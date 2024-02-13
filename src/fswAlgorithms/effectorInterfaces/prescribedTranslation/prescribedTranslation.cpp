@@ -26,7 +26,7 @@
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
  @return void
- @param callTime [ns] Time the method is called
+ @param callTime [ns] Simulation time the method is called
 */
 void PrescribedTranslation::Reset(uint64_t callTime)
 {
@@ -48,26 +48,22 @@ void PrescribedTranslation::Reset(uint64_t callTime)
 /*! This method profiles the prescribed trajectory and updates the prescribed states as a function of time.
 The prescribed states are then written to the output message.
  @return void
- @param callTime [ns] Time the method is called
+ @param callTime [ns] Simulation time the method is called
 */
 void PrescribedTranslation::UpdateState(uint64_t callTime)
 {
-    // Create the buffer messages
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
     PrescribedTranslationMsgPayload prescribedTranslationMsgOut;
 
-    // Zero the output message
     prescribedTranslationMsgOut = PrescribedTranslationMsgPayload();
 
-    // Read the input message
     linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsgPayload();
-    if (this->linearTranslationRigidBodyInMsg.isWritten())
-    {
+    if (this->linearTranslationRigidBodyInMsg.isWritten()) {
         linearTranslationRigidBodyIn = this->linearTranslationRigidBodyInMsg();
     }
 
-    /* This loop is entered (a) initially and (b) when each translation is complete. The parameters used to profile the
-    translation are updated in this statement. */
+    // This loop is entered (a) initially and (b) when each translation is complete.
+    // The parameters used to profile the translation are updated in this statement.
     if (this->linearTranslationRigidBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Update the initial time as the current simulation time
         this->tInit = callTime * NANO2SEC;
@@ -75,21 +71,19 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
         // Store the reference scalar position
         this->transPosRef = linearTranslationRigidBodyIn.rho;
 
-        // Update the initial scalar position
         this->transPosInit = this->transPos;
 
         // Set the convergence to false until the translation is complete
         this->convergence = false;
 
         // Set the parameters required to profile the translation
-        if (this->coastOptionRampDuration > 0.0) { // Set parameters for the coast option
+        if (this->coastRampDuration > 0.0) {
             this->computeCoastParameters();
-        } else { // Set parameters for the no coast option
+        } else {
             this->computeParametersNoCoast();
         }
     }
 
-    // Store the current simulation time
     double t = callTime * NANO2SEC;
 
     // Compute the scalar translational states at the current simulation time
@@ -113,12 +107,11 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
         }
     }
 
-    // Determine the prescribed parameters: r_FM_M, rPrime_FM_M and rPrimePrime_FM_M
+    // Determine the prescribed parameters
     this->r_FM_M = this->transPos*this->transAxis_M;
     this->rPrime_FM_M = this->transVel*this->transAxis_M;
     this->rPrimePrime_FM_M = this->transAccel*this->transAxis_M;
 
-    // Copy the required module variables to the prescribedTranslation output message
     eigenVector3d2CArray(this->r_FM_M, prescribedTranslationMsgOut.r_FM_M);
     eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
     eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
@@ -239,14 +232,13 @@ void PrescribedTranslation::computeParametersNoCoast() {
     this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->ts - this->tf) * (this->ts - this->tf));
 }
 
-/*! This method computes the scalar translational states for the first ramp segment.
+/*! This method computes the scalar translational states for the first ramp segment. The acceleration during the first
+ * ramp segment is positive if the reference position is greater than the initial position. The acceleration is
+ * negative during the first ramp segment if the reference position is less than the initial position.
  @return void
  @param t [s] Current simulation time
 */
 void PrescribedTranslation::computeFirstRampSegment(double t) {
-    // The acceleration during the first ramp segment is positive if the reference position is greater than
-    // the initial position. The acceleration is negative during the first ramp segment if the reference position
-    // is less than the initial position
     if (this->transPosInit < this->transPosRef) {
         this->transAccel = this->transAccelMax;
     } else {
@@ -256,14 +248,13 @@ void PrescribedTranslation::computeFirstRampSegment(double t) {
     this->transPos = this->a * (t - this->tInit) * (t - this->tInit) + this->transPosInit;
 }
 
-/*! This method computes the scalar translational states for the second ramp segment.
+/*! This method computes the scalar translational states for the second ramp segment. The acceleration during the
+ * second ramp segment is negative if the reference position is greater than the initial position. The acceleration
+ * is positive during the second ramp segment if the reference position is less than the initial position.
  @return void
  @param t [s] Current simulation time
 */
 void PrescribedTranslation::computeSecondRampSegment(double t) {
-    // The acceleration during the second ramp segment is negative if the reference position is greater than
-    // the initial position. The acceleration is positive during the second ramp segment if the reference
-    // position is less than the initial position
     if (this->transPosInit < this->transPosRef) {
         this->transAccel = -this->transAccelMax;
     } else {

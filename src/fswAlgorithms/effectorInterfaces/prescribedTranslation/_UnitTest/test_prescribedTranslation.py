@@ -64,13 +64,13 @@ def test_prescribedTranslation(show_plots,
     acceleration. This unit test also tests both methods of profiling the translation, where either a pure bang-bang
     acceleration profile can be selected for the translation, or a coast option can be selected where the accelerations
     are only applied for a specified ramp time and a coast segment with zero acceleration is applied between the two
-    acceleration periods. To validate the module, the final position at the end of each translation is checked to match
-    the specified reference position.
+    acceleration periods. To validate the module, the final hub-relative position at the end of each translation is
+    checked to match the specified reference position.
 
     **Test Parameters**
 
     Args:
-        show_plots (bool):
+        show_plots (bool): Variable for choosing whether plots should be displayed
         coastOptionRampDuration: (double): [s] Ramp duration used for the coast option
         transPosInit (float): [m] Initial translational body position from M to F frame origin along transAxis_M
         transPosRef1 (float): [m] First reference position from M to F frame origin along transAxis_M

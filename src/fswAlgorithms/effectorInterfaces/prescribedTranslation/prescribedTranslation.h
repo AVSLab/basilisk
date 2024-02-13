@@ -35,7 +35,6 @@ public:
 
     void Reset(uint64_t CurrentSimNanos) override;                          //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                    //!< Update member function
-
     void setCoastOptionRampDuration(double rampDuration);                   //!< Setter method for the coast option ramp duration
     void setR_FM_M(const Eigen::Vector3d &r_FM_M);                          //!< Setter method for the translating body hub-relative position vector
     void setRPrime_FM_M(const Eigen::Vector3d &rPrime_FM_M);                //!< Setter method for the translating body hub-relative velocity vector
@@ -58,7 +57,7 @@ public:
     ReadFunctor<LinearTranslationRigidBodyMsgPayload> linearTranslationRigidBodyInMsg;    //!< Input msg for the translational reference position and velocity
     Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;                 //!< Output msg for the translational body prescribed states
 
-    BSKLogger *bskLogger;                                           //!< BSK Logging
+    BSKLogger *bskLogger;                                                   //!< BSK Logging
 
 private:
 
