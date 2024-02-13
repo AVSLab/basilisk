@@ -33,6 +33,7 @@ Orbital Simulations
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
    Including Custom Gravitational Bodies <scenarioCustomGravBody>
    Small Body Waypoint-to-Waypoint Control <scenarioSmallBodyFeedbackControl>
+   Near-Halo Orbit Simulation <scenarioHaloOrbit>
 
 
 Attitude Simulations
