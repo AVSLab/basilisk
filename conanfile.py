@@ -150,6 +150,7 @@ class BasiliskRecipe(ConanFile):
         self.options['opencv'].with_tiff = False  # generate image in TIFF format
         self.options['opencv'].with_openexr = False  # generate image in EXR format
         self.options['opencv'].with_quirc = False  # QR code lib
+        self.options['opencv'].with_webp = False  # raster graphics file format for web
 
         if self.options.get_safe("clean"):
             # clean the distribution folder to start fresh (kept here for backwards compatibility)
