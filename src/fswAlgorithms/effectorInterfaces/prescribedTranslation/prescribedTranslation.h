@@ -40,19 +40,19 @@ public:
     void setRPrime_FM_M(const Eigen::Vector3d &rPrime_FM_M);                //!< Setter method for the translating body hub-relative velocity vector
     void setRPrimePrime_FM_M(const Eigen::Vector3d &rPrimePrime_FM_M);      //!< Setter method for the translating body hub-relative acceleration vector
     void setTransAccelMax(double transAccelMax);                            //!< Setter method for the ramp segment scalar linear acceleration
-    void setTransAxis_M(const Eigen::Vector3d &transAxis_M);                //!< Setter method for the translating body axis of translation
+    void setTransHat_M(const Eigen::Vector3d &transHat_M);                  //!< Setter method for the translating body axis of translation
     void setTransPosInit(double transPosInit);                              //!< Setter method for the initial translating body hub-relative position
     double getCoastOptionRampDuration() const;                              //!< Getter method for the coast option ramp duration
     const Eigen::Vector3d &getR_FM_M() const;                               //!< Getter method for the translating body's hub-relative position vector
     const Eigen::Vector3d &getRPrime_FM_M() const;                          //!< Getter method for the translating body's hub-relative linear velocity vector
     const Eigen::Vector3d &getRPrimePrime_FM_M() const;                     //!< Getter method for the translating body's hub-relative linear acceleration vector
     double getTransAccelMax() const;                                        //!< Getter method for the ramp segment scalar linear acceleration
-    const Eigen::Vector3d &getTransAxis_M() const;                          //!< Getter method for the translating body axis of translation
+    const Eigen::Vector3d &getTransHat_M() const;                           //!< Getter method for the translating body axis of translation
     double getTransPosInit() const;                                         //!< Getter method for the initial translating body position
 
-    double transPos;                                                        //!< [m] Current translational body position along transAxis_M
-    double transVel;                                                        //!< [m] Current translational body velocity along transAxis_M
-    double transAccel;                                                      //!< [m] Current translational body acceleration along transAxis_M
+    double transPos;                                                        //!< [m] Current translational body position along transHat_M
+    double transVel;                                                        //!< [m] Current translational body velocity along transHat_M
+    double transAccel;                                                      //!< [m] Current translational body acceleration along transHat_M
 
     ReadFunctor<LinearTranslationRigidBodyMsgPayload> linearTranslationRigidBodyInMsg;    //!< Input msg for the translational reference position and velocity
     Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;                 //!< Output msg for the translational body prescribed states
@@ -81,7 +81,7 @@ private:
     /* User-configurable variables */
     double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
     double transAccelMax;                                       //!< [m/s^2] Maximum acceleration magnitude
-    Eigen::Vector3d transAxis_M;                                //!< Axis along the direction of translation expressed in M frame components
+    Eigen::Vector3d transHat_M;                                 //!< Axis along the direction of translation expressed in M frame components
     Eigen::Vector3d r_FM_M;                                     //!< [m] Translational body position relative to the Mount frame expressed in M frame components
     Eigen::Vector3d rPrime_FM_M;                                //!< [m/s] B frame time derivative of r_FM_M expressed in M frame components
     Eigen::Vector3d rPrimePrime_FM_M;                           //!< [m/s^2] B frame time derivative of rPrime_FM_M expressed in M frame components
@@ -100,9 +100,9 @@ private:
     /* Shared module variables */
     bool convergence;                                           //!< Boolean variable is true when the translation is complete
     double tInit;                                               //!< [s] Simulation time at the beginning of the translation
-    double transPosInit;                                        //!< [m] Initial translational body position from M to F frame origin along transAxis_M
+    double transPosInit;                                        //!< [m] Initial translational body position from M to F frame origin along transHat_M
     double transVelInit;                                        //!< [m/s] Initial translational body velocity
-    double transPosRef;                                         //!< [m] Reference translational body position from M to F frame origin along transAxis_M
+    double transPosRef;                                         //!< [m] Reference translational body position from M to F frame origin along transHat_M
     double tf;                                                  //!< [s] The simulation time when the translation is complete
     double a;                                                   //!< Parabolic constant for the first half of the translation
     double b;                                                   //!< Parabolic constant for the second half of the translation

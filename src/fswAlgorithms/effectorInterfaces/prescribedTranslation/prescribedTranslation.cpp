@@ -77,7 +77,7 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
         this->convergence = false;
 
         // Set the parameters required to profile the translation
-        if (this->coastRampDuration > 0.0) {
+        if (this->coastOptionRampDuration > 0.0) {
             this->computeCoastParameters();
         } else {
             this->computeParametersNoCoast();
@@ -108,9 +108,9 @@ void PrescribedTranslation::UpdateState(uint64_t callTime)
     }
 
     // Determine the prescribed parameters
-    this->r_FM_M = this->transPos*this->transAxis_M;
-    this->rPrime_FM_M = this->transVel*this->transAxis_M;
-    this->rPrimePrime_FM_M = this->transAccel*this->transAxis_M;
+    this->r_FM_M = this->transPos*this->transHat_M;
+    this->rPrime_FM_M = this->transVel*this->transHat_M;
+    this->rPrimePrime_FM_M = this->transAccel*this->transHat_M;
 
     eigenVector3d2CArray(this->r_FM_M, prescribedTranslationMsgOut.r_FM_M);
     eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
@@ -317,10 +317,10 @@ void PrescribedTranslation::setTransAccelMax(double transAccelMax) {
 
 /*! Setter method for the translating body axis of translation.
  @return void
- @param transAxis_M Translating body axis of translation (unit vector)
+ @param transHat_M Translating body axis of translation (unit vector)
 */
-void PrescribedTranslation::setTransAxis_M(const Eigen::Vector3d &transAxis_M) {
-    this->transAxis_M = transAxis_M;
+void PrescribedTranslation::setTransHat_M(const Eigen::Vector3d &transHat_M) {
+    this->transHat_M = transHat_M;
 }
 
 /*! Setter method for the initial translating body hub-relative position.
@@ -369,8 +369,8 @@ double PrescribedTranslation::getTransAccelMax() const {
 /*! Getter method for the translating body axis of translation.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &PrescribedTranslation::getTransAxis_M() const {
-    return this->transAxis_M;
+const Eigen::Vector3d &PrescribedTranslation::getTransHat_M() const {
+    return this->transHat_M;
 }
 
 /*! Getter method for the initial translating body position.

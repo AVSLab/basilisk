@@ -72,9 +72,9 @@ def test_prescribedTranslation(show_plots,
     Args:
         show_plots (bool): Variable for choosing whether plots should be displayed
         coastOptionRampDuration: (double): [s] Ramp duration used for the coast option
-        transPosInit (float): [m] Initial translational body position from M to F frame origin along transAxis_M
-        transPosRef1 (float): [m] First reference position from M to F frame origin along transAxis_M
-        transPosRef2 (float): [m] Second reference position from M to F frame origin along transAxis_M
+        transPosInit (float): [m] Initial translational body position from M to F frame origin along transHat_M
+        transPosRef1 (float): [m] First reference position from M to F frame origin along transHat_M
+        transPosRef2 (float): [m] Second reference position from M to F frame origin along transHat_M
         transAccelMax (float): [m/s^2] Maximum translational acceleration
         accuracy (float): Absolute accuracy value used in the validation tests
 
@@ -100,9 +100,9 @@ def test_prescribedTranslation(show_plots,
     # Create an instance of the prescribedTranslation module to be tested
     prescribedTrans = prescribedTranslation.PrescribedTranslation()
     prescribedTrans.ModelTag = "prescribedTrans"
-    transAxis_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
+    transHat_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
     prescribedTrans.setCoastOptionRampDuration(coastOptionRampDuration)
-    prescribedTrans.setTransAxis_M(transAxis_M)
+    prescribedTrans.setTransHat_M(transHat_M)
     prescribedTrans.setTransAccelMax(transAccelMax)  # [m/s^2]
     prescribedTrans.setTransPosInit(transPosInit)  # [m]
 
@@ -293,11 +293,11 @@ def test_prescribedTranslation(show_plots,
 
     # 2. Plot the prescribed translational states
     # 2A. Plot r_FM_M
-    r_FM_M_Ref1 = transPosRef1 * transAxis_M
+    r_FM_M_Ref1 = transPosRef1 * transHat_M
     r_FM_M_1_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[0]
     r_FM_M_2_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[1]
     r_FM_M_3_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[2]
-    r_FM_M_Ref2 = transPosRef2 * transAxis_M
+    r_FM_M_Ref2 = transPosRef2 * transHat_M
     r_FM_M_1_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[0]
     r_FM_M_2_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[1]
     r_FM_M_3_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[2]
