@@ -22,8 +22,8 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/PrescribedRotationMsgPayload.h"
+#include "cMsgCInterface/HingedRigidBodyMsg_C.h"
+#include "cMsgCInterface/PrescribedRotationMsg_C.h"
 #include <Eigen/Dense>
 #include <cstdint>
 
@@ -33,6 +33,7 @@ public:
     PrescribedRotation1DOF() = default;                                    //!< Constructor
     ~PrescribedRotation1DOF() = default;                                   //!< Destructor
 
+    void SelfInit() override;                                               //!< Member function to initialize the C-wrapped output message
     void Reset(uint64_t CurrentSimNanos) override;                         //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                   //!< Update member function
     void setCoastOptionRampDuration(double rampDuration);                  //!< Setter for the coast option ramp duration
@@ -47,6 +48,8 @@ public:
     ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyInMsg;              //!< Input msg for the spinning body reference angle and angle rate
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;                 //!< Output msg for the spinning body angle and angle rate
     Message<PrescribedRotationMsgPayload> prescribedRotationOutMsg;        //!< Output msg for the spinning body prescribed rotational states
+    HingedRigidBodyMsg_C spinningBodyOutMsgC = {};                         //!< C-wrapped output msg for the spinning body angle and angle rate
+    PrescribedRotationMsg_C prescribedRotationOutMsgC = {};                //!< C-wrapped output msg for the spinning body prescribed rotational states
 
     BSKLogger *bskLogger;                                                  //!< BSK Logging
 

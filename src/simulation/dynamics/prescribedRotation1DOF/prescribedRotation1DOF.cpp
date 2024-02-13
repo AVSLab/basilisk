@@ -24,6 +24,14 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <cmath>
 
+/*! This method self initializes the C-wrapped output messages.
+ @return void
+*/
+void PrescribedRotation1DOF::SelfInit()
+{
+    HingedRigidBodyMsg_C_init(&this->spinningBodyOutMsgC);
+    PrescribedRotationMsg_C_init(&this->prescribedRotationOutMsgC);
+}
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @return void
@@ -134,6 +142,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     // Write the output messages
     this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
     this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
+    PrescribedRotationMsg_C_write(&prescribedRotationOut, &prescribedRotationOutMsgC, this->moduleID, callTime);
+    HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
 }
 
 /*! This method determines if the current time is within the first ramp segment for the coast option.
