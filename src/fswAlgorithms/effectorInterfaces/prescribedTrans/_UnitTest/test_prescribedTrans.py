@@ -30,12 +30,11 @@ import numpy as np
 import os
 import pytest
 from Basilisk.architecture import bskLogging
-from Basilisk.architecture import messaging  # import the message definitions
+from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import prescribedTrans  # import the module that is to be tested
-from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -53,7 +52,7 @@ def test_prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, sc
     r"""
     **Validation Test Description**
 
-    This unit test ensures that the profiled translational maneuver for a secondary rigid body connected
+    This unit test ensures that the profiled translation for a secondary prescribed rigid body connected
     to the spacecraft hub is properly computed for a series of initial and reference positions and maximum
     accelerations. The final prescribed position and velocity magnitudes are compared with the reference values.
 
@@ -67,7 +66,7 @@ def test_prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, sc
 
     **Description of Variables Being Tested**
 
-    This unit test ensures that the profiled translational maneuver is properly computed for a series of initial and
+    This unit test ensures that the profiled translation is properly computed for a series of initial and
     reference positions and maximum accelerations. The final prescribed position magnitude ``r_FM_M_Final`` and
     velocity magnitude ``rPrime_FM_M_Final`` are compared with the reference values ``r_FM_M_Ref`` and
     ``rPrime_FM_M_Ref``, respectively.
@@ -80,23 +79,23 @@ def test_prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, sc
 
 def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarAccelMax, accuracy):
     """Call this routine directly to run the unit test."""
-    testFailCount = 0                                        # zero unit test result counter
-    testMessages = []                                        # create empty array to store test log messages
-    unitTaskName = "unitTask"                                # arbitrary name (don't change)
-    unitProcessName = "TestProcess"                          # arbitrary name (don't change)
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
     PrescribedTrans = prescribedTrans.prescribedTrans()
-    PrescribedTrans.ModelTag = "prescribedTrans"                                 # update python name of test module
+    PrescribedTrans.ModelTag = "prescribedTrans"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, PrescribedTrans)
@@ -108,9 +107,6 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
     PrescribedTrans.r_FM_M = scalarPosInit * transAxis_M
     PrescribedTrans.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
     PrescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    PrescribedTrans.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedTrans.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    PrescribedTrans.sigma_FM = np.array([0.0, 0.0, 0.0])
 
     # Create input message
     scalarVelRef = 0.0  # [m/s]
@@ -121,7 +117,7 @@ def prescribedTransTestFunction(show_plots, scalarPosInit, scalarPosRef, scalarA
     PrescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    dataLog = PrescribedTrans.prescribedMotionOutMsg.recorder()
+    dataLog = PrescribedTrans.prescribedTranslationOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Need to call the self-init and cross-init methods

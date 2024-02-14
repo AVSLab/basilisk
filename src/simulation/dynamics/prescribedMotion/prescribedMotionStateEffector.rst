@@ -4,15 +4,17 @@ Executive Summary
 The prescribed motion class is an instantiation of the state effector abstract class. This module describes the dynamics
 of a six-degree of freedom (6 DOF) prescribed rigid body connected to a central rigid spacecraft hub. The body frame
 for the prescribed body is designated by the frame :math:`\mathcal{F}`. The prescribed body is mounted onto a hub-fixed
-interface described by a mount frame :math:`\mathcal{M}` that is fixed with respect to the hub. The prescribed body may
-be commanded to translate and rotate in three-dimensional space with respect to the interface it is mounted on.
-Accordingly, the prescribed states for the secondary body are written with respect to the mount frame, :math:`\mathcal{M}`. The
-prescribed states are: ``r_FM_M``, ``rPrime_FM_M``, ``rPrimePrime_FM_M``, ``omega_FM_F``, ``omegaPrime_FM_F``, and
-``sigma_FM``.
+interface described by a mount frame :math:`\mathcal{M}`. The prescribed body may be commanded to translate and rotate
+in three-dimensional space with respect to the interface it is mounted on. Accordingly, the prescribed states for
+the secondary body are written with respect to the mount frame, :math:`\mathcal{M}`. The prescribed states are:
+``r_FM_M``, ``rPrime_FM_M``, ``rPrimePrime_FM_M``, ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``.
 
-The states of the prescribed body are not defined in this module. Therefore, a flight software profiler module must be
-connected to this module's :ref:`PrescribedMotionMsgPayload` input message to profile the prescribed body's states as a
-function of time. This message connection is required to provide the prescribed body's states to this dynamics module.
+The states of the prescribed body are not defined in this module. Therefore, separate kinematic profiler modules must
+be connected to this module's :ref:`PrescribedTranslationMsgPayload` and :ref:`PrescribedRotationMsgPayload`
+input messages to profile the prescribed body's states as a function of time. These message connections are required
+to provide the prescribed body's states to this dynamics module. Note that either a single profiler can be connected to
+these input messages or two separate profiler modules can be used; where one profiles the prescribed body's
+translational states and the other profiles the prescribed body's rotational states.
 
 Message Connection Descriptions
 -------------------------------
@@ -28,12 +30,18 @@ provides information on what this message is used for.
     * - Msg Variable Name
       - Msg Type
       - Description
-    * - prescribedMotionInMsg
-      - :ref:`PrescribedMotionMsgPayload`
-      - Input message for the effector's prescribed states
-    * - prescribedMotionOutMsg
-      - :ref:`PrescribedMotionMsgPayload`
-      - Output message for the effector's prescribed states
+    * - prescribedTranslationInMsg
+      - :ref:`PrescribedTranslationMsgPayload`
+      - Input message for the effector's translational prescribed states
+    * - prescribedRotationInMsg
+      - :ref:`PrescribedRotationMsgPayload`
+      - Input message for the effector's rotational prescribed states
+    * - prescribedTranslationOutMsg
+      - :ref:`PrescribedTranslationMsgPayload`
+      - Output message for the effector's translational prescribed states
+    * - prescribedRotationOutMsg
+      - :ref:`PrescribedRotationMsgPayload`
+      - Output message for the effector's rotational prescribed states
     * - prescribedMotionConfigLogOutMsg
       - :ref:`SCStatesMsgPayload`
       - Output message containing the effector's inertial position and attitude states
@@ -59,17 +67,17 @@ The rotational equations of motion are:
 
 Module Testing
 ^^^^^^^^^^^^^^
-The unit test for this module is an integrated test with two flight software profiler modules. This is required
-because the dynamics module must be connected to a flight software profiler module to define the states of the
+The unit test for this module is an integrated test with two kinematic profiler modules. This is required
+because the dynamics module must be connected to kinematic profiler modules to define the states of the
 prescribed secondary body that is connected to the rigid spacecraft hub. The integrated test for this module has
-two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotational attitude maneuver for the
-prescribed body using the :ref:`prescribedRot1DOF` flight software module. The second scenario prescribes a
-translational maneuver for the prescribed body using the :ref:`prescribedTrans` flight software module.
+two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotation for the
+prescribed body using the :ref:`prescribedRot1DOF` profiler module. The second scenario prescribes a 1 DOF
+translation for the prescribed body using the :ref:`prescribedTrans` profiler module.
 
-The unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of
+The unit test ensures that the profiled 1 DOF rotation is properly computed for a series of
 initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
 and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and
-``thetaDot_Ref``, respectively. The unit test also ensures that the profiled translational maneuver is properly computed for a
+``thetaDot_Ref``, respectively. The unit test also ensures that the profiled translation is properly computed for a
 series of initial and reference positions and maximum accelerations. The final prescribed position magnitude
 ``r_FM_M_Final`` and velocity magnitude ``rPrime_FM_M_Final`` are compared with the reference values ``r_FM_M_Ref``
 and ``rPrime_FM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities of orbital angular momentum,

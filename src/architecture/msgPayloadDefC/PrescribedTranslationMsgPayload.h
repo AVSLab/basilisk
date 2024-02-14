@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,21 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module prescribedTrans
-%{
-   #include "prescribedTrans.h"
-%}
 
-%include "swig_c_wrap.i"
-%c_wrap_2(prescribedTrans, PrescribedTransConfig);
+#ifndef prescribedTranslationSimMsg_h
+#define prescribedTranslationSimMsg_h
 
-%include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
-struct PrescribedTranslationMsg_C;
 
-%include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
-struct LinearTranslationRigidBodyMsg_C;
+ /*! @brief Structure used to define the prescribed motion state effector translational state data message */
+typedef struct {
+    double r_FM_M[3];                          //!< [m] Position vector from the M frame origin to the F frame origin expressed in M frame components
+    double rPrime_FM_M[3];                     //!< [m/s] B/M frame time derivative of r_FM_M
+    double rPrimePrime_FM_M[3];                //!< [m/s^2] B/M frame time derivative of rPrime_FM_M
+}PrescribedTranslationMsgPayload;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif /* prescribedTranslationSimMsg_h */

@@ -44,18 +44,18 @@ splitPath = path.split(bskName)
 
 # Parametrize the user-configurable variables
 @pytest.mark.parametrize("thetaInit", [0.01])
-@pytest.mark.parametrize("thetaRef1a", [0.0, 2*np.pi/3])  # Maneuver 1
-@pytest.mark.parametrize("thetaRef2a", [np.pi/3, 2*np.pi/3]) # Maneuver 1
-@pytest.mark.parametrize("thetaRef1b", [0.0, 2*np.pi/3]) # Maneuver 2
-@pytest.mark.parametrize("thetaRef2b", [np.pi/3, 2*np.pi/3]) # Maneuver 2
+@pytest.mark.parametrize("thetaRef1a", [0.0, 2*np.pi/3])  # Rotation 1
+@pytest.mark.parametrize("thetaRef2a", [np.pi/3, 2*np.pi/3])  # Rotation 1
+@pytest.mark.parametrize("thetaRef1b", [0.0, 2*np.pi/3])  # Rotation 2
+@pytest.mark.parametrize("thetaRef2b", [np.pi/3, 2*np.pi/3])  # Rotation 2
 @pytest.mark.parametrize("phiDDotMax", [0.004])
 @pytest.mark.parametrize("accuracy", [1e-5])
 def test_PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a, thetaRef1b, thetaRef2b, phiDDotMax, accuracy):
     r"""
     **Validation Test Description**
 
-    The unit test for this module simulates TWO consecutive 2 DOF rotational attitude maneuvers for a secondary rigid
-    body connected to a rigid spacecraft hub. Two maneuvers are simulated to ensure that the module correctly updates
+    The unit test for this module simulates TWO consecutive 2 DOF rotations for a secondary rigid body connected
+    to a rigid spacecraft hub. Two rotations are simulated to ensure that the module correctly updates
     the required relative PRV attitude when a new attitude reference message is written. This unit test checks that the
     prescribed body's MRP attitude converges to both reference attitudes for a series of initial and reference attitudes
     and maximum angular accelerations. (``sigma_FM_Final1`` is checked to converge to ``sigma_FM_Ref1``, and
@@ -67,18 +67,18 @@ def test_PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaR
 
     Args:
         thetaInit (float): [rad] Initial PRV angle of the F frame with respect to the M frame
-        thetaRef1a (float): [rad] First reference PRV angle for the first attitude maneuver
-        thetaRef2a (float): [rad] Second reference PRV angle for the first attitude maneuver
-        thetaRef1b (float): [rad] First reference PRV angle for the second attitude maneuver
-        thetaRef2b (float): [rad] Second reference PRV angle for the second attitude maneuver
-        phiDDotMax (float): [rad/s^2] Maximum angular acceleration for the attitude maneuver
+        thetaRef1a (float): [rad] First reference PRV angle for the first rotation
+        thetaRef2a (float): [rad] Second reference PRV angle for the first rotation
+        thetaRef1b (float): [rad] First reference PRV angle for the second rotation
+        thetaRef2b (float): [rad] Second reference PRV angle for the second rotation
+        phiDDotMax (float): [rad/s^2] Maximum angular acceleration for the rotation
         accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
-    The prescribed body's MRP attitude at the end of the first maneuver ``sigma_FM_Final1`` is checked to converge to
+    The prescribed body's MRP attitude at the end of the first rotation ``sigma_FM_Final1`` is checked to converge to
     the first reference attitude ``sigma_FM_Ref1``. The prescribed body's MRP attitude at the end of the second
-    maneuver ``sigma_FM_Final2`` is checked to converge to the second reference attitude ``sigma_FM_Ref2``.
+    rotation ``sigma_FM_Final2`` is checked to converge to the second reference attitude ``sigma_FM_Ref2``.
     Additionally, the prescribed body's final angular velocity magnitude ``thetaDot_Final`` is checked for convergence
     to the reference angular velocity magnitude, ``thetaDot_Ref``.
     """
@@ -90,8 +90,8 @@ def test_PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaR
 
 def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a, thetaRef1b, thetaRef2b, phiDDotMax, accuracy):
     """Call this routine directly to run the unit test."""
-    testFailCount = 0                                        # zero unit test result counter
-    testMessages = []                                        # create empty array to store test log messages
+    testFailCount = 0
+    testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -114,9 +114,6 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     prescribedRot2DOFObj.rotAxis1_M = rotAxis1_M
     prescribedRot2DOFObj.rotAxis2_F1 = rotAxis2_F1
     prescribedRot2DOFObj.phiDDotMax = phiDDotMax
-    prescribedRot2DOFObj.r_FM_M = np.array([1.0, 0.0, 0.0])                  # [m] Position of the F frame origin relative to the M frame origin in M frame components
-    prescribedRot2DOFObj.rPrime_FM_M = np.array([0.0, 0.0, 0.0])             # [m/s] B frame time derivative of r_FM_M in M frame components
-    prescribedRot2DOFObj.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])        # [m/s^2] B frame time derivative of rPrime_FM_M in M frame components
     prescribedRot2DOFObj.omega_FM_F = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame F relative to frame M in F frame components
     prescribedRot2DOFObj.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in F frame components
     prescribedRot2DOFObj.sigma_FM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame F relative to frame M
@@ -138,7 +135,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     prescribedRot2DOFObj.spinningBodyRef2InMsg.subscribeTo(HingedRigidBodyMessage2)
 
     # Set up message data recording logging on the test module output message to get access to it
-    dataLog = prescribedRot2DOFObj.prescribedMotionOutMsg.recorder()
+    dataLog = prescribedRot2DOFObj.prescribedRotationOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     # Set up module variable data recording
@@ -148,11 +145,11 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
-    # Calculate the two reference PRVs for the first attitude maneuver
+    # Calculate the two reference PRVs for the first rotation
     prv_F0M_a = thetaRef1a * rotAxis1_M[0], thetaRef1a * rotAxis1_M[1], thetaRef1a * rotAxis1_M[2]
     prv_F1F0_a = thetaRef2a * rotAxis2_F1[0], thetaRef2a * rotAxis2_F1[1], thetaRef2a * rotAxis2_F1[2]
 
-    # Calculate a single reference PRV for the first attitude maneuver and the associated MRP attitude
+    # Calculate a single reference PRV for the first rotation and the associated MRP attitude
     if (thetaRef1a == 0 and thetaRef2a == 0):  # Prevent a (0,0,0) error using rbk.addPRV()
         prv_F1M_a = np.array([0.0, 0.0, 0.0])
         phi_F1M_a = 0.0
@@ -162,28 +159,28 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
         phi_F1M_a = np.linalg.norm(prv_F1M_a)
         sigma_FM_Ref1 = rbk.PRV2MRP(prv_F1M_a)
 
-    # Set the simulation time for the first attitude maneuver
+    # Set the simulation time for the first rotation
     simTime1 = np.sqrt(((0.5 * np.abs(phi_F1M_a)) * 8) / phiDDotMax) + 10
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1))
 
-    # Execute the first attitude maneuver
+    # Execute the first rotation
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged sigma_FM MRPs for data comparison
     sigma_FM_FirstMan = dataLog.sigma_FM
     sigma_FM_Final1 = sigma_FM_FirstMan[-1, :]
 
-    # Calculate the two reference PRVs for the second attitude maneuver
+    # Calculate the two reference PRVs for the second rotation
     prv_F2M_b = thetaRef1b * rotAxis1_M[0], thetaRef1b * rotAxis1_M[1], thetaRef1b * rotAxis1_M[2]
     prv_F3F2_b = thetaRef2b * rotAxis2_F1[0], thetaRef2b * rotAxis2_F1[1], thetaRef2b * rotAxis2_F1[2]
 
-    # Calculate a single reference PRV (prv_F3M_b) for the second attitude maneuver beginning from the M frame
+    # Calculate a single reference PRV (prv_F3M_b) for the second rotation beginning from the M frame
     if (thetaRef1b == 0 and thetaRef2b == 0):  # Prevent a (0,0,0) error using rbk.addPRV()
         prv_F3M_b = np.array([0.0, 0.0, 0.0])
     else:
         prv_F3M_b = rbk.addPRV(prv_F2M_b, prv_F3F2_b)
 
-    # Calculate a single reference PRV (prv_F3F1_b) for the second attitude maneuver beginning from the spinning body location after the first maneuver (F1)
+    # Calculate a single reference PRV (prv_F3F1_b) for the second rotation beginning from the spinning body location after the first rotation (F1)
     # Also calculate the MRP representing the desired final attitude of the spinning body with respesct to the M frame
     if not unitTestSupport.isArrayEqual(prv_F1M_a, prv_F3M_b, 3, 1e-12):
         prv_F3F1_b = rbk.subPRV(prv_F1M_a, prv_F3M_b)
@@ -193,7 +190,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
         sigma_FM_Ref2 = sigma_FM_Ref1
     phi_F3F1_b = np.linalg.norm(prv_F3F1_b)
 
-    # Write the HingedRigidBody reference messages for the second maneuver
+    # Write the HingedRigidBody reference messages for the second rotation
     hingedRigidBodyMessageData1 = messaging.HingedRigidBodyMsgPayload()
     hingedRigidBodyMessageData2 = messaging.HingedRigidBodyMsgPayload()
     hingedRigidBodyMessageData1.theta = thetaRef1b
@@ -205,11 +202,11 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     prescribedRot2DOFObj.spinningBodyRef1InMsg.subscribeTo(HingedRigidBodyMessage1)
     prescribedRot2DOFObj.spinningBodyRef2InMsg.subscribeTo(HingedRigidBodyMessage2)
 
-    # Set the simulation time for the second maneuver
+    # Set the simulation time for the second rotation
     simTime2 = np.sqrt(((0.5 * np.abs(phi_F3F1_b)) * 8) / phiDDotMax) + 10
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2))
 
-    # Execute the second attitude maneuver
+    # Execute the second rotation
     unitTestSim.ExecuteSimulation()
 
     # Extract the recorded data for data comparison and plotting
