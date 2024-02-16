@@ -50,7 +50,7 @@ struct ArrayMotorTorqueMsg_C;
 
 %include "std_vector.i"
 namespace std {
-    %template(RWConfigPointerVector) vector<RWConfigMsgPayload *>;
+    %template(RWConfigPointerVector) vector<RWConfigMsgPayload *, allocator<RWConfigMsgPayload *> >;
 }
 
 %pythoncode %{

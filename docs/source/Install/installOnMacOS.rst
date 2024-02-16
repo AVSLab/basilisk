@@ -56,7 +56,7 @@ Install HomeBrew Support Packages
 #. Install `HomeBrew <http://brew.sh>`__ using a Terminal window and
    pasting the install script from the HomeBrew web site.
 
-#. The new SWIG version 4 is compatible with Basilisk. Install the SWIG software package using::
+#. SWIG version 4.X is compatible with Basilisk. Install the SWIG software package using::
 
    $ brew install swig
 
@@ -65,7 +65,6 @@ Install HomeBrew Support Packages
    $ brew install cmake
    $ brew link cmake
 
-   You need at least version 3.14 or higher.
 
 Setting up the Python Environment
 ---------------------------------

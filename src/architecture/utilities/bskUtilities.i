@@ -34,7 +34,7 @@
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
-%template(Eigen3dVector) std::vector<Eigen::Vector3d>;
+%template(Eigen3dVector) std::vector<Eigen::Vector3d, std::allocator<Eigen::Vector3d>>;
 
 %pythoncode %{
 import sys

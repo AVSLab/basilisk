@@ -29,12 +29,12 @@
 
 // Instantiate templates used by example
 namespace std {
-   %template(IntVector) vector<int>;
-   %template(DoubleVector) vector<double>;
-   %template(StringVector) vector<string>;
+   %template(IntVector) vector<int, allocator<int> >;
+   %template(DoubleVector) vector<double, allocator<double> >;
+   %template(StringVector) vector<string, allocator<string> >;
    %template(StringSet) set<string>;
    %template(intSet) set<unsigned long>;
-   %template(ConstCharVector) vector<const char*>;
+   %template(ConstCharVector) vector<const char*, allocator<const char*> >;
    %template(MultiArray) vector < vector <double> >;
    %template(MultiArray3d) vector < vector < vector <double> > >;
 }

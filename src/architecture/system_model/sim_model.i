@@ -40,21 +40,21 @@
 
 // Instantiate templates used by example
 namespace std {
-   %template(IntVector) vector<int>;
-   %template(DoubleVector) vector<double>;
+   %template(IntVector) vector<int, allocator<int> >;
+   %template(DoubleVector) vector<double, allocator<double> >;
    %template(MultiArray) vector<vector<double>>;
-   %template(StringVector) vector<string>;
+   %template(StringVector) vector<string, allocator<string> >;
    %template(StringSet) set<string>;
    %template(intSet) set<unsigned long>;
    %template(int64Set) set<long int>;
-   %template(ConstCharVector) vector<const char*>;
+   %template(ConstCharVector) vector<const char*, allocator<const char*> >;
    %template() std::pair<long int, long int>;
    %template() std::pair<long long int, long long int>;
    %template() std::pair<int64_t, int64_t>;
-   %template(exchangeSet) std::set<std::pair<long int, long int>>;
-   %template(modelPriPair) std::vector<ModelPriorityPair>;
-   %template(procSchedList) std::vector<ModelScheduleEntry>;
-   %template(simProcList) std::vector<SysProcess *>;
+   %template(exchangeSet) set<pair<long int, long int>>;
+   %template(modelPriPair) vector<ModelPriorityPair, allocator<ModelPriorityPair> >;
+   %template(procSchedList) vector<ModelScheduleEntry, allocator<ModelScheduleEntry> >;
+   %template(simProcList) vector<SysProcess *, allocator<SysProcess *> >;
 }
 
 %inline %{

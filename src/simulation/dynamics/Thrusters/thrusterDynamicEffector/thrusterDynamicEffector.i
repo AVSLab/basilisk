@@ -33,8 +33,8 @@ from Basilisk.architecture.swig_common_model import *
 // Instantiate templates used by example
 %include "std_vector.i"
 namespace std {
-    %template(ThrusterTimeVector) vector<THRTimePair>;
-    %template(ThrusterConfigVector) vector<THRSimConfig>;
+    %template(ThrusterTimeVector) vector<THRTimePair, std::allocator<THRTimePair>>;
+    %template(ThrusterConfigVector) vector<THRSimConfig, std::allocator<THRSimConfig>>;
 }
 
 %include "sys_model.i"
