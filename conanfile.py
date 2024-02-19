@@ -206,7 +206,7 @@ class BasiliskConan(ConanFile):
             # Issue link: https://github.com/conan-community/community/issues/341
             #TODO Remove this once they fix this issue.
             if self.settings.os == "Windows":
-                self.options['opencv'].freetype = False
+                self.options['opencv'].contrib_freetype = False
 
         if self.options.generator == "":
             # Select default generator supplied to cmake based on os
