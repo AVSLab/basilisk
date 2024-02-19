@@ -17,25 +17,28 @@
 
 #
 #   Unit Test Script
-#   Module Name:        prescribedMotion integrated unit test with prescribedRot1DOF and prescribedLinearTranslation
+#   Module Name:        prescribedMotion integrated unit test with prescribedRotation1DOF and prescribedLinearTranslation
 #   Author:             Leah Kiner
 #   Creation Date:      Jan 10, 2022
 #
 
 import inspect
+import os
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import pytest
+
 from Basilisk.architecture import messaging
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import prescribedLinearTranslation
 from Basilisk.simulation import prescribedMotionStateEffector
-from Basilisk.fswAlgorithms import prescribedRot1DOF
+from Basilisk.simulation import prescribedRotation1DOF
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros, RigidBodyKinematics as rbk
+from Basilisk.utilities import macros
+from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -59,9 +62,9 @@ def test_PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref,
     The unit test for this module is an integrated test with two flight software profiler modules. This is required
     because the dynamics module must be connected to a flight software profiler module to define the states of the
     prescribed secondary body that is connected to the rigid spacecraft hub. The integrated test for this module has
-    two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotational attitude maneuver for the
-    prescribed body using the :ref:`prescribedRot1DOF` flight software module. The second scenario prescribes a
-    translational maneuver for the prescribed body using the :ref:`prescribedLinearTranslation` flight software module.
+    two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotation for the prescribed body
+    using the :ref:`prescribedRotation1DOF` flight software module. The second scenario prescribes
+    linear translation for the prescribed body using the :ref:`prescribedLinearTranslation` flight software module.
 
     This unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of
     initial and reference PRV angles and maximum angular accelerations. The final prescribed attitude and angular
@@ -172,30 +175,27 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     
         # ** ** ** ** ** ROTATIONAL 1 DOF INTEGRATED TEST: ** ** ** ** **
 
-        # Create an instance of the prescribedRot1DOF module to be tested
-        PrescribedRot1DOF = prescribedRot1DOF.prescribedRot1DOF()
-        PrescribedRot1DOF.ModelTag = "prescribedRot1DOF"
+        # Create an instance of the prescribedRotation1DOF module to be tested
+        PrescribedRot1DOF = prescribedRotation1DOF.PrescribedRotation1DOF()
+        PrescribedRot1DOF.ModelTag = "prescribedRotation1DOF"
 
-        # Add the prescribedRot1DOF test module to runtime call list
+        # Add the prescribedRotation1DOF test module to runtime call list
         unitTestSim.AddModelToTask(unitTaskName, PrescribedRot1DOF)
 
-        # Initialize the prescribedRot1DOF test module configuration data
+        # Initialize the prescribedRotation1DOF test module configuration data
         accelMax = 0.01  # [rad/s^2]
-        PrescribedRot1DOF.rotAxis_M = rotAxis_M
-        PrescribedRot1DOF.thetaDDotMax = accelMax
-        PrescribedRot1DOF.omega_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOF.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-        PrescribedRot1DOF.sigma_FM = sigma_FM
+        PrescribedRot1DOF.setRotHat_M(rotAxis_M)
+        PrescribedRot1DOF.setThetaDDotMax(accelMax)
+        PrescribedRot1DOF.setThetaInit(thetaInit)
 
-        # Create the prescribedRot1DOF input message
+        # Create the prescribedRotation1DOF input message
         thetaDot_Ref = 0.0  # [rad/s]
         SpinningBodyMessageData = messaging.HingedRigidBodyMsgPayload()
         SpinningBodyMessageData.theta = theta_Ref
         SpinningBodyMessageData.thetaDot = thetaDot_Ref
         SpinningBodyMessage = messaging.HingedRigidBodyMsg().write(SpinningBodyMessageData)
         PrescribedRot1DOF.spinningBodyInMsg.subscribeTo(SpinningBodyMessage)
-        
-        # Connect the PrescribedRot1DOF module's prescribedRotation output message to the prescribedMotion module's prescribedRotation input message
+
         platform.prescribedRotationInMsg.subscribeTo(PrescribedRot1DOF.prescribedRotationOutMsg)
 
         # Add Earth gravity to the simulation
