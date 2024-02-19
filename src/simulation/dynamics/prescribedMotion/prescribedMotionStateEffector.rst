@@ -71,8 +71,8 @@ The unit test for this module is an integrated test with two kinematic profiler 
 because the dynamics module must be connected to kinematic profiler modules to define the states of the
 prescribed secondary body that is connected to the rigid spacecraft hub. The integrated test for this module has
 two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotation for the
-prescribed body using the :ref:`prescribedRot1DOF` profiler module. The second scenario prescribes a 1 DOF
-translation for the prescribed body using the :ref:`prescribedLinearTranslation` profiler module.
+prescribed body using the :ref:`prescribedRotation1DOF` profiler module. The second scenario prescribes a 1 DOF
+linear translation for the prescribed body using the :ref:`prescribedLinearTranslation` profiler module.
 
 The unit test ensures that the profiled 1 DOF rotation is properly computed for a series of
 initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
@@ -80,8 +80,8 @@ and angular velocity magnitude ``thetaDot_Final`` are compared with the referenc
 ``thetaDot_Ref``, respectively. The unit test also ensures that the profiled translation is properly computed for a
 series of initial and reference positions and maximum accelerations. The final prescribed position magnitude
 ``r_FM_M_Final`` and velocity magnitude ``rPrime_FM_M_Final`` are compared with the reference values ``r_FM_M_Ref``
-and ``rPrime_FM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities of orbital angular momentum,
-rotational angular momentum, and orbital energy are checked to validate the module dynamics.
+and ``rPrime_FM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities of orbital angular
+momentum, rotational angular momentum, and orbital energy are checked to verify the module dynamics.
 
 User Guide
 ----------
