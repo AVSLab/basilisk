@@ -49,6 +49,8 @@ Version |release|
 - Deprecated the :ref:`prescribedMotionMsgPayload` message and replaced with two separate
   :ref:`prescribedTranslationMsgPayload` and :ref:`prescribedRotationMsgPayload` messages.
 - added support for the new ``swig`` 4.2 version
+- updated the Windows build to compile properly with ``opNav`` flag set to true.  A
+  ``opencv`` related flag had to be updated.
 
 >>>>>>> c996337e2 (update release notes and known issues)
 
