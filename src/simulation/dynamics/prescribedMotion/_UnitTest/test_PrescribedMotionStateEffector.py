@@ -17,23 +17,26 @@
 
 #
 #   Unit Test Script
-#   Module Name:        prescribedMotion integrated unit test with prescribedRot1DOF and prescribedTranslation
+#   Module Name:        prescribedMotion integrated unit test with prescribedRot1DOF and prescribedLinearTranslation
 #   Author:             Leah Kiner
 #   Creation Date:      Jan 10, 2022
 #
 
-import pytest
 import inspect
-import os
-import numpy as np
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 import matplotlib
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import prescribedRot1DOF, prescribedTrans
-from Basilisk.simulation import spacecraft, prescribedMotionStateEffector, gravityEffector
-from Basilisk.utilities import macros, RigidBodyKinematics as rbk
+import numpy as np
+import os
+import pytest
 from Basilisk.architecture import messaging
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import prescribedLinearTranslation
+from Basilisk.simulation import prescribedMotionStateEffector
+from Basilisk.fswAlgorithms import prescribedRot1DOF
+from Basilisk.simulation import spacecraft
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros, RigidBodyKinematics as rbk
+from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -58,7 +61,7 @@ def test_PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref,
     prescribed secondary body that is connected to the rigid spacecraft hub. The integrated test for this module has
     two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotational attitude maneuver for the
     prescribed body using the :ref:`prescribedRot1DOF` flight software module. The second scenario prescribes a
-    translational maneuver for the prescribed body using the :ref:`prescribedTrans` flight software module.
+    translational maneuver for the prescribed body using the :ref:`prescribedLinearTranslation` flight software module.
 
     This unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of
     initial and reference PRV angles and maximum angular accelerations. The final prescribed attitude and angular
@@ -399,20 +402,18 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         # ** ** ** ** ** TRANSLATIONAL INTEGRATED TEST ** ** ** ** **
 
-        # Create an instance of the prescribedTrans module to be tested
-        PrescribedTrans = prescribedTrans.prescribedTrans()
-        PrescribedTrans.ModelTag = "prescribedTrans"
+        # Create an instance of the prescribedLinearTranslation module to be tested
+        PrescribedTrans = prescribedLinearTranslation.PrescribedLinearTranslation()
+        PrescribedTrans.ModelTag = "prescribedLinearTranslation"
 
-        # Add the prescribedTrans test module to runtime call list
+        # Add the prescribedLinearTranslation test module to runtime call list
         unitTestSim.AddModelToTask(unitTaskName, PrescribedTrans)
 
-        # Initialize the prescribedTrans test module configuration data
+        # Initialize the prescribedLinearTranslation test module configuration data
         accelMax = 0.005  # [m/s^2]
-        PrescribedTrans.r_FM_M = r_FM_M
-        PrescribedTrans.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedTrans.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-        PrescribedTrans.transAxis_M = transAxis_M
-        PrescribedTrans.scalarAccelMax = accelMax
+        PrescribedTrans.setTransHat_M(transAxis_M)
+        PrescribedTrans.setTransAccelMax(accelMax)
+        PrescribedTrans.setTransPosInit(posInit)
 
         # Create the prescribedTrans input message
         velRef = 0.0  # [m/s]
@@ -422,7 +423,6 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
         PrescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
 
-        # Connect the PrescribedTrans module's prescribedTranslation output message to the prescribedMotion module's prescribedTranslation input message
         platform.prescribedTranslationInMsg.subscribeTo(PrescribedTrans.prescribedTranslationOutMsg)
 
         # Add Earth gravity to the simulation
@@ -625,7 +625,7 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
             testMessages.append("r_FM_M_Final: " + str(r_FM_M_Final) + " r_FM_M_Ref: " + str(r_FM_M_Ref))
 
         if testFailCount == 0:
-            print("PASSED: " + "prescribedMotion and prescribedTrans integrated test")
+            print("PASSED: " + "prescribedMotion and prescribedLinearTranslation integrated test")
 
     return [testFailCount, ''.join(testMessages)]
 
