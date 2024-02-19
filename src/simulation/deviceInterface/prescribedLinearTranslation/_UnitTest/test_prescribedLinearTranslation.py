@@ -242,81 +242,87 @@ def test_prescribedLinearTranslation(show_plots,
                                atol=accuracy,
                                verbose=True)
 
-    # 1. Plot the scalar translational states
-    # 1A. Plot transPos
-    transPosInitPlotting = np.ones(len(timespan)) * transPosInit
-    transPosRef1Plotting = np.ones(len(timespan)) * transPosRef1
-    transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, r_FM_M.dot(transHat_M), label=r"$l$")
-    plt.plot(timespan, transPosInitPlotting, '--', label=r'$\rho_{0}$')
-    plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
-    plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
-    plt.title(r'Translational Position $\rho_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
-    plt.ylabel('(m)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc='upper right', prop={'size': 12})
-    plt.grid(True)
+    if show_plots:
+        plt.close("all")  # clears out plots from earlier test runs
 
-    # 1B. Plot transVel
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, rPrime_FM_M.dot(transHat_M), label=r"$\dot{\rho}$")
-    plt.title(r'Translational Velocity $\dot{\rho}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
-    plt.ylabel('(m/s)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc='upper right', prop={'size': 12})
-    plt.grid(True)
+        # 1. Plot the scalar translational states
+        # 1A. Plot transPos
+        transPosInitPlotting = np.ones(len(timespan)) * transPosInit
+        transPosRef1Plotting = np.ones(len(timespan)) * transPosRef1
+        transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, r_FM_M.dot(transHat_M), label=r"$l$")
+        plt.plot(timespan, transPosInitPlotting, '--', label=r'$\rho_{0}$')
+        plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
+        plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
+        plt.title(r'Translational Position $\rho_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.ylabel('(m)', fontsize=14)
+        plt.xlabel('Time (s)', fontsize=14)
+        plt.legend(loc='upper right', prop={'size': 12})
+        plt.grid(True)
 
-    # 1C. Plot transAccel
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, rPrimePrime_FM_M.dot(transHat_M), label=r"$\ddot{\rho}$")
-    plt.title(r'Translational Acceleration $\ddot{\rho}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
-    plt.ylabel('(m/s$^2$)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc='upper right', prop={'size': 12})
-    plt.grid(True)
+        # 1B. Plot transVel
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, rPrime_FM_M.dot(transHat_M), label=r"$\dot{\rho}$")
+        plt.title(r'Translational Velocity $\dot{\rho}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.ylabel('(m/s)', fontsize=14)
+        plt.xlabel('Time (s)', fontsize=14)
+        plt.legend(loc='upper right', prop={'size': 12})
+        plt.grid(True)
 
-    # 2. Plot the prescribed translational states
-    # 2A. Plot r_FM_M
-    r_FM_M_Ref1 = transPosRef1 * transHat_M
-    r_FM_M_1_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[0]
-    r_FM_M_2_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[1]
-    r_FM_M_3_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[2]
-    r_FM_M_Ref2 = transPosRef2 * transHat_M
-    r_FM_M_1_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[0]
-    r_FM_M_2_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[1]
-    r_FM_M_3_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[2]
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, r_FM_M[:, 0], label=r'$r_{1}$')
-    plt.plot(timespan, r_FM_M[:, 1], label=r'$r_{2}$')
-    plt.plot(timespan, r_FM_M[:, 2], label=r'$r_{3}$')
-    plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_1_Ref1, '--', label=r'$r_{1 Ref_{1}}$')
-    plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_2_Ref1, '--', label=r'$r_{2 Ref_{1}}$')
-    plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_3_Ref1, '--', label=r'$r_{3 Ref_{1}}$')
-    plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_1_Ref2, '--', label=r'$r_{1 Ref_{2}}$')
-    plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_2_Ref2, '--', label=r'$r_{2 Ref_{2}}$')
-    plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_3_Ref2, '--', label=r'$r_{3 Ref_{2}}$')
-    plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(m)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc='center left', prop={'size': 12})
-    plt.grid(True)
+        # 1C. Plot transAccel
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, rPrimePrime_FM_M.dot(transHat_M), label=r"$\ddot{\rho}$")
+        plt.title(r'Translational Acceleration $\ddot{\rho}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+        plt.ylabel('(m/s$^2$)', fontsize=14)
+        plt.xlabel('Time (s)', fontsize=14)
+        plt.legend(loc='upper right', prop={'size': 12})
+        plt.grid(True)
 
-    # Plot rPrime_FM_F
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, rPrime_FM_M[:, 0], label='1')
-    plt.plot(timespan, rPrime_FM_M[:, 1], label='2')
-    plt.plot(timespan, rPrime_FM_M[:, 2], label='3')
-    plt.title(r'${}^\mathcal{M} r$Prime$_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(m/s)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc='upper left', prop={'size': 12})
-    plt.grid(True)
+        # 2. Plot the prescribed translational states
+        # 2A. Plot r_FM_M
+        r_FM_M_Ref1 = transPosRef1 * transHat_M
+        r_FM_M_1_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[0]
+        r_FM_M_2_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[1]
+        r_FM_M_3_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[2]
+        r_FM_M_Ref2 = transPosRef2 * transHat_M
+        r_FM_M_1_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[0]
+        r_FM_M_2_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[1]
+        r_FM_M_3_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[2]
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, r_FM_M[:, 0], label=r'$r_{1}$')
+        plt.plot(timespan, r_FM_M[:, 1], label=r'$r_{2}$')
+        plt.plot(timespan, r_FM_M[:, 2], label=r'$r_{3}$')
+        plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_1_Ref1, '--', label=r'$r_{1 Ref_{1}}$')
+        plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_2_Ref1, '--', label=r'$r_{2 Ref_{1}}$')
+        plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_3_Ref1, '--', label=r'$r_{3 Ref_{1}}$')
+        plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_1_Ref2, '--', label=r'$r_{1 Ref_{2}}$')
+        plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_2_Ref2, '--', label=r'$r_{2 Ref_{2}}$')
+        plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_3_Ref2, '--', label=r'$r_{3 Ref_{2}}$')
+        plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.ylabel('(m)', fontsize=14)
+        plt.xlabel('Time (s)', fontsize=14)
+        plt.legend(loc='center left', prop={'size': 12})
+        plt.grid(True)
+
+        # Plot rPrime_FM_F
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, rPrime_FM_M[:, 0], label='1')
+        plt.plot(timespan, rPrime_FM_M[:, 1], label='2')
+        plt.plot(timespan, rPrime_FM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} r$Prime$_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.ylabel('(m/s)', fontsize=14)
+        plt.xlabel('Time (s)', fontsize=14)
+        plt.legend(loc='upper left', prop={'size': 12})
+        plt.grid(True)
+
+        plt.show()
+        plt.close("all")
 
 
 if __name__ == "__main__":
@@ -328,3 +334,4 @@ if __name__ == "__main__":
                                0.01,  # [m/s^2] transAccelMax
                                1e-4  # accuracy
                                )
+    
