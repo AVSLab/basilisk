@@ -52,7 +52,6 @@ Version |release|
 - updated the Windows build to compile properly with ``opNav`` flag set to true.  A
   ``opencv`` related flag had to be updated.
 
->>>>>>> c996337e2 (update release notes and known issues)
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
