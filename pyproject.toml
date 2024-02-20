@@ -1,0 +1,50 @@
+[build-system]
+# Requirements for calling setuptools
+requires = [
+    "setuptools>=64",  # For PEP 660 (Allow editable installs from pyproject.toml)
+    "setuptools-scm>=8.0",  # Automatically include all Git-controlled files in sdist
+
+    # Requirements for building Basilisk through setuptools and conanfile
+    "conan>=2.0.5",
+    "cmake>=3.18",
+    "parse>=1.18.0",
+    "swig>=4.2.0.post0"  # Requires https://github.com/nightlark/swig-pypi/pull/120
+]
+
+# Use setuptools to build everything.
+build-backend = "setuptools.build_meta"
+
+[project]
+name        = 'Basilisk'
+dynamic     = ["version"]
+requires-python = ">=3.8"
+
+readme      = "README.md"
+license     = {file = "LICENSE"}
+description = "Basilisk: an Astrodynamics Simulation Framework"
+
+dependencies = [
+    # Requirements for Basilisk
+    "pandas",
+    "numpy",
+    "matplotlib",
+    "Pillow",
+    "colorama",
+    'tqdm',
+]
+
+[project.urls]
+homepage = 'https://hanspeterschaub.info/basilisk/'
+
+[project.optional-dependencies]
+test = [
+    'pytest',
+    'flake8',
+    'pytest-cov',
+    'hypothesis',
+    'pytest-xdist',
+    'pytest-random-order',
+]
+
+[tool.setuptools.dynamic]
+version = {file = "docs/source/bskVersion.txt" }

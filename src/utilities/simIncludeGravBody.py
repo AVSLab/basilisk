@@ -468,7 +468,6 @@ class gravBodyFactory:
 
         for fileName in set(self.spiceKernelFileNames):
             self.spiceObject.loadSpiceKernel(fileName, path)
-        self.spiceObject.SPICELoaded = True
 
         # subscribe Grav Body data to the spice state message
         for c, gravBodyDataItem in enumerate(self.gravBodies.values()):

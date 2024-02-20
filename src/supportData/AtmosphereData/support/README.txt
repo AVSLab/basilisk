@@ -5,7 +5,7 @@ Last updated: Nov. 1 2021
 ===============================================================================
 Overview
 ===============================================================================
-The directory supportData/AtmosphereData provides a number of data
+The directory src/supportData/AtmosphereData provides a number of data
 files to be used by the TabularAtmosphere module. This module interpolates
 from a user-provided table of altitude, density, and temperature. 
 

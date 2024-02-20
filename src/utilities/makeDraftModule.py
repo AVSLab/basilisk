@@ -31,7 +31,6 @@ from datetime import datetime
 
 # assumes this script is in .../basilisk/src/utilities
 pathToSrc = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-initialCwd = os.getcwd()
 
 statusColor = '\033[92m'
 failColor = '\033[91m'
@@ -43,6 +42,8 @@ class moduleGenerator:
     class to generate draft Basilisk modules
     """
     def __init__(self):
+        self.initialCwd = os.getcwd()
+
         # the following variables must be set for this module generator to function
         self.modulePathRelSrc = None  # path to the new module folder relative to basilisk/src
         self.moduleName = None  # lower camel case name of the module
@@ -444,7 +445,7 @@ class moduleGenerator:
         self.createTestFile("C++")
 
         # restore current working directory
-        os.chdir(initialCwd)
+        os.chdir(self.initialCwd)
 
     def createCModule(self):
         """
@@ -648,7 +649,7 @@ class moduleGenerator:
         # make module unit test file
         self.createTestFile("C")
 
-        os.chdir(initialCwd)
+        os.chdir(self.initialCwd)
 
 
 def fillCppInfo(module):
