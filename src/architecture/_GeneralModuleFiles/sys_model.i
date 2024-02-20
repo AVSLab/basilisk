@@ -15,7 +15,6 @@ from Basilisk.architecture.swig_common_model import *
 
 %pythonbegin %{
 from typing import Union, Iterable
-from Basilisk.utilities import pythonVariableLogger
 %}
 
 %extend SysModel
@@ -37,6 +36,7 @@ from Basilisk.utilities import pythonVariableLogger
                     raise ValueError(f"Cannot log {variable_name} as it is not a "
                                     f"variable of {type(self).__name__}")
 
+            from Basilisk.utilities import pythonVariableLogger
             return pythonVariableLogger.PythonVariableLogger(logging_functions, recordingTime)
     %}
 }
