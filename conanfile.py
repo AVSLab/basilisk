@@ -213,7 +213,7 @@ class BasiliskConan(ConanFile):
             if self.settings.os == "Macos":
                 self.generator = "Xcode"
             elif self.settings.os == "Windows":
-                self.generator = "Visual Studio 16 2019"
+                self.generator = "Visual Studio 17 2022"
                 self.options["*"].shared = True
             else:
                 print("Creating a make file for project. ")
@@ -223,7 +223,7 @@ class BasiliskConan(ConanFile):
             if self.settings.os == "Windows":
                 self.options["*"].shared = True
         print("cmake generator set to: " + statusColor + str(self.generator) + endColor)
-    
+
     def package_id(self):
         if self.settings.compiler == "Visual Studio":
             if "MD" in self.settings.compiler.runtime:

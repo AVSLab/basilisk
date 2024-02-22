@@ -165,12 +165,22 @@ setup(
     long_description=open('./README.md').read(),
     url='https://hanspeterschaub.info/basilisk/',
     package_dir={'': package_dir},
-    # install_requires=[
-    #     'matplotlib',
-    #     'numpy',
-    #     'pandas'
-    # ],
-    setup_requires=['pytest-runner'],
+    install_requires=[
+        'matplotlib',
+        'numpy',
+        'pandas',
+        'wheel',
+        'conan<2.0',
+        'pandas',
+        'numpy',
+        'matplotlib',
+        'pytest',
+        'Pillow',
+        'parse>=1.18.0',
+        'colorama',
+        'tqdm',
+    ],
+    setup_requires=['pytest-runner', 'setuptools', 'wheel', ],
     tests_require=['pytest', 'flake8'],
     cmdclass={
         'clean': CleanCommand,

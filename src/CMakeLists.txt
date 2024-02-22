@@ -590,8 +590,13 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 
 if(WIN32 AND (PYTHON_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
-       "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
-       "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n")
+       "#init file written by the build
+        import sys, os
+        from Basilisk import __path__
+        bskPath = __path__[0]
+        # if we're on windows, we need to add the Basilisk dll directory to the path
+        if sys.platform == 'win32':
+            os.add_dll_directory(bskPath)")
 else()
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
 endif()
