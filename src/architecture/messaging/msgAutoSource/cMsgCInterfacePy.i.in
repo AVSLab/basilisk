@@ -14,6 +14,8 @@ typedef struct {type};
             {type}_C_subscribe(self, source)
         elif type(source) == {type}:
             {type}_cpp_subscribe(self, source)
+        elif type(source) == int:
+            {type}_addr_subscribe(self, source)
         else:
             raise Exception('tried to subscribe {type} to another message type')
 

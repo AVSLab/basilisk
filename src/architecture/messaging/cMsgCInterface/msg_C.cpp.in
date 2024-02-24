@@ -114,6 +114,10 @@ void @MSG_AUTOSOURCE_TYPE@_cpp_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, vo
     subscriber->headerPointer->isLinked = 1;    // set output message as linked
 };
 
+void {type}_addr_subscribe({type}_C *subscriber, uint64_t sourceAddr){{
+    void *source = reinterpret_cast<void *> (sourceAddr);
+    {type}_cpp_subscribe(subscriber, source);
+}};
 
 //! Cpp interface to check if subscriber is indeed subscribed to a message (1: subscribed, 0: not subscribed)
 int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscriber, void* source) {
