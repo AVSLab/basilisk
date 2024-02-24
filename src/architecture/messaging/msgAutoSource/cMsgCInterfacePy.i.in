@@ -28,6 +28,8 @@ typedef struct {type};
             return ({type}_C_isSubscribedTo(self, source))
         elif type(source) == {type}:
             return ({type}_cpp_isSubscribedTo(self, source))
+        elif type(source) == int:
+            return ({type}_cpp_isSubscribedToAddr(self, source))
         else:
             return 0
 

@@ -23,6 +23,7 @@ void {type}_C_subscribe({type}_C *subscriber, {type}_C *source);
 
 int8_t {type}_C_isSubscribedTo({type}_C *subscriber, {type}_C *source);
 int8_t {type}_cpp_isSubscribedTo({type}_C *subscriber, void* source);
+int8_t {type}_cpp_isSubscribedToAddr({type}_C *subscriber, uint64_t sourceAddr);
 
 void {type}_C_addAuthor({type}_C *coowner, {type}_C *data);
 
