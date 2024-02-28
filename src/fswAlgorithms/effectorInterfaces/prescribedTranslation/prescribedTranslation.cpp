@@ -38,7 +38,6 @@ void PrescribedTranslation::Reset(uint64_t callTime)
     this->tInit = 0.0;
 
     this->transPos = this->transPosInit;
-    this->transVelInit = 0.0;
     this->transVel = 0.0;
 
     // Set the initial convergence to true to enter the correct loop in the Update() method on the first pass
@@ -155,13 +154,13 @@ void PrescribedTranslation::computeCoastParameters() {
         // Determine the position and velocity at the end of the ramp segment/start of the coast segment
         if (this->transPosInit < this->transPosRef) {
             this->transPos_tr = (0.5 * this->transAccelMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
-                                + (this->transVelInit * this->coastOptionRampDuration) + this->transPosInit;
-            this->transVel_tr = this->transAccelMax * this->coastOptionRampDuration + this->transVelInit;
+                                 + this->transPosInit;
+            this->transVel_tr = this->transAccelMax * this->coastOptionRampDuration;
         } else {
             this->transPos_tr =
-                    -((0.5 * this->transAccelMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
-                      + (this->transVelInit * this->coastOptionRampDuration)) + this->transPosInit;
-            this->transVel_tr = -this->transAccelMax * this->coastOptionRampDuration + this->transVelInit;
+                    -((0.5 * this->transAccelMax * this->coastOptionRampDuration * this->coastOptionRampDuration))
+                    + this->transPosInit;
+            this->transVel_tr = -this->transAccelMax * this->coastOptionRampDuration;
         }
 
         // Determine the distance traveled during the coast period
@@ -244,7 +243,7 @@ void PrescribedTranslation::computeFirstRampSegment(double t) {
     } else {
         this->transAccel = -this->transAccelMax;
     }
-    this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit;
+    this->transVel = this->transAccel * (t - this->tInit);
     this->transPos = this->a * (t - this->tInit) * (t - this->tInit) + this->transPosInit;
 }
 
@@ -260,8 +259,7 @@ void PrescribedTranslation::computeSecondRampSegment(double t) {
     } else {
         this->transAccel = this->transAccelMax;
     }
-    this->transVel = this->transAccel * (t - this->tInit) + this->transVelInit
-                   - this->transAccel * (this->tf - this->tInit);
+    this->transVel = this->transAccel * (t - this->tInit) - this->transAccel * (this->tf - this->tInit);
     this->transPos = this->b * (t - this->tf) * (t - this->tf) + this->transPosRef;
 }
 

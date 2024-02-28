@@ -86,7 +86,6 @@ private:
     double transPos_tr;                                         //!< [m] Position at the end of the first ramp segment
     double transPos_tc;                                         //!< [m] Position at the end of the coast segment
     double transVel_tr;                                         //!< [m/s] Velocity at the end of the first ramp segment
-    double transVel_tc;                                         //!< [m/s] Velocity at the end of the coast segment
     double tr;                                                  //!< [s] The simulation time at the end of the first ramp segment
     double tc;                                                  //!< [s] The simulation time at the end of the coast period
 
@@ -100,7 +99,6 @@ private:
     bool convergence;                                           //!< Boolean variable is true when the translation is complete
     double tInit;                                               //!< [s] Simulation time at the beginning of the translation
     double transPosInit;                                        //!< [m] Initial translational body position from M to F frame origin along transHat_M
-    double transVelInit;                                        //!< [m/s] Initial translational body velocity
     double transPosRef;                                         //!< [m] Reference translational body position from M to F frame origin along transHat_M
     double tf;                                                  //!< [s] The simulation time when the translation is complete
     double a;                                                   //!< Parabolic constant for the first half of the translation
