@@ -797,7 +797,7 @@ class SimulationExecutor:
                             magnitudes[name] = disp.generateMagString()
                 except TypeError:
                     # This accomodates dispersion variables that are co-dependent
-                    disp.generate()
+                    disp.generate(simInstance)
                     for i in range(1, disp.numberOfSubDisps+1):
                         name = disp.getName(i)
                         if name not in modifications:  # could be using a saved parameter.
