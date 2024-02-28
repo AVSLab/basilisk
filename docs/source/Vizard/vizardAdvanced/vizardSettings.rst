@@ -222,7 +222,10 @@ default setting for that behavior.
       - int
       - flag to show the mission time instead of the simulation time. Value of 0 (protobuffer default)
         to use viz default, -1 for false, 1 for true
-
+    * - ``messageBufferSize``
+      - int
+      - [bytes] Maximum size of vizMessages to be loaded into memory at one time,
+        -1 to force loading of entire file into memory, 0 to use viz default
 
 
 While the prior settings are only read once during start up, the following settings are checked
