@@ -19,6 +19,8 @@ Version |release|
   had an issue that is now corrected in the current build.
 - ``swig`` 4.2 was causing run-time errors with Basilisk.  The latest version of Basilisk now added
   support for this version of swig.
+- Basilisk no longer builds on Windows with the ``opNav`` flag turned on.  The ``opencv`` related
+  ``conan`` settings are updated in the current release to address this.
 
 
 Version 2.2.1
