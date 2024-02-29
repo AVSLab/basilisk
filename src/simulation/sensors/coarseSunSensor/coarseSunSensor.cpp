@@ -239,7 +239,40 @@ void CoarseSunSensor::computeTrueOutput()
 {
     // If sun heading is within sensor field of view, compute signal
     double signal = this->nHat_B.dot(this->sHat_B);
-    this->trueValue = signal >= cos(this->fov) ? signal : 0.0;
+    if (!this->customFov) {
+        this->trueValue = signal >= cos(this->fov) ? signal : 0.0;
+    }
+    else {
+        Eigen::Matrix3d BS;
+        BS << this->lHat_B, this->mHat_B, this->nHat_B;
+        Eigen::Matrix3d SB = BS.transpose();
+
+        Eigen::Vector3d sHat_S = SB * this->sHat_B;
+        double x = sHat_S[0];
+        double y = sHat_S[1];
+        double z = sHat_S[2];
+        double a = sin(this->fovZeta); // elliptical fov semimajor axis
+
+        if (z < 0 || fabs(x) > a) {
+            signal = 0.0;
+        }
+        else {
+            double b;       // elliptical fov semiminor axis
+            double yLim;    // boundary of elliptical fov
+            if (y > 0) {
+                b = sin(this->fovXi);
+                yLim = std::min(b * pow(1 - pow(x / a, this->n1), 1 / this->n1), pow(1-x*x, 0.5));
+            }
+            else {
+                b = sin(this->fovEta);
+                yLim = std::max(-b * pow(1 - pow(x / a, this->n2), 1 / this->n2), -pow(1-x*x, 0.5));
+            }
+            if (fabs(y) > fabs(yLim)) {
+                signal = 0.0;
+            }
+        }
+        this->trueValue = signal;
+    }
 
     // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
     double eps = 1e-10;

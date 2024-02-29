@@ -64,7 +64,7 @@ public:
     void scaleSensorValues();  //!< scale the sensor values
     void applySaturation();     //!< apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
-    
+
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg; //!< [-] input message for sun data
     ReadFunctor<SCStatesMsgPayload> stateInMsg;   //!< [-] input message for spacecraft state
@@ -77,8 +77,10 @@ public:
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
     double              B2P321Angles[3];        //!< [-] 321 Euler angles for body to platform
-    Eigen::Matrix3d     dcm_PB;                 //!< [-] DCM of platform frame P relative to body frame B
-    Eigen::Vector3d     nHat_B;                 //!< [-] css unit direction vector in body frame components
+    Eigen::Matrix3d     dcm_PB;                 //!< [-] DCM from platform frame P to body frame B
+    Eigen::Vector3d     lHat_B;                 //!< [-] css unit direction vector 1 in body frame components
+    Eigen::Vector3d     mHat_B;                 //!< [-] css unit direction vector 2 in body frame components
+    Eigen::Vector3d     nHat_B;                 //!< [-] css unit direction vector 3 in body frame components
     Eigen::Vector3d     sHat_B;                 //!< [-] unit vector to sun in B
     double              albedoValue = -1.0;     //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
@@ -87,8 +89,14 @@ public:
     double              sensedValue;            //!< [-] solar irradiance measurement including perturbations
     double              kellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
+    bool                customFov = false;
+    double              fovXi;                  //!< [rad] half-angle fov along the +lHat direction
+    double              fovEta;                 //!< [rad] half-angle fov along the -lHat direction
+    double              fovZeta;                //!< [rad] half-angle fov along the ±mHat direction
+    double              n1 = 2;                 //!< [-] ellipse warping coefficient in the +lHat direction
+    double              n2 = 2;                 //!< [-] ellipse warping coefficient in the -lHat direction
     Eigen::Vector3d     r_B;                    //!< [m] position vector in body frame
-    Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame 
+    Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame
     double              senBias;                //!< [-] Sensor bias value
     double              senNoiseStd;            //!< [-] Sensor noise value
     double              faultNoiseStd;          //!< [-] Sensor noise value if CSSFAULT_RAND is triggered
@@ -110,8 +118,8 @@ private:
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
-/*! This class is a thin container on top of the above coarse-sun sensor class.  
-It is used to aggregate the output messages of the coarse sun-sensors into a 
+/*! This class is a thin container on top of the above coarse-sun sensor class.
+It is used to aggregate the output messages of the coarse sun-sensors into a
 a single output for use by downstream models.*/
 class CSSConstellation: public SysModel {
  public:
@@ -120,7 +128,7 @@ class CSSConstellation: public SysModel {
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation
     void appendCSS(CoarseSunSensor *newSensor); //!< @brief [-] Method for adding sensor to list
-    
+
  public:
     Message<CSSArraySensorMsgPayload> constellationOutMsg;  //!< [-] CSS constellation output message
     std::vector<CoarseSunSensor *> sensorList;    //!< [-] List of coarse sun sensors in constellation
