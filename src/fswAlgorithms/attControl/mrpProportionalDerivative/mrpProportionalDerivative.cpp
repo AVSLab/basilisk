@@ -18,6 +18,7 @@
  */
 
 #include "mrpProportionalDerivative.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
@@ -44,9 +45,8 @@ void MrpProportionalDerivative::Reset(uint64_t callTime)
     vcInMsg = VehicleConfigMsgPayload();
     if (this->vehConfigInMsg.isWritten()) {
         vcInMsg = this->vehConfigInMsg();
+        this->ISCPntB_B = cArray2EigenMatrixXd(vcInMsg.ISCPntB_B, 3, 3);
     }
-
-    mCopy(vcInMsg.ISCPntB_B, 1, 9, this->ISCPntB_B);
 }
 
 /*! This method takes the attitude and rate errors relative to the reference frame, as well as
@@ -70,38 +70,29 @@ void MrpProportionalDerivative::UpdateState(uint64_t callTime)
     }
 
     // Compute hub inertial angular velocity in B-frame components
-    double omega_BN_B[3];
-    v3Add(guidInMsg.omega_BR_B, guidInMsg.omega_RN_B, omega_BN_B);
+    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(guidInMsg.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(guidInMsg.omega_RN_B);
+    Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
 
     // Compute K*sigma_BR
-    double v3_temp1[3];
-    v3Scale(this->K, guidInMsg.sigma_BR, v3_temp1);
+    Eigen::Vector3d sigma_BR = cArray2EigenVector3d(guidInMsg.sigma_BR);
+    Eigen::Vector3d v3_temp1 = this->K * sigma_BR;
 
     // Compute P*delta_omega
-    double v3_temp2[3];
-    v3Scale(this->P, guidInMsg.omega_BR_B, v3_temp2);
+    Eigen::Vector3d v3_temp2 = this->P * omega_BR_B;
     
     // Compute omega_r x [I]omega
-    double v3_temp3[3];
-    m33MultV3(RECAST3X3 this->ISCPntB_B, omega_BN_B, v3_temp3);
-    v3Cross(guidInMsg.omega_RN_B, v3_temp3, v3_temp3);
+    Eigen::Vector3d v3_temp3 = omega_RN_B.cross(this->ISCPntB_B * omega_BN_B);
     
     // Compute [I](d(omega_r)/dt - omega x omega_r)
-    double v3_temp4[3];
-    v3Cross(omega_BN_B, guidInMsg.omega_RN_B, v3_temp4);
-    v3Subtract(guidInMsg.domega_RN_B, v3_temp4, v3_temp4);
-    m33MultV3(RECAST3X3 this->ISCPntB_B, v3_temp4, v3_temp4);
+    Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidInMsg.domega_RN_B);
+    Eigen::Vector3d v3_temp4 = this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B));
 
     // Compute required attitude control torque vector
     // Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
-    double Lr[3];  // [Nm] Required control torque vector
-    v3Add(v3_temp1, v3_temp2, Lr);
-    v3Subtract(Lr, v3_temp3, Lr);
-    v3Subtract(Lr, v3_temp4, Lr);
-    v3Add(this->knownTorquePntB_B, Lr, Lr);
-    v3Scale(-1.0, Lr, Lr);
+    Eigen::Vector3d Lr = - v3_temp1 - v3_temp2 + v3_temp3 + v3_temp4 - this->knownTorquePntB_B;  // [Nm] Required control torque vector
 
     // Write the output message
-    v3Copy(Lr, controlOutMsg.torqueRequestBody);
+    eigenVector3d2CArray(Lr, controlOutMsg.torqueRequestBody);
     this->cmdTorqueOutMsg.write(&controlOutMsg, moduleID, callTime);
 }

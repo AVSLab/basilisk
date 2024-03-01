@@ -160,7 +160,7 @@ def findTrueTorques(module, guidCmdData, vehicleConfigOut):
 
     K = module.K
     P = module.P
-    L = np.array(module.knownTorquePntB_B)
+    L = np.squeeze(np.array(module.knownTorquePntB_B))
 
     # Begin Method
     omega_BN_B = omega_BR_B + omega_RN_B

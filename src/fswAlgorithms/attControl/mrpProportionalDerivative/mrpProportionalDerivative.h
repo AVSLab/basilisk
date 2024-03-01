@@ -26,6 +26,7 @@
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
+#include <Eigen/Dense>
 #include <stdint.h>
 
 /*! @brief MRP PD control class. */
@@ -41,10 +42,10 @@ public:
     /* Declare public module variables */
     double K;                                                         //!< [rad/s] Proportional gain applied to MRP errors
     double P;                                                         //!< [N*m*s] Rate error feedback gain applied
-    double knownTorquePntB_B[3];                                      //!< [N*m] Known external torque expressed in body frame components
+    Eigen::Vector3d knownTorquePntB_B;                                //!< [N*m] Known external torque expressed in body frame components
     
     /* Declare private module variables */
-    double ISCPntB_B[9];                                              //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
+    Eigen::Matrix3d ISCPntB_B;                                        //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
 
     ReadFunctor<AttGuidMsgPayload> guidInMsg;                         //!< Attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;              //!< Vehicle configuration input message
