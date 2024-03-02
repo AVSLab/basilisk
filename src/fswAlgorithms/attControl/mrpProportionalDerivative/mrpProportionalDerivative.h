@@ -38,20 +38,25 @@ public:
 
     void Reset(uint64_t CurrentSimNanos) override;                    //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;              //!< Update member function
-
-    /* Declare public module variables */
-    double K;                                                         //!< [rad/s] Proportional gain applied to MRP errors
-    double P;                                                         //!< [N*m*s] Rate error feedback gain applied
-    Eigen::Vector3d knownTorquePntB_B;                                //!< [N*m] Known external torque expressed in body frame components
-    
-    /* Declare private module variables */
-    Eigen::Matrix3d ISCPntB_B;                                        //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
+    double getDerivativeGainP();                                      //!< Getter method for derivative gain P
+    const Eigen::Vector3d &getKnownTorquePntB_B() const;              //!< Getter method for the known external torque about point B
+    double getProportionalGainK();                                    //!< Getter method for proportional gain K
+    void setDerivativeGainP(double P);                                //!< Setter method for derivative gain P
+    void setKnownTorquePntB_B(Eigen::Vector3d &knownTorquePntB_B);    //!< Getter method for the known external torque about point B
+    void setProportionalGainK(double K);                              //!< Getter method for proportional gain K
 
     ReadFunctor<AttGuidMsgPayload> guidInMsg;                         //!< Attitude guidance input message
     ReadFunctor<VehicleConfigMsgPayload> vehConfigInMsg;              //!< Vehicle configuration input message
     Message<CmdTorqueBodyMsgPayload> cmdTorqueOutMsg;                 //!< Commanded torque output message
     
     BSKLogger *bskLogger;                                             //!< BSK Logging
+
+private:
+
+    double K;                                                         //!< [rad/s] Proportional gain applied to MRP errors
+    double P;                                                         //!< [N*m*s] Rate error feedback gain applied
+    Eigen::Vector3d knownTorquePntB_B;                                //!< [N*m] Known external torque expressed in body frame components
+    Eigen::Matrix3d ISCPntB_B;                                        //!< [kg*m^2] Spacecraft inertia about point B expressed in body frame components
 };
 
 #endif

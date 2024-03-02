@@ -88,10 +88,12 @@ def mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.K = 0.15
-    module.P = 150.0
+    knownTorquePntB_B = np.array([0.0, 0.0, 0.0])
+    module.setDerivativeGainP(150.0)
+    module.setProportionalGainK(0.15)
     if setExtTorque:
-        module.knownTorquePntB_B = np.array([0.1, 0.2, 0.3])
+        knownTorquePntB_B = np.array([0.1, 0.2, 0.3])
+        module.setKnownTorquePntB_B(knownTorquePntB_B)
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -125,7 +127,7 @@ def mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn)]*3
+    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn, knownTorquePntB_B)]*3
 
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -147,7 +149,7 @@ def mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
     return [testFailCount, ''.join(testMessages)]
 
 
-def findTrueTorques(module, guidCmdData, vehicleConfigOut):
+def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
     sigma_BR = np.array(guidCmdData.sigma_BR)
     omega_BR_B = np.array(guidCmdData.omega_BR_B)
     omega_RN_B = np.array(guidCmdData.omega_RN_B)
@@ -158,9 +160,9 @@ def findTrueTorques(module, guidCmdData, vehicleConfigOut):
     I[1][1] = vehicleConfigOut.ISCPntB_B[4]
     I[2][2] = vehicleConfigOut.ISCPntB_B[8]
 
-    K = module.K
-    P = module.P
-    L = np.squeeze(np.array(module.knownTorquePntB_B))
+    K = module.getProportionalGainK()
+    P = module.getDerivativeGainP()
+    L = knownTorquePntB_B
 
     # Begin Method
     omega_BN_B = omega_BR_B + omega_RN_B

@@ -96,3 +96,48 @@ void MrpProportionalDerivative::UpdateState(uint64_t callTime)
     eigenVector3d2CArray(Lr, controlOutMsg.torqueRequestBody);
     this->cmdTorqueOutMsg.write(&controlOutMsg, moduleID, callTime);
 }
+
+/*! Getter method for the derivative gain P.
+ @return const double
+*/
+double MrpProportionalDerivative::getDerivativeGainP() {
+    return this->P;
+}
+
+/*! Getter method for the known torque about point B.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &MrpProportionalDerivative::getKnownTorquePntB_B() const {
+    return this->knownTorquePntB_B;
+}
+
+/*! Getter method for the proportional gain K.
+ @return const double
+*/
+double MrpProportionalDerivative::getProportionalGainK() {
+    return this->K;
+}
+
+/*! Setter method for the derivative gain P.
+ @return void
+ @param P [N*m*s] Rate error feedback gain applied
+*/
+void MrpProportionalDerivative::setDerivativeGainP(double P) {
+    this->P = P;
+}
+
+/*! Setter method for the known external torque about point B.
+ @return void
+ @param knownTorquePntB_B [N*m] Known external torque expressed in body frame components
+*/
+void MrpProportionalDerivative::setKnownTorquePntB_B(Eigen::Vector3d &knownTorquePntB_B) {
+    this->knownTorquePntB_B = knownTorquePntB_B;
+}
+
+/*! Setter method for the proportional gain K.
+ @return void
+ @param K [rad/s] Proportional gain applied to MRP errors
+*/
+void MrpProportionalDerivative::setProportionalGainK(double K) {
+    this->K = K;
+}
