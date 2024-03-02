@@ -51,6 +51,7 @@ Version |release|
 - added support for the new ``swig`` 4.2 version
 - updated the Windows build to compile properly with ``opNav`` flag set to true.  A
   ``opencv`` related flag had to be updated.
+- added supoport for Vizard 2.1.6
 
 
 Version 2.2.1 (Dec. 22, 2023)
