@@ -66,6 +66,8 @@ Version |release|
   message table in the module documentation.
 - Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedLinearTranslation`
   simulation module
+- updated the BSK install script to check if the full ``de430.bsp`` file was downloaded.  This addressed
+  a common BSK installation issue where the user doesn't install ``lfs`` first before cloning the repo.
 
 
 Version 2.2.1 (Dec. 22, 2023)
