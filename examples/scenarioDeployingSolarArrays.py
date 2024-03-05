@@ -96,6 +96,15 @@ The following plots illustrate the solar array deployment scenario simulation re
 .. image:: /_images/Scenarios/scenarioDeployingSolarArrays_HubInertialAngularVelocityNorm.svg
     :align: center
 
+Visualization in Vizard
+-----------------------
+
+An image captured from the Vizard visualization of this simulation script is shown below. In this image, the arrays
+are shown in their fully deployed configuration.
+
+.. image:: /_images/static/scenarioDeployingSolarArrays.jpg
+   :align: center
+
 """
 
 #
