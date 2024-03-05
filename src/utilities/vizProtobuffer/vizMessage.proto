@@ -399,4 +399,13 @@ message VizInput{
     int64 frameNumber = 1;
     KeyboardInput keyInputs = 2;
     repeated EventReply  replies = 3;
+    VizBroadcastSyncSettings broadcastSyncSettings = 4;
+}
+
+message VizBroadcastSyncSettings{
+    int32 orbitLinesOn = 1; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
+    int32 trueTrajectoryLinesOn = 2; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
+    int32 spacecraftCSon = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 planetCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 showHillFrame = 5; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }

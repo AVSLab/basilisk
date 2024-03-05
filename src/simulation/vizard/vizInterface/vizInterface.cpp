@@ -1323,6 +1323,28 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
             outMsgBuffer.eventReplies.push_back(*er);
         }
 
+        /*! - Receive VizBroadcastSyncSettings */
+        const vizProtobufferMessage::VizBroadcastSyncSettings* vbss = &(msgRecv->broadcastsyncsettings());
+        // remove "const"ness for compatibility with protobuffer access methods
+        vizProtobufferMessage::VizBroadcastSyncSettings* vbss_nc;
+        vbss_nc = const_cast<vizProtobufferMessage::VizBroadcastSyncSettings*>(vbss);
+        
+        uint32_t syncByteCount = (uint32_t) vbss_nc->ByteSizeLong();
+        if (syncByteCount > 0 && this->broadcastStream) {
+            void* sync_settings = malloc(syncByteCount);
+            vbss_nc->SerializeToArray(sync_settings, (int) syncByteCount);
+
+            /*! - Send sync settings message to BROADCAST (PUBLISHER) socket */
+            int sendStatus = zmq_send(this->publisher_socket, "SYNC_SETTINGS", 13, ZMQ_SNDMORE);
+            if (sendStatus == -1) {
+                bskLogger.bskLog(BSK_ERROR, "Broadcast header did not send to socket.");
+            }
+            sendStatus = zmq_send(this->publisher_socket, sync_settings, syncByteCount, 0);
+            if (sendStatus == -1) {
+                bskLogger.bskLog(BSK_ERROR, "Broadcast protobuffer did not send to socket.");
+            }
+        }
+
         this->userInputMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
 
         delete msgRecv;
