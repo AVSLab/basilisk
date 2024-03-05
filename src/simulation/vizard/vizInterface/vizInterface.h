@@ -24,6 +24,7 @@
 #include <fstream>
 #include <map>
 #include <zmq.h>
+#include <ctime>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
@@ -64,7 +65,9 @@ public:
     int opNavMode;                              /*!< [int] Set non-zero positive value  if Unity/Viz couple in direct
                                                  communication. (1 - regular opNav, 2 - performance opNav) */
     bool saveFile;                              //!< [Bool] Set True if Vizard should save a file of the data.
+
     bool liveStream;                            //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
+    bool broadcastStream;                       //!< [Bool] Set True if messages should be broadcast for listener Vizards to pick up.
     std::vector<void* >bskImagePtrs;            /*!< [RUN] vector of permanent pointers for the images to be used in BSK
                                                      without relying on ZMQ because ZMQ will free it (whenever, who knows) */
 
@@ -77,11 +80,14 @@ public:
     VizSettings settings;                       //!< [-] container for the Viz settings that can be specified from BSK
     LiveVizSettings liveSettings;               //!< [-] container for Viz settings that are updated on each time step
     std::vector<EventDialog *> eventDialogs={};   //!< [-] vector of dialog boxes to show
+    std::string reqComProtocol;                    //!< Communication protocol to use when connecting to Vizard (REQ)
+    std::string reqComAddress;                     //!< Communication address to use when connecting to Vizard (REQ)
+    std::string reqPortNumber;                  //!< Communication port number to use when connecting to Vizard (REQ)
+    std::string pubComProtocol;                 //!< Communication protocol to use when connecting to Vizard (PUB)
+    std::string pubComAddress;                  //!< Communication address to use when connecting to Vizard (PUB)
+    std::string pubPortNumber;                  //!< Communication port number to use when connecting to Vizard (PUB)
+    double broadcastSettingsSendDelay;          //!< Real-time delay between sending Viz settings to broadcast socket
 
-    std::string comProtocol;                    //!< Communication protocol to use when connecting to Vizard
-    std::string comAddress;                     //!< Communication address to use when connecting to Vizard
-    std::string comPortNumber;                  //!< Communication port number to use when connecting to Vizard
-    
     ReadFunctor<EpochMsgPayload> epochInMsg;    //!< [-] simulation epoch date/time input msg
     MsgCurrStatus epochMsgStatus;                   //!< [-] ID of the epoch msg
     EpochMsgPayload epochMsgBuffer;                   //!< [-] epoch msg data
@@ -93,9 +99,14 @@ public:
 
 private:
     // ZeroMQ State
-    void* context;
+    void* requester_context;
     void* requester_socket;
+    void* publisher_context;
+    void* publisher_socket;
     int firstPass;                                          //!< Flag to intialize the viz at first timestep
+
+    int64_t now;                                            //!< Current system time stamp 
+    int64_t lastSettingsSendTime;                           //!< System time stamp when settings message was last sent to broadcast socket
 
     std::vector<MsgCurrStatus>spiceInMsgStatus;             //!< [-] status of the incoming planets' spice data messages
     std::vector <SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies

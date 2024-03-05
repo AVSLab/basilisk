@@ -1115,6 +1115,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         flag if opNaveMode should be used
     liveStream: bool
         flag if live data streaming to Vizard should be used
+    broadcastStream: bool
+        flag if messages should be broadcast for listener Vizards to pick up.
     genericStorageList:
         list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.
     lightList:
@@ -1154,8 +1156,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'liveStream', 'cssList',
          'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
+        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'cssList', 'liveStream', 'broadcastStream',        
          'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList',
          'msmInfoList', 'ellipsoidList', 'trueOrbitColorInMsgList'],
         kwargs)
@@ -1536,7 +1538,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     if 'liveStream' in kwargs:
         val = kwargs['liveStream']
         if not isinstance(val, bool):
-            print('ERROR: vizSupport: liveStream must True or False')
+            print('ERROR: vizSupport: liveStream must be True or False')
             exit(1)
         vizMessenger.liveStream = val
         if 'opNavMode' in kwargs:
@@ -1545,6 +1547,13 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
                 exit(1)
 
     vizMessenger.opNavMode = 0
+    if 'broadcastStream' in kwargs:
+        val = kwargs['broadcastStream']
+        if not isinstance(val, bool):
+            print('ERROR: vizSupport: broadcastStream must be True or False')
+            exit(1)
+        vizMessenger.broadcastStream = val
+
     if 'opNavMode' in kwargs:
         val = kwargs['opNavMode']
         if not isinstance(val, int):

@@ -37,14 +37,22 @@ VizInterface::VizInterface()
     this->opNavMode = 0;
     this->saveFile = false;
     this->liveStream = false;
+    this->broadcastStream = false;
     this->FrameNumber= -1;
+
+    this->lastSettingsSendTime = time(0);
+    this->broadcastSettingsSendDelay = 2;
 
     this->firstPass = 0;
     
-    this->comProtocol = "tcp";
-    this->comAddress = "localhost";
-    this->comPortNumber = "5556";
-    
+    this->reqComProtocol = "tcp";
+    this->reqComAddress = "localhost";
+    this->reqPortNumber = "5556";
+
+    this->pubComProtocol = "tcp";
+    this->pubComAddress = "localhost";
+    this->pubPortNumber = "5570";
+
     return;
 }
 
@@ -65,21 +73,46 @@ VizInterface::~VizInterface()
  */
 void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
-    if (this->opNavMode > 0 || this->liveStream){
-        /* setup zeroMQ */
+    if (this->broadcastStream) {
+        /* setup zeroMQ () */
+        this->publisher_context = zmq_ctx_new();
+        this->publisher_socket = zmq_socket(this->publisher_context, ZMQ_PUB);
+        assert(this->publisher_socket);
+        std::string text = this->pubComProtocol + "://" + this->pubComAddress + ":" + this->pubPortNumber;
+        int broadcastConnect = zmq_bind(this->publisher_socket, text.c_str());
+        if (broadcastConnect != 0) {
+            int error_code = zmq_errno();
+            text = "Broadcast socket did not connect correctly. ZMQ error code: " + std::to_string(error_code);
+            bskLogger.bskLog(BSK_ERROR, text.c_str());
+            return;
+        }
+
+        text = "Broadcasting at " + this->pubComProtocol + "://" + this->pubComAddress + ":" + this->pubPortNumber;
+        bskLogger.bskLog(BSK_INFORMATION, text.c_str());
+    }
+
+    if (this->opNavMode > 0 || this->liveStream) {
         for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = NULL;
         }
-        this->context = zmq_ctx_new();
-        this->requester_socket = zmq_socket(this->context, ZMQ_REQ);
-        zmq_connect(this->requester_socket, (this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber).c_str());
+        /* setup zeroMQ () */
+        this->requester_context = zmq_ctx_new();
+        this->requester_socket = zmq_socket(this->requester_context, ZMQ_REQ);
+        assert(this->requester_socket);
+        std::string text = this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
+        int twoWayConnect = zmq_connect(this->requester_socket, text.c_str());
+        if (twoWayConnect != 0) {
+            int error_code = zmq_errno();
+            text = "2-way socket did not connect correctly. ZMQ error code: " + std::to_string(error_code);
+            bskLogger.bskLog(BSK_ERROR, text.c_str());
+            return;
+        }
 
         void* message = malloc(4 * sizeof(char));
         memcpy(message, "PING", 4);
         zmq_msg_t request;
-
-        std::string text;
-        text = "Waiting for Vizard at " + this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber;
+        
+        text = "Waiting for Vizard at " + this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
         bskLogger.bskLog(BSK_INFORMATION, text.c_str());
 
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
@@ -444,8 +477,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 {
     vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
 
-    /*! Send the Vizard settings once */
-    if (this->settings.dataFresh) {
+    /*! Send the Vizard settings according to interval set by broadcastSettingsSendDelay field */
+    this->now = time(0);
+    if (this->settings.dataFresh || (this->now - this->lastSettingsSendTime) >= this->broadcastSettingsSendDelay) {
+
         vizProtobufferMessage::VizMessage::VizSettingsPb* vizSettings;
         vizSettings = new vizProtobufferMessage::VizMessage::VizSettingsPb;
 
@@ -696,6 +731,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         message->set_allocated_settings(vizSettings);
 
         this->settings.dataFresh = false;
+        this->lastSettingsSendTime = now;
     }
 
     /*! Send the Vizard live settings */
@@ -1042,17 +1078,40 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     {
-        google::protobuf::uint8 varIntBuffer[4];
+        
+        /*! - Serialize message (as is) */
         uint32_t byteCount = (uint32_t) message->ByteSizeLong();
-        google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
-        unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
-        if (this->saveFile) {
-            this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), (int) varIntBytes);
+        void* serialized_message = malloc(byteCount);
+        message->SerializeToArray(serialized_message, (int) byteCount);
+
+        /*! BROADCAST MODE */
+        if (this->broadcastStream) {
+            /*! - Send serialized message to BROADCAST (PUBLISHER) socket */
+            int sendStatus = zmq_send(this->publisher_socket, "SIM_UPDATE", 10, ZMQ_SNDMORE);
+            if (sendStatus == -1) {
+                bskLogger.bskLog(BSK_ERROR, "Broadcast header did not send to socket.");
+            }
+            sendStatus = zmq_send(this->publisher_socket, serialized_message, byteCount, 0);
+            if (sendStatus == -1) {
+                bskLogger.bskLog(BSK_ERROR, "Broadcast protobuffer did not send to socket.");
+            }
         }
 
-        /*! Enter in lock-step with the vizard to simulate a camera */
-        /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
-        /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
+        /*! - If settings were broadcast, remove from message before saving & sending to 2-way socket to reduce message size */
+        if (this->liveStream && (this->firstPass != 0) && (this->lastSettingsSendTime == this->now)) {
+            message->set_allocated_settings(nullptr);
+
+            google::protobuf::uint8 varIntBuffer[4];
+            byteCount = (uint32_t) message->ByteSizeLong();
+            google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
+            unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
+            if (this->saveFile) {
+                this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), (int) varIntBytes);
+            }
+            serialized_message = malloc(byteCount);
+            message->SerializeToArray(serialized_message, (int) byteCount);
+        }
+
         bool opNavModeStatus = false;
         if (this->opNavMode == 2) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
@@ -1073,10 +1132,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_t receive_buffer;
             zmq_msg_init(&receive_buffer);
             zmq_msg_recv (&receive_buffer, requester_socket, 0);
-            
-            /*! - send protobuffer raw over zmq_socket */
-            void* serialized_message = malloc(byteCount);
-            message->SerializeToArray(serialized_message, (int) byteCount);
             zmq_msg_close(&receive_buffer);
 
 
