@@ -390,6 +390,13 @@ message VizInput{
         string keys = 1;
     }
     
+    message EventReply{
+        string eventHandlerID = 1; //Name provided when setting up the EventDialog object
+        string reply = 2; //Which user option was selected
+        bool eventHandlerDestroyed = 3; //Was the panel closed and destroyed?
+    }
+    
     int64 frameNumber = 1;
     KeyboardInput keyInputs = 2;
+    repeated EventReply  replies = 3;
 }
