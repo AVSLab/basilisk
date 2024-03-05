@@ -369,3 +369,13 @@ message VizMessage{
     repeated Location locations = 9; //CHECKED EVERY MESSAGE
     LiveVizSettingsPb liveSettings = 10; //CHECKED EVERY MESSAGE
 }
+
+message VizInput{
+    
+    message KeyboardInput{
+        string keys = 1;
+    }
+    
+    int64 frameNumber = 1;
+    KeyboardInput keyInputs = 2;
+}
