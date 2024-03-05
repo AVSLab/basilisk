@@ -75,6 +75,7 @@ public:
     std::string protoFilename;                  //!< Filename for where to save the protobuff message
     VizSettings settings;                       //!< [-] container for the Viz settings that can be specified from BSK
     LiveVizSettings liveSettings;               //!< [-] container for Viz settings that are updated on each time step
+    std::vector<EventDialog *> eventDialogs={};   //!< [-] vector of dialog boxes to show
 
     std::string comProtocol;                    //!< Communication protocol to use when connecting to Vizard
     std::string comAddress;                     //!< Communication address to use when connecting to Vizard

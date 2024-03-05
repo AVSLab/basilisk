@@ -358,6 +358,19 @@ message VizMessage{
         int32 showGridLines = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
+    message EventDialog{ //ONLY NEEDED IF AN DIALOG BOX IS DESIRED
+        // ALL FIELDS CHECKED EVERY MESSAGE
+        // FIELD 1 IS REQUIRED
+        string eventHandlerID = 1; //Name of Vizard event handler to be returned with EventReply responses
+        string displayString = 2; //Contains the information or choice that should be posed to the user
+        repeated string userOptions = 3; //Determines how many user choices will be shown and what the displayed string will say. If this is empty, the dialog is assumed to be informational only
+        double durationOfDisplay = 4; //[ns] How long to display the dialog box for, use 0 to leave panel on display until closed by user, -1 to override and close panel immediately
+        bool useSimElapsedTimeForDuration = 5; //If true and duration of display is set, use the sim elapsed time to calculate when to hide window. If false, use real time (system clock).
+        int32 useConfirmationPanel = 6; //Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
+        int32 hideOnSelection = 7; //Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to hide panel after user makes a selection, 2 to destroy panel after user makes a selection
+        string dialogFormat = 8; //Select format for dialog box: WARNING, CAUTION, or none to use viz default format
+    }
+    
     TimeStamp currentTime = 1; //CHECKED EVERY MESSAGE
     repeated CelestialBody celestialBodies = 2; //CHECKED EVERY MESSAGE
     repeated Spacecraft spacecraft = 3; //CHECKED EVERY MESSAGE
@@ -368,6 +381,7 @@ message VizMessage{
     EpochDateTime epoch = 8; //CHECKED FIRST MESSAGE ONLY
     repeated Location locations = 9; //CHECKED EVERY MESSAGE
     LiveVizSettingsPb liveSettings = 10; //CHECKED EVERY MESSAGE
+    repeated EventDialog eventDialogs = 11; //CHECKED EVERY MESSAGE
 }
 
 message VizInput{
