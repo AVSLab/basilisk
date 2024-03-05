@@ -18,6 +18,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdio>
+#include <string>
 
 #include "vizInterface.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -87,6 +88,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         zmq_recv (this->requester_socket, buffer, 4, 0);
         zmq_send (this->requester_socket, "PING", 4, 0);
         bskLogger.bskLog(BSK_INFORMATION, "Basilisk-Vizard connection made");
+        zmq_msg_close(&request);
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;
@@ -1075,6 +1077,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             /*! - send protobuffer raw over zmq_socket */
             void* serialized_message = malloc(byteCount);
             message->SerializeToArray(serialized_message, (int) byteCount);
+            zmq_msg_close(&receive_buffer);
+
 
             /*! - Normal sim step by sending protobuffers */
             zmq_msg_t request_header;
@@ -1088,13 +1092,32 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
             zmq_msg_init(&empty_frame1);
             zmq_msg_init(&empty_frame2);
-            zmq_msg_init_data(&request_buffer, serialized_message,byteCount, message_buffer_deallocate, NULL);
+            zmq_msg_init_data(&request_buffer, serialized_message, byteCount, message_buffer_deallocate, NULL);
 
+            /*! - Send to 2-WAY (REQUESTER) socket */
             zmq_msg_send(&request_header, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&empty_frame1, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&empty_frame2, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&request_buffer, this->requester_socket, 0);
+            
+            zmq_msg_close(&request_header);
+            zmq_msg_close(&empty_frame1);
+            zmq_msg_close(&empty_frame2);
+            zmq_msg_close(&request_buffer);
 
+            /*! - Receive status message from Vizard after SIM_UPDATE */
+            zmq_msg_t receiveOK;
+            zmq_msg_init(&receiveOK);
+            int receive_status = zmq_msg_recv(&receiveOK, this->requester_socket, 0);
+            if (receive_status == -1) {
+                bskLogger.bskLog(BSK_ERROR, "Vizard: Did not return a status (OK) message during SIM_UPDATE.");
+            }
+            zmq_msg_close(&receiveOK);
+
+            /*! - Only handle user input if in liveStream mode (and not in noDisplay mode) */
+            if (this->liveStream) {
+                this->receiveUserInput(CurrentSimNanos);
+            }
 
             for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
                 /*! - If the camera is requesting periodic images, request them */
@@ -1112,6 +1135,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_t request_life;
                 zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
                 zmq_msg_send(&request_life, this->requester_socket, 0);
+                zmq_msg_close(&request_life);
                 return;
             }
             
@@ -1170,6 +1194,93 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
 }
 
 
+/*! During liveStream mode, ask Vizard for any user inputs recorded since the last timestep.
+    Parse and package into VizUserInputMsgPayload for handling in Python.
+ @param CurrentSimNanos The current sim time
+ */
+void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
+
+    /*! - Send "REQUEST_INPUT" to elicit a response from Vizard */
+    void* request_input_str = malloc(13 * sizeof(char));
+    memcpy(request_input_str, "REQUEST_INPUT", 13);
+    zmq_msg_t request_input_msg;
+    zmq_msg_init_data(&request_input_msg, request_input_str, 13, message_buffer_deallocate, NULL);
+    zmq_msg_send(&request_input_msg, this->requester_socket, 0);
+    zmq_msg_close(&request_input_msg);
+
+    /*! - Expect Vizard to send a status string on the socket, then the protobuffer. 
+            Status string can be: "VIZARD_INPUT" or "ERROR" */
+    zmq_msg_t viz_response;
+    zmq_msg_init(&viz_response);
+    int receive_status = zmq_msg_recv(&viz_response, this->requester_socket, 0);
+
+    /*! - If socket was empty, throw an error and exit */
+    if (receive_status == -1) {
+        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [0]: Communication error. No data on socket.");
+        return;
+    }
+    /*! - Else, parse the status string and ensure Vizard did not send "ERROR" */
+    else {
+        void* msgData = zmq_msg_data(&viz_response);
+        size_t msgSize = zmq_msg_size(&viz_response);
+        std::string receive_status_str (static_cast<char*>(msgData), msgSize);
+        std::string err_status_str = "ERROR";
+        if (receive_status_str.compare(err_status_str) == 0) {
+            bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [1]: Invalid request string.");
+            return;
+        }
+    }
+
+    /*! - Retrieve protobuffer from socket */
+    receive_status = zmq_msg_recv(&viz_response, this->requester_socket, 0);
+
+    if (receive_status != -1) {
+        /*! - Extract message size and data pointer from socket */
+        int vizPointSize = zmq_msg_size(&viz_response);
+        void* vizPoint = zmq_msg_data(&viz_response);
+
+        /*! - Set up and fill VizInput message */
+        vizProtobufferMessage::VizInput* msgRecv = new vizProtobufferMessage::VizInput;
+        msgRecv->ParseFromArray(vizPoint, vizPointSize);
+
+        /*! - Set up output VizUserInputMsgPayload message */
+        VizUserInputMsgPayload outMsgBuffer;
+        outMsgBuffer = this->userInputMsg.zeroMsgPayload;
+        outMsgBuffer.frameNumber = static_cast<int>(msgRecv->framenumber());
+
+        /*! - Parse keyboard inputs */
+        const std::string& keys = msgRecv->keyinputs().keys();
+        if (keys.length() > 0) {
+            outMsgBuffer.keyboardInput = keys;
+        }
+
+        /*! - Iterate through VizInput_EventReply objects */
+        for (int i=0; i<msgRecv->replies_size(); i++) {
+            const vizProtobufferMessage::VizInput_EventReply* vier = &(msgRecv->replies(i));
+            // remove "const"ness for compatibility with protobuffer access methods
+            vizProtobufferMessage::VizInput_EventReply* vier_nc;
+            vier_nc = const_cast<vizProtobufferMessage::VizInput_EventReply*>(vier);
+            
+            EventReply* er = new EventReply();
+            er->eventHandlerID = *(vier_nc->mutable_eventhandlerid());
+            er->reply = *(vier_nc->mutable_reply());
+            er->eventHandlerDestroyed = vier_nc->eventhandlerdestroyed();
+            outMsgBuffer.eventReplies.push_back(*er);
+        }
+
+        this->userInputMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
+
+        delete msgRecv;
+    }
+    else {
+        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [2]: Did not return a user input message.");   
+    }
+
+    zmq_msg_close(&viz_response);
+
+}
+
+
 /*! Requests an image from Vizard and stores it in the image output message
  */
 void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
@@ -1184,6 +1295,7 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     zmq_msg_t img_request;
     zmq_msg_init_data(&img_request, img_message, cmdMsg.length(), message_buffer_deallocate, NULL);
     zmq_msg_send(&img_request, this->requester_socket, 0);
+    zmq_msg_close(&img_request);
 
     zmq_msg_t length;
     zmq_msg_t image;

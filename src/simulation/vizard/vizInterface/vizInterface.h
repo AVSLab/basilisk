@@ -100,6 +100,7 @@ private:
     std::vector<MsgCurrStatus>spiceInMsgStatus;             //!< [-] status of the incoming planets' spice data messages
     std::vector <SpicePlanetStateMsgPayload> spiceMessage;  //!< [-] Spice message copies
     std::ofstream *outputStream;                            //!< [-] Output file stream opened in reset
+    void receiveUserInput(uint64_t CurrentSimNanos);        //!<   request user input from Vizard, save as 
     void requestImage(size_t camCounter, uint64_t CurrentSimNanos);  //!<   request image from Vizard and store it in output img msg
 
 };
