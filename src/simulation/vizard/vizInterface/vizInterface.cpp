@@ -614,8 +614,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showlightlabels(this->settings.showLightLabels);
         vizSettings->set_celestialbodyhelioviewsizemultiplier(this->settings.celestialBodyHelioViewSizeMultiplier);
         vizSettings->set_showmissiontime(this->settings.showMissionTime);
+        vizSettings->set_keyboardliveinput(this->settings.keyboardLiveInput);
         vizSettings->set_messagebuffersize(this->settings.messageBufferSize);
-
+        
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
             vizProtobufferMessage::VizMessage::ActuatorSettings* al = vizSettings->add_actuatorsettings();
