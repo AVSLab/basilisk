@@ -19,6 +19,8 @@ constant negatively for the second half of the translation. The resulting veloci
 linear, approaching a maximum magnitude halfway through the translation and ending with zero residual velocity.
 The corresponding translational trajectory the prescribed body moves through during the translation is parabolic in time.
 
+.. warning::
+    This module is now deprecated. See the :ref:`PrescribedLinearTranslation` module that replaces this module.
 
 Message Connection Descriptions
 -------------------------------

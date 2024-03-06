@@ -72,7 +72,7 @@ because the dynamics module must be connected to kinematic profiler modules to d
 prescribed secondary body that is connected to the rigid spacecraft hub. The integrated test for this module has
 two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotation for the
 prescribed body using the :ref:`prescribedRot1DOF` profiler module. The second scenario prescribes a 1 DOF
-translation for the prescribed body using the :ref:`prescribedTrans` profiler module.
+translation for the prescribed body using the :ref:`prescribedLinearTranslation` profiler module.
 
 The unit test ensures that the profiled 1 DOF rotation is properly computed for a series of
 initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
@@ -91,11 +91,11 @@ This section is to outline the steps needed to setup a Prescribed Motion State E
 
     from Basilisk.simulation import prescribedMotionStateEffector
 
-#. Create an instantiation of a prescribed body::
+#. Create the prescribed body state effector::
 
     platform = prescribedMotionStateEffector.PrescribedMotionStateEffector()
 
-#. Define all physical parameters for the state effector::
+#. Define the state effector module parameters::
 
     platform.mass = 100.0
     platform.IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
