@@ -20,6 +20,9 @@ constant negatively for the second half of the rotation. The resulting angular v
 linear, approaching a maximum magnitude halfway through the rotation and ending with zero residual velocity.
 The corresponding angle the prescribed body moves through during the rotation is parabolic in time.
 
+.. warning::
+    This module is now deprecated. See the :ref:`PrescribedRotation1DOF` module that replaces this module.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  
