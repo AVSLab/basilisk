@@ -43,6 +43,7 @@ public:
     double k2 = 0.0;                    //!< [N-m/rad] torsional spring constant for second rotation axis
     double c1 = 0.0;                    //!< [N-m-s/rad] rotational damping coefficient for first rotation axis
     double c2 = 0.0;                    //!< [N-m-s/rad] rotational damping coefficient for second rotation axis
+    double theta1Ref = 0.0;         //!< [rad] spinning body reference angle
     double theta1Init = 0.0;            //!< [rad] initial first axis angle
     double theta1DotInit = 0.0;         //!< [rad/s] initial first axis angle rate
     double theta2Init = 0.0;            //!< [rad] initial second axis angle
@@ -100,7 +101,6 @@ private:
     double u2 = 0.0;                //!< [N-m] optional motor torque for second axis
     int lockFlag1 = 0;              //!< [] flag for locking the first rotation axis
     int lockFlag2 = 0;              //!< [] flag for locking the second rotation axis
-    double theta1Ref = 0.0;         //!< [rad] spinning body reference angle
     double theta1DotRef = 0.0;      //!< [rad] spinning body reference angle rate
     double theta2Ref = 0.0;         //!< [rad] spinning body reference angle
     double theta2DotRef = 0.0;      //!< [rad] spinning body reference angle rate
