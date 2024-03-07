@@ -71,17 +71,17 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 
 /*! This method is used to reset the module.
  @return void
- @param currentClock [ns] Time the method is called
+ @param callTime [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
+void PrescribedMotionStateEffector::Reset(uint64_t callTime)
 {
 }
 
 /*! This method writes the module output messages to the messaging system.
  @return void
- @param currentClock [ns] Time the method is called
+ @param callTime [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
+void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t callTime)
 {
     // Write the prescribed translational motion output message if it is linked
     if (this->prescribedTranslationOutMsg.isLinked()) {
@@ -89,7 +89,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
         eigenVector3d2CArray(this->r_FM_M, prescribedTranslationBuffer.r_FM_M);
         eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationBuffer.rPrime_FM_M);
         eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedTranslationBuffer.rPrimePrime_FM_M);
-        this->prescribedTranslationOutMsg.write(&prescribedTranslationBuffer, this->moduleID, currentClock);
+        this->prescribedTranslationOutMsg.write(&prescribedTranslationBuffer, this->moduleID, callTime);
     }
 
     // Write the prescribed rotational motion output message if it is linked
@@ -99,7 +99,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
         eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedRotationBuffer.omegaPrime_FM_F);
         Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
         eigenVector3d2CArray(sigma_FM_loc, prescribedRotationBuffer.sigma_FM);
-        this->prescribedRotationOutMsg.write(&prescribedRotationBuffer, this->moduleID, currentClock);
+        this->prescribedRotationOutMsg.write(&prescribedRotationBuffer, this->moduleID, callTime);
     }
 
     // Write the effector config log message if it is linked
@@ -111,7 +111,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
         eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
         eigenVector3d2CArray(this->sigma_FN, configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_FN_F, configLogMsg.omega_BN_B);
-        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentClock);
+        this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, callTime);
     }
 }
 
@@ -145,12 +145,12 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 /*! This method provides the effector contributions to the mass props and mass prop rates of
  the spacecraft.
  @return void
- @param integTime [s] Time the method is called
+ @param callTime [s] Time the method is called
 */
-void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
+void PrescribedMotionStateEffector::updateEffectorMassProps(double callTime)
 {
     // Update the prescribed states
-    double dt = integTime - this->currentSimTimeSec;
+    double dt = callTime - this->currentSimTimeSec;
     this->r_FM_M = this->rEpoch_FM_M + (this->rPrimeEpoch_FM_M * dt) + (0.5 * this->rPrimePrime_FM_M * dt * dt);
     this->rPrime_FM_M = this->rPrimeEpoch_FM_M + (this->rPrimePrime_FM_M * dt);
     this->omega_FM_F = this->omegaEpoch_FM_F + (this->omegaPrime_FM_F * dt);
@@ -209,14 +209,14 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 /*! This method provides the effector's backsubstitution contributions.
  method
  @return void
- @param integTime [s] Time the method is called
+ @param callTime [s] Time the method is called
  @param backSubContr State effector contribution matrices for backsubstitution
  @param sigma_BN Current B frame attitude with respect to the inertial frame
  @param omega_BN_B [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame
  components
  @param g_N [m/s^2] Gravitational acceleration in N frame components
 */
-void PrescribedMotionStateEffector::updateContributions(double integTime,
+void PrescribedMotionStateEffector::updateContributions(double callTime,
                                                         BackSubMatrices & backSubContr,
                                                         Eigen::Vector3d sigma_BN,
                                                         Eigen::Vector3d omega_BN_B,
@@ -250,14 +250,14 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
 
 /*! This method defines the state effector's MRP attitude state derivative
  @return void
- @param integTime [s] Time the method is called
+ @param callTime [s] Time the method is called
  @param rDDot_BN_N [m/s^2] Acceleration of the vector pointing from the inertial frame origin to the B frame origin,
  expressed in inertial frame components
  @param omegaDot_BN_B [rad/s^2] Inertial time derivative of the angular velocity of the B frame with respect to the
  inertial frame, expressed in B frame components
  @param sigma_BN Current B frame attitude with respect to the inertial frame
 */
-void PrescribedMotionStateEffector::computeDerivatives(double integTime,
+void PrescribedMotionStateEffector::computeDerivatives(double callTime,
                                                        Eigen::Vector3d rDDot_BN_N,
                                                        Eigen::Vector3d omegaDot_BN_B,
                                                        Eigen::Vector3d sigma_BN)
@@ -270,13 +270,13 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
 /*! This method calculates the effector's contributions to the energy and momentum of the
  spacecraft.
  @return void
- @param integTime [s] Time the method is called
+ @param callTime [s] Time the method is called
  @param rotAngMomPntCContr_B [kg m^2/s] Contribution of stateEffector to total rotational angular mom
  @param rotEnergyContr [J] Contribution of stateEffector to total rotational energy
  @param omega_BN_B [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame
  components
 */
-void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime,
+void PrescribedMotionStateEffector::updateEnergyMomContributions(double callTime,
                                                                  Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                  double & rotEnergyContr,
                                                                  Eigen::Vector3d omega_BN_B)
@@ -315,12 +315,12 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 
 /*! This method updates the effector's states at the dynamics frequency.
  @return void
- @param currentSimNanos [ns] Time the method is called
+ @param callTime [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
+void PrescribedMotionStateEffector::UpdateState(uint64_t callTime)
 {
     // Store the current simulation time
-    this->currentSimTimeSec = currentSimNanos * NANO2SEC;
+    this->currentSimTimeSec = callTime * NANO2SEC;
 
     // Read the translational input message if it is linked and written
     if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten()) {
@@ -351,5 +351,5 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
     this->computePrescribedMotionInertialStates();
 
     // Call the method to write the output messages
-    this->writeOutputStateMessages(currentSimNanos);
+    this->writeOutputStateMessages(callTime);
 }
