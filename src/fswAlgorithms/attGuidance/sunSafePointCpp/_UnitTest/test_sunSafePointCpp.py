@@ -85,18 +85,18 @@ def sunSafePointTestFunction(show_plots, case):
     sHat_Cmd_B = np.array([0.0, 0.0 ,1.0])
     if case == 5:
         sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
-    module.sHatBdyCmd = sHat_Cmd_B
-    module.minUnitMag = 0.1
+    module.setSHatBdyCmd(sHat_Cmd_B)
+    module.setMinUnitMag(0.1)
     if case == 2:
         omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
-        module.omega_RN_B = omega_RN_B_Search
-    module.smallAngle = 0.01*mc.D2R
+        module.setOmega_RN_B(omega_RN_B_Search)
+    module.setSmallAngle(0.01*mc.D2R)
 
     # Create input messages
     inputSunVecData = messaging.NavAttMsgPayload()
     sunVec_B = np.array([1.0, 1.0, 0.0])
     if (case == 2 or case == 6):  # No sun visible, providing a near zero norm direction vector
-        sunVec_B = [0.0, module.minUnitMag/2, 0.0]
+        sunVec_B = [0.0, module.getMinUnitMag()/2, 0.0]
     if (case == 3):
         sunVec_B = sHat_Cmd_B
     if (case == 4 or case == 5):
@@ -110,8 +110,8 @@ def sunSafePointTestFunction(show_plots, case):
     imuInMsg = messaging.NavAttMsg().write(inputIMUData)
 
     if case == 7:
-        module.sunAxisSpinRate = 1.5*mc.D2R
-        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * module.sunAxisSpinRate
+        module.setSunAxisSpinRate(1.5*mc.D2R)
+        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * module.getSunAxisSpinRate()
 
     # Set up data logging
     dataLog = module.attGuidanceOutMsg.recorder()

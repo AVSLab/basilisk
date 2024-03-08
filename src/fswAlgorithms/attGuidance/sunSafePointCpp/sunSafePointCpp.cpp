@@ -134,3 +134,78 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
     // Write the guidance output message
     this->attGuidanceOutMsg.write(&attGuidanceOutBuffer, moduleID, callTime);
 }
+
+/*! Getter method for the minimally accepted sun body vector norm.
+ @return double
+*/
+double SunSafePointCpp::getMinUnitMag() const {
+    return this->minUnitMag;
+}
+
+/*! Getter method for the small alignment tolerance angle near 0 or 180 degrees.
+ @return double
+*/
+double SunSafePointCpp::getSmallAngle() const {
+    return this->smallAngle;
+}
+
+/*! Getter method for the desired constant spin rate about sun heading vector.
+ @return double
+*/
+double SunSafePointCpp::getSunAxisSpinRate() const {
+    return this->sunAxisSpinRate;
+}
+
+/*! Getter method for the desired body rate vector if no sun direction is available.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &SunSafePointCpp::getOmega_RN_B() const {
+    return this->omega_RN_B;
+}
+
+/*! Getter method for the desired body vector to point at the sun.
+ @return const Eigen::Vector3d
+*/
+const Eigen::Vector3d &SunSafePointCpp::getSHatBdyCmd() const {
+    return this->sHatBdyCmd;
+}
+
+/*! Setter method for the minimally accepted sun body vector norm.
+ @return void
+ @param minUnitMag The minimally acceptable norm of sun body vector
+*/
+void SunSafePointCpp::setMinUnitMag(const double minUnitMag) {
+    this->minUnitMag = minUnitMag;
+}
+
+/*! Setter method for the small alignment tolerance angle near 0 or 180 degrees.
+ @return void
+ @param smallAngle [rad] An angle value that specifies what is near 0 or 180 degrees
+*/
+void SunSafePointCpp::setSmallAngle(const double smallAngle) {
+    this->smallAngle = smallAngle;
+}
+
+/*! Setter method for the desired constant spin rate about sun heading vector.
+ @return void
+ @param sunAxisSpinRate [rad/s] Desired constant spin rate about sun heading vector
+*/
+void SunSafePointCpp::setSunAxisSpinRate(const double sunAxisSpinRate) {
+    this->sunAxisSpinRate = sunAxisSpinRate;
+}
+
+/*! Setter method for the desired body rate vector if no sun direction is available.
+ @return void
+ @param omega_RN_B [rad/s] Desired body rate vector if no sun direction is available
+*/
+void SunSafePointCpp::setOmega_RN_B(const Eigen::Vector3d &omega_RN_B) {
+    this->omega_RN_B = omega_RN_B;
+}
+
+/*! Setter method for the desired body vector to point at the sun.
+ @return void
+ @param sHatBdyCmd Desired body vector to point at the sun
+*/
+void SunSafePointCpp::setSHatBdyCmd(const Eigen::Vector3d &sHatBdyCmd) {
+    this->sHatBdyCmd = sHatBdyCmd;
+}
