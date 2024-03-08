@@ -93,11 +93,11 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
     sHatNorm = v3Norm(sunDirectionInBuffer.vehSunPntBdy);
 
     if(sHatNorm > this->minUnitMag) {  // A good sun direction vector is available
-        double ctSNormalized;
-        ctSNormalized = v3Dot(this->sHatBdyCmd, sunDirectionInBuffer.vehSunPntBdy)/sHatNorm;
-        ctSNormalized = fabs(ctSNormalized) > 1.0 ?
-        ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
-        this->sunAngleErr = safeAcos(ctSNormalized);
+        double dotProductNormalized;
+        dotProductNormalized = v3Dot(this->sHatBdyCmd, sunDirectionInBuffer.vehSunPntBdy)/sHatNorm;
+        dotProductNormalized = fabs(dotProductNormalized) > 1.0 ?
+        dotProductNormalized/fabs(dotProductNormalized) : dotProductNormalized;
+        this->sunAngleErr = safeAcos(dotProductNormalized);
 
         // Compute the heading error relative to the sun direction vector
         double e_hat[3];  // Eigen Axis
