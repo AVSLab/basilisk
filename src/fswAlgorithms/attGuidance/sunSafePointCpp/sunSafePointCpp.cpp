@@ -29,8 +29,7 @@
  @return void
  @param callTime [ns] Time the method is called
 */
-void SunSafePointCpp::Reset(uint64_t callTime)
-{
+void SunSafePointCpp::Reset(uint64_t callTime) {
     // Check if the required input messages are linked
     if (!this->sunDirectionInMsg.isLinked()) {
         _bskLog(this->bskLogger, BSK_ERROR, "sunSafePointCpp.sunDirectionInMsg wasn't connected.");
@@ -62,24 +61,71 @@ void SunSafePointCpp::Reset(uint64_t callTime)
  @return void
  @param callTime [ns] Time the method is called
 */
-void SunSafePointCpp::UpdateState(uint64_t callTime)
-{
-    // Create the buffer messages
-    NavAttMsgPayload sunDirectionInBuffer;
-    NavAttMsgPayload localImuDataInBuffer;
-    AttGuidMsgPayload attGuidanceOutBuffer;
-
+void SunSafePointCpp::UpdateState(uint64_t callTime) {
     // Zero the attitude guidance output buffer message
-    attGuidanceOutBuffer = AttGuidMsgPayload();
+    this->attGuidanceOutBuffer = AttGuidMsgPayload();
 
     // Read the current sun body vector estimate input message
-    sunDirectionInBuffer = NavAttMsgPayload();
+    this->sunDirectionInBuffer = NavAttMsgPayload();
     if (this->sunDirectionInMsg.isWritten()) {
-        sunDirectionInBuffer = this->sunDirectionInMsg();
+        this->sunDirectionInBuffer = this->sunDirectionInMsg();
     }
 
+    // Determine norm of measured Sun-direction vector
+    double sHatNorm = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).norm();
+
+    // Computing the attitude guidance states sigma_BR and omega_RN_B
+    if (this->sunDirectionIsAvailable(sHatNorm)) {
+        this->computeAttGuidanceStates(sHatNorm);
+    } else {
+        v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+    }
+
+    // Compute the hub angular rate error omega_BR_B
+    this->computeHubAngularRateError();
+
+    // Write the guidance output message
+    eigenVector3d2CArray(this->omega_RN_B, this->attGuidanceOutBuffer.omega_RN_B);
+    this->attGuidanceOutMsg.write(&this->attGuidanceOutBuffer, moduleID, callTime);
+}
+
+/*! Method for computing the attitude guidance states sigma_BR and omega_RN_B if a valid sun direction vector is available.
+ @return void
+ @param sHatNorm Norm of measured Sun-direction vector
+*/
+void SunSafePointCpp::computeAttGuidanceStates(double sHatNorm) {
+    double dotProductNormalized = (this->sHatBdyCmd.dot(cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy)))
+                                   / sHatNorm;
+    dotProductNormalized = fabs(dotProductNormalized) > 1.0 ?
+    dotProductNormalized/fabs(dotProductNormalized) : dotProductNormalized;
+    this->sunAngleErr = safeAcos(dotProductNormalized);
+
+    // Compute the heading error relative to the sun direction vector
+    if (this->sunAngleErr < this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
+        v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+    } else {
+         Eigen::Vector3d e_hat;  // Eigen Axis
+        if (M_PI - this->sunAngleErr < this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
+            e_hat = this->eHat180_B;
+        } else {  // Normal case where sun and commanded body vectors are not aligned
+            e_hat = cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
+        }
+        this->sunMnvrVec = e_hat / e_hat.norm();
+        Eigen::Vector3d v2 = tan(this->sunAngleErr * 0.25) * this->sunMnvrVec;
+        eigenVector3d2CArray(v2, this->attGuidanceOutBuffer.sigma_BR);
+        MRPswitch(this->attGuidanceOutBuffer.sigma_BR, 1.0, this->attGuidanceOutBuffer.sigma_BR);
+    }
+
+    // Rate tracking error is the body rate to bring spacecraft to rest
+    this->omega_RN_B = (this->sunAxisSpinRate / sHatNorm) * cArray2EigenVector3d(this->sunDirectionInBuffer.vehSunPntBdy);
+}
+
+/*! Method for computing the hub angular rate error omega_BR_B.
+ @return void
+*/
+void SunSafePointCpp::computeHubAngularRateError() {
     // Read the imu guidance input message
-    localImuDataInBuffer = NavAttMsgPayload();
+    NavAttMsgPayload localImuDataInBuffer = NavAttMsgPayload();
     if (this->imuInMsg.isWritten()) {
         localImuDataInBuffer = this->imuInMsg();
     }
@@ -88,51 +134,17 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
     Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(localImuDataInBuffer.omega_BN_B);  // [rad/s]
 
     // Create local copy of hub angular velocity error in B frame components
-    Eigen::Vector3d omega_BR_B;  // [rad/s]
+    Eigen::Vector3d omega_BR_B = omega_BN_B - this->omega_RN_B;  // [rad/s]
 
-    // Determine norm of measured Sun-direction vector
-    double sHatNorm = cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy).norm();
+    eigenVector3d2CArray(omega_BR_B, this->attGuidanceOutBuffer.omega_BR_B);
+}
 
-    if(sHatNorm > this->minUnitMag) {  // A good sun direction vector is available
-        double dotProductNormalized = (this->sHatBdyCmd.dot(cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy)))
-                                      / sHatNorm;
-        dotProductNormalized = fabs(dotProductNormalized) > 1.0 ?
-        dotProductNormalized/fabs(dotProductNormalized) : dotProductNormalized;
-        this->sunAngleErr = safeAcos(dotProductNormalized);
-
-        // Compute the heading error relative to the sun direction vector
-        Eigen::Vector3d e_hat;  // Eigen Axis
-        if (this->sunAngleErr < this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
-            v3SetZero(attGuidanceOutBuffer.sigma_BR);
-        } else {
-            if (M_PI - this->sunAngleErr < this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
-                e_hat = this->eHat180_B;
-            } else {  // Normal case where sun and commanded body vectors are not aligned
-                e_hat = cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
-            }
-            this->sunMnvrVec = e_hat / e_hat.norm();
-            Eigen::Vector3d v2 = tan(this->sunAngleErr * 0.25) * this->sunMnvrVec;
-            eigenVector3d2CArray(v2, attGuidanceOutBuffer.sigma_BR);
-            MRPswitch(attGuidanceOutBuffer.sigma_BR, 1.0, attGuidanceOutBuffer.sigma_BR);
-        }
-
-        // Rate tracking error are the body rates to bring spacecraft to rest
-        this->omega_RN_B = (this->sunAxisSpinRate / sHatNorm) * cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy);
-        omega_BR_B = omega_BN_B - this->omega_RN_B;
-        eigenVector3d2CArray(omega_BR_B, attGuidanceOutBuffer.omega_BR_B);
-        eigenVector3d2CArray(this->omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
-
-    } else {  // No proper sun direction vector is available
-        v3SetZero(attGuidanceOutBuffer.sigma_BR);
-
-        // Specify a body-fixed constant search rotation rate
-        omega_BR_B = omega_BN_B - this->omega_RN_B;
-        eigenVector3d2CArray(omega_BR_B, attGuidanceOutBuffer.omega_BR_B);
-        eigenVector3d2CArray(this->omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
-    }
-
-    // Write the guidance output message
-    this->attGuidanceOutMsg.write(&attGuidanceOutBuffer, moduleID, callTime);
+/*! Method for determining if a valid sun direction vector is available.
+ @return bool
+ @param sHatNorm Norm of measured Sun-direction vector
+*/
+bool SunSafePointCpp::sunDirectionIsAvailable(double sHatNorm) const {
+    return sHatNorm > this->minUnitMag;
 }
 
 /*! Getter method for the minimally accepted sun body vector norm.

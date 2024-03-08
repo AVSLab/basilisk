@@ -58,6 +58,10 @@ public:
 
 private:
 
+    void computeAttGuidanceStates(double sHatNorm);             //!< Method for computing the attitude guidance states sigma_BR and omega_RN_B if a valid sun direction vector is available
+    void computeHubAngularRateError();                          //!< Method for computing the hub angular rate error omega_BR_B
+    bool sunDirectionIsAvailable(double sHatNorm) const;        //!< Method for determining if a valid sun direction vector is available
+
     double minUnitMag;                                          //!< The minimally acceptable norm of sun body vector
     double smallAngle;                                          //!< [rad] An angle value that specifies what is near 0 or 180 degrees
     double sunAxisSpinRate;                                     //!< [rad/s] Desired constant spin rate about sun heading vector
