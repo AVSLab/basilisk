@@ -208,6 +208,7 @@ Complex Spacecraft Dynamics Simulations
    Hinged Panel Deployment <scenarioDeployingPanel>
    MSM Simulation of Charged Spacecraft <scenarioTwoChargedSC>
    Spacecraft with 1- or 2-DOF Panel using single effector <scenarioSpinningBodiesTwoDOF>
+   Prescribed Motion Rotational Solar Array Deployment <scenarioDeployingSolarArrays>
 
 Mission Simulations
 ---------------------------------------
