@@ -67,9 +67,10 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
     // Create the buffer messages
     NavAttMsgPayload sunDirectionInBuffer;
     NavAttMsgPayload localImuDataInBuffer;
+    AttGuidMsgPayload attGuidanceOutBuffer;
 
     // Zero the attitude guidance output buffer message
-    this->attGuidanceOutBuffer = AttGuidMsgPayload();
+    attGuidanceOutBuffer = AttGuidMsgPayload();
 
     // Read the current sun body vector estimate input message
     sunDirectionInBuffer = NavAttMsgPayload();
@@ -101,7 +102,7 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
         // Compute the heading error relative to the sun direction vector
         double e_hat[3];  // Eigen Axis
         if (this->sunAngleErr < this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
-            v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+            v3SetZero(attGuidanceOutBuffer.sigma_BR);
         } else {
             if (M_PI - this->sunAngleErr < this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
                 v3Copy(this->eHat180_B, e_hat);
@@ -109,23 +110,23 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
                 v3Cross(sunDirectionInBuffer.vehSunPntBdy, this->sHatBdyCmd, e_hat);
             }
             v3Normalize(e_hat, this->sunMnvrVec);
-            v3Scale(tan(this->sunAngleErr*0.25), this->sunMnvrVec, this->attGuidanceOutBuffer.sigma_BR);
-            MRPswitch(this->attGuidanceOutBuffer.sigma_BR, 1.0, this->attGuidanceOutBuffer.sigma_BR);
+            v3Scale(tan(this->sunAngleErr*0.25), this->sunMnvrVec, attGuidanceOutBuffer.sigma_BR);
+            MRPswitch(attGuidanceOutBuffer.sigma_BR, 1.0, attGuidanceOutBuffer.sigma_BR);
         }
 
         // Rate tracking error are the body rates to bring spacecraft to rest
         v3Scale(this->sunAxisSpinRate/sNorm, sunDirectionInBuffer.vehSunPntBdy, omega_RN_B);
-        v3Subtract(omega_BN_B, omega_RN_B, this->attGuidanceOutBuffer.omega_BR_B);
-        v3Copy(omega_RN_B, this->attGuidanceOutBuffer.omega_RN_B);
+        v3Subtract(omega_BN_B, omega_RN_B, attGuidanceOutBuffer.omega_BR_B);
+        v3Copy(omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
 
     } else {  // No proper sun direction vector is available
-        v3SetZero(this->attGuidanceOutBuffer.sigma_BR);
+        v3SetZero(attGuidanceOutBuffer.sigma_BR);
 
         // Specify a body-fixed constant search rotation rate
-        v3Subtract(omega_BN_B, this->omega_RN_B, this->attGuidanceOutBuffer.omega_BR_B);
-        v3Copy(this->omega_RN_B, this->attGuidanceOutBuffer.omega_RN_B);
+        v3Subtract(omega_BN_B, this->omega_RN_B, attGuidanceOutBuffer.omega_BR_B);
+        v3Copy(this->omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
     }
 
     // Write the guidance output message
-    this->attGuidanceOutMsg.write(&this->attGuidanceOutBuffer, moduleID, callTime);
+    this->attGuidanceOutMsg.write(&attGuidanceOutBuffer, moduleID, callTime);
 }

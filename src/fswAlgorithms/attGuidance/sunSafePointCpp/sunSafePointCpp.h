@@ -49,7 +49,6 @@ public:
     ReadFunctor<NavAttMsgPayload> imuInMsg;                     //!< IMU attitude guidance input message
     ReadFunctor<NavAttMsgPayload> sunDirectionInMsg;            //!< Sun attitude guidance input message
     Message<AttGuidMsgPayload> attGuidanceOutMsg;               //!< Attitude guidance output message
-    AttGuidMsgPayload attGuidanceOutBuffer;                     //!< Attitude guidance output message buffer
 
     BSKLogger *bskLogger;                                       //!< BSK Logging
 };
