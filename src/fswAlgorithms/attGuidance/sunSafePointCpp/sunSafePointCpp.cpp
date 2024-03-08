@@ -89,12 +89,12 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
 
     // Compute the current error vector if it is valid
     double omega_RN_B[3];  // [rad/s] Local copy of the desired reference frame rate
-    double sNorm;  // Norm of measured direction vector
-    sNorm = v3Norm(sunDirectionInBuffer.vehSunPntBdy);
+    double sHatNorm;  // Norm of measured direction vector
+    sHatNorm = v3Norm(sunDirectionInBuffer.vehSunPntBdy);
 
-    if(sNorm > this->minUnitMag) {  // A good sun direction vector is available
+    if(sHatNorm > this->minUnitMag) {  // A good sun direction vector is available
         double ctSNormalized;
-        ctSNormalized = v3Dot(this->sHatBdyCmd, sunDirectionInBuffer.vehSunPntBdy)/sNorm;
+        ctSNormalized = v3Dot(this->sHatBdyCmd, sunDirectionInBuffer.vehSunPntBdy)/sHatNorm;
         ctSNormalized = fabs(ctSNormalized) > 1.0 ?
         ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
         this->sunAngleErr = safeAcos(ctSNormalized);
@@ -115,7 +115,7 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
         }
 
         // Rate tracking error are the body rates to bring spacecraft to rest
-        v3Scale(this->sunAxisSpinRate/sNorm, sunDirectionInBuffer.vehSunPntBdy, omega_RN_B);
+        v3Scale(this->sunAxisSpinRate/sHatNorm, sunDirectionInBuffer.vehSunPntBdy, omega_RN_B);
         v3Subtract(omega_BN_B, omega_RN_B, attGuidanceOutBuffer.omega_BR_B);
         v3Copy(omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
 
