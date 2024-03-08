@@ -59,6 +59,8 @@ Version |release|
 - Created a :ref:`prescribedRotation1DOF` dynamics module to profile a prescribed 1 DOF rotation for a secondary
   rigid body connected to the spacecraft hub. This new module deprecates the ``prescribedRot1DOF`` fsw module.
   To simulate the rotation, this module must be connected to the :ref:`prescribedMotionStateEffector` dynamics module.
+- Created a new example scenario :ref:`scenarioDeployingSolarArrays` demonstrating how to simulate hub-relative
+  multi-body prescribed motion.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------

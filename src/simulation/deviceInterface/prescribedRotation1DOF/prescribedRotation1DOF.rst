@@ -23,6 +23,8 @@ meaning that the module defaults to the bang-bang acceleration profile with no c
 .. important::
     To use this module for prescribed motion, it must be connected to the :ref:`PrescribedMotionStateEffector`
     dynamics module. This ensures the spinning body's states are correctly incorporated into the spacecraft dynamics.
+    See the example script :ref:`scenarioDeployingSolarArrays` for more information about how to set up hub-relative
+    multi-body prescribed motion using the state effector module together with this profiler module.
 
 Message Connection Descriptions
 -------------------------------
