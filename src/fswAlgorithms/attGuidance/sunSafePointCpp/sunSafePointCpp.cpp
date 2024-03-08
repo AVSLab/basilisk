@@ -18,6 +18,7 @@
  */
 
 #include "sunSafePointCpp.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -39,21 +40,20 @@ void SunSafePointCpp::Reset(uint64_t callTime)
     }
 
     // Compute an Eigen axis orthogonal to sHatBdyCmd
-    if (v3Norm(this->sHatBdyCmd)  < 0.1) {
+    if (this->sHatBdyCmd.norm()  < 0.1) {
       char info[MAX_LOGGING_LENGTH];
       sprintf(info, "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
                 this->sHatBdyCmd[0], this->sHatBdyCmd[1], this->sHatBdyCmd[2]);
       _bskLog(this->bskLogger, BSK_ERROR, info);
     } else {
-        double v1[3];
-        v3Set(1., 0., 0., v1);
-        v3Normalize(this->sHatBdyCmd, this->sHatBdyCmd);  // Ensure that this vector is a unit vector
-        v3Cross(this->sHatBdyCmd, v1, this->eHat180_B);
-        if (v3Norm(this->eHat180_B) < 0.1) {
-            v3Set(0., 1., 0., v1);
-            v3Cross(this->sHatBdyCmd, v1, this->eHat180_B);
+        Eigen::Vector3d v1 = {1.0, 0.0, 0.0};
+        this->sHatBdyCmd = this->sHatBdyCmd / this->sHatBdyCmd.norm();  // Ensure that this vector is a unit vector
+        this->eHat180_B = this->sHatBdyCmd.cross(v1);
+        if (this->eHat180_B.norm() < 0.1) {
+            v1 = {0.0, 1.0, 0.0};
+            this->eHat180_B = this->sHatBdyCmd.cross(v1);
         }
-        v3Normalize(this->eHat180_B, this->eHat180_B);
+        this->eHat180_B = this->eHat180_B / this->eHat180_B.norm();
     }
 }
 
@@ -84,47 +84,51 @@ void SunSafePointCpp::UpdateState(uint64_t callTime)
         localImuDataInBuffer = this->imuInMsg();
     }
 
-    double omega_BN_B[3];  // [rad/s] Inertial body angular velocity vector in B frame components
-    v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
+    // Create local copy of hub inertial angular velocity vector in B frame components
+    Eigen::Vector3d omega_BN_B = cArray2EigenVector3d(localImuDataInBuffer.omega_BN_B);  // [rad/s]
 
-    // Compute the current error vector if it is valid
-    double omega_RN_B[3];  // [rad/s] Local copy of the desired reference frame rate
-    double sHatNorm;  // Norm of measured direction vector
-    sHatNorm = v3Norm(sunDirectionInBuffer.vehSunPntBdy);
+    // Create local copy of hub angular velocity error in B frame components
+    Eigen::Vector3d omega_BR_B;  // [rad/s]
+
+    // Determine norm of measured Sun-direction vector
+    double sHatNorm = cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy).norm();
 
     if(sHatNorm > this->minUnitMag) {  // A good sun direction vector is available
-        double dotProductNormalized;
-        dotProductNormalized = v3Dot(this->sHatBdyCmd, sunDirectionInBuffer.vehSunPntBdy)/sHatNorm;
+        double dotProductNormalized = (this->sHatBdyCmd.dot(cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy)))
+                                      / sHatNorm;
         dotProductNormalized = fabs(dotProductNormalized) > 1.0 ?
         dotProductNormalized/fabs(dotProductNormalized) : dotProductNormalized;
         this->sunAngleErr = safeAcos(dotProductNormalized);
 
         // Compute the heading error relative to the sun direction vector
-        double e_hat[3];  // Eigen Axis
+        Eigen::Vector3d e_hat;  // Eigen Axis
         if (this->sunAngleErr < this->smallAngle) {  // Sun heading and desired body axis are essentially aligned. Set attitude error to zero.
             v3SetZero(attGuidanceOutBuffer.sigma_BR);
         } else {
             if (M_PI - this->sunAngleErr < this->smallAngle) {  // The commanded body vector nearly is opposite the sun heading
-                v3Copy(this->eHat180_B, e_hat);
+                e_hat = this->eHat180_B;
             } else {  // Normal case where sun and commanded body vectors are not aligned
-                v3Cross(sunDirectionInBuffer.vehSunPntBdy, this->sHatBdyCmd, e_hat);
+                e_hat = cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy).cross(this->sHatBdyCmd);
             }
-            v3Normalize(e_hat, this->sunMnvrVec);
-            v3Scale(tan(this->sunAngleErr*0.25), this->sunMnvrVec, attGuidanceOutBuffer.sigma_BR);
+            this->sunMnvrVec = e_hat / e_hat.norm();
+            Eigen::Vector3d v2 = tan(this->sunAngleErr * 0.25) * this->sunMnvrVec;
+            eigenVector3d2CArray(v2, attGuidanceOutBuffer.sigma_BR);
             MRPswitch(attGuidanceOutBuffer.sigma_BR, 1.0, attGuidanceOutBuffer.sigma_BR);
         }
 
         // Rate tracking error are the body rates to bring spacecraft to rest
-        v3Scale(this->sunAxisSpinRate/sHatNorm, sunDirectionInBuffer.vehSunPntBdy, omega_RN_B);
-        v3Subtract(omega_BN_B, omega_RN_B, attGuidanceOutBuffer.omega_BR_B);
-        v3Copy(omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
+        this->omega_RN_B = (this->sunAxisSpinRate / sHatNorm) * cArray2EigenVector3d(sunDirectionInBuffer.vehSunPntBdy);
+        omega_BR_B = omega_BN_B - this->omega_RN_B;
+        eigenVector3d2CArray(omega_BR_B, attGuidanceOutBuffer.omega_BR_B);
+        eigenVector3d2CArray(this->omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
 
     } else {  // No proper sun direction vector is available
         v3SetZero(attGuidanceOutBuffer.sigma_BR);
 
         // Specify a body-fixed constant search rotation rate
-        v3Subtract(omega_BN_B, this->omega_RN_B, attGuidanceOutBuffer.omega_BR_B);
-        v3Copy(this->omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
+        omega_BR_B = omega_BN_B - this->omega_RN_B;
+        eigenVector3d2CArray(omega_BR_B, attGuidanceOutBuffer.omega_BR_B);
+        eigenVector3d2CArray(this->omega_RN_B, attGuidanceOutBuffer.omega_RN_B);
     }
 
     // Write the guidance output message
