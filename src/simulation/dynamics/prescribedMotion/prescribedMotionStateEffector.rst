@@ -14,9 +14,7 @@ be connected to this module's :ref:`PrescribedTranslationMsgPayload` and :ref:`P
 input messages to profile the prescribed body's states as a function of time. These message connections are required
 to provide the prescribed body's states to this dynamics module. Note that either a single profiler can be connected to
 these input messages or two separate profiler modules can be used; where one profiles the prescribed body's
-translational states and the other profiles the prescribed body's rotational states. See the example script
-:ref:`scenarioDeployingSolarArrays` for more information about how to set up hub-relative
-multi-body prescribed motion using this state effector module and the associated kinematic profiler modules.
+translational states and the other profiles the prescribed body's rotational states.
 
 Message Connection Descriptions
 -------------------------------
@@ -130,7 +128,6 @@ default.
 
     unitTestSim.AddModelToTask(unitTaskName, platform)
 
-See the example script :ref:`scenarioDeployingSolarArrays` for more information about how to set up hub-relative
-multi-body prescribed motion using this state effector module and the associated kinematic profiler modules.
+
 
 
