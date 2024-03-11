@@ -160,32 +160,32 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double callTime)
     this->effProps.mEff = this->mass;
 
     // Compute dcm_BM
-    this->dcm_BM = this->sigma_MB.toRotationMatrix();
+    Eigen::Matrix3d dcm_BM = this->sigma_MB.toRotationMatrix();
 
     // Compute dcm_FM
-    this->dcm_FM = (this->sigma_FM.toRotationMatrix()).transpose();
+    Eigen::Matrix3d dcm_FM = (this->sigma_FM.toRotationMatrix()).transpose();
 
     // Compute dcm_BF
-    this->dcm_BF = this->dcm_BM * this->dcm_FM.transpose();
+    this->dcm_BF = dcm_BM * dcm_FM.transpose();
 
     // Compute omega_FB_B
-    this->omega_FM_B = this->dcm_BF * this->omega_FM_F;
-    this->omega_FB_B = this->omega_FM_B + this->omega_MB_B;
+    Eigen::Vector3d omega_FM_B = this->dcm_BF * this->omega_FM_F;
+    this->omega_FB_B = omega_FM_B + this->omega_MB_B;
 
     // Compute omegaPrime_FB_B
     this->omegaTilde_FB_B = eigenTilde(this->omega_FB_B);
-    this->omegaPrime_FM_B = this->dcm_BF * this->omegaPrime_FM_F;
-    this->omegaPrime_FB_B = this->omegaPrime_FM_B + this->omegaTilde_FB_B * this->omega_FM_B;
+    Eigen::Vector3d omegaPrime_FM_B = this->dcm_BF * this->omegaPrime_FM_F;
+    this->omegaPrime_FB_B = omegaPrime_FM_B + this->omegaTilde_FB_B * omega_FM_B;
 
     // Convert the prescribed translational states to the B frame
-    this->r_FM_B = this->dcm_BM * this->r_FM_M;
-    this->rPrime_FM_B = this->dcm_BM * this->rPrime_FM_M;
-    this->rPrimePrime_FM_B = this->dcm_BM * this->rPrimePrime_FM_M;
+    Eigen::Vector3d r_FM_B = dcm_BM * this->r_FM_M;
+    Eigen::Vector3d rPrime_FM_B = dcm_BM * this->rPrime_FM_M;
+    this->rPrimePrime_FM_B = dcm_BM * this->rPrimePrime_FM_M;
 
     // Compute the effector's center of mass with respect to point B
-    this->r_FB_B = this->r_FM_B + this->r_MB_B;
+    Eigen::Vector3d r_FB_B = r_FM_B + this->r_MB_B;
     this->r_FcF_B = this->dcm_BF * this->r_FcF_F;
-    this->r_FcB_B = this->r_FcF_B + this->r_FB_B;
+    this->r_FcB_B = this->r_FcF_B + r_FB_B;
     this->effProps.rEff_CB_B = this->r_FcB_B;
 
     // Find the effector's inertia about point B
@@ -195,7 +195,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double callTime)
 
     // Find the B frame time derivative of r_FcB_B
     this->omegaTilde_FB_B = eigenTilde(this->omega_FB_B);
-    this->rPrime_FcB_B = this->omegaTilde_FB_B * this->r_FcF_B + this->rPrime_FM_B;
+    this->rPrime_FcB_B = this->omegaTilde_FB_B * this->r_FcF_B + rPrime_FM_B;
     this->effProps.rEffPrime_CB_B = this->rPrime_FcB_B;
 
     // Find the B frame time derivative of IPntFc_B
@@ -234,15 +234,15 @@ void PrescribedMotionStateEffector::updateContributions(double callTime,
     Eigen::Matrix3d omegaPrimeTilde_FB_B = eigenTilde(this->omegaPrime_FB_B);
 
     // Compute rPrimePrime_FcB_B
-    this->rPrimePrime_FcB_B = (omegaPrimeTilde_FB_B + this->omegaTilde_FB_B * this->omegaTilde_FB_B) * this->r_FcF_B
+    Eigen::Vector3d rPrimePrime_FcB_B = (omegaPrimeTilde_FB_B + this->omegaTilde_FB_B * this->omegaTilde_FB_B) * this->r_FcF_B
                               + this->rPrimePrime_FM_B;
 
     // Backsubstitution RHS translational EOM contribution
-    backSubContr.vecTrans = -this->mass * this->rPrimePrime_FcB_B;
+    backSubContr.vecTrans = -this->mass * rPrimePrime_FcB_B;
 
     // Backsubstitution RHS rotational EOM contribution
     Eigen::Matrix3d IPrimePntFc_B = this->omegaTilde_FB_B * this->IPntFc_B - this->IPntFc_B * this->omegaTilde_FB_B;
-    backSubContr.vecRot = -(this->mass * this->rTilde_FcB_B * this->rPrimePrime_FcB_B)
+    backSubContr.vecRot = -(this->mass * this->rTilde_FcB_B * rPrimePrime_FcB_B)
                           - (IPrimePntFc_B + this->omegaTilde_BN_B * this->IPntFc_B) * this->omega_FB_B
                           - this->IPntFc_B * this->omegaPrime_FB_B
                           - this->mass * this->omegaTilde_BN_B * rTilde_FcB_B * this->rPrime_FcB_B;

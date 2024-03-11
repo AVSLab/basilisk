@@ -85,31 +85,21 @@ private:
     static uint64_t effectorID;                                                     //!< ID number of this panel
 
     // Effector prescribed states in body frame components
-    Eigen::Vector3d r_FM_B;                                                         //!< [m] Position of point F relative to point M expressed in B frame components
-    Eigen::Vector3d rPrime_FM_B;                                                    //!< [m/s] B frame time derivative of position r_FM_B expressed in B frame components
     Eigen::Vector3d rPrimePrime_FM_B;                                               //!< [m/s^2] B frame time derivative of rPrime_FM_B expressed in B frame components
-    Eigen::Vector3d omega_FM_B;                                                     //!< [rad/s] Angular velocity of F frame relative to the M frame expressed in B frame components
-    Eigen::Vector3d omegaPrime_FM_B;                                                //!< [rad/s^2] B frame time derivative of omega_FB_B expressed in B frame components
     Eigen::Vector3d omega_FB_B;                                                     //!< [rad/s] Angular velocity of frame F relative to frame B expressed in B frame components
     Eigen::Vector3d omegaPrime_FB_B;                                                //!< [rad/s^2] B frame time derivative of omega_FB_B expressed in B frame components
 
     // Other vector quantities
     Eigen::Vector3d r_FcF_B;                                                        //!< [m] Position of the effector center of mass point Fc relative to point F expressed in B frame components
     Eigen::Vector3d r_FcB_B;                                                        //!< [m] Position of the effector center of mass point Fc relative to point B expressed in B frame components
-    Eigen::Vector3d r_FcM_B;                                                        //!< [m] Position of the effector center of mass point Fc relative to point M expressed in B frame components
-    Eigen::Vector3d r_FB_B;                                                         //!< [m] Position of point F relative to point B expressed in B frame components
     Eigen::Vector3d rPrime_FcB_B;                                                   //!< [m/s] B frame time derivative of r_FcB_B expressed in B frame components
-    Eigen::Vector3d rPrime_FcM_B;                                                   //!< [m/s] B frame time derivative of r_FcM_B expressed in B frame components
-    Eigen::Vector3d rPrimePrime_FcB_B;                                              //!< [m/s^2] B frame time derivative of rPrime_FcB_B expressed in B frame components
     Eigen::Vector3d omega_BN_B;                                                     //!< [rad/s] Angular velocity of frame B relative to the inertial frame expressed in B frame components
     Eigen::Vector3d omega_FN_B;                                                     //!< [rad/s] Angular velocity of frame F relative to the inertial frame expressed in B frame components
     Eigen::Vector3d rDot_FcB_B;                                                     //!< [m/s] Inertial time derivative of r_FcB_B expressed in B frame components
 
     // DCMs
     Eigen::Matrix3d dcm_BF;                                                         //!< DCM from frame F to frame B
-    Eigen::Matrix3d dcm_BM;                                                         //!< DCM from frame M to frame B
     Eigen::Matrix3d dcm_BN;                                                         //!< DCM from inertial frame to frame B
-    Eigen::Matrix3d dcm_FM;                                                         //!< DCM from frame M to frame F
 
     // Other matrix quantities
     Eigen::Matrix3d IPntFc_B;                                                       //!< [kg-m^2] Inertia of the effector about its center of mass expressed in B frame components
