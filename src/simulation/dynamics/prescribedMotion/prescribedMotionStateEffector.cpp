@@ -306,6 +306,9 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
     Eigen::Matrix3d dcm_FN = (this->dcm_BF).transpose() * this->dcm_BN;
     this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
 
+    // Compute the effector's inertial angular velocity
+    this->omega_FN_F = (this->dcm_BF).transpose() * this->omega_FN_B;
+
     // Compute the effector's inertial position vector
     this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
 
