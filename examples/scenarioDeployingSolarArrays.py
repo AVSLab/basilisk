@@ -716,7 +716,7 @@ def run(show_plots):
     plt.figure(8)
     plt.clf()
     plt.plot(timespan, omega_BN_BNorm)
-    plt.title('Hub Angular Velocity Norm $|{}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}|$', fontsize=16)
+    plt.title(r'Hub Angular Velocity Norm $|{}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}|$', fontsize=16)
     plt.ylabel(r'(deg/s)', fontsize=14)
     plt.xlabel(r'(min)', fontsize=14)
     plt.grid(True)

@@ -43,7 +43,7 @@ def readStdAtm76(filename):
     
     
 def readEarthGRAM(filename):
-    df = pd.read_csv(filename, delim_whitespace = True) 
+    df = pd.read_csv(filename, sep=r'\s+')
     df.sort_values(by=['Hgtkm'],ascending=True, inplace=True)
     df.Hgtkm = df.Hgtkm * 1000
     altList = df.Hgtkm.to_list()
@@ -53,7 +53,7 @@ def readEarthGRAM(filename):
     return altList, rhoList, tempList
 
 def readMarsGRAM(filename):
-	df = pd.read_csv(filename, delim_whitespace = True)
+	df = pd.read_csv(filename, sep=r'\s+')
 	df.sort_values(by=['HgtMOLA'],ascending=True, inplace=True)
 	df.HgtMOLA = df.HgtMOLA * 1000
 	altList = df.HgtMOLA.to_list()
@@ -108,7 +108,7 @@ def readJupiterGRAM(filename):
 
 
 def readMSIS(filename):
-    df = pd.read_csv(filename, skiprows = 29, header=0,delim_whitespace = True,
+    df = pd.read_csv(filename, skiprows = 29, header=0, sep=r'\s+',
                    names=["alt", "rho", "temp"])
     df.sort_values(by=['alt'],ascending=True, inplace=True)
     df.alt = df.alt * 1000
