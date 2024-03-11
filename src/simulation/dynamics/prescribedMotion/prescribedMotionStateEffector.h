@@ -36,26 +36,26 @@ public:
     PrescribedMotionStateEffector();                                                //!< Constructor
     ~PrescribedMotionStateEffector();                                               //!< Destructor
 
-    void Reset(uint64_t currentClock) override;                                     //!< Reset method
-    void UpdateState(uint64_t currentSimNanos) override;                            //!< Method for updating the effector's states
-    void computeDerivatives(double integTime,
+    void Reset(uint64_t callTime) override;                                         //!< Reset method
+    void UpdateState(uint64_t callTime) override;                                   //!< Method for updating the effector's states
+    void computeDerivatives(double callTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::Vector3d sigma_BN) override;                     //!< Method for computing the effector's MRP attitude state derivative
     void computePrescribedMotionInertialStates();                                   //!< Method for computing the effector's inertial states
     void linkInStates(DynParamManager& states) override;                            //!< Method for giving the effector access to hub states
     void registerStates(DynParamManager& statesIn) override;                        //!< Method for registering the effector's states
-    void updateContributions(double integTime,
+    void updateContributions(double callTime,
                              BackSubMatrices & backSubContr,
                              Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) override;                         //!< Method for computing the effector's backsubstitution contributions
-    void updateEffectorMassProps(double integTime) override;                        //!< Method for providing the effector's contributions to the mass props and mass prop rates of the spacecraft
-    void updateEnergyMomContributions(double integTime,
+    void updateEffectorMassProps(double callTime) override;                         //!< Method for providing the effector's contributions to the mass props and mass prop rates of the spacecraft
+    void updateEnergyMomContributions(double callTime,
                                       Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;         //!< Method for computing the effector's contributions to the energy and momentum of the spacecraft
-    void writeOutputStateMessages(uint64_t currentClock) override;                  //!< Method for writing the module's output messages
+    void writeOutputStateMessages(uint64_t callTime) override;                      //!< Method for writing the module's output messages
 
     double currentSimTimeSec;                                                       //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                                                    //!< [kg] Effector mass
