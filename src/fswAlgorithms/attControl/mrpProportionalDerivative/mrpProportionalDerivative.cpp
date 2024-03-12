@@ -38,12 +38,9 @@ void MrpProportionalDerivative::Reset(uint64_t callTime)
         _bskLog(this->bskLogger, BSK_ERROR, "mrpProportionalDerivative.vehConfigInMsg wasn't connected.");
     }
 
-    // Create VehicleConfigMsgPayload input buffer message
-    VehicleConfigMsgPayload vcInMsg;
-
     // Read the VehicleConfigMsgPayload input message
-    vcInMsg = VehicleConfigMsgPayload();
     if (this->vehConfigInMsg.isWritten()) {
+        VehicleConfigMsgPayload vcInMsg;
         vcInMsg = this->vehConfigInMsg();
         this->ISCPntB_B = cArray2EigenMatrixXd(vcInMsg.ISCPntB_B, 3, 3);
     }
