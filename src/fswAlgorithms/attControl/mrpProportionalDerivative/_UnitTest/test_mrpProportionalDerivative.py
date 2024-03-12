@@ -24,7 +24,6 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import mrpProportionalDerivative  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
@@ -57,18 +56,12 @@ def test_mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
 
 
     """
-    [testResults, testMessage] = mrp_ProportionalDerivative_tracking(show_plots, setExtTorque)
-    assert testResults < 1, testMessage
 
-
-def mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_ProportionalDerivative_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -129,25 +122,12 @@ def mrp_ProportionalDerivative_tracking(show_plots, setExtTorque):
 
     trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn, knownTorquePntB_B)]*3
 
-    # compare the module results to the truth values
+    # Compare the module results to the truth values
     accuracy = 1e-12
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.torqueRequestBody, accuracy,
-                                                               "torqueRequestBody", testFailCount, testMessages)
-
-    snippentName = "passFail" + str(setExtTorque)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("Failed: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
+    np.testing.assert_allclose(trueVector,
+                               dataLog.torqueRequestBody,
+                               atol=accuracy,
+                               verbose=True)
 
 def findTrueTorques(module, guidCmdData, vehicleConfigOut, knownTorquePntB_B):
     sigma_BR = np.array(guidCmdData.sigma_BR)
