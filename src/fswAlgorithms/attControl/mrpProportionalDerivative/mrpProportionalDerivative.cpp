@@ -57,25 +57,25 @@ the reference frame angular rates and acceleration, and computes the required co
 void MrpProportionalDerivative::UpdateState(uint64_t callTime)
 {
     // Create the buffer messages
-    CmdTorqueBodyMsgPayload controlOutMsg;  // Control output request msg
-    AttGuidMsgPayload guidInMsg;  // Guidance input message
+    CmdTorqueBodyMsgPayload torqueCmdMsgPayload;  // Control output request msg
+    AttGuidMsgPayload guidanceMsgPayload;  // Guidance input message
 
     // Zero the output message
-    controlOutMsg = CmdTorqueBodyMsgPayload();
+    torqueCmdMsgPayload = CmdTorqueBodyMsgPayload();
 
     // Read the guidance input message
-    guidInMsg = AttGuidMsgPayload();
+    guidanceMsgPayload = AttGuidMsgPayload();
     if (this->guidInMsg.isWritten()) {
-        guidInMsg = this->guidInMsg();
+        guidanceMsgPayload = this->guidInMsg();
     }
 
     // Compute hub inertial angular velocity in B-frame components
-    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(guidInMsg.omega_BR_B);
-    Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(guidInMsg.omega_RN_B);
+    Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(guidanceMsgPayload.omega_BR_B);
+    Eigen::Vector3d omega_RN_B = cArray2EigenVector3d(guidanceMsgPayload.omega_RN_B);
     Eigen::Vector3d omega_BN_B = omega_BR_B + omega_RN_B;
 
     // Compute K*sigma_BR
-    Eigen::Vector3d sigma_BR = cArray2EigenVector3d(guidInMsg.sigma_BR);
+    Eigen::Vector3d sigma_BR = cArray2EigenVector3d(guidanceMsgPayload.sigma_BR);
     Eigen::Vector3d v3_temp1 = this->K * sigma_BR;
 
     // Compute P*delta_omega
@@ -85,7 +85,7 @@ void MrpProportionalDerivative::UpdateState(uint64_t callTime)
     Eigen::Vector3d v3_temp3 = omega_RN_B.cross(this->ISCPntB_B * omega_BN_B);
     
     // Compute [I](d(omega_r)/dt - omega x omega_r)
-    Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidInMsg.domega_RN_B);
+    Eigen::Vector3d domega_RN_B = cArray2EigenVector3d(guidanceMsgPayload.domega_RN_B);
     Eigen::Vector3d v3_temp4 = this->ISCPntB_B * (domega_RN_B - omega_BN_B.cross(omega_RN_B));
 
     // Compute required attitude control torque vector
@@ -93,8 +93,8 @@ void MrpProportionalDerivative::UpdateState(uint64_t callTime)
     Eigen::Vector3d Lr = - v3_temp1 - v3_temp2 + v3_temp3 + v3_temp4 - this->knownTorquePntB_B;  // [Nm] Required control torque vector
 
     // Write the output message
-    eigenVector3d2CArray(Lr, controlOutMsg.torqueRequestBody);
-    this->cmdTorqueOutMsg.write(&controlOutMsg, moduleID, callTime);
+    eigenVector3d2CArray(Lr, torqueCmdMsgPayload.torqueRequestBody);
+    this->cmdTorqueOutMsg.write(&torqueCmdMsgPayload, moduleID, callTime);
 }
 
 /*! Getter method for the derivative gain P.
