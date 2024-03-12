@@ -13,6 +13,31 @@ Release Notes
     - Add magnetic torque bar visualization
     - Visualize aerobraking maneuvers
 
+
+**Version 2.1.6 (March 1, 2024)**
+
+- Buffered loading of file playback messages (only 10 MB will be loaded into memory by default)
+  This value can be customized with the new ``messageBufferSize`` setting
+- Migrated to Unity 2022.3 (Addressables built with Unity 2020 version are compatible with Unity
+  2022 Vizard and do not need to be rebuilt or replaced)
+- Added fall-back non-native file browser for Linux platform
+- Black Lion removed from startup screen options
+- time-out on socket connection attempt in start-up screen (if a vizMessage is not received
+  within 4 seconds, Vizard will try to close the open socket and the user can try again)
+- playback will be paused and playback controls will be hidden during model loading
+  (to prevent confusion during large model imports)
+- hot key "c" added to pop up Console Log panel
+- automatic pop up of Console Log for errors that need the user's attention
+- hot key "v" added to pop up VizMessage panel
+- GenericStorage display will now show "Unavailable" when currentValue is less than 0 to
+  allow simulation of lost telemetry
+- Added check for remote Addressables bundle modelKey validity before trying to load
+- Fixed playback speed displaying infinity on Windows
+- Fixed bug with thruster cone geometry not scaling appropriately when spacecraftLocalView
+  scale is changed and MaxThrust was not specified (occurs in some old LASP files)
+- Fixed bug in the sub-dropdowns (used when Effectors are present) when a Location's properties are updated
+
+
 **Version 2.1.5 (June 28, 2023)**
 
 - main camera range to target display (hot key = r, or toggle under Camera menu)

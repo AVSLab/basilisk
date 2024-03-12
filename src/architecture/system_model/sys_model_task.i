@@ -27,10 +27,10 @@
 
 // Instantiate templates used by example
 namespace std {
-   %template(IntVector) vector<int>;
-   %template(DoubleVector) vector<double>;
-   %template(StringVector) vector<string>;
-   %template(ConstCharVector) vector<const char*>;
+   %template(IntVector) vector<int, allocator<int> >;
+   %template(DoubleVector) vector<double, allocator<double> >;
+   %template(StringVector) vector<string, allocator<string> >;
+   %template(ConstCharVector) vector<const char*, allocator<const char*> >;
 }
 %include "sys_model.h"
 %include "sys_model_task.h"

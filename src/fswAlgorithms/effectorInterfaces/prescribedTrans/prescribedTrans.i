@@ -24,11 +24,11 @@
 %include "swig_c_wrap.i"
 %c_wrap_2(prescribedTrans, PrescribedTransConfig);
 
-%include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
-struct PrescribedMotionMsg_C;
+%include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
+struct PrescribedTranslationMsg_C;
 
-%include "architecture/msgPayloadDefC/PrescribedTransMsgPayload.h"
-struct PrescribedTransMsg_C;
+%include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
+struct LinearTranslationRigidBodyMsg_C;
 
 %pythoncode %{
 import sys

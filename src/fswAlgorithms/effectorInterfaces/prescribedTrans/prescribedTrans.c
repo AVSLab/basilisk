@@ -35,7 +35,7 @@
 void SelfInit_prescribedTrans(PrescribedTransConfig *configData, int64_t moduleID)
 {
     // Initialize the module output message
-    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
+    PrescribedTranslationMsg_C_init(&configData->prescribedTranslationOutMsg);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -49,8 +49,8 @@ void SelfInit_prescribedTrans(PrescribedTransConfig *configData, int64_t moduleI
 void Reset_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     // Check if the input message is connected
-    if (!PrescribedTransMsg_C_isLinked(&configData->prescribedTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedTrans.prescribedTransInMsg wasn't connected.");
+    if (!LinearTranslationRigidBodyMsg_C_isLinked(&configData->linearTranslationRigidBodyInMsg)) {
+        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prescribedTrans.linearTranslationRigidBodyInMsg wasn't connected.");
     }
 
     // Set the initial time
@@ -71,21 +71,21 @@ motion output message.
 void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     // Create the buffer messages
-    PrescribedTransMsgPayload prescribedTransIn;
-    PrescribedMotionMsgPayload prescribedMotionOut;
+    LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
+    PrescribedTranslationMsgPayload prescribedTranslationOut;
 
     // Zero the output message
-    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
+    prescribedTranslationOut = PrescribedTranslationMsg_C_zeroMsgPayload();
 
     // Read the input message
-    prescribedTransIn = PrescribedTransMsg_C_zeroMsgPayload();
-    if (PrescribedTransMsg_C_isWritten(&configData->prescribedTransInMsg))
+    linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsg_C_zeroMsgPayload();
+    if (LinearTranslationRigidBodyMsg_C_isWritten(&configData->linearTranslationRigidBodyInMsg))
     {
-        prescribedTransIn = PrescribedTransMsg_C_read(&configData->prescribedTransInMsg);
+        linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsg_C_read(&configData->linearTranslationRigidBodyInMsg);
     }
 
     // This loop is entered when a new maneuver is requested after all previous maneuvers are completed
-    if (PrescribedTransMsg_C_timeWritten(&configData->prescribedTransInMsg) <= callTime && configData->convergence)
+    if (LinearTranslationRigidBodyMsg_C_timeWritten(&configData->linearTranslationRigidBodyInMsg) <= callTime && configData->convergence)
     {
         // Store the initial information
         configData->tInit = callTime * NANO2SEC;
@@ -93,7 +93,7 @@ void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime
         configData->scalarVelInit = v3Norm(configData->rPrime_FM_M);
 
         // Store the reference information
-        configData->scalarPosRef = prescribedTransIn.scalarPos;
+        configData->scalarPosRef = linearTranslationRigidBodyIn.rho;
         configData->scalarVelRef = 0.0;
 
         // Define temporal information
@@ -144,13 +144,10 @@ void Update_prescribedTrans(PrescribedTransConfig *configData, uint64_t callTime
     v3Scale(scalarAccel, configData->transAxis_M, configData->rPrimePrime_FM_M);
 
     // Copy the local variables to the output message
-    v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
-    v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
-    v3Copy(configData->rPrimePrime_FM_M, prescribedMotionOut.rPrimePrime_FM_M);
-    v3Copy(configData->omega_FM_F, prescribedMotionOut.omega_FM_F);
-    v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
-    v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
+    v3Copy(configData->r_FM_M, prescribedTranslationOut.r_FM_M);
+    v3Copy(configData->rPrime_FM_M, prescribedTranslationOut.rPrime_FM_M);
+    v3Copy(configData->rPrimePrime_FM_M, prescribedTranslationOut.rPrimePrime_FM_M);
 
     // Write the prescribed motion output message
-    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
+    PrescribedTranslationMsg_C_write(&prescribedTranslationOut, &configData->prescribedTranslationOutMsg, moduleID, callTime);
 }
