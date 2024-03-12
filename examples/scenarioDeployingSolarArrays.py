@@ -61,9 +61,9 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioDeployingSolarArrays.py
 
-The scenario outputs eight plots. The first two plots illustrate the array 1 element angles and angle rates
-relative to the hub; while the following two plots illustrate the element angles and rates for the second array. The
-final plots illustrate the hub's inertial motion during the array deployment. The hub's inertial position, attitude,
+The scenario outputs eight plots. The first two plots illustrate the array element angles relative to the
+hub; while the following two plots illustrate the array element rates relative to the hub. The final plots
+illustrate the hub's inertial motion during the array deployment. The hub's inertial position, attitude,
 angular velocity, and angular velocity magnitude are given. This scenario also creates a Vizard simulation to
 visualize the solar array deployment.
 
