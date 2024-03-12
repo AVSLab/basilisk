@@ -19,9 +19,9 @@
 %include "_GeneralModuleFiles/swig_eigen.i"
 %include "_GeneralModuleFiles/swig_conly_data.i"
 %include "stdint.i"
-%template(TimeVector) std::vector<unsigned long long>;
-%template(DoubleVector) std::vector<double>;
-%template(StringVector) std::vector<std::string>;
+%template(TimeVector) std::vector<unsigned long long, std::allocator<unsigned long long>>;
+%template(DoubleVector) std::vector<double, std::allocator<double>>;
+%template(StringVector) std::vector<std::string, std::allocator<std::string>>;
 
 %include "architecture/utilities/macroDefinitions.h"
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
@@ -52,8 +52,7 @@ import numpy as np
 %}};
 %include "{baseDir}/{type}Payload.h"
 INSTANTIATE_TEMPLATES({type}, {type}Payload, {baseDir})
-%template({type}OutMsgsVector) std::vector<Message<{type}Payload>>;
-%template({type}OutMsgsPtrVector) std::vector<Message<{type}Payload>*>;
-%template({type}InMsgsVector) std::vector<ReadFunctor<{type}Payload>>;
-
+%template({type}OutMsgsVector) std::vector<Message<{type}Payload>, std::allocator<Message<{type}Payload>> >;
+%template({type}OutMsgsPtrVector) std::vector<Message<{type}Payload>*, std::allocator<Message<{type}Payload>*> >;
+%template({type}InMsgsVector) std::vector<ReadFunctor<{type}Payload>, std::allocator<ReadFunctor<{type}Payload>> >;
 

@@ -25,7 +25,8 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
+#include "architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.h"
+#include "architecture/msgPayloadDefC/PrescribedRotationMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
@@ -73,9 +74,11 @@ public:
     Eigen::MRPd sigma_FM;                               //!< MRP attitude of frame F relative to frame M
     std::string nameOfsigma_FMState;                    //!< Identifier for the sigma_FM state data container
 
-    ReadFunctor<PrescribedMotionMsgPayload> prescribedMotionInMsg;      //!< Input message for the effector's prescribed states
-    Message<PrescribedMotionMsgPayload> prescribedMotionOutMsg;         //!< Output message for the effector's prescribed states
-    Message<SCStatesMsgPayload> prescribedMotionConfigLogOutMsg;        //!< Output config log message for the effector's states
+    ReadFunctor<PrescribedTranslationMsgPayload> prescribedTranslationInMsg;      //!< Input message for the effector's translational prescribed states
+    ReadFunctor<PrescribedRotationMsgPayload> prescribedRotationInMsg;            //!< Input message for the effector's rotational prescribed states
+    Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;         //!< Output message for the effector's translational prescribed states
+    Message<PrescribedRotationMsgPayload> prescribedRotationOutMsg;               //!< Output message for the effector's rotational prescribed states
+    Message<SCStatesMsgPayload> prescribedMotionConfigLogOutMsg;                  //!< Output config log message for the effector's states
 
 private:
     static uint64_t effectorID;                                         //!< ID number of this panel

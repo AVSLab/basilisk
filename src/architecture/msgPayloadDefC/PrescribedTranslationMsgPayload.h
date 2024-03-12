@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,15 +17,16 @@
 
  */
 
-#ifndef prescribedTransSimMsg_h
-#define prescribedTransSimMsg_h
+#ifndef prescribedTranslationSimMsg_h
+#define prescribedTranslationSimMsg_h
 
 
- /*! @brief Structure used to define the data message*/
+ /*! @brief Structure used to define the prescribed motion state effector translational state data message */
 typedef struct {
-    double scalarPos;                   //!< [m], spinning body translational displacement
-    double scalarVel;                   //!< [m/s], spinning body translational displacement rate
-}PrescribedTransMsgPayload;
+    double r_FM_M[3];                          //!< [m] Position vector from the M frame origin to the F frame origin expressed in M frame components
+    double rPrime_FM_M[3];                     //!< [m/s] B/M frame time derivative of r_FM_M
+    double rPrimePrime_FM_M[3];                //!< [m/s^2] B/M frame time derivative of rPrime_FM_M
+}PrescribedTranslationMsgPayload;
 
 
-#endif /* prescribedTransSimMsg_h */
+#endif /* prescribedTranslationSimMsg_h */

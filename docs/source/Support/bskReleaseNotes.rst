@@ -36,6 +36,32 @@ Version |release|
 - Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
 - Fixed a bug where the legacy variable logging API would either, not log at all or log at a rate different to the
   requested rate.
+- Fixed a python version checking bug that prevented Basilisk from compiling on Windows
+- Created a new example scenario :ref:`scenarioHaloOrbit` demonstrating a near-Halo orbit simulation
+- Updated versioning to better follow the `semantic versioning <https://semver.org>`_ standard, in the format
+  ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will 
+  automatically increment the patch number. This allows users to reference/require specific versions of Basilisk 
+  outside of the release cycle.
+- updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
+- fixed a slew of compiler warnings when compiling with Xcode 15
+- Refactored the ``PrescribedTransMsgPayload`` message by renaming the message to
+  :ref:`LinearTranslationRigidBodyMsgPayload` and renaming the message variables from ``scalarPos`` and ``scalarVel`` to
+  ``rho`` and ``rhoDot``
+- Deprecated the :ref:`prescribedMotionMsgPayload` message and replaced with two separate
+  :ref:`prescribedTranslationMsgPayload` and :ref:`prescribedRotationMsgPayload` messages.
+- added support for the new ``swig`` 4.2 version
+- updated the Windows build to compile properly with ``opNav`` flag set to true.  A
+  ``opencv`` related flag had to be updated.
+- added supoport for Vizard 2.1.6
+- Created a :ref:`prescribedLinearTranslation` dynamics module to profile prescribed linear translation for a
+  secondary rigid body connected to the spacecraft hub. This new module deprecates the ``prescribedTrans`` module.
+  To simulate the translation, this module must be connected to the :ref:`prescribedMotionStateEffector`
+  dynamics module.
+- Created a :ref:`prescribedRotation1DOF` dynamics module to profile a prescribed 1 DOF rotation for a secondary
+  rigid body connected to the spacecraft hub. This new module deprecates the ``prescribedRot1DOF`` fsw module.
+  To simulate the rotation, this module must be connected to the :ref:`prescribedMotionStateEffector` dynamics module.
+- Created a new example scenario :ref:`scenarioDeployingSolarArrays` demonstrating how to simulate hub-relative
+  multi-body prescribed motion.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------

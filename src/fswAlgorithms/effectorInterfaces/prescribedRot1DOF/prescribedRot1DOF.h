@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
-#include "cMsgCInterface/PrescribedMotionMsg_C.h"
+#include "cMsgCInterface/PrescribedRotationMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -31,9 +31,6 @@ typedef struct {
     /* User configurable variables */
     double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body
     double rotAxis_M[3];                                        //!< Rotation axis for the maneuver in M frame components
-    double r_FM_M[3];                                           //!< [m] Position of the F frame origin with respect to the M frame origin in M frame components (fixed)
-    double rPrime_FM_M[3];                                      //!< [m/s] B frame time derivative of r_FM_M in M frame components (fixed)
-    double rPrimePrime_FM_M[3];                                 //!< [m/s^2] B frame time derivative of rPrime_FM_M in M frame components (fixed)
     double omega_FM_F[3];                                       //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
     double omegaPrime_FM_F[3];                                  //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
     double sigma_FM[3];                                         //!< MRP attitude of frame F with respect to frame M
@@ -53,9 +50,9 @@ typedef struct {
     BSKLogger *bskLogger;                                       //!< BSK Logging
 
     /* Messages */
-    HingedRigidBodyMsg_C    spinningBodyInMsg;                  //!< Input msg for the spinning body reference angle and angle rate
-    HingedRigidBodyMsg_C    spinningBodyOutMsg;                 //!< Output msg for the spinning body angle and angle rate
-    PrescribedMotionMsg_C prescribedMotionOutMsg;               //!< Output msg for the spinning body prescribed states
+    HingedRigidBodyMsg_C spinningBodyInMsg;                     //!< Input msg for the spinning body reference angle and angle rate
+    HingedRigidBodyMsg_C spinningBodyOutMsg;                    //!< Output msg for the spinning body angle and angle rate
+    PrescribedRotationMsg_C prescribedRotationOutMsg;           //!< Output msg for the spinning body prescribed rotational states
 
 }PrescribedRot1DOFConfig;
 

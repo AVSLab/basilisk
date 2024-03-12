@@ -83,19 +83,26 @@ void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
 */
 void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
 {
-    // Write the prescribed motion output message if it is linked
-    if (this->prescribedMotionOutMsg.isLinked())
-    {
-        PrescribedMotionMsgPayload prescribedMotionBuffer = this->prescribedMotionOutMsg.zeroMsgPayload;
-        eigenVector3d2CArray(this->r_FM_M, prescribedMotionBuffer.r_FM_M);
-        eigenVector3d2CArray(this->rPrime_FM_M, prescribedMotionBuffer.rPrime_FM_M);
-        eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedMotionBuffer.rPrimePrime_FM_M);
-        eigenVector3d2CArray(this->omega_FM_F, prescribedMotionBuffer.omega_FM_F);
-        eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedMotionBuffer.omegaPrime_FM_F);
 
+    // Write the prescribed translational motion output message if it is linked
+    if (this->prescribedTranslationOutMsg.isLinked())
+    {
+        PrescribedTranslationMsgPayload prescribedTranslationBuffer = this->prescribedTranslationOutMsg.zeroMsgPayload;
+        eigenVector3d2CArray(this->r_FM_M, prescribedTranslationBuffer.r_FM_M);
+        eigenVector3d2CArray(this->rPrime_FM_M, prescribedTranslationBuffer.rPrime_FM_M);
+        eigenVector3d2CArray(this->rPrimePrime_FM_M, prescribedTranslationBuffer.rPrimePrime_FM_M);
+        this->prescribedTranslationOutMsg.write(&prescribedTranslationBuffer, this->moduleID, currentClock);
+    }
+
+    // Write the prescribed rotational motion output message if it is linked
+    if (this->prescribedRotationOutMsg.isLinked())
+    {
+        PrescribedRotationMsgPayload prescribedRotationBuffer = this->prescribedRotationOutMsg.zeroMsgPayload;
+        eigenVector3d2CArray(this->omega_FM_F, prescribedRotationBuffer.omega_FM_F);
+        eigenVector3d2CArray(this->omegaPrime_FM_F, prescribedRotationBuffer.omegaPrime_FM_F);
         Eigen::Vector3d sigma_FM_loc = eigenMRPd2Vector3d(this->sigma_FM);
-        eigenVector3d2CArray(sigma_FM_loc, prescribedMotionBuffer.sigma_FM);
-        this->prescribedMotionOutMsg.write(&prescribedMotionBuffer, this->moduleID, currentClock);
+        eigenVector3d2CArray(sigma_FM_loc, prescribedRotationBuffer.sigma_FM);
+        this->prescribedRotationOutMsg.write(&prescribedRotationBuffer, this->moduleID, currentClock);
     }
 
     // Write the config log message if it is linked
@@ -318,22 +325,30 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
     // Store the current simulation time
     this->currentSimTimeSec = currentSimNanos * NANO2SEC;
 
-    // Read the input message if it is linked and written
-    if (this->prescribedMotionInMsg.isLinked() && this->prescribedMotionInMsg.isWritten())
+    // Read the translational input message if it is linked and written
+    if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten())
     {
-        PrescribedMotionMsgPayload incomingPrescribedStates = this->prescribedMotionInMsg();
-        this->r_FM_M = cArray2EigenVector3d(incomingPrescribedStates.r_FM_M);
-        this->rPrime_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrime_FM_M);
-        this->rPrimePrime_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrimePrime_FM_M);
-        this->omega_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omega_FM_F);
-        this->omegaPrime_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omegaPrime_FM_F);
-        this->sigma_FM = cArray2EigenVector3d(incomingPrescribedStates.sigma_FM);
+        PrescribedTranslationMsgPayload incomingPrescribedTransStates = this->prescribedTranslationInMsg();
+        this->r_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.r_FM_M);
+        this->rPrime_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrime_FM_M);
+        this->rPrimePrime_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrimePrime_FM_M);
 
-        // Save off the prescribed states at each dynamics time step
-        this->rEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedStates.r_FM_M);
-        this->rPrimeEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedStates.rPrime_FM_M);
-        this->omegaEpoch_FM_F = cArray2EigenVector3d(incomingPrescribedStates.omega_FM_F);
-        Eigen::Vector3d sigma_FM_loc = cArray2EigenVector3d(incomingPrescribedStates.sigma_FM);
+        // Save off the prescribed translational states at each dynamics time step
+        this->rEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.r_FM_M);
+        this->rPrimeEpoch_FM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrime_FM_M);
+    }
+
+    // Read the rotational input message if it is linked and written
+    if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten())
+    {
+        PrescribedRotationMsgPayload incomingPrescribedRotStates = this->prescribedRotationInMsg();
+        this->omega_FM_F = cArray2EigenVector3d(incomingPrescribedRotStates.omega_FM_F);
+        this->omegaPrime_FM_F = cArray2EigenVector3d(incomingPrescribedRotStates.omegaPrime_FM_F);
+        this->sigma_FM = cArray2EigenVector3d(incomingPrescribedRotStates.sigma_FM);
+
+        // Save off the prescribed rotational states at each dynamics time step
+        this->omegaEpoch_FM_F = cArray2EigenVector3d(incomingPrescribedRotStates.omega_FM_F);
+        Eigen::Vector3d sigma_FM_loc = cArray2EigenVector3d(incomingPrescribedRotStates.sigma_FM);
         this->sigma_FMState->setState(sigma_FM_loc);
     }
 
