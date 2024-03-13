@@ -146,9 +146,9 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    dynTimeStep = 2.0  # [s]
-    fswTimeStep = 2.0  # [s]
-    dataRecStep = 2.0  # [s]
+    dynTimeStep = 0.01  # [s]
+    fswTimeStep = 0.1  # [s]
+    dataRecStep = 0.1  # [s]
     dynProcessRate = macros.sec2nano(dynTimeStep)  # [ns]
     fswProcessRate = macros.sec2nano(fswTimeStep)  # [ns]
     dataRecRate = macros.sec2nano(dataRecStep)  # [ns]
@@ -218,11 +218,12 @@ def run(show_plots):
                         [0.0, 0.0, I_element_33]]  # [kg m^2] (Elements approximated as rectangular prisms)
     
     # Deployment temporal information
-    ramp_duration = 2.0  # [s]
+    smoothing_duration = 2.0  # [s]
+    bang_duration = 2.0  # [s]
     init_deploy_duration = 5.0 * 60.0  # [s]
-    main_deploy_duration = 30.0 * 60.0  # [s]
-    init_coast_duration = init_deploy_duration - 2 * ramp_duration
-    main_coast_duration = main_deploy_duration - 2 * ramp_duration
+    main_deploy_duration = 20.0 * 60.0  # [s]
+    init_coast_duration = init_deploy_duration - 2 * bang_duration - 2 * smoothing_duration
+    main_coast_duration = main_deploy_duration - 2 * bang_duration - 2 * smoothing_duration
 
     # Rotation 1 initial parameters
     array1ThetaInit1 = 0.0 * macros.D2R  # [rad]
@@ -321,14 +322,21 @@ def run(show_plots):
             if j == 0:
                 thetaInit = array1ThetaInit1  # [rad]
                 thetaRef = array1ThetaInit2  # [rad]
-                thetaDDotMax = np.abs(thetaRef - thetaInit) / ((init_coast_duration * ramp_duration)
-                                                               + (ramp_duration * ramp_duration))
+                thetaDDotMax = np.abs(thetaRef - thetaInit) / ((smoothing_duration * smoothing_duration)
+                                                               + (bang_duration * bang_duration)
+                                                               + (3 * smoothing_duration * smoothing_duration)
+                                                               + ((smoothing_duration + bang_duration)
+                                                                  * init_coast_duration))  # [rad/s^2]
+
                 array1MaxRotAccelList1.append(thetaDDotMax)
             else:
                 thetaInit = array2ThetaInit1  # [rad]
                 thetaRef = array2ThetaInit1  # [rad]
-                thetaDDotMax = np.abs(thetaRef - thetaInit) / ((init_coast_duration * ramp_duration)
-                                                               + (ramp_duration * ramp_duration))
+                thetaDDotMax = np.abs(thetaRef - thetaInit) / ((smoothing_duration * smoothing_duration)
+                                                               + (bang_duration * bang_duration)
+                                                               + (3 * smoothing_duration * smoothing_duration)
+                                                               + ((smoothing_duration + bang_duration)
+                                                                  * init_coast_duration))  # [rad/s^2]
                 array2MaxRotAccelList1.append(thetaDDotMax)
 
     array1RotProfilerList = list()
@@ -338,8 +346,10 @@ def run(show_plots):
         array2RotProfilerList.append(prescribedRotation1DOF.PrescribedRotation1DOF())
         array1RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray1Element" + str(i + 1)
         array2RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray2Element" + str(i + 1)
-        array1RotProfilerList[i].setCoastOptionRampDuration(ramp_duration)  # [s]
-        array2RotProfilerList[i].setCoastOptionRampDuration(ramp_duration)  # [s]
+        array1RotProfilerList[i].setCoastOptionRampDuration(bang_duration)  # [s]
+        array2RotProfilerList[i].setCoastOptionRampDuration(bang_duration)  # [s]
+        array1RotProfilerList[i].setSmoothingDuration(smoothing_duration)  # [s]
+        array2RotProfilerList[i].setSmoothingDuration(smoothing_duration)  # [s]
         array1RotProfilerList[i].setRotHat_M(rot_hat_M)
         array2RotProfilerList[i].setRotHat_M(rot_hat_M)
         array1RotProfilerList[i].setThetaDDotMax(array1MaxRotAccelList1[i])  # [rad/s^2]
@@ -442,8 +452,11 @@ def run(show_plots):
     for i in range(num_elements):
         thetaInit = array1ThetaInit2  # [rad]
         thetaRef = (36 * i * macros.D2R) + array1ThetaInit2  # [rad]
-        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((main_coast_duration * ramp_duration)
-                                                       + (ramp_duration * ramp_duration))  # [rad/s^2]
+        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((smoothing_duration * smoothing_duration)
+                                                       + (bang_duration * bang_duration)
+                                                       + (3 * smoothing_duration * smoothing_duration)
+                                                       + ((smoothing_duration + bang_duration)
+                                                          * main_coast_duration))  # [rad/s^2]
         array1MaxRotAccelList2.append(thetaDDotMax)
 
     # Update the array 1 stand-alone element translational state messages
@@ -479,8 +492,11 @@ def run(show_plots):
     for i in range(num_elements):
         thetaInit = array2ThetaInit1  # [rad]
         thetaRef = array2ThetaInit2  # [rad]
-        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((init_coast_duration * ramp_duration)
-                                                       + (ramp_duration * ramp_duration))  # [rad/s^2]
+        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((smoothing_duration * smoothing_duration)
+                                                       + (bang_duration * bang_duration)
+                                                       + (3 * smoothing_duration * smoothing_duration)
+                                                       + ((smoothing_duration + bang_duration)
+                                                          * init_coast_duration))  # [rad/s^2]
         array2MaxRotAccelList2.append(thetaDDotMax)
 
     array2ElementRefMsgList2 = list()
@@ -503,8 +519,11 @@ def run(show_plots):
     for i in range(num_elements):
         thetaInit = array2ThetaInit2  # [rad]
         thetaRef = (36 * i * macros.D2R) + array2ThetaInit2  # [rad]
-        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((main_coast_duration * ramp_duration)
-                                                       + (ramp_duration * ramp_duration))  # [rad/s^2]
+        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((smoothing_duration * smoothing_duration)
+                                                       + (bang_duration * bang_duration)
+                                                       + (3 * smoothing_duration * smoothing_duration)
+                                                       + ((smoothing_duration + bang_duration)
+                                                          * main_coast_duration))  # [rad/s^2]
         array2MaxRotAccelList3.append(thetaDDotMax)
 
     # Update the array 2 stand-alone element translational state messages
