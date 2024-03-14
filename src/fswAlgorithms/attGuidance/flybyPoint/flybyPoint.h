@@ -40,6 +40,7 @@ typedef enum singularityFlag{
     plusInfinity  =  1
 } SingularityFlag;
 
+#include <Eigen/Dense>
 
 /*! @brief A class to perform flyby pointing */
 class FlybyPoint: public SysModel {
