@@ -27,19 +27,6 @@
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
-
-
-typedef enum flybyModel{
-    rectilinear = 0,
-    cwEquations = 1
-} FlybyModel;
-
-typedef enum singularityFlag{
-    minusInfinity = -1,
-    nonSingular   =  0,
-    plusInfinity  =  1
-} SingularityFlag;
-
 #include <Eigen/Dense>
 
 /*! @brief A class to perform flyby pointing */
@@ -67,7 +54,6 @@ private:
     double     timeBetweenFilterData = 0;       //!< time between two subsequent reads of the filter information
     double     toleranceForCollinearity = 0;            //!< tolerance for singular conditions when position and velocity are collinear
     int64_t    signOfOrbitNormalFrameVector = 1;  //!< Sign of orbit normal vector to complete reference frame
-    FlybyModel chosenFlybyModel = rectilinear;              //!< enum to indicate which flyby model is being used
 
     bool            firstRead;           //!< variable to attest if this is the first read after a Reset
     double          f0;                  //!< ratio between relative velocity and position norms at time of read [Hz]
@@ -75,7 +61,6 @@ private:
     Eigen::Matrix3d R0N;           //!< inertial-to-reference DCM at time of read
     Eigen::Vector3d r_BN_N;           //!< filter spacecraft position estimate in inertial coordinates
     Eigen::Vector3d v_BN_N;           //!< filter spacecraft velocity estimate in inertial coordinates
-    SingularityFlag singularityFlag;     //!< +1 or -1 during singular configurations, 0 otherwise
     uint64_t        lastFilterReadTime;  //!< time of last filter read
 
 
