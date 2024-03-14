@@ -110,8 +110,9 @@ def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, signOr
     # setup flybyPoint guidance module
     flybyGuid = flybyPoint.FlybyPoint()
     flybyGuid.ModelTag = "flybyPoint"
-    flybyGuid.dtFilterData = dTfilter
-    flybyGuid.signOfOrbitNormalFrameVector = signOrbitNormal
+    flybyGuid.setTimeBetweenFilterData(dTfilter)
+    flybyGuid.setToleranceForCollinearity(1E-5)
+    flybyGuid.setSignOfOrbitNormalFrameVector(signOrbitNormal)
     unitTestSim.AddModelToTask(unitTaskName, flybyGuid)
 
     inputData = messaging.NavTransMsgPayload()
