@@ -32,7 +32,6 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import sunSafePointCpp
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
@@ -55,15 +54,9 @@ from Basilisk.utilities import macros as mc
     ,(7)        # sun is visible, vectors not aligned, nominal spin rate specified about sun heading vector
 ])
 
-def test_module(show_plots, case):
+def test_SunSafePointTestFunction(show_plots, case):
     """Module Unit Test"""
-    # Each test method requires a single assert method to be called
-    [testResults, testMessage] = sunSafePointTestFunction(show_plots, case)
-    assert testResults < 1, testMessage
 
-def sunSafePointTestFunction(show_plots, case):
-    testFailCount = 0
-    testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -171,15 +164,10 @@ def sunSafePointTestFunction(show_plots, case):
 
     # Compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-
-    for i in range(0,len(trueVector)):
-        # Check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.sigma_BR[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test at t=" +
-                                str(dataLog.times()[i] * mc.NANO2SEC) +
-                                "sec\n")
+    np.testing.assert_allclose(trueVector,
+                               dataLog.sigma_BR,
+                               atol=accuracy,
+                               verbose=True)
 
     # Check omega_BR_B
     # Set the filtered output truth states
@@ -196,13 +184,10 @@ def sunSafePointTestFunction(show_plots, case):
             (omega_BN_B - omega_RN_B_Search).tolist()
         ]
     # Compare the module results to the truth values
-    for i in range(0,len(trueVector)):
-        if not unitTestSupport.isArrayEqual(dataLog.omega_BR_B[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test at t=" +
-                                str(dataLog.times()[i] * mc.NANO2SEC) +
-                                "sec\n")
-
+    np.testing.assert_allclose(trueVector,
+                               dataLog.omega_BR_B,
+                               atol=accuracy,
+                               verbose=True)
 
     # Check omega_RN_B
     # Set the filtered output truth states
@@ -219,12 +204,10 @@ def sunSafePointTestFunction(show_plots, case):
             omega_RN_B_Search
         ]
     # Compare the module results to the truth values
-    for i in range(0,len(trueVector)):
-        if not unitTestSupport.isArrayEqual(dataLog.omega_RN_B[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_B unit test at t=" +
-                                str(dataLog.times()[i] * mc.NANO2SEC) +
-                                "sec\n")
+    np.testing.assert_allclose(trueVector,
+                               dataLog.omega_RN_B,
+                               atol=accuracy,
+                               verbose=True)
 
     # Check domega_RN_B
     # Set the filtered output truth states
@@ -235,32 +218,14 @@ def sunSafePointTestFunction(show_plots, case):
                ]
 
     # Compare the module results to the truth values
-    for i in range(0,len(trueVector)):
-        if not unitTestSupport.isArrayEqual(dataLog.domega_RN_B[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_B unit test at t=" +
-                                str(dataLog.times()[i] * mc.NANO2SEC) +
-                                "sec\n")
-
-    # Print out success message if no error were found
-    snippentName = "passFail" + str(case)
-    if testFailCount == 0:
-        colorText = 'ForestGreen'
-        print("PASSED: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    else:
-        colorText = 'Red'
-        print("FAILED: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-        print(testMessages)
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
-    return [testFailCount, ''.join(testMessages)]
-
+    np.testing.assert_allclose(trueVector,
+                               dataLog.domega_RN_B,
+                               atol=accuracy,
+                               verbose=True)
 
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    sunSafePointTestFunction(False, 1)
+    test_SunSafePointTestFunction(False, 1)
