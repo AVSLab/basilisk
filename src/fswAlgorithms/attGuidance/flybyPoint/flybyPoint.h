@@ -50,6 +50,13 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
+    double getTimeBetweenFilterData() const;
+    void setTimeBetweenFilterData(double timeBetweenFilterData);
+    double getToleranceForCollinearity() const;
+    void setToleranceForCollinearity(double toleranceForCollinearity);
+    int64_t getSignOfOrbitNormalFrameVector() const;
+    void setSignOfOrbitNormalFrameVector(int64_t signOfOrbitNormalFrameVector);
+
     ReadFunctor<NavTransMsgPayload>  filterInMsg;               //!< input msg relative position w.r.t. asteroid
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;    //!< input asteroid ephemeris msg
     Message<AttRefMsgPayload> attRefOutMsg;                     //!< Attitude reference output message
