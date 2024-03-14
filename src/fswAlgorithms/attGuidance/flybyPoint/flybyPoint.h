@@ -34,9 +34,9 @@ class FlybyPoint: public SysModel {
 public:
     FlybyPoint();
     ~FlybyPoint();
-    void SelfInit();
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void SelfInit() override;
+    void Reset(uint64_t CurrentSimNanos) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
 
     double getTimeBetweenFilterData() const;
     void setTimeBetweenFilterData(double timeBetweenFilterData);
