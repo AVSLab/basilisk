@@ -34,10 +34,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-@pytest.mark.parametrize("thrusterType", [
-    "dynamicEffector", "stateEffector"
-])
-def test_massDepletionTest(show_plots, thrusterType):
+@pytest.mark.parametrize("thrusterConstructor", [thrusterDynamicEffector.ThrusterDynamicEffector,
+                                                thrusterStateEffector.ThrusterStateEffector])
+def test_massDepletionTest(show_plots, thrusterConstructor):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -67,16 +66,8 @@ def test_massDepletionTest(show_plots, thrusterType):
     )
 
     # create thruster object container and tie to spacecraft object
-    if thrusterType == "dynamicEffector":
-        thrustersEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
-    elif thrusterType == "stateEffector":
-        thrustersEffector = thrusterStateEffector.ThrusterStateEffector()
-    else:
-        print("Invalid thruster type.")
-        return
-    thFactory.addToSpacecraft("Thrusters",
-                              thrustersEffector,
-                              scObject)
+    thrustersEffector = thrusterConstructor()
+    thFactory.addToSpacecraft("Thrusters", thrustersEffector, scObject)
 
     unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
     tankModel = fuelTank.FuelTankModelConstantVolume()
@@ -184,10 +175,10 @@ def test_massDepletionTest(show_plots, thrusterType):
     dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
     dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
-    if thrusterType == "dynamicEffector":
+    if thrustersEffector.__class__.__name__ == "ThrusterDynamicEffector":
         truePos = [[-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]]
         trueSigma = [[1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]]
-    elif thrusterType == "stateEffector":
+    elif thrustersEffector.__class__.__name__ == "ThrusterStateEffector":
         truePos = [[-6781593.400948599, 4946868.619447934, 5486741.690842073]]
         trueSigma = [[0.14367298348925786, -0.06487574480164254, 0.3032693696902734]]
 
@@ -200,7 +191,4 @@ def test_massDepletionTest(show_plots, thrusterType):
 
 
 if __name__ == "__main__":
-    test_massDepletionTest(
-        True,  # show_plots
-        "stateEffector"  # thrusterType
-    )
+    test_massDepletionTest(True, thrusterDynamicEffector.ThrusterDynamicEffector)
