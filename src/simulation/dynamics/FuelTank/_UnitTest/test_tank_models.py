@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -17,19 +16,13 @@
 
 
 import inspect
-import numpy as np
 import os
 
+import numpy as np
 from Basilisk.simulation import fuelTank
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
 
 
 def test_tankModelConstantVolume(show_plots=False):
@@ -41,35 +34,35 @@ def test_tankModelConstantVolume(show_plots=False):
 
     model = fuelTank.FuelTankModelConstantVolume()
     model.propMassInit = 10
-    model.r_TcT_TInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1], [1], [1]]
     model.radiusTankInit = 5
 
-    trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_T =      [
-                                [0,0,0,0,0,0,0,0,0],
-                                [100,0,0,0,100,0,0,0,100],
-                                [50,0,0,0,50,0,0,0,50]
-                            ]
+    trials = [(0, 0), (10, -1), (5, -1)]  # mFuel, mDotFuel
+    true_ITankPntT_T = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [100, 0, 0, 0, 100, 0, 0, 0, 100],
+        [50, 0, 0, 0, 50, 0, 0, 0, 50]
+    ]
     true_IPrimeTankPntT_T = [
-                                [0,0,0,0,0,0,0,0,0],
-                                [-10,0,0,0,-10,0,0,0,-10],
-                                [-10,0,0,0,-10,0,0,0,-10]
-                            ]
-    true_r_TcT_T =           [
-                                [1,1,1],
-                                [1,1,1],
-                                [1,1,1]
-                            ]
-    true_rPrime_TcT_T =      [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    true_rPPrime_TcT_T =     [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [-10, 0, 0, 0, -10, 0, 0, 0, -10],
+        [-10, 0, 0, 0, -10, 0, 0, 0, -10]
+    ]
+    true_r_TcT_T = [
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1]
+    ]
+    true_rPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+    true_rPPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
 
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
@@ -110,44 +103,42 @@ def test_tankModelConstantVolume(show_plots=False):
                                    rtol=accuracy,
                                    err_msg="Constant volume tank tank center mass position second derivative not equal")
 
+
 def test_tankModelConstantDensity(show_plots=False):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelConstantDensity()
-    model.propMassInit = 10;
-    model.r_TcT_TInit = [[1],[1],[1]]
+    model.propMassInit = 10
+    model.r_TcT_TInit = [[1], [1], [1]]
     model.radiusTankInit = 5
-    
-    trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_T =      [
-                                [0,0,0,0,0,0,0,0,0],
-                                [100,0,0,0,100,0,0,0,100],
-                                [31.498026247371826,0,0,0,31.498026247371826,0,0,0,31.498026247371826]
-                            ]
+
+    trials = [(0, 0), (10, -1), (5, -1)]  # mFuel, mDotFuel
+    true_ITankPntT_T = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [100, 0, 0, 0, 100, 0, 0, 0, 100],
+        [31.498026247371826, 0, 0, 0, 31.498026247371826, 0, 0, 0, 31.498026247371826]
+    ]
     true_IPrimeTankPntT_T = [
-                                [0,0,0,0,0,0,0,0,0],
-                                [-16.666666666666668,0,0,0,-16.666666666666668,0,0,0,-16.666666666666668],
-                                [-10.499342082457275,0,0,0,-10.499342082457275,0,0,0,-10.499342082457275]
-                            ]
-    true_r_TcT_T =           [
-                                [1,1,1],
-                                [1,1,1],
-                                [1,1,1]
-                            ]
-    true_rPrime_TcT_T =      [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    true_rPPrime_TcT_T =     [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [-16.666666666666668, 0, 0, 0, -16.666666666666668, 0, 0, 0, -16.666666666666668],
+        [-10.499342082457275, 0, 0, 0, -10.499342082457275, 0, 0, 0, -10.499342082457275]
+    ]
+    true_r_TcT_T = [
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1]
+    ]
+    true_rPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+    true_rPPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(trial[0])
@@ -189,43 +180,40 @@ def test_tankModelConstantDensity(show_plots=False):
 
 
 def test_tankModelEmptying(show_plots=False):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelEmptying()
     model.propMassInit = 10
-    model.r_TcT_TInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1], [1], [1]]
     model.radiusTankInit = 5
-    
-    trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_T =      [
-                                [0,0,0,0,0,0,0,0,0],
-                                [100,0,0,0,100,0,0,0,100],
-                                [50.0,0,0,0,50.0,0,0,0,50]
-                            ]
+
+    trials = [(0, 0), (10, -1), (5, -1)]  # mFuel, mDotFuel
+    true_ITankPntT_T = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [100, 0, 0, 0, 100, 0, 0, 0, 100],
+        [50.0, 0, 0, 0, 50.0, 0, 0, 0, 50]
+    ]
     true_IPrimeTankPntT_T = [
-                                [0,0,0,0,0,0,0,0,0],
-                                [0,0,0,0,0,0,0,0,0],
-                                [-8.75,0,0,0,-8.75,0,0,0,-12.5]
-                            ]
-    true_r_TcT_T =           [
-                                [1,1,1-5.0],
-                                [1,1,1],
-                                [1,1,1.0-15.0/8.0]
-                            ]
-    true_rPrime_TcT_T =      [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,-3.0/8.0]
-                            ]
-    true_rPPrime_TcT_T =     [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,-17.0/30.0]
-                            ]
-    
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [-8.75, 0, 0, 0, -8.75, 0, 0, 0, -12.5]
+    ]
+    true_r_TcT_T = [
+        [1, 1, 1 - 5.0],
+        [1, 1, 1],
+        [1, 1, 1.0 - 15.0 / 8.0]
+    ]
+    true_rPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, -3.0 / 8.0]
+    ]
+    true_rPPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, -17.0 / 30.0]
+    ]
+
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(trial[0])
@@ -265,45 +253,43 @@ def test_tankModelEmptying(show_plots=False):
                                    rtol=accuracy,
                                    err_msg="Emptying tank center of mass position second derivative not equal")
 
+
 def test_tankModelUniformBurn(show_plots=False):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelUniformBurn()
     model.propMassInit = 10
-    model.r_TcT_TInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1], [1], [1]]
     model.radiusTankInit = 5
     model.lengthTank = 5;
-    
-    trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_T =      [
-                                [0,0,0,0,0,0,0,0,0],
-                                [83.33333333333334,0,0,0,83.33333333333334,0,0,0,125],
-                                [41.66666666666667,0,0,0,41.66666666666667,0,0,0,62.5]
-                            ]
+
+    trials = [(0, 0), (10, -1), (5, -1)]  # mFuel, mDotFuel
+    true_ITankPntT_T = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [83.33333333333334, 0, 0, 0, 83.33333333333334, 0, 0, 0, 125],
+        [41.66666666666667, 0, 0, 0, 41.66666666666667, 0, 0, 0, 62.5]
+    ]
     true_IPrimeTankPntT_T = [
-                                [0,0,0,0,0,0,0,0,0],
-                                [-8.3333333333334,0,0,0,-8.3333333333334,0,0,0,-12.5],
-                                [-8.3333333333334,0,0,0,-8.3333333333334,0,0,0,-12.5]
-                            ]
-    true_r_TcT_T =           [
-                                [1,1,1],
-                                [1,1,1],
-                                [1,1,1]
-                            ]
-    true_rPrime_TcT_T =      [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    true_rPPrime_TcT_T =     [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [-8.3333333333334, 0, 0, 0, -8.3333333333334, 0, 0, 0, -12.5],
+        [-8.3333333333334, 0, 0, 0, -8.3333333333334, 0, 0, 0, -12.5]
+    ]
+    true_r_TcT_T = [
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1]
+    ]
+    true_rPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+    true_rPPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(trial[0])
@@ -329,7 +315,6 @@ def test_tankModelUniformBurn(show_plots=False):
                                    rtol=accuracy,
                                    err_msg="Tank uniform burn center of mass position not equal")
 
-
         dataRPrime = model.rPrime_TcT_T
         dataRPrime = [dataRPrime[i][0] for i in range(3)]
         np.testing.assert_allclose(dataRPrime,
@@ -346,44 +331,41 @@ def test_tankModelUniformBurn(show_plots=False):
 
 
 def test_tankModelCentrifugalBurn(show_plots=False):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
     model = fuelTank.FuelTankModelCentrifugalBurn()
     model.propMassInit = 10
-    model.r_TcT_TInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1], [1], [1]]
     model.radiusTankInit = 5
     model.lengthTank = 5
-    
-    trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_T =      [
-                                [0,0,0,0,0,0,0,0,0],
-                                [83.33333333333334,0,0,0,83.33333333333334,0,0,0,125],
-                                [57.291666666666671,0,0,0,57.291666666666671,0,0,0,93.75]
-                            ]
+
+    trials = [(0, 0), (10, -1), (5, -1)]  # mFuel, mDotFuel
+    true_ITankPntT_T = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [83.33333333333334, 0, 0, 0, 83.33333333333334, 0, 0, 0, 125],
+        [57.291666666666671, 0, 0, 0, 57.291666666666671, 0, 0, 0, 93.75]
+    ]
     true_IPrimeTankPntT_T = [
-                                [0,0,0,0,0,0,0,0,0],
-                                [-2.0833333333333335,0,0,0,-2.0833333333333335,0,0,0,0.0],
-                                [-8.3333333333333339,0,0,0,-8.3333333333333339,0,0,0,-12.500000000000002]
-                            ]
-    true_r_TcT_T =           [
-                                [1,1,1],
-                                [1,1,1],
-                                [1,1,1]
-                            ]
-    true_rPrime_TcT_T =      [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    true_rPPrime_TcT_T =     [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [-2.0833333333333335, 0, 0, 0, -2.0833333333333335, 0, 0, 0, 0.0],
+        [-8.3333333333333339, 0, 0, 0, -8.3333333333333339, 0, 0, 0, -12.500000000000002]
+    ]
+    true_r_TcT_T = [
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1]
+    ]
+    true_rPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+    true_rPPrime_TcT_T = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(trial[0])
