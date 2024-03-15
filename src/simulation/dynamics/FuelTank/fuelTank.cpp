@@ -48,7 +48,7 @@ FuelTank::~FuelTank() {
  @param model fuel tank model type
  */
 void FuelTank::setTankModel(FuelTankModel *model) {
-    fuelTankModel = model;
+    this->fuelTankModel = model;
 }
 
 /*! Attach a fuel slosh particle to the tank */
@@ -141,17 +141,17 @@ void FuelTank::updateContributions(double integTime,
     backSubContr.vecTrans = backSubContr.vecRot = Eigen::Vector3d::Zero();
 
     // Calculate the fuel consumption properties for the tank
-    tankFuelConsumption = fuelConsumption * massState->getState()(0, 0) / effProps.mEff;
-    fuelTankModel->computeTankPropDerivs(massState->getState()(0, 0), -tankFuelConsumption);
-    r_TB_BLocal = fuelTankModel->r_TcT_T;
-    rPrime_TB_BLocal = fuelTankModel->rPrime_TcT_T;
-    rPPrime_TB_BLocal = fuelTankModel->rPPrime_TcT_T;
-    omega_BN_BLocal = omegaState->getState();
+    this->tankFuelConsumption = this->fuelConsumption * this->massState->getState()(0, 0) / this->effProps.mEff;
+    this->fuelTankModel->computeTankPropDerivs(this->massState->getState()(0, 0), -this->tankFuelConsumption);
+    r_TB_BLocal = this->fuelTankModel->r_TcT_T;
+    rPrime_TB_BLocal = this->fuelTankModel->rPrime_TcT_T;
+    rPPrime_TB_BLocal = this->fuelTankModel->rPPrime_TcT_T;
+    omega_BN_BLocal = this->omegaState->getState();
     if (!this->updateOnly) {
-        backSubContr.vecRot = -massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
-                              - massState->getState()(0, 0) * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
-                              - massState->getStateDeriv()(0, 0) * r_TB_BLocal.cross(rPrime_TB_BLocal);
-        backSubContr.vecRot -= fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
+        backSubContr.vecRot = -this->massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
+                              - this->massState->getState()(0, 0) * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
+                              - this->massState->getStateDeriv()(0, 0) * r_TB_BLocal.cross(rPrime_TB_BLocal);
+        backSubContr.vecRot -= this->fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
     }
 
 }
@@ -173,16 +173,16 @@ void FuelTank::updateEnergyMomContributions(double integTime,
                                             Eigen::Vector3d omega_BN_B) {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = omegaState->getState();
+    omegaLocal_BN_B = this->omegaState->getState();
     Eigen::Vector3d rDot_TcB_B;
 
     // - Find rotational angular momentum contribution from hub
     double massLocal = this->massState->getState()(0, 0);
-    rDot_TcB_B = omegaLocal_BN_B.cross(r_TcB_B);
-    rotAngMomPntCContr_B += ITankPntT_B * omegaLocal_BN_B + massLocal * r_TcB_B.cross(rDot_TcB_B);
+    rDot_TcB_B = omegaLocal_BN_B.cross(this->r_TcB_B);
+    rotAngMomPntCContr_B += this->ITankPntT_B * omegaLocal_BN_B + massLocal * this->r_TcB_B.cross(rDot_TcB_B);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr += 1.0 / 2.0 * omegaLocal_BN_B.dot(ITankPntT_B * omegaLocal_BN_B) + 1.0 / 2.0 * massLocal *
+    rotEnergyContr += 1.0 / 2.0 * omegaLocal_BN_B.dot(this->ITankPntT_B * omegaLocal_BN_B) + 1.0 / 2.0 * massLocal *
                                                                                        rDot_TcB_B.dot(rDot_TcB_B);
 }
 
@@ -203,5 +203,5 @@ void FuelTank::writeOutputMessages(uint64_t currentClock) {
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void FuelTank::UpdateState(uint64_t currentSimNanos) {
-    writeOutputMessages(currentSimNanos);
+    this->writeOutputMessages(currentSimNanos);
 }
