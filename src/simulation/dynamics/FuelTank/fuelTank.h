@@ -270,15 +270,15 @@ private:
 public:
 	FuelTank();
 	~FuelTank();
-    void WriteOutputMessages(uint64_t CurrentClock);
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void writeOutputMessages(uint64_t currentClock);
+    void UpdateState(uint64_t currentSimNanos) override;
     void setTankModel(FuelTankModel* model);
 	void pushFuelSloshParticle(FuelSlosh *particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states) override;  //!< -- Method to register mass state with state manager
 	void linkInStates(DynParamManager& states) override;  //!< -- Method to give the tank access to other states
 	void updateEffectorMassProps(double integTime) override;  //!< -- Method to add contribution mass props from the tank
-    void addThrusterSet(DynamicEffector *NewdynEff) {dynEffectors.push_back(NewdynEff);}  //!< -- Method to add dynamic thruster
-	void addThrusterSet(StateEffector* NewstateEff) {stateEffectors.push_back(NewstateEff);}  //!< -- Method to add state thruster
+    void addThrusterSet(DynamicEffector* dynEff) {dynEffectors.push_back(dynEff);}  //!< -- Method to add dynamic thruster
+	void addThrusterSet(StateEffector* stateEff) {stateEffectors.push_back(stateEff);}  //!< -- Method to add state thruster
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< -- Energy and momentum calculations
