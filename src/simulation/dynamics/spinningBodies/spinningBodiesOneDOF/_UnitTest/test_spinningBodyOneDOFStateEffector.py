@@ -296,5 +296,141 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     return [testFailCount, ''.join(testMessages)]
 
 
+@pytest.mark.parametrize(
+    "max_lim, min_lim", [(-70, 70), (-10, -20)]  # cases: max less than min, start angle inside bounds
+)
+def test_spinning_body_enforces_limits(max_lim, min_lim):
+    """Verify that model raises exception when invalid limits are specified.
+    
+    :param float max_lim: Maximum angle limit [deg]
+    :param float min_lim: Minimum angle limit [deg]
+    """
+    spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+    spinningBody.sHat_S = [0, -1, 0]
+    spinningBody.theta_max = np.deg2rad(max_lim)
+    spinningBody.theta_min = np.deg2rad(min_lim)
+
+    with pytest.raises(ValueError):
+        spinningBody.Reset(0)
+
+
+@pytest.mark.parametrize(
+    "max_lim, min_lim",
+    [(70, -70), (20, -10), (0, -20)],  # cases: symmetric range, asymmetric range, range including start position
+)
+def test_spinning_body_limits(show_plots, max_lim, min_lim):
+    """Verify that model stops motion at limits.
+    
+    :param bool show_plots: Display plots if True
+    :param float max_lim: Maximum angle limit [deg]
+    :param float min_lim: Minimum angle limit [deg]
+    """
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Create the spacecraft module
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+
+    # Define mass properties of the rigid hub of the spacecraft
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [0.0, 0.0, 0.0]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    # Create a spinning body
+    spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+    spinningBody.mass = 50.0
+    spinningBody.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    spinningBody.dcm_S0B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody.r_ScS_S = [[1.0], [0.0], [-1.0]]
+    spinningBody.r_SB_B = [[0.5], [-1.5], [-0.5]]
+    spinningBody.sHat_S = [[0], [-1], [0]]
+    spinningBody.theta_max = np.deg2rad(max_lim)
+    spinningBody.theta_min = np.deg2rad(min_lim)
+    spinningBody.ModelTag = "SpinningBody"
+    unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+    scObject.addStateEffector(spinningBody)
+
+    # Create the torque message
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [1] + [0] * 5  # [Nm]
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
+
+    # Initialize the simulation
+    unitTestSim.InitializeSimulation()
+
+    # Setup logging
+    spinning_body_log = spinningBody.spinningBodyOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, spinning_body_log)
+    sc_log = scObject.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, sc_log)
+    torque_log = cmdMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, torque_log)
+
+    # Setup and run the simulation
+    stopTime = 200 * testProcessRate
+    unitTestSim.ConfigureStopTime(stopTime)
+    unitTestSim.ExecuteSimulation()
+
+    # run with opposite torque
+    cmdArray.motorTorque = [-1] + [0] * 5  # [Nm]
+    cmdMsg = cmdMsg.write(cmdArray)
+    scObject.hub.omega_BN_BInit = [0.0, 0.0, 0.0]
+
+    unitTestSim.ConfigureStopTime(3 * stopTime)  # run twice as long to ensure body reaches opposite side
+    unitTestSim.ExecuteSimulation()
+
+    # Extract the logged variables
+    time_sec = np.array(sc_log.times()) * macros.NANO2SEC
+    theta = spinning_body_log.theta
+    torque = torque_log.motorTorque[:, 0]
+    thetaDot = spinning_body_log.thetaDot
+    omega = sc_log.omega_BN_B
+
+    fig = plt.figure()
+
+    ax = fig.subplots(ncols=1, nrows=4, height_ratios=[2, 2, 1, 1])
+    ax[0].plot(time_sec, np.rad2deg(theta))
+    ax[0].axhline(y=max_lim, color="r")
+    ax[0].axhline(y=min_lim, color="r", label="Limit")
+    ax[0].set_ylabel("Theta [deg]")
+
+    ax[1].plot(time_sec, np.rad2deg(thetaDot), label="Rate")
+    ax[1].set_ylabel("Rate [deg/s]")
+
+    ax[2].plot(time_sec, torque, label="Torque")
+    ax[2].set_ylabel("Torque [N]")
+
+    ax[3].plot(time_sec, np.rad2deg(omega), label="omega_BN_B")
+    ax[3].plot(time_sec, np.rad2deg(np.linalg.norm(omega, axis=1)), linestyle="dashed", label="Norm")
+    ax[3].set_xlabel("Time [s]")
+    ax[3].set_ylabel("omega_BN_B [deg/s]")
+    for axis in ax:
+        axis.grid()
+    plt.suptitle("Spinning Body Response w/Limits")
+
+    if show_plots:
+        plt.show()
+    plt.close("all")
+
+    # ensure that body never exceeded limits
+    assert np.all(theta <= np.deg2rad(max_lim))
+    assert np.all(theta >= np.deg2rad(min_lim))
+
+    # but also ensure that body reached the intended limits
+    assert np.any(np.abs(theta - np.deg2rad(max_lim)) < 1e-4)
+    assert np.any(np.abs(theta - np.deg2rad(min_lim)) < 1e-4)
+
+
 if __name__ == "__main__":
     spinningBody(True, 0.0, False, 0.0 * macros.D2R)
