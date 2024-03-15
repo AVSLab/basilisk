@@ -40,8 +40,7 @@
 
 
 
-//Fuel tank models
-/*! fuel tank model structure */
+/*! Tank model class */
 class FuelTankModel {
 public:
 	double propMassInit;                               //!< [kg] Initial propellant mass in tank
@@ -61,7 +60,7 @@ public:
     virtual ~FuelTankModel() = default;
 };
 
-/*! fuel tank constant volume structure */
+/*! Tank constant volume class */
 class FuelTankModelConstantVolume : public FuelTankModel
 {
 public:
@@ -82,7 +81,7 @@ public:
 	}
 };
 
-/*! fuel tank constant density structure */
+/*! Tank constant density class */
 class FuelTankModelConstantDensity : public FuelTankModel
 {
 public:
@@ -105,7 +104,7 @@ public:
 	}
 };
 
-/*! fuel tank model emptying structure */
+/*! Tank model emptying class */
 class FuelTankModelEmptying : public FuelTankModel
 {
 public:
@@ -191,7 +190,7 @@ public:
 	}
 };
 
-/*! @brief fuel tank model structure for a uniform burn */
+/*! Tank model class for a uniform burn */
 class FuelTankModelUniformBurn : public FuelTankModel
 {
 public:
@@ -216,7 +215,7 @@ public:
 	}
 };
 
-/*! @brief fuel tank model structure for a centrifugal burn */
+/*! Tank model class for a centrifugal burn */
 class FuelTankModelCentrifugalBurn : public FuelTankModel
 {
 public:
@@ -244,7 +243,7 @@ public:
 	}
 };
 
-/*! @brief fuel tank model class */
+/*! Fuel tank effector model class */
 class FuelTank :
 	public StateEffector, public SysModel
 {
@@ -268,11 +267,11 @@ private:
 	FuelTankModel* fuelTankModel;					   //!< -- style of tank to simulate
 	Eigen::Matrix3d ITankPntT_B;
 	Eigen::Vector3d r_TcB_B;
-    static uint64_t effectorID;                           //!< [] ID number of this panel
+    static uint64_t effectorID;                        //!< [] ID number of this fuel tank effector
 
 public:
-	FuelTank();                                        //!< -- Contructor
-	~FuelTank();                                       //!< -- Destructor
+	FuelTank();
+	~FuelTank();
     void WriteOutputMessages(uint64_t CurrentClock);
     void UpdateState(uint64_t CurrentSimNanos) override;
     void setTankModel(FuelTankModel* model);
