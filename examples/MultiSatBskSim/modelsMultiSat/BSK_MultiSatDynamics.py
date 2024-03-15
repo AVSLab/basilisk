@@ -175,8 +175,8 @@ class BSKDynamicModels:
         Defines the fuel tank for the thrusters.
         """
         # Define the tank
-        self.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_UNIFORM_BURN)
-        self.tankModel = fuelTank.cvar.FuelTankModelUniformBurn
+        self.tankModel = fuelTank.FuelTankModelUniformBurn()
+        self.fuelTankStateEffector.setTankModel(self.tankModel)
         self.tankModel.propMassInit = 50.0
         self.tankModel.maxFuelMass = 75.0
         self.tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]

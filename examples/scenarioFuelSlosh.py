@@ -256,11 +256,11 @@ def run(show_plots, damping_parameter, timeStep):
 
     # define the fuel tank
     scSim.tank1 = fuelTank.FuelTank()
-    scSim.tank1.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
-    tankModel = fuelTank.cvar.FuelTankModelConstantVolume
+    tankModel = fuelTank.FuelTankModelConstantVolume()
     tankModel.propMassInit = 400.0  # kg
     tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]  # m
     tankModel.radiusTankInit = 0.5  # m
+    scSim.tank1.setTankModel(tankModel)
     scSim.tank1.r_TB_B = [[0], [0], [0.1]]  # m
     scSim.tank1.nameOfMassState = "fuelTankMass1"
     scSim.tank1.pushFuelSloshParticle(scSim.particle1)
