@@ -70,12 +70,12 @@ public:
     FuelTankModelConstantVolume() = default;
     ~FuelTankModelConstantVolume() override = default;
 
-	void computeTankProps(double mFuel) {
+	void computeTankProps(double mFuel) override {
 		r_TcT_T = r_TcT_TInit;
 		ITankPntT_T = 2.0 / 5.0 * mFuel*radiusTankInit*radiusTankInit*Eigen::Matrix3d::Identity();
 	}
 
-	void computeTankPropDerivs(double mFuel, double mDotFuel) {
+	void computeTankPropDerivs(double mFuel, double mDotFuel) override {
 		IPrimeTankPntT_T = 2.0 / 5.0 * mDotFuel*radiusTankInit*radiusTankInit*Eigen::Matrix3d::Identity();
 		rPrime_TcT_T.setZero();
 		rPPrime_TcT_T.setZero();
@@ -92,13 +92,13 @@ public:
     FuelTankModelConstantDensity() = default;
     ~FuelTankModelConstantDensity() override = default;
 
-	void computeTankProps(double mFuel) {
+	void computeTankProps(double mFuel) override {
 		radiusTank = std::pow(mFuel / propMassInit, 1.0 / 3.0)*radiusTankInit;
 		r_TcT_T = r_TcT_TInit;
 		ITankPntT_T = 2.0 / 5.0 * mFuel*radiusTank*radiusTank*Eigen::Matrix3d::Identity();
 	}
 
-	void computeTankPropDerivs(double mFuel, double mDotFuel) {
+	void computeTankPropDerivs(double mFuel, double mDotFuel) override {
 		IPrimeTankPntT_T = 2.0 / 3.0 * mDotFuel*radiusTank*radiusTank*Eigen::Matrix3d::Identity();
 		rPrime_TcT_T.setZero();
 		rPPrime_TcT_T.setZero();
@@ -118,8 +118,8 @@ public:
 
     FuelTankModelEmptying() = default;
     ~FuelTankModelEmptying() override = default;
-    
-	void computeTankProps(double mFuel) {
+
+	void computeTankProps(double mFuel) override {
 		rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*radiusTankInit);
 		double rtank = radiusTankInit;
 		double volume;
@@ -159,7 +159,7 @@ public:
 
 		
 	}
-	void computeTankPropDerivs(double mFuel, double mDotFuel) {
+	void computeTankPropDerivs(double mFuel, double mDotFuel) override {
 		if (mFuel != propMassInit) {
 			thetaDotStar = -mDotFuel / (M_PI*rhoFuel*std::pow(radiusTankInit, 3)*std::sin(thetaStar));
 			thetaDDotStar = -3 * thetaDotStar*thetaDotStar*std::cos(thetaStar) / std::sin(thetaStar); //This assumes that mddot = 0
@@ -201,13 +201,13 @@ public:
     FuelTankModelUniformBurn() = default;
     ~FuelTankModelUniformBurn() override = default;
 
-	void computeTankProps(double mFuel) {
+	void computeTankProps(double mFuel) override{
 		r_TcT_T = r_TcT_TInit;
 		ITankPntT_T.setZero();
 		ITankPntT_T(0, 0) = ITankPntT_T(1, 1) = mFuel * (radiusTankInit*radiusTankInit / 4.0 + lengthTank*lengthTank / 12.0);
 		ITankPntT_T(2, 2) = mFuel*radiusTankInit*radiusTankInit/2;
 	}
-	void computeTankPropDerivs(double mFuel, double mDotFuel) {
+	void computeTankPropDerivs(double mFuel, double mDotFuel) override {
 		IPrimeTankPntT_T.setZero();
 		IPrimeTankPntT_T(0, 0) = IPrimeTankPntT_T(1, 1) = mDotFuel * (radiusTankInit*radiusTankInit / 4.0 + lengthTank*lengthTank / 12.0);
 		IPrimeTankPntT_T(2, 2) = mDotFuel*radiusTankInit*radiusTankInit / 2;
@@ -227,7 +227,7 @@ public:
     FuelTankModelCentrifugalBurn() = default;
     ~FuelTankModelCentrifugalBurn() override = default;
 
-	void computeTankProps(double mFuel) {
+	void computeTankProps(double mFuel) override {
 		double rhoFuel = propMassInit / (M_PI*radiusTankInit*radiusTankInit*lengthTank);
 		radiusInner = std::sqrt(std::max(radiusTankInit*radiusTankInit - mFuel / (M_PI*lengthTank*rhoFuel),0.0));
 		r_TcT_T = r_TcT_TInit;
@@ -235,7 +235,7 @@ public:
 		ITankPntT_T(0, 0) = ITankPntT_T(1, 1) = mFuel * ((radiusTankInit*radiusTankInit+radiusInner*radiusInner) / 4.0 + lengthTank*lengthTank / 12.0);
 		ITankPntT_T(2, 2) = mFuel*(radiusTankInit*radiusTankInit +radiusInner*radiusInner)/ 2;
 	}
-	void computeTankPropDerivs(double mFuel, double mDotFuel) {
+	void computeTankPropDerivs(double mFuel, double mDotFuel) override {
 		IPrimeTankPntT_T.setZero();
 		IPrimeTankPntT_T(0, 0) = IPrimeTankPntT_T(1, 1) = mDotFuel * (radiusInner*radiusInner / 2.0 + lengthTank*lengthTank / 12.0);
 		IPrimeTankPntT_T(2, 2) = mDotFuel*radiusInner*radiusInner;
@@ -274,18 +274,18 @@ public:
 	FuelTank();                                        //!< -- Contructor
 	~FuelTank();                                       //!< -- Destructor
     void WriteOutputMessages(uint64_t CurrentClock);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void UpdateState(uint64_t CurrentSimNanos) override;
     void setTankModel(FuelTankModel* model);
 	void pushFuelSloshParticle(FuelSlosh *particle);  //!< -- Method to attach fuel slosh particle
-	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager
-	void linkInStates(DynParamManager& states);  //!< -- Method to give the tank access to other states
-	void updateEffectorMassProps(double integTime);  //!< -- Method to add contribtution mass props from the tank
+	void registerStates(DynParamManager& states) override;  //!< -- Method to register mass state with state manager
+	void linkInStates(DynParamManager& states) override;  //!< -- Method to give the tank access to other states
+	void updateEffectorMassProps(double integTime) override;  //!< -- Method to add contribution mass props from the tank
     void addThrusterSet(DynamicEffector *NewdynEff) {dynEffectors.push_back(NewdynEff);}  //!< -- Method to add dynamic thruster
 	void addThrusterSet(StateEffector* NewstateEff) {stateEffectors.push_back(NewstateEff);}  //!< -- Method to add state thruster
-    virtual void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-    virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< -- Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN) override;  //!< -- Method for each stateEffector to calculate derivatives
 };
 
 
