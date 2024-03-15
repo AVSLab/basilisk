@@ -257,7 +257,6 @@ public:
 	bool updateOnly;								   //!< -- Sets whether to use update only mass depletion
     Message<FuelTankMsgPayload> fuelTankOutMsg;        //!< -- fuel tank output message name
     FuelTankMsgPayload fuelTankMassPropMsg;            //!< instance of messaging system message struct
-    BSKLogger bskLogger;                               //!< -- BSK Logging
 
 private:
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub
