@@ -42,7 +42,8 @@
 
 //Fuel tank models
 /*! fuel tank model structure */
-struct FuelTankModel {
+class FuelTankModel {
+public:
 	double propMassInit;                               //!< [kg] Initial propellant mass in tank
     double maxFuelMass = 1.0;                          //!< [kg] maximum tank mass
 	Eigen::Vector3d r_TcT_TInit;                       //!< [m] Initial position vector from B to tank point in B frame comp.
@@ -62,10 +63,13 @@ struct FuelTankModel {
 };
 
 /*! fuel tank constant volume structure */
-struct FuelTankModelConstantVolume_t :
-	public FuelTankModel
+class FuelTankModelConstantVolume : public FuelTankModel
 {
+public:
 	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
+
+    FuelTankModelConstantVolume() = default;
+    ~FuelTankModelConstantVolume() override = default;
 
 	void computeTankProps(double mFuel) {
 		r_TcT_T = r_TcT_TInit;
@@ -80,11 +84,14 @@ struct FuelTankModelConstantVolume_t :
 };
 
 /*! fuel tank constant density structure */
-struct FuelTankModelConstantDensity_t :
-	public FuelTankModel
+class FuelTankModelConstantDensity : public FuelTankModel
 {
+public:
 	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
 	double radiusTank;								   //!< [m] Current radius of the spherical tank
+
+    FuelTankModelConstantDensity() = default;
+    ~FuelTankModelConstantDensity() override = default;
 
 	void computeTankProps(double mFuel) {
 		radiusTank = std::pow(mFuel / propMassInit, 1.0 / 3.0)*radiusTankInit;
@@ -100,9 +107,9 @@ struct FuelTankModelConstantDensity_t :
 };
 
 /*! fuel tank model emptying structure */
-struct FuelTankModelEmptying_t :
-	public FuelTankModel
+class FuelTankModelEmptying : public FuelTankModel
 {
+public:
 	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
 	double rhoFuel;                                    //!< [kg/m^3] density of the fuel
 	double thetaStar;								   //!< [rad] angle from vertical to top of fuel
@@ -110,6 +117,9 @@ struct FuelTankModelEmptying_t :
 	double thetaDDotStar;							   //!< [rad/s^2] second derivative of angle from vertical to top of fuel
 	Eigen::Vector3d k3;								   //!< -- Direction of fuel depletion 
 
+    FuelTankModelEmptying() = default;
+    ~FuelTankModelEmptying() override = default;
+    
 	void computeTankProps(double mFuel) {
 		rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*radiusTankInit);
 		double rtank = radiusTankInit;
@@ -183,12 +193,15 @@ struct FuelTankModelEmptying_t :
 };
 
 /*! @brief fuel tank model structure for a uniform burn */
-struct FuelTankModelUniformBurn_t :
-	public FuelTankModel
+class FuelTankModelUniformBurn : public FuelTankModel
 {
+public:
 	double radiusTankInit;                             //!< [m] Initial radius of the cylindrical tank
 	double lengthTank;								   //!< [m] Length of the tank
 	
+    FuelTankModelUniformBurn() = default;
+    ~FuelTankModelUniformBurn() override = default;
+
 	void computeTankProps(double mFuel) {
 		r_TcT_T = r_TcT_TInit;
 		ITankPntT_T.setZero();
@@ -205,12 +218,15 @@ struct FuelTankModelUniformBurn_t :
 };
 
 /*! @brief fuel tank model structure for a centrifugal burn */
-struct FuelTankModelCentrifugalBurn_t :
-	public FuelTankModel
+class FuelTankModelCentrifugalBurn : public FuelTankModel
 {
+public:
 	double radiusTankInit;                             //!< [m] Initial radius of the cylindrical tank
 	double lengthTank;								   //!< [m] Length of the tank
 	double radiusInner;								   //!< [m] Inner radius of the cylindrical tank
+
+    FuelTankModelCentrifugalBurn() = default;
+    ~FuelTankModelCentrifugalBurn() override = default;
 
 	void computeTankProps(double mFuel) {
 		double rhoFuel = propMassInit / (M_PI*radiusTankInit*radiusTankInit*lengthTank);
@@ -228,24 +244,6 @@ struct FuelTankModelCentrifugalBurn_t :
 		rPPrime_TcT_T.setZero();
 	}
 };
-
-enum FuelTankModelTypes {
-	TANK_MODEL_FIRST_MODEL,
-	TANK_MODEL_CONSTANT_VOLUME = TANK_MODEL_FIRST_MODEL,
-	TANK_MODEL_CONSTANT_DENSITY,
-	TANK_MODEL_EMPTYING,
-	TANK_MODEL_UNIFORM_BURN,
-	TANK_MODEL_CENTRIFUGAL_BURN,
-	TANK_MODEL_LAST_MODEL,
-};
-
-extern FuelTankModelConstantVolume_t FuelTankModelConstantVolume; //!< fuel tank variable
-extern FuelTankModelConstantDensity_t FuelTankModelConstantDensity; //!< fuel tank variable
-extern FuelTankModelEmptying_t FuelTankModelEmptying; //!< fuel tank variable
-extern FuelTankModelUniformBurn_t FuelTankModelUniformBurn; //!< fuel tank variable
-extern FuelTankModelCentrifugalBurn_t FuelTankModelCentrifugalBurn; //!< fuel tank variable
-
-extern FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL];  //!< fuel tank variable
 
 /*! @brief fuel tank model class */
 class FuelTank :
@@ -278,7 +276,7 @@ public:
 	~FuelTank();                                       //!< -- Destructor
     void WriteOutputMessages(uint64_t CurrentClock);
     void UpdateState(uint64_t CurrentSimNanos);
-	void setTankModel(FuelTankModelTypes model);
+    void setTankModel(FuelTankModel* model);
 	void pushFuelSloshParticle(FuelSlosh *particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager
 	void linkInStates(DynParamManager& states);  //!< -- Method to give the tank access to other states
