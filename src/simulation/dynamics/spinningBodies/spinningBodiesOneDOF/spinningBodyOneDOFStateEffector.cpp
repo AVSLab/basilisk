@@ -70,13 +70,14 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock)
     }
     // Ensure user specified valid angular limits
     if (this->theta_max < this->theta_min) {
-        bskLogger.bskLog(
-            BSK_ERROR, "theta_max (%f) must be greater than theta_min (%f).", this->theta_max, this->theta_min);
+        throw std::invalid_argument("theta_max (" + std::to_string(this->theta_max)
+            + ") must be greater than theta_min (" + std::to_string(this->theta_min) + ").");
     }
     // Ensure that user specified valid initial angle
     if ((this->thetaInit > this->theta_max) || (this->thetaInit < this->theta_min)) {
-        bskLogger.bskLog(BSK_ERROR, "Initial angle (%f) must be inside of body angle bounds (%f, %f).",
-            this->thetaInit, this->theta_min, this->theta_max);
+        throw std::invalid_argument("Initial angle (" + std::to_string(this->thetaInit)
+            + ") must be inside of body angle bounds (" + std::to_string(this->theta_min) + ", "
+            + std::to_string(this->theta_max) + ").");
     }
 }
 

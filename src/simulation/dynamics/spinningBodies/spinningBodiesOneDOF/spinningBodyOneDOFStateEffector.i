@@ -16,7 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+#include <stdexcept>
 
+%exception { 
+    try {
+        $action
+    } catch (std::invalid_argument &e) {
+        std::string s("spinningBodyOneDOF error: "), s2(e.what());
+        s = s + s2;
+        SWIG_exception(SWIG_ValueError, s.c_str());
+   }
+}
 
 %module spinningBodyOneDOFStateEffector
 %{
