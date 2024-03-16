@@ -61,6 +61,8 @@ Version |release|
   To simulate the rotation, this module must be connected to the :ref:`prescribedMotionStateEffector` dynamics module.
 - Created a new example scenario :ref:`scenarioDeployingSolarArrays` demonstrating how to simulate hub-relative
   multi-body prescribed motion.
+- Added a new commanded linear force array :ref:`LinearTranslationRigidBodyMsgPayload`.
+- Added a new single-axis translating effector :ref:`linearTranslationOneDOFStateEffector`.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
