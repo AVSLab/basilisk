@@ -71,6 +71,8 @@ Version |release|
   message table in the module documentation.
 - Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedLinearTranslation`
   simulation module
+- Added a new commanded linear force array :ref:`LinearTranslationRigidBodyMsgPayload`.
+- Added a new single-axis translating effector :ref:`linearTranslationOneDOFStateEffector`.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
