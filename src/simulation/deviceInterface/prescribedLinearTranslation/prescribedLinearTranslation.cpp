@@ -137,7 +137,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
-    return (t <= this->tr && this->tf - this->tInit != 0);
+    return (t <= this->t_r && this->t_f - this->tInit != 0);
 }
 
 /*! This method determines if the current time is within the coast segment for the coast option.
@@ -145,7 +145,7 @@ bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInCoastSegment(double t) const {
-    return (t > this->tr && t <= this->tc && this->tf - this->tInit != 0);
+    return (t > this->t_r && t <= this->t_c && this->t_f - this->tInit != 0);
 }
 
 /*! This method determines if the current time is within the second bang segment for the coast option.
@@ -153,7 +153,7 @@ bool PrescribedLinearTranslation::isInCoastSegment(double t) const {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInSecondBangSegment(double t) const {
-    return (t > this->tc && t <= this->tf && this->tf - this->tInit != 0);
+    return (t > this->t_c && t <= this->t_f && this->t_f - this->tInit != 0);
 }
 
 /*! This method computes the required parameters for the translation with a coast period.
@@ -162,7 +162,7 @@ bool PrescribedLinearTranslation::isInSecondBangSegment(double t) const {
 void PrescribedLinearTranslation::computeCoastParameters() {
     if (this->transPosInit != this->transPosRef) {
         // Determine the time at the end of the first bang segment
-        this->tr = this->tInit + this->coastOptionBangDuration;
+        this->t_r = this->tInit + this->coastOptionBangDuration;
 
         // Determine the position and velocity at the end of the bang segment/start of the coast segment
         if (this->transPosInit < this->transPosRef) {
@@ -183,20 +183,20 @@ void PrescribedLinearTranslation::computeCoastParameters() {
         double tCoast = fabs(deltaPosCoast) / fabs(this->transVel_tr);
 
         // Determine the time at the end of the coast segment
-        this->tc = this->tr + tCoast;
+        this->t_c = this->t_r + tCoast;
 
         // Determine the position [m] at the end of the coast segment
         double transPos_tc = this->transPos_tr + deltaPosCoast;
 
         // Determine the time at the end of the translation
-        this->tf = this->tc + this->coastOptionBangDuration;
+        this->t_f = this->t_c + this->coastOptionBangDuration;
 
         // Define the parabolic constants for the first and second bang segments of the translation
-        this->a = (this->transPos_tr - this->transPosInit) / ((this->tr - this->tInit) * (this->tr - this->tInit));
-        this->b = -(this->transPosRef - transPos_tc) / ((this->tc - this->tf) * (this->tc - this->tf));
+        this->a = (this->transPos_tr - this->transPosInit) / ((this->t_r - this->tInit) * (this->t_r - this->tInit));
+        this->b = -(this->transPosRef - transPos_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
     } else {
         // If the initial position equals the reference position, no translation is required.
-        this->tf = this->tInit;
+        this->t_f = this->tInit;
     }
 }
 
@@ -207,7 +207,7 @@ void PrescribedLinearTranslation::computeCoastParameters() {
 void PrescribedLinearTranslation::computeCoastSegment(double t) {
     this->transAccel = 0.0;
     this->transVel = this->transVel_tr;
-    this->transPos = this->transVel_tr * (t - this->tr) + this->transPos_tr;
+    this->transPos = this->transVel_tr * (t - this->t_r) + this->transPos_tr;
 }
 
 /*! This method determines if the current time is within the first bang segment for the no coast option.
@@ -215,7 +215,7 @@ void PrescribedLinearTranslation::computeCoastSegment(double t) {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInFirstBangSegmentNoCoast(double t) const {
-    return (t <= this->ts && this->tf - this->tInit != 0);
+    return (t <= this->t_s && this->t_f - this->tInit != 0);
 }
 
 /*! This method determines if the current time is within the second bang segment for the no coast option.
@@ -223,7 +223,7 @@ bool PrescribedLinearTranslation::isInFirstBangSegmentNoCoast(double t) const {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInSecondBangSegmentNoCoast(double t) const {
-    return (t > this->ts && t <= this->tf && this->tf - this->tInit != 0);
+    return (t > this->t_s && t <= this->t_f && this->t_f - this->tInit != 0);
 }
 
 /*! This method computes the required parameters for the translation with no coast period.
@@ -234,14 +234,14 @@ void PrescribedLinearTranslation::computeParametersNoCoast() {
     double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8) / this->transAccelMax);
 
     // Determine the time at the end of the translation
-    this->tf = this->tInit + totalTransTime;
+    this->t_f = this->tInit + totalTransTime;
 
     // Determine the time halfway through the translation
-    this->ts = this->tInit + (totalTransTime / 2);
+    this->t_s = this->tInit + (totalTransTime / 2);
 
     // Define the parabolic constants for the first and second half of the translation
-    this->a = 0.5 * (this->transPosRef - this->transPosInit) / ((this->ts - this->tInit) * (this->ts - this->tInit));
-    this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->ts - this->tf) * (this->ts - this->tf));
+    this->a = 0.5 * (this->transPosRef - this->transPosInit) / ((this->t_s - this->tInit) * (this->t_s - this->tInit));
+    this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->t_s - this->t_f) * (this->t_s - this->t_f));
 }
 
 /*! This method computes the scalar translational states for the first bang segment. The acceleration during the first
@@ -272,8 +272,8 @@ void PrescribedLinearTranslation::computeSecondBangSegment(double t) {
     } else {
         this->transAccel = this->transAccelMax;
     }
-    this->transVel = this->transAccel * (t - this->tInit) - this->transAccel * (this->tf - this->tInit);
-    this->transPos = this->b * (t - this->tf) * (t - this->tf) + this->transPosRef;
+    this->transVel = this->transAccel * (t - this->tInit) - this->transAccel * (this->t_f - this->tInit);
+    this->transPos = this->b * (t - this->t_f) * (t - this->t_f) + this->transPosRef;
 }
 
 /*! This method computes the scalar translational states when the translation is complete.
