@@ -76,9 +76,9 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
 
         // Set the parameters required to profile the translation
         if (this->coastOptionBangDuration > 0.0) {
-            this->computeCoastParameters();
+            this->computeBangCoastBangParametersNoSmoothing();
         } else {
-            this->computeParametersNoCoast();
+            this->computeBangBangParametersNoSmoothing();
         }
 
         // Set the convergence to false until the translation is complete
@@ -95,7 +95,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
 /*! This method computes the required parameters for the translation with no coast period.
  @return void
 */
-void PrescribedLinearTranslation::computeParametersNoCoast() {
+void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing() {
     // Determine the total time required for the translation
     double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8) / this->transAccelMax);
 
@@ -113,7 +113,7 @@ void PrescribedLinearTranslation::computeParametersNoCoast() {
 /*! This method computes the required parameters for the translation with a coast period.
  @return void
 */
-void PrescribedLinearTranslation::computeCoastParameters() {
+void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing() {
     if (this->transPosInit != this->transPosRef) {
         // Determine the time at the end of the first bang segment
         this->t_r = this->tInit + this->coastOptionBangDuration;
