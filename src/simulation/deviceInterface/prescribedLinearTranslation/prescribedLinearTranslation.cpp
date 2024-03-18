@@ -75,10 +75,14 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
         this->transPosRef = linearTranslationRigidBodyIn.rho;
 
         // Set the parameters required to profile the translation
-        if (this->coastOptionBangDuration > 0.0) {
-            this->computeBangCoastBangParametersNoSmoothing();
+        if (this->transPosRef != this->transPosInit) {
+            if (this->coastOptionBangDuration > 0.0) {
+                this->computeBangCoastBangParametersNoSmoothing();
+            } else {
+                this->computeBangBangParametersNoSmoothing();
+            }
         } else {
-            this->computeBangBangParametersNoSmoothing();
+            this->t_f = this->tInit;
         }
 
         // Set the convergence to false until the translation is complete
@@ -112,49 +116,38 @@ void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing() {
               / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
 }
 
-/*! This method computes the required parameters for the translation with a coast period.
+/*! This method computes the required parameters for the translation with a non-smoothed bang-coast-bang acceleration profile.
  @return void
 */
 void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing() {
-    if (this->transPosInit != this->transPosRef) {
-        // Determine the time at the end of the first bang segment
-        this->t_b1 = this->tInit + this->coastOptionBangDuration;
+    double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
-        // Determine the position and velocity at the end of the bang segment/start of the coast segment
-        if (this->transPosInit < this->transPosRef) {
-            this->transPos_tb1 = (0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
-                                 + this->transPosInit;
-            this->transVel_tb1 = this->transAccelMax * this->coastOptionBangDuration;
-        } else {
-            this->transPos_tb1 =
-                    -((0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration))
-                    + this->transPosInit;
-            this->transVel_tb1 = -this->transAccelMax * this->coastOptionBangDuration;
-        }
+    // Determine the time at the end of the first bang segment t_b1
+    this->t_b1 = this->tInit + this->coastOptionBangDuration;
 
-        // Determine the distance traveled during the coast period
-        double deltaPosCoast = this->transPosRef - this->transPosInit - 2 * (this->transPos_tb1 - this->transPosInit);
+    // Determine the hub-relative position at time t_b1
+    this->transPos_tb1 = sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration
+                         * this->coastOptionBangDuration + this->transPosInit;
+    this->transVel_tb1 = sign * this->transAccelMax * this->coastOptionBangDuration;
 
-        // Determine the time duration of the coast segment
-        double tCoast = fabs(deltaPosCoast) / fabs(this->transVel_tb1);
+    // Determine the distance traveled during the coast period
+    double deltaPosCoast = this->transPosRef - this->transPosInit - 2.0 * (this->transPos_tb1 - this->transPosInit);
 
-        // Determine the time at the end of the coast segment
-        this->t_c = this->t_b1 + tCoast;
+    // Determine the duration of the coast segment coastDuration
+    double coastDuration = fabs(deltaPosCoast / this->transVel_tb1);
 
-        // Determine the position [m] at the end of the coast segment
-        double transPos_tc = this->transPos_tb1 + deltaPosCoast;
+    // Determine the time at the end of the coast segment t_c
+    this->t_c = this->t_b1 + coastDuration;
 
-        // Determine the time at the end of the translation
-        this->t_f = this->t_c + this->coastOptionBangDuration;
+    // Determine the hub-relative position at time t_c
+    double transPos_tc = this->transPos_tb1 + deltaPosCoast;
 
-        // Define the parabolic constants for the first and second bang segments of the translation
+    // Determine the time when the translation is complete t_f
+    this->t_f = this->t_c + this->coastOptionBangDuration;
 
-        this->a = (this->transPos_tb1 - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
-        this->b = -(this->transPosRef - transPos_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
-    } else {
-        // If the initial position equals the reference position, no translation is required.
-        this->t_f = this->tInit;
-    }
+    // Define the parabolic constants for the first and second bang segments of the translation
+    this->a = (this->transPos_tb1 - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+    this->b = -(this->transPosRef - transPos_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
 }
 
 /*! This intermediate method groups the calculation of the current translational states into a single method.
