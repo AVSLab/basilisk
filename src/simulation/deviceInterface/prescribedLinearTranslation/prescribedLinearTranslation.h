@@ -68,6 +68,8 @@ private:
     void computeCoastSegment(double time);                                  //!< Method for computing the scalar translational states for the coast option coast period
     void computeTranslationComplete();                                      //!< Method for computing the scalar translational states when the translation is complete
 
+    void writeOutputMessages(uint64_t CurrentSimNanos);                     //!< Method for writing the module output messages and computing the output message data
+
     /* User-configurable variables */
     double coastOptionBangDuration;                                         //!< [s] Bang time used for the coast option
     double transAccelMax;                                                   //!< [m/s^2] Maximum acceleration magnitude

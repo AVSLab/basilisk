@@ -60,10 +60,6 @@ The prescribed states are then written to the output message.
 void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
 {
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
-    PrescribedTranslationMsgPayload prescribedTranslationMsgOut;
-
-    prescribedTranslationMsgOut = PrescribedTranslationMsgPayload();
-
     linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsgPayload();
     if (this->linearTranslationRigidBodyInMsg.isWritten()) {
         linearTranslationRigidBodyIn = this->linearTranslationRigidBodyInMsg();
@@ -114,22 +110,8 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
         }
     }
 
-    // [m] Translational body position relative to the Mount frame expressed in M frame components
-    Eigen::Vector3d r_FM_M = this->transPos*this->transHat_M;
-
-    // [m/s] B frame time derivative of r_FM_M expressed in M frame components
-    Eigen::Vector3d rPrime_FM_M = this->transVel*this->transHat_M;
-
-    // [m/s^2] B frame time derivative of rPrime_FM_M expressed in M frame components
-    Eigen::Vector3d rPrimePrime_FM_M = this->transAccel*this->transHat_M;
-
-    // Write the output message
-    eigenVector3d2CArray(r_FM_M, prescribedTranslationMsgOut.r_FM_M);
-    eigenVector3d2CArray(rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
-    eigenVector3d2CArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
-
-    this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
-    PrescribedTranslationMsg_C_write(&prescribedTranslationMsgOut, &prescribedTranslationOutMsgC, this->moduleID, callTime);
+    // Write the module output messages
+    this->writeOutputMessages(callTime);
 }
 
 /*! This method computes the required parameters for the translation with no coast period.
@@ -284,6 +266,36 @@ void PrescribedLinearTranslation::computeTranslationComplete() {
     this->transVel = 0.0;
     this->transPos = this->transPosRef;
     this->convergence = true;
+}
+
+/*! This method writes the module output messages and computes the output message data.
+ @return void
+*/
+void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
+    // Create the output buffer message
+    PrescribedTranslationMsgPayload prescribedTranslationMsgOut;
+
+    // Zero the output messages
+    prescribedTranslationMsgOut = PrescribedTranslationMsgPayload();
+
+    // Compute the translational body position relative to the mount frame M expressed in M frame components
+    Eigen::Vector3d r_FM_M = this->transPos * this->transHat_M;  // [m]
+
+    // Compute the translational body velocity relative to the mount frame M expressed in M frame components
+    Eigen::Vector3d rPrime_FM_M = this->transVel * this->transHat_M;  // [m/s]
+
+    // Compute the translational body acceleration relative to the mount frame M expressed in M frame components
+    Eigen::Vector3d rPrimePrime_FM_M = this->transAccel * this->transHat_M;  // [m/s^2]
+
+    // Copy the module variables to the output buffer message
+    eigenVector3d2CArray(r_FM_M, prescribedTranslationMsgOut.r_FM_M);
+    eigenVector3d2CArray(rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
+    eigenVector3d2CArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
+
+    // Write the output messages
+    this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
+    PrescribedTranslationMsg_C_write(&prescribedTranslationMsgOut,
+                                     &prescribedTranslationOutMsgC, this->moduleID, callTime);
 }
 
 /*! Setter method for the coast option bang duration.
