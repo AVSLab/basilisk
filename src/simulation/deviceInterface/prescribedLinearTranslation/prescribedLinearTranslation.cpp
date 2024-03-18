@@ -103,11 +103,11 @@ void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing() {
     this->t_f = this->tInit + totalTransTime;
 
     // Determine the time halfway through the translation
-    this->t_s = this->tInit + (totalTransTime / 2);
+    this->t_b1 = this->tInit + (totalTransTime / 2);
 
     // Define the parabolic constants for the first and second half of the translation
-    this->a = 0.5 * (this->transPosRef - this->transPosInit) / ((this->t_s - this->tInit) * (this->t_s - this->tInit));
-    this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->t_s - this->t_f) * (this->t_s - this->t_f));
+    this->a = 0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+    this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
 }
 
 /*! This method computes the required parameters for the translation with a coast period.
@@ -116,7 +116,7 @@ void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing() {
 void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing() {
     if (this->transPosInit != this->transPosRef) {
         // Determine the time at the end of the first bang segment
-        this->t_r = this->tInit + this->coastOptionBangDuration;
+        this->t_b1 = this->tInit + this->coastOptionBangDuration;
 
         // Determine the position and velocity at the end of the bang segment/start of the coast segment
         if (this->transPosInit < this->transPosRef) {
@@ -137,7 +137,7 @@ void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing() {
         double tCoast = fabs(deltaPosCoast) / fabs(this->transVel_tr);
 
         // Determine the time at the end of the coast segment
-        this->t_c = this->t_r + tCoast;
+        this->t_c = this->t_b1 + tCoast;
 
         // Determine the position [m] at the end of the coast segment
         double transPos_tc = this->transPos_tr + deltaPosCoast;
@@ -146,7 +146,7 @@ void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing() {
         this->t_f = this->t_c + this->coastOptionBangDuration;
 
         // Define the parabolic constants for the first and second bang segments of the translation
-        this->a = (this->transPos_tr - this->transPosInit) / ((this->t_r - this->tInit) * (this->t_r - this->tInit));
+        this->a = (this->transPos_tr - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
         this->b = -(this->transPosRef - transPos_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
     } else {
         // If the initial position equals the reference position, no translation is required.
@@ -184,7 +184,7 @@ void PrescribedLinearTranslation::computeCurrentState(double t) {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInFirstBangSegmentNoCoast(double t) const {
-    return (t <= this->t_s && this->t_f - this->tInit != 0);
+    return (t <= this->t_b1 && this->t_f - this->tInit != 0);
 }
 
 /*! This method determines if the current time is within the first bang segment for the coast option.
@@ -192,7 +192,7 @@ bool PrescribedLinearTranslation::isInFirstBangSegmentNoCoast(double t) const {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
-    return (t <= this->t_r && this->t_f - this->tInit != 0);
+    return (t <= this->t_b1 && this->t_f - this->tInit != 0);
 }
 
 /*! This method determines if the current time is within the second bang segment for the no coast option.
@@ -200,7 +200,7 @@ bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInSecondBangSegmentNoCoast(double t) const {
-    return (t > this->t_s && t <= this->t_f && this->t_f - this->tInit != 0);
+    return (t > this->t_b1 && t <= this->t_f && this->t_f - this->tInit != 0);
 }
 
 /*! This method determines if the current time is within the second bang segment for the coast option.
@@ -216,7 +216,7 @@ bool PrescribedLinearTranslation::isInSecondBangSegment(double t) const {
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInCoastSegment(double t) const {
-    return (t > this->t_r && t <= this->t_c && this->t_f - this->tInit != 0);
+    return (t > this->t_b1 && t <= this->t_c && this->t_f - this->tInit != 0);
 }
 
 /*! This method computes the scalar translational states for the first bang segment. The acceleration during the first
@@ -258,7 +258,7 @@ void PrescribedLinearTranslation::computeSecondBangSegment(double t) {
 void PrescribedLinearTranslation::computeCoastSegment(double t) {
     this->transAccel = 0.0;
     this->transVel = this->transVel_tr;
-    this->transPos = this->transVel_tr * (t - this->t_r) + this->transPos_tr;
+    this->transPos = this->transVel_tr * (t - this->t_b1) + this->transPos_tr;
 }
 
 /*! This method computes the scalar translational states when the translation is complete.
