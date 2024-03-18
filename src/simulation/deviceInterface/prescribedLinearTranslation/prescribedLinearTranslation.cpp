@@ -26,58 +26,53 @@
 /*! This method self initializes the C-wrapped output message.
  @return void
 */
-void PrescribedLinearTranslation::SelfInit()
-{
+void PrescribedLinearTranslation::SelfInit() {
     PrescribedTranslationMsg_C_init(&this->prescribedTranslationOutMsgC);
 }
 
-
-/*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
+/*! This method resets required module variables and checks the input messages to ensure they are linked.
  @return void
- @param callTime [ns] Simulation time the method is called
+ @param callTime [ns] Time the method is called
 */
-void PrescribedLinearTranslation::Reset(uint64_t callTime)
-{
+void PrescribedLinearTranslation::Reset(uint64_t callTime) {
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "Error: prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
+        _bskLog(this->bskLogger,
+                BSK_ERROR,
+                "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
     }
 
-    // Set the initial time
     this->tInit = 0.0;
-
     this->transPos = this->transPosInit;
     this->transVel = 0.0;
 
-    // Set the initial convergence to true to enter the correct loop in the Update() method on the first pass
+    // Set the initial convergence to true to enter the required loop in Update() method on the first pass
     this->convergence = true;
 }
 
-/*! This method profiles the prescribed trajectory and updates the prescribed states as a function of time.
-The prescribed states are then written to the output message.
+/*! This method profiles the translation and updates the prescribed translational states as a function of time.
+The prescribed translational states are then written to the output message.
  @return void
- @param callTime [ns] Simulation time the method is called
+ @param callTime [ns] Time the method is called
 */
-void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
-{
+void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
+    // Read the input message
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
-    linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsgPayload();
     if (this->linearTranslationRigidBodyInMsg.isWritten()) {
+        linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsgPayload();
         linearTranslationRigidBodyIn = this->linearTranslationRigidBodyInMsg();
     }
 
-    // This loop is entered (a) initially and (b) when each translation is complete.
-    // The parameters used to profile the translation are updated in this statement.
+    /* This loop is entered (a) initially and (b) when each rotation is complete.
+    The parameters used to profile the translation are updated in this statement. */
     if (this->linearTranslationRigidBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Update the initial time as the current simulation time
         this->tInit = callTime * NANO2SEC;
 
-        // Store the reference scalar position
-        this->transPosRef = linearTranslationRigidBodyIn.rho;
-
+        // Update the initial hub-relative position
         this->transPosInit = this->transPos;
 
-        // Set the convergence to false until the translation is complete
-        this->convergence = false;
+        // Store the reference position
+        this->transPosRef = linearTranslationRigidBodyIn.rho;
 
         // Set the parameters required to profile the translation
         if (this->coastOptionBangDuration > 0.0) {
@@ -85,6 +80,9 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
         } else {
             this->computeParametersNoCoast();
         }
+
+        // Set the convergence to false until the translation is complete
+        this->convergence = false;
     }
 
     // Compute the scalar translational states at the current simulation time
