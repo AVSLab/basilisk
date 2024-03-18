@@ -81,8 +81,8 @@ private:
     double transPos;                                                            //!< [m] Current translational body position along transHat_M
     double transVel;                                                            //!< [m] Current translational body velocity along transHat_M
     double transAccel;                                                          //!< [m] Current translational body acceleration along transHat_M
-    double transPos_tr;                                                         //!< [m] Position at the end of the first bang segment
-    double transVel_tr;                                                         //!< [m/s] Velocity at the end of the first bang segment
+    double transPos_tb1;                                                        //!< [m] Position at the end of the first bang segment
+    double transVel_tb1;                                                        //!< [m/s] Velocity at the end of the first bang segment
 
     /* Temporal parameters */
     double tInit;                                                               //!< [s] Simulation time at the beginning of the translation
