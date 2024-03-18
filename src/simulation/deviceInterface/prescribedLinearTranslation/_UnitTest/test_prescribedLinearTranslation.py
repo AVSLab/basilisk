@@ -41,14 +41,14 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-@pytest.mark.parametrize("coastOptionRampDuration", [0.0, 2.0, 5.0])  # [s]
+@pytest.mark.parametrize("coastOptionBangDuration", [0.0, 2.0, 5.0])  # [s]
 @pytest.mark.parametrize("transPosInit", [0, -0.75])  # [m]
 @pytest.mark.parametrize("transPosRef1", [0, -0.5])  # [m]
 @pytest.mark.parametrize("transPosRef2", [-0.75, 1.0])  # [m]
 @pytest.mark.parametrize("transAccelMax", [0.01, 0.005])  # [m/s^2]
 @pytest.mark.parametrize("accuracy", [1e-4])
 def test_prescribedLinearTranslation(show_plots,
-                                     coastOptionRampDuration,
+                                     coastOptionBangDuration,
                                      transPosInit,
                                      transPosRef1,
                                      transPosRef2,
@@ -71,7 +71,7 @@ def test_prescribedLinearTranslation(show_plots,
 
     Args:
         show_plots (bool): Variable for choosing whether plots should be displayed
-        coastOptionRampDuration: (double): [s] Ramp duration used for the coast option
+        coastOptionBangDuration: (double): [s] Ramp duration used for the coast option
         transPosInit (float): [m] Initial translational body position from M to F frame origin along transHat_M
         transPosRef1 (float): [m] First reference position from M to F frame origin along transHat_M
         transPosRef2 (float): [m] Second reference position from M to F frame origin along transHat_M
@@ -101,7 +101,7 @@ def test_prescribedLinearTranslation(show_plots,
     prescribedTrans = prescribedLinearTranslation.PrescribedLinearTranslation()
     prescribedTrans.ModelTag = "prescribedTrans"
     transHat_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
-    prescribedTrans.setCoastOptionRampDuration(coastOptionRampDuration)
+    prescribedTrans.setCoastOptionBangDuration(coastOptionBangDuration)
     prescribedTrans.setTransHat_M(transHat_M)
     prescribedTrans.setTransAccelMax(transAccelMax)  # [m/s^2]
     prescribedTrans.setTransPosInit(transPosInit)  # [m]
@@ -126,25 +126,25 @@ def test_prescribedLinearTranslation(show_plots,
     # Determine the required simulation time for the first translation
     transVelInit = 0.0  # [m/s]
     tCoast_1 = 0.0  # [s]
-    if coastOptionRampDuration > 0.0:
+    if coastOptionBangDuration > 0.0:
         # Determine the position and velocity at the end of the ramp segment/start of the coast segment
         if transPosInit < transPosRef1:
-            transPos_tr_1 = ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                             + (transVelInit * coastOptionRampDuration)
+            transPos_tr_1 = ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
+                             + (transVelInit * coastOptionBangDuration)
                              + transPosInit)  # [m]
-            transVel_tr_1 = transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
+            transVel_tr_1 = transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
         else:
-            transPos_tr_1 = (- ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                                + (transVelInit * coastOptionRampDuration))
+            transPos_tr_1 = (- ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
+                                + (transVelInit * coastOptionBangDuration))
                              + transPosInit)  # [m]
-            transVel_tr_1 = - transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
+            transVel_tr_1 = - transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
 
         # Determine the distance traveled during the coast period
         deltaPosCoast_1 = transPosRef1 - transPosInit - 2 * (transPos_tr_1 - transPosInit)  # [m]
 
         # Determine the time duration of the coast segment
         tCoast_1 = np.abs(deltaPosCoast_1) / np.abs(transVel_tr_1)  # [s]
-        translation1ReqTime = (2 * coastOptionRampDuration) + tCoast_1  # [s]
+        translation1ReqTime = (2 * coastOptionBangDuration) + tCoast_1  # [s]
     else:
         translation1ReqTime = np.sqrt(((0.5 * np.abs(transPosRef1 - transPosInit)) * 8) / transAccelMax) + 5  # [s]
 
@@ -163,25 +163,25 @@ def test_prescribedLinearTranslation(show_plots,
 
     # Determine the required simulation time for the second translation
     tCoast_2 = 0.0  # [s]
-    if coastOptionRampDuration > 0.0:
+    if coastOptionBangDuration > 0.0:
         # Determine the position and velocity at the end of the ramp segment/start of the coast segment
         if transPosRef1 < transPosRef2:
-            transPos_tr_2 = ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                             + (transVelInit * coastOptionRampDuration)
+            transPos_tr_2 = ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
+                             + (transVelInit * coastOptionBangDuration)
                              + transPosRef1)  # [m]
-            transVel_tr_2 = transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
+            transVel_tr_2 = transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
         else:
-            transPos_tr_2 = (- ((0.5 * transAccelMax * coastOptionRampDuration * coastOptionRampDuration)
-                             + (transVelInit * coastOptionRampDuration))
+            transPos_tr_2 = (- ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
+                             + (transVelInit * coastOptionBangDuration))
                              + transPosRef1)  # [m]
-            transVel_tr_2 = - transAccelMax * coastOptionRampDuration + transVelInit  # [m/s]
+            transVel_tr_2 = - transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
 
         # Determine the distance traveled during the coast period
         deltaPosCoast_2 = transPosRef2 - transPosRef1 - 2 * (transPos_tr_2 - transPosRef1)  # [m]
 
         # Determine the time duration of the coast segment
         tCoast_2 = np.abs(deltaPosCoast_2) / np.abs(transVel_tr_2)  # [s]
-        translation2ReqTime = (2 * coastOptionRampDuration) + tCoast_2  # [s]
+        translation2ReqTime = (2 * coastOptionBangDuration) + tCoast_2  # [s]
     else:
         translation2ReqTime = np.sqrt(((0.5 * np.abs(transPosRef2 - transPosRef1)) * 8) / transAccelMax) + 5  # [s]
 
@@ -202,11 +202,11 @@ def test_prescribedLinearTranslation(show_plots,
 
     # Unit test validation
     # Store the truth data used to validate the module in two lists
-    if coastOptionRampDuration > 0.0:
+    if coastOptionBangDuration > 0.0:
         # Compute tf for the first translation, and tInit tf for the second translation
-        tf_1 = 2 * coastOptionRampDuration + tCoast_1  # [s]
+        tf_1 = 2 * coastOptionBangDuration + tCoast_1  # [s]
         tInit_2 = translation1ReqTime + translation1ExtraTime  # [s]
-        tf_2 = tInit_2 + (2 * coastOptionRampDuration) + tCoast_2  # [s]
+        tf_2 = tInit_2 + (2 * coastOptionBangDuration) + tCoast_2  # [s]
 
         # Compute the timespan indices for each check
         tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
