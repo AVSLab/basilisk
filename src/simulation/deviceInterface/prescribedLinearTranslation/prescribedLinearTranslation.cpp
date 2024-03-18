@@ -92,22 +92,24 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
     this->writeOutputMessages(callTime);
 }
 
-/*! This method computes the required parameters for the translation with no coast period.
+/*! This method computes the required parameters for the translation with a non-smoothed bang-bang acceleration profile.
  @return void
 */
 void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing() {
     // Determine the total time required for the translation
-    double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8) / this->transAccelMax);
+    double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8.0) / this->transAccelMax);
 
-    // Determine the time at the end of the translation
+    // Determine the time when the translation is complete t_f
     this->t_f = this->tInit + totalTransTime;
 
     // Determine the time halfway through the translation
-    this->t_b1 = this->tInit + (totalTransTime / 2);
+    this->t_b1 = this->tInit + (totalTransTime / 2.0);
 
     // Define the parabolic constants for the first and second half of the translation
-    this->a = 0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
-    this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
+    this->a = 0.5 * (this->transPosRef - this->transPosInit)
+              / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+    this->b = -0.5 * (this->transPosRef - this->transPosInit)
+              / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
 }
 
 /*! This method computes the required parameters for the translation with a coast period.
