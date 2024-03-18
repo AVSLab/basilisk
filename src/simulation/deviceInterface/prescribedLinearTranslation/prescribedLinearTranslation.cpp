@@ -84,7 +84,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
         this->convergence = false;
 
         // Set the parameters required to profile the translation
-        if (this->coastOptionRampDuration > 0.0) {
+        if (this->coastOptionBangDuration > 0.0) {
             this->computeCoastParameters();
         } else {
             this->computeParametersNoCoast();
@@ -94,21 +94,21 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
     double t = callTime * NANO2SEC;
 
     // Compute the scalar translational states at the current simulation time
-    if (this->coastOptionRampDuration > 0.0) {
-        if (this->isInFirstRampSegment(t)) {
-            this->computeFirstRampSegment(t);
+    if (this->coastOptionBangDuration > 0.0) {
+        if (this->isInFirstBangSegment(t)) {
+            this->computeFirstBangSegment(t);
         } else if (this->isInCoastSegment(t)) {
             this->computeCoastSegment(t);
-        } else if (this->isInSecondRampSegment(t)) {
-            this->computeSecondRampSegment(t);
+        } else if (this->isInSecondBangSegment(t)) {
+            this->computeSecondBangSegment(t);
         } else {
             this->computeTranslationComplete();
         }
     } else {
-        if (this->isInFirstRampSegmentNoCoast(t)) {
-            this->computeFirstRampSegment(t);
-        } else if (this->isInSecondRampSegmentNoCoast(t)) {
-            this->computeSecondRampSegment(t);
+        if (this->isInFirstBangSegmentNoCoast(t)) {
+            this->computeFirstBangSegment(t);
+        } else if (this->isInSecondBangSegmentNoCoast(t)) {
+            this->computeSecondBangSegment(t);
         } else {
             this->computeTranslationComplete();
         }
@@ -132,11 +132,11 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
     PrescribedTranslationMsg_C_write(&prescribedTranslationMsgOut, &prescribedTranslationOutMsgC, this->moduleID, callTime);
 }
 
-/*! This method determines if the current time is within the first ramp segment for the coast option.
+/*! This method determines if the current time is within the first bang segment for the coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInFirstRampSegment(double t) const {
+bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
     return (t <= this->tr && this->tf - this->tInit != 0);
 }
 
@@ -148,11 +148,11 @@ bool PrescribedLinearTranslation::isInCoastSegment(double t) const {
     return (t > this->tr && t <= this->tc && this->tf - this->tInit != 0);
 }
 
-/*! This method determines if the current time is within the second ramp segment for the coast option.
+/*! This method determines if the current time is within the second bang segment for the coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInSecondRampSegment(double t) const {
+bool PrescribedLinearTranslation::isInSecondBangSegment(double t) const {
     return (t > this->tc && t <= this->tf && this->tf - this->tInit != 0);
 }
 
@@ -161,19 +161,19 @@ bool PrescribedLinearTranslation::isInSecondRampSegment(double t) const {
 */
 void PrescribedLinearTranslation::computeCoastParameters() {
     if (this->transPosInit != this->transPosRef) {
-        // Determine the time at the end of the first ramp segment
-        this->tr = this->tInit + this->coastOptionRampDuration;
+        // Determine the time at the end of the first bang segment
+        this->tr = this->tInit + this->coastOptionBangDuration;
 
-        // Determine the position and velocity at the end of the ramp segment/start of the coast segment
+        // Determine the position and velocity at the end of the bang segment/start of the coast segment
         if (this->transPosInit < this->transPosRef) {
-            this->transPos_tr = (0.5 * this->transAccelMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
+            this->transPos_tr = (0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
                                  + this->transPosInit;
-            this->transVel_tr = this->transAccelMax * this->coastOptionRampDuration;
+            this->transVel_tr = this->transAccelMax * this->coastOptionBangDuration;
         } else {
             this->transPos_tr =
-                    -((0.5 * this->transAccelMax * this->coastOptionRampDuration * this->coastOptionRampDuration))
+                    -((0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration))
                     + this->transPosInit;
-            this->transVel_tr = -this->transAccelMax * this->coastOptionRampDuration;
+            this->transVel_tr = -this->transAccelMax * this->coastOptionBangDuration;
         }
 
         // Determine the distance traveled during the coast period
@@ -189,9 +189,9 @@ void PrescribedLinearTranslation::computeCoastParameters() {
         double transPos_tc = this->transPos_tr + deltaPosCoast;
 
         // Determine the time at the end of the translation
-        this->tf = this->tc + this->coastOptionRampDuration;
+        this->tf = this->tc + this->coastOptionBangDuration;
 
-        // Define the parabolic constants for the first and second ramp segments of the translation
+        // Define the parabolic constants for the first and second bang segments of the translation
         this->a = (this->transPos_tr - this->transPosInit) / ((this->tr - this->tInit) * (this->tr - this->tInit));
         this->b = -(this->transPosRef - transPos_tc) / ((this->tc - this->tf) * (this->tc - this->tf));
     } else {
@@ -210,19 +210,19 @@ void PrescribedLinearTranslation::computeCoastSegment(double t) {
     this->transPos = this->transVel_tr * (t - this->tr) + this->transPos_tr;
 }
 
-/*! This method determines if the current time is within the first ramp segment for the no coast option.
+/*! This method determines if the current time is within the first bang segment for the no coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInFirstRampSegmentNoCoast(double t) const {
+bool PrescribedLinearTranslation::isInFirstBangSegmentNoCoast(double t) const {
     return (t <= this->ts && this->tf - this->tInit != 0);
 }
 
-/*! This method determines if the current time is within the second ramp segment for the no coast option.
+/*! This method determines if the current time is within the second bang segment for the no coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInSecondRampSegmentNoCoast(double t) const {
+bool PrescribedLinearTranslation::isInSecondBangSegmentNoCoast(double t) const {
     return (t > this->ts && t <= this->tf && this->tf - this->tInit != 0);
 }
 
@@ -244,13 +244,13 @@ void PrescribedLinearTranslation::computeParametersNoCoast() {
     this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->ts - this->tf) * (this->ts - this->tf));
 }
 
-/*! This method computes the scalar translational states for the first ramp segment. The acceleration during the first
- * ramp segment is positive if the reference position is greater than the initial position. The acceleration is
- * negative during the first ramp segment if the reference position is less than the initial position.
+/*! This method computes the scalar translational states for the first bang segment. The acceleration during the first
+ * bang segment is positive if the reference position is greater than the initial position. The acceleration is
+ * negative during the first bang segment if the reference position is less than the initial position.
  @return void
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeFirstRampSegment(double t) {
+void PrescribedLinearTranslation::computeFirstBangSegment(double t) {
     if (this->transPosInit < this->transPosRef) {
         this->transAccel = this->transAccelMax;
     } else {
@@ -260,13 +260,13 @@ void PrescribedLinearTranslation::computeFirstRampSegment(double t) {
     this->transPos = this->a * (t - this->tInit) * (t - this->tInit) + this->transPosInit;
 }
 
-/*! This method computes the scalar translational states for the second ramp segment. The acceleration during the
- * second ramp segment is negative if the reference position is greater than the initial position. The acceleration
- * is positive during the second ramp segment if the reference position is less than the initial position.
+/*! This method computes the scalar translational states for the second bang segment. The acceleration during the
+ * second bang segment is negative if the reference position is greater than the initial position. The acceleration
+ * is positive during the second bang segment if the reference position is less than the initial position.
  @return void
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeSecondRampSegment(double t) {
+void PrescribedLinearTranslation::computeSecondBangSegment(double t) {
     if (this->transPosInit < this->transPosRef) {
         this->transAccel = -this->transAccelMax;
     } else {
@@ -286,17 +286,17 @@ void PrescribedLinearTranslation::computeTranslationComplete() {
     this->convergence = true;
 }
 
-/*! Setter method for the coast option ramp duration.
+/*! Setter method for the coast option bang duration.
  @return void
- @param rampDuration [s] Ramp segment time duration
+ @param bangDuration [s] Bang segment time duration
 */
-void PrescribedLinearTranslation::setCoastOptionRampDuration(double rampDuration) {
-    this->coastOptionRampDuration = rampDuration;
+void PrescribedLinearTranslation::setCoastOptionBangDuration(double bangDuration) {
+    this->coastOptionBangDuration = bangDuration;
 }
 
-/*! Setter method for the ramp segment scalar linear acceleration.
+/*! Setter method for the bang segment scalar linear acceleration.
  @return void
- @param transAccelMax [m/s^2] Ramp segment linear angular acceleration
+ @param transAccelMax [m/s^2] Bang segment linear angular acceleration
 */
 void PrescribedLinearTranslation::setTransAccelMax(double transAccelMax) {
     this->transAccelMax = transAccelMax;
@@ -318,14 +318,14 @@ void PrescribedLinearTranslation::setTransPosInit(double transPosInit) {
     this->transPosInit = transPosInit;
 }
 
-/*! Getter method for the coast option ramp duration.
+/*! Getter method for the coast option bang duration.
  @return double
 */
-double PrescribedLinearTranslation::getCoastOptionRampDuration() const {
-    return this->coastOptionRampDuration;
+double PrescribedLinearTranslation::getCoastOptionBangDuration() const {
+    return this->coastOptionBangDuration;
 }
 
-/*! Getter method for the ramp segment scalar linear acceleration.
+/*! Getter method for the bang segment scalar linear acceleration.
  @return double
 */
 double PrescribedLinearTranslation::getTransAccelMax() const {

@@ -37,12 +37,12 @@ public:
     void SelfInit() override;                                               //!< Member function to initialize the C-wrapped output message
     void Reset(uint64_t CurrentSimNanos) override;                          //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                    //!< Update member function
-    void setCoastOptionRampDuration(double rampDuration);                   //!< Setter method for the coast option ramp duration
-    void setTransAccelMax(double transAccelMax);                            //!< Setter method for the ramp segment scalar linear acceleration
+    void setCoastOptionBangDuration(double bangDuration);                   //!< Setter method for the coast option bang duration
+    void setTransAccelMax(double transAccelMax);                            //!< Setter method for the bang segment scalar linear acceleration
     void setTransHat_M(const Eigen::Vector3d &transHat_M);                  //!< Setter method for the translating body axis of translation
     void setTransPosInit(double transPosInit);                              //!< Setter method for the initial translating body hub-relative position
-    double getCoastOptionRampDuration() const;                              //!< Getter method for the coast option ramp duration
-    double getTransAccelMax() const;                                        //!< Getter method for the ramp segment scalar linear acceleration
+    double getCoastOptionBangDuration() const;                              //!< Getter method for the coast option bang duration
+    double getTransAccelMax() const;                                        //!< Getter method for the bang segment scalar linear acceleration
     const Eigen::Vector3d &getTransHat_M() const;                           //!< Getter method for the translating body axis of translation
     double getTransPosInit() const;                                         //!< Getter method for the initial translating body position
     
@@ -55,31 +55,31 @@ public:
 private:
 
     /* Coast option member functions */
-    bool isInFirstRampSegment(double time) const;               //!< Method for determining if the current time is within the first ramp segment for the coast option
+    bool isInFirstBangSegment(double time) const;               //!< Method for determining if the current time is within the first bang segment for the coast option
     bool isInCoastSegment(double time) const;                   //!< Method for determining if the current time is within the coast segment for the coast option
-    bool isInSecondRampSegment(double time) const;              //!< Method for determining if the current time is within the second ramp segment for the coast option
+    bool isInSecondBangSegment(double time) const;              //!< Method for determining if the current time is within the second bang segment for the coast option
     void computeCoastParameters();                              //!< Method for computing the required parameters for the translation with a coast period
     void computeCoastSegment(double time);                      //!< Method for computing the scalar translational states for the coast option coast period
 
     /* Non-coast option member functions */
-    bool isInFirstRampSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first ramp segment for the no coast option
-    bool isInSecondRampSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second ramp segment for the no coast option
+    bool isInFirstBangSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first bang segment for the no coast option
+    bool isInSecondBangSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second bang segment for the no coast option
     void computeParametersNoCoast();                            //!< Method for computing the required parameters for the translation with no coast period
 
     /* Shared member functions */
-    void computeFirstRampSegment(double time);                  //!< Method for computing the scalar translational states for the first ramp segment
-    void computeSecondRampSegment(double time);                 //!< Method for computing the scalar translational states for the second ramp segment
+    void computeFirstBangSegment(double time);                  //!< Method for computing the scalar translational states for the first bang segment
+    void computeSecondBangSegment(double time);                 //!< Method for computing the scalar translational states for the second bang segment
     void computeTranslationComplete();                          //!< Method for computing the scalar translational states when the translation is complete
 
     /* User-configurable variables */
-    double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
+    double coastOptionBangDuration;                             //!< [s] Bang time used for the coast option
     double transAccelMax;                                       //!< [m/s^2] Maximum acceleration magnitude
     Eigen::Vector3d transHat_M;                                 //!< Axis along the direction of translation expressed in M frame components
 
     /* Coast option variables */
-    double transPos_tr;                                         //!< [m] Position at the end of the first ramp segment
-    double transVel_tr;                                         //!< [m/s] Velocity at the end of the first ramp segment
-    double tr;                                                  //!< [s] The simulation time at the end of the first ramp segment
+    double transPos_tr;                                         //!< [m] Position at the end of the first bang segment
+    double transVel_tr;                                         //!< [m/s] Velocity at the end of the first bang segment
+    double tr;                                                  //!< [s] The simulation time at the end of the first bang segment
     double tc;                                                  //!< [s] The simulation time at the end of the coast period
 
     /* Non-coast option variables */
