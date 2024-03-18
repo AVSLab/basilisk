@@ -79,11 +79,11 @@ private:
     /* Coast option variables */
     double transPos_tr;                                         //!< [m] Position at the end of the first bang segment
     double transVel_tr;                                         //!< [m/s] Velocity at the end of the first bang segment
-    double tr;                                                  //!< [s] The simulation time at the end of the first bang segment
-    double tc;                                                  //!< [s] The simulation time at the end of the coast period
+    double t_r;                                                 //!< [s] The simulation time at the end of the first bang segment
+    double t_c;                                                 //!< [s] The simulation time at the end of the coast period
 
     /* Non-coast option variables */
-    double ts;                                                  //!< [s] The simulation time halfway through the translation
+    double t_s;                                                 //!< [s] The simulation time halfway through the translation
 
     /* Shared module variables */
     double transPos;                                            //!< [m] Current translational body position along transHat_M
@@ -93,7 +93,7 @@ private:
     double tInit;                                               //!< [s] Simulation time at the beginning of the translation
     double transPosInit;                                        //!< [m] Initial translational body position from M to F frame origin along transHat_M
     double transPosRef;                                         //!< [m] Reference translational body position from M to F frame origin along transHat_M
-    double tf;                                                  //!< [s] The simulation time when the translation is complete
+    double t_f;                                                 //!< [s] The simulation time when the translation is complete
     double a;                                                   //!< Parabolic constant for the first half of the translation
     double b;                                                   //!< Parabolic constant for the second half of the translation
 };
