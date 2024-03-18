@@ -87,28 +87,8 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
         }
     }
 
-    double t = callTime * NANO2SEC;
-
     // Compute the scalar translational states at the current simulation time
-    if (this->coastOptionBangDuration > 0.0) {
-        if (this->isInFirstBangSegment(t)) {
-            this->computeFirstBangSegment(t);
-        } else if (this->isInCoastSegment(t)) {
-            this->computeCoastSegment(t);
-        } else if (this->isInSecondBangSegment(t)) {
-            this->computeSecondBangSegment(t);
-        } else {
-            this->computeTranslationComplete();
-        }
-    } else {
-        if (this->isInFirstBangSegmentNoCoast(t)) {
-            this->computeFirstBangSegment(t);
-        } else if (this->isInSecondBangSegmentNoCoast(t)) {
-            this->computeSecondBangSegment(t);
-        } else {
-            this->computeTranslationComplete();
-        }
-    }
+    this->computeCurrentState(callTime * NANO2SEC);
 
     // Write the module output messages
     this->writeOutputMessages(callTime);
@@ -173,6 +153,31 @@ void PrescribedLinearTranslation::computeCoastParameters() {
     } else {
         // If the initial position equals the reference position, no translation is required.
         this->t_f = this->tInit;
+    }
+}
+
+/*! This intermediate method groups the calculation of the current translational states into a single method.
+ @return void
+*/
+void PrescribedLinearTranslation::computeCurrentState(double t) {
+    if (this->coastOptionBangDuration > 0.0) {
+        if (this->isInFirstBangSegment(t)) {
+            this->computeFirstBangSegment(t);
+        } else if (this->isInCoastSegment(t)) {
+            this->computeCoastSegment(t);
+        } else if (this->isInSecondBangSegment(t)) {
+            this->computeSecondBangSegment(t);
+        } else {
+            this->computeTranslationComplete();
+        }
+    } else {
+        if (this->isInFirstBangSegmentNoCoast(t)) {
+            this->computeFirstBangSegment(t);
+        } else if (this->isInSecondBangSegmentNoCoast(t)) {
+            this->computeSecondBangSegment(t);
+        } else {
+            this->computeTranslationComplete();
+        }
     }
 }
 
