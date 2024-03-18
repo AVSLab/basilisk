@@ -53,8 +53,8 @@ public:
 
 private:
     /* Methods for computing the required translation parameters */
-    void computeParametersNoCoast();                                            //!< Method for computing the required parameters for the translation with no coast period
-    void computeCoastParameters();                                              //!< Method for computing the required parameters for the translation with a coast period
+    void computeBangBangParametersNoSmoothing();                                //!< Method for computing the required parameters for the non-smoothed bang-bang profiler option
+    void computeBangCoastBangParametersNoSmoothing();                           //!< Method for computing the required parameters for the non-smoothed bang-coast-bang profiler option
 
     /* Methods for computing the current translational states */
     void computeCurrentState(double time);                                      //!< Intermediate method used to group the calculation of the current translational states into a single method
