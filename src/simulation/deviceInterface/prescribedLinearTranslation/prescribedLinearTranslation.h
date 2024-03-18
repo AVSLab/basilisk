@@ -53,49 +53,45 @@ public:
     BSKLogger *bskLogger;                                                   //!< BSK Logging
 
 private:
+    /* Methods for computing the required translation parameters */
+    void computeParametersNoCoast();                                        //!< Method for computing the required parameters for the translation with no coast period
+    void computeCoastParameters();                                          //!< Method for computing the required parameters for the translation with a coast period
 
-    /* Coast option member functions */
-    bool isInFirstBangSegment(double time) const;               //!< Method for determining if the current time is within the first bang segment for the coast option
-    bool isInCoastSegment(double time) const;                   //!< Method for determining if the current time is within the coast segment for the coast option
-    bool isInSecondBangSegment(double time) const;              //!< Method for determining if the current time is within the second bang segment for the coast option
-    void computeCoastParameters();                              //!< Method for computing the required parameters for the translation with a coast period
-    void computeCoastSegment(double time);                      //!< Method for computing the scalar translational states for the coast option coast period
-
-    /* Non-coast option member functions */
-    bool isInFirstBangSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first bang segment for the no coast option
-    bool isInSecondBangSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second bang segment for the no coast option
-    void computeParametersNoCoast();                            //!< Method for computing the required parameters for the translation with no coast period
-
-    /* Shared member functions */
-    void computeFirstBangSegment(double time);                  //!< Method for computing the scalar translational states for the first bang segment
-    void computeSecondBangSegment(double time);                 //!< Method for computing the scalar translational states for the second bang segment
-    void computeTranslationComplete();                          //!< Method for computing the scalar translational states when the translation is complete
+    /* Methods for computing the current translational states */
+    bool isInFirstBangSegmentNoCoast(double time) const;                    //!< Method for determining if the current time is within the first bang segment for the no coast option
+    bool isInFirstBangSegment(double time) const;                           //!< Method for determining if the current time is within the first bang segment for the coast option
+    bool isInSecondBangSegmentNoCoast(double time) const;                   //!< Method for determining if the current time is within the second bang segment for the no coast option
+    bool isInSecondBangSegment(double time) const;                          //!< Method for determining if the current time is within the second bang segment for the coast option
+    bool isInCoastSegment(double time) const;                               //!< Method for determining if the current time is within the coast segment for the coast option
+    void computeFirstBangSegment(double time);                              //!< Method for computing the scalar translational states for the first bang segment
+    void computeSecondBangSegment(double time);                             //!< Method for computing the scalar translational states for the second bang segment
+    void computeCoastSegment(double time);                                  //!< Method for computing the scalar translational states for the coast option coast period
+    void computeTranslationComplete();                                      //!< Method for computing the scalar translational states when the translation is complete
 
     /* User-configurable variables */
-    double coastOptionBangDuration;                             //!< [s] Bang time used for the coast option
-    double transAccelMax;                                       //!< [m/s^2] Maximum acceleration magnitude
-    Eigen::Vector3d transHat_M;                                 //!< Axis along the direction of translation expressed in M frame components
+    double coastOptionBangDuration;                                         //!< [s] Bang time used for the coast option
+    double transAccelMax;                                                   //!< [m/s^2] Maximum acceleration magnitude
+    Eigen::Vector3d transHat_M;                                             //!< Axis along the direction of translation expressed in M frame components
 
-    /* Coast option variables */
-    double transPos_tr;                                         //!< [m] Position at the end of the first bang segment
-    double transVel_tr;                                         //!< [m/s] Velocity at the end of the first bang segment
-    double t_r;                                                 //!< [s] The simulation time at the end of the first bang segment
-    double t_c;                                                 //!< [s] The simulation time at the end of the coast period
+    /* Scalar translational states */
+    double transPosInit;                                                    //!< [m] Initial translational body position from M to F frame origin along transHat_M
+    double transPosRef;                                                     //!< [m] Reference translational body position from M to F frame origin along transHat_M
+    double transPos;                                                        //!< [m] Current translational body position along transHat_M
+    double transVel;                                                        //!< [m] Current translational body velocity along transHat_M
+    double transAccel;                                                      //!< [m] Current translational body acceleration along transHat_M
+    double transPos_tr;                                                     //!< [m] Position at the end of the first bang segment
+    double transVel_tr;                                                     //!< [m/s] Velocity at the end of the first bang segment
 
-    /* Non-coast option variables */
-    double t_s;                                                 //!< [s] The simulation time halfway through the translation
+    /* Temporal parameters */
+    double tInit;                                                           //!< [s] Simulation time at the beginning of the translation
+    double t_r;                                                             //!< [s] The simulation time at the end of the first bang segment
+    double t_s;                                                             //!< [s] The simulation time halfway through the translation
+    double t_c;                                                             //!< [s] The simulation time at the end of the coast period
+    double t_f;                                                             //!< [s] The simulation time when the translation is complete
 
-    /* Shared module variables */
-    double transPos;                                            //!< [m] Current translational body position along transHat_M
-    double transVel;                                            //!< [m] Current translational body velocity along transHat_M
-    double transAccel;                                          //!< [m] Current translational body acceleration along transHat_M
-    bool convergence;                                           //!< Boolean variable is true when the translation is complete
-    double tInit;                                               //!< [s] Simulation time at the beginning of the translation
-    double transPosInit;                                        //!< [m] Initial translational body position from M to F frame origin along transHat_M
-    double transPosRef;                                         //!< [m] Reference translational body position from M to F frame origin along transHat_M
-    double t_f;                                                 //!< [s] The simulation time when the translation is complete
-    double a;                                                   //!< Parabolic constant for the first half of the translation
-    double b;                                                   //!< Parabolic constant for the second half of the translation
+    bool convergence;                                                       //!< Boolean variable is true when the translation is complete
+    double a;                                                               //!< Parabolic constant for the first half of the translation
+    double b;                                                               //!< Parabolic constant for the second half of the translation
 };
 
 #endif
