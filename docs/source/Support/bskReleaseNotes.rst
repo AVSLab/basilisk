@@ -69,6 +69,8 @@ Version |release|
 - Added support for Vizard 2.1.6.1
 - Updated :ref:`MtbEffector` to include missing swig interface file for a message definition and corrected
   message table in the module documentation.
+- Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedLinearTranslation`
+  simulation module
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
