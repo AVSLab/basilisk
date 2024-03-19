@@ -19,8 +19,8 @@
 #
 #   Unit Test Script
 #   Module Name:        prescribedLinearTranslation
-#   Author:             Patrick Kenneally and Leah Kiner
-#   Creation Date:      Feb 12, 2024
+#   Author:             Leah Kiner
+#   Last Updated:       March 18, 2024
 #
 
 import inspect
@@ -29,6 +29,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
+
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.simulation import prescribedLinearTranslation
@@ -41,14 +42,16 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-@pytest.mark.parametrize("coastOptionBangDuration", [0.0, 2.0, 5.0])  # [s]
-@pytest.mark.parametrize("transPosInit", [0, -0.75])  # [m]
-@pytest.mark.parametrize("transPosRef1", [0, -0.5])  # [m]
-@pytest.mark.parametrize("transPosRef2", [-0.75, 1.0])  # [m]
+@pytest.mark.parametrize("coastOptionBangDuration", [0.0, 2.0])  # [s]
+@pytest.mark.parametrize("smoothingDuration", [0.0, 2.0])  # [s]
+@pytest.mark.parametrize("transPosInit", [0.0, -0.5])  # [m]
+@pytest.mark.parametrize("transPosRef1", [0.0, -1.0])  # [m]
+@pytest.mark.parametrize("transPosRef2", [0.5])  # [m]
 @pytest.mark.parametrize("transAccelMax", [0.01, 0.005])  # [m/s^2]
-@pytest.mark.parametrize("accuracy", [1e-4])
+@pytest.mark.parametrize("accuracy", [1e-8])
 def test_prescribedLinearTranslation(show_plots,
                                      coastOptionBangDuration,
+                                     smoothingDuration,
                                      transPosInit,
                                      transPosRef1,
                                      transPosRef2,
@@ -57,31 +60,39 @@ def test_prescribedLinearTranslation(show_plots,
     r"""
     **Validation Test Description**
 
-    This unit test ensures that a profiled 1 DOF translation for a secondary rigid body connected to a spacecraft hub
-    is properly computed for several different simulation configurations. This unit test profiles two successive
-    translations to ensure the module is correctly configured. The body's initial scalar translational position
-    relative to the spacecraft hub is varied, along with the two final reference positions and the maximum translational
-    acceleration. This unit test also tests both methods of profiling the translation, where either a pure bang-bang
-    acceleration profile can be selected for the translation, or a coast option can be selected where the accelerations
-    are only applied for a specified ramp time and a coast segment with zero acceleration is applied between the two
-    acceleration periods. To validate the module, the final hub-relative position at the end of each translation is
-    checked to match the specified reference position.
+    The unit test for this module ensures that the profiled linear translation for a secondary rigid body relative to
+    the spacecraft hub is properly computed for several different simulation configurations. This unit test profiles
+    two successive translations to ensure the module is correctly configured. The secondary body's initial scalar
+    translational position relative to the spacecraft hub is varied, along with the two final reference positions
+    and the maximum translational acceleration.
+
+    This unit test also tests four different methods of profiling the translation. Two profilers prescribe a pure
+    bang-bang or bang-coast-bang linear acceleration profile for the translation. The bang-bang option results in
+    the fastest possible translation; while the bang-coast-bang option includes a coast period with zero acceleration
+    between the acceleration segments. The other two profilers apply smoothing to the bang-bang and bang-coast-bang
+    acceleration profiles so that the secondary body hub-relative rates start and end at zero.
 
     **Test Parameters**
 
     Args:
         show_plots (bool): Variable for choosing whether plots should be displayed
-        coastOptionBangDuration: (double): [s] Ramp duration used for the coast option
-        transPosInit (float): [m] Initial translational body position from M to F frame origin along transHat_M
-        transPosRef1 (float): [m] First reference position from M to F frame origin along transHat_M
-        transPosRef2 (float): [m] Second reference position from M to F frame origin along transHat_M
+        coastOptionBangDuration: (float): [s] Time the acceleration is applied during the bang segments
+        (Variable must be nonzero to select the bang-coast-bang option)
+        smoothingDuration (float) [s] Time the acceleration is smoothed to the given maximum acceleration value
+        transPosInit (float): [m] Initial translational body position from M to F frame origin along transAxis_M
+        transPosRef1 (float): [m] First reference position from M to F frame origin along transAxis_M
+        transPosRef2 (float): [m] Second reference position from M to F frame origin along transAxis_M
         transAccelMax (float): [m/s^2] Maximum translational acceleration
         accuracy (float): Absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
-    This unit test checks that the final translational body position at the end of each translation converge to the
-    specified reference values ``transPosRef1`` and ``transPosRef2``.
+    To verify the module functionality, the final position at the end of each translation segment is checked to match
+    the specified reference position (``transPosRef1`` and ``transPosRef2``). Additionally, for the smoothed profiler
+    options, the numerical derivative of the profiled displacements and velocities is determined across the entire
+    simulation in this test script. These numerical derivatives are checked with the module's acceleration and velocity
+    profiles to ensure the profiled acceleration is correctly integrated in the module to obtain the displacements and
+    velocities.
     """
 
     unitTaskName = "unitTask"
@@ -91,107 +102,48 @@ def test_prescribedLinearTranslation(show_plots,
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
-    # Create the test thread
-    testTimeStepSec = 0.01  # [s]
+    testTimeStepSec = 0.1  # [s]
     testProcessRate = macros.sec2nano(testTimeStepSec)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the prescribedLinearTranslation module to be tested
+    transAxis_M = np.array([1.0, 0.0, 0.0])  # Axis of translation
     prescribedTrans = prescribedLinearTranslation.PrescribedLinearTranslation()
     prescribedTrans.ModelTag = "prescribedTrans"
-    transHat_M = np.array([0.5, 0.0, 0.5 * np.sqrt(3)])
     prescribedTrans.setCoastOptionBangDuration(coastOptionBangDuration)
-    prescribedTrans.setTransHat_M(transHat_M)
-    prescribedTrans.setTransAccelMax(transAccelMax)  # [m/s^2]
-    prescribedTrans.setTransPosInit(transPosInit)  # [m]
-
-    # Add the prescribedTrans test module to runtime call list
+    prescribedTrans.setSmoothingDuration(smoothingDuration)
+    prescribedTrans.setTransHat_M(transAxis_M)
+    prescribedTrans.setTransAccelMax(transAccelMax)
+    prescribedTrans.setTransPosInit(transPosInit)
     unitTestSim.AddModelToTask(unitTaskName, prescribedTrans)
 
-    # Create the input reference position message for the first translation
-    linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
-    linearTranslationRigidBodyMessageData.rho = transPosRef1
-    linearTranslationRigidBodyMessageData.rhoDot = 0.0
-    linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
-    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
+    # Create the reference position input message for the first translation
+    linearTransRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
+    linearTransRigidBodyMessageData.rho = transPosRef1  # [m]
+    linearTransRigidBodyMessageData.rhoDot = 0.0  # [m/s]
+    linearTransRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTransRigidBodyMessageData)
+    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTransRigidBodyMessage)
 
     # Log module data for module unit test validation
     prescribedStatesDataLog = prescribedTrans.prescribedTranslationOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, prescribedStatesDataLog)
 
-    # Initialize the simulation
+    # Execute the first translation segment
+    simTime = 5 * 60  # [s]
     unitTestSim.InitializeSimulation()
-
-    # Determine the required simulation time for the first translation
-    transVelInit = 0.0  # [m/s]
-    tCoast_1 = 0.0  # [s]
-    if coastOptionBangDuration > 0.0:
-        # Determine the position and velocity at the end of the ramp segment/start of the coast segment
-        if transPosInit < transPosRef1:
-            transPos_tr_1 = ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
-                             + (transVelInit * coastOptionBangDuration)
-                             + transPosInit)  # [m]
-            transVel_tr_1 = transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
-        else:
-            transPos_tr_1 = (- ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
-                                + (transVelInit * coastOptionBangDuration))
-                             + transPosInit)  # [m]
-            transVel_tr_1 = - transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
-
-        # Determine the distance traveled during the coast period
-        deltaPosCoast_1 = transPosRef1 - transPosInit - 2 * (transPos_tr_1 - transPosInit)  # [m]
-
-        # Determine the time duration of the coast segment
-        tCoast_1 = np.abs(deltaPosCoast_1) / np.abs(transVel_tr_1)  # [s]
-        translation1ReqTime = (2 * coastOptionBangDuration) + tCoast_1  # [s]
-    else:
-        translation1ReqTime = np.sqrt(((0.5 * np.abs(transPosRef1 - transPosInit)) * 8) / transAccelMax) + 5  # [s]
-
-    translation1ExtraTime = 5  # [s]
-    unitTestSim.ConfigureStopTime(macros.sec2nano(translation1ReqTime + translation1ExtraTime))
-
-    # Execute the first translation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
     unitTestSim.ExecuteSimulation()
 
-    # Create the input reference position message for the second translation
-    linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
-    linearTranslationRigidBodyMessageData.rho = transPosRef2
-    linearTranslationRigidBodyMessageData.rhoDot = 0.0
-    linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
-    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
+    # Create the reference position input message for the second translation
+    linearTransRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
+    linearTransRigidBodyMessageData.rho = transPosRef2  # [m]
+    linearTransRigidBodyMessageData.rhoDot = 0.0  # [m/s]
+    linearTransRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTransRigidBodyMessageData)
+    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTransRigidBodyMessage)
 
-    # Determine the required simulation time for the second translation
-    tCoast_2 = 0.0  # [s]
-    if coastOptionBangDuration > 0.0:
-        # Determine the position and velocity at the end of the ramp segment/start of the coast segment
-        if transPosRef1 < transPosRef2:
-            transPos_tr_2 = ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
-                             + (transVelInit * coastOptionBangDuration)
-                             + transPosRef1)  # [m]
-            transVel_tr_2 = transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
-        else:
-            transPos_tr_2 = (- ((0.5 * transAccelMax * coastOptionBangDuration * coastOptionBangDuration)
-                             + (transVelInit * coastOptionBangDuration))
-                             + transPosRef1)  # [m]
-            transVel_tr_2 = - transAccelMax * coastOptionBangDuration + transVelInit  # [m/s]
-
-        # Determine the distance traveled during the coast period
-        deltaPosCoast_2 = transPosRef2 - transPosRef1 - 2 * (transPos_tr_2 - transPosRef1)  # [m]
-
-        # Determine the time duration of the coast segment
-        tCoast_2 = np.abs(deltaPosCoast_2) / np.abs(transVel_tr_2)  # [s]
-        translation2ReqTime = (2 * coastOptionBangDuration) + tCoast_2  # [s]
-    else:
-        translation2ReqTime = np.sqrt(((0.5 * np.abs(transPosRef2 - transPosRef1)) * 8) / transAccelMax) + 5  # [s]
-
-    translation2ExtraTime = 5  # [s]
-    unitTestSim.ConfigureStopTime(macros.sec2nano(translation1ReqTime
-                                                  + translation1ExtraTime
-                                                  + translation2ReqTime
-                                                  + translation2ExtraTime))
-
-    # Execute the second translation
+    # Execute the second translation segment
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2 * simTime))
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
@@ -200,51 +152,49 @@ def test_prescribedLinearTranslation(show_plots,
     rPrime_FM_M = prescribedStatesDataLog.rPrime_FM_M  # [m/s]
     rPrimePrime_FM_M = prescribedStatesDataLog.rPrimePrime_FM_M  # [m/s^2]
 
-    # Unit test validation
-    # Store the truth data used to validate the module in two lists
-    if coastOptionBangDuration > 0.0:
-        # Compute tf for the first translation, and tInit tf for the second translation
-        tf_1 = 2 * coastOptionBangDuration + tCoast_1  # [s]
-        tInit_2 = translation1ReqTime + translation1ExtraTime  # [s]
-        tf_2 = tInit_2 + (2 * coastOptionBangDuration) + tCoast_2  # [s]
-
-        # Compute the timespan indices for each check
-        tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
-        tInit_2_index = int(round(tInit_2 / testTimeStepSec)) + 1
-        tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
-
-        # Store the timespan indices in a list
-        timeCheckIndicesList = [tf_1_index, tInit_2_index, tf_2_index]
-
-        # Store the positions to check in a list
-        transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
-
-    else:
-        # Compute tf for the first translation, and tInit tf for the second translation
-        tf_1 = translation1ReqTime  # [s]
-        tInit_2 = translation1ReqTime + translation1ExtraTime  # [s]
-        tf_2 = tInit_2 + translation2ReqTime  # [s]
-
-        # Compute the timespan indices for each check
-        tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
-        tInit_2_index = int(round(tInit_2 / testTimeStepSec)) + 1
-        tf_2_index = int(round(tf_2 / testTimeStepSec)) + 1
-
-        # Store the timespan indices in a list
-        timeCheckIndicesList = [tf_1_index, tInit_2_index, tf_2_index]
-
-        # Store the positions to check in a list
-        transPosCheckList = [transPosRef1, transPosRef1, transPosRef2]
-
-    # Use the two truth data lists to compare with the module-extracted data
-    np.testing.assert_allclose(r_FM_M.dot(transHat_M)[timeCheckIndicesList],
-                               transPosCheckList,
+    # Unit test validation 1: Check that the profiler converges to the required final positions
+    tf_1_index = int(round(simTime / testTimeStepSec)) + 1
+    transPosFinal1 = r_FM_M[tf_1_index].dot(transAxis_M)
+    transPosFinal2 = r_FM_M[-1].dot(transAxis_M)
+    transPosFinalList = [transPosFinal1, transPosFinal2]  # [m]
+    transPosRefList = [transPosRef1, transPosRef2]  # [m]
+    np.testing.assert_allclose(transPosRefList,
+                               transPosFinalList,
                                atol=accuracy,
                                verbose=True)
 
-    if show_plots:
-        plt.close("all")  # clears out plots from earlier test runs
+    # Unit test validation 2: Numerically check that the profiled accelerations,
+    # velocities, and displacements are correct
+    if (smoothingDuration > 0.0):
+        transAccel = rPrimePrime_FM_M.dot(transAxis_M)
+        transVel = rPrime_FM_M.dot(transAxis_M)
+        transPos = r_FM_M.dot(transAxis_M)
+        transAccelNumerical = []
+        transVelNumerical = []
+        for i in range(len(timespan) - 1):
+            # First order forward difference
+            transAccelNumerical.append((transVel[i+1] - transVel[i]) / testTimeStepSec)
+            transVelNumerical.append((transPos[i+1] - transPos[i]) / testTimeStepSec)
 
+        np.testing.assert_allclose(transAccel[0:-1],
+                                   transAccelNumerical,
+                                   atol=1e-2,
+                                   verbose=True)
+        np.testing.assert_allclose(transVel[0:-1],
+                                   transVelNumerical,
+                                   atol=1e-2,
+                                   verbose=True)
+        if show_plots:
+            # Plot the difference between the numerical and profiled results
+            plt.figure()
+            plt.clf()
+            plt.plot(timespan[0:-1], transAccelNumerical - transAccel[0:-1], label=r'$\ddot{\rho}$')
+            plt.plot(timespan[0:-1], transVelNumerical - transVel[0:-1], label=r"$\dot{\rho}$")
+            plt.title(r'Profiled vs Numerical Difference', fontsize=14)
+            plt.legend(loc='upper right', prop={'size': 12})
+            plt.grid(True)
+
+    if show_plots:
         # 1. Plot the scalar translational states
         # 1A. Plot transPos
         transPosInitPlotting = np.ones(len(timespan)) * transPosInit
@@ -252,11 +202,11 @@ def test_prescribedLinearTranslation(show_plots,
         transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2
         plt.figure()
         plt.clf()
-        plt.plot(timespan, r_FM_M.dot(transHat_M), label=r"$l$")
+        plt.plot(timespan, r_FM_M.dot(transAxis_M), label=r"$l$")
         plt.plot(timespan, transPosInitPlotting, '--', label=r'$\rho_{0}$')
         plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
         plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
-        plt.title(r'Translational Position $\rho_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.title(r'Profiled Translational Position $\rho_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(m)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
@@ -265,8 +215,8 @@ def test_prescribedLinearTranslation(show_plots,
         # 1B. Plot transVel
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrime_FM_M.dot(transHat_M), label=r"$\dot{\rho}$")
-        plt.title(r'Translational Velocity $\dot{\rho}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.plot(timespan, rPrime_FM_M.dot(transAxis_M), label=r"$\dot{\rho}$")
+        plt.title(r'Profiled Translational Velocity $\dot{\rho}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(m/s)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
@@ -275,8 +225,8 @@ def test_prescribedLinearTranslation(show_plots,
         # 1C. Plot transAccel
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrimePrime_FM_M.dot(transHat_M), label=r"$\ddot{\rho}$")
-        plt.title(r'Translational Acceleration $\ddot{\rho}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+        plt.plot(timespan, rPrimePrime_FM_M.dot(transAxis_M), label=r"$\ddot{\rho}$")
+        plt.title(r'Profiled Translational Acceleration $\ddot{\rho}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
         plt.ylabel('(m/s$^2$)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
@@ -284,32 +234,22 @@ def test_prescribedLinearTranslation(show_plots,
 
         # 2. Plot the prescribed translational states
         # 2A. Plot r_FM_M
-        r_FM_M_Ref1 = transPosRef1 * transHat_M
-        r_FM_M_1_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[0]
-        r_FM_M_2_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[1]
-        r_FM_M_3_Ref1 = np.ones(len(timespan[0:timeCheckIndicesList[0]])) * r_FM_M_Ref1[2]
-        r_FM_M_Ref2 = transPosRef2 * transHat_M
-        r_FM_M_1_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[0]
-        r_FM_M_2_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[1]
-        r_FM_M_3_Ref2 = np.ones(len(timespan[timeCheckIndicesList[0]:-1])) * r_FM_M_Ref2[2]
+        transPosRef1Plotting = np.ones(len(timespan)) * transPosRef1  # [m]
+        transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2  # [m]
         plt.figure()
         plt.clf()
         plt.plot(timespan, r_FM_M[:, 0], label=r'$r_{1}$')
         plt.plot(timespan, r_FM_M[:, 1], label=r'$r_{2}$')
         plt.plot(timespan, r_FM_M[:, 2], label=r'$r_{3}$')
-        plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_1_Ref1, '--', label=r'$r_{1 Ref_{1}}$')
-        plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_2_Ref1, '--', label=r'$r_{2 Ref_{1}}$')
-        plt.plot(timespan[0:timeCheckIndicesList[0]], r_FM_M_3_Ref1, '--', label=r'$r_{3 Ref_{1}}$')
-        plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_1_Ref2, '--', label=r'$r_{1 Ref_{2}}$')
-        plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_2_Ref2, '--', label=r'$r_{2 Ref_{2}}$')
-        plt.plot(timespan[timeCheckIndicesList[0]:-1], r_FM_M_3_Ref2, '--', label=r'$r_{3 Ref_{2}}$')
+        plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
+        plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
         plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='center left', prop={'size': 12})
         plt.grid(True)
 
-        # Plot rPrime_FM_F
+        # 2B. Plot rPrime_FM_F
         plt.figure()
         plt.clf()
         plt.plot(timespan, rPrime_FM_M[:, 0], label='1')
@@ -321,17 +261,30 @@ def test_prescribedLinearTranslation(show_plots,
         plt.legend(loc='upper left', prop={'size': 12})
         plt.grid(True)
 
-        plt.show()
-        plt.close("all")
+        # 2C. Plot rPrimePrime_FM_F
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, rPrimePrime_FM_M[:, 0], label='1')
+        plt.plot(timespan, rPrimePrime_FM_M[:, 1], label='2')
+        plt.plot(timespan, rPrimePrime_FM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} r$PrimePrime$_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.ylabel('(m/s$^2$)', fontsize=14)
+        plt.xlabel('Time (s)', fontsize=14)
+        plt.legend(loc='upper left', prop={'size': 12})
+        plt.grid(True)
 
+        plt.show()
+    plt.close("all")
 
 if __name__ == "__main__":
-    test_prescribedLinearTranslation(True,  # show_plots
-                               2.0,
-                               0.0,  # [m] transPosInit
-                               -0.5,  # [m] transPosRef1
-                               1.0,  # [m] transPosRef2
-                               0.01,  # [m/s^2] transAccelMax
-                               1e-4  # accuracy
-                               )
+    test_prescribedLinearTranslation(
+        True,  # show_plots
+        2.0,  # [s] coastOptionBangDuration
+        2.0,  # [s] smoothingDuration
+        -0.5,  # [m] transPosInit
+        -1.0,  # [m] transPosRef1
+        0.5,  # [m] transPosRef2
+        0.01,  # [m/s^2] transAccelMax
+        1e-8  # accuracy
+    )
     
