@@ -25,7 +25,6 @@
 #include "cMsgCInterface/MotorStepCommandMsg_C.h"
 #include "cMsgCInterface/StepperMotorMsg_C.h"
 #include "cMsgCInterface/PrescribedMotionMsg_C.h"
-#include "cMsgCInterface/HingedRigidBodyMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -78,7 +77,6 @@ typedef struct {
     /* Messages */
     MotorStepCommandMsg_C motorStepCommandInMsg;           //!< Input msg for the number of commanded motor step counts
     StepperMotorMsg_C stepperMotorOutMsg;                  //!< Output msg for the stepper motor information
-    HingedRigidBodyMsg_C hingedRigidBodyOutMsg;            //!< Output msg for the spinning body module
     PrescribedMotionMsg_C prescribedMotionOutMsg;          //!< Output msg for the spinning body prescribed states
 
 }StepperMotorProfilerConfig;

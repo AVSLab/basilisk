@@ -29,7 +29,6 @@
  */
 void SelfInit_stepperMotorProfiler(StepperMotorProfilerConfig *configData, int64_t moduleID) {
     StepperMotorMsg_C_init(&configData->stepperMotorOutMsg);
-    HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyOutMsg);
     PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
 }
 
@@ -82,13 +81,11 @@ void Update_stepperMotorProfiler(StepperMotorProfilerConfig *configData, uint64_
     // Create the buffer messages
     MotorStepCommandMsgPayload motorStepCommandIn;
     StepperMotorMsgPayload stepperMotorOut;
-    HingedRigidBodyMsgPayload hingedRigidBodyOut;
     PrescribedMotionMsgPayload prescribedMotionOut;
 
     // Zero the buffer messages
     motorStepCommandIn = MotorStepCommandMsg_C_zeroMsgPayload();
     stepperMotorOut = StepperMotorMsg_C_zeroMsgPayload();
-    hingedRigidBodyOut = HingedRigidBodyMsg_C_zeroMsgPayload();
     prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
 
     // Read the input message
@@ -228,10 +225,6 @@ void Update_stepperMotorProfiler(StepperMotorProfilerConfig *configData, uint64_
     stepperMotorOut.stepsCommanded = configData->stepsCommanded;
     stepperMotorOut.stepCount = configData->stepCount;
 
-    // Copy motor states to the hinged rigid body message
-    hingedRigidBodyOut.theta = configData->theta;
-    hingedRigidBodyOut.thetaDot = configData->thetaDot;
-
     // Copy the prescribed states to the prescribed motion output message
     v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
     v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
@@ -242,6 +235,5 @@ void Update_stepperMotorProfiler(StepperMotorProfilerConfig *configData, uint64_
 
     // Write the output messages
     StepperMotorMsg_C_write(&stepperMotorOut, &configData->stepperMotorOutMsg, moduleID, callTime);
-    HingedRigidBodyMsg_C_write(&hingedRigidBodyOut, &configData->hingedRigidBodyOutMsg, moduleID, callTime);
     PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
 }
