@@ -76,11 +76,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
 
         // Set the parameters required to profile the translation
         if (this->transPosRef != this->transPosInit) {
-            if (this->coastOptionBangDuration > 0.0) {
-                this->computeBangCoastBangParametersNoSmoothing();
-            } else {
-                this->computeBangBangParametersNoSmoothing();
-            }
+            this->computeTranslationParameters();
         } else {
             this->t_f = this->tInit;
         }
@@ -94,6 +90,17 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
 
     // Write the module output messages
     this->writeOutputMessages(callTime);
+}
+
+/*! This intermediate method groups the calculation of translation parameters into a single method.
+ @return void
+*/
+void PrescribedLinearTranslation::computeTranslationParameters() {
+    if (this->coastOptionBangDuration > 0.0) {
+        this->computeBangCoastBangParametersNoSmoothing();
+    } else {
+        this->computeBangBangParametersNoSmoothing();
+    }
 }
 
 /*! This method computes the required parameters for the translation with a non-smoothed bang-bang acceleration profile.
