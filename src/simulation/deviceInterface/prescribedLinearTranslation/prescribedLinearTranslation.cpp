@@ -165,9 +165,9 @@ void PrescribedLinearTranslation::computeCurrentState(double t) {
             this->computeTranslationComplete();
         }
     } else {
-        if (this->isInFirstBangSegmentNoCoast(t)) {
+        if (this->isInFirstBangSegment(t)) {
             this->computeFirstBangSegment(t);
-        } else if (this->isInSecondBangSegmentNoCoast(t)) {
+        } else if (this->isInSecondBangSegment(t)) {
             this->computeSecondBangSegment(t);
         } else {
             this->computeTranslationComplete();
@@ -175,31 +175,15 @@ void PrescribedLinearTranslation::computeCurrentState(double t) {
     }
 }
 
-/*! This method determines if the current time is within the first bang segment for the no coast option.
- @return bool
- @param t [s] Current simulation time
-*/
-bool PrescribedLinearTranslation::isInFirstBangSegmentNoCoast(double t) const {
-    return (t <= this->t_b1 && this->t_f - this->tInit != 0);
-}
-
-/*! This method determines if the current time is within the first bang segment for the coast option.
+/*! This method determines if the current time is within the first bang segment.
  @return bool
  @param t [s] Current simulation time
 */
 bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
-    return (t <= this->t_b1 && this->t_f - this->tInit != 0);
+    return (t <= this->t_b1 && this->t_f - this->tInit != 0.0);
 }
 
-/*! This method determines if the current time is within the second bang segment for the no coast option.
- @return bool
- @param t [s] Current simulation time
-*/
-bool PrescribedLinearTranslation::isInSecondBangSegmentNoCoast(double t) const {
-    return (t > this->t_b1 && t <= this->t_f && this->t_f - this->tInit != 0);
-}
-
-/*! This method determines if the current time is within the second bang segment for the coast option.
+/*! This method determines if the current time is within the second bang segment.
  @return bool
  @param t [s] Current simulation time
 */
