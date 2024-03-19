@@ -53,6 +53,7 @@ public:
 
 private:
     /* Methods for computing the required translation parameters */
+    void computeTranslationParameters();                                        //!< Intermediate method to group the calculation of translation parameters into a single method
     void computeBangBangParametersNoSmoothing();                                //!< Method for computing the required parameters for the non-smoothed bang-bang profiler option
     void computeBangCoastBangParametersNoSmoothing();                           //!< Method for computing the required parameters for the non-smoothed bang-coast-bang profiler option
 
