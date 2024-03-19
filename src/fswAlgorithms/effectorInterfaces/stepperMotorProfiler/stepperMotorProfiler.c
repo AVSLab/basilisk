@@ -29,7 +29,6 @@
  */
 void SelfInit_stepperMotorProfiler(StepperMotorProfilerConfig *configData, int64_t moduleID) {
     StepperMotorMsg_C_init(&configData->stepperMotorOutMsg);
-    PrescribedMotionMsg_C_init(&configData->prescribedMotionOutMsg);
 }
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
@@ -54,13 +53,6 @@ void Reset_stepperMotorProfiler(StepperMotorProfilerConfig *configData, uint64_t
     configData->tInit = 0.0;
     configData->stepCount = 0;
 
-    // Initialize the prescribed states not set by the user
-    v3Scale(configData->thetaDotInit, configData->rotAxis_M, configData->omega_FM_F);
-    v3Scale(configData->thetaDDot, configData->rotAxis_M, configData->omegaPrime_FM_F);
-    double prv_F0M_array[3];
-    v3Scale(configData->thetaInit, configData->rotAxis_M, prv_F0M_array);
-    PRV2MRP(prv_F0M_array, configData->sigma_FM);
-
     // Set the previous written time to a negative value to capture a message written at time zero
     configData->previousWrittenTime = -1;
 
@@ -81,12 +73,10 @@ void Update_stepperMotorProfiler(StepperMotorProfilerConfig *configData, uint64_
     // Create the buffer messages
     MotorStepCommandMsgPayload motorStepCommandIn;
     StepperMotorMsgPayload stepperMotorOut;
-    PrescribedMotionMsgPayload prescribedMotionOut;
 
     // Zero the buffer messages
     motorStepCommandIn = MotorStepCommandMsg_C_zeroMsgPayload();
     stepperMotorOut = StepperMotorMsg_C_zeroMsgPayload();
-    prescribedMotionOut = PrescribedMotionMsg_C_zeroMsgPayload();
 
     // Read the input message
     if (MotorStepCommandMsg_C_isWritten(&configData->motorStepCommandInMsg)) {
@@ -193,31 +183,6 @@ void Update_stepperMotorProfiler(StepperMotorProfilerConfig *configData, uint64_
         }
     }
 
-    // Determine the prescribed parameters: omega_FM_F and omegaPrime_FM_F
-    v3Normalize(configData->rotAxis_M, configData->rotAxis_M);
-    v3Scale(configData->thetaDot, configData->rotAxis_M, configData->omega_FM_F);
-    v3Scale(configData->thetaDDot, configData->rotAxis_M, configData->omegaPrime_FM_F);
-
-    // Determine dcm_FF0
-    double dcm_FF0[3][3];
-    double prv_FF0_array[3];
-    double theta_FF0 = configData->theta - configData->thetaInit;
-    v3Scale(theta_FF0, configData->rotAxis_M, prv_FF0_array);
-    PRV2C(prv_FF0_array, dcm_FF0);
-
-    // Determine dcm_F0M
-    double dcm_F0M[3][3];
-    double prv_F0M_array[3];
-    v3Scale(configData->thetaInit, configData->rotAxis_M, prv_F0M_array);
-    PRV2C(prv_F0M_array, dcm_F0M);
-
-    // Determine dcm_FM
-    double dcm_FM[3][3];
-    m33MultM33(dcm_FF0, dcm_F0M, dcm_FM);
-
-    // Determine the MRP attitude: sigma_FM
-    C2MRP(dcm_FM, configData->sigma_FM);
-
     // Copy motor information to the stepper motor message
     stepperMotorOut.theta = configData->theta;
     stepperMotorOut.thetaDot = configData->thetaDot;
@@ -225,15 +190,6 @@ void Update_stepperMotorProfiler(StepperMotorProfilerConfig *configData, uint64_
     stepperMotorOut.stepsCommanded = configData->stepsCommanded;
     stepperMotorOut.stepCount = configData->stepCount;
 
-    // Copy the prescribed states to the prescribed motion output message
-    v3Copy(configData->r_FM_M, prescribedMotionOut.r_FM_M);
-    v3Copy(configData->rPrime_FM_M, prescribedMotionOut.rPrime_FM_M);
-    v3Copy(configData->rPrimePrime_FM_M, prescribedMotionOut.rPrimePrime_FM_M);
-    v3Copy(configData->sigma_FM, prescribedMotionOut.sigma_FM);
-    v3Copy(configData->omega_FM_F, prescribedMotionOut.omega_FM_F);
-    v3Copy(configData->omegaPrime_FM_F, prescribedMotionOut.omegaPrime_FM_F);
-
     // Write the output messages
     StepperMotorMsg_C_write(&stepperMotorOut, &configData->stepperMotorOutMsg, moduleID, callTime);
-    PrescribedMotionMsg_C_write(&prescribedMotionOut, &configData->prescribedMotionOutMsg, moduleID, callTime);
 }

@@ -28,8 +28,6 @@
 struct MotorStepCommandMsg_C;
 %include "architecture/msgPayloadDefC/StepperMotorMsgPayload.h"
 struct StepperMotorMsg_C;
-%include "architecture/msgPayloadDefC/PrescribedMotionMsgPayload.h"
-struct PrescribedMotionMsg_C;
 
 %pythoncode %{
 import sys

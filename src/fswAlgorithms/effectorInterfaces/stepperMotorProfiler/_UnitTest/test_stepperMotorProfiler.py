@@ -97,15 +97,10 @@ def stepperMotorProfilerTestFunction(show_plots, initialMotorAngle, stepsCommand
     # Create an instance of the stepperMotorProfiler module to be tested
     StepperMotorProfiler = stepperMotorProfiler.stepperMotorProfiler()
     StepperMotorProfiler.ModelTag = "StepperMotorProfiler"
-    rotAxis_M = np.array([1.0, 0.0, 0.0])
-    StepperMotorProfiler.rotAxis_M = rotAxis_M
     StepperMotorProfiler.thetaInit = initialMotorAngle
     StepperMotorProfiler.stepAngle = stepAngle
     StepperMotorProfiler.stepTime = stepTime
     StepperMotorProfiler.thetaDDotMax = stepAngle / (0.25 * stepTime * stepTime)
-    StepperMotorProfiler.r_FM_M = np.array([0.0, 0.0, 0.0])
-    StepperMotorProfiler.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    StepperMotorProfiler.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
 
     # Add the test module to the runtime call list
     unitTestSim.AddModelToTask(unitTaskName, StepperMotorProfiler)
@@ -118,9 +113,7 @@ def stepperMotorProfilerTestFunction(show_plots, initialMotorAngle, stepsCommand
 
     # Log the test module output message for data comparison
     stepperMotorDataLog = StepperMotorProfiler.stepperMotorOutMsg.recorder()
-    prescribedDataLog = StepperMotorProfiler.prescribedMotionOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, stepperMotorDataLog)
-    unitTestSim.AddModelToTask(unitTaskName, prescribedDataLog)
 
     # Initialize the simulation, set the sim run time, and execute the simulation
     unitTestSim.InitializeSimulation()
@@ -136,9 +129,6 @@ def stepperMotorProfilerTestFunction(show_plots, initialMotorAngle, stepsCommand
     thetaDDot = (180 / np.pi) * stepperMotorDataLog.thetaDDot
     motorStepCount = stepperMotorDataLog.stepCount
     motorCommandedSteps = stepperMotorDataLog.stepsCommanded
-    sigma_FM = prescribedDataLog.sigma_FM
-    omega_FM_F = prescribedDataLog.omega_FM_F
-    omegaPrime_FM_F = prescribedDataLog.omegaPrime_FM_F
 
     # Only show plots if the motor actuates
     if (stepsCommanded == 0):
@@ -181,30 +171,6 @@ def stepperMotorProfilerTestFunction(show_plots, initialMotorAngle, stepsCommand
     plt.plot(timespan * macros.NANO2SEC, motorCommandedSteps, '--', label='Commanded')
     plt.title(r'Motor Step History', fontsize=14)
     plt.ylabel('Steps', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc='upper right', prop={'size': 12})
-    plt.grid(True)
-
-    # Plot omega_FM_F
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 0], label=r'$\omega_{1}$')
-    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 1], label=r'$\omega_{2}$')
-    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 2], label=r'$\omega_{3}$')
-    plt.title(r'${}^\mathcal{F} \omega_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg/s)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc='upper right', prop={'size': 12})
-    plt.grid(True)
-
-    # Plot omegaPrime_FM_F
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 0], label=r'1')
-    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 1], label=r'2')
-    plt.plot(timespan * macros.NANO2SEC, omegaPrime_FM_F[:, 2], label=r'3')
-    plt.title(r'${}^\mathcal{F} \omega Prime_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-    plt.ylabel('(deg/s$^2$)', fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)
     plt.legend(loc='upper right', prop={'size': 12})
     plt.grid(True)
