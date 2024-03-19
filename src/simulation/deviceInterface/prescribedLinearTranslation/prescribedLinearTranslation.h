@@ -58,13 +58,11 @@ private:
 
     /* Methods for computing the current translational states */
     void computeCurrentState(double time);                                      //!< Intermediate method used to group the calculation of the current translational states into a single method
-    bool isInFirstBangSegmentNoCoast(double time) const;                        //!< Method for determining if the current time is within the first bang segment for the no coast option
-    bool isInFirstBangSegment(double time) const;                               //!< Method for determining if the current time is within the first bang segment for the coast option
-    bool isInSecondBangSegmentNoCoast(double time) const;                       //!< Method for determining if the current time is within the second bang segment for the no coast option
-    bool isInSecondBangSegment(double time) const;                              //!< Method for determining if the current time is within the second bang segment for the coast option
+    bool isInFirstBangSegment(double time) const;                               //!< Method for determining if the current time is within the first bang segment
+    bool isInSecondBangSegment(double time) const;                              //!< Method for determining if the current time is within the second bang segment
     bool isInCoastSegment(double time) const;                                   //!< Method for determining if the current time is within the coast segment for the coast option
-    void computeFirstBangSegment(double time);                                  //!< Method for computing the scalar translational states for the first bang segment
-    void computeSecondBangSegment(double time);                                 //!< Method for computing the scalar translational states for the second bang segment
+    void computeFirstBangSegment(double time);                                  //!< Method for computing the first bang segment scalar translational states
+    void computeSecondBangSegment(double time);                                 //!< Method for computing the second bang segment scalar translational states
     void computeCoastSegment(double time);                                      //!< Method for computing the scalar translational states for the coast option coast period
     void computeTranslationComplete();                                          //!< Method for computing the scalar translational states when the translation is complete
 
