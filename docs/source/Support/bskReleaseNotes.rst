@@ -62,6 +62,8 @@ Version |release|
 - Created a new example scenario :ref:`scenarioDeployingSolarArrays` demonstrating how to simulate hub-relative
   multi-body prescribed motion.
 - Added support for Vizard 2.1.6.1
+- Updated :ref:`MtbEffector` to include missing swig interface file for a message definition and corrected
+  message table in the module documentation.
 
 
 Version 2.2.1 (Dec. 22, 2023)

@@ -40,7 +40,7 @@ struct MTBCmdMsg_C;
 struct MagneticFieldMsg_C;
 %include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
 struct MTBArrayConfigMsg_C;
-%include "architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.h"
+%include "architecture/msgPayloadDefC/MTBMsgPayload.h"
 struct MTBMsg_C;
 
 %pythoncode %{
