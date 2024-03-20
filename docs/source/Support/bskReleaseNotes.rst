@@ -67,6 +67,8 @@ Version |release|
 - Created a :ref:`singleAxisProfiler` simulation module to profile 1 DOF rotational prescribed motion about a
   single hub-fixed axis.
 - Added support for Vizard 2.1.6.1
+- Updated :ref:`MtbEffector` to include missing swig interface file for a message definition and corrected
+  message table in the module documentation.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
