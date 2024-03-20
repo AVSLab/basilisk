@@ -13,6 +13,14 @@ Release Notes
     - Add magnetic torque bar visualization
     - Visualize aerobraking maneuvers
 
+**Version 2.1.6.1 (March 20, 2024)**
+
+- force Vizard to show the most recently received message when a camera image request
+  is received in 2-way comm (this was not required in noDisplay mode because we stay on
+  the head of the received messages, but because we do not stay on the head when the
+  display is on we needed a way to make sure the images were taken of the correct timestep)
+- moved ASyncIO.ForceDotNet.Force() call to before sockets are created (solved a Windows
+  issue where 2-way comm was not completing handshake)
 
 **Version 2.1.6 (March 1, 2024)**
 
