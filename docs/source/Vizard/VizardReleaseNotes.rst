@@ -12,6 +12,9 @@ Release Notes
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
     - Visualize aerobraking maneuvers
+    - Add interactive information panels that can include buttons for the user to interact with
+    - Add ability to listen to a Basilisk simulation broadcast (one-way communication only)
+    - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
 **Version 2.1.6.1 (March 20, 2024)**
 
