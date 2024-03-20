@@ -23,6 +23,7 @@ from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import deprecated
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 
@@ -1117,6 +1118,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         flag if live data streaming to Vizard should be used
     broadcastStream: bool
         flag if messages should be broadcast for listener Vizards to pick up.
+    noDisplay: bool
+        flag if Vizard should run performance opNav (no Vizard display)
     genericStorageList:
         list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.
     lightList:
@@ -1156,8 +1159,8 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-         'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
         ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'cssList', 'liveStream', 'broadcastStream',        
+         'noDisplay', 'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
          'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList',
          'msmInfoList', 'ellipsoidList', 'trueOrbitColorInMsgList'],
         kwargs)
@@ -1541,12 +1544,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             print('ERROR: vizSupport: liveStream must be True or False')
             exit(1)
         vizMessenger.liveStream = val
-        if 'opNavMode' in kwargs:
-            if kwargs['opNavMode'] > 0:
-                print('ERROR: vizSupport: do not use liveStream and opNavMode flags at the same time.')
-                exit(1)
 
-    vizMessenger.opNavMode = 0
     if 'broadcastStream' in kwargs:
         val = kwargs['broadcastStream']
         if not isinstance(val, bool):
@@ -1554,7 +1552,18 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             exit(1)
         vizMessenger.broadcastStream = val
 
+    if 'noDisplay' in kwargs:
+        val = kwargs['noDisplay']
+        if not isinstance(val, bool):
+            print('ERROR: vizSupport: noDisplay must be True or False')
+            exit(1)
+        if val and (vizMessenger.liveStream or vizMessenger.broadcastStream):
+            print('ERROR: vizSupport: noDisplay mode cannot be used with liveStream or broadcastStream.')
+            exit(1)
+        vizMessenger.noDisplay = val
+
     if 'opNavMode' in kwargs:
+        deprecateOpNav()
         val = kwargs['opNavMode']
         if not isinstance(val, int):
             print('ERROR: vizSupport: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
@@ -1562,6 +1571,17 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if val < 0 or val > 2:
             print('ERROR: vizSupport: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
             exit(1)
-        vizMessenger.opNavMode = val
+        if val == 1:
+            vizMessenger.liveStream = True
+        if val == 2:
+            if (vizMessenger.liveStream or vizMessenger.broadcastStream):
+                print("ERROR: vizSupport: noDisplay mode cannot be used with liveStream or broadcastStream.")
+            else:
+                vizMessenger.noDisplay = True
+
 
     return vizMessenger
+
+@deprecated.deprecated("2025/03/05", "opNavMode has been deprecated. Use 'liveStream' or 'noDisplay' flags instead.")
+def deprecateOpNav():
+    return
