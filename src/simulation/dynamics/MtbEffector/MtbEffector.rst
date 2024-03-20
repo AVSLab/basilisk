@@ -26,7 +26,7 @@ provides information on what this message is used for.
       - :ref:`MTBArrayConfigMsgPayload`
       - input msg for layout of magnetic torque bars
     * - mtbOutMsg
-      - :ref:`MagneticFieldMsgPayload`
+      - :ref:`MTBMsgPayload`
       - output message containing net torque produced by the torque bars in body frame `B` components
 
 
