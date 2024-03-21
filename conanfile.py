@@ -35,6 +35,16 @@ except ModuleNotFoundError:
           "for Windows\nRun command `pip3 install conan` for Linux/MacOS")
     sys.exit(1)
 
+# check that the large spice data files were installed.
+filePath = os.getcwd()
+filePath = os.path.join(filePath, "supportData/EphemerisData/de430.bsp")
+fileStats = os.stat(filePath)
+if fileStats.st_size < 1024:
+    print(failColor + "GIT CLONING ERROR: Git didn't pull the large data files.  You must install lfs first "
+                      "before cloning the repo. "
+                      "See step 1 in http://hanspeterschaub.info/basilisk/Install/pullCloneBSK.html"+ endColor)
+    exit(0)
+
 # define BSK module option list (option name and default value)
 bskModuleOptionsBool = {
     "opNav": False,
