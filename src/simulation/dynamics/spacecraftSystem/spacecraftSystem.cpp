@@ -54,6 +54,12 @@ void SpacecraftUnit::addStateEffector(StateEffector *newStateEffector)
 
 void SpacecraftUnit::addDynamicEffector(DynamicEffector *newDynamicEffector)
 {
+    /* assign the state engine names for the parent rigid body states */
+    newDynamicEffector->stateNameOfPosition = this->hub.nameOfHubPosition;
+    newDynamicEffector->stateNameOfVelocity = this->hub.nameOfHubVelocity;
+    newDynamicEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
+    newDynamicEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
+
     this->dynEffectors.push_back(newDynamicEffector);
 
     return;
