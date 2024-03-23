@@ -72,9 +72,9 @@ void SphericalPendulum::linkInStates(DynParamManager& statesIn)
 {
     // - Grab access to the hub states
 
-	this->omegaState = statesIn.getStateObject("hubOmega");
-	this->sigmaState = statesIn.getStateObject("hubSigma");
-	this->velocityState = statesIn.getStateObject("hubVelocity");
+	this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
+	this->sigmaState = statesIn.getStateObject(this->stateNameOfSigma);
+	this->velocityState = statesIn.getStateObject(this->stateNameOfVelocity);
 
     // - Grab access to gravity
     this->g_N = statesIn.getPropertyReference("g_N");

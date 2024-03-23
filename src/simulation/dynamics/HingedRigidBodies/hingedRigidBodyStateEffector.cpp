@@ -108,8 +108,8 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
     this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
 
-    this->sigma_BN = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
-    this->omega_BN_B = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
+    this->sigma_BN = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->omega_BN_B = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfOmega);
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
 

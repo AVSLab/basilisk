@@ -69,9 +69,9 @@ void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
-    this->hubVelocity = statesIn.getStateObject("hubVelocity");
-    this->hubSigma = statesIn.getStateObject("hubSigma");
-    this->hubOmega = statesIn.getStateObject("hubOmega");
+    this->hubVelocity = statesIn.getStateObject(this->stateNameOfVelocity);
+    this->hubSigma = statesIn.getStateObject(this->stateNameOfSigma);
+    this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
     this->g_N = statesIn.getPropertyReference("g_N");
 
     return;

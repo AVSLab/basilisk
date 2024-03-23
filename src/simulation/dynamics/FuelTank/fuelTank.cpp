@@ -60,7 +60,7 @@ void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
 /*! Link states that the module accesses */
 void FuelTank::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hubs omega_BN_N
-    this->omegaState = statesIn.getStateObject("hubOmega");
+	this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
 }
 
 /*! Register states. The fuel tank has one state associated with it: mass, and it also has the
