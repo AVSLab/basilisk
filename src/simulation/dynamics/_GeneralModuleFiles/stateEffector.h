@@ -59,6 +59,12 @@ public:
     Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B
     Eigen::Vector3d r_BP_P;                //!< position vector of the spacecraft mody frame origin B relative to the primary spacecraft body frame P.  This is used in the SpacecraftSystem module where multiple spacecraft hubs can be a single spacecraft
     Eigen::Matrix3d dcm_BP;                //!< DCM of the spacecraft body frame B relative to primary spacecraft body frame P
+
+    std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
+    std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
+    std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude
+    std::string stateNameOfOmega = "";                              //!< state engine name of the parent rigid body inertial angular velocity vector
+
     BSKLogger bskLogger;                   //!< -- BSK Logging
 
 public:

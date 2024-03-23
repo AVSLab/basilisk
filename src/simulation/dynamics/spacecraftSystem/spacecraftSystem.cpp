@@ -44,6 +44,12 @@ SpacecraftUnit::~SpacecraftUnit()
 
 void SpacecraftUnit::addStateEffector(StateEffector *newStateEffector)
 {
+    /* assign the state engine names for the parent rigid body states */
+    newStateEffector->stateNameOfPosition = this->hub.nameOfHubPosition;
+    newStateEffector->stateNameOfVelocity = this->hub.nameOfHubVelocity;
+    newStateEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
+    newStateEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
+
     this->states.push_back(newStateEffector);
 
     // Give the stateEffector the name of the spacecraft it is attached to
