@@ -84,8 +84,8 @@ void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
  */
 
 void GravityGradientEffector::linkInStates(DynParamManager& states){
-    this->hubSigma = states.getStateObject("hubSigma");
-    this->r_BN_N = states.getStateObject("hubPosition");
+    this->hubSigma = states.getStateObject(this->stateNameOfSigma);
+    this->r_BN_N = states.getStateObject(this->stateNameOfPosition);
 	this->ISCPntB_B = states.getPropertyReference("inertiaSC");
     this->c_B = states.getPropertyReference("centerOfMassSC");
     this->m_SC = states.getPropertyReference("m_SC");

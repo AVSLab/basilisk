@@ -85,7 +85,7 @@ void MtbEffector::linkInStates(DynParamManager& states)
     /*
      * Link the Body relative to Inertial frame modified modriguez parameter.
      */
-    this->hubSigma = states.getStateObject("hubSigma");
+    this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     
     return;
 }
