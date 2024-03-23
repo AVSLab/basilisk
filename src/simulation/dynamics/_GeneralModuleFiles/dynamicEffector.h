@@ -38,6 +38,12 @@ public:
     Eigen::Vector3d forceExternal_N = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in inertial components
     Eigen::Vector3d forceExternal_B = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in body frame components
     Eigen::Vector3d torqueExternalPntB_B = Eigen::Vector3d::Zero(); //!< [Nm] External torque applied by this effector
+
+    std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
+    std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
+    std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude
+    std::string stateNameOfOmega = "";                              //!< state engine name of the parent rigid body inertial angular velocity vector
+    
     BSKLogger bskLogger;                    //!< -- BSK Logging
 };
 
