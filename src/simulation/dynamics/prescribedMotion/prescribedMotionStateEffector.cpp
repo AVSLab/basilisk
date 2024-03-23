@@ -126,8 +126,8 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // Get access to the hub states needed for dynamic coupling
-    this->hubSigma = statesIn.getStateObject("hubSigma");
-    this->hubOmega = statesIn.getStateObject("hubOmega");
+    this->hubSigma = statesIn.getStateObject(this->stateNameOfSigma);
+    this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
 }

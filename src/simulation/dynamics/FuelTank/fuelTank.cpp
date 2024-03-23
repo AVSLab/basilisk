@@ -88,7 +88,7 @@ void FuelTank::pushFuelSloshParticle(FuelSlosh *particle)
 void FuelTank::linkInStates(DynParamManager& statesIn)
 {
     // - Grab access to the hubs omega_BN_N
-	this->omegaState = statesIn.getStateObject("hubOmega");
+	this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
 
     return;
 }
