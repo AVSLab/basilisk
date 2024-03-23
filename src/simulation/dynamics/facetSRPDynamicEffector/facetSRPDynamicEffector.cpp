@@ -87,8 +87,8 @@ which are required for calculating SRP forces and torques
  @param states  Dynamic parameter states
 */
 void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
-    this->hubSigma = states.getStateObject("hubSigma");
-    this->hubPosition = states.getStateObject("hubPosition");
+    this->hubSigma = states.getStateObject(this->stateNameOfSigma);
+    this->hubPosition = states.getStateObject(this->stateNameOfPosition);
 }
 
 /*! This method reads the Sun state input message. If time-varying facet articulations are considered,
