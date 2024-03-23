@@ -223,6 +223,11 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     #Configure the hub and link states
     TotalSim.newManager.createProperty("r_BN_N", [[0], [0], [0]])  # manually create the property
     TotalSim.scObject.hub.registerStates(TotalSim.newManager)
+    
+    # assign state engine names of parent rigid body
+    thrusterSet.stateNameOfSigma = TotalSim.scObject.hub.nameOfHubSigma
+    thrusterSet.stateNameOfOmega = TotalSim.scObject.hub.nameOfHubOmega
+
     thrusterSet.linkInStates(TotalSim.newManager)
 
     plt.close("all")

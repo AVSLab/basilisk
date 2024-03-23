@@ -223,8 +223,9 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
  @param states The states to link
  */
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
-    this->hubSigma = states.getStateObject("hubSigma");
-	this->hubOmega = states.getStateObject("hubOmega");
+    this->hubSigma = states.getStateObject(this->stateNameOfSigma);
+    this->hubOmega = states.getStateObject(this->stateNameOfOmega);
+
     this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
 }
 
