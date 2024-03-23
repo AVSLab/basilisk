@@ -73,6 +73,12 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
 /*! This method attaches a stateEffector to the dynamicObject */
 void Spacecraft::addStateEffector(StateEffector *newStateEffector)
 {
+    /* assign the state engine names for the parent rigid body states */
+    newStateEffector->stateNameOfPosition = this->hub.nameOfHubPosition;
+    newStateEffector->stateNameOfVelocity = this->hub.nameOfHubVelocity;
+    newStateEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
+    newStateEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
+
     this->states.push_back(newStateEffector);
 }
 
