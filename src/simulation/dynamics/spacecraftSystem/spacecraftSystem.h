@@ -137,6 +137,15 @@ private:
     StateData *hubSigma;                 //!< -- State data access to sigmaBN for the hub
     StateData *hubGravVelocity;          //!< -- State data access to the gravity-accumulated DV on the Body frame
     StateData *BcGravVelocity;           //!< -- State data access to the gravity-accumulated DV on point Bc
+
+    std::string propName_m_SC;                  //!< property name of m_SC
+    std::string propName_mDot_SC;               //!< property name of mDot_SC
+    std::string propName_centerOfMassSC;        //!< property name of centerOfMassSC
+    std::string propName_inertiaSC;             //!< property name of inertiaSC
+    std::string propName_inertiaPrimeSC;        //!< property name of inertiaPrimeSC
+    std::string propName_centerOfMassPrimeSC;   //!< property name of centerOfMassPrimeSC
+    std::string propName_centerOfMassDotSC;     //!< property name of centerOfMassDotSC
+
 };
 
 

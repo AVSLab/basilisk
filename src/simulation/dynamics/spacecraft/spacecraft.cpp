@@ -28,8 +28,15 @@
 /*! This is the constructor, setting variables to default values */
 Spacecraft::Spacecraft()
 {
-    // - Set default names
+    // - Set default propery names
     this->sysTimePropertyName = "systemTime";
+    this->propName_m_SC = "m_SC";
+    this->propName_mDot_SC = "mDot_SC";
+    this->propName_centerOfMassSC = "centerOfMassSC";
+    this->propName_inertiaSC = "inertiaSC";
+    this->propName_inertiaPrimeSC = "inertiaPrimeSC";
+    this->propName_centerOfMassPrimeSC = "centerOfMassPrimeSC";
+    this->propName_centerOfMassDotSC = "centerOfMassDotSC";
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
@@ -223,13 +230,13 @@ void Spacecraft::initializeDynamics()
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
     // - Create the properties
-    this->m_SC = this->dynManager.createProperty("m_SC", initM_SC);
-    this->mDot_SC = this->dynManager.createProperty("mDot_SC", initMDot_SC);
-    this->c_B = this->dynManager.createProperty("centerOfMassSC", initC_B);
-    this->ISCPntB_B = this->dynManager.createProperty("inertiaSC", initISCPntB_B);
-    this->ISCPntBPrime_B = this->dynManager.createProperty("inertiaPrimeSC", initISCPntBPrime_B);
-    this->cPrime_B = this->dynManager.createProperty("centerOfMassPrimeSC", initCPrime_B);
-    this->cDot_B = this->dynManager.createProperty("centerOfMassDotSC", initCDot_B);
+    this->m_SC = this->dynManager.createProperty(this->propName_m_SC, initM_SC);
+    this->mDot_SC = this->dynManager.createProperty(this->propName_mDot_SC, initMDot_SC);
+    this->c_B = this->dynManager.createProperty(this->propName_centerOfMassSC, initC_B);
+    this->ISCPntB_B = this->dynManager.createProperty(this->propName_inertiaSC, initISCPntB_B);
+    this->ISCPntBPrime_B = this->dynManager.createProperty(this->propName_inertiaPrimeSC, initISCPntBPrime_B);
+    this->cPrime_B = this->dynManager.createProperty(this->propName_centerOfMassPrimeSC, initCPrime_B);
+    this->cDot_B = this->dynManager.createProperty(this->propName_centerOfMassDotSC, initCDot_B);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
 
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!

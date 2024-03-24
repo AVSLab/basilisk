@@ -115,6 +115,15 @@ private:
 
     Eigen::Vector3d oldOmega_BN_B;       //!< [r/s] prior angular rate of B wrt N in the Body frame
 
+    std::string propName_m_SC;                  //!< property name of m_SC
+    std::string propName_mDot_SC;               //!< property name of mDot_SC
+    std::string propName_centerOfMassSC;        //!< property name of centerOfMassSC
+    std::string propName_inertiaSC;             //!< property name of inertiaSC
+    std::string propName_inertiaPrimeSC;        //!< property name of inertiaPrimeSC
+    std::string propName_centerOfMassPrimeSC;   //!< property name of centerOfMassPrimeSC
+    std::string propName_centerOfMassDotSC;     //!< property name of centerOfMassDotSC
+
+
 private:
     void readOptionalRefMsg();                  //!< -- Read the optional attitude or translational reference input message and set the reference states
 };

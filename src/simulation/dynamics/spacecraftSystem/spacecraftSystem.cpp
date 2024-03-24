@@ -163,21 +163,20 @@ void SpacecraftUnit::initializeDynamicsSC(DynParamManager& statesIn)
     Eigen::MatrixXd initISCPntBPrime_B(3,3);
 
     // - Create the properties
-    std::string tmpName;
-    tmpName = this->spacecraftName + "m_SC";
-    this->m_SC = statesIn.createProperty(tmpName, initM_SC);
-    tmpName = this->spacecraftName + "mDot_SC";
-    this->mDot_SC = statesIn.createProperty(tmpName, initMDot_SC);
-    tmpName = this->spacecraftName + "centerOfMassSC";
-    this->c_B = statesIn.createProperty(tmpName, initC_B);
-    tmpName = this->spacecraftName + "inertiaSC";
-    this->ISCPntB_B = statesIn.createProperty(tmpName, initISCPntB_B);
-    tmpName = this->spacecraftName + "inertiaPrimeSC";
-    this->ISCPntBPrime_B = statesIn.createProperty(tmpName, initISCPntBPrime_B);
-    tmpName = this->spacecraftName + "centerOfMassPrimeSC";
-    this->cPrime_B = statesIn.createProperty(tmpName, initCPrime_B);
-    tmpName = this->spacecraftName + "centerOfMassDotSC";
-    this->cDot_B = statesIn.createProperty(tmpName, initCDot_B);
+    this->propName_m_SC = this->spacecraftName + "m_SC";
+    this->m_SC = statesIn.createProperty(this->propName_m_SC, initM_SC);
+    this->propName_mDot_SC = this->spacecraftName + "mDot_SC";
+    this->mDot_SC = statesIn.createProperty(this->propName_mDot_SC, initMDot_SC);
+    this->propName_centerOfMassSC = this->spacecraftName + "centerOfMassSC";
+    this->c_B = statesIn.createProperty(this->propName_centerOfMassSC, initC_B);
+    this->propName_inertiaSC = this->spacecraftName + "inertiaSC";
+    this->ISCPntB_B = statesIn.createProperty(this->propName_inertiaSC, initISCPntB_B);
+    this->propName_inertiaPrimeSC = this->spacecraftName + "inertiaPrimeSC";
+    this->ISCPntBPrime_B = statesIn.createProperty(this->propName_inertiaPrimeSC, initISCPntBPrime_B);
+    this->propName_centerOfMassPrimeSC = this->spacecraftName + "centerOfMassPrimeSC";
+    this->cPrime_B = statesIn.createProperty(this->propName_centerOfMassPrimeSC, initCPrime_B);
+    this->propName_centerOfMassDotSC = this->spacecraftName + "centerOfMassDotSC";
+    this->cDot_B = statesIn.createProperty(this->propName_centerOfMassDotSC, initCDot_B);
 
     // - Give name of all spacecraft to attached hubEffector
     this->hub.nameOfSpacecraftAttachedTo = this->spacecraftName;
