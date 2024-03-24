@@ -143,8 +143,8 @@ void SpinningBodyTwoDOFStateEffector::prependSpacecraftNameToStates()
 /*! This method allows the SB state effector to have access to the hub states and gravity*/
 void SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
 }
 
 /*! This method allows the SB state effector to register its states: theta and thetaDot with the dynamic parameter manager */

@@ -72,7 +72,7 @@ void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     this->hubVelocity = statesIn.getStateObject(this->stateNameOfVelocity);
     this->hubSigma = statesIn.getStateObject(this->stateNameOfSigma);
     this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
     return;
 }
