@@ -65,6 +65,17 @@ public:
     std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude
     std::string stateNameOfOmega = "";                              //!< state engine name of the parent rigid body inertial angular velocity vector
 
+    std::string propName_m_SC = "";                                 //!< property name of m_SC
+    std::string propName_mDot_SC = "";                              //!< property name of mDot_SC
+    std::string propName_centerOfMassSC = "";                       //!< property name of centerOfMassSC
+    std::string propName_inertiaSC = "";                            //!< property name of inertiaSC
+    std::string propName_inertiaPrimeSC = "";                       //!< property name of inertiaPrimeSC
+    std::string propName_centerOfMassPrimeSC = "";                  //!< property name of centerOfMassPrimeSC
+    std::string propName_centerOfMassDotSC = "";                    //!< property name of centerOfMassDotSC
+    std::string propName_inertialPosition = "";                     //!< property name of inertialPosition
+    std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
+    std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
+
     BSKLogger bskLogger;                   //!< -- BSK Logging
 
 public:

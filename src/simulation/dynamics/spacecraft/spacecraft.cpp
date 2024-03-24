@@ -86,6 +86,18 @@ void Spacecraft::addStateEffector(StateEffector *newStateEffector)
     newStateEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
     newStateEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
 
+    /* assign the state engine names for the parent rigid property values */
+    newStateEffector->propName_m_SC = this->propName_m_SC;
+    newStateEffector->propName_mDot_SC = this->propName_mDot_SC;
+    newStateEffector->propName_centerOfMassSC = this->propName_centerOfMassSC;
+    newStateEffector->propName_inertiaSC = this->propName_inertiaSC;
+    newStateEffector->propName_inertiaPrimeSC = this->propName_inertiaPrimeSC;
+    newStateEffector->propName_centerOfMassPrimeSC = this->propName_centerOfMassPrimeSC;
+    newStateEffector->propName_centerOfMassDotSC = this->propName_centerOfMassDotSC;
+    newStateEffector->propName_inertialPosition = this->gravField.inertialPositionPropName;
+    newStateEffector->propName_inertialVelocity = this->gravField.inertialVelocityPropName;
+    newStateEffector->propName_vehicleGravity = this->gravField.vehicleGravityPropName;
+
     this->states.push_back(newStateEffector);
 }
 
