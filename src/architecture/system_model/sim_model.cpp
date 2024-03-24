@@ -55,29 +55,9 @@ void activateNewThread(void *threadData)
 
 }
 
-SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos) : SimThreadExecution(){
-
-    currentThreadNanos = currentSimNanos;
-    threadID = threadIdent;
-}
-
-SimThreadExecution::~SimThreadExecution() {
-
-}
-
-SimThreadExecution::SimThreadExecution() {
-    currentThreadNanos = 0;
-    threadRunning = false;
-    terminateThread = false;
-    selfInitNow = false;
-    crossInitNow = false;
-    resetNow = false;
-    threadID = 0;
-    CurrentNanos = 0;
-    NextTaskTime = 0;
-    stopThreadNanos=0;
-    nextProcPriority = -1;
-    threadContext = nullptr;
+SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos) :
+    currentThreadNanos(currentSimNanos), threadID(threadIdent)
+{
 
 }
 
@@ -295,18 +275,9 @@ void SimThreadExecution::setStopThreadNanos(uint64_t stopThreadNanos) {
  */
 SimModel::SimModel()
 {
-
-    this->threadList.clear();
-
     //Default to single-threaded runtime
     SimThreadExecution *newThread = new SimThreadExecution(0, 0);
     this->threadList.push_back(newThread);
-
-    this->NextTaskTime = 0;
-
-    this->CurrentNanos = 0;
-    this->NextTaskTime = 0;
-    this->nextProcPriority = -1;
 }
 
 /*! Nothing to destroy really */

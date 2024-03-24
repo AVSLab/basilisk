@@ -34,9 +34,9 @@
 class SimThreadExecution
 {
 public:
-    SimThreadExecution();
-    SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos=0);    //!< Constructor for a given sim thread
-    ~SimThreadExecution();   //!< Destructor for given sim thread
+    SimThreadExecution()=default;
+    explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos=0);    //!< Constructor for a given sim thread
+    ~SimThreadExecution()=default;   //!< Destructor for given sim thread
     void updateNewStopTime(uint64_t newStopNanos) {stopThreadNanos = newStopNanos;}  //!< Method to update a new simulation stop time
     void clearProcessList() {processList.clear();}  //!< clear the process list
     void selfInitProcesses();
@@ -66,20 +66,20 @@ public:
     void setStopThreadNanos(uint64_t stopThreadNanos);
 
 public:
-    int64_t stopThreadPriority; //!< Current stop priority for thread
-    uint64_t threadID;          //!< Identifier for thread
-    std::thread *threadContext; //!< std::thread data for concurrent execution
-    int64_t nextProcPriority;  //!< [-] Priority level for the next process
-    bool selfInitNow;              //!< Flag requesting self init
-    bool crossInitNow;             //!< Flag requesting cross-init
-    bool resetNow;                 //!< Flag requesting that the thread execute reset
+    int64_t stopThreadPriority=-1; //!< Current stop priority for thread
+    uint64_t threadID=0;          //!< Identifier for thread
+    std::thread *threadContext=nullptr; //!< std::thread data for concurrent execution
+    int64_t nextProcPriority=-1;  //!< [-] Priority level for the next process
+    bool selfInitNow{};              //!< Flag requesting self init
+    bool crossInitNow{};             //!< Flag requesting cross-init
+    bool resetNow{};                 //!< Flag requesting that the thread execute reset
 private:
-    uint64_t currentThreadNanos;  //!< Current simulation time available at thread
-    uint64_t stopThreadNanos;   //!< Current stop conditions for the thread
-    uint64_t CurrentNanos;  //!< [ns] Current sim time
-    uint64_t NextTaskTime;  //!< [ns] time for the next Task
-    bool threadRunning;            //!< Flag that will allow for easy concurrent locking
-    bool terminateThread;          //!< Flag that indicates that it is time to take thread down
+    uint64_t currentThreadNanos=0;  //!< Current simulation time available at thread
+    uint64_t stopThreadNanos=0;   //!< Current stop conditions for the thread
+    uint64_t CurrentNanos=0;  //!< [ns] Current sim time
+    uint64_t NextTaskTime=0;  //!< [ns] time for the next Task
+    bool threadRunning{};            //!< Flag that will allow for easy concurrent locking
+    bool terminateThread{};          //!< Flag that indicates that it is time to take thread down
     BSKSemaphore parentThreadLock;   //!< Lock that ensures parent thread won't proceed
     BSKSemaphore selfThreadLock;     //!< Lock that ensures this thread only reaches allowed time
     std::vector<SysProcess*> processList;  //!< List of processes associated with thread
@@ -112,13 +112,13 @@ public:
 
 public:
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
-    std::vector<SimThreadExecution*> threadList;  //!< -- Array of threads that we're running on
+    std::vector<SimThreadExecution*> threadList{};  //!< -- Array of threads that we're running on
     std::string SimulationName;  //!< -- Identifier for Sim
-    int64_t nextProcPriority;  //!< [-] Priority level for the next process
+    int64_t nextProcPriority=-1;  //!< [-] Priority level for the next process
 
 private:
-    uint64_t CurrentNanos; //!< [ns] Current sim time
-    uint64_t NextTaskTime; //!< [ns] time for the next Task
+    uint64_t CurrentNanos=0;  //!< [ns] Current sim time
+    uint64_t NextTaskTime=0;  //!< [ns] time for the next Task
 };
 
 #endif /* _SimModel_H_ */
