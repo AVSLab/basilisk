@@ -55,14 +55,12 @@ SysModelTask :: ~SysModelTask()
  */
 void SysModelTask::SelfInitTaskList()
 {
-    std::vector<ModelPriorityPair>::iterator ModelPair;
     SysModel* NonIt;
 
     //! - Loop over all models and do the self init for each
-    for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-        ModelPair++)
+    for(auto const& modelPair : this->TaskModels)
     {
-        NonIt = (ModelPair->ModelPtr);
+        NonIt = modelPair.ModelPtr;
         NonIt->SelfInit();
     }
     return;
@@ -76,11 +74,9 @@ void SysModelTask::SelfInitTaskList()
 */
 void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 {
-	std::vector<ModelPriorityPair>::iterator ModelPair;
-	for (ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-	ModelPair++)
+	for (auto const& modelPair : this->TaskModels)
 	{
-		(*ModelPair).ModelPtr->Reset(CurrentSimTime);
+		modelPair.ModelPtr->Reset(CurrentSimTime);
 	}
 	this->NextStartTime = CurrentSimTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
@@ -93,11 +89,10 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
  */
 void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
 {
-    std::vector<ModelPriorityPair>::iterator ModelPair;
     SysModel* NonIt;
 
     //! - Loop over all of the models in the simulation and call their UpdateState
-    for(ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
+    for(auto ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
         ModelPair++)
     {
         NonIt = (ModelPair->ModelPtr);
@@ -116,7 +111,6 @@ void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
  */
 void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 {
-    std::vector<ModelPriorityPair>::iterator ModelPair;
     ModelPriorityPair LocalPair;
 
     //! - Set the local pair with the requested priority and mode
@@ -125,7 +119,7 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 //    SystemMessaging::GetInstance()->addModuleToProcess(NewModel->moduleID,
 //            parentProc);
     //! - Loop through the ModelPair vector and if Priority is higher than next, insert
-    for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
+    for(auto ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
         ModelPair++)
     {
         if(Priority > ModelPair->CurrentModelPriority)

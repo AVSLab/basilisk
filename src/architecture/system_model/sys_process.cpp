@@ -58,13 +58,12 @@ SysProcess::~SysProcess()
  */
 void SysProcess::selfInitProcess()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
 
     this->nextTaskTime = 0;
     //! - Iterate through model list and call the Task model self-initializer
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& process : this->processTasks)
     {
-        SysModelTask *localTask = it->TaskPtr;
+        SysModelTask *localTask = process.TaskPtr;
         localTask->SelfInitTaskList();
     }
 }
@@ -78,11 +77,10 @@ void SysProcess::selfInitProcess()
 */
 void SysProcess::resetProcess(uint64_t currentTime)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
 
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& process : this->processTasks)
     {
-        SysModelTask *localTask = it->TaskPtr;
+        SysModelTask *localTask = process.TaskPtr;
         localTask->ResetTaskList(currentTime); //! Time of reset. Models that utilize currentTime will start at this.
     }
     this->nextTaskTime = currentTime;
@@ -96,20 +94,18 @@ void SysProcess::resetProcess(uint64_t currentTime)
 */
 void SysProcess::reInitProcess()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     std::vector<ModelScheduleEntry> taskPtrs;
-    std::vector<ModelScheduleEntry>::iterator taskIt;
 
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& task : this->processTasks)
     {
-        SysModelTask *localTask = it->TaskPtr;
+        SysModelTask *localTask = task.TaskPtr;
         localTask->ResetTask();
     }
     taskPtrs = this->processTasks;
     this->processTasks.clear();
-    for(taskIt = taskPtrs.begin(); taskIt != taskPtrs.end(); taskIt++)
+    for(auto const& task : taskPtrs)
     {
-        this->addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
+        this->addNewTask(task.TaskPtr, task.taskPriority);
     }
     return;
 }
@@ -190,9 +186,8 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  */
 void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to find correct place
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         //! - If the next Task starts after new Task, pop it on just prior
         if(it->NextTaskStart > taskCall.NextTaskStart ||
@@ -214,11 +209,10 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
 */
 void SysProcess::disableAllTasks()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     //! - Iterate through all of the tasks to disable them
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& scheduleEntry : this->processTasks)
     {
-        it->TaskPtr->disableTask();
+        scheduleEntry.TaskPtr->disableTask();
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
@@ -228,11 +222,10 @@ void SysProcess::disableAllTasks()
  */
 void SysProcess::enableAllTasks()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     //! - Iterate through all of the task models to disable them
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& scheduleEntry : this->processTasks)
     {
-        it->TaskPtr->enableTask();
+        scheduleEntry.TaskPtr->enableTask();
     }
 }
 
@@ -244,15 +237,14 @@ void SysProcess::enableAllTasks()
 */
 void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 {
-	std::vector<ModelScheduleEntry>::iterator it;
 	//! - Iteratre through all of the task models to disable them
-	for (it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+	for (ModelScheduleEntry &scheduleEntry : this->processTasks)
 	{
-		if (it->TaskPtr->TaskName == taskName)
+		if (scheduleEntry.TaskPtr->TaskName == taskName)
 		{
-			it->TaskPtr->updatePeriod(newPeriod);
-			it->NextTaskStart = it->TaskPtr->getNextStartTime();
-			it->TaskUpdatePeriod = it->TaskPtr->getTaskPeriod();
+			scheduleEntry.TaskPtr->updatePeriod(newPeriod);
+			scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->getNextStartTime();
+			scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->getTaskPeriod();
 			return;
 		}
 	}
