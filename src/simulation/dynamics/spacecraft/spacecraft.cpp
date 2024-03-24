@@ -209,9 +209,9 @@ void Spacecraft::linkInStates(DynParamManager& statesIn)
     this->BcGravVelocity = statesIn.getStateObject(this->hub.nameOfBcGravVelocity);
 
     // - Get access to the hubs position and velocity in the property manager
-    this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
-    this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->gravField.inertialPositionPropName);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->gravField.inertialVelocityPropName);
+    this->g_N = statesIn.getPropertyReference(this->gravField.vehicleGravityPropName);
 }
 
 /*! This method is used to initialize the simulation by registering all of the states, linking the dynamicEffectors,
