@@ -37,17 +37,12 @@ SysProcess::SysProcess(std::string name) : SysProcess()
  */
 void SysProcess::selfInitProcess()
 {
-
     this->nextTaskTime = 0;
-    //! - Iterate through model list and call the Task model self-initializer
-    for(auto const& process : this->processTasks)
-    {
+    for(auto const& process : this->processTasks) {
         SysModelTask *localTask = process.TaskPtr;
         localTask->SelfInitTaskList();
     }
 }
-
-
 
 /*! This method resets each task and associated model-set inside the process
     ensuring that all parameters go back to their default state.
@@ -56,11 +51,9 @@ void SysProcess::selfInitProcess()
 */
 void SysProcess::resetProcess(uint64_t currentTime)
 {
-
-    for(auto const& process : this->processTasks)
-    {
+    for(auto const& process : this->processTasks) {
         SysModelTask *localTask = process.TaskPtr;
-        localTask->ResetTaskList(currentTime); //! Time of reset. Models that utilize currentTime will start at this.
+        localTask->ResetTaskList(currentTime);
     }
     this->nextTaskTime = currentTime;
 }
@@ -72,16 +65,13 @@ void SysProcess::resetProcess(uint64_t currentTime)
 */
 void SysProcess::reInitProcess()
 {
-
-    for(auto const& task : this->processTasks)
-    {
+    for(auto const& task : this->processTasks) {
         SysModelTask *localTask = task.TaskPtr;
         localTask->ResetTask();
     }
     std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
     this->processTasks.clear();
-    for(auto const& task : taskPtrs)
-    {
+    for(auto const& task : taskPtrs) {
         this->addNewTask(task.TaskPtr, task.taskPriority);
     }
 }
@@ -92,25 +82,20 @@ void SysProcess::reInitProcess()
  */
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
-
     //! - Check to make sure that there are models to be called.
-    if(this->processTasks.begin() == this->processTasks.end())
-    {
+    if(this->processTasks.begin() == this->processTasks.end()) {
         bskLogger.bskLog(BSK_WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
     auto fireIt = this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
-    {
+    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++) {
         if(it->NextTaskStart < fireIt->NextTaskStart ||
-                (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
-        {
+                (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
             fireIt = it;
         }
     }
-    if(fireIt->NextTaskStart > currentNanos)
-    {
+    if(fireIt->NextTaskStart > currentNanos) {
         this->nextTaskTime = fireIt->NextTaskStart;
         return;
     }
@@ -122,11 +107,9 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - Figure out when we are going to be called next for scheduling purposes
     fireIt=this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
-    {
+    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++) {
         if(it->NextTaskStart < fireIt->NextTaskStart ||
-           (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
-        {
+           (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
             fireIt = it;
         }
     }
@@ -161,13 +144,11 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
 void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
 {
     //! - Iteratre through all of the task models to find correct place
-    for(auto it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
+    for(auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
         //! - If the next Task starts after new Task, pop it on just prior
         if(it->NextTaskStart > taskCall.NextTaskStart ||
            (it->NextTaskStart == taskCall.NextTaskStart &&
-            taskCall.taskPriority > it->taskPriority))
-        {
+            taskCall.taskPriority > it->taskPriority)) {
             this->processTasks.insert(it, taskCall);
             return;
         }
@@ -183,9 +164,7 @@ void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
 */
 void SysProcess::disableAllTasks() const
 {
-    //! - Iterate through all of the tasks to disable them
-    for(auto const& scheduleEntry : this->processTasks)
-    {
+    for(auto const& scheduleEntry : this->processTasks) {
         scheduleEntry.TaskPtr->disableTask();
     }
 }
@@ -196,9 +175,7 @@ void SysProcess::disableAllTasks() const
  */
 void SysProcess::enableAllTasks() const
 {
-    //! - Iterate through all of the task models to disable them
-    for(auto const& scheduleEntry : this->processTasks)
-    {
+    for(auto const& scheduleEntry : this->processTasks) {
         scheduleEntry.TaskPtr->enableTask();
     }
 }
@@ -212,10 +189,8 @@ void SysProcess::enableAllTasks() const
 void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPeriod)
 {
 	//! - Iteratre through all of the task models to disable them
-	for (ModelScheduleEntry &scheduleEntry : this->processTasks)
-	{
-		if (scheduleEntry.TaskPtr->TaskName == taskName)
-		{
+	for (ModelScheduleEntry &scheduleEntry : this->processTasks) {
+		if (scheduleEntry.TaskPtr->TaskName == taskName) {
 			scheduleEntry.TaskPtr->updatePeriod(newPeriod);
 			scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->getNextStartTime();
 			scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->getTaskPeriod();

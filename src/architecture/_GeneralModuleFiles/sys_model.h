@@ -29,7 +29,7 @@ class SysModel
 {
 public:
     SysModel();
-    SysModel(const SysModel &obj); //!< constructor definition
+    SysModel(const SysModel &obj);
 
     virtual ~SysModel(){};
 

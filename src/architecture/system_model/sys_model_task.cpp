@@ -36,9 +36,7 @@ SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
  */
 void SysModelTask::SelfInitTaskList() const
 {
-    //! - Loop over all models and do the self init for each
-    for(auto const& modelPair : this->TaskModels)
-    {
+    for(auto const& modelPair : this->TaskModels) {
         SysModel* NonIt = modelPair.ModelPtr;
         NonIt->SelfInit();
     }
@@ -52,8 +50,7 @@ void SysModelTask::SelfInitTaskList() const
 */
 void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 {
-	for (auto const& modelPair : this->TaskModels)
-	{
+	for (auto const& modelPair : this->TaskModels) {
 		modelPair.ModelPtr->Reset(CurrentSimTime);
 	}
 	this->NextStartTime = CurrentSimTime;
@@ -67,10 +64,9 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
  */
 void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
 {
-    //! - Loop over all of the models in the simulation and call their UpdateState
-    for(auto ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
-        ModelPair++)
-    {
+    for(auto ModelPair = this->TaskModels.begin();
+    (ModelPair != this->TaskModels.end() && this->taskActive);
+    ModelPair++) {
         SysModel* NonIt = (ModelPair->ModelPtr);
         NonIt->UpdateState(CurrentSimNanos);
         NonIt->CallCounts += 1;
@@ -96,10 +92,8 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 //            parentProc);
     //! - Loop through the ModelPair vector and if Priority is higher than next, insert
     for(auto ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-        ModelPair++)
-    {
-        if(Priority > ModelPair->CurrentModelPriority)
-        {
+        ModelPair++) {
+        if(Priority > ModelPair->CurrentModelPriority) {
             this->TaskModels.insert(ModelPair, LocalPair);
             return;
         }
@@ -117,23 +111,19 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 void SysModelTask::updatePeriod(uint64_t newPeriod)
 {
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
-    if(this->NextStartTime > this->TaskPeriod)
-    {
+    if(this->NextStartTime > this->TaskPeriod) {
         uint64_t newStartTime = (this->NextStartTime/newPeriod)*newPeriod;
-        if(newStartTime <= (this->NextStartTime - this->TaskPeriod))
-        {
+        if(newStartTime <= (this->NextStartTime - this->TaskPeriod)) {
             newStartTime += newPeriod;
         }
         this->NextStartTime = newStartTime;
     }
     //! - Otherwise, we just should keep the original requested first call time for the task
-    else
-    {
+    else {
         this->NextStartTime = this->FirstTaskTime;
     }
     //! - Change the period of the task so that future calls will be based on the new period
     this->TaskPeriod = newPeriod;
-
 }
 
 uint64_t SysModelTask::getNextStartTime() const {

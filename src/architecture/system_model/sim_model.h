@@ -35,27 +35,27 @@ class SimThreadExecution
 {
 public:
     SimThreadExecution()=default;
-    explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos=0);    //!< Constructor for a given sim thread
-    ~SimThreadExecution()=default;   //!< Destructor for given sim thread
-    void updateNewStopTime(uint64_t newStopNanos) {stopThreadNanos = newStopNanos;}  //!< Method to update a new simulation stop time
-    void clearProcessList() {processList.clear();}  //!< clear the process list
+    explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos=0);
+    ~SimThreadExecution()=default;
+    void updateNewStopTime(uint64_t newStopNanos) {stopThreadNanos = newStopNanos;}  //!< Update simulation stop time
+    void clearProcessList() {processList.clear();}  //!< Clear the process list
     void selfInitProcesses() const;
     void crossInitProcesses() const;
     void resetProcesses();
     void addNewProcess(SysProcess* newProc);
     uint64_t procCount() const {return processList.size();} //!< Gets the current "thread-count" in the system
-    bool threadActive() const {return this->threadRunning;} //!< Tells the caller if the thread is currently allocated processes and is in execution
-    void threadReady() {this->threadRunning=true;} //!< Allows the system to put the thread into a running state
+    bool threadActive() const {return this->threadRunning;} //!< Is the thread is currently allocated processes and is in execution
+    void threadReady() {this->threadRunning=true;} //!< Put the thread into a running state
     void waitOnInit();
     void postInit();
-    bool threadValid() const {return !this->terminateThread;} //!< Determines if the thread is currently usable or if it has been requested to shutdown
-    void killThread() {this->terminateThread=true;} //!< Politely asks the thread to no longer be alive.
+    bool threadValid() const {return !this->terminateThread;} //!< Is the thread currently usable or if it has been requested to shutdown
+    void killThread() {this->terminateThread=true;} //!< Asks the thread to no longer be alive
     void lockThread();
     void unlockThread();
     void lockParent();
     void unlockParent();
-    void StepUntilStop();  //!< Step simulation until stop time uint64_t reached
-    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
+    void StepUntilStop();  //!< Step simulation until stop time reached
+    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next task in the simulation
     void moveProcessMessages() const;
     uint64_t getCurrentNanos() const;
     void setCurrentNanos(uint64_t currentNanos);
@@ -90,8 +90,8 @@ private:
 class SimModel
 {
 public:
-    SimModel();  //!< The SimModel constructor
-    ~SimModel();  //!< SimModel destructorS
+    SimModel();
+    ~SimModel();
 
     void selfInitSimulation();  //!< Method to initialize all added Tasks
     void resetInitSimulation() const;  //!< Method to reset all added tasks
@@ -107,7 +107,7 @@ public:
     uint64_t getThreadCount() const {return threadList.size();} //!< returns the number of threads used
     uint64_t getCurrentNanos() const;
     uint64_t getNextTaskTime() const;
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
     std::vector<SimThreadExecution*> threadList{};  //!< -- Array of threads that we're running on
     std::string SimulationName;  //!< -- Identifier for Sim
