@@ -226,7 +226,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubOmega = states.getStateObject(this->stateNameOfOmega);
 
-    this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
+    this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
