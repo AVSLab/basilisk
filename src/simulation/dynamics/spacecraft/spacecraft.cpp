@@ -194,12 +194,12 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
 void Spacecraft::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to all hub states
-    this->hubR_N = statesIn.getStateObject("hubPosition");
-    this->hubV_N = statesIn.getStateObject("hubVelocity");
-    this->hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
-    this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
-    this->hubGravVelocity = statesIn.getStateObject("hubGravVelocity");
-    this->BcGravVelocity = statesIn.getStateObject("BcGravVelocity");
+    this->hubR_N = statesIn.getStateObject(this->hub.nameOfHubPosition);
+    this->hubV_N = statesIn.getStateObject(this->hub.nameOfHubVelocity);
+    this->hubSigma = statesIn.getStateObject(this->hub.nameOfHubSigma);   /* Need sigmaBN for MRP switching */
+    this->hubOmega_BN_B = statesIn.getStateObject(this->hub.nameOfHubOmega);
+    this->hubGravVelocity = statesIn.getStateObject(this->hub.nameOfHubGravVelocity);
+    this->BcGravVelocity = statesIn.getStateObject(this->hub.nameOfBcGravVelocity);
 
     // - Get access to the hubs position and velocity in the property manager
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
