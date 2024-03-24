@@ -86,9 +86,9 @@ void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 void GravityGradientEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->r_BN_N = states.getStateObject(this->stateNameOfPosition);
-	this->ISCPntB_B = states.getPropertyReference("inertiaSC");
-    this->c_B = states.getPropertyReference("centerOfMassSC");
-    this->m_SC = states.getPropertyReference("m_SC");
+	this->ISCPntB_B = states.getPropertyReference(this->propName_inertiaSC);
+    this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
+    this->m_SC = states.getPropertyReference(this->propName_m_SC);
 
     std::vector<std::string>::iterator name;
     for(name = this->planetPropertyNames.begin(); name != this->planetPropertyNames.end(); name++) {
