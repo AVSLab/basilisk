@@ -20,10 +20,10 @@
 #ifndef _SysProcess_HH_
 #define _SysProcess_HH_
 
-#include <vector>
-#include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
 #include "architecture/utilities/bskLogging.h"
+#include <stdint.h>
+#include <vector>
 
 //! Structure that contains the information needed to call a Task
 typedef struct {

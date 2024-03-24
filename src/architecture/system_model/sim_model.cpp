@@ -18,7 +18,6 @@
  */
 
 #include "sim_model.h"
-#include <cstring>
 #include <iostream>
 
 void activateNewThread(void *threadData)

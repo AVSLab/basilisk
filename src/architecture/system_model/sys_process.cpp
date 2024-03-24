@@ -18,7 +18,6 @@
  */
 
 #include "sys_process.h"
-#include <cstring>
 #include <iostream>
 #include <utility>
 
