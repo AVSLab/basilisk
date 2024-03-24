@@ -65,7 +65,6 @@ public:
     uint64_t getStopThreadNanos() const;
     void setStopThreadNanos(uint64_t stopThreadNanos);
 
-public:
     int64_t stopThreadPriority=-1; //!< Current stop priority for thread
     uint64_t threadID=0;          //!< Identifier for thread
     std::thread *threadContext=nullptr; //!< std::thread data for concurrent execution
@@ -109,8 +108,6 @@ public:
     uint64_t getCurrentNanos() const;
     uint64_t getNextTaskTime() const;
     BSKLogger bskLogger;                      //!< -- BSK Logging
-
-public:
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
     std::vector<SimThreadExecution*> threadList{};  //!< -- Array of threads that we're running on
     std::string SimulationName;  //!< -- Identifier for Sim

@@ -53,12 +53,12 @@ public:
     uint64_t getNextPickupTime() const;
     uint64_t getTaskPeriod() const;
     uint64_t getFirstTaskTime() const;
-public:
+
     std::vector<ModelPriorityPair> TaskModels{};  //!< -- Array that has pointers to all task sysModels
     std::string TaskName{};  //!< -- Identifier for Task
     std::string parentProc; //!< -- Process that calls this task
 	bool taskActive=true;  //!< -- Flag indicating whether the Task has been disabled
-  BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
     uint64_t NextStartTime=0; //!< [ns] Next time to start task
     uint64_t NextPickupTime=0; //!< [ns] Next time read Task outputs
