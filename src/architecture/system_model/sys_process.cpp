@@ -63,7 +63,6 @@ void SysProcess::resetProcess(uint64_t currentTime)
         localTask->ResetTaskList(currentTime); //! Time of reset. Models that utilize currentTime will start at this.
     }
     this->nextTaskTime = currentTime;
-    return;
 }
 
 /*! This method does two things: 1) resets the next task time for
@@ -86,7 +85,6 @@ void SysProcess::reInitProcess()
     {
         this->addNewTask(task.TaskPtr, task.taskPriority);
     }
-    return;
 }
 
 /*! This method steps the next task up to currentNanos
