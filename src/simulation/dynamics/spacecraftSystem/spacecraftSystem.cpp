@@ -66,6 +66,18 @@ void SpacecraftUnit::addDynamicEffector(DynamicEffector *newDynamicEffector)
     newDynamicEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
     newDynamicEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
 
+    /* assign the state engine names for the parent rigid property values */
+    newDynamicEffector->propName_m_SC = this->propName_m_SC;
+    newDynamicEffector->propName_mDot_SC = this->propName_mDot_SC;
+    newDynamicEffector->propName_centerOfMassSC = this->propName_centerOfMassSC;
+    newDynamicEffector->propName_inertiaSC = this->propName_inertiaSC;
+    newDynamicEffector->propName_inertiaPrimeSC = this->propName_inertiaPrimeSC;
+    newDynamicEffector->propName_centerOfMassPrimeSC = this->propName_centerOfMassPrimeSC;
+    newDynamicEffector->propName_centerOfMassDotSC = this->propName_centerOfMassDotSC;
+    newDynamicEffector->propName_inertialPosition = this->gravField.inertialPositionPropName;
+    newDynamicEffector->propName_inertialVelocity = this->gravField.inertialVelocityPropName;
+    newDynamicEffector->propName_vehicleGravity = this->gravField.vehicleGravityPropName;
+
     this->dynEffectors.push_back(newDynamicEffector);
 
     return;
