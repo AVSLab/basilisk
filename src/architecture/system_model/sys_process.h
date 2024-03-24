@@ -38,9 +38,9 @@ class SysProcess
 {
 
 public:
-    SysProcess();
-    SysProcess(std::string messageContainer); //!< class method
-    ~SysProcess();
+    SysProcess()=default;
+    explicit SysProcess(std::string name); //!< class method
+    ~SysProcess()=default;
     void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
     void selfInitProcess(); //!< class method
     void resetProcess(uint64_t currentTime); //!< class method
@@ -64,15 +64,15 @@ public:
 
 public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
-    std::string processName;  //!< -- Identifier for process
-	bool processActive;  //!< -- Flag indicating whether the Process is active
-	bool processOnThread; //!< -- Flag indicating that the process has been added to a thread for execution
-    int64_t processPriority;  //!< [-] Priority level for process (higher first)
+    std::string processName{};  //!< -- Identifier for process
+	bool processActive{};  //!< -- Flag indicating whether the Process is active
+	bool processOnThread{}; //!< -- Flag indicating that the process has been added to a thread for execution
+    int64_t processPriority=-1;  //!< [-] Priority level for process (higher first)
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
-    uint64_t nextTaskTime;  //!< [ns] time for the next Task
-    uint64_t prevRouteTime;  //!< [ns] Time that interfaces were previously routed
+    uint64_t nextTaskTime=0;  //!< [ns] time for the next Task
+    uint64_t prevRouteTime=0;  //!< [ns] Time that interfaces were previously routed
 };
 
 #endif /* _SysProcess_H_ */
