@@ -128,8 +128,8 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
     // Get access to the hub states needed for dynamic coupling
     this->hubSigma = statesIn.getStateObject(this->stateNameOfSigma);
     this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
-    this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
-    this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
 }
 
 /*! This method allows the state effector to register its states with the dynamic parameter manager.

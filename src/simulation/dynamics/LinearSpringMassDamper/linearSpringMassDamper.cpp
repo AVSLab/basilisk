@@ -65,11 +65,11 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& statesIn)
 	this->velocityState = statesIn.getStateObject(this->stateNameOfVelocity);
 
     // - Grab access to gravity
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
     // - Grab access to c_B and cPrime_B
-    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
-    this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
+    this->c_B = statesIn.getPropertyReference(this->propName_centerOfMassSC);
+    this->cPrime_B = statesIn.getPropertyReference(this->propName_centerOfMassPrimeSC);
 
     return;
 }

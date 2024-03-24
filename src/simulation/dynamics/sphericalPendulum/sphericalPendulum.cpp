@@ -77,7 +77,7 @@ void SphericalPendulum::linkInStates(DynParamManager& statesIn)
 	this->velocityState = statesIn.getStateObject(this->stateNameOfVelocity);
 
     // - Grab access to gravity
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
     return;
 }
