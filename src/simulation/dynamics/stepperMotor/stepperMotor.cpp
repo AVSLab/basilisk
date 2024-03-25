@@ -1,0 +1,181 @@
+/*
+ ISC License
+
+ Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#include "stepperMotor.h"
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/macroDefinitions.h"
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param callTime [ns] Time the method is called
+*/
+void StepperMotor::Reset(uint64_t callTime) {
+    if (!this->motorStepCommandInMsg.isLinked()) {
+        _bskLog(this->bskLogger, BSK_ERROR, "Error: stepperMotor.motorStepCommandInMsg wasn't connected.");
+    }
+
+    // Initialize the module parameters to zero
+    this->theta = this->thetaInit;
+    this->maneuverThetaInit = this->thetaInit;
+    this->thetaDotInit = 0.0;
+    this->thetaDot = 0.0;
+    this->thetaDotRef = 0.0;
+    this->thetaDDot = 0.0;
+    this->tInit = 0.0;
+    this->stepCount = 0;
+
+    // Set the previous written time to a negative value to capture a message written at time zero
+    this->previousWrittenTime = -1;
+
+    // Initialize the module boolean parameters
+    this->completion = true;
+    this->stepComplete = true;
+    this->newMsg = false;
+}
+
+/*! This method profiles the stepper motor trajectory and updates the prescribed motor states as a function of time.
+The motor states are then written to the output messages.
+ @return void
+ @param callTime [ns] Time the method is called
+*/
+void StepperMotor::UpdateState(uint64_t callTime) {
+    // Create the buffer messages
+    MotorStepCommandMsgPayload motorStepCommandIn;
+    StepperMotorMsgPayload stepperMotorOut;
+
+    // Zero the buffer messages
+    motorStepCommandIn = MotorStepCommandMsgPayload();
+    stepperMotorOut = StepperMotorMsgPayload();
+
+    // Read the input message
+    if (this->motorStepCommandInMsg.isWritten()) {
+        motorStepCommandIn = this->motorStepCommandInMsg();
+        // Store the number of commanded motor steps when a new message is written
+        if (this->previousWrittenTime <  this->motorStepCommandInMsg.timeWritten()) {
+            this->previousWrittenTime = this->motorStepCommandInMsg.timeWritten();
+            this->stepsCommanded = motorStepCommandIn.stepsCommanded;
+            if (this->stepsCommanded != 0) {
+                this->completion = false;
+            } else {
+                this->completion = true;
+            }
+            this->newMsg = true;
+        }
+    }
+
+    // Reset the motor states for the next maneuver ONLY when the current step is completed
+    if (!(this->completion)) {
+        if (this->newMsg && this->stepComplete) {
+
+            // Update the step count to zero
+            this->stepCount = 0;
+
+            // Calculate the current ange and angle rate
+            this->maneuverThetaInit = this->theta;
+            this->thetaDotInit = this->thetaDot;
+
+            // Store the initial time as the current simulation time
+            this->tInit = callTime * NANO2SEC;
+
+            this->newMsg = false;
+        }
+
+        // Define temporal information for the maneuver
+        this->tf = this->tInit + this->stepTime;
+        this->ts = this->tInit + this->stepTime / 2;
+
+        // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
+        if (this->stepComplete) {
+            if (this->stepsCommanded > 0) {
+                this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
+                this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
+                this->a = 0.5 * (this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
+                this->b = -0.5 * (this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
+            } else {
+                this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
+                this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount - 1) * this->stepAngle);
+                this->a = 0.5 * (-this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
+                this->b = -0.5 * (-this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
+            }
+        }
+
+        // Store the current simulation time
+        double t = callTime * NANO2SEC;
+
+        // Update the scalar motor states during each step
+        if ((t < this->ts || t == this->ts) && this->tf - this->tInit != 0) { // Entered during the first half of the maneuver
+            if (this->stepsCommanded > 0 && !this->newMsg) {
+                this->thetaDDot = this->thetaDDotMax;
+            } else if (!this->newMsg) {
+                this->thetaDDot = -this->thetaDDotMax;
+            }
+            this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit;
+            this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->intermediateThetaInit;
+            this->stepComplete = false;
+        } else if (t > this->ts && t < this->tf && this->tf - this->tInit != 0) { // Entered during the second half of the maneuver
+            if (this->stepsCommanded > 0 && !this->newMsg){
+                this->thetaDDot = -this->thetaDDotMax;
+            } else if (!this->newMsg) {
+                this->thetaDDot = this->thetaDDotMax;
+            }
+            this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit - this->thetaDDot * (this->tf - this->tInit);
+            this->theta = this->b * (t - this->tf) * (t - this->tf) + this->intermediateThetaRef;
+            this->stepComplete = false;
+        } else { // Entered when a step is complete
+            this->stepComplete = true;
+            this->thetaDDot = 0.0;
+            this->thetaDot = this->thetaDotRef;
+            this->theta = this->intermediateThetaRef;
+
+            // Update the motor step count
+            if (!this->newMsg) {
+                if (this->stepsCommanded > 0) {
+                    this->stepCount++;
+                } else {
+                    this->stepCount--;
+                }
+            } else {
+                if (this->intermediateThetaRef > this->intermediateThetaInit) {
+                    this->stepCount++;
+                } else {
+                    this->stepCount--;
+                }
+            }
+
+            // Update the initial time
+            this->tInit = callTime * NANO2SEC;
+
+            // Update the completion boolean variable only when motor actuation is complete
+            if ((this->stepCount == this->stepsCommanded) && !this->newMsg) {
+                this->completion = true;
+            }
+        }
+    }
+
+    // Copy motor information to the stepper motor message
+    stepperMotorOut.theta = this->theta;
+    stepperMotorOut.thetaDot = this->thetaDot;
+    stepperMotorOut.thetaDDot = this->thetaDDot;
+    stepperMotorOut.stepsCommanded = this->stepsCommanded;
+    stepperMotorOut.stepCount = this->stepCount;
+
+    // Write the output messages
+    this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
+}
