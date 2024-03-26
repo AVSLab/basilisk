@@ -94,9 +94,14 @@ void StepperMotor::UpdateState(uint64_t callTime) {
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
 }
 
+/*! This high-level method is used to simulate the stepper motor states in time.
+ @return void
+ @param callTime [ns] Time the method is called
+*/
 void StepperMotor::actuateMotor(uint64_t callTime) {
     double t = callTime * NANO2SEC;
 
+    // Reset the motor states when the current request is complete and a new request is received
     if (this->newMsg && this->stepComplete) {
         this->resetMotor(t);
     }
@@ -120,6 +125,10 @@ void StepperMotor::actuateMotor(uint64_t callTime) {
     }
 }
 
+/*! This method resets the motor states when the current request is complete and a new request is received.
+ @return void
+ @param t [s] Time the method is called
+*/
 void StepperMotor::resetMotor(double t) {
     // Reset the motor step count to zero
     this->stepCount = 0;
@@ -133,6 +142,9 @@ void StepperMotor::resetMotor(double t) {
     this->newMsg = false;
 }
 
+/*! This method updates the rotation parameters after a step is completed.
+ @return void
+*/
 void StepperMotor::updateRotationParameters() {
     this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
     if (this->stepsCommanded > 0) {
@@ -146,10 +158,18 @@ void StepperMotor::updateRotationParameters() {
     }
 }
 
+/*! This method determines if the motor is in the first half of a step.
+ @return bool
+ @param t [s] Time the method is called
+*/
 bool StepperMotor::isInStepFirstHalf(double t) {
     return (t < this->ts || t == this->ts) && (this->tf - this->tInit != 0.0);
 }
 
+/*! This method computes the motor states during the first half of each step.
+ @return void
+ @param t [s] Time the method is called
+*/
 void StepperMotor::computeStepFirstHalf(double t) {
     if (this->stepsCommanded > 0 && !this->newMsg) {
         this->thetaDDot = this->thetaDDotMax;
@@ -161,10 +181,18 @@ void StepperMotor::computeStepFirstHalf(double t) {
     this->stepComplete = false;
 }
 
+/*! This method determines if the motor is in the second half of a step.
+ @return bool
+ @param t [s] Time the method is called
+*/
 bool StepperMotor::isInStepSecondHalf(double t) {
     return (t > this->ts && t < this->tf) && (this->tf - this->tInit != 0.0);
 }
 
+/*! This method computes the motor states during the second half of each step.
+ @return void
+ @param t [s] Time the method is called
+*/
 void StepperMotor::computeStepSecondHalf(double t) {
     if (this->stepsCommanded > 0 && !this->newMsg){
         this->thetaDDot = -this->thetaDDotMax;
@@ -176,6 +204,10 @@ void StepperMotor::computeStepSecondHalf(double t) {
     this->stepComplete = false;
 }
 
+/*! This method computes the motor states when a step is complete.
+ @return void
+ @param t [s] Time the method is called
+*/
 void StepperMotor::computeStepComplete(double t) {
     this->stepComplete = true;
     this->thetaDDot = 0.0;

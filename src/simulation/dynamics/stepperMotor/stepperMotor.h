@@ -43,54 +43,52 @@ public:
     void setStepTime(const double stepTime);                          //!< Setter method for the motor step time
     void setThetaDDotMax(const double thetaDDotMax);                  //!< Setter method for the maximum motor angular acceleration
 
-    BSKLogger *bskLogger;                           //!< BSK Logging
+    BSKLogger *bskLogger;                                             //!< BSK Logging
 
-    /* Messages */
     ReadFunctor<MotorStepCommandMsgPayload> motorStepCommandInMsg;    //!< Input msg for the number of commanded motor step counts
-    Message<StepperMotorMsgPayload> stepperMotorOutMsg;               //!< Output msg for the stepper motor information
+    Message<StepperMotorMsgPayload> stepperMotorOutMsg;               //!< Output msg for the stepper motor state information
 
 private:
 
-    void actuateMotor(uint64_t callTime);
-    void resetMotor(double t);
-    void updateRotationParameters();
-    bool isInStepFirstHalf(double t);
-    void computeStepFirstHalf(double t);
-    bool isInStepSecondHalf(double t);
-    void computeStepSecondHalf(double t);
-    void computeStepComplete(double t);
-
-    double thetaInit;                               //!< [rad] Initial motor angle
-    double stepAngle;                               //!< [rad] Angle the stepper motor moves through for a single step
-    double stepTime;                                //!< [s] Time required for a single motor step (constant)
-    double thetaDDotMax;                            //!< [rad/s^2] Maximum angular acceleration of the stepper motor
+    void actuateMotor(uint64_t callTime);                             //!< High-level method used to simulate the stepper motor states in time
+    void resetMotor(double t);                                        //!< Method used to reset the motor states when the current request is complete and a new request is received
+    void updateRotationParameters();                                  //!< Method used to update the rotation parameters after a step is completed
+    bool isInStepFirstHalf(double t);                                 //!< Method used to determine if the motor is in the first half of a step
+    void computeStepFirstHalf(double t);                              //!< Method used to compute the motor states during the first half of each step
+    bool isInStepSecondHalf(double t);                                //!< Method used to determine if the motor is in the second half of a step
+    void computeStepSecondHalf(double t);                             //!< Method used to compute the motor states during the second half of each step
+    void computeStepComplete(double t);                               //!< Method used to compute the motor states when a step is complete
 
     /* Step parameters */
-    int stepsCommanded;                             //!< [steps] Number of commanded steps
-    int stepCount;                                  //!< [steps] Current motor step count (number of steps taken)
+    double stepAngle;                                                 //!< [rad] Angle the stepper motor moves through for a single step
+    double stepTime;                                                  //!< [s] Time required for a single motor step (constant)
+    int stepsCommanded;                                               //!< [steps] Number of commanded steps
+    int stepCount;                                                    //!< [steps] Current motor step count (number of steps taken)
 
     /* Motor angle parameters */
-    double maneuverThetaInit;                       //!< [rad] Initial motor angle
-    double intermediateThetaInit;                   //!< [rad] Motor angle at the start of a new maneuver
-    double intermediateThetaRef;                    //!< [rad] Motor angle at the end of each step
-    double theta;                                   //!< [rad] Current motor angle
-    double thetaDot;                                //!< [rad/s] Current motor angle rate
-    double thetaDDot;                               //!< [rad/s^2] Current motor angular acceleration
+    double thetaInit;                                                 //!< [rad] Initial motor angle
+    double maneuverThetaInit;                                         //!< [rad] Initial motor angle
+    double intermediateThetaInit;                                     //!< [rad] Motor angle at the start of a new maneuver
+    double intermediateThetaRef;                                      //!< [rad] Motor angle at the end of each step
+    double theta;                                                     //!< [rad] Current motor angle
+    double thetaDot;                                                  //!< [rad/s] Current motor angle rate
+    double thetaDDot;                                                 //!< [rad/s^2] Current motor angular acceleration
+    double thetaDDotMax;                                              //!< [rad/s^2] Maximum angular acceleration of the stepper motor
 
     /* Temporal parameters */
-    double tInit;                                   //!< [s] Simulation time at the beginning of the maneuver
-    double previousWrittenTime;                     //!< [ns] Time the last input message was written
-    double ts;                                      //!< [s] The simulation time halfway through the maneuver (switch time for ang accel)
-    double tf;                                      //!< [s] Simulation time when the maneuver is finished
+    double tInit;                                                     //!< [s] Simulation time at the beginning of the maneuver
+    double previousWrittenTime;                                       //!< [ns] Time the last input message was written
+    double ts;                                                        //!< [s] The simulation time halfway through the maneuver (switch time for ang accel)
+    double tf;                                                        //!< [s] Simulation time when the maneuver is finished
 
     /* Boolean parameters */
-    bool completion;                                //!< Boolean designating a fully completed maneuver
-    bool stepComplete;                              //!< Boolean designating a completed step
-    bool newMsg;                                    //!< Boolean designating a new message was written
+    bool completion;                                                  //!< Boolean designating a fully completed maneuver
+    bool stepComplete;                                                //!< Boolean designating a completed step
+    bool newMsg;                                                      //!< Boolean designating a new message was written
 
     /* Constant parameters */
-    double a;                                       //!< Parabolic constant for the first half of a step
-    double b;                                       //!< Parabolic constant for the second half of a step
+    double a;                                                         //!< Parabolic constant for the first half of a step
+    double b;                                                         //!< Parabolic constant for the second half of a step
 };
 
 #endif
