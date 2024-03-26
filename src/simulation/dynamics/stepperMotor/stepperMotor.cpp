@@ -100,13 +100,12 @@ void StepperMotor::UpdateState(uint64_t callTime) {
 
         // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
         if (this->stepComplete) {
+            this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
             if (this->stepsCommanded > 0) {
-                this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
                 this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
                 this->a = 0.5 * (this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
                 this->b = -0.5 * (this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
             } else {
-                this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
                 this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount - 1) * this->stepAngle);
                 this->a = 0.5 * (-this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
                 this->b = -0.5 * (-this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
