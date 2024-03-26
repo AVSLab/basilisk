@@ -11,7 +11,7 @@ The following support documents outline advanced scripting and import features o
    vizardSettings
    vizardCommandLine
    vizardCustomModels
-
+   vizardLiveComm
 
 
 
