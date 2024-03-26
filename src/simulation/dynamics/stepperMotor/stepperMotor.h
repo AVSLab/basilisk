@@ -50,7 +50,7 @@ public:
 
 private:
 
-    void actuateMotor(uint64_t callTime);                             //!< High-level method used to simulate the stepper motor states in time
+    void actuateMotor(double t);                                      //!< High-level method used to simulate the stepper motor states in time
     void resetMotor(double t);                                        //!< Method used to reset the motor states when the current request is complete and a new request is received
     void updateRotationParameters();                                  //!< Method used to update the rotation parameters after a step is completed
     bool isInStepFirstHalf(double t);                                 //!< Method used to determine if the motor is in the first half of a step

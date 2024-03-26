@@ -80,7 +80,7 @@ void StepperMotor::UpdateState(uint64_t callTime) {
 
     // Reset the motor states for the next maneuver ONLY when the current step is completed
     if (!(this->completion)) {
-        this->actuateMotor(callTime);
+        this->actuateMotor(callTime * NANO2SEC);
     }
 
     // Copy motor information to the stepper motor message
@@ -96,11 +96,9 @@ void StepperMotor::UpdateState(uint64_t callTime) {
 
 /*! This high-level method is used to simulate the stepper motor states in time.
  @return void
- @param callTime [ns] Time the method is called
+ @param t [s] Time the method is called
 */
-void StepperMotor::actuateMotor(uint64_t callTime) {
-    double t = callTime * NANO2SEC;
-
+void StepperMotor::actuateMotor(double t) {
     // Reset the motor states when the current request is complete and a new request is received
     if (this->newMsg && this->stepComplete) {
         this->resetMotor(t);
