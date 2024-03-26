@@ -51,6 +51,15 @@ public:
 
 private:
 
+    void actuateMotor(uint64_t callTime);
+    void resetMotor(double t);
+    void updateRotationParameters();
+    bool isInStepFirstHalf(double t);
+    void computeStepFirstHalf(double t);
+    bool isInStepSecondHalf(double t);
+    void computeStepSecondHalf(double t);
+    void computeStepComplete(double t);
+
     double thetaInit;                               //!< [rad] Initial motor angle
     double stepAngle;                               //!< [rad] Angle the stepper motor moves through for a single step
     double stepTime;                                //!< [s] Time required for a single motor step (constant)

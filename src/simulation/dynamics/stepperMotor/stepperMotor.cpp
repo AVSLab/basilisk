@@ -80,89 +80,7 @@ void StepperMotor::UpdateState(uint64_t callTime) {
 
     // Reset the motor states for the next maneuver ONLY when the current step is completed
     if (!(this->completion)) {
-        if (this->newMsg && this->stepComplete) {
-
-            // Update the step count to zero
-            this->stepCount = 0;
-
-            // Calculate the current angle
-            this->maneuverThetaInit = this->theta;
-
-            // Store the initial time as the current simulation time
-            this->tInit = callTime * NANO2SEC;
-
-            this->newMsg = false;
-        }
-
-        // Define temporal information for the maneuver
-        this->tf = this->tInit + this->stepTime;
-        this->ts = this->tInit + this->stepTime / 2;
-
-        // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
-        if (this->stepComplete) {
-            this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
-            if (this->stepsCommanded > 0) {
-                this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
-                this->a = 0.5 * (this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
-                this->b = -0.5 * (this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
-            } else {
-                this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount - 1) * this->stepAngle);
-                this->a = 0.5 * (-this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
-                this->b = -0.5 * (-this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
-            }
-        }
-
-        // Store the current simulation time
-        double t = callTime * NANO2SEC;
-
-        // Update the scalar motor states during each step
-        if ((t < this->ts || t == this->ts) && this->tf - this->tInit != 0) { // Entered during the first half of the maneuver
-            if (this->stepsCommanded > 0 && !this->newMsg) {
-                this->thetaDDot = this->thetaDDotMax;
-            } else if (!this->newMsg) {
-                this->thetaDDot = -this->thetaDDotMax;
-            }
-            this->thetaDot = this->thetaDDot * (t - this->tInit);
-            this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->intermediateThetaInit;
-            this->stepComplete = false;
-        } else if (t > this->ts && t < this->tf && this->tf - this->tInit != 0) { // Entered during the second half of the maneuver
-            if (this->stepsCommanded > 0 && !this->newMsg){
-                this->thetaDDot = -this->thetaDDotMax;
-            } else if (!this->newMsg) {
-                this->thetaDDot = this->thetaDDotMax;
-            }
-            this->thetaDot = this->thetaDDot * (t - this->tInit) - this->thetaDDot * (this->tf - this->tInit);
-            this->theta = this->b * (t - this->tf) * (t - this->tf) + this->intermediateThetaRef;
-            this->stepComplete = false;
-        } else { // Entered when a step is complete
-            this->stepComplete = true;
-            this->thetaDDot = 0.0;
-            this->thetaDot = 0.0;
-            this->theta = this->intermediateThetaRef;
-
-            // Update the motor step count
-            if (!this->newMsg) {
-                if (this->stepsCommanded > 0) {
-                    this->stepCount++;
-                } else {
-                    this->stepCount--;
-                }
-            } else {
-                if (this->intermediateThetaRef > this->intermediateThetaInit) {
-                    this->stepCount++;
-                } else {
-                    this->stepCount--;
-                }
-            }
-
-            // Update the initial time
-            this->tInit = callTime * NANO2SEC;
-
-            // Update the completion boolean variable only when motor actuation is complete
-            if ((this->stepCount == this->stepsCommanded) && !this->newMsg) {
-                this->completion = true;
-            }
-        }
+        this->actuateMotor(callTime);
     }
 
     // Copy motor information to the stepper motor message
@@ -174,6 +92,118 @@ void StepperMotor::UpdateState(uint64_t callTime) {
 
     // Write the output messages
     this->stepperMotorOutMsg.write(&stepperMotorOut, moduleID, callTime);
+}
+
+void StepperMotor::actuateMotor(uint64_t callTime) {
+    double t = callTime * NANO2SEC;
+
+    if (this->newMsg && this->stepComplete) {
+        this->resetMotor(t);
+    }
+
+    // Define temporal information for the maneuver
+    this->tf = this->tInit + this->stepTime;
+    this->ts = this->tInit + this->stepTime / 2;
+
+    // Update the intermediate initial and reference motor angles and the parabolic constants when a step is completed
+    if (this->stepComplete) {
+        this->updateRotationParameters();
+    }
+
+    // Update the scalar motor states during each step
+    if (this->isInStepFirstHalf(t)) {
+        this->computeStepFirstHalf(t);
+    } else if (this->isInStepSecondHalf(t)) {
+        this->computeStepSecondHalf(t);
+    } else {
+        this->computeStepComplete(t);
+    }
+}
+
+void StepperMotor::resetMotor(double t) {
+    // Reset the motor step count to zero
+    this->stepCount = 0;
+
+    // Update the current motor angle
+    this->maneuverThetaInit = this->theta;
+
+    // Update the initial time as the current simulation time
+    this->tInit = t;
+
+    this->newMsg = false;
+}
+
+void StepperMotor::updateRotationParameters() {
+    this->intermediateThetaInit = this->maneuverThetaInit + (this->stepCount * this->stepAngle);
+    if (this->stepsCommanded > 0) {
+        this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount + 1) * this->stepAngle);
+        this->a = 0.5 * (this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
+        this->b = -0.5 * (this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
+    } else {
+        this->intermediateThetaRef = this->maneuverThetaInit + ((this->stepCount - 1) * this->stepAngle);
+        this->a = 0.5 * (-this->stepAngle) / ((this->ts - this->tInit) * (this->ts - this->tInit));
+        this->b = -0.5 * (-this->stepAngle) / ((this->ts - this->tf) * (this->ts - this->tf));
+    }
+}
+
+bool StepperMotor::isInStepFirstHalf(double t) {
+    return (t < this->ts || t == this->ts) && (this->tf - this->tInit != 0.0);
+}
+
+void StepperMotor::computeStepFirstHalf(double t) {
+    if (this->stepsCommanded > 0 && !this->newMsg) {
+        this->thetaDDot = this->thetaDDotMax;
+    } else if (!this->newMsg) {
+        this->thetaDDot = -this->thetaDDotMax;
+    }
+    this->thetaDot = this->thetaDDot * (t - this->tInit);
+    this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->intermediateThetaInit;
+    this->stepComplete = false;
+}
+
+bool StepperMotor::isInStepSecondHalf(double t) {
+    return (t > this->ts && t < this->tf) && (this->tf - this->tInit != 0.0);
+}
+
+void StepperMotor::computeStepSecondHalf(double t) {
+    if (this->stepsCommanded > 0 && !this->newMsg){
+        this->thetaDDot = -this->thetaDDotMax;
+    } else if (!this->newMsg) {
+        this->thetaDDot = this->thetaDDotMax;
+    }
+    this->thetaDot = this->thetaDDot * (t - this->tInit) - this->thetaDDot * (this->tf - this->tInit);
+    this->theta = this->b * (t - this->tf) * (t - this->tf) + this->intermediateThetaRef;
+    this->stepComplete = false;
+}
+
+void StepperMotor::computeStepComplete(double t) {
+    this->stepComplete = true;
+    this->thetaDDot = 0.0;
+    this->thetaDot = 0.0;
+    this->theta = this->intermediateThetaRef;
+
+    // Update the motor step count
+    if (!this->newMsg) {
+        if (this->stepsCommanded > 0) {
+            this->stepCount++;
+        } else {
+            this->stepCount--;
+        }
+    } else {
+        if (this->intermediateThetaRef > this->intermediateThetaInit) {
+            this->stepCount++;
+        } else {
+            this->stepCount--;
+        }
+    }
+
+    // Update the initial time
+    this->tInit = t;
+
+    // Update the completion boolean variable only when motor actuation is complete
+    if ((this->stepCount == this->stepsCommanded) && !this->newMsg) {
+        this->completion = true;
+    }
 }
 
 /*! Getter method for the initial motor angle.
