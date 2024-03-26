@@ -34,8 +34,23 @@ public:
 
     void Reset(uint64_t CurrentSimNanos) override;                    //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;              //!< Update member function
+    double getThetaInit() const;                                      //!< Getter method for the initial motor angle
+    double getStepAngle() const;                                      //!< Getter method for the motor step angle
+    double getStepTime() const;                                       //!< Getter method for the motor step time
+    double getThetaDDotMax() const;                                   //!< Getter method for the maximum motor angular acceleration
+    void setThetaInit(const double thetaInit);                        //!< Setter method for the initial motor angle
+    void setStepAngle(const double stepAngle);                        //!< Setter method for the motor step angle
+    void setStepTime(const double stepTime);                          //!< Setter method for the motor step time
+    void setThetaDDotMax(const double thetaDDotMax);                  //!< Setter method for the maximum motor angular acceleration
 
-    /* User-configured parameters (required) */
+    BSKLogger *bskLogger;                                             //!< BSK Logging
+
+    /* Messages */
+    ReadFunctor<MotorStepCommandMsgPayload> motorStepCommandInMsg;    //!< Input msg for the number of commanded motor step counts
+    Message<StepperMotorMsgPayload> stepperMotorOutMsg;               //!< Output msg for the stepper motor information
+
+private:
+
     double thetaInit;                               //!< [rad] Initial motor angle
     double stepAngle;                               //!< [rad] Angle the stepper motor moves through for a single step
     double stepTime;                                //!< [s] Time required for a single motor step (constant)
@@ -48,12 +63,12 @@ public:
     /* Motor angle parameters */
     double maneuverThetaInit;                       //!< [rad] Initial motor angle
     double intermediateThetaInit;                   //!< [rad] Motor angle at the start of a new maneuver
-    double theta;                                   //!< [rad] Current motor angle
     double thetaDotInit;                            //!< [rad/s] Initial motor angle rate
-    double thetaDot;                                //!< [rad/s] Current motor angle rate
-    double thetaDDot;                               //!< [rad/s^2] Current motor angular acceleration
     double intermediateThetaRef;                    //!< [rad] Motor angle at the end of each step
     double thetaDotRef;                             //!< [rad/s] Reference angle rate
+    double theta;                                   //!< [rad] Current motor angle
+    double thetaDot;                                //!< [rad/s] Current motor angle rate
+    double thetaDDot;                               //!< [rad/s^2] Current motor angular acceleration
 
     /* Temporal parameters */
     double tInit;                                   //!< [s] Simulation time at the beginning of the maneuver
@@ -69,12 +84,6 @@ public:
     /* Constant parameters */
     double a;                                       //!< Parabolic constant for the first half of a step
     double b;                                       //!< Parabolic constant for the second half of a step
-
-    BSKLogger *bskLogger;                           //!< BSK Logging
-
-    /* Messages */
-    ReadFunctor<MotorStepCommandMsgPayload> motorStepCommandInMsg;    //!< Input msg for the number of commanded motor step counts
-    Message<StepperMotorMsgPayload> stepperMotorOutMsg;               //!< Output msg for the stepper motor information
 };
 
 #endif

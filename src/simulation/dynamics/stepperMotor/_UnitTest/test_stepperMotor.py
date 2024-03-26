@@ -97,10 +97,10 @@ def stepperMotorTestFunction(show_plots, initialMotorAngle, stepsCommanded, step
     # Create an instance of the stepperMotor module to be tested
     StepperMotor = stepperMotor.StepperMotor()
     StepperMotor.ModelTag = "StepperMotor"
-    StepperMotor.thetaInit = initialMotorAngle
-    StepperMotor.stepAngle = stepAngle
-    StepperMotor.stepTime = stepTime
-    StepperMotor.thetaDDotMax = stepAngle / (0.25 * stepTime * stepTime)
+    StepperMotor.setThetaInit(initialMotorAngle)
+    StepperMotor.setStepAngle(stepAngle)
+    StepperMotor.setStepTime(stepTime)
+    StepperMotor.setThetaDDotMax(stepAngle / (0.25 * stepTime * stepTime))
 
     # Add the test module to the runtime call list
     unitTestSim.AddModelToTask(unitTaskName, StepperMotor)
