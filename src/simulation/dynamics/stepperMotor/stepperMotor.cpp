@@ -34,9 +34,7 @@ void StepperMotor::Reset(uint64_t callTime) {
     // Initialize the module parameters to zero
     this->theta = this->thetaInit;
     this->maneuverThetaInit = this->thetaInit;
-    this->thetaDotInit = 0.0;
     this->thetaDot = 0.0;
-    this->thetaDotRef = 0.0;
     this->thetaDDot = 0.0;
     this->tInit = 0.0;
     this->stepCount = 0;
@@ -87,9 +85,8 @@ void StepperMotor::UpdateState(uint64_t callTime) {
             // Update the step count to zero
             this->stepCount = 0;
 
-            // Calculate the current ange and angle rate
+            // Calculate the current angle
             this->maneuverThetaInit = this->theta;
-            this->thetaDotInit = this->thetaDot;
 
             // Store the initial time as the current simulation time
             this->tInit = callTime * NANO2SEC;
@@ -126,7 +123,7 @@ void StepperMotor::UpdateState(uint64_t callTime) {
             } else if (!this->newMsg) {
                 this->thetaDDot = -this->thetaDDotMax;
             }
-            this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit;
+            this->thetaDot = this->thetaDDot * (t - this->tInit);
             this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->intermediateThetaInit;
             this->stepComplete = false;
         } else if (t > this->ts && t < this->tf && this->tf - this->tInit != 0) { // Entered during the second half of the maneuver
@@ -135,13 +132,13 @@ void StepperMotor::UpdateState(uint64_t callTime) {
             } else if (!this->newMsg) {
                 this->thetaDDot = this->thetaDDotMax;
             }
-            this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit - this->thetaDDot * (this->tf - this->tInit);
+            this->thetaDot = this->thetaDDot * (t - this->tInit) - this->thetaDDot * (this->tf - this->tInit);
             this->theta = this->b * (t - this->tf) * (t - this->tf) + this->intermediateThetaRef;
             this->stepComplete = false;
         } else { // Entered when a step is complete
             this->stepComplete = true;
             this->thetaDDot = 0.0;
-            this->thetaDot = this->thetaDotRef;
+            this->thetaDot = 0.0;
             this->theta = this->intermediateThetaRef;
 
             // Update the motor step count

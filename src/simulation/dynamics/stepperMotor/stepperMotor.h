@@ -43,7 +43,7 @@ public:
     void setStepTime(const double stepTime);                          //!< Setter method for the motor step time
     void setThetaDDotMax(const double thetaDDotMax);                  //!< Setter method for the maximum motor angular acceleration
 
-    BSKLogger *bskLogger;                                             //!< BSK Logging
+    BSKLogger *bskLogger;                           //!< BSK Logging
 
     /* Messages */
     ReadFunctor<MotorStepCommandMsgPayload> motorStepCommandInMsg;    //!< Input msg for the number of commanded motor step counts
@@ -63,9 +63,7 @@ private:
     /* Motor angle parameters */
     double maneuverThetaInit;                       //!< [rad] Initial motor angle
     double intermediateThetaInit;                   //!< [rad] Motor angle at the start of a new maneuver
-    double thetaDotInit;                            //!< [rad/s] Initial motor angle rate
     double intermediateThetaRef;                    //!< [rad] Motor angle at the end of each step
-    double thetaDotRef;                             //!< [rad/s] Reference angle rate
     double theta;                                   //!< [rad] Current motor angle
     double thetaDot;                                //!< [rad/s] Current motor angle rate
     double thetaDDot;                               //!< [rad/s^2] Current motor angular acceleration
