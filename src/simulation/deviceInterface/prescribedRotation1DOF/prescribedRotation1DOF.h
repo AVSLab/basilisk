@@ -36,13 +36,13 @@ public:
     void SelfInit() override;                                               //!< Member function to initialize the C-wrapped output message
     void Reset(uint64_t CurrentSimNanos) override;                         //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                   //!< Update member function
-    void setCoastOptionRampDuration(double rampDuration);                  //!< Setter for the coast option ramp duration
+    void setCoastOptionBangDuration(double bangDuration);                  //!< Setter for the coast option bang duration
     void setRotHat_M(const Eigen::Vector3d &rotHat_M);                     //!< Setter for the spinning body rotation axis
-    void setThetaDDotMax(double thetaDDotMax);                             //!< Setter for the ramp segment scalar angular acceleration
+    void setThetaDDotMax(double thetaDDotMax);                             //!< Setter for the bang segment scalar angular acceleration
     void setThetaInit(double thetaInit);                                   //!< Setter for the initial spinning body angle
-    double getCoastOptionRampDuration() const;                             //!< Getter for the coast option ramp duration
+    double getCoastOptionBangDuration() const;                             //!< Getter for the coast option bang duration
     const Eigen::Vector3d &getRotHat_M() const;                            //!< Getter for the spinning body rotation axis
-    double getThetaDDotMax() const;                                        //!< Getter for the ramp segment scalar angular acceleration
+    double getThetaDDotMax() const;                                        //!< Getter for the bang segment scalar angular acceleration
     double getThetaInit() const;                                           //!< Getter for the initial spinning body angle
 
     ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyInMsg;              //!< Input msg for the spinning body reference angle and angle rate
@@ -56,33 +56,33 @@ public:
 private:
 
     /* Coast option member functions */
-    bool isInFirstRampSegment(double time) const;               //!< Method for determining if the current time is within the first ramp segment for the coast option
+    bool isInFirstBangSegment(double time) const;               //!< Method for determining if the current time is within the first bang segment for the coast option
     bool isInCoastSegment(double time) const;                   //!< Method for determining if the current time is within the coast segment for the coast option
-    bool isInSecondRampSegment(double time) const;              //!< Method for determining if the current time is within the second ramp segment for the coast option
+    bool isInSecondBangSegment(double time) const;              //!< Method for determining if the current time is within the second bang segment for the coast option
     void computeCoastParameters();                              //!< Method for computing the required parameters for the rotation with a coast period
     void computeCoastSegment(double time);                      //!< Method for computing the scalar rotational states for the coast option coast period
 
     /* Non-coast option member functions */
-    bool isInFirstRampSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first ramp segment for the no coast option
-    bool isInSecondRampSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second ramp segment for the no coast option
+    bool isInFirstBangSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first bang segment for the no coast option
+    bool isInSecondBangSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second bang segment for the no coast option
     void computeParametersNoCoast();                            //!< Method for computing the required parameters for the rotation with no coast period
 
     /* Shared member functions */
-    void computeFirstRampSegment(double time);                  //!< Method for computing the scalar rotational states for the first ramp segment
-    void computeSecondRampSegment(double time);                 //!< Method for computing the scalar rotational states for the second ramp segment
+    void computeFirstBangSegment(double time);                  //!< Method for computing the scalar rotational states for the first bang segment
+    void computeSecondBangSegment(double time);                 //!< Method for computing the scalar rotational states for the second bang segment
     void computeRotationComplete();                             //!< Method for computing the scalar rotational states when the rotation is complete
     Eigen::Vector3d computeSigma_FM();                          //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
 
     /* User-configurable variables */
-    double coastOptionRampDuration;                             //!< [s] Ramp time used for the coast option
-    double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body used in the ramp segments
+    double coastOptionBangDuration;                             //!< [s] Bang time used for the coast option
+    double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body used in the bang segments
     Eigen::Vector3d rotHat_M;                                   //!< Spinning body rotation axis in M frame components
 
     /* Coast option variables */
-    double theta_tr;                                            //!< [rad] Angle at the end of the first ramp segment
+    double theta_tr;                                            //!< [rad] Angle at the end of the first bang segment
     double theta_tc;                                            //!< [rad] Angle at the end of the coast segment
-    double thetaDot_tr;                                         //!< [rad/s] Angle rate at the end of the first ramp segment
-    double tr;                                                  //!< [s] The simulation time at the end of the first ramp segment
+    double thetaDot_tr;                                         //!< [rad/s] Angle rate at the end of the first bang segment
+    double tr;                                                  //!< [s] The simulation time at the end of the first bang segment
     double tc;                                                  //!< [s] The simulation time at the end of the coast period
 
     /* Non-coast option variables */
