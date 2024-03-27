@@ -90,7 +90,7 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
         this->convergence = false;
 
         // Set the parameters required to profile the rotation
-        if (this->coastOptionRampDuration > 0.0) {
+        if (this->coastOptionBangDuration > 0.0) {
             this->computeCoastParameters();
         } else {
             this->computeParametersNoCoast();
@@ -101,21 +101,21 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     double t = callTime * NANO2SEC;
 
     // Compute the scalar rotational states at the current simulation time
-    if (this->coastOptionRampDuration > 0.0) {
-        if (this->isInFirstRampSegment(t)) {
-            this->computeFirstRampSegment(t);
+    if (this->coastOptionBangDuration > 0.0) {
+        if (this->isInFirstBangSegment(t)) {
+            this->computeFirstBangSegment(t);
         } else if (this->isInCoastSegment(t)) {
             this->computeCoastSegment(t);
-        } else if (this->isInSecondRampSegment(t)) {
-            this->computeSecondRampSegment(t);
+        } else if (this->isInSecondBangSegment(t)) {
+            this->computeSecondBangSegment(t);
         } else {
             this->computeRotationComplete();
         }
     } else {
-        if (this->isInFirstRampSegmentNoCoast(t)) {
-            this->computeFirstRampSegment(t);
-        } else if (this->isInSecondRampSegmentNoCoast(t)) {
-            this->computeSecondRampSegment(t);
+        if (this->isInFirstBangSegmentNoCoast(t)) {
+            this->computeFirstBangSegment(t);
+        } else if (this->isInSecondBangSegmentNoCoast(t)) {
+            this->computeSecondBangSegment(t);
         } else {
             this->computeRotationComplete();
         }
@@ -146,11 +146,11 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
 }
 
-/*! This method determines if the current time is within the first ramp segment for the coast option.
+/*! This method determines if the current time is within the first bang segment for the coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedRotation1DOF::isInFirstRampSegment(double t) const {
+bool PrescribedRotation1DOF::isInFirstBangSegment(double t) const {
     return (t <= this->tr && this->tf - this->tInit != 0);
 }
 
@@ -162,11 +162,11 @@ bool PrescribedRotation1DOF::isInCoastSegment(double t) const {
     return (t > this->tr && t <= this->tc && this->tf - this->tInit != 0);
 }
 
-/*! This method determines if the current time is within the second ramp segment for the coast option.
+/*! This method determines if the current time is within the second bang segment for the coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedRotation1DOF::isInSecondRampSegment(double t) const {
+bool PrescribedRotation1DOF::isInSecondBangSegment(double t) const {
     return (t > this->tc && t <= this->tf && this->tf - this->tInit != 0);
 }
 
@@ -175,18 +175,18 @@ bool PrescribedRotation1DOF::isInSecondRampSegment(double t) const {
 */
 void PrescribedRotation1DOF::computeCoastParameters() {
     if (this->thetaInit != this->thetaRef) {
-        // Determine the time at the end of the first ramp segment
-        this->tr = this->tInit + this->coastOptionRampDuration;
+        // Determine the time at the end of the first bang segment
+        this->tr = this->tInit + this->coastOptionBangDuration;
 
-        // Determine the angle and angle rate at the end of the ramp segment/start of the coast segment
+        // Determine the angle and angle rate at the end of the bang segment/start of the coast segment
         if (this->thetaInit < this->thetaRef) {
-            this->theta_tr = (0.5 * this->thetaDDotMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
-                             + (this->thetaDotInit * this->coastOptionRampDuration) + this->thetaInit;
-            this->thetaDot_tr = this->thetaDDotMax * this->coastOptionRampDuration + this->thetaDotInit;
+            this->theta_tr = (0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
+                             + (this->thetaDotInit * this->coastOptionBangDuration) + this->thetaInit;
+            this->thetaDot_tr = this->thetaDDotMax * this->coastOptionBangDuration + this->thetaDotInit;
         } else {
-            this->theta_tr = - ((0.5 * this->thetaDDotMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
-                                + (this->thetaDotInit * this->coastOptionRampDuration)) + this->thetaInit;
-            this->thetaDot_tr = - this->thetaDDotMax * this->coastOptionRampDuration + this->thetaDotInit;
+            this->theta_tr = - ((0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
+                                + (this->thetaDotInit * this->coastOptionBangDuration)) + this->thetaInit;
+            this->thetaDot_tr = - this->thetaDDotMax * this->coastOptionBangDuration + this->thetaDotInit;
         }
 
         // Determine the angle traveled during the coast period
@@ -202,9 +202,9 @@ void PrescribedRotation1DOF::computeCoastParameters() {
         this->theta_tc = this->theta_tr + deltaThetaCoast;
 
         // Determine the time at the end of the rotation
-        this->tf = this->tc + this->coastOptionRampDuration;
+        this->tf = this->tc + this->coastOptionBangDuration;
 
-        // Define the parabolic constants for the first and second ramp segments of the rotation
+        // Define the parabolic constants for the first and second bang segments of the rotation
         this->a = (this->theta_tr - this->thetaInit) / ((this->tr - this->tInit) * (this->tr - this->tInit));
         this->b = - (this->thetaRef - this->theta_tc) / ((this->tc - this->tf) * (this->tc - this->tf));
     } else { // If the initial angle equals the reference angle, no rotation is required. Setting the final time
@@ -224,19 +224,19 @@ void PrescribedRotation1DOF::computeCoastSegment(double t) {
     this->theta = this->thetaDot_tr * (t - this->tr) + this->theta_tr;
 }
 
-/*! This method determines if the current time is within the first ramp segment for the no coast option.
+/*! This method determines if the current time is within the first bang segment for the no coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedRotation1DOF::isInFirstRampSegmentNoCoast(double t) const {
+bool PrescribedRotation1DOF::isInFirstBangSegmentNoCoast(double t) const {
     return (t <= this->ts && this->tf - this->tInit != 0);
 }
 
-/*! This method determines if the current time is within the second ramp segment for the no coast option.
+/*! This method determines if the current time is within the second bang segment for the no coast option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedRotation1DOF::isInSecondRampSegmentNoCoast(double t) const {
+bool PrescribedRotation1DOF::isInSecondBangSegmentNoCoast(double t) const {
     return (t > this->ts && t <= this->tf && this->tf - this->tInit != 0);
 }
 
@@ -258,13 +258,13 @@ void PrescribedRotation1DOF::computeParametersNoCoast() {
     this->b = -0.5 * (this->thetaRef - this->thetaInit) / ((this->ts - this->tf) * (this->ts - this->tf));
 }
 
-/*! This method computes the scalar rotational states for the first ramp segment.
+/*! This method computes the scalar rotational states for the first bang segment.
  @return void
  @param t [s] Current simulation time
 */
-void PrescribedRotation1DOF::computeFirstRampSegment(double t) {
-    // The acceleration during the first ramp segment is positive if the reference angle is greater than
-    // the initial angle. The acceleration is negative during the first ramp segment if the reference angle
+void PrescribedRotation1DOF::computeFirstBangSegment(double t) {
+    // The acceleration during the first bang segment is positive if the reference angle is greater than
+    // the initial angle. The acceleration is negative during the first bang segment if the reference angle
     // is less than the initial angle
     if (this->thetaInit < this->thetaRef) {
         this->thetaDDot = this->thetaDDotMax;
@@ -275,13 +275,13 @@ void PrescribedRotation1DOF::computeFirstRampSegment(double t) {
     this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
 }
 
-/*! This method computes the scalar rotational states for the second ramp segment.
+/*! This method computes the scalar rotational states for the second bang segment.
  @return void
  @param t [s] Current simulation time
 */
-void PrescribedRotation1DOF::computeSecondRampSegment(double t) {
-    // The acceleration during the second ramp segment is negative if the reference angle is greater than
-    // the initial angle. The acceleration is positive during the second ramp segment if the reference angle
+void PrescribedRotation1DOF::computeSecondBangSegment(double t) {
+    // The acceleration during the second bang segment is negative if the reference angle is greater than
+    // the initial angle. The acceleration is positive during the second bang segment if the reference angle
     // is less than the initial angle
     if (this->thetaInit < this->thetaRef) {
         this->thetaDDot = - this->thetaDDotMax;
@@ -332,12 +332,12 @@ Eigen::Vector3d PrescribedRotation1DOF::computeSigma_FM() {
     return cArray2EigenVector3d(sigma_FM_array);
 }
 
-/*! Setter method for the coast option ramp duration.
+/*! Setter method for the coast option bang duration.
  @return void
- @param rampDuration [s] Ramp segment time duration
+ @param bangDuration [s] Bang segment time duration
 */
-void PrescribedRotation1DOF::setCoastOptionRampDuration(double rampDuration) {
-    this->coastOptionRampDuration = rampDuration;
+void PrescribedRotation1DOF::setCoastOptionBangDuration(double bangDuration) {
+    this->coastOptionBangDuration = bangDuration;
 }
 
 /*! Setter method for the spinning body rotation axis.
@@ -348,9 +348,9 @@ void PrescribedRotation1DOF::setRotHat_M(const Eigen::Vector3d &rotHat_M) {
     this->rotHat_M = rotHat_M / rotHat_M.norm();
 }
 
-/*! Setter method for the ramp segment scalar angular acceleration.
+/*! Setter method for the bang segment scalar angular acceleration.
  @return void
- @param thetaDDotMax [rad/s^2] Ramp segment scalar angular acceleration
+ @param thetaDDotMax [rad/s^2] Bang segment scalar angular acceleration
 */
 void PrescribedRotation1DOF::setThetaDDotMax(double thetaDDotMax) {
     this->thetaDDotMax = thetaDDotMax;
@@ -364,11 +364,11 @@ void PrescribedRotation1DOF::setThetaInit(double thetaInit) {
     this->thetaInit = thetaInit;
 }
 
-/*! Getter method for the coast option ramp duration.
+/*! Getter method for the coast option bang duration.
  @return double
 */
-double PrescribedRotation1DOF::getCoastOptionRampDuration() const {
-    return this->coastOptionRampDuration;
+double PrescribedRotation1DOF::getCoastOptionBangDuration() const {
+    return this->coastOptionBangDuration;
 }
 
 /*! Getter method for the spinning body rotation axis.
@@ -378,7 +378,7 @@ const Eigen::Vector3d &PrescribedRotation1DOF::getRotHat_M() const {
     return this->rotHat_M;
 }
 
-/*! Getter method for the ramp segment scalar angular acceleration.
+/*! Getter method for the bang segment scalar angular acceleration.
  @return double
 */
 double PrescribedRotation1DOF::getThetaDDotMax() const {

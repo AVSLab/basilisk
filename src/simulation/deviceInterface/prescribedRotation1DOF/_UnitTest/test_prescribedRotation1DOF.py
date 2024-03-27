@@ -42,14 +42,14 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-@pytest.mark.parametrize("coastOptionRampDuration", [0.0, 2.0, 5.0])  # [s]
+@pytest.mark.parametrize("coastOptionBangDuration", [0.0, 2.0, 5.0])  # [s]
 @pytest.mark.parametrize("thetaInit", [0.0, macros.D2R * -25.0])  # [rad]
 @pytest.mark.parametrize("thetaRef1", [0.0, macros.D2R * -15.0])  # [rad]
 @pytest.mark.parametrize("thetaRef2", [macros.D2R * -25.0, macros.D2R * 35.0])  # [rad]
 @pytest.mark.parametrize("thetaDDotMax", [macros.D2R * 0.4, macros.D2R * 1.0])  # [rad/s^2]
 @pytest.mark.parametrize("accuracy", [1e-4])
 def test_prescribedRotation1DOF(show_plots,
-                            coastOptionRampDuration,
+                            coastOptionBangDuration,
                             thetaInit,
                             thetaRef1,
                             thetaRef2,
@@ -64,14 +64,14 @@ def test_prescribedRotation1DOF(show_plots,
     along with the two final reference angles and the maximum angular acceleration for the rotation.
     The unit test also tests both methods of profiling the rotation, where either a pure bang-bang acceleration
     profile can be selected for the rotation, or a bang-off-bang option can be selected where a coast period with zero
-    acceleration is added between the acceleration ramp segments. To validate the module, the final spinning body angle
+    acceleration is added between the acceleration bang segments. To validate the module, the final spinning body angle
     at the end of each rotation are checked to match the specified reference angles.
 
     **Test Parameters**
 
     Args:
         show_plots (bool): Variable for choosing whether plots should be displayed
-        coastOptionRampDuration (double): [s] Ramp duration used for the coast option
+        coastOptionBangDuration (double): [s] Bang duration used for the coast option
         thetaInit (float): [rad] Initial spinning body angle relative to the mount frame
         thetaRef1 (float): [rad] First spinning body reference angle relative to the mount frame
         thetaRef2 (float): [rad] Second spinning body reference angle relative to the mount frame
@@ -104,7 +104,7 @@ def test_prescribedRotation1DOF(show_plots,
 
     # Initialize the prescribedRotation1DOF test module configuration data
     rotAxis_M = np.array([1.0, 0.0, 0.0])
-    prescribedRot1DOF.setCoastOptionRampDuration(coastOptionRampDuration)
+    prescribedRot1DOF.setCoastOptionBangDuration(coastOptionBangDuration)
     prescribedRot1DOF.setRotHat_M(rotAxis_M)
     prescribedRot1DOF.setThetaDDotMax(thetaDDotMax)
     prescribedRot1DOF.setThetaInit(thetaInit)
@@ -128,23 +128,23 @@ def test_prescribedRotation1DOF(show_plots,
     # Determine the required simulation time for the first rotation
     thetaDotInit = 0.0  # [rad/s]
     tCoast_1 = 0.0  # [s]
-    if (coastOptionRampDuration > 0.0):
-        # Determine the angle and angle rate at the end of the ramp segment/start of the coast segment
+    if (coastOptionBangDuration > 0.0):
+        # Determine the angle and angle rate at the end of the bang segment/start of the coast segment
         if (thetaInit < thetaRef1):
-            theta_tr_1 = ((0.5 * thetaDDotMax * coastOptionRampDuration * coastOptionRampDuration)
-                          + (thetaDotInit * coastOptionRampDuration) + thetaInit)  # [rad]
-            thetaDot_tr_1 = thetaDDotMax * coastOptionRampDuration + thetaDotInit  # [rad/s]
+            theta_tr_1 = ((0.5 * thetaDDotMax * coastOptionBangDuration * coastOptionBangDuration)
+                          + (thetaDotInit * coastOptionBangDuration) + thetaInit)  # [rad]
+            thetaDot_tr_1 = thetaDDotMax * coastOptionBangDuration + thetaDotInit  # [rad/s]
         else:
-            theta_tr_1 = - ((0.5 * thetaDDotMax * coastOptionRampDuration * coastOptionRampDuration)
-                            + (thetaDotInit * coastOptionRampDuration)) + thetaInit  # [rad]
-            thetaDot_tr_1 = - thetaDDotMax * coastOptionRampDuration + thetaDotInit  # [rad/s]
+            theta_tr_1 = - ((0.5 * thetaDDotMax * coastOptionBangDuration * coastOptionBangDuration)
+                            + (thetaDotInit * coastOptionBangDuration)) + thetaInit  # [rad]
+            thetaDot_tr_1 = - thetaDDotMax * coastOptionBangDuration + thetaDotInit  # [rad/s]
 
         # Determine the angle traveled during the coast period
         deltaThetaCoast_1 = thetaRef1 - thetaInit - 2 * (theta_tr_1 - thetaInit)  # [rad]
 
         # Determine the time duration of the coast segment
         tCoast_1 = np.abs(deltaThetaCoast_1) / np.abs(thetaDot_tr_1)  # [s]
-        rotation1ReqTime = (2 * coastOptionRampDuration) + tCoast_1  # [s]
+        rotation1ReqTime = (2 * coastOptionBangDuration) + tCoast_1  # [s]
     else:
         rotation1ReqTime = np.sqrt(((0.5 * np.abs(thetaRef1 - thetaInit)) * 8) / thetaDDotMax)  # [s]
 
@@ -163,23 +163,23 @@ def test_prescribedRotation1DOF(show_plots,
 
     # Determine the required simulation time for the second rotation
     tCoast_2 = 0.0  # [s]
-    if (coastOptionRampDuration > 0.0):
-        # Determine the angle and angle rate at the end of the ramp segment/start of the coast segment
+    if (coastOptionBangDuration > 0.0):
+        # Determine the angle and angle rate at the end of the bang segment/start of the coast segment
         if (thetaRef1 < thetaRef2):
-            theta_tr_2 = ((0.5 * thetaDDotMax * coastOptionRampDuration * coastOptionRampDuration)
-                          + (thetaDotInit * coastOptionRampDuration) + thetaRef1)  # [rad]
-            thetaDot_tr_2 = thetaDDotMax * coastOptionRampDuration + thetaDotInit  # [rad/s]
+            theta_tr_2 = ((0.5 * thetaDDotMax * coastOptionBangDuration * coastOptionBangDuration)
+                          + (thetaDotInit * coastOptionBangDuration) + thetaRef1)  # [rad]
+            thetaDot_tr_2 = thetaDDotMax * coastOptionBangDuration + thetaDotInit  # [rad/s]
         else:
-            theta_tr_2 = - ((0.5 * thetaDDotMax * coastOptionRampDuration * coastOptionRampDuration)
-                            + (thetaDotInit * coastOptionRampDuration)) + thetaRef1  # [rad]
-            thetaDot_tr_2 = - thetaDDotMax * coastOptionRampDuration + thetaDotInit  # [rad/s]
+            theta_tr_2 = - ((0.5 * thetaDDotMax * coastOptionBangDuration * coastOptionBangDuration)
+                            + (thetaDotInit * coastOptionBangDuration)) + thetaRef1  # [rad]
+            thetaDot_tr_2 = - thetaDDotMax * coastOptionBangDuration + thetaDotInit  # [rad/s]
 
         # Determine the angle traveled during the coast period
         deltaThetaCoast_2 = thetaRef2 - thetaRef1 - 2 * (theta_tr_2 - thetaRef1)  # [rad]
 
         # Determine the time duration of the coast segment
         tCoast_2 = np.abs(deltaThetaCoast_2) / np.abs(thetaDot_tr_2)  # [s]
-        rotation2ReqTime = (2 * coastOptionRampDuration) + tCoast_2  # [s]
+        rotation2ReqTime = (2 * coastOptionBangDuration) + tCoast_2  # [s]
     else:
         rotation2ReqTime = np.sqrt(((0.5 * np.abs(thetaRef2 - thetaRef1)) * 8) / thetaDDotMax)  # [s]
 
@@ -203,11 +203,11 @@ def test_prescribedRotation1DOF(show_plots,
 
     # Unit test validation
     # Store the truth data used to validate the module in two lists
-    if (coastOptionRampDuration > 0.0):
+    if (coastOptionBangDuration > 0.0):
         # Compute tf for the first rotation, and tInit tf for the second rotation
-        tf_1 = 2 * coastOptionRampDuration + tCoast_1  # [s]
+        tf_1 = 2 * coastOptionBangDuration + tCoast_1  # [s]
         tInit_2 = rotation1ReqTime + rotation1ExtraTime  # [s]
-        tf_2 = tInit_2 + (2 * coastOptionRampDuration) + tCoast_2  # [s]
+        tf_2 = tInit_2 + (2 * coastOptionBangDuration) + tCoast_2  # [s]
     
         # Compute the timespan indices for each check
         tf_1_index = int(round(tf_1 / testTimeStepSec)) + 1
@@ -327,7 +327,7 @@ def test_prescribedRotation1DOF(show_plots,
 if __name__ == "__main__":
     test_prescribedRotation1DOF(
         True,  # show_plots
-        5.0,  # [s] coastOptionRampDuration
+        5.0,  # [s] coastOptionBangDuration
         macros.D2R * -25.0,  # [rad] thetaInit
         macros.D2R * 15.0,  # [rad] thetaRef1
         macros.D2R * 55.0,  # [rad] thetaRef2
