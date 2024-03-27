@@ -59,6 +59,7 @@ private:
     void computeCoastParameters();                              //!< Method for computing the required parameters for the rotation with a coast period
 
     /* Methods for computing the current rotational states */
+    void computeCurrentState(double time);                      //!< Intermediate method used to group the calculation of the current rotational states into a single method
     bool isInFirstBangSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first bang segment for the no coast option
     bool isInFirstBangSegment(double time) const;               //!< Method for determining if the current time is within the first bang segment for the coast option
     bool isInSecondBangSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second bang segment for the no coast option
