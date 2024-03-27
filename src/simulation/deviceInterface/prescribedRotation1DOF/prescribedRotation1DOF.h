@@ -82,11 +82,11 @@ private:
     double theta_tr;                                            //!< [rad] Angle at the end of the first bang segment
     double theta_tc;                                            //!< [rad] Angle at the end of the coast segment
     double thetaDot_tr;                                         //!< [rad/s] Angle rate at the end of the first bang segment
-    double tr;                                                  //!< [s] The simulation time at the end of the first bang segment
-    double tc;                                                  //!< [s] The simulation time at the end of the coast period
+    double t_r;                                                 //!< [s] The simulation time at the end of the first bang segment
+    double t_c;                                                 //!< [s] The simulation time at the end of the coast period
 
     /* Non-coast option variables */
-    double ts;                                                  //!< [s] The simulation time halfway through the rotation
+    double t_s;                                                 //!< [s] The simulation time halfway through the rotation
 
     /* Shared module variables */
     double theta;                                               //!< [rad] Current angle
@@ -97,7 +97,7 @@ private:
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotHat_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
     double thetaRef;                                            //!< [rad] Spinning body reference angle from frame M to frame F about rotHat_M
-    double tf;                                                  //!< [s] Simulation time when the rotation is complete
+    double t_f;                                                 //!< [s] Simulation time when the rotation is complete
     double a;                                                   //!< Parabolic constant for the first acceleration segment
     double b;                                                   //!< Parabolic constant for the second acceleration segment
 
