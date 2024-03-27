@@ -58,16 +58,8 @@ void PrescribedRotation1DOF::Reset(uint64_t callTime) {
  @param callTime [ns] Time the method is called
 */
 void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
-    // Create the buffer messages
-    HingedRigidBodyMsgPayload spinningBodyIn;
-    HingedRigidBodyMsgPayload spinningBodyOut;
-    PrescribedRotationMsgPayload prescribedRotationOut;
-
-    // Zero the output messages
-    spinningBodyOut = HingedRigidBodyMsgPayload();
-    prescribedRotationOut = PrescribedRotationMsgPayload();
-
     // Read the input message
+    HingedRigidBodyMsgPayload spinningBodyIn;
     spinningBodyIn = HingedRigidBodyMsgPayload();
     if (this->spinningBodyInMsg.isWritten()) {
         spinningBodyIn = this->spinningBodyInMsg();
@@ -121,29 +113,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
         }
     }
 
-    // [rad/s] Angular velocity of frame F wrt frame M in F frame components
-    Eigen::Vector3d omega_FM_F = this->thetaDot * this->rotHat_M;
-
-    // [rad/s^2] B frame time derivative of omega_FM_F in F frame components
-    Eigen::Vector3d omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;
-
-    // MRP attitude of spinning body frame F with respect to frame M
-    Eigen::Vector3d sigma_FM = this->computeSigma_FM();
-
-    // Copy the module variables to the prescribedRotationOut output message
-    eigenVector3d2CArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
-    eigenVector3d2CArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
-    eigenVector3d2CArray(sigma_FM, prescribedRotationOut.sigma_FM);
-
-    // Copy the scalar variables to the spinningBodyOut output message
-    spinningBodyOut.theta = this->theta;
-    spinningBodyOut.thetaDot = this->thetaDot;
-
-    // Write the output messages
-    this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
-    this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
-    PrescribedRotationMsg_C_write(&prescribedRotationOut, &prescribedRotationOutMsgC, this->moduleID, callTime);
-    HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
+    // Write the module output messages
+    this->writeOutputMessages(callTime);
 }
 
 /*! This method computes the required parameters for the rotation with no coast period.
@@ -301,6 +272,41 @@ void PrescribedRotation1DOF::computeRotationComplete() {
     this->thetaDot = 0.0;
     this->theta = this->thetaRef;
     this->convergence = true;
+}
+
+/*! This method writes the module output messages and computes the output message data.
+ @return void
+*/
+void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime) {
+    // Create the output buffer messages
+    HingedRigidBodyMsgPayload spinningBodyOut;
+    PrescribedRotationMsgPayload prescribedRotationOut;
+
+    // Zero the output messages
+    spinningBodyOut = HingedRigidBodyMsgPayload();
+    prescribedRotationOut = PrescribedRotationMsgPayload();
+
+    // Compute the angular velocity of frame F wrt frame M in F frame components
+    Eigen::Vector3d omega_FM_F = this->thetaDot * this->rotHat_M;  // [rad/s]
+
+    // Compute the B frame time derivative of omega_FM_F in F frame components
+    Eigen::Vector3d omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;  // [rad/s^2]
+
+    // Compute the MRP attitude of spinning body frame F with respect to frame M
+    Eigen::Vector3d sigma_FM = this->computeSigma_FM();
+
+    // Copy the module variables to the output buffer messages
+    spinningBodyOut.theta = this->theta;
+    spinningBodyOut.thetaDot = this->thetaDot;
+    eigenVector3d2CArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
+    eigenVector3d2CArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
+    eigenVector3d2CArray(sigma_FM, prescribedRotationOut.sigma_FM);
+
+    // Write the output messages
+    this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
+    this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
+    HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
+    PrescribedRotationMsg_C_write(&prescribedRotationOut, &prescribedRotationOutMsgC, this->moduleID, callTime);
 }
 
 /*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_FM
