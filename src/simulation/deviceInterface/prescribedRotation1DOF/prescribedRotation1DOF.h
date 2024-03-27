@@ -68,6 +68,8 @@ private:
     void computeSecondBangSegment(double time);                 //!< Method for computing the scalar rotational states for the second bang segment
     void computeCoastSegment(double time);                      //!< Method for computing the scalar rotational states for the coast option coast period
     void computeRotationComplete();                             //!< Method for computing the scalar rotational states when the rotation is complete
+
+    void writeOutputMessages(uint64_t CurrentSimNanos);         //!< Method for writing the module output messages and computing the output message data
     Eigen::Vector3d computeSigma_FM();                          //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
 
     /* User-configurable variables */
