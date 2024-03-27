@@ -89,29 +89,8 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
         }
     }
 
-    // Store the current simulation time
-    double t = callTime * NANO2SEC;
-
     // Compute the scalar rotational states at the current simulation time
-    if (this->coastOptionBangDuration > 0.0) {
-        if (this->isInFirstBangSegment(t)) {
-            this->computeFirstBangSegment(t);
-        } else if (this->isInCoastSegment(t)) {
-            this->computeCoastSegment(t);
-        } else if (this->isInSecondBangSegment(t)) {
-            this->computeSecondBangSegment(t);
-        } else {
-            this->computeRotationComplete();
-        }
-    } else {
-        if (this->isInFirstBangSegmentNoCoast(t)) {
-            this->computeFirstBangSegment(t);
-        } else if (this->isInSecondBangSegmentNoCoast(t)) {
-            this->computeSecondBangSegment(t);
-        } else {
-            this->computeRotationComplete();
-        }
-    }
+    this->computeCurrentState(callTime * NANO2SEC);
 
     // Write the module output messages
     this->writeOutputMessages(callTime);
@@ -176,6 +155,31 @@ void PrescribedRotation1DOF::computeCoastParameters() {
         // equal to the initial time ensures the correct statement is entered when the rotational states are
         // profiled below
         this->t_f = this->tInit;
+    }
+}
+
+/*! This intermediate method groups the calculation of the current rotational states into a single method.
+ @return void
+*/
+void PrescribedRotation1DOF::computeCurrentState(double t) {
+    if (this->coastOptionBangDuration > 0.0) {
+        if (this->isInFirstBangSegment(t)) {
+            this->computeFirstBangSegment(t);
+        } else if (this->isInCoastSegment(t)) {
+            this->computeCoastSegment(t);
+        } else if (this->isInSecondBangSegment(t)) {
+            this->computeSecondBangSegment(t);
+        } else {
+            this->computeRotationComplete();
+        }
+    } else {
+        if (this->isInFirstBangSegmentNoCoast(t)) {
+            this->computeFirstBangSegment(t);
+        } else if (this->isInSecondBangSegmentNoCoast(t)) {
+            this->computeSecondBangSegment(t);
+        } else {
+            this->computeRotationComplete();
+        }
     }
 }
 
