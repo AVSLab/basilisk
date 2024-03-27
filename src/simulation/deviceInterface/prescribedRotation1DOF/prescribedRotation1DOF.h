@@ -54,22 +54,19 @@ public:
     BSKLogger *bskLogger;                                                  //!< BSK Logging
 
 private:
-
-    /* Coast option member functions */
-    bool isInFirstBangSegment(double time) const;               //!< Method for determining if the current time is within the first bang segment for the coast option
-    bool isInCoastSegment(double time) const;                   //!< Method for determining if the current time is within the coast segment for the coast option
-    bool isInSecondBangSegment(double time) const;              //!< Method for determining if the current time is within the second bang segment for the coast option
-    void computeCoastParameters();                              //!< Method for computing the required parameters for the rotation with a coast period
-    void computeCoastSegment(double time);                      //!< Method for computing the scalar rotational states for the coast option coast period
-
-    /* Non-coast option member functions */
-    bool isInFirstBangSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first bang segment for the no coast option
-    bool isInSecondBangSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second bang segment for the no coast option
+    /* Methods for computing the required rotational parameters */
     void computeParametersNoCoast();                            //!< Method for computing the required parameters for the rotation with no coast period
+    void computeCoastParameters();                              //!< Method for computing the required parameters for the rotation with a coast period
 
-    /* Shared member functions */
+    /* Methods for computing the current rotational states */
+    bool isInFirstBangSegmentNoCoast(double time) const;        //!< Method for determining if the current time is within the first bang segment for the no coast option
+    bool isInFirstBangSegment(double time) const;               //!< Method for determining if the current time is within the first bang segment for the coast option
+    bool isInSecondBangSegmentNoCoast(double time) const;       //!< Method for determining if the current time is within the second bang segment for the no coast option
+    bool isInSecondBangSegment(double time) const;              //!< Method for determining if the current time is within the second bang segment for the coast option
+    bool isInCoastSegment(double time) const;                   //!< Method for determining if the current time is within the coast segment for the coast option
     void computeFirstBangSegment(double time);                  //!< Method for computing the scalar rotational states for the first bang segment
     void computeSecondBangSegment(double time);                 //!< Method for computing the scalar rotational states for the second bang segment
+    void computeCoastSegment(double time);                      //!< Method for computing the scalar rotational states for the coast option coast period
     void computeRotationComplete();                             //!< Method for computing the scalar rotational states when the rotation is complete
     Eigen::Vector3d computeSigma_FM();                          //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
 
@@ -78,29 +75,27 @@ private:
     double thetaDDotMax;                                        //!< [rad/s^2] Maximum angular acceleration of spinning body used in the bang segments
     Eigen::Vector3d rotHat_M;                                   //!< Spinning body rotation axis in M frame components
 
-    /* Coast option variables */
-    double theta_tr;                                            //!< [rad] Angle at the end of the first bang segment
-    double theta_tc;                                            //!< [rad] Angle at the end of the coast segment
-    double thetaDot_tr;                                         //!< [rad/s] Angle rate at the end of the first bang segment
-    double t_r;                                                 //!< [s] The simulation time at the end of the first bang segment
-    double t_c;                                                 //!< [s] The simulation time at the end of the coast period
-
-    /* Non-coast option variables */
-    double t_s;                                                 //!< [s] The simulation time halfway through the rotation
-
-    /* Shared module variables */
-    double theta;                                               //!< [rad] Current angle
-    double thetaDot;                                            //!< [rad/s] Current angle rate
-    double thetaDDot;                                           //!< [rad/s^2] Current angular acceleration
-    bool convergence;                                           //!< Boolean variable is true when the rotation is complete
-    double tInit;                                               //!< [s] Simulation time at the beginning of the rotation
+    /* Scalar rotational states */
     double thetaInit;                                           //!< [rad] Initial spinning body angle from frame M to frame F about rotHat_M
     double thetaDotInit;                                        //!< [rad/s] Initial spinning body angle rate between frame M to frame F
     double thetaRef;                                            //!< [rad] Spinning body reference angle from frame M to frame F about rotHat_M
+    double theta;                                               //!< [rad] Current angle
+    double thetaDot;                                            //!< [rad/s] Current angle rate
+    double thetaDDot;                                           //!< [rad/s^2] Current angular acceleration
+    double theta_tr;                                            //!< [rad] Angle at the end of the first bang segment
+    double theta_tc;                                            //!< [rad] Angle at the end of the coast segment
+    double thetaDot_tr;                                         //!< [rad/s] Angle rate at the end of the first bang segment
+
+    /* Temporal parameters */
+    double tInit;                                               //!< [s] Simulation time at the beginning of the rotation
+    double t_r;                                                 //!< [s] The simulation time at the end of the first bang segment
+    double t_s;                                                 //!< [s] The simulation time halfway through the rotation
+    double t_c;                                                 //!< [s] The simulation time at the end of the coast period
     double t_f;                                                 //!< [s] Simulation time when the rotation is complete
+
+    bool convergence;                                           //!< Boolean variable is true when the rotation is complete
     double a;                                                   //!< Parabolic constant for the first acceleration segment
     double b;                                                   //!< Parabolic constant for the second acceleration segment
-
 };
 
 #endif
