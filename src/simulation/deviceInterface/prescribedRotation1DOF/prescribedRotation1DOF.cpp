@@ -27,8 +27,7 @@
 /*! This method self initializes the C-wrapped output messages.
  @return void
 */
-void PrescribedRotation1DOF::SelfInit()
-{
+void PrescribedRotation1DOF::SelfInit() {
     HingedRigidBodyMsg_C_init(&this->spinningBodyOutMsgC);
     PrescribedRotationMsg_C_init(&this->prescribedRotationOutMsgC);
 }
@@ -38,9 +37,8 @@ void PrescribedRotation1DOF::SelfInit()
  @param callTime [ns] Time the method is called
 */
 void PrescribedRotation1DOF::Reset(uint64_t callTime) {
-    // Check if the required input message is linked
     if (!this->spinningBodyInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "Error: prescribedRot.spinningBodyInMsg wasn't connected.");
+        _bskLog(this->bskLogger, BSK_ERROR, "Error: prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
     }
 
     this->tInit = 0.0;
@@ -59,16 +57,14 @@ void PrescribedRotation1DOF::Reset(uint64_t callTime) {
 */
 void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     // Read the input message
-    HingedRigidBodyMsgPayload spinningBodyIn;
-    spinningBodyIn = HingedRigidBodyMsgPayload();
+    HingedRigidBodyMsgPayload spinningBodyIn = HingedRigidBodyMsgPayload();
     if (this->spinningBodyInMsg.isWritten()) {
         spinningBodyIn = this->spinningBodyInMsg();
     }
 
     /* This loop is entered (a) initially and (b) when each rotation is complete. The parameters used to profile the
     spinning body rotation are updated in this statement. */
-    if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence)
-    {
+    if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Update the initial time as the current simulation time
         this->tInit = callTime * NANO2SEC;
 
@@ -78,15 +74,15 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
         // Store the reference angle
         this->thetaRef = spinningBodyIn.theta;
 
-        // Set the convergence to false until the rotation is complete
-        this->convergence = false;
-
         // Set the parameters required to profile the rotation
         if (this->coastOptionBangDuration > 0.0) {
             this->computeCoastParameters();
         } else {
             this->computeParametersNoCoast();
         }
+
+        // Set the convergence to false until the rotation is complete
+        this->convergence = false;
     }
 
     // Compute the scalar rotational states at the current simulation time
