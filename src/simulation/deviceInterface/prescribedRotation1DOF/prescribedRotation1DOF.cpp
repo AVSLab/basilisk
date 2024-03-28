@@ -74,10 +74,14 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
         this->thetaRef = spinningBodyIn.theta;
 
         // Set the parameters required to profile the rotation
-        if (this->coastOptionBangDuration > 0.0) {
-            this->computeBangCoastBangParametersNoSmoothing();
+        if (this->thetaInit != this->thetaRef) {
+            if (this->coastOptionBangDuration > 0.0) {
+                this->computeBangCoastBangParametersNoSmoothing();
+            } else {
+                this->computeBangBangParametersNoSmoothing();
+            }
         } else {
-            this->computeBangBangParametersNoSmoothing();
+            this->t_f = this->tInit;
         }
 
         // Set the convergence to false until the rotation is complete
@@ -109,48 +113,38 @@ void PrescribedRotation1DOF::computeBangBangParametersNoSmoothing() {
     this->b = -0.5 * (this->thetaRef - this->thetaInit) / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
 }
 
-/*! This method computes the required parameters for the rotation with a coast period.
+/*! This method computes the required parameters for the rotation with a non-smoothed bang-coast-bang acceleration profile.
  @return void
 */
 void PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing() {
-    if (this->thetaInit != this->thetaRef) {
-        // Determine the time at the end of the first bang segment
-        this->t_b1 = this->tInit + this->coastOptionBangDuration;
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
 
-        // Determine the angle and angle rate at the end of the bang segment/start of the coast segment
-        if (this->thetaInit < this->thetaRef) {
-            this->theta_tb1 = (0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
-                             + this->thetaInit;
-            this->thetaDot_tb1 = this->thetaDDotMax * this->coastOptionBangDuration;
-        } else {
-            this->theta_tb1 = - (0.5 * this->thetaDDotMax * this->coastOptionBangDuration
-                             * this->coastOptionBangDuration) + this->thetaInit;
-            this->thetaDot_tb1 = - this->thetaDDotMax * this->coastOptionBangDuration;
-        }
+    // Determine the time at the end of the first bang segment t_b1
+    this->t_b1 = this->tInit + this->coastOptionBangDuration;
 
-        // Determine the angle traveled during the coast period
-        double deltaThetaCoast = this->thetaRef - this->thetaInit - 2 * (this->theta_tb1 - this->thetaInit);
+    // Determine the hub-relative angle and rate at time t_b1
+    this->theta_tb1 = sign * 0.5 * this->thetaDDotMax * this->coastOptionBangDuration
+                         * this->coastOptionBangDuration + this->thetaInit;
+    this->thetaDot_tb1 = sign * this->thetaDDotMax * this->coastOptionBangDuration;
 
-        // Determine the time duration of the coast segment
-        double tCoast = fabs(deltaThetaCoast) / fabs(this->thetaDot_tb1);
+    // Determine the angle traveled during the coast period
+    double deltaThetaCoast = this->thetaRef - this->thetaInit - 2.0 * (this->theta_tb1 - this->thetaInit);
 
-        // Determine the time at the end of the coast segment
-        this->t_c = this->t_b1 + tCoast;
+    // Determine the duration of the coast segment coastDuration
+    double coastDuration = fabs(deltaThetaCoast / this->thetaDot_tb1);
 
-        // Determine the angle at the end of the coast segment
-        this->theta_tc = this->theta_tb1 + deltaThetaCoast;
+    // Determine the time at the end of the coast segment t_c
+    this->t_c = this->t_b1 + coastDuration;
 
-        // Determine the time at the end of the rotation
-        this->t_f = this->t_c + this->coastOptionBangDuration;
+    // Determine the hub-relative angle at time t_c
+    double theta_tc = this->theta_tb1 + deltaThetaCoast;
 
-        // Define the parabolic constants for the first and second bang segments of the rotation
-        this->a = (this->theta_tb1 - this->thetaInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
-        this->b = - (this->thetaRef - this->theta_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
-    } else { // If the initial angle equals the reference angle, no rotation is required. Setting the final time
-        // equal to the initial time ensures the correct statement is entered when the rotational states are
-        // profiled below
-        this->t_f = this->tInit;
-    }
+    // Determine the time when the rotation is complete t_f
+    this->t_f = this->t_c + this->coastOptionBangDuration;
+
+    // Define the parabolic constants for the first and second bang segments of the rotation
+    this->a = (this->theta_tb1 - this->thetaInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+    this->b = -(this->thetaRef - theta_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
 }
 
 /*! This intermediate method groups the calculation of the current rotational states into a single method.
