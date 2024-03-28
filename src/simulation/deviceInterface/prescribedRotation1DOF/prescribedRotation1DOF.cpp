@@ -91,18 +91,18 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     this->writeOutputMessages(callTime);
 }
 
-/*! This method computes the required parameters for the rotation with no coast period.
+/*! This method computes the required parameters for the rotation with a non-smoothed bang-bang acceleration profile.
  @return void
 */
 void PrescribedRotation1DOF::computeBangBangParametersNoSmoothing() {
     // Determine the total time required for the rotation
-    double totalRotTime = sqrt(((0.5 * fabs(this->thetaRef - this->thetaInit)) * 8) / this->thetaDDotMax);
+    double totalRotTime = sqrt(((0.5 * fabs(this->thetaRef - this->thetaInit)) * 8.0) / this->thetaDDotMax);
 
-    // Determine the time at the end of the rotation
+    // Determine the time when the rotation is complete t_f
     this->t_f = this->tInit + totalRotTime;
 
     // Determine the time halfway through the rotation
-    this->t_b1 = this->tInit + (totalRotTime / 2);
+    this->t_b1 = this->tInit + (totalRotTime / 2.0);
 
     // Define the parabolic constants for the first and second half of the rotation
     this->a = 0.5 * (this->thetaRef - this->thetaInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
