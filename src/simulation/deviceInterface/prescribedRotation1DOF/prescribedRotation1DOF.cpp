@@ -119,32 +119,32 @@ void PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing() {
 
         // Determine the angle and angle rate at the end of the bang segment/start of the coast segment
         if (this->thetaInit < this->thetaRef) {
-            this->theta_tr = (0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
+            this->theta_tb1 = (0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
                              + this->thetaInit;
-            this->thetaDot_tr = this->thetaDDotMax * this->coastOptionBangDuration;
+            this->thetaDot_tb1 = this->thetaDDotMax * this->coastOptionBangDuration;
         } else {
-            this->theta_tr = - (0.5 * this->thetaDDotMax * this->coastOptionBangDuration
+            this->theta_tb1 = - (0.5 * this->thetaDDotMax * this->coastOptionBangDuration
                              * this->coastOptionBangDuration) + this->thetaInit;
-            this->thetaDot_tr = - this->thetaDDotMax * this->coastOptionBangDuration;
+            this->thetaDot_tb1 = - this->thetaDDotMax * this->coastOptionBangDuration;
         }
 
         // Determine the angle traveled during the coast period
-        double deltaThetaCoast = this->thetaRef - this->thetaInit - 2 * (this->theta_tr - this->thetaInit);
+        double deltaThetaCoast = this->thetaRef - this->thetaInit - 2 * (this->theta_tb1 - this->thetaInit);
 
         // Determine the time duration of the coast segment
-        double tCoast = fabs(deltaThetaCoast) / fabs(this->thetaDot_tr);
+        double tCoast = fabs(deltaThetaCoast) / fabs(this->thetaDot_tb1);
 
         // Determine the time at the end of the coast segment
         this->t_c = this->t_b1 + tCoast;
 
         // Determine the angle at the end of the coast segment
-        this->theta_tc = this->theta_tr + deltaThetaCoast;
+        this->theta_tc = this->theta_tb1 + deltaThetaCoast;
 
         // Determine the time at the end of the rotation
         this->t_f = this->t_c + this->coastOptionBangDuration;
 
         // Define the parabolic constants for the first and second bang segments of the rotation
-        this->a = (this->theta_tr - this->thetaInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+        this->a = (this->theta_tb1 - this->thetaInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
         this->b = - (this->thetaRef - this->theta_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
     } else { // If the initial angle equals the reference angle, no rotation is required. Setting the final time
         // equal to the initial time ensures the correct statement is entered when the rotational states are
@@ -258,8 +258,8 @@ void PrescribedRotation1DOF::computeSecondBangSegment(double t) {
 */
 void PrescribedRotation1DOF::computeCoastSegment(double t) {
     this->thetaDDot = 0.0;
-    this->thetaDot = this->thetaDot_tr;
-    this->theta = this->thetaDot_tr * (t - this->t_b1) + this->theta_tr;
+    this->thetaDot = this->thetaDot_tb1;
+    this->theta = this->thetaDot_tb1 * (t - this->t_b1) + this->theta_tb1;
 }
 
 /*! This method computes the scalar rotational states when the rotation is complete.
