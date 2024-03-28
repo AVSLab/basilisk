@@ -55,6 +55,7 @@ public:
 
 private:
     /* Methods for computing the required rotational parameters */
+    void computeRotationParameters();                                      //!< Intermediate method to group the calculation of rotation parameters into a single method
     void computeBangBangParametersNoSmoothing();                           //!< Method for computing the required parameters for the non-smoothed bang-bang profiler option
     void computeBangCoastBangParametersNoSmoothing();                      //!< Method for computing the required parameters for the non-smoothed bang-coast-bang profiler option
 
