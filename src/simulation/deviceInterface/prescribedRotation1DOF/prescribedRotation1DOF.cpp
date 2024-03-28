@@ -75,9 +75,9 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
 
         // Set the parameters required to profile the rotation
         if (this->coastOptionBangDuration > 0.0) {
-            this->computeCoastParameters();
+            this->computeBangCoastBangParametersNoSmoothing();
         } else {
-            this->computeParametersNoCoast();
+            this->computeBangBangParametersNoSmoothing();
         }
 
         // Set the convergence to false until the rotation is complete
@@ -94,7 +94,7 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
 /*! This method computes the required parameters for the rotation with no coast period.
  @return void
 */
-void PrescribedRotation1DOF::computeParametersNoCoast() {
+void PrescribedRotation1DOF::computeBangBangParametersNoSmoothing() {
     // Determine the total time required for the rotation
     double totalRotTime = sqrt(((0.5 * fabs(this->thetaRef - this->thetaInit)) * 8) / this->thetaDDotMax);
 
@@ -112,7 +112,7 @@ void PrescribedRotation1DOF::computeParametersNoCoast() {
 /*! This method computes the required parameters for the rotation with a coast period.
  @return void
 */
-void PrescribedRotation1DOF::computeCoastParameters() {
+void PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing() {
     if (this->thetaInit != this->thetaRef) {
         // Determine the time at the end of the first bang segment
         this->t_r = this->tInit + this->coastOptionBangDuration;
