@@ -64,7 +64,7 @@ class BasiliskConan(ConanFile):
     version = f.read()
     f.close()
     generators = "cmake_find_package_multi"
-    requires = "eigen/3.3.9"
+    requires = "eigen/3.4.0"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
     license = "ISC"
