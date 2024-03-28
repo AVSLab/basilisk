@@ -43,7 +43,6 @@ void PrescribedRotation1DOF::Reset(uint64_t callTime) {
 
     this->tInit = 0.0;
     this->theta = this->thetaInit;
-    this->thetaDotInit = 0.0;
     this->thetaDot = 0.0;
 
     // Set the initial convergence to true to enter the required loop in Update() method on the first pass
@@ -121,12 +120,12 @@ void PrescribedRotation1DOF::computeCoastParameters() {
         // Determine the angle and angle rate at the end of the bang segment/start of the coast segment
         if (this->thetaInit < this->thetaRef) {
             this->theta_tr = (0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
-                             + (this->thetaDotInit * this->coastOptionBangDuration) + this->thetaInit;
-            this->thetaDot_tr = this->thetaDDotMax * this->coastOptionBangDuration + this->thetaDotInit;
+                             + this->thetaInit;
+            this->thetaDot_tr = this->thetaDDotMax * this->coastOptionBangDuration;
         } else {
-            this->theta_tr = - ((0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration)
-                                + (this->thetaDotInit * this->coastOptionBangDuration)) + this->thetaInit;
-            this->thetaDot_tr = - this->thetaDDotMax * this->coastOptionBangDuration + this->thetaDotInit;
+            this->theta_tr = - (0.5 * this->thetaDDotMax * this->coastOptionBangDuration
+                             * this->coastOptionBangDuration) + this->thetaInit;
+            this->thetaDot_tr = - this->thetaDDotMax * this->coastOptionBangDuration;
         }
 
         // Determine the angle traveled during the coast period
@@ -232,7 +231,7 @@ void PrescribedRotation1DOF::computeFirstBangSegment(double t) {
     } else {
         this->thetaDDot = - this->thetaDDotMax;
     }
-    this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit;
+    this->thetaDot = this->thetaDDot * (t - this->tInit);
     this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
 }
 
@@ -249,8 +248,7 @@ void PrescribedRotation1DOF::computeSecondBangSegment(double t) {
     } else {
         this->thetaDDot = this->thetaDDotMax;
     }
-    this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit
-                     - this->thetaDDot * (this->t_f - this->tInit);
+    this->thetaDot = this->thetaDDot * (t - this->tInit) - this->thetaDDot * (this->t_f - this->tInit);
     this->theta = this->b * (t - this->t_f) * (t - this->t_f) + this->thetaRef;
 }
 

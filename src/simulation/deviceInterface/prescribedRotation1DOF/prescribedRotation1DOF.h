@@ -80,7 +80,6 @@ private:
 
     /* Scalar rotational states */
     double thetaInit;                                                      //!< [rad] Initial spinning body angle from frame M to frame F about rotHat_M
-    double thetaDotInit;                                                   //!< [rad/s] Initial spinning body angle rate between frame M to frame F
     double thetaRef;                                                       //!< [rad] Spinning body reference angle from frame M to frame F about rotHat_M
     double theta;                                                          //!< [rad] Current angle
     double thetaDot;                                                       //!< [rad/s] Current angle rate
