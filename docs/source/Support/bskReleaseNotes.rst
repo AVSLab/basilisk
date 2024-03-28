@@ -62,6 +62,8 @@ Version |release|
   To simulate the rotation, this module must be connected to the :ref:`prescribedMotionStateEffector` dynamics module.
 - Created a new example scenario :ref:`scenarioDeployingSolarArrays` demonstrating how to simulate hub-relative
   multi-body prescribed motion.
+- The fuel tank module is refactored to remove the limitation of a only being able to have a single instance of a
+  specific tank model type.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------

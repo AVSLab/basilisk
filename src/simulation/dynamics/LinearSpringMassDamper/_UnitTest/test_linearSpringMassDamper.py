@@ -125,8 +125,8 @@ def fuelSloshTest(show_plots,useFlag,testCase):
                                   scObject)
 
         unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
-        unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
-        tankModel = fuelTank.cvar.FuelTankModelConstantVolume
+        tankModel = fuelTank.FuelTankModelConstantVolume()
+        unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
         tankModel.propMassInit = 40.0
         tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
         unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
