@@ -90,8 +90,7 @@ private:
 
     /* Temporal parameters */
     double tInit;                                                          //!< [s] Simulation time at the beginning of the rotation
-    double t_r;                                                            //!< [s] The simulation time at the end of the first bang segment
-    double t_s;                                                            //!< [s] The simulation time halfway through the rotation
+    double t_b1;                                                           //!< [s] The simulation time at the end of the first bang segment
     double t_c;                                                            //!< [s] The simulation time at the end of the coast period
     double t_f;                                                            //!< [s] The simulation time when the rotation is complete
 
