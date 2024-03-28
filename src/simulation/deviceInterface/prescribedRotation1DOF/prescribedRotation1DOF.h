@@ -84,9 +84,9 @@ private:
     double theta;                                                          //!< [rad] Current angle
     double thetaDot;                                                       //!< [rad/s] Current angle rate
     double thetaDDot;                                                      //!< [rad/s^2] Current angular acceleration
-    double theta_tr;                                                       //!< [rad] Angle at the end of the first bang segment
+    double theta_tb1;                                                      //!< [rad] Angle at the end of the first bang segment
     double theta_tc;                                                       //!< [rad] Angle at the end of the coast segment
-    double thetaDot_tr;                                                    //!< [rad/s] Angle rate at the end of the first bang segment
+    double thetaDot_tb1;                                                   //!< [rad/s] Angle rate at the end of the first bang segment
 
     /* Temporal parameters */
     double tInit;                                                          //!< [s] Simulation time at the beginning of the rotation
