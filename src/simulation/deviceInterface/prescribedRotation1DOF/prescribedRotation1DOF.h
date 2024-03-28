@@ -55,8 +55,8 @@ public:
 
 private:
     /* Methods for computing the required rotational parameters */
-    void computeParametersNoCoast();                                       //!< Method for computing the required parameters for the rotation with no coast period
-    void computeCoastParameters();                                         //!< Method for computing the required parameters for the rotation with a coast period
+    void computeBangBangParametersNoSmoothing();                           //!< Method for computing the required parameters for the non-smoothed bang-bang profiler option
+    void computeBangCoastBangParametersNoSmoothing();                      //!< Method for computing the required parameters for the non-smoothed bang-coast-bang profiler option
 
     /* Methods for computing the current rotational states */
     void computeCurrentState(double time);                                 //!< Intermediate method used to group the calculation of the current rotational states into a single method
