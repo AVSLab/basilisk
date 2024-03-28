@@ -698,7 +698,7 @@ Eigen::Vector3d PrescribedRotation1DOF::computeSigma_FM() {
  @return void
  @param bangDuration [s] Bang segment time duration
 */
-void PrescribedRotation1DOF::setCoastOptionBangDuration(double bangDuration) {
+void PrescribedRotation1DOF::setCoastOptionBangDuration(const double bangDuration) {
     this->coastOptionBangDuration = bangDuration;
 }
 
@@ -714,7 +714,7 @@ void PrescribedRotation1DOF::setRotHat_M(const Eigen::Vector3d &rotHat_M) {
  @return void
  @param smoothingDuration [s] Duration the acceleration is smoothed until reaching the given maximum acceleration value
 */
-void PrescribedRotation1DOF::setSmoothingDuration(double smoothingDuration) {
+void PrescribedRotation1DOF::setSmoothingDuration(const double smoothingDuration) {
     this->smoothingDuration = smoothingDuration;
 }
 
@@ -722,7 +722,7 @@ void PrescribedRotation1DOF::setSmoothingDuration(double smoothingDuration) {
  @return void
  @param thetaDDotMax [rad/s^2] Bang segment scalar angular acceleration
 */
-void PrescribedRotation1DOF::setThetaDDotMax(double thetaDDotMax) {
+void PrescribedRotation1DOF::setThetaDDotMax(const double thetaDDotMax) {
     this->thetaDDotMax = thetaDDotMax;
 }
 
@@ -730,7 +730,7 @@ void PrescribedRotation1DOF::setThetaDDotMax(double thetaDDotMax) {
  @return void
  @param thetaInit [rad] Initial spinning body angle
 */
-void PrescribedRotation1DOF::setThetaInit(double thetaInit) {
+void PrescribedRotation1DOF::setThetaInit(const double thetaInit) {
     this->thetaInit = thetaInit;
 }
 
