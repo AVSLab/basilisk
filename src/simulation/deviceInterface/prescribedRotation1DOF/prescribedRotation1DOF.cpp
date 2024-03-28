@@ -162,9 +162,9 @@ void PrescribedRotation1DOF::computeCurrentState(double t) {
             this->computeRotationComplete();
         }
     } else {
-        if (this->isInFirstBangSegmentNoCoast(t)) {
+        if (this->isInFirstBangSegment(t)) {
             this->computeFirstBangSegment(t);
-        } else if (this->isInSecondBangSegmentNoCoast(t)) {
+        } else if (this->isInSecondBangSegment(t)) {
             this->computeSecondBangSegment(t);
         } else {
             this->computeRotationComplete();
@@ -172,15 +172,7 @@ void PrescribedRotation1DOF::computeCurrentState(double t) {
     }
 }
 
-/*! This method determines if the current time is within the first bang segment for the no coast option.
- @return bool
- @param t [s] Current simulation time
-*/
-bool PrescribedRotation1DOF::isInFirstBangSegmentNoCoast(double t) const {
-    return (t <= this->t_b1 && this->t_f - this->tInit != 0);
-}
-
-/*! This method determines if the current time is within the first bang segment for the coast option.
+/*! This method determines if the current time is within the first bang segment.
  @return bool
  @param t [s] Current simulation time
 */
@@ -188,15 +180,7 @@ bool PrescribedRotation1DOF::isInFirstBangSegment(double t) const {
     return (t <= this->t_b1 && this->t_f - this->tInit != 0);
 }
 
-/*! This method determines if the current time is within the second bang segment for the no coast option.
- @return bool
- @param t [s] Current simulation time
-*/
-bool PrescribedRotation1DOF::isInSecondBangSegmentNoCoast(double t) const {
-    return (t > this->t_b1 && t <= this->t_f && this->t_f - this->tInit != 0);
-}
-
-/*! This method determines if the current time is within the second bang segment for the coast option.
+/*! This method determines if the current time is within the second bang segment.
  @return bool
  @param t [s] Current simulation time
 */
