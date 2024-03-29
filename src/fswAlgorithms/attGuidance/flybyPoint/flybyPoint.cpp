@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,37 +21,24 @@
 #endif
 
 #include "fswAlgorithms/attGuidance/flybyPoint/flybyPoint.h"
-#include <cmath>
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/rigidBodyKinematics.hpp"
+#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-/*! Module constructor */
 FlybyPoint::FlybyPoint() = default;
 
-
-/*! Module destructor */
 FlybyPoint::~FlybyPoint() = default;
-
 
 /*! Initialize C-wrapped output messages */
 void FlybyPoint::SelfInit(){
     AttRefMsg_C_init(&this->attRefOutMsgC);
 }
 
-
 /*! This method is used to reset the module.
  @return void
  */
 void FlybyPoint::Reset(uint64_t CurrentSimNanos)
 {
-    if (!this->filterInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".filterInMsg wasn't connected.");
-    }
-    if (this->flybyModel == cwEquations && !this->asteroidEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".asteroidEphemerisInMsg wasn't connected.");
-    }
-
     this->lastFilterReadTime = 0;
     this->firstRead = true;
 }
@@ -67,103 +54,112 @@ void FlybyPoint::UpdateState(uint64_t CurrentSimNanos)
 {
     /*! create and zero the output message */
     AttRefMsgPayload attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
+    NavTransMsgPayload relativeState = this->filterInMsg();
 
     /*! compute dt from current time and last filter read time [s] */
     double dt = (CurrentSimNanos - this->lastFilterReadTime)*NANO2SEC;
+    bool invalidSolution = false;
 
-    if ((dt >= this->dtFilterData) || this->firstRead) {
+    if ((dt >= this->timeBetweenFilterData) || this->firstRead) {
         /*! set firstRead to false if this was the first read after a reset */
         if (this->firstRead) {
             this->firstRead = false;
         }
-
-        /*! read and allocate the attitude navigation message */
-        NavTransMsgPayload relativeState = this->filterInMsg();
-
         /*! compute velocity/radius ratio at time of read */
-        this->f0 = v3Norm(relativeState.v_BN_N) / v3Norm(relativeState.r_BN_N);
+        this->r_BN_N = Eigen::Map<Eigen::Vector3d>(relativeState.r_BN_N);
+        this->v_BN_N = Eigen::Map<Eigen::Vector3d>(relativeState.v_BN_N);
+        this->f0 = this->v_BN_N.norm() / this->r_BN_N.norm();
 
         /*! compute radial (ur_N), velocity (uv_N), along-track (ut_N), and out-of-plane (uh_N) unit direction vectors */
-        double ur_N[3];
-        v3Normalize(relativeState.r_BN_N, ur_N);
-        double uv_N[3];
-        v3Normalize(relativeState.v_BN_N, uv_N);
-        double uh_N[3];
-        double ut_N[3];
-        if (1 - v3Dot(ur_N, uv_N) < this->epsilon) {
-            v3Perpendicular(ur_N, uh_N);
-            v3Normalize(uh_N, uh_N);
-            v3Cross(uh_N, ur_N, ut_N);
-            // compute flight path angle at the time of read
-            this->gamma0 = M_PI_2;
-            this->singularityFlag = plusInfinity;
-        }
-        else if (v3Dot(ur_N, uv_N) + 1 < this->epsilon) {
-            v3Perpendicular(ur_N, uh_N);
-            v3Normalize(uh_N, uh_N);
-            v3Cross(uh_N, ur_N, ut_N);
-            // compute flight path angle at the time of read
-            this->gamma0 = -M_PI_2;
-            this->singularityFlag = minusInfinity;
+        Eigen::Vector3d ur_N = this->r_BN_N.normalized();
+        Eigen::Vector3d uv_N = this->v_BN_N.normalized();
+        /*! assert r and v are not collinear (collision trajectory) */
+        if (std::abs(1 - ur_N.dot(uv_N)) < this->toleranceForCollinearity) {
+            invalidSolution = false;
         }
         else {
-            v3Cross(ur_N, uv_N, uh_N);
-            v3Normalize(uh_N, uh_N);
-            v3Cross(uh_N, ur_N, ut_N);
-            // compute flight path angle at the time of read
-            this->gamma0 = atan(v3Dot(relativeState.v_BN_N, ur_N) / v3Dot(relativeState.v_BN_N, ut_N));
-            this->singularityFlag = nonSingular;
+            invalidSolution = true;
         }
 
+        Eigen::Vector3d uh_N = ur_N.cross(uv_N).normalized();
+        Eigen::Vector3d ut_N = uh_N.cross(ur_N).normalized();
+
+        // compute flight path angle at the time of read
+        this->gamma0 = std::atan(this->v_BN_N.dot(ur_N) / this->v_BN_N.dot(ut_N));
+
         /*! compute inertial-to-reference DCM at time of read */
-        for (int i=0; i<3; i++) {
-            this->R0N[0][i] = ur_N[i];
-            this->R0N[1][i] = ut_N[i];
-            this->R0N[2][i] = uh_N[i];
-        }
+        this->R0N.row(0) = ur_N;
+        this->R0N.row(1) = ut_N;
+        this->R0N.row(2) = uh_N;
 
         /*! update lastFilterReadTime to current time and dt to zero */
         this->lastFilterReadTime = CurrentSimNanos;
         dt = 0;
     }
 
-    /*! compute rotation angle of reference frame from last read time */
-    double theta;
-    if (this->singularityFlag == nonSingular) {
-        theta = atan(tan(this->gamma0) +this->f0 / cos(this->gamma0) * dt) - this->gamma0;
-    }
-    else {
-        theta = 0;
+    double theta = 0;
+    if (!invalidSolution) {
+        theta = std::atan(std::tan(this->gamma0) + this->f0 / std::cos(this->gamma0) * dt) - this->gamma0;
     }
 
     /*! compute DCM (RtR0) of reference frame from last read time */
-    double PRV_theta[3] = {0, 0, theta};
-    double RtR0[3][3];
-    PRV2C(PRV_theta, RtR0);
+    Eigen::Vector3d PRV_theta;
+    PRV_theta << 0, 0, theta;
+    Eigen::Matrix3d RtR0 = prvToDcm(PRV_theta);
 
     /*! compute DCM of reference frame at time t_0 + dt with respect to inertial frame */
-    double RtN[3][3];
-    m33MultM33(RtR0, this->R0N, RtN);
+    Eigen::Matrix3d RtN = RtR0*this->R0N;
 
     /*! compute scalar angular rate and acceleration of the reference frame in R-frame coordinates */
     double den = (this->f0*this->f0*dt*dt + 2*this->f0*sin(this->gamma0)*dt + 1);
     double thetaDot = this->f0 * cos(this->gamma0) / den;
     double thetaDDot = -2*this->f0*this->f0*cos(this->gamma0) * (this->f0*dt + sin(this->gamma0)) / (den*den);
-    double omega_RN_R[3] = {0, 0, thetaDot};
-    double omegaDot_RN_R[3] = {0, 0, thetaDDot};
+    Eigen::Vector3d omega_RN_R;
+    omega_RN_R << 0, 0, thetaDot;
+    Eigen::Vector3d omegaDot_RN_R;
+    omegaDot_RN_R << 0, 0, thetaDDot;
 
     /*! populate attRefOut with reference frame information */
-    C2MRP(RtN, attMsgBuffer.sigma_RN);
+    Eigen::Vector3d sigma_RN = dcmToMrp(RtN);
+
     if (this->signOfOrbitNormalFrameVector == -1) {
-        double halfRotationX[3] = {1, 0, 0};
-        addMRP(attMsgBuffer.sigma_RN, halfRotationX, attMsgBuffer.sigma_RN);
+        Eigen::Vector3d halfRotationX;
+        halfRotationX << 1, 0, 0;
+        sigma_RN = addMrp(sigma_RN, halfRotationX);
     }
-    m33tMultV3(RtN, omega_RN_R, attMsgBuffer.omega_RN_N);
-    m33tMultV3(RtN, omegaDot_RN_R, attMsgBuffer.domega_RN_N);
+    Eigen::Vector3d omega_RN_N = RtN.transpose()*omega_RN_R;
+    Eigen::Vector3d omegaDot_RN_N = RtN.transpose()*omegaDot_RN_R;
+
+    eigenVector3d2CArray(sigma_RN, attMsgBuffer.sigma_RN);
+    eigenVector3d2CArray(omega_RN_N, attMsgBuffer.omega_RN_N);
+    eigenVector3d2CArray(omegaDot_RN_N, attMsgBuffer.domega_RN_N);
 
     /*! Write the output messages */
     this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos);
-
     /*! Write the C-wrapped output messages */
     AttRefMsg_C_write(&attMsgBuffer, &this->attRefOutMsgC, this->moduleID, CurrentSimNanos);
+}
+
+double FlybyPoint::getTimeBetweenFilterData() const {
+    return this->timeBetweenFilterData;
+}
+
+void FlybyPoint::setTimeBetweenFilterData(double time) {
+    this->timeBetweenFilterData = time;
+}
+
+double FlybyPoint::getToleranceForCollinearity() const {
+    return this->toleranceForCollinearity;
+}
+
+void FlybyPoint::setToleranceForCollinearity(double tolerance) {
+    this->toleranceForCollinearity = tolerance;
+}
+
+int64_t FlybyPoint::getSignOfOrbitNormalFrameVector() const {
+    return this->signOfOrbitNormalFrameVector;
+}
+
+void FlybyPoint::setSignOfOrbitNormalFrameVector(int64_t sign) {
+    this->signOfOrbitNormalFrameVector = sign;
 }

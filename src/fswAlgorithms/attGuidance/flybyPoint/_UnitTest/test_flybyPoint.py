@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2024 University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -110,8 +110,9 @@ def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, signOr
     # setup flybyPoint guidance module
     flybyGuid = flybyPoint.FlybyPoint()
     flybyGuid.ModelTag = "flybyPoint"
-    flybyGuid.dtFilterData = dTfilter
-    flybyGuid.signOfOrbitNormalFrameVector = signOrbitNormal
+    flybyGuid.setTimeBetweenFilterData(dTfilter)
+    flybyGuid.setToleranceForCollinearity(1E-5)
+    flybyGuid.setSignOfOrbitNormalFrameVector(signOrbitNormal)
     unitTestSim.AddModelToTask(unitTaskName, flybyGuid)
 
     inputData = messaging.NavTransMsgPayload()
