@@ -64,7 +64,6 @@ private:
     uint64_t        lastFilterReadTime;  //!< time of last filter read
 
 
-    BSKLogger bskLogger;               //!< BSK Logging
 };
 
 

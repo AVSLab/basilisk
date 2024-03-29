@@ -39,13 +39,6 @@ void FlybyPoint::SelfInit(){
  */
 void FlybyPoint::Reset(uint64_t CurrentSimNanos)
 {
-    if (!this->filterInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".filterInMsg wasn't connected.");
-    }
-    if (this->chosenFlybyModel == cwEquations && !this->asteroidEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, ".asteroidEphemerisInMsg wasn't connected.");
-    }
-
     this->lastFilterReadTime = 0;
     this->firstRead = true;
 }
