@@ -51,19 +51,17 @@ public:
     AttRefMsg_C attRefOutMsgC = {};                             //!< C-wrapped attitude reference output message
 
 private:
-    double     timeBetweenFilterData = 0;       //!< time between two subsequent reads of the filter information
-    double     toleranceForCollinearity = 0;            //!< tolerance for singular conditions when position and velocity are collinear
-    int64_t    signOfOrbitNormalFrameVector = 1;  //!< Sign of orbit normal vector to complete reference frame
+    double timeBetweenFilterData = 0;       //!< time between two subsequent reads of the filter information
+    double toleranceForCollinearity = 0;            //!< tolerance for singular conditions when position and velocity are collinear
+    int64_t signOfOrbitNormalFrameVector = 1;  //!< Sign of orbit normal vector to complete reference frame
 
-    bool            firstRead;           //!< variable to attest if this is the first read after a Reset
-    double          f0;                  //!< ratio between relative velocity and position norms at time of read [Hz]
-    double          gamma0;              //!< flight path angle of the spacecraft at time of read [rad]
+    bool firstRead = true;           //!< variable to attest if this is the first read after a Reset
+    double f0 = 0;                  //!< ratio between relative velocity and position norms at time of read [Hz]
+    double gamma0 = 0;              //!< flight path angle of the spacecraft at time of read [rad]
+    uint64_t lastFilterReadTime = 0;  //!< time of last filter read
     Eigen::Matrix3d R0N;           //!< inertial-to-reference DCM at time of read
     Eigen::Vector3d r_BN_N;           //!< filter spacecraft position estimate in inertial coordinates
     Eigen::Vector3d v_BN_N;           //!< filter spacecraft velocity estimate in inertial coordinates
-    uint64_t        lastFilterReadTime;  //!< time of last filter read
-
-
 };
 
 
