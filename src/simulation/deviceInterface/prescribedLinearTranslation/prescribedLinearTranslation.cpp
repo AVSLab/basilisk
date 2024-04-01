@@ -667,7 +667,7 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
  @return void
  @param coastOptionBangDuration [s] Bang segment time duration
 */
-void PrescribedLinearTranslation::setCoastOptionBangDuration(double coastOptionBangDuration) {
+void PrescribedLinearTranslation::setCoastOptionBangDuration(const double coastOptionBangDuration) {
     this->coastOptionBangDuration = coastOptionBangDuration;
 }
 
@@ -675,7 +675,7 @@ void PrescribedLinearTranslation::setCoastOptionBangDuration(double coastOptionB
  @return void
  @param smoothingDuration [s] Duration the acceleration is smoothed until reaching the given maximum acceleration value
 */
-void PrescribedLinearTranslation::setSmoothingDuration(double smoothingDuration) {
+void PrescribedLinearTranslation::setSmoothingDuration(const double smoothingDuration) {
     this->smoothingDuration = smoothingDuration;
 }
 
@@ -683,7 +683,7 @@ void PrescribedLinearTranslation::setSmoothingDuration(double smoothingDuration)
  @return void
  @param transAccelMax [m/s^2] Bang segment linear angular acceleration
 */
-void PrescribedLinearTranslation::setTransAccelMax(double transAccelMax) {
+void PrescribedLinearTranslation::setTransAccelMax(const double transAccelMax) {
     this->transAccelMax = transAccelMax;
 }
 
@@ -699,7 +699,7 @@ void PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d &transHat_
  @return void
  @param transPosInit [m] Initial translating body position relative to the hub
 */
-void PrescribedLinearTranslation::setTransPosInit(double transPosInit) {
+void PrescribedLinearTranslation::setTransPosInit(const double transPosInit) {
     this->transPosInit = transPosInit;
 }
 

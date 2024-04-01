@@ -36,11 +36,11 @@ public:
     void SelfInit() override;                                                   //!< Member function to initialize the C-wrapped output message
     void Reset(uint64_t CurrentSimNanos) override;                              //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;                        //!< Update member function
-    void setCoastOptionBangDuration(double bangDuration);                       //!< Setter method for the coast option bang duration
-    void setSmoothingDuration(double smoothingDuration);                        //!< Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value
-    void setTransAccelMax(double transAccelMax);                                //!< Setter method for the bang segment scalar linear acceleration
+    void setCoastOptionBangDuration(const double bangDuration);                 //!< Setter method for the coast option bang duration
+    void setSmoothingDuration(const double smoothingDuration);                  //!< Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value
+    void setTransAccelMax(const double transAccelMax);                          //!< Setter method for the bang segment scalar linear acceleration
     void setTransHat_M(const Eigen::Vector3d &transHat_M);                      //!< Setter method for the translating body axis of translation
-    void setTransPosInit(double transPosInit);                                  //!< Setter method for the initial translating body hub-relative position
+    void setTransPosInit(const double transPosInit);                            //!< Setter method for the initial translating body hub-relative position
     double getCoastOptionBangDuration() const;                                  //!< Getter method for the coast option bang duration
     double getSmoothingDuration() const;                                        //!< Getter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value
     double getTransAccelMax() const;                                            //!< Getter method for the bang segment scalar linear acceleration
