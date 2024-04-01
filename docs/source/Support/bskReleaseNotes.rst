@@ -42,6 +42,7 @@ Version |release|
   ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will 
   automatically increment the patch number. This allows users to reference/require specific versions of Basilisk 
   outside of the release cycle.
+  Online documentation is only built for the ``MAJOR.MINOR.0`` releases
 - updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
 - fixed a slew of compiler warnings when compiling with Xcode 15
 - Refactored the ``PrescribedTransMsgPayload`` message by renaming the message to
