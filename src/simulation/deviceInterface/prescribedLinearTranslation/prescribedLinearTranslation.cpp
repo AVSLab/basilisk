@@ -62,7 +62,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
         linearTranslationRigidBodyIn = this->linearTranslationRigidBodyInMsg();
     }
 
-    /* This loop is entered (a) initially and (b) when each rotation is complete.
+    /* This loop is entered (a) initially and (b) when the translation is complete.
     The parameters used to profile the translation are updated in this statement. */
     if (this->linearTranslationRigidBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Update the initial time as the current simulation time
