@@ -24,25 +24,14 @@
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/MotorStepCommandMsg_C.h"
 #include "cMsgCInterface/StepperMotorMsg_C.h"
-#include "cMsgCInterface/PrescribedMotionMsg_C.h"
-#include "cMsgCInterface/HingedRigidBodyMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* User-configured parameters (required) */
-    double rotAxis_M[3];                                   //!< Stepper motor rotation axis
     double thetaInit;                                      //!< [rad] Initial motor angle
     double stepAngle;                                      //!< [rad] Angle the stepper motor moves through for a single step
     double stepTime;                                       //!< [s] Time required for a single motor step (constant)
     double thetaDDotMax;                                   //!< [rad/s^2] Maximum angular acceleration of the stepper motor
-    double r_FM_M[3];                                      //!< [m] Position of the F frame origin with respect to the M frame origin in M frame components (fixed)
-    double rPrime_FM_M[3];                                 //!< [m/s] B frame time derivative of r_FM_M in M frame components (fixed)
-    double rPrimePrime_FM_M[3];                            //!< [m/s^2] B frame time derivative of rPrime_FM_M in M frame components (fixed)
-
-    /* Other prescribed parameters */
-    double sigma_FM[3];                                    //!< MRP attitude of frame F with respect to frame M
-    double omega_FM_F[3];                                  //!< [rad/s] Angular velocity of frame F wrt frame M in F frame components
-    double omegaPrime_FM_F[3];                             //!< [rad/s^2] B frame time derivative of omega_FM_F in F frame components
 
     /* Step parameters */
     int stepsCommanded;                                    //!< [steps] Number of commanded steps
@@ -78,8 +67,6 @@ typedef struct {
     /* Messages */
     MotorStepCommandMsg_C motorStepCommandInMsg;           //!< Input msg for the number of commanded motor step counts
     StepperMotorMsg_C stepperMotorOutMsg;                  //!< Output msg for the stepper motor information
-    HingedRigidBodyMsg_C hingedRigidBodyOutMsg;            //!< Output msg for the spinning body module
-    PrescribedMotionMsg_C prescribedMotionOutMsg;          //!< Output msg for the spinning body prescribed states
 
 }StepperMotorProfilerConfig;
 
