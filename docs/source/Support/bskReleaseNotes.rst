@@ -69,6 +69,11 @@ Version |release|
   simulation module
 - Added a new commanded linear force array :ref:`LinearTranslationRigidBodyMsgPayload`.
 - Added a new single-axis translating effector :ref:`linearTranslationOneDOFStateEffector`.
+- Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedRotation1DOF`
+  simulation module. Note that the optional module variable ``coastOptionRampDuration`` has been renamed to
+  ``coastOptionBangDuration``. The setter and getter methods for this variable are renamed to reflect this change as
+  ``setCoastOptionBangDuration()`` and  ``getCoastOptionBangDuration()``, respectively. See the module documentation
+  for the current usage of this parameter and these associated methods.
 
 
 Version 2.2.1 (Dec. 22, 2023)

@@ -338,8 +338,8 @@ def run(show_plots):
         array2RotProfilerList.append(prescribedRotation1DOF.PrescribedRotation1DOF())
         array1RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray1Element" + str(i + 1)
         array2RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray2Element" + str(i + 1)
-        array1RotProfilerList[i].setCoastOptionRampDuration(ramp_duration)  # [s]
-        array2RotProfilerList[i].setCoastOptionRampDuration(ramp_duration)  # [s]
+        array1RotProfilerList[i].setCoastOptionBangDuration(ramp_duration)  # [s]
+        array2RotProfilerList[i].setCoastOptionBangDuration(ramp_duration)  # [s]
         array1RotProfilerList[i].setRotHat_M(rot_hat_M)
         array2RotProfilerList[i].setRotHat_M(rot_hat_M)
         array1RotProfilerList[i].setThetaDDotMax(array1MaxRotAccelList1[i])  # [rad/s^2]
