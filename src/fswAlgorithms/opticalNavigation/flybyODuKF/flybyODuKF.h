@@ -77,11 +77,10 @@ public:
 
     //!< Variables are named closely to the reference document :
     //!< "The Square-root unscented Kalman Filter for state and parameter-estimation" by van der Merwe and Wan
-    double beta;
-    double alpha;
-    double kappa;
-    double lambda;
-    double eta;
+    double betaParameter;
+    double alphaParameter;
+    double lambdaParameter;
+    double etaParameter;
     double muCentral;
 
     Eigen::MatrixXd processNoise; //!< [-] process noise matrix
