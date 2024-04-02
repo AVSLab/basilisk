@@ -146,8 +146,10 @@ def stateUpdatePositionOD(show_plots):
     moduleConfig.cameraPosMsg.subscribeTo(cameraPosMsg)
     inputData.cameraPos_N = expected[0, 1:4]
 
-    dataLog = moduleConfig.opNavFilterMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    filter_data_log = moduleConfig.opNavFilterMsg.recorder()
+    residual_data_log = moduleConfig.opNavResidualMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, filter_data_log)
+    unitTestSim.AddModelToTask(unitTaskName, residual_data_log)
     unitTestSim.InitializeSimulation()
     for i in range(t1):
         if i > 0 and i % 10 == 0:
@@ -158,7 +160,7 @@ def stateUpdatePositionOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
+    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
 
     # Propgate after the kick
     for i in range(t1, 2*t1):
@@ -175,9 +177,9 @@ def stateUpdatePositionOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
-    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
-    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
+    stateLog = addTimeColumn(filter_data_log.times(), filter_data_log.state)
+    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
+    postFitLog = addTimeColumn(residual_data_log.times(), residual_data_log.postFits)
 
     expected[:,0] *= 1E9
     diff = np.copy(stateLog)
@@ -235,8 +237,8 @@ def statePropPositionOD(show_plots, dt):
     setupFilterData(moduleConfig)
     moduleConfig.measNoiseScaling = 1
 
-    dataLog = moduleConfig.opNavFilterMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    filter_data_log = moduleConfig.opNavFilterMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, filter_data_log)
 
     cameraPosMsg = messaging.CameraLocalizationMsg()
     moduleConfig.cameraPosMsg.subscribeTo(cameraPosMsg)
@@ -256,8 +258,8 @@ def statePropPositionOD(show_plots, dt):
     unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
-    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
+    stateLog = addTimeColumn(filter_data_log.times(), filter_data_log.state)
+    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
 
     expected[:,0] *= 1E9
     diff = np.copy(stateLog)
