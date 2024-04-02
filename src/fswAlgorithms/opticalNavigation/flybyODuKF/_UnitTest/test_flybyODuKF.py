@@ -131,8 +131,10 @@ def stateUpdateFlybyOD(show_plots):
     setupFilterData(moduleConfig)
     moduleConfig.measNoiseScaling = 1
 
-    dataLog = moduleConfig.opNavFilterMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    filter_data_log = moduleConfig.opNavFilterMsg.recorder()
+    residual_data_log = moduleConfig.opNavResidualMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, filter_data_log)
+    unitTestSim.AddModelToTask(unitTaskName, residual_data_log)
 
     time = np.linspace(0, int(multT1*t1), int(multT1*t1//dt)+1)
     energy = np.zeros(len(time))
@@ -166,7 +168,7 @@ def stateUpdateFlybyOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
+    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
 
     for i in range(3, 6):
         if (covarLog[t1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
@@ -186,9 +188,9 @@ def stateUpdateFlybyOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
-    postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
-    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
+    stateLog = addTimeColumn(filter_data_log.times(), filter_data_log.state)
+    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
+    postFitLog = addTimeColumn(residual_data_log.times(), residual_data_log.postFits)
 
 
     diff = np.copy(stateLog)
@@ -248,8 +250,8 @@ def statePropFlybyOD(show_plots, dt):
     setupFilterData(moduleConfig)
     moduleConfig.measNoiseScaling = 1
 
-    dataLog = moduleConfig.opNavFilterMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+    filter_data_log = moduleConfig.opNavFilterMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, filter_data_log)
 
     opnavInMsg = messaging.OpNavUnitVecMsg()
     moduleConfig.opNavHeadingMsg.subscribeTo(opnavInMsg)
@@ -269,8 +271,8 @@ def statePropFlybyOD(show_plots, dt):
     unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = addTimeColumn(dataLog.times(), dataLog.state)
-    covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
+    stateLog = addTimeColumn(filter_data_log.times(), filter_data_log.state)
+    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
 
     diff = np.copy(stateLog)
     diff[:,1:] -= expected[:,1:]
