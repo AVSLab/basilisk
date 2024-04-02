@@ -169,6 +169,7 @@ void FlybyODuKF::timeUpdate(double updateTime)
  */
 void FlybyODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
     this->opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
+    this->opNavResidualMsgBuffer = this->opNavResidualMsg.zeroMsgPayload;
     this->navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
 
     /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
@@ -182,11 +183,12 @@ void FlybyODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
     eigenMatrixXd2CArray(1e6*this->covar, this->opNavFilterMsgBuffer.covar);
 
     if (this->computePostFits){
-        eigenMatrixXd2CArray(this->postFits, this->opNavFilterMsgBuffer.postFitRes);
+        eigenMatrixXd2CArray(this->postFits, this->opNavResidualMsgBuffer.postFits);
     }
 
     this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
     this->opNavFilterMsg.write(&this->opNavFilterMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->opNavResidualMsg.write(&this->opNavResidualMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
 /*! Read the message containing the measurement data.
