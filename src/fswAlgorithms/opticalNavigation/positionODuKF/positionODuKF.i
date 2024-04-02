@@ -37,7 +37,8 @@ from Basilisk.architecture.swig_common_model import *
 struct NavTransMsg_C;
 %include "architecture/msgPayloadDefC/CameraLocalizationMsgPayload.h"
 struct CameraLocalizationMsg_C;
-%include "architecture/msgPayloadDefCpp/OpNavSUKFMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
 
 %pythoncode %{
 import sys

@@ -32,7 +32,8 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/OpNavSUKFMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
 #include "architecture/msgPayloadDefC/CameraLocalizationMsgPayload.h"
 
 #include <string.h>
@@ -71,7 +72,8 @@ public:
     ReadFunctor<CameraLocalizationMsgPayload> cameraPosMsg;
     CameraLocalizationMsgPayload cameraPosBuffer;
     Message<NavTransMsgPayload> navTransOutMsg;
-    Message<OpNavSUKFMsgPayload> opNavFilterMsg;
+    Message<FilterMsgPayload> opNavFilterMsg;
+    Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
     //!< Variables are named closely to the reference document :
     //!< "The Square-root unscented Kalman Filter for state and parameter-estimation" by van der Merwe and Wan
@@ -92,7 +94,8 @@ public:
     double measNoiseSD = 0.1; //!< [km] Constant measurement noise
 private:
     NavTransMsgPayload navTransOutMsgBuffer; //!< Message buffer for input translational nav message
-    OpNavSUKFMsgPayload opNavFilterMsgBuffer;
+    FilterMsgPayload opNavFilterMsgBuffer;
+    FilterResidualsMsgPayload opNavResidualMsgBuffer;
 
     double dt; //!< [s] seconds since last data epoch
     double previousFilterTimeTag; //!< [s]  Time tag for statecovar/etc
