@@ -58,15 +58,16 @@ void PositionODuKF::Reset(uint64_t CurrentSimNanos)
     this->cholProcessNoise.setZero(this->state.size(), this->state.size());
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    this->lambda = (double) this->state.size()*(this->alpha*this->alpha - 1);
-    this->eta = sqrt((double) this->state.size() + this->lambda);
+    this->lambdaParameter = (double) this->state.size()*(this->alphaParameter*this->alphaParameter - 1);
+    this->etaParameter = sqrt((double) this->state.size() + this->lambdaParameter);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    this->wM(0) = this->lambda / ((double) this->state.size() + this->lambda);
-    this->wC(0) = this->lambda / ((double) this->state.size() + this->lambda) + (1 - this->alpha*this->alpha + this->beta);
+    this->wM(0) = this->lambdaParameter / ((double) this->state.size() + this->lambdaParameter);
+    this->wC(0) = this->lambdaParameter / ((double) this->state.size() + this->lambdaParameter)
+            + (1 - this->alphaParameter*this->alphaParameter + this->betaParameter);
     for (size_t i = 1; i < this->numberSigmaPoints; i++)
     {
-        this->wM(i) = 1.0 / (2.0 * ((double) this->state.size() + this->lambda));
+        this->wM(i) = 1.0 / (2.0 * ((double) this->state.size() + this->lambdaParameter));
         this->wC(i) = this->wM(i);
     }
 
@@ -125,10 +126,10 @@ void PositionODuKF::timeUpdate(double updateTime)
     for (size_t i = 1; i<this->state.size() + 1; i++)
     {
         /*! - Adding covariance columns from sigma points*/
-        this->sigmaPoints.col(i) = propagate(time, this->state + this->eta * this->sBar.col(i-1), this->dt);
+        this->sigmaPoints.col(i) = propagate(time, this->state + this->etaParameter * this->sBar.col(i-1), this->dt);
         /*! - Subtracting covariance columns from sigma points*/
         this->sigmaPoints.col( i + this->state.size()) =
-                propagate(time, this->state - this->eta * this->sBar.col(i-1), this->dt);
+                propagate(time, this->state - this->etaParameter * this->sBar.col(i-1), this->dt);
     }
 
     /*! - Compute xbar according to Eq (19)*/

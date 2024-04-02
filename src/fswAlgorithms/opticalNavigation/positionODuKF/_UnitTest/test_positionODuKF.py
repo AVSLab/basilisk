@@ -55,8 +55,8 @@ def twoBodyGrav(t, x, mu = 42828.314*1E9):
 
 def setupFilterData(filterObject):
 
-    filterObject.alpha = 0.02
-    filterObject.beta = 2.0
+    filter_object.alphaParameter = 0.02
+    filter_object.betaParameter = 2.0
 
     filterObject.muCentral = 42828.314*1E9
     elementsInit = orbitalMotion.ClassicElements()
