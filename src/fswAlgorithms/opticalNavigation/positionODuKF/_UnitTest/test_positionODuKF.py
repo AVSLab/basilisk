@@ -1,7 +1,7 @@
 
 # ISC License
 #
-# Copyright (c) 2023, Laboratory  for Atmospheric and Space Physics, University of Colorado at Boulder
+# Copyright (c) 2024, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -17,7 +17,7 @@
 
 
 
-import positionODuKF_test_utilities as FilterPlots
+import positionODuKF_test_utilities as filter_plots
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
@@ -46,31 +46,31 @@ def rk4(f, t, x0, arg = None):
         x[i+1,0] = t[i+1]
     return x
 
-def twoBodyGrav(t, x, mu = 42828.314*1E9):
+def two_body_grav(t, x, mu = 42828.314*1E9):
     dxdt = np.zeros(np.shape(x))
     dxdt[0:3] = x[3:]
     dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
     return dxdt
 
 
-def setupFilterData(filterObject):
+def setup_filter_data(filter_object):
 
     filter_object.alphaParameter = 0.02
     filter_object.betaParameter = 2.0
 
-    filterObject.muCentral = 42828.314*1E9
-    elementsInit = orbitalMotion.ClassicElements()
-    elementsInit.a = 4000*1E3 #m
-    elementsInit.e = 0.2
-    elementsInit.i = 10
-    elementsInit.Omega = 0.001
-    elementsInit.omega = 0.01
-    elementsInit.f = 0.1
-    r, v = orbitalMotion.elem2rv(filterObject.muCentral, elementsInit)
+    filter_object.muCentral = 42828.314*1E9
+    elements_init = orbitalMotion.ClassicElements()
+    elements_init.a = 4000*1E3 #m
+    elements_init.e = 0.2
+    elements_init.i = 10
+    elements_init.Omega = 0.001
+    elements_init.omega = 0.01
+    elements_init.f = 0.1
+    r, v = orbitalMotion.elem2rv(filter_object.muCentral, elements_init)
     states = r.tolist() + v.tolist()
 
-    filterObject.stateInitial = [[s] for s in states]
-    filterObject.covarInitial = [[1000.*1E6, 0.0, 0.0, 0.0, 0.0, 0.0],
+    filter_object.stateInitial = [[s] for s in states]
+    filter_object.covarInitial = [[1000.*1E6, 0.0, 0.0, 0.0, 0.0, 0.0],
                                  [0.0, 1000.*1E6, 0.0, 0.0, 0.0, 0.0],
                                  [0.0, 0.0, 1000.*1E6, 0.0, 0.0, 0.0],
                                  [0.0, 0.0, 0.0, 0.1*1E6, 0.0, 0.0],
@@ -79,13 +79,13 @@ def setupFilterData(filterObject):
 
     sigmaPos = (1E2)**2
     sigmaVel = (1E0)**2
-    filterObject.processNoise = [[sigmaPos, 0.0, 0.0, 0.0, 0.0, 0.0],
+    filter_object.processNoise = [[sigmaPos, 0.0, 0.0, 0.0, 0.0, 0.0],
                            [0.0, sigmaPos, 0.0, 0.0, 0.0, 0.0],
                            [0.0, 0.0, sigmaPos, 0.0, 0.0, 0.0],
                            [0.0, 0.0, 0.0, sigmaVel, 0.0, 0.0],
                            [0.0, 0.0, 0.0, 0.0, sigmaVel, 0.0],
                            [0.0, 0.0, 0.0, 0.0, 0.0, sigmaVel]]
-    filterObject.measNoiseScaling = 100*100
+    filter_object.measNoiseScaling = 100*100
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -96,186 +96,186 @@ def setupFilterData(filterObject):
 
 def test_propagation_kf(show_plots):
     """State and covariance propagation test"""
-    statePropPositionOD(show_plots, 10.0)
+    state_propagation_test(show_plots, 10.0)
 def test_measurements_kf(show_plots):
     """Measurement model test"""
-    stateUpdatePositionOD(show_plots)
+    state_update_test(show_plots)
 
-def stateUpdatePositionOD(show_plots):
+def state_update_test(show_plots):
     __tracebackhide__ = True
 
-    unitTaskName = "unitTask"
-    unitProcessName = "TestProcess"
+    unit_task_name = "unit_task"
+    unit_process_name = "TestProcess"
 
     # Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     dt = 1.0
     t1 = 250
-    multT1 = 20
-    measNoiseSD = 100 # m
+    time_multiple = 20
+    meas_noise_std_dev = 100 # m
 
-    testProcessRate = macros.sec2nano(dt)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(dt)  # update process rate update time
+    test_process = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = positionODuKF.PositionODuKF()
+    module_config = positionODuKF.PositionODuKF()
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    setupFilterData(moduleConfig)
-    moduleConfig.measNoiseSD = measNoiseSD
+    unit_test_sim.AddModelToTask(unit_task_name, module_config)
+    setup_filter_data(module_config)
+    module_config.measNoiseSD = meas_noise_std_dev
 
-    time = np.linspace(0, int(multT1*t1), int(multT1*t1//dt)+1)
+    time = np.linspace(0, int(time_multiple*t1), int(time_multiple*t1//dt)+1)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
-    expected[0,1:] = np.array(moduleConfig.stateInitial).reshape([6,])
-    energy[0] = -moduleConfig.muCentral/(2*orbitalMotion.rv2elem(moduleConfig.muCentral, expected[0,1:4], expected[0,4:]).a)
+    expected[0,1:] = np.array(module_config.stateInitial).reshape([6,])
+    energy[0] = -module_config.muCentral/(2*orbitalMotion.rv2elem(module_config.muCentral, expected[0,1:4], expected[0,4:]).a)
 
     kick = np.array([0., 0., 0., -0.01, 0.01, 0.02]) * 10 * 1E3
 
-    expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], expected[0,1:], arg = moduleConfig.muCentral)
-    expected[t1:multT1*t1+1, :] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1, 1:] + kick, arg = moduleConfig.muCentral)
+    expected[0:t1,:] = rk4(two_body_grav, time[0:t1], expected[0,1:], arg = module_config.muCentral)
+    expected[t1:time_multiple*t1+1, :] = rk4(two_body_grav, time[t1:len(time)], expected[t1-1, 1:] + kick, arg = module_config.muCentral)
     for i in range(1, len(time)):
-        energy[i] = - moduleConfig.muCentral / (2 * orbitalMotion.rv2elem(moduleConfig.muCentral, expected[i, 1:4], expected[i, 4:]).a)
+        energy[i] = - module_config.muCentral / (2 * orbitalMotion.rv2elem(module_config.muCentral, expected[i, 1:4], expected[i, 4:]).a)
 
-    inputData = messaging.CameraLocalizationMsgPayload()
-    cameraPosMsg = messaging.CameraLocalizationMsg()
-    moduleConfig.cameraPosMsg.subscribeTo(cameraPosMsg)
-    inputData.cameraPos_N = expected[0, 1:4]
+    input_data = messaging.CameraLocalizationMsgPayload()
+    camera_position_msg = messaging.CameraLocalizationMsg()
+    module_config.cameraPosMsg.subscribeTo(camera_position_msg)
+    input_data.cameraPos_N = expected[0, 1:4]
 
-    filter_data_log = moduleConfig.opNavFilterMsg.recorder()
-    residual_data_log = moduleConfig.opNavResidualMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, filter_data_log)
-    unitTestSim.AddModelToTask(unitTaskName, residual_data_log)
-    unitTestSim.InitializeSimulation()
+    filter_data_log = module_config.opNavFilterMsg.recorder()
+    residual_data_log = module_config.opNavResidualMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
+    unit_test_sim.AddModelToTask(unit_task_name, residual_data_log)
+    unit_test_sim.InitializeSimulation()
     for i in range(t1):
         if i > 0 and i % 10 == 0:
-            inputData.timeTag = macros.sec2nano(i * dt)
-            inputData.cameraPos_N = (expected[i,1:4] + np.random.normal(0, measNoiseSD, 3))
-            inputData.valid = True
-            cameraPosMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
-        unitTestSim.ExecuteSimulation()
+            input_data.timeTag = macros.sec2nano(i * dt)
+            input_data.cameraPos_N = (expected[i,1:4] + np.random.normal(0, meas_noise_std_dev, 3))
+            input_data.valid = True
+            camera_position_msg.write(input_data, unit_test_sim.TotalSim.CurrentNanos)
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
+        unit_test_sim.ExecuteSimulation()
 
-    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
+    covar_log = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
 
     # Propgate after the kick
     for i in range(t1, 2*t1):
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
-        unitTestSim.ExecuteSimulation()
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
+        unit_test_sim.ExecuteSimulation()
 
     # Start ingesting measurements again after the kick
-    for i in range(t1*2, multT1*t1):
+    for i in range(t1*2, time_multiple*t1):
         if i % 50 == 0:
-            inputData.timeTag = macros.sec2nano(i * dt)
-            inputData.cameraPos_N = (expected[i,1:4] + np.random.normal(0, measNoiseSD, 3))
-            inputData.valid = True
-            cameraPosMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
-        unitTestSim.ExecuteSimulation()
+            input_data.timeTag = macros.sec2nano(i * dt)
+            input_data.cameraPos_N = (expected[i,1:4] + np.random.normal(0, meas_noise_std_dev, 3))
+            input_data.valid = True
+            camera_position_msg.write(input_data, unit_test_sim.TotalSim.CurrentNanos)
+        unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
+        unit_test_sim.ExecuteSimulation()
 
-    stateLog = addTimeColumn(filter_data_log.times(), filter_data_log.state)
-    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
-    postFitLog = addTimeColumn(residual_data_log.times(), residual_data_log.postFits)
+    state_log = addTimeColumn(filter_data_log.times(), filter_data_log.state)
+    covar_log = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
+    postfit_log = addTimeColumn(residual_data_log.times(), residual_data_log.postFits)
 
     expected[:,0] *= 1E9
-    diff = np.copy(stateLog)
+    diff = np.copy(state_log)
     diff[:,1:] -= expected[:,1:]
-    diffRel = np.copy(diff)
-    diffRel[:,1:] /= expected[:,1:]
-    FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
-    FilterPlots.StatePlot(diff, 'Update', show_plots)
-    FilterPlots.plot_TwoOrbits(expected[:,0:4], stateLog[:,0:4], show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, measNoiseSD, 'Update', show_plots)
+    diff_rel = np.copy(diff)
+    diff_rel[:,1:] /= expected[:,1:]
+    filter_plots.energy(time, energy, 'Update', show_plots)
+    filter_plots.state_covar(state_log, covar_log, 'Update', show_plots)
+    filter_plots.states(diff, 'Update', show_plots)
+    filter_plots.two_orbits(expected[:,0:4], state_log[:,0:4], show_plots)
+    filter_plots.post_fit_residuals(postfit_log, meas_noise_std_dev, 'Update', show_plots)
 
-    np.testing.assert_array_less(np.linalg.norm(covarLog[t1, 1:]),
-                                 np.linalg.norm(covarLog[0, 1:]),
+    np.testing.assert_array_less(np.linalg.norm(covar_log[t1, 1:]),
+                                 np.linalg.norm(covar_log[0, 1:]),
                                  err_msg=('Covariance must decrease during first measurement arc'),
                                  verbose=True)
 
-    np.testing.assert_allclose(np.linalg.norm(stateLog[:,1:4]),
+    np.testing.assert_allclose(np.linalg.norm(state_log[:,1:4]),
                                np.linalg.norm(expected[:,1:4]),
                                rtol = 0.01,
                                err_msg=('Position output must match expected values'),
                                verbose=True)
-    np.testing.assert_allclose(np.linalg.norm(stateLog[:,4:]),
+    np.testing.assert_allclose(np.linalg.norm(state_log[:,4:]),
                                np.linalg.norm(expected[:,4:]),
                                rtol = 0.01,
                                err_msg=('Velocity output must match expected values'),
                                verbose=True)
-    np.testing.assert_array_less(np.linalg.norm(covarLog[t1*multT1, 1:]),
-                                 np.linalg.norm(covarLog[0, 1:])/10,
+    np.testing.assert_array_less(np.linalg.norm(covar_log[t1*time_multiple, 1:]),
+                                 np.linalg.norm(covar_log[0, 1:])/10,
                                  err_msg=('Covariance must decrease during second measurement arc'),
                                  verbose=True)
     return
 
 
-def statePropPositionOD(show_plots, dt):
+def state_propagation_test(show_plots, dt):
     __tracebackhide__ = True
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unit_task_name = "unit_task"  # arbitrary name (don't change)
+    unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(dt)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+    test_process_rate = macros.sec2nano(dt)  # update process rate update time
+    test_process = unit_test_sim.CreateNewProcess(unit_process_name)
+    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, test_process_rate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = positionODuKF.PositionODuKF()
+    module_config = positionODuKF.PositionODuKF()
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+    unit_test_sim.AddModelToTask(unit_task_name, module_config)
 
-    setupFilterData(moduleConfig)
-    moduleConfig.measNoiseScaling = 1
+    setup_filter_data(module_config)
+    module_config.measNoiseScaling = 1
 
-    filter_data_log = moduleConfig.opNavFilterMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, filter_data_log)
+    filter_data_log = module_config.opNavFilterMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, filter_data_log)
 
-    cameraPosMsg = messaging.CameraLocalizationMsg()
-    moduleConfig.cameraPosMsg.subscribeTo(cameraPosMsg)
+    camera_position_msg = messaging.CameraLocalizationMsg()
+    module_config.cameraPosMsg.subscribeTo(camera_position_msg)
 
-    timeSim = 60
-    time = np.linspace(0, int(timeSim*60), int(timeSim*60//dt)+1)
+    sim_tim = 60
+    time = np.linspace(0, int(sim_tim*60), int(sim_tim*60//dt)+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected = np.zeros([len(time), 7])
-    expected[0,1:] = np.array(moduleConfig.stateInitial).reshape([6,])
-    energy[0] = -moduleConfig.muCentral/(2*orbitalMotion.rv2elem(moduleConfig.muCentral, expected[0,1:4], expected[0,4:]).a)
-    expected = rk4(twoBodyGrav, time, expected[0,1:], arg = moduleConfig.muCentral)
+    expected[0,1:] = np.array(module_config.stateInitial).reshape([6,])
+    energy[0] = -module_config.muCentral/(2*orbitalMotion.rv2elem(module_config.muCentral, expected[0,1:4], expected[0,4:]).a)
+    expected = rk4(two_body_grav, time, expected[0,1:], arg = module_config.muCentral)
     for i in range(1, len(time)):
-        energy[i] = - moduleConfig.muCentral / (2 * orbitalMotion.rv2elem(moduleConfig.muCentral, expected[i, 1:4], expected[i, 4:]).a)
+        energy[i] = - module_config.muCentral / (2 * orbitalMotion.rv2elem(module_config.muCentral, expected[i, 1:4], expected[i, 4:]).a)
 
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
-    unitTestSim.ExecuteSimulation()
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(macros.min2nano(sim_tim))
+    unit_test_sim.ExecuteSimulation()
 
-    stateLog = addTimeColumn(filter_data_log.times(), filter_data_log.state)
-    covarLog = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
+    state_log = addTimeColumn(filter_data_log.times(), filter_data_log.state)
+    covar_log = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
 
     expected[:,0] *= 1E9
-    diff = np.copy(stateLog)
+    diff = np.copy(state_log)
     diff[:,1:] -= expected[:,1:]
-    FilterPlots.plot_TwoOrbits(expected[:,0:4], stateLog[:,0:4], show_plots)
-    FilterPlots.EnergyPlot(time, energy, 'Prop', show_plots)
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
-    FilterPlots.StatePlot(diff, 'Prop', show_plots)
+    filter_plots.two_orbits(expected[:,0:4], state_log[:,0:4], show_plots)
+    filter_plots.energy(time, energy, 'Prop', show_plots)
+    filter_plots.state_covar(state_log, covar_log, 'Prop', show_plots)
+    filter_plots.states(diff, 'Prop', show_plots)
 
-    np.testing.assert_allclose(stateLog,
+    np.testing.assert_allclose(state_log,
                                expected,
                                atol = 1E-10,
                                err_msg=('State error'),
                                verbose=True)
-    np.testing.assert_array_less(np.linalg.norm(5*covarLog[0, 1:]),
-                                 np.linalg.norm(covarLog[-1, 1:]),
+    np.testing.assert_array_less(np.linalg.norm(5*covar_log[0, 1:]),
+                                 np.linalg.norm(covar_log[-1, 1:]),
                                  err_msg=('Covariance doesn\'t increase'),
                                  verbose=True)
     np.testing.assert_allclose(energy,
@@ -287,4 +287,4 @@ def statePropPositionOD(show_plots, dt):
 
 
 if __name__ == "__main__":
-    stateUpdatePositionOD(True)
+    state_update_test(True)
