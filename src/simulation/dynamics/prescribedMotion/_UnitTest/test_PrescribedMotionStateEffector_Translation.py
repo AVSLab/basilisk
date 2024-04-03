@@ -45,10 +45,11 @@ splitPath = path.split('simulation')
 matplotlib.rc('xtick', labelsize=16)
 matplotlib.rc('ytick', labelsize=16)
 
+@pytest.mark.parametrize("orbit_sim", [True, False])
 @pytest.mark.parametrize("trans_pos_init", [0.0, 0.5])
 @pytest.mark.parametrize("trans_pos_ref", [0.0, -0.5, 1.0])
 @pytest.mark.parametrize("accuracy", [1e-8])
-def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, trans_pos_ref, accuracy):
+def test_PrescribedMotionStateEffector_Translation(show_plots, orbit_sim, trans_pos_init, trans_pos_ref, accuracy):
     r"""
     **Validation Test Description**
 
@@ -70,6 +71,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     **Test Parameters**
 
     Args:
+        orbit_sim (bool): Choose if inertial orbit is simulated
         trans_pos_init (float): [m] Initial scalar position of the F frame with respect to the M frame
         trans_pos_ref (float): [m] Reference scalar position of the F frame with respect to the M frame
         accuracy (float): absolute accuracy value used in the validation tests
@@ -120,17 +122,22 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
                                  [0.0, 0.0, i_hub_33]]  # [kg m^2] (Hub approximated as a cube)
 
     # Set the initial inertial hub states
-    sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
-    sc_object.hub.omega_bn_bInit = [[0.0], [0.0], [0.0]]
-    sc_object.hub.sigma_bnInit = [[0.0], [0.0], [0.0]]
+    if orbit_sim:
+        sc_object.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
+        sc_object.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    else:
+        sc_object.hub.r_CN_NInit = [[1.0], [1.0], [1.0]]
+        sc_object.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+
+    sc_object.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    sc_object.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
 
     # Add the sc_object to the runtime call list
     unit_test_sim.AddModelToTask(unit_task_name, sc_object)
 
     # Define the prescribed motion state effector properties
     trans_axis_m = np.array([1.0, 0.0, 0.0])
-    mass_prescribed_body = 8  # [kg]
+    mass_prescribed_body = 10  # [kg]
     length_prescribed_body = 0.1  # [m]
     width_prescribed_body = 0.1  # [m]
     depth_prescribed_body = 0.1  # [m]
@@ -150,6 +157,8 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
                               [0.0, i_prescribed_body_22, 0.0],
                               [0.0, 0.0,
                                i_prescribed_body_33]]  # [kg m^2] (approximated as a cube)
+    print(sc_object.hub.IHubPntBc_B)
+    print(i_prescribed_body_fc_f)
 
     # Create the prescribed motion state effector
     prescribed_motion_body = prescribedMotionStateEffector.PrescribedMotionStateEffector()
@@ -186,7 +195,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     prescribed_translation.setTransHat_M(trans_axis_m)
     prescribed_translation.setTransAccelMax(trans_accel_max)
     prescribed_translation.setTransPosInit(trans_pos_init)
-    prescribed_translation.setCoastOptionRampDuration(1.0)
+    prescribed_translation.setCoastOptionBangDuration(1.0)
     prescribed_translation.setSmoothingDuration(1.0)
 
     # Create the prescribed_translation input message
@@ -198,22 +207,23 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
 
     prescribed_motion_body.prescribedTranslationInMsg.subscribeTo(prescribed_translation.prescribedTranslationOutMsg)
 
-    # Add Earth gravity to the simulation
-    earth_grav_body = gravityEffector.GravBodyData()
-    earth_grav_body.planetName = "earth_planet_data"
-    earth_grav_body.mu = 0.3986004415E+15
-    earth_grav_body.isCentralBody = True
-    sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_grav_body])
+    if orbit_sim:
+        # Add Earth gravity to the simulation
+        earth_grav_body = gravityEffector.GravBodyData()
+        earth_grav_body.planetName = "earth_planet_data"
+        earth_grav_body.mu = 0.3986004415E+15
+        earth_grav_body.isCentralBody = True
+        sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earth_grav_body])
 
-    # Add energy and momentum variables to log
-    sc_energy_momentum_log = sc_object.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
-    unit_test_sim.AddModelToTask(unit_task_name, sc_energy_momentum_log)
-
-    # Add other states to log
+    # Log data
     sc_state_data_log = sc_object.scStateOutMsg.recorder()
     prescribed_trans_state_data_log = prescribed_motion_body.prescribedTranslationOutMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, sc_state_data_log)
     unit_test_sim.AddModelToTask(unit_task_name, prescribed_trans_state_data_log)
+    if orbit_sim:
+        # Add energy and momentum variables to log
+        sc_energy_momentum_log = sc_object.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+        unit_test_sim.AddModelToTask(unit_task_name, sc_energy_momentum_log)
 
     # Initialize the simulation
     unit_test_sim.InitializeSimulation()
@@ -222,10 +232,6 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     unit_test_sim.ExecuteSimulation()
 
     # Extract the logged data
-    orb_energy = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totOrbEnergy)
-    orb_ang_mom_n = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totOrbAngMomPntN_N)
-    rot_ang_mom_n = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totRotAngMomPntC_N)
-    rot_energy = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totRotEnergy)
     timespan = sc_state_data_log.times() * macros.NANO2SEC  # [s]
     r_bn_n = sc_state_data_log.r_BN_N
     sigma_bn = sc_state_data_log.sigma_BN
@@ -236,13 +242,22 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     r_fm_m_final = r_fm_m[-1, :]
     r_prime_fm_m_final = r_prime_fm_m[-1, :]
 
-    # Setup the conservation quantities
-    orb_ang_mom_init = [[orb_ang_mom_n[0, 1], orb_ang_mom_n[0, 2], orb_ang_mom_n[0, 3]]]
-    orb_ang_mom_final = [orb_ang_mom_n[-1]]
-    rot_ang_mom_init = [[rot_ang_mom_n[0, 1], rot_ang_mom_n[0, 2], rot_ang_mom_n[0, 3]]]
-    rot_ang_mom_final = [rot_ang_mom_n[-1]]
-    orb_energy_init = [[orb_energy[0, 1]]]
-    orb_energy_final = [orb_energy[-1]]
+    if orbit_sim:
+        orb_energy = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totOrbEnergy)
+        orb_ang_mom_n = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totOrbAngMomPntN_N)
+        rot_ang_mom_n = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totRotAngMomPntC_N)
+        rot_energy = unitTestSupport.addTimeColumn(sc_energy_momentum_log.times(), sc_energy_momentum_log.totRotEnergy)
+
+        # Setup the conservation quantities
+        orb_ang_mom_init = [[orb_ang_mom_n[0, 1], orb_ang_mom_n[0, 2], orb_ang_mom_n[0, 3]]]
+        orb_ang_mom_final = [orb_ang_mom_n[-1]]
+        rot_ang_mom_init = [[rot_ang_mom_n[0, 1], rot_ang_mom_n[0, 2], rot_ang_mom_n[0, 3]]]
+        rot_ang_mom_final = [rot_ang_mom_n[-1]]
+        orb_energy_init = [[orb_energy[0, 1]]]
+        orb_energy_final = [orb_energy[-1]]
+
+    else:
+        r_cn_n = sc_state_data_log.r_CN_N  # [m]
 
     # Plot r_FM_F
     r_fm_m_ref = trans_pos_ref * trans_axis_m
@@ -258,7 +273,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     plt.plot(timespan, r_fm_m_1_ref, '--', label=r'$r_{1 Ref}$')
     plt.plot(timespan, r_fm_m_2_ref, '--', label=r'$r_{2 Ref}$')
     plt.plot(timespan, r_fm_m_3_ref, '--', label=r'$r_{3 Ref}$')
-    plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+    # plt.title(r'${}^\mathcal{M} r_{F/M}$ Profiled Trajectory', fontsize=14)
     plt.ylabel('(m)', fontsize=16)
     plt.xlabel('Time (s)', fontsize=16)
     plt.legend(loc='center left', prop={'size': 16})
@@ -270,7 +285,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     plt.plot(timespan, r_prime_fm_m[:, 0], label='1')
     plt.plot(timespan, r_prime_fm_m[:, 1], label='2')
     plt.plot(timespan, r_prime_fm_m[:, 2], label='3')
-    plt.title(r'${}^\mathcal{M} rPrime_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+    # plt.title(r'${}^\mathcal{M} rPrime_{F/M}$ Profiled Trajectory', fontsize=14)
     plt.ylabel('(m/s)', fontsize=16)
     plt.xlabel('Time (s)', fontsize=16)
     plt.legend(loc='upper left', prop={'size': 16})
@@ -282,7 +297,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     plt.plot(timespan, r_prime_prime_fm_m[:, 0], label='1')
     plt.plot(timespan, r_prime_prime_fm_m[:, 1], label='2')
     plt.plot(timespan, r_prime_prime_fm_m[:, 2], label='3')
-    plt.title(r'${}^\mathcal{M} rPrimePrime_{\mathcal{F}/\mathcal{M}}$ Profiled Acceleration', fontsize=14)
+    # plt.title(r'${}^\mathcal{M} rPrimePrime_{F/M}$ Profiled Acceleration', fontsize=14)
     plt.ylabel(r'(m/s$^2$)', fontsize=16)
     plt.xlabel('Time (s)', fontsize=16)
     plt.legend(loc='lower left', prop={'size': 16})
@@ -294,7 +309,7 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     # plt.plot(timespan, r_bn_n[:, 0], label=r'$r_{1}$')
     # plt.plot(timespan, r_bn_n[:, 1], label=r'$r_{2}$')
     # plt.plot(timespan, r_bn_n[:, 2], label=r'$r_{3}$')
-    # plt.title(r'${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory', fontsize=14)
+    # plt.title(r'${}^\mathcal{N} r_{B/N}$ Spacecraft Inertial Trajectory', fontsize=14)
     # plt.ylabel('(m)', fontsize=16)
     # plt.xlabel('Time (s)', fontsize=16)
     # plt.legend(loc='center left', prop={'size': 16})
@@ -324,69 +339,84 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
     # plt.legend(loc='lower left', prop={'size': 16})
     # plt.grid(True)
 
-    # Plot conservation quantities
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, (orb_ang_mom_n[:, 1] - orb_ang_mom_n[0, 1]) / orb_ang_mom_n[0, 1],
-             timespan, (orb_ang_mom_n[:, 2] - orb_ang_mom_n[0, 2]) / orb_ang_mom_n[0, 2],
-             timespan, (orb_ang_mom_n[:, 3] - orb_ang_mom_n[0, 3]) / orb_ang_mom_n[0, 3])
-    plt.title('Orbital Angular Momentum Relative Difference', fontsize=14)
-    plt.ylabel('(Nms)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.grid(True)
+    if orbit_sim:
+        # Plot conservation quantities
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, (orb_ang_mom_n[:, 1] - orb_ang_mom_n[0, 1]) / orb_ang_mom_n[0, 1],
+                 timespan, (orb_ang_mom_n[:, 2] - orb_ang_mom_n[0, 2]) / orb_ang_mom_n[0, 2],
+                 timespan, (orb_ang_mom_n[:, 3] - orb_ang_mom_n[0, 3]) / orb_ang_mom_n[0, 3])
+        # plt.title('Orbital Angular Momentum Relative Difference', fontsize=14)
+        plt.ylabel('Relative Difference (Nms)', fontsize=16)
+        plt.xlabel('Time (s)', fontsize=16)
+        plt.grid(True)
 
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, (orb_energy[:, 1] - orb_energy[0, 1]) / orb_energy[0, 1])
-    plt.title('Orbital Energy Relative Difference', fontsize=14)
-    plt.ylabel('Energy (J)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.grid(True)
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, (orb_energy[:, 1] - orb_energy[0, 1]) / orb_energy[0, 1])
+        # plt.title('Orbital Energy Relative Difference', fontsize=14)
+        plt.ylabel('Relative Difference (J)', fontsize=16)
+        plt.xlabel('Time (s)', fontsize=16)
+        plt.grid(True)
 
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, (rot_ang_mom_n[:, 1] - rot_ang_mom_n[0, 1]),
-             timespan, (rot_ang_mom_n[:, 2] - rot_ang_mom_n[0, 2]),
-             timespan, (rot_ang_mom_n[:, 3] - rot_ang_mom_n[0, 3]))
-    plt.title('Rotational Angular Momentum Difference', fontsize=14)
-    plt.ylabel('(Nms)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.grid(True)
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, (rot_ang_mom_n[:, 1] - rot_ang_mom_n[0, 1]),
+                 timespan, (rot_ang_mom_n[:, 2] - rot_ang_mom_n[0, 2]),
+                 timespan, (rot_ang_mom_n[:, 3] - rot_ang_mom_n[0, 3]))
+        # plt.title('Rotational Angular Momentum Difference', fontsize=14)
+        plt.ylabel('Difference (Nms)', fontsize=16)
+        plt.xlabel('Time (s)', fontsize=16)
+        plt.grid(True)
 
-    plt.figure()
-    plt.clf()
-    plt.plot(timespan, (rot_energy[:, 1] - rot_energy[0, 1]))
-    plt.title('Total Energy Difference', fontsize=14)
-    plt.ylabel('Energy (J)', fontsize=16)
-    plt.xlabel('Time (s)', fontsize=16)
-    plt.grid(True)
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, (rot_energy[:, 1] - rot_energy[0, 1]))
+        # plt.title('Total Energy Difference', fontsize=14)
+        plt.ylabel('Difference (J)', fontsize=16)
+        plt.xlabel('Time (s)', fontsize=16)
+        plt.grid(True)
+
+    else:
+        # Plot r_cn_n
+        plt.figure()
+        plt.clf()
+        plt.plot(timespan, (r_cn_n[:, 0] - r_cn_n[0, 0]) / r_cn_n[0, 0], label=r'$r_{1}$')
+        plt.plot(timespan, (r_cn_n[:, 1] - r_cn_n[0, 1]) / r_cn_n[0, 1], label=r'$r_{2}$')
+        plt.plot(timespan, (r_cn_n[:, 2] - r_cn_n[0, 2]) / r_cn_n[0, 2], label=r'$r_{3}$')
+        plt.title(r'${}^\mathcal{N} r_{C/N}$ Spacecraft COM Inertial Trajectory', fontsize=16)
+        plt.ylabel('(m)', fontsize=16)
+        plt.xlabel('Time (s)', fontsize=16)
+        plt.legend(loc='center left', prop={'size': 16})
+        plt.grid(True)
 
     if show_plots:
         plt.show()
     plt.close("all")
 
     # Begin the test analysis
-    orb_ang_mom_final = np.delete(orb_ang_mom_final, 0, axis=1)  # remove the time column
-    rot_ang_mom_final = np.delete(rot_ang_mom_final, 0, axis=1)  # remove the time column
-    orb_energy_final = np.delete(orb_energy_final, 0, axis=1)  # remove the time column
+    if orbit_sim:
+        orb_ang_mom_final = np.delete(orb_ang_mom_final, 0, axis=1)  # remove the time column
+        rot_ang_mom_final = np.delete(rot_ang_mom_final, 0, axis=1)  # remove the time column
+        orb_energy_final = np.delete(orb_energy_final, 0, axis=1)  # remove the time column
 
-    # Orbital angular momentum check
-    np.testing.assert_allclose(orb_ang_mom_init,
-                               orb_ang_mom_final,
-                               atol=accuracy,
-                               verbose=True)
+        # Orbital angular momentum check
+        np.testing.assert_allclose(orb_ang_mom_init,
+                                   orb_ang_mom_final,
+                                   atol=accuracy,
+                                   verbose=True)
 
-    # Rotational angular momentum check
-    np.testing.assert_allclose(rot_ang_mom_init,
-                               rot_ang_mom_final,
-                               atol=accuracy,
-                               verbose=True)
+        # Rotational angular momentum check
+        np.testing.assert_allclose(rot_ang_mom_init,
+                                   rot_ang_mom_final,
+                                   atol=accuracy,
+                                   verbose=True)
 
-    # Orbital energy check
-    np.testing.assert_allclose(orb_energy_init,
-                               orb_energy_final,
-                               atol=accuracy,
-                               verbose=True)
+        # Orbital energy check
+        np.testing.assert_allclose(orb_energy_init,
+                                   orb_energy_final,
+                                   atol=accuracy,
+                                   verbose=True)
 
     # Check to ensure the initial velocity converged to the reference velocity
     r_prime_fm_m_ref = np.array([0.0, 0.0, 0.0])
@@ -408,8 +438,9 @@ def test_PrescribedMotionStateEffector_Translation(show_plots, trans_pos_init, t
 #
 if __name__ == "__main__":
     test_PrescribedMotionStateEffector_Translation(
-        True,        # show_plots
-        0.0,        # trans_pos_init [m]
-        0.1,        # trans_pos_ref [m]
-        1e-8        # accuracy
+        True,  # show_plots
+        True,  # orbit_sim
+        0.0,  # trans_pos_init [m]
+        0.1,  # trans_pos_ref [m]
+        1e-8  # accuracy
        )
