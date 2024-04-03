@@ -66,7 +66,10 @@ Version |release|
 - Updated :ref:`MtbEffector` to include missing swig interface file for a message definition and corrected
   message table in the module documentation.
 - Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedLinearTranslation`
-  simulation module
+  simulation module. Note that the optional module variable ``coastOptionRampDuration`` has been renamed to
+  ``coastOptionBangDuration``. The setter and getter methods for this variable are renamed to reflect this change as
+  ``setCoastOptionBangDuration()`` and  ``getCoastOptionBangDuration()``, respectively. See the module documentation
+  for the current usage of this parameter and these associated methods.
 - Added a new commanded linear force array :ref:`LinearTranslationRigidBodyMsgPayload`.
 - Added a new single-axis translating effector :ref:`linearTranslationOneDOFStateEffector`.
 - Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedRotation1DOF`
