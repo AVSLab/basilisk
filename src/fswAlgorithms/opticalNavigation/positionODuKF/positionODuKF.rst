@@ -27,8 +27,11 @@ provides information on what this message is used for.
       - :ref:`NavTransMsgPayload`
       - navigation translation output message
     * - opNavFilterMsg
-      - :ref:`OpNavSUKFMsgPayload`
+      - :ref:`FilterMsgPayload`
       - output filter data message containing states and covariances
+    * - opNavResidualMsg
+      - :ref:`FilterResidualMsgPayload`
+      - output measurement data message containing residuals
     * - cameraPosMsg
       - :ref:`CameraLocalizationMsgPayload.h`
       - opnav input message containing the position vector towards the target

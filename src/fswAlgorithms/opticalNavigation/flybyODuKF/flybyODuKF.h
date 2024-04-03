@@ -1,7 +1,7 @@
 /*
  ISC License
  
- Copyright (c) 2023, Laboratory  for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
  
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -32,7 +32,8 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/OpNavSUKFMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/OpNavUnitVecMsgPayload.h"
 
 #include <string.h>
@@ -71,15 +72,15 @@ public:
     ReadFunctor<OpNavUnitVecMsgPayload> opNavHeadingMsg;
     OpNavUnitVecMsgPayload opNavHeadingBuffer;
     Message<NavTransMsgPayload> navTransOutMsg;
-    Message<OpNavSUKFMsgPayload> opNavFilterMsg;
+    Message<FilterMsgPayload> opNavFilterMsg;
+    Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
     //!< Variables are named closely to the reference document :
     //!< "The Square-root unscented Kalman Filter for state and parameter-estimation" by van der Merwe and Wan
-    double beta;
-    double alpha;
-    double kappa;
-    double lambda;
-    double eta;
+    double betaParameter;
+    double alphaParameter;
+    double lambdaParameter;
+    double etaParameter;
     double muCentral;
 
     Eigen::MatrixXd processNoise; //!< [-] process noise matrix
@@ -92,7 +93,8 @@ public:
 
 private:
     NavTransMsgPayload navTransOutMsgBuffer; //!< Message buffer for input translational nav message
-    OpNavSUKFMsgPayload opNavFilterMsgBuffer;
+    FilterMsgPayload opNavFilterMsgBuffer;
+    FilterResidualsMsgPayload opNavResidualMsgBuffer;
 
     double dt; //!< [s] seconds since last data epoch
     double previousFilterTimeTag; //!< [s]  Time tag for statecovar/etc

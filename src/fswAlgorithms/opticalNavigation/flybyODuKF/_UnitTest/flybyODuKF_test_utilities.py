@@ -1,8 +1,8 @@
 #
 #  ISC License
 #
-# Copyright (c) 2023, Laboratory  for Atmospheric and Space Physics, University of Colorado at Boulder
-# 
+# Copyright (c) 2024, University of Colorado at Boulder
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
@@ -32,13 +32,12 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import Ellipse
 
-
 color_x = 'dodgerblue'
 color_y = 'salmon'
 color_z = 'lightgreen'
 m2km = 1.0 / 1000.0
 
-def StatePlot(x, testName, show_plots):
+def states(x, testName, show_plots):
 
     numStates = len(x[0,:])-1
 
@@ -81,12 +80,11 @@ def StatePlot(x, testName, show_plots):
     plt.title('Third rate component (m/s)')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
 
-def EnergyPlot(t, energy, testName, show_plots):
+def energy(t, energy, testName, show_plots):
 
     conserved= np.zeros(len(t))
     for i in range(len(t)):
@@ -98,14 +96,12 @@ def EnergyPlot(t, energy, testName, show_plots):
     plt.title('Energy ' + testName)
     plt.grid()
 
-
-    unitTestSupport.writeFigureLaTeX('Energy' + testName, 'Orbital Energy', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
 
 
-def StateCovarPlot(x, Pflat, testName, show_plots):
+def state_covar(x, Pflat, testName, show_plots):
 
     numStates = len(x[0,:])-1
 
@@ -119,8 +115,8 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
-    plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
-    plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 0, 0]), 'r--')
+    plt.plot(t , x[:, 1] + 3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
+    plt.plot(t , x[:, 1] - 3 * np.sqrt(P[:, 0, 0]), 'r--')
     plt.legend(loc='lower right')
     plt.title('First pos component (m)')
     plt.grid()
@@ -163,14 +159,13 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.title('Third rate component (m/s)')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
 
 
 
-def PostFitResiduals(Res, noise, testName, show_plots):
+def post_fit_residuals(Res, noise, testName, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
@@ -208,14 +203,11 @@ def PostFitResiduals(Res, noise, testName, show_plots):
     plt.title('Third Meas Comp (m)')
     plt.grid()
 
-
-    unitTestSupport.writeFigureLaTeX('PostFit' + testName, 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
-
     if show_plots:
         plt.show()
     plt.close()
 
-def plot_TwoOrbits(r_BN, r_BN2):
+def two_orbits(r_BN, r_BN2, show_plots):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
     ax.set_xlabel('$R_x$, km')
@@ -227,4 +219,7 @@ def plot_TwoOrbits(r_BN, r_BN2):
             ax.scatter(r_BN2[i, 1] * m2km, r_BN2[i, 2] * m2km, r_BN2[i, 3] * m2km, color=color_y, label="Meas orbit")
     ax.scatter(0, 0, color='r')
     ax.set_title('Spacecraft Orbits')
+    if show_plots:
+        plt.show()
+    plt.close()
     return

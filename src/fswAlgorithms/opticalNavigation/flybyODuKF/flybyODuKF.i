@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Laboratory  for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -35,7 +35,8 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 struct NavTransMsg_C;
-%include "architecture/msgPayloadDefCpp/OpNavSUKFMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/OpNavUnitVecMsgPayload.h"
 
 %pythoncode %{

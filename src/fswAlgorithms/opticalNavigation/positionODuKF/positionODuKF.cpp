@@ -1,7 +1,7 @@
 /*
  ISC License
  
- Copyright (c) 2023, Laboratory  for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
  
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -58,15 +58,16 @@ void PositionODuKF::Reset(uint64_t CurrentSimNanos)
     this->cholProcessNoise.setZero(this->state.size(), this->state.size());
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    this->lambda = (double) this->state.size()*(this->alpha*this->alpha - 1);
-    this->eta = sqrt((double) this->state.size() + this->lambda);
+    this->lambdaParameter = (double) this->state.size()*(this->alphaParameter*this->alphaParameter - 1);
+    this->etaParameter = sqrt((double) this->state.size() + this->lambdaParameter);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    this->wM(0) = this->lambda / ((double) this->state.size() + this->lambda);
-    this->wC(0) = this->lambda / ((double) this->state.size() + this->lambda) + (1 - this->alpha*this->alpha + this->beta);
+    this->wM(0) = this->lambdaParameter / ((double) this->state.size() + this->lambdaParameter);
+    this->wC(0) = this->lambdaParameter / ((double) this->state.size() + this->lambdaParameter)
+            + (1 - this->alphaParameter*this->alphaParameter + this->betaParameter);
     for (size_t i = 1; i < this->numberSigmaPoints; i++)
     {
-        this->wM(i) = 1.0 / (2.0 * ((double) this->state.size() + this->lambda));
+        this->wM(i) = 1.0 / (2.0 * ((double) this->state.size() + this->lambdaParameter));
         this->wC(i) = this->wM(i);
     }
 
@@ -125,10 +126,10 @@ void PositionODuKF::timeUpdate(double updateTime)
     for (size_t i = 1; i<this->state.size() + 1; i++)
     {
         /*! - Adding covariance columns from sigma points*/
-        this->sigmaPoints.col(i) = propagate(time, this->state + this->eta * this->sBar.col(i-1), this->dt);
+        this->sigmaPoints.col(i) = propagate(time, this->state + this->etaParameter * this->sBar.col(i-1), this->dt);
         /*! - Subtracting covariance columns from sigma points*/
         this->sigmaPoints.col( i + this->state.size()) =
-                propagate(time, this->state - this->eta * this->sBar.col(i-1), this->dt);
+                propagate(time, this->state - this->etaParameter * this->sBar.col(i-1), this->dt);
     }
 
     /*! - Compute xbar according to Eq (19)*/
@@ -167,6 +168,7 @@ void PositionODuKF::timeUpdate(double updateTime)
  */
 void PositionODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
     this->opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
+    this->opNavResidualMsgBuffer = this->opNavResidualMsg.zeroMsgPayload;
     this->navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
 
     /*! - Write the position estimate into the copy of the navigation message structure*/
@@ -180,11 +182,12 @@ void PositionODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
     eigenMatrixXd2CArray(1e6*this->covar, this->opNavFilterMsgBuffer.covar);
 
     if (this->measurementRead){
-        eigenMatrixXd2CArray(1e3*this->postFits, this->opNavFilterMsgBuffer.postFitRes);
+        eigenMatrixXd2CArray(1e3*this->postFits, this->opNavResidualMsgBuffer.postFits);
     }
 
     this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
     this->opNavFilterMsg.write(&this->opNavFilterMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->opNavResidualMsg.write(&this->opNavResidualMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
 /*! Read the message containing the measurement data.

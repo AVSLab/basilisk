@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,31 +16,20 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module positionODuKF
-%{
-   #include "positionODuKF.h"
-%}
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
+#ifndef FILTER_MESSAGE_H
+#define FILTER_MESSAGE_H
 
-%include "stdint.i"
-%include "std_string.i"
-%include "sys_model.h"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
+/*! @brief structure for filter-states output froma filter*/
+typedef struct
+//@cond DOXYGEN_IGNORE
+FilterMsgPayload
+//@endcond
+{
+    double timeTag;                             //!< [s] Current time of validity for output
+    double covar[6*6];    //!< [-] Current covariance of the filter
+    double state[6];                 //!< [-] Current estimated state of the filter
+    double stateError[6];            //!< [-] Current deviation of the state from the reference state
+}FilterMsgPayload;
 
-%include "positionODuKF.h"
-
-%include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/CameraLocalizationMsgPayload.h"
-struct CameraLocalizationMsg_C;
-%include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
-%include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif /* FILTER_MESSAGE_H */

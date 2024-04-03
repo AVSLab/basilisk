@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,21 +17,23 @@
 
  */
 
-#ifndef OPNAV_FILTER_MESSAGE_H
-#define OPNAV_FILTER_MESSAGE_H
+#ifndef FILTER_RES_MESSAGE_H
+#define FILTER_RES_MESSAGE_H
 
-/*! @brief structure for filter-states output for the unscented kalman filter
- implementation of the sunline state estimator*/
+//!@brief Optical navigation measurement from filter containing post and pre fits
+/*! This message contains the output from the filtering process given a specific measurement
+ */
 typedef struct
 //@cond DOXYGEN_IGNORE
-OpNavSUKFMsgPayload
+FilterResidualsMsgPayload
 //@endcond
 {
     double timeTag;                             //!< [s] Current time of validity for output
-    double covar[6*6];    //!< [-] Current covariance of the filter
-    double state[6];                 //!< [-] Current estimated state of the filter
-    double stateError[6];            //!< [-] Current deviation of the state from the reference state
-    double postFitRes[3];          //!< [-] PostFit Residuals
-}OpNavSUKFMsgPayload;
+    bool valid;                 //!< Quality of measurement if 1, invalid if 0
+    int numberOfObservations;   //!< Number of observations in this message
+    double observation[3];     //!< Measurement values processed
+    double preFits[3];     //!< Measurement prefit residuals
+    double postFits[3];     //!< Measurement postfit residuals
+}FilterResidualsMsgPayload;
 
-#endif /* OPNAV_FILTER_MESSAGE_H */
+#endif /* FILTER_RES_MESSAGE_H */

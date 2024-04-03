@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-# Copyright (c) 2023, Laboratory  for Atmospheric and Space Physics, University of Colorado at Boulder
+# Copyright (c) 2024, University of Colorado at Boulder
 # 
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -37,7 +37,7 @@ color_y = 'salmon'
 color_z = 'lightgreen'
 m2km = 1.0 / 1000.0
 
-def StatePlot(x, testName, show_plots):
+def states(x, testName, show_plots):
 
     numStates = len(x[0,:])-1
 
@@ -84,7 +84,7 @@ def StatePlot(x, testName, show_plots):
         plt.show()
     plt.close()
 
-def EnergyPlot(t, energy, testName, show_plots):
+def energy(t, energy, testName, show_plots):
 
     conserved= np.zeros(len(t))
     for i in range(len(t)):
@@ -101,7 +101,7 @@ def EnergyPlot(t, energy, testName, show_plots):
     plt.close()
 
 
-def StateCovarPlot(x, Pflat, testName, show_plots):
+def state_covar(x, Pflat, testName, show_plots):
 
     numStates = len(x[0,:])-1
 
@@ -165,7 +165,7 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
 
 
 
-def PostFitResiduals(Res, noise, testName, show_plots):
+def post_fit_residuals(Res, noise, testName, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
@@ -207,7 +207,7 @@ def PostFitResiduals(Res, noise, testName, show_plots):
         plt.show()
     plt.close()
 
-def plot_TwoOrbits(r_BN, r_BN2, show_plots):
+def two_orbits(r_BN, r_BN2, show_plots):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
     ax.set_xlabel('$R_x$, km')
