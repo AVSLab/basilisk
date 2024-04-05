@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- text here
+
+Version 2.3.0
+-------------
 - A bug was introduced at 2.2.1 (2dc0a35) to the :ref:`SimulationBaseClass` `AddModelToTask` function when it was
   refactored to use the updated module variable logging. The bug manifests as no data being logged for a variable when
   there are more than one task, a module in each task, and the variable being logged is from a module assigned to a
