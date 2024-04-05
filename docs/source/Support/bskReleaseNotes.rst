@@ -30,6 +30,10 @@ Basilisk Release Notes
     - automated documentation build system when code is pushed to the repo
 
 
+Version |release|
+-----------------
+- text here
+
 
 Version 2.3.0 (April 5, 2024)
 -----------------------------
