@@ -31,8 +31,8 @@ Basilisk Release Notes
 
 
 
-Version |release|
------------------
+Version 2.3.0 (April 5, 2024)
+-----------------------------
 - Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
 - Fixed a bug where the legacy variable logging API would either, not log at all or log at a rate different to the
   requested rate.
