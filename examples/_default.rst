@@ -331,7 +331,6 @@ Advanced Simulation Options
    Using a Variable Time Step Integrator <scenarioVariableTimeStepIntegrators>
    Comparison of different integrators <scenarioIntegratorsComparison>
    Using a Python BSK Module Inherited from SysModel Class <scenarioAttitudePointingPy>
-   Using a Python BSK Module (depreciated)  <scenarioAttitudePointingPyDEPRECATED>
    Changing the bskLog Verbosity from Python <scenarioBskLog>
 
 Multi-Threading Basilisk Simulations
