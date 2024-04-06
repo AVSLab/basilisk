@@ -26,19 +26,14 @@
 #define FLYBYODUKF_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/orbitalMotion.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/OpNavUnitVecMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/OpNavUnitVecMsgPayload.h"
 
-#include <string.h>
-#include <array>
-#include <math.h>
 
 class FlybyODuKF: public SysModel {
 public:
