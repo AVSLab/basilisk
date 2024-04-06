@@ -167,7 +167,6 @@ class SimBaseClass:
         self.TotalSim = sim_model.SimModel()
         self.TaskList = []
         self.procList = []
-        self.pyProcList = []
         self.StopTime = 0
         self.nextEventTime = 0
         self.terminate = False
@@ -206,17 +205,6 @@ class SimBaseClass:
                           ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
             print("")
 
-        for pyProc in self.pyProcList:
-            print(f"{processColor}PyProcess Name: {endColor}" + pyProc.Name +
-                  " , " + processColor + "priority: " + endColor + str(pyProc.pyProcPriority))
-            for task in pyProc.taskList:
-                print(f"{taskColor}PyTask Name: {endColor}" + task.name +
-                      ", " + taskColor + "priority: " + endColor + str(task.priority) +
-                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.rate / 1.0e9) + "s")
-                for module in task.modelList:
-                    print(moduleColor + "PyModuleTag: " + endColor + module.modelName +
-                          ", " + moduleColor + "priority: " + endColor + str(module.modelPriority))
-            print("")
 
     def ShowExecutionFigure(self, show_plots=False):
         """
@@ -231,16 +219,6 @@ class SimBaseClass:
                     moduleList.append(module.ModelPtr.ModelTag + " (" + str(module.CurrentModelPriority) + ")")
                 taskList[task.TaskPtr.TaskName + " (" + str(task.taskPriority) + ", " + str(task.TaskPtr.TaskPeriod/1.0e9) + "s)"] = moduleList
             processList[processData.processName + " (" + str(processData.processPriority) + ")"] = taskList
-
-        for pyProc in self.pyProcList:
-            taskList = OrderedDict()
-            for task in pyProc.taskList:
-                moduleList = []
-                for module in task.modelList:
-                    moduleList.append(module.modelName + " (" + str(module.modelPriority) + ")")
-                taskList[task.name + " (" + str(task.priority) + ", " + str(
-                    task.rate / 1.0e9) + "s)"] = moduleList
-            processList[pyProc.Name + " (" + str(pyProc.pyProcPriority) + ")"] = taskList
 
         fig = plt.figure()
         plt.rcParams.update({'font.size': 8})
@@ -347,29 +325,6 @@ class SimBaseClass:
         self.TotalSim.addNewProcess(proc.processData)
         return proc
 
-    @deprecated.deprecated(
-        "2024/04/01",
-        "PythonProcess and Python modules that inherit from "
-        "'simulationArchTypes.PythonModelClass' are deprecated. "
-        "See 'examples/scenarioAttitudePointingPy' for details.",
-    )
-    def CreateNewPythonProcess(self, procName, priority = -1):
-        """
-        Creates the python analog of a sim-level process, that exists only on the python level in self.pyProcList
-
-        :param procName (str): Name of process
-        :param priority (int): Priority that determines when the model gets updated. (Higher number = Higher priority)
-        :return: simulationArchTypes.PythonProcessClass object
-        """
-        proc = simulationArchTypes.PythonProcessClass(procName, priority)
-        i=0;
-        for procLoc in self.pyProcList:
-            if priority > procLoc.pyProcPriority:
-                self.pyProcList.insert(i, proc)
-                return proc
-            i+=1
-        self.pyProcList.append(proc)
-        return proc
 
     def CreateNewTask(self, TaskName, TaskRate, InputDelay=None, FirstStart=0):
         """
@@ -458,11 +413,7 @@ class SimBaseClass:
         self.TotalSim.assignRemainingProcs()
         self.TotalSim.ResetSimulation()
         self.TotalSim.selfInitSimulation()
-        for proc in self.pyProcList:
-            proc.selfInitProcess()
         self.TotalSim.resetInitSimulation()
-        for proc in self.pyProcList:
-            proc.resetProcess(0)
         self.simulationInitialized = True
 
 
@@ -486,11 +437,6 @@ class SimBaseClass:
 
         nextStopTime = self.TotalSim.NextTaskTime
         nextPriority = -1
-        pyProcPresent = False
-        if len(self.pyProcList) > 0:
-            nextPriority = self.pyProcList[0].pyProcPriority
-            pyProcPresent = True
-            nextStopTime = self.pyProcList[0].nextCallTime()
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
         while self.TotalSim.NextTaskTime <= self.StopTime and not self.terminate:
             if self.TotalSim.CurrentNanos >= self.nextEventTime >= 0:
@@ -505,17 +451,6 @@ class SimBaseClass:
             progressBar.update(self.TotalSim.NextTaskTime)
             nextPriority = -1
             nextStopTime = self.StopTime
-            procStopTimes = []
-            for pyProc in self.pyProcList:
-                nextCallTime = pyProc.nextCallTime()
-                if nextCallTime <= self.TotalSim.CurrentNanos:
-                    pyProc.executeTaskList(self.TotalSim.CurrentNanos)
-                nextCallTime = pyProc.nextCallTime()
-                procStopTimes.append(nextCallTime)
-
-            if pyProcPresent and nextStopTime >= min(procStopTimes):
-                nextStopTime = min(procStopTimes)
-                nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
         self.terminate = False
         progressBar.markComplete()
