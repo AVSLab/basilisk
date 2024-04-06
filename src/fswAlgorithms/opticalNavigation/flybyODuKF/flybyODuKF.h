@@ -43,6 +43,10 @@ public:
     ~FlybyODuKF() override;
 
 private:
+    void customReset() override;
+    void readFilterMeasurements() override;
+    void writeOutputMessages(uint64_t CurrentSimNanos) override;
+    Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) override;
 
 public:
     ReadFunctor<OpNavUnitVecMsgPayload> opNavHeadingMsg;
@@ -51,10 +55,16 @@ public:
     Message<FilterMsgPayload> opNavFilterMsg;
     Message<FilterResidualsMsgPayload> opNavResidualMsg;
 
+    void setMeasurementNoiseScale(const double measurementNoiseScale);
+    double getMeasurementNoiseScale() const ;
+    void setCentralBodyGravitationParameter(const double mu);
+    double getCentralBodyGravitationParameter() const ;
 
 
 private:
 
+    double measNoiseScaling = 1; //!< [s] Scale factor that can be applied on the measurement noise to over/under weight
+    double muCentral = 1; //!< [GM] gravitation parameter of central body
 };
 
 #endif

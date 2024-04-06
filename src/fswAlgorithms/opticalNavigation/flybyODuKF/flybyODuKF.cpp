@@ -28,12 +28,12 @@ FlybyODuKF::~FlybyODuKF() = default;
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
+void FlybyODuKF::customReset() {
     /*! - Check if the required message has not been connected */
-    if (!this->opNavHeadingMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  "Error: flybyODuKF opNavUnitVecInMsg wasn't connected.");
-    }
+    assert(this->opNavHeadingMsg.isLinked());
 
     /*! - Initialize filter parameters and change units to km and s */
+    this->muCentral *= pow(this->unitConversion, 3); // mu is input in meters
 }
 
 /*! Read the message containing the measurement data.
@@ -41,8 +41,36 @@ FlybyODuKF::~FlybyODuKF() = default;
  @return void
  */
 void FlybyODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
-    
+    NavTransMsgPayload navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
+    FilterMsgPayload opNavFilterMsgBuffer = this->opNavFilterMsg.zeroMsgPayload;
+    FilterResidualsMsgPayload residualsBuffer = this->opNavResidualMsg.zeroMsgPayload;
+
+    /*! - Write the flyby OD estimate into the copy of the navigation message structure*/
+    eigenMatrixXd2CArray(1/this->unitConversion*this->state.head(3), navTransOutMsgBuffer.r_BN_N);
+    eigenMatrixXd2CArray(1/this->unitConversion*this->state.tail(3), navTransOutMsgBuffer.v_BN_N);
+
+    /*! - Populate the filter states output buffer and write the output message*/
+    opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
+    eigenMatrixXd2CArray(1/this->unitConversion*this->state, opNavFilterMsgBuffer.state);
+    eigenMatrixXd2CArray(1/this->unitConversion*this->xBar, opNavFilterMsgBuffer.stateError);
+    eigenMatrixXd2CArray(1/this->unitConversion/this->unitConversion*this->covar, opNavFilterMsgBuffer.covar);
+    opNavFilterMsgBuffer.numberOfStates = this->state.size();
+
+    auto optionalMeasurement = this->measurements[0];
+    if (optionalMeasurement.has_value()) {
+        auto measurement = Measurement();
+        measurement = optionalMeasurement.value();
+        residualsBuffer.valid = true;
+        residualsBuffer.numberOfObservations = 1;
+        residualsBuffer.sizeOfObservations = measurement.observation.size();
+        eigenMatrixXd2CArray(measurement.observation, &residualsBuffer.observation[0]);
+        eigenMatrixXd2CArray(measurement.postFitResiduals, &residualsBuffer.postFits[0]);
+        eigenMatrixXd2CArray(measurement.preFitResiduals, &residualsBuffer.preFits[0]);
+        this->measurements[0].reset();
     }
+    this->opNavResidualMsg.write(&residualsBuffer, this->moduleID, CurrentSimNanos);
+    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->opNavFilterMsg.write(&opNavFilterMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
 /*! Read the message containing the measurement data.
@@ -51,6 +79,21 @@ void FlybyODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
  */
 void FlybyODuKF::readFilterMeasurements() {
     this->opNavHeadingBuffer = this->opNavHeadingMsg();
+    auto headingMeasurement = Measurement();
+
+    headingMeasurement.timeTag = this->opNavHeadingBuffer.timeTag;
+    headingMeasurement.validity = this->opNavHeadingBuffer.valid;
+
+    if (headingMeasurement.validity && headingMeasurement.timeTag >= this->previousFilterTimeTag){
+        /*! - Read measurement and cholesky decomposition its noise*/
+        headingMeasurement.observation = cArray2EigenVector3d(this->opNavHeadingBuffer.rhat_BN_N);
+        headingMeasurement.observation.normalize();
+        headingMeasurement.size = 3;
+        headingMeasurement.noise = this->measNoiseScaling * cArray2EigenMatrixXd(this->opNavHeadingBuffer.covar_N,
+                                                                               (int) headingMeasurement.size,
+                                                                               (int) headingMeasurement.size);
+        headingMeasurement.model = normalizedFirstThreeStates;
+        this->measurements[0] = headingMeasurement;
     }
 }
 
@@ -88,10 +131,32 @@ Eigen::VectorXd FlybyODuKF::propagate(std::array<double, 2> interval, const Eige
     return X;
 }
 
+/*! Set the filter measurement noise scale factor if desirable
+    @param double measurementNoiseScale
+    @return void
+    */
+void FlybyODuKF::setMeasurementNoiseScale(const double measurementNoiseScale) {
+    this->measNoiseScaling = measurementNoiseScale;
 }
 
+/*! Get the filter measurement noise scale factor
+    @return double measNoiseScaling
+    */
+double FlybyODuKF::getMeasurementNoiseScale() const {
+    return this->measNoiseScaling;
 }
 
+/*! Set the gravitational parameter used for orbit propagation
+    @param double muInput
+    @return void
+    */
+void FlybyODuKF::setCentralBodyGravitationParameter(const double muInput) {
+    this->muCentral = muInput;
 }
 
+/*! Get gravitational parameter used for orbit propagation
+    @return double muCentral
+    */
+double FlybyODuKF::getCentralBodyGravitationParameter() const {
+    return this->muCentral;
 }
