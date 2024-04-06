@@ -103,14 +103,13 @@ void FlybyODuKF::readFilterMeasurements() {
     @param dt time step
     @return Eigen::VectorXd
 */
-Eigen::VectorXd FlybyODuKF::propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) const
-{
+Eigen::VectorXd FlybyODuKF::propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt){
     double t_0 = interval[0];
     double t_f = interval[1];
     double t = t_0;
     Eigen::VectorXd X = X0;
 
-    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> f = [this](double t, Eigen::VectorXd state)
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> twoBodyDynamics = [this](double t, Eigen::VectorXd state)
     {
         Eigen::VectorXd stateDerivative(state.size());
         /*! Implement point mass gravity for the propagation */
@@ -124,7 +123,7 @@ Eigen::VectorXd FlybyODuKF::propagate(std::array<double, 2> interval, const Eige
     double N = ceil((t_f-t_0)/dt);
     for (int c=0; c < N; c++) {
         double step = std::min(dt,t_f-t);
-        X = this->rk4(f, X, t, step);
+        X = this->rk4(twoBodyDynamics, X, t, step);
         t = t + step;
     }
 
