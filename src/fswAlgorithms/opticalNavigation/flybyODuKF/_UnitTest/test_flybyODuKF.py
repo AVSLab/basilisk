@@ -52,44 +52,38 @@ def two_body_gravity(t, x, mu=42828.314 * 1E9):
 
 
 def setup_filter_data(filter_object):
-    filter_object.alphaParameter = 0.02
-    filter_object.betaParameter = 2.0
+    filter_object.setAlpha(0.02)
+    filter_object.setBeta(2.0)
 
-    filter_object.muCentral = 42828.314 * 1E9
-    elements_init = orbitalMotion.ClassicElements()
-    elements_init.a = 4000 * 1E3  # m
-    elements_init.e = 0.2
-    elements_init.i = 10
-    elements_init.Omega = 0.001
-    elements_init.omega = 0.01
-    elements_init.f = 0.1
-    r, v = orbitalMotion.elem2rv(filter_object.muCentral, elements_init)
+    filter_object.setUnitConversionFromSItoState(1E-3)  # filter in km and km/s
+    filter_object.setCentralBodyGravitationParameter(42828.314 * 1E9)
+    orbital_elements = orbitalMotion.ClassicElements()
+    orbital_elements.a = 4000 * 1E3  # m
+    orbital_elements.e = 0.2
+    orbital_elements.i = 10
+    orbital_elements.Omega = 0.001
+    orbital_elements.omega = 0.01
+    orbital_elements.f = 0.1
+    r, v = orbitalMotion.elem2rv(filter_object.getCentralBodyGravitationParameter(), orbital_elements)
     states = r.tolist() + v.tolist()
 
-    filter_object.stateInitial = [[s] for s in states]
-    filter_object.covarInitial = [[1000. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                  [0.0, 1000. * 1E6, 0.0, 0.0, 0.0, 0.0],
-                                  [0.0, 0.0, 1000. * 1E6, 0.0, 0.0, 0.0],
-                                  [0.0, 0.0, 0.0, 0.1 * 1E6, 0.0, 0.0],
-                                  [0.0, 0.0, 0.0, 0.0, 0.1 * 1E6, 0.0],
-                                  [0.0, 0.0, 0.0, 0.0, 0.0, 0.1 * 1E6]]
+    filter_object.setInitialState([[s] for s in states])
+    filter_object.setInitialCovariance([[1000. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 1000. * 1E6, 0.0, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 1000. * 1E6, 0.0, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.1 * 1E6, 0.0, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.1 * 1E6, 0.0],
+                                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.1 * 1E6]])
 
-    sigma_pos = (1E-8) ** 2
-    sigma_vel = (1E-10) ** 2
-    filter_object.processNoise = [[sigma_pos, 0.0, 0.0, 0.0, 0.0, 0.0],
-                                  [0.0, sigma_pos, 0.0, 0.0, 0.0, 0.0],
-                                  [0.0, 0.0, sigma_pos, 0.0, 0.0, 0.0],
-                                  [0.0, 0.0, 0.0, sigma_vel, 0.0, 0.0],
-                                  [0.0, 0.0, 0.0, 0.0, sigma_vel, 0.0],
-                                  [0.0, 0.0, 0.0, 0.0, 0.0, sigma_vel]]
-    filter_object.measNoiseScaling = 1
+    sigmaPos = (1E-8) ** 2
+    sigmaVel = (1E-10) ** 2
+    filter_object.setProcessNoise([[sigmaPos, 0.0, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, sigmaPos, 0.0, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, sigmaPos, 0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, sigmaVel, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, sigmaVel, 0.0],
+                                   [0.0, 0.0, 0.0, 0.0, 0.0, sigmaVel]])
 
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
 
 def test_propagation_kf(show_plots):
     """Module Unit Test"""
