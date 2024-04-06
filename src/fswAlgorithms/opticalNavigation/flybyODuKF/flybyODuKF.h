@@ -34,6 +34,8 @@
 #include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/FilterResidualsMsgPayload.h"
 
+#include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
+#include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
 
 class FlybyODuKF: public SysModel {
 public:
