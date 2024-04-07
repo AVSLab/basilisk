@@ -88,12 +88,12 @@ void SRukfInterface::UpdateState(uint64_t currentSimNanos)
     this->orderMeasurementsChronologically();
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/
-     for (auto optionalMeasurement : this->measurements) {
+     for (int index =0 ; index < MAX_MEASUREMENT_DEFAULT; ++index) {
          auto measurement = Measurement();
-         if (!optionalMeasurement.has_value()){
+         if (!this->measurements[index].has_value()){
              continue;}
          else{
-             measurement = optionalMeasurement.value();}
+             measurement = this->measurements[index].value();}
          /*! - If the time tag from a valid measurement is new compared to previous step,
          propagate and update the filter*/
          if (measurement.timeTag * NANO2SEC >= this->previousFilterTimeTag && measurement.validity) {
@@ -106,6 +106,7 @@ void SRukfInterface::UpdateState(uint64_t currentSimNanos)
              /*! - measurement update and compute post-fit residuals  */
              this->measurementUpdate(measurement);
              measurement.postFitResiduals = measurement.observation - measurement.model(this->state);
+             this->measurements[index] = measurement;
          }
      }
     /*! - If current clock time is further ahead than the last measurement time, then
