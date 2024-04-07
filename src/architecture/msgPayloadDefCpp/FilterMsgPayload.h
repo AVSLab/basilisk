@@ -22,7 +22,7 @@
 
 #include "fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h"
 
-/*! @brief structure for filter-states output froma filter*/
+/*! @brief structure for filter-states output from a filter*/
 typedef struct
 //@cond DOXYGEN_IGNORE
 FilterMsgPayload
