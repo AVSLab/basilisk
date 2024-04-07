@@ -20,6 +20,8 @@
 #ifndef FILTER_MESSAGE_H
 #define FILTER_MESSAGE_H
 
+#include "fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h"
+
 /*! @brief structure for filter-states output froma filter*/
 typedef struct
 //@cond DOXYGEN_IGNORE
@@ -27,9 +29,9 @@ FilterMsgPayload
 //@endcond
 {
     double timeTag;                             //!< [s] Current time of validity for output
-    double covar[6*6];    //!< [-] Current covariance of the filter
-    double state[6];                 //!< [-] Current estimated state of the filter
-    double stateError[6];            //!< [-] Current deviation of the state from the reference state
+    double covar[MAX_STATES_DEFAULT*MAX_STATES_DEFAULT];    //!< [-] Current covariance of the filter
+    double state[MAX_STATES_DEFAULT];                 //!< [-] Current estimated state of the filter
+    double stateError[MAX_STATES_DEFAULT];            //!< [-] Current deviation of the state from the reference state
 }FilterMsgPayload;
 
 #endif /* FILTER_MESSAGE_H */
