@@ -86,7 +86,7 @@ protected:
                 double t0,
                 double dt) const;
 
-    std::array<std::optional<Measurement>, MAX_MEASUREMENT_DEFAULT> measurements;  //!< [Measurements] All measurement containers in chronological order
+    std::array<std::optional<Measurement>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All measurement containers in chronological order
     double previousFilterTimeTag = 0; //!< [s]  Time tag for statecovar/etc
     double unitConversion = 1; //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
 

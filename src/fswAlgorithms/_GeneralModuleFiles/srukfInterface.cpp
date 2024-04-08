@@ -88,7 +88,7 @@ void SRukfInterface::UpdateState(uint64_t currentSimNanos)
     this->orderMeasurementsChronologically();
     /*! Loop through all of the measurements assuming they are in chronological order by first testing if a value
      * has been populated in the measurements array*/
-     for (int index =0 ; index < MAX_MEASUREMENT_DEFAULT; ++index) {
+     for (int index =0 ; index < MAX_MEASUREMENT_NUMBER; ++index) {
          auto measurement = Measurement();
          if (!this->measurements[index].has_value()){
              continue;}
