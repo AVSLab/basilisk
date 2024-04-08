@@ -171,7 +171,8 @@ def state_update_test(show_plots):
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()
 
-    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar)
+    num_states = filter_data_log.numberOfStates[0]
+    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
 
     for i in range(3, 6):
         if (covar_log[t1, i * 6 + 1 + i] > covar_log[0, i * 6 + 1 + i]):
@@ -191,9 +192,17 @@ def state_update_test(show_plots):
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()
 
-    state_log = add_time_column(filter_data_log.times(), filter_data_log.state)
-    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar)
-    postFitLog = add_time_column(residual_data_log.times(), residual_data_log.postFits)
+    state_log = add_time_column(filter_data_log.times(), filter_data_log.state[:, :num_states])
+    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
+    number_obs = residual_data_log.numberOfObservations
+    size_obs = residual_data_log.sizeOfObservations
+    post_fit_log_sparse = add_time_column(residual_data_log.times(), residual_data_log.postFits)
+    post_fit_log = np.zeros([len(residual_data_log.times()), np.max(size_obs)+1])
+    post_fit_log[:, 0] = post_fit_log_sparse[:, 0]
+
+    for i in range(len(number_obs)):
+        if number_obs[i] > 0:
+            post_fit_log[i, 1:size_obs[i]+1] = post_fit_log_sparse[i, 1:size_obs[i]+1]
 
     diff = np.copy(state_log)
     diff[:, 1:] -= expected[:, 1:]
@@ -201,7 +210,7 @@ def state_update_test(show_plots):
     filter_plots.state_covar(state_log, covar_log, 'Update', show_plots)
     filter_plots.states(diff, 'Update', show_plots)
     filter_plots.two_orbits(expected[:, 0:4], state_log[:, 0:4], show_plots)
-    filter_plots.post_fit_residuals(postFitLog, np.sqrt(1E-6), 'Update', show_plots)
+    filter_plots.post_fit_residuals(post_fit_log, np.sqrt(1E-6), 'Update', show_plots)
 
     for i in range(3, 6):
         if covar_log[t1 * time_multiplier, i * 6 + 1 + i] > covar_log[0, i * 6 + 1 + i] / 10:
@@ -271,8 +280,9 @@ def state_prop_test(show_plots, dt):
     unit_test_sim.ConfigureStopTime(macros.min2nano(timeSim))
     unit_test_sim.ExecuteSimulation()
 
-    state_log = add_time_column(filter_data_log.times(), filter_data_log.state)
-    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar)
+    num_states = filter_data_log.numberOfStates[0]
+    state_log = add_time_column(filter_data_log.times(), filter_data_log.state[:, :num_states])
+    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
 
     diff = np.copy(state_log)
     diff[:, 1:] -= expected[:, 1:]
