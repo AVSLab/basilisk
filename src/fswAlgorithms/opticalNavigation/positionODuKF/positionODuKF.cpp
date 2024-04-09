@@ -177,12 +177,15 @@ void PositionODuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
 
     /*! - Populate the filter states output buffer and write the output message*/
     this->opNavFilterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXd2CArray(1e3*this->state, this->opNavFilterMsgBuffer.state);
-    eigenMatrixXd2CArray(1e3*this->xBar, this->opNavFilterMsgBuffer.stateError);
-    eigenMatrixXd2CArray(1e6*this->covar, this->opNavFilterMsgBuffer.covar);
+    this->opNavFilterMsgBuffer.numberOfStates = this->state.size();
+    eigenMatrixXd2CArray(1e3*this->state, &this->opNavFilterMsgBuffer.state[0]);
+    eigenMatrixXd2CArray(1e3*this->xBar, &this->opNavFilterMsgBuffer.stateError[0]);
+    eigenMatrixXd2CArray(1e6*this->covar, &this->opNavFilterMsgBuffer.covar[0]);
 
     if (this->measurementRead){
         eigenMatrixXd2CArray(1e3*this->postFits, this->opNavResidualMsgBuffer.postFits);
+        this->opNavResidualMsgBuffer.numberOfObservations = 1;
+        this->opNavResidualMsgBuffer.sizeOfObservations = 3;
     }
 
     this->navTransOutMsg.write(&this->navTransOutMsgBuffer, this->moduleID, CurrentSimNanos);

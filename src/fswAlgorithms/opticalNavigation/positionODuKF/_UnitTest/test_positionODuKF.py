@@ -25,7 +25,7 @@ from Basilisk.fswAlgorithms import positionODuKF  # import the module that is to
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 
 
-def addTimeColumn(time, data):
+def add_time_column(time, data):
     return np.transpose(np.vstack([[time], np.transpose(data)]))
 
 def rk4(f, t, x0, arg = None):
@@ -160,7 +160,8 @@ def state_update_test(show_plots):
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()
 
-    covar_log = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
+    num_states = filter_data_log.numberOfStates[0]
+    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
 
     # Propgate after the kick
     for i in range(t1, 2*t1):
@@ -177,9 +178,17 @@ def state_update_test(show_plots):
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unit_test_sim.ExecuteSimulation()
 
-    state_log = addTimeColumn(filter_data_log.times(), filter_data_log.state)
-    covar_log = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
-    postfit_log = addTimeColumn(residual_data_log.times(), residual_data_log.postFits)
+    state_log = add_time_column(filter_data_log.times(), filter_data_log.state[:, :num_states])
+    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
+    number_obs = residual_data_log.numberOfObservations
+    size_obs = residual_data_log.sizeOfObservations
+    post_fit_log_sparse = add_time_column(residual_data_log.times(), residual_data_log.postFits)
+    post_fit_log = np.zeros([len(residual_data_log.times()), np.max(size_obs)+1])
+    post_fit_log[:, 0] = post_fit_log_sparse[:, 0]
+
+    for i in range(len(number_obs)):
+        if number_obs[i] > 0:
+            post_fit_log[i, 1:size_obs[i]+1] = post_fit_log_sparse[i, 1:size_obs[i]+1]
 
     expected[:,0] *= 1E9
     diff = np.copy(state_log)
@@ -190,7 +199,7 @@ def state_update_test(show_plots):
     filter_plots.state_covar(state_log, covar_log, 'Update', show_plots)
     filter_plots.states(diff, 'Update', show_plots)
     filter_plots.two_orbits(expected[:,0:4], state_log[:,0:4], show_plots)
-    filter_plots.post_fit_residuals(postfit_log, meas_noise_std_dev, 'Update', show_plots)
+    filter_plots.post_fit_residuals(post_fit_log, meas_noise_std_dev, 'Update', show_plots)
 
     np.testing.assert_array_less(np.linalg.norm(covar_log[t1, 1:]),
                                  np.linalg.norm(covar_log[0, 1:]),
@@ -258,8 +267,9 @@ def state_propagation_test(show_plots, dt):
     unit_test_sim.ConfigureStopTime(macros.min2nano(sim_tim))
     unit_test_sim.ExecuteSimulation()
 
-    state_log = addTimeColumn(filter_data_log.times(), filter_data_log.state)
-    covar_log = addTimeColumn(filter_data_log.times(), filter_data_log.covar)
+    num_states = filter_data_log.numberOfStates[0]
+    state_log = add_time_column(filter_data_log.times(), filter_data_log.state[:, :num_states])
+    covar_log = add_time_column(filter_data_log.times(), filter_data_log.covar[:, :num_states**2])
 
     expected[:,0] *= 1E9
     diff = np.copy(state_log)
