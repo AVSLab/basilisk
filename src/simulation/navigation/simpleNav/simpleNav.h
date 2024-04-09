@@ -55,6 +55,7 @@ public:
     Message<NavAttMsgPayload> attOutMsg;        //!< attitude navigation output msg
     Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg
     Message<EphemerisMsgPayload> scEphemOutMsg;    //!< translation navigation output msg
+    Message<AccDataMsgPayload> accelDataOutMsg; //!< accelerometer and gyro data output msg
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
     NavAttMsgPayload trueAttState;        //!< -- attitude nav state without errors
@@ -62,6 +63,7 @@ public:
     NavTransMsgPayload trueTransState;    //!< -- translation nav state without errors
     NavTransMsgPayload estTransState;     //!< -- translation nav state including errors
     EphemerisMsgPayload spacecraftEphemerisState;    //!< -- full spacecraft ephemeris state with errors
+    AccDataMsgPayload accelDataState;  //!< accelerometer and gyro data payload
     SCStatesMsgPayload inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateMsgPayload sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
