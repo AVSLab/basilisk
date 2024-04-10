@@ -64,6 +64,8 @@ Version |release|
   multi-body prescribed motion.
 - The fuel tank module is refactored to remove the limitation of a only being able to have a single instance of a
   specific tank model type.
+- Created a :ref:`singleAxisProfiler` simulation module to profile 1 DOF rotational prescribed motion about a
+  single hub-fixed axis.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------
