@@ -18,6 +18,10 @@
  */
 
 #include "rigidBodyKinematics.hpp"
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <vector>
 
 constexpr double eps = std::numeric_limits<double>::epsilon();
 
