@@ -33,7 +33,6 @@ from Basilisk.fswAlgorithms import stepperMotorController
 from Basilisk.simulation import stepperMotor
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -47,7 +46,7 @@ splitPath = path.split(bskName)
 @pytest.mark.parametrize("desiredMotorAngle2", [0.0, 10.0 * (np.pi / 180), 5.0 * (np.pi / 180)])
 @pytest.mark.parametrize("interruptFraction", [0.0, 0.25, 0.5, 0.75])
 @pytest.mark.parametrize("accuracy", [1e-12])
-def test_stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle1, desiredMotorAngle2, interruptFraction, accuracy):
+def test_stepperMotorInterrupt(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle1, desiredMotorAngle2, interruptFraction, accuracy):
     r"""
     **Validation Test Description**
 
@@ -76,13 +75,6 @@ def test_stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorA
 
     """
 
-    [testResults, testMessage] = stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle1, desiredMotorAngle2, interruptFraction, accuracy)
-
-    assert testResults < 1, testMessage
-
-def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle1, desiredMotorAngle2, interruptFraction, accuracy):
-    testFailCount = 0
-    testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -204,9 +196,9 @@ def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle,
 
     # Pull the logged motor step data
     timespan = stepperMotorDataLog.times()
-    theta = (180 / np.pi) * stepperMotorDataLog.theta
-    thetaDot = (180 / np.pi) * stepperMotorDataLog.thetaDot
-    thetaDDot = (180 / np.pi) * stepperMotorDataLog.thetaDDot
+    theta = macros.R2D * stepperMotorDataLog.theta
+    thetaDot = macros.R2D * stepperMotorDataLog.thetaDot
+    thetaDDot = macros.R2D * stepperMotorDataLog.thetaDDot
     motorStepCount = stepperMotorDataLog.stepCount
     motorCommandedSteps = stepperMotorDataLog.stepsCommanded
 
@@ -256,22 +248,13 @@ def stepperMotorTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle,
     plt.close("all")
 
     # Check that the final motor angle matches the motor reference angle desiredMotorAngle2
-    desiredMotorAngle2 = (180 / np.pi) * desiredMotorAngle2
-    if not unitTestSupport.isDoubleEqual(theta[-1], desiredMotorAngle2, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED: " + StepperMotor.ModelTag + " Final motor angle does not match the reference angle.")
-        print("TRUE FINAL ANGLE: \n")
-        print(desiredMotorAngle2)
-        print("MODULE FINAL ANGLE: \n")
-        print(theta[-1])
+    np.testing.assert_allclose(theta[-1],
+                               macros.R2D * desiredMotorAngle2,
+                               atol=accuracy,
+                               verbose=True)
 
-    return [testFailCount, ''.join(testMessages)]
-
-
-# This statement below ensures that the unitTestScript can be run as a
-# stand-along python script
 if __name__ == "__main__":
-    stepperMotorTestFunction(
+    test_stepperMotorInterrupt(
                  True,
                  1.0 * (np.pi / 180),     # stepAngle
                  1.0,                     # stepTime
