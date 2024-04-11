@@ -31,7 +31,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Removed the depreciated manner of creating python modules
 
 
 Version 2.3.0 (April 5, 2024)
