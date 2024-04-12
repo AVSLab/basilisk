@@ -6,9 +6,7 @@ estimate spacecraft relative position to an observed body in the inertial frame.
 The filter used is a square root unscented Kalman filter, and the images are first processed by image processing
 and a measurement model in order to produce this filter's measurements.
 
-The module
-:download:`PDF Description </../../src/fswAlgorithms/opticalNavigation/relativeODuKF/_Documentation/inertialUKF_DesignBasis.pdf>`
-contains further information on this module's mathematical framework.
+The module inherits from the SRuKF interface and implements only the few virtual methods.
 
 Message Connection Descriptions
 -------------------------------
@@ -59,14 +57,29 @@ of gravitational parameter :math:`\mu`.
 Module assumptions and limitations
 -------------------------------
 
-The module inherits all assumptions made while implementing a Kalman filter:
-    • Observability considerations
-    • Gaussian covariances
-    • Linearity limits
-    • and more
+.. list-table:: Interface methods implemented
+    :widths: 25 75 50
+    :header-rows: 1
 
-Otherwise, the limitations are governed by the measurement model and dynamics models relative
-to the required performance.
+    * - Method Name
+      - Method Function
+      - Class specifics
+    * - customReset
+      - perform addition reset duties in child class
+      - assert message link and convert gravitational parameter units
+    * - readFilterMeasurements
+      - read the specific measurements in a child class
+      - read opnavHeading message
+    * - writeOutputMessages
+      - write the specific measurements in a child class
+      - write Nav message and reconvert units
+    * - measurementModel
+      - add a measurement model for the inputs in child class
+      - read opnav heading message and normalize
+    * - propagate
+      - add a dynamics model for the inputs in child class
+      - use two body gravity and and rk4 to propagate
+
 
 User Guide
 ----------
