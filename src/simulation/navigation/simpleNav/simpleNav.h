@@ -21,6 +21,7 @@
 #define SIMPLE_NAV_H
 
 #include <vector>
+#include <random>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"

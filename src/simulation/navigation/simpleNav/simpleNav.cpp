@@ -35,6 +35,7 @@ SimpleNav::SimpleNav()
     this->trueAttState = this->attOutMsg.zeroMsgPayload;
     this->estTransState = this->transOutMsg.zeroMsgPayload;
     this->trueTransState = this->transOutMsg.zeroMsgPayload;
+    this->accelDataState = this->accelDataOutMsg.zeroMsgPayload;
     this->spacecraftEphemerisState = this->scEphemOutMsg.zeroMsgPayload;
     this->PMatrix.resize(18,18);
     this->PMatrix.fill(0.0);
@@ -88,8 +89,9 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
+    vSetZero(this->gyroErrors, 3 * MAX_ACC_BUF_PKT);
+    vSetZero(this->accelErrors, 3 * MAX_ACC_BUF_PKT);
 }
-
 
 /*! This method reads the input messages associated with the vehicle state and
  the sun state
@@ -119,6 +121,7 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
     this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
     this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
     this->scEphemOutMsg.write(&this->spacecraftEphemerisState, this->moduleID, Clock);
+    this->accelDataOutMsg.write(&this->accelDataState, this->moduleID, Clock);
 }
 
 void SimpleNav::applyErrors()
@@ -137,6 +140,15 @@ void SimpleNav::applyErrors()
     v3Add(this->spacecraftEphemerisState.omega_BN_B, &(this->navErrors.data()[9]),
           this->spacecraftEphemerisState.omega_BN_B);
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
+
+    //! - Apply accelerometer errors to truth data
+    for (int index=0; index<this->numberOfGyroBuffers; ++index){
+        AccPktDataMsgPayload accelPacketPayload = this->accelDataState.accPkts[index];
+        v3Add(accelPacketPayload.gyro_B, &this->gyroErrors[3*index], accelPacketPayload.gyro_B);
+        v3Add(accelPacketPayload.accel_B, &this->accelErrors[3*index], accelPacketPayload.accel_B);
+        this->accelDataState.accPkts[index] = accelPacketPayload;
+    }
+
     //! - Add errors to  sun-pointing
     if(this->sunStateInMsg.isLinked()){
         double dcm_OT[3][3];       /* dcm, body T to body O */
@@ -162,6 +174,16 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(this->inertialState.sigma_BN, this->trueAttState.sigma_BN);
     v3Copy(this->inertialState.omega_BN_B, this->trueAttState.omega_BN_B);
     v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
+
+    //! - Set accelerometer state to truth data
+    for (int index=0; index<this->numberOfGyroBuffers; ++index){
+        AccPktDataMsgPayload accelPacketPayload;
+        uint64_t timeOffset = index*SEC2NANO/this->gyroFrequencyPerSecond;
+        accelPacketPayload.measTime = Clock + timeOffset;
+        v3Copy(this->inertialState.omega_BN_B, accelPacketPayload.gyro_B);
+        v3Copy(this->inertialState.omegaDot_BN_B, accelPacketPayload.accel_B);
+        this->accelDataState.accPkts[index] = accelPacketPayload;
+    }
 
     //! - Set ephemeris state to truth data
     v3Copy(this->inertialState.r_BN_N, this->spacecraftEphemerisState.r_BdyZero_N);
@@ -206,6 +228,17 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     this->errorModel.setPropMatrix(localProp);
     this->errorModel.computeNextState();
     this->navErrors = this->errorModel.getCurrentState();
+
+    //! - Compute accelerometer errors
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::normal_distribution<double> gyroErrorDistribution(this->gyroBias,this->gyroStandardDeviation);
+    std::normal_distribution<double> accelErrorDistribution(this->accelBias,this->accelStandardDeviation);
+    for (int index=0; index<3*this->numberOfGyroBuffers; ++index){
+        this->gyroErrors[index] = gyroErrorDistribution(generator);
+        this->accelErrors[index] = accelErrorDistribution(generator);
+    }
+
 }
 
 /*! This method calls all of the run-time operations for the simple nav model.
