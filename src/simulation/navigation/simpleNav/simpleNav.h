@@ -49,6 +49,14 @@ public:
     void writeOutputMessages(uint64_t Clock);
 
 public:
+    double gyroStandardDeviation=1E-5;    //!< Standard deviation for each rate component
+    double accelStandardDeviation=1E-8;    //!< Standard deviation for each acceleration component
+    double gyroBias=0 ;    //!<  Bias for each rate component
+    double accelBias=0;    //!<  Bias for each acceleration component
+    double gyroErrors[3*MAX_ACC_BUF_PKT]; //!<  Errors to apply to each gyro measurement
+    double accelErrors[3*MAX_ACC_BUF_PKT]; //!<  Errors to apply to each accelerometer measurement
+    int numberOfGyroBuffers=100;       //!< Number of gyro measurements per timestep
+    int gyroFrequencyPerSecond=500;       //!< Number of gyro measurements per second
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
