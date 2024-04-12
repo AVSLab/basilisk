@@ -1,6 +1,6 @@
 # ISC License
 #
-# Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, CU Boulder
+# Copyright (c) 2024, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -25,7 +25,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
 def test_long_sim(show_plots):
-    """This unit test integrates the spacecraft motion (changing attutide/rate and postition/velocity)
+    """This unit test integrates the spacecraft motion (changing attitude/rate and position/velocity)
     and ensures that the simple navigation output is consistent with the noise inputs"""
     simple_nav_sim(show_plots, noise=True, number_steps=1000)
 
@@ -68,6 +68,7 @@ def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
     vehicle_velocity = [2.0, 3.0, 1.0]
     vehicle_attitude = [0.3, 0.1, 0.1]
     vehicle_rate = [0.01, 0.02, 0.03]
+    vehicle_accel = [-0.0005, -0.0001, 0.0003]
     sun_heading_B = np.array(sun_position) - np.array(vehicle_position)
     sun_heading_B = np.dot(rbk.MRP2C(vehicle_attitude), sun_heading_B / np.linalg.norm(sun_heading_B))
 
@@ -75,6 +76,7 @@ def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
     state_message.v_BN_N = vehicle_velocity
     state_message.sigma_BN = vehicle_attitude
     state_message.omega_BN_B = vehicle_rate
+    state_message.omegaDot_BN_B = vehicle_accel
     spice_message.PositionVector = sun_position
     spice_message.PlanetName = "sun"
 
@@ -134,13 +136,22 @@ def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
     simple_nav_object.crossTrans = True
     simple_nav_object.crossAtt = False
 
+    simple_nav_object.numberOfGyroBuffers = 100
+    simple_nav_object.gyroFrequencyPerSecond = 1000
+    simple_nav_object.gyroBias = 0.1
+    simple_nav_object.gyroStandardDeviation = 0.01
+    simple_nav_object.accelBias = 0.02
+    simple_nav_object.accelStandardDeviation = 0.002
+
     # setup logging
     rotational_data_log = simple_nav_object.attOutMsg.recorder()
     translational_data_log = simple_nav_object.transOutMsg.recorder()
     ephemeris_data_log = simple_nav_object.scEphemOutMsg.recorder()
+    accel_data_log = simple_nav_object.accelDataOutMsg.recorder()
     unit_test_sim.AddModelToTask(unit_task_name, rotational_data_log)
     unit_test_sim.AddModelToTask(unit_task_name, translational_data_log)
     unit_test_sim.AddModelToTask(unit_task_name, ephemeris_data_log)
+    unit_test_sim.AddModelToTask(unit_task_name, accel_data_log)
 
     unit_test_sim.InitializeSimulation()
     unit_test_sim.ConfigureStopTime(int(number_steps * 1E8))
@@ -159,6 +170,57 @@ def simple_nav_sim(show_plots, noise=False, number_steps=1, sigma_test=3):
     ephemeris_velocity_output = ephemeris_data_log.v_BdyZero_N
     ephemeris_attitude_output = ephemeris_data_log.sigma_BN
     ephemeris_rate_output = ephemeris_data_log.omega_BN_B
+
+    test_packets = accel_data_log.accPkts
+    rate_array = np.zeros([number_steps*simple_nav_object.numberOfGyroBuffers, 3])
+    accel_array = np.zeros([number_steps*simple_nav_object.numberOfGyroBuffers, 3])
+    time_list = []
+    for i in range(number_steps+1):
+        for j in range(simple_nav_object.numberOfGyroBuffers):
+            time_list.append(test_packets[i]["accPkts.measTime"] - test_packets[0]["accPkts.measTime"])
+    for i in range(number_steps):
+        for j in range(simple_nav_object.numberOfGyroBuffers):
+            rate_array[i*simple_nav_object.numberOfGyroBuffers + j, :] = np.array(test_packets[i]["accPkts.gyro_B"])
+            accel_array[i*simple_nav_object.numberOfGyroBuffers + j, :] = np.array(test_packets[i]["accPkts.accel_B"])
+    avg_rate = np.mean(rate_array, axis=0)
+    avg_accel = np.mean(accel_array, axis=0)
+    avg_time = np.mean(time_list)
+    std_rate = np.std(rate_array, axis=0)
+    std_accel = np.std(accel_array, axis=0)
+
+    np.testing.assert_allclose(avg_time,
+                               (number_steps * 1E8)/2,
+                               atol=4*simple_nav_object.gyroStandardDeviation/np.sqrt(number_steps),
+                               equal_nan=False,
+                               err_msg="Average of the time measurements was not at middle of time range",
+                               verbose=True)
+    np.testing.assert_allclose(avg_rate,
+                               np.array(vehicle_rate) + np.array([simple_nav_object.gyroBias]*3),
+                               atol=4*simple_nav_object.gyroStandardDeviation/np.sqrt(number_steps),
+                               equal_nan=False,
+                               err_msg="Average accelerometer rate was not within 4 std deviations of mean + bias",
+                               verbose=True)
+    np.testing.assert_allclose(avg_accel,
+                               np.array(vehicle_accel) + np.array([simple_nav_object.accelBias]*3),
+                               atol=4*simple_nav_object.accelStandardDeviation/np.sqrt(number_steps),
+                               equal_nan=False,
+                               err_msg="Average accelerometer acceleration was not within 4 std deviations of "
+                                       "mean + bias",
+                               verbose=True)
+    np.testing.assert_allclose(std_rate,
+                               simple_nav_object.gyroStandardDeviation,
+                               atol=4*simple_nav_object.gyroStandardDeviation/np.sqrt(number_steps),
+                               equal_nan=False,
+                               err_msg="Standard deviation applied to gyros was not within 4 std deviations of "
+                                       "mean + bias",
+                               verbose=True)
+    np.testing.assert_allclose(std_accel,
+                               simple_nav_object.accelStandardDeviation,
+                               atol=4*simple_nav_object.accelStandardDeviation/np.sqrt(number_steps),
+                               equal_nan=False,
+                               err_msg="Standard deviation to accelerations was not within 4 std deviations of "
+                                       "mean + bias",
+                               verbose=True)
 
     # If the sigma is non-zero ensure errors are below the expected bounds, if not ensure errors are large enough
     if sigma_test != 0:
