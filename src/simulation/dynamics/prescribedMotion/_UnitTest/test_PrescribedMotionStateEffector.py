@@ -1,6 +1,6 @@
 # ISC License
 #
-# Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -14,41 +14,35 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-
 #
-#   Unit Test Script
-#   Module Name:        prescribedMotion integrated unit test with prescribedRotation1DOF and prescribedLinearTranslation
+#   Integrated Unit Test Script
+#   Module Name:        prescribedMotion
 #   Author:             Leah Kiner
 #   Creation Date:      Jan 10, 2022
+#   Last Updated:       April 15, 2024
 #
 
 import inspect
-import os
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pytest
-
 from Basilisk.architecture import messaging
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import prescribedLinearTranslation
 from Basilisk.simulation import prescribedMotionStateEffector
 from Basilisk.simulation import prescribedRotation1DOF
 from Basilisk.simulation import spacecraft
+from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-matplotlib.rc('xtick', labelsize=16)
-matplotlib.rc('ytick', labelsize=16)
-
-# Vary the simulation parameters for pytest
 @pytest.mark.parametrize("rotTest", [True, False])
 @pytest.mark.parametrize("thetaInit", [0, np.pi/18])
 @pytest.mark.parametrize("theta_Ref", [np.pi/36])
