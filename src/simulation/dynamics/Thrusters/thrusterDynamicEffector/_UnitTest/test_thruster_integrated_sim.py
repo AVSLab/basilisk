@@ -114,8 +114,8 @@ def thrusterIntegratedTest(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Get access to dynManager's translational state
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    sigmaRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubSigma)
 
 
     stopTime = 60.0*10.0

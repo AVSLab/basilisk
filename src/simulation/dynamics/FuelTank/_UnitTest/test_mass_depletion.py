@@ -119,8 +119,8 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
 
     unitTestSim.InitializeSimulation()
 
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    sigmaRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubSigma)
 
     stopTime = 60.0 * 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))

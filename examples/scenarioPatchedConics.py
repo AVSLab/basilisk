@@ -241,8 +241,8 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
     rN = unitTestSupport.EigenVector3d2np(posRef.getState())
     vN = unitTestSupport.EigenVector3d2np(velRef.getState())
@@ -282,8 +282,8 @@ def run(show_plots):
     # for the heliocentric position
     # and velocity of the spacecraft. Similar to scenarioOrbitManeuver.py, the states are retrieved,
     # manipulated and fed back to the simulation by:
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
     rN = unitTestSupport.EigenVector3d2np(posRef.getState())
     vN = unitTestSupport.EigenVector3d2np(velRef.getState())
 
@@ -337,8 +337,8 @@ def run(show_plots):
     sun.isCentralBody = False
     jupiter.isCentralBody = True
 
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
     rN = unitTestSupport.EigenVector3d2np(posRef.getState())
     vN = unitTestSupport.EigenVector3d2np(velRef.getState())
 
@@ -561,7 +561,7 @@ def run(show_plots):
         # close the plots being saved off to avoid over-writing old and new figures
         plt.close("all")
 
-    hubPos_N = scObject.dynManager.getStateObject("hubPosition")
+    hubPos_N = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
     dataPos = hubPos_N.getState()
     dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
 

@@ -217,7 +217,7 @@ def run(show_plots):
     np.set_printoptions(precision=16)
     
     # Get current spacecraft states
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
     vN = dataRec.v_BN_N[-1]
 
     # Apply delta V and set new velocity state

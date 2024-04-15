@@ -594,7 +594,7 @@ def run(show_plots):
     runDvBurn(T1, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Get current spacecraft states
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
     vN = scRec.v_BN_N[-1] - astRec.VelocityVector[-1]
 
     # Apply a delta V and set the new velocity state in the circular capture orbit
@@ -610,7 +610,7 @@ def run(show_plots):
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Get access to dynManager translational states for future access to the states
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
     # Retrieve the latest relative position and velocity components
     rN = scRec.r_BN_N[-1] - astRec.PositionVector[-1]

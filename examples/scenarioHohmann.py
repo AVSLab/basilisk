@@ -404,7 +404,7 @@ def run(show_plots, rFirst, rSecond):
     scSim.ExecuteSimulation()
 
     # Get access to translational states
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
     rN = scRec.r_BN_N[-1]
     vN = scRec.v_BN_N[-1]
 

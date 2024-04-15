@@ -491,7 +491,7 @@ def multiBodyGravity(show_plots):
     multiSim.AddModelToTask(unitTaskName, allGrav)
     posVelSig = [[0.], [0.], [0.]]
     allGrav.computeGravityField(posVelSig, posVelSig) #compute acceleration only considering the first body.
-    step1 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
+    step1 = newManager.getPropertyReference(allGrav.vehicleGravityPropName) #retrieve total gravitational acceleration in inertial frame
 
     #Create a message struct to place gravBody2&3 where they are wanted.
     localPlanetEditor.PositionVector = [-om.AU/10., 0., 0.]
@@ -515,7 +515,7 @@ def multiBodyGravity(show_plots):
     allGrav2.Reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav2)
     allGrav2.computeGravityField(posVelSig, posVelSig) #compute acceleration considering the first and second bodies.
-    step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
+    step2 = newManager.getPropertyReference(allGrav2.vehicleGravityPropName) #retrieve total gravitational acceleration in inertial frame
     # grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
     gravBody3 = gravityEffector.GravBodyData()
     gravBody3.planetName = "gravBody3_planet_data"
@@ -534,7 +534,7 @@ def multiBodyGravity(show_plots):
     allGrav3.Reset(0)
     multiSim.AddModelToTask(unitTaskName, allGrav3)
     allGrav3.computeGravityField(posVelSig, posVelSig) #comput acceleration considering all three bodies
-    step3 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
+    step3 = newManager.getPropertyReference(allGrav3.vehicleGravityPropName) #retrieve total gravitational acceleration in inertial frame
 
     step3 = [0., step3[0][0], step3[1][0], step3[2][0]] #add a first (time) column to use isArrayZero
 
