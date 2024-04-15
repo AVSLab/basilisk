@@ -46,7 +46,7 @@ public:
     void setOmegaPrime_FM_F(const Eigen::Vector3d omegaPrime_FM_F);                 //!< Setter method for omegaPrime_FM_F
     void setSigma_FM(const Eigen::MRPd sigma_FM);                                   //!< Setter method for sigma_FM
     void setR_MB_B(const Eigen::Vector3d r_MB_B);                                   //!< Setter method for r_MB_B
-    void setOmega_MB_B(const Eigen::Vector3d omega_MB_B);                           //!< Setter method omega_MB_B
+    void setOmega_MB_M(const Eigen::Vector3d omega_MB_M);                           //!< Setter method omega_MB_M
     void setOmegaPrime_MB_B(const Eigen::Vector3d omegaPrime_MB_B);                 //!< Setter method for omegaPrime_MB_B
     void setSigma_MB(const Eigen::MRPd sigma_MB);                                   //!< Setter method for sigma_MB
 
@@ -60,7 +60,7 @@ public:
     const Eigen::Vector3d getOmegaPrime_FM_F() const;                               //!< Getter method for omegaPrime_FM_F
     const Eigen::MRPd getSigma_FM() const;                                          //!< Getter method for sigma_FM
     const Eigen::Vector3d getR_MB_B() const;                                        //!< Getter method for r_MB_B
-    const Eigen::Vector3d getOmega_MB_B() const;                                    //!< Getter method omega_MB_B
+    const Eigen::Vector3d getOmega_MB_M() const;                                    //!< Getter method omega_MB_M
     const Eigen::Vector3d getOmegaPrime_MB_B() const;                               //!< Getter method for omegaPrime_MB_B
     const Eigen::MRPd getSigma_MB() const;                                          //!< Getter method for sigma_MB
 
@@ -103,7 +103,7 @@ private:
     Eigen::Vector3d omegaPrime_FM_F;                                                //!< [rad/s^2] Angular acceleration of the effector body frame F relative to the hub-fixed mount frame M expressed in F frame components
     Eigen::MRPd sigma_FM;                                                           //!< MRP attitude of the effector's body frame F relative to the hub-fixed mount frame M
     Eigen::Vector3d r_MB_B;                                                         //!< [m] Position vector describing the hub-fixed mount frame origin point M location relative to the hub frame origin point B expressed in B frame components
-    Eigen::Vector3d omega_MB_B;                                                     //!< [rad/s] Angular velocity of the hub-fixed mount frame M relative to the hub frame B expressed in B frame components
+    Eigen::Vector3d omega_MB_M;                                                     //!< [rad/s] Angular velocity of the hub-fixed mount frame M relative to the hub frame B expressed in M frame components
     Eigen::Vector3d omegaPrime_MB_B;                                                //!< [rad/s^2] Angular acceleration of the hub-fixed mount frame M relative to the hub frame B expressed in B frame components
     Eigen::MRPd sigma_MB;                                                           //!< MRP attitude of the hub-fixed frame M relative to the hub body frame B
 

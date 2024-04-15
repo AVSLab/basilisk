@@ -433,7 +433,7 @@ def set_prescribed_motion_effector(prescribed_motion_body):
     prescribed_motion_body.setOmega_FM_F([0.0, 0.0, 0.0])
     prescribed_motion_body.setOmegaPrime_FM_F([0.0, 0.0, 0.0])
     prescribed_motion_body.setSigma_FM([0.0, 0.0, 0.0])
-    prescribed_motion_body.setOmega_MB_B([0.0, 0.0, 0.0])
+    prescribed_motion_body.setOmega_MB_M([0.0, 0.0, 0.0])
     prescribed_motion_body.setOmegaPrime_MB_B([0.0, 0.0, 0.0])
     prescribed_motion_body.setSigma_MB([0.0, 0.0, 0.0])
     prescribed_motion_body.ModelTag = "prescribedMotionBody"

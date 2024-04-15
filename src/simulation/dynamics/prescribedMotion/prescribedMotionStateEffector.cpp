@@ -46,7 +46,7 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->IPntFc_F.setIdentity();
     this->r_FcF_F.setZero();
     this->r_MB_B.setZero();
-    this->omega_MB_B.setZero();
+    this->omega_MB_M.setZero();
     this->omegaPrime_MB_B.setZero();
     this->sigma_MB.setIdentity();
 
@@ -170,7 +170,8 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double callTime)
 
     // Compute omega_FB_B
     Eigen::Vector3d omega_FM_B = this->dcm_BF * this->omega_FM_F;
-    this->omega_FB_B = omega_FM_B + this->omega_MB_B;
+    Eigen::Vector3d omega_MB_B = dcm_BM * this->omega_MB_M;
+    this->omega_FB_B = omega_FM_B + omega_MB_B;
 
     // Compute omegaPrime_FB_B
     this->omegaTilde_FB_B = eigenTilde(this->omega_FB_B);
@@ -437,12 +438,12 @@ void PrescribedMotionStateEffector::setR_MB_B(const Eigen::Vector3d r_MB_B) {
     this->r_MB_B = r_MB_B;
 }
 
-/*! Setter method for omega_MB_B.
+/*! Setter method for omega_MB_M.
  @return void
- @param omega_MB_B [rad/s] Angular velocity of the hub-fixed mount frame M relative to the hub frame B expressed in B frame components
+ @param omega_MB_M [rad/s] Angular velocity of the hub-fixed mount frame M relative to the hub frame B expressed in M frame components
 */
-void PrescribedMotionStateEffector::setOmega_MB_B(const Eigen::Vector3d omega_MB_B) {
-    this->omega_MB_B = omega_MB_B;
+void PrescribedMotionStateEffector::setOmega_MB_M(const Eigen::Vector3d omega_MB_M) {
+    this->omega_MB_M = omega_MB_M;
 }
 
 /*! Setter method for omegaPrime_MB_B.
@@ -530,11 +531,11 @@ const Eigen::Vector3d PrescribedMotionStateEffector::getR_MB_B() const {
     return this->r_MB_B;
 }
 
-/*! Getter method for omega_MB_B.
+/*! Getter method for omega_MB_M.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getOmega_MB_B() const {
-    return this->omega_MB_B;
+const Eigen::Vector3d PrescribedMotionStateEffector::getOmega_MB_M() const {
+    return this->omega_MB_M;
 }
 
 /*! Getter method for omegaPrime_MB_B.
