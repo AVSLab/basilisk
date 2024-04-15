@@ -36,6 +36,34 @@ public:
     PrescribedMotionStateEffector();                                                //!< Constructor
     ~PrescribedMotionStateEffector();                                               //!< Destructor
 
+    void setMass(const double mass);                                                //!< Setter method for the effector mass
+    void setIPntFc_F(const Eigen::Matrix3d IPntFc_F);                               //!< Setter method for IPntFc_F
+    void setR_FcF_F(const Eigen::Vector3d r_FcF_F);                                 //!< Setter method for r_FcF_F
+    void setR_FM_M(const Eigen::Vector3d r_FM_M);                                   //!< Setter method for r_FM_M
+    void setRPrime_FM_M(const Eigen::Vector3d rPrime_FM_M);                         //!< Setter method for rPrime_FM_M
+    void setRPrimePrime_FM_M(const Eigen::Vector3d rPrimePrime_FM_M);               //!< Setter method for rPrimePrime_FM_M
+    void setOmega_FM_F(const Eigen::Vector3d omega_FM_F);                           //!< Setter method for omega_FM_F
+    void setOmegaPrime_FM_F(const Eigen::Vector3d omegaPrime_FM_F);                 //!< Setter method for omegaPrime_FM_F
+    void setSigma_FM(const Eigen::MRPd sigma_FM);                                   //!< Setter method for sigma_FM
+    void setR_MB_B(const Eigen::Vector3d r_MB_B);                                   //!< Setter method for r_MB_B
+    void setOmega_MB_B(const Eigen::Vector3d omega_MB_B);                           //!< Setter method omega_MB_B
+    void setOmegaPrime_MB_B(const Eigen::Vector3d omegaPrime_MB_B);                 //!< Setter method for omegaPrime_MB_B
+    void setSigma_MB(const Eigen::MRPd sigma_MB);                                   //!< Setter method for sigma_MB
+
+    double getMass() const;                                                         //!< Getter method for the effector mass
+    const Eigen::Matrix3d getIPntFc_F() const;                                      //!< Getter method for IPntFc_F
+    const Eigen::Vector3d getR_FcF_F() const;                                       //!< Getter method for r_FcF_F
+    const Eigen::Vector3d getR_FM_M() const;                                        //!< Getter method for r_FM_M
+    const Eigen::Vector3d getRPrime_FM_M() const;                                   //!< Getter method for rPrime_FM_M
+    const Eigen::Vector3d getRPrimePrime_FM_M() const;                              //!< Getter method for rPrimePrime_FM_M
+    const Eigen::Vector3d getOmega_FM_F() const;                                    //!< Getter method for omega_FM_F
+    const Eigen::Vector3d getOmegaPrime_FM_F() const;                               //!< Getter method for omegaPrime_FM_F
+    const Eigen::MRPd getSigma_FM() const;                                          //!< Getter method for sigma_FM
+    const Eigen::Vector3d getR_MB_B() const;                                        //!< Getter method for r_MB_B
+    const Eigen::Vector3d getOmega_MB_B() const;                                    //!< Getter method omega_MB_B
+    const Eigen::Vector3d getOmegaPrime_MB_B() const;                               //!< Getter method for omegaPrime_MB_B
+    const Eigen::MRPd getSigma_MB() const;                                          //!< Getter method for sigma_MB
+
     void Reset(uint64_t callTime) override;                                         //!< Reset method
     void UpdateState(uint64_t callTime) override;                                   //!< Method for updating the effector's states
     void computeDerivatives(double callTime,
