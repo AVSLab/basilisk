@@ -111,18 +111,6 @@ class BasiliskConan(ConanFile):
                 pass
 
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
-
-    try:
-        consoleReturn = str(subprocess.check_output(["conan", "remote", "list", "--raw"]))
-        conanRepos = ["bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan"
-                      ]
-        for item in conanRepos:
-            if item not in consoleReturn:
-                print("Configuring: " + statusColor + item + endColor)
-                cmdString = ["conan", "remote", "add"] + item.split(" ")
-                subprocess.check_call(cmdString)
-    except:
-        print("conan: " + failColor + "Error configuring conan repo information." + endColor)
         
     try:
         # enable this flag for access revised conan modules.
