@@ -196,9 +196,9 @@ class BasiliskConan(ConanFile):
             self.requires.add("xz_utils/5.4.0")
 
         if self.options.vizInterface or self.options.opNav:
-            self.requires.add("libsodium/1.0.18")
-            self.requires.add("cppzmq/4.3.0@bincrafters/stable")
             self.requires.add("protobuf/3.17.1#ffb2039b66b5a372f7a2a8a0b1ddfd13")
+            self.options['zeromq'].encryption = False  # Basilisk does not use data streaming encryption.
+            self.requires.add("cppzmq/4.5.0#7806ca4d6fc21b3f8af77ec4401ecf31")
 
     def configure(self):
         if self.options.clean:
