@@ -20,6 +20,8 @@ r"""
 Overview
 --------
 
+This script showcases how to create a Python Basilisk module.
+
 Demonstrates how to stabilize the attitude tumble without translational motion.
 This script sets up a 6-DOF spacecraft, but without specifying any orbital motion.  Thus,
 this scenario simulates the spacecraft translating in deep space.  The scenario is a
@@ -33,9 +35,6 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 As with :ref:`scenarioAttitudePointing`, when
 the simulation completes 3 plots are shown for the MRP attitude history, the rate
 tracking errors, as well as the control torque vector.
-
-This script showcases the new way of creating Python modules.
-For the deprecated way, refer to :ref:`scenarioAttitudePointingPyDEPRECATED`.
 
 The MRP PD control module in this script is a class called ``PythonMRPPD``.  Note that it has the
 same setup and update routines as are found with a C/C++ Basilisk module.

@@ -30,9 +30,13 @@ Basilisk Release Notes
     - automated documentation build system when code is pushed to the repo
 
 
-
 Version |release|
 -----------------
+- Removed the depreciated manner of creating python modules
+
+
+Version 2.3.0 (April 5, 2024)
+-----------------------------
 - Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
 - Fixed a bug where the legacy variable logging API would either, not log at all or log at a rate different to the
   requested rate.
@@ -42,6 +46,7 @@ Version |release|
   ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will 
   automatically increment the patch number. This allows users to reference/require specific versions of Basilisk 
   outside of the release cycle.
+  Online documentation is only built for the ``MAJOR.MINOR.0`` releases
 - updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
 - fixed a slew of compiler warnings when compiling with Xcode 15
 - Refactored the ``PrescribedTransMsgPayload`` message by renaming the message to
@@ -66,6 +71,21 @@ Version |release|
   specific tank model type.
 - Created a :ref:`singleAxisProfiler` simulation module to profile 1 DOF rotational prescribed motion about a
   single hub-fixed axis.
+- Added support for Vizard 2.1.6.1
+- Updated :ref:`MtbEffector` to include missing swig interface file for a message definition and corrected
+  message table in the module documentation.
+- Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedLinearTranslation`
+  simulation module. Note that the optional module variable ``coastOptionRampDuration`` has been renamed to
+  ``coastOptionBangDuration``. The setter and getter methods for this variable are renamed to reflect this change as
+  ``setCoastOptionBangDuration()`` and  ``getCoastOptionBangDuration()``, respectively. See the module documentation
+  for the current usage of this parameter and these associated methods.
+- Added a new commanded linear force array :ref:`LinearTranslationRigidBodyMsgPayload`.
+- Added a new single-axis translating effector :ref:`linearTranslationOneDOFStateEffector`.
+- Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedRotation1DOF`
+  simulation module. Note that the optional module variable ``coastOptionRampDuration`` has been renamed to
+  ``coastOptionBangDuration``. The setter and getter methods for this variable are renamed to reflect this change as
+  ``setCoastOptionBangDuration()`` and  ``getCoastOptionBangDuration()``, respectively. See the module documentation
+  for the current usage of this parameter and these associated methods.
 
 Version 2.2.1 (Dec. 22, 2023)
 -----------------------------

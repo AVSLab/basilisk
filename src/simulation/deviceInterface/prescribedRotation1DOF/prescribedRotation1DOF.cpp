@@ -27,8 +27,7 @@
 /*! This method self initializes the C-wrapped output messages.
  @return void
 */
-void PrescribedRotation1DOF::SelfInit()
-{
+void PrescribedRotation1DOF::SelfInit() {
     HingedRigidBodyMsg_C_init(&this->spinningBodyOutMsgC);
     PrescribedRotationMsg_C_init(&this->prescribedRotationOutMsgC);
 }
@@ -38,14 +37,12 @@ void PrescribedRotation1DOF::SelfInit()
  @param callTime [ns] Time the method is called
 */
 void PrescribedRotation1DOF::Reset(uint64_t callTime) {
-    // Check if the required input message is linked
     if (!this->spinningBodyInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "Error: prescribedRot.spinningBodyInMsg wasn't connected.");
+        _bskLog(this->bskLogger, BSK_ERROR, "prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
     }
 
     this->tInit = 0.0;
     this->theta = this->thetaInit;
-    this->thetaDotInit = 0.0;
     this->thetaDot = 0.0;
 
     // Set the initial convergence to true to enter the required loop in Update() method on the first pass
@@ -58,25 +55,15 @@ void PrescribedRotation1DOF::Reset(uint64_t callTime) {
  @param callTime [ns] Time the method is called
 */
 void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
-    // Create the buffer messages
-    HingedRigidBodyMsgPayload spinningBodyIn;
-    HingedRigidBodyMsgPayload spinningBodyOut;
-    PrescribedRotationMsgPayload prescribedRotationOut;
-
-    // Zero the output messages
-    spinningBodyOut = HingedRigidBodyMsgPayload();
-    prescribedRotationOut = PrescribedRotationMsgPayload();
-
     // Read the input message
-    spinningBodyIn = HingedRigidBodyMsgPayload();
+    HingedRigidBodyMsgPayload spinningBodyIn = HingedRigidBodyMsgPayload();
     if (this->spinningBodyInMsg.isWritten()) {
         spinningBodyIn = this->spinningBodyInMsg();
     }
 
     /* This loop is entered (a) initially and (b) when each rotation is complete. The parameters used to profile the
     spinning body rotation are updated in this statement. */
-    if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence)
-    {
+    if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Update the initial time as the current simulation time
         this->tInit = callTime * NANO2SEC;
 
@@ -86,211 +73,551 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
         // Store the reference angle
         this->thetaRef = spinningBodyIn.theta;
 
+        // Set the parameters required to profile the rotation
+        if (this->thetaInit != this->thetaRef) {
+            this->computeRotationParameters();
+        } else {
+            this->t_f = this->tInit;
+        }
+
         // Set the convergence to false until the rotation is complete
         this->convergence = false;
-
-        // Set the parameters required to profile the rotation
-        if (this->coastOptionRampDuration > 0.0) {
-            this->computeCoastParameters();
-        } else {
-            this->computeParametersNoCoast();
-        }
     }
-
-    // Store the current simulation time
-    double t = callTime * NANO2SEC;
 
     // Compute the scalar rotational states at the current simulation time
-    if (this->coastOptionRampDuration > 0.0) {
-        if (this->isInFirstRampSegment(t)) {
-            this->computeFirstRampSegment(t);
-        } else if (this->isInCoastSegment(t)) {
-            this->computeCoastSegment(t);
-        } else if (this->isInSecondRampSegment(t)) {
-            this->computeSecondRampSegment(t);
-        } else {
-            this->computeRotationComplete();
-        }
-    } else {
-        if (this->isInFirstRampSegmentNoCoast(t)) {
-            this->computeFirstRampSegment(t);
-        } else if (this->isInSecondRampSegmentNoCoast(t)) {
-            this->computeSecondRampSegment(t);
-        } else {
-            this->computeRotationComplete();
-        }
-    }
+    this->computeCurrentState(callTime * NANO2SEC);
 
-    // [rad/s] Angular velocity of frame F wrt frame M in F frame components
-    Eigen::Vector3d omega_FM_F = this->thetaDot * this->rotHat_M;
-
-    // [rad/s^2] B frame time derivative of omega_FM_F in F frame components
-    Eigen::Vector3d omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;
-
-    // MRP attitude of spinning body frame F with respect to frame M
-    Eigen::Vector3d sigma_FM = this->computeSigma_FM();
-
-    // Copy the module variables to the prescribedRotationOut output message
-    eigenVector3d2CArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
-    eigenVector3d2CArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
-    eigenVector3d2CArray(sigma_FM, prescribedRotationOut.sigma_FM);
-
-    // Copy the scalar variables to the spinningBodyOut output message
-    spinningBodyOut.theta = this->theta;
-    spinningBodyOut.thetaDot = this->thetaDot;
-
-    // Write the output messages
-    this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
-    this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
-    PrescribedRotationMsg_C_write(&prescribedRotationOut, &prescribedRotationOutMsgC, this->moduleID, callTime);
-    HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
+    // Write the module output messages
+    this->writeOutputMessages(callTime);
 }
 
-/*! This method determines if the current time is within the first ramp segment for the coast option.
+/*! This intermediate method groups the calculation of rotation parameters into a single method.
+ @return void
+*/
+void PrescribedRotation1DOF::computeRotationParameters() {
+    if (this->coastOptionBangDuration > 0.0) {
+        if (this->smoothingDuration > 0.0) {
+            this->computeSmoothedBangCoastBangParameters();
+        } else {
+            this->computeBangCoastBangParametersNoSmoothing();
+        }
+    } else {
+        if (this->smoothingDuration > 0.0) {
+            this->computeSmoothedBangBangParameters();
+        } else {
+            this->computeBangBangParametersNoSmoothing();
+        }
+    }
+}
+
+/*! This method computes the required parameters for the rotation with a non-smoothed bang-bang acceleration profile.
+ @return void
+*/
+void PrescribedRotation1DOF::computeBangBangParametersNoSmoothing() {
+    // Determine the total time required for the rotation
+    double totalRotTime = sqrt(((0.5 * fabs(this->thetaRef - this->thetaInit)) * 8.0) / this->thetaDDotMax);
+
+    // Determine the time when the rotation is complete t_f
+    this->t_f = this->tInit + totalRotTime;
+
+    // Determine the time halfway through the rotation
+    this->t_b1 = this->tInit + (totalRotTime / 2.0);
+
+    // Define the parabolic constants for the first and second half of the rotation
+    this->a = 0.5 * (this->thetaRef - this->thetaInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+    this->b = -0.5 * (this->thetaRef - this->thetaInit) / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
+}
+
+/*! This method computes the required parameters for the rotation with a non-smoothed bang-coast-bang acceleration profile.
+ @return void
+*/
+void PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing() {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+
+    // Determine the time at the end of the first bang segment t_b1
+    this->t_b1 = this->tInit + this->coastOptionBangDuration;
+
+    // Determine the hub-relative angle and rate at time t_b1
+    this->theta_tb1 = sign * 0.5 * this->thetaDDotMax * this->coastOptionBangDuration
+                         * this->coastOptionBangDuration + this->thetaInit;
+    this->thetaDot_tb1 = sign * this->thetaDDotMax * this->coastOptionBangDuration;
+
+    // Determine the angle traveled during the coast period
+    double deltaThetaCoast = this->thetaRef - this->thetaInit - 2.0 * (this->theta_tb1 - this->thetaInit);
+
+    // Determine the duration of the coast segment coastDuration
+    double coastDuration = fabs(deltaThetaCoast / this->thetaDot_tb1);
+
+    // Determine the time at the end of the coast segment t_c
+    this->t_c = this->t_b1 + coastDuration;
+
+    // Determine the hub-relative angle at time t_c
+    double theta_tc = this->theta_tb1 + deltaThetaCoast;
+
+    // Determine the time when the rotation is complete t_f
+    this->t_f = this->t_c + this->coastOptionBangDuration;
+
+    // Define the parabolic constants for the first and second bang segments of the rotation
+    this->a = (this->theta_tb1 - this->thetaInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+    this->b = -(this->thetaRef - theta_tc) / ((this->t_c - this->t_f) * (this->t_c - this->t_f));
+}
+
+/*! This method computes the required parameters for the rotation with a smoothed bang-bang acceleration profile.
+ @return void
+*/
+void PrescribedRotation1DOF::computeSmoothedBangBangParameters() {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+
+    // Determine the time at the end of the first smoothing segment t_s1
+    this->t_s1 = this->tInit + this->smoothingDuration;
+
+    // Determine the hub-relative angle and rate at time t_s1
+    this->thetaDot_ts1 = sign * 0.5 * this->thetaDDotMax * this->smoothingDuration;
+    this->theta_ts1 = sign * (3.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration
+                         + this->thetaInit;
+
+    // Determine the duration of the bang segment bangDuration
+    double aTerm = sign * 0.5 * this->thetaDDotMax;
+    double bTerm = (sign * this->thetaDDotMax * this->smoothingDuration + this->thetaDot_ts1) / aTerm;
+    double cTerm = (sign * (2.0 / 5.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration
+                   + this->thetaDot_ts1 * this->smoothingDuration + this->theta_ts1
+                   - 0.5 * (this->thetaRef + this->thetaInit)) / aTerm;
+    double bangDuration = (- bTerm + sqrt(bTerm * bTerm - 4.0 * cTerm)) / 2.0;
+
+    // Determine the time at the end of the first bang segment t_b1
+    this->t_b1 = this->t_s1 + bangDuration;
+
+    // Determine the hub-relative angle and rate at time t_b1
+    this->thetaDot_tb1 = sign * this->thetaDDotMax * bangDuration + this->thetaDot_ts1;
+    this->theta_tb1 = sign * 0.5 * this->thetaDDotMax * bangDuration * bangDuration
+                         + this->thetaDot_ts1 * bangDuration + this->theta_ts1;
+
+    // Determine the time at the end of the second smoothing segment t_s2
+    this->t_s2 = this->t_b1 + 2.0 * this->smoothingDuration;
+
+    // Determine the hub-relative angle and rate at time t_s2
+    this->thetaDot_ts2 = this->thetaDot_tb1;
+    this->theta_ts2 = sign * (4.0 / 5.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration
+                         + this->thetaDot_tb1 * 2.0 * this->smoothingDuration + this->theta_tb1;
+
+    // Determine the time at the end of the second bang segment t_b2
+    this->t_b2 = this->t_s2 + bangDuration;
+
+    // Determine the hub-relative angle and rate at time t_b2
+    this->thetaDot_tb2 = - sign * this->thetaDDotMax * bangDuration + this->thetaDot_ts2;
+    this->theta_tb2 = - sign * 0.5 * this->thetaDDotMax * bangDuration * bangDuration
+                         + this->thetaDot_ts2 * bangDuration + this->theta_ts2;
+
+    // Determine the time when the rotation is complete t_f
+    this->t_f = this->t_b2 + this->smoothingDuration;
+}
+
+/*! This method computes the required parameters for the rotation with a smoothed bang-coast-bang acceleration profile.
+ @return void
+*/
+void PrescribedRotation1DOF::computeSmoothedBangCoastBangParameters() {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+
+    // Determine the time at the end of the first smoothing segment t_s1
+    this->t_s1 = this->tInit + this->smoothingDuration;
+
+    // Determine the hub-relative angle and rate at time t_s1
+    this->thetaDot_ts1 = sign * 0.5 * this->thetaDDotMax * this->smoothingDuration;
+    this->theta_ts1 = sign * (3.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration
+                         + this->thetaInit;
+
+    // Determine the time at the end of the first bang segment t_b1
+    this->t_b1 = this->t_s1 + this->coastOptionBangDuration;
+
+    // Determine the hub-relative angle and rate at time t_b1
+    this->thetaDot_tb1 = sign * this->thetaDDotMax * this->coastOptionBangDuration + this->thetaDot_ts1;
+    this->theta_tb1 = sign * 0.5 * this->thetaDDotMax * this->coastOptionBangDuration
+                         * this->coastOptionBangDuration + this->thetaDot_ts1 * this->coastOptionBangDuration
+                         + this->theta_ts1;
+
+    // Determine the time at the end of the second smoothing segment t_s2
+    this->t_s2 = this->t_b1 + this->smoothingDuration;
+
+    // Determine the hub-relative angle and rate at time t_s2
+    this->thetaDot_ts2 = sign * 0.5 * this->thetaDDotMax * this->smoothingDuration + this->thetaDot_tb1;
+    this->theta_ts2 = sign * (7.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration
+                         + this->thetaDot_tb1 * this->smoothingDuration + this->theta_tb1;
+
+    // Compute the time at the end of the coast segment t_c
+    double deltaThetaCoast = (this->thetaRef - this->thetaInit) - 2 * (this->theta_ts2 - this->thetaInit);
+    this->t_c = (deltaThetaCoast / this->thetaDot_ts2) + this->t_s2;
+
+    // Determine the hub-relative angle and rate at time t_c
+    this->thetaDot_tc = this->thetaDot_ts2;
+    this->theta_tc = this->thetaDot_ts2 * (this->t_c - this->t_s2) + this->theta_ts2;
+
+    // Determine the time at the end of the third smoothing segment t_s3
+    this->t_s3 = this->t_c + this->smoothingDuration;
+
+    // Determine the hub-relative angle and rate at time t_s3
+    this->thetaDot_ts3 = - sign * 0.5 * this->thetaDDotMax * this->smoothingDuration + this->thetaDot_tc;
+    this->theta_ts3 = - sign * (3.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration
+                         + this->thetaDot_tc * this->smoothingDuration + this->theta_tc;
+
+    // Determine the time at the end of the second bang segment t_b2
+    this->t_b2 = this->t_s3 + this->coastOptionBangDuration;
+
+    // Determine the hub-relative angle and rate at time t_b2
+    this->thetaDot_tb2 = - sign * this->thetaDDotMax * this->coastOptionBangDuration + this->thetaDot_ts3;
+    this->theta_tb2 = - sign * 0.5 * this->thetaDDotMax * this->coastOptionBangDuration
+                         * this->coastOptionBangDuration + this->thetaDot_ts3 * this->coastOptionBangDuration
+                         + this->theta_ts3;
+
+    // Determine the time when the rotation is complete t_f
+    this->t_f = this->t_b2 + this->smoothingDuration;
+}
+
+/*! This intermediate method groups the calculation of the current rotational states into a single method.
+ @return void
+*/
+void PrescribedRotation1DOF::computeCurrentState(double t) {
+    if (this->coastOptionBangDuration > 0.0) {
+        if(this->smoothingDuration > 0.0) {
+            if (this->isInFirstSmoothedSegment(t)) {
+                this->computeFirstSmoothedSegment(t);
+            } else if (this->isInFirstBangSegment(t)) {
+                this->computeFirstBangSegment(t);
+            } else if (this->isInSecondSmoothedSegment(t)) {
+                this->computeSecondSmoothedSegment(t);
+            } else if (this->isInCoastSegment(t)) {
+                this->computeCoastSegment(t);
+            } else if (this->isInThirdSmoothedSegment(t)) {
+                this->computeThirdSmoothedSegment(t);
+            } else if (this->isInSecondBangSegment(t)) {
+                this->computeSecondBangSegment(t);
+            } else if (this->isInFourthSmoothedSegment(t)) {
+                this->computeFourthSmoothedSegment(t);
+            } else {
+                this->computeRotationComplete();
+            }
+        } else {
+            if (this->isInFirstBangSegment(t)) {
+                this->computeFirstBangSegment(t);
+            } else if (this->isInCoastSegment(t)) {
+                this->computeCoastSegment(t);
+            } else if (this->isInSecondBangSegment(t)) {
+                this->computeSecondBangSegment(t);
+            } else {
+                this->computeRotationComplete();
+            }
+        }
+    } else {
+        if (this->smoothingDuration > 0.0) {
+            if (this->isInFirstSmoothedSegment(t)) {
+                this->computeFirstSmoothedSegment(t);
+            } else if (this->isInFirstBangSegment(t)) {
+                this->computeFirstBangSegment(t);
+            } else if (this->isInSecondSmoothedSegment(t)) {
+                this->computeSecondSmoothedSegment(t);
+            } else if (this->isInSecondBangSegment(t)) {
+                this->computeSecondBangSegment(t);
+            } else if (this->isInThirdSmoothedSegment(t)) {
+                this->computeThirdSmoothedSegment(t);
+            } else {
+                this->computeRotationComplete();
+            }
+        } else {
+            if (this->isInFirstBangSegment(t)) {
+                this->computeFirstBangSegment(t);
+            } else if (this->isInSecondBangSegment(t)) {
+                this->computeSecondBangSegment(t);
+            } else {
+                this->computeRotationComplete();
+            }
+        }
+    }
+}
+
+/*! This method determines if the current time is within the first bang segment.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedRotation1DOF::isInFirstRampSegment(double t) const {
-    return (t <= this->tr && this->tf - this->tInit != 0);
+bool PrescribedRotation1DOF::isInFirstBangSegment(double t) const {
+    if (this->smoothingDuration > 0.0) {
+        return (t > this->t_s1 && t <= this->t_b1 && this->t_f - this->tInit != 0.0);
+    } else {
+        return (t <= this->t_b1 && this->t_f - this->tInit != 0.0);
+    }
 }
 
-/*! This method determines if the current time is within the coast segment for the coast option.
+/*! This method determines if the current time is within the second bang segment.
+ @return bool
+ @param t [s] Current simulation time
+*/
+bool PrescribedRotation1DOF::isInSecondBangSegment(double t) const {
+    if (this->coastOptionBangDuration > 0.0) {
+        if (this->smoothingDuration > 0.0) {
+            return (t > this->t_s3 && t <= this->t_b2 && this->t_f - this->tInit != 0.0);
+        } else {
+            return (t > this->t_c && t <= this->t_f && this->t_f - this->tInit != 0.0);
+        }
+    } else {
+        if (this->smoothingDuration > 0.0) {
+            return (t > this->t_s2 && t <= this->t_b2 && this->t_f - this->tInit != 0.0);
+        } else {
+            return (t > this->t_b1 && t <= this->t_f && this->t_f - this->tInit != 0.0);
+        }
+    }
+}
+
+/*! This method determines if the current time is within the first smoothing segment for the smoothed profiler options.
+ @return bool
+ @param t [s] Current simulation time
+*/
+bool PrescribedRotation1DOF::isInFirstSmoothedSegment(double t) const {
+    return (t <= this->t_s1 && this->t_f - this->tInit != 0.0);
+}
+
+/*! This method determines if the current time is within the second smoothing segment for the smoothed profiler options..
+ @return bool
+ @param t [s] Current simulation time
+*/
+bool PrescribedRotation1DOF::isInSecondSmoothedSegment(double t) const {
+    return (t > this->t_b1 && t <= this->t_s2 && this->t_f - this->tInit != 0.0);
+}
+
+/*! This method determines if the current time is within the third smoothing segment for the smoothed profiler options.
+ @return bool
+ @param t [s] Current simulation time
+*/
+bool PrescribedRotation1DOF::isInThirdSmoothedSegment(double t) const {
+    if (this->coastOptionBangDuration > 0.0) {
+        return (t > this->t_c && t <= this->t_s3 && this->t_f - this->tInit != 0.0);
+    } else {
+        return (t > this->t_b2 && t <= this->t_f && this->t_f - this->tInit != 0.0);
+    }
+}
+
+/*! This method determines if the current time is within the fourth smoothing segment for the smoothed bang-coast-bang option.
+ @return bool
+ @param t [s] Current simulation time
+*/
+bool PrescribedRotation1DOF::isInFourthSmoothedSegment(double t) const {
+    return (t > this->t_b2 && t <= this->t_f && this->t_f - this->tInit != 0.0);
+}
+
+/*! This method determines if the current time is within the coast segment.
  @return bool
  @param t [s] Current simulation time
 */
 bool PrescribedRotation1DOF::isInCoastSegment(double t) const {
-    return (t > this->tr && t <= this->tc && this->tf - this->tInit != 0);
-}
-
-/*! This method determines if the current time is within the second ramp segment for the coast option.
- @return bool
- @param t [s] Current simulation time
-*/
-bool PrescribedRotation1DOF::isInSecondRampSegment(double t) const {
-    return (t > this->tc && t <= this->tf && this->tf - this->tInit != 0);
-}
-
-/*! This method computes the required parameters for the rotation with a coast period.
- @return void
-*/
-void PrescribedRotation1DOF::computeCoastParameters() {
-    if (this->thetaInit != this->thetaRef) {
-        // Determine the time at the end of the first ramp segment
-        this->tr = this->tInit + this->coastOptionRampDuration;
-
-        // Determine the angle and angle rate at the end of the ramp segment/start of the coast segment
-        if (this->thetaInit < this->thetaRef) {
-            this->theta_tr = (0.5 * this->thetaDDotMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
-                             + (this->thetaDotInit * this->coastOptionRampDuration) + this->thetaInit;
-            this->thetaDot_tr = this->thetaDDotMax * this->coastOptionRampDuration + this->thetaDotInit;
-        } else {
-            this->theta_tr = - ((0.5 * this->thetaDDotMax * this->coastOptionRampDuration * this->coastOptionRampDuration)
-                                + (this->thetaDotInit * this->coastOptionRampDuration)) + this->thetaInit;
-            this->thetaDot_tr = - this->thetaDDotMax * this->coastOptionRampDuration + this->thetaDotInit;
-        }
-
-        // Determine the angle traveled during the coast period
-        double deltaThetaCoast = this->thetaRef - this->thetaInit - 2 * (this->theta_tr - this->thetaInit);
-
-        // Determine the time duration of the coast segment
-        double tCoast = fabs(deltaThetaCoast) / fabs(this->thetaDot_tr);
-
-        // Determine the time at the end of the coast segment
-        this->tc = this->tr + tCoast;
-
-        // Determine the angle at the end of the coast segment
-        this->theta_tc = this->theta_tr + deltaThetaCoast;
-
-        // Determine the time at the end of the rotation
-        this->tf = this->tc + this->coastOptionRampDuration;
-
-        // Define the parabolic constants for the first and second ramp segments of the rotation
-        this->a = (this->theta_tr - this->thetaInit) / ((this->tr - this->tInit) * (this->tr - this->tInit));
-        this->b = - (this->thetaRef - this->theta_tc) / ((this->tc - this->tf) * (this->tc - this->tf));
-    } else { // If the initial angle equals the reference angle, no rotation is required. Setting the final time
-        // equal to the initial time ensures the correct statement is entered when the rotational states are
-        // profiled below
-        this->tf = this->tInit;
+    if (this->smoothingDuration > 0.0) {
+        return (t > this->t_s2 && t <= this->t_c && this->t_f - this->tInit != 0.0);
+    } else{
+        return (t > this->t_b1 && t <= this->t_c && this->t_f - this->tInit != 0.0);
     }
 }
 
-/*! This method computes the scalar rotational states for the coast option coast period.
+/*! This method computes the scalar rotational states for the first bang segment.
+ @return void
+ @param t [s] Current simulation time
+*/
+void PrescribedRotation1DOF::computeFirstBangSegment(double t) {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+    this->thetaDDot = sign * this->thetaDDotMax;
+
+    if (this->smoothingDuration > 0.0) {
+        this->thetaDot = this->thetaDDot * (t - this->t_s1) + this->thetaDot_ts1;
+        this->theta = 0.5 * this->thetaDDot * (t - this->t_s1) * (t - this->t_s1)
+                         + this->thetaDot_ts1 * (t - this->t_s1) + this->theta_ts1;
+    } else {
+        this->thetaDot = this->thetaDDot * (t - this->tInit);
+        this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
+    }
+}
+
+/*! This method computes the scalar rotational states for the second bang segment.
+ @return void
+ @param t [s] Current simulation time
+*/
+void PrescribedRotation1DOF::computeSecondBangSegment(double t) {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+    this->thetaDDot = - sign * this->thetaDDotMax;
+
+    if (this->smoothingDuration > 0.0) {
+        if (this->coastOptionBangDuration > 0.0) {
+            this->thetaDot = this->thetaDDot * (t - this->t_s3) + this->thetaDot_ts3;
+            this->theta = 0.5 * this->thetaDDot * (t - this->t_s3) * (t - this->t_s3)
+                             + this->thetaDot_ts3 * (t - this->t_s3) + this->theta_ts3;
+        } else {
+            this->thetaDot = this->thetaDDot * (t - this->t_s2) + this->thetaDot_ts2;
+            this->theta = 0.5 * this->thetaDDot * (t - this->t_s2) * (t - this->t_s2)
+                             + this->thetaDot_ts2 * (t - this->t_s2) + this->theta_ts2;
+        }
+    } else {
+        this->thetaDot = this->thetaDDot * (t - this->t_f);
+        this->theta = this->b * (t - this->t_f) * (t - this->t_f) + this->thetaRef;
+    }
+}
+
+/*! This method computes the first smoothing segment scalar rotational states for the smoothed profiler options.
+ @return void
+ @param t [s] Current simulation time
+*/
+void PrescribedRotation1DOF::computeFirstSmoothedSegment(double t) {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+
+    double term1 = (3.0 * (t - this->tInit) * (t - this->tInit)) / (this->smoothingDuration * this->smoothingDuration);
+    double term2 = (2.0 * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
+                   / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term3 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit))
+                   / (this->smoothingDuration * this->smoothingDuration);
+    double term4 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
+                   / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term5 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
+                   / (4.0 * this->smoothingDuration * this->smoothingDuration);
+    double term6 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
+                   / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+
+    this->thetaDDot = sign * this->thetaDDotMax * (term1 - term2);
+    this->thetaDot = sign * this->thetaDDotMax * (term3 - term4);
+    this->theta = sign * this->thetaDDotMax * (term5 - term6) + this->thetaInit;
+}
+
+/*! This method computes the second smoothing segment scalar rotational states for the smoothed profiler options.
+ @return void
+ @param t [s] Current simulation time
+*/
+void PrescribedRotation1DOF::computeSecondSmoothedSegment(double t) {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+
+    double term1;
+    double term2;
+    double term3;
+    double term4;
+    double term5;
+    double term6;
+    double term7;
+
+    if (this->coastOptionBangDuration > 0.0) {
+        term1 = (3.0 * (t - this->t_b1) * (t - this->t_b1)) / (this->smoothingDuration * this->smoothingDuration);
+        term2 = (2.0 * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term5 = 0.5 * (t - this->t_b1) * (t - this->t_b1);
+        term6 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (4.0 * this->smoothingDuration * this->smoothingDuration);
+        term7 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    } else {
+        term1 = (3.0 * (t - this->t_b1) * (t - this->t_b1)) / (2.0 * this->smoothingDuration * this->smoothingDuration);
+        term2 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (2.0 * this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (8.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term5 = 0.5 * (t - this->t_b1) * (t - this->t_b1);
+        term6 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (8.0 * this->smoothingDuration * this->smoothingDuration);
+        term7 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
+                / (40.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    }
+
+    this->thetaDDot = sign * this->thetaDDotMax * (1.0 - term1 + term2);
+    this->thetaDot = sign * this->thetaDDotMax * ((t - this->t_b1) - term3 + term4) + this->thetaDot_tb1;
+    this->theta = sign * this->thetaDDotMax * (term5 - term6 + term7)
+                     + this->thetaDot_tb1 * (t - this->t_b1) + this->theta_tb1;
+}
+
+/*! This method computes the third smoothing segment scalar rotational states for the smoothed profiler options.
+ @return void
+ @param t [s] Current simulation time
+*/
+void PrescribedRotation1DOF::computeThirdSmoothedSegment(double t) {
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+
+    double term1;
+    double term2;
+    double term3;
+    double term4;
+    double term5;
+    double term6;
+    double term7;
+
+    if (this->coastOptionBangDuration > 0.0) {
+        term1 = (3.0 * (t - this->t_c) * (t - this->t_c)) / (this->smoothingDuration * this->smoothingDuration);
+        term2 = (2.0 * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
+                / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c))
+                / (this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
+                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term5 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
+                / (4.0 * this->smoothingDuration * this->smoothingDuration);
+        term6 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
+                / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+
+        this->thetaDDot = - sign * this->thetaDDotMax * (term1 - term2);
+        this->thetaDot = - sign * this->thetaDDotMax * (term3 - term4) + this->thetaDot_tc;
+        this->theta = - sign * this->thetaDDotMax * (term5 - term6) + this->thetaDot_tc * (t - this->t_c) + this->theta_tc;
+    } else {
+        term1 = (3.0 * (t - this->t_b2) * (t - this->t_b2)) / (this->smoothingDuration * this->smoothingDuration);
+        term2 = (2.0 * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
+                / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
+                / (this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
+                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term5 = - 0.5 * (t - this->t_b2) * (t - this->t_b2);
+        term6 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
+                / (4.0 * this->smoothingDuration * this->smoothingDuration);
+        term7 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
+                / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+
+        this->thetaDDot = sign * this->thetaDDotMax * ( - 1.0 + term1 - term2);
+        this->thetaDot = sign * this->thetaDDotMax * ( - (t - this->t_b2) + term3 - term4) + this->thetaDot_tb2;
+        this->theta = sign * this->thetaDDotMax * (term5 + term6 - term7) + this->thetaDot_tb2 * (t - this->t_b2)
+                         + this->theta_tb2;
+    }
+}
+
+/*! This method computes the fourth smoothing segment scalar rotational states for the smoothed bang-coast-bang option.
+ @return void
+ @param t [s] Current simulation time
+*/
+void PrescribedRotation1DOF::computeFourthSmoothedSegment(double t) {
+    double term1 = (3.0 * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
+    double term2 = (2.0 * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
+                   / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term3 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t))
+                   / (this->smoothingDuration * this->smoothingDuration);
+    double term4 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
+                   / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term5 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
+                   / (4.0 * this->smoothingDuration * this->smoothingDuration);
+    double term6 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
+                   / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+
+    double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
+
+    this->thetaDDot = - sign * this->thetaDDotMax * (term1 - term2);
+    this->thetaDot = sign * this->thetaDDotMax * (term3 - term4);
+    this->theta = - sign * this->thetaDDotMax * (term5 - term6) + this->thetaRef;
+}
+
+/*! This method computes the coast segment scalar rotational states
  @return void
  @param t [s] Current simulation time
 */
 void PrescribedRotation1DOF::computeCoastSegment(double t) {
     this->thetaDDot = 0.0;
-    this->thetaDot = this->thetaDot_tr;
-    this->theta = this->thetaDot_tr * (t - this->tr) + this->theta_tr;
-}
 
-/*! This method determines if the current time is within the first ramp segment for the no coast option.
- @return bool
- @param t [s] Current simulation time
-*/
-bool PrescribedRotation1DOF::isInFirstRampSegmentNoCoast(double t) const {
-    return (t <= this->ts && this->tf - this->tInit != 0);
-}
-
-/*! This method determines if the current time is within the second ramp segment for the no coast option.
- @return bool
- @param t [s] Current simulation time
-*/
-bool PrescribedRotation1DOF::isInSecondRampSegmentNoCoast(double t) const {
-    return (t > this->ts && t <= this->tf && this->tf - this->tInit != 0);
-}
-
-/*! This method computes the required parameters for the rotation with no coast period.
- @return void
-*/
-void PrescribedRotation1DOF::computeParametersNoCoast() {
-    // Determine the total time required for the rotation
-    double totalRotTime = sqrt(((0.5 * fabs(this->thetaRef - this->thetaInit)) * 8) / this->thetaDDotMax);
-
-    // Determine the time at the end of the rotation
-    this->tf = this->tInit + totalRotTime;
-
-    // Determine the time halfway through the rotation
-    this->ts = this->tInit + (totalRotTime / 2);
-
-    // Define the parabolic constants for the first and second half of the rotation
-    this->a = 0.5 * (this->thetaRef - this->thetaInit) / ((this->ts - this->tInit) * (this->ts - this->tInit));
-    this->b = -0.5 * (this->thetaRef - this->thetaInit) / ((this->ts - this->tf) * (this->ts - this->tf));
-}
-
-/*! This method computes the scalar rotational states for the first ramp segment.
- @return void
- @param t [s] Current simulation time
-*/
-void PrescribedRotation1DOF::computeFirstRampSegment(double t) {
-    // The acceleration during the first ramp segment is positive if the reference angle is greater than
-    // the initial angle. The acceleration is negative during the first ramp segment if the reference angle
-    // is less than the initial angle
-    if (this->thetaInit < this->thetaRef) {
-        this->thetaDDot = this->thetaDDotMax;
+    if (this->smoothingDuration > 0.0) {
+        this->thetaDot = this->thetaDot_ts2;
+        this->theta = this->thetaDot_ts2 * (t - this->t_s2) + this->theta_ts2;
     } else {
-        this->thetaDDot = - this->thetaDDotMax;
+        this->thetaDot = this->thetaDot_tb1;
+        this->theta = this->thetaDot_tb1 * (t - this->t_b1) + this->theta_tb1;
     }
-    this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit;
-    this->theta = this->a * (t - this->tInit) * (t - this->tInit) + this->thetaInit;
-}
-
-/*! This method computes the scalar rotational states for the second ramp segment.
- @return void
- @param t [s] Current simulation time
-*/
-void PrescribedRotation1DOF::computeSecondRampSegment(double t) {
-    // The acceleration during the second ramp segment is negative if the reference angle is greater than
-    // the initial angle. The acceleration is positive during the second ramp segment if the reference angle
-    // is less than the initial angle
-    if (this->thetaInit < this->thetaRef) {
-        this->thetaDDot = - this->thetaDDotMax;
-    } else {
-        this->thetaDDot = this->thetaDDotMax;
-    }
-    this->thetaDot = this->thetaDDot * (t - this->tInit) + this->thetaDotInit
-                     - this->thetaDDot * (this->tf - this->tInit);
-    this->theta = this->b * (t - this->tf) * (t - this->tf) + this->thetaRef;
 }
 
 /*! This method computes the scalar rotational states when the rotation is complete.
@@ -301,6 +628,41 @@ void PrescribedRotation1DOF::computeRotationComplete() {
     this->thetaDot = 0.0;
     this->theta = this->thetaRef;
     this->convergence = true;
+}
+
+/*! This method writes the module output messages and computes the output message data.
+ @return void
+*/
+void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime) {
+    // Create the output buffer messages
+    HingedRigidBodyMsgPayload spinningBodyOut;
+    PrescribedRotationMsgPayload prescribedRotationOut;
+
+    // Zero the output messages
+    spinningBodyOut = HingedRigidBodyMsgPayload();
+    prescribedRotationOut = PrescribedRotationMsgPayload();
+
+    // Compute the angular velocity of frame F wrt frame M in F frame components
+    Eigen::Vector3d omega_FM_F = this->thetaDot * this->rotHat_M;  // [rad/s]
+
+    // Compute the B frame time derivative of omega_FM_F in F frame components
+    Eigen::Vector3d omegaPrime_FM_F = this->thetaDDot * this->rotHat_M;  // [rad/s^2]
+
+    // Compute the MRP attitude of spinning body frame F with respect to frame M
+    Eigen::Vector3d sigma_FM = this->computeSigma_FM();
+
+    // Copy the module variables to the output buffer messages
+    spinningBodyOut.theta = this->theta;
+    spinningBodyOut.thetaDot = this->thetaDot;
+    eigenVector3d2CArray(omega_FM_F, prescribedRotationOut.omega_FM_F);
+    eigenVector3d2CArray(omegaPrime_FM_F, prescribedRotationOut.omegaPrime_FM_F);
+    eigenVector3d2CArray(sigma_FM, prescribedRotationOut.sigma_FM);
+
+    // Write the output messages
+    this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
+    this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
+    HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
+    PrescribedRotationMsg_C_write(&prescribedRotationOut, &prescribedRotationOutMsgC, this->moduleID, callTime);
 }
 
 /*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_FM
@@ -332,12 +694,12 @@ Eigen::Vector3d PrescribedRotation1DOF::computeSigma_FM() {
     return cArray2EigenVector3d(sigma_FM_array);
 }
 
-/*! Setter method for the coast option ramp duration.
+/*! Setter method for the coast option bang duration.
  @return void
- @param rampDuration [s] Ramp segment time duration
+ @param bangDuration [s] Bang segment time duration
 */
-void PrescribedRotation1DOF::setCoastOptionRampDuration(double rampDuration) {
-    this->coastOptionRampDuration = rampDuration;
+void PrescribedRotation1DOF::setCoastOptionBangDuration(const double bangDuration) {
+    this->coastOptionBangDuration = bangDuration;
 }
 
 /*! Setter method for the spinning body rotation axis.
@@ -348,11 +710,19 @@ void PrescribedRotation1DOF::setRotHat_M(const Eigen::Vector3d &rotHat_M) {
     this->rotHat_M = rotHat_M / rotHat_M.norm();
 }
 
-/*! Setter method for the ramp segment scalar angular acceleration.
+/*! Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value.
  @return void
- @param thetaDDotMax [rad/s^2] Ramp segment scalar angular acceleration
+ @param smoothingDuration [s] Duration the acceleration is smoothed until reaching the given maximum acceleration value
 */
-void PrescribedRotation1DOF::setThetaDDotMax(double thetaDDotMax) {
+void PrescribedRotation1DOF::setSmoothingDuration(const double smoothingDuration) {
+    this->smoothingDuration = smoothingDuration;
+}
+
+/*! Setter method for the bang segment scalar angular acceleration.
+ @return void
+ @param thetaDDotMax [rad/s^2] Bang segment scalar angular acceleration
+*/
+void PrescribedRotation1DOF::setThetaDDotMax(const double thetaDDotMax) {
     this->thetaDDotMax = thetaDDotMax;
 }
 
@@ -360,15 +730,15 @@ void PrescribedRotation1DOF::setThetaDDotMax(double thetaDDotMax) {
  @return void
  @param thetaInit [rad] Initial spinning body angle
 */
-void PrescribedRotation1DOF::setThetaInit(double thetaInit) {
+void PrescribedRotation1DOF::setThetaInit(const double thetaInit) {
     this->thetaInit = thetaInit;
 }
 
-/*! Getter method for the coast option ramp duration.
+/*! Getter method for the coast option bang duration.
  @return double
 */
-double PrescribedRotation1DOF::getCoastOptionRampDuration() const {
-    return this->coastOptionRampDuration;
+double PrescribedRotation1DOF::getCoastOptionBangDuration() const {
+    return this->coastOptionBangDuration;
 }
 
 /*! Getter method for the spinning body rotation axis.
@@ -376,6 +746,13 @@ double PrescribedRotation1DOF::getCoastOptionRampDuration() const {
 */
 const Eigen::Vector3d &PrescribedRotation1DOF::getRotHat_M() const {
     return this->rotHat_M;
+}
+
+/*! Getter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value.
+ @return double
+*/
+double PrescribedRotation1DOF::getSmoothingDuration() const {
+    return this->smoothingDuration;
 }
 
 /*! Getter method for the ramp segment scalar angular acceleration.
