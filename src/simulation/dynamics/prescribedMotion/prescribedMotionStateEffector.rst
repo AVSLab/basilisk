@@ -2,19 +2,23 @@
 Executive Summary
 -----------------
 The prescribed motion class is an instantiation of the state effector abstract class. This module describes the dynamics
-of a six-degree of freedom (6 DOF) prescribed rigid body connected to a central rigid spacecraft hub. The body frame
-for the prescribed body is designated by the frame :math:`\mathcal{F}`. The prescribed body is mounted onto a hub-fixed
-interface described by a mount frame :math:`\mathcal{M}`. The prescribed body may be commanded to translate and rotate
-in three-dimensional space with respect to the interface it is mounted on. Accordingly, the prescribed states for
-the secondary body are written with respect to the mount frame, :math:`\mathcal{M}`. The prescribed states are:
+of a rigid sub-component whose three-dimensional motion can be kinematically prescribed relative to a central rigid
+spacecraft hub whose body frame is denoted as the frame :math:`\mathcal{B}`. The body frame for the prescribed body is
+designated by the frame :math:`\mathcal{F}`. The prescribed body must be commanded to translate and rotate in
+three-dimensional space relative to a hub-fixed interface designated as the mount frame :math:`\mathcal{M}`.
+Accordingly, the prescribed states for the sub-component are written with respect to the
+mount frame :math:`\mathcal{M}`:
 ``r_FM_M``, ``rPrime_FM_M``, ``rPrimePrime_FM_M``, ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``.
 
-The states of the prescribed body are not defined in this module. Therefore, separate kinematic profiler modules must
-be connected to this module's :ref:`PrescribedTranslationMsgPayload` and :ref:`PrescribedRotationMsgPayload`
-input messages to profile the prescribed body's states as a function of time. These message connections are required
-to provide the prescribed body's states to this dynamics module. Note that either a single profiler can be connected to
-these input messages or two separate profiler modules can be used; where one profiles the prescribed body's
-translational states and the other profiles the prescribed body's rotational states.
+The states of the prescribed body are not defined or integrated in this module. No equations of motion exist that need
+to be integrated for this type of state effector. Therefore, separate kinematic profiler modules must
+be connected to this module's prescribed motion :ref:`PrescribedTranslationMsgPayload` and
+:ref:`PrescribedRotationMsgPayload` input messages to profile the prescribed sub-component's states as a function of
+time. These message connections are required to provide the sub-component's states to this dynamics module.
+Note that either a single profiler can be connected to both of these input messages, or two separate profiler modules
+can be used; where one profiles the sub-component's translational states and the other profiles the sub-component's
+rotational states. See the example script :ref:`scenarioDeployingSolarArrays` for more information about how to set up
+hub-relative multi-body prescribed motion using this state effector module and the associated kinematic profiler modules.
 
 Message Connection Descriptions
 -------------------------------
@@ -53,7 +57,7 @@ Detailed Module Description
 Mathematical Modeling
 ^^^^^^^^^^^^^^^^^^^^^
 See Kiner et al.'s paper: `Spacecraft Simulation Software Implementation of General Prescribed Motion Dynamics of Two Connected Rigid Bodies <http://hanspeterschaub.info/Papers/Kiner2023.pdf>`__
-for a detailed description of the derived prescribed dynamics.
+for a detailed description of the derived prescribed motion spacecraft dynamics.
 
 The translational equations of motion are:
 
@@ -67,67 +71,62 @@ The rotational equations of motion are:
 
 Module Testing
 ^^^^^^^^^^^^^^
-The unit test for this module is an integrated test with two kinematic profiler modules. This is required
-because the dynamics module must be connected to kinematic profiler modules to define the states of the
-prescribed secondary body that is connected to the rigid spacecraft hub. The integrated test for this module has
-two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotation for the
-prescribed body using the :ref:`prescribedRotation1DOF` profiler module. The second scenario prescribes a 1 DOF
-linear translation for the prescribed body using the :ref:`prescribedLinearTranslation` profiler module.
 
-The unit test ensures that the profiled 1 DOF rotation is properly computed for a series of
-initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
-and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and
-``thetaDot_Ref``, respectively. The unit test also ensures that the profiled translation is properly computed for a
-series of initial and reference positions and maximum accelerations. The final prescribed position magnitude
-``r_FM_M_Final`` and velocity magnitude ``rPrime_FM_M_Final`` are compared with the reference values ``r_FM_M_Ref``
-and ``rPrime_FM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities of orbital angular
-momentum, rotational angular momentum, and orbital energy are checked to verify the module dynamics.
+There are two integrated unit test scripts written for this module.
+
+The first integrated test uses the :ref:`prescribedRotation1DOF` kinematic profiler module to prescribe a
+1-degree-of-freedom (1-DOF) rotation for the prescribed state effector relative to the spacecraft hub.
+The second integrated test uses the :ref:`prescribedLinearTranslation` kinematic profiler module to prescribe linear
+translational motion for the prescribed state effector relative to the spacecraft hub.
+
+Both integrated test scripts verify the prescribed motion state effector dynamics by checking to ensure that the
+orbital angular momentum, orbital energy, and spacecraft rotational angular momentum quantities are reasonably
+conserved.
+
 
 User Guide
 ----------
-This section is to outline the steps needed to setup a Prescribed Motion State Effector in python using Basilisk.
+This section outlines the steps needed to set up the prescribed motion state effector module in python using Basilisk.
 
 #. Import the prescribedMotionStateEffector class::
 
     from Basilisk.simulation import prescribedMotionStateEffector
 
-#. Create the prescribed body state effector::
+#. Create the prescribed motion state effector::
 
-    platform = prescribedMotionStateEffector.PrescribedMotionStateEffector()
+    prescribed_motion_body = prescribedMotionStateEffector.PrescribedMotionStateEffector()
 
-#. Define the state effector module parameters::
+#. Define the prescribed motion state effector module parameters::
 
-    platform.mass = 100.0
-    platform.IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    platform.r_MB_B = np.array([0.0, 0.0, 0.0])
-    platform.r_FcF_F = np.array([0.0, 0.0, 0.0])
-    platform.r_FM_M = np.array([1.0, 0.0, 0.0])
-    platform.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    platform.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    platform.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    platform.sigma_FM = np.array([0.0, 0.0, 0.0])
-    platform.omega_MB_B = np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_MB_B = np.array([0.0, 0.0, 0.0])
-    platform.sigma_MB = np.array([0.0, 0.0, 0.0])
-    platform.ModelTag = "Platform"
+    prescribed_motion_body.setMass(10.0)  # [kg]
+    prescribed_motion_body.setIPntFc_F([[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]])  # [kg-m^2]
+    prescribed_motion_body.setR_MB_B([1.0, 0.0, 0.0])  # [m]
+    prescribed_motion_body.setR_FcF_F([0.1, 0.0, -0.5])  # [m]
+    prescribed_motion_body.setR_FM_M([0.0, 0.0, 0.0])  # [m]
+    prescribed_motion_body.setRPrime_FM_M([0.0, 0.0, 0.0])  # [m/s]
+    prescribed_motion_body.setRPrimePrime_FM_M([0.0, 0.0, 0.0])  # [m/s^2]
+    prescribed_motion_body.setOmega_FM_F([0.0, 0.0, 0.0])  # [rad/s]
+    prescribed_motion_body.setOmegaPrime_FM_F([0.0, 0.0, 0.0])   # [rad/s^2]
+    prescribed_motion_body.setSigma_FM([0.0, 0.0, 0.0])
+    prescribed_motion_body.setOmega_MB_M([0.0, 0.0, 0.0])  # [rad/s]
+    prescribed_motion_body.setOmegaPrime_MB_B([0.0, 0.0, 0.0])  # [rad/s^2]
+    prescribed_motion_body.setSigma_MB([0.0, 0.0, 0.0])
+    prescribed_motion_body.ModelTag = "prescribedMotionBody"
 
-Do this for all of the public parameters in the prescribed motion state effector module. Note that if these parameters
-are not set by the user, all scalar and vector quantities are set to zero and all matrices are set to identity by
-default.
+Note that if these parameters are not set by the user, the vector quantities are set to zero and the matrix and scalar
+quantities are set to identity by default.
 
-#. Add the prescribed state effector to your spacecraft::
+#. Add the prescribed state effector to the spacecraft object::
 
-    scObject.addStateEffector(platform)
-
-   See :ref:`spacecraft` documentation on how to set up a spacecraft object.
-
-#. Make sure to connect the required messages for this module.
+    scObject.addStateEffector(prescribed_motion_body)
 
 #. Add the module to the task list::
 
-    unitTestSim.AddModelToTask(unitTaskName, platform)
+    unitTestSim.AddModelToTask(unitTaskName, prescribed_motion_body)
 
-
+Make sure to connect the required messages for this module using the kinematic profiler modules if the prescribed motion
+body is to be actuated relative to the spacecraft hub. See the example script :ref:`scenarioDeployingSolarArrays` for
+more information about how to set up hub-relative multi-body prescribed motion using this state effector module and the
+associated kinematic profiler modules.
 
 
