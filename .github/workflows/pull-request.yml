@@ -102,7 +102,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: '**/bskPkgRequired.txt'
       - name: Choco help
-        uses: crazy-max/ghaction-chocolatey@v2
+        uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: -h
       - name: "Install swig and cmake"
