@@ -86,6 +86,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         zmq_recv (this->requester_socket, buffer, 4, 0);
         zmq_send (this->requester_socket, "PING", 4, 0);
         bskLogger.bskLog(BSK_INFORMATION, "Basilisk-Vizard connection made");
+        zmq_msg_close(&request);
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;
@@ -1074,6 +1075,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             /*! - send protobuffer raw over zmq_socket */
             void* serialized_message = malloc(byteCount);
             message->SerializeToArray(serialized_message, (int) byteCount);
+            zmq_msg_close(&receive_buffer);
 
             /*! - Normal sim step by sending protobuffers */
             zmq_msg_t request_header;
@@ -1093,6 +1095,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&empty_frame1, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&empty_frame2, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&request_buffer, this->requester_socket, 0);
+            
+            zmq_msg_close(&request_header);
+            zmq_msg_close(&empty_frame1);
+            zmq_msg_close(&empty_frame2);
+            zmq_msg_close(&request_buffer);
 
 
             for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
@@ -1111,6 +1118,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_t request_life;
                 zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
                 zmq_msg_send(&request_life, this->requester_socket, 0);
+                zmq_msg_close(&request_life);
                 return;
             }
 
@@ -1183,6 +1191,7 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     zmq_msg_t img_request;
     zmq_msg_init_data(&img_request, img_message, cmdMsg.length(), message_buffer_deallocate, NULL);
     zmq_msg_send(&img_request, this->requester_socket, 0);
+    zmq_msg_close(&img_request);
 
     zmq_msg_t length;
     zmq_msg_t image;
