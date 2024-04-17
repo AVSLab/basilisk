@@ -50,6 +50,7 @@ namespace std {
     %template(MultiSphereVector) vector<MultiSphere *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
     %template(EventDialogVector) vector<EventDialog *>;
+    %template(EventReplyVector) vector<EventReply>;
 }
 
 %include "vizInterface.h"
@@ -73,6 +74,7 @@ struct EpochMsg_C;
 %include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/VizUserInputMsgPayload.h"
 
 %pythoncode %{
 import sys

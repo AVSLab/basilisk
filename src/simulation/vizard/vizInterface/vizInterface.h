@@ -33,6 +33,7 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/VizUserInputMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
@@ -84,6 +85,8 @@ public:
     ReadFunctor<EpochMsgPayload> epochInMsg;    //!< [-] simulation epoch date/time input msg
     MsgCurrStatus epochMsgStatus;                   //!< [-] ID of the epoch msg
     EpochMsgPayload epochMsgBuffer;                   //!< [-] epoch msg data
+
+    Message<VizUserInputMsgPayload> userInputMsg; //!< [-] User input from Vizard
 
     BSKLogger bskLogger;                        //!< [-] BSK Logging object
 
