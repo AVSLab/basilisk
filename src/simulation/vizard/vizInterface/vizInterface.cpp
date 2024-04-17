@@ -1089,7 +1089,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
             zmq_msg_init(&empty_frame1);
             zmq_msg_init(&empty_frame2);
-            zmq_msg_init_data(&request_buffer, serialized_message,byteCount, message_buffer_deallocate, NULL);
+            zmq_msg_init_data(&request_buffer, serialized_message, byteCount, message_buffer_deallocate, NULL);
 
             zmq_msg_send(&request_header, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&empty_frame1, this->requester_socket, ZMQ_SNDMORE);
