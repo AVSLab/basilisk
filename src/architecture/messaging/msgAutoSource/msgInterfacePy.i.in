@@ -26,7 +26,7 @@
 %include "architecture/utilities/macroDefinitions.h"
 %include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
-ARRAYINTASLIST(FSWdeviceAvailability)
+ARRAYINTASLIST(FSWdeviceAvailability, PyLong_FromLong, PyLong_AsLong)
 STRUCTASLIST(CSSUnitConfigMsgPayload)
 STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)

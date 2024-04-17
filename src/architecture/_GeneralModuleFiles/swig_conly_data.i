@@ -80,11 +80,9 @@
 
 %enddef
 ARRAYASLIST(double)
-ARRAYASLIST(int)
 ARRAYASLIST(float)
-ARRAYASLIST(unsigned int)
 
-%define ARRAYINTASLIST(type)
+%define ARRAYINTASLIST(type, fromfunc, asfunc)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
     void *blankPtr = 0 ;
@@ -102,7 +100,7 @@ ARRAYASLIST(unsigned int)
     for (i = 0; i < PySequence_Length($input); i++) {
         PyObject *o = PySequence_GetItem($input,i);
         if (PyNumber_Check(o)) {
-            temp[i] = (type)PyInt_AsLong(o);
+            temp[i] = (type)asfunc(o);
         } else {
             resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
             if (!SWIG_IsOK(resOut)) {
@@ -130,7 +128,7 @@ ARRAYASLIST(unsigned int)
         locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
         
         if(PyNumber_Check(locOutObj)){
-            PyObject *outObject = PyInt_FromLong((long) $1[i]);
+            PyObject *outObject = fromfunc($1[i]);
             PyList_Append($result,outObject);
             Py_DECREF(outObject);
             Py_DECREF(locOutObj);
@@ -143,8 +141,14 @@ ARRAYASLIST(unsigned int)
 }
 
 %enddef
-ARRAYINTASLIST(int)
-ARRAYINTASLIST(unsigned int)
+ARRAYINTASLIST(int, PyLong_FromLong, PyLong_AsLong)
+ARRAYINTASLIST(unsigned int, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYINTASLIST(long long, PyLong_FromLongLong, PyLong_AsLongLong)
+ARRAYINTASLIST(unsigned long long, PyLong_FromUnsignedLongLong, PyLong_AsUnsignedLongLong)
+ARRAYINTASLIST(short, PyLong_FromLong, PyLong_AsLong)
+ARRAYINTASLIST(unsigned short, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYINTASLIST(size_t, PyLong_FromSize_t, PyLong_AsSize_t)
+ARRAYINTASLIST(ssize_t, PyLong_FromSsize_t, PyLong_AsSsize_t)
 
 %define ARRAY2ASLIST(type)
 
@@ -205,11 +209,76 @@ ARRAYINTASLIST(unsigned int)
 }
 
 %enddef
-
 ARRAY2ASLIST(double)
-ARRAY2ASLIST(int)
 ARRAY2ASLIST(float)
-ARRAY2ASLIST(unsigned int)
+
+%define ARRAYINT2ASLIST(type, fromfunc, asfunc)
+
+%typemap(in) type [ANY][ANY] (type temp[$1_dim0][$1_dim1]) {
+    Py_ssize_t i;
+    if(!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
+        return NULL;
+    }
+    Py_ssize_t rowLength = 0;
+    for(i=0; i<PySequence_Length($input); i++){
+        PyObject *obj = PySequence_GetItem($input, i);
+        if(!PySequence_Check($input)) {
+            printf("Row bad in matrix: %zd\n", i);
+            PyErr_SetString(PyExc_ValueError,"Need a list for each row");
+        }
+        if(!rowLength)
+        {
+            rowLength = PySequence_Length(obj);
+        }
+        if(!rowLength || rowLength != PySequence_Length(obj))
+        {
+            printf("Row bad in matrix: %zd\n", i);
+            PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
+        }
+        int j;
+        for(j=0; j<rowLength; j++)
+        {
+            temp[i][j] = (type)asfunc(PySequence_GetItem(obj, j));
+        }
+    }
+    $1 = temp;
+}
+
+%typemap(memberin) type [ANY][ANY] {
+    int i, j;
+    for (i = 0; i < $1_dim0; i++) {
+        for(j=0; j < $1_dim1; j++) {
+            memcpy(&($1[i][j]), &($input[i][j]), sizeof(type));
+        }
+    }
+}
+
+%typemap(out) type [ANY][ANY] {
+    int i, j;
+    $result = PyList_New(0);
+    for(i=0; i<$1_dim0; i++)
+    {
+        PyObject *locRow = PyList_New(0);
+        for(j=0; j<$1_dim1; j++)
+        {
+            PyObject *outObject = fromfunc($1[i][j]);
+            PyList_Append(locRow, outObject);
+        }
+        PyList_Append($result, locRow);
+        Py_DECREF(locRow);
+    }
+}
+
+%enddef
+ARRAYINT2ASLIST(int, PyLong_FromLong, PyLong_AsLong)
+ARRAYINT2ASLIST(unsigned int, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYINT2ASLIST(long long, PyLong_FromLongLong, PyLong_AsLongLong)
+ARRAYINT2ASLIST(unsigned long long, PyLong_FromUnsignedLongLong, PyLong_AsUnsignedLongLong)
+ARRAYINT2ASLIST(short, PyLong_FromLong, PyLong_AsLong)
+ARRAYINT2ASLIST(unsigned short, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYINT2ASLIST(size_t, PyLong_FromSize_t, PyLong_AsSize_t)
+ARRAYINT2ASLIST(ssize_t, PyLong_FromSsize_t, PyLong_AsSsize_t)
 
 %define STRUCTASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
