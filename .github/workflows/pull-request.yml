@@ -8,8 +8,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pre-commit:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - id: file_changes
+        uses: tj-actions/changed-files@v44
+      - uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
   build-linux:
     name: Build Linux
+    needs: pre-commit
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -82,6 +93,7 @@ jobs:
 
   build-windows:
     name: Build Windows
+    needs: pre-commit
     runs-on: windows-2019
     strategy:
       matrix:
