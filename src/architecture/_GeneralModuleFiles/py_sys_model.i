@@ -5,6 +5,8 @@
 %}
 
 %pythoncode %{
+import sys
+import traceback
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
@@ -32,6 +34,24 @@ class SuperInitChecker(type):
             raise SyntaxError(error_msg)
         return rv
 
+def logError(func):
+    """Decorator that prints any exceptions that happen when
+    the original function is called, and then raises them again."""
+    def inner(*arg, **kwargs):
+        try:
+            return func(*arg, **kwargs)
+        except Exception:
+            traceback.print_exc()
+            raise
+    return inner
+
 class SysModel(_SysModel, metaclass=SuperInitChecker):
     bskLogger: BSKLogger = None
+
+    def __init_subclass__(cls):
+        # Make it so any exceptions in UpdateState and Reset
+        # print any exceptions before returning control to
+        # C++ (at which point exceptions will crash the program)
+        cls.UpdateState = logError(cls.UpdateState)
+        cls.Reset = logError(cls.Reset)
 %}
