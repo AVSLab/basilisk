@@ -417,6 +417,24 @@ LiveVizSettings
     std::string relativeOrbitChief = "";            //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
 }LiveVizSettings;
 
+/*! Structure defining Vizard dialog boxes
+*/
+typedef struct
+//@cond DOXYGEN_IGNORE
+EventDialog
+//@endcond
+{
+    std::string eventHandlerID=""; //!< Name of Vizard event handler to be returned with EventReply responses
+    std::string displayString=""; //!< Contains the information or choice that should be posed to the user
+    std::vector<std::string> userOptions={}; //!< Determines how many user choices will be shown and what the displayed string will say. If this is empty, the dialog is assumed to be informational only
+    double durationOfDisplay=-1; //!< How long to display the dialog box for, use -1 to leave panel on display until closed by user
+    bool useSimElapsedTimeForDuration=false; //!< [seconds] If true and duration of display is set, use the sim elapsed time to calculate when to hide window. If false, use real time (system clock).
+    int useConfirmationPanel=0; //!< Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
+    int hideOnSelection=0; //!< Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to hide panel after user makes a selection, 2 to destroy panel after user makes a selection
+    std::string dialogFormat="none"; //!< Select format for dialog box: WARNING, CAUTION, or none to use viz default format
+}EventDialog;
+
+
 
 /*! Structure defining vizard gravity body values */
 typedef struct{
