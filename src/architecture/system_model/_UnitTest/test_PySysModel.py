@@ -23,6 +23,9 @@ from Basilisk.architecture import sysModel
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 
+import io
+import contextlib
+
 import numpy as np
 
 def test_PySysModel():
@@ -81,6 +84,46 @@ def test_PySysModel():
 
     assert testResults < 1, testMessage
 
+def test_ErrorPySysModel():
+    """This method tests that exceptions happening in Python module
+    Reset and UpdateState are always printed to sys.stderr"""
+
+    testMessage = []
+
+    mod = ErroringPythonModule()
+
+    simulated_syserr_reset = io.StringIO("")    
+
+    with contextlib.redirect_stderr(simulated_syserr_reset):
+        try:
+            mod.Reset()
+        except Exception:
+            pass
+
+    error_reset = simulated_syserr_reset.getvalue()
+
+    if len(error_reset) == 0:
+        testMessage.append("Reset did not print its exception")
+    elif not error_reset.rstrip().endswith("ValueError: Error in Reset"):
+        testMessage.append("Reset did not print the correct exception")
+
+    simulated_syserr_update = io.StringIO("")
+
+    with contextlib.redirect_stderr(simulated_syserr_update):
+        try:
+            mod.UpdateState(0)
+        except Exception:
+            pass
+
+    error_update = simulated_syserr_update.getvalue()
+    
+    if len(error_update) == 0:
+        testMessage.append("Reset did not print its exception")
+    elif not error_update.rstrip().endswith("ValueError: Error in UpdateState"):
+        testMessage.append("UpdateState did not print the correct exception")
+
+    assert len(testMessage) == 0, testMessage
+
 class PythonModule(sysModel.SysModel):
 
     def __init__(self, *args):
@@ -99,5 +142,14 @@ class PythonModule(sysModel.SysModel):
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
         self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s")
 
+class ErroringPythonModule(sysModel.SysModel):
+
+    def Reset(self):
+        raise ValueError("Error in Reset")
+
+    def UpdateState(self, CurrentSimNanos):
+        raise ValueError("Error in UpdateState")
+
 if __name__ == "__main__":
     test_PySysModel()
+    test_ErrorPySysModel()
