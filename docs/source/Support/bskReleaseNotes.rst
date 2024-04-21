@@ -32,6 +32,7 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Removed the depreciated manner of creating python modules
+- Uncaught exceptions raised in Python modules are now printed to ``stderr`` before the program is terminated.
 
 
 Version 2.3.0 (April 5, 2024)
