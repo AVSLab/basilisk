@@ -104,6 +104,8 @@ jobs:
       security-events: write
     env:
       MPLBACKEND: agg
+      CONAN_USER_HOME: C:\Users\runneradmin\
+      CONAN_USER_HOME_SHORT: None
     steps:
       - name: Checkout code
         uses: nschloe/action-checkout-with-lfs-cache@v1
@@ -113,6 +115,16 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: '**/requirements.txt'
+      - name: Cache conan packages
+        id: cache-conan
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-conan-packages
+        with:
+          path: C:\Users\runneradmin\.conan
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
       - name: Choco help
         uses: crazy-max/ghaction-chocolatey@v3
         with:
