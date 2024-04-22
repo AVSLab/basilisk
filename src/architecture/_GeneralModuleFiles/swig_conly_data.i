@@ -44,10 +44,12 @@
             resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
             if (!SWIG_IsOK(resOut)) {
                 SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failure.  Good luck.\n");
+                Py_DECREF(o);
                 return NULL;
             }
             memcpy(&(temp[i]), blankPtr, sizeof(type));
         }
+        Py_DECREF(o);
     }
     $1 = temp;
 }
@@ -65,7 +67,7 @@
     PyObject *locOutObj = 0;
     for (i = 0; i < $1_dim0; i++) {
         locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
-        
+
         if(PyNumber_Check(locOutObj)){
             PyObject *outObject = fromfunc($1[i]);
             PyList_Append($result,outObject);
@@ -75,6 +77,7 @@
         else
         {
             PyList_SetItem($result, i, locOutObj);
+            // NOTE: SetItem steals the reference, so Py_DECREF is unnecessary
         }
     }
 }
@@ -108,7 +111,7 @@ ARRAYASLIST(float, PyFloat_FromDouble, PyFloat_AsDouble)
     Py_ssize_t rowLength = 0;
     for(i=0; i<PySequence_Length($input); i++){
         PyObject *obj = PySequence_GetItem($input, i);
-        if(!PySequence_Check($input)) {
+        if(!PySequence_Check(obj)) {
             printf("Row bad in matrix: %zd\n", i);
             PyErr_SetString(PyExc_ValueError,"Need a list for each row");
         }
@@ -124,8 +127,11 @@ ARRAYASLIST(float, PyFloat_FromDouble, PyFloat_AsDouble)
         int j;
         for(j=0; j<rowLength; j++)
         {
-            temp[i][j] = (type)asfunc(PySequence_GetItem(obj, j));
+            PyObject *o = PySequence_GetItem(obj, j);
+            temp[i][j] = (type)asfunc(o);
+            Py_DECREF(o);
         }
+        Py_DECREF(obj);
     }
     $1 = temp;
 }
@@ -149,6 +155,7 @@ ARRAYASLIST(float, PyFloat_FromDouble, PyFloat_AsDouble)
         {
             PyObject *outObject = fromfunc($1[i][j]);
             PyList_Append(locRow, outObject);
+            Py_DECREF(outObject);
         }
         PyList_Append($result, locRow);
         Py_DECREF(locRow);
@@ -193,10 +200,11 @@ ARRAY2ASLIST(float, PyFloat_FromDouble, PyFloat_AsDouble)
         resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
         if (!SWIG_IsOK(resOut)) {
             SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failur Good luck.\n");
+            Py_DECREF(o);
             return NULL;
         }
         memcpy(&(temp[i]), blankPtr, sizeof(type));
-        
+        Py_DECREF(o);
     }
     $1 = temp;
 }
@@ -214,6 +222,7 @@ ARRAY2ASLIST(float, PyFloat_FromDouble, PyFloat_AsDouble)
     for (i = 0; i < $1_dim0; i++) {
         PyObject *locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
         PyList_SetItem($result, i, locOutObj);
+        // NOTE: SetItem steals the reference, so Py_DECREF is unnecessary
     }
 }
 %enddef
