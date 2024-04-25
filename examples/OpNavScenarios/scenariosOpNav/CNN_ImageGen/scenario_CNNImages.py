@@ -164,12 +164,12 @@ def run(TheScenario, runLog):
     TheScenario.get_DynModel().cameraMod.cameraIsOn = 1
     TheScenario.get_DynModel().cameraMod.saveImages = 1
     TheScenario.get_DynModel().cameraMod.saveDir = runLog.split('/')[-2] +'/' +runLog.split('/')[-1] + '/'
-    TheScenario.get_DynModel().vizInterface.opNavMode = 2
+    TheScenario.get_DynModel().vizInterface.noDisplay = True
 
-    mode = ["None", "-directComm", "-noDisplay"]
+    # Modes: "None", "-directComm", "-noDisplay"
     # The following code spawns the Vizard application from python as a function of the mode selected above, and the platform.
     TheScenario.vizard = subprocess.Popen(
-        [TheScenario.vizPath, "--args", mode[TheScenario.get_DynModel().vizInterface.opNavMode], "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
+        [TheScenario.vizPath, "--args", "-noDisplay", "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
     print("Vizard spawned with PID = " + str(TheScenario.vizard.pid))
 
     # Configure FSW mode

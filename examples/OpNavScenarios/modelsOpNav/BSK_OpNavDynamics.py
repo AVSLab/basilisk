@@ -185,7 +185,7 @@ class BSKDynamicModels():
         # setup OpNav behavior by connecting camera module config message
         self.vizInterface.addCamMsgToModule(self.cameraMod.cameraConfigOutMsg)
         self.vizInterface.addCamMsgToModule(self.cameraMod2.cameraConfigOutMsg)
-        self.vizInterface.opNavMode = 2
+        self.vizInterface.noDisplay = True
         self.vizInterface.settings.skyBox = "black"
         self.vizInterface.settings.ambient = 0.5
 

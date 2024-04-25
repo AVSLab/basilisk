@@ -258,12 +258,12 @@ def run(showPlots, simTime=None):
 
     # this overrides `saveImages` setup in BSK_OpNavDynamics
     TheBSKSim.get_DynModel().cameraMod.saveImages = 0
-    # opNavMode 1 is used for viewing the spacecraft as it navigates, opNavMode 2 is for headless camera simulation
-    TheBSKSim.get_DynModel().vizInterface.opNavMode = 2
+    # liveStream is used for viewing the spacecraft as it navigates, noDisplay is for headless camera simulation
+    TheBSKSim.get_DynModel().vizInterface.noDisplay = True
 
     # The following code spawns the Vizard application from python
-    mode = ["None", "-directComm", "-noDisplay"]
-    TheScenario.run_vizard(mode[TheBSKSim.get_DynModel().vizInterface.opNavMode])
+    # Modes: "None", "-directComm", "-noDisplay"
+    TheScenario.run_vizard("-noDisplay")
 
     # Configure FSW mode
     TheScenario.masterSim.modeRequest = 'prepOpNav'
