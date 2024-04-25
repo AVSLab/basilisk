@@ -37,6 +37,7 @@ VizInterface::VizInterface()
     this->saveFile = false;
     this->liveStream = false;
     this->broadcastStream = false;
+    this->noDisplay = false;
     this->FrameNumber= -1;
 
     this->lastSettingsSendTime = time(0); // current system time in seconds
@@ -91,7 +92,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_INFORMATION, text.c_str());
     }
 
-    if (this->opNavMode > 0 || this->liveStream) {
+    if (this->liveStream || this->noDisplay || this->opNavMode > 0) {
         // Reset cameras
         for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = NULL;
@@ -1117,23 +1118,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             message->SerializeToArray(serialized_message, (int) byteCount);
         }
 
-        /*! Enter in lock-step with the vizard to simulate a camera */
-        /*!--OpNavMode set to 1 is to stay in lock-step with the viz at all time steps. It is a slower run, but provides visual capabilities during OpNav */
-        /*!--OpNavMode set to 2 is a faster mode in which the viz only steps forward to the BSK time step if an image is requested. This is a faster run but nothing can be visualized post-run */
+        // Check whether noDisplay mode should generate imagery from Vizard at this timestep
         bool opNavModeStatus = false;
-        if (this->opNavMode == 2) {
+        if (this->noDisplay || this->opNavMode == 2) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
                 if ((CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
                     opNavModeStatus = true;
                 }
             }
         }
-        if (this->opNavMode == 1
-            ||(this->opNavMode == 2 && opNavModeStatus)
-            || this->liveStream
-            ){
+
+        if (this->liveStream || (this->noDisplay && opNavModeStatus) || (this->opNavMode == 1) || (this->opNavMode == 2 && opNavModeStatus)) {
             // Receive pong
-            /*! - The viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before attempting to go into opNavMode 2 */
+            // Viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before attempting to go into noDisplay mode
             if (this->firstPass < 11){
                 this->firstPass++;
             }
@@ -1194,8 +1191,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
             for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
                 /*! - If the camera is requesting periodic images, request them */
-                if (this->opNavMode > 0 &&
-                    CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                if (CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
                     this->cameraConfigBuffers[camCounter].isOn == 1)
                 {
                     this->requestImage(camCounter, CurrentSimNanos);

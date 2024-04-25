@@ -68,6 +68,8 @@ public:
 
     bool liveStream;                               //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
     bool broadcastStream;                          //!< [Bool] Set True if messages should be broadcast for listener Vizards to pick up.
+    bool noDisplay;                                //!< [Bool] Set True if Vizard should run performance opNav (no Vizard display)
+
     std::vector<void* >bskImagePtrs;               /*!< [RUN] vector of permanent pointers for the images to be used in BSK
                                                         without relying on ZMQ because ZMQ will free it (whenever, who knows) */
 
