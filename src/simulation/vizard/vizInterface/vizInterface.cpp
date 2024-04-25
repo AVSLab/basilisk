@@ -1323,29 +1323,35 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
             outMsgBuffer.keyboardInput = keys;
         }
 
-        // Iterate through VizInput_EventReply objects
-        for (int i=0; i<msgRecv->replies_size(); i++) {
-            const vizProtobufferMessage::VizInput_EventReply* vier = &(msgRecv->replies(i));
-
-            // Remove "const"ness for compatibility with protobuffer access methods
-            vizProtobufferMessage::VizInput_EventReply* vier_nc;
-            vier_nc = const_cast<vizProtobufferMessage::VizInput_EventReply*>(vier);
-
-            // Create EventReply containers and pack into userInputMsg
-            EventReply* er = new EventReply();
-            er->eventHandlerID = *(vier_nc->mutable_eventhandlerid());
-            er->reply = *(vier_nc->mutable_reply());
-            er->eventHandlerDestroyed = vier_nc->eventhandlerdestroyed();
-            outMsgBuffer.eventReplies.push_back(*er);
-
-        }
-
         // Receive VizBroadcastSyncSettings
         const vizProtobufferMessage::VizBroadcastSyncSettings* vbss = &(msgRecv->broadcastsyncsettings());
-
         // Remove "const"ness for compatibility with protobuffer access methods
         vizProtobufferMessage::VizBroadcastSyncSettings* vbss_nc;
         vbss_nc = const_cast<vizProtobufferMessage::VizBroadcastSyncSettings*>(vbss);
+
+        // Iterate through VizEventReply objects
+        for (int i=0; i<msgRecv->replies_size(); i++) {
+            const vizProtobufferMessage::VizEventReply* ver = &(msgRecv->replies(i));
+
+            // Remove "const"ness for compatibility with protobuffer access methods
+            vizProtobufferMessage::VizEventReply* ver_nc;
+            ver_nc = const_cast<vizProtobufferMessage::VizEventReply*>(ver);
+
+            // Create EventReply containers and pack into userInputMsg
+            EventReply* er = new EventReply();
+            er->eventHandlerID = *(ver_nc->mutable_eventhandlerid());
+            er->reply = *(ver_nc->mutable_reply());
+            er->eventHandlerDestroyed = ver_nc->eventhandlerdestroyed();
+            outMsgBuffer.eventReplies.push_back(*er);
+
+            // Populate VizEventReply in VizBroadcastSyncSettings
+            vizProtobufferMessage::VizEventReply* ver_nc_bss = vbss_nc->add_dialogevents();
+            ver_nc_bss->set_eventhandlerid(er->eventHandlerID);
+            ver_nc_bss->set_reply(er->reply);
+            ver_nc_bss->set_eventhandlerdestroyed(er->eventHandlerDestroyed);
+        }
+
+        // Serialize and send BroadcastSyncSettings*/
         uint32_t syncByteCount = (uint32_t) vbss_nc->ByteSizeLong();
 
         // Serialize if in broadcastStream mode

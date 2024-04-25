@@ -358,17 +358,18 @@ message VizMessage{
         int32 showGridLines = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
     
-    message EventDialog{ //ONLY NEEDED IF AN DIALOG BOX IS DESIRED
+    message EventDialog{ //ONLY NEEDED IF AN DIALOG BOX IS DESIRED OR EXISTING DIALOG BOX REQUIRES UPDATE
         // ALL FIELDS CHECKED EVERY MESSAGE
         // FIELD 1 IS REQUIRED
         string eventHandlerID = 1; //Name of Vizard event handler to be returned with EventReply responses
         string displayString = 2; //Contains the information or choice that should be posed to the user
         repeated string userOptions = 3; //Determines how many user choices will be shown and what the displayed string will say. If this is empty, the dialog is assumed to be informational only
-        double durationOfDisplay = 4; //[ns] How long to display the dialog box for, use 0 to leave panel on display until closed by user, -1 to override and close panel immediately
-        bool useSimElapsedTimeForDuration = 5; //If true and duration of display is set, use the sim elapsed time to calculate when to hide window. If false, use real time (system clock).
-        int32 useConfirmationPanel = 6; //Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
-        int32 hideOnSelection = 7; //Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to hide panel after user makes a selection, 2 to destroy panel after user makes a selection
-        string dialogFormat = 8; //Select format for dialog box: WARNING, CAUTION, or none to use viz default format
+        bool forceEventDialogMaximize = 4; // If true, panel will be displayed in Vizard on update even if user has minimized, false will allow panel to stay minimized
+        double durationOfDisplay = 5; //[ns] How long to display the dialog box for, use 0 to leave panel on display until closed by user, -1 to override and close panel immediately
+        bool useSimElapsedTimeForDuration = 6; //If true and duration of display is set, use the sim elapsed time to calculate when to hide window. If false, use real time (system clock).
+        int32 useConfirmationPanel = 7; //Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
+        int32 hideOnSelection = 8; //Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to hide panel after user makes a selection, 2 to destroy panel after user makes a selection
+        string dialogFormat = 9; //Select format for dialog box: WARNING, CAUTION, or none to use viz default format
     }
     
     TimeStamp currentTime = 1; //CHECKED EVERY MESSAGE
@@ -390,22 +391,24 @@ message VizInput{ // Message sent from Vizard to BSK containing user inputs sinc
         string keys = 1;
     }
     
-    message EventReply{
-        string eventHandlerID = 1; // Name provided when setting up the EventDialog object
-        string reply = 2; // Which user option was selected
-        bool eventHandlerDestroyed = 3; // Was the panel closed and destroyed?
-    }
-
     int64 frameNumber = 1; // Frame number when message was sent
     KeyboardInput keyInputs = 2;
-    repeated EventReply replies = 3; // Vector of EventReply submessages
+    repeated VizEventReply replies = 3; // Vector of VizEventReply submessages
     VizBroadcastSyncSettings broadcastSyncSettings = 4; // Sync settings submessage
 }
 
+message VizEventReply{
+    string eventHandlerID = 1; //Name provided when setting up the EventDialog object
+    string reply = 2; //Which user option was selected
+    bool eventHandlerDestroyed = 3; //Was the panel closed and destroyed?
+}
+
 message VizBroadcastSyncSettings{
-    int32 orbitLinesOn = 1; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
-    int32 trueTrajectoryLinesOn = 2; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
-    int32 spacecraftCSon = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int32 planetCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int32 showHillFrame = 5; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    bool forceTrainerSettings = 1; // If true, the BroadcastSyncSettings will be forced to match in the viewers' Vizard instances
+    int32 orbitLinesOn = 2; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
+    int32 trueTrajectoryLinesOn = 3; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
+    int32 spacecraftCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 planetCSon = 5; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 showHillFrame = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    repeated VizEventReply dialogEvents = 7; //Pass trainer EventDialog selections to the viewers
 }
