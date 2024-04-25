@@ -1305,7 +1305,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
 
     if (receive_status != -1) {
         // Extract message size and data pointer from socket
-        int vizPointSize = zmq_msg_size(&viz_response);
+        int vizPointSize = (int)zmq_msg_size(&viz_response);
         void* vizPoint = zmq_msg_data(&viz_response);
 
         // Set up and fill VizInput message
