@@ -268,7 +268,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     viz.pubPortNumber = "5570"
 
     # Pre-instantiate panels
-    infopanel = vizInterface.EventDialog()
+    infopanel = vizInterface.VizEventDialog()
     infopanel.eventHandlerID = "INFO PANEL"
     infopanel.displayString = """This is an information panel. Vizard is reporting 'b' and 'x' keystrokes back to BSK,
     which you can hook up to specific sim states. In this case, press 'b' to show a burn panel. If you initiate
@@ -276,7 +276,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     infopanel.durationOfDisplay = 0  # stay open
     infopanel.dialogFormat = "CAUTION"
 
-    burnpanel = vizInterface.EventDialog()
+    burnpanel = vizInterface.VizEventDialog()
     burnpanel.eventHandlerID = "OPTION PANEL"
     burnpanel.displayString = "This panel accepts a user response. Initiate burn?"
     burnpanel.durationOfDisplay = 0  # stay open
@@ -286,12 +286,12 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     burnpanel.useConfirmationPanel = True
     burnpanel.dialogFormat = "WARNING"
 
-    hudpanel = vizInterface.EventDialog()
+    hudpanel = vizInterface.VizEventDialog()
     hudpanel.eventHandlerID = "HUD"
     hudpanel.durationOfDisplay = 0  # stay open
 
-    # Del viz.eventDialogs[:] at the start of the sim
-    viz.eventDialogs.clear()
+    # Del viz.vizEventDialogs[:] at the start of the sim
+    viz.vizEventDialogs.clear()
 
     # "Subscriber" Vizards will pick up the main settings at this frequency
     viz.broadcastSettingsSendDelay = 2  # seconds
@@ -317,7 +317,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
         velNorm = np.linalg.norm(currState.v_BN_N)
 
         hudpanel.displayString = f"HUD\nAltitude: {alt/1000:.2f} km\nInertial Velocity: {velNorm/1000:.2f} km/s"
-        viz.eventDialogs.append(hudpanel)
+        viz.vizEventDialogs.append(hudpanel)
 
         # Here, I only want to run a single BSK timestep before checking for user responses.
         incrementalStopTime += simulationTimeStep
@@ -335,7 +335,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
                 print("key - b")
                 if not continueBurn:
                     print("burn panel")
-                    viz.eventDialogs.append(burnpanel)
+                    viz.vizEventDialogs.append(burnpanel)
             if 'x' in keyInputs:
                 print("key - x")
                 if continueBurn:

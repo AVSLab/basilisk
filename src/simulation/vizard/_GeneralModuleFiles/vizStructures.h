@@ -421,7 +421,7 @@ LiveVizSettings
 */
 typedef struct
 //@cond DOXYGEN_IGNORE
-EventDialog
+VizEventDialog
 //@endcond
 {
     std::string eventHandlerID="";              //!< Name of Vizard event handler to be returned with EventReply responses
@@ -432,7 +432,7 @@ EventDialog
     int useConfirmationPanel=0;                 //!< Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
     int hideOnSelection=0;                      //!< Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to hide panel after user makes a selection, 2 to destroy panel after user makes a selection
     std::string dialogFormat="none";            //!< Select format for dialog box: WARNING, CAUTION, or none to use viz default format
-}EventDialog;
+}VizEventDialog;
 
 
 

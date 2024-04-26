@@ -23,13 +23,13 @@
 #ifndef VIZ_USER_INPUT_H
 #define VIZ_USER_INPUT_H
 
-/*! @brief Structure used to contain a single EventDialog panel response from Vizard */
+/*! @brief Structure used to contain a single VizEventDialog panel response from Vizard */
 typedef struct
 //@cond DOXYGEN_IGNORE
 EventReply
 //@endcond
 {
-    std::string eventHandlerID;    //!< Name provided when setting up the EventDialog object
+    std::string eventHandlerID;    //!< Name provided when setting up the VizEventDialog object
     std::string reply;             //!< Option selection
     bool eventHandlerDestroyed;    //!< Was the panel closed and destroyed?
 

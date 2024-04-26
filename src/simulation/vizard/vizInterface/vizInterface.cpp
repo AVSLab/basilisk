@@ -755,23 +755,23 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     message->set_allocated_livesettings(liveVizSettings);
 
 
-    /* Send dialog panel info to Vizard */
-    for(size_t k=0; k<this->eventDialogs.size(); k++)
+    // Send dialog panel info to Vizard
+    for(size_t k=0; k<this->vizEventDialogs.size(); k++)
     {
-        vizProtobufferMessage::VizMessage::EventDialog* panel = message->add_eventdialogs();
-        panel->set_eventhandlerid(this->eventDialogs.at(k)->eventHandlerID);
-        panel->set_displaystring(this->eventDialogs.at(k)->displayString);
-        for (size_t idx=0; idx<this->eventDialogs.at(k)->userOptions.size(); idx++) {
-            panel->add_useroptions(this->eventDialogs.at(k)->userOptions[idx]);
+        vizProtobufferMessage::VizEventDialog* panel = message->add_vizeventdialogs();
+        panel->set_eventhandlerid(this->vizEventDialogs.at(k)->eventHandlerID);
+        panel->set_displaystring(this->vizEventDialogs.at(k)->displayString);
+        for (size_t idx=0; idx<this->vizEventDialogs.at(k)->userOptions.size(); idx++) {
+            panel->add_useroptions(this->vizEventDialogs.at(k)->userOptions[idx]);
         }
-        panel->set_durationofdisplay(this->eventDialogs.at(k)->durationOfDisplay);
-        panel->set_usesimelapsedtimeforduration(this->eventDialogs.at(k)->useSimElapsedTimeForDuration);
-        panel->set_useconfirmationpanel(this->eventDialogs.at(k)->useConfirmationPanel);
-        panel->set_hideonselection(this->eventDialogs.at(k)->hideOnSelection);
-        panel->set_dialogformat(this->eventDialogs.at(k)->dialogFormat);
+        panel->set_durationofdisplay(this->vizEventDialogs.at(k)->durationOfDisplay);
+        panel->set_usesimelapsedtimeforduration(this->vizEventDialogs.at(k)->useSimElapsedTimeForDuration);
+        panel->set_useconfirmationpanel(this->vizEventDialogs.at(k)->useConfirmationPanel);
+        panel->set_hideonselection(this->vizEventDialogs.at(k)->hideOnSelection);
+        panel->set_dialogformat(this->vizEventDialogs.at(k)->dialogFormat);
 
     }
-    this->eventDialogs.clear(); // panel requests should only send to Vizard once
+    this->vizEventDialogs.clear(); // Panel requests should only send to Vizard once
 
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;

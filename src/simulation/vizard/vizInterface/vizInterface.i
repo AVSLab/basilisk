@@ -52,7 +52,7 @@ namespace std {
     %template(GenericStorageVector) vector<GenericStorage *>;
     %template(MultiSphereVector) vector<MultiSphere *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
-    %template(EventDialogVector) vector<EventDialog *>;
+    %template(VizEventDialogVector) vector<VizEventDialog *>;
     %template(EventReplyVector) vector<EventReply>;
 }
 

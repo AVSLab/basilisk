@@ -75,11 +75,11 @@ BSK assembles the full ``liveStream`` address as ``viz.reqComProtocol + "://" + 
 The default 2-way address is therefore ``tcp://localhost:5556``.
 
 
-Creating ``EventDialog`` Panels
+Creating ``VizEventDialog`` Panels
 -------------------------------
-``EventDialog`` panels are displayed in Vizard, and contain choices for a user to select. These panels can be configured to have a prescribed duration and several options for a user to select. The following list shows all ``EventDialog`` structure variables.
+``VizEventDialog`` panels are displayed in Vizard, and contain choices for a user to select. These panels can be configured to have a prescribed duration and several options for a user to select. The following list shows all ``VizEventDialog`` structure variables.
 
-.. list-table:: ``EventDialog`` variables
+.. list-table:: ``VizEventDialog`` variables
     :widths: 20 10 10 10 100
     :header-rows: 1
 
@@ -130,21 +130,21 @@ Creating ``EventDialog`` Panels
       - Select format for dialog box: "WARNING", "CAUTION", or none to use viz default format
 
 
-Here is an example an ``EventDialog`` panel creation:
+Here is an example an ``VizEventDialog`` panel creation:
 
 .. code-block:: python
 
-    powerModePanel = vizInterface.EventDialog()
+    powerModePanel = vizInterface.VizEventDialog()
     powerModePanel.eventHandlerID = "Power Mode Panel"
     powerModePanel.displayString = "Set system power mode:"
     powerModePanel.userOptions.append("Nominal")
     powerModePanel.userOptions.append("Low-Power")
     powerModePanel.useConfirmationPanel = True
 
-    viz.eventDialogs.append(powerModePanel)
+    viz.vizEventDialogs.append(powerModePanel)
 
 .. note::
-    The list ``viz.eventDialogs`` sends current panel requests to Vizard as part of the VizMessage, then clears itself before the next timestep. If information in a panel needs to be modified, the same ``EventDialog`` instance (with the same ``eventHandlerID``) can be modified and **re-appended** to ``viz.eventDialogs``. This will cause the panel to re-open if minimized, with updated information. If the panel list needs to be manually cleared, this can be done using ``viz.eventDialogs.clear()``.
+    The list ``viz.vizEventDialogs`` sends current panel requests to Vizard as part of the VizMessage, then clears itself before the next timestep. If information in a panel needs to be modified, the same ``VizEventDialog`` instance (with the same ``eventHandlerID``) can be modified and **re-appended** to ``viz.vizEventDialogs``. This will cause the panel to re-open if minimized, with updated information. If the panel list needs to be manually cleared, this can be done using ``viz.vizEventDialogs.clear()``.
 
 
 Handling User Input
@@ -202,7 +202,7 @@ To parse ``keyInputs``, search the string for characters of interest:
 
 Panel Response Parsing
 ----------------------
-Vizard can also return ``EventReply`` structures, which contain information about selections made within ``EventDialog`` panels. The following list shows all ``EventReply`` structure variables.
+Vizard can also return ``EventReply`` structures, which contain information about selections made within ``VizEventDialog`` panels. The following list shows all ``EventReply`` structure variables.
 
 .. list-table:: ``EventReply`` variables
     :widths: 20 10 100
@@ -213,7 +213,7 @@ Vizard can also return ``EventReply`` structures, which contain information abou
       - Description
     * - ``eventHandlerID``
       - string
-      - Name provided when setting up the EventDialog object
+      - Name provided when setting up the VizEventDialog object
     * - ``reply``
       - string
       - Option selected by user
