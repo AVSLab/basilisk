@@ -28,11 +28,6 @@ The `Vizard <vizard>`_ application supports the following command line arguments
 
 	open /Applications/Vizard.app --args -batchmode -opNav tcp://xxx.xxx.x.xx.xxxxx
 
-#. To launch `Vizard <vizard>`_ application with a livestreaming connection to BlackLion,
-   use the ``-blackLion`` argument followed by the TCP address `Vizard <vizard>`_ should connect to::
-
-	open /Applications/Vizard.app --args -blackLion tcp://xxx.xxx.x.xx:xxxxx
-
 #. To launch `Vizard <vizard>`_ application with a livestreaming connection to DirectComm,
    use the ``-directComm`` argument followed by the TCP address `Vizard <vizard>`_ should connect to::
 
