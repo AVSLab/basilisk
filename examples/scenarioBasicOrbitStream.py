@@ -328,7 +328,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
         if liveStream:
             userInputs = viz.userInputMsg.read()
             keyInputs = userInputs.keyboardInput
-            eventInputs = userInputs.eventReplies
+            eventInputs = userInputs.vizEventReplies
 
             # Parse keyboard inputs, perform actions
             if 'b' in keyInputs:
@@ -359,7 +359,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
 
             # Append info panel
             if incrementalStopTime == 100*simulationTimeStep:
-                viz.eventDialogs.append(infopanel)
+                viz.vizEventDialogs.append(infopanel)
 
             # Turn on thrusters
             if continueBurn:

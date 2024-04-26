@@ -53,7 +53,7 @@ namespace std {
     %template(MultiSphereVector) vector<MultiSphere *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
     %template(VizEventDialogVector) vector<VizEventDialog *>;
-    %template(EventReplyVector) vector<EventReply>;
+    %template(VizEventReplyVector) vector<VizEventReply>;
 }
 
 %include "vizInterface.h"

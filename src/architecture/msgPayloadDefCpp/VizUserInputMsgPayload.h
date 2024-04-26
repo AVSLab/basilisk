@@ -26,14 +26,14 @@
 /*! @brief Structure used to contain a single VizEventDialog panel response from Vizard */
 typedef struct
 //@cond DOXYGEN_IGNORE
-EventReply
+VizEventReply
 //@endcond
 {
     std::string eventHandlerID;    //!< Name provided when setting up the VizEventDialog object
     std::string reply;             //!< Option selection
     bool eventHandlerDestroyed;    //!< Was the panel closed and destroyed?
 
-}EventReply;
+}VizEventReply;
 
 /*! @brief Structure containing all keyboard inputs and EventReply objects recorded since
            the message was last read */
@@ -42,9 +42,9 @@ typedef struct
 VizUserInputMsgPayload
 //@endcond
 {
-    int frameNumber;                       //!< Vizard frame number
-    std::string keyboardInput;             //!< String containing all keyboard inputs since last update.
-    std::vector<EventReply> eventReplies;  //!< Contains all panel inputs since last update
+    int frameNumber;                         //!< Vizard frame number
+    std::string keyboardInput;               //!< String containing all keyboard inputs since last update.
+    std::vector<VizEventReply> vizEventReplies; //!< Contains all panel inputs since last update
 
 }VizUserInputMsgPayload;
 

@@ -1338,11 +1338,11 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
             ver_nc = const_cast<vizProtobufferMessage::VizEventReply*>(ver);
 
             // Create EventReply containers and pack into userInputMsg
-            EventReply* er = new EventReply();
+            VizEventReply* er = new VizEventReply();
             er->eventHandlerID = *(ver_nc->mutable_eventhandlerid());
             er->reply = *(ver_nc->mutable_reply());
             er->eventHandlerDestroyed = ver_nc->eventhandlerdestroyed();
-            outMsgBuffer.eventReplies.push_back(*er);
+            outMsgBuffer.vizEventReplies.push_back(*er);
 
             // Populate VizEventReply in VizBroadcastSyncSettings
             vizProtobufferMessage::VizEventReply* ver_nc_bss = vbss_nc->add_dialogevents();

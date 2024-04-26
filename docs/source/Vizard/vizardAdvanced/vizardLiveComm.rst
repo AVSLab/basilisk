@@ -92,7 +92,7 @@ Creating ``VizEventDialog`` Panels
       - string
       -
       - Yes
-      - Name of Vizard event handler to be returned with ``EventReply`` responses
+      - Name of Vizard event handler to be returned with ``VizEventReply`` responses
     * - ``displayString``
       - string
       - 
@@ -168,7 +168,7 @@ The required structure resembles the following:
         
         userInputs = viz.userInputMsg.read()
         keyInputs = userInputs.keyboardInput
-        eventInputs = userInputs.eventReplies
+        eventInputs = userInputs.vizEventReplies
         
         # Parse "keyInputs" and "eventInputs", modify sim state
 
@@ -202,9 +202,9 @@ To parse ``keyInputs``, search the string for characters of interest:
 
 Panel Response Parsing
 ----------------------
-Vizard can also return ``EventReply`` structures, which contain information about selections made within ``VizEventDialog`` panels. The following list shows all ``EventReply`` structure variables.
+Vizard can also return ``VizEventReply`` structures, which contain information about selections made within ``VizEventDialog`` panels. The following list shows all ``VizEventReply`` structure variables.
 
-.. list-table:: ``EventReply`` variables
+.. list-table:: ``VizEventReply`` variables
     :widths: 20 10 100
     :header-rows: 1
 

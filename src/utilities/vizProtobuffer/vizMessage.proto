@@ -393,7 +393,7 @@ message VizEventDialog{
     //ONLY NEEDED IF AN DIALOG BOX IS DESIRED OR EXISTING DIALOG BOX REQUIRES UPDATE
     // ALL FIELDS CHECKED EVERY MESSAGE
     // FIELD 1 IS REQUIRED
-    string eventHandlerID = 1; //Name of Vizard event handler to be returned with EventReply responses
+    string eventHandlerID = 1; //Name of Vizard event handler to be returned with VizEventReply responses
     string displayString = 2; //Contains the information or choice that should be posed to the user
     repeated string userOptions = 3; //Determines how many user choices will be shown and what the displayed string will say. If this is empty, the dialog is assumed to be informational only
     bool forceEventDialogMaximize = 4; // If true, panel will be displayed in Vizard on update even if user has minimized, false will allow panel to stay minimized
