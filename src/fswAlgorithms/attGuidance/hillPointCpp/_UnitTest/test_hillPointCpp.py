@@ -25,7 +25,7 @@
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import hillPoint  # import the module that is to be tested
+from Basilisk.fswAlgorithms import hillPointCpp  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions as af
@@ -63,8 +63,8 @@ def hillPointTestFunction(show_plots, celMsgSet):
 
 
     # Construct algorithm and associated C++ container
-    module = hillPoint.hillPoint()
-    module.ModelTag = "hillPoint"
+    module = hillPointCpp.HillPointCpp()
+    module.ModelTag = "hillPointCpp"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
