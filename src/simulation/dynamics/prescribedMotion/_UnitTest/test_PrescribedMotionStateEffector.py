@@ -519,4 +519,3 @@ if __name__ == "__main__":
         5.0 * macros.D2R,  # theta_ref [rad]
         1e-7  # accuracy
     )
-    

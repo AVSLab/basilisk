@@ -128,5 +128,3 @@ Make sure to connect the required messages for this module using the kinematic p
 body is to be actuated relative to the spacecraft hub. See the example script :ref:`scenarioDeployingSolarArrays` for
 more information about how to set up hub-relative multi-body prescribed motion using this state effector module and the
 associated kinematic profiler modules.
-
-
