@@ -23,8 +23,6 @@
 
 #include "fswAlgorithms/effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <stdio.h>
-#include <string.h>
 
 
 

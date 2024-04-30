@@ -22,7 +22,6 @@
 #include "fswAlgorithms/attGuidance/sunSafePoint/sunSafePoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
 
 /*! This method initializes the configData for the sun safe attitude guidance.
  It checks to ensure that the inputs are sane and then creates the

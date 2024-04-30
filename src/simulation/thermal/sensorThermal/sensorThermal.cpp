@@ -1,11 +1,6 @@
 #include <math.h>
-#include <iostream>
-#include <cstring>
-#include <algorithm>
 #include "sensorThermal.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenMRP.h"

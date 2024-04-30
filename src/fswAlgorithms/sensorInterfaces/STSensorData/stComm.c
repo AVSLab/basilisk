@@ -21,7 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
 
 /*! This method initializes the configData for the ST sensor interface.
  @return void

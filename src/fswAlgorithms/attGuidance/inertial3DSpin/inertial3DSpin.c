@@ -26,8 +26,6 @@
 
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attGuidance/inertial3DSpin/inertial3DSpin.h"
-#include <string.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 

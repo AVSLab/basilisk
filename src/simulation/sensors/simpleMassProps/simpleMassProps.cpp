@@ -18,8 +18,6 @@
  */
 #include "simulation/sensors/simpleMassProps/simpleMassProps.h"
 #include <iostream>
-#include <cstring>
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This is the constructor for the module class. */

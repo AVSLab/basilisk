@@ -23,7 +23,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 #include <math.h>
-#include "architecture/utilities/linearAlgebra.h"
 
 
 /*! @brief Creates an instance of the PinholeCamera class with a prescribed focal direction in camera frame and -90º of Sun's mask angle (that is, no lighting constraint).

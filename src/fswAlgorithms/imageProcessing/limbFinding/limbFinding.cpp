@@ -26,7 +26,6 @@
  */
 
 /* modify the path to reflect the new module names */
-#include <string.h>
 #include "limbFinding.h"
 
 

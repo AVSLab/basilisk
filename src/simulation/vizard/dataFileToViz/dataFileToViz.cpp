@@ -22,7 +22,6 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include <sstream>
 #include <string>
-#include <string.h>
 
 /*! DataFileToViz Constructor
  */

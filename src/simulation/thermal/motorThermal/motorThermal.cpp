@@ -17,9 +17,6 @@
 
  */
 #include "simulation/thermal/motorThermal/motorThermal.h"
-#include <iostream>
-#include <cstring>
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <math.h>
 

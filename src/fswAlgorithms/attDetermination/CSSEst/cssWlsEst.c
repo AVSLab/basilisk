@@ -21,7 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
-#include <math.h>
 
 /*! This method initializes the configData for theCSS WLS estimator.
  @return void

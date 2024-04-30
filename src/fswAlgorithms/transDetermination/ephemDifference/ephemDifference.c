@@ -17,11 +17,7 @@
 
  */
 
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
 #include "fswAlgorithms/transDetermination/ephemDifference/ephemDifference.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! @brief This method creates the output ephemeris messages for each body.

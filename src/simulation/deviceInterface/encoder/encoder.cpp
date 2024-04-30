@@ -17,10 +17,7 @@
 
  */
 #include "simulation/deviceInterface/encoder/encoder.h"
-#include <iostream>
-#include <cstring>
 #include <math.h>
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor for the module class.  It sets default variable

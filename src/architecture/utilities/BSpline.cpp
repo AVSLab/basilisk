@@ -20,7 +20,6 @@
 #include "BSpline.h"
 #include <architecture/utilities/avsEigenSupport.h>
 #include <iostream>
-#include <cstring>
 #include <math.h>
 
 /*! This constructor initializes an Input structure for BSpline interpolation */

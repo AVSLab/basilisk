@@ -20,7 +20,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
 
 EphemerisConverter::EphemerisConverter()
 {

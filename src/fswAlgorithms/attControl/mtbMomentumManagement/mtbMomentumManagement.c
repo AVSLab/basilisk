@@ -21,7 +21,6 @@
 #include "string.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/svd.h"
-#include <stdio.h>
 
 /*!
  \verbatim embed:rst

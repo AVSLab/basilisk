@@ -21,7 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>
-#include <math.h>
 
 /*! This method initializes the configData for the sun safe ACS control.
  It checks to ensure that the inputs are sane and then creates the

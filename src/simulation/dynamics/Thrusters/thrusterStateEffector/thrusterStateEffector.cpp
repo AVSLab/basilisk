@@ -17,9 +17,7 @@
 
  */
 
-#include <cstring>
 #include <iostream>
-#include <cmath>
 
 #include "thrusterStateEffector.h"
 #include "architecture/utilities/linearAlgebra.h"

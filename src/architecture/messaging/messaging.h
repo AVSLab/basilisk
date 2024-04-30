@@ -17,7 +17,6 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 */
 #ifndef MESSAGING_H
 #define MESSAGING_H
-#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include "architecture/messaging/msgHeader.h"

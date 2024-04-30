@@ -18,7 +18,6 @@
  */
 
 #include <string.h>
-#include <stdlib.h>
 #include <math.h>
 #include "relativeODuKF.h"
 #include "architecture/utilities/ukfUtilities.h"

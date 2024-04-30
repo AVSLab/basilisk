@@ -19,8 +19,6 @@
 
 #include "simulation/environment/dentonFluxModel/dentonFluxModel.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
-#include <iostream>
 #include <fstream>
 #include <cmath>
 

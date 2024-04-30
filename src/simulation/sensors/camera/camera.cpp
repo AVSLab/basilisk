@@ -27,7 +27,6 @@
  */
 
 /* modify the path to reflect the new module names */
-#include <Eigen/Dense>
 #include <string.h>
 #include "camera.h"
 #include "architecture/utilities/rigidBodyKinematics.h"

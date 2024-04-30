@@ -20,7 +20,6 @@
 #include <cstdio>
 
 #include "vizInterface.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>

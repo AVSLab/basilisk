@@ -23,7 +23,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>
-#include <stdlib.h>
 
 /*! This method creates the output navigation message (translation only) for
     the ephemeris model

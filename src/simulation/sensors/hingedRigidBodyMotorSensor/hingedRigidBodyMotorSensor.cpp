@@ -19,8 +19,6 @@
 
 
 #include "simulation/sensors/hingedRigidBodyMotorSensor/hingedRigidBodyMotorSensor.h"
-#include <iostream>
-#include <cstring>
 #include <cmath>
 #include <stdint.h>
 #include <random>

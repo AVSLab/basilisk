@@ -18,7 +18,6 @@
  */
 
 #include "thrusterPlatformState.h"
-#include <math.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 

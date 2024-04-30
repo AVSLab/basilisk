@@ -23,13 +23,7 @@
 
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attGuidance/simpleDeadband/simpleDeadband.h"
-#include <string.h>
 #include <math.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
-
-/* update this include to reflect the required module input messages */
-#include "fswAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
 
 
 

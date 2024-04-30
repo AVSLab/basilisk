@@ -24,7 +24,6 @@
  */
 
 /* modify the path to reflect the new module names */
-#include <string.h>
 #include "centerRadiusCNN.h"
 #include <opencv2/dnn/dnn.hpp>
 #include <fstream>

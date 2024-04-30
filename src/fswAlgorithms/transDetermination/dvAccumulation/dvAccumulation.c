@@ -21,7 +21,6 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
-#include <stdlib.h>
 #include "architecture/utilities/bsk_Print.h"
 
 
