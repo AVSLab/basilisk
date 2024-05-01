@@ -392,6 +392,7 @@ endif()
 if(MSVC)
   set(CMAKE_CXX_STANDARD 17)
   add_definitions(/MP)
+  add_definitions(/D _USE_MATH_DEFINES)
   add_definitions(/D _CRT_SECURE_NO_WARNINGS)
   add_definitions(/D _WINSOCK_DEPRECATED_NO_WARNINGS)
   add_definitions(/D _WIN32_WINNT=0x0501) # Targets Windows xp

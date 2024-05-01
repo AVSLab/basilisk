@@ -22,9 +22,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#ifdef _WIN32
-#define _USE_MATH_DEFINES
-#endif
 
 /*! This constructor initializes an SolutionSpace class for the solution
     of the second order inequality (At^2+Bt+C)/(1+t^2) >= 0 */
