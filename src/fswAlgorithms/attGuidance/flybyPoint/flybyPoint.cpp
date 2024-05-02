@@ -16,9 +16,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#ifndef _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES
-#endif
 
 #include "fswAlgorithms/attGuidance/flybyPoint/flybyPoint.h"
 #include "architecture/utilities/rigidBodyKinematics.hpp"
