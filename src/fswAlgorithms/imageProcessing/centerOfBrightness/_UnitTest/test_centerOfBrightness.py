@@ -52,7 +52,7 @@ except ImportError:
 @pytest.mark.parametrize("image, blur,  saveTest, valid, saveImage", [
                       ("full_circle.png",   1, False, False,  False)
                     , ("full_circle.png",   1, False, True,  False)
-                    , ("test_circle.png",  5, False, True,  False)
+                    , ("test_circle.jpeg",  5, False, True,  False)
                     , ("half_half.png",    1, True , True,  False)
 ])
 

@@ -18,6 +18,7 @@
 */
 
 #include "opticalFlow.h"
+#include <fstream>
 
 OpticalFlow::OpticalFlow() = default;
 

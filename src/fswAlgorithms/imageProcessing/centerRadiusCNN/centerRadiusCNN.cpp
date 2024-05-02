@@ -20,13 +20,14 @@
     Convolutional Neural Net Circle Finder
 
     Note:   This module takes an image and writes out the circles that are found in the image by OpenCV's AI library.
- 
+
  */
 
 /* modify the path to reflect the new module names */
 #include <string.h>
 #include "centerRadiusCNN.h"
 #include <opencv2/dnn/dnn.hpp>
+#include <fstream>
 
 
 /*! The constructor for the CenterRadiusCNN module. It also sets some default values at its creation.  */
@@ -72,7 +73,7 @@ void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
+/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
@@ -119,7 +120,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     float x_pred = output.at<float>(0,0); // Neural net outputs floats
     float y_pred = output.at<float>(0,1);
     float rad_pred = output.at<float>(0,2);
-    
+
     /*!- If no circles are found do not validate the image as a measurement */
     if (x_pred != imageCV.rows/2 && y_pred != imageCV.cols/2 && rad_pred != imageCV.cols/4){
         circleBuffer.valid = 1;
@@ -134,7 +135,6 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     }
 
     this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
-    
+
     return;
 }
-
