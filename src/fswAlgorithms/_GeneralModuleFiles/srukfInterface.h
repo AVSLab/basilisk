@@ -28,26 +28,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h"
-
-/*! @brief Container class for measurement data and models */
-class Measurement{
-public:
-    Measurement() = default;
-
-    std::string name = ""; //!< [-] name of measurement  type
-    size_t size = 0; //!< [-] size of observation vector
-    double timeTag = 0; //!< [-] Observation time tag
-    bool validity = false; //!< [-] Observation validity
-    Eigen::VectorXd observation; //!< [-] Observation data vector
-    Eigen::MatrixXd noise; //!< [-] Constant measurement Noise
-    Eigen::MatrixXd choleskyNoise; //!< [-] cholesky of Qnoise
-    Eigen::VectorXd postFitResiduals; //!< [-] Observation post fit residuals
-    Eigen::VectorXd preFitResiduals; //!< [-] Observation pre fit residuals
-     /*! Each measurement must be paired with a measurement model as a function which inputs the
-     * sigma point matrix and outputs the modeled measurement for each sigma point */
-    std::function<const Eigen::MatrixXd(const Eigen::MatrixXd)> model; //!< [-] observation measurement model
-};
-
+#include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
 
 /*! @brief Square Root unscented Kalman Filter base class */
 class SRukfInterface: public SysModel  {
