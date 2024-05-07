@@ -18,15 +18,12 @@
  */
 /*
     Hill Point Module
- 
+
  */
 
 
 #include "hillPointCpp.h"
-
-/* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 
 /*! This method performs the module reset capability.  This module has no actions. */
@@ -61,70 +58,71 @@ void HillPointCpp::UpdateState(uint64_t CurrentSimNanos){
     navData = NavTransMsg_C_read(&this->transNavInMsg);
 
     /*! - Compute and store output message */
-    computeHillPointingReference(navData.r_BN_N,
-                                 navData.v_BN_N,
-                                 primPlanet.r_BdyZero_N,
-                                 primPlanet.v_BdyZero_N,
+    computeHillPointingReference((Eigen::Vector3d)navData.r_BN_N,
+                                 (Eigen::Vector3d)navData.v_BN_N,
+                                 (Eigen::Vector3d)primPlanet.r_BdyZero_N,
+                                 (Eigen::Vector3d)primPlanet.v_BdyZero_N,
                                  &attRefOut);
 
     AttRefMsg_C_write(&attRefOut, &this->attRefOutMsg, moduleID, CurrentSimNanos);
 }
 
 
-void HillPointCpp::computeHillPointingReference(double r_BN_N[3],
-                                  double v_BN_N[3],
-                                  double celBdyPositonVector[3],
-                                  double celBdyVelocityVector[3],
-                                  AttRefMsgPayload *attRefOut)
-{
+void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,
+                                                Eigen::Vector3d v_BN_N,
+                                                Eigen::Vector3d celBdyPositonVector,
+                                                Eigen::Vector3d celBdyVelocityVector,
+                                                AttRefMsgPayload *attRefOut) {
     
-    double  relPosVector[3];
-    double  relVelVector[3];
-    double  dcm_RN[3][3];            /* DCM from inertial to reference frame */
-    double  dcm_NR[3][3];            /* DCM from reference to inertial frame */
+    Eigen::Vector3d  relPosVector;
+    Eigen::Vector3d  relVelVector;
+    Eigen::Matrix3d  dcm_RN;            /* DCM from inertial to reference frame */
+    Eigen::Vector3d  orbitAngMomentum; /* orbit angular momentum vector */
+    Eigen::Vector3d  omega_RN_R;           /* reference angular velocity vector in Reference frame R components */
+    Eigen::Vector3d  domega_RN_R;          /* reference angular acceleration vector in Reference frame R components */
 
-    double  rm;                      /* orbit radius */
-    double  h[3];                    /* orbit angular momentum vector */
-    double  hm;                      /* module of the orbit angular momentum vector */
-
+    double  orbitRadius;                      /* orbit radius */
     double  dfdt;                    /* rotational rate of the orbit frame */
     double  ddfdt2;                  /* rotational acceleration of the frame */
-    double  omega_RN_R[3];           /* reference angular velocity vector in Reference frame R components */
-    double  domega_RN_R[3];          /* reference angular acceleration vector in Reference frame R components */
 
     /*! - Compute relative position and velocity of the spacecraft with respect to the main celestial body */
-    v3Subtract(r_BN_N, celBdyPositonVector, relPosVector);
-    v3Subtract(v_BN_N, celBdyVelocityVector, relVelVector);
+    relPosVector = r_BN_N - celBdyPositonVector;
+    relVelVector = v_BN_N - celBdyVelocityVector;
 
     /*! - Compute RN */
-    v3Normalize(relPosVector, dcm_RN[0]);
-    v3Cross(relPosVector, relVelVector, h);
-    v3Normalize(h, dcm_RN[2]);
-    v3Cross(dcm_RN[2], dcm_RN[0], dcm_RN[1]);
+    /*! - First row of RN is i_r */
+    dcm_RN.row(0) = relPosVector.normalized();
+
+    /*! - Third row of RN is i_h */
+    orbitAngMomentum = relPosVector.cross(relVelVector);
+    dcm_RN.row(2) = orbitAngMomentum.normalized();
+
+    /*! - Second row of RN is i_theta */
+    dcm_RN.row(1) = dcm_RN.row(2).cross(dcm_RN.row(0));
 
     /*! - Compute R-frame orientation */
-    C2MRP(dcm_RN, attRefOut->sigma_RN);
+    Eigen::Vector3d sigma_RN;
+    sigma_RN = eigenMRPd2Vector3d(eigenC2MRP(dcm_RN));
+    eigenVector3d2CArray(sigma_RN, attRefOut->sigma_RN);
 
     /*! - Compute R-frame inertial rate and acceleration */
-    rm = v3Norm(relPosVector);
-    hm = v3Norm(h);
+    orbitRadius = relPosVector.norm();
 
     /*! - determine orbit angular rates and accelerations */
-    if(rm > 1.) { /* Robustness check */
-        dfdt = hm / (rm * rm);  /* true anomaly rate */
-        ddfdt2 = - 2.0 * v3Dot(relVelVector, dcm_RN[0]) / rm * dfdt; /* derivative of true anomaly rate */
+    if(orbitRadius > 1.) { /* Robustness check */
+        dfdt = orbitAngMomentum.norm() / (orbitRadius * orbitRadius);  /* true anomaly rate */
+        ddfdt2 = - 2.0 * relVelVector.dot(dcm_RN.row(0)) / orbitRadius * dfdt; /* derivative of true anomaly rate */
     } else {
         /* an error has occured, radius shouldn't be less than 1km  */
         dfdt   = 0.;
         ddfdt2 = 0.;
     }
-    v3SetZero(omega_RN_R);
-    v3SetZero(domega_RN_R);
-    omega_RN_R[2]  = dfdt;
-    domega_RN_R[2] = ddfdt2;
+    omega_RN_R << 0.0, 0.0, dfdt;
+    domega_RN_R << 0.0, 0.0, ddfdt2;
 
-
-    m33Transpose(dcm_RN, dcm_NR);
-    m33MultV3(dcm_NR, omega_RN_R, attRefOut->omega_RN_N);
-    m33MultV3(dcm_NR, domega_RN_R, attRefOut->domega_RN_N);
+    Eigen::Vector3d temp;
+    temp = dcm_RN.transpose()*omega_RN_R;
+    eigenVector3d2CArray(temp, attRefOut->omega_RN_N);
+    temp = dcm_RN.transpose()*domega_RN_R;
+    eigenVector3d2CArray(temp, attRefOut->domega_RN_N);
 }

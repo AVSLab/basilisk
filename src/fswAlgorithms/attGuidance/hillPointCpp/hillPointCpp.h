@@ -22,13 +22,13 @@
 
 #include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
+#include <Eigen/Dense>
 
 /* Required module input messages */
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
-
-#include "architecture/utilities/bskLogging.h"
 
 /*! @brief Hill Point attitude guidance class. */
 class HillPointCpp: public SysModel {
@@ -49,10 +49,10 @@ public:
 private:
     int planetMsgIsLinked;                  //!<        flag if the planet message is linked
 
-    static void computeHillPointingReference(double r_BN_N[3],
-                                      double v_BN_N[3],
-                                      double celBdyPositonVector[3],
-                                      double celBdyVelocityVector[3],
+    static void computeHillPointingReference(Eigen::Vector3d r_BN_N,
+                                      Eigen::Vector3d v_BN_N,
+                                      Eigen::Vector3d celBdyPositonVector,
+                                      Eigen::Vector3d celBdyVelocityVector,
                                       AttRefMsgPayload *attRefOut);
 
 };
