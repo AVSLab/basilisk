@@ -20,9 +20,6 @@
 #ifndef _ASTRO_CONSTANTS_H_
 #define _ASTRO_CONSTANTS_H_
 
-#ifdef _WIN32
-#define _USE_MATH_DEFINES
-#endif
 #include <math.h>
 
 #ifndef G_UNIVERSIAL
