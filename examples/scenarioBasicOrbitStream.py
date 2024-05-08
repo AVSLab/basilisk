@@ -22,17 +22,19 @@ Overview
 
 This script duplicates the basic orbit simulation in the scenario :ref:`scenarioBasicOrbit`.
 The difference is that this version allows for the Basilisk simulation data to be live streamed to the
-:ref:`vizard` visualization program.
+:ref:`vizard` visualization program, with optional 2-way communication with Vizard (live user inputs to 
+the simulation).
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioBasicOrbitStream.py
 
-To enable live data streaming, the ``enableUnityVisualization()`` method is provided with ``liveStream``
-argument using::
+To enable live data streaming and/or broadcast streaming, the ``enableUnityVisualization()`` method is provided 
+with ``liveStream`` and ``broadcastStream`` argument using::
 
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        , liveStream=True)
+                                        , liveStream=True
+                                        , broadcastStream=True)
 
 When starting Basilisk simulation it prints now to the terminal that it is trying to connect to Vizard::
 
@@ -65,7 +67,8 @@ This way a 10s simulation time step will take 0.2 seconds with the 50x speed up 
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
-#           a 3-DOV spacecraft on a range of orbit types with live Vizard data streaming.
+#           a 3-DOV spacecraft on a range of orbit types with live Vizard data streaming
+#           and 2-way communication with Vizard.
 # Author:   Hanspeter Schaub
 # Creation Date:  Sept. 29, 2019
 #
@@ -86,17 +89,21 @@ from Basilisk.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+                                simIncludeGravBody, unitTestSupport, vizSupport, simIncludeThruster)
 from Basilisk.simulation import simSynch
+from Basilisk.simulation import vizInterface
+from Basilisk.architecture import messaging
+from Basilisk.simulation import thrusterDynamicEffector
 
 
-def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
+def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
     """
     At the end of the python script you can specify the following example parameters.
 
     Args:
         show_plots (bool): Determines if the script should display plots
         liveStream (bool): Determines if the script should use live data streaming
+        broadcastStream (bool): Determines if the script should broadcast messages for listener Vizards to pick up.
         timeStep (double): Integration update time in seconds
         orbitCase (str):
 
@@ -136,6 +143,11 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
+    I = [60., 0., 0.,
+         0., 30., 0.,
+         0., 0., 40.]
+    scObject.hub.mHub = 50.0  # kg - spacecraft mass
+    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -174,8 +186,8 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         oe.e = 1.0 - rLEO / oe.a
         oe.i = 0.0 * macros.D2R
     else:                   # LEO case, default case 0
-        oe.a = rLEO
-        oe.e = 0.0001
+        oe.a = 2.5*rLEO
+        oe.e = 0.10
         oe.i = 33.3 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
@@ -190,13 +202,34 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
 
+    # create spacecraft data container
+    scData = vizInterface.VizSpacecraftData()
+    scData.spacecraftName = scObject.ModelTag
+    scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+
+    # Configure thruster
+    thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
+    scSim.AddModelToTask(simTaskName, thrusterSet)
+
+    # Make a fresh thruster factory instance, this is critical to run multiple times
+    thFactory = simIncludeThruster.thrusterFactory()
+    thFactory.create('MOOG_Monarc_22_6', [0, 0, 0], [0, -1.5, 0])
+    thrModelTag = "ACSThrusterDynamics"
+    thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
+
+    thrMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
+    thrMsgData.OnTimeRequest = [0, 0, 0]
+    thrMsg = messaging.THRArrayOnTimeCmdMsg()
+    thrMsg.write(thrMsgData)
+    thrusterSet.cmdsInMsg.subscribeTo(thrMsg)
+
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
     P = 2. * np.pi / n
     if useSphericalHarmonics:
         simulationTime = macros.sec2nano(3. * P)
     else:
-        simulationTime = macros.sec2nano(0.75 * P)
+        simulationTime = macros.sec2nano(1 * P)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -214,10 +247,54 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
         clockSync.accelFactor = 50.0
         scSim.AddModelToTask(simTaskName, clockSync)
 
-        # if this scenario is to interface with the BSK Viz, uncomment the following line
-        vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                            , liveStream=True
-                                            )
+    # Configure Vizard, using liveStream and broadcastStream options
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                              , thrEffectorList=thrusterSet
+                                              , thrColors=vizSupport.toRGBA255("white")
+                                              , liveStream=liveStream
+                                              , broadcastStream=broadcastStream
+                                              )
+    # Set key listeners
+    viz.settings.keyboardLiveInput = "bx"
+
+    # To set 2-way port:
+    viz.reqComProtocol = "tcp"
+    viz.reqComAddress = "localhost"
+    viz.reqPortNumber = "5556"
+
+    # To set broadcast port:
+    viz.pubComProtocol = "tcp"
+    viz.pubComAddress = "localhost"
+    viz.pubPortNumber = "5570"
+
+    # Pre-instantiate panels
+    infopanel = vizInterface.EventDialog()
+    infopanel.eventHandlerID = "INFO PANEL"
+    infopanel.displayString = """This is an information panel. Vizard is reporting 'b' and 'x' keystrokes back to BSK,
+    which you can hook up to specific sim states. In this case, press 'b' to show a burn panel. If you initiate
+    a burn, press 'x' to stop the burn. Note: it is up to the user to handle multiple long key presses."""
+    infopanel.durationOfDisplay = 0  # stay open
+    infopanel.dialogFormat = "CAUTION"
+
+    burnpanel = vizInterface.EventDialog()
+    burnpanel.eventHandlerID = "OPTION PANEL"
+    burnpanel.displayString = "This panel accepts a user response. Initiate burn?"
+    burnpanel.durationOfDisplay = 0  # stay open
+    burnpanel.hideOnSelection = True
+    burnpanel.userOptions.append("Yes")
+    burnpanel.userOptions.append("No")
+    burnpanel.useConfirmationPanel = True
+    burnpanel.dialogFormat = "WARNING"
+
+    hudpanel = vizInterface.EventDialog()
+    hudpanel.eventHandlerID = "HUD"
+    hudpanel.durationOfDisplay = 0  # stay open
+
+    # Del viz.eventDialogs[:] at the start of the sim
+    viz.eventDialogs.clear()
+
+    # "Subscriber" Vizards will pick up the main settings at this frequency
+    viz.broadcastSettingsSendDelay = 2  # seconds
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -227,11 +304,67 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
     #
     scSim.InitializeSimulation()
 
-    #
-    #   configure a simulation stop time and execute the simulation run
-    #
-    scSim.ConfigureStopTime(simulationTime)
-    scSim.ExecuteSimulation()
+    # This is the execution loop. BSK executes at a frequency governed by [n * simulationTimeStep]. 
+    incrementalStopTime = 0
+    
+    # Scenario specific flag
+    continueBurn = False
+
+    while incrementalStopTime < simulationTime:
+
+        currState = scObject.scStateOutMsg.read()
+        alt = np.linalg.norm(currState.r_BN_N) - planet.radEquator
+        velNorm = np.linalg.norm(currState.v_BN_N)
+
+        hudpanel.displayString = f"HUD\nAltitude: {alt/1000:.2f} km\nInertial Velocity: {velNorm/1000:.2f} km/s"
+        viz.eventDialogs.append(hudpanel)
+
+        # Here, I only want to run a single BSK timestep before checking for user responses.
+        incrementalStopTime += simulationTimeStep
+        scSim.ConfigureStopTime(incrementalStopTime)
+        scSim.ExecuteSimulation()
+    
+        # Retrieve copy of user input message from Vizard
+        if liveStream:
+            userInputs = viz.userInputMsg.read()
+            keyInputs = userInputs.keyboardInput
+            eventInputs = userInputs.eventReplies
+
+            # Parse keyboard inputs, perform actions
+            if 'b' in keyInputs:
+                print("key - b")
+                if not continueBurn:
+                    print("burn panel")
+                    viz.eventDialogs.append(burnpanel)
+            if 'x' in keyInputs:
+                print("key - x")
+                if continueBurn:
+                    print("Stopping burn.")
+                    continueBurn = False
+                    thrMsgData.OnTimeRequest = [0, 0, 0]
+                    thrMsg.write(thrMsgData, incrementalStopTime)
+
+            # Parse panel responses
+            for response in eventInputs:
+                if response.eventHandlerID == "INFO PANEL":
+                    # Can add any other behavior here
+                    print("Panel 1 closed")
+                if response.eventHandlerID == "OPTION PANEL":
+                    print("Panel 2 response: " + response.reply)
+                    if response.reply == "Yes":
+                        print("Initiating burn.")
+                        continueBurn = True
+                    else:
+                        print("Cancelling burn.")
+
+            # Append info panel
+            if incrementalStopTime == 100*simulationTimeStep:
+                viz.eventDialogs.append(infopanel)
+
+            # Turn on thrusters
+            if continueBurn:
+                thrMsgData.OnTimeRequest = [100, 100, 100]
+                thrMsg.write(thrMsgData, incrementalStopTime)
 
     #
     #   retrieve the logged data
@@ -321,14 +454,16 @@ def run(show_plots, liveStream, timeStep, orbitCase, useSphericalHarmonics, plan
 
     return figureList
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
     run(
-        True,        # show_plots
+        False,       # show_plots
         True,        # liveStream
+        True,        # broadcastStream
         1.0,         # time step (s)
         'LEO',       # orbit Case (LEO, GTO, GEO)
         False,       # useSphericalHarmonics
