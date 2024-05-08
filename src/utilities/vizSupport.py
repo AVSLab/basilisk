@@ -1113,7 +1113,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         list of lists of :ref:`DeviceCmdMsgPayload` sensor state messages.  The outer list length must
         match ``scList``.  If the spacecraft has no sensor command msg, then use ``None``.
     opNavMode: bool
-        flag if opNaveMode should be used
+        flag if opNavMode should be used [DEPRECATED]
     liveStream: bool
         flag if live data streaming to Vizard should be used
     broadcastStream: bool
