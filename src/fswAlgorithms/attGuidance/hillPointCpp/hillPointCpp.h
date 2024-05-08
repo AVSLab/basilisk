@@ -20,7 +20,6 @@
 #ifndef _HILL_POINT_CPP_H_
 #define _HILL_POINT_CPP_H_
 
-#include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
@@ -34,8 +33,8 @@
 class HillPointCpp: public SysModel {
 public:
 
-    HillPointCpp() = default;                                //!< Constructor
-    ~HillPointCpp() override = default;                               //!< Destructor
+    HillPointCpp() = default;                                   //!< Constructor
+    ~HillPointCpp() override = default;                         //!< Destructor
 
     void Reset(uint64_t CurrentSimNanos) override;              //!< Reset member function
     void UpdateState(uint64_t CurrentSimNanos) override;        //!< Update member function
@@ -51,7 +50,7 @@ private:
 
     static void computeHillPointingReference(Eigen::Vector3d r_BN_N,
                                       Eigen::Vector3d v_BN_N,
-                                      Eigen::Vector3d celBdyPositonVector,
+                                      Eigen::Vector3d celBdyPositionVector,
                                       Eigen::Vector3d celBdyVelocityVector,
                                       AttRefMsgPayload *attRefOut);
 

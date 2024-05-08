@@ -37,7 +37,6 @@ void HillPointCpp::Reset(uint64_t CurrentSimNanos){
     AttRefMsg_C_init(&this->attRefOutMsg);
 }
 
-
 /*! This method creates a orbit hill frame reference message.  The desired orientation is
  defined within the module.
  */
@@ -73,7 +72,7 @@ void HillPointCpp::computeHillPointingReference(Eigen::Vector3d r_BN_N,
                                                 Eigen::Vector3d celBdyPositonVector,
                                                 Eigen::Vector3d celBdyVelocityVector,
                                                 AttRefMsgPayload *attRefOut) {
-    
+
     Eigen::Vector3d  relPosVector;
     Eigen::Vector3d  relVelVector;
     Eigen::Matrix3d  dcm_RN;            /* DCM from inertial to reference frame */
