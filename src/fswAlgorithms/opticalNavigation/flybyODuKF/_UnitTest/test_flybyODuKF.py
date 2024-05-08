@@ -146,7 +146,7 @@ def state_update_flyby(show_plots):
     unit_test_sim.InitializeSimulation()
     for i in range(t1):
         if i > 0 and i % 10 == 0:
-            input_data.timeTag = macros.sec2nano(i * dt)
+            input_data.timeTag = i * dt
             input_data.rhat_BN_N = (expected[i, 1:4] + np.random.normal(0, 100, 3))
             input_data.rhat_BN_N /= np.linalg.norm(input_data.rhat_BN_N)
             input_data.valid = True
@@ -162,12 +162,12 @@ def state_update_flyby(show_plots):
 
     np.testing.assert_array_less(np.diag(covariance_data_log[t1, 1:].reshape([6, 6]))[1:],
                                  np.diag(covariance_data_log[0, 1:].reshape([6, 6]))[1:],
-                                 err_msg='covariance error',
+                                 err_msg='middle covariance error',
                                  verbose=True)
 
     for i in range(t1, multT1 * t1):
-        if i % 50 == 0:
-            input_data.timeTag = macros.sec2nano(i * dt)
+        if i % 10 == 0:
+            input_data.timeTag = i * dt
             input_data.rhat_BN_N = (expected[i, 1:4] + np.random.normal(0, 100, 3))
             input_data.rhat_BN_N /= np.linalg.norm(input_data.rhat_BN_N)
             input_data.valid = True
@@ -205,7 +205,7 @@ def state_update_flyby(show_plots):
 
     np.testing.assert_array_less(np.diag(covariance_data_log[t1 * multT1, 1:].reshape([6, 6]))[1:],
                                  np.diag(covariance_data_log[0, 1:].reshape([6, 6]))[1:],
-                                 err_msg='covariance error',
+                                 err_msg='final covariance error',
                                  verbose=True)
     np.testing.assert_allclose(state_data_log[-1, 1:],
                                expected[-1, 1:],
