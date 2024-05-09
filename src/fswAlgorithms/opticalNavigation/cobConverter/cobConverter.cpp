@@ -40,6 +40,9 @@ void CobConverter::Reset(uint64_t CurrentSimNanos)
     if (!this->navAttInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "CobConverter.navAttInMsg wasn't connected.");
     }
+    if (!this->ephemInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "CobConverter.ephemInMsg wasn't connected.");
+    }
 }
 
 /*! During an update, this module transforms pixel values for the center of brightness into a unit vector
@@ -52,9 +55,14 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
     CameraConfigMsgPayload cameraSpecs = this->cameraConfigInMsg();
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();
     NavAttMsgPayload navAttBuffer = this->navAttInMsg();
+    EphemerisMsgPayload ephemBuffer = this->ephemInMsg();
 
     OpNavUnitVecMsgPayload uVecCOBMsgBuffer;
     uVecCOBMsgBuffer = this->opnavUnitVecCOBOutMsg.zeroMsgPayload;
+    OpNavUnitVecMsgPayload uVecCOMMsgBuffer;
+    uVecCOMMsgBuffer = this->opnavUnitVecCOMOutMsg.zeroMsgPayload;
+    OpNavCOMMsgPayload comMsgBuffer;
+    comMsgBuffer = this->opnavCOMOutMsg.zeroMsgPayload;
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0){
         /*! - Extract rotations from relevant messages */
