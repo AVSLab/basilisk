@@ -138,5 +138,19 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
     }
 
     this->opnavUnitVecCOBOutMsg.write(&uVecCOBMsgBuffer, this->moduleID, CurrentSimNanos);
+}
 
+/*! Set the object radius
+    @param double radiusInput [m]
+    @return void
+    */
+void CobConverter::setRadius(const double radius){
+    this->objectRadius = radius;
+}
+
+/*! Get the object radius
+    @return double radius [m]
+    */
+double CobConverter::getRadius() const {
+    return this->objectRadius;
 }

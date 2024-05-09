@@ -49,6 +49,9 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
 
+    void setRadius(const double radius);
+    double getRadius() const;
+
 public:
     Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
     Message<OpNavUnitVecMsgPayload> opnavUnitVecCOMOutMsg;
@@ -63,6 +66,7 @@ public:
 
 private:
     PhaseAngleCorrectionMethod phaseAngleCorrectionMethod;
+    double objectRadius{};
 };
 
 #endif
