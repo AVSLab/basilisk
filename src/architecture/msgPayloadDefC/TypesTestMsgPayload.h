@@ -27,40 +27,40 @@
 /*! @brief Structure used to test the handling of various built-in types in message payloads across SWIG C/Python bridge */
 typedef struct {
     // Scalars
-    int8_t i8Test;
-    uint8_t ui8Test;
-    int16_t i16Test;
-    uint16_t ui16Test;
-    int32_t i32Test;
-    uint32_t ui32Test;
-    int64_t i64Test;
-    uint64_t ui64Test;
-    float f32Test;
-    double f64Test;
+    int8_t i8Test;      //!< Test variable of int8_t
+    uint8_t ui8Test;    //!< Test variable of uint8_t
+    int16_t i16Test;    //!< Test variable of int16_t
+    uint16_t ui16Test;  //!< Test variable of uint16_t
+    int32_t i32Test;    //!< Test variable of int32_t
+    uint32_t ui32Test;  //!< Test variable of uint32_t
+    int64_t i64Test;    //!< Test variable of int64_t
+    uint64_t ui64Test;  //!< Test variable of uint64_t
+    float f32Test;      //!< Test variable of float
+    double f64Test;     //!< Test variable of double
 
     // 1D Arrays, integer
-    int16_t i16TestArray[TYPES_TEST_ARRAY_SIZE];
-    uint16_t ui16TestArray[TYPES_TEST_ARRAY_SIZE];
-    int32_t i32TestArray[TYPES_TEST_ARRAY_SIZE];
-    uint32_t ui32TestArray[TYPES_TEST_ARRAY_SIZE];
-    int64_t i64TestArray[TYPES_TEST_ARRAY_SIZE];
-    uint64_t ui64TestArray[TYPES_TEST_ARRAY_SIZE];
+    int16_t i16TestArray[TYPES_TEST_ARRAY_SIZE];    //!< Test variable of array of int16_t
+    uint16_t ui16TestArray[TYPES_TEST_ARRAY_SIZE];  //!< Test variable of array of uint16_t
+    int32_t i32TestArray[TYPES_TEST_ARRAY_SIZE];    //!< Test variable of array of int32_t
+    uint32_t ui32TestArray[TYPES_TEST_ARRAY_SIZE];  //!< Test variable of array of uint32_t
+    int64_t i64TestArray[TYPES_TEST_ARRAY_SIZE];    //!< Test variable of array of int64_t
+    uint64_t ui64TestArray[TYPES_TEST_ARRAY_SIZE];  //!< Test variable of array of uint64_t
 
     // 2D Arrays, integer
-    int16_t i16TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
-    uint16_t ui16TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
-    int32_t i32TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
-    uint32_t ui32TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
-    int64_t i64TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
-    uint64_t ui64TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
+    int16_t i16TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];    //!< Test variable of 2D array of int16_t
+    uint16_t ui16TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];  //!< Test variable of 2D array of uint16_t
+    int32_t i32TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];    //!< Test variable of 2D array of int32_t
+    uint32_t ui32TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];  //!< Test variable of 2D array of uint32_t
+    int64_t i64TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];    //!< Test variable of 2D array of int64_t
+    uint64_t ui64TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];  //!< Test variable of 2D array of uint64_t
 
     // 1D Arrays, floating point
-    float f32TestArray[TYPES_TEST_ARRAY_SIZE];
-    double f64TestArray[TYPES_TEST_ARRAY_SIZE];
+    float f32TestArray[TYPES_TEST_ARRAY_SIZE];   //!< Test variable of array of float
+    double f64TestArray[TYPES_TEST_ARRAY_SIZE];  //!< Test variable of array of double
 
     // 2D Arrays, floating point
-    float f32TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
-    double f64TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];
+    float f32TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];   //!< Test variable of 2D array of float
+    double f64TestArray2[TYPES_TEST_ARRAY_SIZE][TYPES_TEST_ARRAY_SIZE];  //!< Test variable of 2D array of double
 } TypesTestMsgPayload;
 
 #endif
