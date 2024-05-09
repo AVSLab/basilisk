@@ -38,10 +38,12 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
+enum class PhaseAngleCorrectionMethod {NoCorrection, Lambertian, Binary};
+
 /*! @brief visual limb finding module */
 class CobConverter: public SysModel {
 public:
-    CobConverter();
+    CobConverter(PhaseAngleCorrectionMethod method);
     ~CobConverter();
 
     void UpdateState(uint64_t CurrentSimNanos);
@@ -58,6 +60,9 @@ public:
 
     uint64_t sensorTimeTag;
     BSKLogger bskLogger;
+
+private:
+    PhaseAngleCorrectionMethod phaseAngleCorrectionMethod;
 };
 
 #endif

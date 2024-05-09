@@ -19,7 +19,10 @@
 
 #include "cobConverter.h"
 
-CobConverter::CobConverter() = default;
+CobConverter::CobConverter(PhaseAngleCorrectionMethod method)
+{
+    phaseAngleCorrectionMethod = method;
+}
 
 CobConverter::~CobConverter() = default;
 
