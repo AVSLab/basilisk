@@ -58,14 +58,14 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0){
         /*! - Extract rotations from relevant messages */
-        Eigen::Matrix3d dcm_CB, dcm_BN, dcm_NC;
-        double CB[3][3], BN[3][3];
+        double CB[3][3];
+        double BN[3][3];
         MRP2C(cameraSpecs.sigma_CB, CB);
-        dcm_CB = c2DArray2EigenMatrix3d(CB);
+        Eigen::Matrix3d dcm_CB = c2DArray2EigenMatrix3d(CB);
         MRP2C(navAttBuffer.sigma_BN, BN);
-        dcm_BN = c2DArray2EigenMatrix3d(BN);
+        Eigen::Matrix3d dcm_BN = c2DArray2EigenMatrix3d(BN);
 
-        dcm_NC = dcm_BN.transpose() * dcm_CB.transpose();
+        Eigen::Matrix3d dcm_NC = dcm_BN.transpose() * dcm_CB.transpose();
 
         /*! - camera parameters */
         double alpha = 0;
@@ -112,9 +112,8 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
         /*! - define and rotate covariance using number of pixels found */
         double scaleFactor = sqrt(cobMsgBuffer.pixelsFound)/(2*M_PI);
         covar_C *= 1./scaleFactor;
-        Eigen::Matrix3d covar_N, covar_B;
-        covar_N = dcm_NC * covar_C * dcm_NC.transpose();
-        covar_B = dcm_CB.transpose() * covar_C * dcm_CB;
+        Eigen::Matrix3d covar_N = dcm_NC * covar_C * dcm_NC.transpose();
+        Eigen::Matrix3d covar_B = dcm_CB.transpose() * covar_C * dcm_CB;
 
         /*! - output messages */
         eigenMatrix3d2CArray(covar_N, uVecCOBMsgBuffer.covar_N);
