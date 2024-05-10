@@ -28,7 +28,7 @@
 #include "opencv2/core/mat.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-using ImageData = struct {
+struct ImageData{
     int32_t imageBufferLength;
     void *imageBuffer;
 };
