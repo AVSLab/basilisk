@@ -233,4 +233,3 @@ void GroundMapping::UpdateState(uint64_t CurrentSimNanos)
     // Write output messages
     this->WriteMessages(CurrentSimNanos);
 }
-

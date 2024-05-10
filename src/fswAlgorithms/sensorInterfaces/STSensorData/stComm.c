@@ -71,6 +71,6 @@ void Update_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t 
     configData->attOutBuffer.timeTag = localInput.timeTag;
 
     STAttMsg_C_write(&configData->attOutBuffer, &configData->stAttOutMsg, moduleID, callTime);
-    
+
     return;
 }

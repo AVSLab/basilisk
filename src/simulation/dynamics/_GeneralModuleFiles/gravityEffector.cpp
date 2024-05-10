@@ -38,7 +38,7 @@ double computeDtInSeconds(uint64_t lhs, uint64_t rhs)
 } // namespace
 
 GravBodyData::GravBodyData()
-    : gravityModel{std::make_shared<PointMassGravityModel>()}, 
+    : gravityModel{std::make_shared<PointMassGravityModel>()},
       localPlanet{std::invoke([]() {
           SpicePlanetStateMsgPayload payload{};
           m33SetIdentity(payload.J20002Pfix); // Initialize rotation matrix to identity
@@ -176,7 +176,7 @@ void GravityEffector::prependSpacecraftNameToStates()
 void GravityEffector::registerProperties(DynParamManager& statesIn)
 {
     static const Eigen::Vector3d zeroVector3d = Eigen::Vector3d::Zero();
-    
+
     this->gravProperty = statesIn.createProperty(this->vehicleGravityPropName, zeroVector3d);
     this->inertialPositionProperty =
         statesIn.createProperty(this->inertialPositionPropName, zeroVector3d);

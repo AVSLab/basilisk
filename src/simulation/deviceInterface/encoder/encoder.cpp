@@ -61,11 +61,11 @@ void Encoder::Reset(uint64_t CurrentSimNanos)
     }
 
     // reset the previous time
-    this->prevTime = CurrentSimNanos;     
+    this->prevTime = CurrentSimNanos;
 
     // zero the RW wheel output message buffer //
     this->rwSpeedConverted = this->rwSpeedOutMsg.zeroMsgPayload;
-    
+
     // Loop through the RW to set some internal parameters to default
     for (int i = 0; i < MAX_EFF_CNT; i++)
     {
@@ -74,7 +74,7 @@ void Encoder::Reset(uint64_t CurrentSimNanos)
         // set the remaining clicks to zero
         this->remainingClicks[i] = 0.0;
     }
-    
+
     return;
 }
 
@@ -102,7 +102,7 @@ void Encoder::writeOutputMessages(uint64_t CurrentClock)
 /*! This method applies an encoder to the reaction wheel speeds.
 */
 void Encoder::encode(uint64_t CurrentSimNanos)
-{    
+{
     double timeStep;
     double numberClicks;
     double clicksPerRadian;

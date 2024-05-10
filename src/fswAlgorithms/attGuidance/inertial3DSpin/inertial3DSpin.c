@@ -18,7 +18,7 @@
  */
 /*
     Inertial 3D Spin Module
- 
+
  * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
  * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
 
@@ -77,7 +77,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
 {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer;
-    
+
     if (AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
         attRefInMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);
     } else {
@@ -93,7 +93,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
     } else {
         dt = (callTime - configData->priorTime) * NANO2SEC;
     }
-    
+
     /*! - Generate inertial 3D Spinning Reference */
     configData->attRefOutBuffer = AttRefMsg_C_zeroMsgPayload();
     computeReference_inertial3DSpin(configData,
@@ -116,19 +116,19 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
 {
     double omega_RN_N[3];
     double domega_RN_N[3];
-    
+
     /*! Compute angular rate */
     double dcm_RN[3][3];   /* DCM from inertial frame N to generated ref frame R */
     double omega_RR0_N[3]; /* angular rate of the generated ref R wrt the base ref R0 in inertial N components */
     MRP2C(configData->sigma_RN, dcm_RN);
     m33tMultV3(dcm_RN, omega_RR0_R0, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
-    
+
     /*! Compute angular acceleration */
     double v3Temp[3]; /* temporary 3x1 array */
     v3Cross(omega_R0N_N, omega_RR0_N, v3Temp);
     v3Add(v3Temp, domega_R0N_N, domega_RN_N);
-    
+
     /*! Integrate Attitude */
     double B[3][3]; /* MRP rate matrix */
     double omega_RN_R[3]; /* inertial angular rate of ref R in R frame components */
@@ -138,7 +138,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
     m33MultV3(B, omega_RN_R, v3Temp);
     v3Add(configData->sigma_RN, v3Temp, configData->sigma_RN);
     MRPswitch(configData->sigma_RN, 1.0, configData->sigma_RN);
-    
+
     /*! Copy output in AttRefMsgPayload struct */
     v3Copy(configData->sigma_RN, configData->attRefOutBuffer.sigma_RN);
     v3Copy(omega_RN_N, configData->attRefOutBuffer.omega_RN_N);

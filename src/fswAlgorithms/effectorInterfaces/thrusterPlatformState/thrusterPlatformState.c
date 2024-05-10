@@ -95,4 +95,3 @@ void Update_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint6
     /*! write output thruster config msg */
     THRConfigMsg_C_write(&thrusterConfigBOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
 }
-

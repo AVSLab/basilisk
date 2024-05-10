@@ -268,7 +268,7 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 
 	dMRP2Omega(sigma_RN, sigmaDot_RN, omega_RN_R);
 	ddMRP2dOmega(sigma_RN, sigmaDot_RN, sigmaDDot_RN, omegaDot_RN_R);
-	
+
 	// create the attitude output message buffer
 	AttRefMsgPayload attMsgBuffer;
 	// zero output message
@@ -449,7 +449,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 			}
 		}
 	}
-    
+
 	// add start and goal node to grid and connecting them to the neighboring nodes:
 	double ds = 10;
 	double dg = 10;
@@ -510,7 +510,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 	this->NodesMap[keyG[0]][keyG[1]][keyG[2]] = goalNode;
 	this->keyS[0] = keyS[0]; this->keyS[1] = keyS[1]; this->keyS[2] = keyS[2];
 	this->keyG[0] = keyG[0]; this->keyG[1] = keyG[1]; this->keyG[2] = keyG[2];
-	
+
 }
 
 /*! This method is used inside A* to track the path from goal to start, order it from start to goal and store in class variable path
@@ -570,13 +570,13 @@ void ConstrainedAttitudeManeuver::AStar()
 				}
 			}
 		}
-		
+
 		O.pop(0);
 		O.sort();
 	}
 
 	backtrack(O.list[0]);
-    
+
 	// Uncomment to print path node coordinates
 	/*
 	for (int n = 0; n < this->path.N; n++) {
@@ -628,13 +628,13 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
 				}
 			}
 		}
-		
+
 		O.pop(0);
 		O.sort();
 	}
 
 	backtrack(O.list[0]);
-    
+
 	// Uncomment to print path node coordinates
 	/*
 	std::cout << "Waypoints: \n";
@@ -709,7 +709,7 @@ void ConstrainedAttitudeManeuver::spline()
 		sDot_s[i] = sigmaDot_start[i];
 		sDot_g[i] = sigmaDot_goal[i];
 	}
-	
+
 	this->Input.setXDot_0(sDot_s);
 	this->Input.setXDot_N(sDot_g);
 	if (this->BSplineType == 0) {
@@ -729,7 +729,7 @@ void ConstrainedAttitudeManeuver::spline()
 void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 {
 	double sigma[3], sigmaDot[3], sigmaDDot[3], omega[3], omegaDot[3], L1[3], L2[3], H[3];
-	
+
 	sigma[0]     = this->Output.X1[n];    sigma[1]     = this->Output.X2[n];    sigma[2]     = this->Output.X3[n];
 	sigmaDot[0]  = this->Output.XD1[n];   sigmaDot[1]  = this->Output.XD2[n];   sigmaDot[2]  = this->Output.XD3[n];
 	sigmaDDot[0] = this->Output.XDD1[n];  sigmaDDot[1] = this->Output.XDD2[n];  sigmaDDot[2] = this->Output.XDD3[n];
@@ -748,7 +748,7 @@ double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I[9])
 {
 	double L[3];
 	computeTorque(n, this->vehicleConfigMsgBuffer.ISCPntB_B, L);
-	
+
 	return v3Norm(L);
 }
 
@@ -818,7 +818,7 @@ double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
 }
 
 /*! This helper function returns the coordinates of the 8 symmetrical points to a point in 3D cartesian space. */
-void mirrorFunction(int indices[3], int mirrorIndices[8][3]) 
+void mirrorFunction(int indices[3], int mirrorIndices[8][3])
 {
 	mirrorIndices[0][0] =  indices[0];   mirrorIndices[0][1] =  indices[1];   mirrorIndices[0][2] =  indices[2];
 	mirrorIndices[1][0] = -indices[0];   mirrorIndices[1][1] =  indices[1];   mirrorIndices[1][2] =  indices[2];

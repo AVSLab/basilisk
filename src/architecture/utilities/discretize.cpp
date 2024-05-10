@@ -51,7 +51,7 @@ Discretize::~Discretize()
  @param direction
  @return void*/
 void Discretize::setRoundDirection(roundDirection_t direction){
-    
+
     this->roundDirection = direction;
 
     return;
@@ -62,15 +62,15 @@ void Discretize::setRoundDirection(roundDirection_t direction){
  @param undiscretizedVector
  @return vector of discretized values*/
 Eigen::VectorXd Discretize::discretize(Eigen::VectorXd undiscretizedVector){
-    
+
     if (this->carryError){
         undiscretizedVector += this->discErrors;
     }
-    
+
     //discretize the data
     Eigen::VectorXd workingVector = undiscretizedVector.cwiseQuotient(this->LSB);
     workingVector = workingVector.cwiseAbs();
-    
+
     if (this->roundDirection == TO_ZERO){
         for (uint8_t i = 0; i < this->numStates; i++){
             workingVector[i] = floor(workingVector[i]);
@@ -90,8 +90,6 @@ Eigen::VectorXd Discretize::discretize(Eigen::VectorXd undiscretizedVector){
         workingVector[i] = copysign(workingVector[i], undiscretizedVector[i]);
     }
     this->discErrors = undiscretizedVector - workingVector;
-    
+
     return workingVector;
 }
-
-

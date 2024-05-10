@@ -62,12 +62,12 @@ void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t module
 
     configData->priorSignalAvailable = 0;
     v3SetZero(configData->dOld);
-    
+
     configData->filtStatus.numObs = 0;
     configData->filtStatus.timeTag = 0.0;
     v3SetZero(configData->filtStatus.state);
     vSetZero(configData->filtStatus.postFitRes, MAX_N_CSS_MEAS);
-    
+
 
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
@@ -76,8 +76,8 @@ void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t module
     return;
 }
 
-/*! This method computes the post-fit residuals for the WLS estimate.  Note that 
-    everything has to have been allocated appropriately as this function operates 
+/*! This method computes the post-fit residuals for the WLS estimate.  Note that
+    everything has to have been allocated appropriately as this function operates
     directly on the arrays.
     @return void
     @param cssMeas The measured values for the CSS sensors
@@ -89,7 +89,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig,
                          double *wlsEst, double *cssResiduals)
 {
     double cssDotProd;
-    
+
     memset(cssResiduals, 0x0, cssConfig->nCSS*sizeof(double));
     /*! The method loops through the sensors and performs: */
     for(uint32_t i=0; i<cssConfig->nCSS; i++)
@@ -101,7 +101,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigMsgPayload *cssConfig,
         cssResiduals[i] = cssMeas[i] - cssDotProd;
         /*! -# This populates the post-fit residuals*/
     }
-    
+
 }
 
 /*! This method computes a least squares fit with the given parameters.  It
@@ -125,7 +125,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
     double  m3N[3*MAX_NUM_CSS_SENSORS];
     double  m3N_2[3*MAX_NUM_CSS_SENSORS];
     uint32_t i;
-    
+
     /*! - If we only have one sensor, output best guess (cone of possiblities)*/
     if(numActiveCss == 1) {
         /* Here's a guess.  Do with it what you will. */
@@ -133,7 +133,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
             x[i] = H[0*MAX_NUM_CSS_SENSORS+i] * y[0];
         }
     } else if(numActiveCss == 2) { /*! - If we have two, then do a 2x2 fit */
-        
+
         /*!   -# Find minimum norm solution */
         mMultMt(H, 2, 3, H, 2, 3, m22);
         status = m22Inverse(RECAST2x2 m22, RECAST2x2 m22);
@@ -150,7 +150,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
         /*!    -# Multiply the LSQ matrix by the obs vector for best fit*/
         mMultV(m3N_2, 3, (size_t) numActiveCss, y, x);
     }
-    
+
     return(status);
 }
 
@@ -174,7 +174,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     double dHatOld[3];                           /* Prior normalized sun heading estimate */
     double  dt;                                  /* [s] Control update period */
     NavAttMsgPayload sunlineOutBuffer;               /* Output Nav message*/
-    
+
     /* Zero output message*/
     sunlineOutBuffer = NavAttMsg_C_zeroMsgPayload();
 
@@ -189,10 +189,10 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
         dt = (callTime - configData->priorTime) * NANO2SEC;
     }
     configData->priorTime = callTime;
-    
+
     /* - Zero the observed active CSS count*/
     configData->numActiveCss = 0;
-    
+
     /*! - Loop over the maximum number of sensors to check for good measurements */
     /*! -# Isolate if measurement is good */
     /*! -# Set body vector for this measurement */
@@ -208,10 +208,10 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
                 configData->cssConfigInBuffer.cssVals[i].nHat_B, &H[configData->numActiveCss*3]);
             y[configData->numActiveCss] = InputBuffer.CosValue[i];
             configData->numActiveCss = configData->numActiveCss + 1;
-            
+
         }
     }
-    
+
     /*! Estimation Steps*/
     configData->filtStatus = SunlineFilterMsg_C_zeroMsgPayload();
 

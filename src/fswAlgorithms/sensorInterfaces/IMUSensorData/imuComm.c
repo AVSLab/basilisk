@@ -31,7 +31,7 @@
 void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
 {
     IMUSensorBodyMsg_C_init(&configData->imuSensorOutMsg);
-    
+
 }
 
 
@@ -70,8 +70,8 @@ void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_
               configData->outMsgBuffer.DRFrameBody);
     m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.AngVelPlatform,
               configData->outMsgBuffer.AngVelBody);
-    
+
     IMUSensorBodyMsg_C_write(&configData->outMsgBuffer, &configData->imuSensorOutMsg, moduleID, callTime);
-    
+
     return;
 }

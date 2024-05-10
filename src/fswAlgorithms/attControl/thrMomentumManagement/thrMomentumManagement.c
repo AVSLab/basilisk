@@ -18,7 +18,7 @@
  */
 /*
     Thruster RW Momentum Management
- 
+
  */
 
 #include "fswAlgorithms/attControl/thrMomentumManagement/thrMomentumManagement.h"

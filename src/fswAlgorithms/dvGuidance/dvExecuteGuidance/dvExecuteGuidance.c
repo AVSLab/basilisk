@@ -135,5 +135,3 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
 
     return;
 }
-
-

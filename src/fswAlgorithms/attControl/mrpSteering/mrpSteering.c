@@ -18,7 +18,7 @@
  */
 /*
     MRP_STEERING Module
- 
+
  */
 
 #include "fswAlgorithms/attControl/mrpSteering/mrpSteering.h"
@@ -66,7 +66,7 @@ void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime,
 {
     AttGuidMsgPayload guidCmd;              /* Guidance Message */
     RateCmdMsgPayload outMsg;               /* copy of output message */
-    
+
     /*! - Zero message copies*/
     outMsg = RateCmdMsg_C_zeroMsgPayload();
 

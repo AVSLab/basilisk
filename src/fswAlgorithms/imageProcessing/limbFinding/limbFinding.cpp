@@ -22,7 +22,7 @@
     Note:   This module takes an image and writes out a message containing all the pixel points that are on the limb.
     Author: Thibaud Teil
     Date:   September 16, 2019
- 
+
  */
 
 /* modify the path to reflect the new module names */
@@ -79,7 +79,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
     }
     else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
-    
+
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())
     {
@@ -122,7 +122,7 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
         limbMsg.valid = 1;
         limbMsg.planetIds = 2;
     }
-    
+
     limbMsg.timeTag = (double) this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
@@ -130,4 +130,3 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 
     return;
 }
-

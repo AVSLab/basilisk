@@ -84,7 +84,7 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
         tmpThruster.thrustForce = v3Norm(it->ThrustOps.opThrustForce_B);
         v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
         v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
-        
+
         this->thrusterOutMsgs[idx]->write(&tmpThruster, this->moduleID, CurrentClock);
 
         idx ++;
@@ -100,7 +100,7 @@ bool ThrusterDynamicEffector::ReadInputs()
 {
     uint64_t i;
     bool dataGood;
-    
+
     if (this->cmdsInMsg.isLinked()) {
         //! - read the incoming command array
         this->incomingCmdBuffer = this->cmdsInMsg();
@@ -124,7 +124,7 @@ bool ThrusterDynamicEffector::ReadInputs()
         *CmdPtr = this->incomingCmdBuffer.OnTimeRequest[i];
     }
     return(true);
-    
+
 }
 
 /*! This method is used to read the new commands vector and set the thruster
@@ -164,7 +164,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
         //! After we have assigned the firing to the internal thruster, zero the command request.
         *CmdIt = 0.0;
     }
-    
+
 }
 
 /*! This method is used to update the location and orientation of the thrusters
@@ -252,7 +252,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     Eigen::Matrix3d	axesWeightMatrix;
     Eigen::Vector3d BM1, BM2, BM3;
     double mDotNozzle;
-    
+
     //! - Zero out the structure force/torque for the thruster set
     this->forceExternal_B.setZero();
     this->forceExternal_N.setZero();
@@ -264,7 +264,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     // Loop variables
     std::vector<THRSimConfig>::iterator it;
     THROperation* ops;
-    
+
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     int index;
     for(it = this->thrusterData.begin(), index = 0; it != this->thrusterData.end(); it++, index++)
@@ -293,11 +293,11 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = tmpThrustMag * thrustDirection_B;
         this->forceExternal_B += SingleThrusterForce;
-        
+
         //! - Compute the point B relative torque and aggregate into the composite body torque
         SingleThrusterTorque = thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor * it->MaxSwirlTorque * thrustDirection_B;
         this->torqueExternalPntB_B += SingleThrusterTorque;
-        
+
 		if (!it->updateOnly) {
 			//! - Add the mass depletion force contribution
 			mDotNozzle = 0.0;
@@ -372,7 +372,7 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCS
 
 
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
-    
+
     std::vector<THRSimConfig>::iterator it;
     THROperation *ops;
     double mDotSingle=0.0;
@@ -420,7 +420,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
     double prevValidThrFactor = 0.0;
     double prevValidIspFactor = 0.0;
     double prevValidDelta = 0.0;
-    
+
     //! - Iterate through the on-ramp for the thruster data to find where we are in ramp
     for(it = CurrentThruster->ThrusterOnRamp.begin();
         it != CurrentThruster->ThrusterOnRamp.end(); it++)
@@ -444,7 +444,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
         prevValidDelta = it->TimeDelta;
     }
     //! - If we did not find the current time in the on-ramp, then we are at steady-state
-    
+
     ops->ThrustOnSteadyTime += (currentTime - ops->PreviousIterTime);
     ops->totalOnTime += (currentTime - ops->PreviousIterTime);
     ops->PreviousIterTime = currentTime;
@@ -466,7 +466,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig *CurrentThruster,
 {
     std::vector<THRTimePair>::iterator it;
     THROperation *ops = &(CurrentThruster->ThrustOps);
-    
+
     //! - Set the current off-ramp time based on the previous clock time and now
     if(ops->ThrustOffRampTime == 0.0 &&
        CurrentThruster->ThrusterOffRamp.size() > 0)
@@ -524,7 +524,7 @@ double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
     double rampTime = it->TimeDelta;
     double rampDirection = std::copysign(1.0,
                                          it->ThrustFactor - thrData->ThrustOps.ThrustFactor);
-    
+
     //! - Initialize the time computation functiosn based on ramp direction
     double prevValidThrFactor = rampDirection < 0 ? 1.0 : 0.0;
     double prevValidDelta = 0.0;
@@ -541,7 +541,7 @@ double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
             prevValidDelta = it->TimeDelta;
             continue;
         }
-        
+
         //! - Linearly interpolate between the points, check for numerical garbage, and return clean interpolation
         rampTime = (it->TimeDelta - prevValidDelta)/(it->ThrustFactor -
                                                      prevValidThrFactor) * (thrData->ThrustOps.ThrustFactor -
@@ -549,7 +549,7 @@ double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
         rampTime = rampTime < 0.0 ? 0.0 : rampTime;
         break;
     }
-    
+
     return(rampTime);
 }
 

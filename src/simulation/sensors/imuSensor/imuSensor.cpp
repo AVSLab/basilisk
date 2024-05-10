@@ -35,13 +35,13 @@ ImuSensor::ImuSensor()
 
     this->errorModelGyro =  GaussMarkov(this->numStates, this->RNGSeed);
     this->errorModelAccel = GaussMarkov(this->numStates, this->RNGSeed);
-    
+
     this->aDisc = Discretize((uint8_t) this->numStates);
     this->oDisc = Discretize((uint8_t) this->numStates);
-    
+
     this->aSat = Saturate(this->numStates);
     this->oSat = Saturate(this->numStates);
-    
+
     this->PreviousTime = 0;
     this->NominalReady = false;
     this->senRotBias.fill(0.0);
@@ -72,7 +72,7 @@ ImuSensor::ImuSensor()
     this->gyroScale.fill(1.);
     this->sensorPos_B.fill(0.0);
     this->dcm_PB.setIdentity();
-    
+
     return;
 }
 
@@ -146,7 +146,7 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     aSatBounds(2,0) = -this->senTransMax;
     aSatBounds(2,1) = this->senTransMax;
     this->aSat.setBounds(aSatBounds);
-    
+
     return;
 }
 
@@ -176,12 +176,12 @@ void ImuSensor::readInputMessages()
 void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
     IMUSensorMsgPayload localOutput;
-    
+
     eigenVector3d2CArray(this->accel_SN_P_out, localOutput.AccelPlatform);
     eigenVector3d2CArray(this->DV_SN_P_out, localOutput.DVFramePlatform);
     eigenVector3d2CArray(this->omega_PN_P_out, localOutput.AngVelPlatform);
     eigenVector3d2CArray(this->prv_PN_out, localOutput.DRFramePlatform);
-    
+
     this->sensorOutMsg.write(&localOutput, this->moduleID, Clock);
 
     return;
@@ -195,7 +195,7 @@ void ImuSensor::setLSBs(double LSBa, double LSBo)
     this->aDisc.setLSB(Eigen::Vector3d(LSBa, LSBa, LSBa));
     this->oDisc.setLSB(Eigen::Vector3d(LSBo, LSBo, LSBo));
     return;
-    
+
 }
 
 /*!
@@ -212,10 +212,10 @@ void ImuSensor::setCarryError(bool aCarry, bool oCarry)
     set round direction value
  */
 void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound){
-    
+
     this->aDisc.setRoundDirection(aRound);
     this->oDisc.setRoundDirection(oRound);
-    
+
     return;
 }
 
@@ -227,7 +227,7 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
 
     double dt = (CurrentTime - this->PreviousTime)*1.0E-9;
-    
+
     if(this->aDisc.LSB.any()) //If aLSB has been set.
     {
         this->accel_SN_P_out = this->aDisc.discretize(this->accel_SN_P_out);
@@ -239,7 +239,7 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         this->omega_PN_P_out = this->oDisc.discretize(this->omega_PN_P_out);
         this->prv_PN_out -= this->oDisc.getDiscretizationErrors() * dt;
     }
-    
+
     return;
 }
 
@@ -281,11 +281,11 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     double dt; //time step
 
     dt = (CurrentTime - this->PreviousTime)*1.0E-9;
-    
+
     OmegaErrors = this->navErrorsGyro + this->senRotBias;
     this->omega_PN_P_out += OmegaErrors;
     this->prv_PN_out += OmegaErrors * dt;
-    
+
     AccelErrors = this->navErrorsAccel + this->senTransBias;
     this->accel_SN_P_out += AccelErrors;
     this->DV_SN_P_out += AccelErrors * dt;
@@ -314,7 +314,7 @@ void ImuSensor::computeSensorErrors()
 void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
 	double  dt = (CurrentTime - PreviousTime)*1.0E-9;
-    
+
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
     this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);
     for (int64_t i = 0; i < this->numStates; i++){
@@ -322,7 +322,7 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
             this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt;
         }
     }
-    
+
     Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
     this->accel_SN_P_out = this->aSat.saturate(accel_SN_P_in);
     for (int64_t i = 0; i < this->numStates; i++){
@@ -350,7 +350,7 @@ void ImuSensor::computePlatformDR()
     eigenMatrix3d2CArray(dcm_P2P1, dcm_P2P1_cArray); //makes a 9x1
     C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray); //makes it back into a 3x3
     this->prv_PN_out = cArray2EigenVector3d(prv_PN_cArray);//writes it back to the variable to be passed along.
-    
+
     //calculate "instantaneous" angular rate
     this->omega_PN_P_out = this->dcm_PB * this->current_omega_BN_B;
 
@@ -371,15 +371,15 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     Eigen::Vector3d rDotDot_SN_B;     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
     rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) + this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
     this->accel_SN_P_out = this->dcm_PB * rDotDot_SN_B;
-    
+
     //Calculate time-average cumulative delta v
     Eigen::Matrix3d dcm_NB_1;      // direction cosine matrix from N to B at time 1
     dcm_NB_1 = this->previous_sigma_BN.toRotationMatrix();
     Eigen::Matrix3d dcm_NB_2;      // direction cosine matrix from N to B at time 2
     dcm_NB_2 = this->current_sigma_BN.toRotationMatrix();
-    
+
     this->DV_SN_P_out =this->dcm_PB * dcm_NB_2.transpose() * ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B) + ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B) - (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
-    
+
     return;
 }
 
@@ -405,13 +405,13 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         /* Output sensed data */
         this->writeOutputMessages(CurrentSimNanos);
     }
-    
+
     //record data from the current spacecraft message which is needed for the next IMU call
     this->previous_sigma_BN = this->current_sigma_BN;
     this->previous_omega_BN_B = this->current_omega_BN_B;
     this->previous_TotalAccumDV_BN_B = this->current_TotalAccumDV_BN_B;
     this->PreviousTime = CurrentSimNanos;
-    
+
     this->NominalReady = true;
 
     return;

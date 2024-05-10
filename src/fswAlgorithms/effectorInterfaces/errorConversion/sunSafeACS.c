@@ -65,6 +65,6 @@ void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
     cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
     computeSingleThrustBlock(&(configData->thrData), callTime,
                              &cntrRequest, moduleID);
-    
+
     return;
 }

@@ -179,7 +179,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-/*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
+/*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
  method */
 void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
@@ -313,7 +313,7 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     this->computePanelInertialStates();
 
     this->writeOutputStateMessages(CurrentSimNanos);
-    
+
     return;
 }
 

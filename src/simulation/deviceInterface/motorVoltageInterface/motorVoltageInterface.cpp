@@ -59,7 +59,7 @@ void MotorVoltageInterface::readInputMessages()
 
     // read the incoming array of voltages
     this->inputVoltageBuffer = this->motorVoltageInMsg();
-    
+
     return;
 }
 
@@ -147,5 +147,3 @@ void MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
 
     return;
 }
-
-

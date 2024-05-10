@@ -18,7 +18,7 @@
  */
 /*
     Thrust Firing Remainder
- 
+
  */
 
 #include "fswAlgorithms/effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
@@ -147,7 +147,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
 
 		/*! - Set the output data for each thruster */
 		thrOnTimeOut.OnTimeRequest[i] = onTime[i];
-		
+
 	}
 
     /*! - write the moduel output message */

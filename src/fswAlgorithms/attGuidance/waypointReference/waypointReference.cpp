@@ -54,7 +54,7 @@ WaypointReference::~WaypointReference()
  @param CurrentSimNanos The current sim time in nanoseconds
  */
 void WaypointReference::Reset(uint64_t CurrentSimNanos)
-{	
+{
     if (this->dataFileName.length() == 0) {
         bskLogger.bskLog(BSK_ERROR, "WaypointReference: dataFileName must be an non-empty string.");
     }
@@ -77,7 +77,7 @@ void WaypointReference::Reset(uint64_t CurrentSimNanos)
 	pullDataLine(&this->t_a, &this->attRefMsg_a);
 	/* Pull first line of dataFileName and stores relative time and attitude in this->t_b and this->attRefMsg_b */
 	pullDataLine(&this->t_b, &this->attRefMsg_b);
- 
+
     bskLogger.bskLog(BSK_INFORMATION, "WaypointReference:\nloaded the file: %s.", this->dataFileName.c_str());
 
     return;
@@ -93,16 +93,16 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
     if (this->fileHandle->is_open()) {
         /* read in next line*/
         std::string line;
-		
+
 	    /* create the attitude output message buffer */
 		AttRefMsgPayload attMsgBuffer;
-		
+
 		/* zero output message */
         attMsgBuffer = this->attRefOutMsg.zeroMsgPayload;
-		
+
 		/* current time */
 		uint64_t t =  CurrentSimNanos;
-		
+
 		/* for CurrentTime < t_0 hold initial attitude with zero angular rates and accelerations */
 		if (t < this->t_a) {
 			v3Copy(this->attRefMsg_a.sigma_RN, attMsgBuffer.sigma_RN);
@@ -138,10 +138,10 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 		if (t > this->t_b && this->endOfFile == true) {
 			v3Copy(this->attRefMsg_b.sigma_RN, attMsgBuffer.sigma_RN);
 		}
-	
+
 		/* write output attitude reference message */
         this->attRefOutMsg.write(&attMsgBuffer, this->moduleID, CurrentSimNanos);
-		
+
     }
     return;
 }
@@ -149,19 +149,19 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 
 /*! Pull one line of dataFileName and stores time t and relative attitude in attRefMsg_t */
 void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
-{   
+{
     std::string line;
-	
+
 	/* read in next line, if line is not empty, stores the information ;
 	   if line is empty, switches this_endOfFile to true */
 	if (getline(*this->fileHandle, line)) {
 		std::istringstream iss(line);
-		
+
 		*attRefMsg_t = this->attRefOutMsg.zeroMsgPayload;
 
         /* pull time, this is not used in the BSK msg */
         *t = (uint64_t) (pullScalar(&iss) * SEC2NANO);
-		
+
 		/* get inertial attitude of reference frame R with respect to N and store in msg */
 		double attNorm;
 		double att3[3];
@@ -205,29 +205,29 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 		if (this->useReferenceFrame == false) {
 			/* get inertial angular rates in inertial frame components and store them in msg */
 		    pullVector(&iss, attRefMsg_t->omega_RN_N);
-			
+
 			/* get inertial angular accelerations in inertial frame components and store them in msg */
 		    pullVector(&iss, attRefMsg_t->domega_RN_N);
-			
+
 		}
 		else {
 			/* get inertial angular rates in reference frame components */
 			double omega_RN_R[3];
 		    pullVector(&iss, omega_RN_R);
-			
+
 			/* get inertial angular accelerations in reference frame components */
 			double omegaDot_RN_R[3];
 		    pullVector(&iss, omegaDot_RN_R);
-			
+
 			/* compute direction cosine matrix [RN] */
 			double RN[3][3];
 		    MRP2C(attRefMsg_t->sigma_RN, RN);
-			
+
 			/* change angular rates and accelerations to inertial frame and stores them in msg */
 			v3tMultM33(omega_RN_R, RN, attRefMsg_t->omega_RN_N);
 		    v3tMultM33(omegaDot_RN_R, RN, attRefMsg_t->domega_RN_N);
 		}
-			
+
     } else {
         bskLogger.bskLog(BSK_INFORMATION, "WaypointReference: reached end of file.");
 		this->endOfFile = true;
@@ -274,4 +274,3 @@ void WaypointReference::linearInterpolation(uint64_t t_a, double v_a[3], uint64_
         *(v+i) = v_a[i] + (v_b[i] - v_a[i]) / (t_b - t_a) * (t - t_a);
     }
 }
-

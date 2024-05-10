@@ -107,7 +107,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     opNavMsg = OpNavMsg_C_read(&configData->opnavDataInMsg);
     localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
-    
+
     if (configData->lastTime==0){
         configData->lastTime=callTime*1E-9;
         v3SetZero(configData->currentHeading_N);
@@ -179,6 +179,6 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
 
     /* write the Guidance output message */
     AttGuidMsg_C_write(&configData->attGuidanceOutBuffer, &configData->attGuidanceOutMsg, moduleID, callTime);
-    
+
     return;
 }
