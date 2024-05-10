@@ -67,28 +67,41 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
 
         dcm_NC = dcm_BN.transpose() * dcm_CB.transpose();
 
-        /*! - Find pixel size using camera specs */
-        double pX, pY;
-        /* compute sensorSize/focalLength = 2*tan(FOV/2) */
-        pX = 2.*tan(cameraSpecs.fieldOfView*cameraSpecs.resolution[0]/cameraSpecs.resolution[1]/2.0);
-        pY = 2.*tan(cameraSpecs.fieldOfView/2.0);
-        double X = pX/cameraSpecs.resolution[0];
-        double Y = pY/cameraSpecs.resolution[1];
+        /*! - camera parameters */
+        double alpha = 0;
+        double fieldOfView = cameraSpecs.fieldOfView;
+        double resolutionX = cameraSpecs.resolution[0];
+        double resolutionY = cameraSpecs.resolution[1];
+        double pX = 2.*tan(fieldOfView/2.0);
+        double pY = 2.*tan(fieldOfView*resolutionY/resolutionX/2.0);
+        double dX = resolutionX/pX;
+        double dY = resolutionY/pY;
+        double up = resolutionX/2;
+        double vp = resolutionY/2;
+        double X = 1/dX;
+        double Y = 1/dY;
+        /*! - build inverse K^-1 of camera calibration matrix K */
+        Eigen::Matrix3d cameraCalibrationMatrixInverse;
+        cameraCalibrationMatrixInverse << 1./dX, -alpha/(dX*dY), (alpha*vp - dY*up)/(dX*dY),
+                                          0., 1./dY, -vp/dY,
+                                          0., 0., 1.;
+
+        /*! - Center of Brightness in pixel space */
+        Eigen::Vector3d centerOfBrightness;
+        centerOfBrightness[0] = cobMsgBuffer.centerOfBrightness[0];
+        centerOfBrightness[1] = cobMsgBuffer.centerOfBrightness[1];
+        centerOfBrightness[2] = 1.0;
 
         /*! - Get the heading in the image plane */
-        Eigen::Vector3d rhat_BN_C;
-        rhat_BN_C[0] = (cobMsgBuffer.centerOfBrightness[0] - cameraSpecs.resolution[0]/2 + 0.5)*X;
-        rhat_BN_C[1] = (cobMsgBuffer.centerOfBrightness[1] - cameraSpecs.resolution[1]/2 + 0.5)*Y;
-        rhat_BN_C[2] = 1.0; // Image plane
+        Eigen::Vector3d rhat_COB_C = cameraCalibrationMatrixInverse * centerOfBrightness;
 
         /*! - Retrieve the vector from target to camera and normalize */
-        rhat_BN_C *= - 1;
-        rhat_BN_C.normalize();
+        rhat_COB_C *= - 1;
+        rhat_COB_C.normalize();
 
         /*! - Rotate the vector into frames of interest */
-        Eigen::Vector3d rhat_BN_N, rhat_BN_B;
-        rhat_BN_N = dcm_NC * rhat_BN_C;
-        rhat_BN_B = dcm_CB.transpose() * rhat_BN_C;
+        Eigen::Vector3d rhat_COB_N = dcm_NC * rhat_COB_C;
+        Eigen::Vector3d rhat_COB_B = dcm_CB.transpose() * rhat_COB_C;
 
         /*! - Define diagonal terms of the covariance */
         Eigen::Matrix3d covar_C;
@@ -108,9 +121,9 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
         eigenMatrix3d2CArray(covar_N, uVecCOBMsgBuffer.covar_N);
         eigenMatrix3d2CArray(covar_C, uVecCOBMsgBuffer.covar_C);
         eigenMatrix3d2CArray(covar_B, uVecCOBMsgBuffer.covar_B);
-        eigenVector3d2CArray(rhat_BN_N, uVecCOBMsgBuffer.rhat_BN_N);
-        eigenVector3d2CArray(rhat_BN_C, uVecCOBMsgBuffer.rhat_BN_C);
-        eigenVector3d2CArray(rhat_BN_B, uVecCOBMsgBuffer.rhat_BN_B);
+        eigenVector3d2CArray(rhat_COB_N, uVecCOBMsgBuffer.rhat_BN_N);
+        eigenVector3d2CArray(rhat_COB_C, uVecCOBMsgBuffer.rhat_BN_C);
+        eigenVector3d2CArray(rhat_COB_B, uVecCOBMsgBuffer.rhat_BN_B);
         uVecCOBMsgBuffer.timeTag = (double) cobMsgBuffer.timeTag * NANO2SEC;
         uVecCOBMsgBuffer.valid = true;
     }
