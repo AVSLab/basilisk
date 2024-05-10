@@ -51,8 +51,10 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
 {
     CameraConfigMsgPayload cameraSpecs = this->cameraConfigInMsg();
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();
-    OpNavUnitVecMsgPayload uVecMsgBuffer = this->opnavUnitVecOutMsg.zeroMsgPayload;
     NavAttMsgPayload navAttBuffer = this->navAttInMsg();
+
+    OpNavUnitVecMsgPayload uVecCOBMsgBuffer;
+    uVecCOBMsgBuffer = this->opnavUnitVecCOBOutMsg.zeroMsgPayload;
 
     if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0){
         /*! - Extract rotations from relevant messages */
@@ -101,18 +103,18 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
         Eigen::Matrix3d covar_N, covar_B;
         covar_N = dcm_NC * covar_C * dcm_NC.transpose();
         covar_B = dcm_CB.transpose() * covar_C * dcm_CB;
-        /*! - write output message */
-        eigenMatrix3d2CArray(covar_N, uVecMsgBuffer.covar_N);
-        eigenMatrix3d2CArray(covar_C, uVecMsgBuffer.covar_C);
-        eigenMatrix3d2CArray(covar_B, uVecMsgBuffer.covar_B);
-        eigenVector3d2CArray(rhat_BN_N, uVecMsgBuffer.rhat_BN_N);
-        eigenVector3d2CArray(rhat_BN_C, uVecMsgBuffer.rhat_BN_C);
-        eigenVector3d2CArray(rhat_BN_B, uVecMsgBuffer.rhat_BN_B);
 
-        uVecMsgBuffer.timeTag = (double) cobMsgBuffer.timeTag;
-        uVecMsgBuffer.valid = true;
+        /*! - output messages */
+        eigenMatrix3d2CArray(covar_N, uVecCOBMsgBuffer.covar_N);
+        eigenMatrix3d2CArray(covar_C, uVecCOBMsgBuffer.covar_C);
+        eigenMatrix3d2CArray(covar_B, uVecCOBMsgBuffer.covar_B);
+        eigenVector3d2CArray(rhat_BN_N, uVecCOBMsgBuffer.rhat_BN_N);
+        eigenVector3d2CArray(rhat_BN_C, uVecCOBMsgBuffer.rhat_BN_C);
+        eigenVector3d2CArray(rhat_BN_B, uVecCOBMsgBuffer.rhat_BN_B);
+        uVecCOBMsgBuffer.timeTag = (double) cobMsgBuffer.timeTag * NANO2SEC;
+        uVecCOBMsgBuffer.valid = true;
     }
 
-    this->opnavUnitVecOutMsg.write(&uVecMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->opnavUnitVecCOBOutMsg.write(&uVecCOBMsgBuffer, this->moduleID, CurrentSimNanos);
 
 }

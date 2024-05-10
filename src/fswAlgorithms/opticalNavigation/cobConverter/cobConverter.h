@@ -41,12 +41,12 @@ class CobConverter: public SysModel {
 public:
     CobConverter();
     ~CobConverter();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
-    
+
 public:
-    Message<OpNavUnitVecMsgPayload> opnavUnitVecOutMsg;
+    Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
     ReadFunctor<OpNavCOBMsgPayload> opnavCOBInMsg;
     ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;
     ReadFunctor<NavAttMsgPayload> navAttInMsg;
