@@ -110,8 +110,7 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
         covar_C(1,1) = pow(Y,2);
         covar_C(2,2) = 1;
         /*! - define and rotate covariance using number of pixels found */
-        double scaleFactor;
-        scaleFactor = sqrt(cobMsgBuffer.pixelsFound)/(6.28); // division by 2pi
+        double scaleFactor = sqrt(cobMsgBuffer.pixelsFound)/(2*M_PI);
         covar_C *= 1./scaleFactor;
         Eigen::Matrix3d covar_N, covar_B;
         covar_N = dcm_NC * covar_C * dcm_NC.transpose();
