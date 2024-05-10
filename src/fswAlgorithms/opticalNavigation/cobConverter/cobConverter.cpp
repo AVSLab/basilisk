@@ -53,8 +53,8 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
     OpNavCOBMsgPayload cobMsgBuffer = this->opnavCOBInMsg();
     OpNavUnitVecMsgPayload uVecMsgBuffer = this->opnavUnitVecOutMsg.zeroMsgPayload;
     NavAttMsgPayload navAttBuffer = this->navAttInMsg();
-    
-    if (cobMsgBuffer.valid){
+
+    if (cobMsgBuffer.valid && cobMsgBuffer.pixelsFound != 0){
         /*! - Extract rotations from relevant messages */
         Eigen::Matrix3d dcm_CB, dcm_BN, dcm_NC;
         double CB[3][3], BN[3][3];
