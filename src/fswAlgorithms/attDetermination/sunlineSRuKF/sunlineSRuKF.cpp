@@ -65,6 +65,26 @@ Eigen::VectorXd SunlineSRuKF::propagate(std::array<double, 2> interval, const Ei
     double t = t_0;
     Eigen::VectorXd X = X0;
 
+    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> stateDerivative = [](double t, Eigen::VectorXd state)
+    {
+        Eigen::VectorXd XDot(state.size());
+        /*! Implement propagation with rate derivatives set to zero */
+        Eigen::Vector3d sHat  = state.segment(0, 3);
+        Eigen::Vector3d omega = state.segment(3, 3);
+        XDot.segment(0,3) = sHat.cross(omega);
+        XDot.segment(3,3).setZero();
+
+        return XDot;
+    };
+
+    /*! Propagate to t_final with an RK4 integrator */
+    double N = ceil((t_f-t_0)/dt);
+    for (int c=0; c < N; c++) {
+        double step = std::min(dt,t_f-t);
+        X = this->rk4(stateDerivative, X, t, step);
+        t = t + step;
+    }
+
     return X;
 }
 
