@@ -66,6 +66,7 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioSensorThermal'
                                         , 'scenarioHaloOrbit'
                                         , 'scenarioDeployingSolarArrays'
+                                        , 'scenarioTempMeasurementAttitude'
                                         ])
 @pytest.mark.scenarioTest
 def test_scenarioBskScenarios(show_plots, scenarioCase):
