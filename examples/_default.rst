@@ -195,6 +195,7 @@ Thermal Sub-System
   :maxdepth: 1
 
   Thermal Modeling of a Sensor  <scenarioSensorThermal>
+  Temperature Measurement with Random Seed Noise <scenarioTempMeasurementAttitude>
 
 Complex Spacecraft Dynamics Simulations
 ---------------------------------------
