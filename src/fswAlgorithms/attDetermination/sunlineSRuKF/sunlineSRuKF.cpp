@@ -67,3 +67,50 @@ Eigen::VectorXd SunlineSRuKF::propagate(std::array<double, 2> interval, const Ei
 
     return X;
 }
+
+/*! Set the CSS measurement noise
+    @param double cssMeasurementNoise
+    @return void
+    */
+void SunlineSRuKF::setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd) {
+    this->cssMeasNoiseStd = cssMeasurementNoiseStd;
+}
+
+/*! Set the gyro measurement noise
+    @param double gyroMeasurementNoise
+    @return void
+    */
+void SunlineSRuKF::setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseStd) {
+    this->gyroMeasNoiseStd = gyroMeasurementNoiseStd;
+}
+
+/*! Set the filter measurement noise scale factor if desirable
+    @param double measurementNoiseScale
+    @return void
+    */
+void SunlineSRuKF::setMeasurementNoiseScale(const double measurementNoiseScale) {
+    this->measNoiseScaling = measurementNoiseScale;
+}
+
+/*! Get the CSS measurement noise
+    @param double cssMeasurementNoise
+    @return void
+    */
+double SunlineSRuKF::getCssMeasurementNoiseStd() const {
+    return this->cssMeasNoiseStd;
+}
+
+/*! Get the gyro measurement noise
+    @param double gyroMeasurementNoise
+    @return void
+    */
+double SunlineSRuKF::getGyroMeasurementNoiseStd() const {
+    return this->gyroMeasNoiseStd;
+}
+
+/*! Get the filter measurement noise scale factor
+    @return double measNoiseScaling
+    */
+double SunlineSRuKF::getMeasurementNoiseScale() const {
+    return this->measNoiseScaling;
+}

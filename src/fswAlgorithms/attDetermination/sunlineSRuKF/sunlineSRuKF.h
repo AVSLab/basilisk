@@ -49,6 +49,8 @@ private:
 
     double sensorUseThresh = 0;  //!< Threshold below which we discount sensors
     double measNoiseScaling = 1; //!< [s] Scale factor that can be applied on the measurement noise to over/under weight
+    double cssMeasNoiseStd = 0;  //!< [-] CSS measurement noise std
+    double gyroMeasNoiseStd = 0; //!< [rad/s] rate gyro measurement noise std
     CSSConfigMsgPayload cssConfigInputBuffer;
 
 public:
@@ -60,6 +62,13 @@ public:
     Message<FilterMsgPayload>             filterOutMsg;
     Message<FilterResidualsMsgPayload>    filterGyroResOutMsg;
     Message<FilterResidualsMsgPayload>    filterCssResOutMsg;
+
+    void setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd);
+    void setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseStd);
+    void setMeasurementNoiseScale(const double measurementNoiseScale);
+    double getCssMeasurementNoiseStd() const;
+    double getGyroMeasurementNoiseStd() const;
+    double getMeasurementNoiseScale() const;
 
 };
 
