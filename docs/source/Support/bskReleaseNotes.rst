@@ -36,6 +36,8 @@ Version |release|
 - Uncaught exceptions raised in Python modules are now printed to ``stderr`` before the program is terminated.
 - Added a new N-axis spinning effector :ref:`spinningBodyNDOFStateEffector`. This is an expansion of :ref:`spinningBodyOneDOFStateEffector`
   and :ref:`spinningBodyTwoDOFStateEffector` to any number of degrees of freedom.
+- Update the Windows build to automatically include the Math library defines.  This avoids having
+  to include them in BSK source code files individually.
 
 
 Version 2.3.0 (April 5, 2024)

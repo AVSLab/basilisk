@@ -17,10 +17,6 @@
 
  */
 
-#ifndef _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES
-#endif
-
 #include "sphericalPendulum.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <math.h>
@@ -30,7 +26,7 @@
 SphericalPendulum::SphericalPendulum()
 {
 	// - zero the contributions for mass props and mass rates
-	this->effProps.mEff = 0.0; 
+	this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B.setZero();
 	this->effProps.rEff_CB_B.setZero();
 	this->effProps.rEffPrime_CB_B.setZero();
@@ -41,8 +37,8 @@ SphericalPendulum::SphericalPendulum()
 	this->d.setZero();
 	this->D.setZero();
 
-    this->pHat_01 << 1,0,0; 
-    this->pHat_02 << 0,1,0; 
+    this->pHat_01 << 1,0,0;
+    this->pHat_02 << 0,1,0;
     this->pHat_03 << 0,0,1;
     this->phiInit=0.0;
     this->l_B.setZero();
@@ -50,7 +46,7 @@ SphericalPendulum::SphericalPendulum()
     this->lPrime_P0.setZero();
     this->phiDotInit=0.0;
     this->thetaInit=0.0;
-    this->thetaDotInit=0.0;   
+    this->thetaDotInit=0.0;
     this->massInit = 1.0;
 	this->nameOfPhiState = "sphericalPendulumPhi" + std::to_string(this->effectorID);
 	this->nameOfPhiDotState = "sphericalPendulumPhiDot" + std::to_string(this->effectorID);
@@ -58,7 +54,7 @@ SphericalPendulum::SphericalPendulum()
 	this->nameOfThetaDotState = "sphericalPendulumThetaDot" + std::to_string(this->effectorID);
 	this->nameOfMassState = "sphericalPendulumMass" + std::to_string(this->effectorID);
     this->effectorID++;
-    
+
 	return;
 }
 
@@ -94,7 +90,7 @@ void SphericalPendulum::registerStates(DynParamManager& states)
     Eigen::MatrixXd phiInitMatrix(1,1);
     phiInitMatrix(0,0) = this->phiInit;
     this->phiState->setState(phiInitMatrix);
-    
+
     this->thetaState = states.registerState(1, 1, nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);
     thetaInitMatrix(0,0) = this->thetaInit;
@@ -157,7 +153,7 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
 	Eigen::Vector3d l_P0;
 	l_P0 << this->pendulumRadius*cos(this->phi)*cos(this->theta), this->pendulumRadius*sin(this->phi)*cos(this->theta),
 	 -this->pendulumRadius*sin(this->theta);
-	
+
 	// define the rotation matrix from P0 to B frame
 	dcm_B_P0 << pHat_01(0,0), pHat_02(0,0), pHat_03(0,0),
 				pHat_01(1,0), pHat_02(1,0), pHat_03(1,0),
@@ -166,7 +162,7 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
 
 	this->r_PcB_B = this->d + this->l_B;
 	this->massFSP = this->massState->getState()(0, 0);
- 
+
 	// - Update the effectors mass
 	this->effProps.mEff = this->massFSP;
 	// - Update the position of CoM
@@ -185,7 +181,7 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
     		-this->pendulumRadius*(this->thetaDot*cos(this->theta));
     // rotate l derivative in B frame
     this->lPrime_B = dcm_B_P0*this->lPrime_P0;
-	
+
 	this->rPrime_PcB_B = this->lPrime_B;
 	this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
 
@@ -193,7 +189,7 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
 	this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
 	this->effProps.IEffPrimePntB_B = -this->massFSP*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
                                                                           + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
-	
+
     return;
 }
 
@@ -228,7 +224,7 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
     // - Define bPhi.transpose()
     this->bPhi = this->pHat_03.transpose()*lTilde*(lTilde+dTilde)/(this->pendulumRadius*this->pendulumRadius*cos(this->theta)*cos(this->theta));
 
-   
+
       // - Map gravity to body frame
     Eigen::Vector3d gLocal_N;
     Eigen::Vector3d g_B;
@@ -243,10 +239,10 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
     omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
 	this->cPhi = 1.0/(this->massFSP*this->pendulumRadius*this->pendulumRadius*cos(this->theta)*cos(this->theta))*
 			(-this->massFSP*this->pHat_03.transpose().dot(lTilde*omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->d)
-			+this->pHat_03.transpose()*(L_T) + 
+			+this->pHat_03.transpose()*(L_T) +
 			2*this->massFSP*this->pendulumRadius*this->pendulumRadius*this->phiDot*this->thetaDot*cos(this->theta)*sin(this->theta)
 			-this->massFSP*this->pHat_03.transpose().dot(lTilde*(2*omegaTilde_BN_B_local*this->lPrime_B+omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->l_B)));
-	
+
 	// Define pHat_02_Prime axes of rotation of theta in P0 frame
 	Eigen::Vector3d pHat_02_Prime_P0;
 	pHat_02_Prime_P0 << -sin(this->phi),cos(this->phi),0;
@@ -264,7 +260,7 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
 			+pHat_02_Prime.transpose()*(L_T)
 			-this->massFSP*this->pendulumRadius*this->pendulumRadius*this->phiDot*this->phiDot*cos(this->theta)*sin(this->theta)
 			-this->massFSP*pHat_02_Prime.transpose().dot(lTilde*(2*omegaTilde_BN_B_local*this->lPrime_B+omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->l_B)));
-	
+
 	// - Compute matrix/vector contributions
 	backSubContr.matrixA = -this->massFSP*this->pendulumRadius*((sin(this->phi)*cos(this->theta)*this->pHat_01
 	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->aPhi.transpose()+(cos(this->phi)*sin(this->theta)*this->pHat_01
@@ -302,17 +298,17 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
     return;
 }
 
-/*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is 
+/*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is
  derived using the back-sub method */
 void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
-	
+
 	// - Find DCM
 	Eigen::MRPd sigmaLocal_BN;
 	Eigen::Matrix3d dcm_BN;
 	sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
-	
+
 	// - Set the derivative of l to lDot
 	this->phiState->setDerivative(this->phiDotState->getState());
 	this->thetaState->setDerivative(this->thetaDotState->getState());
@@ -340,7 +336,7 @@ void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDD
 void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                                      double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-	
+
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();
@@ -353,9 +349,9 @@ void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Ve
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*this->massFSP*rDotPcB_B.dot(rDotPcB_B);
 
-    
+
     return;
-    
+
 }
 
 void SphericalPendulum::modifyStates(double integTime){
@@ -367,10 +363,10 @@ void SphericalPendulum::modifyStates(double integTime){
     					sin(this->phi)*cos(this->theta), cos(this->phi), sin(this->phi)*sin(this->theta),
     					-sin(this->theta), 0, cos(this->theta);
     	// define the P0new vectors in P0new components
-    	this->pHat_01 << 1,0,0; 
-    	this->pHat_02 << 0,1,0; 
+    	this->pHat_01 << 1,0,0;
+    	this->pHat_02 << 0,1,0;
     	this->pHat_03 << 0,0,1;
-		
+
     	// rotate these vectors before in P0 frame and then in B frame
     	this->pHat_01=dcm_B_P0*dcm_P0_P0new*this->pHat_01;
     	this->pHat_02=dcm_B_P0*dcm_P0_P0new*this->pHat_02;
@@ -384,11 +380,11 @@ void SphericalPendulum::modifyStates(double integTime){
        	lPrime_P0new=dcm_B_P0.transpose()*this->lPrime_B;
        	// define the new values for phiDot and thetaDot inverting the lPrime definition
        	this->thetaDot=-lPrime_P0new(2,0)/this->pendulumRadius;
-       	this->phiDot=lPrime_P0new(1,0)/this->pendulumRadius; 	
+       	this->phiDot=lPrime_P0new(1,0)/this->pendulumRadius;
 		// set the new values of theta and phi
     	this->theta=0;
     	this->phi=0;
-    	
+
     	// set the new state of phi,theta, phiDot, thetaDot
 		Eigen::MatrixXd phiMatrix(1,1);
     	phiMatrix(0,0) = this->phi;
@@ -406,7 +402,6 @@ void SphericalPendulum::modifyStates(double integTime){
     	thetaDotMatrix(0,0) = this->thetaDot;
     	this->thetaDotState->setState(thetaDotMatrix);
     }
-    
+
     	return;
     }
-
