@@ -28,13 +28,27 @@ void SunlineSRuKF::SelfInit(){
     NavAttMsg_C_init(&this->navAttOutMsgC);
 }
 
-/*! Reset the flyby OD filter to an initial state and
+/*! Reset the sunline filter to an initial state and
  initializes the internal estimation matrices.
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void SunlineSRuKF::customReset() {
+    /*! - Check if the required messages have been connected */
+    assert(this->cssDataInMsg.isLinked());
+    assert(this->cssConfigInMsg.isLinked());
+    assert(this->navAttInMsg.isLinked());
 
+    /*! read in CSS configuration message */
+    this->cssConfigInputBuffer = this->cssConfigInMsg();
+}
+
+/*! Normalize the updated sunline estimate
+ @return void
+ @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
+ */
+void SunlineSRuKF::customFinalizeUpdate() {
+    this->state.head(3).normalize();
 }
 
 /*! Read the message containing the measurement data.

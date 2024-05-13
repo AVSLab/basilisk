@@ -44,6 +44,7 @@ public:
 private:
     void customReset() override;
     void readFilterMeasurements() override;
+    void customFinalizeUpdate() override;
     void writeOutputMessages(uint64_t CurrentSimNanos) override;
     Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) override;
 
