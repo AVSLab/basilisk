@@ -33,6 +33,8 @@ Version |release|
 -----------------
 - Removed the depreciated manner of creating python modules
 - Uncaught exceptions raised in Python modules are now printed to ``stderr`` before the program is terminated.
+- Added a new N-axis spinning effector :ref:`spinningBodyNDOFStateEffector`. This is an expansion of :ref:`spinningBodyOneDOFStateEffector`
+  and :ref:`spinningBodyTwoDOFStateEffector` to any number of degrees of freedom.
 
 
 Version 2.3.0 (April 5, 2024)
