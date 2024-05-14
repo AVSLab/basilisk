@@ -45,6 +45,46 @@ void EphemDifferenceWithUncertainty::Reset(uint64_t currentSimNanos)
  */
 void EphemDifferenceWithUncertainty::UpdateState(uint64_t currentSimNanos)
 {
+    EphemerisMsgPayload ephemBaseInBuffer = this->ephemBaseInMsg();
+    EphemerisMsgPayload ephemSecondaryInBuffer = this->ephemSecondaryInMsg();
+
+    // take timeTag from secondary, as timeTag from primary/base may be constant due to stand-alone message
+    double timeTag = ephemSecondaryInBuffer.timeTag;
+
+    /*! - compute relative states */
+    Eigen::Vector3d r_1_N = cArray2EigenVector3d(ephemBaseInBuffer.r_BdyZero_N);
+    Eigen::Vector3d v_1_N = cArray2EigenVector3d(ephemBaseInBuffer.v_BdyZero_N);
+    Eigen::Vector3d r_2_N = cArray2EigenVector3d(ephemSecondaryInBuffer.r_BdyZero_N);
+    Eigen::Vector3d v_2_N = cArray2EigenVector3d(ephemSecondaryInBuffer.v_BdyZero_N);
+
+    Eigen::Vector3d r_21_N = r_2_N - r_1_N;
+    Eigen::Vector3d v_21_N = v_2_N - v_1_N;
+
+    int numStates = 6;
+    Eigen::VectorXd state_21_N(numStates);
+    state_21_N << r_21_N, v_21_N;
+
+    /*! - compute relative covariance matrix */
+    Eigen::MatrixXd covar_21_N(numStates, numStates);
+    covar_21_N = this->covarianceBase + this->covarianceSecondary;
+
+    /*! - output messages */
+    NavTransMsgPayload navTransOutMsgBuffer;
+    navTransOutMsgBuffer = this->navTransOutMsg.zeroMsgPayload;
+    FilterMsgPayload filterOutMsgBuffer;
+    filterOutMsgBuffer = this->filterOutMsg.zeroMsgPayload;
+
+    navTransOutMsgBuffer.timeTag = timeTag;
+    eigenVector3d2CArray(r_21_N, navTransOutMsgBuffer.r_BN_N);
+    eigenVector3d2CArray(v_21_N, navTransOutMsgBuffer.v_BN_N);
+
+    filterOutMsgBuffer.numberOfStates = numStates;
+    filterOutMsgBuffer.timeTag = timeTag;
+    eigenMatrixXd2CArray(state_21_N, filterOutMsgBuffer.state);
+    eigenMatrixXd2CArray(covar_21_N, filterOutMsgBuffer.covar);
+
+    this->navTransOutMsg.write(&navTransOutMsgBuffer, this->moduleID, currentSimNanos);
+    this->filterOutMsg.write(&filterOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
 /*! Set the state covariance of the base celestial object (e.g. asteroid)
