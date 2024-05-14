@@ -42,12 +42,21 @@ public:
     void UpdateState(uint64_t currentSimNanos) override;
     void Reset(uint64_t currentSimNanos) override;
 
+    void setCovarianceBase(const Eigen::MatrixXd stateCovariance);
+    Eigen::MatrixXd getCovarianceBase() const;
+    void setCovarianceSecondary(const Eigen::MatrixXd stateCovariance);
+    Eigen::MatrixXd getCovarianceSecondary() const;
+
     ReadFunctor<EphemerisMsgPayload> ephemBaseInMsg;
     ReadFunctor<EphemerisMsgPayload> ephemSecondaryInMsg;
     Message<NavTransMsgPayload> navTransOutMsg;
     Message<FilterMsgPayload> filterOutMsg;
 
     BSKLogger bskLogger;
+
+private:
+    Eigen::MatrixXd covarianceBase{};
+    Eigen::MatrixXd covarianceSecondary{};
 };
 
 #endif

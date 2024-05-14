@@ -46,3 +46,35 @@ void EphemDifferenceWithUncertainty::Reset(uint64_t currentSimNanos)
 void EphemDifferenceWithUncertainty::UpdateState(uint64_t currentSimNanos)
 {
 }
+
+/*! Set the state covariance of the base celestial object (e.g. asteroid)
+    @param Eigen::MatrixXd covariance
+    @return void
+    */
+void EphemDifferenceWithUncertainty::setCovarianceBase(const Eigen::MatrixXd stateCovariance){
+    this->covarianceBase.resize(stateCovariance.rows(), stateCovariance.cols());
+    this->covarianceBase << stateCovariance;
+}
+
+/*! Get the state covariance of the base celestial object (e.g. asteroid)
+    @return Eigen::MatrixXd covariance
+    */
+Eigen::MatrixXd EphemDifferenceWithUncertainty::getCovarianceBase() const {
+    return this->covarianceBase;
+}
+
+/*! Set the state covariance of the secondary celestial object (e.g. spacecraft)
+    @param Eigen::MatrixXd covariance
+    @return void
+    */
+void EphemDifferenceWithUncertainty::setCovarianceSecondary(const Eigen::MatrixXd stateCovariance){
+    this->covarianceSecondary.resize(stateCovariance.rows(), stateCovariance.cols());
+    this->covarianceSecondary << stateCovariance;
+}
+
+/*! Get the state covariance of the secondary celestial object (e.g. spacecraft)
+    @return Eigen::MatrixXd covariance
+    */
+Eigen::MatrixXd EphemDifferenceWithUncertainty::getCovarianceSecondary() const {
+    return this->covarianceSecondary;
+}
