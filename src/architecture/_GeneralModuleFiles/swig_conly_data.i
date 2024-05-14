@@ -20,7 +20,8 @@
 %module swig_conly_data
 
 %include "stdint.i"
-%define ARRAYASLIST(type)
+
+%define ARRAYASLIST(type, fromfunc, asfunc)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
     void *blankPtr = 0 ;
@@ -38,15 +39,17 @@
     for (i = 0; i < PySequence_Length($input); i++) {
         PyObject *o = PySequence_GetItem($input,i);
         if (PyNumber_Check(o)) {
-            temp[i] = (type)PyFloat_AsDouble(o);
+            temp[i] = (type)asfunc(o);
         } else {
             resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
             if (!SWIG_IsOK(resOut)) {
                 SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failure.  Good luck.\n");
+                Py_DECREF(o);
                 return NULL;
             }
             memcpy(&(temp[i]), blankPtr, sizeof(type));
         }
+        Py_DECREF(o);
     }
     $1 = temp;
 }
@@ -64,9 +67,9 @@
     PyObject *locOutObj = 0;
     for (i = 0; i < $1_dim0; i++) {
         locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
-        
+
         if(PyNumber_Check(locOutObj)){
-            PyObject *outObject = PyFloat_FromDouble((double) $1[i]);
+            PyObject *outObject = fromfunc($1[i]);
             PyList_Append($result,outObject);
             Py_DECREF(outObject);
             Py_DECREF(locOutObj);
@@ -74,79 +77,30 @@
         else
         {
             PyList_SetItem($result, i, locOutObj);
+            // NOTE: SetItem steals the reference, so Py_DECREF is unnecessary
         }
     }
 }
 
 %enddef
-ARRAYASLIST(double)
-ARRAYASLIST(int)
-ARRAYASLIST(float)
-ARRAYASLIST(unsigned int)
+ARRAYASLIST(int, PyLong_FromLong, PyLong_AsLong)
+ARRAYASLIST(unsigned int, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYASLIST(int32_t, PyLong_FromLong, PyLong_AsLong)
+ARRAYASLIST(uint32_t, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYASLIST(long long, PyLong_FromLongLong, PyLong_AsLongLong)
+ARRAYASLIST(unsigned long long, PyLong_FromUnsignedLongLong, PyLong_AsUnsignedLongLong)
+ARRAYASLIST(int64_t, PyLong_FromLongLong, PyLong_AsLongLong)
+ARRAYASLIST(uint64_t, PyLong_FromUnsignedLongLong, PyLong_AsUnsignedLongLong)
+ARRAYASLIST(short, PyLong_FromLong, PyLong_AsLong)
+ARRAYASLIST(unsigned short, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYASLIST(int16_t, PyLong_FromLong, PyLong_AsLong)
+ARRAYASLIST(uint16_t, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAYASLIST(size_t, PyLong_FromSize_t, PyLong_AsSize_t)
+ARRAYASLIST(ssize_t, PyLong_FromSsize_t, PyLong_AsSsize_t)
+ARRAYASLIST(double, PyFloat_FromDouble, PyFloat_AsDouble)
+ARRAYASLIST(float, PyFloat_FromDouble, PyFloat_AsDouble)
 
-%define ARRAYINTASLIST(type)
-%typemap(in) type [ANY] (type temp[$1_dim0]) {
-    int i;
-    void *blankPtr = 0 ;
-    int resOut = 0 ;
-    if (!PySequence_Check($input)) {
-        PyErr_SetString(PyExc_ValueError,"Expected a sequence");
-        return NULL;
-    }
-    if (PySequence_Length($input) > $1_dim0) {
-        printf("Value: %d\n", $1_dim0);
-        PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected $1_dim0 elements");
-        return NULL;
-    }
-    memset(temp, 0x0, $1_dim0*sizeof(type));
-    for (i = 0; i < PySequence_Length($input); i++) {
-        PyObject *o = PySequence_GetItem($input,i);
-        if (PyNumber_Check(o)) {
-            temp[i] = (type)PyInt_AsLong(o);
-        } else {
-            resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
-            if (!SWIG_IsOK(resOut)) {
-                SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failure.  Good luck.\n");
-                return NULL;
-            }
-            memcpy(&(temp[i]), blankPtr, sizeof(type));
-        }
-    }
-    $1 = temp;
-}
-
-%typemap(memberin) type [ANY] {
-    int i;
-    for (i = 0; i < $1_dim0; i++) {
-        memcpy(&($1[i]), &($input[i]), sizeof(type));
-    }
-}
-
-%typemap(out) type [ANY] {
-    int i;
-    $result = PyList_New(0);
-    PyObject *locOutObj = 0;
-    for (i = 0; i < $1_dim0; i++) {
-        locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
-        
-        if(PyNumber_Check(locOutObj)){
-            PyObject *outObject = PyInt_FromLong((long) $1[i]);
-            PyList_Append($result,outObject);
-            Py_DECREF(outObject);
-            Py_DECREF(locOutObj);
-        }
-        else
-        {
-            PyList_SetItem($result, i, locOutObj);
-        }
-    }
-}
-
-%enddef
-ARRAYINTASLIST(int)
-ARRAYINTASLIST(unsigned int)
-
-%define ARRAY2ASLIST(type)
+%define ARRAY2ASLIST(type, fromfunc, asfunc)
 
 %typemap(in) type [ANY][ANY] (type temp[$1_dim0][$1_dim1]) {
     Py_ssize_t i;
@@ -157,7 +111,7 @@ ARRAYINTASLIST(unsigned int)
     Py_ssize_t rowLength = 0;
     for(i=0; i<PySequence_Length($input); i++){
         PyObject *obj = PySequence_GetItem($input, i);
-        if(!PySequence_Check($input)) {
+        if(!PySequence_Check(obj)) {
             printf("Row bad in matrix: %zd\n", i);
             PyErr_SetString(PyExc_ValueError,"Need a list for each row");
         }
@@ -173,8 +127,11 @@ ARRAYINTASLIST(unsigned int)
         int j;
         for(j=0; j<rowLength; j++)
         {
-            temp[i][j] = PyFloat_AsDouble(PySequence_GetItem(obj, j));
+            PyObject *o = PySequence_GetItem(obj, j);
+            temp[i][j] = (type)asfunc(o);
+            Py_DECREF(o);
         }
+        Py_DECREF(obj);
     }
     $1 = temp;
 }
@@ -196,8 +153,9 @@ ARRAYINTASLIST(unsigned int)
         PyObject *locRow = PyList_New(0);
         for(j=0; j<$1_dim1; j++)
         {
-            PyObject *outObject = PyFloat_FromDouble($1[i][j]);
+            PyObject *outObject = fromfunc($1[i][j]);
             PyList_Append(locRow, outObject);
+            Py_DECREF(outObject);
         }
         PyList_Append($result, locRow);
         Py_DECREF(locRow);
@@ -205,11 +163,22 @@ ARRAYINTASLIST(unsigned int)
 }
 
 %enddef
-
-ARRAY2ASLIST(double)
-ARRAY2ASLIST(int)
-ARRAY2ASLIST(float)
-ARRAY2ASLIST(unsigned int)
+ARRAY2ASLIST(int, PyLong_FromLong, PyLong_AsLong)
+ARRAY2ASLIST(unsigned int, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAY2ASLIST(int32_t, PyLong_FromLong, PyLong_AsLong)
+ARRAY2ASLIST(uint32_t, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAY2ASLIST(long long, PyLong_FromLongLong, PyLong_AsLongLong)
+ARRAY2ASLIST(unsigned long long, PyLong_FromUnsignedLongLong, PyLong_AsUnsignedLongLong)
+ARRAY2ASLIST(int64_t, PyLong_FromLongLong, PyLong_AsLongLong)
+ARRAY2ASLIST(uint64_t, PyLong_FromUnsignedLongLong, PyLong_AsUnsignedLongLong)
+ARRAY2ASLIST(short, PyLong_FromLong, PyLong_AsLong)
+ARRAY2ASLIST(unsigned short, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAY2ASLIST(int16_t, PyLong_FromLong, PyLong_AsLong)
+ARRAY2ASLIST(uint16_t, PyLong_FromUnsignedLong, PyLong_AsUnsignedLong)
+ARRAY2ASLIST(size_t, PyLong_FromSize_t, PyLong_AsSize_t)
+ARRAY2ASLIST(ssize_t, PyLong_FromSsize_t, PyLong_AsSsize_t)
+ARRAY2ASLIST(double, PyFloat_FromDouble, PyFloat_AsDouble)
+ARRAY2ASLIST(float, PyFloat_FromDouble, PyFloat_AsDouble)
 
 %define STRUCTASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
@@ -231,10 +200,11 @@ ARRAY2ASLIST(unsigned int)
         resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
         if (!SWIG_IsOK(resOut)) {
             SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failur Good luck.\n");
+            Py_DECREF(o);
             return NULL;
         }
         memcpy(&(temp[i]), blankPtr, sizeof(type));
-        
+        Py_DECREF(o);
     }
     $1 = temp;
 }
@@ -252,6 +222,7 @@ ARRAY2ASLIST(unsigned int)
     for (i = 0; i < $1_dim0; i++) {
         PyObject *locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
         PyList_SetItem($result, i, locOutObj);
+        // NOTE: SetItem steals the reference, so Py_DECREF is unnecessary
     }
 }
 %enddef
