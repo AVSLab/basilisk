@@ -56,7 +56,51 @@ void SunlineSRuKF::customFinalizeUpdate() {
  @return void
  */
 void SunlineSRuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
+    NavAttMsgPayload navAttOutMsgBuffer = this->navAttOutMsg.zeroMsgPayload;
+    FilterMsgPayload filterMsgBuffer = this->filterOutMsg.zeroMsgPayload;
+    FilterResidualsMsgPayload filterGyroResMsgBuffer = this->filterGyroResOutMsg.zeroMsgPayload;
+    FilterResidualsMsgPayload filterCssResMsgBuffer = this->filterCssResOutMsg.zeroMsgPayload;
 
+    /*! - Write the sunline estimate into the copy of the navigation message structure*/
+    eigenMatrixXd2CArray(this->state.head(3), navAttOutMsgBuffer.vehSunPntBdy);
+
+    /*! - Populate the filter states output buffer and write the output message*/
+    filterMsgBuffer.timeTag = this->previousFilterTimeTag;
+    eigenMatrixXd2CArray(1/this->unitConversion*this->state, filterMsgBuffer.state);
+    eigenMatrixXd2CArray(1/this->unitConversion*this->xBar, filterMsgBuffer.stateError);
+    eigenMatrixXd2CArray(1/this->unitConversion/this->unitConversion*this->covar, filterMsgBuffer.covar);
+    filterMsgBuffer.numberOfStates = this->state.size();
+
+    auto optionalMeasurement = this->measurements[0];
+    if (optionalMeasurement.has_value() && optionalMeasurement->name == "gyro") {
+        auto measurement = Measurement();
+        measurement = optionalMeasurement.value();
+        filterGyroResMsgBuffer.valid = true;
+        filterGyroResMsgBuffer.numberOfObservations = 1;
+        filterGyroResMsgBuffer.sizeOfObservations = measurement.observation.size();
+        eigenMatrixXd2CArray(measurement.observation, &filterGyroResMsgBuffer.observation[0]);
+        eigenMatrixXd2CArray(measurement.postFitResiduals, &filterGyroResMsgBuffer.postFits[0]);
+        eigenMatrixXd2CArray(measurement.preFitResiduals, &filterGyroResMsgBuffer.preFits[0]);
+        this->measurements[0].reset();
+    }
+    optionalMeasurement = this->measurements[1];
+    if (optionalMeasurement.has_value() && optionalMeasurement->name == "css") {
+        auto measurement = Measurement();
+        measurement = optionalMeasurement.value();
+        filterCssResMsgBuffer.valid = true;
+        filterCssResMsgBuffer.numberOfObservations = 1;
+        filterCssResMsgBuffer.sizeOfObservations = measurement.observation.size();
+        eigenMatrixXd2CArray(measurement.observation, &filterCssResMsgBuffer.observation[0]);
+        eigenMatrixXd2CArray(measurement.postFitResiduals, &filterCssResMsgBuffer.postFits[0]);
+        eigenMatrixXd2CArray(measurement.preFitResiduals, &filterCssResMsgBuffer.preFits[0]);
+        this->measurements[1].reset();
+    }
+
+    this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, CurrentSimNanos);
+    NavAttMsg_C_write(&navAttOutMsgBuffer, &this->navAttOutMsgC, this->moduleID, CurrentSimNanos);
+    this->filterOutMsg.write(&filterMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->filterCssResOutMsg.write(&filterCssResMsgBuffer, this->moduleID, CurrentSimNanos);
+    this->filterGyroResOutMsg.write(&filterGyroResMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
 /*! Read the rate gyro input message
