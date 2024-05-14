@@ -38,3 +38,13 @@ Eigen::VectorXd firstThreeStates(Eigen::VectorXd state)
     assert(state.size() > 2);
     return state.head(3);
 }
+
+/*! Measurement model that takes last 3 components of the state vector
+ * @param Eigen::VectorXd state
+ * @return Eigen::VectorXd
+ */
+Eigen::VectorXd lastThreeStates(Eigen::VectorXd state)
+{
+    assert(state.size() > 2);
+    return state.tail(3);
+}

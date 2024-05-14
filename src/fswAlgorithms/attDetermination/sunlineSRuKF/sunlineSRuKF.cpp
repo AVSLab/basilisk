@@ -59,12 +59,97 @@ void SunlineSRuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
 
 }
 
+/*! Read the rate gyro input message
+ @return void
+ */
+void SunlineSRuKF::readGyroMeasurements() {
+    /*! Read rate gyro measurements */
+    NavAttMsgPayload navAttInputBuffer = this->navAttInMsg();
+
+    auto gyroMeasurements = Measurement();
+    gyroMeasurements.validity = true;
+    gyroMeasurements.name = "gyro";
+    gyroMeasurements.size = 3;
+    gyroMeasurements.timeTag = navAttInputBuffer.timeTag;
+    gyroMeasurements.observation = cArray2EigenVector3d(navAttInputBuffer.omega_BN_B);
+    gyroMeasurements.model = lastThreeStates;
+    gyroMeasurements.noise.resize(3, 3);
+    Eigen::MatrixXd I = Eigen::Matrix3d::Identity();
+    gyroMeasurements.noise = pow(this->measNoiseScaling * this->gyroMeasNoiseStd, 2) * I;
+
+    if (gyroMeasurements.validity && gyroMeasurements.timeTag >= this->previousFilterTimeTag){
+        /*! - Read measurement and cholesky decomposition its noise*/
+        this->measurements[this->filterMeasurement] = gyroMeasurements;
+        this->filterMeasurement += 1;
+    }
+}
+
+/*! Read the coarse sun sensor input message
+ @return void
+ */
+void SunlineSRuKF::readCssMeasurements() {
+    /*! Read css data msg */
+    CSSArraySensorMsgPayload cssInputBuffer = this->cssDataInMsg();
+
+    auto cssMeasurements = Measurement();
+
+    /*! - Zero the observed active CSS count */
+    this->numActiveCss = 0;
+
+    /*! - Define the linear model matrix H */
+    Eigen::MatrixXd H;
+
+    /*! - Loop over the maximum number of sensors to check for good measurements */
+    /*! -# Isolate if measurement is good */
+    /*! -# Set body vector for this measurement */
+    /*! -# Get measurement value into observation vector */
+    /*! -# Set inverse noise matrix */
+    /*! -# increase the number of valid observations */
+    /*! -# Otherwise just continue */
+    for(uint32_t i=0; i<this->cssConfigInputBuffer.nCSS; ++i)
+    {
+        if (cssInputBuffer.CosValue[i] > this->sensorUseThresh)
+        {
+            cssMeasurements.validity = true;
+            cssMeasurements.timeTag = cssInputBuffer.timeTag;
+            cssMeasurements.observation.conservativeResize(this->numActiveCss+1);
+            cssMeasurements.observation(this->numActiveCss) = cssInputBuffer.CosValue[i];
+            H.conservativeResize(this->numActiveCss+1, 3);
+            for (int j=0; j<3; ++j) {
+                H(this->numActiveCss,j) = this->cssConfigInputBuffer.cssVals[i].CBias * this->cssConfigInputBuffer.cssVals[i].nHat_B[j];
+            }
+            cssMeasurements.noise.resize(this->numActiveCss+1, this->numActiveCss+1);
+            Eigen::MatrixXd I(this->numActiveCss+1, this->numActiveCss+1);
+            I.setIdentity();
+            cssMeasurements.noise = pow(this->measNoiseScaling * this->cssMeasNoiseStd, 2) * I;
+            this->numActiveCss += 1;
+        }
+    }
+    cssMeasurements.size = this->numActiveCss;
+
+    std::function<const Eigen::VectorXd(const Eigen::VectorXd)> linearModel = [H](const Eigen::VectorXd &state) {
+        return H * state.head(3);
+    };
+
+    if (cssMeasurements.validity && cssMeasurements.timeTag >= this->previousFilterTimeTag){
+        /*! - Read measurement and cholesky decomposition its noise*/
+        cssMeasurements.model = linearModel;
+        cssMeasurements.name = "css";
+        this->measurements[this->filterMeasurement] = cssMeasurements;
+        this->filterMeasurement += 1;
+    }
+}
+
 /*! Read the message containing the measurement data.
  * It updates class variables relating to measurement data including validity and time tags.
  @return void
  */
 void SunlineSRuKF::readFilterMeasurements() {
+    /*! zero filter measurement index */
+    this->filterMeasurement = 0;
 
+    this->readGyroMeasurements();
+    this->readCssMeasurements();
 }
 
 /*! Integrate the equations of motion of two body point mass gravity using Runge-Kutta 4 (RK4)

@@ -43,11 +43,15 @@ public:
 
 private:
     void customReset() override;
+    void readCssMeasurements();
+    void readGyroMeasurements();
     void readFilterMeasurements() override;
     void customFinalizeUpdate() override;
     void writeOutputMessages(uint64_t CurrentSimNanos) override;
     Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) override;
 
+    int filterMeasurement = 0;   //!< [-] Number of measurements of different types being read
+    int numActiveCss = 0;        //!< [-] Number of currently active CSS sensors
     double sensorUseThresh = 0;  //!< Threshold below which we discount sensors
     double measNoiseScaling = 1; //!< [s] Scale factor that can be applied on the measurement noise to over/under weight
     double cssMeasNoiseStd = 0;  //!< [-] CSS measurement noise std

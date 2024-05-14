@@ -47,5 +47,6 @@ public:
 /*! @brief Measurement models used to map a state vector to a measurement */
 Eigen::VectorXd normalizedFirstThreeStates(Eigen::VectorXd state);
 Eigen::VectorXd firstThreeStates(Eigen::VectorXd state, size_t beginSlice, size_t endSlice);
+Eigen::VectorXd lastThreeStates(Eigen::VectorXd state);
 
 #endif
