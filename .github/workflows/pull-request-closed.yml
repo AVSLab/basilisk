@@ -11,7 +11,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         - name: Pull repo
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4
           with:
             ref: develop
             fetch-depth: 0 
