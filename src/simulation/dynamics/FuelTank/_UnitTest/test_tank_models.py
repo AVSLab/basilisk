@@ -21,7 +21,6 @@ import numpy as np
 import os
 
 from Basilisk.simulation import fuelTank
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -424,17 +423,6 @@ def test_tankModelCentrifugalBurn(show_plots=False):
                                    true_rPPrime_TcT_T[idx],
                                    rtol=accuracy,
                                    err_msg="Tank centrifugal burn center of mass position second derivative not equal")
-
-def passFail(testFailCountInput, snippetName):
-    if testFailCountInput < 1:
-        textMsg = 'PASSED'
-        textColor = 'ForestGreen'
-    else:
-        textMsg = 'FAILED'
-        textColor = 'Red'
-
-    texSnippet =  r'\textcolor{' + textColor + '}{'+ textMsg + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 
 if __name__ == "__main__":
