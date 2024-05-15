@@ -23,24 +23,25 @@
 
 FuelTank::FuelTank()
 {
-    this->updateOnly = true;
 	this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B.setZero();
 	this->effProps.rEff_CB_B.setZero();
 	this->effProps.rEffPrime_CB_B.setZero();
 	this->effProps.IEffPrimePntB_B.setZero();
-	this->dcm_TB = dcm_TB.Identity();
-	this->r_TB_B.setZero();
+	this->dcm_TB = Eigen::Matrix3d::Identity();
+    this->r_TB_B.setZero();
+    this->ITankPntT_B = Eigen::Matrix3d::Identity();
+    this->r_TcB_B.setZero();
 
-	this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
     this->effectorID++;
+    this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
 }
 
 uint64_t FuelTank::effectorID = 1;
 
 FuelTank::~FuelTank()
 {
-    this->effectorID = 1;
+    FuelTank::effectorID = 1;
 }
 
 
