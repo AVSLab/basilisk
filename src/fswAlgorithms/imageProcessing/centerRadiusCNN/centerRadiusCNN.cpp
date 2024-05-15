@@ -26,6 +26,7 @@
 /* modify the path to reflect the new module names */
 #include "centerRadiusCNN.h"
 #include <opencv2/dnn/dnn.hpp>
+#include <fstream>
 
 
 /*! The constructor for the CenterRadiusCNN module. It also sets some default values at its creation.  */

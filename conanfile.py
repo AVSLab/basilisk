@@ -174,11 +174,12 @@ class BasiliskConan(ConanFile):
     def requirements(self):
         if self.options.opNav:
             self.requires.add("pcre/8.45")
-            self.requires.add("opencv/4.1.2#b610ad323f67adc1b51e402cb5d68d70")
+            self.requires.add("opencv/4.5.5")
             self.options['opencv'].with_ffmpeg = False  # video frame encoding lib
             self.options['opencv'].with_ade = False  # graph manipulations framework
-            self.options['opencv'].with_tiff = False  # generate image in TIFF format
-            self.options['opencv'].with_openexr = False  # generate image in EXR format
+            self.options['opencv'].with_tiff = False  # encode/decode image in TIFF format
+            self.options['opencv'].with_openexr = False  # encode/decode image in EXR format
+            self.options['opencv'].with_webp = False  # encode/decode image in WEBP format
             self.options['opencv'].with_quirc = False  # QR code lib
             self.requires.add("zlib/1.2.13")
             self.requires.add("xz_utils/5.4.0")
