@@ -21,11 +21,9 @@
 #include <iostream>
 
 
-/*! This is the constructor, setting variables to default values */
 FuelTank::FuelTank()
 {
     this->updateOnly = true;
-	// - zero the contributions for mass props and mass rates'
 	this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B.setZero();
 	this->effProps.rEff_CB_B.setZero();
@@ -34,7 +32,6 @@ FuelTank::FuelTank()
 	this->dcm_TB = dcm_TB.Identity();
 	this->r_TB_B.setZero();
 
-	// - Initialize the variables to working values
 	this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
     this->effectorID++;
     
@@ -43,7 +40,6 @@ FuelTank::FuelTank()
 
 uint64_t FuelTank::effectorID = 1;
 
-/*! This is the destructor, nothing to report here */
 FuelTank::~FuelTank()
 {
     this->effectorID = 1;    /* reset the panel ID*/
@@ -61,7 +57,7 @@ void FuelTank::setTankModel(FuelTankModel* model){
     return;
 }
 
-/*! This is a method to attach a fuel slosh particle to the tank */
+/*! Attach a fuel slosh particle to the tank */
 void FuelTank::pushFuelSloshParticle(FuelSlosh *particle)
 {
     // - Add a fuel slosh particle to the vector of fuel slosh particles
@@ -70,7 +66,7 @@ void FuelTank::pushFuelSloshParticle(FuelSlosh *particle)
     return;
 }
 
-/*! Method for fuel tank to access the states that it needs, needs omega */
+/*! Link states that the module accesses */
 void FuelTank::linkInStates(DynParamManager& statesIn)
 {
     // - Grab access to the hubs omega_BN_N
@@ -79,7 +75,7 @@ void FuelTank::linkInStates(DynParamManager& statesIn)
     return;
 }
 
-/*! Method for fuel tank to register states. The fuel tank has one state associated with it: mass, and it also has the
+/*! Register states. The fuel tank has one state associated with it: mass, and it also has the
  responsibility to call register states for the fuel slosh particles */
 void FuelTank::registerStates(DynParamManager& statesIn)
 {
@@ -92,7 +88,7 @@ void FuelTank::registerStates(DynParamManager& statesIn)
     return;
 }
 
-/*! This method gives the fuel tank the ability to add its contributions the mass of the vehicle. */
+/*! Fuel tank add its contributions the mass of the vehicle. */
 void FuelTank::updateEffectorMassProps(double integTime)
 {
     // - Add contributions of the mass of the tank
@@ -105,7 +101,7 @@ void FuelTank::updateEffectorMassProps(double integTime)
                                                                                          - r_TcB_B * r_TcB_B.transpose());
 	this->effProps.rEff_CB_B = this->r_TcB_B;
 
-    // - This does not incorportate mEffDot into cPrime for high fidelity mass depletion
+    // - This does not incorporate mEffDot into cPrime for high fidelity mass depletion
 	this->effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
 
     //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
@@ -148,7 +144,7 @@ void FuelTank::updateEffectorMassProps(double integTime)
     return;
 }
 
-/*! This method allows the fuel tank to add its contributions to the matrices for the back-sub method. */
+/*! Fuel tank adds its contributions to the matrices for the back-sub method. */
 void FuelTank::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 
@@ -177,17 +173,16 @@ void FuelTank::updateContributions(double integTime, BackSubMatrices & backSubCo
     return;
 }
 
-/*! This method allows the fuel tank to compute its derivative */
+/*! Fuel tank computes its derivative */
 void FuelTank::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
-	// - Call compute derivatives
 	Eigen::MatrixXd conv(1, 1);
 	conv(0, 0) = -this->tankFuelConsumption;
 	this->massState->setDerivative(conv);
     return;
 }
 
-/*! This method allows the fuel tank to contribute to the energy and momentum calculations */
+/*! Fuel tank contributes to the energy and momentum calculations */
 void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                             double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
@@ -208,7 +203,7 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
 	 return;
 }
 
-/*! This method takes the computed fuel tank mass properties and outputs them to the messaging system.
+/*! Compute fuel tank mass properties and outputs them as a message.
  @return void
  @param CurrentClock The current simulation time (used for time stamping)
  */
@@ -221,13 +216,12 @@ void FuelTank::WriteOutputMessages(uint64_t CurrentClock)
     this->fuelTankOutMsg.write(&this->fuelTankMassPropMsg, this->moduleID, CurrentClock);
 }
 
-/*! This method allows the fuel tank to write out its messages to the messaging system
+/*! Fuel tank writes out its messages
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void FuelTank::UpdateState(uint64_t CurrentSimNanos)
 {
-    // Writing the fuel tank mass property message out to the messaging system
     WriteOutputMessages(CurrentSimNanos);
 
     return;
