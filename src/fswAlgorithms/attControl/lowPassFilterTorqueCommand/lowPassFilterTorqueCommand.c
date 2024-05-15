@@ -18,13 +18,12 @@
  */
 /*
     Control Torque Low Pass Filter Module
- 
+
  */
 
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "math.h"
 
@@ -116,7 +115,7 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
         configData->reset = BOOL_FALSE;
 
     }
-    
+
     /*
         regular filter run
      */
@@ -140,10 +139,10 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
     }
 
     /*
-        store the output message 
+        store the output message
      */
     v3Copy(configData->LrF[0], controlOut.torqueRequestBody);
     CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, moduleID, callTime);
-    
+
     return;
 }

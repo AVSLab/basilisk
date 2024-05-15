@@ -18,7 +18,6 @@
  */
 
 #include "svd.h"
-#include <stdlib.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include <math.h>
 #include <stdio.h>
@@ -261,7 +260,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
             w[k] = x;
         }
     }
-    
+
     /*    sort by largest singular value */
     for (i = 0; i < dim2 -  1; i++) {
         max = w[i];
@@ -302,23 +301,23 @@ void solveSVD(double *mx, size_t dim1, size_t dim2, double *x, double *b, double
     double wInvDiag[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double temp[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     int j;
-    
+
     vSetZero(w, dim2);
     mSetZero(v, dim2, dim2);
     mSetZero(A, dim1, dim2);
     mSetZero(uTranspose, dim1, dim2);
     mSetZero(wInvDiag, dim2, dim2);
     mCopy(mx, dim1, dim2, mxCopy);
-    
+
     svdcmp(mxCopy, dim1, dim2, w, v);
-    
+
     // condition wInvDiag
     for (j = 0; j < dim2;  j++)
     {
         if (w[j] >= minSV)
             wInvDiag[MXINDEX(dim2, j, j)] = 1.0 / w[j];
     }
-    
+
     // compute A
     mTranspose(mxCopy, dim1, dim2, uTranspose);
     mMultM(v, dim2, dim2, wInvDiag, dim2, dim2, temp);

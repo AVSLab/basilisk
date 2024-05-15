@@ -17,9 +17,7 @@
 
  */
 
-#include <cstring>
 #include <iostream>
-#include <cmath>
 
 #include "thrusterStateEffector.h"
 #include "architecture/utilities/linearAlgebra.h"
@@ -82,7 +80,7 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
 
     // Reset the mas flow value
     this->mDotTotal = 0.0;
-    
+
     return;
 }
 
@@ -95,7 +93,7 @@ bool ThrusterStateEffector::ReadInputs()
     // Initialize local variables
     uint64_t i;
     bool dataGood;
-    
+
     // Check if the message has been linked
     if (this->cmdsInMsg.isLinked()) {
         //! - Read the incoming command array
@@ -120,7 +118,7 @@ bool ThrusterStateEffector::ReadInputs()
         *CmdPtr = this->incomingCmdBuffer.OnTimeRequest[i];
     }
     return(true);
-    
+
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -187,8 +185,8 @@ void ThrusterStateEffector::ConfigureThrustRequests()
     return;
 }
 
-/*! This method is used to update the location and orientation of the thrusters 
-* at every UpdateState call when the thrusters are attached to a body other than 
+/*! This method is used to update the location and orientation of the thrusters
+* at every UpdateState call when the thrusters are attached to a body other than
 * the hub.
  @return void
  */
@@ -313,7 +311,7 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
             this->kappaInit[i] = 0.0;
         }
         kappaInitMatrix(i, 0) = this->kappaInit[i];
-    }  
+    }
     this->kappaState->setState(kappaInitMatrix);
 
     return;
@@ -350,7 +348,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
         ops->ThrustFactor = this->kappaState->state(i, 0);
     }
     this->kappaState->setDerivative(kappaDot);
-   
+
     return;
 }
 
@@ -367,7 +365,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
     // Auxiliary variables to convert direction and location from F to B
     Eigen::Vector3d thrustDirection_B;
     Eigen::Vector3d thrustLocation_B;
-    
+
     // Expelled momentum variables
     Eigen::Matrix3d BMj;
     Eigen::Matrix3d	axesWeightMatrix;

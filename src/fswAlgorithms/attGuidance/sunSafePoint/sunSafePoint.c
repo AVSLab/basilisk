@@ -22,7 +22,6 @@
 #include "fswAlgorithms/attGuidance/sunSafePoint/sunSafePoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
 
 /*! This method initializes the configData for the sun safe attitude guidance.
  It checks to ensure that the inputs are sane and then creates the
@@ -34,7 +33,7 @@
 void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
     AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
-    
+
 }
 
 
@@ -116,7 +115,7 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
         configData->sunAngleErr = safeAcos(ctSNormalized);
 
         /*
-            Compute the heading error relative to the sun direction vector 
+            Compute the heading error relative to the sun direction vector
          */
         if (configData->sunAngleErr < configData->smallAngle) {
             /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
@@ -151,6 +150,6 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
 
     /* write the Guidance output message */
     AttGuidMsg_C_write(&configData->attGuidanceOutBuffer, &configData->attGuidanceOutMsg, moduleID, callTime);
-    
+
     return;
 }

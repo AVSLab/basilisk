@@ -21,7 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string.h>
-#include <math.h>
 
 /*! This method initializes the configData for the sun safe ACS control.
  It checks to ensure that the inputs are sane and then creates the
@@ -39,8 +38,8 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
     {
         THRArrayOnTimeCmdMsg_C_init(&configData->thrGroups[i].thrOnTimeOutMsg);
     }
- 
-    
+
+
 }
 
 /*! This method resets the module.
@@ -80,13 +79,13 @@ void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
 
     /*! - Read the input requested torque from the feedback controller*/
     cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
-    
+
     for(i=0; i<configData->numThrGroups; i=i+1)
     {
         computeSingleThrustBlock(&(configData->thrGroups[i]), callTime,
             &cntrRequest, moduleID);
     }
-    
+
     return;
 }
 
@@ -98,16 +97,16 @@ CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID)
     effPairs sortPairs[MAX_EFF_CNT];
     uint32_t i;
     double localRequest[3];
-    
+
     v3Copy(contrReq->torqueRequestBody, localRequest);      /* to generate a positive torque onto the spacecraft */
     mMultV(thrData->thrOnMap, thrData->numEffectors, 3,
            localRequest, unSortOnTime);
-    
+
     for(i=0; i<thrData->numEffectors; i=i+1)
     {
         unSortOnTime[i] = unSortOnTime[i] + thrData->nomThrustOn;
     }
-    
+
     for(i=0; i<thrData->numEffectors; i=i+1)
     {
         if(unSortOnTime[i] < thrData->minThrustRequest)
@@ -115,7 +114,7 @@ CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID)
             unSortOnTime[i] = 0.0;
         }
     }
-    
+
     for(i=0; i<thrData->numEffectors; i++)
     {
         unSortPairs[i].onTime = unSortOnTime[i];

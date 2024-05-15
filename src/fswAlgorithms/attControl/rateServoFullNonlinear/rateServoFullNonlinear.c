@@ -18,7 +18,7 @@
  */
 /*
     rateServoFullNonlinear Module
- 
+
  */
 
 #include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
@@ -26,7 +26,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/astroConstants.h"
 
 #include <string.h>
 #include <math.h>
@@ -80,12 +79,12 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
-    
+
     configData->rwConfigParams.numRW = 0;
     if (RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
         configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
     }
-    
+
     /* Reset the integral measure of the rate tracking error */
     v3SetZero(configData->z);
 
@@ -112,7 +111,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     CmdTorqueBodyMsgPayload controlOut;             /*!< commanded torque output message */
 
     double              dt;                 /* [s] control update period */
-    
+
     double              Lr[3];              /* required control torque vector [Nm] */
     double              omega_BastN_B[3];   /* angular velocity of B^ast relative to inertial N, in body frame components */
     double              omega_BBast_B[3];   /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
@@ -128,10 +127,10 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     double              v3_7[3];
     int                 i;
     double              intLimCheck;
-        
+
     /*! - zero the output message */
     controlOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
-    
+
     /*! - compute control update time */
     if (configData->priorTime == 0) {
         dt = 0.0;
@@ -153,7 +152,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
             wheelsAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
         }
     }
-    
+
     /*! - compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
@@ -194,24 +193,23 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     }
     v3Cross(omega_BastN_B, v3_3, v3_4);
     v3Subtract(Lr, v3_4, Lr);
-    
+
     /* Lr +=  - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_5);
     v3Subtract(guidCmd.domega_RN_B, v3_5, v3_6);
     v3Add(v3_6, rateGuid.omegap_BastR_B, v3_6);
     m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_6, v3_7);
     v3Subtract(Lr, v3_7, Lr);
-    
+
     /* Add external torque: Lr += L */
     v3Add(configData->knownTorquePntB_B, Lr, Lr);
-    
+
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
-    
+
     /*! - Set output message and pass it to the message bus */
     v3Copy(Lr, controlOut.torqueRequestBody);
     CmdTorqueBodyMsg_C_write(&controlOut, &configData->cmdTorqueOutMsg, moduleID, callTime);
 
     return;
 }
-

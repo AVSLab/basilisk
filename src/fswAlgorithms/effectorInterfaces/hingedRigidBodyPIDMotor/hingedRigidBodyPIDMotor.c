@@ -21,7 +21,6 @@
 /* modify the path to reflect the new module names */
 #include "hingedRigidBodyPIDMotor.h"
 #include "string.h"
-#include <math.h>
 
 /* Support files */
 #include "architecture/utilities/macroDefinitions.h"

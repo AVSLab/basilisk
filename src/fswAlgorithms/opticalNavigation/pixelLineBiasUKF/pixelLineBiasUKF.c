@@ -1,12 +1,12 @@
 /*
  ISC License
- 
+
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,11 +14,10 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
+
  */
 
 #include <string.h>
-#include <stdlib.h>
 #include <math.h>
 #include "pixelLineBiasUKF.h"
 #include "architecture/utilities/ukfUtilities.h"
@@ -59,7 +58,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[PIXLINE_N_STATES*PIXLINE_N_STATES];
-    
+
     /*! - Initialize filter parameters to max values */
     configData->timeTag = callTime*NANO2SEC;
     configData->dt = 0.0;
@@ -68,7 +67,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     configData->numObs = PIXLINE_N_MEAS;
     configData->firstPassComplete = 0;
     configData->planetId = configData->planetIdInit;
-    
+
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(configData->obs, configData->numObs);
     vSetZero(configData->wM, configData->countHalfSPs * 2 + 1);
@@ -78,13 +77,13 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
              configData->numStates);
     mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
     mSetZero(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
-    
+
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
     (configData->numStates + configData->kappa) - configData->numStates;
     configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
-    
-    
+
+
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
     configData->wM[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal);
@@ -95,7 +94,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
         configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates + configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }
-    
+
     vCopy(configData->stateInit, configData->numStates, configData->state);
     v6Scale(1E-3, configData->state, configData->state); // Convert to km
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
@@ -105,21 +104,21 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
     vScale(1E-6, configData->covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES + PIXLINE_DYN_STATES, configData->covar); // Convert to km
-    
+
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, (int) configData->numStates,
                                (int) configData->numStates, tempMatrix);
-    
+
     badUpdate += ukfCholDecomp(configData->qNoise, (int) configData->numStates,
                                (int) configData->numStates, configData->sQnoise);
-    
+
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
-    
+
     configData->timeTagOut = configData->timeTag;
-    
+
     if (badUpdate <0){
         _bskLog(configData->bskLogger, BSK_WARNING, "Reset method contained bad update");
     }
@@ -145,7 +144,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     NavTransMsgPayload outputRelOD;
     OpNavCirclesMsgPayload inputCircles;
     configData->moduleId = (int) moduleId;
-    
+
     computePostFits = 0;
     v3SetZero(configData->postFits);
 
@@ -179,12 +178,12 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
     }
 
-    
+
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit residuals*/
     if(computePostFits == 1){
         /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
         pixelLineBiasUKFMeasModel(configData);
-        
+
         /*! - Compute the value for the yBar parameter (equation 23)*/
         vSetZero(yBar, configData->numObs);
         for(i=0; i<configData->countHalfSPs*2+1; i++)
@@ -196,8 +195,8 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
         }
         mSubtract(configData->obs, PIXLINE_N_MEAS, 1, yBar, configData->postFits);
     }
-    
-   
+
+
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/
     v3Copy(configData->state, outputRelOD.r_BN_N);
     outputRelOD.timeTag = configData->timeTag;
@@ -206,7 +205,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
     outputRelOD.timeTag = configData->timeTagOut;
     NavTransMsg_C_write(&outputRelOD, &configData->navStateOutMsg, moduleId, callTime);
-    
+
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
     memmove(opNavOutBuffer.covar, configData->covar,
@@ -216,7 +215,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
     vScale(1E6, opNavOutBuffer.covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES+PIXLINE_DYN_STATES, opNavOutBuffer.covar); // Convert to m
     PixelLineFilterMsg_C_write(&opNavOutBuffer, &configData->filtDataOutMsg, moduleId, callTime);
-    
+
     return;
 }
 
@@ -229,14 +228,14 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
  */
 void relODStateProp(PixelLineBiasUKFConfig *configData, double *stateInOut, double dt)
 {
-    
+
     double muPlanet;
     double k1[PIXLINE_DYN_STATES], k2[PIXLINE_DYN_STATES], k3[PIXLINE_DYN_STATES], k4[PIXLINE_DYN_STATES];
     double states1[PIXLINE_DYN_STATES], states2[PIXLINE_DYN_STATES], states3[PIXLINE_DYN_STATES];
     if(configData->planetId ==1){muPlanet = MU_EARTH;} //in km
     if(configData->planetId ==2){muPlanet = MU_MARS;} //in km
     if(configData->planetId ==3){muPlanet = MU_JUPITER;} //in km
-    
+
     /*! Start RK4 */
     /*! - Compute k1 */
     pixelLineBiasUKFTwoBodyDyn(stateInOut, muPlanet, &k1[0]);
@@ -258,12 +257,12 @@ void relODStateProp(PixelLineBiasUKFConfig *configData, double *stateInOut, doub
     vScale(2./3., k2, PIXLINE_DYN_STATES, k2); // k2 is now k2/3
     vScale(1./3., k3, PIXLINE_DYN_STATES, k3); // k3 is now k2/3
     vScale(1./6., k4, PIXLINE_DYN_STATES, k4); // k4 is now k2/6
-    
+
     vAdd(stateInOut, PIXLINE_DYN_STATES, k1, stateInOut);
     vAdd(stateInOut, PIXLINE_DYN_STATES, k2, stateInOut);
     vAdd(stateInOut, PIXLINE_DYN_STATES, k3, stateInOut);
     vAdd(stateInOut, PIXLINE_DYN_STATES, k4, stateInOut);
-    
+
     return;
 }
 
@@ -277,7 +276,7 @@ void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlane
 {
     double rNorm;
     double dvdt[3];
-    
+
     rNorm = v3Norm(state);
     v3Copy(&state[3], stateDeriv);
     v3Copy(state, dvdt);
@@ -302,12 +301,12 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
     double *spPtr; //sigma point intermediate varaible
     double procNoise[PIXLINE_N_STATES*PIXLINE_N_STATES]; //process noise
     int32_t badUpdate=0;
-    
+
     configData->dt = updateTime - configData->timeTag;
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
-    
+
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {
@@ -367,7 +366,7 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
         memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
                configData->numStates*sizeof(double));
-        
+
     }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
     memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
@@ -376,19 +375,19 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ukfQRDJustR(AT, (int) (2 * configData->countHalfSPs + configData->numStates),
                 (int) configData->countHalfSPs, rAT);
-    
+
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates,
                configData->sBar);
-    
+
     /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight
      like in equation 21 in design document.*/
     vScale(-1.0, configData->xBar, configData->numStates, xErr);
     vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
     badUpdate += ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
                                  (int) configData->numStates, sBarUp);
-    
-    
+
+
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, configData->numStates, configData->numStates, configData->sBar);
     mTranspose(configData->sBar, configData->numStates, configData->numStates,
@@ -397,7 +396,7 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
            configData->covar, configData->numStates, configData->numStates,
            configData->covar);
     vCopy(&(configData->SP[0]), configData->numStates, configData->state);
-    
+
     if (badUpdate<0){
         pixelLineBiasUKFCleanUpdate(configData);
         return(-1);}
@@ -431,7 +430,7 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
     pY = 2.*tan(configData->cameraSpecs.fieldOfView/2.0);
     X = pX/configData->cameraSpecs.resolution[0];
     Y = pY/configData->cameraSpecs.resolution[1];
-    
+
     if(configData->circlesInBuffer.planetIds[0] > 0){
         if(configData->circlesInBuffer.planetIds[0] ==1){
             planetRad = REQ_EARTH;//in km
@@ -443,26 +442,26 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
             planetRad = REQ_JUPITER;//in km
         }
     }
-    
+
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         double centers[2], r_N_bar[3], radius=0;
         v2SetZero(centers);
         v3SetZero(r_N_bar);
-        
+
         v3Copy(&configData->SP[j*configData->numStates], r_N_bar);
         rNorm = v3Norm(r_N_bar);
-        
+
         m33MultV3(dcm_CN, r_N_bar, r_C);
         v3Scale(-1./r_C[2], r_C, r_C);
-        
+
         /*! - Find pixel size using camera specs */
         reCentered[0] = r_C[0]/X;
         reCentered[1] = r_C[1]/Y;
-        
+
         centers[0] = reCentered[0] + configData->cameraSpecs.resolution[0]/2 - 0.5;
         centers[1] = reCentered[1] + configData->cameraSpecs.resolution[1]/2 - 0.5;
-        
+
         denom = planetRad/rNorm;
         radius = tan(safeAsin(denom)) / X;
         if (j==0){
@@ -483,7 +482,7 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
     mTranspose(configData->yMeas, PIXLINE_N_MEAS, configData->countHalfSPs*2+1,
                configData->yMeas);
-    
+
 }
 
 /*! This method performs the measurement update for the kalman filter.
@@ -503,13 +502,13 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
     double sy[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; // Chol of covariance
     double updMat[PIXLINE_N_MEAS*PIXLINE_N_MEAS], pXY[PIXLINE_N_STATES*PIXLINE_N_MEAS], Umat[PIXLINE_N_STATES*PIXLINE_N_MEAS]; // Intermediate variable, covariance eq 26, U eq 28
     int32_t badUpdate=0;
-    
+
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     /*! - Compute the valid observations and the measurement model for all observations*/
     pixelLineBiasUKFMeasModel(configData);
-    
+
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
      time update section of the reference document*/
     vSetZero(yBar, configData->numObs);
@@ -520,7 +519,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
         vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
         vAdd(yBar, configData->numObs, tempYVec, yBar);
     }
-    
+
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
      update section of the code.  This is based on the differenence between the yBar
      parameter and the calculated measurement models.  Equation 24 in driving doc. */
@@ -536,7 +535,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
         memcpy(&(AT[i*configData->numObs]), tempYVec,
                configData->numObs*sizeof(double));
     }
-    
+
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
      decomposition of the observation variance matrix constructed for our number
      of observations*/
@@ -550,7 +549,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
      current Sy matrix*/
     ukfQRDJustR(AT, (int) (2*configData->countHalfSPs+configData->numObs),
                 (int) configData->numObs, rAT);
-    
+
     mCopy(rAT, configData->numObs, configData->numObs, syT);
     mTranspose(syT, configData->numObs, configData->numObs, sy);
     /*! - Shift the matrix over by the difference between the 0th SP-based measurement
@@ -559,11 +558,11 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
     vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
     badUpdate += ukfCholDownDate(sy, tempYVec, configData->wC[0],
                                  (int) configData->numObs, updMat);
-    
+
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, configData->numObs, configData->numObs, sy);
     mTranspose(sy, configData->numObs, configData->numObs, syT);
-    
+
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud
      by the measurement model cloud (weighted) to get the total Pxy matrix*/
     mSetZero(pXY, configData->numStates, configData->numObs);
@@ -579,20 +578,20 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
                kMat);
         mAdd(pXY, configData->numStates, configData->numObs, kMat, pXY);
     }
-    
+
     /*! - Then we need to invert the SyT*Sy matrix to get the Kalman gain factor.  Since
      The Sy matrix is lower triangular, we can do a back-sub inversion instead of
      a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
      multiplication is done (equation 27), we have the Kalman Gain.*/
     ukfUInv(syT, (int) configData->numObs, (int) configData->numObs, syInv);
-    
+
     mMultM(pXY, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
     ukfLInv(sy, (int) configData->numObs, (int) configData->numObs, syInv);
     mMultM(kMat, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
-    
-    
+
+
     /*! - Difference the yBar and the observations to get the observed error and
      multiply by the Kalman Gain to get the state update.  Add the state update
      to the state to get the updated state value (equation 27).*/
@@ -617,14 +616,14 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
         mCopy(sBarT, configData->numStates, configData->numStates,
               configData->sBar);
     }
-    
+
     /*! - Compute equivalent covariance based on updated sBar matrix*/
     mTranspose(configData->sBar, configData->numStates, configData->numStates,
                configData->covar);
     mMultM(configData->sBar, configData->numStates, configData->numStates,
            configData->covar, configData->numStates, configData->numStates,
            configData->covar);
-    
+
     if (badUpdate<0){
         pixelLineBiasUKFCleanUpdate(configData);
         return(-1);}
@@ -644,7 +643,7 @@ void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig *configData){
     vCopy(configData->statePrev, configData->numStates, configData->state);
     mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
     mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
-    
+
     /*! - Reset the wM/wC vectors to standard values for unscented kalman filters*/
     configData->wM[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal);
@@ -656,7 +655,6 @@ void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig *configData){
                                              configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }
-    
+
     return;
 }
-

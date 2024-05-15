@@ -17,11 +17,7 @@
 
  */
 
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
 #include "fswAlgorithms/transDetermination/ephemDifference/ephemDifference.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! @brief This method creates the output ephemeris messages for each body.
@@ -96,7 +92,7 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
         v3Subtract(tmpEphStore.v_BdyZero_N,
                    tmpBaseEphem.v_BdyZero_N,
                    tmpEphStore.v_BdyZero_N);
-        
+
         EphemerisMsg_C_write(&tmpEphStore, &configData->changeBodies[i].ephOutMsg, moduleID, callTime);
     }
     return;

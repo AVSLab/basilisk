@@ -18,18 +18,15 @@
  */
 /*
  Inertial 3D Spin Module
- 
+
  * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
  * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
- 
+
  */
 
 #include "fswAlgorithms/attGuidance/rasterManager/rasterManager.h"
 #include <string.h>
 #include <stdio.h>
-#include <math.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
@@ -79,12 +76,8 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
                configData->attOutSet.rate[2]);
         _bskLog(configData->bskLogger, BSK_INFORMATION, info);
     }
-    
+
     AttStateMsg_C_write(&configData->attOutSet, &configData->attStateOutMsg, moduleID, callTime);
 
     return;
 }
-
-
-
-

@@ -18,14 +18,12 @@
  */
 /*
     PRV_STEERING Module
- 
+
  */
 
 #include "fswAlgorithms/attControl/prvSteering/prvSteering.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
-#include <string.h>
 #include <math.h>
 
 
@@ -79,10 +77,10 @@ void Update_prvSteering(PrvSteeringConfig *configData, uint64_t callTime,
 
     /* evalute MRP kinematic steering law */
     PRVSteeringLaw(configData, guidCmd.sigma_BR, outMsgBuffer.omega_BastR_B, outMsgBuffer.omegap_BastR_B);
-    
+
     /* Store the output message and pass it to the message bus */
     RateCmdMsg_C_write(&outMsgBuffer, &configData->rateCmdOutMsg, moduleID, callTime);
-    
+
     return;
 }
 
@@ -120,6 +118,6 @@ void PRVSteeringLaw(PrvSteeringConfig *configData, double sigma_BR[3], double om
     value *= (3*configData->K3*phi*phi + configData->K1)/(pow(M_PI_2/configData->omega_max*(configData->K1*phi + configData->K3*phi*phi*phi),2) + 1);
 
     v3Scale(value, e_hat, omega_ast_p);
-    
+
     return;
 }

@@ -19,7 +19,6 @@
 
 #include <math.h>
 #include <string.h>
-#include <stdlib.h>
 #include "faultDetection.h"
 
 
@@ -92,7 +91,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);
     m33Transpose(dcm_NC, dcm_NC);
-    
+
     /*! Begin fault detection logic */
     /*! - If none of the message contain valid nav data, unvalidate the nav and populate a zero message */
     if (opNavIn1.valid == 0 && opNavIn2.valid == 0){
@@ -129,12 +128,12 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         /*! -- Dissimilar mode compares the two measurements: if the mean +/- 3-sigma covariances overlap use the nominal nav solution */
         double faultDirection[3];
         double faultNorm;
-        
+
         /*! Get the direction and norm between the the two measurements in camera frame*/
         v3Subtract(opNavIn2.r_BN_C, opNavIn1.r_BN_C, faultDirection);
         faultNorm = v3Norm(faultDirection);
         v3Normalize(faultDirection, faultDirection);
-        
+
         /*! If the difference between vectors is beyond the covariances, detect a fault and use secondary */
         if (faultNorm > configData->sigmaFault*sqrt((vNorm(opNavIn1.covar_C, 9) + vNorm(opNavIn2.covar_C, 9)))){
             opNavMsgOut = opNavIn2;
@@ -151,7 +150,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         else if (configData->faultMode==0){
             double P1invX1[3], P2invX2[3], X_C[3], P_C[3][3], P_B[3][3], P_N[3][3];
             double P1inv[3][3], P2inv[3][3];
-            
+
             /*! The covariance merge is given by P = (P1^{-1} + P2^{-1})^{-1} */
             m33Inverse(RECAST3X3 opNavIn1.covar_C, P1inv);
             m33Inverse(RECAST3X3 opNavIn2.covar_C, P2inv);
@@ -164,7 +163,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
             v3Add(P1invX1, P2invX2, X_C);
             m33MultV3(P_C, X_C, X_C);
             v3Copy(X_C, opNavMsgOut.r_BN_C);
-            
+
             /*! Bring all the measurements and covariances into their respective frames */
             m33MultV3(dcm_NC, X_C, opNavMsgOut.r_BN_N);
             mCopy(P_C, 3, 3, opNavMsgOut.covar_C);
@@ -182,7 +181,7 @@ void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime, in
         OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
     }
 
-    
+
     return;
 
 }

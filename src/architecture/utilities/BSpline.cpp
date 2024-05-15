@@ -20,7 +20,6 @@
 #include "BSpline.h"
 #include <architecture/utilities/avsEigenSupport.h>
 #include <iostream>
-#include <cstring>
 #include <math.h>
 
 /*! This constructor initializes an Input structure for BSpline interpolation */
@@ -233,12 +232,12 @@ double OutputDataSet::getStates(double T, int derivative, int index)
 
 /*! This function takes the Input structure, performs the BSpline interpolation and outputs the result into Output structure */
 void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
-{   
+{
     Output->P = P;
 
-    // N = number of waypoints - 1 
+    // N = number of waypoints - 1
     int N = (int) Input.X1.size() - 1;
-    
+
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
     Eigen::VectorXd T(N+1);
     double S = 0;
@@ -272,7 +271,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
     if (Input.XDot_N_flag == true) {K += 1;}
     if (Input.XDDot_0_flag == true) {K += 1;}
     if (Input.XDDot_N_flag == true) {K += 1;}
-    
+
     // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
     if (P > N + K) {
         std::cout << "Error in BSpline.interpolate: \n the desired polynomial order P is too high. Mass matrix A will be singular. \n" ;
@@ -390,7 +389,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
     Output->XD2.resize(Num);
     Output->XD3.resize(Num);
     Output->XDD1.resize(Num);
-    Output->XDD2.resize(Num);    
+    Output->XDD2.resize(Num);
     Output->XDD3.resize(Num);
     for (int i = 0; i < Num; i++) {
         basisFunction(t, U, N+K+1, P, &NN[0], &NN1[0], &NN2[0]);
@@ -412,12 +411,12 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
 
 /*! This function takes the Input structure, performs the BSpline LS approximation and outputs the result into Output structure */
 void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Output)
-{   
+{
     Output->P = P;
 
-    // N = number of waypoints - 1 
+    // N = number of waypoints - 1
     int N = (int) Input.X1.size() - 1;
-    
+
     // T = time tags; if not specified, it is computed from a cartesian distance assuming a constant velocity norm on average
     Eigen::VectorXd T(N+1);
     double S = 0;
@@ -444,7 +443,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
     for (int n = 0; n < N+1; n++) {
         uk[n] = T[n] / Ttot;
     }
-    
+
     // The maximum polynomial order is N + K. If a higher order is requested, print a BSK_ERROR
     if (P > Q) {
         std::cout << "Error in BSpline.approximate: \n the desired polynomial order P can't be higher than the number of control points Q. \n" ;
@@ -505,7 +504,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
         n += 1;
         MD(n,0) = NN2[0];
         MD(n,1) = NN2[1];
-        MD(n,2) = NN2[2];        
+        MD(n,2) = NN2[2];
         T1[n] = Input.XDDot_0[0] * pow(Ttot,2);
         T2[n] = Input.XDDot_0[1] * pow(Ttot,2);
         T3[n] = Input.XDDot_0[2] * pow(Ttot,2);
@@ -516,7 +515,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
         n += 1;
         MD(n,K-1) = NN2[Q-2];
         MD(n,K)   = NN2[Q-1];
-        MD(n,K+1) = NN2[Q];        
+        MD(n,K+1) = NN2[Q];
         T1[K-1] = Input.XDDot_N[0] * pow(Ttot,2);
         T2[K]   = Input.XDDot_N[1] * pow(Ttot,2);
         T3[K+1] = Input.XDDot_N[2] * pow(Ttot,2);
@@ -570,7 +569,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
             Rk3[n-1] -= NN[Q-1]*C3_1[K];
         }
     }
-    
+
     // populate LS matrix ND
     Eigen::MatrixXd ND(N-1,Q-K-1);
     for (int n = 0; n < N-1; n++) {
@@ -614,7 +613,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
     Eigen::VectorXd C1_2 = NWN_inv * R1;
     Eigen::VectorXd C2_2 = NWN_inv * R2;
     Eigen::VectorXd C3_2 = NWN_inv * R3;
-    
+
     // build control point vectors C
     Eigen::VectorXd C1(Q+1), C2(Q+1), C3(Q+1);
     n = 0;
@@ -657,7 +656,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
     Output->XD2.resize(Num);
     Output->XD3.resize(Num);
     Output->XDD1.resize(Num);
-    Output->XDD2.resize(Num);    
+    Output->XDD2.resize(Num);
     Output->XDD3.resize(Num);
     for (int i = 0; i < Num; i++) {
         basisFunction(t, U, Q+1, P, &NN[0], &NN1[0], &NN2[0]);
@@ -679,7 +678,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
 
 /*! This function calculates the basis functions NN of order P, and derivatives NN1, NN2, for a given time t and knot vector U */
 void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2)
-{   
+{
     Eigen::MatrixXd N(I, P+1);
     Eigen::MatrixXd N1(I, P+1);
     Eigen::MatrixXd N2(I, P+1);

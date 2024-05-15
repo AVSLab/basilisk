@@ -20,7 +20,6 @@
 #include "facetSRPDynamicEffector.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include <cmath>
 
 const double speedLight = 299792458.0;  // [m/s] Speed of light

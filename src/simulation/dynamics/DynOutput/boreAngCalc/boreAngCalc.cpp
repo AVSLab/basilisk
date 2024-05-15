@@ -19,7 +19,6 @@
 
 #include "simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 
 //! The constructor.  Note that you have to overwrite the message names.
 BoreAngCalc::BoreAngCalc()
@@ -83,17 +82,17 @@ void BoreAngCalc::ReadInputs()
         this->localPlanet = this->celBodyInMsg();
         celBodyMsgGood = this->celBodyInMsg.isWritten();
     }
-    
+
     this->inputsGood = this->scStateInMsg.isWritten() && (celBodyMsgGood || this->useInertialHeading);
 }
 
-/*! This method computes the vector specified in the input file in the LVLH 
-    reference frame of the spacecraft above the target celestial body.  This 
+/*! This method computes the vector specified in the input file in the LVLH
+    reference frame of the spacecraft above the target celestial body.  This
     is used later to compute how far off that vector is in an angular sense.
     @return void
 */
 void BoreAngCalc::computeCelestialAxisPoint()
-{             
+{
     // Convert planet and body data to Eigen variables
     Eigen::Vector3d r_BN_N = cArray2EigenVector3d(this->localState.r_BN_N); // spacecraft's inertial position
     Eigen::Vector3d v_BN_N = cArray2EigenVector3d(this->localState.v_BN_N); // spacecraft''s inertial velocity
@@ -141,7 +140,7 @@ void BoreAngCalc::computeCelestialOutputData()
     }
 }
 
-/*! This method computes the output structure for messaging. The miss angle is 
+/*! This method computes the output structure for messaging. The miss angle is
     computed using the body heading and the provided inertial heading
     @return void
 */
@@ -170,9 +169,9 @@ void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();
-   
+
     if(this->inputsGood)
-    { 
+    {
         if (this->useCelestialHeading)
         {
             this->computeCelestialAxisPoint();
@@ -182,7 +181,7 @@ void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
             this->computeInertialOutputData();
         }
     }
-    
+
     //! Write out the current output for current time
     WriteOutputMessages(CurrentSimNanos);
 }

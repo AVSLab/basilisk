@@ -18,14 +18,12 @@
  */
 /*
     MRP_STEERING Module
- 
+
  */
 
 #include "fswAlgorithms/attControl/mrpSteering/mrpSteering.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
-#include <string.h>
 #include <math.h>
 
 /*! self init method
@@ -68,7 +66,7 @@ void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime,
 {
     AttGuidMsgPayload guidCmd;              /* Guidance Message */
     RateCmdMsgPayload outMsg;               /* copy of output message */
-    
+
     /*! - Zero message copies*/
     outMsg = RateCmdMsg_C_zeroMsgPayload();
 

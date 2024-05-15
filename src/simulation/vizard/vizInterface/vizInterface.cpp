@@ -1,10 +1,10 @@
 /*
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -12,7 +12,7 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
+
  */
 
 #include <fstream>
@@ -20,7 +20,6 @@
 #include <cstdio>
 
 #include "vizInterface.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
@@ -39,11 +38,11 @@ VizInterface::VizInterface()
     this->FrameNumber= -1;
 
     this->firstPass = 0;
-    
+
     this->comProtocol = "tcp";
     this->comAddress = "localhost";
     this->comPortNumber = "5556";
-    
+
     return;
 }
 
@@ -308,7 +307,7 @@ void VizInterface::ReadBSKMessages()
                 }
             }
         }
-        
+
         /* read in transceiver state values */
         {
             for (size_t idx=0;idx< (size_t) scIt->transceiverList.size(); idx++) {
@@ -333,7 +332,7 @@ void VizInterface::ReadBSKMessages()
                 }
             }
         }
-        
+
         /* read in generic storage state values */
         {
             for (size_t idx=0;idx< (size_t) scIt->genericStorageList.size(); idx++) {
@@ -589,7 +588,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (int i=0; i<4; i++){
                 vizSettings->add_defaultthrustercolor(this->settings.defaultThrusterColor[i]);
             }
-        } 
+        }
 
         vizSettings->set_defaultthrusterplumelifescalar(this->settings.defaultThrusterPlumeLifeScalar);
         vizSettings->set_orbitlinesegments(this->settings.orbitLineSegments);
@@ -794,7 +793,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                         for (int i=0; i<4; i++) {
                             thr->add_color(scIt->thrInfo[idx].color[i]);
                         }
-                    } 
+                    }
                     for (int i=0; i<3; i++){
                         thr->add_position(scIt->thrOutputMessage[idx].thrusterLocation[i]);
                         thr->add_thrustvector(scIt->thrOutputMessage[idx].thrusterDirection[i]);
@@ -857,7 +856,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 el->set_showgridlines(scIt->ellipsoidList[idx]->showGridLines);
             }
 
-            
+
             // Write transceiver messages
             for (size_t idx =0; idx < (size_t) scIt->transceiverList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::Transceiver* tr = scp->add_transceivers();
@@ -1051,7 +1050,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_t receive_buffer;
             zmq_msg_init(&receive_buffer);
             zmq_msg_recv (&receive_buffer, requester_socket, 0);
-            
+
             /*! - send protobuffer raw over zmq_socket */
             void* serialized_message = malloc(byteCount);
             message->SerializeToArray(serialized_message, (int) byteCount);
@@ -1064,7 +1063,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
             void* header_message = malloc(10 * sizeof(char));
             memcpy(header_message, "SIM_UPDATE", 10);
-            
+
             zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
             zmq_msg_init(&empty_frame1);
             zmq_msg_init(&empty_frame2);
@@ -1094,7 +1093,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_send(&request_life, this->requester_socket, 0);
                 return;
             }
-            
+
         }
         /*!  Write protobuffer to file */
         if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {

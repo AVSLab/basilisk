@@ -21,7 +21,6 @@
 #include "fswAlgorithms/attGuidance/attRefCorrection/attRefCorrection.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "string.h"
 
 /*!
     This method initializes the output messages for this module.
@@ -73,4 +72,3 @@ void Update_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTi
     // write to the output messages
     AttRefMsg_C_write(&attRefMsgBuffer, &configData->attRefOutMsg, moduleID, callTime);
 }
-

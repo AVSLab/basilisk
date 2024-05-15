@@ -23,7 +23,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
 #include <math.h>
-#include "architecture/utilities/linearAlgebra.h"
 
 
 /*! @brief Creates an instance of the PinholeCamera class with a prescribed focal direction in camera frame and -90º of Sun's mask angle (that is, no lighting constraint).
@@ -33,7 +32,7 @@ PinholeCamera::PinholeCamera()
 {
     /* Set focal direction to be +z axis in camera frame */
     this->eC_C << 0, 0, 1;
-    
+
     /* Set no lighting conditions by default  */
     this->maskSun = -MPI_2;
 }
@@ -55,7 +54,7 @@ void PinholeCamera::Reset(uint64_t CurrentSimNanos)
 {
     /* Get number of landmarks */
     this->n = int(this->r_LP_P.size());
-    
+
     /* Check that required input messages are connected */
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "PinholeCamera.scStateInMsg was not linked.");
@@ -63,7 +62,7 @@ void PinholeCamera::Reset(uint64_t CurrentSimNanos)
     if (!this->ephemerisInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "PinholeCamera.ephemerisInMsg was not linked.");
     }
-    
+
     /* Compute field of view */
     this->FOVx = 2 * atan2(this->nxPixel*this->wPixel, 2*this->f);
     this->FOVy = 2 * atan2(this->nyPixel*this->wPixel, 2*this->f);
@@ -97,22 +96,22 @@ void PinholeCamera::loopLandmarks()
     Eigen::Vector3d rLmk, nLmk;
     Eigen::Vector2i pLmk;
     bool flagFOV, flagLighting;
-    
+
     /* Preallocate visibility status and landmark pixels */
     this->isvisibleLmk.setZero(this->n);
     this->pixelLmk.setZero(this->n, 2);
-    
+
     /* Loop through landmarks */
     for (int i = 0; i < this->n; i++){
         /* Extract ith landmark position and its normal */
         rLmk = this->r_LP_P[i];
         nLmk = this->nL_P[i];
-        
+
         /* Compute pixel and check visbility/lighting conditions */
         pLmk = this->computePixel(rLmk);
         flagFOV = this->checkFOV(pLmk, rLmk, nLmk);
         flagLighting = this->checkLighting(nLmk);
-        
+
         /* Add pixel */
         if (flagFOV && flagLighting){
             this->pixelLmk.row(i) = pLmk;
@@ -130,7 +129,7 @@ bool PinholeCamera::checkLighting(Eigen::Vector3d nLmk)
     /* Compute Sun's incident angle */
     double angleSun;
     angleSun = M_PI_2 - safeAcos(nLmk.dot(this->e_SP_P) / (this->e_SP_P.norm()*nLmk.norm()));
-    
+
     /* Check if the landmark is illuminated */
     bool flagLighting;
     flagLighting = false;
@@ -138,7 +137,7 @@ bool PinholeCamera::checkLighting(Eigen::Vector3d nLmk)
         /* Set lighting condition to true */
         flagLighting = true;
     }
-    
+
     return flagLighting;
 }
 
@@ -152,7 +151,7 @@ bool PinholeCamera::checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::
     Eigen::Vector3d dr, eLmk_P;
     dr = this->r_BP_P - rLmk;
     eLmk_P = dr / dr.norm();
-    
+
     /* Define output and angles to check
      angleFOV1 checks if landmarks are in front of the camera
      angleFOV2 checks if the reflected light (landmark normal) is captured by camera
@@ -162,7 +161,7 @@ bool PinholeCamera::checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::
     double angleFOV1, angleFOV2;
     angleFOV1 = M_PI_2 - safeAcos(-this->eC_P.dot(eLmk_P) / (this->eC_P.norm()*eLmk_P.norm()));
     angleFOV2 = M_PI_2 - safeAcos(-this->eC_P.dot(nLmk) / (this->eC_P.norm()*nLmk.norm()));
-    
+
     /* If both angles are positive */
     if (angleFOV1 > 0 && angleFOV2 > 0){
         /* Check if landmark actually falls within camera field of view*/
@@ -171,7 +170,7 @@ bool PinholeCamera::checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::
             flagFOV = true;
         }
     }
-    
+
     return flagFOV;
 }
 
@@ -184,13 +183,13 @@ Eigen::Vector2i PinholeCamera::computePixel(Eigen::Vector3d rLmk)
      in camera frame */
     Eigen::Vector3d dr;
     dr = this->dcm_CB * this->dcm_BP * (rLmk - this->r_BP_P);
-    
+
     /* Compute pixel location */
     double u, v;
     Eigen::Vector2i p;
     u = this->f * dr(0) / (dr(2) * this->wPixel);
     v = this->f * dr(1) / (dr(2) * this->wPixel);
-                
+
     /* Apply pixelization */
     if (u > 0){
         p(0) = int(ceil(u));
@@ -210,7 +209,7 @@ Eigen::Vector2i PinholeCamera::computePixel(Eigen::Vector3d rLmk)
     else{
         p(1) = 1;
     }
-    
+
     return p;
 }
 
@@ -222,12 +221,12 @@ void PinholeCamera::processInputs()
     double dcm_PN_array[3][3];
     MRP2C(this->ephemerisPlanet.sigma_BN, dcm_PN_array);
     this->dcm_PN = cArray2EigenMatrix3d(*dcm_PN_array);
-    
+
     /* Compute planet to Sun line e_SP on the planet rotating frame P */
     Eigen::Vector3d r_PS_N;
     r_PS_N = cArray2EigenVector3d(this->ephemerisPlanet.r_BdyZero_N);
     this->e_SP_P = this->dcm_PN * (-r_PS_N / r_PS_N.norm());
-    
+
     /* Compute spacecraft position in the planet rotating frame P */
     this->r_BP_P = this->dcm_PN * (cArray2EigenVector3d(this->spacecraftState.r_BN_N) -  cArray2EigenVector3d(this->ephemerisPlanet.r_BdyZero_N));
 
@@ -235,7 +234,7 @@ void PinholeCamera::processInputs()
     double dcm_BN_array[3][3];
     MRP2C(this->spacecraftState.sigma_BN, dcm_BN_array);
     this->dcm_BP = cArray2EigenMatrix3d(*dcm_BN_array) * this->dcm_PN.transpose();
-    
+
     /* Camera focal direction in planet frame */
     this->eC_P = (this->dcm_CB * this->dcm_BP).transpose()*this->eC_C;
 }
@@ -257,7 +256,7 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock)
     for (int i = 0; i < this->n; i++){
         /* Zero the output message buffers */
         this->landmarkMsgBuffer.at(i) = this->landmarkOutMsgs.at(i)->zeroMsgPayload;
-        
+
         /* Fill landmark output messages */
         this->landmarkMsgBuffer.at(i).isVisible = this->isvisibleLmk(i);
         eigenMatrixXi2CArray(this->pixelLmk.row(i), this->landmarkMsgBuffer.at(i).pL);
@@ -274,14 +273,14 @@ void PinholeCamera::UpdateState(uint64_t CurrentSimNanos)
 {
     /* Read messages */
     this->readInputMessages();
-    
+
     /* Process planet ephemeris, spacecraft position
      and orientation */
     this->processInputs();
-    
+
     /* Loop through landmarks */
     this->loopLandmarks();
-    
+
     /* Write message */
     this->writeOutputMessages(CurrentSimNanos);
 }
@@ -296,22 +295,22 @@ void PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P, Eigen::MatrixXd mr
     /* Obtain number of samples in the batch to be processed */
     int nBatch;
     nBatch = int(rBatch_BP_P.rows());
-    
+
     /* Preallocate batches of pixel landmarks and visibility status. These
      are the variables the user should extract */
     this->pixelBatchLmk.setZero(nBatch, 2*this->n);
     this->isvisibleBatchLmk.setZero(nBatch, this->n);
-    
+
     /* Define direction cosine matrix and MRP of the spacecraft body
      frame w.r.t. the planet frame */
     double dcm_BP_array[3][3];
     double mrp_BP[3];
-    
+
     /* Print initialization */
     if (show_progress){
         std::cout << "--- Initialization of loop through " << nBatch << " samples ---" << '\n';
     }
-    
+
     /* Loop through batch */
     for (int i = 0; i < nBatch; i++){
         /* Print progress after each 5% of the batch is completed */
@@ -320,29 +319,29 @@ void PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P, Eigen::MatrixXd mr
                 std::cout << i / (int(nBatch/100)) << "% completed" << '\n';
             }
         }
-        
+
         /* Extract spacecraft position and Sun's unit-vector in
          planet frame */
         this->r_BP_P = rBatch_BP_P.row(i).transpose();
         this->e_SP_P = eBatch_SP_P.row(i).transpose();
-        
+
         /* Compute spacecraft dcm w.r.t. planet frame */
         eigenMatrixXd2CArray(mrpBatch_BP.row(i).transpose(), mrp_BP);
         MRP2C(mrp_BP, dcm_BP_array);
         this->dcm_BP = cArray2EigenMatrix3d(*dcm_BP_array);
-        
+
         /* Compute camera focal direction in planet frame */
         this->eC_P = (this->dcm_CB * this->dcm_BP).transpose()*this->eC_C;
-        
+
         /* Loop through landmarks */
         this->loopLandmarks();
-        
+
         /* Fill batches of pixel landmarks and visibility status */
         this->pixelBatchLmk.block(i, 0, 1, this->n) = this->pixelLmk.col(0).transpose();
         this->pixelBatchLmk.block(i, this->n, 1, this->n) = this->pixelLmk.col(1).transpose();
         this->isvisibleBatchLmk.row(i) = this->isvisibleLmk;
     }
-    
+
     /* Declare initialization */
     if (show_progress){
         std::cout << "--- Batch has been processed ---" << '\n';

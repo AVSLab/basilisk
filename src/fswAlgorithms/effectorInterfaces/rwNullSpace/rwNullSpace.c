@@ -22,7 +22,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
-#include <math.h>
 
 /*!
  \verbatim embed:rst
@@ -96,8 +95,8 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 
 }
 
-/*! This method takes the input reaction wheel commands as well as the observed 
-    reaction wheel speeds and balances the commands so that the overall vehicle 
+/*! This method takes the input reaction wheel commands as well as the observed
+    reaction wheel speeds and balances the commands so that the overall vehicle
 	momentum is minimized.
  @return void
  @param configData The configuration data associated with the null space control
@@ -114,7 +113,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                                                        the control and null motion torques */
 	double dVector[MAX_EFF_CNT];                   /* [Nm]  null motion wheel speed control array */
     double DeltaOmega[MAX_EFF_CNT];                /* [r/s] difference in RW speeds */
-    
+
     /* zero all output message containers prior to evaluation */
     finalControl = ArrayMotorTorqueMsg_C_zeroMsgPayload();
 
@@ -136,7 +135,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     /* compute the RW null space motor torque solution to reduce the wheel speeds */
 	mMultV(configData->tau, configData->numWheels, configData->numWheels,
 		dVector, finalControl.motorTorque);
-    
+
     /* add the null motion RW torque solution to the RW feedback control torque solution */
 	vAdd(finalControl.motorTorque, configData->numWheels,
 		cntrRequest.motorTorque, finalControl.motorTorque);

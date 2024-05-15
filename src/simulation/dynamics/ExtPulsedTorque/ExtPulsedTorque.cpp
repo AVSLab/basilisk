@@ -18,8 +18,6 @@
  */
 #include "simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
 #include <iostream>
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -65,7 +63,7 @@ void ExtPulsedTorque::readInputMessages()
 
 /*! This method is used to compute the RHS forces and torques.
     Note:   the module can set any of these three vecors, or a subset.  Regarding the external force, the
-            matrix represnetations in the body (B) and inerial (N) frame components are treated as 2 
+            matrix represnetations in the body (B) and inerial (N) frame components are treated as 2
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
 void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
@@ -95,5 +93,3 @@ void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos)
 {
     return;
 }
-
-

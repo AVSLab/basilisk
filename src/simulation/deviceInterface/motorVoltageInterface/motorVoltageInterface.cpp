@@ -19,7 +19,6 @@
 #include "simulation/deviceInterface/motorVoltageInterface/motorVoltageInterface.h"
 
 #include <iostream>
-#include <cstring>
 
 /*! This is the constructor for the motor voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
@@ -60,7 +59,7 @@ void MotorVoltageInterface::readInputMessages()
 
     // read the incoming array of voltages
     this->inputVoltageBuffer = this->motorVoltageInMsg();
-    
+
     return;
 }
 
@@ -148,5 +147,3 @@ void MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
 
     return;
 }
-
-
