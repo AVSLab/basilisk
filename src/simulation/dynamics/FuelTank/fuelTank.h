@@ -53,8 +53,7 @@ public:
 		propMassInit = 0.0;
 		r_TcT_TInit.setZero();
 	}
-    virtual ~FuelTankModel() {
-    }
+    virtual ~FuelTankModel() = default;
 };
 
 /*! fuel tank constant volume structure */
