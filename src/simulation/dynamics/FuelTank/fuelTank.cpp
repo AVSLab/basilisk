@@ -20,20 +20,6 @@
 #include "fuelTank.h"
 #include <iostream>
 
-/*Able to be accesses from python, used to set up fuel tank model*/
-FuelTankModelConstantVolume_t FuelTankModelConstantVolume;
-FuelTankModelConstantDensity_t FuelTankModelConstantDensity;
-FuelTankModelEmptying_t FuelTankModelEmptying;
-FuelTankModelUniformBurn_t FuelTankModelUniformBurn;
-FuelTankModelCentrifugalBurn_t FuelTankModelCentrifugalBurn;
-
-FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL] = {
-	&FuelTankModelConstantVolume,
-	&FuelTankModelConstantDensity,
-	&FuelTankModelEmptying,
-	&FuelTankModelUniformBurn,
-	&FuelTankModelCentrifugalBurn,
-};
 
 /*! This is the constructor, setting variables to default values */
 FuelTank::FuelTank()
@@ -69,8 +55,8 @@ FuelTank::~FuelTank()
  @return void
  @param model fuel tank model type
  */
-void FuelTank::setTankModel(FuelTankModelTypes model){
-	fuelTankModel = FuelTankModels[model];
+void FuelTank::setTankModel(FuelTankModel* model){
+	fuelTankModel = model;
 
     return;
 }
