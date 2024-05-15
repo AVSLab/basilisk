@@ -34,16 +34,13 @@ FuelTank::FuelTank()
 
 	this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
     this->effectorID++;
-    
-    return;
 }
 
 uint64_t FuelTank::effectorID = 1;
 
 FuelTank::~FuelTank()
 {
-    this->effectorID = 1;    /* reset the panel ID*/
-    return;
+    this->effectorID = 1;
 }
 
 
@@ -53,8 +50,6 @@ FuelTank::~FuelTank()
  */
 void FuelTank::setTankModel(FuelTankModel* model){
 	fuelTankModel = model;
-
-    return;
 }
 
 /*! Attach a fuel slosh particle to the tank */
@@ -62,8 +57,6 @@ void FuelTank::pushFuelSloshParticle(FuelSlosh *particle)
 {
     // - Add a fuel slosh particle to the vector of fuel slosh particles
 	this->fuelSloshParticles.push_back(particle);
-
-    return;
 }
 
 /*! Link states that the module accesses */
@@ -71,8 +64,6 @@ void FuelTank::linkInStates(DynParamManager& statesIn)
 {
     // - Grab access to the hubs omega_BN_N
 	this->omegaState = statesIn.getStateObject("hubOmega");
-
-    return;
 }
 
 /*! Register states. The fuel tank has one state associated with it: mass, and it also has the
@@ -84,8 +75,6 @@ void FuelTank::registerStates(DynParamManager& statesIn)
 	this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
     massMatrix(0,0) = this->fuelTankModel->propMassInit;
     this->massState->setState(massMatrix);
-
-    return;
 }
 
 /*! Fuel tank add its contributions the mass of the vehicle. */
@@ -140,8 +129,6 @@ void FuelTank::updateEffectorMassProps(double integTime)
     this->tankFuelConsumption = massLocal/totalMass*(this->fuelConsumption);
 
     this->effProps.mEffDot = -this->fuelConsumption;
-
-    return;
 }
 
 /*! Fuel tank adds its contributions to the matrices for the back-sub method. */
@@ -170,7 +157,6 @@ void FuelTank::updateContributions(double integTime, BackSubMatrices & backSubCo
 		backSubContr.vecRot -= fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
 	}
 
-    return;
 }
 
 /*! Fuel tank computes its derivative */
@@ -179,7 +165,6 @@ void FuelTank::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, 
 	Eigen::MatrixXd conv(1, 1);
 	conv(0, 0) = -this->tankFuelConsumption;
 	this->massState->setDerivative(conv);
-    return;
 }
 
 /*! Fuel tank contributes to the energy and momentum calculations */
@@ -199,8 +184,6 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
     // - Find rotational energy contribution from the hub
     rotEnergyContr += 1.0/2.0*omegaLocal_BN_B.dot(ITankPntT_B*omegaLocal_BN_B) + 1.0/2.0*massLocal*
                                                                              rDot_TcB_B.dot(rDot_TcB_B);
-
-	 return;
 }
 
 /*! Compute fuel tank mass properties and outputs them as a message.
@@ -223,6 +206,4 @@ void FuelTank::WriteOutputMessages(uint64_t CurrentClock)
 void FuelTank::UpdateState(uint64_t CurrentSimNanos)
 {
     WriteOutputMessages(CurrentSimNanos);
-
-    return;
 }
