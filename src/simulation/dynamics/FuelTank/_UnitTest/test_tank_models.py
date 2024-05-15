@@ -72,7 +72,7 @@ def tankModelConstantVolume(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    model = fuelTank.cvar.FuelTankModelConstantVolume
+    model = fuelTank.FuelTankModelConstantVolume()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
@@ -159,7 +159,7 @@ def tankModelConstantDensity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    model = fuelTank.cvar.FuelTankModelConstantDensity
+    model = fuelTank.FuelTankModelConstantDensity()
     model.propMassInit = 10;
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
@@ -247,7 +247,7 @@ def tankModelEmptying(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    model = fuelTank.cvar.FuelTankModelEmptying
+    model = fuelTank.FuelTankModelEmptying()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
@@ -334,7 +334,7 @@ def tankModelUniformBurn(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    model = fuelTank.cvar.FuelTankModelUniformBurn
+    model = fuelTank.FuelTankModelUniformBurn()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
@@ -423,7 +423,7 @@ def tankModelCentrifugalBurn(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    model = fuelTank.cvar.FuelTankModelCentrifugalBurn
+    model = fuelTank.FuelTankModelCentrifugalBurn()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
