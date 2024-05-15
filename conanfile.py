@@ -373,7 +373,7 @@ if __name__ == "__main__":
     conanCmdString = ''.join(conanCmdString)
     print(statusColor + "Running this conan command:" + endColor)
     print(conanCmdString)
-    os.system(conanCmdString)
+    completedProcess = subprocess.run(conanCmdString, shell=True, check=True)
 
     # run conan build
     if is_running_virtual_env() or platform.system() == "Windows":
@@ -382,4 +382,4 @@ if __name__ == "__main__":
         cmakeCmdString = 'python3 -m conans.conan build . -if ' + buildFolderName
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
-    os.system(cmakeCmdString)
+    completedProcess = subprocess.run(cmakeCmdString, shell=True, check=True)
