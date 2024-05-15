@@ -224,7 +224,7 @@ class BasiliskConan(ConanFile):
             if self.settings.os == "Windows":
                 self.options["*"].shared = True
         print("cmake generator set to: " + statusColor + str(self.generator) + endColor)
-    
+
     def package_id(self):
         if self.settings.compiler == "Visual Studio":
             if "MD" in self.settings.compiler.runtime:
@@ -377,6 +377,3 @@ if __name__ == "__main__":
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
     os.system(cmakeCmdString)
-
-
-

@@ -131,16 +131,16 @@ void Spacecraft::readOptionalRefMsg()
         this->hubSigma->setState(eigenMRPd2Vector3d(sigma_BN));
         this->hubOmega_BN_B->setState(omega_BN_B);
     }
-    
+
     if (this->transRefInMsg.isLinked()) {
         Eigen::Vector3d r_RN_N;
         Eigen::Vector3d v_RN_N;
         TransRefMsgPayload transRefMsgBuffer;
         transRefMsgBuffer = this->transRefInMsg();
-        
+
         r_RN_N = cArray2EigenVector3d(transRefMsgBuffer.r_RN_N);
         v_RN_N = cArray2EigenVector3d(transRefMsgBuffer.v_RN_N);
-        
+
         this->hubR_N->setState(r_RN_N);
         this->hubV_N->setState(v_RN_N);
     }
