@@ -80,6 +80,35 @@ Now ```pre-commit``` will run automatically whenever you run ```git commit```!
 When ```pre-commit``` decides to edit some of your files,
 you will need to add those changes to your commit and commit again.
 
+#### ClangFormat
+
+This repository uses a modified version of Mozilla's ```.clang-format``` file.
+Please be sure to reformat any C/C++ file with clang-format before committing.
+This can be done through the command line or with clion.
+
+To prevent a section from getting reformatted, wrap it with ```// clang-format off``` and ```// clang-format on```.
+
+For more information is available on the [clang-format](https://clang.llvm.org/docs/ClangFormat.html) website.
+
+#### Clion
+
+* To enable clang-format in clion, go to ```Settings - Editor - Code Style``` and enable ClangFormat.
+* This will automatically detect the .clang-format file in the project root.
+* To reformat code you have written, select that portion or the whole file
+     and call <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd>.
+
+#### Command Line
+
+* You must ```pip install clang-format``` to use ClangFormat through the command line.
+* Use the command
+  ```
+  $ clang-format -i {file name(s)} -style=file
+  ```
+  where:
+     * ```-i``` makes the suggested changes to the file, otherwise they will be outputted to the cli
+     * ```-style=file``` tells ClangFormat to look for the .clang-format in your project directory,
+       otherwise it will use the LLVM's style guide
+
 ## Write-Ups About Good Commit/PR/Code Review Practice
 
 The following three articles describe in greater detail the ideals to which this repository adheres.
