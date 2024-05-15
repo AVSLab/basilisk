@@ -17,6 +17,7 @@
 import inspect
 import os
 import pytest
+import numpy as np
 
 import matplotlib.pyplot as plt
 from Basilisk.architecture import messaging
@@ -33,30 +34,15 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail() # need to update how the RW states are defined
-# provide a unique test method name, starting with test_
 @pytest.mark.parametrize("thrusterType", [
     "dynamicEffector", "stateEffector"
 ])
 def test_massDepletionTest(show_plots, thrusterType):
     """Module Unit Test"""
-    [testResults, testMessage] = massDepletionTest(show_plots, thrusterType)
-    assert testResults < 1, testMessage
-
-
-# @pytest.mark.xfail #Currently not sure if this is valid or not
-def massDepletionTest(show_plots, thrusterType):
-    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
@@ -205,34 +191,12 @@ def massDepletionTest(show_plots, thrusterType):
         truePos = [[-6781593.400948599, 4946868.619447934, 5486741.690842073]]
         trueSigma = [[0.14367298348925786, -0.06487574480164254, 0.3032693696902734]]
 
-    accuracy = 1e-6
     for i in range(0, len(truePos)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataPos[i], truePos[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Thruster Integrated Test failed pos unit test")
+        np.testing.assert_allclose(dataPos[i], truePos[i], rtol=1e-6, err_msg="Thruster position not equal")
 
-    snippetName = thrusterType + 'PositionPassFail'
-    passFail(testFailCount, snippetName)
-
-    accuracy = 1e-4
     for i in range(0, len(trueSigma)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataSigma[i], trueSigma[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Thruster Integrated Test failed attitude unit test")
-
-    snippetName = thrusterType + 'AttitudePassFail'
-    passFail(testFailCount, snippetName)
-
-    if testFailCount == 0:
-        print("PASSED: Thruster Integrated Sim Test")
-
-    assert testFailCount < 1, testMessages
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+        np.testing.assert_allclose(dataSigma[i], trueSigma[i], rtol=1e-4, err_msg="Thruster attitude not equal")
 
 
 def axisChangeHelper(r_BcB_B):

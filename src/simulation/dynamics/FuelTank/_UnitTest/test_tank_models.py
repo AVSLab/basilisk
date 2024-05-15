@@ -17,6 +17,7 @@
 
 
 import inspect
+import numpy as np
 import os
 
 from Basilisk.simulation import fuelTank
@@ -34,49 +35,16 @@ path = os.path.dirname(os.path.abspath(filename))
 
 def test_tankModelConstantVolume(show_plots=False):
     """Module Unit Test"""
-    [testResults, testMessage] = tankModelConstantVolume(show_plots)
-    assert testResults < 1, testMessage
-
-
-def test_tankModelConstantDensity(show_plots=False):
-    """Module Unit Test"""
-    [testResults, testMessage] = tankModelConstantDensity(show_plots)
-    assert testResults < 1, testMessage
-
-
-def test_tankModelEmptying(show_plots=False):
-    """Module Unit Test"""
-    [testResults, testMessage] = tankModelEmptying(show_plots)
-    assert testResults < 1, testMessage
-
-
-def test_tankModelUniformBurn(show_plots=False):
-    """Module Unit Test"""
-    [testResults, testMessage] = tankModelUniformBurn(show_plots)
-    assert testResults < 1, testMessage
-
-
-def test_tankModelCentrifugalBurn(show_plots=False):
-    """Module Unit Test"""
-    [testResults, testMessage] = tankModelCentrifugalBurn(show_plots)
-    assert testResults < 1, testMessage
-
-
-def tankModelConstantVolume(show_plots):
-    """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    
     model = fuelTank.FuelTankModelConstantVolume()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
-    
+
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
     true_ITankPntT_T =      [
                                 [0,0,0,0,0,0,0,0,0],
@@ -103,62 +71,52 @@ def tankModelConstantVolume(show_plots):
                                 [0,0,0],
                                 [0,0,0]
                             ]
-    
+
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(trial[0])
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_T test")
+        np.testing.assert_allclose(dataITank,
+                                   true_ITankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant volume tank inertia not equal")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_T test")
+        np.testing.assert_allclose(dataIPrimeTank,
+                                   true_IPrimeTankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant volume tank inertia derivatives not equal")
 
         dataR = model.r_TcT_T
         dataR = [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TcT_T test")
+        np.testing.assert_allclose(dataR,
+                                   true_r_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant volume tank tank center mass position not equal")
 
         dataRPrime = model.rPrime_TcT_T
         dataRPrime = [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPrime,
+                                   true_rPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant volume tank tank center mass position derivative not equal")
 
         dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPPrime,
+                                   true_rPPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant volume tank tank center mass position second derivative not equal")
 
-    if testFailCount == 0:
-        print("PASSED: " + " Fuel Tank constant volume unit test")
-
-    snippetName = 'ConstVolPassFail'
-    passFail(testFailCount, snippetName)
-
-    assert testFailCount < 1, testMessages
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
-def tankModelConstantDensity(show_plots):
+def test_tankModelConstantDensity(show_plots=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    
     model = fuelTank.FuelTankModelConstantDensity()
     model.propMassInit = 10;
     model.r_TcT_TInit = [[1],[1],[1]]
@@ -197,56 +155,46 @@ def tankModelConstantDensity(show_plots):
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_T test")
+        np.testing.assert_allclose(dataITank,
+                                   true_ITankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant density tank inertia not equal")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            print(dataIPrimeTank, idx)
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_T test")
+        np.testing.assert_allclose(dataIPrimeTank,
+                                   true_IPrimeTankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant density tank inertia derivatives not equal")
 
         dataR = model.r_TcT_T
         dataR = [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TcT_T test")
+        np.testing.assert_allclose(dataR,
+                                   true_r_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant density tank tank center mass position not equal")
 
         dataRPrime = model.rPrime_TcT_T
         dataRPrime = [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPrime,
+                                   true_rPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant density tank tank center mass position derivative not equal")
 
         dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPPrime,
+                                   true_rPPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Constant density tank tank center mass position second derivative not equal")
 
-    if testFailCount == 0:
-        print("PASSED: " + " Fuel Tank constant volume unit test")
 
-    snippetName = 'ConstDensPassFail'
-    passFail(testFailCount, snippetName)
-
-    assert testFailCount < 1, testMessages
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
-def tankModelEmptying(show_plots):
+def test_tankModelEmptying(show_plots=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    
     model = fuelTank.FuelTankModelEmptying()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
@@ -285,55 +233,45 @@ def tankModelEmptying(show_plots):
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqual(dataITank, true_ITankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed ITankPntT_T test")
+        np.testing.assert_allclose(dataITank,
+                                   true_ITankPntT_T[idx],
+                                   atol=accuracy,
+                                   err_msg="Emptying tank inertia not equal")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed IPrimeTankPntT_T test")
+        np.testing.assert_allclose(dataIPrimeTank,
+                                   true_IPrimeTankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Emptying tank inertia derivative not equal")
 
         dataR = model.r_TcT_T
         dataR = [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed r_TcT_T test")
+        np.testing.assert_allclose(dataR,
+                                   true_r_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Emptying tank center of mass position not equal")
 
         dataRPrime = model.rPrime_TcT_T
         dataRPrime = [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed rPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPrime,
+                                   true_rPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Emptying tank center of mass position derivative not equal")
 
         dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed rPPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPPrime,
+                                   true_rPPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Emptying tank center of mass position second derivative not equal")
 
-    if testFailCount == 0:
-        print("PASSED: " + " Fuel Tank constant volume unit test")
-
-    snippetName = 'EmptyingPassFail'
-    passFail(testFailCount, snippetName)
-
-    assert testFailCount < 1, testMessages
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
-def tankModelUniformBurn(show_plots):
+def test_tankModelUniformBurn(show_plots=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    
     model = fuelTank.FuelTankModelUniformBurn()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
@@ -373,56 +311,47 @@ def tankModelUniformBurn(show_plots):
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed ITankPntT_T test")
+        np.testing.assert_allclose(dataITank,
+                                   true_ITankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank uniform burn inertia not equal")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed IPrimeTankPntT_T test")
+        np.testing.assert_allclose(dataIPrimeTank,
+                                   true_IPrimeTankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank uniform burn inertia derivative not equal")
 
         dataR = model.r_TcT_T
         dataR = [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed r_TcT_T test")
+        np.testing.assert_allclose(dataR,
+                                   true_r_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank uniform burn center of mass position not equal")
+
 
         dataRPrime = model.rPrime_TcT_T
         dataRPrime = [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPrime,
+                                   true_rPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank uniform burn center of mass position derivative not equal")
 
         dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPPrime_TcT_T test")
-
-    if testFailCount == 0:
-        print("PASSED: " + " Fuel Tank constant volume unit test")
-
-    snippetName = 'UniformBurnPassFail'
-    passFail(testFailCount, snippetName)
-
-    assert testFailCount < 1, testMessages
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+        np.testing.assert_allclose(dataRPPrime,
+                                   true_rPPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank uniform burn center of mass position second derivative not equal")
 
 
-def tankModelCentrifugalBurn(show_plots):
+def test_tankModelCentrifugalBurn(show_plots=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    
     model = fuelTank.FuelTankModelCentrifugalBurn()
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
@@ -462,45 +391,39 @@ def tankModelCentrifugalBurn(show_plots):
         model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed ITankPntT_T test")
+        np.testing.assert_allclose(dataITank,
+                                   true_ITankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank centrifugal burn inertia not equal")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed IPrimeTankPntT_T test")
+        np.testing.assert_allclose(dataIPrimeTank,
+                                   true_IPrimeTankPntT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank centrifugal burn inertia derivative not equal")
 
         dataR = model.r_TcT_T
         dataR = [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed r_TcT_T test")
+        np.testing.assert_allclose(dataR,
+                                   true_r_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank centrifugal burn center of mass position not equal")
 
         dataRPrime = model.rPrime_TcT_T
         dataRPrime = [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPrime_TcT_T test")
+        np.testing.assert_allclose(dataRPrime,
+                                   true_rPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank centrifugal burn center of mass position derivative not equal")
 
         dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPPrime_TcT_T test")
 
-    if testFailCount == 0:
-        print("PASSED: " + " Fuel Tank constant volume unit test")
-
-    snippetName = 'CentrifugalPassFail'
-    passFail(testFailCount, snippetName)
-
-    assert testFailCount < 1, testMessages
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
+        np.testing.assert_allclose(dataRPPrime,
+                                   true_rPPrime_TcT_T[idx],
+                                   rtol=accuracy,
+                                   err_msg="Tank centrifugal burn center of mass position second derivative not equal")
 
 def passFail(testFailCountInput, snippetName):
     if testFailCountInput < 1:
@@ -515,6 +438,8 @@ def passFail(testFailCountInput, snippetName):
 
 
 if __name__ == "__main__":
-    # tankModelConstantVolume(True)
-    tankModelConstantDensity(True)
-    # tankModelEmptying(False)
+    # test_tankModelConstantVolume(True)
+    test_tankModelConstantDensity(True)
+    # test_tankModelEmptying(False)
+    # test_tankModelUniformBurn(False)
+    # test_tankModelCentrifugalBurn(False)
