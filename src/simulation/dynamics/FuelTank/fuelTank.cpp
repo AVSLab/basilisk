@@ -96,30 +96,34 @@ void FuelTank::updateEffectorMassProps(double integTime)
 
     //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    for (auto & dynEffector : this->dynEffectors)
     {
-        (*dynIt)->computeStateContribution(integTime);
-        this->fuelConsumption += (*dynIt)->stateDerivContribution(0);
-    }
-    std::vector<StateEffector*>::iterator stateIt;
-    for (stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
-    {
-        (*stateIt)->updateEffectorMassProps(integTime);
-        this->fuelConsumption += (*stateIt)->stateDerivContribution(0);
+        dynEffector->computeStateContribution(integTime);
+        this->fuelConsumption += dynEffector->stateDerivContribution(0);
     }
 
-    std::vector<FuelSlosh*>::iterator fuelSloshInt;
+    for (auto & stateEffector : this->stateEffectors)
+    {
+        stateEffector->updateEffectorMassProps(integTime);
+        this->fuelConsumption += stateEffector->stateDerivContribution(0);
+    }
+
     // - Mass depletion (finding total mass in tank)
     double totalMass = massLocal;
-    for (fuelSloshInt = this->fuelSloshParticles.begin(); fuelSloshInt < this->fuelSloshParticles.end(); fuelSloshInt++) {
+    for (auto fuelSloshInt = this->fuelSloshParticles.begin();
+                fuelSloshInt < this->fuelSloshParticles.end();
+                fuelSloshInt++)
+    {
         // - Retrieve current mass value of fuelSlosh particle
         (*fuelSloshInt)->retrieveMassValue(integTime);
         // - Add fuelSlosh mass to total mass of tank
         totalMass += (*fuelSloshInt)->fuelMass;
     }
     // - Set mass depletion rate of fuelSloshParticles
-    for (fuelSloshInt = this->fuelSloshParticles.begin(); fuelSloshInt < this->fuelSloshParticles.end(); fuelSloshInt++) {
+    for (auto fuelSloshInt = this->fuelSloshParticles.begin();
+                fuelSloshInt < this->fuelSloshParticles.end();
+                fuelSloshInt++)
+    {
         // - Find fuelSlosh particle mass to fuel tank mass ratio
         (*fuelSloshInt)->massToTotalTankMassRatio = (*fuelSloshInt)->fuelMass/totalMass;
         // - Scale total fuelConsumption by mass ratio to find fuelSloshParticle mass depletion rate
