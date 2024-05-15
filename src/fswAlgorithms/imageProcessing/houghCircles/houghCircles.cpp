@@ -22,7 +22,7 @@
     Note:   This module takes an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
     Author: Thibaud Teil
     Date:   February 13, 2019
- 
+
  */
 
 /* modify the path to reflect the new module names */
@@ -66,7 +66,7 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
     }
 }
 
-/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
+/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
@@ -114,7 +114,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
-    
+
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
     cv::HoughCircles( blurred, circles, cv::HOUGH_GRADIENT, this->dpValue, this->houghMinDist, this->cannyThresh,this->voteThresh, this->houghMinRadius, this->houghMaxRadius );
@@ -136,10 +136,9 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.valid = 1;
         circleBuffer.planetIds[0] = 2;
     }
-    
+
     this->opnavCirclesOutMsg.write(&circleBuffer, this->moduleID, CurrentSimNanos);
 
 //    free(imageBuffer.imagePointer);
     return;
 }
-

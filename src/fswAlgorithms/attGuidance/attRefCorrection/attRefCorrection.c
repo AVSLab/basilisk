@@ -72,4 +72,3 @@ void Update_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTi
     // write to the output messages
     AttRefMsg_C_write(&attRefMsgBuffer, &configData->attRefOutMsg, moduleID, callTime);
 }
-

@@ -175,4 +175,3 @@ void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
     //! - Write output data
     this->writeOutputMessages(CurrentSimNanos);
 }
-

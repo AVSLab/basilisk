@@ -86,7 +86,7 @@ void SimpleMassProps::computeMassProperties()
         for (uint64_t j = 0; j < 3; j++) {
             this->vehicleConfigMsgBuffer.ISCPntB_B[3*i + j] = this->scMassPropsMsgBuffer.ISC_PntB_B[i][j];
         }
-    }   
+    }
 
     // transfer the center of mass
     v3Copy(this->scMassPropsMsgBuffer.c_B, this->vehicleConfigMsgBuffer.CoM_B);

@@ -835,7 +835,7 @@ void mLeastSquaresInverse(void *mx, size_t dim1, size_t dim2, void *result)
     double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxGrammian[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxGrammianInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    
+
     mTranspose(mx, dim1, dim2, mxTranspose);
     mMultM(mxTranspose, dim2, dim1, mx, dim1, dim2, mxGrammian);
     mInverse(mxGrammian, dim2, mxGrammianInverse);
@@ -853,7 +853,7 @@ void mMinimumNormInverse(void *mx, size_t dim1, size_t dim2, void *result)
     double mxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxMxTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double mxMxTransposeInverse[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    
+
     mTranspose(m_mx, dim1, dim2, mxTranspose);
     mMultM(m_mx, dim1, dim2, mxTranspose, dim2, dim1, mxMxTranspose);
     mInverse(mxMxTranspose, dim1, mxMxTransposeInverse);
@@ -1286,7 +1286,7 @@ int mInverse(void *mx, size_t dim, void *result)
     {
         BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.");
     }
-    
+
     if(fabs(det) > DB0_EPS) {
         /* Find adjoint matrix */
         double m_adjoint[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
@@ -2698,4 +2698,3 @@ double safeSqrt(double x) {
         return 0.0;
     return sqrt(x);
 }
-

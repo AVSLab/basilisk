@@ -71,7 +71,7 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
 
     v3SetZero(configData->sigma_BR_old);
     configData->time_old = callTime;
-    
+
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(configData->pHat_B)  < 0.1) {
       char info[MAX_LOGGING_LENGTH];
@@ -178,7 +178,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     // compute sigma_RN
     v3Scale(-1.0, sigma_BR, sigma_RB);
     addMRP(scAttInMsgBuffer.sigma_BN, sigma_RB, attRefOutMsgBuffer.sigma_RN);
-    
+
     /* use sigma_BR to compute d(sigma_BR)/dt if at least two data points */
     if (configData->init < 1) {
         // module update time
@@ -190,7 +190,7 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
 
         // calculate BinvMRP
         BinvMRP(sigma_BR, Binv);
-        
+
         // compute omega_BR_B
         v3Scale(4.0, sigmaDot_BR, sigmaDot_BR);
         m33MultV3(Binv, sigmaDot_BR, attGuidOutMsgBuffer.omega_BR_B);
@@ -220,4 +220,3 @@ void Update_locationPointing(locationPointingConfig *configData, uint64_t callTi
     AttGuidMsg_C_write(&attGuidOutMsgBuffer, &configData->attGuidOutMsg, moduleID, callTime);
     AttRefMsg_C_write(&attRefOutMsgBuffer, &configData->attRefOutMsg, moduleID, callTime);
 }
-

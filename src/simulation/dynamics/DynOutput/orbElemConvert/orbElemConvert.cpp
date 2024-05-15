@@ -84,7 +84,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
         v3Copy(this->r_N, spiceMsg.PositionVector);
         v3Copy(this->v_N, spiceMsg.VelocityVector);
         this->spiceStateOutMsg.write(&spiceMsg, this->moduleID, CurrentClock);
-    }    
+    }
 }
 
 /*! The name kind of says it all right?  Converts CurrentElem to pos/vel.

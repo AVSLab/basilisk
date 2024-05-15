@@ -66,7 +66,7 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
 
     // zero the burn info buffer
     configData->burnArrayInfoOutMsgBuffer = ReconfigBurnArrayInfoMsg_C_zeroMsgPayload();
-  
+
     configData->prevCallTime    = 0;
     configData->tCurrent        = 0.0;
     configData->thrustOnFlag    = 0;
@@ -146,7 +146,7 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
 void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chiefTransMsgBuffer,
                      NavTransMsgPayload deputyTransMsgBuffer, AttRefMsgPayload attRefInMsgBuffer,
                      THRArrayConfigMsgPayload thrustConfigMsgBuffer, VehicleConfigMsgPayload vehicleConfigMsgBuffer,
-                     AttRefMsgPayload *attRefOutMsgBuffer, THRArrayOnTimeCmdMsgPayload *thrustOnMsgBuffer, 
+                     AttRefMsgPayload *attRefOutMsgBuffer, THRArrayOnTimeCmdMsgPayload *thrustOnMsgBuffer,
                      uint64_t callTime, int64_t moduleID)
 {
     /* conversion from r,v to classical orbital elements */
@@ -188,7 +188,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
         }
     }else if(configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 1) {
         double t_left = configData->burnArrayInfoOutMsgBuffer.burnArray[1].t - configData->tCurrent; // remaining time until second burn
-        if(configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2 && 
+        if(configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2 &&
            configData->tCurrent < (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t+configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters))){
             // in this case, first burn is still executed, so first burn attitude is set as target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
@@ -212,11 +212,11 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
         }
     }else if(configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag == 1){
         double t_left = configData->burnArrayInfoOutMsgBuffer.burnArray[2].t - configData->tCurrent; // remaining time until third burn
-        if(configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 2 && 
+        if(configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 2 &&
            configData->tCurrent < (configData->burnArrayInfoOutMsgBuffer.burnArray[1].t+configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters))){
             // in this case, second burn is still executed, so second burn attitude is set as target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
-        }else if(configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2 && 
+        }else if(configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2 &&
            configData->tCurrent < (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t+configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters))){
             // in this case, first burn is still executed, so first burn attitude is set as target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
@@ -254,7 +254,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
                 *attRefOutMsgBuffer = attRefInMsgBuffer;
             }else{
                 v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
-            }  
+            }
         }else if(configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2){
             if(configData->tCurrent > (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t+configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime/(2*thrustConfigMsgBuffer.numThrusters)) &&
                configData->attRefInIsLinked){
@@ -272,7 +272,7 @@ void UpdateManeuver(spacecraftReconfigConfig *configData, NavTransMsgPayload chi
     if(configData->tCurrent > configData->resetPeriod){
         Reset_spacecraftReconfig(configData, callTime, moduleID);
     }
-    
+
     return;
 }
 
@@ -462,7 +462,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     /* R frame represents a frame where scheduled thrusct direction is aligned with +Z axis */
     /* dcm_TR is used to align scheduled thrust direction with configured thruster direction */
     /* by multiplying two dcms dcm_TR and dcm_RN, target attitude is calculated */
-    
+
     /* calculate dcm_TR (this is common in three burns) */
     double thruster_dir[3];
     double ep_vec[3];
@@ -482,7 +482,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     double ep_TR[4] = {cos(acos_dv/2.0),ep_vec[0]*sin(acos_dv/2.0),ep_vec[1]*sin(acos_dv/2.0),ep_vec[2]*sin(acos_dv/2.0)};
     double dcm_TR[3][3];
     EP2C(ep_TR,dcm_TR);
-    
+
     /* calculate sigma_dvrtp_RN */
     // calculate dcm_RN
     double M_d_dvrtp = M_d + configData->burnArrayInfoOutMsgBuffer.burnArray[0].t*n;
@@ -519,7 +519,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     double dcm_TN_dvrtp[3][3];
     m33MultM33(dcm_TR,dcm_RN_dvrtp,dcm_TN_dvrtp);
     C2MRP(dcm_TN_dvrtp, configData->burnArrayInfoOutMsgBuffer.burnArray[0].sigma_RN);
-    
+
     /* calculate sigma_dvrta_RN */
     double M_d_dvrta = M_d + configData->burnArrayInfoOutMsgBuffer.burnArray[1].t*n;
     double E_d_dvrta = M2E(M_d_dvrta, oe_d.e);
@@ -555,7 +555,7 @@ void ScheduleDV(spacecraftReconfigConfig *configData,classicElements oe_c,
     double dcm_TN_dvrta[3][3];
     m33MultM33(dcm_TR,dcm_RN_dvrta,dcm_TN_dvrta);
     C2MRP(dcm_TN_dvrta, configData->burnArrayInfoOutMsgBuffer.burnArray[1].sigma_RN);
-    
+
     /* calculate sigma_dvn_RN */
     double M_d_dvn = M_d + configData->burnArrayInfoOutMsgBuffer.burnArray[2].t*n;
     double E_d_dvn = M2E(M_d_dvn, oe_d.e);

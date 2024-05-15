@@ -161,7 +161,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
 void SpiceInterface::initTimeData()
 {
     double EpochDelteET;
-    
+
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
@@ -194,14 +194,14 @@ void SpiceInterface::initTimeData()
 void SpiceInterface::computeGPSData()
 {
     double JDDifference;
-    
+
     //! - The difference between the epochs in julian date terms is the total
     JDDifference = this->J2000Current - this->JDGPSEpoch;
     //! - Scale the elapsed by a week's worth of seconds to get week
     this->GPSWeek = (uint16_t) (JDDifference/(7*86400));
     //! - Subtract out the GPS week scaled up to seconds to get time in week
     this->GPSSeconds = JDDifference - this->GPSWeek*7*86400;
-    
+
     //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
     this->GPSRollovers = this->GPSWeek/1024;
     this->GPSWeek = (uint16_t)(this->GPSWeek-this->GPSRollovers*1024);
@@ -224,7 +224,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
     OutputData.GPSWeek = this->GPSWeek;
     OutputData.GPSRollovers = this->GPSRollovers;
     this->spiceTimeOutMsg.write(&OutputData, this->moduleID, CurrentClock);
-    
+
     //! - Iterate through all of the planets that are on and write their outputs
     for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++)
     {
@@ -264,7 +264,7 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
-    
+
     //! - Compute the current Julian Date string and cast it over to the double
     et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>
              (this->spiceBuffer));
@@ -373,9 +373,9 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
 void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData)
 {
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
-    
+
     /*! - Loop over the vector of Spice objects and compute values.
-     
+
      -# Call the Ephemeris file (spkezr)
      -# Copy out the position and velocity values (default in km)
      -# Convert the pos/vel over to meters.
@@ -387,7 +387,7 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
         double lighttime;
         double localState[6];
         std::string planetFrame = "";
-        
+
         spkezr_c(planit->PlanetName, this->J2000Current, this->referenceBase.c_str(),
             "NONE", this->zeroBase.c_str(), localState, &lighttime);
         v3Copy(&localState[0], planit->PositionVector);
@@ -413,13 +413,13 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
         {
             //pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
             //    planit->second.J20002Pfix);
-            
+
             double aux[6][6];
-            
+
             sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux); //returns attitude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF in Spice.
-            
+
             m66Get33Matrix(0, 0, aux, planit->J20002Pfix);
-            
+
             m66Get33Matrix(1, 0, aux, planit->J20002Pfix_dot);
         }
         c++;
@@ -438,7 +438,7 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
 {
     char *fileName = new char[this->charBufferSize];
     SpiceChar *name = new SpiceChar[this->charBufferSize];
-    
+
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
     strcpy(name, "REPORT");
@@ -446,7 +446,7 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
     strcpy(fileName, dataPath);
     strcat(fileName, kernelName);
     furnsh_c(fileName);
-    
+
     //! - Check to see if we had trouble loading a kernel and alert user if so
     strcpy(name, "DEFAULT");
     erract_c("SET", this->charBufferSize, name);
@@ -470,7 +470,7 @@ int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
 {
     char *fileName = new char[this->charBufferSize];
     SpiceChar *name = new SpiceChar[this->charBufferSize];
-    
+
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
     strcpy(name, "REPORT");

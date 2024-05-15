@@ -26,7 +26,7 @@ MotorThermal::MotorThermal()
 {
     this->currentTemperature = -273.15;     //!< current temperature defaults to absolute zero
     this->ambientTemperature = 0.0;         //!< ambient temperature defaults to 0 Celsius
-    this->ambientThermalResistance = -1.0;  //!< ambient thermal resistance  
+    this->ambientThermalResistance = -1.0;  //!< ambient thermal resistance
     this->motorHeatCapacity = -1.0;         //!< motor heat capacity
     this->efficiency = 1.0;                 //!< default efficiency is 1.0
 }

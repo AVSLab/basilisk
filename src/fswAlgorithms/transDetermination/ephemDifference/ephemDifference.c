@@ -92,7 +92,7 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
         v3Subtract(tmpEphStore.v_BdyZero_N,
                    tmpBaseEphem.v_BdyZero_N,
                    tmpEphStore.v_BdyZero_N);
-        
+
         EphemerisMsg_C_write(&tmpEphStore, &configData->changeBodies[i].ephOutMsg, moduleID, callTime);
     }
     return;

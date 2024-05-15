@@ -133,7 +133,7 @@ void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *
     m33MultV3(HN, rhoDot_N, rhoDot_H);
     v3Cross(omega_HN_H, rho_H, rhoPrime_H);
     v3Subtract(rhoDot_H, rhoPrime_H, rhoPrime_H);
-    
+
     return;
 }
 

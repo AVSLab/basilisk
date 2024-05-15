@@ -104,10 +104,10 @@ void FacetDragDynamicEffector::updateDragDir(){
     Eigen::MRPd sigmaBN;
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
-    
+
     this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
     this->v_hat_B = this->v_B / this->v_B.norm();
-    
+
     return;
 }
 
@@ -117,7 +117,7 @@ dependence and lift forces.
 void FacetDragDynamicEffector::plateDrag(){
 	Eigen::Vector3d facetDragForce, facetDragTorque;
 	Eigen::Vector3d totalDragForce, totalDragTorque;
-    
+
 	//! - Zero out the structure force/torque for the drag set
     double projectedArea = 0.0;
     double projectionTerm = 0.0;
@@ -125,7 +125,7 @@ void FacetDragDynamicEffector::plateDrag(){
 	totalDragTorque.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
-    
+
 	for(size_t i = 0; i < this->numFacets; i++){
 	    projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
 		projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;

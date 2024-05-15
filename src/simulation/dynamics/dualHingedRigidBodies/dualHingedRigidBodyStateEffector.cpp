@@ -83,7 +83,7 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
         free(this->dualHingedRigidBodyOutMsgs.at(c));
         free(this->dualHingedRigidBodyConfigLogOutMsgs.at(c));
     }
-    
+
     this->effectorID = 1;    /* reset the panel ID*/
     return;
 }
@@ -252,7 +252,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     this->matrixGDHRB.row(1) = -(this->IPntS2_S2(1,1)*this->sHat22_P.transpose() - this->mass2*this->d2*this->sHat23_P.transpose()*this->rTildeS2P_P);
 
     this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omega_PN_S1(2)*this->omega_PN_S1(0)
-                            + this->u1 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_P.dot(gravForcePan2) - 
+                            + this->u1 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_P.dot(gravForcePan2) -
                             this->mass1*this->d1*this->sHat13_P.transpose()*(2*this->omegaTildePNLoc_P*this->rPrimeS1P_P + this->omegaTildePNLoc_P*this->omegaTildePNLoc_P*this->r_S1P_P)
                             - this->mass2*this->l1*this->sHat13_P.transpose()*(2*this->omegaTildePNLoc_P*this->rPrimeS2P_P + this->omegaTildePNLoc_P*this->omegaTildePNLoc_P*this->r_S2P_P + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_P); //still missing torque and force terms - SJKC
 
@@ -267,13 +267,13 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
                     + (this->mass1*this->d1*this->sHat13_P + this->mass2*this->l1*this->sHat13_P + this->mass2*this->d2*this->sHat23_P)*this->matrixEDHRB.row(0)*this->vectorVDHRB + this->mass2*this->d2*this->sHat23_P*this->matrixEDHRB.row(1)*this->vectorVDHRB);
 
     // - Define rotational matrice contributions (Eq 96 in paper)
-    
+
     backSubContr.matrixC = (this->IPntS1_S1(1,1)*this->sHat12_P + this->mass1*this->d1*this->rTildeS1P_P*this->sHat13_P + this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->l1*this->rTildeS2P_P*this->sHat13_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(0)*this->matrixFDHRB
                     + (this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(1)*this->matrixFDHRB;
-    
+
     backSubContr.matrixD = (this->IPntS1_S1(1,1)*this->sHat12_P + this->mass1*this->d1*this->rTildeS1P_P*this->sHat13_P + this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->l1*this->rTildeS2P_P*this->sHat13_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(0)*this->matrixGDHRB
                     +(this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(1)*this->matrixGDHRB;
-    
+
     backSubContr.vecRot = -(this->theta1Dot*this->IPntS1_S1(1,1)*this->omegaTildePNLoc_P*this->sHat12_P
                     + this->mass1*this->omegaTildePNLoc_P*this->rTildeS1P_P*this->rPrimeS1P_P + this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->rTildeS1P_P*this->sHat11_P + (this->theta1Dot+this->theta2Dot)*this->IPntS2_S2(1,1)*this->omegaTildePNLoc_P*this->sHat22_P + this->mass2*this->omegaTildePNLoc_P*this->rTildeS2P_P*this->rPrimeS2P_P
                     + this->mass2*this->rTildeS2P_P*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_P) + (this->IPntS1_S1(1,1)*this->sHat12_P + this->mass1*this->d1*this->rTildeS1P_P*this->sHat13_P + this->IPntS2_S2(1,1)*this->sHat22_P
@@ -320,7 +320,7 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P;
     omegaLocal_PN_P = this->omega_BN_BState->getState();
-    
+
     // - Find rotational angular momentum contribution from hub
     Eigen::Vector3d omega_S1P_P;
     Eigen::Vector3d omega_S2P_P;
@@ -340,7 +340,7 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
     rDot_S2P_P = this->rPrimeS2P_P + omegaLocal_PN_P.cross(this->r_S2P_P);
     rotAngMomPntCContr_P = IPntS1_P*omega_S1N_P + this->mass1*this->r_S1P_P.cross(rDot_S1P_P)
                             + IPntS2_P*omega_S2N_P + this->mass2*this->r_S2P_P.cross(rDot_S2P_P);
-    
+
     // - Find rotational energy contribution from the hub
     double rotEnergyContrS1;
     double rotEnergyContrS2;
@@ -351,7 +351,7 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
                         + 0.5*this->mass2*rDot_S2P_P.dot(rDot_S2P_P)
                         + 0.5*this->k2*this->theta2*this->theta2;
     rotEnergyContr = rotEnergyContrS1 + rotEnergyContrS2;
-    
+
     return;
 }
 

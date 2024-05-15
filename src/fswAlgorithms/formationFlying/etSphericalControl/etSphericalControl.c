@@ -18,7 +18,7 @@
  */
 /*
     FSW Electrostatic Tractor Control
- 
+
  */
 
 /* modify the path to reflect the new module names */
@@ -79,12 +79,12 @@ void Reset_etSphericalControl(etSphericalControlConfig *configData, uint64_t cal
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: etSphericalControl.eForceInMsg wasn't connected.");
     }
     // check if input parameters are valid
-    
+
     // L_r must be a positive value
     if (configData->L_r <= 0.0) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error in etSphericalControl: L_r must be set to a positive value.");
     }
-    
+
     // m_T and m_D must be positive and non-zero
     if (VehicleConfigMsg_C_read(&configData->servicerVehicleConfigInMsg).massSC <= 0.0) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error in etSphericalControl: servicer mass must be set to a positive value.");
@@ -127,7 +127,7 @@ void Update_etSphericalControl(etSphericalControlConfig *configData, uint64_t ca
     // out
     CmdForceInertialMsgPayload forceInertialOutMsgBuffer;
     CmdForceBodyMsgPayload forceBodyOutMsgBuffer;
-    
+
     // - always zero the output buffer first
     forceInertialOutMsgBuffer = CmdForceInertialMsg_C_zeroMsgPayload();
     forceBodyOutMsgBuffer = CmdForceBodyMsg_C_zeroMsgPayload();
@@ -139,10 +139,10 @@ void Update_etSphericalControl(etSphericalControlConfig *configData, uint64_t ca
     servicerVehicleConfigInMsgBuffer = VehicleConfigMsg_C_read(&configData->servicerVehicleConfigInMsg);
     debrisVehicleConfigInMsgBuffer = VehicleConfigMsg_C_read(&configData->debrisVehicleConfigInMsg);
     eForceInMsgBuffer = CmdForceInertialMsg_C_read(&configData->eForceInMsg);
-    
+
     // - calculate control force
     calc_RelativeMotionControl(configData, servicerTransInMsgBuffer, debrisTransInMsgBuffer, servicerAttInMsgBuffer, servicerVehicleConfigInMsgBuffer, debrisVehicleConfigInMsgBuffer, eForceInMsgBuffer, &forceInertialOutMsgBuffer, &forceBodyOutMsgBuffer);
-    
+
     // - write the module output messages
     CmdForceInertialMsg_C_write(&forceInertialOutMsgBuffer, &configData->forceInertialOutMsg, moduleID, callTime);
     CmdForceBodyMsg_C_write(&forceBodyOutMsgBuffer, &configData->forceBodyOutMsg, moduleID, callTime);
@@ -172,7 +172,7 @@ void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMs
                                 CmdForceBodyMsgPayload *forceBodyOutMsgBuffer)
 {
     // relative motion control according to "Relative Motion Control For Two-Spacecraft Electrostatic Orbit Corrections" https://doi.org/10.2514/1.56118
-    
+
     // DCMs
     double dcm_HN[3][3]; // [HN] from inertial frame to Hill frame
     double dcm_NH[3][3]; // [NH] from Hill frame to inertial frame
@@ -236,7 +236,7 @@ void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMs
     rv2elem(mu, servicerTransInMsgBuffer.r_BN_N, servicerTransInMsgBuffer.v_BN_N, &elements);
     double a = elements.a;
     double n = sqrt(mu/a/a/a); // mean motion
-    
+
     double Fvector[3];
     v3Set(1./4.*L*(n*n*(-6.*cos(2.*theta)*cos(phi)*cos(phi)+5.*cos(2.*phi)+1.)+4.*thetaDot*cos(phi)*cos(phi)*(2.*n+thetaDot)+4.*phiDot*phiDot),
           (3.*n*n*sin(theta)*cos(theta)+2.*phiDot*tan(phi)*(n+thetaDot))-2.*LDot/L*(n+thetaDot),
@@ -270,7 +270,7 @@ void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMs
     v3Subtract(PK, Fvector, PKF);
     double u_S[3]; // feedback control acceleration
     m33MultV3( GmatrixInv, PKF, u_S);   // u_S = [G]^-1*(-[P]*XDot-[K]*(X-X_r)-[F])
-    
+
     // control thrust force
     double m_T; // mass of servicer
     double m_D; // mass of debris
@@ -291,6 +291,6 @@ void calc_RelativeMotionControl(etSphericalControlConfig *configData, NavTransMs
     m33MultV3(dcm_TN, T_N, T_T);
     v3Copy(T_N, forceInertialOutMsgBuffer->forceRequestInertial);
     v3Copy(T_T, forceBodyOutMsgBuffer->forceRequestBody);
-    
+
     return;
 }

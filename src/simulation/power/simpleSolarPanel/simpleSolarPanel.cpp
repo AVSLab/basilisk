@@ -72,7 +72,7 @@ bool SimpleSolarPanel::customReadMessages()
     {
         this->stateCurrent = this->stateInMsg();
     }
-    //! - Read in optional sun eclipse input message 
+    //! - Read in optional sun eclipse input message
     if(this->sunEclipseInMsg.isLinked()) {
         EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
         sunVisibilityFactor = this->sunEclipseInMsg();

@@ -84,4 +84,3 @@ void HingedBodyLinearProfiler::UpdateState(uint64_t CurrentSimNanos)
     //!<  write to the output messages
     this->hingedRigidBodyReferenceOutMsg.write(&hingedRigidBodyReferenceOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
-

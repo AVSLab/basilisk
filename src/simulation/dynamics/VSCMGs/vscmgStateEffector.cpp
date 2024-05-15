@@ -535,7 +535,7 @@ void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos)
 }
 
 /*! This method is here to write the output message structure into the specified
- message.  
+ message.
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
@@ -770,4 +770,3 @@ void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG)
     msg = new Message<VSCMGConfigMsgPayload>;
     this->vscmgOutMsgs.push_back(msg);
 }
-

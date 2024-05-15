@@ -81,7 +81,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t 
     with zero angular rate and acceleration vectors
  @return void
  @param configData The configuration data associated with the null space control
- @param attRefOut Output message 
+ @param attRefOut Output message
  */
 void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsgPayload *attRefOut)
 {
