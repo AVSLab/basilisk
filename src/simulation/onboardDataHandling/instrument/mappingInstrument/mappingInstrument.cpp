@@ -17,7 +17,6 @@
 
 */
 
-#include "architecture/utilities/macroDefinitions.h"
 #include "simulation/onboardDataHandling/instrument/mappingInstrument/mappingInstrument.h"
 #include "string.h"
 

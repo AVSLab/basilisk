@@ -20,7 +20,6 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include <string.h>
 
 /*! This method initializes the configData for the veh config algorithm.
     It initializes the output message in the messaging system.

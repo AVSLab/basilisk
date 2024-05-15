@@ -19,10 +19,8 @@
 
 /* modify the path to reflect the new module names */
 #include "hillStateConverter.h"
-#include "string.h"
 
 // Internal utilities
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
 
 

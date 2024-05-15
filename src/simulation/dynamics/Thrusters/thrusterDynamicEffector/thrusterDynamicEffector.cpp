@@ -17,18 +17,12 @@
 
  */
 
-#include <cstring>
 #include <iostream>
-#include <cmath>
 
 #include "thrusterDynamicEffector.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
 
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()

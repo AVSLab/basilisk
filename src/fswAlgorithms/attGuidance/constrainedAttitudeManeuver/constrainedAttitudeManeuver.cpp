@@ -18,9 +18,6 @@
  */
 #include "fswAlgorithms/attGuidance/constrainedAttitudeManeuver/constrainedAttitudeManeuver.h"
 #include <map>
-#include <sstream>
-#include <string>
-#include <string.h>
 #include <math.h>
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"

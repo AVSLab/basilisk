@@ -22,7 +22,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
-#include <math.h>
 
 /*!
  \verbatim embed:rst

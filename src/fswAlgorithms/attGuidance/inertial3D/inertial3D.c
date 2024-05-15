@@ -23,16 +23,12 @@
 
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
-#include <string.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 
 
 
 /* Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 /*!

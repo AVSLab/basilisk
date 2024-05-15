@@ -26,7 +26,6 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/astroConstants.h"
 
 #include <string.h>
 #include <math.h>

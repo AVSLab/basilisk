@@ -19,10 +19,7 @@
 
 
 #include "dualHingedRigidBodyStateEffector.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include <iostream>
 #include <string>
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()

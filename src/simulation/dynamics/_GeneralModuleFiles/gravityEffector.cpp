@@ -20,7 +20,6 @@
 #include <functional>
 
 #include "gravityEffector.h"
-#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 

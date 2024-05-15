@@ -19,8 +19,6 @@
 #include "fswAlgorithms/attGuidance/waypointReference/waypointReference.h"
 #include <sstream>
 #include <string>
-#include <string.h>
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"

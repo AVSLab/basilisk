@@ -21,7 +21,6 @@
 #include "fswAlgorithms/attGuidance/attRefCorrection/attRefCorrection.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "string.h"
 
 /*!
     This method initializes the output messages for this module.

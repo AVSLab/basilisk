@@ -24,7 +24,6 @@
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "math.h"
 

@@ -20,7 +20,6 @@
 
 #include "simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.h"
 #include <iostream>
-#include <cstring>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */

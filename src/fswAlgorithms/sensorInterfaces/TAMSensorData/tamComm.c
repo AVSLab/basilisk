@@ -20,8 +20,6 @@
 #include "fswAlgorithms/sensorInterfaces/TAMSensorData/tamComm.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include <string.h>
 #include <math.h>
 
 /*! This method initializes the configData for the TAM sensor interface.

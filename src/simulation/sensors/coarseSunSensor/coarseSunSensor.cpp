@@ -22,8 +22,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
 #include <math.h>
-#include <iostream>
-#include <cstring>
 #include <algorithm>
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"

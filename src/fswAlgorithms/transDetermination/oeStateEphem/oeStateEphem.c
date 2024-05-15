@@ -19,14 +19,9 @@
 
 #include "fswAlgorithms/transDetermination/oeStateEphem/oeStateEphem.h"
 #include "fswAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
-#include "fswAlgorithms/transDetermination/chebyPosEphem/chebyPosEphem.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
-#include "architecture/utilities/astroConstants.h"
 #include <math.h>
-#include <string.h>
-#include <stdlib.h>
 
 /*! This method creates the output navigation message (translation only) for 
     the ephemeris model

@@ -19,7 +19,6 @@
 
 
 #include "vscmgStateEffector.h"
-#include <cstring>
 #include <iostream>
 #include <cmath>
 

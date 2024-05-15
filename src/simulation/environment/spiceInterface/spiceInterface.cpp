@@ -17,7 +17,6 @@
 
  */
 #include "simulation/environment/spiceInterface/spiceInterface.h"
-#include <iostream>
 #include <sstream>
 #include "../libs/cspice/include/SpiceUsr.h"
 #include <string.h>

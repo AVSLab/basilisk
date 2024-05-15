@@ -19,10 +19,6 @@
 
 #include "hingedRigidBodyStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
-#include <iostream>
 #include <string>
 
 /*! This is the constructor, setting variables to default values */

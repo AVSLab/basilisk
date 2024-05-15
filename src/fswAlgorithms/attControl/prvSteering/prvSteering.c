@@ -24,8 +24,6 @@
 #include "fswAlgorithms/attControl/prvSteering/prvSteering.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
-#include <string.h>
 #include <math.h>
 
 

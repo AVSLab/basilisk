@@ -18,7 +18,6 @@
  */
 
 #include "navAggregate.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdio.h>

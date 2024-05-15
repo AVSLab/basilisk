@@ -20,9 +20,7 @@
 #include "fswAlgorithms/effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
-#include <math.h>
 
 /*! This method initializes the configData for the thruster-based RW desat module.
  It checks to ensure that the inputs are sane and then creates the

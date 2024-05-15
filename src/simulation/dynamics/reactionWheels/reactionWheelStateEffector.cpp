@@ -23,7 +23,6 @@
 #include <cstring>
 #include <iostream>
 #include <cmath>
-#include "architecture/utilities/avsEigenSupport.h"
 
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {

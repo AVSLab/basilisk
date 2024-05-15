@@ -21,7 +21,6 @@
 #include "simulation/deviceInterface/hingedBodyLinearProfiler/hingedBodyLinearProfiler.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
-#include <cstring>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */

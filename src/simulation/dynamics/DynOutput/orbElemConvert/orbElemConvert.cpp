@@ -17,7 +17,6 @@
 
  */
 #include "simulation/dynamics/DynOutput/orbElemConvert/orbElemConvert.h"
-#include <cstring>
 #include <iostream>
 #include "architecture/utilities/linearAlgebra.h"
 

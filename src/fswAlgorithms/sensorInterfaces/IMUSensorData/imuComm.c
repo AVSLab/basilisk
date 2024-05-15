@@ -20,7 +20,6 @@
 #include "fswAlgorithms/sensorInterfaces/IMUSensorData/imuComm.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
 
 /*! This method initializes the configData for theIMU sensor interface.
  It checks to ensure that the inputs are sane and then creates the

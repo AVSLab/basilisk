@@ -17,7 +17,6 @@
 
  */
 #include "moduleIdGenerator.h"
-#include <cstring>
 #include <stdio.h>
 
 /*!

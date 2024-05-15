@@ -21,8 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
-#include <math.h>
 
 /*! This method initializes the configData for the nominal delta-V maneuver guidance.
  It checks to ensure that the inputs are sane and then creates the

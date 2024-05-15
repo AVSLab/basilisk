@@ -18,7 +18,6 @@
  */
 
 #include "svd.h"
-#include <stdlib.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include <math.h>
 #include <stdio.h>
