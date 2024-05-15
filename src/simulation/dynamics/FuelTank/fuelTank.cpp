@@ -193,22 +193,22 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
 
 /*! Compute fuel tank mass properties and outputs them as a message.
  @return void
- @param CurrentClock The current simulation time (used for time stamping)
+ @param currentClock The current simulation time (used for time stamping)
  */
-void FuelTank::WriteOutputMessages(uint64_t CurrentClock)
+void FuelTank::writeOutputMessages(uint64_t currentClock)
 {
     this->fuelTankMassPropMsg = this->fuelTankOutMsg.zeroMsgPayload;
     this->fuelTankMassPropMsg.fuelMass = this->effProps.mEff;
     this->fuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
     this->fuelTankMassPropMsg.maxFuelMass = this->fuelTankModel->maxFuelMass;
-    this->fuelTankOutMsg.write(&this->fuelTankMassPropMsg, this->moduleID, CurrentClock);
+    this->fuelTankOutMsg.write(&this->fuelTankMassPropMsg, this->moduleID, currentClock);
 }
 
 /*! Fuel tank writes out its messages
  @return void
- @param CurrentSimNanos The current simulation time in nanoseconds
+ @param currentSimNanos The current simulation time in nanoseconds
  */
-void FuelTank::UpdateState(uint64_t CurrentSimNanos)
+void FuelTank::UpdateState(uint64_t currentSimNanos)
 {
-    WriteOutputMessages(CurrentSimNanos);
+    writeOutputMessages(currentSimNanos);
 }
