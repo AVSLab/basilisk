@@ -27,7 +27,9 @@
 
 #include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/OpNavCOMMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/OpNavUnitVecMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -36,23 +38,35 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
+enum class PhaseAngleCorrectionMethod {NoCorrection, Lambertian, Binary};
+
 /*! @brief visual limb finding module */
 class CobConverter: public SysModel {
 public:
-    CobConverter();
+    CobConverter(PhaseAngleCorrectionMethod method);
     ~CobConverter();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
-    
+
+    void setRadius(const double radius);
+    double getRadius() const;
+
 public:
-    Message<OpNavUnitVecMsgPayload> opnavUnitVecOutMsg;
+    Message<OpNavUnitVecMsgPayload> opnavUnitVecCOBOutMsg;
+    Message<OpNavUnitVecMsgPayload> opnavUnitVecCOMOutMsg;
+    Message<OpNavCOMMsgPayload> opnavCOMOutMsg;
     ReadFunctor<OpNavCOBMsgPayload> opnavCOBInMsg;
     ReadFunctor<CameraConfigMsgPayload> cameraConfigInMsg;
     ReadFunctor<NavAttMsgPayload> navAttInMsg;
+    ReadFunctor<EphemerisMsgPayload> ephemInMsg;
 
     uint64_t sensorTimeTag;
     BSKLogger bskLogger;
+
+private:
+    PhaseAngleCorrectionMethod phaseAngleCorrectionMethod;
+    double objectRadius{};
 };
 
 #endif
