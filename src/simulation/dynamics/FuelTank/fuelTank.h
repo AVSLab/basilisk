@@ -36,13 +36,13 @@
 class FuelTankModel {
 public:
     double propMassInit{};                              //!< [kg] Initial propellant mass in tank
-    double maxFuelMass = 1.0;                          //!< [kg] maximum tank mass
-    Eigen::Vector3d r_TcT_TInit;                          //!< [m] Initial position vector from B to tank point in B frame comp.
-    Eigen::Matrix3d ITankPntT_T;                            //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
+    double maxFuelMass = 1.0;                           //!< [kg] maximum tank mass
+    Eigen::Vector3d r_TcT_TInit;                        //!< [m] Initial position vector from B to tank point in B frame comp.
+    Eigen::Matrix3d ITankPntT_T;                        //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
     Eigen::Matrix3d IPrimeTankPntT_T;                   //!< [kg m^2/s] Derivative of inertia of tank about pnt T in B frame comp.
-    Eigen::Vector3d r_TcT_T;                           //!< [m] position vector from B to tank point in B frame comp.
-    Eigen::Vector3d rPrime_TcT_T;                      //!< [m/s] Derivative of position vector from B to tank point in B frame comp.
-    Eigen::Vector3d rPPrime_TcT_T;                     //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
+    Eigen::Vector3d r_TcT_T;                            //!< [m] position vector from B to tank point in B frame comp.
+    Eigen::Vector3d rPrime_TcT_T;                       //!< [m/s] Derivative of position vector from B to tank point in B frame comp.
+    Eigen::Vector3d rPPrime_TcT_T;                      //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
     virtual void computeTankProps(double mFuel) = 0;    //!< class method
     virtual void computeTankPropDerivs(double mFuel, double mDotFuel) = 0; //!< class method
     FuelTankModel() {
@@ -54,7 +54,7 @@ public:
 /*! Tank constant volume class */
 class FuelTankModelConstantVolume : public FuelTankModel {
 public:
-    double radiusTankInit{};                             //!< [m] Initial radius of the spherical tank
+    double radiusTankInit{};                            //!< [m] Initial radius of the spherical tank
 
     FuelTankModelConstantVolume() = default;
 
@@ -75,8 +75,8 @@ public:
 /*! Tank constant density class */
 class FuelTankModelConstantDensity : public FuelTankModel {
 public:
-    double radiusTankInit{};                             //!< [m] Initial radius of the spherical tank
-    double radiusTank{};                                   //!< [m] Current radius of the spherical tank
+    double radiusTankInit{};                            //!< [m] Initial radius of the spherical tank
+    double radiusTank{};                                //!< [m] Current radius of the spherical tank
 
     FuelTankModelConstantDensity() = default;
 
@@ -98,12 +98,12 @@ public:
 /*! Tank model emptying class */
 class FuelTankModelEmptying : public FuelTankModel {
 public:
-    double radiusTankInit{};                             //!< [m] Initial radius of the spherical tank
-    double rhoFuel{};                                    //!< [kg/m^3] density of the fuel
-    double thetaStar{};                                   //!< [rad] angle from vertical to top of fuel
-    double thetaDotStar{};                               //!< [rad/s] derivative of angle from vertical to top of fuel
-    double thetaDDotStar{};                               //!< [rad/s^2] second derivative of angle from vertical to top of fuel
-    Eigen::Vector3d k3;                                   //!< -- Direction of fuel depletion
+    double radiusTankInit{};                            //!< [m] Initial radius of the spherical tank
+    double rhoFuel{};                                   //!< [kg/m^3] density of the fuel
+    double thetaStar{};                                 //!< [rad] angle from vertical to top of fuel
+    double thetaDotStar{};                              //!< [rad/s] derivative of angle from vertical to top of fuel
+    double thetaDDotStar{};                             //!< [rad/s^2] second derivative of angle from vertical to top of fuel
+    Eigen::Vector3d k3;                                 //!< -- Direction of fuel depletion
 
     FuelTankModelEmptying() = default;
 
@@ -197,8 +197,8 @@ public:
 /*! Tank model class for a uniform burn */
 class FuelTankModelUniformBurn : public FuelTankModel {
 public:
-    double radiusTankInit{};                             //!< [m] Initial radius of the cylindrical tank
-    double lengthTank{};                                   //!< [m] Length of the tank
+    double radiusTankInit{};                            //!< [m] Initial radius of the cylindrical tank
+    double lengthTank{};                                //!< [m] Length of the tank
 
     FuelTankModelUniformBurn() = default;
 
@@ -225,9 +225,9 @@ public:
 /*! Tank model class for a centrifugal burn */
 class FuelTankModelCentrifugalBurn : public FuelTankModel {
 public:
-    double radiusTankInit{};                             //!< [m] Initial radius of the cylindrical tank
-    double lengthTank{};                                   //!< [m] Length of the tank
-    double radiusInner{};                                   //!< [m] Inner radius of the cylindrical tank
+    double radiusTankInit{};                            //!< [m] Initial radius of the cylindrical tank
+    double lengthTank{};                                //!< [m] Length of the tank
+    double radiusInner{};                               //!< [m] Inner radius of the cylindrical tank
 
     FuelTankModelCentrifugalBurn() = default;
 
@@ -260,25 +260,25 @@ public:
 class FuelTank :
         public StateEffector, public SysModel {
 public:
-    std::string nameOfMassState{};                       //!< -- name of mass state
+    std::string nameOfMassState{};                      //!< -- name of mass state
     std::vector<FuelSlosh *> fuelSloshParticles;        //!< -- vector of fuel slosh particles
     std::vector<DynamicEffector *> dynEffectors;        //!< -- Vector of dynamic effectors for thrusters
     std::vector<StateEffector *> stateEffectors;        //!< -- Vector of state effectors for thrusters
-    Eigen::Matrix3d dcm_TB;                               //!< -- DCM from body frame to tank frame
-    Eigen::Vector3d r_TB_B;                               //!< [m] position of tank in B frame
-    bool updateOnly = true;                                   //!< -- Sets whether to use update only mass depletion
-    Message<FuelTankMsgPayload> fuelTankOutMsg{};        //!< -- fuel tank output message name
-    FuelTankMsgPayload fuelTankMassPropMsg{};            //!< instance of messaging system message struct
+    Eigen::Matrix3d dcm_TB;                             //!< -- DCM from body frame to tank frame
+    Eigen::Vector3d r_TB_B;                             //!< [m] position of tank in B frame
+    bool updateOnly = true;                             //!< -- Sets whether to use update only mass depletion
+    Message<FuelTankMsgPayload> fuelTankOutMsg{};       //!< -- fuel tank output message name
+    FuelTankMsgPayload fuelTankMassPropMsg{};           //!< instance of messaging system message struct
 
 private:
-    StateData *omegaState{};                             //!< -- state data for omega_BN of the hub
-    StateData *massState{};                              //!< -- state data for mass state
-    double fuelConsumption{};                               //!< [kg/s] rate of fuel being consumed
-    double tankFuelConsumption{};                           //!< [kg/s] rate of fuel being consumed from tank
-    FuelTankModel *fuelTankModel{};                       //!< -- style of tank to simulate
+    StateData *omegaState{};                            //!< -- state data for omega_BN of the hub
+    StateData *massState{};                             //!< -- state data for mass state
+    double fuelConsumption{};                           //!< [kg/s] rate of fuel being consumed
+    double tankFuelConsumption{};                       //!< [kg/s] rate of fuel being consumed from tank
+    FuelTankModel *fuelTankModel{};                     //!< -- style of tank to simulate
     Eigen::Matrix3d ITankPntT_B;
     Eigen::Vector3d r_TcB_B;
-    static uint64_t effectorID;                        //!< [] ID number of this fuel tank effector
+    static uint64_t effectorID;                         //!< [] ID number of this fuel tank effector
 
 public:
     FuelTank();
@@ -286,10 +286,10 @@ public:
     void writeOutputMessages(uint64_t currentClock);
     void UpdateState(uint64_t currentSimNanos) override;
     void setTankModel(FuelTankModel *model);
-    void pushFuelSloshParticle(FuelSlosh *particle);  //!< -- Attach fuel slosh particle
-    void registerStates(DynParamManager &states) override;  //!< -- Register mass state with state manager
-    void linkInStates(DynParamManager &states) override;  //!< -- Give the tank access to other states
-    void updateEffectorMassProps(double integTime) override;  //!< -- Add contribution mass props from the tank
+    void pushFuelSloshParticle(FuelSlosh *particle);            //!< -- Attach fuel slosh particle
+    void registerStates(DynParamManager &states) override;      //!< -- Register mass state with state manager
+    void linkInStates(DynParamManager &states) override;        //!< -- Give the tank access to other states
+    void updateEffectorMassProps(double integTime) override;    //!< -- Add contribution mass props from the tank
     void addThrusterSet(DynamicEffector *dynEff) {
         dynEffectors.push_back(dynEff);
     }  //!< -- Add DynamicEffector thruster
@@ -300,7 +300,7 @@ public:
                              BackSubMatrices &backSubContr,
                              Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) override;  //!< -- Back-sub contributions
+                             Eigen::Vector3d g_N) override;     //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d &rotAngMomPntCContr_B,
                                       double &rotEnergyContr,
@@ -308,7 +308,7 @@ public:
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override;  //!< -- Calculate stateEffector's derivatives
+                            Eigen::Vector3d sigma_BN) override; //!< -- Calculate stateEffector's derivatives
 };
 
 
