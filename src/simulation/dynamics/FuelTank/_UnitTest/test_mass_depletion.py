@@ -16,10 +16,10 @@
 
 import inspect
 import os
-import pytest
-import numpy as np
 
 import matplotlib.pyplot as plt
+import numpy as np
+import pytest
 from Basilisk.architecture import messaging
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import gravityEffector
@@ -28,14 +28,14 @@ from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
 @pytest.mark.parametrize("thrusterConstructor", [thrusterDynamicEffector.ThrusterDynamicEffector,
-                                                thrusterStateEffector.ThrusterStateEffector])
+                                                 thrusterStateEffector.ThrusterStateEffector])
 def test_massDepletionTest(show_plots, thrusterConstructor):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -46,14 +46,14 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -94,7 +94,7 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.planetName = "earth_planet_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters!
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters
     unitTestSim.earthGravBody.isCentralBody = True
 
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
