@@ -24,17 +24,12 @@
 #include <Eigen/Dense>
 #include "architecture/messaging/messaging.h"
 #include "opencv2/opencv.hpp"
-#include "opencv2/highgui.hpp"
 #include "opencv2/core/mat.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/dnn.hpp"
 
 #include "architecture/msgPayloadDefC/CameraImageMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/OpNavCOBMsgPayload.h"
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief visual object tracking using center of brightness detection */
