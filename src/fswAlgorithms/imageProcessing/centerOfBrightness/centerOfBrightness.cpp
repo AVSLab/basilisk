@@ -92,7 +92,7 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
         cobBuffer.centerOfBrightness[1] = cobCoordinates[1];
         cobBuffer.pixelsFound = locations.size();
     }
-    
+
     this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
 
 }
@@ -136,4 +136,41 @@ Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::V
     }
     coordinates /= weightSum;
     return coordinates;
+}
+
+/*! Set the mask center for windowing
+    @param Eigen::Vector2i center [px]
+    @return void
+    */
+void CenterOfBrightness::setWindowCenter(const Eigen::VectorXi& center)
+{
+    this->windowCenter = center;
+}
+
+/*! Get the mask center for windowing
+    @return Eigen::Vector2i center [px]
+    */
+Eigen::VectorXi CenterOfBrightness::getWindowCenter() const
+{
+    return this->windowCenter;
+}
+
+/*! Set the mask size for windowing
+    @param int32_t width [px]
+    @param int32_t height [px]
+    @return void
+    */
+void CenterOfBrightness::setWindowSize(const int32_t width, const int32_t height)
+{
+    this->windowWidth = width;
+    this->windowHeight = height;
+}
+
+/*! Get the mask center for windowing
+    @return Eigen::Vector2i size [px]
+    */
+Eigen::VectorXi CenterOfBrightness::getWindowSize() const
+{
+    Eigen::VectorXi center = {this->windowWidth, this->windowHeight};
+    return center;
 }

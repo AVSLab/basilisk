@@ -37,15 +37,19 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief visual object tracking using center of brightness detection */
 class CenterOfBrightness: public SysModel {
 public:
     CenterOfBrightness();
     ~CenterOfBrightness();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
+
+    void setWindowCenter(const Eigen::VectorXi& center);
+    Eigen::VectorXi getWindowCenter() const;
+    void setWindowSize(int32_t width, int32_t height);
+    Eigen::VectorXi getWindowSize() const;
 
 private:
     std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
@@ -65,10 +69,11 @@ public:
 
 private:
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
+    Eigen::VectorXi windowCenter{};            //!< [px] center of mask to be used for windowing
+    int32_t windowWidth{};                     //!< [px] width of mask to be used for windowing
+    int32_t windowHeight{};                    //!< [px] height of mask to be used for windowing
     /* OpenCV specific arguments needed for finding all non-zero pixels*/
     cv::Mat imageGray;                   //!< [cv mat] Gray scale image for weighting
 };
 
-
 #endif
-
