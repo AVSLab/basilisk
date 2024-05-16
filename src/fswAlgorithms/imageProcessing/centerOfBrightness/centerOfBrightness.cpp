@@ -45,7 +45,10 @@ void CenterOfBrightness::Reset(uint64_t CurrentSimNanos)
 void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
 {
     CameraImageMsgPayload imageBuffer = this->imageInMsg.zeroMsgPayload;
-    OpNavCOBMsgPayload cobBuffer = this->opnavCOBOutMsg.zeroMsgPayload;
+
+    OpNavCOBMsgPayload cobBuffer;
+    cobBuffer = this->opnavCOBOutMsg.zeroMsgPayload;
+
     cv::Mat imageCV;
 
     /*! - Read in the image*/
@@ -87,8 +90,7 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
 
     /*!- If no lit pixels are found do not validate the image as a measurement */
     if (!locations.empty()){
-        Eigen::Vector2d cobCoordinates;
-        cobCoordinates = this->weightedCenterOfBrightness(locations);
+        Eigen::Vector2d cobCoordinates = this->weightedCenterOfBrightness(locations);
 
         cobBuffer.valid = true;
         cobBuffer.timeTag = this->sensorTimeTag;
@@ -128,10 +130,10 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image)
  */
 Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels)
 {
-    uint32_t weight, weightSum;
+    uint32_t weight;
+    uint32_t weightSum = 0;
     Eigen::Vector2d coordinates;
     coordinates.setZero();
-    weightSum = 0;
     for(auto & pixel : nonZeroPixels) {
         /*! Individual pixel intensity used as the weight for the contribution to the solution*/
         weight = (uint32_t) this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
