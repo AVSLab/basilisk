@@ -78,6 +78,11 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
         }
     }
 
+    this->computeWindow(imageCV);
+    if (this->validWindow) {
+        this->applyWindow(imageCV);
+    }
+
     std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
 
     /*!- If no lit pixels are found do not validate the image as a measurement */
