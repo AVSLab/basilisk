@@ -90,12 +90,12 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
         Eigen::Vector2d cobCoordinates;
         cobCoordinates = this->weightedCenterOfBrightness(locations);
 
-        cobBuffer.valid = 1;
+        cobBuffer.valid = true;
         cobBuffer.timeTag = this->sensorTimeTag;
         cobBuffer.cameraID = imageBuffer.cameraID;
         cobBuffer.centerOfBrightness[0] = cobCoordinates[0];
         cobBuffer.centerOfBrightness[1] = cobCoordinates[1];
-        cobBuffer.pixelsFound = locations.size();
+        cobBuffer.pixelsFound = static_cast<int32_t> (locations.size());
     }
 
     this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
