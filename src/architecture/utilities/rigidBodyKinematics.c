@@ -26,7 +26,7 @@
 
 #define nearZero 0.0000000000001
 
-/*
+/**
  * Q = addEP(B1,B2) provides the Euler parameter vector
  * which corresponds to performing to successive
  * rotations B1 and B2.
@@ -39,7 +39,7 @@ void addEP(double *b1, double *b2, double *result)
     result[3] = b2[3] * b1[0] + b2[2] * b1[1] - b2[1] * b1[2] + b2[0] * b1[3];
 }
 
-/*
+/**
  * addEuler121(E1,E2,Q) computes the overall (1-2-1) Euler
  * angle vector corresponding to two successive
  * (1-2-1) rotations E1 and E2.
@@ -65,7 +65,7 @@ void addEuler121(double *e1, double *e2, double *result)
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
 
-/*
+/**
  * addEuler131(E1,E2,Q) computes the overall (1-3-1) Euler
  * angle vector corresponding to two successive
  * (1-3-1) rotations E1 and E2.
@@ -91,7 +91,7 @@ void addEuler131(double *e1, double *e2, double *result)
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
 
-/*
+/**
  * addEuler123(E1,E2,Q) computes the overall (1-2-3) Euler
  * angle vector corresponding to two successive
  * (1-2-3) rotations E1 and E2.
@@ -108,7 +108,7 @@ void addEuler123(double *e1, double *e2, double *result)
     C2Euler123(C, result);
 }
 
-/*
+/**
  * addEuler132(E1,E2,Q) computes the overall (1-3-2) Euler
  * angle vector corresponding to two successive
  * (1-3-2) rotations E1 and E2.
@@ -125,7 +125,7 @@ void addEuler132(double *e1, double *e2, double *result)
     C2Euler132(C, result);
 }
 
-/*
+/**
  * addEuler212(E1,E2,Q) computes the overall (2-1-2) Euler
  * angle vector corresponding to two successive
  * (2-1-2) rotations E1 and E2.
@@ -151,7 +151,7 @@ void addEuler212(double *e1, double *e2, double *result)
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
 
-/*
+/**
  * addEuler213(E1,E2,Q) computes the overall (2-1-3) Euler
  * angle vector corresponding to two successive
  * (2-1-3) rotations E1 and E2.
@@ -168,7 +168,7 @@ void addEuler213(double *e1, double *e2, double *result)
     C2Euler213(C, result);
 }
 
-/*
+/**
  * addEuler231(E1,E2,Q) computes the overall (2-3-1) Euler
  * angle vector corresponding to two successive
  * (2-3-1) rotations E1 and E2.
@@ -185,7 +185,7 @@ void addEuler231(double *e1, double *e2, double *result)
     C2Euler231(C, result);
 }
 
-/*
+/**
  * addEuler232(E1,E2,Q) computes the overall (2-3-2) Euler
  * angle vector corresponding to two successive
  * (2-3-2) rotations E1 and E2.
@@ -211,7 +211,7 @@ void addEuler232(double *e1, double *e2, double *result)
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
 
-/*
+/**
  * addEuler312(E1,E2,Q) computes the overall (3-1-2) Euler
  * angle vector corresponding to two successive
  * (3-1-2) rotations E1 and E2.
@@ -228,7 +228,7 @@ void addEuler312(double *e1, double *e2, double *result)
     C2Euler312(C, result);
 }
 
-/*
+/**
  * addEuler313(E1,E2,Q) computes the overall (3-1-3) Euler
  * angle vector corresponding to two successive
  * (3-1-3) rotations E1 and E2.
@@ -254,7 +254,7 @@ void addEuler313(double *e1, double *e2, double *result)
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
 
-/*
+/**
  * addEuler321(E1,E2,Q) computes the overall (3-2-1) Euler
  * angle vector corresponding to two successive
  * (3-2-1) rotations E1 and E2.
@@ -271,7 +271,7 @@ void addEuler321(double *e1, double *e2, double *result)
     C2Euler321(C, result);
 }
 
-/*
+/**
  * addEuler323(E1,E2,Q) computes the overall (3-2-3) Euler
  * angle vector corresponding to two successive
  * (3-2-3) rotations E1 and E2.
@@ -297,7 +297,7 @@ void addEuler323(double *e1, double *e2, double *result)
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
 
-/*
+/**
  * Q = addGibbs(Q1,Q2) provides the Gibbs vector
  * which corresponds to performing to successive
  * rotations Q1 and Q2.
@@ -313,7 +313,7 @@ void addGibbs(double *q1, double *q2, double *result)
     v3Scale(1. / (1. - v3Dot(q1, q2)), v1, result);
 }
 
-/*
+/**
  * addMRP(Q1,Q2,Q) provides the MRP vector
  * which corresponds to performing to successive
  * rotations Q1 and Q2.
@@ -350,7 +350,7 @@ void addMRP(double *q1, double *q2, double *result)
     }
 }
 
-/*
+/**
  * addPRV(Q1,Q2,Q) provides the principal rotation vector
  * which corresponds to performing to successive
  * prinicipal rotations Q1 and Q2.
@@ -402,7 +402,7 @@ void addPRV(double *qq1, double *qq2, double *result)
     v3Scale(p / sp, result, result);
 }
 
-/*
+/**
  * BinvEP(Q,B) returns the 3x4 matrix which relates
  * the derivative of Euler parameter vector Q to the
  * body angular velocity vector w.
@@ -424,7 +424,7 @@ void BinvEP(double *q, double B[3][4])
     B[2][3] = q[0];
 }
 
-/*
+/**
  * BinvEuler121(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (1-2-1) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -454,7 +454,7 @@ void BinvEuler121(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvEuler123(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (1-2-3) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -484,7 +484,7 @@ void BinvEuler123(double *q, double B[3][3])
     B[2][2] = 1;
 }
 
-/*
+/**
  * BinvEuler131(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (1-3-1) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -514,7 +514,7 @@ void BinvEuler131(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvEuler132(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (1-3-2) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -544,7 +544,7 @@ void BinvEuler132(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvEuler212(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (2-1-2) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -574,7 +574,7 @@ void BinvEuler212(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvEuler213(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (2-1-3) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -604,7 +604,7 @@ void BinvEuler213(double *q, double B[3][3])
     B[2][2] = 1;
 }
 
-/*
+/**
  * BinvEuler231(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (2-3-1) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -634,7 +634,7 @@ void BinvEuler231(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvEuler232(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (2-3-2) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -664,7 +664,7 @@ void BinvEuler232(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvEuler323(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (3-2-3) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -694,7 +694,7 @@ void BinvEuler323(double *q, double B[3][3])
     B[2][2] = 1;
 }
 
-/*
+/**
  * BinvEuler313(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (3-1-3) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -724,7 +724,7 @@ void BinvEuler313(double *q, double B[3][3])
     B[2][2] = 1;
 }
 
-/*
+/**
  * BinvEuler321(Q,B) returns the 3x3 matrix which relates
  * the derivative of the (3-2-1) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -754,7 +754,7 @@ void BinvEuler321(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvEuler312(Q) returns the 3x3 matrix which relates
  * the derivative of the (3-2-3) Euler angle vector Q to the
  * body angular velocity vector w.
@@ -784,7 +784,7 @@ void BinvEuler312(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
+/**
  * BinvGibbs(Q,B) returns the 3x3 matrix which relates
  * the derivative of Gibbs vector Q to the
  * body angular velocity vector w.
@@ -805,13 +805,13 @@ void BinvGibbs(double *q, double B[3][3])
     m33Scale(1. / (1 + v3Dot(q, q)), B, B);
 }
 
-/*
-* BinvMRP(Q,B) returns the 3x3 matrix which relates
-* the derivative of MRP vector Q to the
-* body angular velocity vector w.
-*
-* w = 4 [B(Q)]^(-1) dQ/dt
-*/
+/**
+ * BinvMRP(Q,B) returns the 3x3 matrix which relates
+ * the derivative of MRP vector Q to the
+ * body angular velocity vector w.
+ *
+ * w = 4 [B(Q)]^(-1) dQ/dt
+ */
 void BinvMRP(double *q, double B[3][3])
 {
     double s2;
@@ -829,7 +829,7 @@ void BinvMRP(double *q, double B[3][3])
     m33Scale(1. / (1 + s2) / (1 + s2), B, B);
 }
 
-/*
+/**
  * BinvPRV(Q,B) returns the 3x3 matrix which relates
  * the derivative of principal rotation vector Q to the
  * body angular velocity vector w.
@@ -857,7 +857,7 @@ void BinvPRV(double *q, double B[3][3])
     B[2][2] = 1 - c2 * (q[0] * q[0] + q[1] * q[1]);
 }
 
-/*
+/**
  * BmatEP(Q,B) returns the 4x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * Euler parameter vector Q.
@@ -880,7 +880,7 @@ void BmatEP(double *q, double B[4][3])
     B[3][2] = q[0];
 }
 
-/*
+/**
  * BmatEuler121(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (1-2-1) Euler angle vector Q.
@@ -911,7 +911,7 @@ void BmatEuler121(double *q, double B[3][3])
     m33Scale(1. / s2, B, B);
 }
 
-/*
+/**
  * BmatEuler131(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (1-3-1) Euler angle vector Q.
@@ -942,7 +942,7 @@ void BmatEuler131(double *q, double B[3][3])
     m33Scale(1. / s2, B, B);
 }
 
-/*
+/**
  * BmatEuler123(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (1-2-3) Euler angle vector Q.
@@ -973,7 +973,7 @@ void BmatEuler123(double *q, double B[3][3])
     m33Scale(1. / c2, B, B);
 }
 
-/*
+/**
  * BmatEuler132(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (1-3-2) Euler angle vector Q.
@@ -1004,7 +1004,7 @@ void BmatEuler132(double *q, double B[3][3])
     m33Scale(1. / c2, B, B);
 }
 
-/*
+/**
  * BmatEuler212(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (2-1-2) Euler angle vector Q.
@@ -1035,7 +1035,7 @@ void BmatEuler212(double *q, double B[3][3])
     m33Scale(1. / s2, B, B);
 }
 
-/*
+/**
  * BmatEuler213(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (2-1-3) Euler angle vector Q.
@@ -1066,7 +1066,7 @@ void BmatEuler213(double *q, double B[3][3])
     m33Scale(1. / c2, B, B);
 }
 
-/*
+/**
  * BmatEuler231(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (2-3-1) Euler angle vector Q.
@@ -1097,7 +1097,7 @@ void BmatEuler231(double *q, double B[3][3])
     m33Scale(1. / c2, B, B);
 }
 
-/*
+/**
  * B = BmatEuler232(Q) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (2-3-2) Euler angle vector Q.
@@ -1128,7 +1128,7 @@ void BmatEuler232(double *q, double B[3][3])
     m33Scale(1. / s2, B, B);
 }
 
-/*
+/**
  * BmatEuler312(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (3-1-2) Euler angle vector Q.
@@ -1159,7 +1159,7 @@ void BmatEuler312(double *q, double B[3][3])
     m33Scale(1. / c2, B, B);
 }
 
-/*
+/**
  * BmatEuler313(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (3-1-3) Euler angle vector Q.
@@ -1190,7 +1190,7 @@ void BmatEuler313(double *q, double B[3][3])
     m33Scale(1. / s2, B, B);
 }
 
-/*
+/**
  * BmatEuler321(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (3-2-1) Euler angle vector Q.
@@ -1221,7 +1221,7 @@ void BmatEuler321(double *q, double B[3][3])
     m33Scale(1. / c2, B, B);
 }
 
-/*
+/**
  * BmatEuler323(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * (3-2-3) Euler angle vector Q.
@@ -1252,7 +1252,7 @@ void BmatEuler323(double *q, double B[3][3])
     m33Scale(1. / s2, B, B);
 }
 
-/*
+/**
  * BmatGibbs(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * Gibbs vector Q.
@@ -1272,7 +1272,7 @@ void BmatGibbs(double *q, double B[3][3])
     B[2][2] = 1 + q[2] * q[2];
 }
 
-/*
+/**
  * BmatMRP(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * MRP vector Q.
@@ -1295,7 +1295,7 @@ void BmatMRP(double *q, double B[3][3])
     B[2][2] = 1 - s2 + 2 * q[2] * q[2];
 }
 
-/*
+/**
  * BdotmatMRP(Q,dQ,B) returns the 3x3 matrix derivative of 
  * the BmatMRP matrix, and it is used to relate the 
  * body angular acceleration vector dw to the second order 
@@ -1319,7 +1319,7 @@ void BdotmatMRP(double *q, double *dq, double B[3][3])
     B[2][2] = s + 4 * ( q[2] * dq[2] );
 }
 
-/*
+/**
  * BmatPRV(Q,B) returns the 3x3 matrix which relates the
  * body angular velocity vector w to the derivative of
  * principal rotation vector Q.
@@ -1343,7 +1343,7 @@ void BmatPRV(double *q, double B[3][3])
     B[2][2] = 1 - c * (q[0] * q[0] + q[1] * q[1]);
 }
 
-/*
+/**
  * C2EP(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding 4x1 Euler parameter vector Q,
  * where the first component of Q is the non-dimensional
@@ -1414,7 +1414,7 @@ void C2EP(double C[3][3], double b[4])
     }
 }
 
-/*
+/**
  * C2Euler121(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (1-2-1) Euler angle set.
  */
@@ -1425,7 +1425,7 @@ void C2Euler121(double C[3][3], double *q)
     q[2] = atan2(C[1][0], C[2][0]);
 }
 
-/*
+/**
  * C2Euler123(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (1-2-3) Euler angle set.
  */
@@ -1436,7 +1436,7 @@ void C2Euler123(double C[3][3], double *q)
     q[2] = atan2(-C[1][0], C[0][0]);
 }
 
-/*
+/**
  * C2Euler131(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (1-3-1) Euler angle set.
  */
@@ -1447,7 +1447,7 @@ void C2Euler131(double C[3][3], double *q)
     q[2] = atan2(C[2][0], -C[1][0]);
 }
 
-/*
+/**
  * C2Euler132(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (1-3-2) Euler angle set.
  */
@@ -1458,7 +1458,7 @@ void C2Euler132(double C[3][3], double *q)
     q[2] = atan2(C[2][0], C[0][0]);
 }
 
-/*
+/**
  * C2Euler212(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (2-1-2) Euler angle set.
  */
@@ -1469,7 +1469,7 @@ void C2Euler212(double C[3][3], double *q)
     q[2] = atan2(C[0][1], -C[2][1]);
 }
 
-/*
+/**
  * C2Euler213(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (2-1-3) Euler angle set.
  */
@@ -1480,7 +1480,7 @@ void C2Euler213(double C[3][3], double *q)
     q[2] = atan2(C[0][1], C[1][1]);
 }
 
-/*
+/**
  * C2Euler231(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (2-3-1) Euler angle set.
  */
@@ -1491,7 +1491,7 @@ void C2Euler231(double C[3][3], double *q)
     q[2] = atan2(-C[2][1], C[1][1]);
 }
 
-/*
+/**
  * C2Euler232(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (2-3-2) Euler angle set.
  */
@@ -1502,7 +1502,7 @@ void C2Euler232(double C[3][3], double *q)
     q[2] = atan2(C[2][1], C[0][1]);
 }
 
-/*
+/**
  * C2Euler312(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (3-1-2) Euler angle set.
  */
@@ -1513,7 +1513,7 @@ void C2Euler312(double C[3][3], double *q)
     q[2] = atan2(-C[0][2], C[2][2]);
 }
 
-/*
+/**
  * C2Euler313(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (3-1-3) Euler angle set.
  */
@@ -1524,7 +1524,7 @@ void C2Euler313(double C[3][3], double *q)
     q[2] = atan2(C[0][2], C[1][2]);
 }
 
-/*
+/**
  * C2Euler321(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (3-2-1) Euler angle set.
  */
@@ -1535,7 +1535,7 @@ void C2Euler321(double C[3][3], double *q)
     q[2] = atan2(C[1][2], C[2][2]);
 }
 
-/*
+/**
  * C2Euler323(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding (3-2-3) Euler angle set.
  */
@@ -1546,7 +1546,7 @@ void C2Euler323(double C[3][3], double *q)
     q[2] = atan2(C[1][2], -C[0][2]);
 }
 
-/*
+/**
  * C2Gibbs(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding 3x1 Gibbs vector Q.
  */
@@ -1561,7 +1561,7 @@ void C2Gibbs(double C[3][3], double *q)
     q[2] = b[3] / b[0];
 }
 
-/*
+/**
  * C2MRP(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding 3x1 MRP vector Q where the
  * MRP vector is chosen such that |Q| <= 1.
@@ -1579,7 +1579,7 @@ void C2MRP(double C[3][3], double *q)
     q[2] = b[3] / (1 + b[0]);
 }
 
-/*
+/**
  * C2PRV(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding 3x1 principal rotation vector Q,
  * where the first component of Q is the principal rotation angle
@@ -1593,7 +1593,7 @@ void C2PRV(double C[3][3], double *q)
     EP2PRV(beta,q);
 }
 
-/*
+/**
  * dEP(Q,W,dq) returns the Euler parameter derivative
  * for a given Euler parameter vector Q and body
  * angular velocity vector w.
@@ -1618,7 +1618,7 @@ void dEP(double *q, double *w, double *dq)
     dq[3] = 0.5 * dq[3];
 }
 
-/*
+/**
  * dEuler121(Q,W,dq) returns the (1-2-1) Euler angle derivative
  * vector for a given (1-2-1) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1633,7 +1633,7 @@ void dEuler121(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler123(Q,W,dq) returns the (1-2-3) Euler angle derivative
  * vector for a given (1-2-3) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1648,7 +1648,7 @@ void dEuler123(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler131(Q,W,dq) returns the (1-3-1) Euler angle derivative
  * vector for a given (1-3-1) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1663,7 +1663,7 @@ void dEuler131(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler132(Q,W,dq) returns the (1-3-2) Euler angle derivative
  * vector for a given (1-3-2) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1678,7 +1678,7 @@ void dEuler132(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler212(Q,W,dq) returns the (2-1-2) Euler angle derivative
  * vector for a given (2-1-2) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1693,7 +1693,7 @@ void dEuler212(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler213(Q,W,dq) returns the (2-1-3) Euler angle derivative
  * vector for a given (2-1-3) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1708,7 +1708,7 @@ void dEuler213(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler231(Q,W,dq) returns the (2-3-1) Euler angle derivative
  * vector for a given (2-3-1) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1723,7 +1723,7 @@ void dEuler231(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler232(Q,W,dq) returns the (2-3-2) Euler angle derivative
  * vector for a given (2-3-2) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1738,7 +1738,7 @@ void dEuler232(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler312(Q,W,dq) returns the (3-1-2) Euler angle derivative
  * vector for a given (3-1-2) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1753,7 +1753,7 @@ void dEuler312(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler313(Q,W,dq) returns the (3-1-3) Euler angle derivative
  * vector for a given (3-1-3) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1768,7 +1768,7 @@ void dEuler313(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler321(Q,W,dq) returns the (3-2-1) Euler angle derivative
  * vector for a given (3-2-1) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1783,7 +1783,7 @@ void dEuler321(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dEuler323(Q,W,dq) returns the (3-2-3) Euler angle derivative
  * vector for a given (3-2-3) Euler angle vector Q and body
  * angular velocity vector w.
@@ -1798,7 +1798,7 @@ void dEuler323(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * dGibbs(Q,W,dq) returns the Gibbs derivative
  * for a given Gibbs vector Q and body
  * angular velocity vector w.
@@ -1814,7 +1814,7 @@ void dGibbs(double *q, double *w, double *dq)
     v3Scale(0.5, dq, dq);
 }
 
-/*
+/**
  * dMRP(Q,W,dq) returns the MRP derivative
  * for a given MRP vector Q and body
  * angular velocity vector w.
@@ -1830,7 +1830,7 @@ void dMRP(double *q, double *w, double *dq)
     v3Scale(0.25, dq, dq);
 }
 
-/*
+/**
  * dMRP2omega(Q,dQ,W) returns the angular rate W
  * for a given MRP vector Q and 
  * MRP derivative dQ.
@@ -1846,7 +1846,7 @@ void dMRP2Omega(double *q, double *dq, double *w)
     v3Scale(4, w, w);
 }
 
-/*
+/**
  * ddMRP(Q,dQ,W,dW) returns the second order MRP derivative
  * for a given MRP vector Q, first MRP derivative dQ, body angular
  * velocity vector w and body angular acceleration vector dw.
@@ -1868,7 +1868,7 @@ void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
     }
 }
 
-/*
+/**
  * ddMRP2omegaDot(Q,dQ,ddQ) returns the angular rate W
  * for a given MRP vector Q and 
  * MRP derivative dQ.
@@ -1892,7 +1892,7 @@ void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
     v3Scale(4, dw, dw);
 }
 
-/*
+/**
  * dPRV(Q,W,dq) returns the PRV derivative
  * for a given PRV vector Q and body
  * angular velocity vector w.
@@ -1907,7 +1907,7 @@ void dPRV(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
+/**
  * elem2PRV(R,Q) translates a prinicpal rotation
  * element set R into the corresponding principal
  * rotation vector Q.
@@ -1919,7 +1919,7 @@ void elem2PRV(double *r, double *q)
     q[2] = r[3] * r[0];
 }
 
-/*
+/**
  * EP2C(Q,C) returns the direction cosine
  * matrix in terms of the 4x1 Euler parameter vector
  * Q.  The first element is the non-dimensional Euler
@@ -1949,7 +1949,7 @@ void EP2C(double *q, double C[3][3])
     C[2][2] = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3;
 }
 
-/*
+/**
  * EP2Euler121(Q,E) translates the Euler parameter
  * vector Q into the corresponding (1-2-1) Euler angle
  * vector E.
@@ -1967,7 +1967,7 @@ void EP2Euler121(double *q, double *e)
     e[2] = t2 - t1;
 }
 
-/*
+/**
  * EP2Euler123(Q,E) translates the Euler parameter vector
  * Q into the corresponding (1-2-3) Euler angle set.
  */
@@ -1988,7 +1988,7 @@ void EP2Euler123(double *q, double *e)
     e[2] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
 }
 
-/*
+/**
  * EP2Euler131(Q,E) translates the Euler parameter
  * vector Q into the corresponding (1-3-1) Euler angle
  * vector E.
@@ -2006,7 +2006,7 @@ void EP2Euler131(double *q, double *e)
     e[2] = t2 + t1;
 }
 
-/*
+/**
  * EP2Euler132(Q,E) translates the Euler parameter vector
  * Q into the corresponding (1-3-2) Euler angle set.
  */
@@ -2027,7 +2027,7 @@ void EP2Euler132(double *q, double *e)
     e[2] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
 }
 
-/*
+/**
  * EP2Euler212(Q,E) translates the Euler parameter
  * vector Q into the corresponding (2-1-2) Euler angle
  * vector E.
@@ -2045,7 +2045,7 @@ void EP2Euler212(double *q, double *e)
     e[2] = t2 + t1;
 }
 
-/*
+/**
  * EP2Euler213(Q,E) translates the Euler parameter vector
  * Q into the corresponding (2-1-3) Euler angle set.
  */
@@ -2066,7 +2066,7 @@ void EP2Euler213(double *q, double *e)
     e[2] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
 }
 
-/*
+/**
  * EP2Euler231(Q,E) translates the Euler parameter vector
  * Q into the corresponding (2-3-1) Euler angle set.
  */
@@ -2087,7 +2087,7 @@ void EP2Euler231(double *q, double *e)
     e[2] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
 }
 
-/*
+/**
  * EP2Euler232(Q,E) translates the Euler parameter
  * vector Q into the corresponding (2-3-2) Euler angle
  * vector E.
@@ -2105,7 +2105,7 @@ void EP2Euler232(double *q, double *e)
     e[2] = t2 - t1;
 }
 
-/*
+/**
  * EP2Euler312(Q,E) translates the Euler parameter vector
  * Q into the corresponding (3-1-2) Euler angle set.
  */
@@ -2126,7 +2126,7 @@ void EP2Euler312(double *q, double *e)
     e[2] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
 }
 
-/*
+/**
  * EP2Euler313(Q,E) translates the Euler parameter
  * vector Q into the corresponding (3-1-3) Euler angle
  * vector E.
@@ -2144,7 +2144,7 @@ void EP2Euler313(double *q, double *e)
     e[2] = t2 - t1;
 }
 
-/*
+/**
  * EP2Euler321(Q,E) translates the Euler parameter vector
  * Q into the corresponding (3-2-1) Euler angle set.
  */
@@ -2165,7 +2165,7 @@ void EP2Euler321(double *q, double *e)
     e[2] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
 }
 
-/*
+/**
  * EP2Euler323(Q,E) translates the Euler parameter
  * vector Q into the corresponding (3-2-3) Euler angle
  * vector E.
@@ -2183,7 +2183,7 @@ void EP2Euler323(double *q, double *e)
     e[2] = t2 + t1;
 }
 
-/*
+/**
  * EP2Gibbs(Q1,Q) translates the Euler parameter vector Q1
  * into the Gibbs vector Q.
  */
@@ -2194,7 +2194,7 @@ void EP2Gibbs(double *q1, double *q)
     q[2] = q1[3] / q1[0];
 }
 
-/*
+/**
  * EP2MRP(Q1,Q) translates the Euler parameter vector Q1
  * into the MRP vector Q.
  */
@@ -2211,7 +2211,7 @@ void EP2MRP(double *q1, double *q)
     }
 }
 
-/*
+/**
  * EP2PRV(Q1,Q) translates the Euler parameter vector Q1
  * into the principal rotation vector Q.
  */
@@ -2233,7 +2233,7 @@ void EP2PRV(double *q1, double *q)
     q[2] = q1[3] / sp * p;
 }
 
-/*
+/**
  *  Euler1(X,M)  Elementary rotation matrix
  * Returns the elementary rotation matrix about the
  * first body axis.
@@ -2247,7 +2247,7 @@ void Euler1(double x, double m[3][3])
     m[2][2] = m[1][1];
 }
 
-/*
+/**
  *  Euler2(X,M)  Elementary rotation matrix
  * Returns the elementary rotation matrix about the
  * second body axis.
@@ -2261,7 +2261,7 @@ void Euler2(double x, double m[3][3])
     m[2][2] = m[0][0];
 }
 
-/*
+/**
  *  Euler3(X,M)  Elementary rotation matrix
  * Returns the elementary rotation matrix about the
  * third body axis.
@@ -2275,7 +2275,7 @@ void Euler3(double x, double m[3][3])
     m[1][1] = m[0][0];
 }
 
-/*
+/**
  * Euler1212C(Q,C) returns the direction cosine
  * matrix in terms of the 1-2-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2307,7 +2307,7 @@ void Euler1212C(double *q, double C[3][3])
     C[2][2] = ct1 * ct2 * ct3 - st1 * st3;
 }
 
-/*
+/**
  * Euler1212EP(E,Q) translates the 121 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -2327,7 +2327,7 @@ void Euler1212EP(double *e, double *q)
     q[3] = sin(e2) * sin(e1 - e3);
 }
 
-/*
+/**
  * Euler1212Gibbs(E,Q) translates the (1-2-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2339,7 +2339,7 @@ void Euler1212Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler1212MRP(E,Q) translates the (1-2-1) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2351,7 +2351,7 @@ void Euler1212MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler1212PRV(E,Q) translates the (1-2-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -2363,7 +2363,7 @@ void Euler1212PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler1232C(Q,C) returns the direction cosine
  * matrix in terms of the 1-2-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2395,7 +2395,7 @@ void Euler1232C(double *q, double C[3][3])
     C[2][2] = ct1 * ct2;
 }
 
-/*
+/**
  * Euler1232EP(E,Q) translates the 123 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -2421,7 +2421,7 @@ void Euler1232EP(double *e, double *q)
     q[3] = c1 * c2 * s3 + s1 * s2 * c3;
 }
 
-/*
+/**
  * Euler1232Gibbs(E,Q) translates the (1-2-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2433,7 +2433,7 @@ void Euler1232Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler1232MRP(E,Q) translates the (1-2-3) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2445,7 +2445,7 @@ void Euler1232MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler1232PRV(E,Q) translates the (1-2-3) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -2457,7 +2457,7 @@ void Euler1232PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler1312C(Q,C) returns the direction cosine
  * matrix in terms of the 1-3-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2489,7 +2489,7 @@ void Euler1312C(double *q, double C[3][3])
     C[2][2] = ct1 * ct3 - ct2 * st1 * st3;
 }
 
-/*
+/**
  * Euler1312EP(E,Q) translates the 131 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -2509,7 +2509,7 @@ void Euler1312EP(double *e, double *q)
     q[3] = sin(e2) * cos(-e1 + e3);
 }
 
-/*
+/**
  * Euler1312Gibbs(E,Q) translates the (1-3-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2521,7 +2521,7 @@ void Euler1312Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler1312MRP(E,Q) translates the (1-3-1) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2533,7 +2533,7 @@ void Euler1312MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler1312PRV(E,Q) translates the (1-3-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -2545,7 +2545,7 @@ void Euler1312PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler1322C(Q,C) returns the direction cosine
  * matrix in terms of the 1-3-2 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2577,7 +2577,7 @@ void Euler1322C(double *q, double C[3][3])
     C[2][2] = ct1 * ct3 + st1 * st2 * st3;
 }
 
-/*
+/**
  * Euler1322EP(E,Q) translates the 132 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -2603,7 +2603,7 @@ void Euler1322EP(double *e, double *q)
     q[3] = c1 * s2 * c3 + s1 * c2 * s3;
 }
 
-/*
+/**
  * Euler1322Gibbs(E,Q) translates the (1-3-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2615,7 +2615,7 @@ void Euler1322Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler1322MRP(E,Q) translates the (1-3-2) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2627,7 +2627,7 @@ void Euler1322MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler1322PRV(E,Q) translates the (1-3-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -2639,7 +2639,7 @@ void Euler1322PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler2122C(Q,C) returns the direction cosine
  * matrix in terms of the 2-1-2 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2671,7 +2671,7 @@ void Euler2122C(double *q, double C[3][3])
     C[2][2] = ct1 * ct2 * ct3 - st1 * st3;
 }
 
-/*
+/**
  * Euler2122EP(E,Q) translates the 212 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -2691,7 +2691,7 @@ void Euler2122EP(double *e, double *q)
     q[3] = sin(e2) * sin(-e1 + e3);
 }
 
-/*
+/**
  * Euler2122Gibbs(E,Q) translates the (2-1-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2703,7 +2703,7 @@ void Euler2122Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler2122MRP(E,Q) translates the (2-1-2) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2715,7 +2715,7 @@ void Euler2122MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler2122PRV(E,Q) translates the (2-1-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -2727,7 +2727,7 @@ void Euler2122PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler2132C(Q,C) returns the direction cosine
  * matrix in terms of the 2-1-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2759,7 +2759,7 @@ void Euler2132C(double *q, double C[3][3])
     C[2][2] = ct1 * ct2;
 }
 
-/*
+/**
  * Euler2132EP(E,Q) translates the 213 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -2785,7 +2785,7 @@ void Euler2132EP(double *e, double *q)
     q[3] = c1 * c2 * s3 - s1 * s2 * c3;
 }
 
-/*
+/**
  * Euler2132Gibbs(E,Q) translates the (2-1-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2797,7 +2797,7 @@ void Euler2132Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler2132MRP(E,Q) translates the (2-1-3) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2809,7 +2809,7 @@ void Euler2132MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler2132PRV(E,Q) translates the (2-1-3) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -2821,7 +2821,7 @@ void Euler2132PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler2312C(Q,C) returns the direction cosine
  * matrix in terms of the 2-3-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2853,7 +2853,7 @@ void Euler2312C(double *q, double C[3][3])
     C[2][2] = ct1 * ct3 - st1 * st2 * st3;
 }
 
-/*
+/**
  * Euler2312EP(E,Q) translates the 231 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -2879,7 +2879,7 @@ void Euler2312EP(double *e, double *q)
     q[3] = c1 * s2 * c3 - s1 * c2 * s3;
 }
 
-/*
+/**
  * Euler2312Gibbs(E,Q) translates the (2-3-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2891,7 +2891,7 @@ void Euler2312Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler2312MRP(E,Q) translates the (2-3-1) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2903,7 +2903,7 @@ void Euler2312MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler2312PRV(E,Q) translates the (2-3-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -2915,7 +2915,7 @@ void Euler2312PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler2322C(Q) returns the direction cosine
  * matrix in terms of the 2-3-2 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -2947,7 +2947,7 @@ void Euler2322C(double *q, double C[3][3])
     C[2][2] = ct1 * ct3 - ct2 * st1 * st3;
 }
 
-/*
+/**
 * Euler2322EP(E,Q) translates the 232 Euler angle
 * vector E into the Euler parameter vector Q.
 */
@@ -2967,7 +2967,7 @@ void Euler2322EP(double *e, double *q)
     q[3] = sin(e2) * cos(e1 - e3);
 }
 
-/*
+/**
  * Euler2322Gibbs(E) translates the (2-3-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -2979,7 +2979,7 @@ void Euler2322Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler2322MRP(E,Q) translates the (2-3-2) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -2991,7 +2991,7 @@ void Euler2322MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler2322PRV(E,Q) translates the (2-3-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -3003,7 +3003,7 @@ void Euler2322PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler3122C(Q,C) returns the direction cosine
  * matrix in terms of the 1-2-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -3035,7 +3035,7 @@ void Euler3122C(double *q, double C[3][3])
     C[2][2] = ct2 * ct3;
 }
 
-/*
+/**
  * Euler3122EP(E,Q) translates the 312 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -3061,7 +3061,7 @@ void Euler3122EP(double *e, double *q)
     q[3] = s1 * c2 * c3 + c1 * s2 * s3;
 }
 
-/*
+/**
  * Euler3122Gibbs(E,Q) translates the (3-1-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -3073,7 +3073,7 @@ void Euler3122Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler3122MRP(E,Q) translates the (3-1-2) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -3085,7 +3085,7 @@ void Euler3122MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler3122PRV(E,Q) translates the (3-1-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -3097,7 +3097,7 @@ void Euler3122PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler3132C(Q,C) returns the direction cosine
  * matrix in terms of the 3-1-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -3129,7 +3129,7 @@ void Euler3132C(double *q, double C[3][3])
     C[2][2] = ct2;
 }
 
-/*
+/**
  * Euler3132EP(E,Q) translates the 313 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -3149,7 +3149,7 @@ void Euler3132EP(double *e, double *q)
     q[3] = cos(e2) * sin(e1 + e3);
 }
 
-/*
+/**
  * Euler3132Gibbs(E,Q) translates the (3-1-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -3161,7 +3161,7 @@ void Euler3132Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler3132MRP(E,Q) translates the (3-1-3) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -3173,7 +3173,7 @@ void Euler3132MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler3132PRV(E,Q) translates the (3-1-3) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -3185,7 +3185,7 @@ void Euler3132PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler3212C(Q,C) returns the direction cosine
  * matrix in terms of the 3-2-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -3217,7 +3217,7 @@ void Euler3212C(double *q, double C[3][3])
     C[2][2] = ct3 * ct2;
 }
 
-/*
+/**
  * Euler3212EPE,Q) translates the 321 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -3243,7 +3243,7 @@ void Euler3212EP(double *e, double *q)
     q[3] = s1 * c2 * c3 - c1 * s2 * s3;
 }
 
-/*
+/**
  * Euler3212Gibbs(E,Q) translates the (3-2-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -3255,7 +3255,7 @@ void Euler3212Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler3212MRP(E,Q) translates the (3-2-1) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -3267,7 +3267,7 @@ void Euler3212MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler3212PRV(E,Q) translates the (3-2-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
@@ -3279,7 +3279,7 @@ void Euler3212PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Euler3232C(Q,C) returns the direction cosine
  * matrix in terms of the 3-2-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
@@ -3311,7 +3311,7 @@ void Euler3232C(double *q, double C[3][3])
     C[2][2] = ct2;
 }
 
-/*
+/**
  * Euler3232EP(E,Q) translates the 323 Euler angle
  * vector E into the Euler parameter vector Q.
  */
@@ -3331,7 +3331,7 @@ void Euler3232EP(double *e, double *q)
     q[3] = cos(e2) * sin(e1 + e3);
 }
 
-/*
+/**
  * Euler3232Gibbs(E,Q) translates the (3-2-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
@@ -3343,7 +3343,7 @@ void Euler3232Gibbs(double *e, double *q)
     EP2Gibbs(ep, q);
 }
 
-/*
+/**
  * Euler3232MRP(E,Q) translates the (3-2-3) Euler
  * angle vector E into the MRP vector Q.
  */
@@ -3355,7 +3355,7 @@ void Euler3232MRP(double *e, double *q)
     EP2MRP(ep, q);
 }
 
-/*
+/**
  * Euler3232PRV(E,Q) translates the (3-2-3) Euler
  * angle vector Q1 into the principal rotation vector Q.
  */
@@ -3367,7 +3367,7 @@ void Euler3232PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
+/**
  * Gibbs2C(Q,C) returns the direction cosine
  * matrix in terms of the 3x1 Gibbs vector Q.
  */
@@ -3395,7 +3395,7 @@ void Gibbs2C(double *q, double C[3][3])
     m33Scale(1. / (1 + d1), C, C);
 }
 
-/*
+/**
  * Gibbs2EP(Q1,Q) translates the Gibbs vector Q1
  * into the Euler parameter vector Q.
  */
@@ -3407,7 +3407,7 @@ void Gibbs2EP(double *q1, double *q)
     q[3] = q1[2] * q[0];
 }
 
-/*
+/**
  * Gibbs2Euler121(Q,E) translates the Gibbs
  * vector Q into the (1-2-1) Euler angle vector E.
  */
@@ -3419,7 +3419,7 @@ void Gibbs2Euler121(double *q, double *e)
     EP2Euler121(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler123(Q,E) translates the Gibbs
  * vector Q into the (1-2-3) Euler angle vector E.
  */
@@ -3431,7 +3431,7 @@ void Gibbs2Euler123(double *q, double *e)
     EP2Euler123(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler131(Q,E) translates the Gibbs
  * vector Q into the (1-3-1) Euler angle vector E.
  */
@@ -3443,7 +3443,7 @@ void Gibbs2Euler131(double *q, double *e)
     EP2Euler131(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler132(Q,E) translates the Gibbs
  * vector Q into the (1-3-2) Euler angle vector E.
  */
@@ -3455,7 +3455,7 @@ void Gibbs2Euler132(double *q, double *e)
     EP2Euler132(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler212(Q,E) translates the Gibbs
  * vector Q into the (2-1-2) Euler angle vector E.
  */
@@ -3467,7 +3467,7 @@ void Gibbs2Euler212(double *q, double *e)
     EP2Euler212(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler213(Q,E) translates the Gibbs
  * vector Q into the (2-1-3) Euler angle vector E.
  */
@@ -3479,7 +3479,7 @@ void Gibbs2Euler213(double *q, double *e)
     EP2Euler213(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler231(Q,E) translates the Gibbs
  * vector Q into the (2-3-1) Euler angle vector E.
  */
@@ -3491,7 +3491,7 @@ void Gibbs2Euler231(double *q, double *e)
     EP2Euler231(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler232(Q,E) translates the Gibbs
  * vector Q into the (2-3-2) Euler angle vector E.
  */
@@ -3503,7 +3503,7 @@ void Gibbs2Euler232(double *q, double *e)
     EP2Euler232(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler312(Q,E) translates the Gibbs
  * vector Q into the (3-1-2) Euler angle vector E.
  */
@@ -3515,7 +3515,7 @@ void Gibbs2Euler312(double *q, double *e)
     EP2Euler312(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler313(Q,E) translates the Gibbs
  * vector Q into the (3-1-3) Euler angle vector E.
  */
@@ -3527,7 +3527,7 @@ void Gibbs2Euler313(double *q, double *e)
     EP2Euler313(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler321(Q,E) translates the Gibbs
  * vector Q into the (3-2-1) Euler angle vector E.
  */
@@ -3539,7 +3539,7 @@ void Gibbs2Euler321(double *q, double *e)
     EP2Euler321(ep, e);
 }
 
-/*
+/**
  * Gibbs2Euler323(Q,E) translates the Gibbs
  * vector Q into the (3-2-3) Euler angle vector E.
  */
@@ -3551,7 +3551,7 @@ void Gibbs2Euler323(double *q, double *e)
     EP2Euler323(ep, e);
 }
 
-/*
+/**
  * Gibbs2MRP(Q1,Q) translates the Gibbs vector Q1
  * into the MRP vector Q.
  */
@@ -3560,7 +3560,7 @@ void Gibbs2MRP(double *q1, double *q)
     v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1))), q1, q);
 }
 
-/*
+/**
  * Gibbs2PRV(Q1,Q) translates the Gibbs vector Q1
  * into the principal rotation vector Q.
  */
@@ -3582,7 +3582,7 @@ void Gibbs2PRV(double *q1, double *q)
     q[2] = q1[2] / tp * p;
 }
 
-/*
+/**
  * MRP2C(Q,C) returns the direction cosine
  * matrix in terms of the 3x1 MRP vector Q.
  */
@@ -3614,7 +3614,7 @@ void MRP2C(double *q, double C[3][3])
     m33Scale(1. / d, C, C);
 }
 
-/*
+/**
  * MRP2EP(Q1,Q) translates the MRP vector Q1
  * into the Euler parameter vector Q.
  */
@@ -3629,7 +3629,7 @@ void MRP2EP(double *q1, double *q)
     q[3] = 2 * q1[2] / ps;
 }
 
-/*
+/**
  * MRP2Euler121(Q,E) translates the MRP
  * vector Q into the (1-2-1) Euler angle vector E.
  */
@@ -3641,7 +3641,7 @@ void MRP2Euler121(double *q, double *e)
     EP2Euler121(ep, e);
 }
 
-/*
+/**
  * MRP2Euler123(Q,E) translates the MRP
  * vector Q into the (1-2-3) Euler angle vector E.
  */
@@ -3653,7 +3653,7 @@ void MRP2Euler123(double *q, double *e)
     EP2Euler123(ep, e);
 }
 
-/*
+/**
  * MRP2Euler131(Q,E) translates the MRP
  * vector Q into the (1-3-1) Euler angle vector E.
  */
@@ -3665,7 +3665,7 @@ void MRP2Euler131(double *q, double *e)
     EP2Euler131(ep, e);
 }
 
-/*
+/**
  * MRP2Euler132(Q,E) translates the MRP
  * vector Q into the (1-3-2) Euler angle vector E.
  */
@@ -3677,7 +3677,7 @@ void MRP2Euler132(double *q, double *e)
     EP2Euler132(ep, e);
 }
 
-/*
+/**
  * E = MRP2Euler212(Q) translates the MRP
  * vector Q into the (2-1-2) Euler angle vector E.
  */
@@ -3689,7 +3689,7 @@ void MRP2Euler212(double *q, double *e)
     EP2Euler212(ep, e);
 }
 
-/*
+/**
  * MRP2Euler213(Q,E) translates the MRP
  * vector Q into the (2-1-3) Euler angle vector E.
  */
@@ -3701,7 +3701,7 @@ void MRP2Euler213(double *q, double *e)
     EP2Euler213(ep, e);
 }
 
-/*
+/**
  * MRP2Euler231(Q,E) translates the MRP
  * vector Q into the (2-3-1) Euler angle vector E.
  */
@@ -3713,7 +3713,7 @@ void MRP2Euler231(double *q, double *e)
     EP2Euler231(ep, e);
 }
 
-/*
+/**
  * MRP2Euler232(Q,E) translates the MRP
  * vector Q into the (2-3-2) Euler angle vector E.
  */
@@ -3725,7 +3725,7 @@ void MRP2Euler232(double *q, double *e)
     EP2Euler232(ep, e);
 }
 
-/*
+/**
  * MRP2Euler312(Q,E) translates the MRP
  * vector Q into the (3-1-2) Euler angle vector E.
  */
@@ -3737,7 +3737,7 @@ void MRP2Euler312(double *q, double *e)
     EP2Euler312(ep, e);
 }
 
-/*
+/**
  * MRP2Euler313(Q,E) translates the MRP
  * vector Q into the (3-1-3) Euler angle vector E.
  */
@@ -3749,7 +3749,7 @@ void MRP2Euler313(double *q, double *e)
     EP2Euler313(ep, e);
 }
 
-/*
+/**
  * MRP2Euler321(Q,E) translates the MRP
  * vector Q into the (3-2-1) Euler angle vector E.
  */
@@ -3761,7 +3761,7 @@ void MRP2Euler321(double *q, double *e)
     EP2Euler321(ep, e);
 }
 
-/*
+/**
  * MRP2Euler323(Q,E) translates the MRP
  * vector Q into the (3-2-3) Euler angle vector E.
  */
@@ -3773,7 +3773,7 @@ void MRP2Euler323(double *q, double *e)
     EP2Euler323(ep, e);
 }
 
-/*
+/**
  * MRP2Gibbs(Q1,Q) translates the MRP vector Q1
  * into the Gibbs vector Q.
  */
@@ -3782,7 +3782,7 @@ void MRP2Gibbs(double *q1, double *q)
     v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q);
 }
 
-/*
+/**
  * MRP2PRV(Q1,Q) translates the MRP vector Q1
  * into the principal rotation vector Q.
  */
@@ -3803,7 +3803,7 @@ void MRP2PRV(double *q1, double *q)
     q[2] = q1[2] / tp * p;
 }
 
-/*
+/**
  * MRPswitch(Q,s2,s) checks to see if v3Norm(Q) is larger than s2.
  * If yes, then the MRP vector Q is mapped to its shadow set.
  */
@@ -3819,7 +3819,7 @@ void MRPswitch(double *q, double s2, double *s)
     }
 }
 
-/*
+/**
  * MRPshadow forces a switch from the current MRP to its shadow set
  */
 void MRPshadow(double *qIn, double *qOut)
@@ -3831,7 +3831,7 @@ void MRPshadow(double *qIn, double *qOut)
     return;
 }
 
-/*
+/**
  * Makes sure that the angle x lies within +/- Pi.
  */
 double wrapToPi(double x)
@@ -3851,7 +3851,7 @@ double wrapToPi(double x)
     return q;
 }
 
-/*
+/**
  * PRV2C(Q,C) returns the direction cosine
  * matrix in terms of the 3x1 principal rotation vector
  * Q.
@@ -3891,7 +3891,7 @@ void PRV2C(double *q, double C[3][3])
     C[2][2] = q3 * q3 * d1 + cp;
 }
 
-/*
+/**
  * PRV2elem(R,Q) translates a prinicpal rotation vector R
  * into the corresponding principal rotation element set Q.
  */
@@ -3910,7 +3910,7 @@ void PRV2elem(double *r, double *q)
 	}
 }
 
-/*
+/**
  * PRV2EP(Q0,Q) translates the principal rotation vector Q1
  * into the Euler parameter vector Q.
  */
@@ -3927,7 +3927,7 @@ void PRV2EP(double *q0, double *q)
     q[3] = q1[3] * sp;
 }
 
-/*
+/**
  * PRV2Euler121(Q,E) translates the principal rotation
  * vector Q into the (1-2-1) Euler angle vector E.
  */
@@ -3939,7 +3939,7 @@ void PRV2Euler121(double *q, double *e)
     EP2Euler121(ep, e);
 }
 
-/*
+/**
  * PRV2Euler123(Q,E) translates the principal rotation
  * vector Q into the (1-2-3) Euler angle vector E.
  */
@@ -3951,7 +3951,7 @@ void PRV2Euler123(double *q, double *e)
     EP2Euler123(ep, e);
 }
 
-/*
+/**
  * PRV2Euler131(Q,E) translates the principal rotation
  * vector Q into the (1-3-1) Euler angle vector E.
  */
@@ -3963,7 +3963,7 @@ void PRV2Euler131(double *q, double *e)
     EP2Euler131(ep, e);
 }
 
-/*
+/**
  * PRV2Euler132(Q,E) translates the principal rotation
  * vector Q into the (1-3-2) Euler angle vector E.
  */
@@ -3975,7 +3975,7 @@ void PRV2Euler132(double *q, double *e)
     EP2Euler132(ep, e);
 }
 
-/*
+/**
  * PRV2Euler212(Q,E) translates the principal rotation
  * vector Q into the (2-1-2) Euler angle vector E.
  */
@@ -3987,7 +3987,7 @@ void PRV2Euler212(double *q, double *e)
     EP2Euler212(ep, e);
 }
 
-/*
+/**
  * PRV2Euler213(Q,E) translates the principal rotation
  * vector Q into the (2-1-3) Euler angle vector E.
  */
@@ -3999,7 +3999,7 @@ void PRV2Euler213(double *q, double *e)
     EP2Euler213(ep, e);
 }
 
-/*
+/**
  * PRV2Euler231(Q) translates the principal rotation
  * vector Q into the (2-3-1) Euler angle vector E.
  */
@@ -4011,7 +4011,7 @@ void PRV2Euler231(double *q, double *e)
     EP2Euler231(ep, e);
 }
 
-/*
+/**
  * PRV2Euler232(Q,E) translates the principal rotation
  * vector Q into the (2-3-2) Euler angle vector E.
  */
@@ -4023,7 +4023,7 @@ void PRV2Euler232(double *q, double *e)
     EP2Euler232(ep, e);
 }
 
-/*
+/**
  * PRV2Euler312(Q,E) translates the principal rotation
  * vector Q into the (3-1-2) Euler angle vector E.
  */
@@ -4035,7 +4035,7 @@ void PRV2Euler312(double *q, double *e)
     EP2Euler312(ep, e);
 }
 
-/*
+/**
  * PRV2Euler313(Q,E) translates the principal rotation
  * vector Q into the (3-1-3) Euler angle vector E.
  */
@@ -4047,7 +4047,7 @@ void PRV2Euler313(double *q, double *e)
     EP2Euler313(ep, e);
 }
 
-/*
+/**
  * PRV2Euler321(Q,E) translates the principal rotation
  * vector Q into the (3-2-1) Euler angle vector E.
  */
@@ -4059,7 +4059,7 @@ void PRV2Euler321(double *q, double *e)
     EP2Euler321(ep, e);
 }
 
-/*
+/**
  * PRV2Euler323(Q,E) translates the principal rotation
  * vector Q into the (3-2-3) Euler angle vector E.
  */
@@ -4071,7 +4071,7 @@ void PRV2Euler323(double *q, double *e)
     EP2Euler323(ep, e);
 }
 
-/*
+/**
  * PRV2Gibbs(Q0,Q) translates the principal rotation vector Q1
  * into the Gibbs vector Q.
  */
@@ -4087,7 +4087,7 @@ void PRV2Gibbs(double *q0, double *q)
     q[2] = q1[3] * tp;
 }
 
-/*
+/**
  * PRV2MRP(Q0,Q) translates the principal rotation vector Q1
  * into the MRP vector Q.
  */
@@ -4103,7 +4103,7 @@ void PRV2MRP(double *q0, double *q)
     q[2] = q1[3] * tp;
 }
 
-/*
+/**
  * subEP(B1,B2,Q) provides the Euler parameter vector
  * which corresponds to relative rotation from B2
  * to B1.
@@ -4116,7 +4116,7 @@ void subEP(double *b1, double *b2, double *q)
     q[3] = -b2[3] * b1[0] + b2[2] * b1[1] - b2[1] * b1[2] + b2[0] * b1[3];
 }
 
-/*
+/**
  * subEuler121(E,E1,E2) computes the relative
  * (1-2-1) Euler angle vector from E1 to E.
  */
@@ -4141,7 +4141,7 @@ void subEuler121(double *e, double *e1, double *e2)
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
 
-/*
+/**
  * subEuler123(E,E1,E2) computes the relative
  * (1-2-3) Euler angle vector from E1 to E.
  */
@@ -4157,7 +4157,7 @@ void subEuler123(double *e, double *e1, double *e2)
     C2Euler123(C2, e2);
 }
 
-/*
+/**
  * subEuler131(E,E1,E2) computes the relative
  * (1-3-1) Euler angle vector from E1 to E.
  */
@@ -4182,7 +4182,7 @@ void subEuler131(double *e, double *e1, double *e2)
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
 
-/*
+/**
  * subEuler132(E,E1,E2) computes the relative
  * (1-3-2) Euler angle vector from E1 to E.
  */
@@ -4198,7 +4198,7 @@ void subEuler132(double *e, double *e1, double *e2)
     C2Euler132(C2, e2);
 }
 
-/*
+/**
  * subEuler212(E,E1,E2) computes the relative
  * (2-1-2) Euler angle vector from E1 to E.
  */
@@ -4223,7 +4223,7 @@ void subEuler212(double *e, double *e1, double *e2)
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
 
-/*
+/**
  * subEuler213(E,E1,E2) computes the relative
  * (2-1-3) Euler angle vector from E1 to E.
  */
@@ -4239,7 +4239,7 @@ void subEuler213(double *e, double *e1, double *e2)
     C2Euler213(C2, e2);
 }
 
-/*
+/**
  * subEuler231(E,E1,E2) computes the relative
  * (2-3-1) Euler angle vector from E1 to E.
  */
@@ -4255,7 +4255,7 @@ void subEuler231(double *e, double *e1, double *e2)
     C2Euler231(C2, e2);
 }
 
-/*
+/**
  * subEuler232(E,E1,E2) computes the relative
  * (2-3-2) Euler angle vector from E1 to E.
  */
@@ -4280,7 +4280,7 @@ void subEuler232(double *e, double *e1, double *e2)
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
 
-/*
+/**
  * subEuler312(E,E1,E2) computes the relative
  * (3-1-2) Euler angle vector from E1 to E.
  */
@@ -4296,7 +4296,7 @@ void subEuler312(double *e, double *e1, double *e2)
     C2Euler312(C2, e2);
 }
 
-/*
+/**
  * subEuler313(E,E1,E2) computes the relative
  * (3-1-3) Euler angle vector from E1 to E.
  */
@@ -4321,7 +4321,7 @@ void subEuler313(double *e, double *e1, double *e2)
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
 
-/*
+/**
  * subEuler321(E,E1,E2) computes the relative
  * (3-2-1) Euler angle vector from E1 to E.
  */
@@ -4337,7 +4337,7 @@ void subEuler321(double *e, double *e1, double *e2)
     C2Euler321(C2, e2);
 }
 
-/*
+/**
  * subEuler323(E,E1,E2) computes the relative
  * (3-2-3) Euler angle vector from E1 to E.
  */
@@ -4362,7 +4362,7 @@ void subEuler323(double *e, double *e1, double *e2)
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
 
-/*
+/**
  * subGibbs(Q1,Q2,Q) provides the Gibbs vector
  * which corresponds to relative rotation from Q2
  * to Q1.
@@ -4377,7 +4377,7 @@ void subGibbs(double *q1, double *q2, double *q)
     v3Scale(1. / (1. + v3Dot(q1, q2)), q, q);
 }
 
-/*
+/**
  * subMRP(Q1,Q2,Q) provides the MRP vector
  * which corresponds to relative rotation from Q2
  * to Q1.
@@ -4405,7 +4405,7 @@ void subMRP(double *q1, double *q2, double *q)
     v3Subtract(q, d1, q);
     v3Scale(1. / det, q, q);
 
-    /* map MRP to inner set */
+    /** map MRP to inner set */
     mag = v3Dot(q, q);
     if (mag > 1.0){
         v3Scale(-1./mag, q, q);
@@ -4413,7 +4413,7 @@ void subMRP(double *q1, double *q2, double *q)
 
 }
 
-/*
+/**
  * subPRV(Q1,Q2,Q) provides the prinipal rotation vector
  * which corresponds to relative principal rotation from Q2
  * to Q1.
@@ -4452,7 +4452,7 @@ void subPRV(double *q10, double *q20, double *q)
     v3Scale(p / sp, q, q);
 }
 
-/*
+/**
  * Mi(theta, a, C) returns the rotation matrix corresponding
  * to a single axis rotation about axis a by the angle theta
  */
@@ -4506,7 +4506,7 @@ void Mi(double theta, int a, double C[3][3])
     }
 }
 
-/*
+/**
  * tilde(theta, mat) returns the the 3x3 cross product matrix
  */
 void   tilde(double *v, double mat[3][3])
