@@ -138,6 +138,49 @@ Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::V
     return coordinates;
 }
 
+/*! This method applies the window for windowing by setting anything outside the window to black.
+ @return void
+ @param image cv::Mat of the input image
+ */
+void CenterOfBrightness::applyWindow (cv::Mat const &image) const
+{
+    /*! Create a window and ignore anything outside of it (make it black).
+     * Point in opencv is column, row. x goes left-to-right, y goes top-to-bottom ([0,0] is top left corner).
+     * Window mask is inclusive (edge of mask should be considered in COB), so must add/subtract one pixel. */
+    /*! - Left edge removal */
+    if (this->windowPointTopLeft[0] > 0) {
+        cv::rectangle(image,
+                      cv::Point(0, 0),
+                      cv::Point(this->windowPointTopLeft[0]-1, image.size().height),
+                      cv::Scalar(0),
+                      -1);
+    }
+    /*! - Right edge removal */
+    if (this->windowPointBottomRight[0] < image.size().width) {
+        cv::rectangle(image,
+                      cv::Point(this->windowPointBottomRight[0]+1, 0),
+                      cv::Point(image.size().width, image.size().height),
+                      cv::Scalar(0),
+                      -1);
+    }
+    /*! - Top edge removal */
+    if (this->windowPointTopLeft[1] > 0) {
+        cv::rectangle(image,
+                      cv::Point(this->windowPointTopLeft[0]-1, 0),
+                      cv::Point(this->windowPointBottomRight[0]+1, this->windowPointTopLeft[1]-1),
+                      cv::Scalar(0),
+                      -1);
+    }
+    /*! - Bottom edge removal */
+    if (this->windowPointBottomRight[1] < image.size().height) {
+        cv::rectangle(image,
+                      cv::Point(this->windowPointTopLeft[0]-1, this->windowPointBottomRight[1]+1),
+                      cv::Point(this->windowPointBottomRight[0]+1, image.size().height),
+                      cv::Scalar(0),
+                      -1);
+    }
+}
+
 /*! This method computes the points of the window used for windowing
  @return void
  @param image openCV matrix of the input image

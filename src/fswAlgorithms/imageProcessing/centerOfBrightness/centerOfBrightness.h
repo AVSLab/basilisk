@@ -55,6 +55,7 @@ private:
     std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
     Eigen::Vector2d weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
     void computeWindow(cv::Mat const &image);
+    void applyWindow (cv::Mat const &image) const;
 
 public:
     Message<OpNavCOBMsgPayload> opnavCOBOutMsg;  //!< The name of the OpNav center of brightness output message
