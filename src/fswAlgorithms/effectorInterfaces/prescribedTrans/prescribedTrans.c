@@ -22,7 +22,6 @@
 
 /*! Import other required files */
 #include <math.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"

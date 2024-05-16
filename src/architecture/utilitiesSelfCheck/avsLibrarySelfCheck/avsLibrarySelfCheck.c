@@ -18,7 +18,6 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
 #include "architecture/utilities/astroConstants.h"
@@ -2368,7 +2367,7 @@ int testRigidBodyKinematics(double accuracy)
         printf("dPRV failed\n");
         errorCount++;
     }
-    
+
     double w[3];
     v3Set(0.0124791041517595, 0.0042760566673861, -0.0043633231299858, v3_1);
     dMRP2Omega(om, v3_1, v3);
@@ -2377,7 +2376,7 @@ int testRigidBodyKinematics(double accuracy)
         printf("dMRP2Omega failed\n");
         errorCount++;
     }
-    
+
     double dw[3];
     v3Set(0.0022991473184427, 0.0035194052312667, -0.0070466757773158, dw);
     ddMRP(om, v3_1, w, dw, v3);

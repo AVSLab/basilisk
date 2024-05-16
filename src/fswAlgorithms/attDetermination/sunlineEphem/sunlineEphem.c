@@ -19,7 +19,6 @@
 
 #include "sunlineEphem.h"
 #include <string.h>
-#include <math.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
@@ -46,7 +45,7 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  */
 void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    
+
 }
 
 /*! Updates the sun heading based on ephemeris data. Returns the heading as a unit vector in the body frame.
@@ -65,7 +64,7 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int6
     EphemerisMsgPayload sunEphemBuffer; /* [-] Input sun ephemeris data */
     NavTransMsgPayload scTransBuffer;   /* [-] Input spacecraft position data */
     NavAttMsgPayload scAttBuffer;       /* [-] Input spacecraft attitude data */
-    
+
     // check if the required input messages are included
     if (!EphemerisMsg_C_isLinked(&configData->sunPositionInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineEphem.sunPositionInMsg wasn't connected.");
@@ -89,7 +88,7 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int6
     MRP2C(scAttBuffer.sigma_BN, BN);
     m33MultV3(BN, r_SB_N_hat, r_SB_B_hat);
     v3Normalize(r_SB_B_hat, r_SB_B_hat);
-    
+
     /*! - store the output message*/
     v3Copy(r_SB_B_hat, outputSunline.vehSunPntBdy);
     NavAttMsg_C_write(&outputSunline, &configData->navStateOutMsg, moduleID, callTime);

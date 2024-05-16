@@ -18,18 +18,12 @@
  */
 /*
     Attitude Tracking simple Module
- 
+
  */
 
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attGuidance/simpleDeadband/simpleDeadband.h"
-#include <string.h>
 #include <math.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
-
-/* update this include to reflect the required module input messages */
-#include "fswAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
 
 
 
@@ -83,10 +77,10 @@ void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, 
     /*! - Evaluate average simple in attitude and rates */
     configData->attError = 4.0 * atan(v3Norm(configData->attGuidOut.sigma_BR));
     configData->rateError = v3Norm(configData->attGuidOut.omega_BR_B);
-    
+
     /*! - Check whether control should be ON or OFF */
     applyDBLogic_simpleDeadband(configData);
-    
+
     /*! - Write output guidance message and update module knowledge of control status*/
     AttGuidMsg_C_write(&configData->attGuidOut, &configData->attGuidOutMsg, moduleID, callTime);
     return;
@@ -102,7 +96,7 @@ void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData)
 {
     uint32_t areErrorsBelowUpperThresh = (configData->attError < configData->outerAttThresh && configData->rateError < configData->outerRateThresh);
     uint32_t areErrorsBelowLowerThresh = (configData->attError < configData->innerAttThresh && configData->rateError < configData->innerRateThresh);
-    
+
     if (areErrorsBelowUpperThresh)
     {
         if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && configData->wasControlOff))
@@ -116,7 +110,3 @@ void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData)
         }
     } else { configData->wasControlOff = 0; }
 }
-
-
-
-

@@ -20,9 +20,7 @@
 #include "fswAlgorithms/effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include <string.h>
-#include <math.h>
 
 /*! This method initializes the configData for the thruster-based RW desat module.
  It checks to ensure that the inputs are sane and then creates the
@@ -106,7 +104,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 	double currentMatch;          /* Assessment of the current match */
     double fireValue;             /* Amount of time to fire the jet for */
 	THRArrayOnTimeCmdMsgPayload outputData;    /* Local output firings */
-  
+
     /*! - If we haven't met the cooldown threshold, do nothing */
 	if ((callTime - configData->previousFiring)*1.0E-9 <
 		configData->thrFiringPeriod)
@@ -116,12 +114,12 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 
     /*! - Read the input rwheel speeds from the reaction wheels*/
     rwSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedInMsg);
-    
+
     /*! - Accumulate the total momentum vector we want to apply (subtract speed vectors)*/
 	v3SetZero(observedSpeedVec);
 	for (i = 0; i < configData->numRWAs; i++)
 	{
-		v3Scale(rwSpeeds.wheelSpeeds[i], &(configData->rwAlignMap[i * 3]), 
+		v3Scale(rwSpeeds.wheelSpeeds[i], &(configData->rwAlignMap[i * 3]),
 			singleSpeedVec);
 		v3Subtract(observedSpeedVec, singleSpeedVec, observedSpeedVec);
 	}
@@ -132,9 +130,9 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 		return;
 	}
 
-    /*! - Iterate through the list of thrusters and find the "best" match for the 
-          observed momentum vector that does not continue to perturb the velocity 
-          in the same direction as previous aggregate firings.  Only do this once we have 
+    /*! - Iterate through the list of thrusters and find the "best" match for the
+          observed momentum vector that does not continue to perturb the velocity
+          in the same direction as previous aggregate firings.  Only do this once we have
 		  removed the specified momentum accuracy from the current direction.*/
 	selectedThruster = -1;
 	bestMatch = 0.0;
@@ -159,9 +157,9 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 				configData->currDMDir);
 		}
 	}
-    
+
     /*! - Zero out the thruster commands prior to setting the selected thruster.
-          Only apply thruster firing if the best match is non-zero.  Find the thruster 
+          Only apply thruster firing if the best match is non-zero.  Find the thruster
 		  that best matches the current specified direction.
     */
     outputData = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
@@ -180,7 +178,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 			bestMatch = fireValue - currentMatch;
 		}
 	}
-    /*! - If we have a valid match: 
+    /*! - If we have a valid match:
           - Set firing based on the best counter to the observed momentum.
           - Saturate based on the maximum allowable firing
           - Accumulate impulse and the total firing
@@ -205,4 +203,3 @@ void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
 
     return;
 }
-

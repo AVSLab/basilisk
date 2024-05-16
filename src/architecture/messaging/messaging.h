@@ -17,7 +17,6 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 */
 #ifndef MESSAGING_H
 #define MESSAGING_H
-#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include "architecture/messaging/msgHeader.h"
@@ -39,7 +38,7 @@ private:
     messageType* payloadPointer;    //!< -- pointer to the incoming msg data
     MsgHeader *headerPointer;      //!< -- pointer to the incoming msg header
     bool initialized;               //!< -- flag indicating if the input message is connect to another message
-    
+
 public:
     //!< -- BSK Logging
     BSKLogger bskLogger;            //!< -- bsk logging instance
@@ -126,17 +125,17 @@ public:
 
     //! Check if self has been subscribed to a C message
     uint8_t isSubscribedToC(void *source){
-        
+
         int8_t firstCheck = (this->headerPointer == (MsgHeader*) source);
         MsgHeader* pt = this->headerPointer;
         int8_t secondCheck = (this->payloadPointer == (messageType *) (++pt));
 
         return (this->initialized && firstCheck && secondCheck);
-        
+
     };
     //! Check if self has been subscribed to a Cpp message
     uint8_t isSubscribedTo(Message<messageType> *source){
-        
+
         MsgHeader *dummyMsgPtr;
         int8_t firstCheck = (this->payloadPointer == source->getMsgPointers(&(dummyMsgPtr)));
         int8_t secondCheck = (this->headerPointer == dummyMsgPtr);
@@ -197,7 +196,7 @@ public:
 
     //! Recorder object
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
-    
+
     messageType zeroMsgPayload = {};    //!< zero'd copy of the message payload structure
 
     //! check if this msg has been connected to
@@ -296,7 +295,7 @@ public:
     std::vector<uint64_t>& timesWritten(){return this->msgWrittenTimes;}
     //! record method
     std::vector<messageType>& record(){return this->msgRecord;};
-    
+
     //! determine message name
     std::string findMsgName(std::string msgName) {
         size_t locMsg = msgName.find("Payload");

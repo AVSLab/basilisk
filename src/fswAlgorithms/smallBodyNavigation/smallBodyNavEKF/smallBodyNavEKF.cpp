@@ -21,8 +21,6 @@
 #include "fswAlgorithms/smallBodyNavigation/smallBodyNavEKF/smallBodyNavEKF.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include <iostream>
-#include <cstring>
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -455,4 +453,3 @@ void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
     SmallBodyNavMsg_C_write(&smallBodyNavOutMsgBuffer, &this->smallBodyNavOutMsgC, this->moduleID, CurrentSimNanos);
     EphemerisMsg_C_write(&asteroidEphemerisOutMsgBuffer, &this->asteroidEphemerisOutMsgC, this->moduleID, CurrentSimNanos);
 }
-

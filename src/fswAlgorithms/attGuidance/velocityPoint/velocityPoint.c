@@ -17,23 +17,20 @@
 
  */
 /*
- 
+
  Velocity Pointing Guidance Module
- 
+
  */
 
 
 #include "fswAlgorithms/attGuidance/velocityPoint/velocityPoint.h"
 #include <string.h>
 #include <math.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/orbitalMotion.h"
-#include "architecture/utilities/astroConstants.h"
 
 
 /*! self init method
@@ -86,7 +83,7 @@ void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, in
     }
     navData = NavTransMsg_C_read(&configData->transNavInMsg);
 
-    
+
     /*! - Compute and store output message */
     computeVelocityPointingReference(configData,
                                      navData.r_BN_N,
@@ -94,7 +91,7 @@ void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, in
                                      primPlanet.r_BdyZero_N,
                                      primPlanet.v_BdyZero_N,
                                      &attRefOut);
-    
+
     AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 
     return;
@@ -109,13 +106,13 @@ void computeVelocityPointingReference(velocityPointConfig *configData,
                                       AttRefMsgPayload *attRefOut)
 {
     double  dcm_RN[3][3];            /* DCM from inertial to reference frame */
-    
+
     double  r[3];                    /* relative position vector of the spacecraft with respect to the orbited planet */
     double  v[3];                    /* relative velocity vector of the spacecraft with respect to the orbited planet  */
     double  h[3];                    /* orbit angular momentum vector */
     double  rm;                      /* orbit radius */
     double  hm;                      /* module of the orbit angular momentum vector */
-    
+
     double  dfdt;                    /* rotational rate of the orbit frame */
     double  ddfdt2;                  /* rotational acceleration of the frame */
     double  omega_RN_R[3];           /* reference angular velocity vector in Reference frame R components */
@@ -125,7 +122,7 @@ void computeVelocityPointingReference(velocityPointConfig *configData,
     double  temp33[3][3];
     double  temp;
     double  denom;
-    
+
     /* zero the reference rate and acceleration vectors */
     v3SetZero(omega_RN_R);
     v3SetZero(domega_RN_R);
@@ -133,16 +130,16 @@ void computeVelocityPointingReference(velocityPointConfig *configData,
     /* Compute relative position and velocity of the spacecraft with respect to the main celestial body */
     v3Subtract(r_BN_N, celBdyPositonVector, r);
     v3Subtract(v_BN_N, celBdyVelocityVector, v);
-    
+
     /* Compute RN */
     v3Normalize(v, dcm_RN[1]);
     v3Cross(r, v, h);
     v3Normalize(h, dcm_RN[2]);
     v3Cross(dcm_RN[1], dcm_RN[2], dcm_RN[0]);
-    
+
     /* Compute R-frame orientation */
     C2MRP(dcm_RN, attRefOut->sigma_RN);
-    
+
     /* Compute R-frame inertial rate and acceleration */
     rm = v3Norm(r);
     hm = v3Norm(h);

@@ -1,11 +1,6 @@
 #include <math.h>
-#include <iostream>
-#include <cstring>
-#include <algorithm>
 #include "sensorThermal.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -89,7 +84,7 @@ void SensorThermal::readMessages()
     //! Read vehicle state ephemeris message
     this->stateCurrent = this->stateInMsg();
 
-    //! - Read in optional sun eclipse input message 
+    //! - Read in optional sun eclipse input message
     if(this->sunEclipseInMsg.isLinked()) {
         EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
         sunVisibilityFactor = this->sunEclipseInMsg();
@@ -113,7 +108,7 @@ void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
 
     //! - Read in messages
     this->readMessages();
-    
+
     //! - Evaluate model
     this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
 
@@ -200,5 +195,3 @@ void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
 
     return;
 }
-
-

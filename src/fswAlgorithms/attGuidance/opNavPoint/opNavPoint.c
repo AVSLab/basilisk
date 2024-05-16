@@ -22,7 +22,6 @@
 #include "fswAlgorithms/attGuidance/opNavPoint/opNavPoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
 
 /*! This method initializes the configData for the opNav attitude guidance.
  It checks to ensure that the inputs are sane and then creates the
@@ -108,7 +107,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     opNavMsg = OpNavMsg_C_read(&configData->opnavDataInMsg);
     localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
-    
+
     if (configData->lastTime==0){
         configData->lastTime=callTime*1E-9;
         v3SetZero(configData->currentHeading_N);
@@ -180,6 +179,6 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
 
     /* write the Guidance output message */
     AttGuidMsg_C_write(&configData->attGuidanceOutBuffer, &configData->attGuidanceOutMsg, moduleID, callTime);
-    
+
     return;
 }

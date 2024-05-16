@@ -21,8 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
-#include <cstring>
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/gauss_markov.h"
 
 StarTracker::StarTracker()

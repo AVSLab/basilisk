@@ -18,11 +18,10 @@
  */
 /*
     Thruster RW Momentum Management
- 
+
  */
 
 #include "fswAlgorithms/attControl/thrMomentumManagement/thrMomentumManagement.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 

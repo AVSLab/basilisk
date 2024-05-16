@@ -21,7 +21,6 @@
 #include "string.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/svd.h"
-#include <stdio.h>
 
 /*!
  \verbatim embed:rst
@@ -70,7 +69,7 @@ void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->rwMotorTorqueInMsg)){
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwMotorTorqueInMsg is not connected.");
     }
-    
+
     /*! - Read the input configuration messages.*/
     configData->rwConfigParams = RWArrayConfigMsg_C_read(&configData->rwParamsInMsg);
     configData->mtbConfigParams = MTBArrayConfigMsg_C_read(&configData->mtbParamsInMsg);
@@ -124,7 +123,7 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     ArrayMotorTorqueMsgPayload rwMotorTorqueInMsgBuffer = ArrayMotorTorqueMsg_C_read(&configData->rwMotorTorqueInMsg);
     MTBCmdMsgPayload mtbCmdOutputMsgBuffer = MTBCmdMsg_C_zeroMsgPayload();
     ArrayMotorTorqueMsgPayload rwMotorTorqueOutMsgBuffer = rwMotorTorqueInMsgBuffer;
-    
+
     /*! - Compute the wheel speed feedback.*/
     vSubtract(rwSpeedsInMsgBuffer.wheelSpeeds, numRW, configData->wheelSpeedBiases, configData->wheelSpeedError_W);
     vElementwiseMult(configData->rwConfigParams.JsList, numRW, configData->wheelSpeedError_W, configData->hDeltaWheels_W);
@@ -137,7 +136,7 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     mMultM(BTilde_B, 3, 3, configData->mtbConfigParams.GtMatrix_B, 3, numMTB, BGt);
     solveSVD(BGt, 3, numMTB, mtbCmdOutputMsgBuffer.mtbDipoleCmds, configData->tauIdealRW_B, 0.00000000001);
     vScale(-1.0, mtbCmdOutputMsgBuffer.mtbDipoleCmds, numMTB, mtbCmdOutputMsgBuffer.mtbDipoleCmds);
-    
+
     /*
      * Saturate dipoles.
      */
@@ -145,32 +144,32 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     {
         if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] > configData->mtbConfigParams.maxMtbDipoles[j])
             mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = configData->mtbConfigParams.maxMtbDipoles[j];
-        
+
         if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] < -configData->mtbConfigParams.maxMtbDipoles[j])
             mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = -configData->mtbConfigParams.maxMtbDipoles[j];
     }
-    
+
     /*! - Compute the desired Body torque produced by the torque bars.*/
     mMultV(BGt, 3, numMTB, mtbCmdOutputMsgBuffer.mtbDipoleCmds, configData->tauDesiredMTB_B);
     vScale(-1.0, configData->tauDesiredMTB_B, 3, configData->tauDesiredMTB_B);
-    
+
     /*! - Compute the reaction wheel torque commands.*/
     v3Subtract(configData->tauDesiredMTB_B, configData->tauIdealRW_B, uDelta_B);
     mMinimumNormInverse(Gs, 3, numRW, GsPsuedoInverse);
     mMultV(GsPsuedoInverse, numRW, 3, uDelta_B, uDelta_W);
     vAdd(configData->tauIdealRW_W, numRW, uDelta_W, configData->tauDesiredRW_W);
-    
+
     /*! - Compute the desired Body torque produced by the reaction wheels.*/
     mMultV(Gs, 3, numRW, configData->tauDesiredRW_W, configData->tauDesiredRW_B);
     vScale(-1.0, configData->tauDesiredRW_B, 3, configData->tauDesiredRW_B);
-    
+
     /*
      * Write output messages.
      */
     MTBCmdMsg_C_write(&mtbCmdOutputMsgBuffer, &configData->mtbCmdOutMsg, moduleID, callTime);
     vAdd(configData->tauDesiredRW_W, numRW, rwMotorTorqueOutMsgBuffer.motorTorque, rwMotorTorqueOutMsgBuffer.motorTorque);
     ArrayMotorTorqueMsg_C_write(&rwMotorTorqueOutMsgBuffer, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
-    
+
     return;
 }
 

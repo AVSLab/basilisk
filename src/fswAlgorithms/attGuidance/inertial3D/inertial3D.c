@@ -23,16 +23,12 @@
 
 /* modify the path to reflect the new module names */
 #include "fswAlgorithms/attGuidance/inertial3D/inertial3D.h"
-#include <string.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 
 
 
 /* Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 
 
 /*!
@@ -85,7 +81,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t 
     with zero angular rate and acceleration vectors
  @return void
  @param configData The configuration data associated with the null space control
- @param attRefOut Output message 
+ @param attRefOut Output message
  */
 void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsgPayload *attRefOut)
 {

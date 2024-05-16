@@ -20,7 +20,6 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include <string.h>
 
 /*! This method initializes the configData for the veh config algorithm.
     It initializes the output message in the messaging system.
@@ -47,7 +46,7 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
 
     /*! - Copy over the inertia */
     m33Copy(RECAST3X3 configData->ISCPntB_B, RECAST3X3 localConfigData.ISCPntB_B);
-    
+
     /*! - Copy over the mass */
     localConfigData.massSC = configData->massSC;
 

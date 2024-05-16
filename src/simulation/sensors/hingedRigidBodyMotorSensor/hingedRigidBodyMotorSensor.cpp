@@ -19,8 +19,6 @@
 
 
 #include "simulation/sensors/hingedRigidBodyMotorSensor/hingedRigidBodyMotorSensor.h"
-#include <iostream>
-#include <cstring>
 #include <cmath>
 #include <stdint.h>
 #include <random>
@@ -29,7 +27,7 @@
 HingedRigidBodyMotorSensor::HingedRigidBodyMotorSensor()
 {
 
-    
+
     this->rGen.seed((unsigned int)this->RNGSeed); //! RNGSeed is an attribute of all modules
 
     this->thetaNoiseStd = 0.0;
@@ -84,7 +82,7 @@ void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
     double workingTheta;            //! [rad] discretized panel angle
     double workingThetaDot;         //! [rad/s] discretized panel angle rate
     double remainder;               //! [] remainder between sensed state and discretized state
-    
+
     HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorInMsgBuffer;  //! local copy of message buffer
     HingedRigidBodyMsgPayload hingedRigidBodyMotorSensorOutMsgBuffer;  //! local copy of message buffer
 
@@ -119,7 +117,7 @@ void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
             workingTheta += this->thetaLSB * copysign(1.0,sensedTheta);
         }
         sensedTheta = workingTheta;
-        
+
     }
     if(this->thetaDotLSB > 0.0)
     {
@@ -130,7 +128,7 @@ void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
             workingThetaDot += this->thetaDotLSB * copysign(1.0,sensedThetaDot);
         }
         sensedThetaDot = workingThetaDot;
-        
+
     }
 
     //! write to the output messages
@@ -138,4 +136,3 @@ void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
     hingedRigidBodyMotorSensorOutMsgBuffer.thetaDot = sensedThetaDot;
     this->hingedRigidBodyMotorSensorOutMsg.write(&hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
-

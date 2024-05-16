@@ -18,13 +18,10 @@
  */
 /*
  MRP Rotation Guidance Module with a Constant Body Rate Vector
- 
+
  */
 
 #include "fswAlgorithms/attGuidance/mrpRotation/mrpRotation.h"
-#include <string.h>
-#include <math.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
@@ -62,7 +59,7 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t
 
     v3SetZero(configData->priorCmdSet);
     v3SetZero(configData->priorCmdRates);
-     
+
 }
 
 /*! @brief This method takes the input attitude reference frame, and and superimposes the dynamics MRP
@@ -95,7 +92,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
         /* - Check the command is new */
         checkRasterCommands(configData);
     }
-    
+
     /*! - Compute time step to use in the integration downstream */
     computeTimeStep(configData, callTime);
 
@@ -190,11 +187,11 @@ void computeMRPRotationReference(mrpRotationConfig *configData,
     MRP2C(configData->mrpSet, RR0);
     m33MultM33(RR0, R0N, RN);
     C2MRP(RN, attRefOut->sigma_RN);
-    
+
     /*! - Compute angular velocity of R/N */
     m33tMultV3(RN, configData->omega_RR0_R, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, attRefOut->omega_RN_N);
- 
+
     /*! - Compute angular acceleration of R/N */
     v3Cross(omega_R0N_N, omega_RR0_N, domega_RR0_N);
     v3Add(domega_RR0_N, domega_R0N_N, attRefOut->domega_RN_N);

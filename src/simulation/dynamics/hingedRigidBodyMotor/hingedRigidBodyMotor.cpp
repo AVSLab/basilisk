@@ -20,7 +20,6 @@
 
 #include "simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.h"
 #include <iostream>
-#include <cstring>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -66,7 +65,7 @@ void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
     double refTheta;
     double refThetaDot;
     double torque;
-    
+
     HingedRigidBodyMsgPayload hingedBodyStateSensedInMsgBuffer;  //!< local copy of message buffer for reference
     HingedRigidBodyMsgPayload hingedBodyStateReferenceInMsgBuffer;  //!< local copy of message buffer for measurement
     ArrayMotorTorqueMsgPayload motorTorqueOutMsgBuffer;  //!< local copy of message buffer for motor torque
@@ -87,8 +86,7 @@ void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
     //! calculate motor torque
     torque = -1 * this->K * (sensedTheta - refTheta) - this->P * (sensedThetaDot - refThetaDot);
     motorTorqueOutMsgBuffer.motorTorque[0] = torque;
-    
+
     //! write to the output messages
     this->motorTorqueOutMsg.write(&motorTorqueOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
-

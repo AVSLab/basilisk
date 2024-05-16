@@ -20,7 +20,6 @@
 #include <iostream>
 #include <cstring>
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 /*! This is the constructor for the simple voltage estimator module.  It sets default variable
     values and initializes the various parts of the model */

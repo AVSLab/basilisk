@@ -21,7 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string.h>
 
 /*! This method initializes the configData for the ST sensor interface.
  @return void
@@ -72,6 +71,6 @@ void Update_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t 
     configData->attOutBuffer.timeTag = localInput.timeTag;
 
     STAttMsg_C_write(&configData->attOutBuffer, &configData->stAttOutMsg, moduleID, callTime);
-    
+
     return;
 }

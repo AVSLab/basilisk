@@ -23,11 +23,10 @@
     as well as provides a template for image corruption
     Author: Thibaud Teil
     Date:   October 03, 2019
- 
+
  */
 
 /* modify the path to reflect the new module names */
-#include <Eigen/Dense>
 #include <string.h>
 #include "camera.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -64,12 +63,12 @@ void Camera::Reset(uint64_t currentSimNanos)
 void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat localHsv;
     cvtColor(mSrc, localHsv, cv::COLOR_BGR2HSV);
-    
+
     for (int j = 0; j < mSrc.rows; j++) {
         for (int i = 0; i < mSrc.cols; i++) {
             // Saturation is hsv.at<Vec3b>(j, i)[1] range: [0-255]
             // Value is hsv.at<Vec3b>(j, i)[2] range: [0-255]
-            
+
             // convert radians to degrees and multiply by 2
             // user assumes range hue range is 0-2pi and not 0-180
             int input_degrees = (int) (this->hsv[0] * R2D);
@@ -137,7 +136,7 @@ void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, d
     cv::Mat mGaussian_noise = cv::Mat(mSrc.size(), CV_16SC3);
     /*!  Generates random noise in a normal distribution.*/
     randn(mGaussian_noise, cv::Scalar::all(Mean), cv::Scalar::all(StdDev));
-    
+
     mSrc.convertTo(mSrc_16SC, CV_16SC3);
     /*!  Adds the noise layer to the image layer with a weighted add to prevent overflowing the pixels.*/
     addWeighted(mSrc_16SC, 1.0, mGaussian_noise, 1.0, 0.0, mSrc_16SC);
@@ -156,38 +155,38 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
     /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
     // RNG rng(initValue);
-    
+
     /*! This line makes the hot and dead pixels the same frame to frame.*/
     cv::RNG rng;
-    
+
     /*!  Determines the amount of hot/dead pixels based on the input probabilities.*/
     int amount1 = (int) (mSrc.rows * mSrc.cols * pa);
     int amount2 = (int) (mSrc.rows * mSrc.cols * pb);
-    
+
     cv::Mat mSaltPepper = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mSaltPepper, mSrc.type());
-    
+
     cv::Vec3b black;
     black.val[0] = 0;
     black.val[1] = 0;
     black.val[2] = 0;
-    
+
     cv::Vec3b white;
     white.val[0] = 255;
     white.val[1] = 255;
     white.val[2] = 255;
-    
+
     /*!  Chooses random pixels to be stuck or dead in the amount calculated previously.*/
     for(int counter = 0; counter < amount1; counter++){
         mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows),
                                   rng.uniform(0, mSaltPepper.cols)) = black;
     }
-    
+
     for(int counter = 0; counter < amount2; counter++){
         mSaltPepper.at<cv::Vec3b>(rng.uniform(0, mSaltPepper.rows),
                                   rng.uniform(0, mSaltPepper.cols)) = white;
     }
-    
+
     mSaltPepper.convertTo(mDst, mSrc.type());
 }
 
@@ -204,23 +203,23 @@ void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshho
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = this->localCurrentSimNanos;
     cv::RNG rng((uint64) (initValue + time(0) + randOffset));
-    
+
     float prob = (float) (rng.uniform(0.0, 1.0));
     if (prob > probThreshhold) {
         cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
         mSrc.convertTo(mCosmic, mSrc.type());
-    
+
         /*!  Chooses a random point on the image. Then chooses a second random point within 50 pixels
          * in either direction.*/
         int x = rng.uniform(0, mCosmic.rows);
         int y = rng.uniform(0, mCosmic.cols);
         int deltax = rng.uniform(-maxSize/2, maxSize/2);
         int deltay = rng.uniform(-maxSize/2, maxSize/2);
-        
+
         cv::Point p1 = cv::Point(x, y);
         cv::Point p2 = cv::Point(x + deltax, y + deltay);
         line(mCosmic, p1, p2, cv::Scalar(255, 255, 255), 1, cv::LINE_8);
-    
+
         mCosmic.convertTo(mDst, mSrc.type());
     }
 }
@@ -294,7 +293,7 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
     if(this->cosmicRays > 0){
         this->addCosmicRayBurst(mFilters, mFilters, std::round(this->cosmicRays));
     }
-    
+
     mFilters.convertTo(mDst, mSource.type());
 }
 
@@ -331,10 +330,10 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     cameraMsg.ppFocalLength = this->ppFocalLength;
     cameraMsg.ppFocusDistance = this->ppFocusDistance;
     cameraMsg.ppMaxBlurSize = this->ppMaxBlurSize;
-    
+
     /*! - Update the camera config data no matter if an image is present*/
     this->cameraConfigOutMsg.write(&cameraMsg, this->moduleID, currentSimNanos);
-    
+
     cv::Mat imageCV;
     cv::Mat blurred;
     if (this->saveDir != ""){
@@ -361,7 +360,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-        
+
         this->applyFilters(imageCV, blurred);
         if (this->saveImages == 1){
             if (!cv::imwrite(localPath, blurred)) {
@@ -387,7 +386,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
         this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
         memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
-        
+
         this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
     }
     else{

@@ -20,7 +20,6 @@
 
 #include "simulation/dynamics/msmForceTorque/msmForceTorque.h"
 #include <iostream>
-#include <cstring>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -54,18 +53,18 @@ void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_ERROR, "MsmForceTorque.scStateInMsgs[%d] was not linked.", c);
         }
     }
-    
+
     for (long unsigned int c=0; c < this->voltInMsgs.size(); c++) {
         if (!this->voltInMsgs.at(c).isLinked()) {
             bskLogger.bskLog(BSK_ERROR, "MsmForceTorque.voltInMsgs[%d] was not linked.", c);
         }
     }
-    
+
     this->numSat = (uint32_t) this->scStateInMsgs.size();
     if (this->numSat < 2) {
         bskLogger.bskLog(BSK_ERROR, "MsmForceTorque must have 2 or more spacecraft components added. You added %lu.", this->numSat);
     }
-    
+
     /* determine number of spheres being modeled */
     this->numSpheres = 0;
     for (long unsigned int c=0; c < this->numSat; c++) {
@@ -74,7 +73,7 @@ void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
     if (this->numSpheres == 0) {
         bskLogger.bskLog(BSK_ERROR, "MsmForceTorque does not have any spheres added?");
     }
-    
+
     return;
 }
 
@@ -86,18 +85,18 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
 {
     /* add the message reader to the vector of input spacecraft state messages */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
-    
+
     /* increase the vector of voltage input message readers */
     ReadFunctor<VoltMsgPayload> inVoltMsg;
     this->voltInMsgs.push_back(inVoltMsg);
-    
+
     /* store MSM sphere radii and location information */
     if (radii.size() != r_SB_B.size()) {
         bskLogger.bskLog(BSK_ERROR, "MsmForceTorque:addSpacecraftToModel() The vector of MSM radii and positions must have the same size, they have sizes %lu and %lu.", radii.size(), r_SB_B.size());
     }
     this->radiiList.push_back(radii);
     this->r_SB_BList.push_back(r_SB_B);
-    
+
     this->volt.push_back(0);
     Eigen::Vector3d zero;
     zero << 0.0, 0.0, 0.0;
@@ -105,12 +104,12 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
     Eigen::MRPd zeroMRP;
     zeroMRP = zero;
     this->sigma_BNList.push_back(zeroMRP);
-        
+
     /* create output message objects */
     Message<CmdTorqueBodyMsgPayload> *msgTorque;
     msgTorque = new Message<CmdTorqueBodyMsgPayload>;
     this->eTorqueOutMsgs.push_back(msgTorque);
-    
+
     Message<CmdForceInertialMsgPayload> *msgForce;
     msgForce = new Message<CmdForceInertialMsgPayload>;
     this->eForceOutMsgs.push_back(msgForce);
@@ -128,11 +127,11 @@ void MsmForceTorque::readMessages()
     VoltMsgPayload voltInMsgBuffer;          //!< local copy of voltage input message buffer
     SCStatesMsgPayload scStateInMsgsBuffer;     //!< local copy of spacecraft state input message buffer
     long unsigned int c;                        //!< spacecraft loop counter
-    
+
     for (c = 0; c < this->numSat; c++) {
         voltInMsgBuffer = this->voltInMsgs.at(c)();
         this->volt.at(c) = voltInMsgBuffer.voltage;
-        
+
         scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
         this->r_BN_NList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
         this->sigma_BNList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.sigma_BN);
@@ -147,7 +146,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 {
     // read the input messages
     this->readMessages();
-    
+
     // compute the electrostatic forces and torques
     Eigen::MatrixXd S;                          //!< [1/m] Elastance matrix divided by kc
     Eigen::VectorXd V;                          //!< [V] vector of sphere voltages
@@ -164,7 +163,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
     ChargeMsmMsgPayload chargeMsmMsgBuffer;     //!< [] MSM charge message buffer
 
     kc = 8.99e9;
-    
+
     /* size matrices */
     S.resize(this->numSpheres, this->numSpheres);
     V.resize(this->numSpheres);
@@ -178,7 +177,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
             r_SN_NList.push_back(r_BN_N + dcm_NB * this->r_SB_BList.at(c).at(k));
         }
     }
-    
+
     /*
      setup elastance matrix
      */
@@ -201,7 +200,7 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
             }
         }
     }
-    
+
     /* solve for sphere charges */
     q = S.llt().solve(V);
 
@@ -218,17 +217,17 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 
         netForce_N.setZero();
         netTorque_B.setZero();
-        
+
         dcm_BN = this->sigma_BNList.at(c).toRotationMatrix().transpose();
-        
+
         // set the body sphere end counter
         i1 = i0 + this->radiiList.at(c).size();
-        
+
         // zero output message buffer
         forceMsgBuffer = this->eForceOutMsgs.at(c)->zeroMsgPayload;
         torqueMsgBuffer = this->eTorqueOutMsgs.at(c)->zeroMsgPayload;
         chargeMsmMsgBuffer = this->chargeMsmOutMsgs.at(c)->zeroMsgPayload;
-        
+
         // loop over current body spheres
         for (long unsigned int j=i0; j<i1; j++) {
             force_N.setZero();
@@ -247,11 +246,11 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
             }
             // add to total force acting on spacecraft
             netForce_N += force_N;
-            
+
             // add to total torque acting on spacecraft
             netTorque_B += this->r_SB_BList.at(c).at(j-i0).cross(dcm_BN * force_N);
         }
-        
+
         // store net force and torque acting on body
         eigenVector3d2CArray(netForce_N, forceMsgBuffer.forceRequestInertial);
         this->eForceOutMsgs.at(c)->write(&forceMsgBuffer, this->moduleID, CurrentSimNanos);
@@ -265,5 +264,5 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
         // set the body sphere start counter
         i0 = i1;
     }
-    
+
 }

@@ -22,8 +22,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
 #include <math.h>
-#include <iostream>
-#include <cstring>
 #include <algorithm>
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -82,17 +80,17 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 {
     double tempPhi = this->phi + cssPhiPerturb;
     double tempTheta = this->theta + cssThetaPerturb;
-    
+
     //! - Rotation from individual photo diode sensor frame (S) to css platform frame (P)
     Eigen::Vector3d sensorV3_P; // sensor diode normal in platform frame
     sensorV3_P.fill(0.0);
-    
+
     /*! azimuth and elevation rotations of vec transpose(1,0,0) where vec is the unit normal
      of the photo diode*/
     sensorV3_P[0] = cos(tempPhi) * cos(tempTheta);
     sensorV3_P[1] = cos(tempPhi) * sin(tempTheta);
     sensorV3_P[2] = sin(tempPhi);
-    
+
     //! Rotation from P frame to body frame (B)
     this->nHat_B = this->dcm_PB.transpose() * sensorV3_P;
 }
@@ -133,20 +131,20 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
     nMatrix.resize(1,1);
     pMatrix.resize(1,1);
     bounds.resize(1,1);
-    
+
     this->noiseModel.setRNGSeed(this->RNGSeed);
-    
+
     nMatrix(0,0) = this->senNoiseStd*1.5;
     this->noiseModel.setNoiseMatrix(nMatrix);
-    
+
     bounds(0,0) = this->walkBounds;
     this->noiseModel.setUpperBounds(bounds);
-    
+
     pMatrix(0,0) = 1.;
     this->noiseModel.setPropMatrix(pMatrix);
 
-    
-    
+
+
     // Fault Noise Model
     Eigen::VectorXd nMatrixFault;
     Eigen::VectorXd pMatrixFault;
@@ -159,11 +157,11 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
 
     nMatrixFault(0,0) = this->faultNoiseStd*1.5; // sensor noise standard dev
     this->faultNoiseModel.setNoiseMatrix(nMatrixFault);
-    
+
     boundsFault(0,0) = 2.0; // walk bounds
     this->faultNoiseModel.setUpperBounds(boundsFault);
 
-    pMatrixFault(0,0) = 1.0; // propagation matrix 
+    pMatrixFault(0,0) = 1.0; // propagation matrix
     this->faultNoiseModel.setPropMatrix(pMatrixFault);
 
     Eigen::MatrixXd satBounds;
@@ -202,38 +200,38 @@ void CoarseSunSensor::readInputMessages()
     }
 }
 
-/*! This method computes the sun-vector heading information in the vehicle 
+/*! This method computes the sun-vector heading information in the vehicle
  body frame.*/
 void CoarseSunSensor::computeSunData()
 {
     Eigen::Vector3d Sc2Sun_Inrtl;
     Eigen::Vector3d sHat_N;
     Eigen::Matrix3d dcm_BN;
-    
+
     Eigen::Vector3d r_BN_N_eigen;
     Eigen::Vector3d sunPos;
     Eigen::MRPd sigma_BN_eigen;
-    
+
     //! - Get the position from spacecraft to Sun
-    
+
     //! - Read Message data to eigen
     r_BN_N_eigen = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
     sunPos = cArray2EigenVector3d(this->sunData.PositionVector);
     sigma_BN_eigen = cArray2EigenMRPd(this->stateCurrent.sigma_BN);
-    
-    
+
+
     //! - Find sun heading unit vector
     Sc2Sun_Inrtl = sunPos -  r_BN_N_eigen;
     sHat_N = Sc2Sun_Inrtl / Sc2Sun_Inrtl.norm();
-    
+
     //! - Get the inertial to body frame transformation information and convert sHat to body frame
     dcm_BN = sigma_BN_eigen.toRotationMatrix().transpose();
     this->sHat_B = dcm_BN * sHat_N;
-    
+
     //! - compute sun distance factor
     double r_Sun_Sc = Sc2Sun_Inrtl.norm();
     this->sunDistanceFactor = pow(AU*1000., 2.)/pow(r_Sun_Sc, 2.);
-    
+
 }
 
 /*! This method computes the true sensed values for the sensor */
@@ -254,8 +252,8 @@ void CoarseSunSensor::computeTrueOutput()
     } else {
         kellyFit = 1.0;
     }
-    this->trueValue *= kellyFit; 
-    
+    this->trueValue *= kellyFit;
+
     // apply sun distance factor (adjust based on flux at current distance from sun)
     this->trueValue *= this->sunDistanceFactor;
 
@@ -263,11 +261,11 @@ void CoarseSunSensor::computeTrueOutput()
     this->trueValue *= this->sunVisibilityFactor.shadowFactor;
 
     // Adding albedo value (if defined by the user)
-    if (this->albedoValue > 0.0){        
+    if (this->albedoValue > 0.0){
         this->trueValue += this->albedoValue;}
 }
 
-/*! This method takes the true observed cosine value and converts 
+/*! This method takes the true observed cosine value and converts
  it over to an errored value.  It applies noise to the truth. */
 void CoarseSunSensor::applySensorErrors()
 {
@@ -283,27 +281,27 @@ void CoarseSunSensor::applySensorErrors()
     }
 
     this->sensedValue = this->trueValue + sensorError;
-    
+
     //Apply faults values here.
     this->faultNoiseModel.computeNextState();
-    
+
     if(this->faultState == CSSFAULT_OFF){
         this->sensedValue = 0.0;
     } else if (this->faultState == CSSFAULT_STUCK_MAX){
         this->sensedValue = 1.0;
     } else if (this->faultState == CSSFAULT_STUCK_CURRENT){
-        this->sensedValue = this->pastValue; 
+        this->sensedValue = this->pastValue;
     } else if (this->faultState == CSSFAULT_STUCK_RAND){
         this->sensedValue = this->faultNoiseModel.getCurrentState().coeff(0,0);
-        this->faultState = CSSFAULT_STUCK_CURRENT; 
+        this->faultState = CSSFAULT_STUCK_CURRENT;
     } else if (this->faultState == CSSFAULT_RAND){
         this->sensedValue = this->faultNoiseModel.getCurrentState().coeff(0,0);
     } else { // Nominal
 
     }
 
-    this->pastValue = this->sensedValue; 
-    
+    this->pastValue = this->sensedValue;
+
 }
 
 void CoarseSunSensor::scaleSensorValues()
@@ -320,7 +318,7 @@ void CoarseSunSensor::applySaturation()
     eigenMatrixXd2CArray(sensedEigen, &this->sensedValue);
 }
 
-/*! This method writes the output message.  The output message contains the 
+/*! This method writes the output message.  The output message contains the
  current output of the CSS converted over to some discrete "counts" to
  emulate ADC conversion of S/C.
  @param Clock The current simulation time*/
@@ -354,7 +352,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
     }
 }
 
-/*! This method is called at a specified rate by the architecture.  It makes the 
+/*! This method is called at a specified rate by the architecture.  It makes the
  calls to compute the current sun information and write the output message for
  the rest of the model.
  @param CurrentSimNanos The current simulation time from the architecture*/
@@ -376,7 +374,7 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-/*! The default constructor for the constellation really just clears the 
+/*! The default constructor for the constellation really just clears the
  sensor list.*/
 CSSConstellation::CSSConstellation()
 {
@@ -425,7 +423,7 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         it->scaleSensorValues();
         it->applySaturation();
         it->writeOutputMessages(CurrentSimNanos);
-        
+
         this->outputBuffer.CosValue[itp - this->sensorList.begin()] = it->sensedValue;
 
     }

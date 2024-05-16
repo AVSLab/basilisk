@@ -21,7 +21,6 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
-#include <stdlib.h>
 #include "architecture/utilities/bsk_Print.h"
 
 
@@ -161,7 +160,7 @@ void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, in
     double frameDV_B[3];            /* [m/s] The DV of an integrated acc measurement */
     AccDataMsgPayload inputAccData;     /* [-] Input message container */
     NavTransMsgPayload outputData;      /* [-] The local storage of the outgoing message data */
-    
+
     /*! - zero output message container */
     outputData = NavTransMsg_C_zeroMsgPayload();
 
@@ -169,7 +168,7 @@ void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, in
     inputAccData = AccDataMsg_C_read(&configData->accPktInMsg);
 
     /*! - stack data in time order */
-    
+
     dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); /* measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time. */
 
     /*! - Ensure that the computed dt doesn't get huge.*/
@@ -200,7 +199,7 @@ void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, in
     }
 
     /*! - Create output message */
-    
+
     outputData.timeTag = configData->previousTime*NANO2SEC;
     v3Copy(configData->vehAccumDV_B, outputData.vehAccumDV);
 

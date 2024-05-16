@@ -20,8 +20,6 @@
 #include "fswAlgorithms/sensorInterfaces/TAMSensorData/tamComm.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include <string.h>
 #include <math.h>
 
 /*! This method initializes the configData for the TAM sensor interface.
@@ -57,7 +55,7 @@ void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t
 
     return;
 }
-    
+
 /*! This method takes the sensor data from the magnetometers and
  converts that information to the format used by the TAM nav.
  @return void
@@ -77,6 +75,6 @@ void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_
 
     /*! - Write aggregate output into output message */
     TAMSensorBodyMsg_C_write(&configData->tamLocalOutput, &configData->tamOutMsg, moduleID, callTime);
-    
+
     return;
 }
