@@ -72,7 +72,7 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
     std::string dirName;
     /*! - Save image to prescribed path if requested */
     if (this->saveImages) {
-        dirName = this->saveDir + std::to_string(CurrentSimNanos * 1E-9) + ".png";
+        dirName = this->saveDir + std::to_string((double) CurrentSimNanos * NANO2SEC) + ".png";
         if (!cv::imwrite(dirName, imageCV)) {
             bskLogger.bskLog(BSK_WARNING, "CenterOfBrightness: wasn't able to save images.");
         }
