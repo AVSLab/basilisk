@@ -54,6 +54,7 @@ public:
 private:
     std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
     Eigen::Vector2d weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
+    void computeWindow(cv::Mat const &image);
 
 public:
     Message<OpNavCOBMsgPayload> opnavCOBOutMsg;  //!< The name of the OpNav center of brightness output message
@@ -72,6 +73,9 @@ private:
     Eigen::VectorXi windowCenter{};            //!< [px] center of mask to be used for windowing
     int32_t windowWidth{};                     //!< [px] width of mask to be used for windowing
     int32_t windowHeight{};                    //!< [px] height of mask to be used for windowing
+    Eigen::Vector2i windowPointTopLeft{};      //!< [px] top left point of window
+    Eigen::Vector2i windowPointBottomRight{};  //!< [px] bottom right point of window
+    bool validWindow = false;            //!< [px] true if window is set, false if center, height, or width equal 0
     /* OpenCV specific arguments needed for finding all non-zero pixels*/
     cv::Mat imageGray;                   //!< [cv mat] Gray scale image for weighting
 };

@@ -138,6 +138,31 @@ Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::V
     return coordinates;
 }
 
+/*! This method computes the points of the window used for windowing
+ @return void
+ @param image openCV matrix of the input image
+ */
+void CenterOfBrightness::computeWindow(cv::Mat const &image)
+{
+    // if any of the window parameters is 0 (not specified), window is the same as image dimensions and won't be applied
+    if (this->windowCenter.isZero() || this->windowWidth == 0 || this->windowHeight == 0) {
+        this->windowPointTopLeft[0] = 0;
+        this->windowPointTopLeft[1] = 0;
+        this->windowPointBottomRight[0] = image.size().width;
+        this->windowPointBottomRight[1] = image.size().height;
+    } else {
+        this->windowPointTopLeft[0] = this->windowCenter[0] - this->windowWidth/2;
+        this->windowPointTopLeft[1] = this->windowCenter[1] - this->windowHeight/2;
+        this->windowPointBottomRight[0] = this->windowCenter[0] + this->windowWidth/2;
+        this->windowPointBottomRight[1] = this->windowCenter[1] + this->windowHeight/2;
+        this->validWindow = true;
+    }
+    assert(windowPointTopLeft[0] >= 0);
+    assert(windowPointTopLeft[1] >= 0);
+    assert(windowPointBottomRight[0] <= image.size().width);
+    assert(windowPointBottomRight[1] <= image.size().height);
+}
+
 /*! Set the mask center for windowing
     @param Eigen::Vector2i center [px]
     @return void
