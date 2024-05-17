@@ -16,8 +16,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#ifndef SRUKF_INTERFACE_HPP
-#define SRUKF_INTERFACE_HPP
+#ifndef EKF_INTERFACE_HPP
+#define EKF_INTERFACE_HPP
 
 #include <Eigen/Dense>
 #include <functional>
@@ -30,32 +30,39 @@
 #include "fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h"
 #include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
 
-/*! @brief Square Root unscented Kalman Filter base class */
-class SRukfInterface: public SysModel  {
+/*! Enumerator class to set if the filter is meant to be used purely as a linear/classical KF,
+ * no reference state updates will be performed in the classical filter, while the EKF updates the reference
+ * with the computed state error at each measurement update */
+enum class FilterType {Classical, Extended};
+
+/*! @brief Extended or Classical/Linear Kalman Filter base class. */
+class EkfInterface: public SysModel  {
 public:
-    SRukfInterface();
-    ~SRukfInterface() override;
+    EkfInterface(FilterType type);
+    ~EkfInterface() override;
     void Reset(uint64_t CurrentSimNanos) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
 
-    void setAlpha(const double alpha);
-    double getAlpha() const;
-    void setBeta(const double beta);
-    double getBeta() const;
-    void setInitialState(const Eigen::VectorXd initialState);
+    void setMinimumCovarianceNormForEkf(double infiniteNorm);
+    double getMinimumCovarianceNormForEkf() const;
+    void setInitialState(const Eigen::VectorXd &initialState);
     Eigen::VectorXd getInitialState() const;
-    void setInitialCovariance(const Eigen::MatrixXd initialCovariance);
+    void setInitialCovariance(const Eigen::MatrixXd &initialCovariance);
     Eigen::MatrixXd getInitialCovariance() const;
-    void setProcessNoise(const Eigen::MatrixXd processNoise);
+    void setProcessNoise(const Eigen::MatrixXd &processNoise);
     Eigen::MatrixXd getProcessNoise() const;
-    void setUnitConversionFromSItoState(const double conversion);
+    void setUnitConversionFromSItoState(double conversion);
     double getUnitConversionFromSItoState() const ;
+    void setConstantRateStates(const Eigen::VectorXd &rateStates);
+    Eigen::VectorXd getConstantRateStates() const;
 
 protected:
     virtual void customReset(){/* virtual */};
     virtual void customInitializeUpdate(){/* virtual */};
     virtual void customFinalizeUpdate(){/* virtual */};
     virtual Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt)=0;
+    virtual Eigen::MatrixXd computeDynamicsMatrix(const Eigen::VectorXd& state)=0;
+    virtual Eigen::MatrixXd computeMeasurementMatrix(const Eigen::VectorXd& state)=0;
     /*! Read method neads to read incoming messages containing the measurements for the filter.
      * Their information must be added to the Measurement container class, and added to the measurements vector.
      * Each measurement must be paired with a measurement model provided in the measurementModels.h */
@@ -68,45 +75,35 @@ protected:
                 double dt) const;
 
     std::array<std::optional<Measurement>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All measurement containers in chronological order
-    double previousFilterTimeTag = 0; //!< [s]  Time tag for statecovar/etc
+    double previousFilterTimeTag = 0; //!< [s]  Last filter time-tag
     double unitConversion = 1; //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
+    bool updatedWithCkf = true; //!< [-] Flag to signal that filter was last updated with a Linear measurement update
 
-    size_t numberSigmaPoints=0; //!< [s]  2n+1 sigma points for convenience
     Eigen::VectorXd state; //!< [-] State estimate for time TimeTag
-    Eigen::MatrixXd sBar; //!< [-] Time updated covariance
+    Eigen::VectorXd stateError; //!< [-] State error for time TimeTag
+    Eigen::VectorXd constantRateStates; //!< [-] Constant rate states if the filter doesn not estimate them
+    Eigen::MatrixXd stateTransitionMatrix; //!< [-] State Transition Matrix
     Eigen::MatrixXd covar; //!< [-] covariance
-    Eigen::VectorXd xBar; //!< [-] Current mean state estimate
-    Eigen::MatrixXd sigmaPoints; //!< [-]    sigma point matrix
-
-    Eigen::MatrixXd yMeas; //!< [-] Measurement model data
-    Eigen::VectorXd postFits; //!< [-] PostFit residuals
-    Eigen::MatrixXd cholProcessNoise; //!< [-] cholesky of Qnoise
 
 private:
     void timeUpdate(const double updateTime);
     void measurementUpdate(const Measurement &measurement);
     Eigen::VectorXd computeResiduals(const Measurement &measurement);
-    Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd input) const;
-    Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd input,
-                                       const Eigen::VectorXd inputVector,
-                                       const double coefficient) const;
-    Eigen::MatrixXd backSubstitution(const Eigen::MatrixXd U, const Eigen::MatrixXd b) const;
-    Eigen::MatrixXd forwardSubstitution(const Eigen::MatrixXd L, const Eigen::MatrixXd b) const;
-    Eigen::MatrixXd choleskyDecomposition(const Eigen::MatrixXd input) const;
+    Eigen::MatrixXd computeKalmanGain(const Eigen::MatrixXd &covar,
+                                    const Eigen::MatrixXd &measurementMatrix,
+                                    const Eigen::MatrixXd &measurementNoise) const;
+    void updateCovariance(const Eigen::MatrixXd &measMat, const Eigen::MatrixXd &noise, const Eigen::MatrixXd &kalmanGain);
+    void ckfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &yMeas, const Eigen::MatrixXd &measurementMatrix);
+    void ekfUpdate(const Eigen::MatrixXd &kalmanGain, const Eigen::VectorXd &yMeas);
+
     void orderMeasurementsChronologically();
-
-    double beta=0;
-    double alpha=0;
-    double lambda=0;
-    double eta=0;
-
-    Eigen::VectorXd wM;
-    Eigen::VectorXd wC;
 
     Eigen::MatrixXd processNoise; //!< [-] process noise matrix
     Eigen::VectorXd stateInitial; //!< [-] State estimate for time TimeTag at previous time
-    Eigen::MatrixXd sBarInitial; //!< [-] Time updated covariance at previous time
     Eigen::MatrixXd covarInitial; //!< [-] covariance at previous time
+    double minCovarNorm = 1E-5; /*!< [-] Infinite norm after which the filter will begin processing measurements as
+    an extended kalman filter */
+    FilterType ckfOnlyMode = FilterType::Extended; //!< [-] flag to know whether the filter is being run as a linear KF or extended KF
 };
 
-#endif /* SRUKF_INTERFACE_HPP */
+#endif /* EKF_INTERFACE_HPP */

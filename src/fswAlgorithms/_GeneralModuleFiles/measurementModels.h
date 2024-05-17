@@ -23,6 +23,27 @@
 #ifndef FILTER_MEAS_MODELS_H
 #define FILTER_MEAS_MODELS_H
 
+/*! @brief Container class for measurement data and models */
+class Measurement{
+public:
+    Measurement() = default;
+
+    std::string name = ""; //!< [-] name of measurement  type
+    size_t size = 0; //!< [-] size of observation vector
+    double timeTag = 0; //!< [-] Observation time tag
+    bool validity = false; //!< [-] Observation validity
+    Eigen::VectorXd observation; //!< [-] Observation data vector
+    Eigen::MatrixXd noise; //!< [-] Constant measurement Noise
+    Eigen::MatrixXd choleskyNoise; //!< [-] cholesky of Qnoise
+    Eigen::VectorXd postFitResiduals; //!< [-] Observation post fit residuals
+    Eigen::VectorXd preFitResiduals; //!< [-] Observation pre fit residuals
+     /*! Each measurement must be paired with a measurement model as a function which inputs the
+     * sigma point matrix and outputs the modeled measurement for each sigma point */
+    std::function<const Eigen::MatrixXd(const Eigen::MatrixXd)> model; //!< [-] observation measurement model
+};
+
+
+
 /*! @brief Measurement models used to map a state vector to a measurement */
 Eigen::VectorXd normalizedFirstThreeStates(Eigen::VectorXd state);
 Eigen::VectorXd firstThreeStates(Eigen::VectorXd state, size_t beginSlice, size_t endSlice);
