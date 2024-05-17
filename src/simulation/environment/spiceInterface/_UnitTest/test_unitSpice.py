@@ -376,6 +376,42 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+def test_59_999999_second_epoch():
+    """
+    Unit test added to reproduce issue #690
+    """
+    DateSpice = "2015 February 10, 00:00:59.999999 UTC"
+
+    # Create a sim module as an empty container
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    TotalSim = SimulationBaseClass.SimBaseClass()
+
+    DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
+    # create the dynamics task and specify the integration update time
+    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+
+    # Initialize the spice modules that we are using.
+    SpiceObject = spiceInterface.SpiceInterface()
+    SpiceObject.ModelTag = "SpiceInterfaceData"
+    SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
+
+    TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+
+    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(DateSpice)
+    SpiceObject.epochInMsg.subscribeTo(epochMsg)
+
+    # Configure simulation
+    TotalSim.ConfigureStopTime(int(60.0 * 1E9))
+
+    # Execute simulation
+    TotalSim.InitializeSimulation()
+    TotalSim.ExecuteSimulation()
+
+    print(SpiceObject.UTCCalInit)
+    assert(SpiceObject.UTCCalInit[-15:] == "59.999999 (UTC)")
 
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
