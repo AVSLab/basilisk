@@ -96,12 +96,12 @@ void SRukfInterface::UpdateState(uint64_t currentSimNanos)
              measurement = this->measurements[index].value();}
          /*! - If the time tag from a valid measurement is new compared to previous step,
          propagate and update the filter*/
-         if (measurement.timeTag * NANO2SEC >= this->previousFilterTimeTag && measurement.validity) {
+         if (measurement.timeTag >= this->previousFilterTimeTag && measurement.validity) {
               /*! - prepare measurement data */
              measurement.choleskyNoise = SRukfInterface::choleskyDecomposition(measurement.noise);
 
              /*! - time update to the measurement time and compute pre-fit residuals*/
-             this->timeUpdate(measurement.timeTag * NANO2SEC);
+             this->timeUpdate(measurement.timeTag);
              measurement.preFitResiduals = this->computeResiduals(measurement);
              /*! - measurement update and compute post-fit residuals  */
              this->measurementUpdate(measurement);
@@ -111,7 +111,7 @@ void SRukfInterface::UpdateState(uint64_t currentSimNanos)
      }
     /*! - If current clock time is further ahead than the last measurement time, then
     propagate to this current time-step*/
-    if ((double) currentSimNanos * NANO2SEC >= this->previousFilterTimeTag) {
+    if ((double) currentSimNanos * NANO2SEC > this->previousFilterTimeTag) {
         this->timeUpdate((double) currentSimNanos * NANO2SEC);
     }
     this->customFinalizeUpdate();
