@@ -16,7 +16,7 @@ In order to run Basilisk, the following software will be necessary. This documen
 -  `Python <https://www.python.org/>`__ 3.8.x or greater.  The following python package dependencies are automatically
    checked and installed in the steps below.
 
-   - .. include:: ../bskPkgRequired.txt
+   - .. include:: ../../requirements.txt
 
 -  `SWIG <http://www.swig.org/>`__ (version 4.x)
 -  `GCC <https://gcc.gnu.org/>`__
@@ -166,4 +166,3 @@ If you are developing new modules you often just want to configure the Basilisk 
 #. You can do a multi core make by running ``make -j<number of cores +1>`` such as::
 
        (venv) $ make -j5
-
