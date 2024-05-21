@@ -40,6 +40,7 @@ Version |release|
   to include them in BSK source code files individually.
 - Added support for arrays and 2D arrays of 16 and 64 bit integers in message definitions
 - Fixed bug where 2D arrays of 32 bit integers would have elements of type ``float`` in python.
+- Fixed the ``Identity()`` method in avsEigenMRP library.
 
 
 Version 2.3.0 (April 5, 2024)

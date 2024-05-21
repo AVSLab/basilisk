@@ -46,7 +46,7 @@ namespace Eigen {
         struct MRPbase_assign_impl;
     }
 
-    /** \geometry_module \ingroup Geometry_Module
+    /**
      * \class MRPBase
      * \brief Base class for MRP expressions
      * \tparam Derived derived type (CRTP)
@@ -119,7 +119,7 @@ namespace Eigen {
         Derived& operator=(const AngleAxisType& aa);
         template<class OtherDerived> Derived& operator=(const MatrixBase<OtherDerived>& m); //!< method
 
-        /** \returns a MRP representing an identity rotation
+        /** \returns a MRP representing an identity mapping or zero rotation
          * \sa MatrixBase::Identity()
          */
         static inline MRP<Scalar> Identity() { return MRP<Scalar>(Scalar(0), Scalar(0), Scalar(0)); }
@@ -208,7 +208,7 @@ namespace Eigen {
      * Definition/implementation of MRP<Scalar>
      ***************************************************************************/
 
-    /** \geometry_module \ingroup Geometry_Module
+    /**
      *
      * \class MRP
      *
@@ -237,8 +237,11 @@ namespace Eigen {
         /*! structure definition */
         struct traits<MRP<_Scalar,_Options> >
         {
+            /** struct definition */
             typedef MRP<_Scalar,_Options> PlainObject;
+            /** struct definition */
             typedef _Scalar Scalar;
+            /** struct definition */
             typedef Matrix<_Scalar,3,1,_Options> Coefficients;
             enum{
                 IsAligned = internal::traits<Coefficients>::Flags & PacketAccessBit,
@@ -303,6 +306,9 @@ namespace Eigen {
         Coefficients m_coeffs; //!< variable
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
+        /**
+         Check template parameters
+         */
         static EIGEN_STRONG_INLINE void _check_template_params()         //!< method
         {
             EIGEN_STATIC_ASSERT( (_Options & DontAlign) == _Options,
@@ -311,10 +317,10 @@ namespace Eigen {
 #endif
     };
 
-    /** \ingroup Geometry_Module
+    /**
      * single precision MRP type */
     typedef MRP<float> MRPf;
-    /** \ingroup Geometry_Module
+    /**
      * double precision MRP type */
     typedef MRP<double> MRPd;
 
@@ -323,20 +329,24 @@ namespace Eigen {
      ***************************************************************************/
 
     namespace internal {
+        /** struct definition */
         template<typename _Scalar, int _Options>
-        /*! struct definition */
+        /** struct definition */
         struct traits<Map<MRP<_Scalar>, _Options> > : traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> >
         {
+            /** struct definition */
             typedef Map<Matrix<_Scalar,3,1>, _Options> Coefficients;
         };
     }
 
     namespace internal {
         template<typename _Scalar, int _Options>
-        /*! struct definition */
+        /** struct definition */
         struct traits<Map<const MRP<_Scalar>, _Options> > : traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> >
         {
+            /** struct definition */
             typedef Map<const Matrix<_Scalar,3,1>, _Options> Coefficients;
+            /** struct definition */
             typedef traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> > TraitsBase;
             enum {
                 Flags = TraitsBase::Flags & ~LvalueBit
@@ -344,7 +354,7 @@ namespace Eigen {
         };
     }
 
-    /** \ingroup Geometry_Module
+    /**
      * \brief MRP expression mapping a constant memory buffer
      *
      * \tparam _Scalar the type of the MRP coefficients
@@ -372,7 +382,7 @@ namespace Eigen {
          * The pointer \a coeffs must reference the three coefficients of MRP in the following order:
          * \code *coeffs == {x, y, z} \endcode
          *
-         * If the template parameter _Options is set to #Aligned, then the pointer coeffs must be aligned. */
+         * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
         EIGEN_STRONG_INLINE Map(const Scalar* coeffs) : m_coeffs(coeffs) {}
 
         inline const Coefficients& coeffs() const { return m_coeffs;} //!< method
@@ -381,7 +391,7 @@ namespace Eigen {
         const Coefficients m_coeffs; //!< variable
     };
 
-    /** \ingroup Geometry_Module
+    /**
      * \brief Expression of a MRP from a memory buffer
      *
      * \tparam _Scalar the type of the MRP coefficients
@@ -409,7 +419,7 @@ namespace Eigen {
          * The pointer \a coeffs must reference the three coefficients of MRP in the following order:
          * \code *coeffs == {x, y, z} \endcode
          *
-         * If the template parameter _Options is set to #Aligned, then the pointer coeffs must be aligned. */
+         * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
         EIGEN_STRONG_INLINE Map(Scalar* coeffs) : m_coeffs(coeffs) {}
 
         inline Coefficients& coeffs() { return m_coeffs; } //!< method
@@ -419,16 +429,16 @@ namespace Eigen {
         Coefficients m_coeffs; //!< variable
     };
 
-    /** \ingroup Geometry_Module
+    /**
      * Map an unaligned array of single precision scalars as a MRP */
     typedef Map<MRP<float>, 0>         MRPMapf;
-    /** \ingroup Geometry_Module
+    /**
      * Map an unaligned array of double precision scalars as a MRP */
     typedef Map<MRP<double>, 0>        MRPMapd;
-    /** \ingroup Geometry_Module
+    /**
      * Map a 16-byte aligned array of single precision scalars as a MRP */
     typedef Map<MRP<float>, Aligned>   MRPMapAlignedf;
-    /** \ingroup Geometry_Module
+    /**
      * Map a 16-byte aligned array of double precision scalars as a MRP */
     typedef Map<MRP<double>, Aligned>  MRPMapAlignedd;
 
@@ -792,6 +802,7 @@ namespace Eigen {
         {
             typedef typename Other::Scalar Scalar; //!< variable
             typedef DenseIndex Index; //!< variable
+            /** Class Definition */
             template<class Derived> static inline void run(MRPBase<Derived>& sig, const Other& mat)
             {
                 Quaternion<Scalar> q;
@@ -810,10 +821,13 @@ namespace Eigen {
         
         // set from a vector of coefficients assumed to be a MRP
         template<typename Other>
-        /*! struct definition */
+        /**
+         structure definition
+         */
         struct MRPbase_assign_impl<Other,3,1>
         {
             typedef typename Other::Scalar Scalar; //!< variable
+            /** Class definition */
             template<class Derived> static inline void run(MRPBase<Derived>& q, const Other& vec)
             {
                 q.coeffs() = vec;
