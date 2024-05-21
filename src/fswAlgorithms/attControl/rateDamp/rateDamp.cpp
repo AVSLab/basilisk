@@ -50,3 +50,19 @@ void RateDamp::UpdateState(uint64_t CurrentSimNanos)
 {
 
 }
+
+/*! Set the module rate feedback gain
+    @param double P
+    @return void
+    */
+void RateDamp::setRateGain(const double p) {
+    this->P = p;
+}
+
+/*! Get the module rate feedback gain
+    @param double measurementNoiseScale
+    @return void
+    */
+double RateDamp::getRateGain() const {
+    return this->P;
+}

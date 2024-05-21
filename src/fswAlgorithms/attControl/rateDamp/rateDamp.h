@@ -42,7 +42,11 @@ public:
     Message<CmdTorqueBodyMsgPayload>       cmdTorqueOutMsg;       //!< commanded torque output message
     CmdTorqueBodyMsg_C                     cmdTorqueOutMsgC = {}; //!< C-wrapped commanded torque output message
 
+    void setRateGain(double const p);
+    double getRateGain() const;
+
 private:
+    double P;       //!< [N*m*s] Rate feedback gain
 
 };
 
