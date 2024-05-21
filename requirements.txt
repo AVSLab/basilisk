@@ -1,0 +1,9 @@
+conan>=1.40.1, <2.00.0
+pandas
+parse>=1.18.0
+Pillow
+pytest
+pytest-html
+pytest-xdist
+matplotlib
+numpy
