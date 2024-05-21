@@ -38,7 +38,7 @@ void RateDamp::SelfInit(){
  */
 void RateDamp::Reset(uint64_t CurrentSimNanos)
 {
-
+    assert(this->attNavInMsg.isLinked());
 }
 
 
