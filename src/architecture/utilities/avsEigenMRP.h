@@ -122,7 +122,7 @@ namespace Eigen {
         /** \returns a MRP representing an identity rotation
          * \sa MatrixBase::Identity()
          */
-        static inline MRP<Scalar> Identity() { return MRP<Scalar>(Scalar(1), Scalar(0), Scalar(0), Scalar(0)); }
+        static inline MRP<Scalar> Identity() { return MRP<Scalar>(Scalar(0), Scalar(0), Scalar(0)); }
 
         /** \sa MRPBase::Identity(), MatrixBase::setIdentity()
          */
