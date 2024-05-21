@@ -24,7 +24,8 @@ In order to run Basilisk, the following software will be necessary:
 
 The following python package dependencies are automatically checked and installed in the steps below.
 
-- .. include:: ../bskPkgRequired.txt
+.. literalinclude:: ../../../requirements.txt
+   :language: python
 
 Configuration
 -------------
@@ -139,10 +140,7 @@ Installing required python support packages
       If you are upgrading from a version of Basilisk prior to 1.8.0, be sure to delete the ``.conan`` folder in your
       home directory to create a clean copy compatible with the current build system.
 
-- The following python packages are the minimum required packages for Basilisk.  They are installed and checked
-  for the correction version in the steps below.
-
-  - .. include:: ../bskPkgRequired.txt
+- The required python packages for Basilisk will be installed automatically when running ``conanfile.py``.
 
 -  `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability, including ``pytest`` to run an automated test suite of unit and integrated tests.
 

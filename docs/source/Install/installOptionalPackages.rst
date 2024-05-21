@@ -18,7 +18,8 @@ This page contains all the optional python packages that can be included to unlo
 features or utilities.  For convenience the complete set of optional packages, including any constraints on
 acceptable versions, are listed here:
 
-    .. include:: ../bskPkgOptions.txt
+.. literalinclude:: ../../../requirements_optional.txt
+   :language: python
 
 To automatically ensure that the system has all optional packages installed, use the ``allOptPkg``
 flag as discussed in :ref:`configureBuild`.
