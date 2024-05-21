@@ -10,8 +10,6 @@ from Basilisk.utilities import SimulationBaseClass as sbc
 from Basilisk.utilities import macros
 
 
-#from Basilisk.simulation import simFswInterfaceMessages
-
 @pytest.mark.parametrize("msg_type", ['AttRefMsg','NavAttMsg'])
 @pytest.mark.parametrize("use_limits", [True, False])
 def test_hillToAttRef(show_plots, use_limits, msg_type):

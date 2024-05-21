@@ -165,7 +165,6 @@ def horizonOpNav_update():
     # Set the names for the input messages
     opNav = horizonOpNav.horizonOpNav()
     opNav.noiseSF = 2
-    # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, update, and reset
     opNav.ModelTag = "limbNav"
