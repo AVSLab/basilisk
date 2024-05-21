@@ -37,17 +37,17 @@ Installing Python
 ~~~~~~~~~~~~~~~~~~
 
 Python is installed using the Windows installer found on the Python website. Make sure to choose the correct
-installer for your architecture. When stepping through the installer there are two menus options menus. The 
+installer for your architecture. When stepping through the installer there are two menus options menus. The
 first is the optional features menu for which all options should be selected.
 
    .. image:: /_images/static/windows-installer-python-optional-features-installer-menu.png
       :align: center
       :scale: 75%
 
-The second menu is the python advanced options menu where both "Download debugging symbols" and "Download debug binaries 
+The second menu is the python advanced options menu where both "Download debugging symbols" and "Download debug binaries
 (requires VS 2017 or later)" should be selected in order to build Basilisk with a Debug profile. A Debug profile is
-required to place accurate breakpoints/attach a debugger to C/C++ code.  
- 
+required to place accurate breakpoints/attach a debugger to C/C++ code.
+
    .. image:: /_images/static/windows-installer-python-advanced-options-installer-menu.png
       :align: center
       :scale: 75%
@@ -207,6 +207,3 @@ using:
 
    -  Change the active config to Release instead of debug for solution properties.
    -  Within Visual Studio now go under `Build menu/Build Solution` to build.
-
-
-

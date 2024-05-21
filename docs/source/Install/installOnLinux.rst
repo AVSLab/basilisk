@@ -167,4 +167,3 @@ If you are developing new modules you often just want to configure the Basilisk 
 #. You can do a multi core make by running ``make -j<number of cores +1>`` such as::
 
        (venv) $ make -j5
-

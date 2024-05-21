@@ -72,5 +72,3 @@ The following python packages must be installed via ``pip``::
     pip3 install 'sphinx<5.0' sphinx_rtd_theme==0.5.1 breathe recommonmark docutils
 
 See the list at the top of this page for what versions of these packages are acceptable.
-
-
