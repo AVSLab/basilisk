@@ -48,7 +48,18 @@ void RateDamp::Reset(uint64_t CurrentSimNanos)
  */
 void RateDamp::UpdateState(uint64_t CurrentSimNanos)
 {
+    /*! Read input attitude navigation msg */
+    NavAttMsgPayload attNavInBuffer = this->attNavInMsg();
 
+    /*! Create and populate cmd torque buffer message */
+    CmdTorqueBodyMsgPayload cmdTorqueOutBuffer;
+    for (int i=0; i<3; ++i) {
+        cmdTorqueOutBuffer.torqueRequestBody[i] = -this->P * attNavInBuffer.omega_BN_B[i];
+    }
+
+    /*! Write output messages */
+    this->cmdTorqueOutMsg.write(&cmdTorqueOutBuffer, this->moduleID, CurrentSimNanos);
+    CmdTorqueBodyMsg_C_write(&cmdTorqueOutBuffer, &this->cmdTorqueOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
 /*! Set the module rate feedback gain
