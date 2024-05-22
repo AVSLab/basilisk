@@ -91,10 +91,12 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport, simIncludeThruster)
 from Basilisk.simulation import simSynch
-from Basilisk.simulation import vizInterface
 from Basilisk.architecture import messaging
 from Basilisk.simulation import thrusterDynamicEffector
-
+try:
+    from Basilisk.simulation import vizInterface
+except ImportError:
+    pass
 
 def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
     """
@@ -202,11 +204,6 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
 
-    # create spacecraft data container
-    scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = scObject.ModelTag
-    scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-
     # Configure thruster
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
     scSim.AddModelToTask(simTaskName, thrusterSet)
@@ -242,59 +239,68 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
-    if liveStream:
-        clockSync = simSynch.ClockSynch()
-        clockSync.accelFactor = 50.0
-        scSim.AddModelToTask(simTaskName, clockSync)
+    if vizSupport.vizFound:
+        # create spacecraft data container
+        scData = vizInterface.VizSpacecraftData()
+        scData.spacecraftName = scObject.ModelTag
+        scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
-    # Configure Vizard, using liveStream and broadcastStream options
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , thrEffectorList=thrusterSet
-                                              , thrColors=vizSupport.toRGBA255("white")
-                                              , liveStream=liveStream
-                                              , broadcastStream=broadcastStream
-                                              )
-    # Set key listeners
-    viz.settings.keyboardLiveInput = "bx"
+        if liveStream:
+            clockSync = simSynch.ClockSynch()
+            clockSync.accelFactor = 50.0
+            scSim.AddModelToTask(simTaskName, clockSync)
 
-    # To set 2-way port:
-    viz.reqComProtocol = "tcp"
-    viz.reqComAddress = "localhost"
-    viz.reqPortNumber = "5556"
+        # Configure Vizard, using liveStream and broadcastStream options
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  , thrEffectorList=thrusterSet
+                                                  , thrColors=vizSupport.toRGBA255("white")
+                                                  , liveStream=liveStream
+                                                  , broadcastStream=broadcastStream
+                                                  )
+        # Set key listeners
+        viz.settings.keyboardLiveInput = "bxz"
 
-    # To set broadcast port:
-    viz.pubComProtocol = "tcp"
-    viz.pubComAddress = "localhost"
-    viz.pubPortNumber = "5570"
+        # To set 2-way port:
+        viz.reqComProtocol = "tcp"
+        viz.reqComAddress = "localhost"
+        viz.reqPortNumber = "5556"
 
-    # Pre-instantiate panels
-    infopanel = vizInterface.VizEventDialog()
-    infopanel.eventHandlerID = "INFO PANEL"
-    infopanel.displayString = """This is an information panel. Vizard is reporting 'b' and 'x' keystrokes back to BSK,
-    which you can hook up to specific sim states. In this case, press 'b' to show a burn panel. If you initiate
-    a burn, press 'x' to stop the burn. Note: it is up to the user to handle multiple long key presses."""
-    infopanel.durationOfDisplay = 0  # stay open
-    infopanel.dialogFormat = "CAUTION"
+        # To set broadcast port:
+        viz.pubComProtocol = "tcp"
+        viz.pubComAddress = "localhost"
+        viz.pubPortNumber = "5570"
 
-    burnpanel = vizInterface.VizEventDialog()
-    burnpanel.eventHandlerID = "OPTION PANEL"
-    burnpanel.displayString = "This panel accepts a user response. Initiate burn?"
-    burnpanel.durationOfDisplay = 0  # stay open
-    burnpanel.hideOnSelection = True
-    burnpanel.userOptions.append("Yes")
-    burnpanel.userOptions.append("No")
-    burnpanel.useConfirmationPanel = True
-    burnpanel.dialogFormat = "WARNING"
+        # Pre-instantiate panels
+        infopanel = vizInterface.VizEventDialog()
+        infopanel.eventHandlerID = "INFO PANEL"
+        infopanel.displayString = """This is an information panel. Vizard is reporting 'b', 'x' and 'z' \
+keystrokes back to BSK, which you can hook up to specific sim states. In this case, \
+press 'b' to show a burn panel. If you initiate a burn, press 'x' to stop the burn. \
+Press 'z' to stop the simulation.
+        
+        Note: it is up to the user to handle multiple long key presses."""
+        infopanel.durationOfDisplay = 0  # stay open
+        infopanel.dialogFormat = "CAUTION"
 
-    hudpanel = vizInterface.VizEventDialog()
-    hudpanel.eventHandlerID = "HUD"
-    hudpanel.durationOfDisplay = 0  # stay open
+        burnpanel = vizInterface.VizEventDialog()
+        burnpanel.eventHandlerID = "OPTION PANEL"
+        burnpanel.displayString = "This panel accepts a user response. Initiate burn?"
+        burnpanel.durationOfDisplay = 0  # stay open
+        burnpanel.hideOnSelection = True
+        burnpanel.userOptions.append("Yes")
+        burnpanel.userOptions.append("No")
+        burnpanel.useConfirmationPanel = True
+        burnpanel.dialogFormat = "WARNING"
 
-    # Del viz.vizEventDialogs[:] at the start of the sim
-    viz.vizEventDialogs.clear()
+        hudpanel = vizInterface.VizEventDialog()
+        hudpanel.eventHandlerID = "HUD"
+        hudpanel.durationOfDisplay = 0  # stay open
 
-    # "Subscriber" Vizards will pick up the main settings at this frequency
-    viz.broadcastSettingsSendDelay = 2  # seconds
+        # Del viz.vizEventDialogs[:] at the start of the sim
+        viz.vizEventDialogs.clear()
+
+        # "Subscriber" Vizards will pick up the main settings at this frequency
+        viz.broadcastSettingsSendDelay = 2  # seconds
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -325,7 +331,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
         scSim.ExecuteSimulation()
     
         # Retrieve copy of user input message from Vizard
-        if liveStream:
+        if liveStream and vizSupport.vizFound:
             userInputs = viz.userInputMsg.read()
             keyInputs = userInputs.keyboardInput
             eventInputs = userInputs.vizEventReplies
@@ -343,6 +349,9 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
                     continueBurn = False
                     thrMsgData.OnTimeRequest = [0, 0, 0]
                     thrMsg.write(thrMsgData, incrementalStopTime)
+            if 'z' in keyInputs:
+                print("key - z")
+                incrementalStopTime = simulationTime
 
             # Parse panel responses
             for response in eventInputs:
