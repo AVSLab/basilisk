@@ -90,13 +90,14 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
 
     /*!- If no lit pixels are found do not validate the image as a measurement */
     if (!locations.empty()){
-        Eigen::Vector2d cobCoordinates = this->weightedCenterOfBrightness(locations);
+        std::pair<Eigen::Vector2d, double> cobData;
+        cobData = this->computeWeightedCenterOfBrightness(locations);
 
         cobBuffer.valid = true;
         cobBuffer.timeTag = this->sensorTimeTag;
         cobBuffer.cameraID = imageBuffer.cameraID;
-        cobBuffer.centerOfBrightness[0] = cobCoordinates[0];
-        cobBuffer.centerOfBrightness[1] = cobCoordinates[1];
+        cobBuffer.centerOfBrightness[0] = cobData.first[0];
+        cobBuffer.centerOfBrightness[1] = cobData.first[1];
         cobBuffer.pixelsFound = static_cast<int32_t> (locations.size());
     }
 
@@ -124,11 +125,11 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image)
     return locations;
 }
 
-/*! Method computes the weighted center of brightness out of the non-zero pixel coordinates.
- @return Eigen 2 vector of pixel values
+/*! Method computes the weighted center of brightness and total brightness out of the non-zero pixel coordinates.
+ @return std::pair<Eigen::Vector2d, double> First: center of brightness, Second: brightness
  @param vector integer pixel coordinates of bright pixels
  */
-Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels)
+std::pair<Eigen::Vector2d, double> CenterOfBrightness::computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels)
 {
     uint32_t weightSum = 0;
     Eigen::Vector2d coordinates;
@@ -140,8 +141,10 @@ Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::V
         coordinates[1] += weight * pixel[1];
         weightSum += weight; // weighted sum of all the pixels
     }
+    double brightness = weightSum / 255.0;  // normalized
     coordinates /= weightSum;
-    return coordinates;
+
+    return {coordinates, brightness};
 }
 
 /*! This method applies the window for windowing by setting anything outside the window to black.

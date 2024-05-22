@@ -48,7 +48,7 @@ public:
 
 private:
     std::vector<cv::Vec2i> extractBrightPixels(cv::Mat image);
-    Eigen::Vector2d weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
+    std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
     void computeWindow(cv::Mat const &image);
     void applyWindow (cv::Mat const &image) const;
 
