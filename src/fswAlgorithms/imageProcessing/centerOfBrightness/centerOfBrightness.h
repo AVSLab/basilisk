@@ -51,6 +51,7 @@ private:
     std::pair<Eigen::Vector2d, double> computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels);
     void computeWindow(cv::Mat const &image);
     void applyWindow (cv::Mat const &image) const;
+    void updateBrightnessHistory(double brightness);
 
 public:
     Message<OpNavCOBMsgPayload> opnavCOBOutMsg;  //!< The name of the OpNav center of brightness output message
@@ -63,6 +64,7 @@ public:
     int32_t threshold = 50;                 //!< [px] Threshold value on whether or not to include the solution
     bool saveImages = false;                  //!< [-] 1 to save images to file for debugging
     std::string saveDir = "./";                //!< The name of the directory to save images
+    int32_t numberOfPointsBrightnessAverage = 5;  //!< [-] number of points to be used for rolling average of brightness
 
 private:
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
@@ -72,6 +74,7 @@ private:
     Eigen::Vector2i windowPointTopLeft{};      //!< [px] top left point of window
     Eigen::Vector2i windowPointBottomRight{};  //!< [px] bottom right point of window
     bool validWindow = false;            //!< [px] true if window is set, false if center, height, or width equal 0
+    Eigen::VectorXd brightnessHistory{};    //!< [-] brightness history to be used for rolling average
     /* OpenCV specific arguments needed for finding all non-zero pixels*/
     cv::Mat imageGray;                   //!< [cv mat] Gray scale image for weighting
 };

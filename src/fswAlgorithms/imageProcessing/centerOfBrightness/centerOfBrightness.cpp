@@ -92,6 +92,7 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
     if (!locations.empty()){
         std::pair<Eigen::Vector2d, double> cobData;
         cobData = this->computeWeightedCenterOfBrightness(locations);
+        this->updateBrightnessHistory(cobData.second);
 
         cobBuffer.valid = true;
         cobBuffer.timeTag = this->sensorTimeTag;
@@ -145,6 +146,26 @@ std::pair<Eigen::Vector2d, double> CenterOfBrightness::computeWeightedCenterOfBr
     coordinates /= weightSum;
 
     return {coordinates, brightness};
+}
+
+/*! Update brightness history by shifting back previous brightness values and updating most recent one
+    @return void
+    @param brightness total brightness of current time step
+    */
+void CenterOfBrightness::updateBrightnessHistory(double brightness)
+{
+    // increase vector size if it is not at its full size yet
+    if (this->brightnessHistory.rows() < this->numberOfPointsBrightnessAverage) {
+        this->brightnessHistory.conservativeResize(this->brightnessHistory.rows() + 1, 1);
+    }
+    // shift previous brightness values back (only if number of data points for rolling average is greater than 1)
+    if (this->brightnessHistory.rows() > 1) {
+        for (auto i = static_cast<int>(this->brightnessHistory.rows())-1; i > 0; --i) {
+            this->brightnessHistory[i] = this->brightnessHistory[i-1];
+        }
+    }
+    // update most recent brightness value
+    this->brightnessHistory[0] = brightness;
 }
 
 /*! This method applies the window for windowing by setting anything outside the window to black.
