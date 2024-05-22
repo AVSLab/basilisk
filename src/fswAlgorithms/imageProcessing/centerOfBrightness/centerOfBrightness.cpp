@@ -100,6 +100,7 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
         cobBuffer.centerOfBrightness[0] = cobData.first[0];
         cobBuffer.centerOfBrightness[1] = cobData.first[1];
         cobBuffer.pixelsFound = static_cast<int32_t> (locations.size());
+        cobBuffer.rollingAverageBrightness = this->brightnessHistory.mean();
     }
 
     this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
