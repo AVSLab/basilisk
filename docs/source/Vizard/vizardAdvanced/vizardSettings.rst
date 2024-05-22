@@ -1459,7 +1459,7 @@ The full list of required and optional generic sensor parameters are provided in
       - No
       - Send desired RGBA as values between 0 and 255, default is pure white
     * - ``showLensFlare``
-      - double
+      - int
       -
       - No
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
