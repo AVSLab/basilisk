@@ -2,7 +2,8 @@ Executive Summary
 -----------------
 
 Module reads in a message containing a pointer to an image and writes out the weighted center of brightness of the
-image for any pixel above a parametrized threshold.
+image for any pixel above a parametrized threshold. A window mask can be specified such that only the pixels within the
+specified window are considered.
 
 
 Message Connection Descriptions
@@ -21,7 +22,8 @@ provides information on what this message is used for.
       - Description
     * - opnavCirclesOutMsg
       - :ref:`OpNavCOBMsgPayload`
-      - output center of brightness message containing number of detected pixels, and center-of-brightness in pixel space
+      - output center of brightness message containing number of detected pixels, and center-of-brightness in pixel
+        space
     * - imageInMsg
       - :ref:`CameraImageMsgPayload`
       - camera image input message containing the pointer to the image
@@ -42,11 +44,12 @@ Both of these are implemented using OpenCV methods.
 Afterwards the weighted center-of-brightness is implemented by finding all the non-zero pixels (all pixels that were
 not thresholded down), and finding their intensity (which will be their weight).
 Assuming the image is made up of pixels :math:`p` with and x and y component, that :math:`I` is the intensity, and
-:math:`I_{\mathrm{min}` is the threshold value, the center of brightness is then defined as:
+:math:`I_{\mathrm{min}` is the threshold value, the center of brightness within the window of the image
+(:math:`\mathrm{window} \in \mathrm{image}`) is then defined as:
 
 .. math::
 
-    \mathcal{P} &= \{p \in \mathrm{image} \hspace{5cm} |  \hspace{5cm} I(p) > I_{\mathrm{min}\} \\
+    \mathcal{P} &= \{p \in \mathrm{window} \hspace{5cm} |  \hspace{5cm} I(p) > I_{\mathrm{min}\} \\
     I_\mathrm{tot} &= \sum_{p \in \mathcal{P}} I(p) \\
     p_{\mathrm{cob}} &= \frac{1}{I_\mathrm{tot}}\sum_{p \in \mathcal{P}} I(p) * p }
 
@@ -63,14 +66,19 @@ This section is to outline the steps needed to setup a Center of Brightness in P
 
     from Basilisk.fswAlgorithms import centerOfBrightness
 
-#. Create an instantiation of a Spinning body::
+#. Create an instantiation of centerOfBrightness::
 
     cobAlgorithm = centerOfBrightness.CenterOfBrightness()
 
-#. Define all physical parameters for a Spinning Body. For example::
+#. Define the image processing parameters. For example::
 
     cobAlgorithm.blurSize = 7
     cobAlgorithm.threshold = 10
+
+#. Define the window mask (optional)::
+
+    cobAlgorithm.setWindowCenter(windowCenter)
+    cobAlgorithm.setWindowSize(windowWidth, windowHeight)
 
 #. Subscribe to the image message output by the camera model or visualization interface::
 
