@@ -413,7 +413,7 @@ void VizInterface::ReadBSKMessages()
                 if(scIt->msmInfo.msmChargeInMsg.isWritten()){
                     ChargeMsmMsgPayload msmChargeMsgBuffer;
                     msmChargeMsgBuffer = scIt->msmInfo.msmChargeInMsg();
-                    if (msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
+                    if ((size_t) msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
                         for (size_t idx=0;idx< (size_t) scIt->msmInfo.msmList.size(); idx++) {
                             scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
                         }
@@ -992,12 +992,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             scp->set_logotexture(scIt->logoTexture);
 
             /* set spacecraft osculating orbit line color */
-            for (int i=0; i<scIt->oscOrbitLineColor.size(); i++){
+            for (size_t i=0; i<scIt->oscOrbitLineColor.size(); i++){
                 scp->add_oscorbitlinecolor(scIt->oscOrbitLineColor[i]);
             }
 
             /* set spacecraft true orbit line color */
-            for (int i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
+            for (size_t i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
