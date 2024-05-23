@@ -24,7 +24,8 @@ In order to run Basilisk, the following software will be necessary:
 
 The following python package dependencies are automatically checked and installed in the steps below.
 
-- .. include:: ../bskPkgRequired.txt
+.. literalinclude:: ../../../requirements.txt
+   :language: python
 
 Configuration
 -------------
@@ -36,17 +37,17 @@ Installing Python
 ~~~~~~~~~~~~~~~~~~
 
 Python is installed using the Windows installer found on the Python website. Make sure to choose the correct
-installer for your architecture. When stepping through the installer there are two menus options menus. The 
+installer for your architecture. When stepping through the installer there are two menus options menus. The
 first is the optional features menu for which all options should be selected.
 
    .. image:: /_images/static/windows-installer-python-optional-features-installer-menu.png
       :align: center
       :scale: 75%
 
-The second menu is the python advanced options menu where both "Download debugging symbols" and "Download debug binaries 
+The second menu is the python advanced options menu where both "Download debugging symbols" and "Download debug binaries
 (requires VS 2017 or later)" should be selected in order to build Basilisk with a Debug profile. A Debug profile is
-required to place accurate breakpoints/attach a debugger to C/C++ code.  
- 
+required to place accurate breakpoints/attach a debugger to C/C++ code.
+
    .. image:: /_images/static/windows-installer-python-advanced-options-installer-menu.png
       :align: center
       :scale: 75%
@@ -100,51 +101,51 @@ Using A Python Virtual Environment
 The following steps show how to create, active ad de-activate a virtual environment.  The remaining installation
 steps work regardless if done within a virtual environment or not.
 
-- In a Terminal window change your current directory to be the Basilisk folder,
-  then create a virtual environment using::
+#. In a Terminal window change your current directory to be the Basilisk folder,
+   then create a virtual environment using::
 
-    $ python -m venv .venv
+     $ python -m venv .venv
 
-  This creates a hidden folder inside the Basilisk folder which will store all the python packages and
-  environment information.
+   This creates a hidden folder inside the Basilisk folder which will store all the python packages and
+   environment information.
 
-- Activate virtual environment when needing configure, build or run Basilisk::
+#. Activate virtual environment when needing configure, build or run Basilisk::
 
-    $ .venv\Scripts\activate
+     $ .venv\Scripts\activate
 
-  If the virtual environment is activated, users will see (venv) before the prompt
+   If the virtual environment is activated, users will see (venv) before the prompt
 
-- Deactivate the virtual environment to return to the normal operating system environment::
+#. Deactivate the virtual environment to return to the normal operating system environment::
 
-    (venv) $ deactivate
+     (venv) $ deactivate
 
 
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Basilisk uses conan for package managing. In order to do so, users
-  must ensure ``wheel`` is installed and install ``conan``::
+#. Basilisk uses conan for package managing. In order to do so, users
+   must ensure ``wheel`` is installed and install ``conan``::
 
        (venv) $ pip install wheel 'conan<2.0'
 
-  The conan repositories information is automatically setup by ``conanfile.py``.
+   The conan repositories information is automatically setup by ``conanfile.py``.
 
-  .. warning::
 
-     Don't use the ``conan`` binary installed from the `conan web site <https://conan.io/downloads.html>`__.
-     This causes several issues with the current build system.
+   .. warning::
 
-  .. warning::
+      Don't use the ``conan`` binary installed from the `conan web site <https://conan.io/downloads.html>`__.
+      This causes several issues with the current build system.
+
+
+   .. warning::
 
       If you are upgrading from a version of Basilisk prior to 1.8.0, be sure to delete the ``.conan`` folder in your
       home directory to create a clean copy compatible with the current build system.
 
-- The following python packages are the minimum required packages for Basilisk.  They are installed and checked
-  for the correction version in the steps below.
+#. The required python packages for Basilisk will be installed automatically when running ``conanfile.py``.
 
-  - .. include:: ../bskPkgRequired.txt
-
--  `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability, including ``pytest`` to run an automated test suite of unit and integrated tests.
+#. `Optional Packages:` The above directions install the Basilisk base software.
+   There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
 Build Project Process via Command line
 --------------------------------------
@@ -209,6 +210,3 @@ using:
 
    -  Change the active config to Release instead of debug for solution properties.
    -  Within Visual Studio now go under `Build menu/Build Solution` to build.
-
-
-

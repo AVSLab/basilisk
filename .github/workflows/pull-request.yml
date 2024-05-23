@@ -97,7 +97,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-          cache-dependency-path: '**/bskPkgRequired.txt'
+          cache-dependency-path: '**/requirements.txt'
       - name: Choco help
         uses: crazy-max/ghaction-chocolatey@v2
         with:

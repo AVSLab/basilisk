@@ -12,7 +12,8 @@ Basilisk requires the use of Python 3.8.x or greater.
 
 The following python package dependencies are automatically checked and installed in the steps below.
 
-- .. include:: ../bskPkgRequired.txt
+.. literalinclude:: ../../../requirements.txt
+   :language: python
 
 .. attention::
     If you are running a new Apple computer with the M-series ARM64 processor, be sure to download a
@@ -96,27 +97,27 @@ Using A Python Virtual Environment
 The following steps show how to create, active ad de-activate a virtual environment.  The remaining installation
 steps work regardless if done within a virtual environment or not.
 
-- In a Terminal window change your current directory to be the Basilisk folder,
-  then create a virtual environment using::
+#. In a Terminal window change your current directory to be the Basilisk folder,
+   then create a virtual environment using::
 
-    $ python3 -m venv .venv
+     $ python3 -m venv .venv
 
-  This creates a hidden folder inside the Basilisk folder which will store all the python packages and
-  environment information.
+   This creates a hidden folder inside the Basilisk folder which will store all the python packages and
+   environment information.
 
-- Activate virtual environment when needing configure, build or run Basilisk::
+#. Activate virtual environment when needing configure, build or run Basilisk::
 
-    $ source .venv/bin/activate
+     $ source .venv/bin/activate
 
-  The above step will add (.venv) before the prompt.
+   The above step will add (.venv) before the prompt.
 
-- Deactivate the virtual environment to return to the normal operating system environment::
+#. Deactivate the virtual environment to return to the normal operating system environment::
 
-    (.venv) $ deactivate
+     (.venv) $ deactivate
 
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--  Basilisk uses ``conan`` for package managing. In order to do so, users
+#. Basilisk uses ``conan`` for package managing. In order to do so, users
    must ensure ``wheel`` is installed and install ``conan``::
 
        (.venv) $ pip3 install wheel 'conan<2.0'
@@ -129,12 +130,10 @@ Installing required python support packages
       If you are upgrading from a version of Basilisk prior to 1.8.0, be sure to delete the ``.conan`` folder in your
       home directory to create a clean copy compatible with the current build system.
 
-- The following python packages are the minimum required packages for Basilisk.  They are installed and checked
-  for the correction version in the steps below.
+#. The required python packages for Basilisk will be installed automatically when running ``conanfile.py``.
 
-  - .. include:: ../bskPkgRequired.txt
-
--  `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability, including ``pytest`` to run an automated test suite of unit and integrated tests.
+#. `Optional Packages:` The above directions install the Basilisk base software.
+   There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
 Build Project Process via Terminal
 ----------------------------------

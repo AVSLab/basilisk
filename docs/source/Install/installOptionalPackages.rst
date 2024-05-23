@@ -18,7 +18,8 @@ This page contains all the optional python packages that can be included to unlo
 features or utilities.  For convenience the complete set of optional packages, including any constraints on
 acceptable versions, are listed here:
 
-    .. include:: ../bskPkgOptions.txt
+.. literalinclude:: ../../../requirements_optional.txt
+   :language: python
 
 To automatically ensure that the system has all optional packages installed, use the ``allOptPkg``
 flag as discussed in :ref:`configureBuild`.
@@ -68,8 +69,6 @@ Creating the Sphinx Basilisk Documentation
 Go to :ref:`createHtmlDocumentation` to learn what associated python tools are required.
 The following python packages must be installed via ``pip``::
 
-    pip3 install 'sphinx<5.0' sphinx_rtd_theme==0.5.1 breathe recommonmark docutils
+    pip3 install sphinx==5.3.0 sphinx_rtd_theme==0.5.1 breathe recommonmark docutils
 
 See the list at the top of this page for what versions of these packages are acceptable.
-
-
