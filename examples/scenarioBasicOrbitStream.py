@@ -77,6 +77,8 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import datetime as dt
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -276,9 +278,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
         infopanel.displayString = """This is an information panel. Vizard is reporting 'b', 'x' and 'z' \
 keystrokes back to BSK, which you can hook up to specific sim states. In this case, \
 press 'b' to show a burn panel. If you initiate a burn, press 'x' to stop the burn. \
-Press 'z' to stop the simulation.
-        
-        Note: it is up to the user to handle multiple long key presses."""
+Press 'z' to stop the simulation."""
         infopanel.durationOfDisplay = 0  # stay open
         infopanel.dialogFormat = "CAUTION"
 
@@ -316,6 +316,7 @@ Press 'z' to stop the simulation.
     # Scenario specific flag
     continueBurn = False
 
+    priorKeyPressTime = dt.datetime.now()
     while incrementalStopTime < simulationTime:
 
         currState = scObject.scStateOutMsg.read()
@@ -337,21 +338,26 @@ Press 'z' to stop the simulation.
             eventInputs = userInputs.vizEventReplies
 
             # Parse keyboard inputs, perform actions
-            if 'b' in keyInputs:
-                print("key - b")
-                if not continueBurn:
-                    print("burn panel")
-                    viz.vizEventDialogs.append(burnpanel)
-            if 'x' in keyInputs:
-                print("key - x")
-                if continueBurn:
-                    print("Stopping burn.")
-                    continueBurn = False
-                    thrMsgData.OnTimeRequest = [0, 0, 0]
-                    thrMsg.write(thrMsgData, incrementalStopTime)
-            if 'z' in keyInputs:
-                print("key - z")
-                incrementalStopTime = simulationTime
+            now = dt.datetime.now()
+            if (now - priorKeyPressTime).total_seconds() > 1.0: # check that 1s has passed since last key press
+                if 'b' in keyInputs:
+                    print("key - b")
+                    priorKeyPressTime = now
+                    if not continueBurn:
+                        print("burn panel")
+                        viz.vizEventDialogs.append(burnpanel)
+                if 'x' in keyInputs:
+                    print("key - x")
+                    priorKeyPressTime = now
+                    if continueBurn:
+                        print("Stopping burn.")
+                        continueBurn = False
+                        thrMsgData.OnTimeRequest = [0, 0, 0]
+                        thrMsg.write(thrMsgData, incrementalStopTime)
+                if 'z' in keyInputs:
+                    print("key - z")
+                    priorKeyPressTime = now
+                    incrementalStopTime = simulationTime
 
             # Parse panel responses
             for response in eventInputs:
