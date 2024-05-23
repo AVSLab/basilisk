@@ -23,10 +23,6 @@
 #include "vizMessage.pb.h"
 #include <zmq.hpp>
 #include <string>
-#include "opencv2/opencv.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/core/mat.hpp"
-#include "opencv2/imgcodecs.hpp"
 
 struct ImageData{
     int32_t imageBufferLength;
