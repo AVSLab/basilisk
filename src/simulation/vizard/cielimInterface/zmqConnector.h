@@ -42,7 +42,7 @@ public:
 
 private:
     std::shared_ptr<zmq::context_t> context;
-    std::unique_ptr<zmq::socket_t> requester_socket;
+    std::unique_ptr<zmq::socket_t> requesterSocket;
     int firstPass{}; //!< Flag to initialize the viz at first timestep
     std::string comProtocol = "tcp";
     std::string comAddress = "127.0.0.1";

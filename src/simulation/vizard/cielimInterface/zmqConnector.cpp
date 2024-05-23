@@ -24,17 +24,17 @@ ZmqConnector::ZmqConnector() = default;
 void ZmqConnector::connect() {
     if (!this->isConnected()) {
         this->context = std::make_shared<zmq::context_t>();
-        this->requester_socket = std::make_unique<zmq::socket_t>(*this->context, ZMQ_REQ);
+        this->requesterSocket = std::make_unique<zmq::socket_t>(*this->context, ZMQ_REQ);
         std::cout << this->comAddress << ":" << this->comPortNumber << std::endl;
-        this->requester_socket->connect(this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber);
+        this->requesterSocket->connect(this->comProtocol + "://" + this->comAddress + ":" + this->comPortNumber);
     }
     this->ping();
     this->ping();
 }
 
 bool ZmqConnector::isConnected() const {
-    if (this->requester_socket) {
-        return this->requester_socket->connected();
+    if (this->requesterSocket) {
+        return this->requesterSocket->connected();
     }
     return false;
 }
@@ -54,14 +54,14 @@ void ZmqConnector::send(const vizProtobufferMessage::VizMessage& message) {
 
     auto emptyMsg = zmq::message_t(0);
 
-    this->requester_socket->send(zmq::message_t("SIM_UPDATE", 10), ZMQ_SNDMORE);
-    this->requester_socket->send(emptyMsg, ZMQ_SNDMORE);
-    this->requester_socket->send(emptyMsg, ZMQ_SNDMORE);
-    this->requester_socket->send(payload, ZMQ_NULL);
+    this->requesterSocket->send(zmq::message_t("SIM_UPDATE", 10), ZMQ_SNDMORE);
+    this->requesterSocket->send(emptyMsg, ZMQ_SNDMORE);
+    this->requesterSocket->send(emptyMsg, ZMQ_SNDMORE);
+    this->requesterSocket->send(payload, ZMQ_NULL);
 
     // Receive pong
     auto pong = zmq::message_t();
-    auto res = this->requester_socket->recv(&pong, ZMQ_NULL);
+    auto res = this->requesterSocket->recv(&pong, ZMQ_NULL);
 }
 
 void ZmqConnector::message_buffer_deallocate(void *data, void *hint)
@@ -80,11 +80,11 @@ ImageData ZmqConnector::requestImage(size_t cameraId) {
                                               ZmqConnector::message_buffer_deallocate,
                                               nullptr);
 
-    auto res = this->requester_socket->send(imageRequestMessage, zmq::send_flags::none);
+    auto res = this->requesterSocket->send(imageRequestMessage, zmq::send_flags::none);
     auto imageLengthMessage = zmq::message_t();
     auto imageMessage = zmq::message_t();
-    res = this->requester_socket->recv(imageLengthMessage, zmq::recv_flags::none);
-    res = this->requester_socket->recv(imageMessage, zmq::recv_flags::none);
+    res = this->requesterSocket->recv(imageLengthMessage, zmq::recv_flags::none);
+    res = this->requesterSocket->recv(imageMessage, zmq::recv_flags::none);
 
     const int32_t *lengthPoint = imageLengthMessage.data<int32_t>();
     const void *imagePoint = imageMessage.data();
@@ -97,8 +97,8 @@ ImageData ZmqConnector::requestImage(size_t cameraId) {
 
 
 void ZmqConnector::ping() {
-    this->requester_socket->send(zmq::message_t("PING", 4), ZMQ_NULL);
+    this->requesterSocket->send(zmq::message_t("PING", 4), ZMQ_NULL);
     auto message = zmq::message_t();
-    auto res = this->requester_socket->recv(message, zmq::recv_flags::none);
+    auto res = this->requesterSocket->recv(message, zmq::recv_flags::none);
     std::cout << message.str() << std::endl;
 }
