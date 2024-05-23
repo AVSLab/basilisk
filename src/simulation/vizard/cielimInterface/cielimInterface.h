@@ -32,8 +32,6 @@
 #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
 #include <fstream>
-#include <map>
-#include <memory>
 #include <vector>
 #include <zmq.h>
 
