@@ -46,11 +46,9 @@ needs_sphinx = '7.0'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    # 'sphinx.ext.inheritance_diagram',
     "sphinx_rtd_theme",
     'recommonmark',
     'breathe'
