@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023 University of Colorado at Boulder
+ Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -23,10 +23,6 @@
 #include "vizMessage.pb.h"
 #include <zmq.hpp>
 #include <string>
-#include "opencv2/opencv.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/core/mat.hpp"
-#include "opencv2/imgcodecs.hpp"
 
 struct ImageData{
     int32_t imageBufferLength;
@@ -46,7 +42,7 @@ public:
 
 private:
     std::shared_ptr<zmq::context_t> context;
-    std::unique_ptr<zmq::socket_t> requester_socket;
+    std::unique_ptr<zmq::socket_t> requesterSocket;
     int firstPass{}; //!< Flag to initialize the viz at first timestep
     std::string comProtocol = "tcp";
     std::string comAddress = "127.0.0.1";

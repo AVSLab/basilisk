@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023, University of Colorado at Boulder
+ Copyright (c) 2023, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -32,8 +32,6 @@
 #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
 #include <fstream>
-#include <map>
-#include <memory>
 #include <vector>
 #include <zmq.h>
 
