@@ -10,7 +10,9 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- text here
+- The fuel tank models have become classes and python simulation code using tank modules need to be
+  updated.  See :ref:`fueltank` or :ref:`scenarioFuelSlosh` for further documentation.
+
 
 Version 2.3.0
 -------------
