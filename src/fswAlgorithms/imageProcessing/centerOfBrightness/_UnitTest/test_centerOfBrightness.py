@@ -32,7 +32,7 @@ except ImportError:
     importErr = True
     reasonErr = "python Pillow package not installed---can't test CenterOfBrightness module"
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport
+from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
@@ -42,41 +42,40 @@ except ImportError:
     importErr = True
     reasonErr = "Center Of Brightness not built---check OpenCV option"
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
+
+def computeWindowCenter(windowPointTopLeft, windowPointBottomRight):
+    center_x = int(windowPointTopLeft[0] + (windowPointBottomRight[0] - windowPointTopLeft[0])/2)
+    center_y = int(windowPointTopLeft[1] + (windowPointBottomRight[1] - windowPointTopLeft[1])/2)
+
+    return np.array([center_x, center_y])
+
+
+def computeWindowSize(windowPointTopLeft, windowPointBottomRight):
+    width = int(windowPointBottomRight[0] - windowPointTopLeft[0])
+    height = int(windowPointBottomRight[1] - windowPointTopLeft[1])
+
+    return [width, height]
+
 
 @pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, blur,  saveTest, valid, saveImage", [
-                      ("full_circle.png",   1, False, False,  False)
-                    , ("full_circle.png",   1, False, True,  False)
-                    , ("test_circle.jpeg",  5, False, True,  False)
-                    , ("half_half.png",    1, True , True,  False)
-])
-
-def test_module(show_plots, image, blur, saveTest, valid, saveImage):
-    """
-    Unit test for Center of Brightness algorithm. The unit test specifically runs on 2 images:
-
-        1. A crescent Mars: This image only contains a slim Mars crescent
-        2. Moons: This image contains several Moon crescents
-
-    This modules compares directly to the expected circles from the images.
-    """
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = centerOfBrightnessTest(show_plots, image, blur, saveTest, valid, saveImage)
-    assert testResults < 1, testMessage
+@pytest.mark.parametrize("image, blur,  saveTest, validImage, saveImage, windowPointTopLeft, windowPointBottomRight",
+                         [("full_circle.png", 1, False, False, False, [0, 0], [0, 0]),
+                          ("full_circle.png", 1, False, True, False, [0, 0], [0, 0]),
+                          ("test_circle.jpeg", 5, False, True, False, [0, 0], [0, 0]),
+                          ("half_half.png", 1, True, True, False, [0, 0], [0, 0]),
+                          ("half_half.png", 1, True, True, False, [50, 0], [275, 91])
+                          ])
+def test_module(show_plots, image, blur, saveTest, validImage, saveImage, windowPointTopLeft, windowPointBottomRight):
+    centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveImage, windowPointTopLeft,
+                           windowPointBottomRight)
 
 
-def centerOfBrightnessTest(show_plots, image, blur, saveTest, valid, saveImage):
+def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveImage, windowPointTopLeft,
+                           windowPointBottomRight):
     imagePath = path + '/' + image
     input_image = Image.open(imagePath)
     input_image.load()
 
-    testFailCount = 0
-    testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -86,9 +85,13 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, valid, saveImage):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
+    windowCenter = computeWindowCenter(windowPointTopLeft, windowPointBottomRight)
+    [windowWidth, windowHeight] = computeWindowSize(windowPointTopLeft, windowPointBottomRight)
     moduleConfig = centerOfBrightness.CenterOfBrightness()
     moduleConfig.ModelTag = "centerOfBrightness"
-
+    if windowCenter.all() != 0 and windowWidth != 0 and windowHeight != 0:
+        moduleConfig.setWindowCenter(windowCenter)
+        moduleConfig.setWindowSize(windowWidth, windowHeight)
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
 
     moduleConfig.filename = imagePath
@@ -99,13 +102,21 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, valid, saveImage):
         moduleConfig.saveImages = True
     cob_ref = [input_image.width/2, input_image.height/2]
     if image == "half_half.png":
-        cob_ref = [(3*input_image.width/4 + 1)*valid, int(input_image.height/2)*valid]
-        pixelNum_ref = (int(input_image.width*input_image.height/2) + input_image.width)*valid
+        # left half black, right half white, and a 1px wide grey stripe in the center with brightness 116/255
+        white_width = 138
+        grey_width = 1
+        height = 183
+        if np.array_equal(windowPointTopLeft, [50, 0]) and np.array_equal(windowPointBottomRight, [275, 91]):
+            height = 91
+
+        cob_ref = [(3/4 * 1 * white_width + 1/2 * 116/255 * grey_width)/(white_width + grey_width) * input_image.width,
+                   int(height/2)*validImage]
+        pixelNum_ref = ((white_width+grey_width)*height)*validImage
 
     inputMessageData = messaging.CameraImageMsgPayload()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    inputMessageData.valid = valid
+    inputMessageData.valid = validImage
     imgInMsg = messaging.CameraImageMsg().write(inputMessageData)
     moduleConfig.imageInMsg.subscribeTo(imgInMsg)
     dataLog = moduleConfig.opnavCOBOutMsg.recorder()
@@ -124,7 +135,11 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, valid, saveImage):
 
     if pixelNum > 0:
         data = [center[0], center[1], np.sqrt(pixelNum)/50]
-        draw_result.ellipse((data[0] - data[2], data[1] - data[2], data[0] + data[2], data[1] + data[2]), outline=(255, 0, 0, 0))
+        draw_result.ellipse((data[0] - data[2], data[1] - data[2], data[0] + data[2], data[1] + data[2]),
+                            outline=(255, 0, 0, 0))
+    if windowCenter.all() != 0 and windowWidth != 0 and windowHeight != 0:
+        draw_result.rectangle((windowPointTopLeft[0], windowPointTopLeft[1], windowPointBottomRight[0],
+                               windowPointBottomRight[1]), outline=(0, 255, 0, 0))
 
     # Remove saved images for the test of that functionality
     files = glob.glob(path + "/result_*")
@@ -137,17 +152,23 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, valid, saveImage):
     if show_plots:
         output_image.show()
 
-    for i in range(2):
-        if np.abs((center[i] - cob_ref[i])/cob_ref[i]) > 1E-1:
-            testFailCount+=1
-            testMessages.append("Test failed processing " + image + " due to center offset")
+    # make sure module output data is correct
+    tolerance = 0.6  # just above half a pixel
+    np.testing.assert_allclose(center,
+                               cob_ref,
+                               rtol=0,
+                               atol=tolerance,
+                               err_msg='Variable: rhat_COB_N',
+                               verbose=True)
 
-    if image == "half_half.png" and np.abs((pixelNum - pixelNum_ref)) > 1E-1:
-            testFailCount+=1
-            testMessages.append("Test failed processing " + image + " due to number of detected pixels")
-
-    return [testFailCount, ''.join(testMessages)]
+    if image == "half_half.png":
+        np.testing.assert_allclose(pixelNum,
+                                   pixelNum_ref,
+                                   rtol=0,
+                                   atol=tolerance,
+                                   err_msg='Variable: pixelNum',
+                                   verbose=True)
 
 
 if __name__ == "__main__":
-    centerOfBrightnessTest(True, "test_circle.png",     5, "", 1, True) # Moon images
+    centerOfBrightnessTest(True, "half_half.png", 1, True, True, False, [50, 0], [275, 91])

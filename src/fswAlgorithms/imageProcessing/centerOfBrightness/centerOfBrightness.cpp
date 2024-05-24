@@ -45,7 +45,10 @@ void CenterOfBrightness::Reset(uint64_t CurrentSimNanos)
 void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
 {
     CameraImageMsgPayload imageBuffer = this->imageInMsg.zeroMsgPayload;
-    OpNavCOBMsgPayload cobBuffer = this->opnavCOBOutMsg.zeroMsgPayload;
+
+    OpNavCOBMsgPayload cobBuffer;
+    cobBuffer = this->opnavCOBOutMsg.zeroMsgPayload;
+
     cv::Mat imageCV;
 
     /*! - Read in the image*/
@@ -72,27 +75,31 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
     std::string dirName;
     /*! - Save image to prescribed path if requested */
     if (this->saveImages) {
-        dirName = this->saveDir + std::to_string(CurrentSimNanos * 1E-9) + ".png";
+        dirName = this->saveDir + std::to_string((double) CurrentSimNanos * NANO2SEC) + ".png";
         if (!cv::imwrite(dirName, imageCV)) {
             bskLogger.bskLog(BSK_WARNING, "CenterOfBrightness: wasn't able to save images.");
         }
+    }
+
+    this->computeWindow(imageCV);
+    if (this->validWindow) {
+        this->applyWindow(imageCV);
     }
 
     std::vector<cv::Vec2i> locations = this->extractBrightPixels(imageCV);
 
     /*!- If no lit pixels are found do not validate the image as a measurement */
     if (!locations.empty()){
-        Eigen::Vector2d cobCoordinates;
-        cobCoordinates = this->weightedCenterOfBrightness(locations);
+        Eigen::Vector2d cobCoordinates = this->weightedCenterOfBrightness(locations);
 
-        cobBuffer.valid = 1;
+        cobBuffer.valid = true;
         cobBuffer.timeTag = this->sensorTimeTag;
         cobBuffer.cameraID = imageBuffer.cameraID;
         cobBuffer.centerOfBrightness[0] = cobCoordinates[0];
         cobBuffer.centerOfBrightness[1] = cobCoordinates[1];
-        cobBuffer.pixelsFound = locations.size();
+        cobBuffer.pixelsFound = static_cast<int32_t> (locations.size());
     }
-    
+
     this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
 
 }
@@ -123,10 +130,10 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image)
  */
 Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels)
 {
-    uint32_t weight, weightSum;
+    uint32_t weight;
+    uint32_t weightSum = 0;
     Eigen::Vector2d coordinates;
     coordinates.setZero();
-    weightSum = 0;
     for(auto & pixel : nonZeroPixels) {
         /*! Individual pixel intensity used as the weight for the contribution to the solution*/
         weight = (uint32_t) this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
@@ -136,4 +143,109 @@ Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::V
     }
     coordinates /= weightSum;
     return coordinates;
+}
+
+/*! This method applies the window for windowing by setting anything outside the window to black.
+ @return void
+ @param image cv::Mat of the input image
+ */
+void CenterOfBrightness::applyWindow (cv::Mat const &image) const
+{
+    /*! Create a window and ignore anything outside of it (make it black).
+     * Point in opencv is column, row. x goes left-to-right, y goes top-to-bottom ([0,0] is top left corner).
+     * Window mask is inclusive (edge of mask should be considered in COB), so must add/subtract one pixel. */
+    /*! - Left edge removal */
+    if (this->windowPointTopLeft[0] > 0) {
+        cv::rectangle(image,
+                      cv::Point(0, 0),
+                      cv::Point(this->windowPointTopLeft[0]-1, image.size().height),
+                      cv::Scalar(0),
+                      -1);
+    }
+    /*! - Right edge removal */
+    if (this->windowPointBottomRight[0] < image.size().width) {
+        cv::rectangle(image,
+                      cv::Point(this->windowPointBottomRight[0]+1, 0),
+                      cv::Point(image.size().width, image.size().height),
+                      cv::Scalar(0),
+                      -1);
+    }
+    /*! - Top edge removal */
+    if (this->windowPointTopLeft[1] > 0) {
+        cv::rectangle(image,
+                      cv::Point(this->windowPointTopLeft[0]-1, 0),
+                      cv::Point(this->windowPointBottomRight[0]+1, this->windowPointTopLeft[1]-1),
+                      cv::Scalar(0),
+                      -1);
+    }
+    /*! - Bottom edge removal */
+    if (this->windowPointBottomRight[1] < image.size().height) {
+        cv::rectangle(image,
+                      cv::Point(this->windowPointTopLeft[0]-1, this->windowPointBottomRight[1]+1),
+                      cv::Point(this->windowPointBottomRight[0]+1, image.size().height),
+                      cv::Scalar(0),
+                      -1);
+    }
+}
+
+/*! This method computes the points of the window used for windowing
+ @return void
+ @param image openCV matrix of the input image
+ */
+void CenterOfBrightness::computeWindow(cv::Mat const &image)
+{
+    // if any of the window parameters is 0 (not specified), window is the same as image dimensions and won't be applied
+    if (this->windowCenter.isZero() || this->windowWidth == 0 || this->windowHeight == 0) {
+        this->windowPointTopLeft[0] = 0;
+        this->windowPointTopLeft[1] = 0;
+        this->windowPointBottomRight[0] = image.size().width;
+        this->windowPointBottomRight[1] = image.size().height;
+    } else {
+        this->windowPointTopLeft[0] = this->windowCenter[0] - this->windowWidth/2;
+        this->windowPointTopLeft[1] = this->windowCenter[1] - this->windowHeight/2;
+        this->windowPointBottomRight[0] = this->windowCenter[0] + this->windowWidth/2;
+        this->windowPointBottomRight[1] = this->windowCenter[1] + this->windowHeight/2;
+        this->validWindow = true;
+    }
+    assert(windowPointTopLeft[0] >= 0);
+    assert(windowPointTopLeft[1] >= 0);
+    assert(windowPointBottomRight[0] <= image.size().width);
+    assert(windowPointBottomRight[1] <= image.size().height);
+}
+
+/*! Set the mask center for windowing
+    @param Eigen::Vector2i center [px]
+    @return void
+    */
+void CenterOfBrightness::setWindowCenter(const Eigen::VectorXi& center)
+{
+    this->windowCenter = center;
+}
+
+/*! Get the mask center for windowing
+    @return Eigen::Vector2i center [px]
+    */
+Eigen::VectorXi CenterOfBrightness::getWindowCenter() const
+{
+    return this->windowCenter;
+}
+
+/*! Set the mask size for windowing
+    @param int32_t width [px]
+    @param int32_t height [px]
+    @return void
+    */
+void CenterOfBrightness::setWindowSize(const int32_t width, const int32_t height)
+{
+    this->windowWidth = width;
+    this->windowHeight = height;
+}
+
+/*! Get the mask center for windowing
+    @return Eigen::Vector2i size [px]
+    */
+Eigen::VectorXi CenterOfBrightness::getWindowSize() const
+{
+    Eigen::VectorXi center = {this->windowWidth, this->windowHeight};
+    return center;
 }

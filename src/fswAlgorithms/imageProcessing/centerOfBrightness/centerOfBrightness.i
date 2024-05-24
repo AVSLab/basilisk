@@ -16,6 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
 %module centerOfBrightness
 %{
    #include "centerOfBrightness.h"
@@ -30,6 +31,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.h"
 %include "swig_conly_data.i"
 %include "std_array.i"
+%include "swig_eigen.i"
 
 %include "centerOfBrightness.h"
 
@@ -42,4 +44,3 @@ struct CameraImageMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
