@@ -130,13 +130,12 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image)
  */
 Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels)
 {
-    uint32_t weight;
     uint32_t weightSum = 0;
     Eigen::Vector2d coordinates;
     coordinates.setZero();
     for(auto & pixel : nonZeroPixels) {
         /*! Individual pixel intensity used as the weight for the contribution to the solution*/
-        weight = (uint32_t) this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
+        auto weight = this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
         coordinates[0] += weight * pixel[0];
         coordinates[1] += weight * pixel[1];
         weightSum += weight; // weighted sum of all the pixels
