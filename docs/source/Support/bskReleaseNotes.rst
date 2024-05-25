@@ -43,6 +43,8 @@ Version |release|
 - Fixed the ``Identity()`` method in avsEigenMRP library.
 - Fixed the ``SpiceInterface::initTimeData()`` method to write epoch strings with microsecond precision instead of 0.1 second precision
   to prevent SPICE errors when epochs ending with seconds higher than 59.95 seconds got rounded up to 60.0 seconds
+- Added a new rigid body kinematics library :ref:`attitudeKinematics` using C++ and Eigen Library.
+  Note, this library does not contain all the functions yet from :ref:`rigidBodyKinematics`
 - The fuel tank module is refactored to remove the limitation of a only being able to have a single instance of a
   specific tank model type.
 - Update Basilisk documentation build system to use latest version of ``sphinx`` and ``sphinx_rtd_theme``
