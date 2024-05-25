@@ -98,7 +98,6 @@ def faultdetection(show_plots, r_c1, r_c2, valid1, valid2, faultMode):
     faults = faultDetection.faultDetection()
     faults.sigmaFault = 3
     faults.faultMode = faultMode
-    # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, update, and reset
     faults.ModelTag = "faultDet"

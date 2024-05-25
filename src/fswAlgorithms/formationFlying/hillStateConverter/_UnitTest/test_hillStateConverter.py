@@ -9,7 +9,6 @@ from Basilisk.utilities import SimulationBaseClass as sbc
 from Basilisk.utilities import macros
 
 
-#from Basilisk.simulation import simFswInterfaceMessages
 
 def test_hillStateConverter(show_plots):
     """
