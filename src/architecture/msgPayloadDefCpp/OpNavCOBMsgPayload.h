@@ -37,6 +37,7 @@ OpNavCOBMsgPayload
     int64_t cameraID; //!< -- [-]   ID of the camera that took the image
     double centerOfBrightness[2]; //!< -- [-]   Center x, y of bright pixels
     int32_t pixelsFound; //!< -- [-] Number of bright pixels found in the image
+    double rollingAverageBrightness; //!< [-] brightness computed over rolling average
 }OpNavCOBMsgPayload;
 
 #endif /* COBOPNAVMSG_H */

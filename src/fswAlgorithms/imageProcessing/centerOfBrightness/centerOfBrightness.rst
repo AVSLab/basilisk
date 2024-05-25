@@ -3,7 +3,10 @@ Executive Summary
 
 Module reads in a message containing a pointer to an image and writes out the weighted center of brightness of the
 image for any pixel above a parametrized threshold. A window mask can be specified such that only the pixels within the
-specified window are considered.
+specified window are considered. The module also computes the normalized total brightness of all bright pixels
+(brightness between 0 and 1, summed up over all bright pixels) and determines the rolling average of the brightness
+over the last few time steps. If there are no bright pixels, the brightness history (and rolling average) will not be
+updated.
 
 
 Message Connection Descriptions
@@ -23,7 +26,7 @@ provides information on what this message is used for.
     * - opnavCirclesOutMsg
       - :ref:`OpNavCOBMsgPayload`
       - output center of brightness message containing number of detected pixels, and center-of-brightness in pixel
-        space
+        space, as well as the rolling average of the total brightness.
     * - imageInMsg
       - :ref:`CameraImageMsgPayload`
       - camera image input message containing the pointer to the image
@@ -54,6 +57,12 @@ Assuming the image is made up of pixels :math:`p` with and x and y component, th
     p_{\mathrm{cob}} &= \frac{1}{I_\mathrm{tot}}\sum_{p \in \mathcal{P}} I(p) * p }
 
 where the center of brightess :math:`p_{\mathrm{cob}}` has an x and y component which are then written to the message.
+The normalized total brightness is equal to
+
+.. math::
+    I_\mathrm{tot, normalized} = \frac{I_\mathrm{tot}}{255}
+
+and the rolling average is computed over the last :math:`N` time steps, as specified by numberOfPointsBrightnessAverage.
 
 If the incomping image is not valid, or there were no pixels above the threshold, the image is tagged as invalid.
 Downstream algorithms can therefore know when to skip a measurement.
@@ -79,6 +88,10 @@ This section is to outline the steps needed to setup a Center of Brightness in P
 
     cobAlgorithm.setWindowCenter(windowCenter)
     cobAlgorithm.setWindowSize(windowWidth, windowHeight)
+
+#. Specify the number of data points to be used for the rolling average of total brightness (optional)::
+
+    cobAlgorithm.numberOfPointsBrightnessAverage = 5
 
 #. Subscribe to the image message output by the camera model or visualization interface::
 

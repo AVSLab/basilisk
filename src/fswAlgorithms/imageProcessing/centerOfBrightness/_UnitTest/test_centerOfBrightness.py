@@ -16,6 +16,7 @@
  # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
+import cv2
 import pytest, os, inspect, glob
 import numpy as np
 
@@ -73,6 +74,7 @@ def test_module(show_plots, image, blur, saveTest, validImage, saveImage, window
 def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveImage, windowPointTopLeft,
                            windowPointBottomRight):
     imagePath = path + '/' + image
+    imagePath_module = path + '/temp_' + image
     input_image = Image.open(imagePath)
     input_image.load()
 
@@ -94,12 +96,15 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
         moduleConfig.setWindowSize(windowWidth, windowHeight)
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
 
-    moduleConfig.filename = imagePath
+    numberOfPointsBrightnessAverage = 3
+    moduleConfig.numberOfPointsBrightnessAverage = numberOfPointsBrightnessAverage
+    moduleConfig.filename = imagePath_module
     moduleConfig.blurSize = blur
     moduleConfig.threshold = 50
     moduleConfig.saveDir = path + '/result_save.png'
     if saveTest:
         moduleConfig.saveImages = True
+
     cob_ref = [input_image.width/2, input_image.height/2]
     if image == "half_half.png":
         # left half black, right half white, and a 1px wide grey stripe in the center with brightness 116/255
@@ -123,11 +128,31 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
+
+    # run simulation for 5 time steps (excluding initial time step at 0 ns), scale brightness each time step
+    # necessary to test rolling brightness average
+    scaler = np.array([1.0, 0.9, 0.8, 0.7, 0.6])
+    brightness_ref = np.zeros([len(scaler)])
+    brightnessAverage_ref = np.zeros([len(scaler)])
+    for i in range(0, len(scaler)):
+        im = cv2.imread(imagePath)
+        th, im_th = cv2.threshold(im, int(scaler[i] * 255), 255, cv2.THRESH_TRUNC)
+        out_image_path = imagePath_module
+        cv2.imwrite(out_image_path, im_th)
+
+        unitTestSim.ConfigureStopTime(i * testProcessRate)
+        unitTestSim.ExecuteSimulation()
+
+        # true rolling brightness average
+        if image == "half_half.png":
+            brightness_raw = int(scaler[i] * 255)*white_width*height + 116*grey_width*height
+            brightness_ref[i] = brightness_raw / 255
+            lower_idx = max(0, i-(numberOfPointsBrightnessAverage-1))
+            brightnessAverage_ref[i] = np.mean(brightness_ref[lower_idx:i+1])
 
     center = dataLog.centerOfBrightness[-1,:]
     pixelNum = dataLog.pixelsFound[-1]
+    brightnessAverage = dataLog.rollingAverageBrightness
 
     output_image = Image.new("RGB", input_image.size)
     output_image.paste(input_image)
@@ -141,6 +166,8 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
         draw_result.rectangle((windowPointTopLeft[0], windowPointTopLeft[1], windowPointBottomRight[0],
                                windowPointBottomRight[1]), outline=(0, 255, 0, 0))
 
+    input_image.close()
+
     # Remove saved images for the test of that functionality
     files = glob.glob(path + "/result_*")
     for f in files:
@@ -151,6 +178,11 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
 
     if show_plots:
         output_image.show()
+
+    # Remove temporarily created images
+    files = glob.glob(imagePath_module)
+    for f in files:
+        os.remove(f)
 
     # make sure module output data is correct
     tolerance = 0.6  # just above half a pixel
@@ -167,6 +199,13 @@ def centerOfBrightnessTest(show_plots, image, blur, saveTest, validImage, saveIm
                                    rtol=0,
                                    atol=tolerance,
                                    err_msg='Variable: pixelNum',
+                                   verbose=True)
+
+        np.testing.assert_allclose(brightnessAverage,
+                                   brightnessAverage_ref,
+                                   rtol=tolerance,
+                                   atol=0,
+                                   err_msg='Variable: brightnessAverage',
                                    verbose=True)
 
 

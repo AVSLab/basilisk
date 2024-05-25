@@ -90,14 +90,17 @@ void CenterOfBrightness::UpdateState(uint64_t CurrentSimNanos)
 
     /*!- If no lit pixels are found do not validate the image as a measurement */
     if (!locations.empty()){
-        Eigen::Vector2d cobCoordinates = this->weightedCenterOfBrightness(locations);
+        std::pair<Eigen::Vector2d, double> cobData;
+        cobData = this->computeWeightedCenterOfBrightness(locations);
+        this->updateBrightnessHistory(cobData.second);
 
         cobBuffer.valid = true;
         cobBuffer.timeTag = this->sensorTimeTag;
         cobBuffer.cameraID = imageBuffer.cameraID;
-        cobBuffer.centerOfBrightness[0] = cobCoordinates[0];
-        cobBuffer.centerOfBrightness[1] = cobCoordinates[1];
+        cobBuffer.centerOfBrightness[0] = cobData.first[0];
+        cobBuffer.centerOfBrightness[1] = cobData.first[1];
         cobBuffer.pixelsFound = static_cast<int32_t> (locations.size());
+        cobBuffer.rollingAverageBrightness = this->brightnessHistory.mean();
     }
 
     this->opnavCOBOutMsg.write(&cobBuffer, this->moduleID, CurrentSimNanos);
@@ -124,25 +127,46 @@ std::vector<cv::Vec2i> CenterOfBrightness::extractBrightPixels(cv::Mat image)
     return locations;
 }
 
-/*! Method computes the weighted center of brightness out of the non-zero pixel coordinates.
- @return Eigen 2 vector of pixel values
+/*! Method computes the weighted center of brightness and total brightness out of the non-zero pixel coordinates.
+ @return std::pair<Eigen::Vector2d, double> First: center of brightness, Second: brightness
  @param vector integer pixel coordinates of bright pixels
  */
-Eigen::Vector2d CenterOfBrightness::weightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels)
+std::pair<Eigen::Vector2d, double> CenterOfBrightness::computeWeightedCenterOfBrightness(std::vector<cv::Vec2i> nonZeroPixels)
 {
-    uint32_t weight;
     uint32_t weightSum = 0;
     Eigen::Vector2d coordinates;
     coordinates.setZero();
     for(auto & pixel : nonZeroPixels) {
         /*! Individual pixel intensity used as the weight for the contribution to the solution*/
-        weight = (uint32_t) this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
+        auto weight = this->imageGray.at<unsigned char>(pixel[1], pixel[0]);
         coordinates[0] += weight * pixel[0];
         coordinates[1] += weight * pixel[1];
         weightSum += weight; // weighted sum of all the pixels
     }
+    double brightness = weightSum / 255.0;  // normalized
     coordinates /= weightSum;
-    return coordinates;
+
+    return {coordinates, brightness};
+}
+
+/*! Update brightness history by shifting back previous brightness values and updating most recent one
+    @return void
+    @param brightness total brightness of current time step
+    */
+void CenterOfBrightness::updateBrightnessHistory(double brightness)
+{
+    // increase vector size if it is not at its full size yet
+    if (this->brightnessHistory.rows() < this->numberOfPointsBrightnessAverage) {
+        this->brightnessHistory.conservativeResize(this->brightnessHistory.rows() + 1, 1);
+    }
+    // shift previous brightness values back (only if number of data points for rolling average is greater than 1)
+    if (this->brightnessHistory.rows() > 1) {
+        for (auto i = static_cast<int>(this->brightnessHistory.rows())-1; i > 0; --i) {
+            this->brightnessHistory[i] = this->brightnessHistory[i-1];
+        }
+    }
+    // update most recent brightness value
+    this->brightnessHistory[0] = brightness;
 }
 
 /*! This method applies the window for windowing by setting anything outside the window to black.
