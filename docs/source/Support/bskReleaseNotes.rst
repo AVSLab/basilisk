@@ -45,7 +45,7 @@ Version |release|
   to prevent SPICE errors when epochs ending with seconds higher than 59.95 seconds got rounded up to 60.0 seconds
 - The fuel tank module is refactored to remove the limitation of a only being able to have a single instance of a
   specific tank model type.
-
+- Update Basilisk documentation build system to use latest version of ``sphinx`` and ``sphinx_rtd_theme``
 
 
 Version 2.3.0 (April 5, 2024)
