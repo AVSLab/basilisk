@@ -57,6 +57,7 @@ Version |release|
 - Added time tag to :ref:`CSSArraySensorMsgPayload`
 - updated Eigen library to 3.4.0
 - updated OpenCV library to 4.5.5
+- Added support for Vizard 2.2.0
 - Added documentation on using pre-commit formatters and clang formating
 - Added two new scenarios that use the :ref:`spinningBodyNDOFStateEffector` module. :ref:`scenarioRoboticArm` simulates
   a robotic arm that changes orientation through the use of the :ref:`prescribedRotation1DOF` profiler module.
@@ -70,7 +71,7 @@ Version |release|
 - Updated :ref:`cppModuleTemplate` to make user configurable variables private, accessed via setter and getter methods
 - Updated :ref:`makeDraftModule` to make C++ modules with private module variables using setter/getter methods
 - Updated :ref:`cppModules-1` to discuss the new expectation that C++ modules are all private.  This enables
-  gracefull module variable depreciation if needed.
+  graceful module variable depreciation if needed.
 - Added support for numpy 2.0.
 - Fixed use of spherical coordinate system in :ref:`magneticFieldWMM` model.
 - Added ability to run the GitHub ``pull_request.yml`` action on a select branch
