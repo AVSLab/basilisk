@@ -46,6 +46,7 @@ Version |release|
 - The fuel tank module is refactored to remove the limitation of a only being able to have a single instance of a
   specific tank model type.
 - Update Basilisk documentation build system to use latest version of ``sphinx`` and ``sphinx_rtd_theme``
+- Added time tag to :ref:`CSSArraySensorMsgPayload`
 
 
 Version 2.3.0 (April 5, 2024)
