@@ -64,7 +64,7 @@ class BasiliskConan(ConanFile):
     version = f.read()
     f.close()
     generators = "cmake_find_package_multi"
-    requires = "eigen/3.3.9"
+    requires = "eigen/3.4.0"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
     license = "ISC"
@@ -174,11 +174,12 @@ class BasiliskConan(ConanFile):
     def requirements(self):
         if self.options.opNav:
             self.requires.add("pcre/8.45")
-            self.requires.add("opencv/4.1.2#b610ad323f67adc1b51e402cb5d68d70")
+            self.requires.add("opencv/4.5.5")
             self.options['opencv'].with_ffmpeg = False  # video frame encoding lib
             self.options['opencv'].with_ade = False  # graph manipulations framework
-            self.options['opencv'].with_tiff = False  # generate image in TIFF format
-            self.options['opencv'].with_openexr = False  # generate image in EXR format
+            self.options['opencv'].with_tiff = False  # encode/decode image in TIFF format
+            self.options['opencv'].with_openexr = False  # encode/decode image in EXR format
+            self.options['opencv'].with_webp = False  # encode/decode image in WEBP format
             self.options['opencv'].with_quirc = False  # QR code lib
             self.requires.add("zlib/1.2.13")
             self.requires.add("xz_utils/5.4.0")
@@ -223,7 +224,7 @@ class BasiliskConan(ConanFile):
             if self.settings.os == "Windows":
                 self.options["*"].shared = True
         print("cmake generator set to: " + statusColor + str(self.generator) + endColor)
-    
+
     def package_id(self):
         if self.settings.compiler == "Visual Studio":
             if "MD" in self.settings.compiler.runtime:
@@ -366,7 +367,7 @@ if __name__ == "__main__":
     conanCmdString = ''.join(conanCmdString)
     print(statusColor + "Running this conan command:" + endColor)
     print(conanCmdString)
-    os.system(conanCmdString)
+    completedProcess = subprocess.run(conanCmdString, shell=True, check=True)
 
     # run conan build
     if is_running_virtual_env() or platform.system() == "Windows":
@@ -375,7 +376,4 @@ if __name__ == "__main__":
         cmakeCmdString = 'python3 -m conans.conan build . -if ' + buildFolderName
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
-    os.system(cmakeCmdString)
-
-
-
+    completedProcess = subprocess.run(cmakeCmdString, shell=True, check=True)

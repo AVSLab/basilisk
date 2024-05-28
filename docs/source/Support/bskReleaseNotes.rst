@@ -47,6 +47,8 @@ Version |release|
   specific tank model type.
 - Update Basilisk documentation build system to use latest version of ``sphinx`` and ``sphinx_rtd_theme``
 - Added time tag to :ref:`CSSArraySensorMsgPayload`
+- updated Eigen library to 3.4.0
+- updated OpenCV library to 4.5.5
 
 
 Version 2.3.0 (April 5, 2024)

@@ -54,7 +54,7 @@ are implemented and executed in the sequence shown:
 - Dead and stuck pixels
 - Random Cosmic rays
 
-Doxygen documentation for OpenCV can be found `here <https://docs.opencv.org/4.1.2/>`__.
+Doxygen documentation for OpenCV can be found `here <https://docs.opencv.org/4.5.5/>`__.
 
 Overview of Corruptions
 ~~~~~~~~~~~~~~~~~~~~~~~
