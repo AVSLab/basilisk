@@ -714,3 +714,12 @@ TEST(RigidBodyKinematics, tildeMatrixTest)
     EXPECT_TRUE((tildeMatrix(vector)*testVector - vector.cross(testVector)).norm() < kinematicsAccuracy);
     EXPECT_TRUE((tildeMatrix(vector) - expected).norm() < kinematicsAccuracy);
 }
+
+// Testing if the safe math function return expected values
+TEST(RigidBodyKinematics, safeFunctions){
+    EXPECT_TRUE(std::abs(std::acos(1.0) - aCosSafe(1.1)) < kinematicsAccuracy);
+    EXPECT_TRUE(std::abs(std::acos(-1.0) - aCosSafe(-1.1)) < kinematicsAccuracy);
+    EXPECT_TRUE(std::abs(std::acos(1.0) - aCosSafe(1.1)) < kinematicsAccuracy);
+    EXPECT_TRUE(std::abs(std::acos(-1.0) - aCosSafe(-1.1)) < kinematicsAccuracy);
+    EXPECT_TRUE(std::abs(sqrtSafe(-1.1)) < kinematicsAccuracy);
+}
