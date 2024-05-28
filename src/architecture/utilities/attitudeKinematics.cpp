@@ -88,7 +88,7 @@ Eigen::Vector3d addPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2)
     assert(std::abs(cosPhi1 * cosPhi2 - sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2)) < 1);
 
     double angle;
-    angle = 2 * std::acos(cosPhi1 * cosPhi2 - sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2));
+    angle = 2 * acos(cosPhi1 * cosPhi2 - sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2));
 
     Eigen::Vector3d prv;
     if(std::abs(angle) < 1.0E-13){return prv.setZero();}
@@ -322,13 +322,13 @@ Eigen::Vector4d dcmToEp(const Eigen::Matrix3d& dcm){
     double maxVal = *std::max_element(epVector.begin(), epVector.end());
 
     if (maxVal == ep(0)){
-        ep(0) = std::sqrt(ep(0));
+        ep(0) = sqrtSafe(ep(0));
         ep(1) = (dcm(1, 2) - dcm(2, 1)) / 4 / ep(0);
         ep(2) = (dcm(2, 0) - dcm(0, 2)) / 4 / ep(0);
         ep(3) = (dcm(0, 1) - dcm(1, 0)) / 4 / ep(0);
         }
     else if (maxVal == ep(1)){
-        ep(1) = std::sqrt(ep(1));
+        ep(1) = sqrtSafe(ep(1));
         ep(0) = (dcm(1, 2) - dcm(2, 1)) / 4 / ep(1);
         if(ep(0) < 0) {
             ep(1) = -ep(1);
@@ -338,7 +338,7 @@ Eigen::Vector4d dcmToEp(const Eigen::Matrix3d& dcm){
         ep(3) = (dcm(2, 0) + dcm(0, 2)) / 4 / ep(1);
         }
     else if (maxVal == ep(2)){
-        ep(2) = std::sqrt(ep(2));
+        ep(2) = sqrtSafe(ep(2));
         ep(0) = (dcm(2, 0) - dcm(0, 2)) / 4 / ep(2);
         if(ep(0) < 0) {
             ep(2) = -ep(2);
@@ -348,7 +348,7 @@ Eigen::Vector4d dcmToEp(const Eigen::Matrix3d& dcm){
         ep(3) = (dcm(1, 2) + dcm(2, 1)) / 4 / ep(2);
         }
     else if (maxVal == ep(3)){
-        ep(3) = std::sqrt(ep(3));
+        ep(3) = sqrtSafe(ep(3));
         ep(0) = (dcm(0, 1) - dcm(1, 0)) / 4 / ep(3);
         if(ep(0) < 0) {
             ep(3) = -ep(3);
@@ -391,7 +391,7 @@ Eigen::Vector3d dcmToEulerAngles321(const Eigen::Matrix3d& dcm){
     Eigen::Vector3d euler321;
 
     euler321[0] = std::atan2(dcm(0,1), dcm(0,0));
-    euler321[1] = std::asin(-dcm(0,2));
+    euler321[1] = aSinSafe(-dcm(0,2));
     euler321[2] = std::atan2(dcm(1,2), dcm(2,2));
 
     return euler321;
@@ -539,8 +539,8 @@ Eigen::Vector3d epToMrp(const Eigen::Vector4d& ep){
  */
 Eigen::Vector3d epToPrv(const Eigen::Vector4d& ep){
     Eigen::Vector3d prv;
-    if (std::abs(std::sin(std::acos(ep(0)))) < eps){return prv.setZero();}
-    prv = ep.tail(3)/ std::sin(std::acos(ep(0))) * 2 * std::acos(ep(0));
+    if (std::abs(std::sin(aCosSafe(ep(0)))) < eps){return prv.setZero();}
+    prv = ep.tail(3)/ std::sin(aCosSafe(ep(0))) * 2 * aCosSafe(ep(0));
     return prv;
 }
 
@@ -554,7 +554,7 @@ Eigen::Vector3d epToEulerAngles321(const Eigen::Vector4d& ep){
 
     euler321(0) = std::atan2(2 * (ep(1) * ep(2) + ep(0) * ep(3)),
                              ep(0) * ep(0) + ep(1) * ep(1) - ep(2) * ep(2) - ep(3) * ep(3));
-    euler321(1) = std::asin(-2 * (ep(1) * ep(3) - ep(0) * ep(2)));
+    euler321(1) = aSinSafe(-2 * (ep(1) * ep(3) - ep(0) * ep(2)));
     euler321(2) = std::atan2(2 * (ep(2) * ep(3) + ep(0) * ep(1)),
                              ep(0) * ep(0) - ep(1) * ep(1) - ep(2) * ep(2) + ep(3) * ep(3));
 
@@ -804,7 +804,7 @@ Eigen::Vector3d subPrv(const Eigen::Vector3d& prv1, const Eigen::Vector3d& prv2)
     Eigen::Vector3d unitVector2(prv2/prv2.norm());
 
     assert(std::abs(cosPhi1 * cosPhi2 + sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2)) < 1);
-    double angle = 2 * std::acos(cosPhi1 * cosPhi2 + sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2));
+    double angle = 2 * aCosSafe(cosPhi1 * cosPhi2 + sinPhi1 * sinPhi2 * unitVector1.dot(unitVector2));
 
     Eigen::Vector3d prv;
     if(std::abs(angle) < 1.0E-13){return prv.setZero();}
@@ -861,4 +861,41 @@ Eigen::Matrix3d tildeMatrix(const Eigen::Vector3d& vector){
             vector(2), 0, -vector(0),
             -vector(1), vector(0), 0;
     return tilde;
+}
+
+/**
+ * Return the arc-cos of x where x is limited to |x| is less or equal to 1
+ * @param x double value
+ * @return double
+ */
+double aCosSafe (double x) {
+    if (x < -1.0)
+        return acos(-1);
+    else if (x > 1.0)
+        return acos(1) ;
+    return acos (x) ;
+}
+
+/**
+ * Return the arc-sin of x where x is limited to |x|<=1
+ * @param x double value
+ * @return double
+ */
+double aSinSafe (double x) {
+    if (x < -1.0)
+        return asin(-1);
+    else if (x > 1.0)
+        return asin(1) ;
+    return asin (x) ;
+}
+
+/**
+ * Return the square root of x where x is limited to x >= 0
+ * @param x double value
+ * @return double
+ */
+double sqrtSafe(double x) {
+    if (x < 0.0)
+        return 0.0;
+    return sqrt(x);
 }

@@ -80,3 +80,7 @@ Eigen::Vector3d subEulerAngles321(const Eigen::Vector3d& euler3211, const Eigen:
 
 Eigen::Matrix3d rotationMatrix(const double angle, const int axis_number);
 Eigen::Matrix3d tildeMatrix(const Eigen::Vector3d& vector);
+
+double aCosSafe(double x);
+double aSinSafe(double x);
+double sqrtSafe(double x);
