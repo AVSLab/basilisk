@@ -204,7 +204,7 @@ Related Publications
    Learn
    Support
    Documentation/index
-   Forum
+   ExternalSites
 
 .. toctree::
    :maxdepth: 1
