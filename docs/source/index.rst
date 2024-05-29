@@ -16,9 +16,9 @@ Welcome to Basilisk: an Astrodynamics Simulation Framework
 Architecture
 ------------
 
-.. sidebar:: Basilisk Vision
+.. sidebar:: Basilisk Info
 
-    .. image:: _images/static/Basilisk-Logo.png
+    .. image:: _images/static/Basilisk-Logo.svg
        :align: center
        :width: 300
 
@@ -30,6 +30,10 @@ Architecture
     **Platforms:** macOS, Linux and Windows
 
     **Status:** |version|
+
+    **Logo:** :download:`PNG <_images/static/Basilisk-Logo.png>`
+    :download:`PDF <_images/static/Basilisk-Logo.pdf>`
+    :download:`SVG <_images/static/Basilisk-Logo.svg>`
 
 Basilisk, or BSK for short, is a software framework
 capable of both faster-than realtime spacecraft simulations, including repeatable

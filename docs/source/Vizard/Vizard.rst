@@ -14,7 +14,7 @@ About Vizard
 	 
 |
 
-.. sidebar:: Vizard Vision
+.. sidebar:: Vizard Info
 
     .. image:: /_images/static/basiliskVizardLogo.png
        :align: center
@@ -25,6 +25,8 @@ About Vizard
     **License:** Freeware
 
     **Status:** Version 2.1.6.1 (Released March 20, 2024)
+
+    **Logo:** :download:`PNG <../_images/static/basiliskVizardLogo.png>`
 
 The Vizard Unity-based Basilisk
 visualization is able to display in a three-dimensional view the
