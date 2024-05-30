@@ -34,6 +34,8 @@ Version |release|
 - Removed the depreciated manner of creating python modules
 - Created a new example scenario :ref:`scenarioTempMeasurementAttitude` demonstrating the use of tempMeasurement module and generating random noise in the measurement.
 - Uncaught exceptions raised in Python modules are now printed to ``stderr`` before the program is terminated.
+- Updated Basilisk and Vizard logos and provided download links
+- Updated ``News and Discussions`` menu tab to be ``External Links`` to Basilisk related web sites
 - Added a new N-axis spinning effector :ref:`spinningBodyNDOFStateEffector`. This is an expansion of :ref:`spinningBodyOneDOFStateEffector`
   and :ref:`spinningBodyTwoDOFStateEffector` to any number of degrees of freedom.
 - Update the Windows build to automatically include the Math library defines.  This avoids having
