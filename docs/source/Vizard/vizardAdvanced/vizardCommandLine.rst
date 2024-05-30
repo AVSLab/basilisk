@@ -2,6 +2,11 @@
 
 Command Line Launching
 ======================
+
+.. image:: /_images/static/basiliskVizardLogo.png
+       :align: right
+       :scale: 50 %
+
 This page contains a series of terminal commands to open Vizard from the command line on macOS
 and provide optional arguments.  Adjust the command line ``open`` command and file name according
 to your platform and how you named the Vizard application.  The examples below it is assumed the

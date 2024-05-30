@@ -4,6 +4,10 @@
 Live Communication with Vizard
 ==============================
 
+.. image:: /_images/static/basiliskVizardLogo.png
+       :align: right
+       :scale: 50 %
+
 BSK can link with Vizard **live** in three ways:
 
 * ``liveStream`` : The BSK sim runs in lockstep with Vizard. This supports user input handling and

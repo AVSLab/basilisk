@@ -7,6 +7,10 @@ Release Notes
 
 .. sidebar:: In Progress Features
 
+    .. image:: /_images/static/basiliskVizardLogo.png
+       :align: center
+       :width: 100 %
+
     - general GUI enhancements
     - Add the rate gyro visualization
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)

@@ -4,6 +4,10 @@
 BSK Scripting Settings
 ======================
 
+.. image:: /_images/static/basiliskVizardLogo.png
+       :align: right
+       :scale: 50 %
+
 Overview
 --------
 

@@ -7,6 +7,9 @@
 User Guide
 ==========
 
+.. image:: /_images/static/basiliskVizardLogo.png
+       :align: right
+       :scale: 50 %
 
 Startup Panel
 -------------
