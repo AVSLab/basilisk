@@ -36,6 +36,11 @@ existing stylistic conventions in that package (unless you are
 retrofitting the whole package to follow this guide, for which you
 deserve an award).
 
+**Contribution Guidelines**: see the file `CONTRIBUTING.md
+<https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md>`__
+for additional information on making code to contribute back to
+the Basilisk repository.
+
 What about non-conforming code?
 -------------------------------
 
@@ -223,4 +228,3 @@ Python Exceptions
    x = (4*9/2)-1
    # No
    x = (4 * 9 / 2) - 1
-
