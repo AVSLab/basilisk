@@ -109,6 +109,23 @@ For more information is available on the [clang-format](https://clang.llvm.org/d
      * ```-style=file``` tells ClangFormat to look for the .clang-format in your project directory,
        otherwise it will use the LLVM's style guide
 
+#### macOS Code Editor
+
+Xcode no longer directly supports plugins.  However, you can set up an elegant
+[Automator script](https://www.apulsoft.ch/blog/clang-format-automator-quick-action/)
+that allows you to run the `clang-format` command from any text
+as a Service or a keyboard short-cut
+and replace the selected text with the newly formated text.
+This method will function in any C/C++ IDE, not just Xcode.
+
+The following Automator script is an example if Basilisk is running in a
+virtual environment:
+```
+~/Repos/basilisk/.venv/bin/clang-format --style=file:~/Repos/basilisk/.clang-format
+```
+To determine the path to your installed copy of ``clang-format`` you can
+run the command ``where clang-format`` from the command line.
+
 ## Write-Ups About Good Commit/PR/Code Review Practice
 
 The following three articles describe in greater detail the ideals to which this repository adheres.
