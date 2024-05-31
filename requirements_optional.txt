@@ -3,3 +3,5 @@ docutils
 recommonmark
 sphinx>7.0.0
 sphinx_rtd_theme==2.0.0
+pre-commit
+clang-format

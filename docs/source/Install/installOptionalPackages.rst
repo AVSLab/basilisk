@@ -72,3 +72,14 @@ The following python packages must be installed via ``pip``::
     pip3 install 'sphinx>7.0.0' sphinx_rtd_theme==2.0.0 breathe recommonmark docutils
 
 See the list at the top of this page for what versions of these packages are acceptable.
+
+
+Formatting Code Files using ``pre-commit`` and ``clang-format``
+---------------------------------------------------------------
+If you are developing new code to contribute back to Basilisk it must follow the
+:ref:`codingGuidelines`.  This requires installing::
+
+    pip3 install pre-commit clang-format
+
+The file `CONTRIBUTING.md <https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md>`__
+explains how to setup and use these code formating tools.
