@@ -80,7 +80,19 @@ Now ```pre-commit``` will run automatically whenever you run ```git commit```!
 When ```pre-commit``` decides to edit some of your files,
 you will need to add those changes to your commit and commit again.
 
-#### ClangFormat
+#### Manually Running pre-commit
+
+For cases where `pre-commit` does not automatically run (for example when first
+installing and using `pre-commit`), you can
+manually run pre-commit on specific files you have edited. Use the
+command:
+```
+$ pre-commit run --files <file>
+```
+Note that you must run this command inside the directory containing
+the file you are running `pre-commit` on.
+
+### ClangFormat
 
 This repository uses a modified version of Mozilla's ```.clang-format``` file.
 Please be sure to reformat any C/C++ file with clang-format before committing.
