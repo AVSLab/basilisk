@@ -36,6 +36,11 @@ existing stylistic conventions in that package (unless you are
 retrofitting the whole package to follow this guide, for which you
 deserve an award).
 
+**Contribution Guidelines**: see the file `CONTRIBUTING.md
+<https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md>`__
+for additional information on making code to contribute back to
+the Basilisk repository.
+
 What about non-conforming code?
 -------------------------------
 
@@ -224,3 +229,29 @@ Python Exceptions
    # No
    x = (4 * 9 / 2) - 1
 
+
+Running Unit and Integrated Tests
+---------------------------------
+Prior to any code being pushed back to the Basilisk repo all unit and integrated tests must pass.
+The default packages include ``pytest`` which is a program that can run a series of tests on
+python scripts that begin with ``test_``.  The package ``pytest-xdist`` is also installed by default
+and allows these tests to be run in a multi-threaded manner using the argument ``-n auto``.
+
+Further, Basilisk uses the Google ``gtest`` suite to run unit tests on C or C++ support libraries.
+To run all the unit and integrated test open a terminal window and change your working directory
+to the root ``basilisk`` directory.  Activate the python virtual environment if needed.
+Next, run the command::
+
+    $ python run_all_test.py
+
+This will execute ``pytest`` and ``gtest`` checks.  All tests should pass.  If not all
+Basilisk modules are built (i.e. the build process turned off ``opNav`` option), then
+some tests will show up as skipped.
+
+If you want to use ``pytest`` to generate a validation HTML report,
+then the ``pytest-html`` package is used. In a terminal window, make your
+working directory ``basilisk/src``.  Next, run ``pytest`` by adding the ``--html`` argument
+followed by the path to where to generate the report html folder.  It is recommended to put
+this inside a folder as HTML support folder will be created::
+
+    $ pytest --html report/report.html
