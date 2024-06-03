@@ -109,7 +109,7 @@ object radius :math:`R` in meters is converted to the object radius in pixel uni
 
 .. math::
 
-    R_c = \frac{R K_x f}{\rho}
+    R_c = \frac{R K_x f}{\rho} = \frac{R d_x}{\rho}
 
 where :math:`K_x = d_x/f`, :math:`f` is the focal length in meters, and :math:`\rho` is the distance from the
 body center to the spacecraft in meters. Using the sun direction in the image plane :math:`\phi`, the COM location in

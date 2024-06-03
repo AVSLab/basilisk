@@ -107,9 +107,7 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
         Eigen::Vector3d shat_C = dcm_CB * shat_B;
         double phi = atan2(shat_C[1], shat_C[0]); // sun direction in image plane
 
-        double focalLength = cameraSpecs.ppFocalLength; // focal length in m
-        double Kx = dX / focalLength; // camera parameter from Bhaskaran paper
-        double Rc = this->objectRadius * Kx * focalLength / rho; // object radius in pixels
+        double Rc = this->objectRadius * dX / rho; // object radius in pixels
 
         double gamma = 0; // offset factor between Center of Mass and Center of Brightness
         bool validCOM = false; // valid COM estimation is false if PhaseAngleCorrectionMethod == NoCorrection
