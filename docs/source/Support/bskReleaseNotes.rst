@@ -52,6 +52,10 @@ Version |release|
 - updated Eigen library to 3.4.0
 - updated OpenCV library to 4.5.5
 - Added documentation on using pre-commit formatters and clang formating
+- Added two new scenarios that use the :ref:`spinningBodyNDOFStateEffector` module. :ref:`scenarioRoboticArm` simulates
+  a robotic arm that changes orientation through the use of the :ref:`prescribedRotation1DOF` profiler module.
+  :ref:`scenarioFlexiblePanel` simulates a flexible panel that has torsional and bending modes, which are approximated
+  though a lumped-mass approach and discretized to as many subpanels as needed.
 
 
 Version 2.3.0 (April 5, 2024)

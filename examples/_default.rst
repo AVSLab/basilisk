@@ -205,11 +205,13 @@ Complex Spacecraft Dynamics Simulations
 
    Fuel Slosh <scenarioFuelSlosh>
    Flexible (Hinged) Panels <scenarioHingedRigidBody>
+   Bending and Torsional Flexible Panels <scenarioFlexiblePanel>
    Sensors Attached to a Rotating Panel <scenarioRotatingPanel>
    Hinged Panel Deployment <scenarioDeployingPanel>
    MSM Simulation of Charged Spacecraft <scenarioTwoChargedSC>
    Spacecraft with 1- or 2-DOF Panel using single effector <scenarioSpinningBodiesTwoDOF>
    Prescribed Motion Rotational Solar Array Deployment <scenarioDeployingSolarArrays>
+   Robotic Arm Effector with Profiler <scenarioRoboticArm>
 
 Mission Simulations
 ---------------------------------------
