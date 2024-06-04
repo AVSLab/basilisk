@@ -1,7 +1,7 @@
 ## Branches
 
 -   Branches should be named `feature/bsk-XXX--short-desc` or `hotfix/short-desc`, where "bsk-XXX" is the associated
-    Github project ticket.
+    GitHub project ticket.
     -   If a branch is not associated with a ticket, either it's a hotfix or it needs a ticket.
     -   Hotfixes should be used sparingly. For instance, a bug introduced in the same release cycle
     (or discovered very shortly after merging a PR) can be hotfixed. Bugs that a user may have been exposed to should
@@ -47,12 +47,17 @@ disabled). Always use the "Merge" strategy.
 A [coding conventions](https://hanspeterschaub.info/basilisk/Support/Developer/CodingGuidlines.html) document exists to
 explain peculiarities and assist in onboarding.
 
--  All development should correspond to a Github ticket, and branch names and PRs should include the ticket name.
+-  All development should correspond to a GitHub ticket, and branch names and PRs should include the ticket name.
 
 ### pre-commit
 
 Pre-commit is a tool used to automate code formatting for easy reading.
 This allows the reviewer to focus on the architecture of a change and not simple nitpicks.
+
+The coder should run the pre-commit tools locally before
+requesting a pull-request (PR) on the Basilisk GitHub repository.  However,
+the PR action will run the pre-commit tools on the server as well
+when running the continuous integration tests.
 
 ##### Installing pre-commit
 
