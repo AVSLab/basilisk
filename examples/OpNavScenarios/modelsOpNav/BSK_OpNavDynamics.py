@@ -369,7 +369,7 @@ class BSKDynamicModels():
     def SetSimpleGrav(self):
         planet = self.gravFactory.createMarsBarycenter()
         planet.isCentralBody = True
-        
+
         self.gravFactory.addBodiesTo(self.scObject)
 
     # Global call to initialize every module
@@ -387,5 +387,3 @@ class BSKDynamicModels():
         self.SetEphemConvert()
         self.SetCamera()
         self.SetCamera2()
-
-

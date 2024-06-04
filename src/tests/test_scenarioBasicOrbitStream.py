@@ -79,4 +79,3 @@ def test_scenarioBasicOrbitStream(show_plots, orbitCase, useSphericalHarmonics, 
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

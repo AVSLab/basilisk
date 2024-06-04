@@ -1082,7 +1082,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     {
-        
+
         // Serialize message (as is)
         uint32_t byteCount = (uint32_t) message->ByteSizeLong();
         void* serialized_message = malloc(byteCount);
@@ -1158,7 +1158,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&empty_frame1, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&empty_frame2, this->requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&request_buffer, this->requester_socket, 0);
-            
+
             zmq_msg_close(&request_header);
             zmq_msg_close(&empty_frame1);
             zmq_msg_close(&empty_frame2);
@@ -1375,7 +1375,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         delete msgRecv;
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [2]: Did not return a user input message.");   
+        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [2]: Did not return a user input message.");
     }
 
     zmq_msg_close(&viz_response);

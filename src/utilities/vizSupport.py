@@ -1159,7 +1159,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'cssList', 'liveStream', 'broadcastStream',        
+        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'cssList', 'liveStream', 'broadcastStream',
          'noDisplay', 'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
          'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList',
          'msmInfoList', 'ellipsoidList', 'trueOrbitColorInMsgList'],

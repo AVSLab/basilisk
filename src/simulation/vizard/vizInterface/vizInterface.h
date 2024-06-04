@@ -1,10 +1,10 @@
 /*
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -12,7 +12,7 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
+
  */
 
 
@@ -76,14 +76,14 @@ public:
     std::vector<ReadFunctor<CameraConfigMsgPayload>> cameraConfInMsgs;  //!< vector of incoming camera data messages
     std::vector<MsgCurrStatus> cameraConfMsgStatus;                     //!< vector of msg status of incoming camera data
     std::vector<CameraConfigMsgPayload> cameraConfigBuffers;            //!< vector of Camera config buffers
-        
+
     int64_t FrameNumber;                          //!< Number of frames that have been updated for TimeStamp message
     std::string protoFilename;                    //!< Filename for where to save the protobuff message
     VizSettings settings;                         //!< container for the Viz settings that can be specified from BSK
     LiveVizSettings liveSettings;                 //!< container for Viz settings that are updated on each time step
     std::vector<VizEventDialog *> vizEventDialogs={}; //!< vector of dialog boxes to show
 
-    
+
     std::string reqComProtocol;                   //!< Communication protocol to use when connecting to 2-way Vizard
     std::string reqComAddress;                    //!< Communication address to use when connecting to 2-way Vizard
     std::string reqPortNumber;                    //!< Communication port number to use when connecting to 2-way Vizard
@@ -111,7 +111,7 @@ private:
     std::vector<MsgCurrStatus>spiceInMsgStatus;             //!< status of the incoming planets' spice data messages
     std::vector <SpicePlanetStateMsgPayload> spiceMessage;  //!< Spice message copies
     std::ofstream *outputStream;                            //!< Output file stream opened in reset
-    int64_t now;                                            //!< Current system time stamp 
+    int64_t now;                                            //!< Current system time stamp
     int64_t lastSettingsSendTime;                           //!< System time stamp when settings message was last sent to broadcast socket
 
     void receiveUserInput(uint64_t CurrentSimNanos);        //!< request user input from Vizard, save as

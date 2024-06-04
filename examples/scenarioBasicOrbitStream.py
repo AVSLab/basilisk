@@ -22,14 +22,14 @@ Overview
 
 This script duplicates the basic orbit simulation in the scenario :ref:`scenarioBasicOrbit`.
 The difference is that this version allows for the Basilisk simulation data to be live streamed to the
-:ref:`vizard` visualization program, with optional 2-way communication with Vizard (live user inputs to 
+:ref:`vizard` visualization program, with optional 2-way communication with Vizard (live user inputs to
 the simulation).
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioBasicOrbitStream.py
 
-To enable live data streaming and/or broadcast streaming, the ``enableUnityVisualization()`` method is provided 
+To enable live data streaming and/or broadcast streaming, the ``enableUnityVisualization()`` method is provided
 with ``liveStream`` and ``broadcastStream`` argument using::
 
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
@@ -310,9 +310,9 @@ Press 'z' to stop the simulation."""
     #
     scSim.InitializeSimulation()
 
-    # This is the execution loop. BSK executes at a frequency governed by [n * simulationTimeStep]. 
+    # This is the execution loop. BSK executes at a frequency governed by [n * simulationTimeStep].
     incrementalStopTime = 0
-    
+
     # Scenario specific flag
     continueBurn = False
 
@@ -330,7 +330,7 @@ Press 'z' to stop the simulation."""
         incrementalStopTime += simulationTimeStep
         scSim.ConfigureStopTime(incrementalStopTime)
         scSim.ExecuteSimulation()
-    
+
         # Retrieve copy of user input message from Vizard
         if liveStream and vizSupport.vizFound:
             userInputs = viz.userInputMsg.read()

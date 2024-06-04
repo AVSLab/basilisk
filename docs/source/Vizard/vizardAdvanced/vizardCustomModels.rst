@@ -65,11 +65,3 @@ Also use of the ``modelDictionaryKey`` to apply custom models to celestial body 
 .. important::
 
     The units of models when applied to spacecraft are assumed to be meters. Models applied to celestial bodes are assumed to be in kilometers.
-
-
-
-
-
-
-
-

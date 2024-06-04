@@ -22,7 +22,7 @@ When starting up the Vizard software a panel is presented where the user can sel
 
 To live stream data from a running Basilisk simulation to Vizard, refer to the :ref:`vizardLiveComm` page.
 
-View Modes 
+View Modes
 ----------
 To engage with the visualization, the
 view point can be rotated and the user can zoom in and out. There are
@@ -49,7 +49,7 @@ three view modes available:
    Double clicking on a planet returns the user to a planet-centric
    view.
 
-Space Vehicle States 
+Space Vehicle States
 --------------------
 The following sections describe
 the basic user interface elements of Vizard. Some settings can be set
@@ -67,7 +67,7 @@ Reaction Wheel States
 
 If Reaction Wheels or RWs are modeled, then a RW panel can be opened
 from within the ``Actuator`` menu bar item. Here the RW wheel speeds and
-motor torques are shown. 
+motor torques are shown.
 
 .. image:: ../_images/static/vizard-ImgRW.jpg
    :align: center
@@ -141,7 +141,7 @@ validate that the sensor axis doesn't get too close to the sun (keep out
 cone), or if the solar panel normal axis stays within some cone to the
 sun (keep in cone). If the cone in/out condition is not triggered, then
 the cone is opaque. If the in/out condition is triggered, then the cone
-becomes solid. 
+becomes solid.
 
 .. image:: ../_images/static/vizard-ImgCones.jpg
    :align: center
@@ -228,7 +228,7 @@ a keyboard short-cut assigned.
   one rendering cycle to slow down the simulation.
 - **Show FPS**: This toggles on the frames-per-second on the lower right of the screen
 
-	
+
 ``Camera`` Menu Item
 --------------------
 The Camera menu item allows for custom camera views to be created into

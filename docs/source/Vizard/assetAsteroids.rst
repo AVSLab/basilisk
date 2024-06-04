@@ -84,4 +84,3 @@ and either key can be used to apply the model.
       - 594 KB
       - https://nasa3d.arc.nasa.gov/detail/toutatis
       - https://assetstore.unity.com/packages/2d/textures- materials/rock-textures-4k-179128
-

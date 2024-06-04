@@ -63,7 +63,7 @@ The communication protocol and port number can be changed using:
     viz.reqComProtocol = "xxx";
     viz.reqComAddress  = "xxx";
     viz.reqPortNumber  = "XXXX";
-	
+
 BSK assembles the full ``liveStream`` address as::
 
     viz.reqComProtocol + "://" + viz.reqComAddress + ":" + viz.reqPortNumber
@@ -115,12 +115,12 @@ list shows all ``VizEventDialog`` structure variables.
       - Name of Vizard event handler to be returned with ``VizEventReply`` responses
     * - ``displayString``
       - string
-      - 
+      -
       - Yes
       - Contains the information or choice that should be posed to the user.
     * - ``userOptions``
       - string[]
-      - 
+      -
       - No
       - Array of display strings, one entry for each user choice that will be shown. If this is
         empty, the dialog is assumed to be informational only. Strings must be unique (cannot display
@@ -150,7 +150,7 @@ list shows all ``VizEventDialog`` structure variables.
         makes a selection, 2 to destroy panel after user makes a selection
     * - ``dialogFormat``
       - string
-      - 
+      -
       - No
       - Select format for dialog box: "WARNING", "CAUTION", or none to use viz default format
 
@@ -186,7 +186,7 @@ read from the :ref:`VizUserInputMsgPayload` message at the desired rate.
 
 From Python, this can be achieved by calling ``scSim.ExecuteSimulation()`` at the desired input
 reception rate so that responses can be parsed and used to influence the simulation state.
-    
+
 The required structure resembles the following:
 
 .. code-block:: python
@@ -199,11 +199,11 @@ The required structure resembles the following:
         currentTime += inputTimeStep
         scSim.ConfigureStopTime(currentTime)
         scSim.ExecuteSimulation()
-        
+
         userInputs = viz.userInputMsg.read()
         keyInputs = userInputs.keyboardInput
         eventInputs = userInputs.vizEventReplies
-        
+
         # Parse "keyInputs" and "eventInputs", modify sim state
 
 The 2-way communication output message, ``viz.userInputMsg`` , is an instance
@@ -274,7 +274,7 @@ To parse ``eventInputs`` , loop over the list:
     for response in eventInputs:
         eventID = response.eventHandlerID
         eventOption = response.reply
-        
+
         if eventID == "Power Mode Panel":
             if eventOption == "Low-Power":
                 # change mode
@@ -288,7 +288,7 @@ See the scenario :ref:`scenarioBasicOrbitStream` for an implemented 2-way commun
 In addition to livestreaming, BSK can broadcast its read-only messages to a secondary port
 using the ``broadcastStream`` flag. This follows a publish/subscribe architecture, which means many
 subscriber Vizards can hook up to a single BSK instance.
-	
+
 To enable broadcasting use the ``broadcastStream`` flag:
 
 .. code-block:: python
@@ -309,7 +309,7 @@ Vizard can also run both ``liveStream`` and ``broadcastStream`` modes simultaneo
                                               , liveStream=True
                                               , broadcastStream=True
                                               )
-											  
+
 This configuration behaves the same as a normal livestream (BSK waits for connection to start), after which
 subscriber Vizards can connect. Subscriber Vizards cannot connect before the publisher Vizard.
 
@@ -357,7 +357,7 @@ The communication protocol and port number can be changed from Python using:
     viz.pubComProtocol = "xxx";
     viz.pubComAddress  = "xxx";
     viz.pubPortNumber  = "XXXX";
-	
+
 BSK assembles the full ``broadcastStream`` address as::
 
     viz.pubComProtocol + "://" + viz.pubComAddress + ":" + viz.pubPortNumber
@@ -391,7 +391,7 @@ The default broadcast address is therefore ``tcp://localhost:5570``.
     firewall restrictions or other applications may restrict port use. If the port experiences trouble
     binding, a ZMQ error will be thrown to the terminal and a different port number should be chosen.
     (Error #19 if port is in use, Error #49 if address:port does not exist.)
-	
+
 In order to broadcast temporarily over a network, a dynamic IP address can be used. With both devices on
 the same network, set the broadcast address as:
 

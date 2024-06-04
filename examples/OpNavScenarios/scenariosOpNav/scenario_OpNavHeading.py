@@ -167,7 +167,7 @@ class scenario_OpNav(BSKScenario):
         circleRadii = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
         validCircle = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.valid)
 
-        frame = unitTestSupport.addTimeColumn(self.headingBVecLog.times(), self.headingBVecLog.bVec_B) 
+        frame = unitTestSupport.addTimeColumn(self.headingBVecLog.times(), self.headingBVecLog.bVec_B)
 
         numRW = 4
         dataRW = []

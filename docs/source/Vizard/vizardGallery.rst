@@ -26,4 +26,3 @@ Video Gallery
     * - |inline-image2|
       - 2020 July 5
       - Basic Vizard 1.4 features illustration
-

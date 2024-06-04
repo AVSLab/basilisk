@@ -423,14 +423,14 @@ cones can be setup in Vizard, but can also be scripted from Basilisk
 using the helper function ``createConeInOut``:
 
 .. code-block::
-	
+
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal',
                                normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True,
                                coneHeight=5.0, coneName=‘sensorCone’)
 	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0],
                                incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
-	
+
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
 
@@ -1836,5 +1836,3 @@ the MSM radii are stored in the list ``rListDebris``.  The sample code is::
                                               , saveFile=fileName
                                               , msmInfoList=[msmInfoDebris]
                                               )
-
-

@@ -27,7 +27,7 @@ The following messages are set directly within ``vizInterface``.  Additional mes
       - Description
     * - opnavImageOutMsgs
       - :ref:`CameraImageMsgPayload`
-      - (optional) vector of Image output messages, the corresponding camera configuration input message is setup 
+      - (optional) vector of Image output messages, the corresponding camera configuration input message is setup
         through ``vizInterface.addCamMsgToModule(msg)``
     * - epochInMsg
       - :ref:`EpochMsgPayload`
@@ -64,6 +64,3 @@ User Guide
 The ``vizInterface`` module can be directly configured, or setup using the helper methods in :ref:`vizSupport`.
 More information can be found in :ref:`vizardSettings` page.  The :ref:`scenarioFormationBasic` illustrates and
 discusses how to configure ``vizInterface`` for use with multiple satellites.
-
-
-
