@@ -486,6 +486,7 @@ class moduleGenerator:
         briefDescription = self.briefDescription
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
+        variableList = self.variableList
 
         self.log(statusColor + "\nCreating C Module: " + endColor + name)
         self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
@@ -536,6 +537,10 @@ class moduleGenerator:
         for msg in outMsgList:
             headerFile += '    ' + msg['type'] + '_C ' + msg['var'] \
                           + ';  //!< ' + msg['desc'] + '\n'
+        if len(variableList):
+            headerFile += '\n'
+            for msg in variableList:
+                headerFile += '    ' + msg['type'] + ' ' + msg['var'] + ';  //!< ' + msg['desc'] + '\n'
         headerFile += '\n'
         headerFile += '    BSKLogger *bskLogger;  //!< BSK Logging\n'
         headerFile += '}' + name + 'Config;\n'
@@ -742,6 +747,13 @@ def fillCInfo(module):
     outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
     outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
     module.outMsgList = outMsgList
+
+    # provide list of module variables
+    # leave list empty if you are not setting up module variables at this stage
+    variableList = list()
+    variableList.append({'type': 'double', 'var': 'varDouble', 'desc': '[units] variable description'})
+    variableList.append({'type': 'int', 'var': 'varInt', 'desc': '[units] variable description'})
+    module.variableList = variableList
 
 
 if __name__ == "__main__":
