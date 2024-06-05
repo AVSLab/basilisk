@@ -50,6 +50,7 @@ class moduleGenerator:
         self.copyrightHolder = None  # holder of open source copyright
         self.inMsgList = []  # list of input message dictionary list
         self.outMsgList = []  # list of input message dictionary list
+        self.variableList = []  # list of module variables
 
         # module behavior flags
         self.cleanBuild = False  # flag if any prior directories should be deleted automatically
@@ -263,6 +264,7 @@ class moduleGenerator:
         briefDescription = self.briefDescription
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
+        variableList = self.variableList
 
         self.log(statusColor + '\nCreating C++ Module: ' + endColor + name)
         self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
@@ -321,7 +323,21 @@ class moduleGenerator:
             headerFile += '    Message<' + msg['type'] + 'Payload> ' + msg['var'] \
                           + ';  //!< ' + msg['desc'] + '\n'
         headerFile += '\n'
-        headerFile += '    BSKLogger bskLogger;              //!< -- BSK Logging\n'
+        headerFile += '    BSKLogger bskLogger;              //!< BSK Logging\n'
+        headerFile += '\n'
+        if len(variableList):
+            for msg in variableList:
+                varName = msg['var'];
+                headerFile += ("    /** setter for `" + varName + "` property */\n")
+                headerFile += ('    void set' + varName[:1].upper() + varName[1:] \
+                              + '(' + msg['type'] + ');\n')
+                headerFile += ("    /** getter for `" + varName + "` property */\n")
+                headerFile += ('    ' + msg['type'] + ' get' + varName[:1].upper() + varName[1:] \
+                              + '() const {return this->' + varName + ';}\n')
+            headerFile += '\n'
+            headerFile += 'private:\n'
+            for msg in variableList:
+                headerFile += '    ' + msg['type'] + ' ' + msg['var'] + ';  //!< ' + msg['desc'] + '\n'
         headerFile += '\n'
         headerFile += '};\n'
         headerFile += '\n'
@@ -346,6 +362,11 @@ class moduleGenerator:
         defFile += '    values and initializes the various parts of the model */\n'
         defFile += self._className + '::' + self._className + '()\n'
         defFile += '{\n'
+        if self.variableList:
+            defFile += '    // initialize module variables\n'
+            for msg in variableList:
+                defFile += '    this->' + msg['var'] + ' = {};\n'
+
         defFile += '}\n'
         defFile += '\n'
         defFile += '/*! Module Destructor */\n'
@@ -391,6 +412,16 @@ class moduleGenerator:
             defFile += '    this->' + msg['var'] + '.write(&' + msg['var'] + 'Buffer, this->moduleID, CurrentSimNanos);\n'
         defFile += '}\n'
         defFile += '\n'
+
+        if variableList:
+            for msg in variableList:
+                varName = msg['var']
+                defFile += 'void ' + self._className + '::set' + varName[:1].upper() + varName[1:] \
+                    + '(' + msg['type'] + ' var)\n'
+                defFile += '{\n'
+                defFile += '    this->' + varName + ' = var;\n'
+                defFile += '}\n'
+                defFile += '\n'
 
         with open(defFileName, 'w') as w:
             w.write(defFile)
@@ -679,6 +710,12 @@ def fillCppInfo(module):
     outMsgList.append({'type': 'RWConfigMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
     module.outMsgList = outMsgList
 
+    # provide list of module variables
+    # leave list empty if you are not setting up module variables at this stage
+    variableList = list()
+    variableList.append({'type': 'double', 'var': 'varDouble', 'desc': '[units] variable description'})
+    variableList.append({'type': 'int', 'var': 'varInt', 'desc': '[units] variable description'})
+    module.variableList = variableList
 
 def fillCInfo(module):
     """Fill in the C module information.  This should be edited before running to meet the new module needs."""
