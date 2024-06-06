@@ -30,7 +30,7 @@
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 
-%include "sys_model.h"
+%include "sys_model.i"
 %include "pinholeCamera.h"
 %include "std_vector.i"
 
