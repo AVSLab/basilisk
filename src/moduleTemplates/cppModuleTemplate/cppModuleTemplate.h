@@ -25,6 +25,8 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
+#include <array>
+
 /*! @brief basic Basilisk C++ module class */
 class CppModuleTemplate: public SysModel {
 public:
@@ -34,15 +36,24 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-public:
-
-    double dummy;                                   //!< [units] sample module variable declaration
-    double dumVector[3];                            //!< [units] sample vector variable
-
     Message<CModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
     ReadFunctor<CModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
 
-    BSKLogger bskLogger;              //!< -- BSK Logging
+    BSKLogger bskLogger;                               //!< BSK Logging
+
+    /** setter for `dummy` property */
+    void setDummy(double value);
+    /** getter for `dummy` property */
+    double getDummy() const {return this->dummy;}
+    /** setter for `dumVector` property */
+    void setDumVector(std::array<double, 3> value);
+    /** getter for `dumVector` property */
+    std::array<double, 3> getDumVector() const {return this->dumVector;}
+
+private:
+
+    double dummy = {};                                 //!< [units] sample module variable declaration
+    std::array<double, 3> dumVector = {};              //!< [units] sample vector variable
 
 };
 
