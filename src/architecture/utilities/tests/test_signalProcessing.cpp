@@ -27,16 +27,15 @@ const double testAccuracy = 1e-8;
 double calculateStandardDeviation(const std::vector<double>& input)
 {
     double sum = 0.;
-    double mean = 0.;
     double standardDeviation = 0.;
 
-    for (double i : input) {
-        sum += input[i];
+    for (double value : input) {
+        sum += value;
     }
 
-    mean = sum / input.size();
-    for (int i = 0; i < input.size(); ++i) {
-        standardDeviation += pow(input[i] - mean, 2);
+    double mean = sum / input.size();
+    for (double value : input) {
+        standardDeviation += pow(value - mean, 2);
     }
 
     return std::sqrt(standardDeviation / input.size());
