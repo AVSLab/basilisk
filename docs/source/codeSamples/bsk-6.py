@@ -48,14 +48,14 @@ def run():
     # set module variables
     mod1.dummy = 1
     mod1.dumVector = [1., 2., 3.]
-    mod2.dummy = 1
-    mod2.dumVector = [1., 2., 3.]
+    mod2.setDummy(1)
+    mod2.setDumVector([1., 2., 3.])
 
-    # request these module variables to be recorded    
+    # request these module variables to be recorded
     mod1Logger = mod1.logger("dummy", macros.sec2nano(1.))
     scSim.AddModelToTask("dynamicsTask", mod1Logger)
-    mod2WrapLogger = mod2.logger(["dummy", "dumVector"], macros.sec2nano(1.))
-    scSim.AddModelToTask("dynamicsTask", mod2WrapLogger)
+    mod2Logger = mod2.logger(["dummy", "dumVector"])
+    scSim.AddModelToTask("dynamicsTask", mod2Logger)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
@@ -71,9 +71,9 @@ def run():
     print("mod1.dummy:")
     print(mod1Logger.dummy)
     print("mod2.dummy:")
-    print(mod2WrapLogger.dummy)
-    print("mod2.dumVector:")
-    print(mod2WrapLogger.dumVector)
+    print(mod2Logger.dummy)
+    print("mod2.getDumVector():")
+    print(mod2Logger.dumVector)
 
 if __name__ == "__main__":
     run()
