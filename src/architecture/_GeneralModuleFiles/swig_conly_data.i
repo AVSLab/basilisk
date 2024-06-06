@@ -243,9 +243,9 @@ def getStructSize(self):
         return eval('sizeof_' + repr(self).split(';')[0].split('.')[-1])
     except (NameError) as e:
         typeString = 'sizeof_' + repr(self).split(';')[0].split('.')[-1]
-        raise NameError(e.message + '\nYou tried to get this size macro: ' + typeString + 
-            '\n It appears to be undefined.  \nYou need to run the SWIG GEN_SIZEOF' +  
-            ' SWIG macro against the class/struct in your SWIG file if you want to ' + 
+        raise NameError(e.message + '\nYou tried to get this size macro: ' + typeString +
+            '\n It appears to be undefined.  \nYou need to run the SWIG GEN_SIZEOF' +
+            ' SWIG macro against the class/struct in your SWIG file if you want to ' +
             ' make this call.\n')
 
 
@@ -253,20 +253,18 @@ def protectSetAttr(self, name, value):
     if(hasattr(self, name) or name == 'this' or name.find('swig') >= 0):
         object.__setattr__(self, name, value)
     else:
-        raise ValueError('You tried to add this variable: ' + name + '\n' + 
+        raise ValueError('You tried to add this variable: ' + name + '\n' +
             'To this class: ' + str(self))
 
 def protectAllClasses(moduleType):
     import inspect
-    import sys
-    clsmembers = inspect.getmembers(sys.modules[__name__], inspect.isclass)
+
+    clsmembers = inspect.getmembers(moduleType, inspect.isclass)
     for member in clsmembers:
         try:
-            exec(str(member[0]) + '.__setattr__ = protectSetAttr')
-            exec(str(member[0]) + '.getStructSize = getStructSize') 
+            member[1].__setattr__ = protectSetAttr
+            member[1].getStructSize = getStructSize
         except (AttributeError, TypeError) as e:
             pass
-    
+
 %}
-
-
