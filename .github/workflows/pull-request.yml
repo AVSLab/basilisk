@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.10"]
     permissions:
       actions: read
       contents: read
@@ -97,7 +97,7 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.10"]
     permissions:
       actions: read
       contents: read
