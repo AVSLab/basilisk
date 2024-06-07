@@ -22,22 +22,38 @@ from typing import Union, Iterable
 {
     %pythoncode %{
         def logger(self, variableNames: Union[str, Iterable[str]], recordingTime: int = 0):
+            """Generate a logger from one or more variables in this model.
+
+            Each variable must be public or private with a standard-named getter.
+            For example, if you want to log the variable `foo` from the model
+            `mod`, then `mod.foo` or `mod.getFoo()` must be available.
+
+            Args:
+                variableNames (Union[str, Iterable[str]]): The name or names
+                    of the variables to log.
+                recordingTime (int, optional): The minimum interval between variable
+                    recordings. Defaults to 0.
+            """
             if isinstance(variableNames, str):
                 variableNames = [variableNames]
 
-            logging_functions = {
-                variable_name: lambda _, vn=variable_name: getattr(self, vn)
-                for variable_name in variableNames
-            }
+            loggingFunctions = {}
+            for variableName in variableNames:
+                if hasattr(self, variableName):
+                    loggingFunctions[variableName] = lambda _, variableName=variableName: getattr(self, variableName)
+                    continue
 
-            for variable_name, log_fun in logging_functions.items():
-                try:
-                    log_fun(0)
-                except AttributeError:
-                    raise ValueError(f"Cannot log {variable_name} as it is not a "
-                                    f"variable of {type(self).__name__}")
+                getterStr = f"get{variableName[0].upper()}{variableName[1:]}"
+                getter = getattr(self, getterStr, None)
+                if getter is not None:
+                    loggingFunctions[variableName] = lambda _, getter=getter: getter()
+                    continue
+
+                raise ValueError(f"Cannot log {variableName} as it is not a "
+                    f"public variable of {type(self).__name__} and the getter "
+                    f"{getterStr} does not exist.")
 
             from Basilisk.utilities import pythonVariableLogger
-            return pythonVariableLogger.PythonVariableLogger(logging_functions, recordingTime)
+            return pythonVariableLogger.PythonVariableLogger(loggingFunctions, recordingTime)
     %}
 }
