@@ -51,3 +51,54 @@ void SunSearch::UpdateState(uint64_t CurrentSimNanos)
 {
 
 }
+
+
+/*! Set the slew time
+    @param double slewTime
+    @return void
+    */
+void SunSearch::setSlewTime(double const t1, const double t2, const double t3) {
+    this->slewProperties[0].slewTime = t1;
+    this->slewProperties[1].slewTime = t2;
+    this->slewProperties[2].slewTime = t3;
+}
+
+/*! Set the slew angle
+    @param double slewAngle
+    @return void
+    */
+void SunSearch::setSlewAngle(double const theta1, double const theta2, double const theta3) {
+    this->slewProperties[0].slewAngle = theta1;
+    this->slewProperties[1].slewAngle = theta2;
+    this->slewProperties[2].slewAngle = theta3;
+}
+
+/*! Set the maximum angle rate
+    @param double slewMaxRate
+    @return void
+    */
+void SunSearch::setMaxRate(double const omega1, double const omega2, double const omega3) {
+    this->slewProperties[0].slewMaxRate = omega1;
+    this->slewProperties[1].slewMaxRate = omega2;
+    this->slewProperties[2].slewMaxRate = omega3;
+}
+
+/*! Set the rotation axis
+    @param double slewRotAxis
+    @return void
+    */
+void SunSearch::setRotAxis(int const a1, int const a2, int const a3) {
+    this->slewProperties[0].slewRotAxis = a1;
+    this->slewProperties[1].slewRotAxis = a2;
+    this->slewProperties[2].slewRotAxis = a3;
+}
+
+/*! Set the maximum torque
+    @param double slewMaxTorque
+    @return void
+    */
+void SunSearch::setMaxTorque(double const u1, double const u2, double const u3) {
+    this->slewMaxTorque[0] = u1;
+    this->slewMaxTorque[1] = u2;
+    this->slewMaxTorque[2] = u3;
+}

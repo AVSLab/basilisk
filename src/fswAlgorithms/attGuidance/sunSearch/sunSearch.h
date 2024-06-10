@@ -50,6 +50,12 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
+    void setSlewTime(double const t1, const double t2, const double t3);
+    void setSlewAngle(double const theta1, double const theta2, double const theta3);
+    void setMaxRate(double const omega1, double const omega2, double const omega3);
+    void setMaxTorque(double const u1, double const u2, double const u3);
+    void setRotAxis(int const a1, int const a2, int const a3);
+
     ReadFunctor<NavAttMsgPayload>          attNavInMsg;          //!< input msg measured attitude
     ReadFunctor<VehicleConfigMsgPayload>   vehConfigInMsg;       //!< input veh config msg
     Message<AttGuidMsgPayload>             attGuidOutMsg;        //!< Attitude reference output message
