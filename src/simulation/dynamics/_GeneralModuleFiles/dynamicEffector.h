@@ -27,14 +27,14 @@
 /*! @brief dynamic effector class */
 class DynamicEffector {
 public:
-    DynamicEffector();                      //!< -- Constructor
-    virtual ~DynamicEffector();             //!< -- Destructor
+    DynamicEffector();                      //!< Constructor
+    virtual ~DynamicEffector();             //!< Destructor
     virtual void computeStateContribution(double integTime);
-    virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method to get access to other states/stateEffectors
+    virtual void linkInStates(DynParamManager& states) = 0;  //!< Method to get access to other states/stateEffectors
     virtual void computeForceTorque(double integTime, double timeStep) = 0;  //!< -- Method to computeForce and torque on the body
-    
+
 public:
-    Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector
+    Eigen::VectorXd stateDerivContribution; //!< DynamicEffectors contribution to a stateEffector
     Eigen::Vector3d forceExternal_N = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in inertial components
     Eigen::Vector3d forceExternal_B = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in body frame components
     Eigen::Vector3d torqueExternalPntB_B = Eigen::Vector3d::Zero(); //!< [Nm] External torque applied by this effector
@@ -55,7 +55,7 @@ public:
     std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
     std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
 
-    BSKLogger bskLogger;                    //!< -- BSK Logging
+    BSKLogger bskLogger;                    //!< BSK Logging
 };
 
 
