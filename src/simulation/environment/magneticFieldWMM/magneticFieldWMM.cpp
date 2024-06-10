@@ -29,7 +29,7 @@ MagneticFieldWMM::MagneticFieldWMM()
 {
     //! - Set the default magnetic field properties
     this->planetRadius = REQ_EARTH*1000.;   // must be the radius of Earth for WMM
-    this->magneticModels[0] = nullptr;      // a nullptr means no WMM coefficients have been loaded
+    this->magneticModel = nullptr;      // a nullptr means no WMM coefficients have been loaded
     this->epochDateFractionalYear = -1;     // negative value means this variable has not been set
 }
 
@@ -38,7 +38,7 @@ MagneticFieldWMM::MagneticFieldWMM()
  */
 MagneticFieldWMM::~MagneticFieldWMM()
 {
-    if (this->magneticModels[0] != nullptr) {
+    if (this->magneticModel != nullptr) {
         cleanupEarthMagFieldModel();
     }
 }
@@ -48,10 +48,10 @@ MagneticFieldWMM::~MagneticFieldWMM()
  */
 void MagneticFieldWMM::customReset(uint64_t CurrentClock)
 {
-    if (this->magneticModels[0] != nullptr) {
+    if (this->magneticModel != nullptr) {
         /* clean up the prior initialization */
         cleanupEarthMagFieldModel();
-        this->magneticModels[0] = nullptr;
+        this->magneticModel = nullptr;
     }
 
     //! - Check that required module variables are set
@@ -158,16 +158,13 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
 void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
 {
     Eigen::Vector3d rHat_P;             // []    normalized position vector in E frame components
-    double phi;                         // [rad] latitude
-    double lambda;                      // [rad] longitude
-    double h;                           // [m]   height above geoid
     double PM[3][3];                    // []    DCM from magnetic field frame to planet frame P
     double NM[3][3];                    // []    DCM from magnetic field frame to inertial frame N
     double B_M[3];                      // [T]   magnetic field in Magnetic field aligned frame
     double M2[3][3];                    // []    2nd axis rotation DCM
     double M3[3][3];                    // []    3rd axis rotation DCM
 
-    if (this->magneticModels[0] == nullptr) {
+    if (this->magneticModel == nullptr) {
         // no magnetic field was setup, set field to zero and return
         v3SetZero(msg->magField_N);
         return;
@@ -176,17 +173,18 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
     //! - compute normalized E-frame position vector
     rHat_P = this->r_BP_P.normalized();
 
-    //! - compute spacecraft latitude and longitude
-    phi = safeAsin(rHat_P[2]);
-    lambda = atan2(rHat_P[1], rHat_P[0]);
-    h = (this->orbitRadius - this->planetRadius)/1000.; /* must be in km */
+    //! - compute spacecraft latitude and longitude in spherical (geocentric) coordinates
+    MAGtype_CoordSpherical coordSpherical;
+    coordSpherical.phig = R2D * safeAsin(rHat_P[2]); /* degrees North */
+    coordSpherical.lambda = R2D * atan2(rHat_P[1], rHat_P[0]); /* degrees East  */
+    coordSpherical.r = this->orbitRadius / 1000.0; /* must be in km */
 
     //! - evaluate NED magnetic field
-    computeWmmField(gregorian2DecimalYear(currentTime), phi, lambda, h, B_M);
+    computeWmmField(gregorian2DecimalYear(currentTime), coordSpherical, B_M);
 
     //! - convert NED magnetic field M vector components into N-frame components and store in output message
-    Euler2(phi + M_PI_2, M2);
-    Euler3(-lambda, M3);
+    Euler2(D2R * coordSpherical.phig + M_PI_2, M2);
+    Euler3(D2R * -coordSpherical.lambda, M3);
     m33MultM33(M3, M2, PM);
     m33tMultM33(this->planetState.J20002Pfix, PM, NM);
     m33MultV3(NM, B_M, msg->magField_N);
@@ -197,38 +195,33 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
  */
 void MagneticFieldWMM::cleanupEarthMagFieldModel()
 {
-    MAG_FreeMagneticModelMemory(timedMagneticModel);
-    MAG_FreeMagneticModelMemory(magneticModels[0]);
+    MAG_FreeMagneticModelMemory(this->timedMagneticModel);
+    MAG_FreeMagneticModelMemory(this->magneticModel);
+
+    MAG_FreeLegendreMemory(this->LegendreFunction);
+    MAG_FreeSphVarMemory(this->SphVariables);
 }
 
-void MagneticFieldWMM::computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3])
+void MagneticFieldWMM::computeWmmField(double decimalYear, MAGtype_CoordSpherical coordSpherical, double B_M[3])
 {
-    MAGtype_CoordSpherical      coordSpherical{};
-    MAGtype_CoordGeodetic       coordGeodetic{};
-    MAGtype_GeoMagneticElements geoMagneticElements{};
-    MAGtype_GeoMagneticElements errors{};
+    MAGtype_MagneticResults MagneticResultsSph;
 
     this->userDate.DecimalYear = decimalYear;
-
-    /* set the Geodetic coordinates of the satellite */
-    coordGeodetic.phi = phi * R2D; /* degrees North */
-    coordGeodetic.lambda = lambda * R2D; /* degrees East  */
-    /* If height is given above WGS-84 */
-    coordGeodetic.HeightAboveEllipsoid = h; /* km */
-
     this->geoid.UseGeoid = 0;
 
-    /* Convert from geodetic to Spherical Equations: 17-18, WMM Technical report */
-    MAG_GeodeticToSpherical(this->ellip, coordGeodetic, &coordSpherical);
-
     /* Time adjust the coefficients, Equation 19, WMM Technical report */
-    MAG_TimelyModifyMagneticModel(this->userDate, this->magneticModels[0], this->timedMagneticModel);
-    /* Computes the geoMagnetic field elements and their time change */
-    MAG_Geomag(this->ellip, coordSpherical, coordGeodetic, this->timedMagneticModel, &geoMagneticElements);
-    MAG_CalculateGridVariation(coordGeodetic, &geoMagneticElements);
-    MAG_WMMErrorCalc(geoMagneticElements.H, &errors);
-    v3Set(geoMagneticElements.X, geoMagneticElements.Y, geoMagneticElements.Z, B_M);
+    MAG_TimelyModifyMagneticModel(this->userDate, this->magneticModel, this->timedMagneticModel);
 
+    /* Compute Spherical Harmonic variables  */
+    MAG_ComputeSphericalHarmonicVariables(this->ellip, coordSpherical, this->timedMagneticModel->nMax, this->SphVariables);
+
+    /* Compute ALF  */
+    MAG_AssociatedLegendreFunction(coordSpherical, this->timedMagneticModel->nMax, this->LegendreFunction);
+
+    /* Accumulate the spherical harmonic coefficients*/
+    MAG_Summation(this->LegendreFunction, this->timedMagneticModel, *this->SphVariables, coordSpherical, &MagneticResultsSph);
+
+    v3Set(MagneticResultsSph.Bx, MagneticResultsSph.By, MagneticResultsSph.Bz, B_M);
     v3Scale(1e-9, B_M, B_M); /* convert nano-Tesla to Tesla */
 }
 
@@ -238,24 +231,27 @@ void MagneticFieldWMM::initializeWmm()
     int nTerms;
     auto fileName = this->dataPath + "WMM.COF";
 
-    if (!MAG_robustReadMagModels(const_cast<char*>(fileName.c_str()),
-                                 &(this->magneticModels),
-                                 1)) {
+    MAGtype_MagneticModel *models[1];
+    if (!MAG_robustReadMagModels(const_cast<char*>(fileName.c_str()), &models, 1)) {
         bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", fileName.c_str());
         return;
     }
+    this->magneticModel = models[0];
 
-    if(nMax < magneticModels[0]->nMax) {
-        nMax = magneticModels[0]->nMax;
+    if(nMax < magneticModel->nMax) {
+        nMax = magneticModel->nMax;
     }
     nTerms = ((nMax + 1) * (nMax + 2) / 2);
     /* For storing the time modified WMM Model parameters */
     this->timedMagneticModel = MAG_AllocateModelMemory(nTerms);
-    if(this->magneticModels[0] == nullptr || this->timedMagneticModel == nullptr) {
+    if(this->magneticModel == nullptr || this->timedMagneticModel == nullptr) {
         MAG_Error(2);
     }
     /* Set default values and constants */
     MAG_SetDefaults(&this->ellip, &this->geoid);
+
+    this->LegendreFunction = MAG_AllocateLegendreFunctionMemory(nTerms); /* For storing the ALF functions */
+    this->SphVariables = MAG_AllocateSphVarMemory(nMax);
 
     this->geoid.GeoidHeightBuffer = GeoidHeightBuffer;
     this->geoid.Geoid_Initialized = 1;
