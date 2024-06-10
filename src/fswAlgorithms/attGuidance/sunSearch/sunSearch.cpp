@@ -39,6 +39,23 @@ void SunSearch::SelfInit(){
  */
 void SunSearch::Reset(uint64_t CurrentSimNanos)
 {
+    if (!this->attNavInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, ".attNavInMsg wasn't connected.");
+    }
+    if (!this->vehConfigInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, ".vehConfigInMsg wasn't connected.");
+    }
+
+    /*! read vehicle configuration message */
+    VehicleConfigMsgPayload vehConfigIn = this->vehConfigInMsg();
+    this->principleInertias[0] = vehConfigIn.ISCPntB_B[0];
+    this->principleInertias[1] = vehConfigIn.ISCPntB_B[4];
+    this->principleInertias[2] = vehConfigIn.ISCPntB_B[8];
+
+    for (int index=0; index<3; index++) {
+        this->computeKinematicProperties(index);
+    }
+
     this->resetTime = CurrentSimNanos;
 }
 
