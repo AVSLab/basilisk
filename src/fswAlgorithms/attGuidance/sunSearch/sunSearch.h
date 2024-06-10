@@ -68,6 +68,7 @@ private:
     uint64_t       resetTime;            //!< time at which reset is called
     BSKLogger      bskLogger;            //!< BSK Logging
 
+    void computeKinematicProperties(int const index);
 };
 
 #endif

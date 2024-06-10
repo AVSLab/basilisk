@@ -53,6 +53,43 @@ void SunSearch::UpdateState(uint64_t CurrentSimNanos)
 }
 
 
+/*! Define this method to compute the kinematic properties of each slew
+    @return void
+    */
+void SunSearch::computeKinematicProperties(int const index)
+{
+    SlewProperties* SP = &this->slewProperties[index];
+    int axis = SP->slewRotAxis - 1;
+    double maxAcc = this->slewMaxTorque[axis] / this->principleInertias[axis];
+
+    /*! Computing fastest bang-bang slew with no coasting arc */
+    double alpha = 4 * SP->slewAngle / (SP->slewTime * SP->slewTime);
+    double omegaMax = 2 * SP->slewAngle / SP->slewTime;
+    double totalTime = SP->slewTime;
+    double thrustTime = totalTime / 2;
+
+    /*! If angular acceleration exceeds limit, decrease acceleration and increase slew time */
+    if (alpha > maxAcc) {
+        alpha = maxAcc;
+        totalTime = 2 * sqrt(SP->slewAngle / alpha);
+        thrustTime = totalTime / 2;
+        omegaMax = alpha * thrustTime;
+    }
+
+    /*! If angular rate exceeds limit, increase slew time adding a coasting arc */
+    if (omegaMax > SP->slewMaxRate) {
+        omegaMax = SP->slewMaxRate;
+        totalTime = SP->slewAngle / omegaMax + omegaMax / alpha;
+        thrustTime = omegaMax / alpha;
+    }
+
+    SP->slewAngAcc     = alpha;
+    SP->slewOmegaMax   = omegaMax;
+    SP->slewTotalTime  = totalTime;
+    SP->slewThrustTime = thrustTime;
+}
+
+
 /*! Set the slew time
     @param double slewTime
     @return void
