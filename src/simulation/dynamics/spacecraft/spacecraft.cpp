@@ -81,22 +81,22 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
 void Spacecraft::addStateEffector(StateEffector *newStateEffector)
 {
     /* assign the state engine names for the parent rigid body states */
-    newStateEffector->stateNameOfPosition = this->hub.nameOfHubPosition;
-    newStateEffector->stateNameOfVelocity = this->hub.nameOfHubVelocity;
-    newStateEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
-    newStateEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
+    newStateEffector->setStateNameOfPosition(this->hub.nameOfHubPosition);
+    newStateEffector->setStateNameOfVelocity(this->hub.nameOfHubVelocity);
+    newStateEffector->setStateNameOfSigma(this->hub.nameOfHubSigma);
+    newStateEffector->setStateNameOfOmega(this->hub.nameOfHubOmega);
 
     /* assign the state engine names for the parent rigid property values */
-    newStateEffector->propName_m_SC = this->propName_m_SC;
-    newStateEffector->propName_mDot_SC = this->propName_mDot_SC;
-    newStateEffector->propName_centerOfMassSC = this->propName_centerOfMassSC;
-    newStateEffector->propName_inertiaSC = this->propName_inertiaSC;
-    newStateEffector->propName_inertiaPrimeSC = this->propName_inertiaPrimeSC;
-    newStateEffector->propName_centerOfMassPrimeSC = this->propName_centerOfMassPrimeSC;
-    newStateEffector->propName_centerOfMassDotSC = this->propName_centerOfMassDotSC;
-    newStateEffector->propName_inertialPosition = this->gravField.inertialPositionPropName;
-    newStateEffector->propName_inertialVelocity = this->gravField.inertialVelocityPropName;
-    newStateEffector->propName_vehicleGravity = this->gravField.vehicleGravityPropName;
+    newStateEffector->setPropName_m_SC(this->propName_m_SC);
+    newStateEffector->setPropName_mDot_SC(this->propName_mDot_SC);
+    newStateEffector->setPropName_centerOfMassSC(this->propName_centerOfMassSC);
+    newStateEffector->setPropName_inertiaSC(this->propName_inertiaSC);
+    newStateEffector->setPropName_inertiaPrimeSC(this->propName_inertiaPrimeSC);
+    newStateEffector->setPropName_centerOfMassPrimeSC(this->propName_centerOfMassPrimeSC);
+    newStateEffector->setPropName_centerOfMassDotSC(this->propName_centerOfMassDotSC);
+    newStateEffector->setPropName_inertialPosition(this->gravField.inertialPositionPropName);
+    newStateEffector->setPropName_inertialVelocity(this->gravField.inertialVelocityPropName);
+    newStateEffector->setPropName_vehicleGravity(this->gravField.vehicleGravityPropName);
 
     this->states.push_back(newStateEffector);
 }
@@ -105,22 +105,22 @@ void Spacecraft::addStateEffector(StateEffector *newStateEffector)
 void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
 {
     /* assign the state engine names for the parent rigid body states */
-    newDynamicEffector->stateNameOfPosition = this->hub.nameOfHubPosition;
-    newDynamicEffector->stateNameOfVelocity = this->hub.nameOfHubVelocity;
-    newDynamicEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
-    newDynamicEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
+    newDynamicEffector->setStateNameOfPosition(this->hub.nameOfHubPosition);
+    newDynamicEffector->setStateNameOfVelocity(this->hub.nameOfHubVelocity);
+    newDynamicEffector->setStateNameOfSigma(this->hub.nameOfHubSigma);
+    newDynamicEffector->setStateNameOfOmega(this->hub.nameOfHubOmega);
 
     /* assign the state engine names for the parent rigid property values */
-    newDynamicEffector->propName_m_SC = this->propName_m_SC;
-    newDynamicEffector->propName_mDot_SC = this->propName_mDot_SC;
-    newDynamicEffector->propName_centerOfMassSC = this->propName_centerOfMassSC;
-    newDynamicEffector->propName_inertiaSC = this->propName_inertiaSC;
-    newDynamicEffector->propName_inertiaPrimeSC = this->propName_inertiaPrimeSC;
-    newDynamicEffector->propName_centerOfMassPrimeSC = this->propName_centerOfMassPrimeSC;
-    newDynamicEffector->propName_centerOfMassDotSC = this->propName_centerOfMassDotSC;
-    newDynamicEffector->propName_inertialPosition = this->gravField.inertialPositionPropName;
-    newDynamicEffector->propName_inertialVelocity = this->gravField.inertialVelocityPropName;
-    newDynamicEffector->propName_vehicleGravity = this->gravField.vehicleGravityPropName;
+    newDynamicEffector->setPropName_m_SC(this->propName_m_SC);
+    newDynamicEffector->setPropName_mDot_SC(this->propName_mDot_SC);
+    newDynamicEffector->setPropName_centerOfMassSC(this->propName_centerOfMassSC);
+    newDynamicEffector->setPropName_inertiaSC(this->propName_inertiaSC);
+    newDynamicEffector->setPropName_inertiaPrimeSC(this->propName_inertiaPrimeSC);
+    newDynamicEffector->setPropName_centerOfMassPrimeSC(this->propName_centerOfMassPrimeSC);
+    newDynamicEffector->setPropName_centerOfMassDotSC(this->propName_centerOfMassDotSC);
+    newDynamicEffector->setPropName_inertialPosition(this->gravField.inertialPositionPropName);
+    newDynamicEffector->setPropName_inertialVelocity(this->gravField.inertialVelocityPropName);
+    newDynamicEffector->setPropName_vehicleGravity(this->gravField.vehicleGravityPropName);
 
     this->dynEffectors.push_back(newDynamicEffector);
 }

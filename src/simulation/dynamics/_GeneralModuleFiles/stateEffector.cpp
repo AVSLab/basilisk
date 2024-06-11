@@ -61,7 +61,7 @@ void StateEffector::receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen:
 }
 
 /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft. The back-sub
- method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state 
+ method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state
  effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B*/
 void StateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
@@ -69,7 +69,7 @@ void StateEffector::updateContributions(double integTime, BackSubMatrices & back
 }
 
 /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the dynamicObject.
- The analytical devlopement of these contributions can be seen in 
+ The analytical devlopement of these contributions can be seen in
  Basilisk/simulation/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf*/
 void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                                  double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
@@ -99,4 +99,144 @@ void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 void StateEffector::prependSpacecraftNameToStates()
 {
     return;
+}
+
+void StateEffector::setStateNameOfPosition(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->stateNameOfPosition = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: stateNameOfPosition variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setStateNameOfVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->stateNameOfVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: stateNameOfVelocity variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setStateNameOfSigma(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->stateNameOfSigma = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: stateNameOfSigma variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setStateNameOfOmega(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->stateNameOfOmega = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: stateNameOfOmega variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_m_SC(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_m_SC = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_m_SC variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_mDot_SC(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_mDot_SC = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_mDot_SC variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_centerOfMassSC(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_centerOfMassSC = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_centerOfMassSC variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_inertiaSC(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertiaSC = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertiaSC variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_inertiaPrimeSC(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertiaPrimeSC = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertiaPrimeSC variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_centerOfMassPrimeSC(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_centerOfMassPrimeSC = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_centerOfMassPrimeSC variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_centerOfMassDotSC(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_centerOfMassDotSC = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_centerOfMassDotSC variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_inertialPosition(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialPosition = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertialPosition variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_inertialVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertialVelocity variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_vehicleGravity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_vehicleGravity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_vehicleGravity variable must be a non-empty string");
+    }
 }

@@ -225,9 +225,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     TotalSim.scObject.hub.registerStates(TotalSim.newManager)
 
     # assign state engine names of parent rigid body
-    thrusterSet.stateNameOfSigma = TotalSim.scObject.hub.nameOfHubSigma
-    thrusterSet.stateNameOfOmega = TotalSim.scObject.hub.nameOfHubOmega
-    thrusterSet.propName_inertialPosition = TotalSim.scObject.gravField.inertialPositionPropName
+    thrusterSet.setStateNameOfSigma(TotalSim.scObject.hub.nameOfHubSigma)
+    thrusterSet.setStateNameOfOmega(TotalSim.scObject.hub.nameOfHubOmega)
+    thrusterSet.setPropName_inertialPosition(TotalSim.scObject.gravField.inertialPositionPropName)
     thrusterSet.linkInStates(TotalSim.newManager)
 
     plt.close("all")

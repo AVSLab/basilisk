@@ -39,6 +39,66 @@ public:
     Eigen::Vector3d forceExternal_B = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in body frame components
     Eigen::Vector3d torqueExternalPntB_B = Eigen::Vector3d::Zero(); //!< [Nm] External torque applied by this effector
 
+    /** setter for `stateNameOfPosition` property */
+    void setStateNameOfPosition(std::string value);
+    /** getter for `stateNameOfPosition` property */
+    const std::string getStateNameOfPosition() const {return this->stateNameOfPosition; }
+    /** setter for `stateNameOfVelocity` property */
+    void setStateNameOfVelocity(std::string value);
+    /** getter for `stateNameOfVelocity` property */
+    const std::string getStateNameOfVelocity() const { return this->stateNameOfVelocity; }
+    /** setter for `stateNameOfSigma` property */
+    void setStateNameOfSigma(std::string value);
+    /** getter for `stateNameOfSigma` property */
+    const std::string getStateNameOfSigma() const { return this->stateNameOfSigma; }
+    /** setter for `stateNameOfOmega` property */
+    void setStateNameOfOmega(std::string value);
+    /** getter for `stateNameOfOmega` property */
+    const std::string getStateNameOfOmega() const { return this->stateNameOfOmega; }
+    /** setter for `propName_m_SC` property */
+   void setPropName_m_SC(std::string value);
+   /** getter for `propName_m_SC` property */
+   const std::string getPropName_m_SC() const { return this->propName_m_SC; }
+   /** setter for `propName_mDot_SC` property */
+   void setPropName_mDot_SC(std::string value);
+   /** getter for `propName_mDot_SC` property */
+   const std::string getPropName_mDot_SC() const { return this->propName_mDot_SC; }
+   /** setter for `propName_centerOfMassSC` property */
+   void setPropName_centerOfMassSC(std::string value);
+   /** getter for `propName_centerOfMassSC` property */
+   const std::string getPropName_centerOfMassSC() const { return this->propName_centerOfMassSC; }
+   /** setter for `propName_inertiaSC` property */
+   void setPropName_inertiaSC(std::string value);
+   /** getter for `propName_inertiaSC` property */
+   const std::string getPropName_inertiaSC() const { return this->propName_inertiaSC; }
+   /** setter for `propName_inertiaPrimeSC` property */
+   void setPropName_inertiaPrimeSC(std::string value);
+   /** getter for `propName_inertiaPrimeSC` property */
+   const std::string getPropName_inertiaPrimeSC() const { return this->propName_inertiaPrimeSC; }
+   /** setter for `propName_centerOfMassPrimeSC` property */
+   void setPropName_centerOfMassPrimeSC(std::string value);
+   /** getter for `propName_centerOfMassPrimeSC` property */
+   const std::string getPropName_centerOfMassPrimeSC() const { return this->propName_centerOfMassPrimeSC; }
+   /** setter for `propName_centerOfMassDotSC` property */
+   void setPropName_centerOfMassDotSC(std::string value);
+   /** getter for `propName_centerOfMassDotSC` property */
+   const std::string getPropName_centerOfMassDotSC() const { return this->propName_centerOfMassDotSC; }
+   /** setter for `propName_inertialPosition` property */
+   void setPropName_inertialPosition(std::string value);
+   /** getter for `propName_inertialPosition` property */
+   const std::string getPropName_inertialPosition() const { return this->propName_inertialPosition; }
+   /** setter for `propName_inertialVelocity` property */
+   void setPropName_inertialVelocity(std::string value);
+   /** getter for `propName_inertialVelocity` property */
+   const std::string getPropName_inertialVelocity() const { return this->propName_inertialVelocity; }
+   /** setter for `propName_vehicleGravity` property */
+   void setPropName_vehicleGravity(std::string value);
+   /** getter for `propName_vehicleGravity` property */
+   const std::string getPropName_vehicleGravity() const { return this->propName_vehicleGravity; }
+
+    BSKLogger bskLogger;                    //!< BSK Logging
+
+protected:
     std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
     std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
     std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude
@@ -55,7 +115,6 @@ public:
     std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
     std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
 
-    BSKLogger bskLogger;                    //!< BSK Logging
 };
 
 
