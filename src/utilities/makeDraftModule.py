@@ -73,11 +73,11 @@ class moduleGenerator:
         """
         Make sure the supplied module destination path is correct
         """
-        self.log(statusColor + "Checking Module location:" + endColor, end=" ")
+        self.log(f"{statusColor}Checking Module location:{endColor}", end=" ")
         if os.path.isdir(self._absPath):
             os.chdir(self._absPath)
         else:
-            self.log(failColor + "\nERROR: " + endColor + "Incorrect path to the new folder:")
+            self.log(f"{failColor}\nERROR: {endColor}Incorrect path to the new folder:")
             self.log(self._absPath)
             exit()
         self.log("Done")
@@ -87,13 +87,13 @@ class moduleGenerator:
         """
         Create the new module folder
         """
-        self.log(statusColor + "Creating Module Folder:" + endColor, end=" ")
+        self.log(f"{statusColor}Creating Module Folder:{endColor}", end=" ")
         if os.path.isdir(self._newModuleLocation):
-            self.log("\n" + warningColor + "WARNING: " + endColor + "The new module destination already exists.")
+            self.log(f"\n{warningColor}WARNING: {endColor}The new module destination already exists.")
             if not self.cleanBuild:
                 ans = input("Do you want to delete this folder and recreate? (y or n): ")
                 if ans != "y":
-                    self.log(failColor + "Aborting module creation." + endColor)
+                    self.log(f"{failColor}Aborting module creation.{endColor}")
                     exit()
             self.log("Cleared the old folder.")
             shutil.rmtree(self._newModuleLocation)
@@ -115,11 +115,11 @@ class moduleGenerator:
 
     def createRstFile(self):
         """Create the Module RST documentation draft."""
-        rstFileName = self.moduleName + ".rst"
-        self.log(statusColor + "Creating RST Documentation File " + rstFileName + ":" + endColor, end=" ")
+        rstFileName = f"{self.moduleName}.rst"
+        self.log(f"{statusColor}Creating RST Documentation File {rstFileName}:{endColor}", end=" ")
         rstFile = 'Executive Summary\n'
         rstFile += '-----------------\n'
-        rstFile += self.briefDescription + '\n'
+        rstFile += f'{self.briefDescription}\n'
         rstFile += '\n'
         rstFile += 'Message Connection Descriptions\n'
         rstFile += '-------------------------------\n'
@@ -136,9 +136,9 @@ class moduleGenerator:
         rstFile += '      - Msg Type\n'
         rstFile += '      - Description\n'
         for msg in self.inMsgList + self.outMsgList:
-            rstFile += '    * - ' + msg['var'] + '\n'
-            rstFile += '      - :ref:`' + msg['type'] + 'Payload`\n'
-            rstFile += '      - ' + msg['desc'] + '\n'
+            rstFile += f'    * - {msg["var"]}\n'
+            rstFile += f'      - :ref:`{msg["type"]}Payload`\n'
+            rstFile += f'      - {msg["desc"]}\n'
         rstFile += '\n'
 
         with open(rstFileName, 'w') as w:
@@ -152,11 +152,11 @@ class moduleGenerator:
         """
         os.mkdir('_UnitTest')
         os.chdir('_UnitTest')
-        testFileName = "test_" + self.moduleName + ".py"
-        self.log(statusColor + "Creating Python Init Test File " + testFileName + ":" + endColor, end=" ")
+        testFileName = f"test_{self.moduleName}.py"
+        self.log(f"{statusColor}Creating Python Init Test File {testFileName}:{endColor}", end=" ")
         testFile = ""
         for line in self._licenseText.split('\n'):
-            testFile += '# ' + line + '\n'
+            testFile += f'# {line}\n'
         testFile += '\n'
         testFile += 'import pytest\n'
         testFile += '\n'
@@ -164,7 +164,7 @@ class moduleGenerator:
         testFile += 'from Basilisk.utilities import unitTestSupport\n'
         testFile += 'from Basilisk.architecture import messaging\n'
         testFile += 'from Basilisk.utilities import macros\n'
-        testFile += 'from Basilisk.' + os.path.split(self.modulePathRelSrc)[0] + ' import ' + self.moduleName + '\n'
+        testFile += f'from Basilisk.{os.path.split(self.modulePathRelSrc)[0]} import {self.moduleName}\n'
         testFile += '\n'
         testFile += '@pytest.mark.parametrize("accuracy", [1e-12])\n'
         testFile += '@pytest.mark.parametrize("param1, param2", [\n'
@@ -172,7 +172,7 @@ class moduleGenerator:
         testFile += '    ,(1, 3)\n'
         testFile += '])\n'
         testFile += '\n'
-        testFile += 'def test_' + self.moduleName + '(show_plots, param1, param2, accuracy):\n'
+        testFile += f'def test_{self.moduleName}(show_plots, param1, param2, accuracy):\n'
         testFile += '    r"""\n'
         testFile += '    **Validation Test Description**\n'
         testFile += '\n'
@@ -191,11 +191,11 @@ class moduleGenerator:
         testFile += '\n'
         testFile += '    Here discuss what variables and states are being checked. \n'
         testFile += '    """\n'
-        testFile += '    [testResults, testMessage] = ' + self.moduleName + 'TestFunction(show_plots, param1, param2, accuracy)\n'
+        testFile += f'    [testResults, testMessage] = {self.moduleName}TestFunction(show_plots, param1, param2, accuracy)\n'
         testFile += '    assert testResults < 1, testMessage\n'
         testFile += '\n'
         testFile += '\n'
-        testFile += 'def ' + self.moduleName + 'TestFunction(show_plots, param1, param2, accuracy):\n'
+        testFile += f'def {self.moduleName}TestFunction(show_plots, param1, param2, accuracy):\n'
         testFile += '    """Test method"""\n'
         testFile += '    testFailCount = 0\n'
         testFile += '    testMessages = []\n'
@@ -209,28 +209,28 @@ class moduleGenerator:
         testFile += '\n'
         testFile += '    # setup module to be tested\n'
         if type == "C++":
-            testFile += '    module = ' + self.moduleName + '.' + self._className + '()\n'
+            testFile += f'    module = {self.moduleName}.{self._className}()\n'
         elif type == "C":
-            testFile += '    module = ' + self.moduleName + '.' + self.moduleName + '()\n'
+            testFile += f'    module = {self.moduleName}.{self.moduleName}()\n'
         else:
-            self.log(failColor + "ERROR: " + endColor + "Wrong module type provided to test file method.")
+            self.log(f"{failColor}ERROR: {endColor}Wrong module type provided to test file method.")
             exit(0)
-        testFile += '    module.ModelTag = "' + self.moduleName + 'Tag"\n'
+        testFile += f'    module.ModelTag = "{self.moduleName}Tag"\n'
         testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
         testFile += '\n'
         testFile += '    # Configure blank module input messages\n'
         for msg in self.inMsgList:
-            testFile += '    ' + msg['var'] + 'Data = messaging.' + msg['type'] + 'Payload()\n'
-            testFile += '    ' + msg['var'] + ' = messaging.' + msg['type'] + '().write(' + msg['var'] + 'Data)' + '\n'
+            testFile += f'    {msg["var"]}Data = messaging.{msg["type"]}Payload()\n'
+            testFile += f'    {msg["var"]} = messaging.{msg["type"]}().write({msg["var"]}Data)\n'
             testFile += '\n'
         testFile += '    # subscribe input messages to module\n'
         for msg in self.inMsgList:
-            testFile += '    module.' + msg['var'] + '.subscribeTo(' + msg['var'] + ')\n'
+            testFile += f'    module.{msg["var"]}.subscribeTo({msg["var"]})\n'
         testFile += '\n'
         testFile += '    # setup output message recorder objects\n'
         for msg in self.outMsgList:
-            testFile += '    ' + msg['var'] + 'Rec = module.' + msg['var'] + '.recorder()\n'
-            testFile += '    unitTestSim.AddModelToTask(unitTaskName, ' + msg['var'] + 'Rec)\n'
+            testFile += f'    {msg["var"]}Rec = module.{msg["var"]}.recorder()\n'
+            testFile += f'    unitTestSim.AddModelToTask(unitTaskName, {msg["var"]}Rec)\n'
         testFile += '\n'
         testFile += '    unitTestSim.InitializeSimulation()\n'
         testFile += '    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))\n'
@@ -247,7 +247,7 @@ class moduleGenerator:
         testFile += '\n'
         testFile += '\n'
         testFile += 'if __name__ == "__main__":\n'
-        testFile += '    test_' + self.moduleName + '(False, 1, 1, 1e-12)\n'
+        testFile += f'    test_{self.moduleName}(False, 1, 1, 1e-12)\n'
         testFile += '\n'
         testFile += '\n'
 
@@ -285,11 +285,11 @@ class moduleGenerator:
         # make module header file
         #
         headerFileName = name + ".h"
-        self.log(statusColor + "Creating Header File " + headerFileName + ":" + endColor, end=" ")
+        self.log(f"{statusColor}Creating Header File {headerFileName}:{endColor}", end=" ")
         headerFile = licenseC
         headerFile += '\n'
-        headerFile += '#ifndef ' + name.upper() + '_H\n'
-        headerFile += '#define ' + name.upper() + '_H\n'
+        headerFile += f'#ifndef {name.upper()}_H\n'
+        headerFile += f'#define {name.upper()}_H\n'
         headerFile += '\n'
         headerFile += '#include "architecture/_GeneralModuleFiles/sys_model.h"\n'
         # loop over message definition includes
@@ -298,46 +298,43 @@ class moduleGenerator:
             # ensure we don't include message definition files multiple times
             if msg['type'] not in includedMsgs:
                 if msg['wrap'] == 'C':
-                    headerFile += '#include "architecture/msgPayloadDefC/' + msg['type'] + 'Payload.h"\n'
+                    headerFile += f'#include "architecture/msgPayloadDefC/{msg["type"]}Payload.h"\n'
                 if msg['wrap'] == 'C++':
-                    headerFile += '#include "architecture/msgPayloadDefCpp/' + msg['type'] + 'Payload.h"\n'
+                    headerFile += f'#include "architecture/msgPayloadDefCpp/{msg["type"]}Payload.h"\n'
                 includedMsgs.append(msg['type'])
         headerFile += '#include "architecture/utilities/bskLogging.h"\n'
         headerFile += '#include "architecture/messaging/messaging.h"\n'
         headerFile += '\n'
-        headerFile += '/*! @brief ' + briefDescription + '\n */\n'
-        headerFile += 'class ' + self._className + ': public SysModel {\n'
+        headerFile += f'/*! @brief {briefDescription}\n */\n'
+        headerFile += f'class {self._className}: public SysModel {{\n'
         headerFile += 'public:\n'
-        headerFile += '    ' + self._className + '();\n'
-        headerFile += '    ~' + self._className + '();\n'
+        headerFile += f'    {self._className}();\n'
+        headerFile += f'    ~{self._className}();\n'
         headerFile += '\n'
         headerFile += '    void Reset(uint64_t CurrentSimNanos);\n'
         headerFile += '    void UpdateState(uint64_t CurrentSimNanos);\n'
         headerFile += '\n'
         headerFile += 'public:\n'
         for msg in inMsgList:
-            headerFile += '    ReadFunctor<' + msg['type'] + 'Payload> ' + msg['var'] \
-                          + ';  //!< ' + msg['desc'] + '\n'
+            headerFile += f'    ReadFunctor<{msg["type"]}Payload> {msg["var"]};  //!< {msg["desc"]}\n'
         headerFile += '\n'
         for msg in outMsgList:
-            headerFile += '    Message<' + msg['type'] + 'Payload> ' + msg['var'] \
-                          + ';  //!< ' + msg['desc'] + '\n'
+            headerFile += f'    Message<{msg["type"]}Payload> {msg["var"]};  //!< {msg["desc"]}\n'
         headerFile += '\n'
         headerFile += '    BSKLogger bskLogger;              //!< BSK Logging\n'
         headerFile += '\n'
         if len(variableList):
             for msg in variableList:
                 varName = msg['var'];
-                headerFile += ("    /** setter for `" + varName + "` property */\n")
-                headerFile += ('    void set' + varName[:1].upper() + varName[1:] \
-                              + '(' + msg['type'] + ');\n')
-                headerFile += ("    /** getter for `" + varName + "` property */\n")
-                headerFile += ('    ' + msg['type'] + ' get' + varName[:1].upper() + varName[1:] \
-                              + '() const {return this->' + varName + ';}\n')
+                headerFile += f"    /** setter for `{varName}` property */\n"
+                headerFile += f'    void set{varName[:1].upper() + varName[1:]}({msg["type"]});\n'
+                headerFile += f"    /** getter for `{varName}` property */\n"
+                headerFile += (f'    {msg["type"]} get{varName[:1].upper() + varName[1:]}() '
+                               f'const {{return this->{varName};}}\n')
             headerFile += '\n'
             headerFile += 'private:\n'
             for msg in variableList:
-                headerFile += '    ' + msg['type'] + ' ' + msg['var'] + ';  //!< ' + msg['desc'] + '\n'
+                headerFile += f'    {msg["type"]} {msg["var"]};  //!< {msg["desc"]}\n'
         headerFile += '\n'
         headerFile += '};\n'
         headerFile += '\n'
@@ -354,7 +351,7 @@ class moduleGenerator:
         self.log(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
         defFile = licenseC
         defFile += '\n'
-        defFile += '#include "' + modulePath + '/' + name + '/' + name + '.h"\n'
+        defFile += f'#include "{modulePath}/{name}/{name}.h"\n'
         defFile += '#include <iostream>\n'
         defFile += '#include <cstring>\n'
         defFile += '\n'
@@ -365,24 +362,24 @@ class moduleGenerator:
         if self.variableList:
             defFile += '    // initialize module variables\n'
             for msg in variableList:
-                defFile += '    this->' + msg['var'] + ' = {};\n'
+                defFile += f'    this->{msg["var"]} = {{}};\n'
 
         defFile += '}\n'
         defFile += '\n'
         defFile += '/*! Module Destructor */\n'
-        defFile += self._className + '::~' + self._className + '()\n'
+        defFile += f'{self._className}::~{self._className}()\n'
         defFile += '{\n'
         defFile += '}\n'
         defFile += '\n'
         defFile += '/*! This method is used to reset the module and checks that required input messages are connect.\n'
         defFile += '    @return void\n'
         defFile += '*/\n'
-        defFile += 'void ' + self._className + '::Reset(uint64_t CurrentSimNanos)\n'
+        defFile += f'void {self._className}::Reset(uint64_t CurrentSimNanos)\n'
         defFile += '{\n'
         defFile += '    // check that required input messages are connected\n'
         for msg in inMsgList:
-            defFile += '    if (!this->' + msg['var'] + '.isLinked()) {\n'
-            defFile += '        bskLogger.bskLog(BSK_ERROR, "' + self._className + '.' + msg['var'] + ' was not linked.");\n'
+            defFile += f'    if (!this->{msg["var"]}.isLinked()) {{\n'
+            defFile += f'        bskLogger.bskLog(BSK_ERROR, "{self._className}.{msg["var"]} was not linked.");\n'
             defFile += '    }\n'
         defFile += '\n'
         defFile += '}\n'
@@ -392,34 +389,33 @@ class moduleGenerator:
                    'Provide an appropriate description.\n'
         defFile += '    @return void\n'
         defFile += '*/\n'
-        defFile += 'void ' + self._className + '::UpdateState(uint64_t CurrentSimNanos)\n'
+        defFile += f'void {self._className}::UpdateState(uint64_t CurrentSimNanos)\n'
         defFile += '{\n'
         for msg in inMsgList + outMsgList:
-            defFile += '    ' + msg['type'] + 'Payload ' + msg['var'] + 'Buffer;  //!< local copy of message buffer\n'
+            defFile += f'    {msg["type"]}Payload {msg["var"]}Buffer;  //!< local copy of message buffer\n'
         defFile += '\n'
         defFile += '    // always zero the output message buffers before assigning values\n'
         for msg in outMsgList:
-            defFile += '    ' + msg['var'] + 'Buffer = this->' + msg['var'] + '.zeroMsgPayload;\n'
+            defFile += f'    {msg["var"]}Buffer = this->{msg["var"]}.zeroMsgPayload;\n'
         defFile += '\n'
         defFile += '    // read in the input messages\n'
         for msg in inMsgList:
-            defFile += '    ' + msg['var'] + 'Buffer = this->' + msg['var'] + '();\n'
+            defFile += f'    {msg["var"]}Buffer = this->{msg["var"]}();\n'
         defFile += '\n'
         defFile += '    // do some math and stuff to populate the output messages\n'
         defFile += '\n'
         defFile += '    // write to the output messages\n'
         for msg in outMsgList:
-            defFile += '    this->' + msg['var'] + '.write(&' + msg['var'] + 'Buffer, this->moduleID, CurrentSimNanos);\n'
+            defFile += f'    this->{msg["var"]}.write(&{msg["var"]}Buffer, this->moduleID, CurrentSimNanos);\n'
         defFile += '}\n'
         defFile += '\n'
 
         if variableList:
             for msg in variableList:
                 varName = msg['var']
-                defFile += 'void ' + self._className + '::set' + varName[:1].upper() + varName[1:] \
-                    + '(' + msg['type'] + ' var)\n'
+                defFile += f'void {self._className}::set{varName[:1].upper() + varName[1:]}({msg["type"]} var)\n'
                 defFile += '{\n'
-                defFile += '    this->' + varName + ' = var;\n'
+                defFile += f'    this->{varName} = var;\n'
                 defFile += '}\n'
                 defFile += '\n'
 
@@ -433,9 +429,9 @@ class moduleGenerator:
         swigFileName = name + ".i"
         self.log(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
         swigFile = licenseC
-        swigFile += '%module ' + name + '\n'
+        swigFile += f'%module {name}\n'
         swigFile += '%{\n'
-        swigFile += '    #include "' + name + '.h"\n'
+        swigFile += f'    #include "{name}.h"\n'
         swigFile += '%}\n'
         swigFile += '\n'
         swigFile += '%pythoncode %{\n'
@@ -445,17 +441,17 @@ class moduleGenerator:
         swigFile += '%include "swig_conly_data.i"\n'
         swigFile += '\n'
         swigFile += '%include "sys_model.i"\n'
-        swigFile += '%include "' + name + '.h"\n'
+        swigFile += f'%include "{name}.h"\n'
         swigFile += '\n'
         includedMsgs = []
         for msg in inMsgList + outMsgList:
             # ensure we don't include message definition files multiple times
             if msg['type'] not in includedMsgs:
                 if msg['wrap'] == 'C':
-                    swigFile += '%include "architecture/msgPayloadDefC/' + msg['type'] + 'Payload.h"\n'
-                    swigFile += 'struct ' + msg['type'] + '_C;\n'
+                    swigFile += f'%include "architecture/msgPayloadDefC/{msg["type"]}Payload.h"\n'
+                    swigFile += f'struct {msg["type"]}_C;\n'
                 if msg['wrap'] == 'C++':
-                    swigFile += '%include "architecture/msgPayloadDefCpp/' + msg['type'] + 'Payload.h"\n'
+                    swigFile += f'%include "architecture/msgPayloadDefCpp/{msg["type"]}Payload.h"\n'
                 includedMsgs.append(msg['type'])
         swigFile += '\n'
         swigFile += '%pythoncode %{\n'
@@ -488,12 +484,12 @@ class moduleGenerator:
         outMsgList = self.outMsgList
         variableList = self.variableList
 
-        self.log(statusColor + "\nCreating C Module: " + endColor + name)
+        self.log(f"{statusColor}\nCreating C Module: {endColor}{name}")
         self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
 
         # read in the license information
         self.readLicense()
-        licenseC = "/*" + self._licenseText + "*/\n\n"
+        licenseC = f"/*{self._licenseText}*/\n\n"
 
         # make sure the path, specified relative to basilisk/src, to the new module location is correct
         self._absPath = os.path.join(pathToSrc, modulePath)
@@ -506,12 +502,12 @@ class moduleGenerator:
         #
         # make module header file
         #
-        headerFileName = name + ".h"
-        self.log(statusColor + "Creating Header File " + headerFileName + ":" + endColor, end=" ")
+        headerFileName = f"{name}.h"
+        self.log(f"{statusColor}Creating Header File {headerFileName}:{endColor}", end=" ")
         headerFile = licenseC
         headerFile += '\n'
-        headerFile += '#ifndef ' + name.upper() + '_H\n'
-        headerFile += '#define ' + name.upper() + '_H\n'
+        headerFile += f'#ifndef {name.upper()}_H\n'
+        headerFile += f'#define {name.upper()}_H\n'
         headerFile += '\n'
         headerFile += '#include <stdint.h>\n'
         # loop over message definition includes
@@ -520,37 +516,35 @@ class moduleGenerator:
             # ensure we don't include message definition files multiple times
             if msg['type'] not in includedMsgs:
                 if msg['wrap'] == 'C':
-                    headerFile += '#include "cMsgCInterface/' + msg['type'] + '_C.h"\n'
+                    headerFile += f'#include "cMsgCInterface/{msg["type"]}_C.h"\n'
                 if msg['wrap'] == 'C++':
-                    self.log(failColor + "Error: " + endColor + "You can't include C++ messages in a C module.")
+                    self.log(f"{failColor}Error: {endColor}You can't include C++ messages in a C module.")
                     exit()
                 includedMsgs.append(msg['type'])
         headerFile += '#include "architecture/utilities/bskLogging.h"\n'
         headerFile += '\n'
-        headerFile += '/*! @brief ' + briefDescription + '\n */\n'
-        headerFile += 'typedef struct {\n'
+        headerFile += f'/*! @brief {briefDescription}\n */\n'
+        headerFile += f'typedef struct {{\n'
         headerFile += '\n'
         headerFile += '    /* declare module IO interfaces */\n'
         for msg in inMsgList:
-            headerFile += '    ' + msg['type'] + '_C ' + msg['var'] \
-                          + ';  //!< ' + msg['desc'] + '\n'
+            headerFile += f'    {msg["type"]}_C {msg["var"]};  //!< {msg["desc"]}\n'
         for msg in outMsgList:
-            headerFile += '    ' + msg['type'] + '_C ' + msg['var'] \
-                          + ';  //!< ' + msg['desc'] + '\n'
+            headerFile += f'    {msg["type"]}_C {msg["var"]};  //!< {msg["desc"]}\n'
         if len(variableList):
             headerFile += '\n'
             for msg in variableList:
-                headerFile += '    ' + msg['type'] + ' ' + msg['var'] + ';  //!< ' + msg['desc'] + '\n'
+                headerFile += f'    {msg["type"]} {msg["var"]};  //!< {msg["desc"]}\n'
         headerFile += '\n'
         headerFile += '    BSKLogger *bskLogger;  //!< BSK Logging\n'
-        headerFile += '}' + name + 'Config;\n'
+        headerFile += f'}}{name}Config;\n'
         headerFile += '\n'
         headerFile += '#ifdef __cplusplus\n'
         headerFile += 'extern "C" {\n'
         headerFile += '#endif\n'
-        headerFile += '    void SelfInit_' + name + '(' + name + 'Config *configData, int64_t moduleID);\n'
-        headerFile += '    void Update_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID);\n'
-        headerFile += '    void Reset_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID);\n'
+        headerFile += f'    void SelfInit_{name}({name}Config *configData, int64_t moduleID);\n'
+        headerFile += f'    void Update_{name}({name}Config *configData, uint64_t callTime, int64_t moduleID);\n'
+        headerFile += f'    void Reset_{name}({name}Config *configData, uint64_t callTime, int64_t moduleID);\n'
         headerFile += '\n'
         headerFile += '#ifdef __cplusplus\n'
         headerFile += '}\n'
@@ -565,11 +559,11 @@ class moduleGenerator:
         #
         # make module definition file
         #
-        defFileName = name + ".c"
-        self.log(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
+        defFileName = f"{name}.c"
+        self.log(f"{statusColor}Creating Definition File {defFileName}:{endColor}", end=" ")
         defFile = licenseC
         defFile += '\n'
-        defFile += '#include "' + modulePath + '/' + name + '/' + name + '.h"\n'
+        defFile += f'#include "{modulePath}/{name}/{name}.h"\n'
         defFile += '#include "string.h"\n'
         defFile += '\n'
         defFile += '/*!\n'
@@ -578,10 +572,10 @@ class moduleGenerator:
         defFile += ' @param configData The configuration data associated with this module\n'
         defFile += ' @param moduleID The module identifier\n'
         defFile += ' */\n'
-        defFile += 'void SelfInit_' + name + '(' + name + 'Config  *configData, int64_t moduleID)\n'
+        defFile += f'void SelfInit_{name}({name}Config  *configData, int64_t moduleID)\n'
         defFile += '{\n'
         for msg in outMsgList:
-            defFile += '    ' + msg['type'] + '_C_init(&configData->' + msg['var'] + ');\n'
+            defFile += f'    {msg["type"]}_C_init(&configData->{msg["var"]});\n'
         defFile += '}\n'
         defFile += '\n'
         defFile += '\n'
@@ -593,12 +587,12 @@ class moduleGenerator:
         defFile += ' @param callTime [ns] time the method is called\n'
         defFile += ' @param moduleID The module identifier\n'
         defFile += '*/\n'
-        defFile += 'void Reset_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID)\n'
+        defFile += f'void Reset_{name}({name}Config *configData, uint64_t callTime, int64_t moduleID)\n'
         defFile += '{\n'
         defFile += '    // check if the required message has not been connected\n'
         for msg in inMsgList:
-            defFile += '    if (!' + msg['type'] + '_C_isLinked(&configData->' + msg['var'] + ')) {\n'
-            defFile += '        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ' + name + '.' + msg['var'] \
+            defFile += f'    if (!{msg["type"]}_C_isLinked(&configData->{msg["var"]})) {{\n'
+            defFile += f'        _bskLog(configData->bskLogger, BSK_ERROR, "Error: {name}.{msg["var"]}' \
                        + ' was not connected.");\n'
             defFile += '    }\n'
 
@@ -611,28 +605,26 @@ class moduleGenerator:
         defFile += ' @param callTime The clock time at which the function was called (nanoseconds)\n'
         defFile += ' @param moduleID The module identifier\n'
         defFile += '*/\n'
-        defFile += 'void Update_' + name + '(' + name + 'Config *configData, uint64_t callTime, int64_t moduleID)\n'
+        defFile += f'void Update_{name}({name}Config *configData, uint64_t callTime, int64_t moduleID)\n'
         defFile += '{\n'
         for msg in inMsgList + outMsgList:
-            defFile += '    ' + msg['type'] + 'Payload ' + msg['var'] + 'Buffer;  //!< local copy of message buffer\n'
+            defFile += f'    {msg["type"]}Payload {msg["var"]}Buffer;  //!< local copy of message buffer\n'
         defFile += '\n'
         defFile += '    // always zero the output message buffers before assigning values\n'
         for msg in outMsgList:
-            defFile += '    ' + msg['var'] + 'Buffer = ' + msg['type'] + '_C_zeroMsgPayload();\n'
+            defFile += f'    {msg["var"]}Buffer = {msg["type"]}_C_zeroMsgPayload();\n'
         defFile += '\n'
         defFile += '    // read in the input messages\n'
         for msg in inMsgList:
-            defFile += '    ' + msg['var'] + 'Buffer = ' + msg['type'] + '_C_read(&configData->' + msg['var'] + ');\n'
+            defFile += f'    {msg["var"]}Buffer = {msg["type"]}_C_read(&configData->{msg["var"]});\n'
         defFile += '\n'
         defFile += '    // do some math and stuff to populate the output messages\n'
         defFile += '\n'
         defFile += '    // write to the output messages\n'
         for msg in outMsgList:
-            defFile += '    ' + msg['type'] + '_C_write(&' + msg['var'] + 'Buffer, &configData->' + msg[
-                'var'] + ', moduleID, callTime);\n'
+            defFile += f'    {msg["type"]}_C_write(&{msg["var"]}Buffer, &configData->{msg["var"]}, moduleID, callTime);\n'
         defFile += '}\n'
         defFile += '\n'
-
 
         with open(defFileName, 'w') as w:
             w.write(defFile)
@@ -641,12 +633,12 @@ class moduleGenerator:
         #
         # make module swig interface file
         #
-        swigFileName = name + ".i"
-        self.log(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
+        swigFileName = f"{name}.i"
+        self.log(f"{statusColor}Creating Swig Interface File {swigFileName}:{endColor}", end=" ")
         swigFile = licenseC
-        swigFile += '%module ' + name + '\n'
+        swigFile += f'%module {name}\n'
         swigFile += '%{\n'
-        swigFile += '    #include "' + name + '.h"\n'
+        swigFile += f'    #include "{name}.h"\n'
         swigFile += '%}\n'
         swigFile += '\n'
         swigFile += '%pythoncode %{\n'
@@ -655,17 +647,17 @@ class moduleGenerator:
         swigFile += '%include "swig_c_wrap.i"\n'
         swigFile += f'%c_wrap({name});\n'
         swigFile += '\n'
-        swigFile += '%include "' + name + '.h"\n'
+        swigFile += f'%include "{name}.h"\n'
         swigFile += '\n'
         includedMsgs = []
         for msg in inMsgList + outMsgList:
             # ensure we don't include message definition files multiple times
             if msg['type'] not in includedMsgs:
                 if msg['wrap'] == 'C':
-                    swigFile += '%include "architecture/msgPayloadDefC/' + msg['type'] + 'Payload.h"\n'
-                    swigFile += 'struct ' + msg['type'] + '_C;\n'
+                    swigFile += f'%include "architecture/msgPayloadDefC/{msg["type"]}Payload.h"\n'
+                    swigFile += f'struct {msg["type"]}_C;\n'
                 if msg['wrap'] == 'C++':
-                    self.log(failColor + "ERROR: " + endColor + 'you cannot swig a C++ message in a C module.')
+                    self.log(f"{failColor}ERROR: {endColor}you cannot swig a C++ message in a C module.")
                 includedMsgs.append(msg['type'])
         swigFile += '\n'
         swigFile += '%pythoncode %{\n'
