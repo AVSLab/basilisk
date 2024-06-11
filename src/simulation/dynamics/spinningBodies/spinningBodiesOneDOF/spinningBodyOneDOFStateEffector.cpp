@@ -180,7 +180,7 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
         - this->mass * (rPrimeTilde_ScB_B * this->rTilde_ScB_B + this->rTilde_ScB_B * rPrimeTilde_ScB_B);
 }
 
-/*! This method allows the SB state effector to give its contributions to the matrices needed for the back-sub 
+/*! This method allows the SB state effector to give its contributions to the matrices needed for the back-sub
  method */
 void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
                                                           BackSubMatrices & backSubContr,
@@ -233,7 +233,7 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
                 - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B
                 - this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B)) / this->mTheta;
     }
- 
+
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
     backSubContr.matrixA = -this->mass * rTilde_ScS_B * this->sHat_B * this->aTheta.transpose();
@@ -262,7 +262,7 @@ void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime,
     this->sigma_BN = sigma_BN;
     this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
 
-    // Grab omegaDot_BN_B 
+    // Grab omegaDot_BN_B
     Eigen::Vector3d omegaDotLocal_BN_B;
     omegaDotLocal_BN_B = omegaDot_BN_B;
 

@@ -66,7 +66,7 @@ public:
     Message<SCStatesMsgPayload> scStateOutMsg;       //!< -- Name of the state output message
     Message<SCMassPropsMsgPayload> scMassStateOutMsg;   //!< -- Name of the state output message
     Message<SCEnergyMomentumMsgPayload> scEnergyMomentumOutMsg;   //!< -- Name of the state output message
-    
+
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
 
@@ -91,7 +91,7 @@ public:
     Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
     Eigen::Vector3d omegaDot_BN_B;       //!< [rad/s/s] angular acceleration of body wrt to N in body frame
 
-    
+
 
     HubEffector hub;                     //!< class variable
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
@@ -99,7 +99,7 @@ public:
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     std::vector<DockingData*> dockingPoints;    //!< class variable
 
-    
+
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 
@@ -161,7 +161,7 @@ public:
     SpacecraftUnit primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacecraft can attach/detach to/from
     std::vector<SpacecraftUnit*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
     std::vector<SpacecraftUnit*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
-    int numberOfSCAttachedToPrimary;          //!< class variable 
+    int numberOfSCAttachedToPrimary;          //!< class variable
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
@@ -190,7 +190,7 @@ public:
 
 private:
     Eigen::MatrixXd *sysTime;            //!< [s] System time
-    
+
 };
 
 

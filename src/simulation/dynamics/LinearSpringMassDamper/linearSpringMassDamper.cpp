@@ -130,7 +130,7 @@ void LinearSpringMassDamper::retrieveMassValue(double integTime)
 {
     // Save mass value into the fuelSlosh class variable
     this->fuelMass = this->massSMD;
-    
+
     return;
 }
 
@@ -164,7 +164,7 @@ void LinearSpringMassDamper::updateContributions(double integTime, BackSubMatric
 	cRho = 1.0/(this->massSMD)*(this->pHat_B.dot(this->massSMD * g_B) - this->k*this->rho - this->c*this->rhoDot
 		         - 2 * this->massSMD*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
 		                   - this->massSMD*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->r_PcB_B));
-	
+
 	// - Compute matrix/vector contributions
 	backSubContr.matrixA = this->massSMD*this->pHat_B*this->aRho.transpose();
     backSubContr.matrixB = this->massSMD*this->pHat_B*this->bRho.transpose();
@@ -176,17 +176,17 @@ void LinearSpringMassDamper::updateContributions(double integTime, BackSubMatric
     return;
 }
 
-/*! This method is used to define the derivatives of the SMD. One is the trivial kinematic derivative and the other is 
+/*! This method is used to define the derivatives of the SMD. One is the trivial kinematic derivative and the other is
  derived using the back-sub method */
 void LinearSpringMassDamper::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
-	
+
 	// - Find DCM
 	Eigen::MRPd sigmaLocal_BN;
 	Eigen::Matrix3d dcm_BN;
 	sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
-	
+
 	// - Set the derivative of rho to rhoDot
 	this->rhoState->setDerivative(this->rhoDotState->getState());
 
@@ -253,6 +253,6 @@ void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vect
 
     // - Calculate the torque about point C
     this->torqueOnBodyPntC_B = -(this->massSMD*rTilde_PcC_B*this->pHat_B*rhoDDotLocal + this->massSMD*omegaLocalTilde_BN_B*rTilde_PcC_B*rPrime_PcC_B - this->massSMD*(rPrimeTilde_PcC_B*rTilde_PcC_B + rTilde_PcC_B*rPrimeTilde_PcC_B)*omegaLocal_BN_B);
-    
+
     return;
 }

@@ -109,7 +109,7 @@ void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
     newDynamicEffector->stateNameOfVelocity = this->hub.nameOfHubVelocity;
     newDynamicEffector->stateNameOfSigma = this->hub.nameOfHubSigma;
     newDynamicEffector->stateNameOfOmega = this->hub.nameOfHubOmega;
-    
+
     /* assign the state engine names for the parent rigid property values */
     newDynamicEffector->propName_m_SC = this->propName_m_SC;
     newDynamicEffector->propName_mDot_SC = this->propName_mDot_SC;

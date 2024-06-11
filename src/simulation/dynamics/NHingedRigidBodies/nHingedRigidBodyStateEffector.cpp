@@ -35,7 +35,7 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     this->nameOfThetaState ="nHingedRigidBody" + std::to_string(this->effectorID) + "Theta";
     this->nameOfThetaDotState = "nHingedRigidBody" + std::to_string(this->effectorID) + "ThetaDot";
     this->effectorID++;
-    
+
     return;
 }
 
@@ -80,7 +80,7 @@ void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
 void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
-    
+
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     Eigen::MatrixXd thetaInitMatrix(this->PanelVec.size(),1);
     Eigen::MatrixXd thetaDotInitMatrix(this->PanelVec.size(),1);
@@ -122,7 +122,7 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     sum_rH.setZero();
     Eigen::Vector3d sum_rPrimeH;
     sum_rPrimeH.setZero();
-    
+
     std::vector<HingedPanel>::iterator PanelIt;
     int it = 0;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
@@ -138,61 +138,61 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
         PanelIt->sHat1_B = PanelIt->dcm_SB.row(0);
         PanelIt->sHat2_B = PanelIt->dcm_SB.row(1);
         PanelIt->sHat3_B = PanelIt->dcm_SB.row(2);
-        
+
         PanelIt->r_SB_B = this->r_HB_B - PanelIt->d*PanelIt->sHat1_B + sum_rH;
         sum_rH += -2*PanelIt->d*PanelIt->sHat1_B;
 
         // - Define rTilde_SB_B
         PanelIt->rTilde_SB_B = eigenTilde(PanelIt->r_SB_B);
-        
+
         // - Find rPrime_SB_B
         sum_ThetaDot += PanelIt->thetaDot;
         PanelIt->rPrime_SB_B = PanelIt->d*(sum_ThetaDot*PanelIt->sHat3_B + sum_rPrimeH);
         sum_rPrimeH += 2*PanelIt->sHat3_B*sum_ThetaDot;
-        
+
         PanelIt->omega_SB_B = sum_ThetaDot*PanelIt->sHat2_B;
-        
+
         // - Next find the body time derivative of the inertia about point B
         // - Define tilde matrix of rPrime_SB_B
         PanelIt->rPrimeTilde_SB_B = eigenTilde(PanelIt->rPrime_SB_B);
-        
+
         // - Find body time derivative of IPntS_B
         PanelIt->ISPrimePntS_B = sum_ThetaDot*(PanelIt->IPntS_S(2,2) - PanelIt->IPntS_S(0,0))
                        *(PanelIt->sHat1_B*PanelIt->sHat3_B.transpose() + PanelIt->sHat3_B*PanelIt->sHat1_B.transpose());
-        
+
         // - Mass summation
         sum_mass += PanelIt->mass;
-        
+
         // - Inertia of the panels summation term
         sum_PanelInertia += PanelIt->dcm_SB.transpose()*PanelIt->IPntS_S*PanelIt->dcm_SB
             + PanelIt->mass*PanelIt->rTilde_SB_B*PanelIt->rTilde_SB_B.transpose();
-        
+
         // - COM position summation terms
         sum_COM += PanelIt->mass*PanelIt->r_SB_B;
-        
+
         sum_COMprime += PanelIt->mass*PanelIt->rPrime_SB_B;
-        
+
         // - Inertia Prime of the effector summation terms
         sum_EffInertia += PanelIt->ISPrimePntS_B - PanelIt->mass*(PanelIt->rPrimeTilde_SB_B*PanelIt->rTilde_SB_B
                                                                   + PanelIt->rTilde_SB_B*PanelIt->rPrimeTilde_SB_B);
-        
+
         it += 1;
     }
-    
+
     // - update effector mass properties
     this->effProps.mEff = sum_mass;
-    
+
     // - update effector COM location
     this->effProps.rEff_CB_B = 1.0/this->effProps.mEff*sum_COM;
-    
+
     this->effProps.rEffPrime_CB_B = 1.0/this->effProps.mEff*sum_COMprime;
-    
+
     // - Find the inertia of the hinged rigid body about point B
     this->effProps.IEffPntB_B = sum_PanelInertia;
-    
+
     // - Find body time derivative of IPntB_B
     this->effProps.IEffPrimePntB_B = sum_EffInertia;
-    
+
     return;
 }
 
@@ -205,7 +205,7 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
     return ans;
 }
 
-/*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
+/*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
  method */
 void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
@@ -364,7 +364,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
-    
+
     // - translational contributions
     backSubContr.matrixA.setZero();
     backSubContr.matrixB.setZero();
@@ -382,7 +382,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
             sumTerm1 += (2*((int) this->PanelVec.size() - k)+1)*PanelIt2->mass*PanelIt2->d*PanelIt2->sHat3_B;
             std::advance(PanelIt2, 1);
         }
-        
+
         sumTerm2 = pow(sumThetaDot,2)*(2*((int) this->PanelVec.size() - j)+1)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B;
         backSubContr.matrixA += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
         backSubContr.matrixB += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
@@ -391,10 +391,10 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     }
     Eigen::Vector3d aTheta;
     Eigen::Vector3d bTheta;
-    
+
     aTheta = this->matrixEDHRB.row(0)*this->matrixFDHRB;
     bTheta = this->matrixEDHRB.row(0)*this->matrixGDHRB;
-    
+
     // - Rotational contributions
     backSubContr.matrixC.setZero();
     backSubContr.matrixD.setZero();
@@ -440,7 +440,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         j += 1;
     }
 
-    
+
     return;
 }
 
@@ -474,7 +474,7 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::
     this->thetaState->setDerivative(this->thetaDotState->getState());
     // - Second, a little more involved
     this->thetaDotState->setDerivative(thetaDDot);
-    
+
     return;
 }
 
@@ -501,7 +501,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
         rotEnergyContr_Sum += 0.5*omega_SN_B.dot(IPntS_B*omega_SN_B) + 1.0/2.0*PanelIt->mass*rDot_SB_B.dot(rDot_SB_B)
         + 1.0/2.0*PanelIt->k*(PanelIt->theta-PanelIt->theta_0)*(PanelIt->theta-PanelIt->theta_0);
     }
-    
+
     // - Find rotational angular momentum contribution from hub
     rotAngMomPntCContr_B = rotAngMomPntCContr_B_Sum;
 

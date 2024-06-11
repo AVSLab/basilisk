@@ -49,7 +49,7 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->omegaPrime_MB_B.setZero();
     this->sigma_MB.setIdentity();
     this->currentSimTimeSec = 0.0;
-    
+
     // Initialize prescribed states at epoch
     this->rEpoch_FM_M.setZero();
     this->rPrimeEpoch_FM_M.setZero();

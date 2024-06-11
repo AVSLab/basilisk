@@ -127,7 +127,7 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
         translatingBodyBuffer.rhoDot = this->rhoDot;
         this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, currentSimNanos);
     }
-    
+
     if (this->translatingBodyConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->translatingBodyConfigLogOutMsg.zeroMsgPayload;
@@ -194,10 +194,10 @@ void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
         this->aRho.setZero();
         this->bRho.setZero();
         this->cRho = 0.0;
-        
+
         return;
     }
-    
+
     this->aRho = - this->fHat_B.transpose();
     this->bRho = this->fHat_B.transpose() * this->rTilde_FcB_B;
     this->cRho = 1.0 / this->mass * (this->motorForce - this->k * (this->rho - this->rhoRef)

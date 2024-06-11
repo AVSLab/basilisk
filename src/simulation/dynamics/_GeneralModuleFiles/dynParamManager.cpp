@@ -66,7 +66,7 @@ StateData* DynParamManager::getStateObject(std::string stateName)
 {
     StateData *statePtr;
     std::map<std::string, StateData>::iterator it;
-    
+
     statePtr = nullptr;
     it = stateContainer.stateMap.find(stateName);
     if(it != stateContainer.stateMap.end())
@@ -82,7 +82,7 @@ StateData* DynParamManager::getStateObject(std::string stateName)
             hub attitude in a translation only simulation setup */
         bskLogger.bskLog(BSK_WARNING, "You requested this non-existent state name: %s You either miss-typed the stateName, or you asked for a state that doesn't exist in your simulation setup. stateName = ", stateName.c_str());
     }
-    
+
     return(statePtr);
 }
 

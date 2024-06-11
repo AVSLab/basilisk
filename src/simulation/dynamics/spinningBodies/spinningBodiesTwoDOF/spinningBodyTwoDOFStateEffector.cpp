@@ -51,7 +51,7 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     this->IS2PntSc2_B.setIdentity();
     this->IPrimeS1PntSc1_B.setZero();
     this->IPrimeS2PntSc2_B.setZero();
-    
+
     this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
     this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
     this->nameOfTheta2State = "spinningBodyTheta2" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
@@ -257,7 +257,7 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime)
         - this->mass2 * (rPrimeTilde_Sc2B_B * this->rTilde_Sc2B_B + this->rTilde_Sc2B_B * rPrimeTilde_Sc2B_B);
 }
 
-/*! This method allows the SB state effector to give its contributions to the matrices needed for the back-sub 
+/*! This method allows the SB state effector to give its contributions to the matrices needed for the back-sub
  method */
 void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
@@ -327,18 +327,18 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
     Eigen::Vector2d CThetaStar;
     CThetaStar(0,0) = this->u1 - this->k1 * (this->theta1 - this->theta1Ref)
         - this->c1 * (this->theta1Dot - this->theta1DotRef) + this->s1Hat_B.transpose() * gravityTorquePntS1_B
-        - this->s1Hat_B.transpose() * ((IPrimeSPntS1_B + this->omegaTilde_BN_B * ISPntS1_B) * this->omega_BN_B 
-        + (this->IPrimeS1PntSc1_B + this->omegaTilde_BN_B * this->IS1PntSc1_B) * this->omega_S1B_B 
-        + (this->IPrimeS2PntSc2_B + this->omegaTilde_BN_B * this->IS2PntSc2_B) * this->omega_S2B_B 
+        - this->s1Hat_B.transpose() * ((IPrimeSPntS1_B + this->omegaTilde_BN_B * ISPntS1_B) * this->omega_BN_B
+        + (this->IPrimeS1PntSc1_B + this->omegaTilde_BN_B * this->IS1PntSc1_B) * this->omega_S1B_B
+        + (this->IPrimeS2PntSc2_B + this->omegaTilde_BN_B * this->IS2PntSc2_B) * this->omega_S2B_B
         + (this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S1_B * rTilde_Sc2S2_B) * this->omegaTilde_S1B_B * this->omega_S2S1_B
         + this->mass1 * (rTilde_Sc1S1_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * rTilde_Sc1S1_B) * this->rPrime_Sc1S1_B
-        + this->mass2 * (rTilde_Sc2S1_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * rTilde_Sc2S1_B) * this->rPrime_Sc2S1_B 
+        + this->mass2 * (rTilde_Sc2S1_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * rTilde_Sc2S1_B) * this->rPrime_Sc2S1_B
         + this->mass2 * rTilde_Sc2S1_B * omegaTilde_S2S1_B * this->rPrime_Sc2S2_B
         + this->mass * rTilde_ScS1_B * this->omegaTilde_BN_B * rDot_S1B_B);
     CThetaStar(1, 0) = this->u2 - this->k2 * (this->theta2 - this->theta2Ref)
         - this->c2 * (this->theta2Dot - this->theta2DotRef) + this->s2Hat_B.transpose() * gravityTorquePntS2_B
         - this->s2Hat_B.transpose() * ((IPrimeS2PntS2_B + this->omegaTilde_BN_B * IS2PntS2_B) * this->omega_S2N_B
-        + IS2PntS2_B * this->omegaTilde_S1B_B * this->omega_S2S1_B + this->mass2 * rTilde_Sc2S2_B * omegaTilde_S1N_B * this->rPrime_S2S1_B 
+        + IS2PntS2_B * this->omegaTilde_S1B_B * this->omega_S2S1_B + this->mass2 * rTilde_Sc2S2_B * omegaTilde_S1N_B * this->rPrime_S2S1_B
         + this->mass2 * rTilde_Sc2S2_B * this->omegaTilde_BN_B * (rDot_S2S1_B + rDot_S1B_B));
 
     // Check if any of the axis are locked and change dynamics accordingly
@@ -353,7 +353,7 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
             AThetaStar.row(0).setZero();
             BThetaStar.row(0).setZero();
             CThetaStar.row(0).setZero();
-            
+
         }
         if (this->lockFlag2 == 1)
         {
@@ -383,16 +383,16 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
     backSubContr.vecRot = - (this->IPrimeS1PntSc1_B + this->omegaTilde_BN_B * this->IS1PntSc1_B) * this->omega_S1B_B - (this->IPrimeS2PntSc2_B + this->omegaTilde_BN_B * this->IS2PntSc2_B) * this->omega_S2B_B
         - (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->omegaTilde_S1B_B * this->omega_S2S1_B
         - this->mass1 * (this->rTilde_Sc1B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc1B_B) * this->rPrime_Sc1B_B
-        - this->mass2 * (this->rTilde_Sc2B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc2B_B) * this->rPrime_Sc2B_B 
+        - this->mass2 * (this->rTilde_Sc2B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc2B_B) * this->rPrime_Sc2B_B
         - this->mass2 * this->rTilde_Sc2B_B * omegaTilde_S2S1_B * this->rPrime_Sc2S2_B
         - (this->IS1PntSc1_B + this->IS2PntSc2_B - this->mass1 * this->rTilde_Sc1B_B * rTilde_Sc1S1_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S1_B) * this->s1Hat_B * this->CTheta.row(0)
-        - (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->s2Hat_B * this->CTheta.row(1);        
+        - (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->s2Hat_B * this->CTheta.row(1);
 }
 
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
 void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
-{   
-    // Grab omegaDot_BN_B 
+{
+    // Grab omegaDot_BN_B
     Eigen::Vector3d omegaDotLocal_BN_B;
     omegaDotLocal_BN_B = omegaDot_BN_B;
 
@@ -465,7 +465,7 @@ void SpinningBodyTwoDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->u1 = incomingCmdBuffer.motorTorque[0];
         this->u2 = incomingCmdBuffer.motorTorque[1];
     }
-    
+
     //! - Zero the command buffer and read the incoming command array
     if (this->motorLockInMsg.isLinked() && this->motorLockInMsg.isWritten()) {
         ArrayEffectorLockMsgPayload incomingLockBuffer;
@@ -490,7 +490,7 @@ void SpinningBodyTwoDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 
     /* Compute spinning body inertial states */
     this->computeSpinningBodyInertialStates();
-    
+
     /* Write output messages*/
     this->writeOutputStateMessages(CurrentSimNanos);
 }
