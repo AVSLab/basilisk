@@ -93,6 +93,28 @@ public:
     void postIntegration(double callTime) final;      //!< -- method to perform post-integration steps
 
 private:
+
+    template <typename Type>
+    void assignStateParamNames(Type effector) {
+        /* assign the state engine names for the parent rigid body states */
+        effector->setStateNameOfPosition(this->hub.nameOfHubPosition);
+        effector->setStateNameOfVelocity(this->hub.nameOfHubVelocity);
+        effector->setStateNameOfSigma(this->hub.nameOfHubSigma);
+        effector->setStateNameOfOmega(this->hub.nameOfHubOmega);
+
+        /* assign the state engine names for the parent rigid property values */
+        effector->setPropName_m_SC(this->propName_m_SC);
+        effector->setPropName_mDot_SC(this->propName_mDot_SC);
+        effector->setPropName_centerOfMassSC(this->propName_centerOfMassSC);
+        effector->setPropName_inertiaSC(this->propName_inertiaSC);
+        effector->setPropName_inertiaPrimeSC(this->propName_inertiaPrimeSC);
+        effector->setPropName_centerOfMassPrimeSC(this->propName_centerOfMassPrimeSC);
+        effector->setPropName_centerOfMassDotSC(this->propName_centerOfMassDotSC);
+        effector->setPropName_inertialPosition(this->gravField.inertialPositionPropName);
+        effector->setPropName_inertialVelocity(this->gravField.inertialVelocityPropName);
+        effector->setPropName_vehicleGravity(this->gravField.vehicleGravityPropName);
+    };
+
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
     StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
     StateData *hubOmega_BN_B;                   //!< -- State data access to the attitude rate of the hub
