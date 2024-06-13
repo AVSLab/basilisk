@@ -16,6 +16,9 @@ The constructor ensure that all class variables that require default values are 
         self->dummy = 42.0;
     }
 
+Instead of declaring default values in the constructor, this can also be done in the module ``*.h`` file
+by using the default value in the variable definition.
+
 Destructor
 ----------
 The module destructor should ensure the module is closed down properly. It might have to close a file handle, or free up the memory of dynamically allocated message objects to a vector of output messages.
@@ -24,11 +27,16 @@ Reset Method
 ------------
 The ``Reset()`` method should be used to
 
-- restore module variables if needed. For example, the integral feedback gain variable might be reset to 0.
-- perform one-time message reads such as reading in the reaction wheel or spacecraft configuration message. etc.  Whenever ``Reset()`` is called the module should read in these messages again to use the latest values.
-- check that required input messages are connected.  If a required input message is not connected when ``Reset()`` is called, then log a BSK error message.
+- Restore module variables if needed. For example, the integral feedback gain variable might be reset to 0.
+- Perform one-time message reads such as reading in the reaction wheel or spacecraft configuration message. etc.
+  Whenever ``Reset()`` is called the module should read in these messages again to use the latest values.
+- Check that required input messages are connected.  If a required input message is not connected when
+  ``Reset()`` is called, then log a BSK error message.
+- Ensure that required variables are set to acceptable values.  For example, assume the gain variable
+  is defaulted to zero.  The  ``Reset()`` method would check that the gain value is no longer the default value.
 
-The following sample code assumes that the class variable ``value`` should be re-set to 0 on ``Reset()``, and that ``someInMsg`` is a required input message:L
+The following sample code assumes that the class variable ``value`` should be re-set to 0
+on ``Reset()``, and that ``someInMsg`` is a required input message:L
 
 .. code:: cpp
 
@@ -41,6 +49,10 @@ The following sample code assumes that the class variable ``value`` should be re
 
         if (!this->someInMsg.isLinked()) {
             bskLogger.bskLog(BSK_ERROR, "SomeModule does not have someInMsg connected!");
+        }
+
+        if (this->gain <= 0) {
+            bskLogger.bskLog(BSK_ERROR, "The required gain value was not set to a positive value.");
         }
     }
 
@@ -111,3 +123,9 @@ Note that with the ``new`` call above the memory associated with this output mes
         }
     }
 
+Setters
+-------
+Assume the module has a user configurable variable called ``gain``.  This variable
+should be a private variable and be set through the ``setGain()`` method.
+If possible, the setter method should check that valid values are provided
+or throw an error.
