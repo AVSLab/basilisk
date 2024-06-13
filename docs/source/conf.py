@@ -399,8 +399,13 @@ class fileCrawler():
                     lines += "----\n\n"
 
                 # Link the path with the modules for Breathe
-                module_files.extend([s for s in c_file_local_paths if c_file_basename in s])
-                module_files_temp.extend([s for s in c_file_local_paths if c_file_basename in s])
+                # make sure the list of files match the base name perfectly
+                # this avoids issues where one file name is contained in another
+                # file name
+                c_file_list_coarse = [s for s in c_file_local_paths if c_file_basename in s]
+                c_file_list = [file_name for file_name in c_file_list_coarse if file_name.rsplit(".", 1)[0] == c_file_basename]
+                module_files.extend(c_file_list)
+                module_files_temp.extend(c_file_list)
 
                 # Populate the module's .rst
                 for module_file in module_files_temp:
