@@ -224,6 +224,7 @@ class fileCrawler():
     def grabRelevantFiles(self,dir_path):
         dirs_in_dir = glob(dir_path + '*/')
         files_in_dir = glob(dir_path + "*.h")
+        files_in_dir.extend(glob(dir_path + "*.hpp"))
         files_in_dir.extend(glob(dir_path + "*.c"))
         files_in_dir.extend(glob(dir_path + "*.cpp"))
         files_in_dir.extend(glob(dir_path + "*.py"))
@@ -346,7 +347,7 @@ class fileCrawler():
 
         # Sort the files by language
         py_file_paths = sorted([s for s in files_paths if ".py" in s])
-        c_file_paths = sorted([s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s])
+        c_file_paths = sorted([s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s or ".hpp" in s])
 
         # Create the .rst file for C-Modules
 
@@ -506,4 +507,3 @@ else:
 
 # Example of how to link C with Breathe
 # breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/mrpFeedback", ['mrpFeedback.c', 'mrpFeedback.h'])}
-
