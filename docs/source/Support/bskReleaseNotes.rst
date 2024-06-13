@@ -64,6 +64,7 @@ Version |release|
 - Updated :ref:`makeDraftModule` to make C++ modules with private module variables using setter/getter methods
 - Updated :ref:`cppModules-1` to discuss the new expectation that C++ modules are all private.  This enables
   gracefull module variable depreciation if needed.
+- Updated documentation and conanfile to reflect that Python must be 3.10 or newer
 
 
 Version 2.3.0 (April 5, 2024)

@@ -24,6 +24,7 @@ try:
         print("use version 1.40.1 to 1.xx.0 to work with the conan repo changes." + endColor)
         exit(0)
     from conans.tools import Version
+
     # check conan version 1.xx
     if conan_version < Version("1.40.1"):
         print(failColor + "conan version " + conan_version + " is not compatible with Basilisk.")
@@ -160,8 +161,8 @@ class BasiliskConan(ConanFile):
 
         # check the version of Python
         print("\nChecking Python version:")
-        if not (sys.version_info.major == 3 and sys.version_info.minor >= 8):
-            print(warningColor + "Python 3.8 or newer should be used with Basilisk." + endColor)
+        if not (sys.version_info.major == 3 and sys.version_info.minor >= 10):
+            print(warningColor + "Python 3.10 or newer should be used with Basilisk." + endColor)
             print("You are using Python {}.{}.{}".format(sys.version_info.major,
                                                          sys.version_info.minor, sys.version_info.micro))
         else:

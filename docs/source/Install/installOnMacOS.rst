@@ -18,7 +18,7 @@ The following python package dependencies are automatically checked and installe
 .. attention::
     If you are running a new Apple computer with the M-series ARM64 processor, be sure to download a
     version of Python that is compatible with M-series processor.  The
-    `Python.org <https://python.org>`__ web site contains Universal binaries for Python 3.9 and
+    `Python.org <https://python.org>`__ web site contains Universal binaries for Python 3.10 and
     onward.  Regarding the python packages via ``pip`` and ``brew``, the required packages
     can all be installed readily in a native form using the standard installation instructions below.
 

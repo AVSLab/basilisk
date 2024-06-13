@@ -25,7 +25,7 @@ If applicable, add screenshots/plots to help explain your problem.
 **Desktop (please complete the following information):**
 - OS: [e.g. Macos]
 - Version [e.g. 12.6.1]
-- Python version [e.g. 3.9.15]
+- Python version [e.g. 3.10.14]
 
 **Additional context**
 Add any other context about the problem or potential solution paths here.
