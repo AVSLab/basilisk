@@ -381,11 +381,7 @@ class fileCrawler():
                     lines += ".. _" + c_file_basename + pathToFolder.split("/")[-1] + ":\n\n"
                 else:
                     lines += ".. _" + c_file_basename + ":\n\n"
-                if "fswMessages" in src_path \
-                        or "simFswInterfaceMessages" in src_path \
-                        or "simMessages" in src_path\
-                        or "architecture" in src_path\
-                        or "utilities" in src_path:
+                if "architecture" in src_path or "utilities" in src_path:
                     lines += c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
                 else:
                     lines += "Module: " + c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
@@ -492,7 +488,6 @@ if rebuild:
         shutil.rmtree(officialDoc)
     # adjust the fileCrawler path to a local folder to just build a sub-system
     breathe_projects_source = fileCrawler.run(officialSrc)
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/fswMessages")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/environment")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/moduleTemplates")
