@@ -224,6 +224,7 @@ class fileCrawler():
     def grabRelevantFiles(self,dir_path):
         dirs_in_dir = glob(dir_path + '*/')
         files_in_dir = glob(dir_path + "*.h")
+        files_in_dir.extend(glob(dir_path + "*.hpp"))
         files_in_dir.extend(glob(dir_path + "*.c"))
         files_in_dir.extend(glob(dir_path + "*.cpp"))
         files_in_dir.extend(glob(dir_path + "*.py"))
@@ -346,7 +347,7 @@ class fileCrawler():
 
         # Sort the files by language
         py_file_paths = sorted([s for s in files_paths if ".py" in s])
-        c_file_paths = sorted([s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s])
+        c_file_paths = sorted([s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s or ".hpp" in s])
 
         # Create the .rst file for C-Modules
 
@@ -380,11 +381,7 @@ class fileCrawler():
                     lines += ".. _" + c_file_basename + pathToFolder.split("/")[-1] + ":\n\n"
                 else:
                     lines += ".. _" + c_file_basename + ":\n\n"
-                if "fswMessages" in src_path \
-                        or "simFswInterfaceMessages" in src_path \
-                        or "simMessages" in src_path\
-                        or "architecture" in src_path\
-                        or "utilities" in src_path:
+                if "architecture" in src_path or "utilities" in src_path:
                     lines += c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
                 else:
                     lines += "Module: " + c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
@@ -398,8 +395,13 @@ class fileCrawler():
                     lines += "----\n\n"
 
                 # Link the path with the modules for Breathe
-                module_files.extend([s for s in c_file_local_paths if c_file_basename in s])
-                module_files_temp.extend([s for s in c_file_local_paths if c_file_basename in s])
+                # make sure the list of files match the base name perfectly
+                # this avoids issues where one file name is contained in another
+                # file name
+                c_file_list_coarse = [s for s in c_file_local_paths if c_file_basename in s]
+                c_file_list = [file_name for file_name in c_file_list_coarse if file_name.rsplit(".", 1)[0] == c_file_basename]
+                module_files.extend(c_file_list)
+                module_files_temp.extend(c_file_list)
 
                 # Populate the module's .rst
                 for module_file in module_files_temp:
@@ -486,7 +488,6 @@ if rebuild:
         shutil.rmtree(officialDoc)
     # adjust the fileCrawler path to a local folder to just build a sub-system
     breathe_projects_source = fileCrawler.run(officialSrc)
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms/fswMessages")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/environment")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/moduleTemplates")
@@ -506,4 +507,3 @@ else:
 
 # Example of how to link C with Breathe
 # breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/mrpFeedback", ['mrpFeedback.c', 'mrpFeedback.h'])}
-
