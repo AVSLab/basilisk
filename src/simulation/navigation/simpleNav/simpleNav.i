@@ -41,6 +41,8 @@ struct NavTransMsg_C;
 struct SpicePlanetStateMsg_C;
 %include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
 struct EphemerisMsg_C;
+%include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
+struct AccDataMsg_C;
 
 %pythoncode %{
 import sys
