@@ -27,7 +27,7 @@ rwList = []
 def create(
         gsHat_B,
         Js,
-        uMax = numpy.NaN
+        uMax = numpy.nan
     ):
     """
     Create a FSW RW object

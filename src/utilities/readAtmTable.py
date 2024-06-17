@@ -29,8 +29,8 @@ def readAtmTable(filename,typename):
         altList, rhoList, tempList = readJupiterGRAM(filename)
     else:
         print('Type not recognized')
-        return np.NaN, np.NaN, np.NaN
-    
+        return np.nan, np.nan, np.nan
+
     return altList, rhoList, tempList
 
 def readStdAtm76(filename):
@@ -40,8 +40,8 @@ def readStdAtm76(filename):
     tempList = df.Temperature.to_list()
     rhoList = df.Density.to_list()
     return altList, rhoList, tempList
-    
-    
+
+
 def readEarthGRAM(filename):
     df = pd.read_csv(filename, sep=r'\s+')
     df.sort_values(by=['Hgtkm'],ascending=True, inplace=True)
@@ -49,7 +49,7 @@ def readEarthGRAM(filename):
     altList = df.Hgtkm.to_list()
     rhoList = df.DensMean.to_list()
     tempList = df.Tmean.to_list()
-    
+
     return altList, rhoList, tempList
 
 def readMarsGRAM(filename):
@@ -61,7 +61,7 @@ def readMarsGRAM(filename):
 	tempList = df.Temp.to_list()
 
 	return altList, rhoList, tempList
-	
+
 
 def readVenusGRAM(filename):
 	df = pd.read_csv(filename, skiprows=[1])
@@ -72,7 +72,7 @@ def readVenusGRAM(filename):
 	tempList = df.Temperature_K.to_list()
 
 	return altList, rhoList, tempList
-	
+
 
 def readUranusGRAM(filename):
 	df = pd.read_csv(filename, skiprows=[1])
@@ -83,7 +83,7 @@ def readUranusGRAM(filename):
 	tempList = df.Temperature_K.to_list()
 
 	return altList, rhoList, tempList
-	
+
 
 def readTitanGRAM(filename):
 	df = pd.read_csv(filename, skiprows=[1])
@@ -113,9 +113,8 @@ def readMSIS(filename):
     df.sort_values(by=['alt'],ascending=True, inplace=True)
     df.alt = df.alt * 1000
     altList = df.alt.to_list()
-    df.rho = df.rho / 1000 * 100**3 
+    df.rho = df.rho / 1000 * 100**3
     rhoList = df.rho.to_list()
     tempList = df.temp.to_list()
- 	
-    return altList, rhoList, tempList
 
+    return altList, rhoList, tempList
