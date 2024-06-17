@@ -8,4 +8,4 @@ pytest
 pytest-html
 pytest-xdist
 matplotlib
-numpy
+numpy<2.0.0
