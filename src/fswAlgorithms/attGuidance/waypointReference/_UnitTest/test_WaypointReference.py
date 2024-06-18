@@ -52,17 +52,17 @@ def test_waypointReference(show_plots, attType, MRPswitching, useReferenceFrame,
     **Validation Test Description**
 
     This unit test script tests the capability of the WaypointReference module to correctly read time-tagged
-    attitude parameters, angular rates and angular accelerations from a text file. 
-    First a text file is generated that contains a sequence of time-tagged attitude parameters, angular rates 
+    attitude parameters, angular rates and angular accelerations from a text file.
+    First a text file is generated that contains a sequence of time-tagged attitude parameters, angular rates
     and angular accelerations; subsequently, the same file is fed to the waypointReference module.
     The module is tested against all the attitude types that it supports:
     - MRPs
     - Euler Parameters (quaternion) [q0, q1, q2, q3]
     - Euler Parameters (quaternion) [q1, q2, q3, qs]
-    and with angular rates and accelerations that can be expressed either in the inertial frame N or in the 
+    and with angular rates and accelerations that can be expressed either in the inertial frame N or in the
     reference frame R.
-    This unit test writes 5 time-tagged attitudes at times t = [1.0, 2.0, 3.0, 4.0, 5.0]s. Real values of 
-    attitude parameters, angular rates and angular accelerations in inertial frames are stored in 
+    This unit test writes 5 time-tagged attitudes at times t = [1.0, 2.0, 3.0, 4.0, 5.0]s. Real values of
+    attitude parameters, angular rates and angular accelerations in inertial frames are stored in
     ``attReal_RN``, ``omegaReal_RN_N`` and ``omegaDotReal_RN_N`` respectively.
 
     **Test Parameters**
@@ -75,21 +75,21 @@ def test_waypointReference(show_plots, attType, MRPswitching, useReferenceFrame,
 
     **Description of Variables Being Tested**
 
-    This unit test checks the correctness of the output attitude reference message 
+    This unit test checks the correctness of the output attitude reference message
 
     - ``attRefMsg``
 
     compared to the real values stored in the data file  ``attReal_RN``, ``omegaReal_RN_N`` and ``omegaDotReal_RN_N``.
     The simulation is run with a sampling frequency of 0.25 s, which is higher than the frequency with which the attitude
-    waypoints are saved in the data file (1.0 s), starting at t = 0. 
+    waypoints are saved in the data file (1.0 s), starting at t = 0.
 
-    For t < 1.0 s we check that the attitude in ``attRefMsg`` coincides with ``attReal_RN`` at time t = 1.0 s, 
+    For t < 1.0 s we check that the attitude in ``attRefMsg`` coincides with ``attReal_RN`` at time t = 1.0 s,
     while rates and accelerations in ``attRefMsg`` are zero.
 
-    For t > 5.0 s we check that the attitude in ``attRefMsg`` coincides with ``attReal_RN`` at time t = 5.0 s, 
+    For t > 5.0 s we check that the attitude in ``attRefMsg`` coincides with ``attReal_RN`` at time t = 5.0 s,
     while rates and accelerations in ``attRefMsg`` are zero.
 
-    For 1.0 s <= t <= 5.0 s we check that the attitude, rates and accelerations in ``attRefMsg`` coincide with 
+    For 1.0 s <= t <= 5.0 s we check that the attitude, rates and accelerations in ``attRefMsg`` coincide with
     the linear interpolation of ``attReal_RN``, ``omegaReal_RN_N`` and ``omegaDotReal_RN_N``.
     """
 
@@ -132,7 +132,7 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
     dataFileName = os.path.join(path, dataFileName)
     delimiter = ","
     fDataFile = open(dataFileName, "w+")
-    
+
     # create the datafile and store the real attitude, rate and acceleration values
     t = []
     attReal_RN = []
@@ -162,11 +162,11 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
         elif attType == 2:
             q = rbk.MRP2EP(attReal_RN[-1])
             qs = [q[1], q[2], q[3], q[0]]
-            lineString += str(qs)[1:-1] + delimiter
+            lineString += str([float(elem) for elem in qs])[1:-1] + delimiter
         else:
             print("Invalid attitude type")
             return
-        
+
         if not useReferenceFrame:
             lineString += str(omegaReal_RN_N[-1].tolist())[1:-1] + delimiter + str(omegaDotReal_RN_N[-1].tolist())[1:-1] + '\n'
         else:
@@ -174,7 +174,7 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
             omegaReal_RN_R = np.matmul(RN, omegaReal_RN_N[-1])
             omegaDotReal_RN_R = np.matmul(RN, omegaDotReal_RN_N[-1])
             lineString += str(omegaReal_RN_R.tolist())[1:-1] + delimiter + str(omegaDotReal_RN_R.tolist())[1:-1] + '\n'
-        
+
         # write line on file
         fDataFile.write(lineString)
 
@@ -201,17 +201,17 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(simulationTime) 
+    unitTestSim.ConfigureStopTime(simulationTime)
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
     # This pulls the sampling times from the simulation run.
     timeData = dataLog.times() * macros.NANO2SEC
-    
+
     # Check if logged data matches the real attitude, rates and accelerations
     j = 0
-    
+
     sigma_RN = [[], [], []]
     # checking attitude msg for t < t_min
     for i in range(len(timeData)-1):
@@ -229,7 +229,7 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
             if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], np.array([0.0, 0.0, 0.0]), accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
-        
+
         # checking attitude msg for t_min <= t <= t_max
         elif timeData[i] >= t[0] and timeData[i] <= t[-1]:
             while (timeData[i] >= t[j] and timeData[i] <= t[j+1]) == False:
@@ -256,7 +256,7 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
             if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], omegaDot_RN_N_int, accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
-        
+
         # checking attitude msg for t < t_max
         else:
             if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], attReal_RN[-1], accuracy):
@@ -290,4 +290,3 @@ if __name__ == "__main__":
         1e-12)
     if os.path.exists(dataFileName):
         os.remove(dataFileName)
-	   
