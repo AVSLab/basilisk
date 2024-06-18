@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,6 +21,7 @@
 #define SIMPLE_NAV_H
 
 #include <vector>
+#include <random>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
@@ -28,6 +29,8 @@
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
+#include "architecture/msgPayloadDefC/AccPktDataMsgPayload.h"
+#include "architecture/msgPayloadDefC/AccDataMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include "architecture/messaging/messaging.h"
@@ -47,12 +50,21 @@ public:
     void writeOutputMessages(uint64_t Clock);
 
 public:
+    double gyroStandardDeviation=1E-5;    //!< Standard deviation for each rate component
+    double accelStandardDeviation=1E-8;    //!< Standard deviation for each acceleration component
+    double gyroBias=0 ;    //!<  Bias for each rate component
+    double accelBias=0;    //!<  Bias for each acceleration component
+    double gyroErrors[3*MAX_ACC_BUF_PKT]; //!<  Errors to apply to each gyro measurement
+    double accelErrors[3*MAX_ACC_BUF_PKT]; //!<  Errors to apply to each accelerometer measurement
+    int numberOfGyroBuffers=100;       //!< Number of gyro measurements per timestep
+    int gyroFrequencyPerSecond=500;       //!< Number of gyro measurements per second
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
     Message<NavAttMsgPayload> attOutMsg;        //!< attitude navigation output msg
     Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg
     Message<EphemerisMsgPayload> scEphemOutMsg;    //!< translation navigation output msg
+    Message<AccDataMsgPayload> accelDataOutMsg; //!< accelerometer and gyro data output msg
     bool crossTrans;                  //!< -- Have position error depend on velocity
     bool crossAtt;                    //!< -- Have attitude depend on attitude rate
     NavAttMsgPayload trueAttState;        //!< -- attitude nav state without errors
@@ -60,6 +72,7 @@ public:
     NavTransMsgPayload trueTransState;    //!< -- translation nav state without errors
     NavTransMsgPayload estTransState;     //!< -- translation nav state including errors
     EphemerisMsgPayload spacecraftEphemerisState;    //!< -- full spacecraft ephemeris state with errors
+    AccDataMsgPayload accelDataState;  //!< accelerometer and gyro data payload
     SCStatesMsgPayload inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateMsgPayload sunState;  //!< -- input Sun state
     BSKLogger bskLogger;              //!< -- BSK Logging
