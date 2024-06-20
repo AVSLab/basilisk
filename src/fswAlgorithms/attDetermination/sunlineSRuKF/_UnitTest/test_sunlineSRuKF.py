@@ -106,19 +106,16 @@ def setup_css_config_msg(CSSOrientationList, cssConfigDataInMsg):
     cssConfigDataInMsg.write(cssConfigData)
 
 
-
-@pytest.mark.parametrize("show_plots", [False])
 def test_propagation_kf(show_plots):
     state_propagation_flyby(show_plots)
 
 
 @pytest.mark.parametrize("initial_error", [False, True])
-@pytest.mark.parametrize("show_plots", [False])
 def test_measurements_kf(show_plots, initial_error):
-    state_update_flyby(show_plots, initial_error)
+    state_update_flyby(initial_error, show_plots)
 
 
-def state_propagation_flyby(show_plots):
+def state_propagation_flyby(show_plots=False):
     unit_task_name = "unitTask"  # arbitrary name (don't change)
     unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
@@ -193,7 +190,7 @@ def state_propagation_flyby(show_plots):
                                verbose=True)
 
 
-def state_update_flyby(show_plots, initial_error):
+def state_update_flyby(initial_error, show_plots=False):
     unit_task_name = "unitTask"  # arbitrary name (don't change)
     unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
