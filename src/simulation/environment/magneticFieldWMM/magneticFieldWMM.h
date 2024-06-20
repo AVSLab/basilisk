@@ -39,7 +39,7 @@ private:
     void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime);
     void initializeWmm();
     void cleanupEarthMagFieldModel();
-    void computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]);
+    void computeWmmField(double decimalYear, MAGtype_CoordSpherical coord, double B_M[3]);
     void customReset(uint64_t CurrentClock);
     void customSetEpochFromVariable();
     void decimalYear2Gregorian(double fractionalYear, struct tm *gregorian);
@@ -51,11 +51,15 @@ public:
     BSKLogger bskLogger;                    //!< -- BSK Logging
 
 private:
-    MAGtype_MagneticModel *magneticModels[1];
+    MAGtype_MagneticModel *magneticModel;
     MAGtype_MagneticModel *timedMagneticModel;
     MAGtype_Ellipsoid      ellip;
     MAGtype_Geoid          geoid;
     MAGtype_Date           userDate;
+
+    MAGtype_LegendreFunction* LegendreFunction;
+    MAGtype_SphericalHarmonicVariables* SphVariables;
+
 };
 
 

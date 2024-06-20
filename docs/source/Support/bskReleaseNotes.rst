@@ -65,6 +65,7 @@ Version |release|
 - Updated :ref:`cppModules-1` to discuss the new expectation that C++ modules are all private.  This enables
   gracefull module variable depreciation if needed.
 - Added support for numpy 2.0.
+- Fixed use of spherical coordinate system in :ref:`magneticFieldWMM` model.
 
 
 Version 2.3.0 (April 5, 2024)
