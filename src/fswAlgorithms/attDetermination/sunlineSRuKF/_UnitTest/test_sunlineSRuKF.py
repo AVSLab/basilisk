@@ -109,14 +109,12 @@ def setup_css_config_msg(CSSOrientationList, cssConfigDataInMsg):
 
 @pytest.mark.parametrize("show_plots", [False])
 def test_propagation_kf(show_plots):
-    """Module Unit Test"""
     state_propagation_flyby(show_plots)
 
 
 @pytest.mark.parametrize("initial_error", [False, True])
 @pytest.mark.parametrize("show_plots", [False])
 def test_measurements_kf(show_plots, initial_error):
-    """Module Unit Test"""
     state_update_flyby(show_plots, initial_error)
 
 
