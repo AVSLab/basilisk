@@ -344,13 +344,13 @@ def state_update_flyby(show_plots, initial_error):
 
     diff = np.copy(state_data_log)
     diff[:, 1:] -= expected[:, 1:]
-    filter_plots.state_covar(state_data_log, covariance_data_log, 'Update', show_plots)
-    filter_plots.states(diff, 'Update', show_plots)
-    filter_plots.post_fit_residuals(css_post_fit_log, cssSigma, 'Update CSS PreFit', show_plots)
-    filter_plots.post_fit_residuals(css_pre_fit_log, cssSigma, 'Update CSS PostFit', show_plots)
-    filter_plots.post_fit_residuals(gyro_post_fit_log, gyroSigma, 'Update Gyro PreFit', show_plots)
-    filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit', show_plots)
-
+    if show_plots:
+        plt_1 = filter_plots.state_covar(state_data_log, covariance_data_log, 'Update').show()
+        plt_2 = filter_plots.states(diff, 'Update').show()
+        plt_3 = filter_plots.post_fit_residuals(css_post_fit_log, cssSigma, 'Update CSS PreFit').show()
+        plt_4 = filter_plots.post_fit_residuals(css_pre_fit_log, cssSigma, 'Update CSS PostFit').show()
+        plt_5 = filter_plots.post_fit_residuals(gyro_post_fit_log, gyroSigma, 'Update Gyro PreFit').show()
+        plt_6 = filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit').show()
 
 
 if __name__ == "__main__":

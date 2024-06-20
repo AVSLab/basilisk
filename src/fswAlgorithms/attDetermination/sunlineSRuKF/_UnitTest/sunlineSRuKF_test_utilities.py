@@ -37,7 +37,7 @@ color_z = 'lightgreen'
 m2km = 1.0 / 1000.0
 
 
-def states(x, testName, show_plots):
+def states(x, testName):
     numStates = len(x[0, :]) - 1
 
     t = np.zeros(len(x[:, 0]))
@@ -79,12 +79,10 @@ def states(x, testName, show_plots):
     plt.title('Third rate component (rad/s)')
     plt.grid()
 
-    if show_plots:
-        plt.show()
-    plt.close()
+    return plt
 
 
-def energy(t, energy, testName, show_plots):
+def energy(t, energy, testName):
     conserved = np.zeros(len(t))
     for i in range(len(t)):
         conserved[i] = (energy[i] - energy[0]) / energy[0]
@@ -95,12 +93,10 @@ def energy(t, energy, testName, show_plots):
     plt.title('Energy ' + testName)
     plt.grid()
 
-    if show_plots:
-        plt.show()
-    plt.close()
+    return plt
 
 
-def state_covar(x, Pflat, testName, show_plots):
+def state_covar(x, Pflat, testName):
     numStates = len(x[0, :]) - 1
 
     P = np.zeros([len(Pflat[:, 0]), numStates, numStates])
@@ -156,12 +152,10 @@ def state_covar(x, Pflat, testName, show_plots):
     plt.title('Third rate component (m/s)')
     plt.grid()
 
-    if show_plots:
-        plt.show()
-    plt.close()
+    return plt
 
 
-def post_fit_residuals(Res, noise, testName, show_plots):
+def post_fit_residuals(Res, noise, testName):
     MeasNoise = np.zeros(len(Res[:, 0]))
     t = np.zeros(len(Res[:, 0]))
     for i in range(len(Res[:, 0])):
@@ -198,12 +192,10 @@ def post_fit_residuals(Res, noise, testName, show_plots):
     plt.title('Third Meas Comp (m)')
     plt.grid()
 
-    if show_plots:
-        plt.show()
-    plt.close()
+    return plt
 
 
-def two_orbits(r_BN, r_BN2, show_plots):
+def two_orbits(r_BN, r_BN2):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
     ax.set_xlabel('$R_x$, km')
@@ -215,7 +207,5 @@ def two_orbits(r_BN, r_BN2, show_plots):
             ax.scatter(r_BN2[i, 1] * m2km, r_BN2[i, 2] * m2km, r_BN2[i, 3] * m2km, color=color_y, label="Meas orbit")
     ax.scatter(0, 0, color='r')
     ax.set_title('Spacecraft Orbits')
-    if show_plots:
-        plt.show()
-    plt.close()
-    return
+
+    return plt
