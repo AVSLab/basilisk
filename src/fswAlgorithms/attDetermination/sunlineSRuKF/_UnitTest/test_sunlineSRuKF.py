@@ -105,7 +105,6 @@ def setup_css_config_msg(CSSOrientationList, cssConfigDataInMsg):
     cssConfigData.cssVals = totalCSSList
     cssConfigDataInMsg.write(cssConfigData)
 
-    return
 
 
 @pytest.mark.parametrize("show_plots", [False])
@@ -194,7 +193,6 @@ def state_propagation_flyby(show_plots):
                                rtol=1E-10,
                                err_msg='state propagation error',
                                verbose=True)
-    return
 
 
 def state_update_flyby(show_plots, initial_error):
@@ -355,7 +353,6 @@ def state_update_flyby(show_plots, initial_error):
     filter_plots.post_fit_residuals(gyro_post_fit_log, gyroSigma, 'Update Gyro PreFit', show_plots)
     filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit', show_plots)
 
-    return
 
 
 if __name__ == "__main__":
