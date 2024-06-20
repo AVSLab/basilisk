@@ -268,7 +268,8 @@ def state_update_flyby(initial_error, show_plots=False):
         BN = rbk.MRP2C(bodyFrame[i, 1:4])
         cosList = []
         for j in range(len(CSSOrientationList)):
-            cosList.append(np.dot(CSSOrientationList[j], np.matmul(BN, [0, 0, 1])) + np.random.normal(0, cssSigma, 1))
+            cosList.append((np.dot(CSSOrientationList[j], np.matmul(BN, [0, 0, 1]))
+                            + np.random.normal(0, cssSigma, 1))[0])
         cssDataMsg.CosValue = np.array(cosList)
         cssDataMsg.timeTag = time[i]
         omega = expected[0, 4:] + np.random.normal(0, gyroSigma, 3)
