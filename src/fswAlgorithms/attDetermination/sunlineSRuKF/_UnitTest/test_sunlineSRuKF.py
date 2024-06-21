@@ -105,23 +105,17 @@ def setup_css_config_msg(CSSOrientationList, cssConfigDataInMsg):
     cssConfigData.cssVals = totalCSSList
     cssConfigDataInMsg.write(cssConfigData)
 
-    return
 
-
-@pytest.mark.parametrize("show_plots", [False])
 def test_propagation_kf(show_plots):
-    """Module Unit Test"""
     state_propagation_flyby(show_plots)
 
 
 @pytest.mark.parametrize("initial_error", [False, True])
-@pytest.mark.parametrize("show_plots", [False])
 def test_measurements_kf(show_plots, initial_error):
-    """Module Unit Test"""
-    state_update_flyby(show_plots, initial_error)
+    state_update_flyby(initial_error, show_plots)
 
 
-def state_propagation_flyby(show_plots):
+def state_propagation_flyby(show_plots=False):
     unit_task_name = "unitTask"  # arbitrary name (don't change)
     unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
@@ -194,10 +188,9 @@ def state_propagation_flyby(show_plots):
                                rtol=1E-10,
                                err_msg='state propagation error',
                                verbose=True)
-    return
 
 
-def state_update_flyby(show_plots, initial_error):
+def state_update_flyby(initial_error, show_plots=False):
     unit_task_name = "unitTask"  # arbitrary name (don't change)
     unit_process_name = "TestProcess"  # arbitrary name (don't change)
 
@@ -275,7 +268,8 @@ def state_update_flyby(show_plots, initial_error):
         BN = rbk.MRP2C(bodyFrame[i, 1:4])
         cosList = []
         for j in range(len(CSSOrientationList)):
-            cosList.append(np.dot(CSSOrientationList[j], np.matmul(BN, [0, 0, 1])) + np.random.normal(0, cssSigma, 1))
+            cosList.append((np.dot(CSSOrientationList[j], np.matmul(BN, [0, 0, 1]))
+                            + np.random.normal(0, cssSigma, 1))[0])
         cssDataMsg.CosValue = np.array(cosList)
         cssDataMsg.timeTag = time[i]
         omega = expected[0, 4:] + np.random.normal(0, gyroSigma, 3)
@@ -348,14 +342,13 @@ def state_update_flyby(show_plots, initial_error):
 
     diff = np.copy(state_data_log)
     diff[:, 1:] -= expected[:, 1:]
-    filter_plots.state_covar(state_data_log, covariance_data_log, 'Update', show_plots)
-    filter_plots.states(diff, 'Update', show_plots)
-    filter_plots.post_fit_residuals(css_post_fit_log, cssSigma, 'Update CSS PreFit', show_plots)
-    filter_plots.post_fit_residuals(css_pre_fit_log, cssSigma, 'Update CSS PostFit', show_plots)
-    filter_plots.post_fit_residuals(gyro_post_fit_log, gyroSigma, 'Update Gyro PreFit', show_plots)
-    filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit', show_plots)
-
-    return
+    if show_plots:
+        plt_1 = filter_plots.state_covar(state_data_log, covariance_data_log, 'Update').show()
+        plt_2 = filter_plots.states(diff, 'Update').show()
+        plt_3 = filter_plots.post_fit_residuals(css_post_fit_log, cssSigma, 'Update CSS PreFit').show()
+        plt_4 = filter_plots.post_fit_residuals(css_pre_fit_log, cssSigma, 'Update CSS PostFit').show()
+        plt_5 = filter_plots.post_fit_residuals(gyro_post_fit_log, gyroSigma, 'Update Gyro PreFit').show()
+        plt_6 = filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit').show()
 
 
 if __name__ == "__main__":
