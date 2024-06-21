@@ -212,6 +212,7 @@ Complex Spacecraft Dynamics Simulations
    Spacecraft with 1- or 2-DOF Panel using single effector <scenarioSpinningBodiesTwoDOF>
    Prescribed Motion Rotational Solar Array Deployment <scenarioDeployingSolarArrays>
    Robotic Arm Effector with Profiler <scenarioRoboticArm>
+   Two Spacecraft Connected Using Holonomic Constraints <scenarioConstrainedDynamics>
 
 Mission Simulations
 ---------------------------------------

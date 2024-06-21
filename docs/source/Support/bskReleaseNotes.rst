@@ -31,6 +31,9 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Added a new example scenario :ref:`scenarioConstrainedDynamics` demonstrating post-docked spacecraft dynamics
+- Created a :ref:`constraintDynamicEffector` dynamics module to couple separate spacecraft motion using holonomic
+  constraints
 - Removed the depreciated manner of creating python modules
 - Created a new example scenario :ref:`scenarioTempMeasurementAttitude` demonstrating the use of tempMeasurement module and generating random noise in the measurement.
 - Uncaught exceptions raised in Python modules are now printed to ``stderr`` before the program is terminated.
