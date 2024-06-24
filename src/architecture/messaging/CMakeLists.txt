@@ -1,8 +1,4 @@
 cmake_policy(SET CMP0078 NEW)
-find_package(SWIG REQUIRED)
-include(${SWIG_USE_FILE})
-find_package(PythonLibs 3 REQUIRED)
-find_package(PythonInterp 3 REQUIRED)
 
 function(generate_messages searchDir generateCCode)
   file(
@@ -13,10 +9,10 @@ function(generate_messages searchDir generateCCode)
   foreach(msgFile ${message_files})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
     get_filename_component(TARGET_DIR ${msgFile} DIRECTORY)
-    set(COMP_OUT_NAME "${CMAKE_CURRENT_SOURCE_DIR}/../../../dist3/autoSource/${TARGET_NAME}.i")
+    set(COMP_OUT_NAME "${CMAKE_BINARY_DIR}/autoSource/${TARGET_NAME}.i")
     add_custom_command(
       OUTPUT ${COMP_OUT_NAME}
-      COMMAND ${PYTHON_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
+      COMMAND ${Python3_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
               ${generateCCode}
       DEPENDS ${msgFile}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/)
@@ -26,16 +22,16 @@ function(generate_messages searchDir generateCCode)
       set_property(
         SOURCE ${COMP_OUT_NAME}
         PROPERTY SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/../" "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
-                 "-I${EXTERNAL_MODULES_PATH}/" "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${PYTHON_INCLUDE_PATH}")
+                 "-I${EXTERNAL_MODULES_PATH}/" "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${Python3_INCLUDE_DIRS}")
       include_directories("${EXTERNAL_MODULES_PATH}/")
     else()
       set_property(
         SOURCE ${COMP_OUT_NAME}
         PROPERTY SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/../" "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
-                 "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${PYTHON_INCLUDE_PATH}")
+                 "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${Python3_INCLUDE_DIRS}")
     endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
-    include_directories(${PYTHON_INCLUDE_PATH})
+    include_directories(${Python3_INCLUDE_DIRS})
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../")
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../")
@@ -65,7 +61,7 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
     COMMAND
-      ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
+      ${Python3_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
       "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/"
       "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
@@ -73,7 +69,7 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 else()
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-    COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
+    COMMAND ${Python3_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
             "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
     VERBATIM)

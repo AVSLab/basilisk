@@ -11,9 +11,9 @@ set(LIB_NAME "cMsgCInterface")
 
 # Grab the library source files
 file(GLOB C_FILES
-        "${CMAKE_SOURCE_DIR}/../dist3/autoSource/cMsgCInterface/*.cpp"
-        "${CMAKE_SOURCE_DIR}/../dist3/autoSource/cMsgCInterface/*.c"
-        "${CMAKE_SOURCE_DIR}/../dist3/autoSource/cMsgCInterface/*.h"
+        "${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface/*.cpp"
+        "${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface/*.c"
+        "${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface/*.h"
     )
 
 # Add Target
@@ -24,7 +24,7 @@ endif()
 
 # Link all necessary libraries
 #target_link_libraries(${LIB_NAME} ArchitectureUtilities)
-target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
+target_link_libraries(${LIB_NAME} ${PYTHON3_MODULE})
 #target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
 
 # define build location, IDE generation specifications
