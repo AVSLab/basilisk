@@ -57,6 +57,10 @@ function(generate_messages searchDir generateCCode)
   endforeach()
 endfunction(generate_messages)
 
+# Copy the cMsgCInterfacePy wrapper module to support backwards-compatibility.
+# TODO: Deprecate this!
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cMsgCInterfacePy/__init__.py ${CMAKE_BINARY_DIR}/Basilisk/architecture/cMsgCInterfacePy/__init__.py COPYONLY)
+
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py

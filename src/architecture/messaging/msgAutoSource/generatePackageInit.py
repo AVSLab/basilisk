@@ -19,4 +19,8 @@ if __name__ == "__main__":
                 mainImportFid.write('from Basilisk.architecture.messaging.' + className + ' import *\n')
     mainImportFid.close()
     setOldPath = moduleOutputPath.split('messaging')[0] + '/cMsgCInterfacePy'
-    os.symlink(moduleOutputPath, setOldPath)
+
+    # XXX: Disabled: don't make a symbolic link here, because when we build a
+    # Python wheel, the contents of the folder get copied, effectively doubling
+    # the size. Instead, see the new messaging/cMsgCInterface directory.
+    # os.symlink(moduleOutputPath, setOldPath)
