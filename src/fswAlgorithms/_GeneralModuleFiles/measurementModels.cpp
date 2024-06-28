@@ -48,3 +48,11 @@ Eigen::VectorXd lastThreeStates(Eigen::VectorXd state)
     assert(state.size() > 2);
     return state.tail(3);
 }
+
+/*! Measurement model that takes first 3 components of the state vector and interprets them as MRPs
+ * @param Eigen::VectorXd state
+ * @return Eigen::VectorXd
+ */
+Eigen::VectorXd mrpFirstThreeStates(Eigen::VectorXd state){
+    return mrpSwitch(state.head(3), 1);
+}

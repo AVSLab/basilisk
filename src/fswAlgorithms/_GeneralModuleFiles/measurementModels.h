@@ -17,8 +17,8 @@
 
  */
 
-#include <Eigen/Dense>
 #include <Eigen/Core>
+#include "architecture/utilities/rigidBodyKinematics.hpp"
 
 #ifndef FILTER_MEAS_MODELS_H
 #define FILTER_MEAS_MODELS_H
@@ -48,5 +48,6 @@ public:
 Eigen::VectorXd normalizedFirstThreeStates(Eigen::VectorXd state);
 Eigen::VectorXd firstThreeStates(Eigen::VectorXd state, size_t beginSlice, size_t endSlice);
 Eigen::VectorXd lastThreeStates(Eigen::VectorXd state);
+Eigen::VectorXd mrpFirstThreeStates(Eigen::VectorXd state);
 
 #endif
