@@ -26,28 +26,13 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import hillPointCpp  # import the module that is to be tested
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(conditionstring)
-# provide a unique test method name, starting with test_
 @pytest.mark.parametrize("celMsgSet", [True, False])
 
-def test_hillPoint(show_plots, celMsgSet):
-    """Module Unit Test"""
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = hillPointTestFunction(show_plots, celMsgSet)
-    assert testResults < 1, testMessage
-
-
-def hillPointTestFunction(show_plots, celMsgSet):
+def test_hillPointCpp(show_plots, celMsgSet):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -139,11 +124,10 @@ def hillPointTestFunction(show_plots, celMsgSet):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+        np.testing.assert_allclose(trueVector[i],
+                               moduleOutput[i],
+                               atol=accuracy,
+                               verbose=True)
     #
     # check omega_RN_N
     #
@@ -159,11 +143,11 @@ def hillPointTestFunction(show_plots, celMsgSet):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+        np.testing.assert_allclose(trueVector[i],
+                               moduleOutput[i],
+                               atol=accuracy,
+                               verbose=True)
+
     #
     # check domega_RN_N
     #
@@ -178,11 +162,10 @@ def hillPointTestFunction(show_plots, celMsgSet):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_N unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+        np.testing.assert_allclose(trueVector[i],
+                               moduleOutput[i],
+                               atol=accuracy,
+                               verbose=True)
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
@@ -199,4 +182,4 @@ def hillPointTestFunction(show_plots, celMsgSet):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_hillPoint(False, True)
+    test_hillPointCpp(False, True)
