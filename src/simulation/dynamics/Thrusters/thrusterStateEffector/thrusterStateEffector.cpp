@@ -408,7 +408,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
             mDotNozzle = 0.0;
             if (it->steadyIsp * ops->ThrustFactor > 0.0)
             {
-                mDotNozzle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
+                mDotNozzle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp);
             }
             this->forceOnBody_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
 
@@ -454,7 +454,7 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
         mDotSingle = 0.0;
         if (it->steadyIsp * ops->ThrustFactor > 0.0)
         {
-            mDotSingle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
+            mDotSingle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp);
         }
         this->mDotTotal += mDotSingle;
     }
