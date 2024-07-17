@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -19,47 +19,51 @@
 #ifndef _STEPPERMOTORCONTROLLER_
 #define _STEPPERMOTORCONTROLLER_
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/MotorStepCommandMsg_C.h"
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
+#include <cstdint>
 
-/*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+/*! @brief Stepper Motor Controller Class */
+class StepperMotorController: public SysModel{
+public:
+
+    StepperMotorController() = default;                                    //!< Constructor
+    ~StepperMotorController() = default;                                   //!< Destructor
+
+    void Reset(uint64_t currentSimNanos) override;                         //!< Reset member function
+    void UpdateState(uint64_t currentSimNanos) override;                   //!< Update member function
+    double getThetaInit() const;                                           //!< Getter method for the initial motor angle
+    double getStepAngle() const;                                           //!< Getter method for the motor step angle
+    double getStepTime() const;                                            //!< Getter method for the motor step time
+    void setThetaInit(const double thetaInit);                             //!< Setter method for the initial motor angle
+    void setStepAngle(const double stepAngle);                             //!< Setter method for the motor step angle
+    void setStepTime(const double stepTime);                               //!< Setter method for the motor step time
+
+    ReadFunctor<HingedRigidBodyMsgPayload> motorRefAngleInMsg;             //!< Intput msg for the stepper motor reference message
+    Message<MotorStepCommandMsgPayload> motorStepCommandOutMsg;            //!< Output msg for the number of commanded motor step counts
+
+    BSKLogger *bskLogger;                                                  //!< BSK Logging
+
+private:
+
     /* Motor angle parameters */
-    double initAngle;                                        //!< [rad] Initial motor angle
-    double currentAngle;                                     //!< [rad] Current motor angle
-    double desiredAngle;                                     //!< [rad] Motor reference angle
-    double deltaAngle;                                       //!< [rad] Difference between desired and current angle
-    double stepAngle;                                        //!< [rad] Angle the stepper motor moves through for a single step (constant)
+    double thetaInit{};                                                    //!< [rad] Initial motor angle
+    double theta{};                                                        //!< [rad] Current motor angle
+    double thetaRef{};                                                     //!< [rad] Motor reference angle
+    double deltaTheta{};                                                   //!< [rad] Difference between desired and current angle
+    double stepAngle{};                                                    //!< [rad] Angle the stepper motor moves through for a single step (constant)
 
     /* Step parameters */
-    int32_t stepsCommanded;                                  //!< [steps] Number of steps needed to reach the desired angle (output)
-    int32_t stepCount;                                       //!< [steps] Current motor step count (number of steps taken)
+    int stepsCommanded{};                                                  //!< [steps] Number of steps needed to reach the desired angle (output)
+    int stepCount{};                                                       //!< [steps] Current motor step count (number of steps taken)
 
     /* Temporal parameters */
-    double stepTime;                                         //!< [s] Time required for a single motor step (constant)
-    double previousWrittenTime;                              //!< [ns] Time the last input message was written
-    double deltaSimTime;                                     //!< [ns] The time elapsed since the last message was written
-    bool firstCall;                                          //!< Boolean used to capture a message written at time zero
-
-    BSKLogger* bskLogger;                                    //!< BSK Logging
-
-    /* Messages */
-    HingedRigidBodyMsg_C spinningBodyInMsg;                  //!< Intput msg for the stepper motor reference message
-    MotorStepCommandMsg_C motorStepCommandOutMsg;            //!< Output msg for the number of commanded motor step counts
-
-}StepperMotorControllerConfig;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    void SelfInit_stepperMotorController(StepperMotorControllerConfig *configData, int64_t moduleID);                     //!< Method for module initialization
-    void Reset_stepperMotorController(StepperMotorControllerConfig *configData, uint64_t callTime, int64_t moduleID);     //!< Method for module reset
-    void Update_stepperMotorController(StepperMotorControllerConfig *configData, uint64_t callTime, int64_t moduleID);    //!< Method for module time update
-#ifdef __cplusplus
-}
-#endif
+    double stepTime{1.0};                                                  //!< [s] Time required for a single motor step (constant)
+    double previousWrittenTime{-1.0};                                      //!< [ns] Time the last input message was written
+    double deltaSimTime{};                                                 //!< [ns] The time elapsed since the last message was written
+};
 
 #endif

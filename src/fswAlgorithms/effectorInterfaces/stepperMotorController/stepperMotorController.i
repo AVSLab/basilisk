@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,20 +21,19 @@
    #include "stepperMotorController.h"
 %}
 
-%include "swig_c_wrap.i"
-%c_wrap_2(stepperMotorController, StepperMotorControllerConfig);
+%pythoncode %{
+from Basilisk.architecture.swig_common_model import *
+%}
+%include "std_string.i"
+%include "swig_conly_data.i"
+%include "swig_eigen.i"
 
-%constant void SelfInit_stepperMotorController(void*, uint64_t);
-%ignore SelfInit_stepperMotorController;
-%constant void Reset_stepperMotorController(void*, uint64_t, uint64_t);
-%ignore Reset_stepperMotorController;
-%constant void Update_stepperMotorController(void*, uint64_t, uint64_t);
-%ignore Update_stepperMotorController;
-
+%include "sys_model.i"
 %include "stepperMotorController.h"
 
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 struct HingedRigidBodyMsg_C;
+
 %include "architecture/msgPayloadDefC/MotorStepCommandMsgPayload.h"
 struct MotorStepCommandMsg_C;
 
