@@ -141,7 +141,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTime = macros.hour2nano(6)
+    simulationTime = macros.day2nano(6)
     simulationTimeStepDyn = macros.sec2nano(0.5)
     simulationTimeStepFsw = macros.sec2nano(2)
     simulationTimeStepPlt = macros.hour2nano(1)
@@ -341,6 +341,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     thruster.steadyIsp = 1600
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
+    thruster.MaxSwirlTorque = 0 #-1.3e-3 * thruster.MaxThrust
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
@@ -351,6 +352,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     THRConfig.rThrust_B = r_TF_F
     THRConfig.tHatThrust_B = tHat_F
     THRConfig.maxThrust = thruster.MaxThrust
+    THRConfig.swirlTorque = thruster.MaxSwirlTorque
     thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
 
     # Set up the SRP dynamic effector
@@ -500,6 +502,8 @@ def run(momentumManagement, cmEstimation, showPlots):
         saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
+        saReference[item].r_AB_B = [(-1)**item * (3.75 + 0.5 * lenXHub), 0.0, 0.45]
+        saReference[item].pointingMode = 0
         scSim.AddModelToTask(fswTask, saReference[item], 24)
 
     # Set up solar array controller modules
@@ -535,7 +539,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Configure thruster on-time message
     thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrOnTimeMsgData.OnTimeRequest = [3600*4*30]
+    thrOnTimeMsgData.OnTimeRequest = [3600*24*3.5]
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
@@ -617,6 +621,9 @@ def run(momentumManagement, cmEstimation, showPlots):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
         saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
+        saReference[item].rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+        saReference[item].rwConfigDataInMsg.subscribeTo(fswRwConfigMsg)
+        saReference[item].vehConfigInMsg.subscribeTo(vcMsg_CoM)
         saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
         saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
@@ -691,6 +698,15 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.InitializeSimulation()
 
     # configure a simulation stop time and execute the simulation run
+    # scSim.ConfigureStopTime(simulationTime/2)
+    # scSim.ExecuteSimulation()
+    # saReference[0].pointingMode = 1
+    # saReference[1].pointingMode = 0
+    # saReference[0].Reset(macros.day2nano(1))
+    # saReference[1].Reset(macros.day2nano(1))
+    # pltReference.K = 0
+    # pltReference.Ki = 0
+    # pltReference.Reset(macros.day2nano(1))
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
@@ -768,13 +784,14 @@ def run(momentumManagement, cmEstimation, showPlots):
     plot_external_torque(timeData, dataSRPTorquePntC, yString='SRP', figID=8)
     pltName = fileName+"8"+str(int(momentumManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(8)
-    plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, figID=9)
+    plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, figID=9)
     pltName = fileName+"9"+str(int(momentumManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(9)
-    plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, dataSRPTorquePntC, figID=10)
+    plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, dataSRPTorquePntC, figID=10)
     pltName = fileName+"10"+str(int(momentumManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(10)
     plot_solar_array_pointing_error(timeData, dataSAPointing, figID=11)
+    pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(11)
     plot_neg_Y_pointing_error(timeData, dataNegYPointing, figID=12)
     pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
@@ -893,10 +910,7 @@ def plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, dataM0B, da
         if h_B_norm == 0:
             dataAngle.append(0.0)
         else:
-            dataAngle.append(np.arccos(min(max(np.dot(h_B, thrDir_B) / np.linalg.norm(h_B), -1), 1)))
-        cross = np.cross(h_B, thrDir_B)
-        if np.arctan2(cross[1], cross[0]) < 0:
-            dataAngle[-1] = -dataAngle[-1]
+            dataAngle.append(h_B_norm)
 
     dataAngle = np.array(dataAngle) * macros.R2D
     plt.figure(figID, figsize=(5, 2.75))
@@ -919,7 +933,7 @@ def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
     else:
         plt.ylabel('Torque [mNm]')
 
-def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, figID=None):
+def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, swirlTorque, figID=None):
     """Plot the thruster torque about CM."""
     r_MB_B = np.array([dataMB_B[0][0], dataMB_B[1][0], dataMB_B[2][0]])
     dataThrTorque = []
@@ -930,11 +944,11 @@ def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, d
         r_TM_B = np.matmul(BF, dataThrLoc_F[i])
         r_TC_B = r_TM_B + r_MB_B - dataCM[i]
         thrVec_B = np.matmul(BF, dataThrVec_F[i])
-        dataThrTorque.append(np.cross(r_TC_B, thrVec_B))
+        dataThrTorque.append(np.cross(r_TC_B, thrVec_B) + thrVec_B * swirlTorque)
     dataThrTorque = np.array(dataThrTorque)
     plot_external_torque(timeData, dataThrTorque, yString=r'Thruster', figID=figID)
 
-def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, dataSRP, figID=None):
+def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, swirlTorque, dataSRP, figID=None):
     """Plot the net external torques in the plane perpendicular to the thrust vector."""
     r_MB_B = np.array([dataMB_B[0][0], dataMB_B[1][0], dataMB_B[2][0]])
     dataDeltaL = []
@@ -945,7 +959,7 @@ def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, 
         r_TM_B = np.matmul(BF, dataThrLoc_F[i])
         r_TC_B = r_TM_B + r_MB_B - dataCM[i]
         thrVec_B = np.matmul(BF, dataThrVec_F[i])
-        thrTorque_B = np.cross(r_TC_B, thrVec_B)
+        thrTorque_B = np.cross(r_TC_B, thrVec_B) + thrVec_B * swirlTorque
         dataDeltaL.append(dataSRP[i] + thrTorque_B)
     dataDeltaL = np.array(dataDeltaL)
     plot_external_torque(timeData, dataDeltaL, yString=r'Net Ext.', figID=figID)
