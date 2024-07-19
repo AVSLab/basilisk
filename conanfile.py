@@ -95,23 +95,6 @@ class BasiliskConan(ConanFile):
     # set cmake generator default
     generator = None
 
-    # make sure conan is configured to use the libstdc++11 by default
-    if platform.system() != "Darwin":
-        try:
-            subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=subprocess.DEVNULL)
-        except:
-            pass
-
-        if platform.system() == "Linux":
-            try:
-                subprocess.check_output(["conan", "profile", "update",
-                                         "settings.compiler.libcxx=libstdc++11", "default"])
-                print("\nConfiguring: " + statusColor + "use libstdc++11 by default" + endColor)
-
-            except:
-                pass
-
-    print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     try:
         # enable this flag for access revised conan modules.
@@ -343,6 +326,25 @@ class BasiliskConan(ConanFile):
             print("This resulted in the stderr: \n%s" % err.decode())
 
 if __name__ == "__main__":
+    # make sure conan is configured to use the libstdc++11 by default
+    # XXX: This needs to be run before dispatching to Conan (i.e. outside of the
+    # ConanFile object), because it affects the configuration of the first run.
+    # (Running it here fixes https://github.com/AVSLab/basilisk/issues/525)
+    if platform.system() != "Darwin":
+        try:
+            subprocess.check_output(["conan", "profile", "new", "default", "--detect"])
+        except:
+            pass
+
+        if platform.system() == "Linux":
+            try:
+                # XXX: This fixes a linker issue due to the dual C++ ABI.
+                subprocess.check_output(["conan", "profile", "update", "settings.compiler.libcxx=libstdc++11", "default"])
+                print("\nConfiguring: " + statusColor + "use libstdc++11 by default" + endColor)
+            except:
+                pass
+    print(statusColor + "Checking conan configuration:" + endColor + " Done")
+
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
     # define the optional arguments
     parser.add_argument("--generator", help="cmake generator")
