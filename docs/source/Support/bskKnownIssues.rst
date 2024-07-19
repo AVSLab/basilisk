@@ -16,6 +16,10 @@ Version |release|
   ``CMake Error: Unknown argument: --gtest_output``.  The current release fixes this issue.
 - There was an issue with the :ref:`thrusterStateEffector` such that its mass depletion rate was
   hard-coded to 100% for all firings. This is corrected in the current release.
+- pip-based installation in editable mode using `pip install -e .` is not currently supported.
+  Developers and users alike should continue to use `python conanfile.py` installation.
+- The CI test builds starting failing running the `gtest` unit test suite with the error
+  ``CMake Error: Unknown argument: --gtest_output``.  The current release fixes this issue.
 
 
 Version 2.3.0

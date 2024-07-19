@@ -11,7 +11,7 @@ Install
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
-   
+
    Install/pullCloneBSK
    Install/installOnLinux
    Install/installOnMacOS
@@ -21,7 +21,4 @@ Install
    Install/installOptionalPackages
    Install/customPython
    Install/installBuildConan
-
-
-
-
+   Install/pipInstall
