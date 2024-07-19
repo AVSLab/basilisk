@@ -356,7 +356,7 @@ if __name__ == "__main__":
     for opt, value in bskModuleOptionsString.items():
         parser.add_argument("--" + opt, help="using string option for " + opt, default=value)
     for opt, value in bskModuleOptionsFlag.items():
-        parser.add_argument("--" + opt, help="using flag option for " + opt, action="store_true")
+        parser.add_argument("--" + opt, help="using flag option for " + opt, default=value, action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
 
     # set the build destination folder
