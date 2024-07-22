@@ -20,7 +20,6 @@ jobs:
           extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
   build-linux:
     name: Build Linux
-    needs: pre-commit
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -93,7 +92,6 @@ jobs:
 
   build-windows:
     name: Build Windows
-    needs: pre-commit
     runs-on: windows-2019
     strategy:
       matrix:
