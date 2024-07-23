@@ -6,19 +6,19 @@ path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(path + '/../../../../../Basilisk/src/architecture/messaging/msgAutoSource')
 
 if __name__ == "__main__":
-    moduleOutputPath = sys.argv[1]
-    isExist = os.path.exists(moduleOutputPath)
+    modulePath = sys.argv[1]
+    isExist = os.path.exists(modulePath)
     if not isExist:
-        os.makedirs(moduleOutputPath, exist_ok=True)
-    mainImportFid = open(moduleOutputPath + '/__init__.py', 'w')
+        os.makedirs(modulePath, exist_ok=True)
+    mainImportFid = open(modulePath + '/__init__.py', 'w')
     for i in range(2, len(sys.argv)):
         headerInputPath = sys.argv[i]
-        for filePre in os.listdir(headerInputPath):
-            if(filePre.endswith(".h") or filePre.endswith(".hpp")):
-                className = os.path.splitext(filePre)[0]
+        for fileName in os.listdir(headerInputPath):
+            if fileName.endswith(".h") or fileName.endswith(".hpp"):
+                className = os.path.splitext(fileName)[0]
                 msgName = className.split('Payload')[0]
                 mainImportFid.write('from Basilisk.architecture.messaging.' + className + ' import *\n')
     mainImportFid.close()
-    setOldPath = moduleOutputPath.split('messaging')[0] + '/cMsgCInterfacePy'
-    pathlib.Path(setOldPath).unlink(missing_ok=True)
-    os.symlink(moduleOutputPath, setOldPath)
+    oldModulePath = modulePath.split('messaging')[0] + '/cMsgCInterfacePy'
+    pathlib.Path(oldModulePath).unlink(missing_ok=True)
+    os.symlink(modulePath, oldModulePath)
