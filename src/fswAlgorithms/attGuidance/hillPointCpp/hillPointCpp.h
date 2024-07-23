@@ -44,10 +44,10 @@ public:
     NavTransMsg_C transNavInMsg;            //!<        The name of the incoming attitude command
     EphemerisMsg_C celBodyInMsg;            //!<        The name of the celestial body message
 //
-    int planetMsgIsLinked;                  //!<        flag if the planet message is linked
     BSKLogger *bskLogger;                   //!<        BSK Logging
 
 private:
+    int planetMsgIsLinked;                  //!<        flag if the planet message is linked
 
     static void computeHillPointingReference(double r_BN_N[3],
                                       double v_BN_N[3],
