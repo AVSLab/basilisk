@@ -6,6 +6,10 @@ path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(path + '/../../../../../Basilisk/src/architecture/messaging/msgAutoSource')
 
 if __name__ == "__main__":
+    """
+    In the message package directory create an __init__.py file
+    containing all the message packages. If the file exists, overwrite it.
+    """
     modulePath = sys.argv[1]
     isExist = os.path.exists(modulePath)
     if not isExist:
