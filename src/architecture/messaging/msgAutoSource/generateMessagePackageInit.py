@@ -12,8 +12,7 @@ if __name__ == "__main__":
     """
     modulePath = sys.argv[1]
     isExist = os.path.exists(modulePath)
-    if not isExist:
-        os.makedirs(modulePath, exist_ok=True)
+    os.makedirs(modulePath, exist_ok=True)
     mainImportFid = open(modulePath + '/__init__.py', 'w')
     for i in range(2, len(sys.argv)):
         headerInputPath = sys.argv[i]
