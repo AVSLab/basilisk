@@ -65,7 +65,7 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
     COMMAND
-      ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
+      ${PYTHON_EXECUTABLE} generateMessagePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
       "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/"
       "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
@@ -73,7 +73,7 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 else()
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-    COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
+    COMMAND ${PYTHON_EXECUTABLE} generateMessagePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
             "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
     VERBATIM)
