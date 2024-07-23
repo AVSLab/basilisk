@@ -17,10 +17,11 @@
 
  */
 
-#ifndef _HILL_POINT_
-#define _HILL_POINT_
+#ifndef _HILL_POINT_CPP_H_
+#define _HILL_POINT_CPP_H_
 
 #include <stdint.h>
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 /* Required module input messages */
 #include "cMsgCInterface/EphemerisMsg_C.h"
@@ -29,42 +30,31 @@
 
 #include "architecture/utilities/bskLogging.h"
 
+/*! @brief Hill Point attitude guidance class. */
+class HillPointCpp: public SysModel {
+public:
 
+    HillPointCpp() = default;                                //!< Constructor
+    ~HillPointCpp() override = default;                               //!< Destructor
 
+    void Reset(uint64_t CurrentSimNanos) override;              //!< Reset member function
+    void UpdateState(uint64_t CurrentSimNanos) override;        //!< Update member function
 
-/*!@brief Data structure for module to compute the Hill-frame pointing navigation solution.
- */
-typedef struct {
-    
-    /* declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;               //!<        The name of the output message
     NavTransMsg_C transNavInMsg;            //!<        The name of the incoming attitude command
     EphemerisMsg_C celBodyInMsg;            //!<        The name of the celestial body message
-
+//
     int planetMsgIsLinked;                  //!<        flag if the planet message is linked
+    BSKLogger *bskLogger;                   //!<        BSK Logging
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
+private:
 
-}hillPointConfig;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    
-    void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID);
-    void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID);
-
-    void computeHillPointingReference(hillPointConfig *configData,
-                                      double r_BN_N[3],
+    static void computeHillPointingReference(double r_BN_N[3],
                                       double v_BN_N[3],
                                       double celBdyPositonVector[3],
                                       double celBdyVelocityVector[3],
                                       AttRefMsgPayload *attRefOut);
 
-#ifdef __cplusplus
-}
-#endif
-
+};
 
 #endif
