@@ -279,8 +279,8 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     backSubContr.matrixA = -this->mass * rTilde_ScS_B * this->sHat_B * this->aTheta.transpose();
     backSubContr.matrixB = -this->mass * rTilde_ScS_B * this->sHat_B * this->bTheta.transpose();
     backSubContr.vecTrans = -this->mass * this->omegaTilde_SB_B * this->rPrime_ScS_B
-            + this->mass * rTilde_ScS_B * this->sHat_B * this->cTheta
-            + this->sHat_B * this->sHat_B.dot(this->dcm_BS * attBodyForce_S);
+            + this->mass * rTilde_ScS_B * this->sHat_B * this->cTheta + this->dcm_BS * attBodyForce_S;
+//            + this->mass * rTilde_ScS_B * this->sHat_B * (this->cTheta - this->sHat_B.dot(this->dcm_BS * attBodyTorquePntS_S) / this->mTheta) + this->dcm_BS * attBodyForce_S;
 
     // Rotation contributions
     backSubContr.matrixC = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B)
@@ -291,8 +291,8 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
             - this->mass * this->omegaTilde_BN_B * this->rTilde_ScB_B * this->rPrime_ScB_B
             - this->mass * this->rTilde_ScB_B * this->omegaTilde_SB_B * this->rPrime_ScS_B
             - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->cTheta
-            + this->dcm_BS * attBodyTorquePntS_S - this->sHat_B.dot(this->dcm_BS * attBodyTorquePntS_S) * this->sHat_B
-            + eigenTilde(this->r_SB_B) * this->sHat_B * this->sHat_B.dot(this->dcm_BS * attBodyForce_S);
+//            - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * (this->cTheta - this->sHat_B.dot(this->dcm_BS * attBodyTorquePntS_S) / this->mTheta)
+            + this->dcm_BS * attBodyTorquePntS_S + eigenTilde(this->r_SB_B) * (this->dcm_BS * attBodyForce_S);
 }
 
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
