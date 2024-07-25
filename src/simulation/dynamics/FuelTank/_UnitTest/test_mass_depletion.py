@@ -180,7 +180,7 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
         trueSigma = [[1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]]
     elif thrustersEffector.__class__.__name__ == "ThrusterStateEffector":
         truePos = [[-6781593.400948599, 4946868.619447934, 5486741.690842073]]
-        trueSigma = [[0.14367298348925786, -0.06487574480164254, 0.3032693696902734]]
+        trueSigma = [[0.14366625871003397, -0.06488330854626220, 0.3032637107362375]]
 
     for i in range(0, len(truePos)):
         np.testing.assert_allclose(dataPos[i], truePos[i], rtol=1e-6, err_msg="Thruster position not equal")
@@ -189,6 +189,10 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
         # check a vector values
         np.testing.assert_allclose(dataSigma[i], trueSigma[i], rtol=1e-4, err_msg="Thruster attitude not equal")
 
+    # target value computed from MaxThrust / (EARTH_GRAV * steadyIsp)
+    np.testing.assert_allclose(fuelMassDot[100], -0.000403404216123, rtol=1e-3,
+                               err_msg="Thruster mass depletion not ramped up")
+    np.testing.assert_allclose(fuelMassDot[-1],0, rtol=1e-12, err_msg="Thruster mass depletion not ramped down")
 
 if __name__ == "__main__":
     test_massDepletionTest(True, thrusterDynamicEffector.ThrusterDynamicEffector)

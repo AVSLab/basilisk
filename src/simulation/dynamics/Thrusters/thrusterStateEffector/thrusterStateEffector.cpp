@@ -341,9 +341,6 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
             kappaDot(i, 0) = -this->kappaState->state(i, 0) * it->cutoffFrequency;
         }
 
-        // Set the IspFactor to 1 to check that there is mass flow
-        ops->IspFactor = 1.0;
-
         // Save the state to thruster ops
         ops->ThrustFactor = this->kappaState->state(i, 0);
     }
@@ -409,9 +406,9 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
         if (!it->updateOnly) {
             //! - Add the mass depletion force contribution
             mDotNozzle = 0.0;
-            if (it->steadyIsp * ops->IspFactor > 0.0)
+            if (it->steadyIsp * ops->ThrustFactor > 0.0)
             {
-                mDotNozzle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
+                mDotNozzle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp);
             }
             this->forceOnBody_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
 
@@ -455,9 +452,9 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
     {
         ops = &it->ThrustOps;
         mDotSingle = 0.0;
-        if (it->steadyIsp * ops->IspFactor > 0.0)
+        if (it->steadyIsp * ops->ThrustFactor > 0.0)
         {
-            mDotSingle = it->MaxThrust / (EARTH_GRAV * it->steadyIsp);
+            mDotSingle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp);
         }
         this->mDotTotal += mDotSingle;
     }
