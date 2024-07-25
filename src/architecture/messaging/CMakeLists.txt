@@ -61,23 +61,24 @@ function(generate_messages searchDir generateCCode)
   endforeach()
 endfunction(generate_messages)
 
+set(message_directory_paths
+        "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
+        "../../msgPayloadDefC/"
+        "../../msgPayloadDefCpp/"
+)
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-    COMMAND
-      ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
-      "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/"
-      "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
-    VERBATIM)
-else()
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-    COMMAND ${PYTHON_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
-            "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
-    VERBATIM)
-endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+   list(APPEND message_directory_paths
+          "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/"
+          "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/")
+endif (NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+
+add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
+        COMMAND
+        ${PYTHON_EXECUTABLE} generateMessagePackageInit.py ${message_directory_paths}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
+        VERBATIM
+)
 
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
