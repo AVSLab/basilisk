@@ -1,4 +1,5 @@
 import os
+import pathlib
 import sys
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -19,4 +20,5 @@ if __name__ == "__main__":
                 mainImportFid.write('from Basilisk.architecture.messaging.' + className + ' import *\n')
     mainImportFid.close()
     setOldPath = moduleOutputPath.split('messaging')[0] + '/cMsgCInterfacePy'
+    pathlib.Path(setOldPath).unlink(missing_ok=True)
     os.symlink(moduleOutputPath, setOldPath)
