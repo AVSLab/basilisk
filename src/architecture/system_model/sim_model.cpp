@@ -134,18 +134,18 @@ void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
         SysProcess *localProc = (*it);
         if(localProc->processEnabled())
         {
-            while(localProc->nextTaskTime < this->CurrentNanos ||
-                  (localProc->nextTaskTime == this->CurrentNanos &&
+            while(localProc->getNextTaskTime() < this->CurrentNanos ||
+                  (localProc->getNextTaskTime() == this->CurrentNanos &&
                    localProc->processPriority >= stopPri))
             {
                 localProc->singleStepNextTask(this->CurrentNanos);
             }
-            if(localProc->getNextTime() < nextCallTime)
+            if(localProc->getNextTaskTime() < nextCallTime)
             {
-                nextCallTime = localProc->getNextTime();
+                nextCallTime = localProc->getNextTaskTime();
                 this->nextProcPriority = localProc->processPriority;
             }
-            else if(localProc->getNextTime() == nextCallTime &&
+            else if(localProc->getNextTaskTime() == nextCallTime &&
                     localProc->processPriority > this->nextProcPriority)
             {
                 this->nextProcPriority = localProc->processPriority;
@@ -437,18 +437,18 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
         SysProcess *localProc = (*it);
         if(localProc->processEnabled())
         {
-            while(localProc->nextTaskTime < this->CurrentNanos ||
-                (localProc->nextTaskTime == this->CurrentNanos &&
+            while(localProc->getNextTaskTime() < this->CurrentNanos ||
+                (localProc->getNextTaskTime() == this->CurrentNanos &&
                   localProc->processPriority >= stopPri))
             {
                 localProc->singleStepNextTask(this->CurrentNanos);
             }
-            if(localProc->getNextTime() < nextCallTime)
+            if(localProc->getNextTaskTime() < nextCallTime)
             {
-                nextCallTime = localProc->getNextTime();
+                nextCallTime = localProc->getNextTaskTime();
                 this->nextProcPriority = localProc->processPriority;
             }
-            else if(localProc->getNextTime() == nextCallTime &&
+            else if(localProc->getNextTaskTime() == nextCallTime &&
                 localProc->processPriority > this->nextProcPriority)
             {
                 this->nextProcPriority = localProc->processPriority;

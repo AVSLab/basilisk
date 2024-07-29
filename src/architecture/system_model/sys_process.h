@@ -59,7 +59,6 @@ public:
     void enableAllTasks(); //!< class method
     bool getProcessControlStatus() {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
     void setProcessControlStatus(bool processTaken) {processOnThread = processTaken;} //!< Provides a mechanism to say that this process is allocated to a thread
-    uint64_t getNextTime() const { return(this->nextTaskTime);}
     uint64_t getNextTaskTime() const { return(this->nextTaskTime);}
     uint64_t getPrevRouteTime() const;
 
