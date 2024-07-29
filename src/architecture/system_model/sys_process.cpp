@@ -259,4 +259,7 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
     bskLogger.bskLog(BSK_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
 }
 
+uint64_t SysProcess::getPrevRouteTime() const {
+    return this->prevRouteTime;
+}
 
