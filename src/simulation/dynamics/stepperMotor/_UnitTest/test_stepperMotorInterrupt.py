@@ -87,13 +87,12 @@ def test_stepperMotorInterrupt(show_plots, stepAngle, stepTime, initialMotorAngl
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # Create an instance of the stepperMotorController module to be tested
-    StepperMotorController = stepperMotorController.stepperMotorController()
+    # Create the stepper motor controller module
+    StepperMotorController = stepperMotorController.StepperMotorController()
     StepperMotorController.ModelTag = "stepperMotorController"
-    StepperMotorController.stepAngle = stepAngle
-    StepperMotorController.stepTime = stepTime
-    StepperMotorController.initAngle = initialMotorAngle
-    StepperMotorController.currentAngle = initialMotorAngle
+    StepperMotorController.setStepAngle(stepAngle)
+    StepperMotorController.setStepTime(stepTime)
+    StepperMotorController.setThetaInit(initialMotorAngle)
 
     # Add the stepperMotorController test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, StepperMotorController)
@@ -102,7 +101,7 @@ def test_stepperMotorInterrupt(show_plots, stepAngle, stepTime, initialMotorAngl
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
     HingedRigidBodyMessageData.theta = desiredMotorAngle1
     HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    StepperMotorController.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    StepperMotorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Create an instance of the stepperMotor module to be tested
     StepperMotor = stepperMotor.StepperMotor()
@@ -157,7 +156,7 @@ def test_stepperMotorInterrupt(show_plots, stepAngle, stepTime, initialMotorAngl
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
     HingedRigidBodyMessageData.theta = desiredMotorAngle2
     HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
-    StepperMotorController.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    StepperMotorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Calculate number of steps to actuate from interrupted motor position to the second desired motor angle
     if (trueNumSteps1 > 0):
