@@ -147,7 +147,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - Call the next scheduled model, and set the time to its start
     SysModelTask *localTask = fireIt->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
-    fireIt->NextTaskStart = localTask->NextStartTime;
+    fireIt->NextTaskStart = localTask->getNextStartTime();
     
     //! - Figure out when we are going to be called next for scheduling purposes
     fireIt=this->processTasks.begin();
@@ -173,8 +173,8 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
 {
     ModelScheduleEntry localEntry;
     localEntry.TaskPtr = newTask;
-    localEntry.TaskUpdatePeriod = newTask->TaskPeriod;
-    localEntry.NextTaskStart = newTask->NextStartTime;
+    localEntry.TaskUpdatePeriod = newTask->getTaskPeriod();
+    localEntry.NextTaskStart = newTask->getNextStartTime();
     localEntry.taskPriority = taskPriority;
     this->scheduleTask(localEntry);
     newTask->updateParentProc(processName);
@@ -251,8 +251,8 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 		if (it->TaskPtr->TaskName == taskName)
 		{
 			it->TaskPtr->updatePeriod(newPeriod);
-			it->NextTaskStart = it->TaskPtr->NextStartTime;
-			it->TaskUpdatePeriod = it->TaskPtr->TaskPeriod;
+			it->NextTaskStart = it->TaskPtr->getNextStartTime();
+			it->TaskUpdatePeriod = it->TaskPtr->getTaskPeriod();
 			return;
 		}
 	}
