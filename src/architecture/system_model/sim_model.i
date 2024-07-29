@@ -102,5 +102,31 @@ namespace std {
                     "Using NextTaskTime is deprecated. Use: getNextTaskTime()\n"
             )
             return self.getNextTaskTime()
+
+        def getNextTime(self):
+            deprecated.deprecationWarn(
+                    "getNextTime()",
+                    "2025/08/01",
+                    "Using getNextTime() is deprecated. Use: getNextTaskTime()\n"
+            )
+            return self.getNextTaskTime()
+
+        @property
+        def nextTaskTime(self):
+            deprecated.deprecationWarn(
+                    "nextTaskTime",
+                    "2025/08/01",
+                    "Using nextTaskTime is deprecated. Use: getNextTaskTime()\n"
+            )
+            return self.getNextTaskTime()
+
+        @property
+        def prevRouteTime(self):
+            deprecated.deprecationWarn(
+                    "prevRouteTime",
+                    "2025/08/01",
+                    "Using prevRouteTime is deprecated. Use: getPrevRouteTime()\n"
+            )
+            return self.getPrevRouteTime()
     %}
 }
