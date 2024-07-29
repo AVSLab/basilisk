@@ -12,6 +12,8 @@ Version |release|
 -----------------
 - The fuel tank models have become classes and python simulation code using tank modules need to be
   updated.  See :ref:`fueltank` or :ref:`scenarioFuelSlosh` for further documentation.
+- The CI test builds starting failing running the `gtest` unit test suite with the error
+  ``CMake Error: Unknown argument: --gtest_output``.  The current release fixes this issue.
 
 
 Version 2.3.0
