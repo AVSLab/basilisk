@@ -20,7 +20,6 @@ jobs:
           extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
   build-linux:
     name: Build Linux
-    needs: pre-commit
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -80,17 +79,11 @@ jobs:
         if: ${{ always() }}
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
-        run: ctest --gtest_output "json:../ctest/ctest-results-linux-${{ matrix.python-version }}.json"
-      - name: "Upload Google Test CTest results"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ctest-results-${{ matrix.python-version }}
-          path: ctest/ctest-results-${{ matrix.python-version }}.json
+        run: ctest
         if: ${{ always() }}
 
   build-windows:
     name: Build Windows
-    needs: pre-commit
     runs-on: windows-2019
     strategy:
       matrix:
@@ -159,4 +152,5 @@ jobs:
         shell: pwsh
         run: |
           cd dist3
-          ctest --gtest_output "json:../ctest/ctest-results-windows-${{ matrix.python-version }}.json"; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
+          ctest
+          if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
