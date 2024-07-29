@@ -49,7 +49,10 @@ public:
 	void disableTask() {this->taskActive = false;} //!< Disables the task.  I know.
     void updatePeriod(uint64_t newPeriod);
     void updateParentProc(std::string parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
-    
+    uint64_t getNextStartTime() const;
+    uint64_t getNextPickupTime() const;
+    uint64_t getTaskPeriod() const;
+    uint64_t getFirstTaskTime() const;
 public:
     std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
     std::string TaskName;  //!< -- Identifier for Task

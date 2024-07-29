@@ -166,3 +166,19 @@ void SysModelTask::updatePeriod(uint64_t newPeriod)
     this->TaskPeriod = newPeriod;
 
 }
+
+uint64_t SysModelTask::getNextStartTime() const {
+    return this->NextStartTime;
+}
+
+uint64_t SysModelTask::getNextPickupTime() const {
+    return this->NextPickupTime;
+}
+
+uint64_t SysModelTask::getTaskPeriod() const {
+    return this->TaskPeriod;
+}
+
+uint64_t SysModelTask::getFirstTaskTime() const {
+    return this->FirstTaskTime;
+}
