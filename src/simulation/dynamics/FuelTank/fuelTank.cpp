@@ -57,6 +57,14 @@ void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
     this->fuelSloshParticles.push_back(particle);
 }
 
+void FuelTank::addThrusterSet(ThrusterDynamicEffector *dynEff) {
+    thrDynEffectors.push_back(dynEff);
+}
+
+void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
+    thrStateEffectors.push_back(stateEff);
+}
+
 /*! Link states that the module accesses */
 void FuelTank::linkInStates(DynParamManager &statesIn) {
     // - Grab access to the hubs omega_BN_N
@@ -90,12 +98,12 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 
     //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
-    for (auto &dynEffector: this->dynEffectors) {
+    for (auto &dynEffector: this->thrDynEffectors) {
         dynEffector->computeStateContribution(integTime);
         this->fuelConsumption += dynEffector->stateDerivContribution(0);
     }
 
-    for (auto &stateEffector: this->stateEffectors) {
+    for (auto &stateEffector: this->thrStateEffectors) {
         stateEffector->updateEffectorMassProps(integTime);
         this->fuelConsumption += stateEffector->stateDerivContribution(0);
     }
