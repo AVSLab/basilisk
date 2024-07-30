@@ -51,6 +51,8 @@ THRSimConfig
     char label[10];                                 //!< [-], label name of the TH device being simulated
     double cutoffFrequency;                         //!< [rad/s] cutoff frequency for first-order behavior
     double MaxSwirlTorque;                          //!< [Nm] Steady state magnitude of the swirl torque produced by ionic thrusters
+    std::vector<double> thrBlowDownCoeff;           //!< -- Polynomial coefficients for fuel mass to thrust blow down model in descending order
+    std::vector<double> ispBlowDownCoeff;           //!< -- Polynomial coefficients for fuel mass to Isp blow down model in descending order
 }THRSimConfig;
 
 
