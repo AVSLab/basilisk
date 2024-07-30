@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -16,43 +16,34 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-
-#
-#   Unit Test Script
-#   Module Name:        stepperMotorController
-#   Author:             Shamsa SabekZaei and Leah Kiner
-#   Creation Date:      Aug 25, 2023
-#
-
 import inspect
-import matplotlib.pyplot as plt
-import numpy as np
 import os
+
+import numpy as np
 import pytest
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import stepperMotorController
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
-@pytest.mark.parametrize("stepAngle", [0.008 * (np.pi / 180), 0.01 * (np.pi / 180), 0.5 * (np.pi / 180)])
-@pytest.mark.parametrize("stepTime", [0.008, 0.1, 0.5])
-@pytest.mark.parametrize("initialMotorAngle", [-5 * (np.pi / 180), 0.0, 60.0 * (np.pi / 180)])
-@pytest.mark.parametrize("desiredMotorAngle", [0.0, 10.6 * (np.pi / 180), 60.0051 * (np.pi / 180)])
-def test_stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle):
+@pytest.mark.parametrize("motorStepAngle", [0.008 * macros.D2R, 0.01 * macros.D2R, 0.5 * macros.D2R])
+@pytest.mark.parametrize("motorStepTime", [0.008, 0.1, 0.5])
+@pytest.mark.parametrize("motorThetaInit", [-5.0 * macros.D2R, 0.0, 60.0 * macros.D2R])
+@pytest.mark.parametrize("motorThetaRef", [0.0, 10.6 * macros.D2R, 60.0051 * macros.D2R])
+def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motorThetaInit, motorThetaRef):
     r"""
     **Validation Test Description**
 
     This unit test ensures that the stepper motor controller module correctly determines the number of steps required to actuate
     from an initial angle to a final reference angle. The initial and desired motor angles are varied so that both
     positive and negative steps are taken. It should be noted that the motor angles are descretized by a constant
-    ``stepAngle``; therefore the motor cannot actuate to any desired angle. The desired motor angles are chosen in this
+    ``motorStepAngle``; therefore the motor cannot actuate to any desired angle. The desired motor angles are chosen in this
     test so that several cases require the desired angle to be adjusted to the nearest multiple of the motor step angle.
     In other words, this test introduces cases where the computed number of required steps is not an integer. For these
     cases, the determined number of steps must be rounded to the nearest whole step.
@@ -60,10 +51,10 @@ def test_stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, ini
     **Test Parameters**
 
     Args:
-        stepAngle (float): [rad] Angle the stepper motor moves through for a single step (constant)
-        stepTime (float): [sec] Time required for a single motor step (constant)
-        initialMotorAngle (float): [rad] Initial stepper motor angle
-        desiredMotorAngle (float): [rad] Desired stepper motor angle
+        motorStepAngle (float): [rad] Angle the stepper motor moves through for a single step (constant)
+        motorStepTime (float): [sec] Time required for a single motor step (constant)
+        motorThetaInit (float): [rad] Initial stepper motor angle
+        motorThetaRef (float): [rad] Desired stepper motor angle
 
     **Description of Variables Being Tested**
 
@@ -72,13 +63,7 @@ def test_stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, ini
     the number of steps determined in this script.
 
     """
-    [testResults, testMessage] = stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle)
 
-    assert testResults < 1, testMessage
-
-def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialMotorAngle, desiredMotorAngle):
-    testFailCount = 0                                        # Zero the unit test result counter
-    testMessages = []                                        # Create an empty array to store the test log messages
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -87,39 +72,36 @@ def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialM
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create the test thread
-    testProcessRate = macros.sec2nano(stepTime)     # update process rate update time
+    testProcessRate = macros.sec2nano(motorStepTime)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create an instance of the stepperMotorController module to be tested
-    StepperMotorController = stepperMotorController.stepperMotorController()
-    StepperMotorController.ModelTag = "stepperMotorController"
-    StepperMotorController.stepAngle = stepAngle
-    StepperMotorController.stepTime = stepTime
-    StepperMotorController.initAngle = initialMotorAngle
-    StepperMotorController.currentAngle = initialMotorAngle
-
-    # Add the stepperMotor test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, StepperMotorController)
+    motorController = stepperMotorController.StepperMotorController()
+    motorController.ModelTag = "stepperMotorController"
+    motorController.setStepAngle(motorStepAngle)
+    motorController.setStepTime(motorStepTime)
+    motorController.setThetaInit(motorThetaInit)
+    unitTestSim.AddModelToTask(unitTaskName, motorController)
 
     # Create the stepperMotorController input message
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    HingedRigidBodyMessageData.theta = desiredMotorAngle
+    HingedRigidBodyMessageData.theta = motorThetaRef
     HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData)
-    StepperMotorController.spinningBodyInMsg.subscribeTo(HingedRigidBodyMessage)
+    motorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Log the test module output message for data comparison
-    motorStepCommandLog = StepperMotorController.motorStepCommandOutMsg.recorder(testProcessRate)
+    motorStepCommandLog = motorController.motorStepCommandOutMsg.recorder(testProcessRate)
     unitTestSim.AddModelToTask(unitTaskName, motorStepCommandLog)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
     # Calculate required number of steps for validation
-    if (initialMotorAngle > 0):
-        trueNumSteps = (desiredMotorAngle - (np.ceil(initialMotorAngle/stepAngle)*stepAngle)) / stepAngle
+    if (motorThetaInit > 0):
+        trueNumSteps = (motorThetaRef - (np.ceil(motorThetaInit/motorStepAngle)*motorStepAngle)) / motorStepAngle
     else:
-        trueNumSteps = (desiredMotorAngle - (np.floor(initialMotorAngle/stepAngle)*stepAngle)) / stepAngle
+        trueNumSteps = (motorThetaRef - (np.floor(motorThetaInit/motorStepAngle)*motorStepAngle)) / motorStepAngle
 
     # If the desired motor angle is not a multiple of the step angle, the number of steps calculated is not an integer
     # and it must be rounded to the nearest whole step
@@ -131,10 +113,10 @@ def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialM
         trueNumSteps = np.ceil(trueNumSteps)
 
     # If the desired motor angle is not a multiple of the step angle, a new desired angle is calculated
-    newMotorDesiredAngle = initialMotorAngle + (trueNumSteps * stepAngle)
+    newMotorDesiredAngle = motorThetaInit + (trueNumSteps * motorStepAngle)
 
     # Set the simulation time
-    actuateTime = stepTime * np.abs(trueNumSteps)  # [sec] Time for the motor to actuate to the desired angle
+    actuateTime = motorStepTime * np.abs(trueNumSteps)  # [sec] Time for the motor to actuate to the desired angle
     holdTime = 5  # [sec] Time the simulation will continue while holding the final angle
     unitTestSim.ConfigureStopTime(macros.sec2nano(actuateTime + holdTime))
 
@@ -145,20 +127,18 @@ def stepperMotorControllerTestFunction(show_plots, stepAngle, stepTime, initialM
     stepsCommanded = motorStepCommandLog.stepsCommanded
 
     # Check that the correct number of steps was calculated
-    if (stepsCommanded[0] != trueNumSteps):
-        testFailCount += 1
-        testMessages.append("\nFAILED: " + StepperMotorController.ModelTag + " Number of required motor steps do not match")
+    accuracy = 1e-12
+    np.testing.assert_allclose(stepsCommanded[0],
+                               trueNumSteps,
+                               atol=accuracy,
+                               verbose=True)
 
-    return [testFailCount, ''.join(testMessages)]
 
-
-# This statement below ensures that the unitTestScript can be run as a
-# stand-along python script
 if __name__ == "__main__":
-    stepperMotorControllerTestFunction(
+    test_stepperMotorController(
          False,
-         1.0 * (np.pi / 180),     # stepAngle
-         1,                       # stepTime
-         0.0,                     # initialAngle
-         10.0 * (np.pi / 180),    # desiredAngle
+         1.0 * macros.D2R,  # motorStepAngle
+         1.0,  # motorStepTime
+         0.0,  # initialAngle
+         10.0 * macros.D2R,  # desiredAngle
     )
