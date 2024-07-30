@@ -43,6 +43,11 @@ FuelTank::~FuelTank() {
     FuelTank::effectorID = 1;
 }
 
+/*! optionally set the name of the mass state to be used by the state manager */
+void FuelTank::setNameOfMassState(const std::string nameOfMassState) {
+    this->nameOfMassState = nameOfMassState;
+}
+
 /*! set fuel tank model
  @return void
  @param model fuel tank model type

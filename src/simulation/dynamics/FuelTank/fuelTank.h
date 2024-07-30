@@ -291,6 +291,7 @@ public:
     void registerStates(DynParamManager &states) override;      //!< -- Register mass state with state manager
     void linkInStates(DynParamManager &states) override;        //!< -- Give the tank access to other states
     void updateEffectorMassProps(double integTime) override;    //!< -- Add contribution mass props from the tank
+    void setNameOfMassState(const std::string nameOfMassState); //!< -- Setter for fuel tank mass state name
     void addThrusterSet(ThrusterDynamicEffector *dynEff);       //!< -- Add DynamicEffector thruster
     void addThrusterSet(ThrusterStateEffector *stateEff);       //!< -- Add StateEffector thruster
     void updateContributions(double integTime,
