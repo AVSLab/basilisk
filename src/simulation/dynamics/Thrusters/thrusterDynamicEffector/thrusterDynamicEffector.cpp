@@ -278,6 +278,11 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
         thrustDirection_B = this->bodyToHubInfo.at(index).dcm_BF * it->thrDir_B;
         thrustLocation_B = this->bodyToHubInfo.at(index).r_FB_B + this->bodyToHubInfo.at(index).dcm_BF * it->thrLoc_B;
 
+        //! - If the connected fuel tank is subject to blow down effects, update them here
+        if (this->fuelMass >= 0.0 && (!it->thrBlowDownCoeff.empty() || !it->ispBlowDownCoeff.empty())) {
+            this->computeBlowDownDecay(&(*it));
+        }
+
         //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
         if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= -dt*10E-10 &&
            ops->ThrustOnCmd > 0.0)
@@ -371,6 +376,39 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCS
     this->bodyToHubInfo.push_back(attachedBodyToHub);
 
     return;
+}
+
+
+/*! This method is used to update the blow down effects to the thrust and/or Isp
+* at every computeForceTorque call when the thrusters are attached to a fuel
+* tank subject to blow down effects.
+ @return void
+ */
+void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster)
+{
+    THROperation *ops = &(currentThruster->ThrustOps);
+
+    if (!currentThruster->thrBlowDownCoeff.empty()) {
+        double thrustBlowDown = 0.0;
+        double thrOrder = 1.0;
+        for(auto thrCoeff = currentThruster->thrBlowDownCoeff.rbegin(); thrCoeff !=
+                                               currentThruster->thrBlowDownCoeff.rend(); thrCoeff++) {
+            thrustBlowDown += *thrCoeff * thrOrder;
+            thrOrder *= fuelMass;  // Fuel mass assigned in fuel tank's updateEffectorMassProps method
+        }
+        ops->thrustBlowDownFactor = std::clamp(thrustBlowDown / currentThruster->MaxThrust, double (0.0), double (1.0));
+    }
+
+    if (!currentThruster->ispBlowDownCoeff.empty()) {
+        double ispBlowDown = 0.0;
+        double ispOrder = 1.0;
+        for (auto ispCoeff = currentThruster->ispBlowDownCoeff.rbegin(); ispCoeff !=
+                                                currentThruster->ispBlowDownCoeff.rend(); ispCoeff++) {
+            ispBlowDown += *ispCoeff * ispOrder;
+            ispOrder *= fuelMass; // Fuel mass assigned in fuel tank's updateEffectorMassProps method
+        }
+        ops->ispBlowDownFactor = std::clamp(ispBlowDown / currentThruster->steadyIsp, double (0.0), double (1.0));
+    }
 }
 
 
