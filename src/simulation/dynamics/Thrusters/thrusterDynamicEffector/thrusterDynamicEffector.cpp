@@ -291,23 +291,23 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
         }
 
         //! - For each thruster, aggregate the current thrust direction into composite body force
-        tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
+        tmpThrustMag = it->MaxThrust * ops->ThrustFactor * ops->thrustBlowDownFactor;
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = tmpThrustMag * thrustDirection_B;
         this->forceExternal_B += SingleThrusterForce;
 
         //! - Compute the point B relative torque and aggregate into the composite body torque
-        SingleThrusterTorque = thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor * it->MaxSwirlTorque * thrustDirection_B;
+        SingleThrusterTorque = thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor *
+                               ops->thrustBlowDownFactor * it->MaxSwirlTorque * thrustDirection_B;
         this->torqueExternalPntB_B += SingleThrusterTorque;
 
 		if (!it->updateOnly) {
 			//! - Add the mass depletion force contribution
 			mDotNozzle = 0.0;
-			if (it->steadyIsp * ops->IspFactor > 0.0)
+			if (it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor > 0.0)
 			{
-				mDotNozzle = it->MaxThrust*ops->ThrustFactor / (EARTH_GRAV *
-					it->steadyIsp * ops->IspFactor);
+				mDotNozzle = tmpThrustMag / (EARTH_GRAV * it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor);
 			}
 			this->forceExternal_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
 
@@ -386,9 +386,9 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
     {
         ops = &it->ThrustOps;
         mDotSingle = 0.0;
-        if(it->steadyIsp * ops->IspFactor > 0.0)
+        if(it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor > 0.0)
         {
-            mDotSingle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp * ops->IspFactor);
+            mDotSingle = it->MaxThrust * ops->ThrustFactor * ops->thrustBlowDownFactor / (EARTH_GRAV * it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor);
         }
         this->mDotTotal += mDotSingle;
     }
