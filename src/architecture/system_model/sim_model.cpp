@@ -267,6 +267,34 @@ void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     newProc->setProcessControlStatus(true);
 }
 
+uint64_t SimThreadExecution::getCurrentNanos() const {
+    return this->CurrentNanos;
+}
+
+uint64_t SimThreadExecution::getNextTaskTime() const {
+    return this->NextTaskTime;
+}
+
+uint64_t SimThreadExecution::getCurrentThreadNanos() const {
+    return this->currentThreadNanos;
+}
+
+uint64_t SimThreadExecution::getStopThreadNanos() const {
+    return this->stopThreadNanos;
+}
+
+void SimThreadExecution::setNextTaskTime(uint64_t nextTaskTime) {
+    NextTaskTime = nextTaskTime;
+}
+
+void SimThreadExecution::setCurrentNanos(uint64_t currentNanos) {
+    CurrentNanos = currentNanos;
+}
+
+void SimThreadExecution::setStopThreadNanos(uint64_t stopThreadNanos) {
+    SimThreadExecution::stopThreadNanos = stopThreadNanos;
+}
+
 /*! This Constructor is used to initialize the top-level sim model.
  */
 SimModel::SimModel()
@@ -307,7 +335,7 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     }
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
-        (*thrIt)->stopThreadNanos = SimStopTime;
+        (*thrIt)->setStopThreadNanos(SimStopTime);
         (*thrIt)->stopThreadPriority = stopPri;
         if((*thrIt)->procCount() > 0) {
             (*thrIt)->unlockThread();
@@ -319,10 +347,10 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     {
         if((*thrIt)->procCount() > 0) {
             (*thrIt)->lockParent();
-            this->NextTaskTime = (*thrIt)->NextTaskTime < this->NextTaskTime ?
-                                 (*thrIt)->NextTaskTime : this->NextTaskTime;
-            this->CurrentNanos = (*thrIt)->CurrentNanos < this->CurrentNanos ?
-                                 (*thrIt)->CurrentNanos : this->CurrentNanos;
+            this->NextTaskTime = (*thrIt)->getNextTaskTime() < this->NextTaskTime ?
+                                 (*thrIt)->getNextTaskTime() : this->NextTaskTime;
+            this->CurrentNanos = (*thrIt)->getCurrentNanos() < this->CurrentNanos ?
+                                 (*thrIt)->getCurrentNanos() : this->CurrentNanos;
         }
     }
 }
@@ -451,8 +479,8 @@ void SimModel::ResetSimulation()
     this->CurrentNanos = 0;
     for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
     {
-        (*thrIt)->NextTaskTime = 0;
-        (*thrIt)->CurrentNanos = 0;
+        (*thrIt)->setNextTaskTime(0);
+        (*thrIt)->setCurrentNanos(0);
     }
 }
 
@@ -547,8 +575,8 @@ void SimModel::assignRemainingProcs() {
     {
         it=this->processList.begin();
         (*thrIt)->nextProcPriority = (*it)->processPriority;
-        (*thrIt)->NextTaskTime = 0;
-        (*thrIt)->CurrentNanos = 0;
+        (*thrIt)->setNextTaskTime(0);
+        (*thrIt)->setCurrentNanos(0);
         //(*thrIt)->lockThread();
         (*thrIt)->threadContext = new std::thread(activateNewThread, (*thrIt));
     }
