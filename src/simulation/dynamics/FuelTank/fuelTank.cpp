@@ -43,6 +43,10 @@ FuelTank::~FuelTank() {
     FuelTank::effectorID = 1;
 }
 
+void FuelTank::setNameOfMassState(const std::string nameOfMassState) {
+    this->nameOfMassState = nameOfMassState;
+}
+
 /*! set fuel tank model
  @return void
  @param model fuel tank model type
