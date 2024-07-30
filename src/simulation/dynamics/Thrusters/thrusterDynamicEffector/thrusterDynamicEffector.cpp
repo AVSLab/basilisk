@@ -230,6 +230,14 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubOmega = states.getStateObject(this->stateNameOfOmega);
 
     this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
+
+    for(const auto& thrusterConfig : this->thrusterData) {
+        if (this->fuelMass < 0.0 &&
+            (!thrusterConfig.thrBlowDownCoeff.empty() || !thrusterConfig.ispBlowDownCoeff.empty())) {
+            bskLogger.bskLog(BSK_WARNING,"ThrusterDynamicEffector: blow down coefficients have been "
+                                          "specified, but no fuel tank is attached.");
+        }
+    }
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
