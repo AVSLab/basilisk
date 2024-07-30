@@ -1,3 +1,5 @@
+name: "Pull Request Closed"
+
 on:
     pull_request:
         types:
@@ -14,7 +16,7 @@ jobs:
           uses: actions/checkout@v4
           with:
             ref: develop
-            fetch-depth: 0 
+            fetch-depth: 0
             token: ${{ secrets.BOT_ACCESS_TOKEN }}
         - name: Bump version
           run: ./.github/workflows/version-bumper.sh ./docs/source/bskVersion.txt
