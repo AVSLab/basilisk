@@ -77,3 +77,30 @@ namespace std {
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sim_model.h"
+
+%pythoncode %{
+    from Basilisk.utilities import deprecated
+%}
+
+%extend SimModel{
+    %pythoncode %{
+
+        @property
+        def CurrentNanos(self):
+            deprecated.deprecationWarn(
+                    "CurrentNanos",
+                    "2025/08/01",
+                    "Using CurrentNanos is deprecated. Use: getCurrentNanos()\n"
+            )
+            return self.getCurrentNanos()
+
+        @property
+        def NextTaskTime(self):
+            deprecated.deprecationWarn(
+                    "NextTaskTime",
+                    "2025/08/01",
+                    "Using NextTaskTime is deprecated. Use: getNextTaskTime()\n"
+            )
+            return self.getNextTaskTime()
+    %}
+}
