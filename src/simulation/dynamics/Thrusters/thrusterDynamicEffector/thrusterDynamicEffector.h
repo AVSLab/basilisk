@@ -58,7 +58,8 @@ public:
     void ComputeThrusterFire(THRSimConfig *CurrentThruster, double currentTime);
     void ComputeThrusterShut(THRSimConfig *CurrentThruster, double currentTime);
     void UpdateThrusterProperties();
-    
+    void computeBlowDownDecay(THRSimConfig *CurrentThruster);
+
 
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
