@@ -63,6 +63,7 @@ void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
 
 void FuelTank::addThrusterSet(ThrusterDynamicEffector *dynEff) {
     thrDynEffectors.push_back(dynEff);
+    dynEff->fuelMass = this->fuelTankModel->propMassInit;
 }
 
 void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
@@ -130,6 +131,11 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         (*fuelSloshInt)->massToTotalTankMassRatio = (*fuelSloshInt)->fuelMass / totalMass;
         // - Scale total fuelConsumption by mass ratio to find fuelSloshParticle mass depletion rate
         (*fuelSloshInt)->fuelMassDot = (*fuelSloshInt)->massToTotalTankMassRatio * (-this->fuelConsumption);
+    }
+
+    // - Set total fuel mass parameter for thruster dynamic effectors experiencing blow down effects
+    for (auto &dynEffector: this->thrDynEffectors) {
+        dynEffector->fuelMass = totalMass;
     }
 
     // - Set fuel consumption rate of fuelTank (not negative because the negative sign is in the computeDerivatives call
