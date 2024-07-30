@@ -98,7 +98,8 @@ public:
     void deleteThreads();
     void assignRemainingProcs();
     uint64_t getThreadCount() {return threadList.size();} //!< returns the number of threads used
-
+    uint64_t getCurrentNanos() const;
+    uint64_t getNextTaskTime() const;
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
