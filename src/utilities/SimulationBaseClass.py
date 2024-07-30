@@ -351,7 +351,7 @@ class SimBaseClass:
 
     # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
     # 'allModels' attributes (as well as any mention of them) as they are no longer needed
-    @deprecated.deprecated("2024/09/06", 
+    @deprecated.deprecated("2024/09/06",
         "Use the 'logger' function or 'PythonVariableLogger' instead of 'AddVariableForLogging'."
         " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
     )
@@ -362,18 +362,18 @@ class SimBaseClass:
         Args:
             VarName (str): The variable to log in the format "<ModelTag>.<variable_name>"
             LogPeriod (int, optional): The minimum time between logs. Defaults to 0.
-        """        
+        """
         if "." not in VarName:
             raise ValueError('The variable to log must be given in the format '
                              '"<ModelTag>.<variable_name>"')
-        
+
         modelTag = VarName.split('.')[0]
 
         # Calling eval on a pre-compiled string is faster than
         # eval-ing the string (by a large factor)
         compiledExpr = compile(VarName, "<logged-variable>", "eval")
 
-        # Find the model object that corresponds to the given tag, as well as the 
+        # Find the model object that corresponds to the given tag, as well as the
         # task where this model was added
         modelOrConfig = task = None
         for model, modelData, task in self.allModels:
@@ -388,7 +388,7 @@ class SimBaseClass:
         # expression. We pass a dictionary '{modelTag: modelOrConfig}'
         # that allows the expression to substitute the modelTag by the
         # actual model object
-        def fun(_): 
+        def fun(_):
             val = eval(compiledExpr, globals(), {modelTag: modelOrConfig})
             val = np.array(val).squeeze()
             return val
@@ -423,7 +423,7 @@ class SimBaseClass:
         """
         self.StopTime = TimeStop
 
-    @deprecated.deprecated("2024/09/06", 
+    @deprecated.deprecated("2024/09/06",
         "Calling 'RecordLogVars' is deprecated and unnecessary."
     )
     def RecordLogVars(self):
@@ -456,7 +456,7 @@ class SimBaseClass:
         progressBar.markComplete()
         progressBar.close()
 
-    @deprecated.deprecated("2024/09/06", 
+    @deprecated.deprecated("2024/09/06",
         "Deprecated way to access logged variables."
         " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
     )
@@ -464,10 +464,10 @@ class SimBaseClass:
         """
         Pull the recorded module recorded variable.  The first column is the variable recording time in
         nano-seconds, the additional column(s) are the message data columns.
-        """        
+        """
         if LogName not in self.oldSyntaxVariableLog:
             raise ValueError(f'"{LogName}" is not being logged. Check the spelling.')
-        
+
         logger = self.oldSyntaxVariableLog[LogName]
         return np.column_stack([logger.times(), logger.variable])
 
@@ -581,10 +581,10 @@ class SimBaseClass:
                 "\tscSim.AddModelToTask(simTaskName, inertial3D, 10)\n"
             )
             return modelData.createWrapper()
-    
+
         deprecated.deprecationWarn(
-            deprecationId, 
-            removalDate, 
+            deprecationId,
+            removalDate,
             "This C module has not been converted yet to the new way of defining C "
             "modules, which makes using them more intuitive. Take the time to see how "
             "the new C module '.i' file looks by checking out a default Basilisk module"

@@ -34,7 +34,7 @@ typedef struct {
 //! Class used to group a set of models into one "Task" of execution
 class SysModelTask
 {
-    
+
 public:
     SysModelTask();
     SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method

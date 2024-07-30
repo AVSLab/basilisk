@@ -22,7 +22,7 @@ Overview
 This script demonstrates how to use event handlers to add reaction wheel faults. The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AddRWFault.py
-      
+
 Using event handlers
 --------------------
 
@@ -112,11 +112,11 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
 
         self.configure_initial_conditions()
         self.log_outputs()
-        
+
         self.oneTimeRWFaultFlag = 1
         self.repeatRWFaultFlag = 1
         self.oneTimeFaultTime = macros.min2nano(10.)
-        
+
         DynModels = self.get_DynModel()
         self.DynModels.RWFaultLog = []
 
@@ -166,7 +166,7 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
 
         sigma_BR = np.delete(attErrRec.sigma_BR, 0, 0)
         omega_BR_B = np.delete(attErrRec.omega_BR_B, 0, 0)
-        
+
         num_RW = 4
         RW_speeds = np.delete(self.rwSpeedRec.wheelSpeeds[:, range(num_RW)], 0, 0)
         RW_friction = []
@@ -197,7 +197,7 @@ def runScenario(scenario):
 
     simulationTime = macros.min2nano(30.)
     scenario.modeRequest = "hillPoint"
-        
+
     # Run the simulation
     scenario.InitializeSimulation()
     scenario.ConfigureStopTime(simulationTime)

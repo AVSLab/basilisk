@@ -148,7 +148,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     SysModelTask *localTask = fireIt->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
     fireIt->NextTaskStart = localTask->getNextStartTime();
-    
+
     //! - Figure out when we are going to be called next for scheduling purposes
     fireIt=this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
@@ -207,7 +207,7 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     this->processTasks.push_back(taskCall);
 }
 
-/*! The name kind of says it all right?  It is a shotgun used to disable all of 
+/*! The name kind of says it all right?  It is a shotgun used to disable all of
     a process' tasks.  It is handy for a FSW scheme where you have tons of tasks
     and you are really only turning one on at a time.
     @return void
@@ -222,7 +222,7 @@ void SysProcess::disableAllTasks()
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
- a processes tasks.  It is handy for a process that starts out almost entirely 
+ a processes tasks.  It is handy for a process that starts out almost entirely
  inhibited but you want to turn it all on at once.
  @return void
  */
@@ -236,7 +236,7 @@ void SysProcess::enableAllTasks()
     }
 }
 
-/*! This method updates a specified task's period once it locates that task 
+/*! This method updates a specified task's period once it locates that task
     in the list.  It will warn the user if a task is not found.
     @return void
 	@param taskName The name of the task you want to change period of
@@ -262,4 +262,3 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 uint64_t SysProcess::getPrevRouteTime() const {
     return this->prevRouteTime;
 }
-

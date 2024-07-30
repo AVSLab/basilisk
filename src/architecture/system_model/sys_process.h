@@ -36,7 +36,7 @@ typedef struct {
 //! Class used to group a set of tasks into one process (task group) of execution
 class SysProcess
 {
-    
+
 public:
     SysProcess();
     SysProcess(std::string messageContainer); //!< class method

@@ -70,7 +70,7 @@ namespace std {
         SWIG_exception(SWIG_RuntimeError, e.what());
     } catch (const std::string& e) {
         SWIG_exception(SWIG_RuntimeError, e.c_str());
-    } 
+    }
 }
 
 %include "sys_model_task.h"

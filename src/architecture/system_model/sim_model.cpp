@@ -610,6 +610,3 @@ uint64_t SimModel::getCurrentNanos() const {
 uint64_t SimModel::getNextTaskTime() const {
     return this->NextTaskTime;
 }
-
-
-
