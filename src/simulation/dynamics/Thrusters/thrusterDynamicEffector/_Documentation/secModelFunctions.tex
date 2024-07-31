@@ -8,6 +8,7 @@ The Thrusters module contains methods allowing it to perform several tasks:
 	\item \textbf{Compute Forces and Torques}: Gets the forces and torques on the SpaceCraft given the previous definitions
 	\item \textbf{Compute mass flow rate }: Computes the time derivative of the mass using $I_{sp}$ and Earth's gravity
 	\item \textbf{Update thruster properties}: Updates each thruster's location and orientation given the body that it is attached to.
+	\item \textbf{Compute Blow Down Decay}: Updates a thrust and $I_{sp}$ scaling factor given the current total fuel mass.
 \end{itemize}
 
 
@@ -19,8 +20,6 @@ The Thrusters module contains methods allowing it to perform several tasks:
 
 The Thruster module assumes that the thruster is thrusting exactly along it's thrust direction axis. Even if the position is dispersed, the thrust will be constant along the defined thrust axis.
 
-The mass flow rate is considered to be constant as long as the thrusters are activated. Even in a ramp scenario, we assume that the mass is lost, without contributing to the thrust. Mass flow is therefore the same as long as the valve is open.
-
 When attaching a thruster to a body different than the hub, its location and orientation need to be converted back to the hub's $\mathcal{B}$ frame. This happens at the dynamics rate within the $\texttt{UpdateState}$ function. Therefore, the body to where a thruster is attached to is kept in place for the entire duration of the integration step, being updated only after all the intermediate integrator calls have been made. The user can choose to attach each thruster to the hub or not, but has to be careful about calling the correct version of the $\texttt{addThruster}$ function. The function with one argument attaches the thruster to the hub, whereas the version with two arguments attaches it to the body through a state message.
 
 The swirl torque present in ion thrusters is assumed to be aligned with the thruster's axis and is proportional to the current thrust factor.
@@ -30,4 +29,3 @@ The swirl torque present in ion thrusters is assumed to be aligned with the thru
 The ramps in the thrusters modules are made by defining a set of elements to the ramp. They therefore form, by definition, a piecewise-linear ramp. If enough points are added, this will strongly ressemble a polynomial, but the ramps are in essence piecewise constant.
 
 The $I_{sp}$ used for each thruster is considered constant throughout a simulation. This means there is no practical way of doing variable $I_{sp}$ simulations. It can nevertheless be done by stopping the simulation and modifying the values.
-

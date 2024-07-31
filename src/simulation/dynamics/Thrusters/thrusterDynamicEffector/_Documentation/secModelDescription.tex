@@ -1,21 +1,25 @@
 \section{Model Description}
 
 \section{Introduction}
-The Thruster model in the AVS Basilisk simulation is used to emulate the effect 
-of a vehicle's thrusters on the overall system.  Its primary use is to generate 
-realistic forces/torques on the vehicle structure and body.  This is 
-accomplished by applying a force at a specified location/direction in the body and 
-using the current vehicle center of mass to calculate the resultant torque.  
-Each individual thruster in a given model has its own ramp-up/ramp-down profile 
-specified as part of its initialization data and it follows those profiles during 
+The Thruster model in the AVS Basilisk simulation is used to emulate the effect
+of a vehicle's thrusters on the overall system.  Its primary use is to generate
+realistic forces/torques on the vehicle structure and body.  This is
+accomplished by applying a force at a specified location/direction in the body and
+using the current vehicle center of mass to calculate the resultant torque.
+Each individual thruster in a given model has its own ramp-up/ramp-down profile
+specified as part of its initialization data and it follows those profiles during
 start-up and shutdown.
 
-The thruster model also contains a mechanism that is used to change the current 
-vehicle mass properties as the thruster fires propellant overboard.  This model 
-uses the thruster ISP (specific impulse, also specified with configuration data) 
-to calculate how much mass is being removed during a given thruster firing and 
-decrements the mass properties included in the thruster linearly as a function 
-of mass.  
+The thruster model also contains a mechanism that is used to change the current
+vehicle mass properties as the thruster fires propellant overboard.  This model
+uses the thruster ISP (specific impulse, also specified with configuration data)
+to calculate how much mass is being removed during a given thruster firing and
+decrements the mass properties included in the thruster linearly as a function
+of mass.
+
+With a fuel tank connected, fuel mass information also flows back to the thruster.
+This mass of the fuel can be used to scale the available thrust and $I_{sp}$ as a tank
+depletes, modeling the blow down effects of pressure loss.
 
 \subsection{Output}
 

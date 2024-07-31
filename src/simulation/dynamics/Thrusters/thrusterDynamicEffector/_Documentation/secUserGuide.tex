@@ -1,13 +1,13 @@
 \section{User Guide}
 
-The model can be configured according to the user's wishes, but the following 
+The model can be configured according to the user's wishes, but the following
 rules of thumb should probably be respected unless the user is confident:
 \begin{enumerate}
-\item{The internal simulation dynamics step time should be less than or equal 
+\item{The internal simulation dynamics step time should be less than or equal
      to the thruster ramp-up/ramp-down time steps}
-\item{The internal simulation dynamics step time should be less than or equal to 
+\item{The internal simulation dynamics step time should be less than or equal to
      the desired thruster discretization level}
-\item{The internal simulation dynamics step time should be less than one-tenth 
+\item{The internal simulation dynamics step time should be less than one-tenth
     of the expected minimum allowable thruster firing duration}
 \end{enumerate}
 
@@ -39,7 +39,7 @@ If setting up a ramp, the user must also perform this:
  \item[-]      \texttt{rampOffList = []}
 
  \item[-]      \texttt{for i in range(rampsteps):}
- 
+
 \hspace{2cm}\texttt{fnewElement = thrusterDynamicEffector.THRTimePairSimMsg()}
 
 \hspace{2cm}\texttt{fnewElement.TimeDelta = (i + 1.) * 0.1}
@@ -57,14 +57,20 @@ If setting up a ramp, the user must also perform this:
 \hspace{2cm}\texttt{fnewElement.ThrustFactor = 1.0 - (i + 1.0) / 10.0}
 
  \hspace{2cm}\texttt{fnewElement.IspFactor = newElement.ThrustFactor}
- 
+
  \hspace{2cm}\texttt{frampOffList.append(newElement)}
 
  \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOnRamp =}
- 
+
   \texttt{thrusterDynamicEffector.ThrusterTimeVector(rampOnList)}: Add the on ramp
  \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOffRamp =}
- 
+
  \texttt{thrusterDynamicEffector.ThrusterTimeVector(rampOffList)}: Add the off ramp
-            
-            \end{itemize}
+\end{itemize}
+
+If setting up blow down effects, the user must also add these optional parameters to the thruster model before adding it to the set:
+
+\begin{itemize}
+  \item[-]   \texttt{thruster1.thrBlowDownCoeff = [1.0 , 2.0, 3.0] }: Set any number of polynomial coefficients for mass to thrust equation
+  \item[-]   \texttt{thruster1.thrLoc\_B = [1.0 , 2.0, 3.0] }: Set any number of polynomial coefficients for mass to $I_{sp}$ equation
+\end{itemize}
