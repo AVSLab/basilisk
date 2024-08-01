@@ -1,6 +1,7 @@
 import warnings
 
 import numpy as np
+import itertools
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
@@ -58,24 +59,25 @@ def curve_per_df_column(df):
     """
     idx = pd.IndexSlice
     df_list = []
-    for index in range(len(df.columns)):
+    for index in df.columns.tolist():
         try:
             i = df.columns.codes[0][index] # Multi-Index level=0 index
             j = df.columns.codes[1][index] # Multi-Index level=1 index
 
             # Grab the desired x and y data
-            xData = df.index.values # time [ns]
-            yData = df.loc[idx[:], idx[i, j]].values # variable data
-            runNum = np.repeat(i, len(xData))
+            x_data = df.index.values # time [ns]
+            y_data = df.loc[idx[:], idx[i, j]].values # variable data
+            run_num = np.repeat(i, len(x_data))
         except:
             # Grab the desired x and y data
-            xData = df.index.values  # time [ns]
-            yData = df.loc[idx[:], idx[index]].values  # variable data
-            runNum = np.repeat(index, len(xData))
+            x_data = df.index.values  # time [ns]
+            y_data = df.loc[idx[:], idx[index]].values  # variable data
+            run_num = np.repeat(index[0], len(x_data))
 
         # Convert to two columns
-        plotData = pd.DataFrame(np.transpose([xData, yData]).tolist(), columns=['x', 'y'])#, runNum]).tolist()
-        df_list.append(plotData)
+        plot_data = (pd.DataFrame(np.transpose([x_data, y_data, run_num]).tolist(), columns=['x', 'y', 'run'])
+                     .values.tolist())
+        df_list.append(plot_data)
     return df_list
 
 
@@ -154,7 +156,7 @@ class DS_Plot():
               cmap=Sets1to3,
               plotObjType=hv.Curve,
               labels=[],
-              plotFcn=curve_per_df_component):
+              plotFcn=curve_per_df_column):
         if type(data) is not list:
             self.data = [data]
         else:
@@ -165,11 +167,9 @@ class DS_Plot():
         self.macro_x = macro_x
         self.macro_y = macro_y
         self.plotObjType = plotObjType
-        self.cmap = cmap
-        #self.backend =
+        self.cmap = itertools.cycle(cmap)
         self.labels = labels
         self.plotFcn = plotFcn
-
 
     def generateCurves(self):
         '''
@@ -234,7 +234,6 @@ class DS_Plot():
                                            )).opts(framewise=True)
 
         image.opts(width=960, height=540)
-        image.opts(tools=['hover'])
         image.opts(padding=0.05)
         image.opts(title=self.title, xlabel=self.xAxisLabel, ylabel=self.yAxisLabel)
 
