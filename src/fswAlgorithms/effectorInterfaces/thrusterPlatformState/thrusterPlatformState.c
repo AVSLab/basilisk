@@ -91,6 +91,7 @@ void Update_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint6
     v3Subtract(r_TM_B, r_BM_B, thrusterConfigBOut.rThrust_B);
     m33tMultV3(FB, thrusterConfigFIn.tHatThrust_B, thrusterConfigBOut.tHatThrust_B);
     thrusterConfigBOut.maxThrust = thrusterConfigFIn.maxThrust;
+    thrusterConfigBOut.swirlTorque = thrusterConfigFIn.swirlTorque;
 
     /*! write output thruster config msg */
     THRConfigMsg_C_write(&thrusterConfigBOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
