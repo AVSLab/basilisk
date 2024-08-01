@@ -49,3 +49,4 @@ src/moduleTemplates/autoCppModule/*
 **/__pycache__/
 venv/
 .venv/
+examples/MonteCarloExamples/scenario_AttFeedbackMC/
