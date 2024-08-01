@@ -68,10 +68,7 @@ void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
-    this->hubVelocity = statesIn.getStateObject(this->stateNameOfVelocity);
-    this->hubSigma = statesIn.getStateObject(this->stateNameOfSigma);
-    this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
+    // - Get access to the hub states
     this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
     return;
@@ -213,7 +210,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d )this->hubSigma->getState();
+    sigmaLocal_BN = (Eigen::Vector3d )sigma_BN;
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
@@ -224,7 +221,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     g_B = dcm_BN*gLocal_N;
 
     // - Define omega_BN_S
-    this->omegaLoc_BN_B = this->hubOmega->getState();
+    this->omegaLoc_BN_B = omega_BN_B;
     std::vector<HingedPanel>::iterator PanelIt;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
         PanelIt->omega_BN_S = PanelIt->dcm_SB*this->omegaLoc_BN_B;
@@ -451,9 +448,9 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::
     Eigen::Vector3d rDDotLoc_BN_N;
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Vector3d omegaDotLoc_BN_B;
-    rDDotLoc_BN_N = this->hubVelocity->getStateDeriv();
-    sigmaLocal_BN = (Eigen::Vector3d )this->hubSigma->getState();
-    omegaDotLoc_BN_B = this->hubOmega->getStateDeriv();
+    rDDotLoc_BN_N = rDDot_BN_N;
+    sigmaLocal_BN = (Eigen::Vector3d )sigma_BN;
+    omegaDotLoc_BN_B = omegaDot_BN_B;
 
     // - Find rDDotLoc_BN_B
     Eigen::Matrix3d dcm_BN;
@@ -484,7 +481,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = hubOmega->getState();
+    omegaLocal_BN_B = omega_BN_B;
 
     Eigen::Vector3d omega_SN_B;
     Eigen::Matrix3d IPntS_B;

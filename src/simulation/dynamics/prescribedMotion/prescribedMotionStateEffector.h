@@ -126,8 +126,6 @@ private:
     Eigen::Vector3d omega_FN_F;                         //!< [rad/s] Angular velocity of frame F relative to the inertial frame in F frame components
 
     // Hub states
-    StateData *hubSigma;                                //!< Hub attitude relative to the inertial frame represented by MRP
-    StateData *hubOmega;                                //!< [rad/s] Hub angular velocity in B frame components relative to the inertial frame
     Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;          //!< [m] v_N Inertial velocity relative to system spice zeroBase/refBase
 

@@ -59,11 +59,6 @@ LinearSpringMassDamper::~LinearSpringMassDamper()
 /*! Method for spring mass damper particle to access the states that it needs. It needs gravity and the hub states */
 void LinearSpringMassDamper::linkInStates(DynParamManager& statesIn)
 {
-    // - Grab access to the hub states
-	this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
-	this->sigmaState = statesIn.getStateObject(this->stateNameOfSigma);
-	this->velocityState = statesIn.getStateObject(this->stateNameOfVelocity);
-
     // - Grab access to gravity
     this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
@@ -141,7 +136,7 @@ void LinearSpringMassDamper::updateContributions(double integTime, BackSubMatric
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d ) this->sigmaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d ) sigma_BN;
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
@@ -158,7 +153,7 @@ void LinearSpringMassDamper::updateContributions(double integTime, BackSubMatric
     this->bRho = -this->rTilde_PcB_B*this->pHat_B;
 
     // - Define cRho
-    Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
+    Eigen::Vector3d omega_BN_B_local = omega_BN_B;
     Eigen::Matrix3d omegaTilde_BN_B_local;
     omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
 	cRho = 1.0/(this->massSMD)*(this->pHat_B.dot(this->massSMD * g_B) - this->k*this->rho - this->c*this->rhoDot
@@ -184,7 +179,7 @@ void LinearSpringMassDamper::computeDerivatives(double integTime, Eigen::Vector3
 	// - Find DCM
 	Eigen::MRPd sigmaLocal_BN;
 	Eigen::Matrix3d dcm_BN;
-	sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
+	sigmaLocal_BN = (Eigen::Vector3d) sigma_BN;
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
 	// - Set the derivative of rho to rhoDot
@@ -192,8 +187,8 @@ void LinearSpringMassDamper::computeDerivatives(double integTime, Eigen::Vector3
 
 	// - Compute rhoDDot
 	Eigen::MatrixXd conv(1,1);
-    Eigen::Vector3d omegaDot_BN_B_local = this->omegaState->getStateDeriv();
-    Eigen::Vector3d rDDot_BN_N_local = this->velocityState->getStateDeriv();
+    Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
+    Eigen::Vector3d rDDot_BN_N_local = rDDot_BN_N;
 	Eigen::Vector3d rDDot_BN_B_local = dcm_BN*rDDot_BN_N_local;
     conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
 	this->rhoDotState->setDerivative(conv);
@@ -211,7 +206,7 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eige
 {
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = omegaState->getState();
+    omegaLocal_BN_B = omega_BN_B;
     Eigen::Vector3d rDotPcB_B;
 
     // - Find rotational angular momentum contribution from hub
@@ -228,7 +223,7 @@ void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vect
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = this->omegaState->getState();
+    omegaLocal_BN_B = omega_BN_B;
     Eigen::Matrix3d omegaLocalTilde_BN_B;
     omegaLocalTilde_BN_B = eigenTilde(omegaLocal_BN_B);
 

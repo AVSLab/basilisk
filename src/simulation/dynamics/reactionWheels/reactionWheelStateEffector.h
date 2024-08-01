@@ -62,7 +62,7 @@ public:
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
-    
+
 public:
 	std::vector<RWConfigMsgPayload *> ReactionWheelData;          //!< -- RW information
 
@@ -82,9 +82,6 @@ private:
     ArrayMotorTorqueMsgPayload incomingCmdBuffer = {};          //!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
 
-	StateData *hubSigma;                                        //!< class variable
-	StateData *hubOmega;                                        //!< class variable
-	StateData *hubVelocity;                                     //!< class variable
 	StateData *OmegasState;                                     //!< class variable
 	StateData *thetasState;                                     //!< class variable
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components

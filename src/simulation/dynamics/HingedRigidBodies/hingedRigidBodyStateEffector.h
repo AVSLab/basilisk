@@ -84,8 +84,8 @@ private:
     Eigen::Vector3d v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN;        //!< -- MRP attitude of panel frame S relative to inertial frame
     Eigen::Vector3d omega_SN_S;      //!< [rad/s] inertial panel frame angular velocity vector
-    StateData *sigma_BN;             //!< Hub/Inertial attitude represented by MRP
-    StateData *omega_BN_B;           //!< Hub/Inertial angular velocity vector in B frame components
+    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};         //!< Hub/Inertial attitude represented by MRP
+    Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};  //!< Hub/Inertial angular velocity vector in B frame components
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase

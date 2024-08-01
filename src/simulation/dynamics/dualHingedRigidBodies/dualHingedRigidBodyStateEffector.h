@@ -131,13 +131,13 @@ private:
     Eigen::Vector3d v_SN_N[2];        //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::Vector3d sigma_SN[2];      //!< -- MRP attitude of panel frame S relative to inertial frame
     Eigen::Vector3d omega_SN_S[2];    //!< [rad/s] inertial panel frame angular velocity vector
-    StateData *sigma_BNState;         //!< Hub/Inertial attitude represented by MRP
-    StateData *omega_BN_BState;       //!< Hub/Inertial angular velocity vector in B frame components
+    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};        //!< Hub/Inertial attitude represented by MRP of body relative to inertial frame
+    Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};  //!< Hub/Inertial angular velocity vector in B frame components
     StateData *v_BN_NState;           //!< Hub/Inertial velocity vector in inertial frame components
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
-    
+
 };
 
 

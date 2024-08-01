@@ -61,9 +61,6 @@ private:
     Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;       //!< [m/s] Body time derivative of vector c_B in B frame components
 	StateData *rhoDotState;		   //!< -- state data for time derivative of rho;
-	StateData *omegaState;         //!< -- state data for the hubs omega_BN_B
-	StateData *sigmaState;         //!< -- state data for the hubs sigma_BN
-	StateData *velocityState;      //!< -- state data for the hubs rDot_BN_N
     static uint64_t effectorID;    //!< [] ID number of this panel
 
 public:
@@ -82,4 +79,3 @@ public:
 
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
-

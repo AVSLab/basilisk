@@ -50,7 +50,7 @@ public:
 	void linkInStates(DynParamManager& states);
     void updateEffectorMassProps(double integTime);
     void Reset(uint64_t CurrentSimNanos);
-    void AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG); 
+    void AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG);
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
@@ -82,13 +82,11 @@ private:
     VSCMGArrayTorqueMsgPayload incomingCmdBuffer; 	//!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                  	//!< -- Time for previous valid thruster firing
 
-	StateData *hubSigma;                        //!< class variable
 	StateData *hubOmega;                        //!< class variable
-	StateData *hubVelocity;                     //!< class variable
-	StateData *OmegasState;                     //!< class variable
-	StateData *thetasState;                     //!< class variable
-	StateData *gammasState;                     //!< class variable
-	StateData *gammaDotsState;                  //!< class variable
+	StateData *OmegasState;                     //!< [rad/s] RW spin state
+	StateData *thetasState;                     //!< [rad] RW angle
+	StateData *gammasState;                     //!< [rad] CMG gimbal angle
+	StateData *gammaDotsState;                  //!< [rad/s] CMG gimbal angle rate
 
 };
 
