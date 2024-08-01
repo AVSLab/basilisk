@@ -126,6 +126,9 @@ class BasiliskConan(ConanFile):
             # XXX: Add build system requirements which were removed from requirements.txt.
             "conan>=1.40.1, <2.00.0",
             "parse>=1.18.0",
+            "setuptools>=64",
+            "setuptools-scm>=8.0",
+            "cmake>=3.26",
         ]
 
         checkStr = "Required"
