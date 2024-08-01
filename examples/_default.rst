@@ -97,6 +97,7 @@ Orbit Control
    :maxdepth: 1
 
    Small Body Waypoint-to-Waypoint Control <scenarioSmallBodyFeedbackControl>
+   Lambert Solver Delta-V Maneuver <scenarioLambertSolver>
 
 
 
