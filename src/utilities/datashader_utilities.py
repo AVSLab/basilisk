@@ -1,5 +1,4 @@
 import warnings
-
 import numpy as np
 import itertools
 
@@ -50,7 +49,6 @@ def curve_per_df_component(df):
         df_list.append(curve_df)
 
     return df_list
-
 
 def curve_per_df_column(df):
     """
@@ -195,7 +193,7 @@ class DS_Plot():
 
             # Customize the individual component curves, points, other
             for curve_df in curveList:
-                curve = self.plotObjType(curve_df)#.opts(framewise=True)
+                curve = self.plotObjType(curve_df)
                 curves.append(curve)
                 count += 1
 
@@ -243,4 +241,3 @@ class DS_Plot():
             image = image*legend
 
         return image, self.title
-

@@ -20,7 +20,7 @@
 r"""
 Motivation
 ----------
-This script is a basic demonstration of a script that can be used to plot Monte Carlo data with 
+This script is a basic demonstration of a script that can be used to plot Monte Carlo data with
 bokeh and datashaders.   These tools are very efficient to plot large amounts of simulation data
 that is likely to occur with Monte Carlo sensitivity analysis studies.  For example, running this script will
 create an HTML interactive view of the simulation data.   Instead of seeing a fixed resolution, the user can
@@ -80,7 +80,7 @@ How to Run the Script
 
     Read all three steps before advancing.
 
-The next steps outline how to run this script. 
+The next steps outline how to run this script.
 
 1.  This script can only be run once there exists data produced by the ``scenario_AttFeedbackMC.py`` script.
 
