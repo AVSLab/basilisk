@@ -2,13 +2,15 @@ import glob
 import os
 import time
 
-import numpy as np
 import pandas as pd
 from Basilisk.utilities import macros
+import numpy as np
 
 try:
     import holoviews as hv
+    import datashader as ds
     from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component
+    from holoviews.operation.datashader import datashade, dynspread, spread
 except:
     pass
 
@@ -56,6 +58,7 @@ class mcAnalysisBaseClass:
     def getExtremaRunIndices(self, numExtrema, window):
         """
         Determine the MC run indices of the most deviant values within a particular time window
+        Only compatible with curve_per_df_column
 
         :param numExtrema: number of extreme runs to collect
         :param window: window of time to search for the extremes in
@@ -66,17 +69,15 @@ class mcAnalysisBaseClass:
         times = self.data.index.tolist()
 
         # Find the closest indices to the time window requested
-        indStart = min(range(len(times)), key=lambda i: abs(times[i] - window[0]))
-        indEnd = min(range(len(times)), key=lambda i: abs(times[i] - window[1]))
-        self.timeWindow = [indStart, indEnd]
+        ind_start = min(range(len(times)), key=lambda i: abs(times[i] - window[0]))
+        ind_end = min(range(len(times)), key=lambda i: abs(times[i] - window[1]))
+        self.timeWindow = [times[ind_start], times[ind_end]]
 
         # Find outliers based on largest deviation off of the mean
-        self.mean = self.data.mean(axis=1, level=1)
-        self.diff = self.data.subtract(self.mean)
-        self.diff = self.diff.abs()
-        self.diff = self.diff.iloc[indStart:indEnd].max(axis=0)
-        self.extremaRuns = self.diff.nlargest(numExtrema).index._codes[0]
-        print("Extreme runs are ", list(dict.fromkeys(self.extremaRuns.tolist())))
+        mean = self.data.mean(axis=1)
+        diff = self.data.abs().sub(mean, axis=0)
+        self.extremaRuns = diff.transpose().nlargest(numExtrema, self.timeWindow).index
+        print("Extrema runs are: ", list(dict.fromkeys(self.extremaRuns.tolist())))
         return self.extremaRuns
 
     def generateStatCurves(self):
@@ -160,7 +161,11 @@ class mcAnalysisBaseClass:
         """
         idx = pd.IndexSlice
         baseDir = self.dataDir
+        new_list = []
+        for run in runIdx:
+            new_list.append(run[0])
 
+        runIdx = new_list
         # check if a subset directory exists, and if it already contains all runIdx requested
         if not os.path.exists(baseDir + "/subset/"):
             os.mkdir(baseDir + "/subset/")
