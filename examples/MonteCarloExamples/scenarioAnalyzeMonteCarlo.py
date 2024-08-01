@@ -68,11 +68,11 @@ The setup steps are as follows:
 #. Install this particular version of ``panel`` package first.  It must be done alone as it upgrades
    ``bokeh`` to a version that is too new::
 
-        pip3 install --upgrade panel==0.9.7
+        pip3 install --upgrade panel==1.4.4
 
 #. Next, install the following particular python package versions::
 
-        pip3 install --upgrade bokeh==1.2.0 holoviews==1.12.3 param==1.9.3 hvplot==0.6.0
+        pip3 install --upgrade bokeh==3.4.2 holoviews==1.16.0 param==2.1.1 hvplot==0.10.0
 
 How to Run the Script
 ---------------------
@@ -92,7 +92,7 @@ The next steps outline how to run this script.
 
 3.  This script must be called from command line using::
 
-        /$path2bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py
+        /$path2bin/panel serve --show /$path2script/scenarioAnalyzeMonteCarlo.py
 
 This will process the data created with ``scenario_AttFeedbackMC.py`` and open a browser window showing
 Figure 1 above.  To end the script you need to press the typical key strokes to interrupt a process as the
