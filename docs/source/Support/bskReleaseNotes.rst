@@ -62,6 +62,15 @@ Version |release|
   This way the online documentation for develop is up to date for each contribution, not just for the hand-built
   documentation we did with major tagged releases.  The new Basilisk online documentation list is now
   `<https://avslab.github.io/basilisk>`__.
+- Added a Lambert's problem based FSW package to compute the DV maneuver required to get to a desired location at a
+  desired time. At that location, another maneuver may be performed to match the surface velocity of a celestial body.
+  This FSW package consists of the modules :ref:`lambertSolver` to solve Lambert's problem, :ref:`lambertPlanner` to
+  set up and define the Lambert problem, :ref:`lambertValidator` to check if the solution from the :ref:`lambertSolver`
+  module violates any constraints before a Delta-V is commanded, :ref:`lambertSurfaceRelativeVelocity` to compute the
+  inertial velocity required to match the surface velocity of the central body, and :ref:`lambertSecondDV` to compute
+  the DV maneuver required to match the surface velocity.
+- Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert's problem FSW module package
+- Added :ref:`scenario_LambertGuidance` BSK-Sim scenario to illustrate the Lambert modules in different flight modes
 
 
 Version 2.4.0 (August 23, 2024)
