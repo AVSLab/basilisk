@@ -28,7 +28,7 @@ Creating the Sphinx Basilisk Documentation
 Go to :ref:`createHtmlDocumentation` to learn what associated python tools are required.
 The following python packages must be installed via ``pip``::
 
-    pip3 install 'sphinx>7.0.0' sphinx_rtd_theme==2.0.0 breathe recommonmark docutils
+    pip3 install 'sphinx>7.0.0, <8.0.0' sphinx_rtd_theme==2.0.0 breathe recommonmark docutils
 
 See the list at the top of this page for what versions of these packages are acceptable.
 
