@@ -264,7 +264,7 @@ class fileCrawler():
                     "vizMessage.proto" in files_in_dir[i] or \
                     "EGM9615.h" in files_in_dir[i] or \
                     "SunLineKF_test_utilities.py" in files_in_dir[i] or \
-                    "datashader_utilities.py" in files_in_dir[i] or \
+                    "dataframe_utilities.py" in files_in_dir[i] or \
                     "reportconf.py" in files_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
@@ -512,4 +512,3 @@ else:
 
 # Example of how to link C with Breathe
 # breathe_projects_source = {"BasiliskFSW": ("../../src/fswAlgorithms/attControl/mrpFeedback", ['mrpFeedback.c', 'mrpFeedback.h'])}
-

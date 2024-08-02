@@ -105,14 +105,8 @@ import os
 
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
 from bokeh.palettes import RdYlBu9
-
-try:
-    from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_column, pull_and_format_df
-    FOUND_DATASHADER = True
-
-except:
-    print("Wasn't able to include the datashader_utilities.")
-    FOUND_DATASHADER = False
+from Basilisk.utilities.dataframe_utilities import curve_per_df_column, pull_and_format_df
+from Basilisk.utilities.DS_Plot import DS_Plot
 
 import Basilisk.utilities.macros as macros
 
@@ -172,9 +166,6 @@ def run(show_plots):
     :param show_extreme_data: call plotSuite method for user-defined number of extrema MC runs
     :param optional_plots: plots additional user-defined plots
     """
-
-    if not FOUND_DATASHADER:
-        return
 
     show_all_data = True
     show_extreme_data = True
