@@ -37,6 +37,8 @@ To create message objects in C and C++ modules, you need to run ``python3 conanf
 
 Running ``python3 conanfile.py`` re-creates the IDE project file that will now include access to the new message definition.
 
+.. caution::
 
+    Compiled message objects (built by ``python3 conanfile.py``) are added to the installed Basilisk package, such that they can be imported from Python. If you rename or delete a message's ``*Payload.h`` file, you should run a "clean" build to delete its previously compiled message objects, to avoid accidentally importing and using an old message type that should no longer exist.
 
-
+    "Clean" builds can be done by deleting the ``dist3`` directory, or by running ``python3 conanfile.py --clean``.
