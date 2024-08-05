@@ -70,6 +70,7 @@ Version |release|
 - Added support for numpy 2.0.
 - Fixed use of spherical coordinate system in :ref:`magneticFieldWMM` model.
 - Added ability to run the GitHub ``pull_request.yml`` action on a select branch
+- Fixed mass depletion rate bug in :ref:`thrusterStateEffector` previously fixed at 100%
 
 
 Version 2.3.0 (April 5, 2024)
