@@ -14,6 +14,8 @@ Version |release|
   updated.  See :ref:`fueltank` or :ref:`scenarioFuelSlosh` for further documentation.
 - The CI test builds starting failing running the `gtest` unit test suite with the error
   ``CMake Error: Unknown argument: --gtest_output``.  The current release fixes this issue.
+- There was an issue with the :ref:`thrusterStateEffector` such that its mass depletion rate was
+  hard-coded to 100% for all firings. This is corrected in the current release.
 
 
 Version 2.3.0
