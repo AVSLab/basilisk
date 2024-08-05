@@ -5,7 +5,7 @@ CMakeCache.txt
 .DS_Store
 dist/
 dist3/
-.pytest_cache 
+.pytest_cache
 docs/html
 docs/build
 docs/source/Documentation/*
@@ -49,3 +49,4 @@ src/moduleTemplates/autoCppModule/*
 **/__pycache__/
 venv/
 .venv/
+examples/MonteCarloExamples/scenario_AttFeedbackMC/

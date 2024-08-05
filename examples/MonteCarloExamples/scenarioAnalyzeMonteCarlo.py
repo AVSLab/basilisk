@@ -20,7 +20,7 @@
 r"""
 Motivation
 ----------
-This script is a basic demonstration of a script that can be used to plot Monte Carlo data with 
+This script is a basic demonstration of a script that can be used to plot Monte Carlo data with
 bokeh and datashaders.   These tools are very efficient to plot large amounts of simulation data
 that is likely to occur with Monte Carlo sensitivity analysis studies.  For example, running this script will
 create an HTML interactive view of the simulation data.   Instead of seeing a fixed resolution, the user can
@@ -68,11 +68,11 @@ The setup steps are as follows:
 #. Install this particular version of ``panel`` package first.  It must be done alone as it upgrades
    ``bokeh`` to a version that is too new::
 
-        pip3 install --upgrade panel==0.9.7
+        pip3 install --upgrade panel==1.4.4
 
 #. Next, install the following particular python package versions::
 
-        pip3 install --upgrade bokeh==1.2.0 holoviews==1.12.3 param==1.9.3 hvplot==0.6.0
+        pip3 install --upgrade bokeh==3.4.2 holoviews==1.16.0 param==2.1.1 hvplot==0.10.0
 
 How to Run the Script
 ---------------------
@@ -80,7 +80,7 @@ How to Run the Script
 
     Read all three steps before advancing.
 
-The next steps outline how to run this script. 
+The next steps outline how to run this script.
 
 1.  This script can only be run once there exists data produced by the ``scenario_AttFeedbackMC.py`` script.
 
@@ -92,7 +92,7 @@ The next steps outline how to run this script.
 
 3.  This script must be called from command line using::
 
-        /$path2bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py
+        /$path2bin/panel serve --show /$path2script/scenarioAnalyzeMonteCarlo.py
 
 This will process the data created with ``scenario_AttFeedbackMC.py`` and open a browser window showing
 Figure 1 above.  To end the script you need to press the typical key strokes to interrupt a process as the
@@ -102,15 +102,11 @@ bokeh server will keep running until stopped.
 
 import inspect
 import os
-FOUND_DATESHADER = True
-try:
-    from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component, pull_and_format_df
-    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
-    from bokeh.palettes import Blues9, Reds9, Greens9, \
-        Blues3, Reds3, Greens3, Oranges3, RdYlBu9
-except:
-    print("Wasn't able to include the datashader_utilities.")
-    FOUND_DATESHADER = False
+
+from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
+from bokeh.palettes import RdYlBu9
+from Basilisk.utilities.dataframe_utilities import curve_per_df_column, pull_and_format_df
+from Basilisk.utilities.DS_Plot import DS_Plot
 
 import Basilisk.utilities.macros as macros
 
@@ -139,16 +135,16 @@ def plotSuite(dataDir):
     sigmaPlot = DS_Plot(sigma_BR, title="Attitude Error",
                         xAxisLabel='time [s]', yAxisLabel='Sigma_BR',
                         macro_x=macros.NANO2SEC,
-                        labels = ['b1', 'b2', 'b3'], cmap=RdYlBu9,
-                        plotFcn=curve_per_df_component)
+                        labels=['b1', 'b2', 'b3'], cmap=RdYlBu9,
+                        plotFcn=curve_per_df_column)
     plotList.append(sigmaPlot)
 
     sigma_BR = pull_and_format_df(dataDir + "attGuidMsg.omega_BR_B.data", 3)
     sigmaPlot = DS_Plot(sigma_BR, title="Attitude Rate Error",
                         xAxisLabel='time [s]', yAxisLabel='omega_BR_B',
                         macro_x=macros.NANO2SEC, macro_y=macros.R2D,
-                        labels = ['b1', 'b2', 'b3'], cmap=RdYlBu9,
-                        plotFcn=curve_per_df_component)
+                        labels=['b1', 'b2', 'b3'], cmap=RdYlBu9,
+                        plotFcn=curve_per_df_column)
     plotList.append(sigmaPlot)
     return plotList
 
@@ -171,11 +167,8 @@ def run(show_plots):
     :param optional_plots: plots additional user-defined plots
     """
 
-    if not FOUND_DATESHADER:
-        return
-
     show_all_data = True
-    show_extreme_data = False
+    show_extreme_data = True
     optional_plots = False
 
     plotList = []
@@ -192,13 +185,13 @@ def run(show_plots):
         plotList.extend(plotSuite(analysis.dataDir))
 
     if show_extreme_data:
-        analysis.variableName = "attGuidMsg.omega_BR_B"
+        analysis.variableName = "attGuidMsg.sigma_BR"
         analysis.variableDim = 1
 
-        extremaRunNumbers = analysis.getExtremaRunIndices(numExtrema=1, window=[500 * 1E9, 550 * 1E9])
+        extrema_run_numbers = analysis.getExtremaRunIndices(numExtrema=1, window=[500 * 1e9, 550 * 1e9])
 
-        analysis.extractSubsetOfRuns(runIdx=extremaRunNumbers)
-        plotList.extend(plotSuite(analysis.dataDir + "/subset"))
+        analysis.extractSubsetOfRuns(runIdx=extrema_run_numbers)
+        plotList.extend(plotSuite(analysis.dataDir + "subset/"))
 
     if optional_plots:
         # nominalRuns = analysis.getNominalRunIndices(50)
@@ -210,7 +203,7 @@ def run(show_plots):
                                                xAxisLabel='time[s]', yAxisLabel='Eclipse Factor',
                                                macro_x=macros.NANO2SEC, macro_y=macros.R2D,
                                                cmap=RdYlBu9,
-                                               plotFcn=curve_per_df_component)
+                                               plotFcn=curve_per_df_column)
 
         # plotList.extend([statPlots])
         plotList.extend([shadowFactorPlot])
