@@ -153,7 +153,7 @@ def state_update_flyby(show_plots):
             input_data.covar_N = [5. * 1E-5, 0., 0.,
                                   0., 5. * 1E-5, 0.,
                                   0., 0., 5. * 1E-5]
-            opnav_input_msg.write(input_data, unit_test_sim.TotalSim.CurrentNanos)
+            opnav_input_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()
 
@@ -174,7 +174,7 @@ def state_update_flyby(show_plots):
             input_data.covar_N = [5. * 1E-5, 0., 0.,
                                   0., 5. * 1E-5, 0.,
                                   0., 0., 5. * 1E-5]
-            opnav_input_msg.write(input_data, unit_test_sim.TotalSim.CurrentNanos)
+            opnav_input_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()
 

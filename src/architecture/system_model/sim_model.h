@@ -114,9 +114,11 @@ public:
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
     std::vector<SimThreadExecution*> threadList;  //!< -- Array of threads that we're running on
     std::string SimulationName;  //!< -- Identifier for Sim
-    uint64_t CurrentNanos;  //!< [ns] Current sim time
-    uint64_t NextTaskTime;  //!< [ns] time for the next Task
     int64_t nextProcPriority;  //!< [-] Priority level for the next process
+
+private:
+    uint64_t CurrentNanos; //!< [ns] Current sim time
+    uint64_t NextTaskTime; //!< [ns] time for the next Task
 };
 
 #endif /* _SimModel_H_ */

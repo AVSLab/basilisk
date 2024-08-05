@@ -84,13 +84,13 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
         
         SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
-            ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
-            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
+            ["self.TotalSim.getCurrentNanos()>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
+            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.getCurrentNanos())", "self.oneTimeRWFaultFlag=0"])
 
         
         SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
             ["self.repeatRWFaultFlag==1"],
-            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
+            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.getCurrentNanos())", "self.setEventActivity('addRepeatedRWFault',True)"])
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods

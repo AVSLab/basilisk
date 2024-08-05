@@ -332,7 +332,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         StateCurrent.nonConservativeAccelpntB_B = np.dot(dcm_BN_2, rDotDot_BN_N[i][:])
         StateCurrent.omegaDot_BN_B = np.dot(dcm_BN_2, omegaDot_BN_N[i][:])
         StateCurrent.TotalAccumDV_BN_B = np.dot(dcm_BN_2, rDot_BN_N[i][:] - rDot_BN_N[0][:])
-        scStateMsg.write(StateCurrent, unitSim.TotalSim.CurrentNanos)
+        scStateMsg.write(StateCurrent, unitSim.TotalSim.getCurrentNanos())
 
     # Pull output time histories from messaging system
     DRout = dataLog.DRFramePlatform

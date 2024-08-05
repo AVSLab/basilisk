@@ -369,7 +369,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         lambertSolutionInMsgData.v1Sol2 = np.array([0., 0., 0.])
         lambertSolutionInMsgData.v2Sol2 = np.array([0., 0., 0.])
         lambertSolutionInMsgData.validSol2 = 0
-        lambertSolutionInMsg.write(lambertSolutionInMsgData, unitTestSim.TotalSim.CurrentNanos)
+        lambertSolutionInMsg.write(lambertSolutionInMsgData, unitTestSim.TotalSim.getCurrentNanos())
 
         unitTestSim.ConfigureStopTime(i * testProcessRate)
         unitTestSim.ExecuteSimulation()

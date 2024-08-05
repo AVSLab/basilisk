@@ -84,10 +84,10 @@ class EventHandlerClass:
         if self.eventActive == False:
             return(nextTime)
         nextTime = self.prevTime + self.eventRate - (self.prevTime%self.eventRate)
-        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
-            nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
+        if self.prevTime < 0 or (parentSim.TotalSim.getCurrentNanos()%self.eventRate == 0):
+            nextTime = parentSim.TotalSim.getCurrentNanos() + self.eventRate
             eventCount = self.checkCall(parentSim)
-            self.prevTime = parentSim.TotalSim.CurrentNanos
+            self.prevTime = parentSim.TotalSim.getCurrentNanos()
             if eventCount > 0:
                 self.eventActive = False
                 self.operateCall(parentSim)
@@ -402,7 +402,7 @@ class SimBaseClass:
     def ResetTask(self, taskName):
         for Task in self.TaskList:
             if Task.Name == taskName:
-                Task.resetTask(self.TotalSim.CurrentNanos)
+                Task.resetTask(self.TotalSim.getCurrentNanos())
 
     def InitializeSimulation(self):
         """
@@ -435,23 +435,23 @@ class SimBaseClass:
         """
         self.initializeEventChecks()
 
-        nextStopTime = self.TotalSim.NextTaskTime
+        nextStopTime = self.TotalSim.getNextTaskTime()
         nextPriority = -1
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while self.TotalSim.NextTaskTime <= self.StopTime and not self.terminate:
-            if self.TotalSim.CurrentNanos >= self.nextEventTime >= 0:
+        while self.TotalSim.getNextTaskTime() <= self.StopTime and not self.terminate:
+            if self.TotalSim.getCurrentNanos() >= self.nextEventTime >= 0:
                 self.nextEventTime = self.checkEvents()
-                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
             if 0 <= self.nextEventTime < nextStopTime:
                 nextStopTime = self.nextEventTime
                 nextPriority = -1
             if self.terminate:
                 break
             self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
-            progressBar.update(self.TotalSim.NextTaskTime)
+            progressBar.update(self.TotalSim.getNextTaskTime())
             nextPriority = -1
             nextStopTime = self.StopTime
-            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()

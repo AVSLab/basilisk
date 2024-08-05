@@ -156,7 +156,7 @@ def state_update_test(show_plots):
             input_data.timeTag = macros.sec2nano(i * dt)
             input_data.cameraPos_N = (expected[i,1:4] + np.random.normal(0, meas_noise_std_dev, 3))
             input_data.valid = True
-            camera_position_msg.write(input_data, unit_test_sim.TotalSim.CurrentNanos)
+            camera_position_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unit_test_sim.ExecuteSimulation()
 
@@ -174,7 +174,7 @@ def state_update_test(show_plots):
             input_data.timeTag = macros.sec2nano(i * dt)
             input_data.cameraPos_N = (expected[i,1:4] + np.random.normal(0, meas_noise_std_dev, 3))
             input_data.valid = True
-            camera_position_msg.write(input_data, unit_test_sim.TotalSim.CurrentNanos)
+            camera_position_msg.write(input_data, unit_test_sim.TotalSim.getCurrentNanos())
         unit_test_sim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unit_test_sim.ExecuteSimulation()
 
