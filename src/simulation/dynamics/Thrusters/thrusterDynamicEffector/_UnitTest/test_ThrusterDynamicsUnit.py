@@ -111,34 +111,35 @@ def fixMDotData(mDotData):
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("ramp, thrustNumber , duration , long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque", [
-    ("OFF", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  #Test random thrust config
-    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Short fire test
-    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E6, "OFF", "OFF", 0.0),  # Short fire test with higher test rate
-    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0),  # rate test
-    ("OFF", 1, 5.0, 10.,  35., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # angle test
-    ("OFF", 1, 5.0, 30.,  15., [[1.], [1.5], [0.0]], 1E8, "OFF", "OFF", 0.0),  # Position test
-    ("OFF", 2, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Number of thrusters test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Basic ramp test
-    ("ON", 1, 0.5, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Short ramp test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0),  # rate ramp test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "OFF", 0.0),  # Cuttoff test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "ON", 0.0),  # Ramp down test
-    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 2.0),  # Simple swirl torque test
-    ("ON", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.5),  # Basic ramp with swirl torque test
+@pytest.mark.parametrize("ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown", [
+    ("OFF", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  #Test random thrust config
+    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Short fire test
+    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E6, "OFF", "OFF", 0.0, "OFF"),  # Short fire test with higher test rate
+    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0, "OFF"),  # rate test
+    ("OFF", 1, 5.0, 10.,  35., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # angle test
+    ("OFF", 1, 5.0, 30.,  15., [[1.], [1.5], [0.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Position test
+    ("OFF", 2, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Number of thrusters test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Basic ramp test
+    ("ON", 1, 0.5, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Short ramp test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0, "OFF"),  # rate ramp test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "OFF", 0.0, "OFF"),  # Cuttoff test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "ON", 0.0, "OFF"),  # Ramp down test
+    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 2.0, "OFF"),  # Simple swirl torque test
+    ("ON", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.5, "OFF"),  # Basic ramp with swirl torque test
+    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "ON"),  # Blow down test
     ])
 
 
 # provide a unique test method name, starting with test_
-def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration ,  long_angle, lat_angle,  location, rate, cutoff, rampDown, swirlTorque):
+def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle , location, rate, cutoff, rampDown, swirlTorque)
+    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown)
     assert testResults < 1, testMessage
 
 
 # Run the test
-def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque):
+def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -157,6 +158,18 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
     thrusterSet.ModelTag = "ACSThrusterDynamics"
 
+    # Configure blow down coefficients
+    if blowDown == "ON":
+        fuel_ratio = 0.5
+        max_fuel = 1.0
+        thrusterSet.fuelMass = fuel_ratio * max_fuel
+        thrust_blow_down_coeff = [-1.0 / max_fuel, 1.0]
+        isp_blow_down_coeff = [-Isp / max_fuel, Isp]
+    else:
+        fuel_ratio = 1.0
+        thrust_blow_down_coeff = []
+        isp_blow_down_coeff = []
+
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
     angledeg_long = long_angle # Parametrized angle of thrust
     angledeg_lat = lat_angle
@@ -166,9 +179,11 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     thruster1.thrLoc_B = location # Parametrized location for thruster
     thruster1.thrDir_B = [[math.cos(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_lat)]]
     thruster1.MaxThrust = 1.0
-    thruster1.steadyIsp = 226.7
+    thruster1.steadyIsp = Isp
     thruster1.MinOnTime = 0.006
     thruster1.MaxSwirlTorque = swirlTorque
+    for thr_coeff in thrust_blow_down_coeff: thruster1.thrBlowDownCoeff.push_back(thr_coeff)
+    for isp_coeff in isp_blow_down_coeff: thruster1.ispBlowDownCoeff.push_back(isp_coeff)
     thrusterSet.addThruster(thruster1)
 
     loc1 = np.array([thruster1.thrLoc_B[0][0],thruster1.thrLoc_B[1][0],thruster1.thrLoc_B[2][0]])
@@ -324,9 +339,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         for i in range(np.shape(thrForce)[0]):# Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpoints[0:3,i] = dir1
+                    expectedpoints[0:3, i] = dir1 * fuel_ratio
                 else:
-                    expectedpoints[0:3, i] = dir1 + dir2
+                    expectedpoints[0:3, i] = (dir1 + dir2) * fuel_ratio
 
         # Modify expected values for comparison and define errorTolerance
         TruthForce = np.transpose(expectedpoints)
@@ -346,9 +361,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpointstor[0:3, i] = np.cross(loc1, dir1) + swirlTorque * dir1
+                    expectedpointstor[0:3, i] = (np.cross(loc1, dir1) + swirlTorque * dir1) * fuel_ratio
                 else:
-                    expectedpointstor[0:3, i] = np.cross(loc1, dir1)  + swirlTorque * dir1 + np.cross(loc2, dir2)
+                    expectedpointstor[0:3, i] = (np.cross(loc1, dir1) + swirlTorque * dir1 + np.cross(loc2, dir2)) * fuel_ratio
 
         # Define errorTolerance
         TruthTorque = np.transpose(expectedpointstor)
@@ -748,4 +763,4 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), True, "OFF", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0)
+    unitThrusters(ResultsStore(), True, "OFF", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "ON")
