@@ -27,6 +27,7 @@
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
 : stepsInRamp(30)
+, fuelMass(-1.0)
 , prevFireTime(0.0)
 , prevCommandTime(0xFFFFFFFFFFFFFFFF)
 {
