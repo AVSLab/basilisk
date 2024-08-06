@@ -60,7 +60,6 @@ public:
     void UpdateThrusterProperties();
     void computeBlowDownDecay(THRSimConfig *CurrentThruster);
 
-
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
