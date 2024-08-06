@@ -24,6 +24,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+import numpy
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -64,7 +65,9 @@ def thrusterIntegratedTest(show_plots):
     TH1 = thFactory.create(
         'MOOG_Monarc_1',
         [1,0,0],                # location in B-frame
-        [0,1,0]                 # thruster force direction in B-frame
+        [0,1,0],                 # thruster force direction in B-frame
+        thrBlowDownCoeff=[0, 0, 0.9],  # polynomial coefficients for fuel mass to thrust blow down model in descending order
+        ispBlowDownCoeff=[0, 0, 227.5]  # polynomial coefficients for fuel mass to Isp blow down model in descending order
     )
 
     # create thruster object container and tie to spacecraft object
@@ -92,6 +95,7 @@ def thrusterIntegratedTest(show_plots):
     thrustersDynamicEffector.cmdsInMsg.subscribeTo(thrCmdMsg)
 
     # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
@@ -124,30 +128,18 @@ def thrusterIntegratedTest(show_plots):
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
-    dataPos = [[dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    dataPos = [dataPos[0][0], dataPos[1][0], dataPos[2][0]]
+    dataSigma = [dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]
 
-    truePos = [
-                [-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]
-                ]
+    truePos = [-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]
 
-    trueSigma = [
-                [1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]
-                ]
+    trueSigma = [1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]
 
     accuracy = 1e-8
-    for i in range(0,len(truePos)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Thruster Integrated Test failed pos unit test")
+    numpy.testing.assert_allclose(dataPos, truePos, rtol=accuracy, verbose=True)
 
     accuracy = 1e-7
-    for i in range(0,len(trueSigma)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Thruster Integrated Test failed attitude unit test")
+    numpy.testing.assert_allclose(dataSigma, trueSigma, rtol=accuracy, verbose=True)
 
     if testFailCount == 0:
         print("PASSED: " + " Thruster Integrated Sim Test")
