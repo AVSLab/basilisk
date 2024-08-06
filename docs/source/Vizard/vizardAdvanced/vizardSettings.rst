@@ -691,12 +691,19 @@ The following table illustrates the possible variables for the
 
 
 If the ``renderMode`` is set to 1 the camera outputs a depth map.
-Depth maps rendered by an Instrument Camera utilize Unity’s ``Linear01Depth`` shader helper macro inside
-Vizard’s DepthMap shader. The macro linearizes the non-linear internal depth texture whose precision
-is configuration and platform dependent to return a value between 0 and 1 where 1 is the maximum depth.
-Vizard’s DepthMap shader takes the value returned and encodes it as an RGB color. The far clipping plane
-of the Instrument Camera determines the maximum depth of the rendered texture and can be set as part of
-the camera configuration.
+Depth maps rendered by an Instrument Camera utilize Unity’s ``Linear01Depth`` shader helper macro
+inside Vizard’s DepthMap shader. The macro linearizes the non-linear internal depth texture
+whose precision is configuration and platform dependent to return a value between 0 and 1 where
+1 is the maximum depth. Vizard’s DepthMap shader takes the value returned and encodes it as an
+RGB color. The far clipping plane of the Instrument Camera determines the maximum depth of the
+rendered texture and can be set as part of the camera configuration.
+
+.. warning::
+
+      Three channel output (RGB) of depth is unavailable as of Vizard 2.2.0 until further notice,
+      due to a change in how Unity writes the color output from the fragment shader in Unity 2022.3.
+      Until this is resolved, the depth is encoded only in the red channel (R) of the pixel color.
+
 
 .. warning::
 
@@ -704,14 +711,22 @@ the camera configuration.
     the calculated depth increases with distance from the camera.
 
 
-To decode the depth for a specific pixel, sample its RGB color values :math:`(r,g,b)` and calculate the depth as as:
+To decode the depth for a specific pixel, sample its color. If your color sampler returns a float red
+channel value between 0 and 1.0, calculate the depth as:
 
 .. math::
 
-    depth = (farClippingPlane)(\frac{\frac{\frac{b} {256} +g} {256} + r} {256})
+	depth = (farClippingPlane)(pixelColor.r)
 
-If the depth is equal to or greater than the far clipping plane of the instrument camera,
-the pixel color will be white (255, 255, 255).
+If your color sampler returns an integer red channel value between 0 and 255, calculate the depth as:
+
+.. math::
+
+	depth = (farClippingPlane)(\frac{pixelColor.r} {255})
+
+
+If the depth is equal to or greater than the far clipping plane of the instrument camera, the
+pixel color will be white (255, 255, 255).
 
 
 
