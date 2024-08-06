@@ -87,6 +87,8 @@ def thrusterIntegratedTest(show_plots):
 
     unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
 
     # set thruster commands
     ThrustMessage = messaging.THRArrayOnTimeCmdMsgPayload()
@@ -140,6 +142,9 @@ def thrusterIntegratedTest(show_plots):
 
     accuracy = 1e-7
     numpy.testing.assert_allclose(dataSigma, trueSigma, rtol=accuracy, verbose=True)
+
+    accuracy = 1e-9
+    numpy.testing.assert_allclose(thrustersDynamicEffector.fuelMass, fuelLog.fuelMass[-1], rtol=accuracy, verbose=True)
 
     if testFailCount == 0:
         print("PASSED: " + " Thruster Integrated Sim Test")
