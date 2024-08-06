@@ -27,6 +27,7 @@
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
 : stepsInRamp(30)
+, mDotTotal(0.0)
 , fuelMass(-1.0)
 , prevFireTime(0.0)
 , prevCommandTime(0xFFFFFFFFFFFFFFFF)
@@ -37,7 +38,6 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_N.fill(0.0);
     this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();
-    this->mDotTotal = 0.0;
     return;
 }
 
@@ -322,7 +322,8 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 			{
 				mDotNozzle = tmpThrustMag / (EARTH_GRAV * it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor);
 			}
-			this->forceExternal_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
+			this->forceExternal_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B +
+                                     omegaLocal_BN_B).cross(thrustLocation_B);
 
 			//! - Add the mass depletion torque contribution
 			BM1 = thrustDirection_B;
@@ -331,8 +332,10 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 			BMj.col(0) = BM1;
 			BMj.col(1) = BM2;
 			BMj.col(2) = BM3;
-			this->torqueExternalPntB_B += mDotNozzle * (eigenTilde(thrustDirection_B) * eigenTilde(thrustDirection_B).transpose()
-				+ it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
+			this->torqueExternalPntB_B += mDotNozzle * (eigenTilde(thrustDirection_B) *
+                                          eigenTilde(thrustDirection_B).transpose() + it->areaNozzle / (4 * M_PI) *
+                                          BMj * axesWeightMatrix * BMj.transpose()) *
+                                          (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
 
 		}
         // - Save force and torque values for messages

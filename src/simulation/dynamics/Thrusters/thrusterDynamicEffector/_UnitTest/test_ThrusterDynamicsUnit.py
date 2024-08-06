@@ -99,7 +99,7 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 
 def fixMDotData(mDotData):
     """This test was written before a bug in variable logging was fixed.
-    
+
     This bug made it so consecutive logged zeros would get removed, which
     is why we need to remove all zero rows at the beginning of mDotData
     but one.
