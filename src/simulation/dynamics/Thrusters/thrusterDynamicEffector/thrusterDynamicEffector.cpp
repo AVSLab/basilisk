@@ -27,6 +27,8 @@
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
 : stepsInRamp(30)
+, mDotTotal(0.0)
+, fuelMass(-1.0)
 , prevFireTime(0.0)
 , prevCommandTime(0xFFFFFFFFFFFFFFFF)
 {
@@ -36,7 +38,6 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_N.fill(0.0);
     this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();
-    this->mDotTotal = 0.0;
     return;
 }
 
@@ -81,6 +82,8 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
         eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
         tmpThruster.maxThrust = it->MaxThrust;
         tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
+        tmpThruster.thrustBlowDownFactor = it->ThrustOps.thrustBlowDownFactor;
+        tmpThruster.ispBlowDownFactor = it->ThrustOps.ispBlowDownFactor;
         tmpThruster.thrustForce = v3Norm(it->ThrustOps.opThrustForce_B);
         v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
         v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
@@ -226,6 +229,14 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
 	this->hubOmega = states.getStateObject("hubOmega");
     this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
+
+    for(const auto& thrusterConfig : this->thrusterData) {
+        if (this->fuelMass < 0.0 &&
+            (!thrusterConfig.thrBlowDownCoeff.empty() || !thrusterConfig.ispBlowDownCoeff.empty())) {
+            bskLogger.bskLog(BSK_WARNING,"ThrusterDynamicEffector: blow down coefficients have been "
+                                          "specified, but no fuel tank is attached.");
+        }
+    }
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
@@ -275,6 +286,11 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
         thrustDirection_B = this->bodyToHubInfo.at(index).dcm_BF * it->thrDir_B;
         thrustLocation_B = this->bodyToHubInfo.at(index).r_FB_B + this->bodyToHubInfo.at(index).dcm_BF * it->thrLoc_B;
 
+        //! - If the connected fuel tank is subject to blow down effects, update them here
+        if (this->fuelMass >= 0.0 && (!it->thrBlowDownCoeff.empty() || !it->ispBlowDownCoeff.empty())) {
+            this->computeBlowDownDecay(&(*it));
+        }
+
         //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
         if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= -dt*10E-10 &&
            ops->ThrustOnCmd > 0.0)
@@ -288,25 +304,26 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
         }
 
         //! - For each thruster, aggregate the current thrust direction into composite body force
-        tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
+        tmpThrustMag = it->MaxThrust * ops->ThrustFactor * ops->thrustBlowDownFactor;
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = tmpThrustMag * thrustDirection_B;
         this->forceExternal_B += SingleThrusterForce;
 
         //! - Compute the point B relative torque and aggregate into the composite body torque
-        SingleThrusterTorque = thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor * it->MaxSwirlTorque * thrustDirection_B;
+        SingleThrusterTorque = thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor *
+                               ops->thrustBlowDownFactor * it->MaxSwirlTorque * thrustDirection_B;
         this->torqueExternalPntB_B += SingleThrusterTorque;
 
 		if (!it->updateOnly) {
 			//! - Add the mass depletion force contribution
 			mDotNozzle = 0.0;
-			if (it->steadyIsp * ops->IspFactor > 0.0)
+			if (it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor > 0.0)
 			{
-				mDotNozzle = it->MaxThrust*ops->ThrustFactor / (EARTH_GRAV *
-					it->steadyIsp * ops->IspFactor);
+				mDotNozzle = tmpThrustMag / (EARTH_GRAV * it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor);
 			}
-			this->forceExternal_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
+			this->forceExternal_B += 2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B +
+                                     omegaLocal_BN_B).cross(thrustLocation_B);
 
 			//! - Add the mass depletion torque contribution
 			BM1 = thrustDirection_B;
@@ -315,8 +332,10 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 			BMj.col(0) = BM1;
 			BMj.col(1) = BM2;
 			BMj.col(2) = BM3;
-			this->torqueExternalPntB_B += mDotNozzle * (eigenTilde(thrustDirection_B) * eigenTilde(thrustDirection_B).transpose()
-				+ it->areaNozzle / (4 * M_PI) * BMj * axesWeightMatrix * BMj.transpose()) * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
+			this->torqueExternalPntB_B += mDotNozzle * (eigenTilde(thrustDirection_B) *
+                                          eigenTilde(thrustDirection_B).transpose() + it->areaNozzle / (4 * M_PI) *
+                                          BMj * axesWeightMatrix * BMj.transpose()) *
+                                          (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B);
 
 		}
         // - Save force and torque values for messages
@@ -371,6 +390,39 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCS
 }
 
 
+/*! This method is used to update the blow down effects to the thrust and/or Isp
+* at every computeForceTorque call when the thrusters are attached to a fuel
+* tank subject to blow down effects.
+ @return void
+ */
+void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster)
+{
+    THROperation *ops = &(currentThruster->ThrustOps);
+
+    if (!currentThruster->thrBlowDownCoeff.empty()) {
+        double thrustBlowDown = 0.0;
+        double thrOrder = 1.0;
+        for(auto thrCoeff = currentThruster->thrBlowDownCoeff.rbegin(); thrCoeff !=
+                                               currentThruster->thrBlowDownCoeff.rend(); thrCoeff++) {
+            thrustBlowDown += *thrCoeff * thrOrder;
+            thrOrder *= fuelMass;  // Fuel mass assigned in fuel tank's updateEffectorMassProps method
+        }
+        ops->thrustBlowDownFactor = std::clamp(thrustBlowDown / currentThruster->MaxThrust, double (0.0), double (1.0));
+    }
+
+    if (!currentThruster->ispBlowDownCoeff.empty()) {
+        double ispBlowDown = 0.0;
+        double ispOrder = 1.0;
+        for (auto ispCoeff = currentThruster->ispBlowDownCoeff.rbegin(); ispCoeff !=
+                                                currentThruster->ispBlowDownCoeff.rend(); ispCoeff++) {
+            ispBlowDown += *ispCoeff * ispOrder;
+            ispOrder *= fuelMass; // Fuel mass assigned in fuel tank's updateEffectorMassProps method
+        }
+        ops->ispBlowDownFactor = std::clamp(ispBlowDown / currentThruster->steadyIsp, double (0.0), double (1.0));
+    }
+}
+
+
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
 
     std::vector<THRSimConfig>::iterator it;
@@ -383,9 +435,9 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
     {
         ops = &it->ThrustOps;
         mDotSingle = 0.0;
-        if(it->steadyIsp * ops->IspFactor > 0.0)
+        if(it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor > 0.0)
         {
-            mDotSingle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp * ops->IspFactor);
+            mDotSingle = it->MaxThrust * ops->ThrustFactor * ops->thrustBlowDownFactor / (EARTH_GRAV * it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor);
         }
         this->mDotTotal += mDotSingle;
     }

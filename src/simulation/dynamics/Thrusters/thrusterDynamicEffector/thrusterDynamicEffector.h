@@ -49,8 +49,7 @@ public:
     void computeForceTorque(double integTime, double timeStep);
     void computeStateContribution(double integTime);
     void Reset(uint64_t CurrentSimNanos);
-    //! Add a new thruster to the thruster set
-    void addThruster(THRSimConfig* newThruster);
+    void addThruster(THRSimConfig* newThruster);  //! Add a new thruster to the thruster set
     void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
@@ -59,7 +58,7 @@ public:
     void ComputeThrusterFire(THRSimConfig *CurrentThruster, double currentTime);
     void ComputeThrusterShut(THRSimConfig *CurrentThruster, double currentTime);
     void UpdateThrusterProperties();
-    
+    void computeBlowDownDecay(THRSimConfig *CurrentThruster);
 
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
@@ -69,6 +68,7 @@ public:
     std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
+    double fuelMass;                               //!< kg Current total fuel mass of connected fuel tank
     double prevFireTime;                           //!< s  Previous thruster firing time
 	double thrFactorToTime(THRSimConfig *thrData,
 		std::vector<THRTimePair> *thrRamp);

@@ -67,6 +67,10 @@ class thrusterFactory(object):
                 frequency of first-order filter dynamics
             swirlTorque: float
                 constant momentum from ionic thrusters
+            thrBlowDownCoeff: list
+                vector with polynomial coefficients for fuel mass to thrust blow down model in descending order
+            ispBlowDownCoeff: list
+                vector with polynomial coefficients for fuel mass to Isp blow down model in descending order
 
         """
         # create the blank thruster object
@@ -167,6 +171,22 @@ class thrusterFactory(object):
         else:
             varLabel = 'TH' + str(len(self.thrusterList) + 1)  # default device labeling
         TH.label = varLabel
+
+        if 'thrBlowDownCoeff' in kwargs:
+            thrBlowDownCoeff = kwargs['thrBlowDownCoeff']
+            if not isinstance(thrBlowDownCoeff, list):
+                print('ERROR: thruster blow down coefficients must be a numerical list')
+                exit(1)
+            else:
+                for coeff in thrBlowDownCoeff: TH.thrBlowDownCoeff.push_back(coeff)
+
+        if 'ispBlowDownCoeff' in kwargs:
+            ispBlowDownCoeff = kwargs['ispBlowDownCoeff']
+            if not isinstance(ispBlowDownCoeff, list):
+                print('ERROR: Isp blow down coefficients must be a numerical list')
+                exit(1)
+            else:
+                for coeff in ispBlowDownCoeff: TH.ispBlowDownCoeff.push_back(coeff)
 
         # set thruster force direction axis
         norm = numpy.linalg.norm(tHat_B)

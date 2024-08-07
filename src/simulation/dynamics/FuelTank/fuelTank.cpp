@@ -43,6 +43,10 @@ FuelTank::~FuelTank() {
     FuelTank::effectorID = 1;
 }
 
+void FuelTank::setNameOfMassState(const std::string nameOfMassState) {
+    this->nameOfMassState = nameOfMassState;
+}
+
 /*! set fuel tank model
  @return void
  @param model fuel tank model type
@@ -55,6 +59,15 @@ void FuelTank::setTankModel(FuelTankModel *model) {
 void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
     // - Add a fuel slosh particle to the vector of fuel slosh particles
     this->fuelSloshParticles.push_back(particle);
+}
+
+void FuelTank::addThrusterSet(ThrusterDynamicEffector *dynEff) {
+    thrDynEffectors.push_back(dynEff);
+    dynEff->fuelMass = this->fuelTankModel->propMassInit;
+}
+
+void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
+    thrStateEffectors.push_back(stateEff);
 }
 
 /*! Link states that the module accesses */
@@ -90,12 +103,12 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 
     //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
-    for (auto &dynEffector: this->dynEffectors) {
+    for (auto &dynEffector: this->thrDynEffectors) {
         dynEffector->computeStateContribution(integTime);
         this->fuelConsumption += dynEffector->stateDerivContribution(0);
     }
 
-    for (auto &stateEffector: this->stateEffectors) {
+    for (auto &stateEffector: this->thrStateEffectors) {
         stateEffector->updateEffectorMassProps(integTime);
         this->fuelConsumption += stateEffector->stateDerivContribution(0);
     }
@@ -118,6 +131,11 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         (*fuelSloshInt)->massToTotalTankMassRatio = (*fuelSloshInt)->fuelMass / totalMass;
         // - Scale total fuelConsumption by mass ratio to find fuelSloshParticle mass depletion rate
         (*fuelSloshInt)->fuelMassDot = (*fuelSloshInt)->massToTotalTankMassRatio * (-this->fuelConsumption);
+    }
+
+    // - Set total fuel mass parameter for thruster dynamic effectors experiencing blow down effects
+    for (auto &dynEffector: this->thrDynEffectors) {
+        dynEffector->fuelMass = totalMass;
     }
 
     // - Set fuel consumption rate of fuelTank (not negative because the negative sign is in the computeDerivatives call

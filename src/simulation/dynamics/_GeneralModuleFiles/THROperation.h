@@ -33,8 +33,10 @@ THROperation
 //@endcond
 {
     uint64_t fireCounter;                //!< (-) Number of times thruster fired
-    double ThrustFactor;                 //!< -- Current Thrust Percentage
+    double ThrustFactor;                 //!< -- Current thrust scaling factor due to ramp up/down
     double IspFactor;                    //!< -- Current fractional ISP
+    double thrustBlowDownFactor = 1.0;   //!< -- Current thrust scaling factor due to tank blow down
+    double ispBlowDownFactor = 1.0;      //!< -- Current Isp scaling due to tank blow down
     double ThrustOnCmd;                  //!< s  Time Thruster was requested
     double totalOnTime;                  //!< s  Total amount of time thruster has fired
     double opThrustForce_B[3] = {0};     //!< N  Thrust force vector in body frame components
