@@ -147,8 +147,8 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - Call the next scheduled model, and set the time to its start
     SysModelTask *localTask = fireIt->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
-    fireIt->NextTaskStart = localTask->NextStartTime;
-    
+    fireIt->NextTaskStart = localTask->getNextStartTime();
+
     //! - Figure out when we are going to be called next for scheduling purposes
     fireIt=this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
@@ -173,8 +173,8 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
 {
     ModelScheduleEntry localEntry;
     localEntry.TaskPtr = newTask;
-    localEntry.TaskUpdatePeriod = newTask->TaskPeriod;
-    localEntry.NextTaskStart = newTask->NextStartTime;
+    localEntry.TaskUpdatePeriod = newTask->getTaskPeriod();
+    localEntry.NextTaskStart = newTask->getNextStartTime();
     localEntry.taskPriority = taskPriority;
     this->scheduleTask(localEntry);
     newTask->updateParentProc(processName);
@@ -207,7 +207,7 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     this->processTasks.push_back(taskCall);
 }
 
-/*! The name kind of says it all right?  It is a shotgun used to disable all of 
+/*! The name kind of says it all right?  It is a shotgun used to disable all of
     a process' tasks.  It is handy for a FSW scheme where you have tons of tasks
     and you are really only turning one on at a time.
     @return void
@@ -222,7 +222,7 @@ void SysProcess::disableAllTasks()
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
- a processes tasks.  It is handy for a process that starts out almost entirely 
+ a processes tasks.  It is handy for a process that starts out almost entirely
  inhibited but you want to turn it all on at once.
  @return void
  */
@@ -236,7 +236,7 @@ void SysProcess::enableAllTasks()
     }
 }
 
-/*! This method updates a specified task's period once it locates that task 
+/*! This method updates a specified task's period once it locates that task
     in the list.  It will warn the user if a task is not found.
     @return void
 	@param taskName The name of the task you want to change period of
@@ -251,12 +251,14 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 		if (it->TaskPtr->TaskName == taskName)
 		{
 			it->TaskPtr->updatePeriod(newPeriod);
-			it->NextTaskStart = it->TaskPtr->NextStartTime;
-			it->TaskUpdatePeriod = it->TaskPtr->TaskPeriod;
+			it->NextTaskStart = it->TaskPtr->getNextStartTime();
+			it->TaskUpdatePeriod = it->TaskPtr->getTaskPeriod();
 			return;
 		}
 	}
     bskLogger.bskLog(BSK_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
 }
 
-
+uint64_t SysProcess::getPrevRouteTime() const {
+    return this->prevRouteTime;
+}

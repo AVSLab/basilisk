@@ -57,19 +57,27 @@ public:
     void StepUntilStop();  //!< Step simulation until stop time uint64_t reached
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void moveProcessMessages();
+    uint64_t getCurrentNanos() const;
+    void setCurrentNanos(uint64_t currentNanos);
+    uint64_t getNextTaskTime() const;
+    void setNextTaskTime(uint64_t nextTaskTime);
+    uint64_t getCurrentThreadNanos() const;
+    uint64_t getStopThreadNanos() const;
+    void setStopThreadNanos(uint64_t stopThreadNanos);
+
 public:
-    uint64_t currentThreadNanos;  //!< Current simulation time available at thread
-    uint64_t stopThreadNanos;   //!< Current stop conditions for the thread
     int64_t stopThreadPriority; //!< Current stop priority for thread
     uint64_t threadID;          //!< Identifier for thread
     std::thread *threadContext; //!< std::thread data for concurrent execution
-    uint64_t CurrentNanos;  //!< [ns] Current sim time
-    uint64_t NextTaskTime;  //!< [ns] time for the next Task
     int64_t nextProcPriority;  //!< [-] Priority level for the next process
     bool selfInitNow;              //!< Flag requesting self init
     bool crossInitNow;             //!< Flag requesting cross-init
     bool resetNow;                 //!< Flag requesting that the thread execute reset
 private:
+    uint64_t currentThreadNanos;  //!< Current simulation time available at thread
+    uint64_t stopThreadNanos;   //!< Current stop conditions for the thread
+    uint64_t CurrentNanos;  //!< [ns] Current sim time
+    uint64_t NextTaskTime;  //!< [ns] time for the next Task
     bool threadRunning;            //!< Flag that will allow for easy concurrent locking
     bool terminateThread;          //!< Flag that indicates that it is time to take thread down
     BSKSemaphore parentThreadLock;   //!< Lock that ensures parent thread won't proceed
@@ -85,7 +93,7 @@ class SimModel
 public:
     SimModel();  //!< The SimModel constructor
     ~SimModel();  //!< SimModel destructorS
-    
+
     void selfInitSimulation();  //!< Method to initialize all added Tasks
     void resetInitSimulation();  //!< Method to reset all added tasks
     void StepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
@@ -98,16 +106,19 @@ public:
     void deleteThreads();
     void assignRemainingProcs();
     uint64_t getThreadCount() {return threadList.size();} //!< returns the number of threads used
-
+    uint64_t getCurrentNanos() const;
+    uint64_t getNextTaskTime() const;
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 public:
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
     std::vector<SimThreadExecution*> threadList;  //!< -- Array of threads that we're running on
     std::string SimulationName;  //!< -- Identifier for Sim
-    uint64_t CurrentNanos;  //!< [ns] Current sim time
-    uint64_t NextTaskTime;  //!< [ns] time for the next Task
     int64_t nextProcPriority;  //!< [-] Priority level for the next process
+
+private:
+    uint64_t CurrentNanos; //!< [ns] Current sim time
+    uint64_t NextTaskTime; //!< [ns] time for the next Task
 };
 
 #endif /* _SimModel_H_ */

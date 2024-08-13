@@ -22,7 +22,7 @@ Overview
 This script demonstrates how to use event handlers to add reaction wheel faults. The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AddRWFault.py
-      
+
 Using event handlers
 --------------------
 
@@ -43,8 +43,8 @@ Setting up the faults
 This script uses two event handlers. The first one defines an event that injects a large, one-time static friction fault::
 
         SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
-            ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
-            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
+            ["self.TotalSim.getCurrentNanos()>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
+            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.getCurrentNanos())", "self.oneTimeRWFaultFlag=0"])
 
 For this event, the conditions are that the time for the fault has passed, and that the corresponding fault flag is active. The fault time is specified in the scenario script. The ``oneTimeRWFaultFlag`` and the ``repeatRWFaultFlag``, also set in the scenario script, ensures that the faults are added only for the fault scenario.
 
@@ -52,7 +52,7 @@ The second event handler defines an event that is always active, and adds a smal
 
         SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
             ["self.repeatRWFaultFlag==1"],
-            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
+            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.getCurrentNanos())", "self.setEventActivity('addRepeatedRWFault',True)"])
 
 Note the command ``"self.setEventActivity('addRepeatedRWFault',True)"``, keeping the eventActive flag turned on for this event handler. For both event handlers, the particular methods that change the reaction wheel friction parameters are defined in ``BSK_Dynamics``.
 
@@ -112,11 +112,11 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
 
         self.configure_initial_conditions()
         self.log_outputs()
-        
+
         self.oneTimeRWFaultFlag = 1
         self.repeatRWFaultFlag = 1
         self.oneTimeFaultTime = macros.min2nano(10.)
-        
+
         DynModels = self.get_DynModel()
         self.DynModels.RWFaultLog = []
 
@@ -166,7 +166,7 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
 
         sigma_BR = np.delete(attErrRec.sigma_BR, 0, 0)
         omega_BR_B = np.delete(attErrRec.omega_BR_B, 0, 0)
-        
+
         num_RW = 4
         RW_speeds = np.delete(self.rwSpeedRec.wheelSpeeds[:, range(num_RW)], 0, 0)
         RW_friction = []
@@ -197,7 +197,7 @@ def runScenario(scenario):
 
     simulationTime = macros.min2nano(30.)
     scenario.modeRequest = "hillPoint"
-        
+
     # Run the simulation
     scenario.InitializeSimulation()
     scenario.ConfigureStopTime(simulationTime)

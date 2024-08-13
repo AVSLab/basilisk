@@ -145,7 +145,7 @@ def singleGravityBody(show_plots):
         velCurr = [y for x in velCurr for y in x]
         velArray.append(velCurr)
         posDiff = numpy.array(posCurr) - stateOut[0:3]*1000.0
-        posRow = [unitTestSim.TotalSim.CurrentNanos*1.0E-9]
+        posRow = [unitTestSim.TotalSim.getCurrentNanos()*1.0E-9]
         posRow.extend(posDiff.tolist())
         posError.append(posRow)
         assert numpy.linalg.norm(posDiff) < 1000.0
@@ -266,7 +266,7 @@ def multiBodyGravity(show_plots):
         velCurr = [y for x in velCurr for y in x]
         velArray.append(velCurr)
         posDiff = numpy.array(posCurr) - stateOut[0:3]*1000.0
-        posRow = [unitTestSim.TotalSim.CurrentNanos*1.0E-9]
+        posRow = [unitTestSim.TotalSim.getCurrentNanos()*1.0E-9]
         posRow.extend(posDiff.tolist())
         posError.append(posRow)
         assert numpy.linalg.norm(posDiff) < 1000.0

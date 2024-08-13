@@ -134,7 +134,7 @@ def flybyPointTestFunction(show_plots, initPos, initVel, dTsim, dTfilter, signOr
         dataVel.append(np.array(initVel))
         inputData.timeTag = macros.sec2nano(i * dTsim)
         inputData.r_BN_N = dataPos[i]
-        filterInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
+        filterInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dTsim) - 1)
         unitTestSim.ExecuteSimulation()
 

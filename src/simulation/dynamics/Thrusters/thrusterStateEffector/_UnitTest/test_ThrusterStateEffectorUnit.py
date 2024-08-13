@@ -271,7 +271,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     plt.close("all")
 
     # Run the simulation
-    TotalSim.ConfigureStopTime(TotalSim.TotalSim.CurrentNanos + int(thrDurationTime))
+    TotalSim.ConfigureStopTime(TotalSim.TotalSim.getCurrentNanos() + int(thrDurationTime))
     TotalSim.ExecuteSimulation()
 
     # Plot the thrust factor if needed

@@ -723,7 +723,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                     dotProd = np.dot(np.array(element), np.array(testVector1)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
-            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
 
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
@@ -762,7 +762,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                     dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
-            cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
+            cssDataInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
 
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()

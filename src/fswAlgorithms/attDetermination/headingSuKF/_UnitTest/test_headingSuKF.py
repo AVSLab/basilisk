@@ -413,7 +413,7 @@ def StateUpdateSunLine(show_plots):
             inputData.valid = 1
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
             inputData.covar_B = [0.0001**2, 0, 0, 0, 0.0001**2, 0, 0, 0, 0.0001**2]
-            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
+            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -444,7 +444,7 @@ def StateUpdateSunLine(show_plots):
             inputData.r_BN_B += np.random.normal(0, 0.001, 3)
             inputData.valid = 1
             inputData.covar_B = [0.0001**2,0,0,0,0.0001**2,0,0,0,0.0001**2]
-            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
+            opnavDataInMsg.write(inputData, unitTestSim.TotalSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+t1 +1)*0.5))
         unitTestSim.ExecuteSimulation()
 

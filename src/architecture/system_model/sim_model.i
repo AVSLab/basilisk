@@ -70,10 +70,63 @@ namespace std {
         SWIG_exception(SWIG_RuntimeError, e.what());
     } catch (const std::string& e) {
         SWIG_exception(SWIG_RuntimeError, e.c_str());
-    } 
+    }
 }
 
 %include "sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sim_model.h"
+
+%pythoncode %{
+    from Basilisk.utilities import deprecated
+%}
+
+%extend SimModel{
+    %pythoncode %{
+
+        @property
+        def CurrentNanos(self):
+            deprecated.deprecationWarn(
+                    "CurrentNanos",
+                    "2025/08/01",
+                    "Using CurrentNanos is deprecated. Use: getCurrentNanos()\n"
+            )
+            return self.getCurrentNanos()
+
+        @property
+        def NextTaskTime(self):
+            deprecated.deprecationWarn(
+                    "NextTaskTime",
+                    "2025/08/01",
+                    "Using NextTaskTime is deprecated. Use: getNextTaskTime()\n"
+            )
+            return self.getNextTaskTime()
+
+        def getNextTime(self):
+            deprecated.deprecationWarn(
+                    "getNextTime()",
+                    "2025/08/01",
+                    "Using getNextTime() is deprecated. Use: getNextTaskTime()\n"
+            )
+            return self.getNextTaskTime()
+
+        @property
+        def nextTaskTime(self):
+            deprecated.deprecationWarn(
+                    "nextTaskTime",
+                    "2025/08/01",
+                    "Using nextTaskTime is deprecated. Use: getNextTaskTime()\n"
+            )
+            return self.getNextTaskTime()
+
+        @property
+        def prevRouteTime(self):
+            deprecated.deprecationWarn(
+                    "prevRouteTime",
+                    "2025/08/01",
+                    "Using prevRouteTime is deprecated. Use: getPrevRouteTime()\n"
+            )
+            return self.getPrevRouteTime()
+    %}
+}

@@ -127,7 +127,7 @@ def test_stepperMotorController(show_plots, motorStepAngle, motorStepTime, motor
     # Create the second interruption message
     HingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
     HingedRigidBodyMessageData.theta = motorThetaRef2
-    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.CurrentNanos)
+    HingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(HingedRigidBodyMessageData, unitTestSim.TotalSim.getCurrentNanos())
     motorController.motorRefAngleInMsg.subscribeTo(HingedRigidBodyMessage)
 
     # Calculate number of steps to actuate from interrupted motor position to the second desired motor angle

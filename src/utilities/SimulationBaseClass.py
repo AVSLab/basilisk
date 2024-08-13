@@ -84,10 +84,10 @@ class EventHandlerClass:
         if self.eventActive == False:
             return(nextTime)
         nextTime = self.prevTime + self.eventRate - (self.prevTime%self.eventRate)
-        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
-            nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
+        if self.prevTime < 0 or (parentSim.TotalSim.getCurrentNanos()%self.eventRate == 0):
+            nextTime = parentSim.TotalSim.getCurrentNanos() + self.eventRate
             eventCount = self.checkCall(parentSim)
-            self.prevTime = parentSim.TotalSim.CurrentNanos
+            self.prevTime = parentSim.TotalSim.getCurrentNanos()
             if eventCount > 0:
                 self.eventActive = False
                 self.operateCall(parentSim)
@@ -199,7 +199,7 @@ class SimBaseClass:
             for task in processData.processTasks:
                 print(f"{taskColor}Task Name: {endColor}" + task.TaskPtr.TaskName +
                       ", " + taskColor + "priority: " + endColor + str(task.taskPriority) +
-                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.TaskPeriod/1.0e9) + "s")
+                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.getTaskPeriod()/1.0e9) + "s")
                 for module in task.TaskPtr.TaskModels:
                     print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.ModelTag +
                           ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
@@ -351,7 +351,7 @@ class SimBaseClass:
 
     # When this method is removed, remember to delete the 'oldSyntaxVariableLog' and
     # 'allModels' attributes (as well as any mention of them) as they are no longer needed
-    @deprecated.deprecated("2024/09/06", 
+    @deprecated.deprecated("2024/09/06",
         "Use the 'logger' function or 'PythonVariableLogger' instead of 'AddVariableForLogging'."
         " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
     )
@@ -362,18 +362,18 @@ class SimBaseClass:
         Args:
             VarName (str): The variable to log in the format "<ModelTag>.<variable_name>"
             LogPeriod (int, optional): The minimum time between logs. Defaults to 0.
-        """        
+        """
         if "." not in VarName:
             raise ValueError('The variable to log must be given in the format '
                              '"<ModelTag>.<variable_name>"')
-        
+
         modelTag = VarName.split('.')[0]
 
         # Calling eval on a pre-compiled string is faster than
         # eval-ing the string (by a large factor)
         compiledExpr = compile(VarName, "<logged-variable>", "eval")
 
-        # Find the model object that corresponds to the given tag, as well as the 
+        # Find the model object that corresponds to the given tag, as well as the
         # task where this model was added
         modelOrConfig = task = None
         for model, modelData, task in self.allModels:
@@ -388,7 +388,7 @@ class SimBaseClass:
         # expression. We pass a dictionary '{modelTag: modelOrConfig}'
         # that allows the expression to substitute the modelTag by the
         # actual model object
-        def fun(_): 
+        def fun(_):
             val = eval(compiledExpr, globals(), {modelTag: modelOrConfig})
             val = np.array(val).squeeze()
             return val
@@ -402,7 +402,7 @@ class SimBaseClass:
     def ResetTask(self, taskName):
         for Task in self.TaskList:
             if Task.Name == taskName:
-                Task.resetTask(self.TotalSim.CurrentNanos)
+                Task.resetTask(self.TotalSim.getCurrentNanos())
 
     def InitializeSimulation(self):
         """
@@ -423,7 +423,7 @@ class SimBaseClass:
         """
         self.StopTime = TimeStop
 
-    @deprecated.deprecated("2024/09/06", 
+    @deprecated.deprecated("2024/09/06",
         "Calling 'RecordLogVars' is deprecated and unnecessary."
     )
     def RecordLogVars(self):
@@ -435,28 +435,28 @@ class SimBaseClass:
         """
         self.initializeEventChecks()
 
-        nextStopTime = self.TotalSim.NextTaskTime
+        nextStopTime = self.TotalSim.getNextTaskTime()
         nextPriority = -1
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while self.TotalSim.NextTaskTime <= self.StopTime and not self.terminate:
-            if self.TotalSim.CurrentNanos >= self.nextEventTime >= 0:
+        while self.TotalSim.getNextTaskTime() <= self.StopTime and not self.terminate:
+            if self.TotalSim.getCurrentNanos() >= self.nextEventTime >= 0:
                 self.nextEventTime = self.checkEvents()
-                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
             if 0 <= self.nextEventTime < nextStopTime:
                 nextStopTime = self.nextEventTime
                 nextPriority = -1
             if self.terminate:
                 break
             self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
-            progressBar.update(self.TotalSim.NextTaskTime)
+            progressBar.update(self.TotalSim.getNextTaskTime())
             nextPriority = -1
             nextStopTime = self.StopTime
-            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.getNextTaskTime() else self.TotalSim.getNextTaskTime()
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
 
-    @deprecated.deprecated("2024/09/06", 
+    @deprecated.deprecated("2024/09/06",
         "Deprecated way to access logged variables."
         " See 'http://hanspeterschaub.info/basilisk/Learn/bskPrinciples/bskPrinciples-6.html'"
     )
@@ -464,10 +464,10 @@ class SimBaseClass:
         """
         Pull the recorded module recorded variable.  The first column is the variable recording time in
         nano-seconds, the additional column(s) are the message data columns.
-        """        
+        """
         if LogName not in self.oldSyntaxVariableLog:
             raise ValueError(f'"{LogName}" is not being logged. Check the spelling.')
-        
+
         logger = self.oldSyntaxVariableLog[LogName]
         return np.column_stack([logger.times(), logger.variable])
 
@@ -581,10 +581,10 @@ class SimBaseClass:
                 "\tscSim.AddModelToTask(simTaskName, inertial3D, 10)\n"
             )
             return modelData.createWrapper()
-    
+
         deprecated.deprecationWarn(
-            deprecationId, 
-            removalDate, 
+            deprecationId,
+            removalDate,
             "This C module has not been converted yet to the new way of defining C "
             "modules, which makes using them more intuitive. Take the time to see how "
             "the new C module '.i' file looks by checking out a default Basilisk module"

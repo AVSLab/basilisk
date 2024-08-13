@@ -154,8 +154,8 @@ def opticalFlowTest(show_plots, image, sigma_BN, maxFeatures, searchSize, maskSi
             inputAtt.sigma_BN = np.copy(attitudeUpdate).tolist()
             inputEphem.sigma_BN = np.copy(-attitudeUpdate).tolist()
             attitudes.append(attitudeUpdate.tolist())
-            attInMsg.write(inputAtt, unitTestSim.TotalSim.CurrentNanos)
-            ephemInMsg.write(inputEphem, unitTestSim.TotalSim.CurrentNanos)
+            attInMsg.write(inputAtt, unitTestSim.TotalSim.getCurrentNanos())
+            ephemInMsg.write(inputEphem, unitTestSim.TotalSim.getCurrentNanos())
         unitTestSim.ConfigureStopTime(macros.sec2nano(i * dt))
         unitTestSim.ExecuteSimulation()
 
