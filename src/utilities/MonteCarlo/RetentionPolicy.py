@@ -52,7 +52,7 @@ class RetentionPolicy:
 
     def addLogsToSim(self, simInstance):
         for variable in self.varLogList:
-            simInstance.AddVariableForLogging(variable.varName, variable.varRate,
+            simInstance.AddVariableForMultiProcessLogging(variable.varName, variable.varRate,
                                               variable.startIndex, variable.stopIndex, variable.varType)
 
     def addRetentionFunction(self, function):
@@ -117,7 +117,7 @@ class RetentionPolicy:
                     data["messages"][msgParam.msgRecName + "." + varName] = msgData
 
             for variable in retentionPolicy.varLogList:
-                data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)
+                data["variables"][variable.varName] = simInstance.GetMultiProcessLoggerVariableData(variable.varName)
 
             for func in retentionPolicy.retentionFunctions:
                 tmpModuleData = func(simInstance)
