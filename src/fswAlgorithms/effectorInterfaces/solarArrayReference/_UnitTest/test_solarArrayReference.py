@@ -40,7 +40,7 @@ from Basilisk.architecture import bskLogging
 
 
 # this python function computes the same reference angle as the tested module
-def computeRotationAngle(sigma_RN, rHat_SB_N, a1Hat_B, a2Hat_B, theta0):
+def computeSunReferenceAngle(sigma_RN, rHat_SB_N, a1Hat_B, a2Hat_B, theta0):
 
     RN = rbk.MRP2C(sigma_RN)
     rS_R = np.matmul(RN, rHat_SB_N)
@@ -58,9 +58,28 @@ def computeRotationAngle(sigma_RN, rHat_SB_N, a1Hat_B, a2Hat_B, theta0):
             theta = -theta
     else:
         theta = theta0
+    if theta-theta0 > np.pi:
+        theta -= np.pi
+    elif theta-theta0 < -np.pi:
+        theta += np.pi
 
     return theta
 
+def computeSrpReferenceAngle(sHat, hHat, thetaSunR):
+
+    s2 = sHat[1]
+    s3 = sHat[2]
+    h2 = hHat[1]
+    h3 = hHat[2]
+    Delta = 8 * ((s2*h2)**2 + (s3*h3)**2 + (s2*h3)**2 + (s3*h2)**2) + (s2*h2 + s3*h3)**2
+    t = np.arctan( (3*(s3*h3 - s2*h2) - Delta**0.5) / (4*s2*h3 + 2*s3*h2) )
+    yHat = np.array([0.0, np.cos(t), np.sin(t)])
+    if np.dot(sHat, yHat) < 0:
+        yHat = -1 * yHat
+    theta = np.arctan2(yHat[2], yHat[1])
+    f = np.dot(hHat, yHat) * (np.dot(sHat, yHat))**2
+
+    return thetaSunR - f * (theta - thetaSunR)
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -72,16 +91,15 @@ def computeRotationAngle(sigma_RN, rHat_SB_N, a1Hat_B, a2Hat_B, theta0):
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
 # The first parametrize arguments are shown last in the pytest argument list
 @pytest.mark.parametrize("rHat_SB_N", [[1, 0, 0],
-                                  [0, 0, 1]])
+                                       [0, 0, 1]])
 @pytest.mark.parametrize("sigma_BN", [[0.1, 0.2, 0.3],
                                       [0.5, 0.4, 0.3]])
 @pytest.mark.parametrize("sigma_RN", [[0.3, 0.2, 0.1],
                                       [0.9, 0.7, 0.8]])
-@pytest.mark.parametrize("bodyFrame", [0, 1])                                      
+@pytest.mark.parametrize("bodyFrame", [0, 1])
+@pytest.mark.parametrize("pointingMode", [0, 1])
 @pytest.mark.parametrize("accuracy", [1e-12])
-
-
-def test_solarArrayRotation(show_plots, rHat_SB_N, sigma_BN, sigma_RN, bodyFrame, accuracy):
+def test_solarArrayRotation(show_plots, rHat_SB_N, sigma_BN, sigma_RN, bodyFrame, pointingMode, accuracy):
     r"""
     **Validation Test Description**
 
@@ -97,26 +115,28 @@ def test_solarArrayRotation(show_plots, rHat_SB_N, sigma_BN, sigma_RN, bodyFrame
         sigma_BN[3] (double): spacecraft hub attitude with respect to the inertial frame, in MRP;
         sigma_RN[3] (double): reference frame attitude with respect to the inertial frame, in MRP;
         bodyFrame (int): 0 to calculate reference rotation angle w.r.t. reference frame, 1 to calculate it w.r.t the current spacecraft attitude;
+        pointingMode (int): 0 to compute reference angle to maximize power generation, 1 for maximum momentum dumping
         accuracy (float): absolute accuracy value used in the validation tests.
 
     **Description of Variables Being Tested**
 
-    This unit test checks the correctness of the output attitude reference message 
+    This unit test checks the correctness of the output attitude reference message
 
     - ``hingedRigidBodyRefOutMsg``
 
-    in all its parts. The reference angle ``theta`` is checked versus the value computed by a python function that computes the same angle. 
+    in all its parts. The reference angle ``theta`` is checked versus the value computed by a python function that computes the same angle.
     The reference angle derivative ``thetaDot`` is checked versus zero, as the module is run for only one Update call.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, bodyFrame, accuracy)
+    [testResults, testMessage] = solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, bodyFrame, pointingMode, accuracy)
     assert testResults < 1, testMessage
 
 
-def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, attitudeFrame, accuracy):
+def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, attitudeFrame, pointingMode, accuracy):
 
     a1Hat_B = np.array([1, 0, 0])
     a2Hat_B = np.array([0, 1, 0])
+    r_AB_B = np.array([4.5, 0, 0.5])
     BN = rbk.MRP2C(sigma_BN)
     rHat_SB_B = np.matmul(BN, rHat_SB_N)
     thetaC = 0
@@ -146,6 +166,8 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     # Initialize the test module configuration data
     solarArray.a1Hat_B = a1Hat_B
     solarArray.a2Hat_B = a2Hat_B
+    solarArray.r_AB_B = r_AB_B
+    solarArray.pointingMode = pointingMode
     solarArray.attitudeFrame = attitudeFrame
 
     # Create input attitude navigation message
@@ -161,12 +183,33 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     attRefInMsg = messaging.AttRefMsg().write(attRefInMsgData)
     solarArray.attRefInMsg.subscribeTo(attRefInMsg)
 
-    # Create input hinged rigid body body message
+    # Create input hinged rigid body message
     hingedRigidBodyInMsgData = messaging.HingedRigidBodyMsgPayload()
     hingedRigidBodyInMsgData.theta = thetaC
     hingedRigidBodyInMsgData.thetaDot = thetaDotC
     hingedRigidBodyInMsg = messaging.HingedRigidBodyMsg().write(hingedRigidBodyInMsgData)
     solarArray.hingedRigidBodyInMsg.subscribeTo(hingedRigidBodyInMsg)
+
+    if pointingMode == 1:
+        # Create input vehicle config msg
+        vehConfigInMsgData = messaging.VehicleConfigMsgPayload()
+        vehConfigInMsgData.CoM_B = [0.0, 0.0, 0.0]
+        vehConfigInMsg = messaging.VehicleConfigMsg().write(vehConfigInMsgData)
+        solarArray.vehConfigInMsg.subscribeTo(vehConfigInMsg)
+
+        # Create RW configuration message
+        rwArrayConfigInMsgData = messaging.RWArrayConfigMsgPayload()
+        rwArrayConfigInMsgData.numRW = 3
+        rwArrayConfigInMsgData.GsMatrix_B = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+        rwArrayConfigInMsgData.JsList = [0.15, 0.15, 0.15]
+        rwArrayConfigInMsg = messaging.RWArrayConfigMsg().write(rwArrayConfigInMsgData)
+        solarArray.rwConfigDataInMsg.subscribeTo(rwArrayConfigInMsg)
+
+        # Create RW speeds message
+        rwSpeedsInMsgData = messaging.RWSpeedMsgPayload()
+        rwSpeedsInMsgData.wheelSpeeds = macros.RPM * 1000.0 * np.array([1.0, 1.0, 1.0])
+        rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgData)
+        solarArray.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = solarArray.hingedRigidBodyRefOutMsg.recorder()
@@ -183,15 +226,35 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
-
     if attitudeFrame == 0:
-        thetaR = computeRotationAngle(sigma_RN, rHat_SB_N, a1Hat_B, a2Hat_B, thetaC)
+        thetaSunR = computeSunReferenceAngle(sigma_RN, rHat_SB_N, a1Hat_B, a2Hat_B, thetaC)
     else:
-        thetaR = computeRotationAngle(sigma_BN, rHat_SB_N, a1Hat_B, a2Hat_B, thetaC)
-    if thetaR-thetaC > np.pi:
-        thetaR -= np.pi
-    elif thetaR-thetaC < -np.pi:
-        thetaR += np.pi
+        thetaSunR = computeSunReferenceAngle(sigma_BN, rHat_SB_N, a1Hat_B, a2Hat_B, thetaC)
+
+    if pointingMode == 0:
+        thetaR = thetaSunR
+
+    elif pointingMode == 1:
+        H_B = np.array([0.0, 0.0, 0.0])
+        for i in range(rwArrayConfigInMsgData.numRW):
+            for j in range(3):
+                H_B[j] = (H_B[j] + rwArrayConfigInMsgData.GsMatrix_B[3*i+j]
+                                 * rwArrayConfigInMsgData.JsList[i] * rwSpeedsInMsgData.wheelSpeeds[i])
+
+        if attitudeFrame == 0:
+            BN = rbk.MRP2C(sigma_BN)
+            RN = rbk.MRP2C(sigma_RN)
+            RB = np.matmul(RN, BN.transpose())
+            sHat = np.matmul(RB, rHat_SB_B)
+            H_R = np.matmul(RB, H_B)
+            hHat = np.cross(r_AB_B, H_R)
+        else:
+            sHat = rHat_SB_B
+            hHat = np.cross(r_AB_B, H_B)
+        hHat = hHat / np.linalg.norm(hHat)
+
+        thetaR = computeSrpReferenceAngle(sHat, hHat, thetaSunR)
+
     # compare the module results to the truth values
     if not unitTestSupport.isDoubleEqual(dataLog.theta[0], thetaR, accuracy):
         testFailCount += 1
@@ -220,9 +283,10 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
 if __name__ == "__main__":
     test_solarArrayRotation(
                  False,
-                 np.array([1, 0, 0]),
-                 np.array([0.1, 0.2, 0.3]),
-                 np.array([0.3, 0.2, 0.1]),
+                 np.array([0, 0, 1]),
+                 np.array([0.5, 0.4, 0.3]),
+                 np.array([0.9, 0.7, 0.8]),
+                 1,
                  0,
-                 1e-12
+                 1e-12,
                )

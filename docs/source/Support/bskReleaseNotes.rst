@@ -71,6 +71,7 @@ Version |release|
 - Fixed use of spherical coordinate system in :ref:`magneticFieldWMM` model.
 - Added ability to run the GitHub ``pull_request.yml`` action on a select branch
 - Fixed mass depletion rate bug in :ref:`thrusterStateEffector` previously fixed at 100%
+- Enhanced :ref:`solarArrayReference` with a mode that can compute the reference for the solar arrays that maximizes SRP torque opposed to current RW net momentum.
 
 
 Version 2.3.0 (April 5, 2024)
