@@ -1,11 +1,17 @@
-import pandas as pd
+import numpy as np
+from dataclasses import dataclass
 from Basilisk.utilities import unitTestSupport
 
-
+@dataclass
 class VariableRetentionParameters:
     """
     Represents a variable's logging parameters.
     """
+    varName:str
+    varRate:int
+    startIndex:int
+    stopIndex:int
+    varType:str
 
     def __init__(self, varName, varRate, startIndex=0, stopIndex=0, varType='double'):
         self.varName = varName
@@ -14,7 +20,7 @@ class VariableRetentionParameters:
         self.stopIndex = stopIndex
         self.varType = varType
 
-
+@dataclass
 class MessageRetentionParameters:
     """
     Represents a message's logging parameters.
@@ -22,11 +28,12 @@ class MessageRetentionParameters:
         name: name of the message recorder
         retainedVars: the message variable to record
     """
+    msgRecName:str
+    retainedVars:str
 
     def __init__(self, name, retainedVars):
         self.msgRecName = name
         self.retainedVars = retainedVars
-
 
 class RetentionPolicy:
     """
@@ -54,6 +61,8 @@ class RetentionPolicy:
         for variable in self.varLogList:
             simInstance.AddVariableForMultiProcessLogging(variable.varName, variable.varRate,
                                               variable.startIndex, variable.stopIndex, variable.varType)
+
+
 
     def addRetentionFunction(self, function):
         self.retentionFunctions.append(function)
@@ -98,9 +107,8 @@ class RetentionPolicy:
                     }
                 }
         """
-        data = {"messages": {}, "variables": {}, "custom": {}}
-        df = pd.DataFrame()
-        dataFrames = []
+        data = {"messages": {}, "variables": {}, "custom": {} }
+
         for retentionPolicy in retentionPolicies:
             for msgParam in retentionPolicy.messageLogList:
 
