@@ -37,6 +37,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
 from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities.MonteCarlo._UnitTests.SimpleTestModule import SimpleTestModule
 import shutil
 import matplotlib.pyplot as plt
 import numpy as np
@@ -47,9 +48,11 @@ VERBOSE = True
 PROCESSES = 2
 
 retainedMessageName = "spacecraftStateMsg"
+retainedVariableName = "helloworldModule"
 retainedRate = macros.sec2nano(10)
 var1 = "v_BN_N"
 var2 = "r_BN_N"
+fun1 = ".GetTicker()"
 
 def myCreationFunction():
     """ function that returns a simulation """
@@ -70,9 +73,14 @@ def myCreationFunction():
     # Setup the simulation modules
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
+    scObject.ModelTag = "bskSat"
     # Add spacecraft object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
+
+    # Set up SimpleTestModule to test a getter function using AddVariableForMultiProcessLogging
+    testModule = SimpleTestModule()
+    testModule.ModelTag = "helloworldModule"
+    sim.AddModelToTask(simTaskName, testModule)
 
     # Setup Earth gravity body and attach gravity model to spacecraft
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -168,6 +176,8 @@ def test_MonteCarloSimulation(show_plots):
     # Add retention policy
     retentionPolicy = RetentionPolicy()
     retentionPolicy.addMessageLog(retainedMessageName, [var1, var2])
+    retentionPolicy.addVariableLog("helloworldModule.GetTicker()")
+    retentionPolicy.addVariableLog("bskSat.totOrbEnergy")
     retentionPolicy.setDataCallback(myDataCallback)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -180,9 +190,13 @@ def test_MonteCarloSimulation(show_plots):
 
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     assert retainedData is not None, "Retained data should be available after execution"
+
     assert "messages" in retainedData, "Retained data should retain messages"
     assert retainedMessageName + ".r_BN_N" in retainedData["messages"], "Retained messages should exist"
     assert retainedMessageName + ".v_BN_N" in retainedData["messages"], "Retained messages should exist"
+
+    assert "variables" in retainedData, "Retained data should retain variables"
+    assert retainedVariableName + ".GetTicker()" in retainedData["variables"], "Retained variables should exist"
 
     # rerun the case and it should be the same, because we dispersed random seeds
     oldOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
