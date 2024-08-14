@@ -97,7 +97,6 @@ torque exactly counters the action of the SRP torque according to:
 
 import os
 
-import Basilisk.architecture.cMsgCInterfacePy as cMsgPy
 import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk import __path__
@@ -149,10 +148,10 @@ def run(momentumManagement, cmEstimation, showPlots):
     dynProcess.addTask(scSim.CreateNewTask(dynTask, simulationTimeStepDyn))
     dynProcess.addTask(scSim.CreateNewTask(pltRefTask, simulationTimeStepPlt))
     dynProcess.addTask(scSim.CreateNewTask(fswTask, simulationTimeStepFsw))
-    
+
     #
     # setup the simulation tasks/objects
-    # 
+    #
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
@@ -168,7 +167,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     gravBodies = gravFactory.createBodies(['sun'])
     gravBodies['sun'].isCentralBody = True
     mu = gravBodies['sun'].mu
-    
+
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
     gravFactory.addBodiesTo(scObject)
 
@@ -201,7 +200,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     scObject.hub.v_CN_NInit = vN                          # m/s - v_BN_N
     scObject.hub.sigma_BNInit = [0, 0., 0.]              # MRP set to customize initial inertial attitude
     scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]      # rad/s - omega_CN_B
-    
+
     # define the simulation inertia
     I = [ 1725,    -5,   -12,
             -5,  5525,    43,
@@ -251,11 +250,11 @@ def run(momentumManagement, cmEstimation, showPlots):
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTask, sNavObject)
-    
+
     # Set up the simple mass props object
     simpleMassPropsObject = simpleMassProps.SimpleMassProps()
     scSim.AddModelToTask(dynTask, simpleMassPropsObject)
-    
+
     # Set up the rotating solar arrays
     numRSA = 2
     RSAList = []
@@ -293,7 +292,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[1].thetaDotInit = 0
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
-    
+
     # Set up the dual-gimbaled platform
     platform = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
     scSim.AddModelToTask(dynTask, platform)
@@ -317,7 +316,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     platform.dcm_S20S1 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     platform.ModelTag = "platform1"
     scObject.addStateEffector(platform)
-    
+
     # Set up the SEP thruster
     sepThruster = thrusterStateEffector.ThrusterStateEffector()
     scSim.AddModelToTask(dynTask, sepThruster)
@@ -334,14 +333,14 @@ def run(momentumManagement, cmEstimation, showPlots):
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
     scObject.addStateEffector(sepThruster)
-    
+
     # Write THR Config Msg
     THRConfig = messaging.THRConfigMsgPayload()
     THRConfig.rThrust_B = r_TF_F
     THRConfig.tHatThrust_B = tHat_F
     THRConfig.maxThrust = thruster.MaxThrust
     thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
-    
+
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
     SRP.numFacets = 10
@@ -413,7 +412,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     #
     #   setup the FSW algorithm modules
     #
-    
+
     # Set up thruster platform state module
     pltState = thrusterPlatformState.thrusterPlatformState()
     pltState.ModelTag = "thrusterPlatformState"
@@ -421,7 +420,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     pltState.r_BM_M = [0, 0, 0]
     pltState.r_FM_F = [0, 0, 0]
     scSim.AddModelToTask(fswTask, pltState, 30)
-    
+
     # Set up the CM estimator module
     r_CB_B_0 = [0.04, -0.05, 1.25]
     cmEstimator = thrustCMEstimation.ThrustCMEstimation()
@@ -442,7 +441,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I       # use the same inertia in the FSW algorithm as in the simulation
     vcMsg_I = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    
+
     # Set up platform reference module
     pltReference = thrusterPlatformReference.thrusterPlatformReference()
     pltReference.ModelTag = 'thrusterPlatformReference'
@@ -466,7 +465,7 @@ def run(momentumManagement, cmEstimation, showPlots):
         pltController[item].K = 0.5
         pltController[item].P = 3
         scSim.AddModelToTask(fswTask, pltController[item], 27)
-    
+
     # Set up the torque scheduler module
     pltTorqueScheduler = torqueScheduler.torqueScheduler()
     pltTorqueScheduler.ModelTag = "TorqueScheduler"
@@ -481,7 +480,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     sepPoint.a2Hat_B = [0, 1, 0]          # antiparallel direction to the sensitive surface
     sepPoint.hHat_N = [1, 0, 0]           # random inertial thrust direction
     scSim.AddModelToTask(fswTask, sepPoint, 25)
-    
+
     # Set up the solar array reference modules
     saReference = []
     for item in range(numRSA):
@@ -500,12 +499,12 @@ def run(momentumManagement, cmEstimation, showPlots):
         saController[item].P = 50
         saController[item].I = 3e-3
         scSim.AddModelToTask(fswTask, saController[item], 23)
-    
+
     # Set up attitude tracking error
     attError = attTrackingError.attTrackingError()
     attError.ModelTag = "AttitudeTrackingError"
     scSim.AddModelToTask(fswTask, attError, 22)
-    
+
     # Set up the MRP Feedback control module
     mrpControl = mrpFeedback.mrpFeedback()
     mrpControl.ModelTag = "mrpFeedback"
@@ -530,7 +529,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
     # This is needed because platformReference runs on its own task at a different frequency,
     # but it receives inputs and provides outputs to modules that run on the main flight software task
-    cMsgPy.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
+    messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
 
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
