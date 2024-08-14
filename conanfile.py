@@ -291,7 +291,7 @@ class BasiliskConan(ConanFile):
         print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
         if self.options.managePipEnvironment:
-            # TODO: Remove this, it's only needed when conanfile.py is handling pip installations.
+            # TODO: it's only needed when conanfile.py is handling pip installations.
             self.add_basilisk_to_sys_path()
         if self.options.buildProject:
             print(statusColor + "\nCompiling Basilisk..." + endColor)
