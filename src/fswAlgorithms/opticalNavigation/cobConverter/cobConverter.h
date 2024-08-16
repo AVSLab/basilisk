@@ -43,7 +43,7 @@ enum class PhaseAngleCorrectionMethod {NoCorrection, Lambertian, Binary};
 /*! @brief visual limb finding module */
 class CobConverter: public SysModel {
 public:
-    CobConverter(PhaseAngleCorrectionMethod method);
+    CobConverter(PhaseAngleCorrectionMethod method, double radiusObject);
     ~CobConverter();
 
     void UpdateState(uint64_t CurrentSimNanos);

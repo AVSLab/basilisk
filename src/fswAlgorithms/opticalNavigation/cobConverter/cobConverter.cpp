@@ -19,9 +19,10 @@
 
 #include "cobConverter.h"
 
-CobConverter::CobConverter(PhaseAngleCorrectionMethod method)
+CobConverter::CobConverter(PhaseAngleCorrectionMethod method, double radiusObject)
 {
     phaseAngleCorrectionMethod = method;
+    objectRadius = radiusObject;
 }
 
 CobConverter::~CobConverter() = default;
