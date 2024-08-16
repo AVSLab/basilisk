@@ -6,14 +6,9 @@ import pandas as pd
 from Basilisk.utilities import macros
 import numpy as np
 
-try:
-    import holoviews as hv
-    import datashader as ds
-    from Basilisk.utilities.dataframe_utilities import curve_per_df_component
-    from Basilisk.utilities.DS_Plot import DS_Plot
-    from holoviews.operation.datashader import datashade, dynspread, spread
-except:
-    pass
+import holoviews as hv
+from Basilisk.utilities.dataframe_utilities import curve_per_df_component
+from Basilisk.utilities.DS_Plot import DS_Plot
 
 class mcAnalysisBaseClass:
     def __init__(self):
