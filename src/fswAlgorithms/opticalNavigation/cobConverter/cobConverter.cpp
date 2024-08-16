@@ -22,6 +22,7 @@
 CobConverter::CobConverter(PhaseAngleCorrectionMethod method, double radiusObject)
 {
     phaseAngleCorrectionMethod = method;
+    assert(radiusObject > 0);
     objectRadius = radiusObject;
 }
 
@@ -204,6 +205,7 @@ void CobConverter::UpdateState(uint64_t CurrentSimNanos)
     @return void
     */
 void CobConverter::setRadius(const double radius){
+    assert(radius > 0);
     this->objectRadius = radius;
 }
 
