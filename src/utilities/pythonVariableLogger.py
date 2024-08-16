@@ -27,9 +27,10 @@ class PythonVariableLogger(sysModel.SysModel):
         timesCubed   = log.b
     """
 
+
     def __init__(
-        self, 
-        logging_functions: Dict[str, LoggingFunction], 
+        self,
+        logging_functions: Dict[str, LoggingFunction],
         min_log_period: int = 0
     ) -> None:
         """Initializer.
@@ -38,7 +39,7 @@ class PythonVariableLogger(sysModel.SysModel):
             logging_functions (Dict[str, LoggingFunction]): A dictionary where the
                 keys are the names of variables to store, and the values are functions
                 called to retrieve these variables. These functions must accept a single
-                input, an integer with the time in nanoseconds when the function is 
+                input, an integer with the time in nanoseconds when the function is
                 called.
             min_log_period (int, optional): The minimum interval between data recordings
                 Defaults to 0.
@@ -59,11 +60,11 @@ class PythonVariableLogger(sysModel.SysModel):
     def times(self):
         """Retrieve the times when the data was logged"""
         return np.array(self._times)
-    
+
     def Reset(self, CurrentSimNanos):
         self.clear()
         return super().Reset(CurrentSimNanos)
-    
+
     def UpdateState(self, CurrentSimNanos):
         if CurrentSimNanos >= self._next_update_time:
             self._times.append(CurrentSimNanos)
@@ -71,7 +72,7 @@ class PythonVariableLogger(sysModel.SysModel):
                 try:
                     val = logging_function(CurrentSimNanos)
                 except Exception as ex:
-                    self.bskLogger.bskLog(sysModel.BSK_ERROR, 
+                    self.bskLogger.bskLog(sysModel.BSK_ERROR,
                                         f"Error while logging '{variable_name}'"
                                         f" in logger '{self.ModelTag}': {ex}")
                     val = None
@@ -80,7 +81,15 @@ class PythonVariableLogger(sysModel.SysModel):
 
             self._next_update_time += self.min_log_period
         return super().UpdateState(CurrentSimNanos)
-    
+
+    def GetData(self, name:str):
+        """
+        :param name: The variable to be fetched
+        :return: Returns a 2D numpy array where the first column is variable recording time in nanoseconds
+        and the additional column(s) are the message data columns.
+        """
+        return np.column_stack([self.times(), self.__getattr__(name)])
+
     def __getattr__(self, __name: str) -> Any:
         if __name in self._variables:
             return np.array(self._variables[__name])

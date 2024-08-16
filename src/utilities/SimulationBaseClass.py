@@ -171,6 +171,7 @@ class SimBaseClass:
         self.nextEventTime = 0
         self.terminate = False
         self.oldSyntaxVariableLog = {}
+        self.multiProcessVariableLoggers = {}
         self.allModels = []
         self.eventMap = {}
         self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
@@ -399,6 +400,50 @@ class SimBaseClass:
 
         self.oldSyntaxVariableLog[VarName] = logger
 
+    def AddVariableForMultiProcessLogging(self, VarName: str, LogPeriod: int = 0, *_, **__):
+        """
+        This function should only be used when parallelizing Simulations. Use PythonVariableLogger instead for
+        single process simulations.
+        Generates a logger and adds it to the same task as the module
+        in `VarName`.
+        Args:
+            VarName (str): The variable to log in the format "<ModelTag>.<variable_name>"
+            LogPeriod (int, optional): The minimum time between logs. Defaults to 0.
+        """
+        if "." not in VarName:
+            raise ValueError('The variable to log must be given in the format '
+                             '"<ModelTag>.<variable_name>"')
+
+        modelTag = VarName.split('.')[0]
+        # Calling eval on a pre-compiled string is faster than
+        # eval-ing the string (by a large factor)
+        compiledExpr = compile(VarName, "<logged-variable>", "eval")
+
+        # Find the model object that corresponds to the given tag, as well as the
+        # task where this model was added
+        modelOrConfig = task = None
+        for model, modelData, task in self.allModels:
+            if model.ModelTag == modelTag:
+                modelOrConfig = modelData or model
+                break
+        if task is None or modelOrConfig is None:
+            raise ValueError(f"Could not find model with tag {modelTag}")
+
+        # The callback logging function 'fun' simply evaluates the given
+        # expression. We pass a dictionary '{modelTag: modelOrConfig}'
+        # that allows the expression to substitute the modelTag by the
+        # actual model object
+        def fun(_):
+            val = eval(compiledExpr, globals(), {modelTag: modelOrConfig})
+            val = np.array(val).squeeze()
+            return val
+
+        logger = PythonVariableLogger({"variable": fun}, LogPeriod)
+        logger.ModelTag = f"Logger:{VarName}"
+        self.AddModelToTask(task.Name, logger)
+
+        self.multiProcessVariableLoggers[VarName] = logger
+
     def ResetTask(self, taskName):
         for Task in self.TaskList:
             if Task.Name == taskName:
@@ -470,6 +515,19 @@ class SimBaseClass:
 
         logger = self.oldSyntaxVariableLog[LogName]
         return np.column_stack([logger.times(), logger.variable])
+
+    def GetMultiProcessLoggerVariableData(self, LogName):
+        """
+        # This function should only be used when parallelizing Simulations. Use PythonVariableLogger instead for
+        single process simulations.
+        Pull the recorded module recorded variable.  The first column is the variable recording time in
+        nano-seconds, the additional column(s) are the message data columns.
+        """
+        if LogName not in self.multiProcessVariableLoggers:
+            raise ValueError(f'"{LogName}" is not being logged. Check the spelling.')
+
+        logger = self.multiProcessVariableLoggers[LogName]
+        return logger.GetData("variable")
 
     def disableTask(self, TaskName):
         """
