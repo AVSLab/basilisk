@@ -19,53 +19,27 @@
 
 #include "sys_model_task.h"
 
-/*! The task constructor.  */
-SysModelTask::SysModelTask()
-{
-    this->TaskModels.clear();
-    this->TaskName.clear();
-    this->TaskPeriod = 1000;
-    this->NextStartTime = 0;
-    this->NextPickupTime = 0;
-    this->FirstTaskTime = 0;
-    this->taskActive = true;
-}
 /*! A construction option that allows the user to set some task parameters.
  Note that the only required argument is InputPeriod.
  @param InputPeriod The amount of nanoseconds between calls to this Task.
  @param FirstStartTime The amount of time in nanoseconds to hold a task dormant before starting.
         After this time the task is executed at integer amounts of InputPeriod again
  */
-SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
+SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
+    NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime)
 {
-    this->TaskPeriod = InputPeriod;
-    this->NextStartTime = FirstStartTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
-    this->FirstTaskTime = FirstStartTime;
-    this->taskActive = true;
-}
-
-//! The destructor.
-SysModelTask :: ~SysModelTask()
-{
 }
 
 /*! This method self-initializes all of the models that have been added to the Task.
  @return void
  */
-void SysModelTask::SelfInitTaskList()
+void SysModelTask::SelfInitTaskList() const
 {
-    std::vector<ModelPriorityPair>::iterator ModelPair;
-    SysModel* NonIt;
-
-    //! - Loop over all models and do the self init for each
-    for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-        ModelPair++)
-    {
-        NonIt = (ModelPair->ModelPtr);
+    for(auto const& modelPair : this->TaskModels) {
+        SysModel* NonIt = modelPair.ModelPtr;
         NonIt->SelfInit();
     }
-    return;
 }
 
 
@@ -76,11 +50,8 @@ void SysModelTask::SelfInitTaskList()
 */
 void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 {
-	std::vector<ModelPriorityPair>::iterator ModelPair;
-	for (ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-	ModelPair++)
-	{
-		(*ModelPair).ModelPtr->Reset(CurrentSimTime);
+	for (auto const& modelPair : this->TaskModels) {
+		modelPair.ModelPtr->Reset(CurrentSimTime);
 	}
 	this->NextStartTime = CurrentSimTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
@@ -93,14 +64,10 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
  */
 void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
 {
-    std::vector<ModelPriorityPair>::iterator ModelPair;
-    SysModel* NonIt;
-
-    //! - Loop over all of the models in the simulation and call their UpdateState
-    for(ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
-        ModelPair++)
-    {
-        NonIt = (ModelPair->ModelPtr);
+    for(auto ModelPair = this->TaskModels.begin();
+    (ModelPair != this->TaskModels.end() && this->taskActive);
+    ModelPair++) {
+        SysModel* NonIt = (ModelPair->ModelPtr);
         NonIt->UpdateState(CurrentSimNanos);
         NonIt->CallCounts += 1;
     }
@@ -116,7 +83,6 @@ void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
  */
 void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 {
-    std::vector<ModelPriorityPair>::iterator ModelPair;
     ModelPriorityPair LocalPair;
 
     //! - Set the local pair with the requested priority and mode
@@ -125,11 +91,9 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 //    SystemMessaging::GetInstance()->addModuleToProcess(NewModel->moduleID,
 //            parentProc);
     //! - Loop through the ModelPair vector and if Priority is higher than next, insert
-    for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
-        ModelPair++)
-    {
-        if(Priority > ModelPair->CurrentModelPriority)
-        {
+    for(auto ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
+        ModelPair++) {
+        if(Priority > ModelPair->CurrentModelPriority) {
             this->TaskModels.insert(ModelPair, LocalPair);
             return;
         }
@@ -146,25 +110,20 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
  */
 void SysModelTask::updatePeriod(uint64_t newPeriod)
 {
-    uint64_t newStartTime;
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
-    if(this->NextStartTime > this->TaskPeriod)
-    {
-        newStartTime = (this->NextStartTime/newPeriod)*newPeriod;
-        if(newStartTime <= (this->NextStartTime - this->TaskPeriod))
-        {
+    if(this->NextStartTime > this->TaskPeriod) {
+        uint64_t newStartTime = (this->NextStartTime/newPeriod)*newPeriod;
+        if(newStartTime <= (this->NextStartTime - this->TaskPeriod)) {
             newStartTime += newPeriod;
         }
         this->NextStartTime = newStartTime;
     }
     //! - Otherwise, we just should keep the original requested first call time for the task
-    else
-    {
+    else {
         this->NextStartTime = this->FirstTaskTime;
     }
     //! - Change the period of the task so that future calls will be based on the new period
     this->TaskPeriod = newPeriod;
-
 }
 
 uint64_t SysModelTask::getNextStartTime() const {

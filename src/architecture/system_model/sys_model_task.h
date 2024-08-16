@@ -20,10 +20,10 @@
 #ifndef _SysModelTask_HH_
 #define _SysModelTask_HH_
 
-#include <vector>
-#include <stdint.h>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
+#include <stdint.h>
+#include <vector>
 
 //! Structure used to pair a model and its requested priority
 typedef struct {
@@ -36,11 +36,11 @@ class SysModelTask
 {
 
 public:
-    SysModelTask();
-    SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method
-    ~SysModelTask();
+    SysModelTask()=default;
+    explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method
+    ~SysModelTask()=default;
     void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
-    void SelfInitTaskList();
+    void SelfInitTaskList() const;
     //void CrossInitTaskList();
     void ExecuteTaskList(uint64_t CurrentSimTime);
 	void ResetTaskList(uint64_t CurrentSimTime);
@@ -48,22 +48,22 @@ public:
 	void enableTask() {this->taskActive = true;} //!< Enables the task.  Great comment huh?
 	void disableTask() {this->taskActive = false;} //!< Disables the task.  I know.
     void updatePeriod(uint64_t newPeriod);
-    void updateParentProc(std::string parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
+    void updateParentProc(std::string const& parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
     uint64_t getNextStartTime() const;
     uint64_t getNextPickupTime() const;
     uint64_t getTaskPeriod() const;
     uint64_t getFirstTaskTime() const;
-public:
-    std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
-    std::string TaskName;  //!< -- Identifier for Task
+
+    std::vector<ModelPriorityPair> TaskModels{};  //!< -- Array that has pointers to all task sysModels
+    std::string TaskName{};  //!< -- Identifier for Task
     std::string parentProc; //!< -- Process that calls this task
-	bool taskActive;  //!< -- Flag indicating whether the Task has been disabled
-  BSKLogger bskLogger;                      //!< -- BSK Logging
+	bool taskActive=true;  //!< -- Flag indicating whether the Task has been disabled
+    BSKLogger bskLogger;                      //!< -- BSK Logging
 private:
-    uint64_t NextStartTime; //!< [ns] Next time to start task
-    uint64_t NextPickupTime; //!< [ns] Next time read Task outputs
-    uint64_t TaskPeriod; //!< [ns] Cycle rate for Task
-    uint64_t FirstTaskTime; //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
+    uint64_t NextStartTime=0; //!< [ns] Next time to start task
+    uint64_t NextPickupTime=0; //!< [ns] Next time read Task outputs
+    uint64_t TaskPeriod=100; //!< [ns] Cycle rate for Task
+    uint64_t FirstTaskTime=0; //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
 };
 
 #endif /* _SysModelTask_H_ */

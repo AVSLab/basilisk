@@ -18,14 +18,11 @@
  */
 
 #include "sim_model.h"
-#include <cstring>
 #include <iostream>
 
 void activateNewThread(void *threadData)
 {
-
-    SimThreadExecution *theThread = static_cast<SimThreadExecution*> (threadData);
-
+    auto *theThread = static_cast<SimThreadExecution*> (threadData);
     //std::cout << "Starting thread yes" << std::endl;
     theThread->postInit();
 
@@ -49,35 +46,14 @@ void activateNewThread(void *threadData)
         }
         //std::cout << "Stepping thread"<<std::endl;
         theThread->unlockParent();
-
     }
     //std::cout << "Killing thread" << std::endl;
 
 }
 
-SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos) : SimThreadExecution(){
-
-    currentThreadNanos = currentSimNanos;
-    threadID = threadIdent;
-}
-
-SimThreadExecution::~SimThreadExecution() {
-
-}
-
-SimThreadExecution::SimThreadExecution() {
-    currentThreadNanos = 0;
-    threadRunning = false;
-    terminateThread = false;
-    selfInitNow = false;
-    crossInitNow = false;
-    resetNow = false;
-    threadID = 0;
-    CurrentNanos = 0;
-    NextTaskTime = 0;
-    stopThreadNanos=0;
-    nextProcPriority = -1;
-    threadContext = nullptr;
+SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos) :
+    currentThreadNanos(currentSimNanos), threadID(threadIdent)
+{
 
 }
 
@@ -127,34 +103,27 @@ void SimThreadExecution::unlockParent() {
 void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
-    std::vector<SysProcess *>::iterator it = this->processList.begin();
+    auto it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
-    while(it!= this->processList.end() && this->threadValid())
-    {
-        SysProcess *localProc = (*it);
-        if(localProc->processEnabled())
-        {
+    while(it!= this->processList.end() && this->threadValid()) {
+        if(SysProcess *localProc = (*it); localProc->processEnabled()) {
             while(localProc->getNextTaskTime() < this->CurrentNanos ||
                   (localProc->getNextTaskTime() == this->CurrentNanos &&
-                   localProc->processPriority >= stopPri))
-            {
+                   localProc->processPriority >= stopPri)) {
                 localProc->singleStepNextTask(this->CurrentNanos);
             }
-            if(localProc->getNextTaskTime() < nextCallTime)
-            {
+            if(localProc->getNextTaskTime() < nextCallTime) {
                 nextCallTime = localProc->getNextTaskTime();
                 this->nextProcPriority = localProc->processPriority;
             }
             else if(localProc->getNextTaskTime() == nextCallTime &&
-                    localProc->processPriority > this->nextProcPriority)
-            {
+                    localProc->processPriority > this->nextProcPriority) {
                 this->nextProcPriority = localProc->processPriority;
             }
         }
         it++;
     }
     this->NextTaskTime = nextCallTime != ~((uint64_t) 0) ? nextCallTime : this->CurrentNanos;
-
 }
 
 /*! This method steps the simulation until the specified stop time and
@@ -170,8 +139,7 @@ void SimThreadExecution::StepUntilStop()
      process)*/
     int64_t inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     while(this->threadValid() && (this->NextTaskTime < stopThreadNanos || (this->NextTaskTime == stopThreadNanos &&
-                                               this->nextProcPriority >= stopThreadPriority)) )
-    {
+                                               this->nextProcPriority >= stopThreadPriority))) {
         this->SingleStepProcesses(inPri);
         inPri = stopThreadNanos == this->NextTaskTime ? stopThreadPriority : -1;
     }
@@ -182,13 +150,10 @@ void SimThreadExecution::StepUntilStop()
     TODO: Make this method move messages safely between threads
  @return void
  */
-void SimThreadExecution::moveProcessMessages() {
-    std::vector<SysProcess *>::iterator it;
-    for(it = this->processList.begin(); it != this->processList.end(); it++)
-    {
-        //(*it)->routeInterfaces(this->CurrentNanos);
+void SimThreadExecution::moveProcessMessages() const {
+    for(auto const* process : this->processList) {
+        //process->routeInterfaces(this->CurrentNanos);
     }
-
 }
 
 /*! Once threads are released for execution, this method ensures that they finish
@@ -199,8 +164,7 @@ void SimThreadExecution::moveProcessMessages() {
  */
 void SimThreadExecution::waitOnInit() {
     std::unique_lock<std::mutex> lck(this->initReadyLock);
-    while(!this->threadActive())
-    {
+    while(!this->threadActive()) {
         (this)->initHoldVar.wait(lck);
     }
 }
@@ -221,11 +185,9 @@ void SimThreadExecution::postInit() {
     be initializing their systems simultaneously.
  @return void
  */
-void SimThreadExecution::selfInitProcesses() {
-    std::vector<SysProcess *>::iterator it;
-    for(it=this->processList.begin(); it!= this->processList.end(); it++)
-    {
-        (*it)->selfInitProcess();
+void SimThreadExecution::selfInitProcesses() const {
+    for(auto const& process : this->processList) {
+        process->selfInitProcess();
     }
 }
 
@@ -233,11 +195,9 @@ void SimThreadExecution::selfInitProcesses() {
     movement has been completed.
  @return void
  */
-void SimThreadExecution::crossInitProcesses() {
-    std::vector<SysProcess *>::iterator it;
-    for(it=this->processList.begin(); it!= this->processList.end(); it++)
-    {
-        //(*it)->crossInitProcess();
+void SimThreadExecution::crossInitProcesses() const {
+    for(auto const* process : this->processList) {
+        //process->crossInitProcess();
     }
 }
 
@@ -247,13 +207,11 @@ void SimThreadExecution::crossInitProcesses() {
  @return void
  */
 void SimThreadExecution::resetProcesses() {
-    std::vector<SysProcess *>::iterator it;
     this->currentThreadNanos = 0;
     this->CurrentNanos = 0;
     this->NextTaskTime = 0;
-    for(it=this->processList.begin(); it!= this->processList.end(); it++)
-    {
-        (*it)->resetProcess(this->currentThreadNanos);
+    for(auto const& process : this->processList) {
+        process->resetProcess(this->currentThreadNanos);
     }
 }
 
@@ -299,18 +257,9 @@ void SimThreadExecution::setStopThreadNanos(uint64_t stopThreadNanos) {
  */
 SimModel::SimModel()
 {
-
-    this->threadList.clear();
-
-    //Default to single-threaded runtime
-    SimThreadExecution *newThread = new SimThreadExecution(0, 0);
+    // Default to single-threaded runtime
+    auto *newThread = new SimThreadExecution(0, 0);
     this->threadList.push_back(newThread);
-
-    this->NextTaskTime = 0;
-
-    this->CurrentNanos = 0;
-    this->NextTaskTime = 0;
-    this->nextProcPriority = -1;
 }
 
 /*! Nothing to destroy really */
@@ -327,34 +276,30 @@ SimModel::~SimModel()
  */
 void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
-    std::vector<SimThreadExecution*>::iterator thrIt;
     std::cout << std::flush;
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        (*thrIt)->moveProcessMessages();
+    for(auto const* simThread : this->threadList) {
+        simThread->moveProcessMessages();
     }
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
+    for(auto const& simThread : this->threadList)
     {
-        (*thrIt)->setStopThreadNanos(SimStopTime);
-        (*thrIt)->stopThreadPriority = stopPri;
-        if((*thrIt)->procCount() > 0) {
-            (*thrIt)->unlockThread();
+        simThread->setStopThreadNanos(SimStopTime);
+        simThread->stopThreadPriority = stopPri;
+        if(simThread->procCount() > 0) {
+            simThread->unlockThread();
         }
     }
     this->NextTaskTime = (uint64_t) ~0;
     this->CurrentNanos = (uint64_t) ~0;
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        if((*thrIt)->procCount() > 0) {
-            (*thrIt)->lockParent();
-            this->NextTaskTime = (*thrIt)->getNextTaskTime() < this->NextTaskTime ?
-                                 (*thrIt)->getNextTaskTime() : this->NextTaskTime;
-            this->CurrentNanos = (*thrIt)->getCurrentNanos() < this->CurrentNanos ?
-                                 (*thrIt)->getCurrentNanos() : this->CurrentNanos;
+    for(auto const& simThread : this->threadList) {
+        if(simThread->procCount() > 0) {
+            simThread->lockParent();
+            this->NextTaskTime = simThread->getNextTaskTime() < this->NextTaskTime ?
+                                 simThread->getNextTaskTime() : this->NextTaskTime;
+            this->CurrentNanos = simThread->getCurrentNanos() < this->CurrentNanos ?
+                                 simThread->getCurrentNanos() : this->CurrentNanos;
         }
     }
 }
-
 
 /*! This method allows the user to attach a process to the simulation for
     execution.  Note that the priority level of the process determines what
@@ -365,11 +310,8 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 */
 void SimModel::addNewProcess(SysProcess *newProc)
 {
-    std::vector<SysProcess *>::iterator it;
-    for(it = this->processList.begin(); it != this->processList.end(); it++)
-    {
-        if(newProc->processPriority > (*it)->processPriority)
-        {
+    for(auto it = this->processList.begin(); it != this->processList.end(); it++) {
+        if(newProc->processPriority > (*it)->processPriority) {
             this->processList.insert(it, newProc);
             return;
         }
@@ -384,18 +326,15 @@ void SimModel::addNewProcess(SysProcess *newProc)
  */
 void SimModel::selfInitSimulation()
 {
-    std::vector<SimThreadExecution*>::iterator thrIt;
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        (*thrIt)->selfInitNow = true;
-        (*thrIt)->unlockThread();
+    for(auto const& simThread : this->threadList) {
+        simThread->selfInitNow = true;
+        simThread->unlockThread();
     }
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++) {
-        (*thrIt)->lockParent();
+    for(auto const& simThread : this->threadList) {
+        simThread->lockParent();
     }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
-
 }
 
 /*! This method goes through all of the processes in the simulation,
@@ -403,20 +342,14 @@ void SimModel::selfInitSimulation()
  *  each task and resets them.
  @return void
  */
-void SimModel::resetInitSimulation()
+void SimModel::resetInitSimulation() const
 {
-
-
-    std::vector<SimThreadExecution*>::iterator thrIt;
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        (*thrIt)->resetNow = true;
-        (*thrIt)->unlockThread();
+    for(auto const& simThread : this->threadList) {
+        simThread->resetNow = true;
+        simThread->unlockThread();
     }
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        (*thrIt)->lockParent();
-
+    for(auto const& simThread : this->threadList) {
+        simThread->lockParent();
     }
 }
 
@@ -430,12 +363,11 @@ void SimModel::resetInitSimulation()
 void SimModel::SingleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
-    std::vector<SysProcess *>::iterator it = this->processList.begin();
+    auto it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
     while(it!= this->processList.end())
     {
-        SysProcess *localProc = (*it);
-        if(localProc->processEnabled())
+        if(SysProcess *localProc = (*it); localProc->processEnabled())
         {
             while(localProc->getNextTaskTime() < this->CurrentNanos ||
                 (localProc->getNextTaskTime() == this->CurrentNanos &&
@@ -456,9 +388,7 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
         }
         it++;
     }
-
     this->NextTaskTime = nextCallTime != ~((uint64_t) 0) ? nextCallTime : this->CurrentNanos;
-    //! - If a message has been added to logger, link the message IDs
 }
 
 /*! This method is used to reset a simulation to time 0. It sets all process and
@@ -468,19 +398,15 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
  */
 void SimModel::ResetSimulation()
 {
-    std::vector<SysProcess *>::iterator it;
-    //! - Iterate through model list and call the Task model initializer
-    for(it = this->processList.begin(); it != this->processList.end(); it++)
-    {
-        (*it)->reInitProcess();
+    for(auto const& process : this->processList) {
+        process->reInitProcess();
     }
-    std::vector<SimThreadExecution*>::iterator thrIt;
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
+    for(auto const& simThread : this->threadList)
     {
-        (*thrIt)->setNextTaskTime(0);
-        (*thrIt)->setCurrentNanos(0);
+        simThread->setNextTaskTime(0);
+        simThread->setCurrentNanos(0);
     }
 }
 
@@ -489,20 +415,13 @@ void SimModel::ResetSimulation()
     threads need to be reallocated.  Otherwise it is basically a no-op.
  @return void
  */
-void SimModel::clearProcsFromThreads() {
-
-    std::vector<SimThreadExecution*>::iterator thrIt;
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        (*thrIt)->clearProcessList();
+void SimModel::clearProcsFromThreads() const {
+    for(auto const& simThread : this->threadList) {
+        simThread->clearProcessList();
     }
-    std::vector<SysProcess *>::iterator it;
-    //! - Iterate through model list and call the Task model initializer
-    for(it = this->processList.begin(); it != this->processList.end(); it++)
-    {
-        (*it)->setProcessControlStatus(false);
+    for(auto const& process : this->processList) {
+        process->setProcessControlStatus(false);
     }
-
 }
 
 /*! This method provides an easy mechanism for allowing the user to change the
@@ -514,16 +433,13 @@ void SimModel::clearProcsFromThreads() {
  */
 void SimModel::resetThreads(uint64_t threadCount)
 {
-
     this->clearProcsFromThreads();
     this->deleteThreads();
     this->threadList.clear();
-    for(uint64_t i=0; i<threadCount; i++)
-    {
-        SimThreadExecution *newThread = new SimThreadExecution(0, 0);
+    for(uint64_t i=0; i<threadCount; i++) {
+        auto *newThread = new SimThreadExecution(0, 0);
         this->threadList.push_back(newThread);
     }
-
 }
 
 /*! This method walks through all of the child threads that have been created in
@@ -533,16 +449,14 @@ void SimModel::resetThreads(uint64_t threadCount)
  @return void
  */
 void SimModel::deleteThreads() {
-    std::vector<SimThreadExecution*>::iterator thrIt;
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        (*thrIt)->killThread();
-        (*thrIt)->unlockThread();
-        if((*thrIt)->threadContext && (*thrIt)->threadContext->joinable()) {
-            (*thrIt)->threadContext->join();
-            delete (*thrIt)->threadContext;
+    for(auto const& simThread : this->threadList) {
+        simThread->killThread();
+        simThread->unlockThread();
+        if(simThread->threadContext && simThread->threadContext->joinable()) {
+            simThread->threadContext->join();
+            delete simThread->threadContext;
         }
-        delete (*thrIt);
+        delete simThread;
     }
     this->threadList.clear();
 }
@@ -554,35 +468,28 @@ void SimModel::deleteThreads() {
  @return void
  */
 void SimModel::assignRemainingProcs() {
-
     std::vector<SysProcess *>::iterator it;
     std::vector<SimThreadExecution*>::iterator thrIt;
-    for(it=this->processList.begin(), thrIt=threadList.begin(); it!= this->processList.end(); it++, thrIt++)
-    {
-        if(thrIt == threadList.end())
-        {
+    for(it=this->processList.begin(), thrIt=threadList.begin(); it!= this->processList.end(); it++, thrIt++) {
+        if(thrIt == threadList.end()) {
             thrIt = threadList.begin();
         }
         if((*it)->getProcessControlStatus()) {
             thrIt--; //Didn't get a thread to add, so roll back
-        }
-        else
-        {
+        } else {
             (*thrIt)->addNewProcess((*it));
         }
     }
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
+    for(auto const& simThread : this->threadList) {
         it=this->processList.begin();
-        (*thrIt)->nextProcPriority = (*it)->processPriority;
-        (*thrIt)->setNextTaskTime(0);
-        (*thrIt)->setCurrentNanos(0);
-        //(*thrIt)->lockThread();
-        (*thrIt)->threadContext = new std::thread(activateNewThread, (*thrIt));
+        simThread->nextProcPriority = (*it)->processPriority;
+        simThread->setNextTaskTime(0);
+        simThread->setCurrentNanos(0);
+        //simThread->lockThread();
+        simThread->threadContext = new std::thread(activateNewThread, simThread);
     }
-    for(thrIt=this->threadList.begin(); thrIt != this->threadList.end(); thrIt++)
-    {
-        (*thrIt)->waitOnInit();
+    for(auto const& simThread : this->threadList) {
+        simThread->waitOnInit();
     }
 }
 

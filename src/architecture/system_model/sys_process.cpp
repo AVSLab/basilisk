@@ -18,38 +18,17 @@
  */
 
 #include "sys_process.h"
-#include <cstring>
 #include <iostream>
+#include <utility>
 
-/*! The task constructor.  */
-SysProcess :: SysProcess()
-{
-    this->nextTaskTime = 0;
-    this->processActive = true;
-    this->processPriority = -1;
-    this->processOnThread = false;
-    this->disableProcess();
-}
 /*! Make a process AND attach a storage bucket with the provided name. Give
     the process the same name.
     @return void
     @param messageContainer The amount of nanoseconds between calls to this Task.
  */
-SysProcess::SysProcess(std::string messageContainer)
+SysProcess::SysProcess(std::string name) : SysProcess()
 {
-    this->nextTaskTime = 0;
-    this->processActive = true;
-    this->processName = messageContainer;
-    this->prevRouteTime = 0xFF;
-    this->processOnThread = false;
-    this->disableProcess();
-}
-
-/*! The destructor does nothing.
- @return void
- */
-SysProcess::~SysProcess()
-{
+    this->processName = std::move(name);
 }
 
 /*! This method sets the nextTaskTime = 0 and calls SelfInitTaskList() for
@@ -58,18 +37,12 @@ SysProcess::~SysProcess()
  */
 void SysProcess::selfInitProcess()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
-
     this->nextTaskTime = 0;
-    //! - Iterate through model list and call the Task model self-initializer
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
-        SysModelTask *localTask = it->TaskPtr;
+    for(auto const& process : this->processTasks) {
+        SysModelTask *localTask = process.TaskPtr;
         localTask->SelfInitTaskList();
     }
 }
-
-
 
 /*! This method resets each task and associated model-set inside the process
     ensuring that all parameters go back to their default state.
@@ -78,15 +51,11 @@ void SysProcess::selfInitProcess()
 */
 void SysProcess::resetProcess(uint64_t currentTime)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
-
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
-        SysModelTask *localTask = it->TaskPtr;
-        localTask->ResetTaskList(currentTime); //! Time of reset. Models that utilize currentTime will start at this.
+    for(auto const& process : this->processTasks) {
+        SysModelTask *localTask = process.TaskPtr;
+        localTask->ResetTaskList(currentTime);
     }
     this->nextTaskTime = currentTime;
-    return;
 }
 
 /*! This method does two things: 1) resets the next task time for
@@ -96,22 +65,15 @@ void SysProcess::resetProcess(uint64_t currentTime)
 */
 void SysProcess::reInitProcess()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
-    std::vector<ModelScheduleEntry> taskPtrs;
-    std::vector<ModelScheduleEntry>::iterator taskIt;
-
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
-        SysModelTask *localTask = it->TaskPtr;
+    for(auto const& task : this->processTasks) {
+        SysModelTask *localTask = task.TaskPtr;
         localTask->ResetTask();
     }
-    taskPtrs = this->processTasks;
+    std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
     this->processTasks.clear();
-    for(taskIt = taskPtrs.begin(); taskIt != taskPtrs.end(); taskIt++)
-    {
-        this->addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
+    for(auto const& task : taskPtrs) {
+        this->addNewTask(task.TaskPtr, task.taskPriority);
     }
-    return;
 }
 
 /*! This method steps the next task up to currentNanos
@@ -120,27 +82,20 @@ void SysProcess::reInitProcess()
  */
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
-    std::vector<ModelScheduleEntry>::iterator fireIt;
-
     //! - Check to make sure that there are models to be called.
-    if(this->processTasks.begin() == this->processTasks.end())
-    {
+    if(this->processTasks.begin() == this->processTasks.end()) {
         bskLogger.bskLog(BSK_WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
-    fireIt=this->processTasks.begin();
+    auto fireIt = this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
-    {
+    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++) {
         if(it->NextTaskStart < fireIt->NextTaskStart ||
-                (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
-        {
+                (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
             fireIt = it;
         }
     }
-    if(fireIt->NextTaskStart > currentNanos)
-    {
+    if(fireIt->NextTaskStart > currentNanos) {
         this->nextTaskTime = fireIt->NextTaskStart;
         return;
     }
@@ -152,11 +107,9 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - Figure out when we are going to be called next for scheduling purposes
     fireIt=this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
-    {
+    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++) {
         if(it->NextTaskStart < fireIt->NextTaskStart ||
-           (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
-        {
+           (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority)) {
             fireIt = it;
         }
     }
@@ -188,17 +141,14 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  @return void
  @param taskCall Pointer to a struct that contains start time and task handle.
  */
-void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
+void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to find correct place
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
+    for(auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
         //! - If the next Task starts after new Task, pop it on just prior
         if(it->NextTaskStart > taskCall.NextTaskStart ||
            (it->NextTaskStart == taskCall.NextTaskStart &&
-            taskCall.taskPriority > it->taskPriority))
-        {
+            taskCall.taskPriority > it->taskPriority)) {
             this->processTasks.insert(it, taskCall);
             return;
         }
@@ -212,13 +162,10 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     and you are really only turning one on at a time.
     @return void
 */
-void SysProcess::disableAllTasks()
+void SysProcess::disableAllTasks() const
 {
-    std::vector<ModelScheduleEntry>::iterator it;
-    //! - Iterate through all of the tasks to disable them
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
-        it->TaskPtr->disableTask();
+    for(auto const& scheduleEntry : this->processTasks) {
+        scheduleEntry.TaskPtr->disableTask();
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
@@ -226,13 +173,10 @@ void SysProcess::disableAllTasks()
  inhibited but you want to turn it all on at once.
  @return void
  */
-void SysProcess::enableAllTasks()
+void SysProcess::enableAllTasks() const
 {
-    std::vector<ModelScheduleEntry>::iterator it;
-    //! - Iterate through all of the task models to disable them
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-    {
-        it->TaskPtr->enableTask();
+    for(auto const& scheduleEntry : this->processTasks) {
+        scheduleEntry.TaskPtr->enableTask();
     }
 }
 
@@ -242,17 +186,14 @@ void SysProcess::enableAllTasks()
 	@param taskName The name of the task you want to change period of
 	@param newPeriod the new number of nanoseconds you want between calls
 */
-void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
+void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPeriod)
 {
-	std::vector<ModelScheduleEntry>::iterator it;
 	//! - Iteratre through all of the task models to disable them
-	for (it = this->processTasks.begin(); it != this->processTasks.end(); it++)
-	{
-		if (it->TaskPtr->TaskName == taskName)
-		{
-			it->TaskPtr->updatePeriod(newPeriod);
-			it->NextTaskStart = it->TaskPtr->getNextStartTime();
-			it->TaskUpdatePeriod = it->TaskPtr->getTaskPeriod();
+	for (ModelScheduleEntry &scheduleEntry : this->processTasks) {
+		if (scheduleEntry.TaskPtr->TaskName == taskName) {
+			scheduleEntry.TaskPtr->updatePeriod(newPeriod);
+			scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->getNextStartTime();
+			scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->getTaskPeriod();
 			return;
 		}
 	}

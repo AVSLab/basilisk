@@ -20,16 +20,16 @@
 #ifndef _SysModel_HH_
 #define _SysModel_HH_
 
+#include <architecture/utilities/bskLogging.h>
 #include <string>
 #include <stdint.h>
-#include <architecture/utilities/bskLogging.h>
 
 /*! @brief Simulation System Model Class */
 class SysModel
 {
 public:
     SysModel();
-    SysModel(const SysModel &obj); //!< constructor definition
+    SysModel(const SysModel &obj);
 
     virtual ~SysModel(){};
 
@@ -45,7 +45,6 @@ public:
     /** Called at simulation initialization, resets module to specified time */
     virtual void Reset(uint64_t CurrentSimNanos){};
 
-public:
     std::string ModelTag = "";     //!< -- name for the algorithm to base off of
     uint64_t CallCounts = 0;       //!< -- Counts on the model being called
     uint32_t RNGSeed = 0x1badcad1; //!< -- Giving everyone a random seed for ease of MC
