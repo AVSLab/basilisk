@@ -109,7 +109,7 @@ object radius :math:`R` in meters is converted to the object radius in pixel uni
 
 .. math::
 
-    R_c = \frac{R K_x f}{\rho}
+    R_c = \frac{R K_x f}{\rho} = \frac{R d_x}{\rho}
 
 where :math:`K_x = d_x/f`, :math:`f` is the focal length in meters, and :math:`\rho` is the distance from the
 body center to the spacecraft in meters. Using the sun direction in the image plane :math:`\phi`, the COM location in
@@ -136,15 +136,15 @@ This section is to outline the steps needed to setup a center of brightness conv
 
     from Basilisk.fswAlgorithms import cobConverter
 
-#. Create an instantiation of converter class. The COM/COB correction method needs to be specified::
+#. Create an instantiation of converter class. The COM/COB correction method and object radius need to be specified::
 
-    module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_NoCorrection)  # no correction
-    # module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_Lambertian)  # Lambertian method
-    # module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_Binary)  # Binary method
+    module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_NoCorrection, R_obj)  # no correction
+    # module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_Lambertian, R_obj)  # Lambertian method
+    # module = cobConverter.CobConverter(cobConverter.PhaseAngleCorrectionMethod_Binary, R_obj)  # Binary method
 
-#. The object radius in units of meters for the phase angle correction is set by::
+#. The object radius in units of meters for the phase angle correction can be updated by::
 
-    module.setRadius(R_object)
+    module.setRadius(R_obj)
 
 #. Subscribe to the messages::
 
