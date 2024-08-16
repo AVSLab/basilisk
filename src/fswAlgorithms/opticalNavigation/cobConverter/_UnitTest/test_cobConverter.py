@@ -120,9 +120,8 @@ def cob_converter_test_function(show_plots, cameraResolution, sigma_CB, sigma_BN
     testProcessRate = macros.sec2nano(0.5)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-    module = cobConverter.CobConverter(method)
     R_object = 25. * 1e3
-    module.setRadius(R_object)
+    module = cobConverter.CobConverter(method, R_object)
     unitTestSim.AddModelToTask(unitTaskName, module, module)
 
     # Create the input messages.
