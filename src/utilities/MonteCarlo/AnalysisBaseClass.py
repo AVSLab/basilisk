@@ -9,7 +9,8 @@ import numpy as np
 try:
     import holoviews as hv
     import datashader as ds
-    from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component
+    from Basilisk.utilities.dataframe_utilities import curve_per_df_component
+    from Basilisk.utilities.DS_Plot import DS_Plot
     from holoviews.operation.datashader import datashade, dynspread, spread
 except:
     pass
