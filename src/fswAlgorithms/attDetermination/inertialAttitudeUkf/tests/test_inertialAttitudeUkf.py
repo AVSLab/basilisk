@@ -70,9 +70,8 @@ def setup_filter_data(filter_object):
     filter_object.setAlpha(0.02)
     filter_object.setBeta(2.0)
 
-    states = [0.05, 0.5, 0.1, 0.2, -0.05, 0.1]
-
-    filter_object.setInitialState([[s] for s in states])
+    filter_object.setInitialPosition([0.05, 0.5, 0.1])
+    filter_object.setInitialVelocity([0.2, -0.05, 0.1])
     filter_object.setInitialCovariance([[1, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 1, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 1, 0.0, 0.0, 0.0],
@@ -147,12 +146,12 @@ def test_propagation_kf(show_plots):
     rw_speeds = messaging.RWSpeedMsg().write(rw_speeds_data)
     intertialAttitudeFilter.rwSpeedMsg.subscribeTo(rw_speeds)
 
-    states = [0.05, 0.5, 0.1, -0.02, 0.005, -0.01]
-    intertialAttitudeFilter.setInitialState([[s] for s in states])
-    initState = intertialAttitudeFilter.getInitialState()
+    intertialAttitudeFilter.setInitialPosition([0.05, 0.5, 0.1])
+    intertialAttitudeFilter.setInitialVelocity([-0.02, 0.005, -0.01])
+    initState = [0.05, 0.5, 0.1, -0.02, 0.005, -0.01]
 
     st_1_data = messaging.STAttMsgPayload()
-    st_1_data.MRP_BdyInrtl = [initState[0][0], initState[1][0], initState[2][0]]
+    st_1_data.MRP_BdyInrtl = initState[:3]
     st_1_data.timeTag = 0
 
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
@@ -162,7 +161,7 @@ def test_propagation_kf(show_plots):
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
-    st_2_data.MRP_BdyInrtl = [initState[0][0], initState[1][0], initState[2][0]]
+    st_2_data.MRP_BdyInrtl = initState[:3]
     st_2_data.timeTag = 0
 
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
@@ -180,7 +179,9 @@ def test_propagation_kf(show_plots):
 
     sim_time = 100
     time = np.linspace(0, sim_time, sim_time+1)
-    initial_condition = np.array(intertialAttitudeFilter.getInitialState()).reshape([6, ])
+    initial_condition = np.zeros(6)
+    initial_condition[:3] = np.array(intertialAttitudeFilter.getInitialPosition()).reshape(3)
+    initial_condition[3:] = np.array(intertialAttitudeFilter.getInitialVelocity()).reshape(3)
     expected = rk4(attitude_dynamics, time, initial_condition, np.array(I).reshape([3,3]))
 
     unit_test_sim.InitializeSimulation()
@@ -262,14 +263,16 @@ def test_measurements_kf(show_plots, initial_error, method):
     rw_speeds = messaging.RWSpeedMsg().write(rw_speeds_data)
     intertialAttitudeFilter.rwSpeedMsg.subscribeTo(rw_speeds)
 
-    initState = intertialAttitudeFilter.getInitialState()
+    initial_condition = np.zeros(6)
+    initial_condition[:3] = np.array(intertialAttitudeFilter.getInitialPosition()).reshape(3)
+    initial_condition[3:] = np.array(intertialAttitudeFilter.getInitialVelocity()).reshape(3)
 
     if initial_error:
-        states = [0, 0, 0, 0, 0, 0]
-        intertialAttitudeFilter.setInitialState([[s] for s in states])
+        intertialAttitudeFilter.setInitialPosition([0, 0, 0])
+        intertialAttitudeFilter.setInitialVelocity([0, 0, 0])
 
     st_1_data = messaging.STAttMsgPayload()
-    st_1_data.MRP_BdyInrtl = [initState[0][0], initState[1][0], initState[2][0]]
+    st_1_data.MRP_BdyInrtl = initial_condition[:3]
     st_1_data.timeTag = 0
 
     star_tracker1 = inertialAttitudeUkf.StarTrackerMessage()
@@ -279,7 +282,7 @@ def test_measurements_kf(show_plots, initial_error, method):
     intertialAttitudeFilter.addStarTrackerInput(star_tracker1)
 
     st_2_data = messaging.STAttMsgPayload()
-    st_2_data.MRP_BdyInrtl = [initState[0][0], initState[1][0], initState[2][0]]
+    st_2_data.MRP_BdyInrtl = initial_condition[:3]
     st_2_data.timeTag = 0
 
     star_tracker2 = inertialAttitudeUkf.StarTrackerMessage()
@@ -308,7 +311,6 @@ def test_measurements_kf(show_plots, initial_error, method):
     max_buffer_len = 120
     substeps = 50
     time = np.linspace(0, sim_time, substeps*sim_time+1)
-    initial_condition = np.array(initState).reshape([6, ])
     expected = np.zeros([len(time), 7])
     expected[:int(len(time)/2), :] = rk4(attitude_dynamics, time[:int(len(time)/2)], initial_condition,
                                          np.array(I).reshape([3,3]))

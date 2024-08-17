@@ -25,13 +25,8 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
-%include "swig_eigen.i"
+%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
 
-%include "sys_model.i"
-%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
 %include "inertialAttitudeUkf.h"
 
 %include "architecture/msgPayloadDefCpp/FilterMsgPayload.h"
