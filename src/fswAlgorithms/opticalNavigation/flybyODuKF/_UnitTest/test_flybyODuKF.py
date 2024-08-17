@@ -64,9 +64,9 @@ def setup_filter_data(filter_object):
     orbital_elements.omega = 0.01
     orbital_elements.f = 0.1
     r, v = orbitalMotion.elem2rv(filter_object.getCentralBodyGravitationParameter(), orbital_elements)
-    states = r.tolist() + v.tolist()
 
-    filter_object.setInitialState([[s] for s in states])
+    filter_object.setInitialPosition(r)
+    filter_object.setInitialVelocity(v)
     filter_object.setInitialCovariance([[1000. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 1000. * 1E6, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 1000. * 1E6, 0.0, 0.0, 0.0],
@@ -126,7 +126,8 @@ def state_update_flyby(show_plots):
     time = np.linspace(0, int(multT1 * t1), int(multT1 * t1 // dt) + 1)
     energy = np.zeros(len(time))
     expected = np.zeros([len(time), 7])
-    expected[0, 1:] = np.array(flyby_module.getInitialState()).reshape([6, ])
+    expected[0, 1:4] = np.array(flyby_module.getInitialPosition()).reshape(3)
+    expected[0, 4:7] = np.array(flyby_module.getInitialVelocity()).reshape(3)
     energy[0] = -flyby_module.getCentralBodyGravitationParameter() / (2 * orbitalMotion.rv2elem(
         flyby_module.getCentralBodyGravitationParameter(), expected[0, 1:4], expected[0, 4:]).a)
 
@@ -246,7 +247,8 @@ def state_propagation_flyby(show_plots, dt):
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected = np.zeros([len(time), 7])
-    expected[0, 1:] = np.array(flyby_module.getInitialState()).reshape([6, ])
+    expected[0, 1:4] = np.array(flyby_module.getInitialPosition()).reshape(3)
+    expected[0, 4:7] = np.array(flyby_module.getInitialVelocity()).reshape(3)
     energy[0] = -flyby_module.getCentralBodyGravitationParameter() / (2 * orbitalMotion.rv2elem(
         flyby_module.getCentralBodyGravitationParameter(), expected[0, 1:4], expected[0, 4:]).a)
     expected = rk4(two_body_gravity, time, expected[0, 1:])
