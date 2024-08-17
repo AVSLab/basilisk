@@ -28,72 +28,40 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "fswAlgorithms/_GeneralModuleFiles/filterInterfaceDefinitions.h"
+#include "fswAlgorithms/_GeneralModuleFiles/kalmanFilter.h"
 #include "fswAlgorithms/_GeneralModuleFiles/measurementModels.h"
+#include "fswAlgorithms/_GeneralModuleFiles/stateModels.h"
 
 /*! @brief Square Root unscented Kalman Filter base class */
-class SRukfInterface: public SysModel  {
+class SRukfInterface: public KalmanFilter {
 public:
     SRukfInterface();
     ~SRukfInterface() override;
-    void Reset(uint64_t CurrentSimNanos) override;
-    void UpdateState(uint64_t CurrentSimNanos) override;
+    void Reset(uint64_t CurrentSimNanos) final;
 
-    void setAlpha(const double alpha);
+    void setAlpha(double alpha);
     double getAlpha() const;
-    void setBeta(const double beta);
+    void setBeta(double beta);
     double getBeta() const;
-    void setInitialState(const Eigen::VectorXd initialState);
-    Eigen::VectorXd getInitialState() const;
-    void setInitialCovariance(const Eigen::MatrixXd initialCovariance);
-    Eigen::MatrixXd getInitialCovariance() const;
-    void setProcessNoise(const Eigen::MatrixXd processNoise);
-    Eigen::MatrixXd getProcessNoise() const;
-    void setUnitConversionFromSItoState(const double conversion);
-    double getUnitConversionFromSItoState() const ;
-
-protected:
-    virtual void customReset(){/* virtual */};
-    virtual void customInitializeUpdate(){/* virtual */};
-    virtual void customFinalizeUpdate(){/* virtual */};
-    virtual Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt)=0;
-    /*! Read method neads to read incoming messages containing the measurements for the filter.
-     * Their information must be added to the Measurement container class, and added to the measurements vector.
-     * Each measurement must be paired with a measurement model provided in the measurementModels.h */
-    virtual void readFilterMeasurements()=0;
-    virtual void writeOutputMessages(uint64_t CurrentSimNanos)=0;
-
-    Eigen::VectorXd rk4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                const Eigen::VectorXd& X0,
-                double t0,
-                double dt) const;
-
-    std::array<std::optional<Measurement>, MAX_MEASUREMENT_NUMBER> measurements;  //!< [Measurements] All measurement containers in chronological order
-    double previousFilterTimeTag = 0; //!< [s]  Time tag for statecovar/etc
-    double unitConversion = 1; //!< [-] Scale that converts input units (SI) to a desired unit for the inner maths
-
-    size_t numberSigmaPoints=0; //!< [s]  2n+1 sigma points for convenience
-    Eigen::VectorXd state; //!< [-] State estimate for time TimeTag
-    Eigen::MatrixXd sBar; //!< [-] Time updated covariance
-    Eigen::MatrixXd covar; //!< [-] covariance
-    Eigen::VectorXd xBar; //!< [-] Current mean state estimate
-    Eigen::MatrixXd sigmaPoints; //!< [-]    sigma point matrix
-
-    Eigen::MatrixXd yMeas; //!< [-] Measurement model data
-    Eigen::VectorXd postFits; //!< [-] PostFit residuals
-    Eigen::MatrixXd cholProcessNoise; //!< [-] cholesky of Qnoise
 
 private:
-    void timeUpdate(const double updateTime);
-    void measurementUpdate(const Measurement &measurement);
-    Eigen::VectorXd computeResiduals(const Measurement &measurement);
-    Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd input) const;
-    Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd input,
-                                       const Eigen::VectorXd inputVector,
-                                       const double coefficient) const;
-    Eigen::MatrixXd backSubstitution(const Eigen::MatrixXd U, const Eigen::MatrixXd b) const;
-    Eigen::MatrixXd forwardSubstitution(const Eigen::MatrixXd L, const Eigen::MatrixXd b) const;
-    Eigen::MatrixXd choleskyDecomposition(const Eigen::MatrixXd input) const;
-    void orderMeasurementsChronologically();
+    void timeUpdate(double updateTime) final;
+    void measurementUpdate(const MeasurementModel &measurement) final;
+
+    Eigen::VectorXd computeResiduals(const MeasurementModel &measurement) final;
+    Eigen::MatrixXd qrDecompositionJustR(const Eigen::MatrixXd &input) const;
+    Eigen::MatrixXd choleskyUpDownDate(const Eigen::MatrixXd &input,
+                                       const Eigen::VectorXd &inputVector,
+                                       double coefficient) const;
+    Eigen::MatrixXd backSubstitution(const Eigen::MatrixXd &U, const Eigen::MatrixXd &b) const;
+    Eigen::MatrixXd forwardSubstitution(const Eigen::MatrixXd &L, const Eigen::MatrixXd &b) const;
+    Eigen::MatrixXd choleskyDecomposition(const Eigen::MatrixXd &input) const;
+
+    Eigen::MatrixXd sBar; //!< [-] Time updated covariance
+    std::array<StateVector, 2*MAX_STATES_VECTOR+1> sigmaPoints; //!< [-]    sigma point vector
+    int numberSigmaPoints=0;//!< [-] number of sigma points
+    Eigen::MatrixXd cholProcessNoise; //!< [-] cholesky of Qnoise
+    Eigen::MatrixXd cholMeasNoise; //!< [-] cholesky of Measurement noise
 
     double beta=0;
     double alpha=0;
@@ -102,11 +70,7 @@ private:
 
     Eigen::VectorXd wM;
     Eigen::VectorXd wC;
-
-    Eigen::MatrixXd processNoise; //!< [-] process noise matrix
-    Eigen::VectorXd stateInitial; //!< [-] State estimate for time TimeTag at previous time
     Eigen::MatrixXd sBarInitial; //!< [-] Time updated covariance at previous time
-    Eigen::MatrixXd covarInitial; //!< [-] covariance at previous time
 };
 
 #endif /* SRUKF_INTERFACE_HPP */
