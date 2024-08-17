@@ -272,7 +272,7 @@ def run(showPlots, simTime=None):
         simulationTime = macros.min2nano(simTime)
     else:
         simulationTime = macros.min2nano(600)
-        TheBSKSim.ConfigureStopTime(simulationTime)
+    TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
     t2 = time.time()
     print('Finished Execution in ', t2-t1, ' seconds. Post-processing results')
