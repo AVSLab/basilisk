@@ -19,35 +19,57 @@
 
 #include <Eigen/Core>
 #include "architecture/utilities/rigidBodyKinematics.hpp"
+#include "fswAlgorithms/_GeneralModuleFiles/stateModels.h"
 
 #ifndef FILTER_MEAS_MODELS_H
 #define FILTER_MEAS_MODELS_H
 
 /*! @brief Container class for measurement data and models */
-class Measurement{
+class MeasurementModel{
 public:
-    Measurement() = default;
+    MeasurementModel();
+    ~MeasurementModel();
 
-    std::string name = ""; //!< [-] name of measurement  type
-    size_t size = 0; //!< [-] size of observation vector
-    double timeTag = 0; //!< [-] Observation time tag
+    static Eigen::VectorXd positionStates(const StateVector &state);
+    static Eigen::VectorXd normalizedPositionStates(const StateVector &state);
+    static Eigen::VectorXd mrpStates(const StateVector &state);
+    static Eigen::VectorXd velocityStates(const StateVector &state);
+
+    Eigen::MatrixXd model(const StateVector& state) const;
+    void setMeasurementModel(const std::function<const Eigen::MatrixXd(const StateVector&)>& modelCalculator);
+    Eigen::MatrixXd computeMeasurementMatrix(const StateVector& state) const;
+    void setMeasurementMatrix(const std::function<const Eigen::MatrixXd(const StateVector&)>& hMatrixCalculator);
+
+    size_t size() const;
+    std::string getMeasurementName() const;
+    void setMeasurementName(std::string_view measurementName);
+    double getTimeTag() const;
+    void setTimeTag(double measurementTimeTag);
+    bool getValidity() const;
+    void setValidity(bool measurementValidity);
+    Eigen::VectorXd getObservation() const;
+    void setObservation(const Eigen::VectorXd& measurementObserved);
+    Eigen::MatrixXd getMeasurementNoise() const;
+    void setMeasurementNoise(const Eigen::MatrixXd& measurementNoise);
+    Eigen::VectorXd getPreFitResiduals() const;
+    void setPreFitResiduals(const Eigen::VectorXd& measurementPreFit);
+    Eigen::VectorXd getPostFitResiduals() const;
+    void setPostFitResiduals(const Eigen::VectorXd& measurementPostFit);
+
+
+private:
+    std::string name{}; //!< [-] Name of measurement  type
+    double timeTag{}; //!< [-] Observation time tag
     bool validity = false; //!< [-] Observation validity
     Eigen::VectorXd observation; //!< [-] Observation data vector
-    Eigen::MatrixXd noise; //!< [-] Constant measurement Noise
-    Eigen::MatrixXd choleskyNoise; //!< [-] cholesky of Qnoise
+    Eigen::MatrixXd noise; //!< [-] Measurement Noise
+    Eigen::MatrixXd choleskyNoise; //!< [-] Cholesky decomposition of measurement noise
     Eigen::VectorXd postFitResiduals; //!< [-] Observation post fit residuals
     Eigen::VectorXd preFitResiduals; //!< [-] Observation pre fit residuals
-     /*! Each measurement must be paired with a measurement model as a function which inputs the
-     * sigma point matrix and outputs the modeled measurement for each sigma point */
-    std::function<const Eigen::MatrixXd(const Eigen::MatrixXd)> model; //!< [-] observation measurement model
+
+    std::function<const Eigen::MatrixXd(const StateVector&)> measurementModel; //!< [-] observation measurement model
+    std::function<const Eigen::MatrixXd(const StateVector&)> measurementPartials; //!< [-] partial of measurement model wrt state
+
 };
-
-
-
-/*! @brief Measurement models used to map a state vector to a measurement */
-Eigen::VectorXd normalizedFirstThreeStates(Eigen::VectorXd state);
-Eigen::VectorXd firstThreeStates(Eigen::VectorXd state, size_t beginSlice, size_t endSlice);
-Eigen::VectorXd lastThreeStates(Eigen::VectorXd state);
-Eigen::VectorXd mrpFirstThreeStates(Eigen::VectorXd state);
 
 #endif
