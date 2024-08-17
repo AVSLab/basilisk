@@ -296,6 +296,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     target_include_directories(
       ${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file
                                                                 # (not located in src)
+    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/fswAlgorithms/_GeneralModuleFiles")
 
     target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles"
     )# Exposes framework files for easy includes
@@ -543,6 +544,7 @@ generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "sim
 generate_package_targets("${THERMAL_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
 # FSW ALGORITHMS
+find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/_GeneralModuleFiles" GENERAL_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attGuidance" ATT_GUID_TARGETS)
@@ -561,6 +563,7 @@ find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/orbitControl" ORBIT_CONT
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/transDetermination" TRANS_DET_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/vehicleConfigData" VEH_CONFIG_TARGETS)
 
+generate_package_targets("${GENERAL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_DET_TARGETS}" "fswAlgorithmsLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_GUID_TARGETS}" "attGuidanceLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
