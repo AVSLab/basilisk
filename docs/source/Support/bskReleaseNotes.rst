@@ -133,6 +133,7 @@ Version 2.3.0 (April 5, 2024)
   ``coastOptionBangDuration``. The setter and getter methods for this variable are renamed to reflect this change as
   ``setCoastOptionBangDuration()`` and  ``getCoastOptionBangDuration()``, respectively. See the module documentation
   for the current usage of this parameter and these associated methods.
+- Updated messaging files so that non-swig messages can be subscribed to, and data read out from.  Supports pybind-based messages notably.
 
 
 Version 2.2.1 (Dec. 22, 2023)
