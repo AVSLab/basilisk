@@ -75,10 +75,10 @@ def clear_all_plots():
     plt.close("all")
 
 def omegaTrack(rError, covar):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     t = rError[:, 0] * ns2min
 
@@ -105,10 +105,10 @@ def omegaTrack(rError, covar):
 
 def vecTrack(ref, track, covar):
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     rError = np.copy(ref)
     rError[:,1:] -= track[:,1:]
@@ -165,10 +165,10 @@ def vecTrack(ref, track, covar):
 
 
 def plot_faults(dataFaults, valid1, valid2):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     # for i in range(len(dataFaults[:,0])):
     #     if (dataFaults[i,0]*ns2min%1 != 0):
@@ -186,10 +186,10 @@ def plot_faults(dataFaults, valid1, valid2):
     return
 
 def diff_methods(vec1, meth1, meth2, val1, val2):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     validIdx1 = []
     for i in range(len(val1[:,0])):
@@ -238,10 +238,10 @@ def diff_methods(vec1, meth1, meth2, val1, val2):
 def diff_vectors(vec1, vec2, valid, string):
     assert len(vec1[0,:]) == len(vec2[0,:]), print("Vectors need to be the same size")
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     validIdx = []
     for i in range(len(valid[:,0])):
@@ -281,10 +281,10 @@ def diff_vectors(vec1, vec2, valid, string):
 
 def nav_percentages(truth, states, covar, valid, string):
     numStates = len(states[0:,1:])
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     validIdx = []
     for i in range(len(valid[:,0])):
@@ -357,10 +357,10 @@ def plot_orbit(r_BN):
     return
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
     plt.figure(22, figsize=(3, 1.8), facecolor='w', edgecolor='k')
     for idx in range(1, numRW):
         plt.plot(timeData, dataUsReq[:, idx],
@@ -377,10 +377,10 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
 
 
 def plot_TwoOrbits(r_BN, r_BN2):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     # fig = plt.figure(5, figsize=(2.7, 1.6), facecolor='w', edgecolor='k')
     fig = plt.figure(5, figsize=(3.5, 2.), facecolor='w', edgecolor='k')
@@ -397,10 +397,10 @@ def plot_TwoOrbits(r_BN, r_BN2):
     return
 
 def plot_attitude_error(timeLineSet, dataSigmaBR):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     plt.figure(5555, figsize=(3, 1.8), facecolor='w', edgecolor='k')
     plt.rcParams["font.size"] = "8"
@@ -419,10 +419,10 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
 
 
 def plot_rate_error(timeLineSet, dataOmegaBR):
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
     plt.figure(666666, figsize=(3, 1.8), facecolor='w', edgecolor='k')
     plt.rcParams["font.size"] = "8"
     styleList = ['-', '--', ':']
@@ -463,10 +463,10 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 
 def plotStateCovarPlot(x, Pflat):
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     numStates = len(x[0,:])-1
 
@@ -713,10 +713,10 @@ def pixelAndPos(x, r, centers, size):
 def imgProcVsExp(true, centers, radii, size):
 
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     t= true[:, 0]*ns2min
     centerline = np.ones([len(t),2])*(size/2+0.5)
@@ -800,10 +800,10 @@ def plotPostFitResiduals(Res, noise):
     MeasNoise = np.zeros([len(Res[:,0]), 3])
     Noiselast = np.zeros([3,3])
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(10.)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(10.)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     t= np.zeros(len(Res[:,0]))
     for i in range(len(Res[:,0])):
@@ -913,10 +913,10 @@ def plot_cirlces(centers, radii, validity, resolution):
         if validity[i, 1] == 1:
             circleIndx.append(i)
 
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(len(circleIndx)+1)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(len(circleIndx)+1)
     colorList = []
     for i in range(len(circleIndx)):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
 
     plt.figure(500, figsize=(3, 3), facecolor='w', edgecolor='k')
     ax = plt.gca()
@@ -944,10 +944,10 @@ def plot_limb(limbPoints, numLimb,  validity, resolution):
             indx.append(i)
 
     numBerPoints = []
-    colorsInt = len(mpl.cm.get_cmap("inferno").colors)/(len(indx)+1)
+    colorsInt = len(mpl.pyplot.get_cmap("inferno").colors)/(len(indx)+1)
     colorList = []
     for i in range(len(indx)):
-        colorList.append(mpl.cm.get_cmap("inferno").colors[int(i*colorsInt)])
+        colorList.append(mpl.pyplot.get_cmap("inferno").colors[int(i*colorsInt)])
         numBerPoints.append(numLimb[indx[i], 1])
         time.append(numLimb[indx[i], 0]*1E-9/60)
 
@@ -1008,7 +1008,7 @@ class AnimatedCircles(object):
             self.centers[i, 1:] = centers[self.circleIndx[i], 1:3]
             self.radii[i,0] = centers[self.circleIndx[i],0]
             self.radii[i, 1] = radii[self.circleIndx[i], 1]
-        self.colorList =  mpl.cm.get_cmap("inferno").colors
+        self.colorList =  mpl.pyplot.get_cmap("inferno").colors
 
 
     def setup_plot(self):
@@ -1046,10 +1046,10 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
     nstates = int(np.sqrt(len(Pflat[0,:])-1))
     mpl.rc("figure", figsize=(3, 1.8))
 
-    colorsInt = int(len(mpl.cm.get_cmap().colors)/10)
+    colorsInt = int(len(mpl.pyplot.get_cmap().colors)/10)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap().colors[i*colorsInt])
+        colorList.append(mpl.pyplot.get_cmap().colors[i*colorsInt])
 
     P = np.zeros([len(Pflat[:,0]),nstates,nstates])
     t= np.zeros(len(Pflat[:,0]))
@@ -1125,10 +1125,10 @@ def PostFitResiduals(Res, covar_B, FilterType, show_plots):
 
     mpl.rc("figure", figsize=(3, 1.8))
 
-    colorsInt = int(len(mpl.cm.get_cmap().colors) / 10)
+    colorsInt = int(len(mpl.pyplot.get_cmap().colors) / 10)
     colorList = []
     for i in range(10):
-        colorList.append(mpl.cm.get_cmap().colors[i * colorsInt])
+        colorList.append(mpl.pyplot.get_cmap().colors[i * colorsInt])
 
     MeasNoise = np.zeros([len(Res[:, 0]), 3])
     prevNoise = np.zeros(3)
@@ -1222,7 +1222,7 @@ class AnimatedLimb(object):
         for i in range(len(self.pointIndx)):
             self.centers[i, 1:] = centers[self.pointIndx[i], 1:2]
             self.points[i,0] = limbPoints[self.pointIndx[i],1:]
-        self.colorList =  mpl.cm.get_cmap("inferno").colors
+        self.colorList =  mpl.pyplot.get_cmap("inferno").colors
 
 
     def data_stream(self, i):
