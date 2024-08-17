@@ -41,6 +41,8 @@ externalTools/fswAuto/autowrapper/wraps/*
 src/moduleTemplates/autoCModule/*
 src/moduleTemplates/autoCppModule/*
 
+supportData/EphemerisData/de430.bsp
+
 *.fdb_latexmk
 *.fls
 

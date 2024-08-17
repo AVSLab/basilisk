@@ -376,6 +376,22 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 enable_testing()
 
+# Check if the large Spice files are present.  If not, download from JPL site directly
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp")
+  message(STATUS "File de430.bsp not found, downloading file:")
+  file(DOWNLOAD
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp"
+        "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp"
+        SHOW_PROGRESS
+        STATUS DOWNLOAD_RESULT_CODE
+        )
+  if(NOT DOWNLOAD_RESULT_CODE EQUAL 0)
+        message(FATAL_ERROR "Failed downloading de430.bsp! Error: ${DOWNLOAD_RESULT}.")
+  endif()
+else()
+  message(STATUS "Found Spice files.")
+endif ()
+
 # TODO: Remove the global link-libraries call
 find_package(Eigen3 CONFIG REQUIRED)
 # The following lines are necessary to prevent Xcode from issuing a warning about Eigen not being within the search
