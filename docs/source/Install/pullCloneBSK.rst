@@ -25,8 +25,6 @@ next :ref:`install <bskInstall>` and compile the code before you can run it.
 The Basilisk framework is developed using the Git version control system.  The following directions explain how to
 clone or pull a copy from the repository.
 
-#. If you have not already installed ``lfs`` (Large File Storage) system, go to `Git LFS Support Page <https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage>`__ to download and install ``lfs`` before pulling the Basilisk repo.
-
 #. If needed, create your own `github.org <http://github.com>`__ account
 
 #. Use a browser to go to the `Basilisk GitHub
@@ -35,15 +33,13 @@ clone or pull a copy from the repository.
 #. In the "Quick setup" section select the ``https`` option instead of the ssh option
 
 #. Copy the project url ``https://github.com/AVSLab/basilisk.git`` from the GitHub clone panel
-   
+
    .. image:: ../_images/static/github-clone-panel.png
       :align: center
       :scale: 40%
-		
+
 #. Clone into preferred Git client (Source Tree for instance), or just clone the repository in the directory containing Basilisk. In SourceTree, use ``clone from url``, add the Basilisk repository url and select ``develop`` branch to pull the latest code.
-   
+
    .. image:: ../_images/static/sourcetree-clone-panel.png
       :align: center
       :scale: 40%
-
-
