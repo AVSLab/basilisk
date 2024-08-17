@@ -5,7 +5,7 @@ CMakeCache.txt
 .DS_Store
 dist/
 dist3/
-.pytest_cache 
+.pytest_cache
 docs/html
 docs/build
 docs/source/Documentation/*
@@ -32,7 +32,6 @@ cmake-build*/*
 *.toc
 src/cmake-build-debug/*
 supportData/*/__init__.py
-src/utilities/MonteCarlo/__init__.py
 src/utilities/vizProtobuffer/__init__.py
 src/utilities/vizProtobuffer/vizMessage.pb.cc
 src/utilities/vizProtobuffer/vizMessage.pb.h
@@ -49,3 +48,10 @@ src/moduleTemplates/autoCppModule/*
 **/__pycache__/
 venv/
 .venv/
+
+# VSCode
+.devcontainer
+
+# Python packaging
+*.egg-info
+build/

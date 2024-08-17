@@ -50,7 +50,7 @@ from Basilisk.utilities.readAtmTable import readAtmTable
 def test_tabularAtmosphere(altitude, accuracy, useMinReach, useMaxReach):
     r"""
     **Validation Test Description**
-    
+
     TabularAtmosphere interpolates from user-provided data to compute density and temperature at the current s/c
     altitude. The unit test checks altitudes at, between, above, and below the values included in the table. This
     test uses a python helper function to provide data from EarthGRAM (see supportData\AtmosphereData\support).
@@ -80,7 +80,7 @@ def test_tabularAtmosphere(altitude, accuracy, useMinReach, useMaxReach):
     - ``densData[0]``
     - ``tempData[0]``
     """
-    
+
     # each test method requires a single assert method to be called
     [testResults, testMessage] = tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach)
     assert testResults < 1, testMessage
@@ -102,21 +102,21 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     # Construct algorithm and associated C++ container
     module = tabularAtmosphere.TabularAtmosphere()   # update with current values
     module.ModelTag = "tabularAtmosphere"            # update python name of test module
-    
+
     # define constants & load data
     r_eq = 6378136.6
-    filename = bskPath + '/../../supportData/AtmosphereData/EarthGRAMNominal.txt'
+    filename = bskPath + '/supportData/AtmosphereData/EarthGRAMNominal.txt'
     altList, rhoList, tempList = readAtmTable(filename,'EarthGRAM')
-        
+
     # assign constants & ref. data to module
     module.planetRadius = r_eq
-    module.altList = tabularAtmosphere.DoubleVector(altList)    
+    module.altList = tabularAtmosphere.DoubleVector(altList)
     module.rhoList = tabularAtmosphere.DoubleVector(rhoList)
     module.tempList = tabularAtmosphere.DoubleVector(tempList)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
-    
+
     # CHECK - env min and max
     if useMinReach:
         minReach = 50.0 * 1000
@@ -128,7 +128,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
         module.envMaxReach = maxReach
     else:
         maxReach = 5000.0 * 1000
-    
+
     #   setup orbit and simulation time
     r0 = r_eq + (altitude * 1000.0)  # meters
     oe = orbitalMotion.ClassicElements()
@@ -145,7 +145,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
     scStateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
     scStateMsg.r_BN_N = np.array(r0N)
     scInMsg = messaging.SCStatesMsg().write(scStateMsg)
-    
+
     # add spacecraft to environment model
     module.addSpacecraftToModel(scInMsg)
 
@@ -164,11 +164,11 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
-    
+
     # This pulls the actual data log from the simulation run.
     densData = dataLog.neutralDensity
     tempData = dataLog.localTemp
-    
+
     # define python function to compute truth values
     def tabAtmoComp(val, xList, yList):
         if (val < xList[0]) or (val <= minReach):
@@ -186,16 +186,16 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
                     m = (y1 - y0)/(x - x0)
                     out = y0 + (val - x0) * m
                     return out
-    
+
     # compute truth values
     trueDensity = tabAtmoComp(altitude * 1000, altList, rhoList)
     print('\nmodule density: {0:.6e}'.format(densData[0]))
     print('true density: {0:.6e}'.format(trueDensity))
-    
+
     trueTemp = tabAtmoComp(altitude * 1000, altList, tempList)
     print('\nmodule temperature: {0:.6e}'.format(tempData[0]))
     print('true temperature: {0:.6e}\n'.format(trueTemp))
-    
+
     # compare truth values to module results
     if trueDensity != 0:
         testFailCount = not unitTestSupport.isDoubleEqualRelative(densData[0], trueDensity, accuracy)
@@ -205,7 +205,7 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
         testMessage = "density computed correctly"
     else:
         testMessage = "density computed incorrectly"
-        
+
     # compare truth values to module results for temperature
     if trueTemp != 0 :    # needs checking
         testFailCount = not unitTestSupport.isDoubleEqualRelative(tempData[0], trueTemp, accuracy)
@@ -218,9 +218,9 @@ def tabularAtmosphereTestFunction(altitude, accuracy, useMinReach, useMaxReach):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + module.ModelTag)       
+        print("PASSED: " + module.ModelTag)
 
-    return [testFailCount, testMessage]         
+    return [testFailCount, testMessage]
 
 
 #

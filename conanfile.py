@@ -17,6 +17,7 @@ failColor = '\033[91m'
 warningColor = '\033[93m'
 endColor = '\033[0m'
 
+# TODO: Remove this check (deprecated, same as managePipEnvironment flag below).
 try:
     from conans import __version__ as conan_version
     if int(conan_version[0]) >= 2:
@@ -39,15 +40,24 @@ except ModuleNotFoundError:
 bskModuleOptionsBool = {
     "opNav": False,
     "vizInterface": True,
-    "buildProject": True
+    "buildProject": True,
+
+    # XXX: Set managePipEnvironment to True to keep the old behaviour of
+    # managing the `pip` environment directly (upgrading, installing Python
+    # packages, etc.). This behaviour is deprecated using the new pip-based
+    # installation, and should only be required for users who are still calling
+    # this file with `python conanfile.py ...`.
+    # TODO: Remove all managePipEnvironment behaviour!
+    "managePipEnvironment": True
 }
 bskModuleOptionsString = {
-    "autoKey": "",
-    "pathToExternalModules": ""
+    "autoKey": "",  # TODO: Remove, used only for managePipEnvironment.
+    "pathToExternalModules": "",
+    "pyLimitedAPI": "",
 }
 bskModuleOptionsFlag = {
     "clean": False,
-    "allOptPkg": False
+    "allOptPkg": False  # TODO: Remove, used only for managePipEnvironment.
 }
 
 # this statement is needed to enable Windows to print ANSI codes in the Terminal
@@ -72,15 +82,6 @@ class BasiliskConan(ConanFile):
     options = {"generator": "ANY"}
     default_options = {"generator": ""}
 
-    # ensure latest pip is installed
-    if is_running_virtual_env() or platform.system() == "Windows":
-        cmakeCmdString = 'python -m pip install --upgrade pip'
-    else:
-        cmakeCmdString = 'python3 -m pip install --upgrade pip'
-    print(statusColor + "Updating pip:" + endColor)
-    print(cmakeCmdString)
-    os.system(cmakeCmdString)
-
     for opt, value in bskModuleOptionsBool.items():
         options.update({opt: [True, False]})
         default_options.update({opt: value})
@@ -94,23 +95,6 @@ class BasiliskConan(ConanFile):
     # set cmake generator default
     generator = None
 
-    # make sure conan is configured to use the libstdc++11 by default
-    if platform.system() != "Darwin":
-        try:
-            subprocess.check_output(["conan", "profile", "new", "default", "--detect"], stdout=subprocess.DEVNULL)
-        except:
-            pass
-
-        if platform.system() == "Linux":
-            try:
-                subprocess.check_output(["conan", "profile", "update",
-                                         "settings.compiler.libcxx=libstdc++11", "default"])
-                print("\nConfiguring: " + statusColor + "use libstdc++11 by default" + endColor)
-
-            except:
-                pass
-
-    print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     try:
         # enable this flag for access revised conan modules.
@@ -119,10 +103,33 @@ class BasiliskConan(ConanFile):
         pass
 
     def system_requirements(self):
+        if not self.options.managePipEnvironment:
+            return  # Don't need to manage any pip requirements
+
+        # TODO: Remove everything here, which only runs if we have set
+        # managePipEnvironment (i.e. conanfile.py-based build).
+
+        # ensure latest pip is installed
+        if is_running_virtual_env() or platform.system() == "Windows":
+            cmakeCmdString = 'python -m pip install --upgrade pip'
+        else:
+            cmakeCmdString = 'python3 -m pip install --upgrade pip'
+        print(statusColor + "Updating pip:" + endColor)
+        print(cmakeCmdString)
+        os.system(cmakeCmdString)
+
         reqFile = open('requirements.txt', 'r')
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
+        pkgList += [
+            # XXX: Add build system requirements which were removed from requirements.txt.
+            "conan>=1.40.1, <2.00.0",
+            "parse>=1.18.0",
+            "setuptools>=64",
+            "setuptools-scm>=8.0",
+            "cmake>=3.26",
+        ]
 
         checkStr = "Required"
         if self.options.allOptPkg:
@@ -268,10 +275,24 @@ class BasiliskConan(ConanFile):
         cmake.definitions["BUILD_VIZINTERFACE"] = self.options.vizInterface
         cmake.definitions["EXTERNAL_MODULES_PATH"] = self.options.pathToExternalModules
         cmake.definitions["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+        if self.options.pyLimitedAPI != "":
+            cmake.definitions["PY_LIMITED_API"] = self.options.pyLimitedAPI
+
+        # Set the build rpath, since we don't install the targets, so that the
+        # shared libraries can find each other using relative paths.
+        cmake.definitions["CMAKE_BUILD_RPATH_USE_ORIGIN"] = True
+
+        # TODO: Set the minimum buildable MacOS version.
+        # (This might be necessary but I'm not sure yet, leaving it here for future reference.)
+        # cmake.definitions["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.13"
+
         cmake.parallel = True
         print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
-        self.add_basilisk_to_sys_path()
+        if self.options.managePipEnvironment:
+            # TODO: it's only needed when conanfile.py is handling pip installations.
+            self.add_basilisk_to_sys_path()
         if self.options.buildProject:
             print(statusColor + "\nCompiling Basilisk..." + endColor)
             start = datetime.now()
@@ -294,7 +315,7 @@ class BasiliskConan(ConanFile):
 
     def add_basilisk_to_sys_path(self):
         print("Adding Basilisk module to python\n")
-        add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "-e", "."]
+        add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "--no-build-isolation", "-e", "."]
         if not is_running_virtual_env() and self.options.autoKey != 's':
             add_basilisk_module_command.append("--user")
 
@@ -308,6 +329,25 @@ class BasiliskConan(ConanFile):
             print("This resulted in the stderr: \n%s" % err.decode())
 
 if __name__ == "__main__":
+    # make sure conan is configured to use the libstdc++11 by default
+    # XXX: This needs to be run before dispatching to Conan (i.e. outside of the
+    # ConanFile object), because it affects the configuration of the first run.
+    # (Running it here fixes https://github.com/AVSLab/basilisk/issues/525)
+    if platform.system() != "Darwin":
+        try:
+            subprocess.check_output(["conan", "profile", "new", "default", "--detect"])
+        except:
+            pass
+
+        if platform.system() == "Linux":
+            try:
+                # XXX: This fixes a linker issue due to the dual C++ ABI.
+                subprocess.check_output(["conan", "profile", "update", "settings.compiler.libcxx=libstdc++11", "default"])
+                print("\nConfiguring: " + statusColor + "use libstdc++11 by default" + endColor)
+            except:
+                pass
+    print(statusColor + "Checking conan configuration:" + endColor + " Done")
+
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
     # define the optional arguments
     parser.add_argument("--generator", help="cmake generator")
@@ -319,7 +359,7 @@ if __name__ == "__main__":
     for opt, value in bskModuleOptionsString.items():
         parser.add_argument("--" + opt, help="using string option for " + opt, default=value)
     for opt, value in bskModuleOptionsFlag.items():
-        parser.add_argument("--" + opt, help="using flag option for " + opt, action="store_true")
+        parser.add_argument("--" + opt, help="using flag option for " + opt, default=value, action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
 
     # set the build destination folder

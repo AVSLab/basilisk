@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.26)
+# cmake>=3.18 is required for FindPython3 to work. See https://github.com/pypa/manylinux/issues/613
+# cmake>=3.26 is required for FindPython3 SABIModule.
+# XXX: Some versions of CMake around 3.21~3.26 crash CMake on Windows. Reason and range is still TBD.
+
 if(POLICY CMP0078)
   cmake_policy(SET CMP0078 NEW)
 endif()
@@ -41,6 +45,42 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 
 include(bskTargetExcludeBuildOptions)
 
+# Find necessary packages
+find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
+
+if((${Python3_VERSION} VERSION_GREATER_EQUAL 3.12))
+  message(WARNING "Basilisk on Python 3.12+ (found version ${Python3_VERSION}) requires SWIG 4.2.0+.")
+  find_package(SWIG 4.2...<5 REQUIRED COMPONENTS python)
+else()
+  find_package(SWIG 4.0...<5 REQUIRED COMPONENTS python)
+endif()
+include(${SWIG_USE_FILE})
+
+# Set the Python module library to be linked to.
+set(PYTHON3_MODULE Python3::Module)
+if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
+  message(STATUS "Requested Py_LIMITED_API=${PY_LIMITED_API}")
+  message(STATUS "(Refer to https://docs.python.org/3/c-api/stable.html#limited-c-api for details)")
+
+  if(${SWIG_VERSION} VERSION_LESS 4.2)
+    message(FATAL_ERROR "Could not find a suitable version of SWIG (found ${SWIG_VERSION}, need SWIG>=4.2.0)")
+  endif()
+
+  if(NOT Python3_Development.SABIModule_FOUND)
+    message(FATAL_ERROR "Could not find the required Python3 Stable ABI module!")
+  endif()
+
+  # Set the Python API to limited mode, to provide wider ABI
+  # compatibility (basically, we can build a single Python wheel to
+  # support all future Python versions).
+  # See https://docs.python.org/3/c-api/stable.html
+  # NOTE: Swig 4.2.0 is required, see https://github.com/swig/swig/pull/2727
+  add_definitions("-DPy_LIMITED_API=${PY_LIMITED_API}")  # Support for current Python version
+
+  # Force libraries to link to the Stable ABI module instead.
+  # This especially fixes an issue with Windows, because
+  set(PYTHON3_MODULE Python3::SABIModule)
+endif()
 
 # ! create_symlinks : create symlinks to support files in source rather than keeping them in dist The function takes one
 # required argument and N optional arguments. \argn: a list of supporting file paths
@@ -122,7 +162,7 @@ function(sub_dir_list result curdir)
 endfunction(sub_dir_list)
 
 # add header search directories
-include_directories("${CMAKE_SOURCE_DIR}/../dist3/autoSource")
+include_directories("${CMAKE_BINARY_DIR}/autoSource")
 include_directories("${CMAKE_SOURCE_DIR}")
 
 function(generate_package_libraries INIT_DIRECTORY AllLibs)
@@ -162,7 +202,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
     target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
-    target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON_LIBRARIES})
+    target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON3_MODULE})
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
 
     # define build location, IDE generation specifications
@@ -198,10 +238,6 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
 endfunction(find_package_targets)
 
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
-
-  find_package(SWIG REQUIRED)
-  include(UseSWIG REQUIRED)
-  find_package(PythonLibs 3 REQUIRED)
 
   if(TARGET_LIST)
     string(REPLACE "/" ";" DirList "${TARGET_LIST}")
@@ -280,7 +316,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       include("${PARENT_DIR}/Custom.cmake")
     endif()
 
-    target_include_directories(${TARGET_NAME} PRIVATE ${PYTHON_INCLUDE_PATH}) # Exposes python.h to wrap.c(xx) file
+    target_include_directories(${TARGET_NAME} PRIVATE ${Python3_INCLUDE_DIRS}) # Exposes python.h to wrap.c(xx) file
     target_include_directories(
       ${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/${PARENT_DIR}) # Exposes module .h files to the PYTHON_wrap.c(xx) file
                                                                 # (not located in src)
@@ -328,8 +364,6 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 endfunction(generate_package_targets)
 
 # Start of main projection configuration
-find_package(PythonInterp 3 REQUIRED)
-find_package(PythonLibs 3 REQUIRED)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -583,13 +617,16 @@ find_package_targets("${CMAKE_SOURCE_DIR}/topLevelModules/pyswice" PYSWICE_TARGE
 generate_package_targets("${PYSWICE_TARGETS}" "${ARCHITECTURE_LIBS};${library_dependencies}" "topLevelModules")
 
 # PYTHON PACKAGE CONFIGURATION
-# Must make the build directories first, so that cmake can insert empty init files before build (linux specific need)
+# Must make the build directories first, so that cmake can insert empty init files before build (needed for packaging correctly)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
 
-if(WIN32 AND (PYTHON_VERSION VERSION_GREATER 3.8))
+if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n")
@@ -598,7 +635,6 @@ else()
 endif()
 
 # TODO: Iterate through all dist directories and add __init__.py's where they don't exist
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(
   GLOB_RECURSE DIST_DIRECTORIES
   LIST_DIRECTORIES true
@@ -636,7 +672,7 @@ add_custom_target(OverwriteSwig ALL)
 set(ARG utilities/overwriteSwig.py ${CMAKE_BINARY_DIR} ${SWIG_VERSION})
 add_custom_command(
   TARGET OverwriteSwig
-  COMMAND ${PYTHON_EXECUTABLE} ${ARG}
+  COMMAND ${Python3_EXECUTABLE} ${ARG}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../src/)
 if(TARGET _thrusterDynamicEffector)
   add_dependencies(OverwriteSwig _thrusterDynamicEffector _vscmgStateEffector _reactionWheelStateEffector)

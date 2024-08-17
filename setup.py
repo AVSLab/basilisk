@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -17,167 +16,131 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+
+#-------------------------------------------------------------------------------
+# XXX: Check that `setuptools` is the correct version. This check is necessary
+# because older versions of pip<22.3 can install site-package versions instead
+# of the requested package versions. But we can't check the `pip` version
+# because it runs the PEP-517 frontend, so it may not be available here at all.
+# So instead, we check it indirectly by ensuring that setuptools is an
+# acceptable version. See https://github.com/pypa/pip/issues/6264
+from importlib.metadata import version  # Supported on Python 3.8+
+setuptools_version = version('setuptools')
+if int(setuptools_version.split(".")[0]) < 64:
+    raise RuntimeError(f"setuptools>=64 is required to install Basilisk, but found setuptools=={setuptools_version}. " \
+                       f"This can happen on old versions of pip. Please upgrade with `pip install --upgrade \"pip>=22.3\"`.")
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+# Allow user to pass arguments to Conan through environment variables.
+# TODO: Should allow these to be passed in as arguments, e.g. pip's
+# `--config-settings`. However, this is not implemented by setuptools yet.
+# See https://github.com/pypa/setuptools/issues/3896
+import shlex
 import os
+USER_CONAN_ARGS = shlex.split(os.getenv("CONAN_ARGS") or "")
+#-------------------------------------------------------------------------------
+
+
 import sys
+from dataclasses import dataclass
+from setuptools import setup, Command, Extension, find_packages
+from setuptools.command.build import build, SubCommand
+from subprocess import run
+from pathlib import Path
 
-from setuptools import Command, setup
-from setuptools.command.test import test as TestCommand
-
-# Just a function to run a command
-verbose = False
-
-
-def runCommand(cmd, dir=None):
-    if not verbose:
-        cmd += "> /dev/null"
-    print("Running command:", cmd)
-
-    originalDir = os.getcwd()
-    if dir is not None:
-        os.chdir(dir)
-        os.system(cmd)
-        os.chdir(originalDir)
-    else:
-        os.system(cmd)
+HERE = Path(__file__).parent.resolve()
 
 
-class PyTestCommand(TestCommand):
-    # Here we define a command to use for testing installed Basilisk
-    # Taken from pytest documentation found https://docs.pytest.org/en/latest/goodpractices.html
-    description = "Custom test command that runs pytest"
-    user_options = [('pytest-args=', 'a', "Arguments to pass to pytest")]
+@dataclass
+class ConanExtension(Extension):
+    name: str
+    src: Path
+    build_dir: str
+    args: list[str]
 
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = ''
-
-    def run_tests(self):
-        import shlex
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(['src'] + shlex.split(self.pytest_args))
-        sys.exit(errno)
+    def __post_init__(self):
+        self.conanfile = Path(self.src)/"conanfile.py"
+        assert self.conanfile.is_file(), f"Expected to find conanfile.py file at {self.conanfile}"
 
 
-class CleanCommand(Command):
-    # Custom command to clean up
-    description = "Custom clean command that removes dist3/build and artifacts"
-    user_options = []
+class BuildConanExtCommand(Command, SubCommand):
+    def initialize_options(self) -> None:
+        self.conan_extensions = []
 
-    def initialize_options(self):
-        self.cwd = None
+    def finalize_options(self) -> None:
+        # NOTE: Leave the extensions in self.distribution.ext_modules to
+        # ensure that setuptools builds this as a "platform Wheel".
+        self.conan_extensions = [ext for ext in self.distribution.ext_modules if isinstance(ext, ConanExtension)]
 
-    def finalize_options(self):
-        self.cwd = os.getcwd()
+        # Set limited ABI compatibility by default, targeting the minimum required Python version.
+        # See https://docs.python.org/3/c-api/stable.html
+        # NOTE: Swig 4.2.0 is required, see https://github.com/swig/swig/pull/2727
+        min_version = next(self.distribution.python_requires.filter([f"3.{i}" for i in range(2, 100)])).replace(".", "")
+        bdist_wheel = self.reinitialize_command("bdist_wheel", py_limited_api=f"cp{min_version}")
+        bdist_wheel.ensure_finalized()
+        for ext in self.conan_extensions:
+            ext.args += ["--pyLimitedAPI", f"0x{min_version[0]:>02}{min_version[1]:>02}00f0"]
 
-    def run(self):
-        to_delete = [
-            "dist3/",
-            "docs/build",
-            "docs/source/_images/Scenarios"
-        ]
-        assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        runCommand('rm -rf ' + " ".join(to_delete))
+    def get_source_files(self) -> list[str]:
+        # NOTE: This is necessary for building sdists, and is populated
+        # automatically by setuptools-scm in the project build-requires.
+        return []
 
+    def run(self) -> None:
+        for ext in self.conan_extensions:
+            if self.editable_mode:
+                # TODO: Add support for installing in editable mode. For now, we
+                # assume that it has already been built (e.g. by `conanfile.py`)
+                pass
+            else:
+                # Call the underlying Conanfile with the desired arguments.
+                run([sys.executable, ext.conanfile] + ext.args, check=True)
 
-class CMakeBuildCommand(Command):
-    # Custom command to build with cmake and xcode
-    description = "Custom build command that runs CMake"
-    user_options = []
+            # Find packages built by this extension and add them to the Distribution.
+            for pkg in find_packages(ext.build_dir):
+                pkg_dir = Path(ext.build_dir, *pkg.split("."))
+                self.distribution.packages.append(pkg)
+                self.distribution.package_dir[pkg] = os.path.relpath(pkg_dir, start=HERE)
 
-    def initialize_options(self):
-        self.cwd = None
+        if self.editable_mode and len(self.distribution.packages) == 0:
+            raise Exception("Tried to install in editable mode, but packages have not been prepared yet! " \
+                            "Please install via `python conanfile.py` instead!")
 
-    def finalize_options(self):
-        self.cwd = os.getcwd()
-
-    def run(self):
-        assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print("Making distribution directory")
-        runCommand("mkdir dist3/")
-        print("Executing CMake build into dist3/ directory")
-        # if we switch to using mostly setup.py for the build, install will not be done by CMake
-        print("This also will install Basilisk locally...")
-        runCommand("cmake -G Xcode ../src/", "dist3/")
-
-
-class XCodeBuildCommand(Command):
-    description = "Custom build command that runs XCode"
-    user_options = []
-
-    def initialize_options(self):
-        self.cwd = None
-
-    def finalize_options(self):
-        self.cwd = os.getcwd()
-
-    def run(self):
-        assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print("Executing XCode build into dist3/ directory")
-        runCommand("xcodebuild -project dist3/basilisk.xcodeproj -target ALL_BUILD")
+        # Refresh `build_py` to ensure it can find the newly generated packages.
+        build_py = self.reinitialize_command("build_py")
+        build_py.ensure_finalized()
 
 
-# Lint command
-class LintCommand(Command):
-    description = "Custom lint command that displays pep8 violations"
-    user_options = []
+# XXX: Forcibly override build to run ConanExtension builder before build_py.
+build.sub_commands = [
+    ('build_ext', build.has_ext_modules),
+    ('build_py', build.has_pure_modules)
+]
 
-    def initialize_options(self):
-        self.cwd = None
-
-    def finalize_options(self):
-        self.cwd = os.getcwd()
-
-    def run(self):
-        assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print("Executing linter")
-        runCommand("flake8 src/")
-
-
-class BuildDocsCommand(Command):
-    # Custom command to build with cmake and xcode
-
-    description = "Custom build command to build the documentation with doxygen"
-    user_options = []
-
-    def initialize_options(self):
-        self.cwd = None
-
-    def finalize_options(self):
-        self.cwd = os.getcwd()
-
-    def run(self):
-        assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print("Building documentation")
-        runCommand("make html", "docs/source")
-
-package_dir = "dist3"
-
-f = open('docs/source/bskVersion.txt', 'r')
-bskVersion = f.read().strip()
 
 setup(
-    name='Basilisk',
-    version=bskVersion,
-    description="Astrodynamics Simulation Library",
-    packages=['Basilisk', ],
-    license=open('./LICENSE').read(),
-    long_description=open('./README.md').read(),
-    url='https://hanspeterschaub.info/basilisk/',
-    package_dir={'': package_dir},
-    # install_requires=[
-    #     'matplotlib',
-    #     'numpy',
-    #     'pandas'
-    # ],
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'flake8'],
-    cmdclass={
-        'clean': CleanCommand,
-        'xcode': XCodeBuildCommand,
-        'cmake': CMakeBuildCommand,
-        'test': PyTestCommand,
-        'docs': BuildDocsCommand,
-        'lint': LintCommand
-    }
+    ext_modules=[
+        # XXX: Build as an "extension" to force "has_ext_modules" to be True,
+        # and build this as a "platform wheel" instead of a "pure Python wheel".
+        ConanExtension(
+            name="Basilisk",
+            build_dir="dist3",  # XXX: Hard-coded in conanfile, leave this as is!
+            src=HERE,
+            args=[
+                # (defaults)
+                "--buildType", "Release",
+                "--buildProject", "True",
+                "--clean",
+                # (user arguments)
+                *USER_CONAN_ARGS,
+                # (overrides)
+                "--managePipEnvironment", "False"  # Force conanfile to leave pip alone.
+            ]
+        )
+    ],
+
+    # XXX: Override build_ext with ConanExtension builder.
+    cmdclass={'build_ext': BuildConanExtCommand},
 )
