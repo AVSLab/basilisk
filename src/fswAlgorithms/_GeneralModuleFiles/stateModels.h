@@ -44,34 +44,49 @@ class ConsiderState : public State{};
 /*! @brief State models used to map a state vector to a measurement */
 class StateVector{
 private:
-    PositionState position;
-    VelocityState velocity;
-    AccelerationState acceleration;
-    BiasState bias;
-    ConsiderState considerParameters;
+    std::optional<PositionState> position;
+    std::optional<VelocityState> velocity;
+    std::optional<AccelerationState> acceleration;
+    std::optional<BiasState> bias;
+    std::optional<ConsiderState> considerParameters;
     Eigen::MatrixXd stm;
 
 public:
     StateVector();
     ~StateVector();
 
-    size_t size() const;
+    long size() const;
     StateVector add(const StateVector &vector) const;
+    StateVector addVector(const Eigen::VectorXd &vector) const;
     StateVector scale(const double scalar) const;
+    Eigen::VectorXd returnValues() const;
 
-    void setPositionStates(const Eigen::VectorXd& positionComponents);
+    void setPosition(const PositionState &position);
+    PositionState getPosition() const;
     Eigen::VectorXd getPositionStates() const;
-    void setVelocityStates(const Eigen::VectorXd& velocityComponents);
+    bool hasPosition() const;
+    void setVelocity(const VelocityState &velocity);
+    VelocityState getVelocity() const;
     Eigen::VectorXd getVelocityStates() const;
-    void setAccelerationStates(const Eigen::VectorXd& accelerationComponents);
+    bool hasVelocity() const;
+    void setAcceleration(const AccelerationState &acceleration);
+    AccelerationState getAcceleration() const;
     Eigen::VectorXd getAccelerationStates() const;
-    void setBiasStates(const Eigen::VectorXd& biasComponents);
+    bool hasAcceleration() const;
+    void setBias(const BiasState &bias);
+    BiasState getBias() const;
     Eigen::VectorXd getBiasStates() const;
-    void setConsiderStates(const Eigen::VectorXd& considerComponents);
+    bool hasBias() const;
+    void setConsider(const ConsiderState &consider);
+    ConsiderState getConsider() const;
     Eigen::VectorXd getConsiderStates() const;
+    bool hasConsider() const;
 
-    void attachSTM(const Eigen::MatrixXd& stm);
-    Eigen::MatrixXd detatchSTM() const;
+    void attachStm(const Eigen::MatrixXd& stm);
+    Eigen::MatrixXd detachStm() const;
+
+
+
 };
 
 #endif
