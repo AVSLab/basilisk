@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -48,12 +48,11 @@ private:
     void readFilterMeasurements() override;
     void customFinalizeUpdate() override;
     void writeOutputMessages(uint64_t CurrentSimNanos) override;
-    Eigen::VectorXd propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt) override;
+    static StateVector stateDerivative(double t, const StateVector &state);
 
     int filterMeasurement = 0;   //!< [-] Number of measurements of different types being read
     int numActiveCss = 0;        //!< [-] Number of currently active CSS sensors
     double sensorUseThresh = 0;  //!< Threshold below which we discount sensors
-    double measNoiseScaling = 1; //!< [s] Scale factor that can be applied on the measurement noise to over/under weight
     double cssMeasNoiseStd = 0;  //!< [-] CSS measurement noise std
     double gyroMeasNoiseStd = 0; //!< [rad/s] rate gyro measurement noise std
     CSSConfigMsgPayload cssConfigInputBuffer;
@@ -68,12 +67,12 @@ public:
     Message<FilterResidualsMsgPayload>    filterGyroResOutMsg;
     Message<FilterResidualsMsgPayload>    filterCssResOutMsg;
 
-    void setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd);
-    void setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseStd);
-    void setMeasurementNoiseScale(const double measurementNoiseScale);
+    void setCssMeasurementNoiseStd(double cssMeasurementNoiseStd);
+    void setGyroMeasurementNoiseStd(double gyroMeasurementNoiseStd);
     double getCssMeasurementNoiseStd() const;
     double getGyroMeasurementNoiseStd() const;
-    double getMeasurementNoiseScale() const;
+    void setSensorThreshold(double threshold);
+    double getSensorThreshold() const;
 
 };
 

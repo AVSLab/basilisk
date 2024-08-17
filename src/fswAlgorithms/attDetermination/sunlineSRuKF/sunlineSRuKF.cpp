@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -26,6 +26,7 @@ SunlineSRuKF::~SunlineSRuKF() = default;
 /*! Initialize C-wrapped output messages */
 void SunlineSRuKF::SelfInit(){
     NavAttMsg_C_init(&this->navAttOutMsgC);
+    this->setFilterDynamics(SunlineSRuKF::stateDerivative);
 }
 
 /*! Reset the sunline filter to an initial state and
@@ -48,7 +49,9 @@ void SunlineSRuKF::customReset() {
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void SunlineSRuKF::customFinalizeUpdate() {
-    this->state.head(3).normalize();
+    PositionState heading;
+    heading.setValues(this->state.getPositionStates().normalized());
+    this->state.setPosition(heading);
 }
 
 /*! Read the message containing the measurement data.
@@ -62,39 +65,41 @@ void SunlineSRuKF::writeOutputMessages(uint64_t CurrentSimNanos) {
     FilterResidualsMsgPayload filterCssResMsgBuffer = this->filterCssResOutMsg.zeroMsgPayload;
 
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-    eigenMatrixXd2CArray(this->state.head(3), navAttOutMsgBuffer.vehSunPntBdy);
+    eigenMatrixXd2CArray(this->state.getPositionStates(), navAttOutMsgBuffer.vehSunPntBdy);
 
     /*! - Populate the filter states output buffer and write the output message*/
     filterMsgBuffer.timeTag = this->previousFilterTimeTag;
-    eigenMatrixXd2CArray(1/this->unitConversion*this->state, filterMsgBuffer.state);
-    eigenMatrixXd2CArray(1/this->unitConversion*this->xBar, filterMsgBuffer.stateError);
-    eigenMatrixXd2CArray(1/this->unitConversion/this->unitConversion*this->covar, filterMsgBuffer.covar);
+    eigenMatrixXd2CArray(this->state.returnValues(), filterMsgBuffer.state);
+    eigenMatrixXd2CArray(this->xBar.returnValues(), filterMsgBuffer.stateError);
+    eigenMatrixXd2CArray(this->covar, filterMsgBuffer.covar);
     filterMsgBuffer.numberOfStates = this->state.size();
 
-    auto optionalMeasurement = this->measurements[0];
-    if (optionalMeasurement.has_value() && optionalMeasurement->name == "gyro") {
-        auto measurement = Measurement();
-        measurement = optionalMeasurement.value();
-        filterGyroResMsgBuffer.valid = true;
-        filterGyroResMsgBuffer.numberOfObservations = 1;
-        filterGyroResMsgBuffer.sizeOfObservations = measurement.observation.size();
-        eigenMatrixXd2CArray(measurement.observation, &filterGyroResMsgBuffer.observation[0]);
-        eigenMatrixXd2CArray(measurement.postFitResiduals, &filterGyroResMsgBuffer.postFits[0]);
-        eigenMatrixXd2CArray(measurement.preFitResiduals, &filterGyroResMsgBuffer.preFits[0]);
-        this->measurements[0].reset();
+    int i = 0;
+    for(auto optionalMeasurement : this->measurements){
+        if (optionalMeasurement.has_value() && optionalMeasurement->getMeasurementName() == "gyro") {
+            auto measurement = MeasurementModel();
+            measurement = optionalMeasurement.value();
+            filterGyroResMsgBuffer.valid = true;
+            filterGyroResMsgBuffer.numberOfObservations = 1;
+            filterGyroResMsgBuffer.sizeOfObservations = measurement.size();
+            eigenMatrixXd2CArray(measurement.getObservation(), &filterGyroResMsgBuffer.observation[0]);
+            eigenMatrixXd2CArray(measurement.getPostFitResiduals(), &filterGyroResMsgBuffer.postFits[0]);
+            eigenMatrixXd2CArray(measurement.getPreFitResiduals(), &filterGyroResMsgBuffer.preFits[0]);
+        }
+        else if (optionalMeasurement.has_value() && optionalMeasurement->getMeasurementName() == "css") {
+            auto measurement = MeasurementModel();
+            measurement = optionalMeasurement.value();
+            filterCssResMsgBuffer.valid = true;
+            filterCssResMsgBuffer.numberOfObservations = 1;
+            filterCssResMsgBuffer.sizeOfObservations = measurement.size();
+            eigenMatrixXd2CArray(measurement.getObservation(), &filterCssResMsgBuffer.observation[0]);
+            eigenMatrixXd2CArray(measurement.getPostFitResiduals(), &filterCssResMsgBuffer.postFits[0]);
+            eigenMatrixXd2CArray(measurement.getPreFitResiduals(), &filterCssResMsgBuffer.preFits[0]);
+        }
+        this->measurements[i].reset();
+        i += 1;
     }
-    optionalMeasurement = this->measurements[1];
-    if (optionalMeasurement.has_value() && optionalMeasurement->name == "css") {
-        auto measurement = Measurement();
-        measurement = optionalMeasurement.value();
-        filterCssResMsgBuffer.valid = true;
-        filterCssResMsgBuffer.numberOfObservations = 1;
-        filterCssResMsgBuffer.sizeOfObservations = measurement.observation.size();
-        eigenMatrixXd2CArray(measurement.observation, &filterCssResMsgBuffer.observation[0]);
-        eigenMatrixXd2CArray(measurement.postFitResiduals, &filterCssResMsgBuffer.postFits[0]);
-        eigenMatrixXd2CArray(measurement.preFitResiduals, &filterCssResMsgBuffer.preFits[0]);
-        this->measurements[1].reset();
-    }
+
 
     this->navAttOutMsg.write(&navAttOutMsgBuffer, this->moduleID, CurrentSimNanos);
     NavAttMsg_C_write(&navAttOutMsgBuffer, &this->navAttOutMsgC, this->moduleID, CurrentSimNanos);
@@ -110,18 +115,16 @@ void SunlineSRuKF::readGyroMeasurements() {
     /*! Read rate gyro measurements */
     NavAttMsgPayload navAttInputBuffer = this->navAttInMsg();
 
-    auto gyroMeasurements = Measurement();
-    gyroMeasurements.validity = true;
-    gyroMeasurements.name = "gyro";
-    gyroMeasurements.size = 3;
-    gyroMeasurements.timeTag = navAttInputBuffer.timeTag;
-    gyroMeasurements.observation = cArray2EigenVector3d(navAttInputBuffer.omega_BN_B);
-    gyroMeasurements.model = lastThreeStates;
-    gyroMeasurements.noise.resize(3, 3);
-    Eigen::MatrixXd I = Eigen::Matrix3d::Identity();
-    gyroMeasurements.noise = pow(this->measNoiseScaling * this->gyroMeasNoiseStd, 2) * I;
+    if (navAttInputBuffer.timeTag >= this->previousFilterTimeTag){
+        auto gyroMeasurements = MeasurementModel();
+        gyroMeasurements.setValidity(true);
+        gyroMeasurements.setMeasurementName("gyro");
+        gyroMeasurements.setTimeTag(navAttInputBuffer.timeTag);
+        gyroMeasurements.setObservation(cArray2EigenVector3d(navAttInputBuffer.omega_BN_B));
+        gyroMeasurements.setMeasurementModel(MeasurementModel::velocityStates);
+        Eigen::MatrixXd I = Eigen::Matrix3d::Identity();
+        gyroMeasurements.setMeasurementNoise(this->measNoiseScaling * pow(this->gyroMeasNoiseStd, 2) * I);
 
-    if (gyroMeasurements.validity && gyroMeasurements.timeTag >= this->previousFilterTimeTag){
         /*! - Read measurement and cholesky decomposition its noise*/
         this->measurements[this->filterMeasurement] = gyroMeasurements;
         this->filterMeasurement += 1;
@@ -134,14 +137,15 @@ void SunlineSRuKF::readGyroMeasurements() {
 void SunlineSRuKF::readCssMeasurements() {
     /*! Read css data msg */
     CSSArraySensorMsgPayload cssInputBuffer = this->cssDataInMsg();
-
-    auto cssMeasurements = Measurement();
+    auto cssMeasurements = MeasurementModel();
+    cssMeasurements.setValidity(false);
 
     /*! - Zero the observed active CSS count */
     this->numActiveCss = 0;
 
     /*! - Define the linear model matrix H */
-    Eigen::MatrixXd H;
+    Eigen::MatrixXd hMatrix;
+    Eigen::VectorXd cssObservation;
 
     /*! - Loop over the maximum number of sensors to check for good measurements */
     /*! -# Isolate if measurement is good */
@@ -154,31 +158,32 @@ void SunlineSRuKF::readCssMeasurements() {
     {
         if (cssInputBuffer.CosValue[i] > this->sensorUseThresh)
         {
-            cssMeasurements.validity = true;
-            cssMeasurements.timeTag = cssInputBuffer.timeTag;
-            cssMeasurements.observation.conservativeResize(this->numActiveCss+1);
-            cssMeasurements.observation(this->numActiveCss) = cssInputBuffer.CosValue[i];
-            H.conservativeResize(this->numActiveCss+1, 3);
+            cssMeasurements.setValidity(true);
+            cssObservation.conservativeResize(this->numActiveCss+1);
+            cssObservation(this->numActiveCss) = cssInputBuffer.CosValue[i];
+            hMatrix.conservativeResize(this->numActiveCss+1, 3);
             for (int j=0; j<3; ++j) {
-                H(this->numActiveCss,j) = this->cssConfigInputBuffer.cssVals[i].CBias * this->cssConfigInputBuffer.cssVals[i].nHat_B[j];
+                hMatrix(this->numActiveCss,j) = this->cssConfigInputBuffer.cssVals[i].CBias *
+                        this->cssConfigInputBuffer.cssVals[i].nHat_B[j];
             }
-            cssMeasurements.noise.resize(this->numActiveCss+1, this->numActiveCss+1);
-            Eigen::MatrixXd I(this->numActiveCss+1, this->numActiveCss+1);
-            I.setIdentity();
-            cssMeasurements.noise = pow(this->measNoiseScaling * this->cssMeasNoiseStd, 2) * I;
+            cssMeasurements.setTimeTag(cssInputBuffer.timeTag);
             this->numActiveCss += 1;
         }
     }
-    cssMeasurements.size = this->numActiveCss;
 
-    std::function<const Eigen::VectorXd(const Eigen::VectorXd)> linearModel = [H](const Eigen::VectorXd &state) {
-        return H * state.head(3);
+    std::function<const Eigen::VectorXd(const StateVector)> linearModel = [hMatrix](const StateVector &state) {
+        Eigen::VectorXd observed = hMatrix * state.getPositionStates();
+        return observed;
     };
 
-    if (cssMeasurements.validity && cssMeasurements.timeTag >= this->previousFilterTimeTag){
+    if (cssMeasurements.getValidity() && cssMeasurements.getTimeTag() >= this->previousFilterTimeTag){
         /*! - Read measurement and cholesky decomposition its noise*/
-        cssMeasurements.model = linearModel;
-        cssMeasurements.name = "css";
+        Eigen::MatrixXd I(this->numActiveCss, this->numActiveCss);
+        I.setIdentity();
+        cssMeasurements.setMeasurementNoise(this->measNoiseScaling * pow(this->cssMeasNoiseStd, 2) * I);
+        cssMeasurements.setObservation(cssObservation);
+        cssMeasurements.setMeasurementModel(linearModel);
+        cssMeasurements.setMeasurementName("css");
         this->measurements[this->filterMeasurement] = cssMeasurements;
         this->filterMeasurement += 1;
     }
@@ -196,40 +201,28 @@ void SunlineSRuKF::readFilterMeasurements() {
     this->readCssMeasurements();
 }
 
-/*! Integrate the equations of motion of two body point mass gravity using Runge-Kutta 4 (RK4)
-    @param interval integration interval
-    @param X0 initial state
-    @param dt time step
-    @return Eigen::VectorXd
-*/
-Eigen::VectorXd SunlineSRuKF::propagate(std::array<double, 2> interval, const Eigen::VectorXd& X0, double dt){
-    double t_0 = interval[0];
-    double t_f = interval[1];
-    double t = t_0;
-    Eigen::VectorXd X = X0;
+/*! Define the equations of motion for the filter dynamics
+    @param double time
+    @return StateVector inputState
+    @return StateVector outputState
+    */
+StateVector SunlineSRuKF::stateDerivative(const double t, const StateVector &state){
+    StateVector XDot;
+    /*! Implement propagation with rate derivatives set to zero */
+    Eigen::Vector3d sHat  = state.getPositionStates();
+    Eigen::Vector3d omega = state.getVelocityStates();
 
-    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> stateDerivative = [](double t, Eigen::VectorXd state)
-    {
-        Eigen::VectorXd XDot(state.size());
-        /*! Implement propagation with rate derivatives set to zero */
-        Eigen::Vector3d sHat  = state.segment(0, 3);
-        Eigen::Vector3d omega = state.segment(3, 3);
-        XDot.segment(0,3) = sHat.cross(omega);
-        XDot.segment(3,3).setZero();
+    PositionState xDotPosition;
+    VelocityState xDotVelocity;
 
-        return XDot;
-    };
+    xDotPosition.setValues(sHat.cross(omega));
+    xDotVelocity.setValues(Eigen::VectorXd::Zero(3));
 
-    /*! Propagate to t_final with an RK4 integrator */
-    double N = ceil((t_f-t_0)/dt);
-    for (int c=0; c < N; c++) {
-        double step = std::min(dt,t_f-t);
-        X = this->rk4(stateDerivative, X, t, step);
-        t = t + step;
-    }
+    XDot.setPosition(xDotPosition);
+    XDot.setVelocity(xDotVelocity);
 
-    return X;
-}
+    return XDot;
+};
 
 /*! Set the CSS measurement noise
     @param double cssMeasurementNoise
@@ -245,14 +238,6 @@ void SunlineSRuKF::setCssMeasurementNoiseStd(const double cssMeasurementNoiseStd
     */
 void SunlineSRuKF::setGyroMeasurementNoiseStd(const double gyroMeasurementNoiseStd) {
     this->gyroMeasNoiseStd = gyroMeasurementNoiseStd;
-}
-
-/*! Set the filter measurement noise scale factor if desirable
-    @param double measurementNoiseScale
-    @return void
-    */
-void SunlineSRuKF::setMeasurementNoiseScale(const double measurementNoiseScale) {
-    this->measNoiseScaling = measurementNoiseScale;
 }
 
 /*! Get the CSS measurement noise
@@ -271,9 +256,17 @@ double SunlineSRuKF::getGyroMeasurementNoiseStd() const {
     return this->gyroMeasNoiseStd;
 }
 
-/*! Get the filter measurement noise scale factor
-    @return double measNoiseScaling
+/*! Set the threshold value to accept a css measurement
+    @param double threshold
+    @return void
     */
-double SunlineSRuKF::getMeasurementNoiseScale() const {
-    return this->measNoiseScaling;
+void SunlineSRuKF::setSensorThreshold(double threshold){
+    this->sensorUseThresh = threshold;
+}
+
+/*! Get the threshold value to accept a css measurement
+    @return double threshold
+    */
+double SunlineSRuKF::getSensorThreshold() const{
+    return this->sensorUseThresh;
 }

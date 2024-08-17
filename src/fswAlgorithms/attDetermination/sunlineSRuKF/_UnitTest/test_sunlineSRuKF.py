@@ -70,9 +70,8 @@ def setup_filter_data(filter_object):
     filter_object.setAlpha(0.02)
     filter_object.setBeta(2.0)
 
-    states = [0.0, 0.0, 1.0, 0.02, -0.005, 0.01]
-
-    filter_object.setInitialState([[s] for s in states])
+    filter_object.setInitialPosition([0.0, 0.0, 1.0])
+    filter_object.setInitialVelocity([0.02, -0.005, 0.01])
     filter_object.setInitialCovariance([[0.0001, 0.0, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0001, 0.0, 0.0, 0.0, 0.0],
                                         [0.0, 0.0, 0.0001, 0.0, 0.0, 0.0],
@@ -109,7 +108,6 @@ def setup_css_config_msg(CSSOrientationList, cssConfigDataInMsg):
 def test_propagation_kf(show_plots):
     state_propagation_flyby(show_plots)
 
-
 @pytest.mark.parametrize("initial_error", [False, True])
 def test_measurements_kf(show_plots, initial_error):
     state_update_flyby(initial_error, show_plots)
@@ -138,9 +136,11 @@ def state_propagation_flyby(show_plots=False):
     unit_test_sim.AddModelToTask(unit_task_name, sun_heading_data_log)
 
     simpleNavMsgData = messaging.NavAttMsgPayload()
-    initState = sunHeadingFilter.getInitialState()
+    initState = np.zeros(6)
+    initState[:3] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
+    initState[3:] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
     simpleNavMsgData.timeTag = 0
-    simpleNavMsgData.omega_BN_B = [initState[3][0], initState[4][0], initState[5][0]]
+    simpleNavMsgData.omega_BN_B = initState[3:]
     simpleNavMsg = messaging.NavAttMsg().write(simpleNavMsgData)
     sunHeadingFilter.navAttInMsg.subscribeTo(simpleNavMsg)
 
@@ -165,10 +165,11 @@ def state_propagation_flyby(show_plots=False):
     cssMsg = messaging.CSSArraySensorMsg().write(cssDataMsg)
     sunHeadingFilter.cssDataInMsg.subscribeTo(cssMsg)
 
-    sim_time = 5
-    time = np.linspace(0, 5, 6)
+    sim_time = 50
+    time = np.linspace(0, sim_time, sim_time+1)
     expected = np.zeros([len(time), 7])
-    expected[0, 1:] = np.array(sunHeadingFilter.getInitialState()).reshape([6, ])
+    expected[0, 1:4] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
+    expected[0, 4:7] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
     expected = rk4(sunline_dynamics, time, expected[0, 1:], normalizeState=True)
 
     unit_test_sim.InitializeSimulation()
@@ -188,7 +189,11 @@ def state_propagation_flyby(show_plots=False):
                                rtol=1E-10,
                                err_msg='state propagation error',
                                verbose=True)
-
+    diff = np.copy(state_data_log)
+    diff[:, 1:] -= expected[:, 1:]
+    if show_plots:
+        filter_plots.state_covar(state_data_log, covariance_data_log, 'Update').show()
+        filter_plots.states(diff, 'Update').show()
 
 def state_update_flyby(initial_error, show_plots=False):
     unit_task_name = "unitTask"  # arbitrary name (don't change)
@@ -207,9 +212,6 @@ def state_update_flyby(initial_error, show_plots=False):
 
     # Add test module to runtime call list
     setup_filter_data(sunHeadingFilter)
-    if initial_error:
-        states = [1.0, 0.0, 0.0, -0.02, 0.005, -0.01]
-        sunHeadingFilter.setInitialState([[s] for s in states])
     unit_test_sim.AddModelToTask(unit_task_name, sunHeadingFilter)
 
     sun_heading_data_log = sunHeadingFilter.filterOutMsg.recorder()
@@ -225,10 +227,12 @@ def state_update_flyby(initial_error, show_plots=False):
     unit_test_sim.AddModelToTask(unit_task_name, nav_att_data_log)
 
     simpleNavMsgData = messaging.NavAttMsgPayload()
-    initState = sunHeadingFilter.getInitialState()
-    simpleNavMsgData.timeTag = 0
-    simpleNavMsgData.omega_BN_B = [initState[3][0], initState[4][0], initState[5][0]]
-    simpleNavMsg = messaging.NavAttMsg()
+    initState = np.zeros(6)
+    initState[:3] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
+    initState[3:] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
+    simpleNavMsgData.timeTag = -1
+    simpleNavMsgData.omega_BN_B = initState[3:]
+    simpleNavMsg = messaging.NavAttMsg().write(simpleNavMsgData)
     sunHeadingFilter.navAttInMsg.subscribeTo(simpleNavMsg)
 
     CSSOrientationList = [
@@ -249,12 +253,17 @@ def state_update_flyby(initial_error, show_plots=False):
     sim_time = 1000
     time = np.linspace(0, sim_time, sim_time+1)
     expected = np.zeros([len(time), 7])
-    expected[0, 1:] = np.array([0.0, 0.0, 1.0, 0.02, -0.005, 0.01])
+    expected[0, 1:4] = np.array(sunHeadingFilter.getInitialPosition()).reshape(3)
+    expected[0, 4:7] = np.array(sunHeadingFilter.getInitialVelocity()).reshape(3)
     expected = rk4(sunline_dynamics, time, expected[0, 1:], normalizeState=True)
 
     bodyFrame = np.zeros([len(time), 7])
     bodyFrame[0, 1:] = np.array([0.0, 0.0, 0.0, expected[0, 4], expected[0, 5], expected[0, 6]])
     bodyFrame = rk4(mrp_integration, time, bodyFrame[0, 1:], mrpShadow=True)
+
+    if initial_error:
+        sunHeadingFilter.setInitialPosition([1.0, 0.0, 0.0])
+        sunHeadingFilter.setInitialVelocity([-0.02, 0.005, -0.01])
 
     cssDataMsg = messaging.CSSArraySensorMsgPayload()
     cssMsg = messaging.CSSArraySensorMsg()
@@ -262,7 +271,6 @@ def state_update_flyby(initial_error, show_plots=False):
 
     cssSigma = sunHeadingFilter.getCssMeasurementNoiseStd()
     gyroSigma = sunHeadingFilter.getGyroMeasurementNoiseStd()
-
     unit_test_sim.InitializeSimulation()
     for i in range(0, len(time)-1):
         BN = rbk.MRP2C(bodyFrame[i, 1:4])
@@ -292,6 +300,7 @@ def state_update_flyby(initial_error, show_plots=False):
             covariance[-1].append(covariance_data_log[i][1+j*(num_states+1)])
 
     css_number_obs = css_residual_data_log.numberOfObservations
+    css_obs = css_residual_data_log.observation
     css_size_obs = css_residual_data_log.sizeOfObservations
     css_post_fit_log_sparse = add_time_column(css_residual_data_log.times(), css_residual_data_log.postFits)
     css_post_fit_log = np.zeros([len(css_residual_data_log.times()), np.max(css_size_obs)+1])
@@ -325,14 +334,14 @@ def state_update_flyby(initial_error, show_plots=False):
                                expected[half_time:, 1:4],
                                 rtol=1E-9,
                                 atol=5*cssSigma,
-                                err_msg='state propagation error',
+                                err_msg='heading estimation error',
                                 verbose=True)
     # testing that rate estimate is correct within 5 sigma
     np.testing.assert_allclose(state_data_log[half_time:, 4:],
                                 expected[half_time:, 4:],
                                rtol=1E-9,
                                atol=5*gyroSigma,
-                               err_msg='state propagation error',
+                               err_msg='rate estimation error',
                                verbose=True)
     # testing that covariance is shrinking
     np.testing.assert_array_less(np.diag(covariance_data_log[half_time, 1:].reshape([6, 6])),
@@ -343,13 +352,13 @@ def state_update_flyby(initial_error, show_plots=False):
     diff = np.copy(state_data_log)
     diff[:, 1:] -= expected[:, 1:]
     if show_plots:
-        plt_1 = filter_plots.state_covar(state_data_log, covariance_data_log, 'Update').show()
-        plt_2 = filter_plots.states(diff, 'Update').show()
-        plt_3 = filter_plots.post_fit_residuals(css_post_fit_log, cssSigma, 'Update CSS PreFit').show()
-        plt_4 = filter_plots.post_fit_residuals(css_pre_fit_log, cssSigma, 'Update CSS PostFit').show()
-        plt_5 = filter_plots.post_fit_residuals(gyro_post_fit_log, gyroSigma, 'Update Gyro PreFit').show()
-        plt_6 = filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit').show()
+        filter_plots.state_covar(state_data_log, covariance_data_log, 'Update').show()
+        filter_plots.states(diff, 'Update').show()
+        filter_plots.post_fit_residuals(css_post_fit_log, cssSigma, 'Update CSS PreFit').show()
+        filter_plots.post_fit_residuals(css_pre_fit_log, cssSigma, 'Update CSS PostFit').show()
+        filter_plots.post_fit_residuals(gyro_post_fit_log, gyroSigma, 'Update Gyro PreFit').show()
+        filter_plots.post_fit_residuals(gyro_pre_fit_log, gyroSigma, 'Update Gyro PostFit').show()
 
 
 if __name__ == "__main__":
-    state_update_flyby(False, False)
+    state_update_flyby(True, True)

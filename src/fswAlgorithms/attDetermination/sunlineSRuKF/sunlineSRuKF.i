@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2024, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder
+ Copyright (c) 2024, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -25,13 +25,8 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 
-%include "swig_conly_data.i"
-%include "std_vector.i"
-%include "std_string.i"
-%include "swig_eigen.i"
+%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.i"
 
-%include "sys_model.i"
-%include "fswAlgorithms/_GeneralModuleFiles/srukfInterface.h"
 %include "sunlineSRuKF.h"
 
 %include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
