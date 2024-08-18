@@ -14,7 +14,7 @@ requires = [
 [project]
 name        = 'Basilisk'
 dynamic     = ["version", "dependencies", "optional-dependencies"]
-requires-python = ">=3.8"
+requires-python = ">=3.8, <3.12"
 
 readme      = "README.md"
 license     = {file = "LICENSE"}

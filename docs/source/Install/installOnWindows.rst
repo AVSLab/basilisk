@@ -15,7 +15,7 @@ In order to run Basilisk, the following software will be necessary:
 
 -  `Cmake <https://cmake.org/>`__ 3.14 or higher.  Make sure you can execute this
    program from the command line
--  `Python <https://www.python.org/downloads/windows/>`__ 3.8.x or greater
+-  `Python <https://www.python.org/downloads/windows/>`__ 3.8 to 3.11
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Visual Studios 15 2017 or greater
 -  `Swig <http://www.swig.org/download.html>`__ version 4.X

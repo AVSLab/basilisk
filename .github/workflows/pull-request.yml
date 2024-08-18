@@ -254,7 +254,7 @@ jobs:
       - name: "Install swig and cmake"
         run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
       - name: "Install python packages"
-        run: sudo apt-get install python3-setuptools python3-tk python3.10-venv
+        run: sudo apt-get install python3-setuptools python3-tk python3.11-venv
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install wheel and conan package"
