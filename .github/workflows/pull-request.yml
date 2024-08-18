@@ -277,6 +277,65 @@ jobs:
         run: ctest
         if: ${{ always() }}
 
+  build-linux-3-11-pip:
+    name: Linux 22.04 python 3.11 pip
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: nschloe/action-checkout-with-lfs-cache@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Cache conan packages
+        id: cache-conan
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-conan-packages
+        with:
+          # conan cache files are stored in `~/.conan` on Linux/macOS
+          path: ~/.conan
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+      - name: Cache pip modules
+        id: cache-pip
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-pip-modules
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: "Install swig and cmake"
+        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
+      - name: "Install python packages"
+        run: sudo apt-get install python3-setuptools python3-tk python3.11-venv
+      - name: "Create virtual Environment"
+        run: python3 -m venv .venv
+      - name: "Build basilisk"
+        run: |
+          source .venv/bin/activate
+          pip install . -v
+      - name: "Run Python Tests"
+        run: |
+          source .venv/bin/activate
+          cd src && pytest -n 2 -m "not scenarioTest" --junitxml=../junit/test-results-${{ matrix.python-version }}-pip.xml
+      - name: "Upload pytest test results"
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: junit/test-results-${{ matrix.python-version }}.xml
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
 
   build-windows:
     name: Build Windows
