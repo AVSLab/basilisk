@@ -1,10 +1,16 @@
 %{{
 #include "cMsgCInterface/{type}_C.h"
+#include "architecture/messaging/messaging.h"
 %}}
 %include "cMsgCInterface/{type}_C.h"
 %include "architecture/messaging/msgHeader.h"
 typedef struct {type};
 %extend {type}_C {{
+    Recorder<{type}Payload> recorder(uint64_t timeDiff = 0) {{
+        self->header.isLinked = 1;
+        return Recorder<{type}Payload>{{static_cast<void*>(self), timeDiff}};
+    }}
+
     %pythoncode %{{
 
     def subscribeTo(self, source):
@@ -33,12 +39,6 @@ typedef struct {type};
         else:
             return 0
 
-
-    def recorder(self, timeDiff=0):
-        """create a recorder module for this message"""
-        from Basilisk.architecture.messaging import {type}Recorder
-        self.header.isLinked = 1
-        return {type}Recorder(self, timeDiff)
 
     def init(self, data=None):
         """returns a Msg copy connected to itself"""
