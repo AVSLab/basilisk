@@ -79,6 +79,8 @@ Version |release|
   - NOTE: This is primarily intended to support pre-compiled releases in the future. All users are recommended to continue
     using ``python conanfile.py`` installation for now.
 
+- The ``cmake`` command now downloads large Spice data files automatically from the JPL server.
+
 
 Version 2.3.0 (April 5, 2024)
 -----------------------------

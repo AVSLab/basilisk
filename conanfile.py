@@ -313,7 +313,8 @@ class BasiliskConan(ConanFile):
             sys.exit(1)
         else:
             print("This resulted in the stdout: \n%s" % output.decode())
-            print("This resulted in the stderr: \n%s" % err.decode())
+            if err.decode() != "":
+                print("This resulted in the stderr: \n%s" % err.decode())
 
 if __name__ == "__main__":
     # make sure conan is configured to use the libstdc++11 by default
