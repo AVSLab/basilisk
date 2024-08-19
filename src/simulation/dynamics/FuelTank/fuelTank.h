@@ -22,9 +22,10 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
 #include "architecture/messaging/messaging.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.h"
 
 #include <math.h>
 #include <vector>
@@ -262,8 +263,8 @@ class FuelTank :
 public:
     std::string nameOfMassState{};                      //!< -- name of mass state
     std::vector<FuelSlosh *> fuelSloshParticles;        //!< -- vector of fuel slosh particles
-    std::vector<DynamicEffector *> dynEffectors;        //!< -- Vector of dynamic effectors for thrusters
-    std::vector<StateEffector *> stateEffectors;        //!< -- Vector of state effectors for thrusters
+    std::vector<ThrusterDynamicEffector *> thrDynEffectors;        //!< -- Vector of dynamic effectors for thrusters
+    std::vector<ThrusterStateEffector *> thrStateEffectors;        //!< -- Vector of state effectors for thrusters
     Eigen::Matrix3d dcm_TB;                             //!< -- DCM from body frame to tank frame
     Eigen::Vector3d r_TB_B;                             //!< [m] position of tank in B frame
     bool updateOnly = true;                             //!< -- Sets whether to use update only mass depletion
@@ -290,12 +291,8 @@ public:
     void registerStates(DynParamManager &states) override;      //!< -- Register mass state with state manager
     void linkInStates(DynParamManager &states) override;        //!< -- Give the tank access to other states
     void updateEffectorMassProps(double integTime) override;    //!< -- Add contribution mass props from the tank
-    void addThrusterSet(DynamicEffector *dynEff) {
-        dynEffectors.push_back(dynEff);
-    }  //!< -- Add DynamicEffector thruster
-    void addThrusterSet(StateEffector *stateEff) {
-        stateEffectors.push_back(stateEff);
-    }  //!< -- Add StateEffector thruster
+    void addThrusterSet(ThrusterDynamicEffector *dynEff);       //!< -- Add DynamicEffector thruster
+    void addThrusterSet(ThrusterStateEffector *stateEff);       //!< -- Add StateEffector thruster
     void updateContributions(double integTime,
                              BackSubMatrices &backSubContr,
                              Eigen::Vector3d sigma_BN,
