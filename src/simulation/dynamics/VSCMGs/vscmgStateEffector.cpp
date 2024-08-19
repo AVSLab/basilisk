@@ -52,11 +52,11 @@ VSCMGStateEffector::~VSCMGStateEffector()
 
 void VSCMGStateEffector::linkInStates(DynParamManager& statesIn)
 {
-	this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
-	//! - Get access to the hub states
+    this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
+    //! - Get access to the hub states
     this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
-	return;
+    return;
 }
 
 void VSCMGStateEffector::registerStates(DynParamManager& states)

@@ -84,7 +84,7 @@ bool DragDynamicEffector::ReadInputs()
  */
 void DragDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
-	this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
+    this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
