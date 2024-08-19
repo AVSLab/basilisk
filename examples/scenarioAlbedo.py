@@ -357,7 +357,7 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     scSim.InitializeSimulation()
     #
     if multiplePlanet:
-        velRef = scObject.dynManager.getStateObject("hubVelocity")
+        velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
         # Configure a simulation stop time and execute the simulation run
         T1 = macros.sec2nano(500.)
         scSim.ConfigureStopTime(T1)

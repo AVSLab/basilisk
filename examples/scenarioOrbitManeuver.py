@@ -214,8 +214,8 @@ def run(show_plots, maneuverCase):
     #
     #  get access to dynManager translational states for future access to the states
     #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
     # The dynamics simulation is setup using a Spacecraft() module with the Earth's
     # gravity module attached.  Note that the rotational motion simulation is turned off to leave

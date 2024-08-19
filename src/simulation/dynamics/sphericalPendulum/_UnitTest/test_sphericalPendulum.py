@@ -205,8 +205,8 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 
     if testCase == 3:
         stateLog = pythonVariableLogger.PythonVariableLogger({
-            "sphericalPendulumMass1": lambda _: scObject.dynManager.getStateObject("sphericalPendulumMass1").getState(),
-            "sphericalPendulumMass2": lambda _: scObject.dynManager.getStateObject("sphericalPendulumMass2").getState(),
+            "sphericalPendulumMass1": lambda _: scObject.dynManager.getStateObject(scSim.pendulum1.nameOfMassState).getState(),
+            "sphericalPendulumMass2": lambda _: scObject.dynManager.getStateObject(scSim.pendulum2.nameOfMassState).getState(),
         })
         scSim.AddModelToTask(simTaskName, stateLog)
 

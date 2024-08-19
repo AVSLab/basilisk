@@ -114,11 +114,9 @@ void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
     this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
 
-    this->sigma_BNState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
-    this->omega_BN_BState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
-    this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubVelocity");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfVelocity);
 
     return;
 }
@@ -220,7 +218,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     gLocal_N = *this->g_N;
 
     // - Find dcmBN
-    sigmaPNLocal = (Eigen::Vector3d )this->sigma_BNState->getState();
+    this->sigma_BN = sigma_BN;
+    sigmaPNLocal = this->sigma_BN;
     dcmNP = sigmaPNLocal.toRotationMatrix();
     dcmPN = dcmNP.transpose();
     // - Map gravity to body frame
@@ -232,7 +231,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     Eigen::Vector3d gravTorquePan2PntH2 = -this->d2*this->sHat21_P.cross(this->mass2*g_P);
 
     // - Define omegaBN_S
-    this->omega_PNLoc_P = this->omega_BN_BState->getState();
+    this->omega_BN_B = omega_BN_B;
+    this->omega_PNLoc_P = this->omega_BN_B;
     this->omega_PN_S1 = this->dcm_S1P*this->omega_PNLoc_P;
     this->omega_PN_S2 = this->dcm_S2P*this->omega_PNLoc_P;
     // - Define omegaTildeBNLoc_B
@@ -296,8 +296,9 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eige
 
     // Grab necessarry values from manager (these have been previously computed in hubEffector)
     rDDotBNLoc_N = this->v_BN_NState->getStateDeriv();
-    sigmaBNLocal = (Eigen::Vector3d )this->sigma_BNState->getState();
-    omegaDotBNLoc_B = this->omega_BN_BState->getStateDeriv();
+    this->sigma_BN = sigma_BN;
+    sigmaBNLocal = this->sigma_BN;
+    omegaDotBNLoc_B = omegaDot_BN_B;
     dcmNB = sigmaBNLocal.toRotationMatrix();
     dcmBN = dcmNB.transpose();
     rDDotBNLoc_B = dcmBN*rDDotBNLoc_N;
@@ -319,7 +320,8 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P;
-    omegaLocal_PN_P = this->omega_BN_BState->getState();
+    this->omega_BN_B = omega_BN_B;
+    omegaLocal_PN_P = this->omega_BN_B;
 
     // - Find rotational angular momentum contribution from hub
     Eigen::Vector3d omega_S1P_P;
@@ -418,14 +420,14 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
 {
     // inertial attitudes
     Eigen::MRPd sigmaPN;
-    sigmaPN = (Eigen::Vector3d)this->sigma_BNState->getState();
+    sigmaPN = this->sigma_BN;
     Eigen::Matrix3d dcm_NP = sigmaPN.toRotationMatrix();
     this->sigma_SN[0] = eigenMRPd2Vector3d(eigenC2MRP(this->dcm_S1P*dcm_NP.transpose()));
     this->sigma_SN[1] = eigenMRPd2Vector3d(eigenC2MRP(this->dcm_S2P*dcm_NP.transpose()));
 
     // inertial angular velocities
     Eigen::Vector3d omega_PN_P;
-    omega_PN_P = (Eigen::Vector3d)this->omega_BN_BState->getState();
+    omega_PN_P = this->omega_BN_B;
     this->omega_SN_S[0] = this->dcm_S1P * ( omega_PN_P + this->theta1Dot*this->sHat12_P);
     this->omega_SN_S[1] = this->dcm_S1P * ( omega_PN_P + this->theta2Dot*this->sHat22_P);
 

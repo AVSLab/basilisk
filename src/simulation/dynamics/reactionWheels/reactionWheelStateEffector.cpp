@@ -52,11 +52,8 @@ ReactionWheelStateEffector::~ReactionWheelStateEffector()
 
 void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
 {
-	//! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
-	this->hubSigma = statesIn.getStateObject("hubSigma");
-	this->hubOmega = statesIn.getStateObject("hubOmega");
-	this->hubVelocity = statesIn.getStateObject("hubVelocity");
-    this->g_N = statesIn.getPropertyReference("g_N");
+	//! - Get access to the hub states
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
 	return;
 }
@@ -192,13 +189,13 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
     gLocal_N = *this->g_N;
 
     //! - Find dcm_BN
-    sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
+    sigmaBNLocal = (Eigen::Vector3d ) sigma_BN;
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
     g_B = dcm_BN*gLocal_N;
 
-	omegaLoc_BN_B = this->hubOmega->getState();
+	omegaLoc_BN_B = omega_BN_B;
 
     std::vector<RWConfigMsgPayload *>::iterator RWItp;
     RWConfigMsgPayload * RWIt;
@@ -295,9 +292,9 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
     RWConfigMsgPayload *RWIt;
 
 	//! Grab necessarry values from manager
-	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
-	rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
-	sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
+	omegaDotBNLoc_B = omegaDot_BN_B;
+	rDDotBNLoc_N = rDDot_BN_N;
+	sigmaBNLocal = (Eigen::Vector3d ) sigma_BN;
 	dcm_NB = sigmaBNLocal.toRotationMatrix();
 	dcm_BN = dcm_NB.transpose();
 	rDDotBNLoc_B = dcm_BN*rDDotBNLoc_N;
@@ -331,7 +328,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
 	Eigen::Matrix3d dcm_NB;                        /*! direction cosine matrix from B to N */
-	Eigen::Vector3d omegaLoc_BN_B = hubOmega->getState();
+	Eigen::Vector3d omegaLoc_BN_B = omega_BN_B;
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();

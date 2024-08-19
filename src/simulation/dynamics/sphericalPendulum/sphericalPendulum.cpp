@@ -70,14 +70,8 @@ SphericalPendulum::~SphericalPendulum()
 /*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states */
 void SphericalPendulum::linkInStates(DynParamManager& statesIn)
 {
-    // - Grab access to the hub states
-
-	this->omegaState = statesIn.getStateObject("hubOmega");
-	this->sigmaState = statesIn.getStateObject("hubSigma");
-	this->velocityState = statesIn.getStateObject("hubVelocity");
-
     // - Grab access to gravity
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
     return;
 }
@@ -210,7 +204,7 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d ) this->sigmaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d ) sigma_BN;
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
@@ -234,7 +228,7 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
     L_T=this->l_B.cross(this->massFSP*g_B)-dcm_B_P0*this->D*this->lPrime_P0;
 
     // - Define cPhi
-    Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
+    Eigen::Vector3d omega_BN_B_local = omega_BN_B;
     Eigen::Matrix3d omegaTilde_BN_B_local;
     omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
 	this->cPhi = 1.0/(this->massFSP*this->pendulumRadius*this->pendulumRadius*cos(this->theta)*cos(this->theta))*
@@ -306,7 +300,7 @@ void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDD
 	// - Find DCM
 	Eigen::MRPd sigmaLocal_BN;
 	Eigen::Matrix3d dcm_BN;
-	sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
+	sigmaLocal_BN = (Eigen::Vector3d) sigma_BN;
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
 	// - Set the derivative of l to lDot
@@ -316,8 +310,8 @@ void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDD
 	// - Compute lDDot
 	Eigen::MatrixXd phi_conv(1,1);
 	Eigen::MatrixXd theta_conv(1,1);
-    Eigen::Vector3d omegaDot_BN_B_local = this->omegaState->getStateDeriv();
-    Eigen::Vector3d rDDot_BN_N_local = this->velocityState->getStateDeriv();
+    Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
+    Eigen::Vector3d rDDot_BN_N_local = rDDot_BN_N;
 	Eigen::Vector3d rDDot_BN_B_local = dcm_BN*rDDot_BN_N_local;
     phi_conv(0, 0) = this->aPhi.dot(rDDot_BN_B_local) + this->bPhi.dot(omegaDot_BN_B_local) + this->cPhi;
 	this->phiDotState->setDerivative(phi_conv);
@@ -339,7 +333,7 @@ void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Ve
 
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = omegaState->getState();
+    omegaLocal_BN_B = omega_BN_B;
     Eigen::Vector3d rDotPcB_B;
 
     // - Find rotational angular momentum contribution from hub

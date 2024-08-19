@@ -52,13 +52,11 @@ VSCMGStateEffector::~VSCMGStateEffector()
 
 void VSCMGStateEffector::linkInStates(DynParamManager& statesIn)
 {
-	//! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
-	this->hubSigma = statesIn.getStateObject("hubSigma");
-	this->hubOmega = statesIn.getStateObject("hubOmega");
-	this->hubVelocity = statesIn.getStateObject("hubVelocity");
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
+    //! - Get access to the hub states
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
 
-	return;
+    return;
 }
 
 void VSCMGStateEffector::registerStates(DynParamManager& states)
@@ -284,13 +282,13 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 
 
     //! - Find dcm_BN
-    sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
+    sigmaBNLocal = (Eigen::Vector3d ) sigma_BN;
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
     g_B = dcm_BN*gLocal_N;
 
-	omegaLoc_BN_B = this->hubOmega->getState();
+	omegaLoc_BN_B = omega_BN_B;
 
     std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
@@ -412,10 +410,10 @@ void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rD
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 
 	//! Grab necessarry values from manager
-	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
+	omegaDotBNLoc_B = omegaDot_BN_B;
 	omegaLoc_BN_B = this->hubOmega->getState();
-	rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
-	sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
+	rDDotBNLoc_N = rDDot_BN_N;
+	sigmaBNLocal = (Eigen::Vector3d ) sigma_BN;
 	dcm_NB = sigmaBNLocal.toRotationMatrix();
 	dcm_BN = dcm_NB.transpose();
 	rDDotBNLoc_B = dcm_BN*rDDotBNLoc_N;

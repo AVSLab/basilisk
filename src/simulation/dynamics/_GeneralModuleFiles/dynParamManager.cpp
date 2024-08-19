@@ -66,7 +66,7 @@ StateData* DynParamManager::getStateObject(std::string stateName)
 {
     StateData *statePtr;
     std::map<std::string, StateData>::iterator it;
-    
+
     statePtr = nullptr;
     it = stateContainer.stateMap.find(stateName);
     if(it != stateContainer.stateMap.end())
@@ -80,9 +80,9 @@ StateData* DynParamManager::getStateObject(std::string stateName)
             Either the state name was miss-spelled, or the state simply
             doesn't exit in the current simulaiton setup (i.e. asking for the
             hub attitude in a translation only simulation setup */
-        bskLogger.bskLog(BSK_WARNING, "You requested this non-existent state name: %s You either miss-typed the stateName, or you asked for a state that doesn't exist in your simulation setup.", stateName.c_str());
+        bskLogger.bskLog(BSK_WARNING, "You requested this non-existent state name: %s You either miss-typed the stateName, or you asked for a state that doesn't exist in your simulation setup. stateName = ", stateName.c_str());
     }
-    
+
     return(statePtr);
 }
 

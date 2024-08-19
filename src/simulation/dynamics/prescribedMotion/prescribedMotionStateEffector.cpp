@@ -49,7 +49,7 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->omegaPrime_MB_B.setZero();
     this->sigma_MB.setIdentity();
     this->currentSimTimeSec = 0.0;
-    
+
     // Initialize prescribed states at epoch
     this->rEpoch_FM_M.setZero();
     this->rPrimeEpoch_FM_M.setZero();
@@ -126,10 +126,8 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // Get access to the hub states needed for dynamic coupling
-    this->hubSigma = statesIn.getStateObject("hubSigma");
-    this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
-    this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
 }
 
 /*! This method allows the state effector to register its states with the dynamic parameter manager.

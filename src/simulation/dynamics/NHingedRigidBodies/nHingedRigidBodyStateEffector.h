@@ -85,9 +85,6 @@ private:
     Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
     Eigen::Matrix3d omegaTildeLoc_BN_B; //!< -- tilde matrix of omegaBN
-    StateData *hubSigma;            //!< -- state manager access to the hubs MRP state
-    StateData *hubOmega;            //!< -- state manager access to the hubs omegaBN_B state
-    StateData *hubVelocity;         //!< -- state manager access to the hubs rDotBN_N state
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     static uint64_t effectorID;        //!< [] ID number of this panel
 

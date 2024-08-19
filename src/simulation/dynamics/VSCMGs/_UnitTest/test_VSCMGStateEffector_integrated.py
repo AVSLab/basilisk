@@ -250,8 +250,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     unitTestSim.InitializeSimulation()
 
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    sigmaRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubSigma)
 
     unitTestSim.ExecuteSimulation()
 

@@ -44,19 +44,19 @@ SpacecraftUnit::~SpacecraftUnit()
 
 void SpacecraftUnit::addStateEffector(StateEffector *newStateEffector)
 {
+    this->assignStateParamNames<StateEffector *>(newStateEffector);
+
     this->states.push_back(newStateEffector);
 
     // Give the stateEffector the name of the spacecraft it is attached to
     newStateEffector->nameOfSpacecraftAttachedTo = this->spacecraftName;
-
-    return;
 }
 
 void SpacecraftUnit::addDynamicEffector(DynamicEffector *newDynamicEffector)
 {
-    this->dynEffectors.push_back(newDynamicEffector);
+    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
 
-    return;
+    this->dynEffectors.push_back(newDynamicEffector);
 }
 
 void SpacecraftUnit::addDockingPort(DockingData *newDockingPort)
@@ -151,21 +151,20 @@ void SpacecraftUnit::initializeDynamicsSC(DynParamManager& statesIn)
     Eigen::MatrixXd initISCPntBPrime_B(3,3);
 
     // - Create the properties
-    std::string tmpName;
-    tmpName = this->spacecraftName + "m_SC";
-    this->m_SC = statesIn.createProperty(tmpName, initM_SC);
-    tmpName = this->spacecraftName + "mDot_SC";
-    this->mDot_SC = statesIn.createProperty(tmpName, initMDot_SC);
-    tmpName = this->spacecraftName + "centerOfMassSC";
-    this->c_B = statesIn.createProperty(tmpName, initC_B);
-    tmpName = this->spacecraftName + "inertiaSC";
-    this->ISCPntB_B = statesIn.createProperty(tmpName, initISCPntB_B);
-    tmpName = this->spacecraftName + "inertiaPrimeSC";
-    this->ISCPntBPrime_B = statesIn.createProperty(tmpName, initISCPntBPrime_B);
-    tmpName = this->spacecraftName + "centerOfMassPrimeSC";
-    this->cPrime_B = statesIn.createProperty(tmpName, initCPrime_B);
-    tmpName = this->spacecraftName + "centerOfMassDotSC";
-    this->cDot_B = statesIn.createProperty(tmpName, initCDot_B);
+    this->propName_m_SC = this->spacecraftName + "m_SC";
+    this->m_SC = statesIn.createProperty(this->propName_m_SC, initM_SC);
+    this->propName_mDot_SC = this->spacecraftName + "mDot_SC";
+    this->mDot_SC = statesIn.createProperty(this->propName_mDot_SC, initMDot_SC);
+    this->propName_centerOfMassSC = this->spacecraftName + "centerOfMassSC";
+    this->c_B = statesIn.createProperty(this->propName_centerOfMassSC, initC_B);
+    this->propName_inertiaSC = this->spacecraftName + "inertiaSC";
+    this->ISCPntB_B = statesIn.createProperty(this->propName_inertiaSC, initISCPntB_B);
+    this->propName_inertiaPrimeSC = this->spacecraftName + "inertiaPrimeSC";
+    this->ISCPntBPrime_B = statesIn.createProperty(this->propName_inertiaPrimeSC, initISCPntBPrime_B);
+    this->propName_centerOfMassPrimeSC = this->spacecraftName + "centerOfMassPrimeSC";
+    this->cPrime_B = statesIn.createProperty(this->propName_centerOfMassPrimeSC, initCPrime_B);
+    this->propName_centerOfMassDotSC = this->spacecraftName + "centerOfMassDotSC";
+    this->cDot_B = statesIn.createProperty(this->propName_centerOfMassDotSC, initCDot_B);
 
     // - Give name of all spacecraft to attached hubEffector
     this->hub.nameOfSpacecraftAttachedTo = this->spacecraftName;
@@ -619,9 +618,9 @@ void SpacecraftSystem::initializeSCPosVelocity(SpacecraftUnit &spacecraft)
     return;
 }
 
-/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of 
- the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
- in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
+/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of
+ the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled
+ in this method. At the end of this method all of the states will have their corresponding state derivatives set in the
  dynParam Manager thus solving for Xdot*/
 void SpacecraftSystem::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
@@ -1012,7 +1011,7 @@ void SpacecraftSystem::calculateDeltaVandAcceleration(SpacecraftUnit &spacecraft
 }
 
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
- total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used 
+ total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used
  for validation purposes. */
 void SpacecraftSystem::computeEnergyMomentum(double time)
 {
@@ -1206,7 +1205,7 @@ void SpacecraftSystem::computeEnergyMomentumSystem(double time)
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -(*this->primaryCentralSpacecraft.m_SC)(0,0)*(Eigen::Vector3d (*this->primaryCentralSpacecraft.c_B)).cross(cDotLocal_B);
     this->primaryCentralSpacecraft.totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
-    
+
     return;
 }
 
@@ -1308,4 +1307,3 @@ void SpacecraftSystem::postIntegration(double integrateToThisTime) {
     this->computeEnergyMomentum(integrateToThisTime);
 
 }
-

@@ -121,8 +121,8 @@ def singleGravityBody(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
     scObject.hub.mHub = 100
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
@@ -244,8 +244,8 @@ def multiBodyGravity(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
     dt = 50.0
     totalTime = 20000.0

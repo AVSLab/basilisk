@@ -453,10 +453,10 @@ def run(show_plots):
     #
     scSim.InitializeSimulation()
 
-    debrisPos = scObject2.dynManager.getStateObject("hubPosition")
-    debrisVel = scObject2.dynManager.getStateObject("hubVelocity")
-    servicerPos = scObject.dynManager.getStateObject("hubPosition")
-    servicerVel = scObject.dynManager.getStateObject("hubVelocity")
+    debrisPos = scObject2.dynManager.getStateObject(scObject2.hub.nameOfHubPosition)
+    debrisVel = scObject2.dynManager.getStateObject(scObject2.hub.nameOfHubVelocity)
+    servicerPos = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
+    servicerVel = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
     # Set up flight modes
     def fswTargetPointing():

@@ -108,10 +108,8 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
     this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
 
-    this->sigma_BN = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubSigma");
-    this->omega_BN_B = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + "hubOmega");
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
 
     return;
 }
@@ -185,7 +183,8 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_PN;
-    sigmaLocal_PN = sigma_BN;
+    this->sigma_BN = sigma_BN;
+    sigmaLocal_PN = this->sigma_BN;
     Eigen::Matrix3d dcm_PN;
     Eigen::Matrix3d dcm_NP;
     dcm_NP = sigmaLocal_PN.toRotationMatrix();
@@ -198,7 +197,8 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     g_P = dcm_PN*gLocal_N;
 
     // - Define omega_BN_S
-    this->omegaLoc_PN_P = omega_BN_B;
+    this->omega_BN_B = omega_BN_B;
+    this->omegaLoc_PN_P = this->omega_BN_B;
     this->omega_PN_S = this->dcm_SP*this->omegaLoc_PN_P;
     // - Define omegaTildeLoc_BN_B
     this->omegaTildeLoc_PN_P = eigenTilde(this->omegaLoc_PN_P);
@@ -246,7 +246,8 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::V
     Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
     Eigen::MRPd sigmaLocal_PN;
     Eigen::Vector3d omegaDotLoc_PN_P;
-    sigmaLocal_PN = sigma_BN;
+    this->sigma_BN = sigma_BN;  // store current hub attitude
+    sigmaLocal_PN = this->sigma_BN;
 
     // - Find rDDotLoc_BN_B
     Eigen::Matrix3d dcm_PN;
@@ -368,7 +369,7 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
 {
     // inertial attitude
     Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->sigma_BN->getState();
+    sigmaBN = this->sigma_BN;
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();
@@ -377,7 +378,7 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
 
     // inertial angular velocity
     Eigen::Vector3d omega_BN_B;
-    omega_BN_B = (Eigen::Vector3d)this->omega_BN_B->getState();
+    omega_BN_B = this->omega_BN_B;
     this->omega_SN_S = this->dcm_SP * ( omega_BN_B + this->thetaDot*this->sHat2_P);
 
     // inertial position vector

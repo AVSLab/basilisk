@@ -77,9 +77,6 @@ private:
 	StateData *thetaState;	   //!< -- state data for spherical pendulum displacement
 	StateData *phiDotState;     //!< -- state data for time derivative of phi;
 	StateData *thetaDotState;		   //!< -- state data for time derivative of theta;
-	StateData *omegaState;         //!< -- state data for the hubs omega_BN_B
-	StateData *sigmaState;         //!< -- state data for the hubs sigma_BN
-	StateData *velocityState;      //!< -- state data for the hubs rDot_BN_N
     Eigen::Matrix3d dcm_B_P0;      // Rotation matrix from P0 to B frame
     static uint64_t effectorID;        //!< [] ID number of this panel
 

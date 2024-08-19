@@ -66,8 +66,8 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos)
  */
 void RadiationPressure::linkInStates(DynParamManager& states)
 {
-    this->hubSigma = states.getStateObject("hubSigma");
-    this->hubR_N = states.getStateObject("hubPosition");
+    this->hubSigma = states.getStateObject(this->stateNameOfSigma);
+    this->hubR_N = states.getStateObject(this->stateNameOfPosition);
 }
 
 /*! This method is used to read the incoming ephmeris and
