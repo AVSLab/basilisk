@@ -1,6 +1,6 @@
 pandas
 matplotlib
-numpy
+numpy<=2.0.1
 colorama
 tqdm
 Pillow
