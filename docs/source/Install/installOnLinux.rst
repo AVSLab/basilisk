@@ -13,7 +13,7 @@ Software setup
 In order to run Basilisk, the following software will be necessary. This document outline how to install this support software.
 
 -  `Cmake <https://cmake.org/>`__ 3.14 or higher
--  `Python <https://www.python.org/>`__ 3.8.x or greater.
+-  `Python <https://www.python.org/>`__ 3.8 to 3.11
 -  `SWIG <http://www.swig.org/>`__ (version 4.x)
 -  `GCC <https://gcc.gnu.org/>`__
 -  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__

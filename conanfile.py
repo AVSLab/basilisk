@@ -165,19 +165,6 @@ class BasiliskConan(ConanFile):
                 except subprocess.CalledProcessError:
                     print(failColor + "Was not able to install " + elem + endColor)
 
-        # check the version of Python
-        print("\nChecking Python version:")
-        if not (sys.version_info.major == 3 and sys.version_info.minor >= 8):
-            print(warningColor + "Python 3.8 or newer should be used with Basilisk." + endColor)
-            print("You are using Python {}.{}.{}".format(sys.version_info.major,
-                                                         sys.version_info.minor, sys.version_info.micro))
-        else:
-            print(statusColor + "Python {}.{}.{}".format(sys.version_info.major,
-                                                         sys.version_info.minor, sys.version_info.micro)
-                  + " is acceptable for Basilisk" + endColor)
-
-        print("\n")
-
     def requirements(self):
         if self.options.opNav:
             self.requires.add("pcre/8.45")
@@ -359,7 +346,11 @@ if __name__ == "__main__":
     for opt, value in bskModuleOptionsString.items():
         parser.add_argument("--" + opt, help="using string option for " + opt, default=value)
     for opt, value in bskModuleOptionsFlag.items():
-        parser.add_argument("--" + opt, help="using flag option for " + opt, default=value, action=argparse.BooleanOptionalAction)
+        if sys.version_info < (3, 9, 0):
+            parser.add_argument("--" + opt, help="using flag option for " + opt, default=value, action='store_true')
+        else:
+            parser.add_argument("--" + opt, help="using flag option for " + opt, default=value,
+                                action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
 
     # set the build destination folder

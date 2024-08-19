@@ -77,7 +77,7 @@ Wheel Compatibility
 When installed using a standard Python packaging tool such as ``pip``, Basilisk will automatically be
 built using the `Python Limited C API <https://docs.python.org/3/c-api/stable.html#limited-c-api>`_. The
 resulting wheel file will contain a set of compiled Python extension modules that, at least in theory, can be
-run using any compatible Python version (currently, any Python 3.8+).
+run using any compatible Python version (currently, any from Python 3.8 to 3.11).
 
 To maintain backwards compatibility, standard Basilisk installations via ``python conanfile.py`` are not
 compatible between different Python versions, as is stated in :ref:`customPython`. However, users can
