@@ -7,6 +7,9 @@
 User Guide
 ==========
 
+.. image:: /_images/static/basiliskVizardLogo.png
+       :align: right
+       :scale: 50 %
 
 Startup Panel
 -------------
@@ -17,42 +20,9 @@ When starting up the Vizard software a panel is presented where the user can sel
    :align: center
    :width: 90 %
 
-To live stream data from a running Basilisk simulation to Vizard make sure that the connection type is `DirectComm` and the mode is `Live Streaming`.  When starting a Basilisk script that uses live streaming (see :ref:`scenarioBasicOrbitStream` with ``liveStream`` set to true) the socket address, which is ``tcp://localhost:5556`` by default, is shown in the terminal window. Copy this and paste it into the Vizard socket address text field. Finally press the `Start Visualization` button to begin the visualization.
+To live stream data from a running Basilisk simulation to Vizard, refer to the :ref:`vizardLiveComm` page.
 
-The default Vizard communication can be overwritten using the following variables:
-
-.. code-block:: python
-
-    viz = vizInterface.VizInterface()
-    viz.comProtocol     = "tcp"
-    viz.comAddress      = "127.0.0.1"
-    viz.comPortNumber   = "1234"
-
-This example would cause Basilisk to use the socket address ``tcp://127.0.0.1:1234`` to connect to Vizard.
-
-.. list-table:: Vizard Communication Parameters
-    :widths: 10 10 10 70
-    :header-rows: 1
-
-    * - Variable
-      - Type
-      - Default
-      - Description
-    * - ``comProtocol``
-      - string
-      - ``tcp``
-      - Transport protocol to use for the connection. See all protocol options
-        `here <http://api.zeromq.org/3-2:zmq-connect>`__.
-    * - ``comAddress``
-      - string
-      - ``localhost``
-      - Network address to use for the connection.  This can be either a host name or an IP address.
-    * - ``comPortNumber``
-      - string
-      - ``5556``
-      - Port number to use for the connection.
-
-View Modes 
+View Modes
 ----------
 To engage with the visualization, the
 view point can be rotated and the user can zoom in and out. There are
@@ -79,7 +49,7 @@ three view modes available:
    Double clicking on a planet returns the user to a planet-centric
    view.
 
-Space Vehicle States 
+Space Vehicle States
 --------------------
 The following sections describe
 the basic user interface elements of Vizard. Some settings can be set
@@ -97,7 +67,7 @@ Reaction Wheel States
 
 If Reaction Wheels or RWs are modeled, then a RW panel can be opened
 from within the ``Actuator`` menu bar item. Here the RW wheel speeds and
-motor torques are shown. 
+motor torques are shown.
 
 .. image:: ../_images/static/vizard-ImgRW.jpg
    :align: center
@@ -171,7 +141,7 @@ validate that the sensor axis doesn't get too close to the sun (keep out
 cone), or if the solar panel normal axis stays within some cone to the
 sun (keep in cone). If the cone in/out condition is not triggered, then
 the cone is opaque. If the in/out condition is triggered, then the cone
-becomes solid. 
+becomes solid.
 
 .. image:: ../_images/static/vizard-ImgCones.jpg
    :align: center
@@ -258,7 +228,7 @@ a keyboard short-cut assigned.
   one rendering cycle to slow down the simulation.
 - **Show FPS**: This toggles on the frames-per-second on the lower right of the screen
 
-	
+
 ``Camera`` Menu Item
 --------------------
 The Camera menu item allows for custom camera views to be created into

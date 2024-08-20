@@ -7,14 +7,48 @@ Release Notes
 
 .. sidebar:: In Progress Features
 
+    .. image:: /_images/static/basiliskVizardLogo.png
+       :align: center
+       :width: 100 %
+
     - general GUI enhancements
     - Add the rate gyro visualization
     - Alternate camera view points relative to non-spacecraft locations (lunar landing site, etc.)
     - Add magnetic torque bar visualization
     - Visualize aerobraking maneuvers
-    - Add interactive information panels that can include buttons for the user to interact with
-    - Add ability to listen to a Basilisk simulation broadcast (one-way communication only)
+    - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
+
+**Version 2.2.0 (August 20, 2024)**
+
+- Added VizEventDialog message type to VizMessage.proto. EventDialogs allow the user to create a GUI
+  panel that pops up in Vizard with informational text and optional button choices that the viewer
+  can select to provide input to the simulation (via a VizEventReply message). There are three dialog
+  format types: informational, caution (yellow), and warning (red).
+- Added ability to send keyboard and EventDialog selection inputs live to connected Basilisk simulation,
+  via the new VizInput message in VizMessage.proto,  this feature requires Vizard to be connected to
+  Basilisk in the Receive & Reply mode
+- Added Receive Only streaming mode to allow additional Vizard instances to subscribe to a Basilisk
+  simulation as viewers. Receive Only connections cannot provide input back to the Basilisk simulation
+- Added forced synchronization of EventDialog and certain settings (orbit line visibility, coordinate
+  frame visibility) of Receive Only (broadcast) viewers with the Receive and Reply user (trainer).
+  When forced synchronization is enabled, broadcast Vizard instances will display the current choices
+  and settings selections of the trainer. The trainer can release forced synchronization mode under the
+  Broadcast tab of the Settings panel to allow broadcast viewers to control their own displays.
+- Improved Vizard handling of incorrect socket address or connection type: failure to connect will
+  result in error message and user will have a chance to correct socket address and/or connection type
+- Improved camera transition between scale regimes (spacecraft local view to planet local
+  view to hello view)
+- Improved camera transition on selection of new camera target
+- depth map shader output textures changed to red-channel only while multi-channel shader
+  issue is resolved
+
+.. warning::
+
+    - depth map shader color output values are being adjusted by Unity after being written by fragment shader,
+      resulting in incorrect depth measurements using the three-channel decoding
+    - The use of ``vizInterface.opNavMode`` is now depreciated.  See :ref:`vizardLiveComm` for more
+      information.  The setting ``opNavMode=1`` is now ``liveStream`` and ``opNavMode=2`` is now ``noDisplay``.
 
 **Version 2.1.6.1 (March 20, 2024)**
 

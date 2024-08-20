@@ -5,30 +5,24 @@ Video Gallery
 =============
 
 
-.. raw:: html
+.. |inline-image1| image:: https://hanspeterschaub.info/Movies/emmLaunch-2020-07-19.jpg
+   :target: https://hanspeterschaub.info/Movies/emmLaunch-2020-07-19.mp4
+   :height: 10em
 
-    <style media="all">
-        img {
-            border: white 1px solid;
-            transition-duration: 0.3s;
-        }
-        figcaption {padding-bottom: 1em;font-style: italic;}
-        img:hover {transform: scale(1.1);}
-    </style>
+.. |inline-image2| image:: https://hanspeterschaub.info/Movies/Vizard-Basic-Features.jpg
+   :target: https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4
+   :height: 10em
 
-    <figure>
-        <a href="https://hanspeterschaub.info/Movies/emmLaunch-2020-07-19.mp4">
-        <img src="https://hanspeterschaub.info/Movies/emmLaunch-2020-07-19.jpg"
-            style="height:10em;" alt="clip image" title="Vizard movie'">
-        </a>
-        <figcaption>2020-07-23.  EMM Hope launch visualization departing Earth</figcaption>
-    </figure>
+.. list-table:: Table of Vizard Video Links
+    :widths: auto
+    :header-rows: 1
 
-    <figure>
-        <a href="https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4">
-        <img src="https://hanspeterschaub.info/Movies/Vizard-Basic-Features.jpg"
-            style="height:10em;" alt="clip image" title="Vizard movie'">
-        </a>
-        <figcaption>2020-07-05.  Basic Vizard 1.4 features illustration</figcaption>
-    </figure>
-
+    * - Site
+      - Date
+      - Description
+    * - |inline-image1|
+      - 2020 July 23
+      - EMM Hope launch visualization departing Earth
+    * - |inline-image2|
+      - 2020 July 5
+      - Basic Vizard 1.4 features illustration

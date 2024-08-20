@@ -185,7 +185,7 @@ class BSKDynamicModels():
         # setup OpNav behavior by connecting camera module config message
         self.vizInterface.addCamMsgToModule(self.cameraMod.cameraConfigOutMsg)
         self.vizInterface.addCamMsgToModule(self.cameraMod2.cameraConfigOutMsg)
-        self.vizInterface.opNavMode = 2
+        self.vizInterface.noDisplay = True
         self.vizInterface.settings.skyBox = "black"
         self.vizInterface.settings.ambient = 0.5
 
@@ -369,7 +369,7 @@ class BSKDynamicModels():
     def SetSimpleGrav(self):
         planet = self.gravFactory.createMarsBarycenter()
         planet.isCentralBody = True
-        
+
         self.gravFactory.addBodiesTo(self.scObject)
 
     # Global call to initialize every module
@@ -387,5 +387,3 @@ class BSKDynamicModels():
         self.SetEphemConvert()
         self.SetCamera()
         self.SetCamera2()
-
-

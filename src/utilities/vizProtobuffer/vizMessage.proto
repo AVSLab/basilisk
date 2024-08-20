@@ -10,10 +10,10 @@
 syntax = "proto3";
 package vizProtobufferMessage;
 
-   
+
 //A VizMessage should contain all Basilisk Sim messages needed to visualize a single time step
 message VizMessage{
-    
+
     message EpochDateTime{
         //FIELDS 1-6 FIRST MESSAGE ONLY
         int32 year = 1;  //default: 2019
@@ -42,7 +42,7 @@ message VizMessage{
         double radiusRatio = 7; //[radiusPolar/radiusEq] Used to compute ellipticity. It is optional and is provided for bodies in the basic Vizard body dictionary.  Default is 1.
         string modelDictionaryKey = 8; //"" will result in using the current default for the celestial body's given name, otherwise key will be matched if possible to available model in internal model dictionary
     }
-  
+
     //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
     message Spacecraft{
         //FIELDS 1-4 EVERY TIMESTEP,
@@ -53,7 +53,7 @@ message VizMessage{
         repeated double position = 2;  //SCStatesMsg.r_BN_N
         repeated double velocity = 3;  //SCStatesMsg.v_BN_N
         repeated double rotation = 4;  //SCStatesMsg.sigma_BN
-      
+
         repeated ReactionWheel reactionWheels = 5;
         repeated Thruster thrusters = 6;
         repeated CoarseSunSensor CSS = 7;
@@ -106,7 +106,7 @@ message VizMessage{
         int32 CSSGroupID = 7;
         double minMsmt = 8;
     }
-    
+
     message GenericSensor{ //ONLY REQUIRED IF GENERIC SENSOR HUD DESIRED
         //FIELDS 2-4, 7-9 ONLY IN FIRST MESSAGE
         //FIELDS 5,6 OPTIONAL, BUT CAN BE UPDATED IN EVERY MESSAGE
@@ -119,7 +119,7 @@ message VizMessage{
         repeated int32 color = 8; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.
         string label = 9; // (Optional) string to display on sensor label
     }
-    
+
     message GenericStorage{ //ONLY REQUIRED IF GENERIC STORAGE PANEL DESIRED
         //FIELDS 2, 5 ONLY IN FIRST MESSAGE
         //FIELDS 3, 4 EVERY MESSAGE
@@ -131,7 +131,7 @@ message VizMessage{
         repeated int32 color = 6; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be used to color the bar graph between thresholds (i.e. the first color will be used between values of 0 and threshold 1, the second color will be used between threshold 1 and 2,..., the last color will be used between threshold n and the maxValue
         repeated int32 thresholds = 7; //(Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
     }
-    
+
     message Light{//ONLY REQUIRED IF LIGHT DESIRED
         // FIELDS 1-4,6-14 ONLY IN FIRST MESSAGE
         // FIELD 5 OPTIONAL, BUT CAN BE CHANGED EVERY MESSAGE
@@ -150,7 +150,7 @@ message VizMessage{
         double lensFlareBrightness = 13; // (Optional) Simulates refraction of light in camera lens, this value controls the size and brightness of the lens flare, default is 0.3
         double lensFlareFadeSpeed = 14; //(Optional) Speed with which the lens flare fades, default is 10.0
     }
-    
+
     message Transceiver{//ONLY REQUIRED IF TRANSCEIVER DESIRED
         //FIELDS 2-4, 8,9 ONLY FIRST MESSAGE
         //FIELDS 5, 6, 10 OPTIONAL, BUT CHECKED EVERY MESSAGE
@@ -182,10 +182,10 @@ message VizMessage{
         int64 ppMaxBlurSize = 15; //(Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to leave this option off.
         int64 renderMode = 16; //(Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
         repeated double depthMapClippingPlanes = 17; //(Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
-        
+
     }
 
-    
+
     message PointLine{//ONLY NEEDED IF POINT-LINES DESIRED
         //IF POINT-LINE CREATED IN LIVEVIZSETTINGS, WILL BE UPDATED EVERY MESSAGE
         //IF POINT-LINE CREATED IN VIZSETTINGSPB, CHECKED ONLY AT START
@@ -193,7 +193,7 @@ message VizMessage{
         string toBodyName = 2; //Can be spacecraft, celestial body, or ground location
         repeated int32 lineColor = 3; //Send desired RGBA as values between 0 and 255
     }
-    
+
     message KeepOutInCone{//ONLY NEEDED IF KEEP OUT OR KEEP IN CONE DESIRED
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE
         bool isKeepIn = 1; //True -> keep in cone created, False -> keep out cone created
@@ -206,7 +206,7 @@ message VizMessage{
         repeated int32 coneColor = 8; //Send desired RGBA as values between 0 and 255
         string coneName = 9; //If unspecified, viz will autogenerate name
     }
-    
+
     message StandardCameraSettings{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY NEEDED IF STANDARD CAMERA PANEL AUTOMATIC SET-UP IS DESIRED
         string spacecraftName = 1; //Body to attach camera to (default is the first spacecraft in messages)
@@ -231,7 +231,7 @@ message VizMessage{
         int32 showThrusterLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showRWLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
-    
+
     message InstrumentSettings{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, NONE ARE REQUIRED
         string spacecraftName = 1; //Which spacecraft's instruments to set
@@ -245,7 +245,7 @@ message VizMessage{
         int32 showGenericStoragePanel = 9; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showMultiSphereLabels = 10; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
-    
+
     message CustomModel{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY NEEDED IF A CUSTOM MODEL IS BEING APPLIED
         string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape or "HI_DEF_SPHERE" to use the high vertex count icosphere
@@ -319,9 +319,10 @@ message VizMessage{
         double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
         int32 forceStartAtSpacecraftLocalView = 50; // Require Vizard to start up in spacecraft-view on start up
         int32 useSimpleLocationMarkers = 51; // Value of 0 (protobuffer default) to use simplified Location markers when number of locations is greater than 100, -1 to force use of full-featured Location, 1 to force use of simplified Location (no cones, range, or communication lines)
+        string keyboardLiveInput = 52; // string of alphanumeric key inputs to listen for during 2-way communication
 	    int64 messageBufferSize = 53; //[bytes] Maximum size of vizMessages to be loaded into memory at one time, -1 to force loading of entire file into memory, 0 to use viz default
     }
-    
+
     message MultiSphere{ //ONLY NEEDED IF MSM DESIRED
         //FIELDS 2,3, 5 CHECKED FIRST MESSAGE ONLY
         //FIELD 1,4 CHECKED EVERY MESSAGE
@@ -335,7 +336,7 @@ message VizMessage{
         repeated int32 negativeColor = 7; // (optional) Send desired RGBA as values between 0 and 255, default is red
         int32 neutralOpacity = 8; // (optional) Send desired opacity value between 0 and 255 for when charge is neutral, negative value yields default
     }
-    
+
     message Location{ //ONLY NEEDED IF LOCATION DESIRED
         // ALL FIELDS CHECKED EVERY MESSAGE
         string stationName = 1; // location text label
@@ -356,7 +357,7 @@ message VizMessage{
         repeated int32 color = 5; //Send desired RGBA as values between 0 and 255
         int32 showGridLines = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
-    
+
     TimeStamp currentTime = 1; //CHECKED EVERY MESSAGE
     repeated CelestialBody celestialBodies = 2; //CHECKED EVERY MESSAGE
     repeated Spacecraft spacecraft = 3; //CHECKED EVERY MESSAGE
@@ -367,4 +368,49 @@ message VizMessage{
     EpochDateTime epoch = 8; //CHECKED FIRST MESSAGE ONLY
     repeated Location locations = 9; //CHECKED EVERY MESSAGE
     LiveVizSettingsPb liveSettings = 10; //CHECKED EVERY MESSAGE
+    repeated VizEventDialog vizEventDialogs = 11; //CHECKED EVERY MESSAGE
+}
+
+message VizInput{ // Message sent from Vizard to BSK containing user inputs since last send
+
+    message KeyboardInput{ // Submessage containing of all Vizard recorded keys
+        string keys = 1;
+    }
+
+    int64 frameNumber = 1; // Frame number when message was sent
+    KeyboardInput keyInputs = 2;
+    repeated VizEventReply replies = 3; // Vector of VizEventReply submessages
+    VizBroadcastSyncSettings broadcastSyncSettings = 4; // Sync settings submessage
+}
+
+message VizEventReply{
+    string eventHandlerID = 1; //Name provided when setting up the EventDialog object
+    string reply = 2; //Which user option was selected
+    bool eventHandlerDestroyed = 3; //Was the panel closed and destroyed?
+}
+
+message VizEventDialog{
+    //ONLY NEEDED IF AN DIALOG BOX IS DESIRED OR EXISTING DIALOG BOX REQUIRES UPDATE
+    // ALL FIELDS CHECKED EVERY MESSAGE
+    // FIELD 1 IS REQUIRED
+    string eventHandlerID = 1; //Name of Vizard event handler to be returned with VizEventReply responses
+    string displayString = 2; //Contains the information or choice that should be posed to the user
+    repeated string userOptions = 3; //Determines how many user choices will be shown and what the displayed string will say. If this is empty, the dialog is assumed to be informational only
+    bool forceEventDialogMaximize = 4; // If true, panel will be displayed in Vizard on update even if user has minimized, false will allow panel to stay minimized
+    double durationOfDisplay = 5; //[ns] How long to display the dialog box for, use 0 to leave panel on display until closed by user, -1 to override and close panel immediately
+    bool useSimElapsedTimeForDuration = 6; //If true and duration of display is set, use the sim elapsed time to calculate when to hide window. If false, use real time (system clock).
+    int32 useConfirmationPanel = 7; //Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
+    int32 hideOnSelection = 8; //Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to hide panel after user makes a selection, 2 to destroy panel after user makes a selection
+    string dialogFormat = 9; //Select format for dialog box: WARNING, CAUTION, or none to use viz default format
+}
+
+message VizBroadcastSyncSettings{
+    bool forceTrainerSettings = 1; // If true, the BroadcastSyncSettings will be forced to match in the viewers' Vizard instances
+    int32 orbitLinesOn = 2; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
+    int32 trueTrajectoryLinesOn = 3; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
+    int32 spacecraftCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 planetCSon = 5; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 showHillFrame = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    repeated VizEventReply dialogEvents = 7; //Pass trainer EventDialog selections to the viewers
+    repeated VizEventDialog currentEventDialogs = 8; //Pass all existing EventDialogs to viewers (to allow late joiners to see all dialog boxes)
 }

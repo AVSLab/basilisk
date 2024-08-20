@@ -21,6 +21,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 %}
 
+%include "swig_deprecated.i"
+%deprecated_variable(VizInterface, opNavMode, "2025/04/17", "opNavMode is deprecated. Use liveStream and noDisplay flags instead.")
+
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
@@ -49,6 +52,8 @@ namespace std {
     %template(GenericStorageVector) vector<GenericStorage *>;
     %template(MultiSphereVector) vector<MultiSphere *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
+    %template(VizEventDialogVector) vector<VizEventDialog *>;
+    %template(VizEventReplyVector) vector<VizEventReply>;
 }
 
 %include "vizInterface.h"
@@ -72,6 +77,7 @@ struct EpochMsg_C;
 %include "architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 %include "architecture/msgPayloadDefCpp/ChargeMsmMsgPayload.h"
+%include "architecture/msgPayloadDefCpp/VizUserInputMsgPayload.h"
 
 %pythoncode %{
 import sys

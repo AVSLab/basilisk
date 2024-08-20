@@ -161,7 +161,7 @@ def run(show_plots):
 
     # setup asteroid gravity body
     mu = 2.34268    # meters^3/s^2
-    asteroid = gravFactory.createCustomGravObject("Itokawa", mu)
+    asteroid = gravFactory.createCustomGravObject("Itokawa", mu, radEquator=200)
 
     asteroid.isCentralBody = True  # ensure this is the central gravitational body
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])

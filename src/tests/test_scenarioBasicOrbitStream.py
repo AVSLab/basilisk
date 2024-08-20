@@ -66,7 +66,7 @@ def test_scenarioBasicOrbitStream(show_plots, orbitCase, useSphericalHarmonics, 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    scenarioBasicOrbitStream.run(show_plots, False, 10., orbitCase, useSphericalHarmonics, planetCase)
+    scenarioBasicOrbitStream.run(show_plots, False, False, 10., orbitCase, useSphericalHarmonics, planetCase)
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -79,4 +79,3 @@ def test_scenarioBasicOrbitStream(show_plots, orbitCase, useSphericalHarmonics, 
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

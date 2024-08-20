@@ -4,6 +4,10 @@
 BSK Scripting Settings
 ======================
 
+.. image:: /_images/static/basiliskVizardLogo.png
+       :align: right
+       :scale: 50 %
+
 Overview
 --------
 
@@ -222,6 +226,9 @@ default setting for that behavior.
       - int
       - flag to show the mission time instead of the simulation time. Value of 0 (protobuffer default)
         to use viz default, -1 for false, 1 for true
+    * - ``keyboardLiveInput``
+      - string
+      - string of alphanumeric key inputs to listen for during 2-way communication    * - ``messageBufferSize``
     * - ``messageBufferSize``
       - int
       - [bytes] Maximum size of vizMessages to be loaded into memory at one time,
@@ -416,14 +423,14 @@ cones can be setup in Vizard, but can also be scripted from Basilisk
 using the helper function ``createConeInOut``:
 
 .. code-block::
-	
+
 	viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject, saveFile=fileName)
 	vizSupport.createConeInOut(viz, toBodyName='earth', coneColor='teal',
                                normalVector_B=[1, 0, 0], incidenceAngle=30\ macros.D2R, isKeepIn=True,
                                coneHeight=5.0, coneName=‘sensorCone’)
 	vizSupport.createConeInOut(viz,toBodyName='earth', coneColor='blue', normalVector_B=[0, 1, 0],
                                incidenceAngle=30\ macros.D2R, isKeepIn=False, coneHeight=5.0, coneName=‘comCone’)]
-	
+
 The following table illustrates the
 arguments for the ``createConeInOut`` method:
 
@@ -684,12 +691,19 @@ The following table illustrates the possible variables for the
 
 
 If the ``renderMode`` is set to 1 the camera outputs a depth map.
-Depth maps rendered by an Instrument Camera utilize Unity’s ``Linear01Depth`` shader helper macro inside
-Vizard’s DepthMap shader. The macro linearizes the non-linear internal depth texture whose precision
-is configuration and platform dependent to return a value between 0 and 1 where 1 is the maximum depth.
-Vizard’s DepthMap shader takes the value returned and encodes it as an RGB color. The far clipping plane
-of the Instrument Camera determines the maximum depth of the rendered texture and can be set as part of
-the camera configuration.
+Depth maps rendered by an Instrument Camera utilize Unity’s ``Linear01Depth`` shader helper macro
+inside Vizard’s DepthMap shader. The macro linearizes the non-linear internal depth texture
+whose precision is configuration and platform dependent to return a value between 0 and 1 where
+1 is the maximum depth. Vizard’s DepthMap shader takes the value returned and encodes it as an
+RGB color. The far clipping plane of the Instrument Camera determines the maximum depth of the
+rendered texture and can be set as part of the camera configuration.
+
+.. warning::
+
+      Three channel output (RGB) of depth is unavailable as of Vizard 2.2.0 until further notice,
+      due to a change in how Unity writes the color output from the fragment shader in Unity 2022.3.
+      Until this is resolved, the depth is encoded only in the red channel (R) of the pixel color.
+
 
 .. warning::
 
@@ -697,14 +711,22 @@ the camera configuration.
     the calculated depth increases with distance from the camera.
 
 
-To decode the depth for a specific pixel, sample its RGB color values :math:`(r,g,b)` and calculate the depth as as:
+To decode the depth for a specific pixel, sample its color. If your color sampler returns a float red
+channel value between 0 and 1.0, calculate the depth as:
 
 .. math::
 
-    depth = (farClippingPlane)(\frac{\frac{\frac{b} {256} +g} {256} + r} {256})
+	depth = (farClippingPlane)(pixelColor.r)
 
-If the depth is equal to or greater than the far clipping plane of the instrument camera,
-the pixel color will be white (255, 255, 255).
+If your color sampler returns an integer red channel value between 0 and 255, calculate the depth as:
+
+.. math::
+
+	depth = (farClippingPlane)(\frac{pixelColor.r} {255})
+
+
+If the depth is equal to or greater than the far clipping plane of the instrument camera, the
+pixel color will be white (255, 255, 255).
 
 
 
@@ -1456,7 +1478,7 @@ The full list of required and optional generic sensor parameters are provided in
       - No
       - Send desired RGBA as values between 0 and 255, default is pure white
     * - ``showLensFlare``
-      - double
+      - int
       -
       - No
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -1829,5 +1851,3 @@ the MSM radii are stored in the list ``rListDebris``.  The sample code is::
                                               , saveFile=fileName
                                               , msmInfoList=[msmInfoDebris]
                                               )
-
-

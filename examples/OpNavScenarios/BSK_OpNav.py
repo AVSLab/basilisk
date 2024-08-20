@@ -73,10 +73,16 @@ By default the Vizard will run in head-less mode where the full scene is note re
 for viewing as this slows down the simulation.  To see the scene, edit the following line
 within the scenario script::
 
-    TheBSKSim.get_DynModel().vizInterface.opNavMode = 1
+    TheBSKSim.get_DynModel().vizInterface.noDisplay = False
 
-to set `opNaveMode` flag to 1 instead of 2.  This launches Vizard with the argument ``-directComm``
-rather than with ``-noDisplay`` and the user can monitor the scene being rendered.
+to set ``noDisplay`` flag to False instead of True.  Further, 2-way communication is
+enabled by adding the line::
+
+    TheBSKSim.get_DynModel().vizInterface.liveStream = True
+
+Finally, the Vizard binary is called with the ``-directComm`` argument using::
+
+    TheScenario.run_vizard("-directComm")
 
 
 OpNav Dynamics, Flight Software, and Plotting
@@ -212,8 +218,3 @@ class BSKScenario(object):
         if self.showPlots:
             figureList = self.pull_outputs(self.showPlots)
         return figureList
-
-
-
-
-

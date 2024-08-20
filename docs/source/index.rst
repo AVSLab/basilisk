@@ -8,10 +8,6 @@ Welcome to Basilisk: an Astrodynamics Simulation Framework
        :align: center
        :width: 100%
 
-.. important::
-
-    With Basilisk v2.1.5 onwards the repository is moving from BitBucket to GitHub starting Dec. 13, 2022.
-    Notes on how to access the new repo location are found in  :ref:`pullCloneBSK`.
 
 Architecture
 ------------
