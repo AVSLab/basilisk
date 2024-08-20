@@ -231,21 +231,7 @@ class BasiliskConan(ConanFile):
             self.keep_imports = True
             self.copy("*.dll", "../Basilisk", "bin")
 
-    def generateMessageModules(self, originalWorkingDirectory):
-        cmdString = [sys.executable, "GenCMessages.py"]
-        if self.options.pathToExternalModules:
-            cmdString.extend(["--pathToExternalModules", str(self.options.pathToExternalModules)])
-        subprocess.check_call(cmdString)
-        os.chdir(originalWorkingDirectory)
-        print("Done")
-
     def build(self):
-        # auto-generate C message definition files
-        print(statusColor + "Auto-generating message definitions:" + endColor, end=" ")
-        bskPath = os.getcwd()
-        os.chdir(os.path.join(bskPath, "src/architecture/messaging/msgAutoSource"))
-        self.generateMessageModules(bskPath)
-
         if self.options.pathToExternalModules:
             print(statusColor + "Including External Folder: " + endColor + str(self.options.pathToExternalModules))
 

@@ -1,0 +1,55 @@
+/* @MSG_AUTOSOURCE_LICENSE@ */
+
+
+/* Header generated automatically through CMake.
+ * See architecture/messaging/cMsgCInterface/CMakeLists.txt
+*/
+
+#ifndef @MSG_AUTOSOURCE_TYPE@_C_H
+#define @MSG_AUTOSOURCE_TYPE@_C_H
+
+#include <stdint.h>
+#include "@MSG_AUTOSOURCE_HEADER@"
+#include "architecture/messaging/msgHeader.h"
+
+//! structure definition
+typedef struct {
+    MsgHeader header;              //!< message header, zero'd on construction
+    @MSG_AUTOSOURCE_TYPE@Payload payload;		        //!< message copy, zero'd on construction
+    @MSG_AUTOSOURCE_TYPE@Payload *payloadPointer;	    //!< pointer to message
+    MsgHeader *headerPointer;      //!< pointer to message header
+} @MSG_AUTOSOURCE_TYPE@_C;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void @MSG_AUTOSOURCE_TYPE@_cpp_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, void* source);
+
+void @MSG_AUTOSOURCE_TYPE@_C_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, @MSG_AUTOSOURCE_TYPE@_C *source);
+
+int8_t @MSG_AUTOSOURCE_TYPE@_C_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscriber, @MSG_AUTOSOURCE_TYPE@_C *source);
+int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscriber, void* source);
+
+void @MSG_AUTOSOURCE_TYPE@_C_addAuthor(@MSG_AUTOSOURCE_TYPE@_C *coowner, @MSG_AUTOSOURCE_TYPE@_C *data);
+
+void @MSG_AUTOSOURCE_TYPE@_C_init(@MSG_AUTOSOURCE_TYPE@_C *owner);
+
+int @MSG_AUTOSOURCE_TYPE@_C_isLinked(@MSG_AUTOSOURCE_TYPE@_C *data);
+
+int @MSG_AUTOSOURCE_TYPE@_C_isWritten(@MSG_AUTOSOURCE_TYPE@_C *data);
+
+uint64_t @MSG_AUTOSOURCE_TYPE@_C_timeWritten(@MSG_AUTOSOURCE_TYPE@_C *data);
+
+int64_t @MSG_AUTOSOURCE_TYPE@_C_moduleID(@MSG_AUTOSOURCE_TYPE@_C *data);
+
+void @MSG_AUTOSOURCE_TYPE@_C_write(@MSG_AUTOSOURCE_TYPE@Payload *data, @MSG_AUTOSOURCE_TYPE@_C *destination, int64_t moduleID, uint64_t callTime);
+
+@MSG_AUTOSOURCE_TYPE@Payload @MSG_AUTOSOURCE_TYPE@_C_read(@MSG_AUTOSOURCE_TYPE@_C *source);
+
+@MSG_AUTOSOURCE_TYPE@Payload @MSG_AUTOSOURCE_TYPE@_C_zeroMsgPayload();
+
+#ifdef __cplusplus
+}
+#endif
+#endif
