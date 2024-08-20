@@ -2,7 +2,7 @@ Executive Summary
 -----------------
 
 This class provides an interface for Extended (and Classical) Kalman Filters. Modules which inherit from it will
-benefit from having the core functionality of these basic filters.
+benefit from having the core functionality of these basic filters. This class inherits from the Kalman Filter interface.
 
 The math is derived primarily using the equations in Tapley, Schutz, and Born's Statistical Orbit Determination textbook
 Chapter 4. This contains further information on this module's mathematical framework, and the flow diagrams describing
@@ -50,30 +50,6 @@ provides information on what this message is used for.
       - update using the extended kalman filter
       - private
       - non-virtual
-    * - orderMeasurementsChronologically
-      - order the messages chronologically
-      - private
-      - non-virtual
-    * - customReset
-      - perform addition reset duties in child class
-      - protected
-      - virtual, optional
-    * - propagate
-      - add a dynamics model for the inputs in child class
-      - protected
-      - virtual, needs to be populated
-    * - readFilterMeasurements
-      - read the specific measurements in a child class
-      - protected
-      - virtual, needs to be populated
-    * - writeOutputMessages
-      - write the specific measurements in a child class
-      - protected
-      - virtual, needs to be populated
-    * - rk4
-      - Runge-Kutta 4 integrator if needed for propagation
-      - protected
-      - non-virtual
 
 
 Module assumptions and limitations
@@ -110,18 +86,3 @@ This section also lists all the setters and getters that are defined by the inte
     * - set/getConstantRateStates
       - if using constant rates (not estimated by the filter) that integrate the state linearly, set this rate component
       - necessary
-    * - set/getInitialState
-      - filter initial state
-      - necessary
-    * - set/getInitialCovariance
-      - filter initial covariance (square matrix size of state)
-      - necessary
-    * - set/getProcessNoise
-      - filter process noise value (square matrix size of state)
-      - necessary
-    * - set/getConstantMeasurementNoise
-      - filter measurement noise (square matrix size of observations)
-      - optional
-    * - set/getUnitConversionFromSItoState
-      - conversion from SI to internal filter units
-      - optional
