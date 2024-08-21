@@ -115,10 +115,10 @@ void @MSG_AUTOSOURCE_TYPE@_cpp_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, vo
 };
 
 //! This method takes an address location as an integer, reinterprets it to be an object, and calls the CPP subscribe method from there
-void {type}_addr_subscribe({type}_C *subscriber, uint64_t sourceAddr){{
+void @MSG_AUTOSOURCE_TYPE@_addr_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, uint64_t sourceAddr){
     void *source = reinterpret_cast<void *> (sourceAddr);
-    {type}_cpp_subscribe(subscriber, source);
-}};
+    @MSG_AUTOSOURCE_TYPE@_cpp_subscribe(subscriber, source);
+};
 
 //! Cpp interface to check if subscriber is indeed subscribed to a message (1: subscribed, 0: not subscribed)
 int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscriber, void* source) {
@@ -133,9 +133,9 @@ int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscri
 };
 
 //! Cpp interface to check if subscriber is indeed subscribed to a message-address (1: subscribed, 0: not subscribed)
-int8_t {type}_cpp_isSubscribedToAddr({type}_C *subscriber, uint64_t sourceAddr) {{
+int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedToAddr(@MSG_AUTOSOURCE_TYPE@_C *subscriber, uint64_t sourceAddr) {
 
     void *source = reinterpret_cast<void*> (sourceAddr);
-    return ({type}_cpp_isSubscribedTo(subscriber, source));
+    return (@MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedTo(subscriber, source));
 
-}};
+};
