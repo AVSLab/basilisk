@@ -32,7 +32,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Added swirl torque information to :ref:`THRConfigMsg`, :ref:`thrustCMEstimation`, and :ref:`thrusterPlatformState`
 
 
 Version 2.4.0 (August 23, 2024)
