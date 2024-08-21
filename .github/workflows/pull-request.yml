@@ -41,7 +41,7 @@ jobs:
         id: cache-conan
         uses: actions/cache@v4
         env:
-          cache-name: cache-conan-packages
+          cache-name: cache-conan-packages-ubuntu-20-04
         with:
           # conan cache files are stored in `~/.conan` on Linux/macOS
           path: ~/.conan
@@ -105,7 +105,7 @@ jobs:
         id: cache-conan
         uses: actions/cache@v4
         env:
-          cache-name: cache-conan-packages
+          cache-name: cache-conan-packages-ubuntu-20-04
         with:
           # conan cache files are stored in `~/.conan` on Linux/macOS
           path: ~/.conan
@@ -169,7 +169,7 @@ jobs:
         id: cache-conan
         uses: actions/cache@v4
         env:
-          cache-name: cache-conan-packages
+          cache-name: cache-conan-packages-ubuntu-22-04
         with:
           # conan cache files are stored in `~/.conan` on Linux/macOS
           path: ~/.conan
@@ -234,7 +234,7 @@ jobs:
         id: cache-conan
         uses: actions/cache@v4
         env:
-          cache-name: cache-conan-packages
+          cache-name: cache-conan-packages-ubuntu-22-04
         with:
           # conan cache files are stored in `~/.conan` on Linux/macOS
           path: ~/.conan
@@ -298,7 +298,7 @@ jobs:
         id: cache-conan
         uses: actions/cache@v4
         env:
-          cache-name: cache-conan-packages
+          cache-name: cache-conan-packages-ubuntu-22-04
         with:
           # conan cache files are stored in `~/.conan` on Linux/macOS
           path: ~/.conan
