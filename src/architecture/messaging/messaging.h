@@ -119,7 +119,7 @@ public:
     void subscribeToAddr(uint64_t sourceAddr)
     {
         //!Cast a pointer at the sourceAddr and call the regular subscribe
-        Message<messageType> *source = 
+        Message<messageType> *source =
             reinterpret_cast<Message<messageType> *> (sourceAddr);
 	    subscribeTo(source);
     }
