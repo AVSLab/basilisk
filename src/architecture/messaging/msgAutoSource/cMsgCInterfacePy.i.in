@@ -14,6 +14,8 @@ typedef struct {type};
             {type}_C_subscribe(self, source)
         elif type(source) == {type}:
             {type}_cpp_subscribe(self, source)
+        elif type(source) == int: #Note that is assumes it is a uint64_t address in memory
+            {type}_addr_subscribe(self, source)
         else:
             raise Exception('tried to subscribe {type} to another message type')
 
@@ -26,6 +28,8 @@ typedef struct {type};
             return ({type}_C_isSubscribedTo(self, source))
         elif type(source) == {type}:
             return ({type}_cpp_isSubscribedTo(self, source))
+        elif type(source) == int: #Note that this assumes it is a uint64_t address location in memory
+            return ({type}_cpp_isSubscribedToAddr(self, source))
         else:
             return 0
 
