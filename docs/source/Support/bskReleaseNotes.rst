@@ -30,8 +30,8 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
 
 
-Version |release|
------------------
+Version |release| (August 23, 2024)
+-----------------------------------
 - Added a new example scenario :ref:`scenarioConstrainedDynamics` demonstrating post-docked spacecraft dynamics
 - Created a :ref:`constraintDynamicEffector` dynamics module to couple separate spacecraft motion using holonomic
   constraints
