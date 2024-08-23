@@ -10,6 +10,12 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- pip-based installation in editable mode using `pip install -e .` is not currently supported.
+  Developers and users alike should continue to use `python conanfile.py` installation.
+
+
+Version 2.4.0
+-------------
 - The fuel tank models have become classes and python simulation code using tank modules need to be
   updated.  See :ref:`fueltank` or :ref:`scenarioFuelSlosh` for further documentation.
 - The CI test builds starting failing running the `gtest` unit test suite with the error
