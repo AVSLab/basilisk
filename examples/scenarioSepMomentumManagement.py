@@ -141,7 +141,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTime = macros.day2nano(1.9)
+    simulationTime = macros.day2nano(2)
     simulationTimeStepDyn = macros.sec2nano(0.5)
     simulationTimeStepFsw = macros.sec2nano(2)
     simulationTimeStepPlt = macros.hour2nano(1)
@@ -341,7 +341,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     thruster.steadyIsp = 1600
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
-    thruster.MaxSwirlTorque = -1.3e-3 * thruster.MaxThrust
+    thruster.MaxSwirlTorque = 1.3e-3 * thruster.MaxThrust
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
@@ -502,7 +502,7 @@ def run(momentumManagement, cmEstimation, showPlots):
         saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
-        saReference[item].r_AB_B = [(-1)**item * (3.75 + 0.5 * lenXHub), 0.0, 0.45]
+        saReference[item].r_AB_B = [(-1)**item * (3.75 + 0.5 * lenXHub + 0.5 * 7.262), 0.0, 0.45]
         saReference[item].pointingMode = 0
         scSim.AddModelToTask(fswTask, saReference[item], 24)
 
@@ -539,7 +539,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Configure thruster on-time message
     thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrOnTimeMsgData.OnTimeRequest = [3600*24*3.5]
+    thrOnTimeMsgData.OnTimeRequest = [3600*24*2]
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
@@ -698,15 +698,12 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.InitializeSimulation()
 
     # configure a simulation stop time and execute the simulation run
-    scSim.ConfigureStopTime(macros.day2nano(0.5))
+    scSim.ConfigureStopTime(macros.day2nano(1.0))
     scSim.ExecuteSimulation()
     saReference[0].pointingMode = 1
     saReference[1].pointingMode = 1
     saReference[0].Reset(macros.day2nano(1))
     saReference[1].Reset(macros.day2nano(1))
-    pltReference.K = 0
-    pltReference.Ki = 0
-    pltReference.Reset(macros.day2nano(1))
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
@@ -897,24 +894,21 @@ def plot_thruster_cm_offset(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThr
 
 def plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, dataM0B, dataThrDir_F, figID=None):
     """Plot the angle between thrust vector and net momentum on RWs."""
-    dataAngle = []
+    dataMomentum = []
+    dataMomentumNorm = []
     for i in range(len(timeData)):
-        FM0 = rbk.euler1232C([dataNu[0][i], dataNu[1][i], 0.0])
-        FB = np.matmul(FM0, dataM0B)
-        BF = FB.transpose()
-        thrDir_B = np.matmul(BF, dataThrDir_F[i])
         h_B = np.array([0, 0, 0])
         for j in range(len(Gs)):
             h_B = h_B + dataOmegaRW[i][j] * Gs[j]
-        h_B_norm = np.linalg.norm(h_B)
-        if h_B_norm == 0:
-            dataAngle.append(0.0)
-        else:
-            dataAngle.append(h_B_norm)
-
-    dataAngle = np.array(dataAngle) * macros.R2D
+        dataMomentum.append(h_B)
+        dataMomentumNorm.append(np.linalg.norm(h_B))
+    dataMomentum = np.array(dataMomentum)
     plt.figure(figID, figsize=(5, 2.75))
-    plt.plot(timeData, dataAngle, color='C3', label=r'$\Delta \phi$')
+    for idx in range(3):
+        plt.plot(timeData, dataMomentum[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'${}^BH_' + str(idx+1) + '$')
+    plt.plot(timeData, dataMomentumNorm, color='C3', linestyle='dashed', label=r'$\|H\|$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [days]')
     plt.ylabel('Thr-to-Momentum Angle [deg]')
