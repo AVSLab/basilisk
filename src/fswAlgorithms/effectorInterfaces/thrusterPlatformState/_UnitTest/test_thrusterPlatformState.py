@@ -78,6 +78,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     r_FM_F = np.array([0.0, 0.0, -0.1])
     r_TF_F = np.array([-0.01, 0.03, 0.02])
     T_F    = np.array([1.0, 1.0, 10.0])
+    swirlFactor = 0.1
 
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
@@ -107,6 +108,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     THRConfig = messaging.THRConfigMsgPayload()
     THRConfig.rThrust_B = r_TF_F
     THRConfig.maxThrust = np.linalg.norm(T_F)
+    THRConfig.swirlTorque = THRConfig.maxThrust * swirlFactor
     THRConfig.tHatThrust_B = T_F / THRConfig.maxThrust
     thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
     platform.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
@@ -140,6 +142,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     rThrust_B = thrConfigLog.rThrust_B[0]
     tHatThrust_B = thrConfigLog.tHatThrust_B[0]
     tMax = thrConfigLog.maxThrust[0]
+    tSwirl = thrConfigLog.swirlTorque[0]
 
     FM = rbk.euler1232C([theta1, theta2, 0.0])
     MB = rbk.MRP2C(sigma_MB)
@@ -151,6 +154,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     np.testing.assert_allclose(rThrust_B, r_TB_B, rtol=0, atol=accuracy, verbose=True)
     np.testing.assert_allclose(tHatThrust_B, tHat_B, rtol=0, atol=accuracy, verbose=True)
     np.testing.assert_allclose(tMax, np.linalg.norm(T_F), rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(tSwirl, np.linalg.norm(T_F) * swirlFactor, rtol=0, atol=accuracy, verbose=True)
 
     return
 
