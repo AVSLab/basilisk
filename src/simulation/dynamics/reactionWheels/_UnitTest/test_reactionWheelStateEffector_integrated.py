@@ -518,6 +518,21 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def test_setJs(show_plots):
+    """Module Unit Test of settign Js value"""
+    rwFactory = simIncludeRW.rwFactory()
+
+    RW = rwFactory.create(
+        'custom'
+        , [1, 0, 0]  # gsHat_B
+        , rWB_B=[0.1, 0., 0.]  # m
+        , u_max= 0.01 # N
+        , Js=0.1 # kg*m^2
+    )
+    assert RW.Js == 0.1, "Setting Js through RW factory class create function failed"
+
+
 if __name__ == "__main__":
     # reactionWheelIntegratedTest(True,True,'BalancedWheels')
-    reactionWheelIntegratedTest(True,True,'BOE')
+    # reactionWheelIntegratedTest(True,True,'BalancedWheels')
+    test_setJs(False)

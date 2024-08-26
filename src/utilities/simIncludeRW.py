@@ -81,7 +81,7 @@ class rwFactory(object):
                 Viscous friction coefficient
             Js: float
                 RW inertia about spin axis
-        
+
         Returns
         -------
         RWConfigSimMsg : message structure
@@ -237,7 +237,7 @@ class rwFactory(object):
                 print('ERROR: Js must be a FLOAT argument')
                 exit(1)
             if varJs > 0.0:
-                RW.Js = varJs * macros.RPM
+                RW.Js = varJs
                 RW.Jt = 0.5 * RW.Js
                 RW.Jg = RW.Jt
             else:
@@ -371,9 +371,9 @@ class rwFactory(object):
         JsList = []
         uMaxList = []
         for rw in self.rwList.values():
-            
+
             flatGsHat = [element for sublist in rw.gsHat_B for element in sublist]
-            
+
             GsMatrix_B.extend(flatGsHat)
             JsList.extend([rw.Js])
             uMaxList.extend([rw.u_max])
