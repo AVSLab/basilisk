@@ -141,7 +141,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTime = macros.day2nano(2)
+    simulationTime = macros.day2nano(3)
     simulationTimeStepDyn = macros.sec2nano(0.5)
     simulationTimeStepFsw = macros.sec2nano(2)
     simulationTimeStepPlt = macros.hour2nano(1)
@@ -341,7 +341,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     thruster.steadyIsp = 1600
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
-    thruster.MaxSwirlTorque = 1.3e-3 * thruster.MaxThrust
+    thruster.MaxSwirlTorque = 1.0e-3 * thruster.MaxThrust
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
@@ -539,7 +539,7 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Configure thruster on-time message
     thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrOnTimeMsgData.OnTimeRequest = [3600*24*2]
+    thrOnTimeMsgData.OnTimeRequest = [3600*24*7]
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
@@ -698,7 +698,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.InitializeSimulation()
 
     # configure a simulation stop time and execute the simulation run
-    scSim.ConfigureStopTime(macros.day2nano(1.0))
+    scSim.ConfigureStopTime(macros.day2nano(1.5))
     scSim.ExecuteSimulation()
     saReference[0].pointingMode = 1
     saReference[1].pointingMode = 1
