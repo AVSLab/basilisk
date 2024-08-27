@@ -141,7 +141,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTime = macros.day2nano(3)
+    simulationTime = macros.day2nano(1)
     simulationTimeStepDyn = macros.sec2nano(0.5)
     simulationTimeStepFsw = macros.sec2nano(2)
     simulationTimeStepPlt = macros.hour2nano(1)
@@ -442,7 +442,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     cmEstimator.attitudeTol = 1e-6
     cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
-    cmEstimator.R0 = [4e-8, 4e-8, 4e-8]
+    cmEstimator.R0 = [1e-10, 1e-10, 1e-10]
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
 
     # create the FSW vehicle configuration message for CoM
@@ -468,7 +468,7 @@ def run(momentumManagement, cmEstimation, showPlots):
         pltReference.K = 2.5e-4
     else:
         pltReference.K = 0
-    pltReference.Ki = 0
+    pltReference.Ki = 3e-9
     scSim.AddModelToTask(pltRefTask, pltReference, 28)
 
     # Set up the two platform PD controllers
@@ -545,7 +545,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
     # This is needed because platformReference runs on its own task at a different frequency,
     # but it receives inputs and provides outputs to modules that run on the main flight software task
-    messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
+    # messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
 
     # # Enable Vizard
     # Create the effector lists and dictionaries for Vizard
@@ -698,18 +698,18 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.InitializeSimulation()
 
     # configure a simulation stop time and execute the simulation run
-    scSim.ConfigureStopTime(macros.day2nano(1.5))
-    scSim.ExecuteSimulation()
-    saReference[0].pointingMode = 1
-    saReference[1].pointingMode = 1
-    saReference[0].Reset(macros.day2nano(1))
-    saReference[1].Reset(macros.day2nano(1))
+    # scSim.ConfigureStopTime(macros.day2nano(1.5))
+    # scSim.ExecuteSimulation()
+    # saReference[0].pointingMode = 1
+    # saReference[1].pointingMode = 1
+    # saReference[0].Reset(macros.day2nano(1))
+    # saReference[1].Reset(macros.day2nano(1))
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
     # retrieve the logged data
 
-    timeData = snAttLog.times() * macros.NANO2HOUR / 24
+    timeData = snAttLog.times() * macros.NANO2HOUR
     dataSigmaBN = snAttLog.sigma_BN
     dataSigmaRN = attRefLog.sigma_RN
     dataSigmaBR = attErrorLog.sigma_BR
@@ -822,7 +822,7 @@ def plot_attitude(timeData, dataSigmaBN, dataSigmaRN, figID=None):
                  color=unitTestSupport.getLineColor(idx, 3), linestyle='dashed',
                  label=r'$\sigma_{RN,' + str(idx + 1) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel(r'Attitude $\sigma$')
 
 def plot_attitude_error(timeData, dataSigmaBR, figID=None):
@@ -833,7 +833,7 @@ def plot_attitude_error(timeData, dataSigmaBR, figID=None):
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx + 1) + '$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel(r'Attitude Tracking Error $\sigma_{B/R}$')
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW, figID=None):
@@ -844,7 +844,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, figID=None):
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx + 1) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel('RW Speed (RPM) ')
 
 def plot_solar_array_angle(timeData, dataAngle, dataRefAngle, figID=None):
@@ -855,7 +855,7 @@ def plot_solar_array_angle(timeData, dataAngle, dataRefAngle, figID=None):
     for i, angle in enumerate(dataRefAngle):
         plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), linestyle='dashed', label=r'$\alpha_{R,' + str(i+1) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel(r'Solar Array Angles [deg]')
 
 def plot_platform_angle(timeData, dataAngle, dataRefAngle, figID=None):
@@ -866,7 +866,7 @@ def plot_platform_angle(timeData, dataAngle, dataRefAngle, figID=None):
     for i, angle in enumerate(dataRefAngle):
         plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), linestyle='dashed', label=r'$\nu_{R,' + str(i+1) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel(r'Platform Angles [deg]')
 
 def plot_thruster_cm_offset(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrDir_F, figID=None):
@@ -889,7 +889,7 @@ def plot_thruster_cm_offset(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThr
     plt.figure(figID, figsize=(5, 2.75))
     plt.plot(timeData, dataAngOffset, label=r'$\Delta \theta$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel('CM Offset Ang [deg]')
 
 def plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, dataM0B, dataThrDir_F, figID=None):
@@ -910,7 +910,7 @@ def plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, dataM0B, da
                  label=r'${}^BH_' + str(idx+1) + '$')
     plt.plot(timeData, dataMomentumNorm, color='C3', linestyle='dashed', label=r'$\|H\|$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel('Thr-to-Momentum Angle [deg]')
 
 def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
@@ -921,7 +921,7 @@ def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'${}^BL_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     if yString:
         plt.ylabel(yString + ' Torque [mNm]')
     else:
@@ -967,6 +967,7 @@ def plot_state_errors(timeData, data1, data2, figID=None):
     plt.plot(timeData, -3*data2[:, 0]*1000, color='C0', linestyle='dashed')
     plt.legend(loc='upper right')
     plt.ylabel('$r_{CM,1}$ [mm]')
+    plt.subplot(3,1,1).set_ylim([-30, 30])
     plt.grid()
     plt.subplot(3,1,2)
     plt.plot(timeData, data1[:, 1]*1000, color='C1', linestyle='solid', label=r'$\Delta r_2$')
@@ -974,6 +975,7 @@ def plot_state_errors(timeData, data1, data2, figID=None):
     plt.plot(timeData, -3*data2[:, 1]*1000, color='C1', linestyle='dashed')
     plt.legend(loc='upper right')
     plt.ylabel('$r_{CM,2}$ [mm]')
+    plt.subplot(3,1,2).set_ylim([-30, 30])
     plt.grid()
     plt.subplot(3,1,3)
     plt.plot(timeData, data1[:, 2]*1000, color='C2', linestyle='solid', label=r'$\Delta r_3$')
@@ -981,8 +983,9 @@ def plot_state_errors(timeData, data1, data2, figID=None):
     plt.plot(timeData, -3*data2[:, 2]*1000, color='C2', linestyle='dashed')
     plt.legend(loc='upper right')
     plt.ylabel('$r_{CM,3}$ [mm]')
+    plt.subplot(3,1,3).set_ylim([-30, 30])
     plt.grid()
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
 
 def plot_residuals(timeData, preFit, postFit, R, figID=None):
     """Plot pre-fit and post-fit residuals on integral feedback torque measurements."""
@@ -1003,7 +1006,7 @@ def plot_residuals(timeData, preFit, postFit, R, figID=None):
     plt.legend(loc='upper right')
     plt.ylabel('Post-Fit residuals [mNm]')
     plt.grid()
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
 
 def plot_solar_array_pointing_error(timeData, dataAngle, figID=None):
     """Plot the solar array angles w.r.t references."""
@@ -1011,7 +1014,7 @@ def plot_solar_array_pointing_error(timeData, dataAngle, figID=None):
     for i, angle in enumerate(dataAngle):
         plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), label=r'$\gamma_' + str(i+1) + '$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [days]')
+    plt.xlabel('Time [hours]')
     plt.ylabel(r'Solar Array Pointing Error [deg]')
 
 def plot_neg_Y_pointing_error(timeData, dataAngle, figID=None):
@@ -1026,6 +1029,6 @@ def plot_neg_Y_pointing_error(timeData, dataAngle, figID=None):
 if __name__ == "__main__":
     run(
         True,
-        False,
+        True,
         True
     )
