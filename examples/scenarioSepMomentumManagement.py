@@ -141,7 +141,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTime = macros.day2nano(1)
+    simulationTime = macros.day2nano(1/4)
     simulationTimeStepDyn = macros.sec2nano(0.5)
     simulationTimeStepFsw = macros.sec2nano(2)
     simulationTimeStepPlt = macros.hour2nano(1)
@@ -329,31 +329,31 @@ def run(momentumManagement, cmEstimation, showPlots):
     platform.ModelTag = "platform1"
     scObject.addStateEffector(platform)
 
+    # Write THR Config Msg
+    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
+    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
+    THRConfig = messaging.THRConfigMsgPayload()
+    THRConfig.rThrust_B = r_TF_F
+    THRConfig.tHatThrust_B = tHat_F
+    THRConfig.maxThrust = 0.27
+    THRConfig.swirlTorque = 1.0e-3 * THRConfig.maxThrust
+    thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
+
     # Set up the SEP thruster
     sepThruster = thrusterStateEffector.ThrusterStateEffector()
     scSim.AddModelToTask(dynTask, sepThruster)
     thruster = thrusterStateEffector.THRSimConfig()
-    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
-    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
     thruster.thrLoc_B = r_TF_F
-    thruster.thrDir_B = tHat_F
-    thruster.MaxThrust = 0.27
+    thruster.thrDir_B = (np.array(tHat_F) + np.array([0.01, -0.02, 0.0])) / np.linalg.norm(np.array(tHat_F) + np.array([0.01, -0.02, 0.0]))
+    thruster.MaxThrust = THRConfig.maxThrust * 0.9
     thruster.steadyIsp = 1600
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
-    thruster.MaxSwirlTorque = 1.0e-3 * thruster.MaxThrust
+    thruster.MaxSwirlTorque = THRConfig.swirlTorque * 0.9
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
     scObject.addStateEffector(sepThruster)
-
-    # Write THR Config Msg
-    THRConfig = messaging.THRConfigMsgPayload()
-    THRConfig.rThrust_B = r_TF_F
-    THRConfig.tHatThrust_B = tHat_F
-    THRConfig.maxThrust = thruster.MaxThrust
-    THRConfig.swirlTorque = thruster.MaxSwirlTorque
-    thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
 
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
@@ -468,7 +468,7 @@ def run(momentumManagement, cmEstimation, showPlots):
         pltReference.K = 2.5e-4
     else:
         pltReference.K = 0
-    pltReference.Ki = 3e-9
+    pltReference.Ki = 0
     scSim.AddModelToTask(pltRefTask, pltReference, 28)
 
     # Set up the two platform PD controllers
@@ -545,7 +545,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
     # This is needed because platformReference runs on its own task at a different frequency,
     # but it receives inputs and provides outputs to modules that run on the main flight software task
-    # messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
+    messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
 
     # # Enable Vizard
     # Create the effector lists and dictionaries for Vizard
@@ -967,7 +967,7 @@ def plot_state_errors(timeData, data1, data2, figID=None):
     plt.plot(timeData, -3*data2[:, 0]*1000, color='C0', linestyle='dashed')
     plt.legend(loc='upper right')
     plt.ylabel('$r_{CM,1}$ [mm]')
-    plt.subplot(3,1,1).set_ylim([-30, 30])
+    # plt.subplot(3,1,1).set_ylim([-30, 30])
     plt.grid()
     plt.subplot(3,1,2)
     plt.plot(timeData, data1[:, 1]*1000, color='C1', linestyle='solid', label=r'$\Delta r_2$')
@@ -975,7 +975,7 @@ def plot_state_errors(timeData, data1, data2, figID=None):
     plt.plot(timeData, -3*data2[:, 1]*1000, color='C1', linestyle='dashed')
     plt.legend(loc='upper right')
     plt.ylabel('$r_{CM,2}$ [mm]')
-    plt.subplot(3,1,2).set_ylim([-30, 30])
+    # plt.subplot(3,1,2).set_ylim([-30, 30])
     plt.grid()
     plt.subplot(3,1,3)
     plt.plot(timeData, data1[:, 2]*1000, color='C2', linestyle='solid', label=r'$\Delta r_3$')
@@ -983,7 +983,7 @@ def plot_state_errors(timeData, data1, data2, figID=None):
     plt.plot(timeData, -3*data2[:, 2]*1000, color='C2', linestyle='dashed')
     plt.legend(loc='upper right')
     plt.ylabel('$r_{CM,3}$ [mm]')
-    plt.subplot(3,1,3).set_ylim([-30, 30])
+    # plt.subplot(3,1,3).set_ylim([-30, 30])
     plt.grid()
     plt.xlabel('Time [hours]')
 
