@@ -9,7 +9,7 @@ function(generate_messages searchDir generateCCode)
   foreach(msgFile ${message_files})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
     get_filename_component(TARGET_DIR ${msgFile} DIRECTORY)
-    set(COMP_OUT_NAME "${CMAKE_CURRENT_SOURCE_DIR}/../../../dist3/autoSource/${TARGET_NAME}.i")
+    set(COMP_OUT_NAME "${CMAKE_BINARY_DIR}/autoSource/${TARGET_NAME}.i")
     add_custom_command(
       OUTPUT ${COMP_OUT_NAME}
       COMMAND ${Python3_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
