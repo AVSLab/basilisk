@@ -123,10 +123,12 @@ class BasiliskConan(ConanFile):
         reqFile.close()
         pkgList = [x.lower() for x in required]
         pkgList += [
-            # XXX: Add build system requirements which were removed from requirements.txt.
+            # Also install build system requirements.
+            # TODO: Read these from the `pyproject.toml` file directly?
+            # NOTE: These are *NOT* runtime requirements and should *NOT* be in `requirements.txt`!
             "conan>=1.40.1, <2.00.0",
             "parse>=1.18.0",
-            "setuptools>=64",
+            "setuptools>=70.1.0",
             "setuptools-scm>=8.0",
             "cmake>=3.26",
         ]
@@ -288,6 +290,9 @@ class BasiliskConan(ConanFile):
 
     def add_basilisk_to_sys_path(self):
         print("Adding Basilisk module to python\n")
+        # NOTE: "--no-build-isolation" is used here only to force pip to use the
+        # packages installed directly by this Conanfile (using the
+        # "managePipEnvironment" option). Otherwise, it is not necessary.
         add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "--no-build-isolation", "-e", "."]
         if not is_running_virtual_env() and self.options.autoKey != 's':
             add_basilisk_module_command.append("--user")
