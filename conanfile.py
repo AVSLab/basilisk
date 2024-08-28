@@ -110,10 +110,7 @@ class BasiliskConan(ConanFile):
         # managePipEnvironment (i.e. conanfile.py-based build).
 
         # ensure latest pip is installed
-        if is_running_virtual_env() or platform.system() == "Windows":
-            cmakeCmdString = 'python -m pip install --upgrade pip'
-        else:
-            cmakeCmdString = 'python3 -m pip install --upgrade pip'
+        cmakeCmdString = f'{sys.executable} -m pip install --upgrade pip'
         print(statusColor + "Updating pip:" + endColor)
         print(cmakeCmdString)
         os.system(cmakeCmdString)
@@ -363,10 +360,7 @@ if __name__ == "__main__":
 
     # run conan install
     conanCmdString = list()
-    if is_running_virtual_env() or platform.system() == "Windows":
-        conanCmdString.append('python -m conans.conan install . --build=missing')
-    else:
-        conanCmdString.append('python3 -m conans.conan install . --build=missing')
+    conanCmdString.append(f'{sys.executable} -m conans.conan install . --build=missing')
     conanCmdString.append(' -s build_type=' + str(args.buildType))
     conanCmdString.append(' -if ' + buildFolderName)
     if args.generator:
@@ -393,10 +387,7 @@ if __name__ == "__main__":
     completedProcess = subprocess.run(conanCmdString, shell=True, check=True)
 
     # run conan build
-    if is_running_virtual_env() or platform.system() == "Windows":
-        cmakeCmdString = 'python -m conans.conan build . -if ' + buildFolderName
-    else:
-        cmakeCmdString = 'python3 -m conans.conan build . -if ' + buildFolderName
+    cmakeCmdString = f'{sys.executable} -m conans.conan build . -if ' + buildFolderName
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
     completedProcess = subprocess.run(cmakeCmdString, shell=True, check=True)
