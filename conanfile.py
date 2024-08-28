@@ -32,8 +32,8 @@ try:
         exit(0)
     from conans import ConanFile, CMake, tools
 except ModuleNotFoundError:
-    print("Please make sure you install python conan (version 1.xx, not 2.xx) package\nRun command `pip install conan` "
-          "for Windows\nRun command `pip3 install conan` for Linux/MacOS")
+    print("Please make sure you install python conan (version 1.xx, not 2.xx) package\nRun command `pip install \"conan<2\"` "
+          "for Windows\nRun command `pip3 install \"conan<2\"` for Linux/MacOS")
     sys.exit(1)
 
 # define BSK module option list (option name and default value)
