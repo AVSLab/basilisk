@@ -50,7 +50,6 @@ public:
     void updatePeriod(uint64_t newPeriod);
     void updateParentProc(std::string const& parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
 
-public:
     std::vector<ModelPriorityPair> TaskModels{};  //!< -- Array that has pointers to all task sysModels
     std::string TaskName{};  //!< -- Identifier for Task
     std::string parentProc; //!< -- Process that calls this task

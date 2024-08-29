@@ -57,7 +57,7 @@ public:
     void StepUntilStop();  //!< Step simulation until stop time uint64_t reached
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void moveProcessMessages() const;
-public:
+
     uint64_t CurrentNanos=0;  //!< [ns] Current sim time
     uint64_t NextTaskTime=0;  //!< [ns] time for the next Task
     uint64_t currentThreadNanos=0;  //!< Current simulation time available at thread
@@ -102,7 +102,6 @@ public:
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
-public:
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
     std::vector<SimThreadExecution*> threadList{};  //!< -- Array of threads that we're running on
     std::string SimulationName;  //!< -- Identifier for Sim
