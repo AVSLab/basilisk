@@ -34,11 +34,11 @@ typedef struct {
 //! Class used to group a set of models into one "Task" of execution
 class SysModelTask
 {
-    
+
 public:
-    SysModelTask();
-    SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method
-    ~SysModelTask();
+    SysModelTask()=default;
+    explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method
+    ~SysModelTask()=default;
     void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
     void SelfInitTaskList();
     //void CrossInitTaskList();
@@ -49,16 +49,16 @@ public:
 	void disableTask() {this->taskActive = false;} //!< Disables the task.  I know.
     void updatePeriod(uint64_t newPeriod);
     void updateParentProc(std::string parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
-    
+
 public:
-    std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
-    std::string TaskName;  //!< -- Identifier for Task
+    std::vector<ModelPriorityPair> TaskModels{};  //!< -- Array that has pointers to all task sysModels
+    std::string TaskName{};  //!< -- Identifier for Task
     std::string parentProc; //!< -- Process that calls this task
-    uint64_t NextStartTime;  //!< [ns] Next time to start task
-    uint64_t NextPickupTime;  //!< [ns] Next time read Task outputs
-    uint64_t TaskPeriod;  //!< [ns] Cycle rate for Task
-    uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
-	bool taskActive;  //!< -- Flag indicating whether the Task has been disabled
+    uint64_t NextStartTime=0;  //!< [ns] Next time to start task
+    uint64_t NextPickupTime=0;  //!< [ns] Next time read Task outputs
+    uint64_t TaskPeriod=100;  //!< [ns] Cycle rate for Task
+    uint64_t FirstTaskTime=0;  //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
+	bool taskActive=true;  //!< -- Flag indicating whether the Task has been disabled
   BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 

@@ -19,35 +19,16 @@
 
 #include "sys_model_task.h"
 
-/*! The task constructor.  */
-SysModelTask::SysModelTask()
-{
-    this->TaskModels.clear();
-    this->TaskName.clear();
-    this->TaskPeriod = 1000;
-    this->NextStartTime = 0;
-    this->NextPickupTime = 0;
-    this->FirstTaskTime = 0;
-    this->taskActive = true;
-}
 /*! A construction option that allows the user to set some task parameters.
  Note that the only required argument is InputPeriod.
  @param InputPeriod The amount of nanoseconds between calls to this Task.
  @param FirstStartTime The amount of time in nanoseconds to hold a task dormant before starting.
         After this time the task is executed at integer amounts of InputPeriod again
  */
-SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
+SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
+    NextStartTime(FirstStartTime), TaskPeriod(InputPeriod), FirstTaskTime(FirstStartTime)
 {
-    this->TaskPeriod = InputPeriod;
-    this->NextStartTime = FirstStartTime;
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
-    this->FirstTaskTime = FirstStartTime;
-    this->taskActive = true;
-}
-
-//! The destructor.
-SysModelTask :: ~SysModelTask()
-{
 }
 
 /*! This method self-initializes all of the models that have been added to the Task.
