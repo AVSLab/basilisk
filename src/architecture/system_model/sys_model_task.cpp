@@ -44,7 +44,6 @@ void SysModelTask::SelfInitTaskList()
         NonIt = modelPair.ModelPtr;
         NonIt->SelfInit();
     }
-    return;
 }
 
 
