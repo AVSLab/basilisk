@@ -69,8 +69,8 @@ def run(show_plots):
 
     monteCarlo.setArchiveDir(path + "/scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
     monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
-    monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on
-    monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
+    # monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on
+    # monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
     monteCarlo.setVarCast('float')  # Optional: Downcast the retained numbers to float32 to save on storage space
     monteCarlo.setDispMagnitudeFile(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
 
