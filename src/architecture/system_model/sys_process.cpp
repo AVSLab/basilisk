@@ -58,13 +58,12 @@ SysProcess::~SysProcess()
  */
 void SysProcess::selfInitProcess()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
 
     this->nextTaskTime = 0;
     //! - Iterate through model list and call the Task model self-initializer
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& process : this->processTasks)
     {
-        SysModelTask *localTask = it->TaskPtr;
+        SysModelTask *localTask = process.TaskPtr;
         localTask->SelfInitTaskList();
     }
 }
@@ -78,11 +77,10 @@ void SysProcess::selfInitProcess()
 */
 void SysProcess::resetProcess(uint64_t currentTime)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
 
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& process : this->processTasks)
     {
-        SysModelTask *localTask = it->TaskPtr;
+        SysModelTask *localTask = process.TaskPtr;
         localTask->ResetTaskList(currentTime); //! Time of reset. Models that utilize currentTime will start at this.
     }
     this->nextTaskTime = currentTime;
@@ -96,20 +94,18 @@ void SysProcess::resetProcess(uint64_t currentTime)
 */
 void SysProcess::reInitProcess()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     std::vector<ModelScheduleEntry> taskPtrs;
-    std::vector<ModelScheduleEntry>::iterator taskIt;
 
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& task : this->processTasks)
     {
-        SysModelTask *localTask = it->TaskPtr;
+        SysModelTask *localTask = task.TaskPtr;
         localTask->ResetTask();
     }
     taskPtrs = this->processTasks;
     this->processTasks.clear();
-    for(taskIt = taskPtrs.begin(); taskIt != taskPtrs.end(); taskIt++)
+    for(auto const& task : taskPtrs)
     {
-        this->addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
+        this->addNewTask(task.TaskPtr, task.taskPriority);
     }
     return;
 }
@@ -148,7 +144,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     SysModelTask *localTask = fireIt->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
     fireIt->NextTaskStart = localTask->NextStartTime;
-    
+
     //! - Figure out when we are going to be called next for scheduling purposes
     fireIt=this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
@@ -190,9 +186,8 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  */
 void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to find correct place
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         //! - If the next Task starts after new Task, pop it on just prior
         if(it->NextTaskStart > taskCall.NextTaskStart ||
@@ -207,36 +202,34 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     this->processTasks.push_back(taskCall);
 }
 
-/*! The name kind of says it all right?  It is a shotgun used to disable all of 
+/*! The name kind of says it all right?  It is a shotgun used to disable all of
     a process' tasks.  It is handy for a FSW scheme where you have tons of tasks
     and you are really only turning one on at a time.
     @return void
 */
 void SysProcess::disableAllTasks()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     //! - Iterate through all of the tasks to disable them
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& scheduleEntry : this->processTasks)
     {
-        it->TaskPtr->disableTask();
+        scheduleEntry.TaskPtr->disableTask();
     }
 }
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
- a processes tasks.  It is handy for a process that starts out almost entirely 
+ a processes tasks.  It is handy for a process that starts out almost entirely
  inhibited but you want to turn it all on at once.
  @return void
  */
 void SysProcess::enableAllTasks()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
     //! - Iterate through all of the task models to disable them
-    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for(auto const& scheduleEntry : this->processTasks)
     {
-        it->TaskPtr->enableTask();
+        scheduleEntry.TaskPtr->enableTask();
     }
 }
 
-/*! This method updates a specified task's period once it locates that task 
+/*! This method updates a specified task's period once it locates that task
     in the list.  It will warn the user if a task is not found.
     @return void
 	@param taskName The name of the task you want to change period of
@@ -244,19 +237,16 @@ void SysProcess::enableAllTasks()
 */
 void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 {
-	std::vector<ModelScheduleEntry>::iterator it;
 	//! - Iteratre through all of the task models to disable them
-	for (it = this->processTasks.begin(); it != this->processTasks.end(); it++)
+    for (ModelScheduleEntry &scheduleEntry : this->processTasks)
 	{
-		if (it->TaskPtr->TaskName == taskName)
+        if (scheduleEntry.TaskPtr->TaskName == taskName)
 		{
-			it->TaskPtr->updatePeriod(newPeriod);
-			it->NextTaskStart = it->TaskPtr->NextStartTime;
-			it->TaskUpdatePeriod = it->TaskPtr->TaskPeriod;
+            scheduleEntry.TaskPtr->updatePeriod(newPeriod);
+            scheduleEntry.NextTaskStart = scheduleEntry.TaskPtr->NextStartTime;
+            scheduleEntry.TaskUpdatePeriod = scheduleEntry.TaskPtr->TaskPeriod;
 			return;
 		}
 	}
     bskLogger.bskLog(BSK_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
 }
-
-
