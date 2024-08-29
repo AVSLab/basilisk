@@ -127,7 +127,6 @@ class BasiliskConan(ConanFile):
             # TODO: Read these from the `pyproject.toml` file directly?
             # NOTE: These are *NOT* runtime requirements and should *NOT* be in `requirements.txt`!
             "conan>=1.40.1, <2.00.0",
-            "parse>=1.18.0",
             "setuptools>=70.1.0",
             "setuptools-scm>=8.0",
             "cmake>=3.26",

@@ -7,7 +7,6 @@ requires = [
     # Requirements for building Basilisk through conanfile
     "conan>=1.40.1, <2.00.0",
     "cmake>=3.26",
-    "parse>=1.18.0",
     "swig==4.2.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
 ]
 
