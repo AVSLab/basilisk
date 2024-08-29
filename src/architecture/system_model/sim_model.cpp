@@ -23,7 +23,7 @@
 void activateNewThread(void *threadData)
 {
 
-    SimThreadExecution *theThread = static_cast<SimThreadExecution*> (threadData);
+    auto *theThread = static_cast<SimThreadExecution*> (threadData);
 
     //std::cout << "Starting thread yes" << std::endl;
     theThread->postInit();
@@ -247,7 +247,7 @@ void SimThreadExecution::addNewProcess(SysProcess* newProc) {
 SimModel::SimModel()
 {
     //Default to single-threaded runtime
-    SimThreadExecution *newThread = new SimThreadExecution(0, 0);
+    auto *newThread = new SimThreadExecution(0, 0);
     this->threadList.push_back(newThread);
 }
 
@@ -266,7 +266,7 @@ SimModel::~SimModel()
 void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
     std::cout << std::flush;
-    for(auto const& simThread : this->threadList)
+    for(auto const* simThread : this->threadList)
     {
         simThread->moveProcessMessages();
     }
@@ -364,12 +364,11 @@ void SimModel::resetInitSimulation() const
 void SimModel::SingleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~((uint64_t) 0);
-    std::vector<SysProcess *>::iterator it = this->processList.begin();
+    auto it = this->processList.begin();
     this->CurrentNanos = this->NextTaskTime;
     while(it!= this->processList.end())
     {
-        SysProcess *localProc = (*it);
-        if(localProc->processEnabled())
+        if(SysProcess *localProc = (*it); localProc->processEnabled())
         {
             while(localProc->nextTaskTime < this->CurrentNanos ||
                 (localProc->nextTaskTime == this->CurrentNanos &&
@@ -450,7 +449,7 @@ void SimModel::resetThreads(uint64_t threadCount)
     this->threadList.clear();
     for(uint64_t i=0; i<threadCount; i++)
     {
-        SimThreadExecution *newThread = new SimThreadExecution(0, 0);
+        auto *newThread = new SimThreadExecution(0, 0);
         this->threadList.push_back(newThread);
     }
 

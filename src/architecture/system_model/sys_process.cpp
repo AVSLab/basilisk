@@ -72,14 +72,13 @@ void SysProcess::resetProcess(uint64_t currentTime)
 */
 void SysProcess::reInitProcess()
 {
-    std::vector<ModelScheduleEntry> taskPtrs;
 
     for(auto const& task : this->processTasks)
     {
         SysModelTask *localTask = task.TaskPtr;
         localTask->ResetTask();
     }
-    taskPtrs = this->processTasks;
+    std::vector<ModelScheduleEntry> taskPtrs = this->processTasks;
     this->processTasks.clear();
     for(auto const& task : taskPtrs)
     {
@@ -93,8 +92,6 @@ void SysProcess::reInitProcess()
  */
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
-    std::vector<ModelScheduleEntry>::iterator it;
-    std::vector<ModelScheduleEntry>::iterator fireIt;
 
     //! - Check to make sure that there are models to be called.
     if(this->processTasks.begin() == this->processTasks.end())
@@ -102,9 +99,9 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
         bskLogger.bskLog(BSK_WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
-    fireIt=this->processTasks.begin();
+    auto fireIt = this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
+    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
     {
         if(it->NextTaskStart < fireIt->NextTaskStart ||
                 (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
@@ -125,7 +122,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - Figure out when we are going to be called next for scheduling purposes
     fireIt=this->processTasks.begin();
     //! - If the requested time does not meet our next start time, just return
-    for(it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
+    for(auto it=this->processTasks.begin(); it!=this->processTasks.end(); it++)
     {
         if(it->NextTaskStart < fireIt->NextTaskStart ||
            (it->NextTaskStart==fireIt->NextTaskStart && it->taskPriority > fireIt->taskPriority))
