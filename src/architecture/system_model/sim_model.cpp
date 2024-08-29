@@ -161,7 +161,7 @@ void SimThreadExecution::StepUntilStop()
     TODO: Make this method move messages safely between threads
  @return void
  */
-void SimThreadExecution::moveProcessMessages() {
+void SimThreadExecution::moveProcessMessages() const {
 //    for(auto const& process : this->processList)
 //    {
 //        process->routeInterfaces(this->CurrentNanos);
@@ -199,7 +199,7 @@ void SimThreadExecution::postInit() {
     be initializing their systems simultaneously.
  @return void
  */
-void SimThreadExecution::selfInitProcesses() {
+void SimThreadExecution::selfInitProcesses() const {
     for(auto const& process : this->processList)
     {
         process->selfInitProcess();
@@ -210,7 +210,7 @@ void SimThreadExecution::selfInitProcesses() {
     movement has been completed.
  @return void
  */
-void SimThreadExecution::crossInitProcesses() {
+void SimThreadExecution::crossInitProcesses() const {
 //    for(auto const& process : this->processList)
 //    {
 //        process->crossInitProcess();
@@ -338,7 +338,7 @@ void SimModel::selfInitSimulation()
  *  each task and resets them.
  @return void
  */
-void SimModel::resetInitSimulation()
+void SimModel::resetInitSimulation() const
 {
 
 
@@ -421,7 +421,7 @@ void SimModel::ResetSimulation()
     threads need to be reallocated.  Otherwise it is basically a no-op.
  @return void
  */
-void SimModel::clearProcsFromThreads() {
+void SimModel::clearProcsFromThreads() const {
 
     for(auto const& simThread : this->threadList)
     {

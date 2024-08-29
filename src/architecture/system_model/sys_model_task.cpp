@@ -34,7 +34,7 @@ SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
 /*! This method self-initializes all of the models that have been added to the Task.
  @return void
  */
-void SysModelTask::SelfInitTaskList()
+void SysModelTask::SelfInitTaskList() const
 {
     SysModel* NonIt;
 

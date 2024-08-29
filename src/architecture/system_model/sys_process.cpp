@@ -161,7 +161,7 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  @return void
  @param taskCall Pointer to a struct that contains start time and task handle.
  */
-void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
+void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
 {
     //! - Iteratre through all of the task models to find correct place
     for(auto it = this->processTasks.begin(); it != this->processTasks.end(); it++)
@@ -184,7 +184,7 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     and you are really only turning one on at a time.
     @return void
 */
-void SysProcess::disableAllTasks()
+void SysProcess::disableAllTasks() const
 {
     //! - Iterate through all of the tasks to disable them
     for(auto const& scheduleEntry : this->processTasks)
@@ -197,7 +197,7 @@ void SysProcess::disableAllTasks()
  inhibited but you want to turn it all on at once.
  @return void
  */
-void SysProcess::enableAllTasks()
+void SysProcess::enableAllTasks() const
 {
     //! - Iterate through all of the task models to disable them
     for(auto const& scheduleEntry : this->processTasks)
@@ -212,7 +212,7 @@ void SysProcess::enableAllTasks()
 	@param taskName The name of the task you want to change period of
 	@param newPeriod the new number of nanoseconds you want between calls
 */
-void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
+void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPeriod)
 {
 	//! - Iteratre through all of the task models to disable them
     for (ModelScheduleEntry &scheduleEntry : this->processTasks)

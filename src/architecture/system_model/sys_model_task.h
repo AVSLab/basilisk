@@ -40,7 +40,7 @@ public:
     explicit SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime=0); //!< class method
     ~SysModelTask()=default;
     void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
-    void SelfInitTaskList();
+    void SelfInitTaskList() const;
     //void CrossInitTaskList();
     void ExecuteTaskList(uint64_t CurrentSimTime);
 	void ResetTaskList(uint64_t CurrentSimTime);
@@ -48,7 +48,7 @@ public:
 	void enableTask() {this->taskActive = true;} //!< Enables the task.  Great comment huh?
 	void disableTask() {this->taskActive = false;} //!< Disables the task.  I know.
     void updatePeriod(uint64_t newPeriod);
-    void updateParentProc(std::string parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
+    void updateParentProc(std::string const& parent) {this->parentProc = parent;} //!< Allows the system to move task to a different process
 
 public:
     std::vector<ModelPriorityPair> TaskModels{};  //!< -- Array that has pointers to all task sysModels
