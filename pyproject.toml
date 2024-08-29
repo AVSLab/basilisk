@@ -1,13 +1,12 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-    "setuptools>=64",       # For PEP 660 (Allow editable installs from pyproject.toml)
+    "setuptools>=70.1.0",   # Required for "bdist_wheel" to work correctly.
     "setuptools-scm>=8.0",  # Automatically include all Git-controlled files in sdist
 
     # Requirements for building Basilisk through conanfile
     "conan>=1.40.1, <2.00.0",
     "cmake>=3.26",
-    "parse>=1.18.0",
     "swig==4.2.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
 ]
 

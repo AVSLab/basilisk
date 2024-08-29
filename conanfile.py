@@ -32,8 +32,8 @@ try:
         exit(0)
     from conans import ConanFile, CMake, tools
 except ModuleNotFoundError:
-    print("Please make sure you install python conan (version 1.xx, not 2.xx) package\nRun command `pip install conan` "
-          "for Windows\nRun command `pip3 install conan` for Linux/MacOS")
+    print("Please make sure you install python conan (version 1.xx, not 2.xx) package\nRun command `pip install \"conan<2\"` "
+          "for Windows\nRun command `pip3 install \"conan<2\"` for Linux/MacOS")
     sys.exit(1)
 
 # define BSK module option list (option name and default value)
@@ -110,23 +110,24 @@ class BasiliskConan(ConanFile):
         # managePipEnvironment (i.e. conanfile.py-based build).
 
         # ensure latest pip is installed
-        if is_running_virtual_env() or platform.system() == "Windows":
-            cmakeCmdString = 'python -m pip install --upgrade pip'
-        else:
-            cmakeCmdString = 'python3 -m pip install --upgrade pip'
+        cmakeCmdString = f'{sys.executable} -m pip install --upgrade pip'
         print(statusColor + "Updating pip:" + endColor)
         print(cmakeCmdString)
         os.system(cmakeCmdString)
 
+        # TODO: Remove this: requirements and optional requirements are
+        # installed automatically by add_basilisk_to_sys_path(). Only build
+        # system requirements need to be installed here.
         reqFile = open('requirements.txt', 'r')
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
         pkgList += [
-            # XXX: Add build system requirements which were removed from requirements.txt.
+            # Also install build system requirements.
+            # TODO: Read these from the `pyproject.toml` file directly?
+            # NOTE: These are *NOT* runtime requirements and should *NOT* be in `requirements.txt`!
             "conan>=1.40.1, <2.00.0",
-            "parse>=1.18.0",
-            "setuptools>=64",
+            "setuptools>=70.1.0",
             "setuptools-scm>=8.0",
             "cmake>=3.26",
         ]
@@ -141,29 +142,39 @@ class BasiliskConan(ConanFile):
             checkStr += " and All Optional"
 
         print("\nChecking " + checkStr + " Python packages:")
+        missing_packages = []
         for elem in pkgList:
             try:
+                # TODO: pkg_resources is deprecated, but its replacement
+                # importlib does not provide a way to check for installed
+                # packages given a version specifier (e.g. "numpy<2")...
+                # NOTE: pkg_resources stops working if we upgrade "setuptools",
+                # so check all packages here first, then upgrade below.
                 pkg_resources.require(elem)
                 print("Found: " + statusColor + elem + endColor)
             except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
-                installCmd = [sys.executable, "-m", "pip", "install"]
+                missing_packages.append(elem)
 
-                if not is_running_virtual_env():
-                    if self.options.autoKey:
-                        choice = self.options.autoKey
-                    else:
-                        choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
-                                       "\nInstall for user (u), system (s) or cancel(c)? ")
-                    if choice == 'c':
-                        print(warningColor + "Skipping installing " + elem + endColor)
-                        continue
-                    elif choice == 'u':
-                        installCmd.append("--user")
-                installCmd.append(elem)
-                try:
-                    subprocess.check_call(installCmd)
-                except subprocess.CalledProcessError:
-                    print(failColor + "Was not able to install " + elem + endColor)
+        for elem in missing_packages:
+            installCmd = [sys.executable, "-m", "pip", "install"]
+
+            if not is_running_virtual_env():
+                if self.options.autoKey:
+                    choice = self.options.autoKey
+                else:
+                    choice = input(warningColor + f"Required python package " + elem + " is missing" + endColor +
+                                    "\nInstall for user (u), system (s) or cancel(c)? ")
+                if choice == 'c':
+                    print(warningColor + "Skipping installing " + elem + endColor)
+                    continue
+                elif choice == 'u':
+                    installCmd.append("--user")
+            installCmd.append(elem)
+            try:
+                subprocess.check_call(installCmd)
+                print(f"Installed: {statusColor}{elem}{endColor}")
+            except subprocess.CalledProcessError:
+                print(failColor + f"Was not able to install " + elem + endColor)
 
     def requirements(self):
         if self.options.opNav:
@@ -288,7 +299,15 @@ class BasiliskConan(ConanFile):
 
     def add_basilisk_to_sys_path(self):
         print("Adding Basilisk module to python\n")
+        # NOTE: "--no-build-isolation" is used here only to force pip to use the
+        # packages installed directly by this Conanfile (using the
+        # "managePipEnvironment" option). Otherwise, it is not necessary.
         add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "--no-build-isolation", "-e", "."]
+
+        if self.options.allOptPkg:
+            # Install the optional requirements as well
+            add_basilisk_module_command[-1] = ".[optional]"
+
         if not is_running_virtual_env() and self.options.autoKey != 's':
             add_basilisk_module_command.append("--user")
 
@@ -358,10 +377,7 @@ if __name__ == "__main__":
 
     # run conan install
     conanCmdString = list()
-    if is_running_virtual_env() or platform.system() == "Windows":
-        conanCmdString.append('python -m conans.conan install . --build=missing')
-    else:
-        conanCmdString.append('python3 -m conans.conan install . --build=missing')
+    conanCmdString.append(f'{sys.executable} -m conans.conan install . --build=missing')
     conanCmdString.append(' -s build_type=' + str(args.buildType))
     conanCmdString.append(' -if ' + buildFolderName)
     if args.generator:
@@ -388,10 +404,7 @@ if __name__ == "__main__":
     completedProcess = subprocess.run(conanCmdString, shell=True, check=True)
 
     # run conan build
-    if is_running_virtual_env() or platform.system() == "Windows":
-        cmakeCmdString = 'python -m conans.conan build . -if ' + buildFolderName
-    else:
-        cmakeCmdString = 'python3 -m conans.conan build . -if ' + buildFolderName
+    cmakeCmdString = f'{sys.executable} -m conans.conan build . -if ' + buildFolderName
     print(statusColor + "Running cmake:" + endColor)
     print(cmakeCmdString)
     completedProcess = subprocess.run(cmakeCmdString, shell=True, check=True)

@@ -372,7 +372,7 @@ jobs:
         shell: pwsh
         run: |
             venv\Scripts\activate
-            pip install wheel 'conan<2.0' parse six pytest-xdist
+            pip install wheel 'conan<2.0' six pytest-xdist
       - name: "Add basilisk and cmake path to env path"
         shell: pwsh
         run: |
