@@ -20,36 +20,16 @@
 #include "sys_process.h"
 #include <cstring>
 #include <iostream>
+#include <utility>
 
-/*! The task constructor.  */
-SysProcess :: SysProcess()
-{
-    this->nextTaskTime = 0;
-    this->processActive = true;
-    this->processPriority = -1;
-    this->processOnThread = false;
-    this->disableProcess();
-}
 /*! Make a process AND attach a storage bucket with the provided name. Give
     the process the same name.
     @return void
     @param messageContainer The amount of nanoseconds between calls to this Task.
  */
-SysProcess::SysProcess(std::string messageContainer)
+SysProcess::SysProcess(std::string name) : SysProcess()
 {
-    this->nextTaskTime = 0;
-    this->processActive = true;
-    this->processName = messageContainer;
-    this->prevRouteTime = 0xFF;
-    this->processOnThread = false;
-    this->disableProcess();
-}
-
-/*! The destructor does nothing.
- @return void
- */
-SysProcess::~SysProcess()
-{
+    this->processName = std::move(name);
 }
 
 /*! This method sets the nextTaskTime = 0 and calls SelfInitTaskList() for
