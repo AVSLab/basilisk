@@ -115,6 +115,9 @@ class BasiliskConan(ConanFile):
         print(cmakeCmdString)
         os.system(cmakeCmdString)
 
+        # TODO: Remove this: requirements and optional requirements are
+        # installed automatically by add_basilisk_to_sys_path(). Only build
+        # system requirements need to be installed here.
         reqFile = open('requirements.txt', 'r')
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
@@ -140,29 +143,39 @@ class BasiliskConan(ConanFile):
             checkStr += " and All Optional"
 
         print("\nChecking " + checkStr + " Python packages:")
+        missing_packages = []
         for elem in pkgList:
             try:
+                # TODO: pkg_resources is deprecated, but its replacement
+                # importlib does not provide a way to check for installed
+                # packages given a version specifier (e.g. "numpy<2")...
+                # NOTE: pkg_resources stops working if we upgrade "setuptools",
+                # so check all packages here first, then upgrade below.
                 pkg_resources.require(elem)
                 print("Found: " + statusColor + elem + endColor)
             except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
-                installCmd = [sys.executable, "-m", "pip", "install"]
+                missing_packages.append(elem)
 
-                if not is_running_virtual_env():
-                    if self.options.autoKey:
-                        choice = self.options.autoKey
-                    else:
-                        choice = input(warningColor + "Required python package " + elem + " is missing" + endColor +
-                                       "\nInstall for user (u), system (s) or cancel(c)? ")
-                    if choice == 'c':
-                        print(warningColor + "Skipping installing " + elem + endColor)
-                        continue
-                    elif choice == 'u':
-                        installCmd.append("--user")
-                installCmd.append(elem)
-                try:
-                    subprocess.check_call(installCmd)
-                except subprocess.CalledProcessError:
-                    print(failColor + "Was not able to install " + elem + endColor)
+        for elem in missing_packages:
+            installCmd = [sys.executable, "-m", "pip", "install"]
+
+            if not is_running_virtual_env():
+                if self.options.autoKey:
+                    choice = self.options.autoKey
+                else:
+                    choice = input(warningColor + f"Required python package " + elem + " is missing" + endColor +
+                                    "\nInstall for user (u), system (s) or cancel(c)? ")
+                if choice == 'c':
+                    print(warningColor + "Skipping installing " + elem + endColor)
+                    continue
+                elif choice == 'u':
+                    installCmd.append("--user")
+            installCmd.append(elem)
+            try:
+                subprocess.check_call(installCmd)
+                print(f"Installed: {statusColor}{elem}{endColor}")
+            except subprocess.CalledProcessError:
+                print(failColor + f"Was not able to install " + elem + endColor)
 
     def requirements(self):
         if self.options.opNav:
@@ -291,6 +304,11 @@ class BasiliskConan(ConanFile):
         # packages installed directly by this Conanfile (using the
         # "managePipEnvironment" option). Otherwise, it is not necessary.
         add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "--no-build-isolation", "-e", "."]
+
+        if self.options.allOptPkg:
+            # Install the optional requirements as well
+            add_basilisk_module_command[-1] = ".[optional]"
+
         if not is_running_virtual_env() and self.options.autoKey != 's':
             add_basilisk_module_command.append("--user")
 
