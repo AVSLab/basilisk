@@ -220,9 +220,9 @@ def run(show_plots):
 # The following must be commented out before this script can run.  It is provided here
 # to ensure that the sphinx documentation generation process does not run this script
 # automatically.
-if __name__ == "__main__":
-    run(False)
+# if __name__ == "__main__":
+#     run(False)
 
 
 # uncomment the following line to run this script.
-# run(False)
+run(False)

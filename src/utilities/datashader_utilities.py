@@ -25,18 +25,26 @@ def curve_per_df_component(df):
     """
     Make a curve per component in the message dataframe (i.e. omega_BR_B[2] across all runs as a single curve)
 
-    :param df:
-    :return:
+    :param df: DataFrame to process
+    :return: List of DataFrames with curves
     """
     idx = pd.IndexSlice
-    df = df.interpolate(method = "linear")
+    df = df.interpolate(method="linear")
     df_list = []
+
     for i in np.unique(df.columns.codes[1]):
         # Select all of the component
         varIdx_df = df.loc[idx[:], idx[:, i]]
 
-        # Inject NaNs at the end of the run so the curves don't wrap from t_f to t_0
-        varIdx_df = varIdx_df.append(pd.Series(name=np.nan, dtype='float'))
+        # Ensure that varIdx_df and new_row have compatible indices
+        if isinstance(varIdx_df.index, pd.MultiIndex):
+            varIdx_df.index = varIdx_df.index.to_flat_index()
+
+        # Create new row with NaNs having the same length as varIdx_df columns
+        new_row = pd.Series([np.nan] * len(varIdx_df.columns), index=varIdx_df.columns)
+
+        # Concatenate DataFrames
+        varIdx_df = pd.concat([varIdx_df, new_row.to_frame().T], ignore_index=True)
 
         # Flatten values by column order
         time = np.tile(varIdx_df.index, len(varIdx_df.columns.codes[0]))  # Repeat time by number of runs
@@ -175,7 +183,11 @@ class DS_Plot():
 
         if not self.labels == []:
             color_key = [(name, color) for name, color in zip(self.labels, self.cmap)]
-            legend = hv.NdOverlay({n: hv.Points([np.nan, np.nan], label=str(n)).opts(style=dict(color=c)) for n, c in color_key})
+            legend = hv.NdOverlay({
+                n: hv.Points([np.nan, np.nan], label=str(n)).options(
+                    color=c
+                ) for n, c in color_key
+            })
             image = image*legend
 
         return image, self.title
