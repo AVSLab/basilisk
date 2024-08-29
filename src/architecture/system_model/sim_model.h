@@ -19,16 +19,16 @@
 #ifndef _SimModel_HH_
 #define _SimModel_HH_
 
-#include <vector>
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/bskSemaphore.h"
+#include "architecture/system_model/sys_process.h"
+#include <condition_variable>
+#include <iostream>
+#include <mutex>
 #include <stdint.h>
 #include <set>
 #include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <iostream>
-#include "architecture/system_model/sys_process.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/bskSemaphore.h"
+#include <vector>
 
 //! This class handles the management of a given "thread" of execution and provides the main mechanism for running concurrent jobs inside BSK
 class SimThreadExecution
