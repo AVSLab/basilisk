@@ -32,7 +32,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- Added swirl torque information to :ref:`THRConfigMsg`, :ref:`thrustCMEstimation`, and :ref:`thrusterPlatformState`
+- Added swirl torque information to :ref:`THRConfigMsgPayload`, :ref:`thrustCMEstimation`, and :ref:`thrusterPlatformState`
 - Updated required version of `setuptools` to avoid installation error ("invalid command ``bdist_wheel``") on
   some environments.
 - Made the initial Basilisk build more robust in case ``de430.bsp`` download was interrupted
