@@ -20,10 +20,10 @@
 #ifndef _SysProcess_HH_
 #define _SysProcess_HH_
 
-#include <vector>
-#include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
 #include "architecture/utilities/bskLogging.h"
+#include <stdint.h>
+#include <vector>
 
 //! Structure that contains the information needed to call a Task
 typedef struct {
@@ -36,38 +36,38 @@ typedef struct {
 //! Class used to group a set of tasks into one process (task group) of execution
 class SysProcess
 {
-    
+
 public:
-    SysProcess();
-    SysProcess(std::string messageContainer); //!< class method
-    ~SysProcess();
+    SysProcess()=default;
+    explicit SysProcess(std::string name); //!< class method
+    ~SysProcess()=default;
     void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1); //!< class method
     void selfInitProcess(); //!< class method
     void resetProcess(uint64_t currentTime); //!< class method
     void reInitProcess(); //!< class method
     void enableProcess() {this->processActive = true;} //!< class method
     void disableProcess() {this->processActive = false;} //!< class method
-    void scheduleTask(ModelScheduleEntry & taskCall); //!< class method
-    void setProcessName(std::string newName){this->processName = newName;} //!< class method
-    std::string getProcessName() { return(processName);} //!< class method
+    void scheduleTask(const ModelScheduleEntry & taskCall); //!< class method
+    void setProcessName(std::string const& newName){this->processName = newName;} //!< class method
+    std::string const getProcessName() { return(this->processName);} //!< class method
     uint64_t getNextTime() { return(this->nextTaskTime);} //!< class method
     void singleStepNextTask(uint64_t currentNanos); //!< class method
-    bool processEnabled() {return this->processActive;} //!< class method
-	void changeTaskPeriod(std::string taskName, uint64_t newPeriod); //!< class method
+    bool processEnabled() const {return this->processActive;} //!< class method
+	void changeTaskPeriod(const std::string& taskName, uint64_t newPeriod); //!< class method
     void setPriority(int64_t newPriority) {this->processPriority = newPriority;} //!< class method
-    void disableAllTasks(); //!< class method
-    void enableAllTasks(); //!< class method
-    bool getProcessControlStatus() {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
+    void disableAllTasks() const; //!< class method
+    void enableAllTasks() const; //!< class method
+    bool getProcessControlStatus() const {return this->processOnThread;} //!< Allows caller to see if this process is parented by a thread
     void setProcessControlStatus(bool processTaken) {processOnThread = processTaken;} //!< Provides a mechanism to say that this process is allocated to a thread
-    
+
 public:
     std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
-    uint64_t nextTaskTime;  //!< [ns] time for the next Task
-    uint64_t prevRouteTime;  //!< [ns] Time that interfaces were previously routed
-    std::string processName;  //!< -- Identifier for process
-	bool processActive;  //!< -- Flag indicating whether the Process is active
-	bool processOnThread; //!< -- Flag indicating that the process has been added to a thread for execution
-    int64_t processPriority;  //!< [-] Priority level for process (higher first)
+    uint64_t nextTaskTime=0;  //!< [ns] time for the next Task
+    uint64_t prevRouteTime=0;  //!< [ns] Time that interfaces were previously routed
+    std::string processName{};  //!< -- Identifier for process
+    bool processActive{};  //!< -- Flag indicating whether the Process is active
+    bool processOnThread{}; //!< -- Flag indicating that the process has been added to a thread for execution
+    int64_t processPriority=-1;  //!< [-] Priority level for process (higher first)
     BSKLogger bskLogger;                      //!< -- BSK Logging
 };
 
