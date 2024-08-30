@@ -381,13 +381,16 @@ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp")
   message(STATUS "File de430.bsp not found, downloading file:")
   file(DOWNLOAD
         "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp"
-        "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp"
+        # Download it to the build directory (in case the download gets interrupted).
+        "${CMAKE_BINARY_DIR}/data/de430.bsp"
         SHOW_PROGRESS
         STATUS DOWNLOAD_RESULT_CODE
         )
   if(NOT DOWNLOAD_RESULT_CODE EQUAL 0)
         message(FATAL_ERROR "Failed downloading de430.bsp! Error: ${DOWNLOAD_RESULT}.")
   endif()
+  # Move the SPICE file into the appropriate directory.
+  file(RENAME "${CMAKE_BINARY_DIR}/data/de430.bsp" "${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp")
 else()
   message(STATUS "Found Spice files.")
 endif ()
