@@ -347,6 +347,10 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     prevFireTime = integTime;
 }
 
+/*! This method adds new thruster(s) to the thruster set.
+ @return void
+ @param newThruster thruster sim config(s)
+ */
 void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster)
 {
     this->thrusterData.push_back(*newThruster);
@@ -368,6 +372,11 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster)
     this->bodyToHubInfo.push_back(attachedBodyToHub);
 }
 
+/*! This method adds new thruster(s) to the thruster set connected to a different body than the hub.
+ @return void
+ @param newThruster thruster sim config(s)
+ @param bodyStateMsg body states to which thruster(s) are attached
+ */
 void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
 {
     this->thrusterData.push_back(*newThruster);
@@ -423,7 +432,7 @@ void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster
     }
 }
 
-
+/*! This method computes contributions to the fuel mass depletion. */
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
 
     std::vector<THRSimConfig>::iterator it;
