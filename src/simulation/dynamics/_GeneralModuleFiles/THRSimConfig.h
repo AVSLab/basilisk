@@ -37,22 +37,22 @@ THRSimConfig
 //@endcond
 {
     Eigen::Vector3d thrLoc_B;                       //!< [m] Thruster location expressed in body
-    Eigen::Vector3d thrDir_B;                       //!< [-] Thruster force direction unit vector in body
-    std::vector<THRTimePair> ThrusterOnRamp;        //!< -- Percentage of max thrust for ramp up
-    std::vector<THRTimePair> ThrusterOffRamp;       //!< -- Percentage of max thrust for ramp down
+    Eigen::Vector3d thrDir_B;                       //!< Thruster force direction unit vector in body
+    std::vector<THRTimePair> ThrusterOnRamp;        //!< Percentage of max thrust for ramp up
+    std::vector<THRTimePair> ThrusterOffRamp;       //!< Percentage of max thrust for ramp down
 	double areaNozzle;								//!< [m^2] Area of nozzle
     double MaxThrust;                               //!< [N] Steady state thrust of thruster
     double steadyIsp;                               //!< [s] Steady state specific impulse of thruster
-    double MinOnTime;                               //!< s  Minimum allowable on-time
-    THROperation ThrustOps;                         //!< -- Thruster operating data
-    double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
-    std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
-	bool updateOnly = true;							//!< -- Use update only calculations
-    char label[10];                                 //!< [-], label name of the TH device being simulated
+    double MinOnTime;                               //!< [s]  Minimum allowable on-time
+    THROperation ThrustOps;                         //!< Thruster operating data
+    double thrusterMagDisp;                         //!< Percentage of magnitude dispersion
+    std::vector<double> thrusterDirectionDisp;      //!< Unit vector of dispersed thruster pointing
+	bool updateOnly = true;                         //!< Use update only calculations
+    char label[10];                                 //!< label name of the TH device being simulated
     double cutoffFrequency;                         //!< [rad/s] cutoff frequency for first-order behavior
     double MaxSwirlTorque;                          //!< [Nm] Steady state magnitude of the swirl torque produced by ionic thrusters
-    std::vector<double> thrBlowDownCoeff;           //!< -- Polynomial coefficients for fuel mass to thrust blow down model in descending order
-    std::vector<double> ispBlowDownCoeff;           //!< -- Polynomial coefficients for fuel mass to Isp blow down model in descending order
+    std::vector<double> thrBlowDownCoeff;           //!< Polynomial coefficients for fuel mass to thrust blow down model in descending order
+    std::vector<double> ispBlowDownCoeff;           //!< Polynomial coefficients for fuel mass to Isp blow down model in descending order
 }THRSimConfig;
 
 
