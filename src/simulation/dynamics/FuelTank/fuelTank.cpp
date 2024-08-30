@@ -58,7 +58,7 @@ void FuelTank::setTankModel(FuelTankModel *model) {
 
 /*! Attach a fuel slosh particle to the tank */
 void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
-    // - Add a fuel slosh particle to the vector of fuel slosh particles
+    // Add a fuel slosh particle to the vector of fuel slosh particles
     this->fuelSloshParticles.push_back(particle);
 }
 
@@ -75,14 +75,14 @@ void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
 
 /*! Link states that the module accesses */
 void FuelTank::linkInStates(DynParamManager &statesIn) {
-    // - Grab access to the hubs omega_BN_N
+    // Grab access to the hubs omega_BN_N
     this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
 }
 
 /*! Register states. The fuel tank has one state associated with it: mass, and it also has the
  responsibility to call register states for the fuel slosh particles */
 void FuelTank::registerStates(DynParamManager &statesIn) {
-    // - Register the mass state associated with the tank
+    // Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
     this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
     massMatrix(0, 0) = this->fuelTankModel->propMassInit;
@@ -91,7 +91,7 @@ void FuelTank::registerStates(DynParamManager &statesIn) {
 
 /*! Fuel tank add its contributions the mass of the vehicle. */
 void FuelTank::updateEffectorMassProps(double integTime) {
-    // - Add contributions of the mass of the tank
+    // Add contributions of the mass of the tank
     double massLocal = this->massState->getState()(0, 0);
     this->fuelTankModel->computeTankProps(massLocal);
     this->r_TcB_B = r_TB_B + this->dcm_TB.transpose() * this->fuelTankModel->r_TcT_T;
@@ -101,10 +101,10 @@ void FuelTank::updateEffectorMassProps(double integTime) {
                                                            - r_TcB_B * r_TcB_B.transpose());
     this->effProps.rEff_CB_B = this->r_TcB_B;
 
-    // - This does not incorporate mEffDot into cPrime for high fidelity mass depletion
+    // This does not incorporate mEffDot into cPrime for high fidelity mass depletion
     this->effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
 
-    //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
+    // Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
     for (auto &dynEffector: this->thrDynEffectors) {
         dynEffector->computeStateContribution(integTime);
@@ -116,32 +116,32 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         this->fuelConsumption += stateEffector->stateDerivContribution(0);
     }
 
-    // - Mass depletion (finding total mass in tank)
+    // Mass depletion (finding total mass in tank)
     double totalMass = massLocal;
     for (auto fuelSloshInt = this->fuelSloshParticles.begin();
          fuelSloshInt < this->fuelSloshParticles.end();
          fuelSloshInt++) {
-        // - Retrieve current mass value of fuelSlosh particle
+        // Retrieve current mass value of fuelSlosh particle
         (*fuelSloshInt)->retrieveMassValue(integTime);
-        // - Add fuelSlosh mass to total mass of tank
+        // Add fuelSlosh mass to total mass of tank
         totalMass += (*fuelSloshInt)->fuelMass;
     }
-    // - Set mass depletion rate of fuelSloshParticles
+    // Set mass depletion rate of fuelSloshParticles
     for (auto fuelSloshInt = this->fuelSloshParticles.begin();
          fuelSloshInt < this->fuelSloshParticles.end();
          fuelSloshInt++) {
-        // - Find fuelSlosh particle mass to fuel tank mass ratio
+        // Find fuelSlosh particle mass to fuel tank mass ratio
         (*fuelSloshInt)->massToTotalTankMassRatio = (*fuelSloshInt)->fuelMass / totalMass;
-        // - Scale total fuelConsumption by mass ratio to find fuelSloshParticle mass depletion rate
+        // Scale total fuelConsumption by mass ratio to find fuelSloshParticle mass depletion rate
         (*fuelSloshInt)->fuelMassDot = (*fuelSloshInt)->massToTotalTankMassRatio * (-this->fuelConsumption);
     }
 
-    // - Set total fuel mass parameter for thruster dynamic effectors experiencing blow down effects
+    // Set total fuel mass parameter for thruster dynamic effectors experiencing blow down effects
     for (auto &dynEffector: this->thrDynEffectors) {
         dynEffector->fuelMass = totalMass;
     }
 
-    // - Set fuel consumption rate of fuelTank (not negative because the negative sign is in the computeDerivatives call
+    // Set fuel consumption rate of fuelTank (not negative because the negative sign is in the computeDerivatives call
     this->tankFuelConsumption = massLocal / totalMass * (this->fuelConsumption);
     this->effProps.mEffDot = -this->fuelConsumption;
 }
@@ -157,7 +157,7 @@ void FuelTank::updateContributions(double integTime,
     Eigen::Vector3d rPPrime_TB_BLocal;
     Eigen::Vector3d omega_BN_BLocal;
 
-    // - Zero some matrices
+    // Zero some matrices
     backSubContr.matrixA = backSubContr.matrixB = backSubContr.matrixC = backSubContr.matrixD = Eigen::Matrix3d::Zero();
     backSubContr.vecTrans = backSubContr.vecRot = Eigen::Vector3d::Zero();
 
@@ -192,17 +192,17 @@ void FuelTank::updateEnergyMomContributions(double integTime,
                                             Eigen::Vector3d &rotAngMomPntCContr_B,
                                             double &rotEnergyContr,
                                             Eigen::Vector3d omega_BN_B) {
-    // - Get variables needed for energy momentum calcs
+    // Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = this->omegaState->getState();
     Eigen::Vector3d rDot_TcB_B;
 
-    // - Find rotational angular momentum contribution from hub
+    // Find rotational angular momentum contribution from hub
     double massLocal = this->massState->getState()(0, 0);
     rDot_TcB_B = omegaLocal_BN_B.cross(this->r_TcB_B);
     rotAngMomPntCContr_B += this->ITankPntT_B * omegaLocal_BN_B + massLocal * this->r_TcB_B.cross(rDot_TcB_B);
 
-    // - Find rotational energy contribution from the hub
+    // Find rotational energy contribution from the hub
     rotEnergyContr += 1.0 / 2.0 * omegaLocal_BN_B.dot(this->ITankPntT_B * omegaLocal_BN_B) + 1.0 / 2.0 * massLocal *
                                                                                        rDot_TcB_B.dot(rDot_TcB_B);
 }
