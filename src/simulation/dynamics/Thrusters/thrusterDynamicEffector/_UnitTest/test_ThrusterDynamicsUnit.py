@@ -111,34 +111,35 @@ def fixMDotData(mDotData):
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("ramp, thrustNumber , duration , long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque", [
-    ("OFF", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  #Test random thrust config
-    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Short fire test
-    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E6, "OFF", "OFF", 0.0),  # Short fire test with higher test rate
-    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0),  # rate test
-    ("OFF", 1, 5.0, 10.,  35., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # angle test
-    ("OFF", 1, 5.0, 30.,  15., [[1.], [1.5], [0.0]], 1E8, "OFF", "OFF", 0.0),  # Position test
-    ("OFF", 2, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Number of thrusters test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Basic ramp test
-    ("ON", 1, 0.5, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0),  # Short ramp test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0),  # rate ramp test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "OFF", 0.0),  # Cuttoff test
-    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "ON", 0.0),  # Ramp down test
-    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 2.0),  # Simple swirl torque test
-    ("ON", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.5),  # Basic ramp with swirl torque test
+@pytest.mark.parametrize("ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown", [
+    ("OFF", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  #Test random thrust config
+    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Short fire test
+    ("OFF", 1, 0.1, 30.,  15., [[1.125], [0.5], [2.0]], 1E6, "OFF", "OFF", 0.0, "OFF"),  # Short fire test with higher test rate
+    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0, "OFF"),  # rate test
+    ("OFF", 1, 5.0, 10.,  35., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # angle test
+    ("OFF", 1, 5.0, 30.,  15., [[1.], [1.5], [0.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Position test
+    ("OFF", 2, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Number of thrusters test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Basic ramp test
+    ("ON", 1, 0.5, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "OFF"),  # Short ramp test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF", 0.0, "OFF"),  # rate ramp test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "OFF", 0.0, "OFF"),  # Cuttoff test
+    ("ON", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "ON", "ON", 0.0, "OFF"),  # Ramp down test
+    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 2.0, "OFF"),  # Simple swirl torque test
+    ("ON", 1, 5.0, 30., 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.5, "OFF"),  # Basic ramp with swirl torque test
+    ("OFF", 1, 5.0, 30.,  15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "ON"),  # Blow down test
     ])
 
 
 # provide a unique test method name, starting with test_
-def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration ,  long_angle, lat_angle,  location, rate, cutoff, rampDown, swirlTorque):
+def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle , location, rate, cutoff, rampDown, swirlTorque)
+    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown)
     assert testResults < 1, testMessage
 
 
 # Run the test
-def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque):
+def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_angle, lat_angle, location, rate, cutoff, rampDown, swirlTorque, blowDown):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -157,6 +158,18 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
     thrusterSet.ModelTag = "ACSThrusterDynamics"
 
+    # Configure blow down coefficients
+    if blowDown == "ON":
+        fuel_ratio = 0.5
+        max_fuel = 1.0
+        thrusterSet.fuelMass = fuel_ratio * max_fuel
+        thrust_blow_down_coeff = [-1.0 / max_fuel, 1.0]
+        isp_blow_down_coeff = [-Isp / max_fuel, Isp]
+    else:
+        fuel_ratio = 1.0
+        thrust_blow_down_coeff = []
+        isp_blow_down_coeff = []
+
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
     angledeg_long = long_angle # Parametrized angle of thrust
     angledeg_lat = lat_angle
@@ -166,9 +179,11 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     thruster1.thrLoc_B = location # Parametrized location for thruster
     thruster1.thrDir_B = [[math.cos(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_lat)]]
     thruster1.MaxThrust = 1.0
-    thruster1.steadyIsp = 226.7
+    thruster1.steadyIsp = Isp
     thruster1.MinOnTime = 0.006
     thruster1.MaxSwirlTorque = swirlTorque
+    for thr_coeff in thrust_blow_down_coeff: thruster1.thrBlowDownCoeff.push_back(thr_coeff)
+    for isp_coeff in isp_blow_down_coeff: thruster1.ispBlowDownCoeff.push_back(isp_coeff)
     thrusterSet.addThruster(thruster1)
 
     loc1 = np.array([thruster1.thrLoc_B[0][0],thruster1.thrLoc_B[1][0],thruster1.thrLoc_B[2][0]])
@@ -250,27 +265,36 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         # Auto Generate LaTex Figures
         format = r"width=0.8\textwidth"
 
-        snippetName = "Snippet" + str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +\
-                      str(int(long_angle))+"deg_"+ "Loc"+ str(int(loc1[2])) + "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        snippetName = ("Snippet" + str(thrustNumber) + "Thrusters_" + str(int(duration)) + "s_" + str(int(long_angle)) +
+                       "deg_" + "Loc" + str(int(loc1[2])) + "_Rate" + str(int(1./(testRate*macros.NANO2SEC))) +
+                       "_Swirl" + str(int(swirlTorque)) + "_BlowDown" + blowDown)
         if thrustNumber==1:
-            texSnippet = "The thruster is set at " +str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, in the position $\bm r = \left("+\
-                         str(loc1[0])+","+str(loc1[1])+"," +str(loc1[2])+ \
-                         r"\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
-                         str(duration)+ " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) + " steps per second"
+            texSnippet = ("The thruster is set at " + str(int(long_angle)) + r"$^\circ$ off the x-axis " +
+                          str(int(lat_angle)) + r"$^\circ$ off the z-axis, in the position $\bm r = \left(" +
+                          str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) +
+                          r"\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " +
+                          str(duration) + " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) +
+                          " steps per second. Swirl torque is set to " + str(int(swirlTorque)) +
+                          " Newton meters and blow down effects are " + blowDown + ".")
         if thrustNumber==2:
-            texSnippet = "The first thruster is set at " + str(int(long_angle)) + r"$^\circ$ off the x-axis " + str(
-                int(lat_angle)) + r"$^\circ$ off the z-axis, in the position $\bm r = \left(" + \
-                         str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                         r"\right)$. The second thruster is set at " + str(int(long_angle+45)) + r"$^\circ$ off the x-axis " + str(
-                int(lat_angle+45)) + r"$^\circ$ off the z-axis, in the position $\bm r = \left(" + \
-                         str(loc2[0]) + "," + str(loc2[1]) + "," + str(loc2[2]) + \
-                         r"\right)$. The test uses these " + str(thrustNumber) + " thrusters for " + \
-                         str(duration) + " seconds. The test rate is " + str(
-                int(1. / (testRate * macros.NANO2SEC))) + " steps per second"
+            texSnippet = ("The first thruster is set at " + str(int(long_angle)) + r"$^\circ$ off the x-axis " +
+                          str(int(lat_angle)) + r"$^\circ$ off the z-axis, in the position $\bm r = \left(" +
+                          str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) +
+                          r"\right)$. The second thruster is set at " + str(int(long_angle+45)) +
+                          r"$^\circ$ off the x-axis " + str(int(lat_angle+45)) +
+                          r"$^\circ$ off the z-axis, in the position $\bm r = \left(" + str(loc2[0]) + "," +
+                          str(loc2[1]) + "," + str(loc2[2]) + r"\right)$. The test uses these " + str(thrustNumber) +
+                          " thrusters for " + str(duration) + " seconds. The test rate is " +
+                          str(int(1. / (testRate * macros.NANO2SEC))) + " steps per second. Swirl torque is set to " +
+                          str(int(swirlTorque)) + " Newton meters and blow down effects are " + blowDown + ".")
         unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
-        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName = ("Force_" + str(thrustNumber) + "Thrusters_" + str(int(duration)) + "s_" + str(int(long_angle)) +
+                    "deg_" + "Loc" + str(int(location[2][0])) + "_Rate" + str(int(1./(testRate*macros.NANO2SEC))) +
+                    "_Swirl" + str(int(swirlTorque)) + "_BlowDown" + blowDown)
+        PlotTitle = ("Force on Y with " + str(thrustNumber) + " thrusters, for " + str(int(duration)) + " sec at " +
+                     str(int(long_angle)) + " deg " + "Rate" + str(int(1./(testRate*macros.NANO2SEC))) + ", Swirl" +
+                     str(int(swirlTorque)) + "Nm, BlowDown" + blowDown)
 
         plt.close("all")
         plt.figure(1)
@@ -284,8 +308,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             plt.show()
             plt.close('all')
 
-        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName = ("Torque_" + str(thrustNumber) + "Thrusters_" + str(int(duration)) + "s_" + str(int(long_angle)) +
+                    "deg_" + "Loc" + str(int(location[2][0])) + "_Rate" + str(int(1./(testRate*macros.NANO2SEC))) +
+                    "_Swirl" + str(int(swirlTorque)) + "_BlowDown" + blowDown)
+        PlotTitle = ("Torque on X with " + str(thrustNumber) + " thrusters, for " + str(int(duration)) + " sec at " +
+                     str(int(long_angle)) + " deg " + "Rate" + str(int(1./(testRate*macros.NANO2SEC))) + ", Swirl" +
+                     str(int(swirlTorque)) + "Nm, BlowDown" + blowDown)
 
         plt.figure(11)
         plt.clf()
@@ -298,8 +326,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             plt.show()
             plt.close('all')
 
-        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName = (str(thrustNumber) + "Thrusters_" + str(int(duration)) + "s_" + str(int(long_angle)) + "deg_" +
+                    "Loc" + str(int(location[2][0])) + "_Rate" + str(int(1./(testRate*macros.NANO2SEC))) +
+                    "_Swirl" + str(int(swirlTorque)) + "_BlowDown" + blowDown)
+        PlotTitle = ("All Forces and Torques " + str(thrustNumber) + " thrusters, for " + str(int(duration)) +
+                     " sec at " + str(int(long_angle)) + " deg " + "Rate" + str(int(1./(testRate*macros.NANO2SEC))) +
+                     ", Swirl" + str(int(swirlTorque)) + "Nm, BlowDown" + blowDown)
 
         plt.figure(22)
         plt.clf()
@@ -329,9 +361,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         for i in range(np.shape(thrForce)[0]):# Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpoints[0:3,i] = dir1
+                    expectedpoints[0:3, i] = dir1 * fuel_ratio
                 else:
-                    expectedpoints[0:3, i] = dir1 + dir2
+                    expectedpoints[0:3, i] = (dir1 + dir2) * fuel_ratio
 
         # Modify expected values for comparison and define errorTolerance
         TruthForce = np.transpose(expectedpoints)
@@ -351,9 +383,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpointstor[0:3, i] = np.cross(loc1, dir1) + swirlTorque * dir1
+                    expectedpointstor[0:3, i] = (np.cross(loc1, dir1) + swirlTorque * dir1) * fuel_ratio
                 else:
-                    expectedpointstor[0:3, i] = np.cross(loc1, dir1)  + swirlTorque * dir1 + np.cross(loc2, dir2)
+                    expectedpointstor[0:3, i] = (np.cross(loc1, dir1) + swirlTorque * dir1 + np.cross(loc2, dir2)) * fuel_ratio
 
         # Define errorTolerance
         TruthTorque = np.transpose(expectedpointstor)
@@ -406,19 +438,26 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
                 mDotData = fixMDotData(mDotData)
 
-                snippetName = "Snippet" + "Ramp_" + str(rampsteps) +"steps_" + str(int(duration)) + "s"+  "_Cutoff" + cutoff + "_Rate" + str(
-                    int(1. / (testRate * macros.NANO2SEC))) + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, at $\bm r = \left(" + \
-                             str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                             r"\right)$. The thrust is set for " + \
-                             str(duration) + " seconds with a test rate of " + str(
-                    int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
+                snippetName = ("Snippet" + "Ramp_" + str(rampsteps) + "steps_" + str(int(duration)) + "s" + "_Cutoff" +
+                               cutoff + "_Rate" + str(int(1. / (testRate * macros.NANO2SEC))) + "_Cutoff" + cutoff +
+                               "_Swirl" + str(int(swirlTorque)) + "_BlowDown" + blowDown)
+                texSnippet = ("We test the ramped thrust with " + str(rampsteps) +
+                              " incremental steps. The single thruster is set at the default " + str(int(long_angle)) +
+                              r"$^\circ$ off the x-axis " + str(int(lat_angle)) +
+                              r"$^\circ$ off the z-axis, at $\bm r = \left(" + str(loc1[0]) + "," + str(loc1[1]) + "," +
+                              str(loc1[2]) + r"\right)$. The thrust is set for " + str(duration) +
+                              " seconds with a test rate of " + str(int(1. / (testRate * macros.NANO2SEC))) +
+                              " steps per second. The Cutoff test is " + cutoff + ", swirl torque is set to " +
+                              str(int(swirlTorque)) + " Newton meters, and blow down effects are " + blowDown + ".")
                 unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
-                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff +"_" + str(int(duration)) + "s"+"_testRate" + str(
-                int(1. / (testRate * macros.NANO2SEC)))
-                PlotTitle = "All Forces and Torques with " + str(rampsteps) + " step Ramp, thrust for " + str(int(duration)) + "s. Cutoff " + cutoff+", testRate" + str(
-                int(1. / (testRate * macros.NANO2SEC)))
+                PlotName = ("Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_" + str(int(duration)) + "s" +
+                            "_testRate" + str(int(1. / (testRate * macros.NANO2SEC))) + "_Swirl" + str(int(swirlTorque))
+                            + "_BlowDown" + blowDown)
+                PlotTitle = ("All Forces and Torques with " + str(rampsteps) + " step Ramp, thrust for " +
+                             str(int(duration)) + "s. Cutoff " + cutoff+", testRate " +
+                             str(int(1. / (testRate * macros.NANO2SEC))) + ", swirlTorque " + str(int(swirlTorque)) +
+                             ", blowDown " + blowDown)
 
                 plt.figure(22)
                 plt.clf()
@@ -522,18 +561,25 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
                 mDotData = fixMDotData(mDotData)
 
-                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff +"_" + str(int(duration)) + "s"+"_testRate" + str(
-                int(1. / (testRate * macros.NANO2SEC)))
-                PlotTitle = "All Forces and Torques, with a "  + str(rampsteps) + " step Ramp, thrust for " + str(int(duration)) + "s. Cutoff " + cutoff+", testRate" + str(
-                int(1. / (testRate * macros.NANO2SEC)))
+                PlotName = ("Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_" + str(int(duration)) + "s" +
+                            "_testRate" + str(int(1. / (testRate * macros.NANO2SEC))) + "_Swirl" + str(int(swirlTorque)) +
+                            "_BlowDown" + blowDown)
+                PlotTitle = ("All Forces and Torques, with a " + str(rampsteps) + " step Ramp, thrust for " +
+                             str(int(duration)) + "s. Cutoff " + cutoff + ", testRate" +
+                             str(int(1. / (testRate * macros.NANO2SEC))) + ", swirlTorque " + str(int(swirlTorque)) +
+                             ", blowDown " + blowDown)
 
-                snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
-                    int(1. / (testRate * macros.NANO2SEC)))  + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, at $\bm r = \left(" + \
-                             str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                             r"\right)$. The thrust is set for " + \
-                             str(duration) + " seconds with a test rate of " + str(
-                    int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
+                snippetName = ("Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" +
+                               str(int(1. / (testRate * macros.NANO2SEC))) + "_Cutoff" + cutoff + "_Swirl" +
+                               str(int(swirlTorque)) + "_BlowDown" + blowDown)
+                texSnippet = ("We test the ramped thrust with " + str(rampsteps) +
+                              " incremental steps. The single thruster is set at the default " + str(int(long_angle)) +
+                              r"$^\circ$ off the x-axis " + str(int(lat_angle)) +
+                              r"$^\circ$ off the z-axis, at $\bm r = \left(" + str(loc1[0]) + "," + str(loc1[1]) + "," +
+                              str(loc1[2]) + r"\right)$. The thrust is set for " + str(duration) +
+                              " seconds with a test rate of " + str(int(1. / (testRate * macros.NANO2SEC))) +
+                              " steps per second. The Cutoff test is " + cutoff + ", swirl torque is set to " +
+                              str(int(swirlTorque)) + " Newton meters, and blow down effects are " + blowDown + ".")
                 unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
                 plt.figure(55)
@@ -627,20 +673,25 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
             mDotData = fixMDotData(mDotData)
 
-            PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "rampDown" + rampDown+"_testRate" + str(
-                int(1. / (testRate * macros.NANO2SEC)))
-            PlotTitle = "All Forces and Torques, with a " + str(rampsteps) + " step Ramp, Cutoff " + cutoff + ", RampDown" + rampDown +" testRate" + str(
-                int(1. / (testRate * macros.NANO2SEC)))
+            PlotName = ("Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "rampDown" + rampDown+"_testRate" +
+                        str(int(1. / (testRate * macros.NANO2SEC))) + "_Swirl" + str(int(swirlTorque)) + "_BlowDown" +
+                        blowDown)
+            PlotTitle = ("All Forces and Torques, with a " + str(rampsteps) + " step Ramp, Cutoff " + cutoff +
+                         ", RampDown" + rampDown + " testRate" + str(int(1. / (testRate * macros.NANO2SEC))) +
+                         ", swirlTorque " + str(int(swirlTorque)) + ", blowDown " + blowDown)
 
-            snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
-                int(1. / (testRate * macros.NANO2SEC)))+ "rampDown" + rampDown
-            texSnippet = "We test the ramped thrust with " + str(
-                rampsteps) + " incremental steps. The single thruster is set at the default "+str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, at $\bm r = \left(" + \
-                         str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                         r"\right)$. The thrust is set for " + \
-                         str(RDstart) + " seconds initially with a test rate of " + str(
-                int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff + \
-                        " the RampDown test is " + rampDown + "."
+            snippetName = ("Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" +
+                           str(int(1. / (testRate * macros.NANO2SEC))) + "rampDown" + rampDown + "_Swirl" +
+                           str(int(swirlTorque)) + "_BlowDown" + blowDown)
+            texSnippet = ("We test the ramped thrust with " + str(rampsteps) +
+                          " incremental steps. The single thruster is set at the default " + str(int(long_angle)) +
+                          r"$^\circ$ off the x-axis " + str(int(lat_angle)) +
+                          r"$^\circ$ off the z-axis, at $\bm r = \left(" + str(loc1[0]) + "," + str(loc1[1]) + "," +
+                          str(loc1[2]) + r"\right)$. The thrust is set for " + str(RDstart) +
+                          " seconds initially with a test rate of " + str(int(1. / (testRate * macros.NANO2SEC))) +
+                          " steps per second. The Cutoff test is " + cutoff + ", the RampDown test is " + rampDown +
+                          ", swirl torque is set to " + str(int(swirlTorque)) + " Newton meters, and blow down effects are "
+                          + blowDown + ".")
             unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
             plt.figure(55)
@@ -753,4 +804,4 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), True, "OFF", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0)
+    unitThrusters(ResultsStore(), True, "OFF", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF", 0.0, "ON")

@@ -29,13 +29,15 @@ typedef struct
 THROutputMsgPayload
 //@endcond
 {
-    double maxThrust;                    //!< N  Steady state thrust of thruster
-    double thrustFactor;                 //!< -- Current Thrust Percentage
-    double thrustForce = 0;              //!< N Thrust force magnitude
-    double thrustForce_B[3] = {0};       //!< N  Thrust force vector in body frame components
-    double thrustTorquePntB_B[3] = {0};  //!< N-m Thrust torque about point B in body frame components
-    double thrusterLocation[3] = {0};    //!< m  Current position vector (inertial)
-    double thrusterDirection[3] = {0};   //!< -- Unit vector of thruster pointing
+    double maxThrust;                    //!< [N] Steady state thrust of thruster
+    double thrustFactor;                 //!< Current thrust percentage due to ramp up/down
+    double thrustBlowDownFactor;         //!< Current thrust percentage due to tank blow down
+    double ispBlowDownFactor;            //!< Current isp percentage due to tank blow down
+    double thrustForce = 0;              //!< [N] Thrust force magnitude
+    double thrustForce_B[3] = {0};       //!< [N] Thrust force vector in body frame components
+    double thrustTorquePntB_B[3] = {0};  //!< [N-m] Thrust torque about point B in body frame components
+    double thrusterLocation[3] = {0};    //!< [m] Current position vector (inertial)
+    double thrusterDirection[3] = {0};   //!< Unit vector of thruster pointing
 }THROutputMsgPayload;
 
 
