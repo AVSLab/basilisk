@@ -14,6 +14,10 @@ Version |release|
   Developers and users alike should continue to use `python conanfile.py` installation.
 - If the :ref:`simIncludeRW` python tool was provided a specific ``Js`` value, it was being falsely converted
   before being assigned.  This is now corrected.
+- If ``supportData/EphemerisData/de430.bsp`` is not present the current build system will download the file
+  from JPL server.  However, if the download is interrupted, then the next build will find the file and
+  not attempt to re-download it.  This is now fixed in the current version where the file is only
+  stored in the ``supportData`` folder if the download was complete.
 
 Version 2.4.0
 -------------
