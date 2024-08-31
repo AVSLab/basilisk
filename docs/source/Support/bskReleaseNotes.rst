@@ -37,6 +37,7 @@ Version |release|
   some environments.
 - Made the initial Basilisk build more robust in case ``de430.bsp`` download was interrupted
 - Enhanced :ref:`thrusterDynamicEffector` to allow automatic scaling down of thrust and Isp as fuel mass depletes.
+- Fixed issue with :ref:`vizInterface` not being able to save to file
 
 
 Version 2.4.0 (August 23, 2024)
