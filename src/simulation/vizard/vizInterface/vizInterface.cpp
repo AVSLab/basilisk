@@ -1103,7 +1103,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         /* If settings were broadcast, remove from message before saving & sending to 2-way socket to reduce message
            size. Message must be re-serialized here as its contents have changed. */
-        if (this->liveStream && (this->firstPass != 0) && (this->lastSettingsSendTime == this->now)) {
+        if ((this->liveStream && (this->firstPass != 0) && (this->lastSettingsSendTime == this->now))
+             || this->saveFile) {
             // Zero-out settings to reduce message size if not at first timestep
             message->set_allocated_settings(nullptr);
             // Re-serialize
