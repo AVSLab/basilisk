@@ -399,18 +399,13 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     v3 = numpy.multiply(numpy.dot(rTruth, vTruth) / mu, vTruth)
     eVec = numpy.subtract(eVec, v3)
     eO = numpy.linalg.norm(eVec)
-    rmag = r
-    rPeriap = p / (1.0 + eO)
 
     # compute semi - major axis
     alpha = 2.0 / r - v * v / mu
     if (math.fabs(alpha) > epsConv): # elliptic or hyperbolic case
         aO = 1.0 / alpha
-        rApoap = p / (1.0 - eO)
     else:                        # parabolic case
-        rp = p / 2.0
         aO = 0.0 # a is not defined for parabola, so -rp is returned instead
-        rApoap = 0.0
 
     # Calculate the inclination
     iO = math.acos(hVec[2] / h)
