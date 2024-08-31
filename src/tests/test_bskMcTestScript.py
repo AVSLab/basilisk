@@ -48,11 +48,12 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 
 # @pytest.mark.skip(reason="MC can have issues completing.")
 
-@pytest.mark.skipif(sys.version_info < (3, 9) and platform.system() == 'Darwin',
+@pytest.mark.skipif(sys.version_info < (3, 9),
                     reason="Test has issues with Controller class and older python.")
 
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
+
 def test_scenarioBskMcScenarios(show_plots):
     # These need to be run in serial such that the data is produced for analysis
     scenarios = ['scenario_AttFeedbackMC',
@@ -81,4 +82,3 @@ def test_scenarioBskMcScenarios(show_plots):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-
