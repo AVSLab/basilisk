@@ -396,13 +396,13 @@ jobs:
         run: |
           venv\Scripts\activate
           cd src\architecture
-          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n auto; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
+          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n auto -m "not ciSkip"; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
       - name: "Python FswAlgorithms Tests"
         shell: pwsh
         run: |
           venv\Scripts\activate
           cd src\fswAlgorithms
-          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n auto; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
+          (Get-ChildItem -Directory).FullName | ForEach-Object { cd $_; pytest -n auto -m "not ciSkip"; if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}}
       - name: "C/C++ Tests"
         shell: pwsh
         run: |
