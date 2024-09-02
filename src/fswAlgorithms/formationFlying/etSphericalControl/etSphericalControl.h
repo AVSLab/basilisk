@@ -43,7 +43,7 @@ typedef struct {
     CmdForceInertialMsg_C eForceInMsg;                  //!< servicer electrostatic force input message
     CmdForceInertialMsg_C forceInertialOutMsg;          //!< servicer inertial frame control force output message
     CmdForceBodyMsg_C forceBodyOutMsg;                  //!< servicer body frame control force output message
-    
+
     double mu;                                          //!< [m^3/s^2]  gravitational parameter
     double L_r;                                         //!< [m]  reference separation distance
     double theta_r;                                     //!< [rad]  reference in-plane rotation angle

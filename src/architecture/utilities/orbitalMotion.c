@@ -50,8 +50,6 @@ void hillFrame(double *rc_N, double *vc_N, double HN[3][3])
     v3Copy(ir_N, HN[0]);
     v3Copy(itheta_N, HN[1]);
     v3Copy(ih_N, HN[2]);
-
-    return;
 }
 
 /*!
@@ -91,8 +89,6 @@ void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, dou
     v3Add(vd_N, rhoPrime_H, vd_N);
     m33MultV3(NH, vd_N, vd_N);
     v3Add(vd_N, vc_N, vd_N);
-
-    return;
 }
 
 
@@ -107,7 +103,7 @@ void  hill2rv(double *rc_N, double *vc_N, double *rho_H, double *rhoPrime_H, dou
  *   rho_H: deputy Hill position vector
  *   rhoPrime_H: deputy Hill velocity vector
  */
-void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H)
+void rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *rho_H, double *rhoPrime_H)
 {
     double HN[3][3];        /* DCM of Hill frame relative to inertial */
     double hVec_N[3];       /* orbit angular momentum vector */
@@ -133,8 +129,6 @@ void    rv2hill(double *rc_N, double *vc_N, double *rd_N, double *vd_N, double *
     m33MultV3(HN, rhoDot_N, rhoDot_H);
     v3Cross(omega_HN_H, rho_H, rhoPrime_H);
     v3Subtract(rhoDot_H, rhoPrime_H, rhoPrime_H);
-
-    return;
 }
 
 
@@ -575,8 +569,6 @@ void rv2elem(double mu, double *rVec, double *vVec, ClassicElements *elements)
     if (elements->f < 0.0) {
         elements->f += 2*M_PI;
     }
-
-    return;
 }
 
 /*!
@@ -1023,5 +1015,4 @@ void clElem2eqElem(ClassicElements *elements_cl, equinoctialElements *elements_e
     double M        = E2M(E, elements_cl->e);
     elements_eq->l  = elements_cl->Omega + elements_cl->omega + M;
     elements_eq->L  = elements_cl->Omega + elements_cl->omega + elements_cl->f;
-    return;
 }
