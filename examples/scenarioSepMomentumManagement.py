@@ -538,6 +538,38 @@ def run(momentumManagement, cmEstimation, showPlots):
     # but it receives inputs and provides outputs to modules that run on the main flight software task
     messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
 
+    # # Enable Vizard
+    # Create the effector lists and dictionaries for Vizard
+    rw_state_effector_list = []
+    sc_body_list = []
+    sc_body_list.append(scObject)
+    rw_state_effector_list.append(rwStateEffector)
+    sc_body_list.append([RSAList[0].ModelTag, RSAList[0].spinningBodyConfigLogOutMsg])
+    sc_body_list.append([RSAList[1].ModelTag, RSAList[1].spinningBodyConfigLogOutMsg])
+
+    viz = vizSupport.enableUnityVisualization(scSim, dynTask, sc_body_list, saveFile=__file__)
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=[sc_body_list[0].ModelTag]
+                                 , modelPath="CUBE"
+                                 , customTexturePath="/Users/Riccardo/Downloads/avsLogo.png"
+                                 , offset=[0, 0, 0]
+                                 , scale=[2.5, 2.5, 2.5]
+                                 )
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=[sc_body_list[1][0]]
+                                 , modelPath="CYLINDER"
+                                 , customTexturePath="/Users/Riccardo/Downloads/bskLogo2.png"
+                                 , offset=[-0.035, 0.25, -0.087]
+                                 , scale=[7, 7, 0.05]
+                                 )
+    vizSupport.createCustomModel(viz
+                                 , simBodiesToModify=[sc_body_list[2][0]]
+                                 , modelPath="CYLINDER"
+                                 , customTexturePath="/Users/Riccardo/Downloads/bskLogo1.png"
+                                 , offset=[0.128, 0.25, -0.087]
+                                 , scale=[7, 7, 0.05]
+                                 )
+
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     sNavObject.sunStateInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
