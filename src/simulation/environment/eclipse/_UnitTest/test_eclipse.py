@@ -350,7 +350,7 @@ def unitEclipseCustom(show_plots):
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["custom"]))
 
     # Specify bennu orbit
-    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid = planetEphemeris.ClassicElements()
     oeAsteroid.a = 1.1259 * orbitalMotion.AU * 1000. # m
     oeAsteroid.e = 0.20373
     oeAsteroid.i = 6.0343 * macros.D2R

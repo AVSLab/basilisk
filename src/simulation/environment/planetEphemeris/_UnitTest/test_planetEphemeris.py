@@ -96,16 +96,16 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
 
     mu = orbitalMotion.MU_SUN*1000.*1000.*1000  # m^3/s^2
     # setup planet ephemeris states
-    oeEarth = planetEphemeris.ClassicElementsMsgPayload()
-    oeEarth.a = planetEphemeris.SMA_EARTH*1000  # meters
+    oeEarth = planetEphemeris.ClassicElements()
+    oeEarth.a = orbitalMotion.SMA_EARTH*1000  # meters
     oeEarth.e = 0.001
     oeEarth.i = 10.0*macros.D2R
     oeEarth.Omega = 30.0*macros.D2R
     oeEarth.omega = 20.0*macros.D2R
     oeEarth.f = 90.0*macros.D2R
 
-    oeVenus = planetEphemeris.ClassicElementsMsgPayload()
-    oeVenus.a = planetEphemeris.SMA_VENUS*1000  # meters
+    oeVenus = planetEphemeris.ClassicElements()
+    oeVenus.a = orbitalMotion.SMA_VENUS*1000  # meters
     oeVenus.e = 0.001
     oeVenus.i = 5.0*macros.D2R
     oeVenus.Omega = 110.0*macros.D2R

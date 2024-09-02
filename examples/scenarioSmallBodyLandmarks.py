@@ -288,7 +288,7 @@ def run(show_plots, useBatch):
 
     # Specify asteroid orbit elements and rotational state January 21st, 2022
     # https://ssd.jpl.nasa.gov/horizons.cgi#results
-    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid = planetEphemeris.ClassicElements()
     oeAsteroid.a = 1.4583 * 149597870.7*1e3  # meters
     oeAsteroid.e = 0.2227
     oeAsteroid.i = 10.829 * np.pi/180

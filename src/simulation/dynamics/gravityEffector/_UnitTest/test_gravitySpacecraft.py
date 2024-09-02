@@ -335,7 +335,7 @@ def polyGravityBody(show_plots):
     DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(intTime)))
 
     # specify orbit of polyhedral body
-    oePolyBody = planetEphemeris.ClassicElementsMsgPayload()
+    oePolyBody = planetEphemeris.ClassicElements()
     oePolyBody.a = 2.3612 * orbitalMotion.AU * 1000
     oePolyBody.e = 0
     oePolyBody.i = 0*macros.D2R
