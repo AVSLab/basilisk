@@ -18,6 +18,7 @@
 */
 
 #include "fswAlgorithms/orbitControl/smallBodyWaypointFeedback/smallBodyWaypointFeedback.h"
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <math.h>
 

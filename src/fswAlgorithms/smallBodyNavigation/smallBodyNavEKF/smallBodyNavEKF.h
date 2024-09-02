@@ -32,7 +32,6 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief This module estimates relative spacecraft position and velocity with respect to the body and attitude and attitude rate of the body wrt. the inertial frame
  */

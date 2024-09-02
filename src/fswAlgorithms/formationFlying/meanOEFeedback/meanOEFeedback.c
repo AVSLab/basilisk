@@ -20,7 +20,6 @@
 #include "meanOEFeedback.h"
 
 #include <math.h>
-#include <string.h>
 
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"

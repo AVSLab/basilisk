@@ -31,7 +31,6 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/astroConstants.h"
 
 /*! @brief This module is provides a Lyapunov feedback control law for waypoint to waypoint guidance and control about
  * a small body. The waypoints are defined in the Hill frame of the body.

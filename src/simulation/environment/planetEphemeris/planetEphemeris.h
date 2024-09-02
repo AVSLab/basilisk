@@ -26,10 +26,8 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/bskLogging.h"
-#include <Eigen/Dense>
 
 
 /*! @brief planet ephemeris class */
