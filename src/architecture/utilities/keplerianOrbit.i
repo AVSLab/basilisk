@@ -27,7 +27,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 
 %include "keplerianOrbit.h"
-%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
+%include "orbitalMotion.h"
 
 %pythoncode %{
 import sys

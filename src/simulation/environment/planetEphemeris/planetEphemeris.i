@@ -30,13 +30,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 
 namespace std {
-    %template(classicElementVector) vector<ClassicElementsMsgPayload>;
+    %template(classicElementVector) vector<ClassicElements>;
 }
 
 %include "sys_model.i"
 %include "planetEphemeris.h"
 %include "architecture/utilities/orbitalMotion.h"
-%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
 %include "architecture/utilities/astroConstants.h"
 
 
