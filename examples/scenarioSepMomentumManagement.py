@@ -264,7 +264,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[0].r_SB_B = [0.75, 0.0, 0.45]
     RSAList[0].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[0].sHat_S = [0, 1, 0]
-    RSAList[0].dcm_S0B = [[0, 0, -1], [1, 0, 0], [0, -1, 0]]
+    RSAList[0].dcm_S0B = [[0, 0, 1], [1, 0, 0], [0, 1, 0]]
     RSAList[0].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -281,7 +281,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[1].r_SB_B = [-0.75, 0.0, 0.45]
     RSAList[1].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[1].sHat_S = [0, 1, 0]
-    RSAList[1].dcm_S0B = [[0, 0, 1], [-1, 0, 0], [0, -1, 0]]
+    RSAList[1].dcm_S0B = [[0, 0, -1], [-1, 0, 0], [0, 1, 0]]
     RSAList[1].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -302,7 +302,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     saBoresightList = []
     for item in range(numRSA):
         saBoresightList.append(boreAngCalc.BoreAngCalc())
-        saBoresightList[item].boreVec_B = [0, 0, -1]
+        saBoresightList[item].boreVec_B = [0, 0, 1]
         scSim.AddModelToTask(dynTask, saBoresightList[item])
     
     # Set up the dual-gimbaled platform
