@@ -20,6 +20,7 @@ Version |release|
   stored in the ``supportData`` folder if the download was complete.
 - :ref:`vizInterface` was not able to save to a binary data file.
   This is now fixed in the current release.
+- :ref:`vizInterface` was not saving the Vizard settings to the binary file.  Fixed now.
 
 
 Version 2.4.0

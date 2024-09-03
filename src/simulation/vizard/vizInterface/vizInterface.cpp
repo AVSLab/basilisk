@@ -483,8 +483,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
     /*! Send the Vizard settings according to interval set by broadcastSettingsSendDelay field */
     this->now = time(0);
-    if (this->settings.dataFresh || (this->broadcastStream && (this->now - this->lastSettingsSendTime) >= this->broadcastSettingsSendDelay)) {
-
+    if (this->broadcastStream && (this->now - this->lastSettingsSendTime) >= this->broadcastSettingsSendDelay) {
+        this->settings.dataFresh = true;
+    }
+    if (this->settings.dataFresh) {
         vizProtobufferMessage::VizMessage::VizSettingsPb* vizSettings;
         vizSettings = new vizProtobufferMessage::VizMessage::VizSettingsPb;
 
@@ -734,7 +736,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         message->set_allocated_settings(vizSettings);
 
-        this->settings.dataFresh = false;
         this->lastSettingsSendTime = now;
     }
 
@@ -1106,7 +1107,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         if ((this->liveStream && (this->firstPass != 0) && (this->lastSettingsSendTime == this->now))
              || this->saveFile) {
             // Zero-out settings to reduce message size if not at first timestep
-            message->set_allocated_settings(nullptr);
+            if (this->settings.dataFresh == false) {
+                message->set_allocated_settings(nullptr);
+            }
+            this->settings.dataFresh = false;
+
             // Re-serialize
             google::protobuf::uint8 varIntBuffer[4];
             byteCount = (uint32_t) message->ByteSizeLong();
