@@ -235,7 +235,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
                                                                  MAX_EFF_CNT, testFailCount, testMessages)
 
 
-    GsMatrix = np.transpose(np.reshape(rwConfigParams.GsMatrix_B,(MAX_EFF_CNT,3),"C"))
+    GsMatrix = np.transpose(np.reshape(rwConfigParams.GsMatrix_B, (MAX_EFF_CNT, 3), order="C"))
     F = np.transpose(moduleOutput[0])
     receivedTorque = -1.0*np.array([np.matmul(GsMatrix,F)])
     receivedTorque = np.append(np.array([]), receivedTorque)
