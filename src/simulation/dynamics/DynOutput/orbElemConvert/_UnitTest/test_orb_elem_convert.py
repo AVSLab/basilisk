@@ -183,7 +183,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     TotalSim.AddModelToTask(unitTaskName, orb_elemObject)
 
     # Set element values
-    epsDiff = 0.0000001
+    epsDiff = 1e-5
     orb_elemObject.mu = mu
 
     ###### ELEM2RV ######
@@ -224,16 +224,16 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     # Get r and v from message
     rMsgPlanet = dataLog.PositionVector[-1]
     vMsgPlanet = dataLog.VelocityVector[-1]
-    rMsgPlanetDiff = numpy.subtract(rSim, rMsgPlanet)
-    for g in range(3):
-        if abs(rMsgPlanetDiff[g]) > 0:
-            testMessages.append(" FAILED: Planet Position Message, column " + str(g))
-            testFailCount1 += 1
-    vMsgPlanetDiff = numpy.subtract(vSim, vMsgPlanet)
-    for g in range(3):
-        if abs(vMsgPlanetDiff[g]) > 0:
-            testMessages.append(" FAILED: Planet Velocity Message, column " + str(g))
-            testFailCount1 += 1
+    numpy.testing.assert_allclose(
+        rSim, rMsgPlanet,
+        rtol=epsDiff, verbose=True,
+        err_msg="FAILED: Planet Position Message"
+    )
+    numpy.testing.assert_allclose(
+        vSim, vMsgPlanet,
+        rtol=epsDiff, verbose=True,
+        err_msg="FAILED: Planet Velocity Message"
+    )
 
     # Calculation of elem2rv
     if e == 1.0 and a > 0.0:  # rectilinear elliptic orbit case
@@ -274,39 +274,16 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         vTruth[2] = -mu / h * (-(math.cos(theta) + e * math.cos(AP)) * math.sin(i))
 
     # Position and Velocity Diff Checks
-    rDiff = numpy.subtract(rSim, rTruth)
-    vDiff = numpy.subtract(vSim, vTruth)
-    rDiffcsv = numpy.asarray(rDiff)
-    vDiffcsv = numpy.asarray(vDiff)
-    for g in range(3):
-        if abs(rDiff[g]) > epsDiff:
-            testMessages.append(" FAILED: Position Vector, column " + str(g))
-            testFailCount1 += 1
-    for g in range(3):
-        if abs(vDiff[g]) > epsDiff:
-            testMessages.append(" FAILED: Velocity Vector, column " + str(g))
-            testFailCount1 += 1
-
-    if name != 0:
-        if testFailCount1 == 0:
-            colorText = 'ForestGreen'
-            passFailMsg = ""  # "Passed: " + name + "."
-            passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
-        else:
-            colorText = 'Red'
-            passFailMsg = "Failed: " + name + "."
-            testMessages.append(passFailMsg)
-            testMessages.append(" | ")
-            passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
-
-        # Write some snippets for AutoTex
-        snippetName = name + "PassedText1"
-        snippetContent = passedText
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
-
-        snippetName = name + "PassFailMsg1"
-        snippetContent = passFailMsg
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    numpy.testing.assert_allclose(
+        rSim, rTruth,
+        rtol=epsDiff, verbose=True,
+        err_msg="FAILED: Position Vector"
+    )
+    numpy.testing.assert_allclose(
+        vSim, vTruth,
+        rtol=epsDiff, verbose=True,
+        err_msg="FAILED: Velocity Vector"
+    )
 
     ###### RV2ELEM ######
     # RV2Elem
@@ -422,18 +399,13 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     v3 = numpy.multiply(numpy.dot(rTruth, vTruth) / mu, vTruth)
     eVec = numpy.subtract(eVec, v3)
     eO = numpy.linalg.norm(eVec)
-    rmag = r
-    rPeriap = p / (1.0 + eO)
 
     # compute semi - major axis
     alpha = 2.0 / r - v * v / mu
     if (math.fabs(alpha) > epsConv): # elliptic or hyperbolic case
         aO = 1.0 / alpha
-        rApoap = p / (1.0 - eO)
     else:                        # parabolic case
-        rp = p / 2.0
         aO = 0.0 # a is not defined for parabola, so -rp is returned instead
-        rApoap = 0.0
 
     # Calculate the inclination
     iO = math.acos(hVec[2] / h)
