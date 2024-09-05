@@ -39,13 +39,16 @@ Version |release|
 - Enhanced :ref:`thrusterDynamicEffector` to allow automatic scaling down of thrust and Isp as fuel mass depletes.
 - Fixed issue with :ref:`vizInterface` not being able to save to file
 - Fixed issue with :ref:`vizInterface` not saving off Vizard protobuffer message on first time step
+- Created an input device status message to toggle the :ref:`constraintDynamicEffector` dynamics module on/off.
+- Created an output message to record constraint forces and torques acting on separate spacecraft connected using a :ref:`constraintDynamicEffector` dynamics module.
+- Added in a low-pass filter to filter the output forces and torques of the :ref:`constraintDynamicEffector` dynamics module.
 
 
 Version 2.4.0 (August 23, 2024)
 -------------------------------
 - Added a new example scenario :ref:`scenarioConstrainedDynamics` demonstrating post-docked spacecraft dynamics
 - Created a :ref:`constraintDynamicEffector` dynamics module to couple separate spacecraft motion using holonomic
-  constraints
+  constraints.
 - Removed the depreciated manner of creating python modules
 - Created a new example scenario :ref:`scenarioTempMeasurementAttitude` demonstrating the use of tempMeasurement module and generating random noise in the measurement.
 - Uncaught exceptions raised in Python modules are now printed to ``stderr`` before the program is terminated.
