@@ -7,9 +7,10 @@ with warnings.catch_warnings():
     import pandas as pd
     import datashader as ds
     import holoviews as hv
-    from holoviews.operation.datashader import datashade, dynspread
+    from holoviews.operation.datashader import datashade, dynspread, rasterize, spread
     from holoviews.streams import RangeXY
     from datashader.colors import Sets1to3
+    from holoviews import opts
 from Basilisk.utilities import macros
 
 def pull_and_format_df(path, varIdxLen):
@@ -44,14 +45,14 @@ def curve_per_df_component(df):
         new_row = pd.Series([np.nan] * len(varIdx_df.columns), index=varIdx_df.columns)
 
         # Concatenate DataFrames
-        varIdx_df = pd.concat([varIdx_df, new_row.to_frame().T], ignore_index=True)
+        varIdx_df = pd.concat([varIdx_df, new_row.to_frame().T], ignore_index=False)
 
         # Flatten values by column order
-        time = np.tile(varIdx_df.index, len(varIdx_df.columns.codes[0]))  # Repeat time by number of runs
-        varIdx_flat = varIdx_df.values.flatten('F')
+        time = np.tile(varIdx_df.index[:-1], len(varIdx_df.columns.codes[0]))  # Repeat time by number of runs
+        varIdx_flat = varIdx_df.values.flatten('F')[:-len(varIdx_df.columns.codes[0])]  # Flatten by column order
 
         # Generate a curve for each component
-        curve_df = pd.DataFrame(np.transpose([time, varIdx_flat]).tolist(), columns=['x', 'y'])
+        curve_df = pd.DataFrame({'x': time, 'y': varIdx_flat})
         df_list.append(curve_df)
 
     return df_list
@@ -109,10 +110,8 @@ class DS_Plot():
         self.macro_y = macro_y
         self.plotObjType = plotObjType
         self.cmap = cmap
-        #self.backend =
         self.labels = labels
         self.plotFcn = plotFcn
-
 
     def generateCurves(self):
         '''
@@ -122,73 +121,37 @@ class DS_Plot():
         :return: dict of hv.Curve or hv.Point objects
         '''
         count = 0
-        curves = []
+        curves = {}
         missingData = []
         self.min = self.data[0].values.min()
         self.max = self.data[0].values.max()
 
         for i in range(len(self.data)):
-            if self.min > self.data[0].values.min() : self.min = self.data[0].values.min()
-            if self.max < self.data[0].values.max() : self.max = self.data[0].values.max()
+            if self.min > self.data[i].values.min():
+                self.min = self.data[i].values.min()
+            if self.max < self.data[i].values.max():
+                self.max = self.data[i].values.max()
             self.data[i] = self.data[i] * self.macro_y
-            self.data[i].index = self.data[i].index * 1e-9
+            self.data[i].index = self.data[i].index * self.macro_x
 
-            # Seperate dataframe by component
+            # Separate dataframe by component
             curveList = self.plotFcn(self.data[i])  # Only one component so it will be a single curve
-
-            # Customize the individual component curves, points, other
             for curve_df in curveList:
-                curve = self.plotObjType(curve_df)#.opts(framewise=True)
-                curves.append(curve)
+                curves[f'Curve {count}'] = self.plotObjType(curve_df, kdims=['x'], vdims=['y']).opts(color=self.cmap[count % len(self.cmap)])
                 count += 1
 
-            if self.data[i].dropna().empty:
-                missingData.append(True)
-        # Label each curve with a unique identifier
-        curves = {i: curves[i] for i in range(len(curves))}
         return curves, missingData
-
 
     def generateImage(self):
         '''
-        Generate the image to be sent to the bokeh server. This includes
-        1) generating curves from the dataframe or list of dataframes,
-        2) overlaying those curves onto a single image, and
-        3) populating various annotations and asethetic configurations
-        :return: hv.DynImage()
+        Generate the image to be rendered dynamically.
+        :return: holoviews Element and title
         '''
-        hv.extension('bokeh')
-        # Overlay these curves
-        curves, missingData = self.generateCurves()
-        overlay = hv.NdOverlay(curves, kdims='k')#.opts(framewise=True)
+        curves, _ = self.generateCurves()  # This should return a dictionary now
+        overlay = hv.NdOverlay(curves, kdims='k')
 
-        # Rasterize the plot using datashade()
-        if np.sum(missingData) == len(self.data):
-            image = hv.Text(0.5, 0.5, "All Data Missing")
-        else:
-            if self.min == self.max and self.min != np.nan:
-                y_range = (self.min-0.1, self.max+0.1)
-                image = dynspread(datashade(overlay, dynamic=True, streams=[RangeXY],
-                                            aggregator=ds.count_cat('k'), color_key=self.cmap,
-                                            y_range=y_range)).opts(framewise=True)
-            else:
-                image = dynspread(datashade(overlay, dynamic=True, streams=[RangeXY],
-                                            aggregator=ds.count_cat('k'), color_key=self.cmap
-                                           )).opts(framewise=True)
-
-        image.opts(width=960, height=540)
-        image.opts(tools=['hover'])
-        image.opts(padding=0.05)
-        image.opts(title=self.title, xlabel=self.xAxisLabel, ylabel=self.yAxisLabel)
-
-        if not self.labels == []:
-            color_key = [(name, color) for name, color in zip(self.labels, self.cmap)]
-            legend = hv.NdOverlay({
-                n: hv.Points([np.nan, np.nan], label=str(n)).options(
-                    color=c
-                ) for n, c in color_key
-            })
-            image = image*legend
-
-        return image, self.title
-
+        # Return the overlay as a holoviews element with interactive capabilities
+        return overlay.opts(
+            width=800, height=600, tools=['hover', 'pan', 'wheel_zoom', 'box_zoom', 'reset'],
+            title=self.title, xlabel=self.xAxisLabel, ylabel=self.yAxisLabel
+        ), self.title
