@@ -106,6 +106,15 @@ FOUND_DATESHADER = True
 try:
     from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component, pull_and_format_df
     from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
+    from bokeh.plotting import figure
+    from bokeh.models import ColumnDataSource
+    from bokeh.palettes import RdYlBu9
+    from bokeh.palettes import Category10  # Import a color palette
+    from bokeh.models import HoverTool, Legend
+    from bokeh.layouts import column
+    from bokeh.models import WheelZoomTool
+    from bokeh.io import curdoc
+
     from bokeh.palettes import Blues9, Reds9, Greens9, \
         Blues3, Reds3, Greens3, Oranges3, RdYlBu9
 except:
@@ -122,34 +131,110 @@ from Basilisk import __path__
 
 bskPath = __path__[0]
 
+def reshape_df_for_plotting(df):
+    """
+    Reshape DataFrame from wide format with MultiIndex columns to long format.
+    Args:
+        df: DataFrame with MultiIndex columns
+    Returns:
+        Reshaped DataFrame suitable for plotting
+    """
+    # Reset MultiIndex columns to a single level with appropriate names
+    df.columns = [f'{i}_{j}' for i, j in df.columns]
+    
+    # Reset index to make it a column and rename the columns
+    df = df.reset_index()
+    
+    # Melt DataFrame to long format, assuming 'time' is the index and should be retained
+    df_long = df.melt(id_vars=['time[ns]'], var_name='variable', value_name='value')
+    
+    # Extract run number and component from the variable name
+    df_long[['runNum', 'component']] = df_long['variable'].str.split('_', expand=True)
+    
+    # Drop the original variable column
+    df_long = df_long.drop(columns=['variable'])
+    
+    # Rename 'time[ns]' to 'time' for simplicity
+    df_long = df_long.rename(columns={'time[ns]': 'time'})
+    
+    return df_long
+
 def plotSuite(dataDir):
     """
-    This is the function to populate with all of the plots to be generated using datashaders and bokeh.
-    Each variable requires a call to ``pull_and_format_df()`` to ensure the dataframe will be compatible with
-    the developed datashader utilities.
-
+    Create interactive plots for each dataset using Bokeh, color-coded by run number,
+    with time converted to seconds, and interactive tools.
+    
     Args:
-        dataDir: (str) directory containing all of the dataframes created from the Monte Carlo run
-
-    Returns: List of DS_Plots
-
+        dataDir: Directory containing data files
+    
+    Returns:
+        List of Bokeh plots
     """
     plotList = []
+    
+    # Define a color map using a Bokeh color palette
+    color_map = Category10[10]  # You can use other palettes or specify your own colors
+    
+    # Create a plot for attitude error
     sigma_BR = pull_and_format_df(dataDir + "attGuidMsg.sigma_BR.data", 3)
-    sigmaPlot = DS_Plot(sigma_BR, title="Attitude Error",
-                        xAxisLabel='time [s]', yAxisLabel='Sigma_BR',
-                        macro_x=macros.NANO2SEC,
-                        labels = ['b1', 'b2', 'b3'], cmap=RdYlBu9,
-                        plotFcn=curve_per_df_component)
-    plotList.append(sigmaPlot)
+    sigma_BR = reshape_df_for_plotting(sigma_BR)
+    sigma_BR['time'] = sigma_BR['time'] / 1e9  # Convert time from nanoseconds to seconds
+    
+    p1 = figure(title="Attitude Error", x_axis_label='time [s]', y_axis_label='Sigma_BR',
+                width=800, height=400, tools="pan,wheel_zoom,box_zoom,reset,hover,save")
+    
+    # Set wheel_zoom as the active scroll tool
+    p1.toolbar.active_scroll = p1.select(dict(type=WheelZoomTool))[0]
 
+    # Add hover tool
+    hover = HoverTool()
+    hover.tooltips = [("Run", "@runNum"), ("Time", "@time{0.00}"), ("Value", "@value{0.00}")]
+    p1.add_tools(hover)
+    
+    lines = []
+    legend_items = []
+    for i, run_num in enumerate(sigma_BR['runNum'].unique()):
+        df_run = sigma_BR[sigma_BR['runNum'] == run_num]
+        color = color_map[i % len(color_map)]  # Cycle through colors if there are more runs than colors
+        source = ColumnDataSource(df_run[df_run['component'] == '0'])
+        line = p1.line(x='time', y='value', source=source,
+                       legend_label=f'Run {run_num}', line_width=2, color=color)  # Adjust color and line width as needed
+        lines.append(line)
+        legend_items.append((f'Run {run_num}', [line]))
+
+    
+    plotList.append(p1)
+
+    # Create a plot for attitude rate error
     sigma_BR = pull_and_format_df(dataDir + "attGuidMsg.omega_BR_B.data", 3)
-    sigmaPlot = DS_Plot(sigma_BR, title="Attitude Rate Error",
-                        xAxisLabel='time [s]', yAxisLabel='omega_BR_B',
-                        macro_x=macros.NANO2SEC, macro_y=macros.R2D,
-                        labels = ['b1', 'b2', 'b3'], cmap=RdYlBu9,
-                        plotFcn=curve_per_df_component)
-    plotList.append(sigmaPlot)
+    sigma_BR = reshape_df_for_plotting(sigma_BR)
+    sigma_BR['time'] = sigma_BR['time'] / 1e9  # Convert time from nanoseconds to seconds
+    
+    p2 = figure(title="Attitude Rate Error", x_axis_label='time [s]', y_axis_label='omega_BR_B',
+                width=800, height=400, tools="pan,wheel_zoom,box_zoom,reset,hover,save")
+    
+    # Set wheel_zoom as the active scroll tool
+    p2.toolbar.active_scroll = p2.select(dict(type=WheelZoomTool))[0]
+
+    # Add hover tool
+    hover = HoverTool()
+    hover.tooltips = [("Run", "@runNum"), ("Time", "@time{0.00}"), ("Value", "@value{0.00}")]
+    p2.add_tools(hover)
+    
+    lines = []
+    legend_items = []
+    for i, run_num in enumerate(sigma_BR['runNum'].unique()):
+        df_run = sigma_BR[sigma_BR['runNum'] == run_num]
+        color = color_map[i % len(color_map)]  # Cycle through colors if there are more runs than colors
+        source = ColumnDataSource(df_run[df_run['component'] == '0'])
+        line = p2.line(x='time', y='value', source=source,
+                       legend_label=f'Run {run_num}', line_width=2, color=color)  # Adjust color and line width as needed
+        lines.append(line)
+        legend_items.append((f'Run {run_num}', [line]))
+    
+    
+    plotList.append(p2)
+
     return plotList
 
 

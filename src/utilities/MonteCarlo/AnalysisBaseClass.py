@@ -8,6 +8,11 @@ from Basilisk.utilities import macros
 
 try:
     import holoviews as hv
+    from bokeh.layouts import column, row
+    from bokeh.models import Slider
+    from bokeh.plotting import figure
+    from bokeh.models import ColumnDataSource
+    from bokeh.plotting import curdoc
     from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component
 except:
     pass
@@ -196,36 +201,21 @@ class mcAnalysisBaseClass:
             pd.to_pickle(dfSubSet, baseDir + "/subset/" + varName[-1])
         print("Finished Populating Subset Directory")
 
+    def create_bokeh_plots(self, figures):
+        return figures  # Assuming figures are already Bokeh plots
+    
+    def generateBokehCurves(self):
+        curves = []
+        for df in self.data:
+            source = ColumnDataSource(df)
+            p = figure(width=800, height=400, title=self.title)
+            p.line(x='x', y='y', source=source, line_width=2, color=self.cmap[0])  # Customize as needed
+            curves.append(p)
+        return curves
+
     def renderPlots(self, plotList):
-        """
-        Render all plots in plotList and print information about time taken, percent complete, which plot, etc.
+        # Assuming plotList contains Bokeh figures
+        layout = column(*plotList)
+        curdoc().add_root(layout)
 
-        :param plotList: List of plots to render
-        :return: nothing.
-        """
-        hv.extension('bokeh')
-        renderer = hv.renderer('bokeh').instance(mode='server')
 
-        if self.save_as_static:
-            print("Note: You requested to save static plots. This means no interactive python session will be generated.")
-        print("Beginning the plotting")
-
-        if not os.path.exists(self.dataDir + self.staticDir):
-            os.mkdir(self.dataDir + self.staticDir)
-
-        for i in range(len(plotList)):
-            startTime = time.time()
-            image, title = plotList[i].generateImage()
-            try:
-                if self.save_as_static:
-                    # Save .html files of each of the plots into the static directory
-                    hv.save(image, self.dataDir + self.staticDir + "/" + title + ".html")
-                else:
-                    renderer.server_doc(image)
-                # Print information about the rendering process
-                print("LOADED: " + title +"\t\t\t" +
-                      "Percent Complete: " + str(round((i + 1) / len(plotList) * 100, 2)) + "% \t\t\t"
-                      "Time Elapsed: " + str( round(time.time() - startTime)) + " [s]")
-            except Exception as e:
-                print("Couldn't Plot " + title)
-                print(e)
