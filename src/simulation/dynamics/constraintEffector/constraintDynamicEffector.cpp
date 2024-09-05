@@ -144,6 +144,9 @@ void ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k){
     }
 }
 
+/*! This method allows the user to set the status of the constraint dynamic effector
+ @return void
+*/
 void ConstraintDynamicEffector::readInputMessage(){
      if(this->effectorStatusInMsg.isLinked()){
         DeviceStatusMsgPayload statusMsg;
@@ -270,7 +273,7 @@ void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 
 /*! Update state method
  @return void
- @param CurrentSimNanos current simulation time
+ @param CurrentSimNanos The current simulation time
  */
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {

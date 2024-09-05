@@ -22,13 +22,13 @@
 
 /*! @brief Structure used to Constraint Dynamic Effector output message */
 typedef struct {
-    double Fc_N[3]; // Constraint force applied in Inertial frame
-    double L1_B1[3]; //Constraint torque applied on s/c 1 in B1 frame
-    double L2_B2[3]; //Constraint torque applied on s/c 2 in B2 frame
-    double psi_N[3]; // Direction constraint violation
-    double Fc_mag_filtered; //Magnitude of filtered constraint force applied in Inertial frame
-    double L1_mag_filtered; //Magnitude of filtered constraint torque on s/c 1 applied in B1 frame
-    double L2_mag_filtered; //Magnitude of filtered constraint torque on s/c 2 applied in B2 frame
+    double Fc_N[3]; //!< [N] Constraint force applied in Inertial frame
+    double L1_B1[3]; //!< [N.m] Constraint torque applied on s/c 1 in B1 frame
+    double L2_B2[3]; //!< [N.m] Constraint torque applied on s/c 2 in B2 frame
+    double psi_N[3]; //!< [m] Direction constraint violation
+    double Fc_mag_filtered; //!< [N] Magnitude of filtered constraint force applied in Inertial frame
+    double L1_mag_filtered; //!< [N.m] Magnitude of filtered constraint torque on s/c 1 applied in B1 frame
+    double L2_mag_filtered; //!< [N.m] Magnitude of filtered constraint torque on s/c 2 applied in B2 frame
 }ConstDynEffectorMsgPayload;
 
 #endif

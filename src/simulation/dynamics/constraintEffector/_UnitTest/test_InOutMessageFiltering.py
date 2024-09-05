@@ -44,6 +44,27 @@ from Basilisk.architecture import messaging
     (0,1)]) #Zero cut off frequency test
 
 def test_constraintEffectorAllCases(show_plots,CutOffFreq,useConstEffector):
+    r"""Module Unit Test
+    **Validation Test Description**
+
+    This unit test sets up two spacecraft connected by a holonomic constraint effector acting as a physical connection
+    between them. The two spacecraft are set up with an identical mass and symmetrical inertias. We test the on/off input
+    message used to toggle the status of the holonomic constraint effector, along with the default
+    case. We test the output message of the module, namely the constraint forces and torques acting on both spacecraft. Along
+    with this we also test the low pass filter used to filter the ouptut messsage parameters.
+
+    **Description of the test**
+
+    In order to verify the values of the output message, we simulate the scenario and then mimic it in Python using the same
+    parameters and compare the resulting values. The default status of the dynamic effector is ON. To verify the on/off
+    status of the dynamic effector, we check that the output message parameters are equal to 0 if the effector is OFF or
+    is approximately equal to the values calculated in Python if the effector is ON.
+
+    To verify the filtering, we employ a similar approach of simulating the scenario and mimicing it in Python. If the cut-off
+    frequency supplied is 0, there is no filtering. If it is negative, an error message is thrown and no filtering is performed.
+    If it is positive, then we perform a low-pass filtering of the constraint forces and torques using a second-order low pass
+    filter, to provide the corresponding results.
+    """
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
