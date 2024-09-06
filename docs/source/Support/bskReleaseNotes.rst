@@ -45,6 +45,7 @@ Version |release|
 - Removed deprecated way to log Basilisk module variables
 - Removed deprecated way to create C-wrapped Basilisk modules
 - Corrected Equations (11) and (12) in the :ref:`celestialTwoBodyPoint` PDF documentation
+- Expanded the GitHub CI tests to run scenario script tests
 - Untangled :ref:`ClassicElementsMsgPayload` which was used both as a message payload definition
   and as a data structure inside modules.  The use of ``classicElements()`` is now depreciated
   for the use of ``ClassicElements()`` defined in :ref:`orbitalMotionutilities`.
