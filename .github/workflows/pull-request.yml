@@ -384,33 +384,12 @@ jobs:
         run: |
           venv\Scripts\activate
           python conanfile.py
-      - name: "Python Simulation Tests"
+      - name: "Run Python Tests"
         shell: pwsh
         run: |
           Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name MPLBACKEND -Value ${MPLBACKEND}
           venv\Scripts\activate
-          cd src\simulation
-          pytest -n auto -m "not ciSkip"
-          if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
-      - name: "Python Architecture Tests"
-        shell: pwsh
-        run: |
-          venv\Scripts\activate
-          cd src\architecture
-          pytest -n auto -m "not ciSkip"
-          if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
-      - name: "Python FswAlgorithms Tests"
-        shell: pwsh
-        run: |
-          venv\Scripts\activate
-          cd src\fswAlgorithms
-          pytest -n auto -m "not ciSkip"
-          if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
-      - name: "Python Scenario Tests"
-        shell: pwsh
-        run: |
-          venv\Scripts\activate
-          cd src\tests
+          cd src
           pytest -n auto -m "not ciSkip"
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
       - name: "C/C++ Tests"
