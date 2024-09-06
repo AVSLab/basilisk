@@ -158,13 +158,22 @@ def run(show_plots, maneuverCase):
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # setup Gravity Body
+    # setup Gravity Body and SPICE definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
+
+    # setup spice library for Earth ephemeris
+    timeInitString = "2024 September 21, 21:00:00.0 TDB"
+    spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+    spiceObject.zeroBase = 'Earth'
+    spiceObject.loadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
+
+    # need spice to run before spacecraft module as it provides the spacecraft translational states
+    scSim.AddModelToTask(simTaskName, spiceObject)
 
     #
     #   setup orbit and simulation time
@@ -290,6 +299,10 @@ def run(show_plots, maneuverCase):
     # run simulation for 3rd chunk
     scSim.ConfigureStopTime(simulationTime + T2 + T3)
     scSim.ExecuteSimulation()
+
+    # unload custom Spice kernel
+    gravFactory.unloadSpiceKernels()
+    spiceObject.unloadSpiceKernel("hst_edited.bsp", bskPath + '/supportData/EphemerisData/')
 
     #
     #   retrieve the logged data
