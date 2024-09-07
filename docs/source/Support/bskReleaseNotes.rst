@@ -42,6 +42,8 @@ Version |release|
 - Created an input device status message to toggle the :ref:`constraintDynamicEffector` dynamics module on/off.
 - Created an output message to record constraint forces and torques acting on separate spacecraft connected using a :ref:`constraintDynamicEffector` dynamics module.
 - Added in a low-pass filter to filter the output forces and torques of the :ref:`constraintDynamicEffector` dynamics module.
+- Removed deprecated way to log Basilisk module variables
+- Removed deprecated way to create C-wrapped Basilisk modules
 
 
 Version 2.4.0 (August 23, 2024)
