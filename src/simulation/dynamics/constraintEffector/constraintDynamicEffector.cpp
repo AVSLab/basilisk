@@ -19,6 +19,9 @@
 
 #include "constraintDynamicEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include<cmath>
+#include<array>
+#include<iostream>
 
 /*! This is the constructor, nothing to report here */
 ConstraintDynamicEffector::ConstraintDynamicEffector()
@@ -120,6 +123,41 @@ void ConstraintDynamicEffector::setC_a(double c_a) {
     }
 }
 
+/*! This method allows the user to set the cut-off frequency of the low pass filter which is then used to calculate the coefficients for numerical low pass filtering based on a second-order low pass filter design.
+ @return void
+ @param wc The cut-off frequency of the low pass filter.
+ @param h The constant digital time step.
+ @param k The damping coefficient
+*/
+void ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k){
+    if (wc>0){
+    std::array<double,3> num_coeffs = {pow(wc*h,2),2*pow(wc*h,2),pow(wc*h,2)};
+    std::array<double,3> denom_coeffs = {-4+4*k*h-pow(wc*h,2),8-2*pow(wc*h,2),4+4*k*h+pow(wc*h,2)};
+    this->a = denom_coeffs[1]/denom_coeffs[2];
+    this->b = denom_coeffs[0]/denom_coeffs[2];
+    this->c = num_coeffs[2]/denom_coeffs[2];
+    this->d = num_coeffs[1]/denom_coeffs[2];
+    this->e = num_coeffs[0]/denom_coeffs[2];
+    }
+    else{
+        bskLogger.bskLog(BSK_ERROR, "Cut off frequency of low pass filter w_c must be greater than 0.");
+    }
+}
+
+/*! This method allows the user to set the status of the constraint dynamic effector
+ @return void
+*/
+void ConstraintDynamicEffector::readInputMessage(){
+     if(this->effectorStatusInMsg.isLinked()){
+        DeviceStatusMsgPayload statusMsg;
+        statusMsg = this->effectorStatusInMsg();
+        this->effectorStatus = statusMsg.deviceStatus;
+     }
+     else{
+        this->effectorStatus = 1;
+     }
+}
+
 /*! This method allows the constraint effector to have access to the parent states
  @return void
  @param states The states to link
@@ -198,25 +236,96 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
             Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
             Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(sigma_B2B1) - this->c_a * 0.25 * sigma_B2B1.Bmat() * omega_B2B1_B2;
             Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
-            this->L_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
+            this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
 
             // assign forces and torques for spacecraft 1
             this->forceExternal_N = this->Fc_N;
             this->torqueExternalPntB_B = L_B1_len + L_B1_att;
+            this->T_B1 = this->torqueExternalPntB_B;
         }
         else if (this->scID == 1) {
             // assign forces and torques for spacecraft 2
             this->forceExternal_N = - this->Fc_N;
-            this->torqueExternalPntB_B = this->L_B2;
+            this->torqueExternalPntB_B = this->T_B2;
         }
         this->scID = (1 + pow(-1,this->scID))/2; // toggle spacecraft to be assigned forces and torques
     }
 }
 
-/*! Update state method, nothing to report here
+/*! This method takes the computed constraint force and torque states and outputs them to the m
+ messaging system.
  @return void
+ @param CurrentClock The current simulation time (used for time stamping)
+ */
+void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
+{
+    ConstDynEffectorMsgPayload outputForces;
+    outputForces = this->constraintElements.zeroMsgPayload;
+    eigenVector3d2CArray(this->forceExternal_N,outputForces.Fc_N);
+    eigenVector3d2CArray(this->T_B1,outputForces.L1_B1);
+    eigenVector3d2CArray(this->T_B2,outputForces.L2_B2);
+    eigenVector3d2CArray(this->psi_N,outputForces.psi_N);
+    outputForces.Fc_mag_filtered = this->F_filtered_mag_t;
+    outputForces.L1_mag_filtered = this->T1_filtered_mag_t;
+    outputForces.L2_mag_filtered = this->T2_filtered_mag_t;
+    this->constraintElements.write(&outputForces,this->moduleID,CurrentClock);
+}
+
+/*! Update state method
+ @return void
+ @param CurrentSimNanos The current simulation time
  */
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    this->readInputMessage();
+    if(this->effectorStatus){
+        this->computeFilteredForce(CurrentSimNanos);
+        this->computeFilteredTorque(CurrentSimNanos);
+        this->writeOutputStateMessage(CurrentSimNanos);
+    }
+}
 
+/*! Filtering method to calculate filtered Constraint Force
+ @return void
+ @param CurrentClock The current simulation time (used for time stamping)
+ */
+void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
+{
+
+    double F_t[3];
+    eigenVector3d2CArray(this->Fc_N,F_t);
+    this->F_mag_t = std::sqrt(pow(F_t[0],2)+pow(F_t[1],2)+pow(F_t[2],2));
+    this->F_filtered_mag_t = this->a*this->F_filtered_mag_tminus1 +
+    this->b*this->F_filtered_mag_tminus2+this->c*this->F_mag_t+
+    this->d*this->F_mag_tminus1+this->e*this->F_mag_tminus2;
+    this->F_filtered_mag_tminus2 = this->F_filtered_mag_tminus1;
+    this->F_filtered_mag_tminus1 = this->F_filtered_mag_t;
+    this->F_mag_tminus2 = this->F_mag_tminus1;
+    this->F_mag_tminus1 = this->F_mag_t;
+}
+
+/*! Filtering method to calculate filtered Constraint Torque
+ @return void
+ @param CurrentClock The current simulation time (used for time stamping)
+ */
+void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock)
+{
+        double T_t1[3];
+        eigenVector3d2CArray(this->T_B1,T_t1);
+        this->T1_mag_t = std::sqrt(pow(T_t1[0],2)+pow(T_t1[1],2)+pow(T_t1[2],2));
+        this->T1_filtered_mag_t = this->a*this->T1_filtered_mag_tminus1 +
+        this->b*this->T1_filtered_mag_tminus2+this->c*this->T1_mag_t+
+        this->d*this->T1_mag_tminus1+this->e*this->T1_mag_tminus2;
+        this->T1_filtered_mag_tminus2 = this->T1_filtered_mag_tminus1;
+        this->T1_filtered_mag_tminus1 = this->T1_filtered_mag_t;
+        this->T1_mag_tminus2 = this->T1_mag_tminus1;
+        this->T1_mag_tminus1 = this->T1_mag_t;
+        double T_t2[3];
+        eigenVector3d2CArray(this->T_B2,T_t2);
+        this->T2_mag_t = std::sqrt(pow(T_t2[0],2)+pow(T_t2[1],2)+pow(T_t2[2],2));
+        this->T2_filtered_mag_t = this->a*this->T2_filtered_mag_tminus1 + this->b*this->T2_filtered_mag_tminus2+this->c*this->T2_mag_t+this->d*this->T2_mag_tminus1+this->e*this->T2_mag_tminus2;
+        this->T2_filtered_mag_tminus2 = this->T2_filtered_mag_tminus1;
+        this->T2_filtered_mag_tminus1 = this->T2_filtered_mag_t;
+        this->T2_mag_tminus2 = this->T2_mag_tminus1;
+        this->T2_mag_tminus1 = this->T2_mag_t;
 }

@@ -90,3 +90,16 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
     constraintEffector.getC_d(2*beta)
     constraintEffector.getK_a(alpha**2)
     constraintEffector.getC_a(2*beta)
+
+#. (Optional) Define a input device status message.(1 means constraintEffector is connected.0 means constraintEffector is disconnected). If not set, it defaults to being connected::
+
+    effectorStatusMsgPayload = messaging.DeviceStatusMsgPayload()
+    effectorStatusMsgPayload.deviceStatus = 1
+    effectorStatusMsg = messaging.DeviceStatusMsg().write(effectorStatusMsgPayload)
+    constraintEffector.effectorStatusInMsg.subscribeTo(effectorStatusMsg)
+
+#. (Optional) Setup Low Pass Filtering for the Constraint Forces and Torques acting on the two satellites. Define a positive cut-off frequency wc for the low-pass filter. If not set, defaults to 0::
+
+    constraintEffector.setFilterData(wc)
+
+#. The constraintEffector output message records the raw and filtered constraint forces and torques acting on the two spacecraft using the variable ``constraintElements``.

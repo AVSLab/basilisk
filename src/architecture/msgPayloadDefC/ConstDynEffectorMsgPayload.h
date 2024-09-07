@@ -17,34 +17,18 @@
 
  */
 
+#ifndef CONSTRAINT_DYN_EFFECTOR_MSG_H
+#define CONSTRAINT_DYN_EFFECTOR_MSG_H
 
-%module constraintDynamicEffector
-%{
-   #include "constraintDynamicEffector.h"
-%}
+/*! @brief Structure used to Constraint Dynamic Effector output message */
+typedef struct {
+    double Fc_N[3]; //!< [N] Constraint force applied in Inertial frame
+    double L1_B1[3]; //!< [N.m] Constraint torque applied on s/c 1 in B1 frame
+    double L2_B2[3]; //!< [N.m] Constraint torque applied on s/c 2 in B2 frame
+    double psi_N[3]; //!< [m] Direction constraint violation
+    double Fc_mag_filtered; //!< [N] Magnitude of filtered constraint force applied in Inertial frame
+    double L1_mag_filtered; //!< [N.m] Magnitude of filtered constraint torque on s/c 1 applied in B1 frame
+    double L2_mag_filtered; //!< [N.m] Magnitude of filtered constraint torque on s/c 2 applied in B2 frame
+}ConstDynEffectorMsgPayload;
 
-%pythoncode %{
-from Basilisk.architecture.swig_common_model import *
-%}
-%include "std_string.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
-
-// Instantiate templates used by example
-%include "std_vector.i"
-
-%include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-%include "constraintDynamicEffector.h"
-
-%include "architecture/msgPayloadDefC/ConstDynEffectorMsgPayload.h"
-struct ConstDynEffectorMsg_C;
-
-%include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif
