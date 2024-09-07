@@ -323,8 +323,9 @@ Press 'z' to stop the simulation."""
         alt = np.linalg.norm(currState.r_BN_N) - planet.radEquator
         velNorm = np.linalg.norm(currState.v_BN_N)
 
-        hudpanel.displayString = f"HUD\nAltitude: {alt/1000:.2f} km\nInertial Velocity: {velNorm/1000:.2f} km/s"
-        viz.vizEventDialogs.append(hudpanel)
+        if vizSupport.vizFound:
+            hudpanel.displayString = f"HUD\nAltitude: {alt/1000:.2f} km\nInertial Velocity: {velNorm/1000:.2f} km/s"
+            viz.vizEventDialogs.append(hudpanel)
 
         # Here, I only want to run a single BSK timestep before checking for user responses.
         incrementalStopTime += simulationTimeStep
