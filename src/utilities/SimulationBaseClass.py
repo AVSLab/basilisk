@@ -476,105 +476,6 @@ class SimBaseClass:
                 else:
                     self.eventMap[eventName].eventActive = activityCommand
 
-    def setModelDataWrap(self, modelData):
-        """
-        Takes a module and returns an object that provides access to said module's SelfInit, Update, and Reset
-        methods.
-
-        Takes the module instance, collects all SwigPyObjects generated from the .i file (SelfInit,
-        Update and Reset), and attaches it to a alg_contain model instance so the modules standard functions can be
-        run at the python level.
-
-        :param modelData: model to gather functions for
-        :return: An alg_contain model that provides access to the original model's core functions
-        """
-        deprecationId = f"{SimBaseClass.setModelDataWrap.__module__}.{SimBaseClass.setModelDataWrap.__qualname__}"
-        removalDate = "2024/07/30"
-
-        if hasattr(modelData, "createWrapper"):
-            deprecated.deprecationWarn(
-                deprecationId,
-                removalDate,
-                "C modules no longer require having separate 'Config' and 'Wrap' objects. "
-                "Treat C modules like C++ modules. For example, instead of:\n"
-                "\tinertial3DConfig = inertial3D.inertial3DConfig()\n"
-                "\tinertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)\n"
-                "\tinertial3DWrap.ModelTag = 'inertial3D'\n"
-                "\tscSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig, 10)\n"
-                "Do:\n"
-                "\tinertial3D = inertial3D.inertial3D()\n"
-                "\tinertial3D.ModelTag = 'inertial3D'\n"
-                "\tscSim.AddModelToTask(simTaskName, inertial3D, 10)\n"
-            )
-            return modelData.createWrapper()
-
-        deprecated.deprecationWarn(
-            deprecationId,
-            removalDate,
-            "This C module has not been converted yet to the new way of defining C "
-            "modules, which makes using them more intuitive. Take the time to see how "
-            "the new C module '.i' file looks by checking out a default Basilisk module"
-            " and adapt your module to use a similar format."
-        )
-
-        algDict = {}
-        STR_SELFINIT = 'SelfInit'
-        STR_UPDATE = 'Update'
-        STR_RESET = 'Reset'
-
-        # SwigPyObject's Parsing:
-        # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, Update and Restart
-        # are wrapped by Swig in the .i files. Therefore they are the only SwigPyObjects
-        def parseDirList(dirList):
-            algNames = []
-            for methodName in dirList:
-                methodObject = eval('sys.modules["' + module + '"].' + methodName)
-                if type(methodObject).__name__ == "SwigPyObject":
-                    algNames.append(methodName)
-            return algNames
-
-        # Check the type of the algorithm, i.e. SelfInit, Update or Reset,
-        # and return the key to create a new dictionary D[str_method] = method
-        def checkMethodType(methodName):
-            if methodName[0:len(STR_SELFINIT)] == STR_SELFINIT:
-                return STR_SELFINIT
-            elif methodName[0:len(STR_UPDATE)] == STR_UPDATE:
-                return STR_UPDATE
-            elif methodName[0:len(STR_RESET)] == STR_RESET:
-                return STR_RESET
-            else:
-                raise ValueError('Cannot recognize the method'
-                                 '(I only assess SelfInit, Update and Reset methods). '
-                                 'Parse better.')
-
-        module = modelData.__module__
-        sysMod = sys.modules[module]
-        dirList = dir(sysMod)
-        algList = parseDirList(dirList)
-
-        # if the package has different levels we need to access the correct level of the package
-        currMod = __import__(module, globals(), locals(), [], 0)
-
-        moduleString = "currMod."
-        moduleNames = module.split(".")
-        if len(moduleNames) > 1:
-            moduleString += ".".join(moduleNames[1:]) + "."
-
-        for alg in algList:
-            key = checkMethodType(alg)
-            algDict[key] = alg
-
-        update = eval(moduleString + algDict[STR_UPDATE])
-        selfInit = eval(moduleString + algDict[STR_SELFINIT])
-        try:
-            resetArg = algDict[STR_RESET]
-            reset = eval(moduleString + resetArg)
-            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, reset)
-        except:
-            modelWrap = alg_contain.AlgContain(modelData, update, selfInit)
-        return modelWrap
-
-
 def SetCArray(InputList, VarType, ArrayPointer):
     if(isinstance(ArrayPointer, (list, tuple))):
         raise TypeError('Cannot set a C array if it is actually a python list.  Just assign the variable to the list directly.')
@@ -583,7 +484,6 @@ def SetCArray(InputList, VarType, ArrayPointer):
     for CurrElem in InputList:
         exec (CmdString)
         CurrIndex += 1
-
 
 def getCArray(varType, arrayPointer, arraySize):
     CmdString = 'outputList.append(sim_model.' + varType + 'Array_getitem(arrayPointer, currIndex))'
