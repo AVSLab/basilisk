@@ -44,6 +44,7 @@ Version |release|
 - Added in a low-pass filter to filter the output forces and torques of the :ref:`constraintDynamicEffector` dynamics module.
 - Removed deprecated way to log Basilisk module variables
 - Removed deprecated way to create C-wrapped Basilisk modules
+- Corrected Equations (11) and (12) in the :ref:`celestialTwoBodyPoint` PDF documentation
 
 
 Version 2.4.0 (August 23, 2024)
