@@ -450,7 +450,7 @@ jobs:
           source .venv/bin/activate
           pip3 install wheel 'conan<2.0' cmake
       - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
