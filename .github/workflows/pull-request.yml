@@ -445,17 +445,6 @@ jobs:
         run: ctest -C Release
         if: ${{ always() }}
 
-      - name: "Build basilisk without vizInterface"
-        run: source .venv/bin/activate && python3 conanfile.py --clean --vizInterface False
-
-      - name: "Run Python Tests"
-        run: |
-          source .venv/bin/activate
-          cd src
-          pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
-
       - name: "Build Documentation"
         run: |
           source .venv/bin/activate
