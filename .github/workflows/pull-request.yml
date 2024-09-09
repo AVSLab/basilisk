@@ -449,7 +449,7 @@ jobs:
         run: |
           source .venv/bin/activate
           cd docs
-          make html
+          make html SPHINXOPTS="-W"
         if: ${{ always() }}
 
   build-macOS-no-vizInterface:
