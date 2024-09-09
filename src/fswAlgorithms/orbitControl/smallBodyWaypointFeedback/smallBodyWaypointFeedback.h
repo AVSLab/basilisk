@@ -31,7 +31,6 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/astroConstants.h"
 
 /*! @brief This module is provides a Lyapunov feedback control law for waypoint to waypoint guidance and control about
  * a small body. The waypoints are defined in the Hill frame of the body.
@@ -84,7 +83,7 @@ private:
     Eigen::Matrix3d o_hat_3_tilde;  //!< Tilde matrix of the third asteroid orbit frame base vector
     Eigen::Vector3d o_hat_1;  //!< First asteroid orbit frame base vector
     Eigen::MatrixXd I;  //!< 3 x 3 identity matrix
-    classicElements oe_ast;  //!< Orbital elements of the asteroid
+    ClassicElements oe_ast;  //!< Orbital elements of the asteroid
     double F_dot;  //!< Time rate of change of true anomaly
     double F_ddot;  //!< Second time derivative of true anomaly
     Eigen::Vector3d r_BN_N;

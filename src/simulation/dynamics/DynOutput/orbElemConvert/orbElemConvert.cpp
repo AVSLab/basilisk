@@ -69,7 +69,18 @@ void OrbElemConvert::Reset(uint64_t CurrentSimNanos)
 void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
     if (this->elemOutMsg.isLinked() && this->inputsGood) {
-        this->elemOutMsg.write(&this->CurrentElem, this->moduleID, CurrentClock);
+        auto payload = ClassicElementsMsgPayload();
+        payload.a = this->CurrentElem.a;
+        payload.e = this->CurrentElem.e;
+        payload.i = this->CurrentElem.i;
+        payload.Omega = this->CurrentElem.Omega;
+        payload.omega = this->CurrentElem.omega;
+        payload.f = this->CurrentElem.f;
+        payload.rmag = this->CurrentElem.rmag;
+        payload.alpha = this->CurrentElem.alpha;
+        payload.rPeriap = this->CurrentElem.rPeriap;
+        payload.rApoap = this->CurrentElem.rApoap;
+        this->elemOutMsg.write(&payload, this->moduleID, CurrentClock);
     }
     if (this->scStateOutMsg.isLinked() && this->inputsGood) {
         SCStatesMsgPayload scMsg;
@@ -111,7 +122,19 @@ void OrbElemConvert::ReadInputs()
 {
     this->inputsGood = false;
     if (this->elemInMsg.isLinked()) {
-        this->CurrentElem = this->elemInMsg();
+        auto elements = ClassicElements();
+        auto inputElement = this->elemInMsg();
+        elements.a = inputElement.a;
+        elements.e = inputElement.e;
+        elements.i = inputElement.i;
+        elements.Omega = inputElement.Omega;
+        elements.omega = inputElement.omega;
+        elements.f = inputElement.f;
+        elements.rmag = inputElement.rmag;
+        elements.alpha = inputElement.alpha;
+        elements.rPeriap = inputElement.rPeriap;
+        elements.rApoap = inputElement.rApoap;
+        this->CurrentElem = elements;
         this->inputsGood = this->elemInMsg.isWritten();
     }
 

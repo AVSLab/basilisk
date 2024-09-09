@@ -29,7 +29,6 @@
 #include "cMsgCInterface/CmdForceBodyMsg_C.h"
 
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
@@ -43,7 +42,7 @@ typedef struct {
     CmdForceInertialMsg_C eForceInMsg;                  //!< servicer electrostatic force input message
     CmdForceInertialMsg_C forceInertialOutMsg;          //!< servicer inertial frame control force output message
     CmdForceBodyMsg_C forceBodyOutMsg;                  //!< servicer body frame control force output message
-    
+
     double mu;                                          //!< [m^3/s^2]  gravitational parameter
     double L_r;                                         //!< [m]  reference separation distance
     double theta_r;                                     //!< [rad]  reference in-plane rotation angle

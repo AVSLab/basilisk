@@ -101,7 +101,7 @@ TEST(OrbitalMotion, elem2rv1DEccentric)
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
     elements.a = 7500.0;
     elements.e = 1.0;
     elements.i = 40.0 * D2R;
@@ -123,7 +123,7 @@ TEST(OrbitalMotion, elem2rv1DHyperbolic)
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
     elements.a = -7500.0;
     elements.e = 1.0;
     elements.i = 40.0 * D2R;
@@ -145,7 +145,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
 
     void SetUp() override {
         elements.a = -7500.0;
@@ -188,7 +188,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
 
     void SetUp() override {
         elements.alpha = 0.0; /* zero orbit energy, i.e. parabolic */
@@ -229,7 +229,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
 
     void SetUp() override {
         elements.a     = 7500.0;
@@ -271,7 +271,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
 
     void SetUp() override {
         elements.a = 7500.0;
@@ -309,7 +309,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
     double eps2 = 1e-12 * 0.5;
 
     void SetUp() override {
@@ -347,7 +347,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
     double eps2 = 1e-12 * 0.5;
 
     void SetUp() override {
@@ -385,7 +385,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
 
     void SetUp() override {
         elements.a = 7500.0;
@@ -422,7 +422,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
 
     void SetUp() override {
         elements.a = 7500.0;
@@ -460,7 +460,7 @@ protected:
     double v[3];
     double r2[3];
     double v3_2[3];
-    classicElements elements;
+    ClassicElements elements;
 
     void SetUp() override {
         elements.a = 7500.0;
@@ -493,7 +493,7 @@ TEST_F(CircularEquitorialRetrograde, rv2elem) {
 }
 
 TEST(OrbitalMotion, classicElementsToMeanElements) {
-    classicElements elements;
+    ClassicElements elements;
     elements.a     = 1000.0;
     elements.e     = 0.2;
     elements.i     = 0.2;
@@ -502,7 +502,7 @@ TEST(OrbitalMotion, classicElementsToMeanElements) {
     elements.f     = 0.2;
     double req = 300.0;
     double J2 = 1e-3;
-    classicElements elements_p;
+    ClassicElements elements_p;
     clMeanOscMap(req, J2, &elements, &elements_p, 1);
     EXPECT_PRED3(isEqualRel, elements_p.a, 1000.07546442015950560744386166334152, orbitalElementsAccuracy);
     EXPECT_NEAR(elements_p.e, 0.20017786852908628358882481279579, orbitalElementsAccuracy);
@@ -513,7 +513,7 @@ TEST(OrbitalMotion, classicElementsToMeanElements) {
 }
 
 TEST(OrbitalMotion, classicElementsToEquinoctialElements) {
-    classicElements elements;
+    ClassicElements elements;
     elements.a     = 1000.0;
     elements.e     = 0.2;
     elements.i     = 0.2;

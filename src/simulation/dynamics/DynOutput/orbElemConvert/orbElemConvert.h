@@ -38,19 +38,19 @@ class OrbElemConvert: public SysModel {
 public:
     OrbElemConvert();
     ~OrbElemConvert();
-    
+
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     void Elements2Cartesian();
     void Cartesian2Elements();
     void ReadInputs();
-    
+
 public:
     double r_N[3];                    //!< m  Current position vector (inertial)
     double v_N[3];                    //!< m/s Current velocity vector (inertial)
     double mu;                        //!< -- Current grav param (inertial)
-    ClassicElementsMsgPayload CurrentElem;                      //!< -- Current orbital elements
+    ClassicElements CurrentElem;                      //!< -- Current orbital elements
     SCStatesMsgPayload statesIn;                            //!< -- spacecraft state message
     SpicePlanetStateMsgPayload planetIn;                        //!< -- planet state message
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;           //!< -- sc state input message

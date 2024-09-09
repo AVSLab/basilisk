@@ -30,19 +30,25 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 
 namespace std {
-    %template(classicElementVector) vector<ClassicElementsMsgPayload>;
+    %template(classicElementVector) vector<ClassicElements>;
 }
 
 %include "sys_model.i"
 %include "planetEphemeris.h"
 %include "architecture/utilities/orbitalMotion.h"
-%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
 %include "architecture/utilities/astroConstants.h"
 
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;
 
+%include "swig_deprecated.i"
+%deprecated_function(ClassicElementsMsgPayload, "2025/09/02", "Replace ClassicElementsMsgPayload() with ClassicalElements() defined in orbitalMotion")
+%inline %{
+    ClassicElements ClassicElementsMsgPayload() {
+        return (ClassicElements());
+    }
+%}
 
 %pythoncode %{
 import sys

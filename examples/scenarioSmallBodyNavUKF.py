@@ -314,7 +314,7 @@ def run(show_plots):
 
     # specify small body o.e. and rotational state January 21st, 2022
     # https://ssd.jpl.nasa.gov/horizons.cgi#results
-    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid = planetEphemeris.ClassicElements()
     oeAsteroid.a = 2.3612 * orbitalMotion.AU * 1000  # meters
     oeAsteroid.e = 0.08823
     oeAsteroid.i = 7.1417*macros.D2R

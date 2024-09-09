@@ -22,7 +22,6 @@
 
 #include <stdint.h>
 
-#include "architecture/utilities/orbitalMotion.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
@@ -34,10 +33,10 @@
 /*!@brief Data structure for module to compute the orbital velocity spinning pointing navigation solution.
  */
 typedef struct {
-    
+
     /* declare module private variables */
-    double mu;                                      //!< Planet gravitational parameter 
-   
+    double mu;                                      //!< Planet gravitational parameter
+
     /* declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;               //!<        The name of the output message
     NavTransMsg_C transNavInMsg;            //!<        The name of the incoming attitude command
@@ -52,7 +51,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID);
     void Update_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID);

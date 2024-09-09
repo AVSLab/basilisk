@@ -26,10 +26,8 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/bskLogging.h"
-#include <Eigen/Dense>
 
 
 /*! @brief planet ephemeris class */
@@ -37,16 +35,16 @@ class PlanetEphemeris: public SysModel {
 public:
     PlanetEphemeris();
     ~PlanetEphemeris();
-    
+
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
     void setPlanetNames(std::vector<std::string> planetNames);
-    
+
 public:
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetOutMsgs; //!< -- vector of planet state output messages
 
-    std::vector<classicElements>planetElements; //!< -- Vector of planet classical orbit elements
+    std::vector<ClassicElements>planetElements; //!< -- Vector of planet classical orbit elements
 
     std::vector<double> rightAscension;         //!< [r] right ascension of the north pole rotation axis (pos. 3-axis)
     std::vector<double> declination;            //!< [r] Declination of the north pole rotation axis (neg. 2-axis)

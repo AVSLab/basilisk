@@ -26,7 +26,6 @@
 #include "cMsgCInterface/NavTransMsg_C.h"
 
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {

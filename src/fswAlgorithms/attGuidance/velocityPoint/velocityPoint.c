@@ -117,7 +117,7 @@ void computeVelocityPointingReference(velocityPointConfig *configData,
     double  ddfdt2;                  /* rotational acceleration of the frame */
     double  omega_RN_R[3];           /* reference angular velocity vector in Reference frame R components */
     double  domega_RN_R[3];          /* reference angular acceleration vector in Reference frame R components */
-    classicElements oe;              /* Orbit Elements set */
+    ClassicElements oe;              /* Orbit Elements set */
 
     double  temp33[3][3];
     double  temp;

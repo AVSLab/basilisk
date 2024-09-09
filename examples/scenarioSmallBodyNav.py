@@ -456,7 +456,7 @@ def run(show_plots):
     # specify orbits of gravitational bodies
     # https://ssd.jpl.nasa.gov/horizons.cgi#results
     # December 31st, 2018
-    oeAsteroid = planetEphemeris.ClassicElementsMsgPayload()
+    oeAsteroid = planetEphemeris.ClassicElements()
     oeAsteroid.a = 1.1259 * orbitalMotion.AU * 1000  # meters
     oeAsteroid.e = 0.20373
     oeAsteroid.i = 6.0343 * macros.D2R
