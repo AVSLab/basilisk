@@ -121,7 +121,18 @@ except:
     FOUND_DATESHADER = False
 
 import Basilisk.utilities.macros as macros
+import holoviews as hv
+from holoviews.operation.datashader import datashade, dynspread
+from holoviews import opts
+import datashader as ds
+import datashader.transfer_functions as tf
+import pandas as pd
+from bokeh.plotting import figure
+from bokeh.models import ColorBar, BasicTicker, LinearColorMapper
+from bokeh.palettes import Viridis256
 
+# Load the Bokeh extension for HoloViews
+hv.extension('bokeh')
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -129,34 +140,6 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
 
 bskPath = __path__[0]
-
-def reshape_df_for_plotting(df):
-    """
-    Reshape DataFrame from wide format with MultiIndex columns to long format.
-    Args:
-        df: DataFrame with MultiIndex columns
-    Returns:
-        Reshaped DataFrame suitable for plotting
-    """
-    # Reset MultiIndex columns to a single level with appropriate names
-    df.columns = [f'{i}_{j}' for i, j in df.columns]
-    
-    # Reset index to make it a column and rename the columns
-    df = df.reset_index()
-    
-    # Melt DataFrame to long format, assuming 'time' is the index and should be retained
-    df_long = df.melt(id_vars=['time[ns]'], var_name='variable', value_name='value')
-    
-    # Extract run number and component from the variable name
-    df_long[['runNum', 'component']] = df_long['variable'].str.split('_', expand=True)
-    
-    # Drop the original variable column
-    df_long = df_long.drop(columns=['variable'])
-    
-    # Rename 'time[ns]' to 'time' for simplicity
-    df_long = df_long.rename(columns={'time[ns]': 'time'})
-    
-    return df_long
 
 def plotSuite(dataDir, components):
     plotter = MonteCarloPlotter(dataDir)
@@ -169,6 +152,77 @@ def plotSuite(dataDir, components):
     
     # Return the dictionary of plots
     return plotter.plots
+
+def create_datashader_plot(df, x, y_columns, title, y_label):
+    """
+    Create a datashader plot for large datasets with multiple runs and a colorbar.
+    
+    Args:
+        df (pd.DataFrame): Input DataFrame
+        x (str): Column name for x-axis (time in seconds)
+        y_columns (list): List of column names for y-axis (one per run)
+        title (str): Plot title
+        y_label (str): Label for y-axis
+    
+    Returns:
+        bokeh.plotting.figure: Bokeh figure object with colorbar
+    """
+    # Create a color key for each run
+    num_runs = len(y_columns)
+    color_key = {y: Viridis256[int(i * 255 / (num_runs - 1))] for i, y in enumerate(y_columns)}
+
+    # Create a single DataFrame with all runs and a 'run' column
+    all_runs_df = pd.DataFrame({'x': df[x]})
+    for y in y_columns:
+        all_runs_df[y] = df[y]
+        all_runs_df[f'run_{y}'] = y
+
+    # Melt the DataFrame to long format
+    melted_df = pd.melt(all_runs_df, id_vars=['x'], value_vars=y_columns,
+                        var_name='run', value_name='y')
+
+    # Create a HoloViews Dataset
+    dataset = hv.Dataset(melted_df, kdims=['x', 'run'], vdims=['y'])
+
+    # Create Curve element instead of Points
+    curves = hv.Curve(dataset, kdims=['x', 'y'], vdims=['run'])
+
+    # Apply datashading with explicit downsampling and increased line width
+    shaded = datashade(curves, aggregator=ds.count_cat('run'), color_key=color_key, min_alpha=200)
+    
+    # Apply dynamic spreading for better visibility when zooming
+    spread = dynspread(shaded, max_px=10, threshold=0.5)  # Increased from 5 to 10
+    
+    # Set plot options
+    plot = spread.opts(
+        width=800, height=400, 
+        title=title,
+        xlabel='Time (seconds)', ylabel=y_label,
+        tools=['hover', 'pan', 'box_zoom', 'wheel_zoom', 'reset'],
+        show_legend=False
+    )
+
+    # Convert HoloViews plot to Bokeh figure
+    bokeh_plot = hv.render(plot, backend='bokeh')
+
+    # Create a color mapper for the colorbar
+    color_mapper = LinearColorMapper(palette=Viridis256, low=0, high=num_runs-1)
+
+    # Create a ColorBar
+    color_bar = ColorBar(
+        color_mapper=color_mapper,
+        ticker=BasicTicker(desired_num_ticks=min(10, num_runs)),
+        label_standoff=12,
+        border_line_color=None,
+        location=(0, 0),
+        title="Run Number",
+        width=20
+    )
+
+    # Add the ColorBar to the plot
+    bokeh_plot.add_layout(color_bar, 'right')
+
+    return bokeh_plot
 
 def run(show_plots):
     """
@@ -197,9 +251,33 @@ def run(show_plots):
     analysis.staticDir = "/plots/"
 
     if show_all_data:
-        plotDict = plotSuite(analysis.dataDir, components_to_plot)
-        layout = column(*plotDict.values())
-        curdoc().add_root(layout)
+        try:
+            plotter = MonteCarloPlotter(analysis.dataDir)
+            plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
+            plotter.generate_plots(components_to_plot)
+            
+            # Get downsampled plots and plot info
+            downsampled_plots = plotter.get_downsampled_plots()
+            plot_info = plotter.get_plot_info()
+            
+            # Create datashader plots for large datasets
+            ds_plots = []
+            for title, df in downsampled_plots.items():
+                y_columns = [col for col in df.columns if col.startswith('run')]
+                y_label = plot_info[title]['y_label']
+                bokeh_plot = create_datashader_plot(df, x='time', y_columns=y_columns, title=title, y_label=y_label)
+                ds_plots.append(bokeh_plot)
+            
+            # Use column layout with sizing_mode='stretch_both' for responsive layout
+            layout = column(*ds_plots, sizing_mode='stretch_both')
+            curdoc().add_root(layout)
+        except FileNotFoundError as e:
+            print(f"Error: {str(e)}")
+            print("Please make sure you have run scenario_AttFeedbackMC.py to generate the necessary .data files before running this script.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {str(e)}")
+            print(f"Error details: {type(e).__name__}: {str(e)}")
+            print(f"DataFrame columns: {df.columns}")  # Add this line for debugging
 
     if show_extreme_data:
         analysis.variableName = "attGuidMsg.omega_BR_B"
@@ -215,8 +293,8 @@ def run(show_plots):
         pass
 
 # The following must be commented out before this script can run.  It is provided here
-# to ensure that the sphinx documentation generation process does not run this script
-# automatically.
+# to ensure that the sphinx documentation generation process does not
+# run this script automatically.
 # if __name__ == "__main__":
 #     run(False)
 
