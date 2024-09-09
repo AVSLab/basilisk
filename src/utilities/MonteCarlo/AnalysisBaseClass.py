@@ -5,6 +5,10 @@ import time
 import numpy as np
 import pandas as pd
 from Basilisk.utilities import macros
+from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource, HoverTool, ColorBar, LinearColorMapper, BasicTicker, PrintfTickFormatter, Tabs, TabPanel
+from bokeh.transform import linear_cmap
+from bokeh.palettes import Viridis256
 
 try:
     import holoviews as hv
@@ -27,6 +31,7 @@ class mcAnalysisBaseClass:
         self.timeWindow = []
         self.data = None
 
+    @staticmethod
     def pull_and_format_df(path, varIdxLen):
         df = pd.read_pickle(path)
         if len(np.unique(df.columns.codes[1])) is not varIdxLen:
@@ -158,7 +163,7 @@ class mcAnalysisBaseClass:
     def extractSubsetOfRuns(self, runIdx):
         """
         Create a separate folder in the data directory that contains the subset of data the user is looking to plot.
-        If the ``/subset/`` directory already exists, check if it contains the data for the runs requested, if so skip.
+        If the ``/subset/`` directory already exists, check if it already contains all runIdx requested, if so skip.
 
         :param runIdx: list of run indices to extract
         :return: nothing
@@ -218,4 +223,71 @@ class mcAnalysisBaseClass:
         layout = column(*plotList)
         curdoc().add_root(layout)
 
+class MonteCarloPlotter(mcAnalysisBaseClass):
+    def __init__(self, data_dir):
+        super().__init__()
+        self.dataDir = data_dir
+        self.data = {}
+        self.plots = {}
 
+    def load_data(self, variable_names):
+        for var_name in variable_names:
+            self.data[var_name] = self.pull_and_format_df(f"{self.dataDir}/{var_name}.data", 3)  # Assuming variableDim is 3
+
+    def generate_plots(self, components):
+        self.plots = {}
+        for var_name, df in self.data.items():
+            tabs = []
+            for component in components:
+                plot = self.create_bokeh_plot(df, var_name, component)
+                component_map = {0: 'X', 1: 'Y', 2: 'Z'}
+                component_label = component_map.get(component, str(component))
+                tab = TabPanel(child=plot, title=f"Component {component_label}")
+                tabs.append(tab)
+            self.plots[var_name] = Tabs(tabs=tabs)
+
+    def create_bokeh_plot(self, df, var_name, component):
+        component_map = {0: 'x', 1: 'y', 2: 'z'}
+        component_label = component_map.get(component, str(component))
+        
+        p = figure(width=1000, height=600, 
+                   title=f"{var_name} Monte Carlo Results - Component {component_label.upper()}",
+                   tools="pan,box_zoom,wheel_zoom,reset,save",
+                   x_axis_label='Time [s]',
+                   y_axis_label=f"{var_name.split('.')[-1]} - Component {component_label.upper()}")
+
+        runs = sorted(df.columns.get_level_values('runNum').unique())
+        num_runs = len(runs)
+        
+        color_palette = Viridis256
+        
+        color_mapper = LinearColorMapper(palette=color_palette, low=runs[0], high=runs[-1])
+
+        source = ColumnDataSource(data=dict(
+            xs=[df.index * macros.NANO2SEC for _ in runs],
+            ys=[df.loc[:, (run, component)] for run in runs],
+            run=runs
+        ))
+
+        p.multi_line(xs='xs', ys='ys', source=source, line_width=2.5, alpha=0.7,
+                     color={'field': 'run', 'transform': color_mapper})
+
+        p.add_tools(HoverTool(tooltips=[("Time", "$x{0.00} s"), ("Value", "$y{0.000}"), ("Run", "@run")]))
+
+        ticker = BasicTicker(desired_num_ticks=min(10, num_runs))
+        formatter = PrintfTickFormatter(format="%d")
+        color_bar = ColorBar(
+            color_mapper=color_mapper, 
+            width=20, 
+            location=(0,0), 
+            title="Run Number",
+            ticker=ticker,
+            formatter=formatter
+        )
+        p.add_layout(color_bar, 'right')
+
+        return p
+
+    def render_plots(self):
+        layout = column(*self.plots.values())
+        curdoc().add_root(layout)
