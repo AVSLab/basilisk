@@ -105,14 +105,13 @@ import os
 FOUND_DATESHADER = True
 try:
     from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component, pull_and_format_df
-    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import mcAnalysisBaseClass
+    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
     from bokeh.plotting import figure
     from bokeh.models import ColumnDataSource
     from bokeh.palettes import RdYlBu9
     from bokeh.palettes import Category10  # Import a color palette
     from bokeh.models import HoverTool, Legend
     from bokeh.layouts import column
-    from bokeh.models import WheelZoomTool
     from bokeh.io import curdoc
 
     from bokeh.palettes import Blues9, Reds9, Greens9, \
@@ -159,122 +158,48 @@ def reshape_df_for_plotting(df):
     
     return df_long
 
-def plotSuite(dataDir):
-    """
-    Create interactive plots for each dataset using Bokeh, color-coded by run number,
-    with time converted to seconds, and interactive tools.
+def plotSuite(dataDir, components):
+    plotter = MonteCarloPlotter(dataDir)
     
-    Args:
-        dataDir: Directory containing data files
+    # Load the data for both attitude error and attitude rate error
+    plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
     
-    Returns:
-        List of Bokeh plots
-    """
-    plotList = []
+    # Generate the plots for specified components
+    plotter.generate_plots(components)
     
-    # Define a color map using a Bokeh color palette
-    color_map = Category10[10]  # You can use other palettes or specify your own colors
-    
-    # Create a plot for attitude error
-    sigma_BR = pull_and_format_df(dataDir + "attGuidMsg.sigma_BR.data", 3)
-    sigma_BR = reshape_df_for_plotting(sigma_BR)
-    sigma_BR['time'] = sigma_BR['time'] / 1e9  # Convert time from nanoseconds to seconds
-    
-    p1 = figure(title="Attitude Error", x_axis_label='time [s]', y_axis_label='Sigma_BR',
-                width=800, height=400, tools="pan,wheel_zoom,box_zoom,reset,hover,save")
-    
-    # Set wheel_zoom as the active scroll tool
-    p1.toolbar.active_scroll = p1.select(dict(type=WheelZoomTool))[0]
-
-    # Add hover tool
-    hover = HoverTool()
-    hover.tooltips = [("Run", "@runNum"), ("Time", "@time{0.00}"), ("Value", "@value{0.00}")]
-    p1.add_tools(hover)
-    
-    lines = []
-    legend_items = []
-    for i, run_num in enumerate(sigma_BR['runNum'].unique()):
-        df_run = sigma_BR[sigma_BR['runNum'] == run_num]
-        color = color_map[i % len(color_map)]  # Cycle through colors if there are more runs than colors
-        source = ColumnDataSource(df_run[df_run['component'] == '0'])
-        line = p1.line(x='time', y='value', source=source,
-                       legend_label=f'Run {run_num}', line_width=2, color=color)  # Adjust color and line width as needed
-        lines.append(line)
-        legend_items.append((f'Run {run_num}', [line]))
-
-    
-    plotList.append(p1)
-
-    # Create a plot for attitude rate error
-    sigma_BR = pull_and_format_df(dataDir + "attGuidMsg.omega_BR_B.data", 3)
-    sigma_BR = reshape_df_for_plotting(sigma_BR)
-    sigma_BR['time'] = sigma_BR['time'] / 1e9  # Convert time from nanoseconds to seconds
-    
-    p2 = figure(title="Attitude Rate Error", x_axis_label='time [s]', y_axis_label='omega_BR_B',
-                width=800, height=400, tools="pan,wheel_zoom,box_zoom,reset,hover,save")
-    
-    # Set wheel_zoom as the active scroll tool
-    p2.toolbar.active_scroll = p2.select(dict(type=WheelZoomTool))[0]
-
-    # Add hover tool
-    hover = HoverTool()
-    hover.tooltips = [("Run", "@runNum"), ("Time", "@time{0.00}"), ("Value", "@value{0.00}")]
-    p2.add_tools(hover)
-    
-    lines = []
-    legend_items = []
-    for i, run_num in enumerate(sigma_BR['runNum'].unique()):
-        df_run = sigma_BR[sigma_BR['runNum'] == run_num]
-        color = color_map[i % len(color_map)]  # Cycle through colors if there are more runs than colors
-        source = ColumnDataSource(df_run[df_run['component'] == '0'])
-        line = p2.line(x='time', y='value', source=source,
-                       legend_label=f'Run {run_num}', line_width=2, color=color)  # Adjust color and line width as needed
-        lines.append(line)
-        legend_items.append((f'Run {run_num}', [line]))
-    
-    
-    plotList.append(p2)
-
-    return plotList
-
+    # Return the dictionary of plots
+    return plotter.plots
 
 def run(show_plots):
     """
-    **This script is meant to be configured based on the user's needs. It can be configured using the following
-    three booleans:**
-
-    First, set ``show_all_data = True`` to get a broad view of the data and find a time window to investigate closer.
-
-    Once the data is characterized, the user can set ``show_extreme_data = True`` to look at specific run cases
-    within the window.
-
-    Finally, the user can set ``show_optional_data = True`` to look at any extra data to determine why the extrema
-    cases exist.
+    This script is meant to be configured based on the user's needs. It can be configured using the following
+    three booleans:
 
     :param show_all_data: plot all MC runs for the plots specified in the plotSuite method
     :param show_extreme_data: call plotSuite method for user-defined number of extrema MC runs
     :param optional_plots: plots additional user-defined plots
     """
 
-    if not FOUND_DATESHADER:
-        return
-
     show_all_data = True
     show_extreme_data = False
     optional_plots = False
 
+    # Specify which components to plot (0, 1, 2 correspond to x, y, z)
+    components_to_plot = [0, 1, 2]
+
     plotList = []
-    analysis = mcAnalysisBaseClass()
-    analysis.dataDir = path + "/scenario_AttFeedbackMC/"
+    analysis = MonteCarloPlotter(path + "/scenario_AttFeedbackMC/")
 
     # save_as_static: save off static .html files of the plots generated into the staticDir directory.
     # The staticDir will be created inside the dataDir folder.
-    # (Note: This inhibits dynamic plotting!
+    # (Note: This inhibits dynamic plotting!)
     analysis.save_as_static = False
     analysis.staticDir = "/plots/"
 
     if show_all_data:
-        plotList.extend(plotSuite(analysis.dataDir))
+        plotDict = plotSuite(analysis.dataDir, components_to_plot)
+        layout = column(*plotDict.values())
+        curdoc().add_root(layout)
 
     if show_extreme_data:
         analysis.variableName = "attGuidMsg.omega_BR_B"
@@ -283,31 +208,17 @@ def run(show_plots):
         extremaRunNumbers = analysis.getExtremaRunIndices(numExtrema=1, window=[500 * 1E9, 550 * 1E9])
 
         analysis.extractSubsetOfRuns(runIdx=extremaRunNumbers)
-        plotList.extend(plotSuite(analysis.dataDir + "/subset"))
+        plotList.extend(plotSuite(analysis.dataDir + "/subset", components_to_plot))
 
     if optional_plots:
-        # nominalRuns = analysis.getNominalRunIndices(50)
-        # statPlots = analysis.generateStatPlots()
-
-        shadowFactor = pull_and_format_df(analysis.dataDir + "/eclipse_data_0.shadowFactor.data", 1)
-        shadowFactor = shadowFactor.dropna(axis=1)
-        shadowFactorPlot = DS_Plot(shadowFactor, title="Optional Plots: Eclipse",
-                                               xAxisLabel='time[s]', yAxisLabel='Eclipse Factor',
-                                               macro_x=macros.NANO2SEC, macro_y=macros.R2D,
-                                               cmap=RdYlBu9,
-                                               plotFcn=curve_per_df_component)
-
-        # plotList.extend([statPlots])
-        plotList.extend([shadowFactorPlot])
-
-    analysis.renderPlots(plotList)
+        # This section needs to be updated if you want to include optional plots
+        pass
 
 # The following must be commented out before this script can run.  It is provided here
 # to ensure that the sphinx documentation generation process does not run this script
 # automatically.
 # if __name__ == "__main__":
 #     run(False)
-
 
 # uncomment the following line to run this script.
 run(False)
