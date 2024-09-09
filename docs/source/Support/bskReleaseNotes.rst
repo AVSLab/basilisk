@@ -20,13 +20,13 @@ Basilisk Release Notes
 
 .. sidebar:: In Progress Features
 
-    - GPU based methods to evaluate solar radiation pressure forces and torques
     - new tutorial example scripts
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
-    - support a way to do thread-safe messaging
     - automated documentation build system when code is pushed to the repo
+    - ability to add select branching to spacecraft effectors
+    - More effector and sensor fault modeling
     - `pip`-based installation and pre-compiled releases
 
 
@@ -42,6 +42,8 @@ Version |release|
 - Created an input device status message to toggle the :ref:`constraintDynamicEffector` dynamics module on/off.
 - Created an output message to record constraint forces and torques acting on separate spacecraft connected using a :ref:`constraintDynamicEffector` dynamics module.
 - Added in a low-pass filter to filter the output forces and torques of the :ref:`constraintDynamicEffector` dynamics module.
+- Removed deprecated way to log Basilisk module variables
+- Removed deprecated way to create C-wrapped Basilisk modules
 
 
 Version 2.4.0 (August 23, 2024)
