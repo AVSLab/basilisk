@@ -4,6 +4,8 @@ import time
 
 import numpy as np
 import pandas as pd
+import dask.dataframe as dd
+
 from Basilisk.utilities import macros
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool, ColorBar, LinearColorMapper, BasicTicker, PrintfTickFormatter, Tabs, TabPanel
@@ -224,37 +226,72 @@ class mcAnalysisBaseClass:
         curdoc().add_root(layout)
 
 class MonteCarloPlotter(mcAnalysisBaseClass):
-    def __init__(self, data_dir):
+    def __init__(self, dataDir):
         super().__init__()
-        self.dataDir = data_dir
+        self.dataDir = dataDir
         self.data = {}
         self.plots = {}
+        self.plot_info = {}  # Dictionary to store plot information
+        self.component_map = {0: 'x', 1: 'y', 2: 'z'}  # Mapping from component number to label
+
+    def pull_and_format_df(self, path, varIdxLen):
+        df = pd.read_pickle(path)
+        if len(np.unique(df.columns.codes[1])) != varIdxLen:
+            print(f"Warning: {path} not formatted correctly!")
+            newMultIndex = pd.MultiIndex.from_product([df.columns.codes[0], range(varIdxLen)],
+                                                      names=['runNum', 'varIdx'])
+            indices = pd.Index([0, 1])  # Need multiple rows for curves
+            df = df.reindex(columns=newMultIndex, index=indices)
+        
+        # Convert column names to strings and add a 'time' column in seconds
+        df.columns = df.columns.map(lambda x: f"run{x[0]}_{x[1]}")
+        df['time'] = df.index / 1e9  # Convert nanoseconds to seconds
+        return df
 
     def load_data(self, variable_names):
         for var_name in variable_names:
-            self.data[var_name] = self.pull_and_format_df(f"{self.dataDir}/{var_name}.data", 3)  # Assuming variableDim is 3
+            file_path = os.path.join(self.dataDir, f"{var_name}.data")
+            if os.path.exists(file_path):
+                self.data[var_name] = self.pull_and_format_df(file_path, 3)  # Assuming variableDim is 3
+            else:
+                print(f"Warning: {file_path} not found.")
 
     def generate_plots(self, components):
         self.plots = {}
+        self.plot_info = {}  # Reset plot_info
         for var_name, df in self.data.items():
-            tabs = []
             for component in components:
-                plot = self.create_bokeh_plot(df, var_name, component)
-                component_map = {0: 'X', 1: 'Y', 2: 'Z'}
-                component_label = component_map.get(component, str(component))
-                tab = TabPanel(child=plot, title=f"Component {component_label}")
-                tabs.append(tab)
-            self.plots[var_name] = Tabs(tabs=tabs)
+                component_label = self.component_map.get(component, str(component))
+                title = f"{var_name} - Component {component_label}"
+                plot_df = df[['time'] + [col for col in df.columns if col.endswith(f"_{component}")]]
+                self.plots[title] = plot_df
+                
+                # Store plot information
+                y_label = f"{var_name.replace('attGuidMsg.', '')} - Component {component_label}"
+                self.plot_info[title] = {'y_label': y_label}
+
+    def downsample_data(self, df, target_size=10000):
+        if len(df) <= target_size:
+            return df
+        
+        step = len(df) // target_size
+        return df.iloc[::step].reset_index(drop=True)
+
+    def get_downsampled_plots(self, target_size=10000):
+        return {title: self.downsample_data(df, target_size) for title, df in self.plots.items()}
+
+    def get_plot_info(self):
+        return self.plot_info
 
     def create_bokeh_plot(self, df, var_name, component):
-        component_map = {0: 'x', 1: 'y', 2: 'z'}
-        component_label = component_map.get(component, str(component))
+        component_label = self.component_map.get(component, str(component))
         
         p = figure(width=1000, height=600, 
                    title=f"{var_name} Monte Carlo Results - Component {component_label.upper()}",
                    tools="pan,box_zoom,wheel_zoom,reset,save",
                    x_axis_label='Time [s]',
-                   y_axis_label=f"{var_name.split('.')[-1]} - Component {component_label.upper()}")
+                   y_axis_label=f"{var_name.split('.')[-1]} - Component {component_label.upper()}",
+                   background_fill_color="white")
 
         runs = sorted(df.columns.get_level_values('runNum').unique())
         num_runs = len(runs)
