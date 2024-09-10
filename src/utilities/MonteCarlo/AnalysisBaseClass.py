@@ -248,13 +248,22 @@ class MonteCarloPlotter(mcAnalysisBaseClass):
         df['time'] = df.index / 1e9  # Convert nanoseconds to seconds
         return df
 
-    def load_data(self, variable_names):
-        for var_name in variable_names:
-            file_path = os.path.join(self.dataDir, f"{var_name}.data")
+    def load_data(self, variables):
+        self.debug_info.append(f"Loading data for variables: {variables}")
+        for variable in variables:
+            file_path = os.path.join(self.dataDir, f"{variable}.csv")
+            self.debug_info.append(f"Looking for file: {file_path}")
             if os.path.exists(file_path):
-                self.data[var_name] = self.pull_and_format_df(file_path, 3)  # Assuming variableDim is 3
+                self.debug_info.append(f"File found: {file_path}")
+                df = pd.read_csv(file_path)
+                self.debug_info.append(f"DataFrame shape: {df.shape}")
+                self.data[variable] = df
             else:
-                print(f"Warning: {file_path} not found.")
+                self.debug_info.append(f"File not found: {file_path}")
+        
+        self.debug_info.append(f"Data loaded. Number of variables: {len(self.data)}")
+        for key, df in self.data.items():
+            self.debug_info.append(f"Variable: {key}, DataFrame shape: {df.shape}")
 
     def generate_plots(self, components):
         self.plots = {}
@@ -277,8 +286,53 @@ class MonteCarloPlotter(mcAnalysisBaseClass):
         step = len(df) // target_size
         return df.iloc[::step].reset_index(drop=True)
 
-    def get_downsampled_plots(self, target_size=10000):
-        return {title: self.downsample_data(df, target_size) for title, df in self.plots.items()}
+    def get_downsampled_plots(self):
+        self.debug_info.append("Starting get_downsampled_plots method")
+        downsampled_plots = {}
+        for key, df in self.data.items():
+            self.debug_info.append(f"\nProcessing {key}")
+            self.debug_info.append(f"DataFrame shape: {df.shape}")
+            self.debug_info.append(f"DataFrame columns: {df.columns}")
+            self.debug_info.append(f"First few rows of data:\n{df.head().to_string()}")
+            self.debug_info.append(f"Data types of columns:\n{df.dtypes}")
+            
+            if 'time' not in df.columns:
+                self.debug_info.append(f"Error: 'time' column not found in DataFrame for {key}")
+                continue
+            
+            self.debug_info.append(f"Time column data type: {df['time'].dtype}")
+            self.debug_info.append(f"Time column first few values: {df['time'].head().tolist()}")
+            
+            try:
+                # Convert 'time' to datetime if it's not already
+                if not pd.api.types.is_datetime64_any_dtype(df['time']):
+                    df['time'] = pd.to_datetime(df['time'], unit='ns')
+                
+                self.debug_info.append("Time conversion successful")
+                self.debug_info.append(f"Time column data type after conversion: {df['time'].dtype}")
+                self.debug_info.append(f"Time column first few values after conversion: {df['time'].head().tolist()}")
+                
+                # Perform downsampling
+                downsampled_df = df.groupby(df['time'].dt.floor('1s')).mean().reset_index()
+                self.debug_info.append(f"Downsampling successful")
+                self.debug_info.append(f"Downsampled DataFrame shape: {downsampled_df.shape}")
+                self.debug_info.append(f"Downsampled DataFrame columns: {downsampled_df.columns}")
+                self.debug_info.append(f"First few rows of downsampled data:\n{downsampled_df.head().to_string()}")
+                
+                if not downsampled_df.empty:
+                    downsampled_plots[key] = downsampled_df
+                else:
+                    self.debug_info.append(f"Warning: Downsampled DataFrame is empty for {key}")
+            except Exception as e:
+                self.debug_info.append(f"Error during downsampling for {key}: {str(e)}")
+                import traceback
+                self.debug_info.append(traceback.format_exc())
+        
+        self.debug_info.append(f"\nNumber of downsampled plots: {len(downsampled_plots)}")
+        return downsampled_plots
+
+    def get_debug_info(self):
+        return self.debug_info
 
     def get_plot_info(self):
         return self.plot_info
@@ -327,4 +381,3 @@ class MonteCarloPlotter(mcAnalysisBaseClass):
 
     def render_plots(self):
         layout = column(*self.plots.values())
-        curdoc().add_root(layout)
