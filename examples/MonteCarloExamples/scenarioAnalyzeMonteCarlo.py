@@ -128,7 +128,7 @@ import datashader as ds
 import datashader.transfer_functions as tf
 import pandas as pd
 from bokeh.plotting import figure
-from bokeh.models import ColorBar, BasicTicker, LinearColorMapper
+from bokeh.models import ColorBar, BasicTicker, LinearColorMapper, ColumnDataSource
 from bokeh.palettes import Viridis256
 
 # Load the Bokeh extension for HoloViews
@@ -153,86 +153,211 @@ def plotSuite(dataDir, components):
     # Return the dictionary of plots
     return plotter.plots
 
-def create_datashader_plot(df, x, y_columns, title, y_label):
-    """
-    Create a datashader plot for large datasets with multiple runs and a colorbar.
-    
-    Args:
-        df (pd.DataFrame): Input DataFrame
-        x (str): Column name for x-axis (time in seconds)
-        y_columns (list): List of column names for y-axis (one per run)
-        title (str): Plot title
-        y_label (str): Label for y-axis
-    
-    Returns:
-        bokeh.plotting.figure: Bokeh figure object with colorbar
-    """
-    # Create a color key for each run
-    num_runs = len(y_columns)
-    color_key = {y: Viridis256[int(i * 255 / (num_runs - 1))] for i, y in enumerate(y_columns)}
+from bokeh.models import CustomJS, ColumnDataSource, HoverTool, Legend
+from bokeh.palettes import Category10  # Import a color palette
 
-    # Create a single DataFrame with all runs and a 'run' column
-    all_runs_df = pd.DataFrame({'x': df[x]})
-    for y in y_columns:
-        all_runs_df[y] = df[y]
-        all_runs_df[f'run_{y}'] = y
+import numpy as np
+from bokeh.models import HoverTool, Legend, ColorBar, BasicTicker, LinearColorMapper
+from bokeh.palettes import Viridis256
+from bokeh.plotting import figure
+from bokeh.layouts import column
 
-    # Melt the DataFrame to long format
-    melted_df = pd.melt(all_runs_df, id_vars=['x'], value_vars=y_columns,
-                        var_name='run', value_name='y')
+def create_datashader_plot(df, title, y_label, max_points=1000):
+    print(f"Creating datashader plot for {title}")
+    print(f"Original DataFrame shape: {df.shape}")
+    print(f"Original DataFrame index: {df.index}")
+    print(f"Original DataFrame columns: {df.columns}")
 
-    # Create a HoloViews Dataset
-    dataset = hv.Dataset(melted_df, kdims=['x', 'run'], vdims=['y'])
+    # Create a list to store individual plots
+    plots = []
 
-    # Create Curve element instead of Points
-    curves = hv.Curve(dataset, kdims=['x', 'y'], vdims=['run'])
+    # Map components to x, y, z
+    component_map = {0: 'x', 1: 'y', 2: 'z'}
 
-    # Apply datashading with explicit downsampling and increased line width
-    shaded = datashade(curves, aggregator=ds.count_cat('run'), color_key=color_key, min_alpha=200)
-    
-    # Apply dynamic spreading for better visibility when zooming
-    spread = dynspread(shaded, max_px=10, threshold=0.5)  # Increased from 5 to 10
-    
-    # Set plot options
-    plot = spread.opts(
-        width=800, height=400, 
-        title=title,
-        xlabel='Time (seconds)', ylabel=y_label,
-        tools=['hover', 'pan', 'box_zoom', 'wheel_zoom', 'reset'],
-        show_legend=False
-    )
+    # Get the number of runs
+    num_runs = len(set(col[0] for col in df.columns))
+    print(f"Number of runs detected: {num_runs}")
 
-    # Convert HoloViews plot to Bokeh figure
-    bokeh_plot = hv.render(plot, backend='bokeh')
-
-    # Create a color mapper for the colorbar
+    # Create a color mapper
     color_mapper = LinearColorMapper(palette=Viridis256, low=0, high=num_runs-1)
 
-    # Create a ColorBar
-    color_bar = ColorBar(
-        color_mapper=color_mapper,
-        ticker=BasicTicker(desired_num_ticks=min(10, num_runs)),
-        label_standoff=12,
-        border_line_color=None,
-        location=(0, 0),
-        title="Run Number",
-        width=20
-    )
+    # Convert time to seconds for plotting
+    time_seconds = (df.index - df.index[0]).total_seconds()
+    print(f"Time range: {time_seconds.min()} to {time_seconds.max()} seconds")
 
-    # Add the ColorBar to the plot
-    bokeh_plot.add_layout(color_bar, 'right')
+    # Iterate through each component
+    for component in range(3):  # Assuming 3 components (0, 1, 2)
+        component_label = component_map[component]
+        print(f"\nProcessing {component_label.upper()} Component")
+        
+        # Create a figure for this component
+        p = figure(title=f"{title} - {component_label.upper()} Component", x_axis_label='Time (s)', y_axis_label=f"{y_label} ({component_label})",
+                   width=800, height=400, tools='pan,wheel_zoom,box_zoom,reset')
 
-    return bokeh_plot
+        # Plot each run for this component
+        for run in range(num_runs):
+            col_name = (run, component)
+            if col_name not in df.columns:
+                print(f"Warning: Column {col_name} not found in DataFrame. Available columns: {df.columns}")
+                continue
+            
+            # Print some debug information about the data
+            print(f"  Run {run}:")
+            print(f"    Data range: {df[col_name].min()} to {df[col_name].max()}")
+            print(f"    Number of unique values: {df[col_name].nunique()}")
+            
+            source = ColumnDataSource(data=dict(x=time_seconds, y=df[col_name], run_num=[run]*len(time_seconds)))
+            p.line('x', 'y', source=source, color=color_mapper.palette[int(run * (len(color_mapper.palette) - 1) / (num_runs - 1))], 
+                   line_alpha=0.6, legend_label=f"Run {run}")
+
+        # Add HoverTool
+        hover = HoverTool(
+            tooltips=[
+                ('Time', '$x{0.000} s'),
+                (f'{y_label} ({component_label})', '$y{0.0000}'),
+                ('Run', '@run_num')
+            ],
+            mode='mouse'  # Use mouse mode to show tooltip for the closest line
+        )
+        p.add_tools(hover)
+
+        # Add ColorBar
+        color_bar = ColorBar(color_mapper=color_mapper, ticker=BasicTicker(desired_num_ticks=10),
+                             label_standoff=12, border_line_color=None, location=(0, 0))
+        p.add_layout(color_bar, 'right')
+
+        # Adjust the x-range and y-range
+        p.x_range.start = time_seconds.min()
+        p.x_range.end = time_seconds.max()
+        y_min = min(df[[(run, component) for run in range(num_runs)]].min().min() for component in range(3))
+        y_max = max(df[[(run, component) for run in range(num_runs)]].max().max() for component in range(3))
+        p.y_range.start = y_min
+        p.y_range.end = y_max
+
+        # Configure legend
+        p.legend.click_policy = "hide"
+        p.legend.location = "top_left"
+
+        print(f"  Plot ranges - X: [{p.x_range.start}, {p.x_range.end}], Y: [{p.y_range.start}, {p.y_range.end}]")
+
+        plots.append(p)
+
+    # Create a layout with all plots
+    layout = column(*plots)
+
+    print("Datashader plot created successfully")
+    return layout
+
+from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
+
+class MonteCarloPlotterWrapper(MonteCarloPlotter):
+    def __init__(self, dataDir):
+        super().__init__(dataDir)
+        self.custom_debug_info = []
+
+    def load_data(self, variables):
+        self.custom_debug_info.append(f"Loading data for variables: {variables}")
+        self.custom_debug_info.append(f"All .data files in the directory:")
+        data_files = [f for f in os.listdir(self.dataDir) if f.endswith('.data')]
+        self.custom_debug_info.extend(data_files)
+        
+        for variable in variables:
+            file_path = os.path.join(self.dataDir, f"{variable}.data")
+            self.custom_debug_info.append(f"Looking for file: {file_path}")
+            if os.path.exists(file_path):
+                self.custom_debug_info.append(f"File found: {file_path}")
+                df = pd.read_pickle(file_path)
+                self.custom_debug_info.append(f"DataFrame shape: {df.shape}")
+                self.custom_debug_info.append(f"DataFrame columns: {df.columns}")
+                self.custom_debug_info.append(f"DataFrame index: {df.index}")
+                self.custom_debug_info.append(f"First few rows:\n{df.head().to_string()}")
+                self.data[variable] = df
+            else:
+                self.custom_debug_info.append(f"File not found: {file_path}")
+        
+        self.custom_debug_info.append(f"Data loaded. Number of variables: {len(self.data)}")
+        for key, df in self.data.items():
+            self.custom_debug_info.append(f"Variable: {key}, DataFrame shape: {df.shape}")
+
+    def get_downsampled_plots(self):
+        self.custom_debug_info.append("Starting get_downsampled_plots method")
+        downsampled_plots = {}
+        for key, df in self.data.items():
+            self.custom_debug_info.append(f"\nProcessing {key}")
+            self.custom_debug_info.append(f"DataFrame shape: {df.shape}")
+            self.custom_debug_info.append(f"DataFrame columns: {df.columns}")
+            self.custom_debug_info.append(f"DataFrame index: {df.index}")
+            
+            # Assuming the index is the time
+            if not pd.api.types.is_datetime64_any_dtype(df.index):
+                df.index = pd.to_datetime(df.index, unit='ns')
+            
+            self.custom_debug_info.append("Time conversion successful")
+            self.custom_debug_info.append(f"Index after conversion: {df.index}")
+            
+            # Perform downsampling
+            downsampled_df = df.groupby(df.index.floor('1s')).mean()
+            self.custom_debug_info.append(f"Downsampling successful")
+            self.custom_debug_info.append(f"Downsampled DataFrame shape: {downsampled_df.shape}")
+            self.custom_debug_info.append(f"Downsampled DataFrame columns: {downsampled_df.columns}")
+            self.custom_debug_info.append(f"First few rows of downsampled data:\n{downsampled_df.head().to_string()}")
+            
+            if not downsampled_df.empty:
+                downsampled_plots[key] = downsampled_df
+            else:
+                self.custom_debug_info.append(f"Warning: Downsampled DataFrame is empty for {key}")
+        
+        self.custom_debug_info.append(f"\nNumber of downsampled plots: {len(downsampled_plots)}")
+        return downsampled_plots
+
+    def get_debug_info(self):
+        return self.custom_debug_info
+
+def get_plotter_debug_info(plotter):
+    debug_info = []
+    try:
+        debug_info.append(f"Data directory: {plotter.dataDir}")
+    except AttributeError:
+        debug_info.append("Unable to access dataDir")
+    
+    try:
+        debug_info.append(f"Number of loaded variables: {len(plotter.data)}")
+        for key, df in plotter.data.items():
+            debug_info.append(f"\nVariable: {key}")
+            debug_info.append(f"DataFrame shape: {df.shape}")
+            debug_info.append(f"DataFrame columns: {df.columns}")
+            debug_info.append(f"First few rows of data:\n{df.head().to_string()}")
+            debug_info.append(f"Data types of columns:\n{df.dtypes}")
+            
+            if 'time' in df.columns:
+                debug_info.append(f"Time column data type: {df['time'].dtype}")
+                debug_info.append(f"Time column first few values: {df['time'].head().tolist()}")
+    except AttributeError:
+        debug_info.append("Unable to access data attribute")
+    except Exception as e:
+        debug_info.append(f"Error while getting debug info: {str(e)}")
+    
+    return debug_info
 
 def run(show_plots):
-    """
-    This script is meant to be configured based on the user's needs. It can be configured using the following
-    three booleans:
+    print("Starting run function")
+    print(f"Current working directory: {os.getcwd()}")
 
-    :param show_all_data: plot all MC runs for the plots specified in the plotSuite method
-    :param show_extreme_data: call plotSuite method for user-defined number of extrema MC runs
-    :param optional_plots: plots additional user-defined plots
-    """
+    # Create the MonteCarloPlotter instance
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenario_AttFeedbackMC")
+    print(f"Data directory path: {data_dir}")
+
+    if not os.path.exists(data_dir) or not os.listdir(data_dir):
+        print("Error: The data directory is empty or doesn't exist.")
+        print("Make sure you've run the scenario_AttFeedbackMC.py script to generate the data files.")
+        return
+
+    if os.path.exists(data_dir):
+        print(f"Contents of {data_dir}:")
+        for file in os.listdir(data_dir):
+            print(f"  {file}")
+    else:
+        print(f"Error: Directory {data_dir} does not exist")
 
     show_all_data = True
     show_extreme_data = False
@@ -242,42 +367,61 @@ def run(show_plots):
     components_to_plot = [0, 1, 2]
 
     plotList = []
-    analysis = MonteCarloPlotter(path + "/scenario_AttFeedbackMC/")
 
     # save_as_static: save off static .html files of the plots generated into the staticDir directory.
     # The staticDir will be created inside the dataDir folder.
     # (Note: This inhibits dynamic plotting!)
+    analysis = MonteCarloPlotter(data_dir)
     analysis.save_as_static = False
     analysis.staticDir = "/plots/"
 
     if show_all_data:
         try:
-            plotter = MonteCarloPlotter(analysis.dataDir)
+            print("Initializing MonteCarloPlotterWrapper")
+            plotter = MonteCarloPlotterWrapper(data_dir)
+            
+            print("Loading data")
             plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
-            plotter.generate_plots(components_to_plot)
+             
+            # Get and print debug info
+            debug_info = plotter.get_debug_info()
+            print("\n".join(debug_info))
             
-            # Get downsampled plots and plot info
+            print("Getting downsampled plots")
             downsampled_plots = plotter.get_downsampled_plots()
-            plot_info = plotter.get_plot_info()
             
-            # Create datashader plots for large datasets
-            ds_plots = []
-            for title, df in downsampled_plots.items():
-                y_columns = [col for col in df.columns if col.startswith('run')]
-                y_label = plot_info[title]['y_label']
-                bokeh_plot = create_datashader_plot(df, x='time', y_columns=y_columns, title=title, y_label=y_label)
-                ds_plots.append(bokeh_plot)
+            # Get and print updated debug info
+            debug_info = plotter.get_debug_info()
+            print("\n".join(debug_info))
             
-            # Use column layout with sizing_mode='stretch_both' for responsive layout
-            layout = column(*ds_plots, sizing_mode='stretch_both')
-            curdoc().add_root(layout)
-        except FileNotFoundError as e:
-            print(f"Error: {str(e)}")
-            print("Please make sure you have run scenario_AttFeedbackMC.py to generate the necessary .data files before running this script.")
+            print(f"Number of downsampled plots: {len(downsampled_plots)}")
+            
+            if downsampled_plots:
+                all_plots = []
+                for title, df in downsampled_plots.items():
+                    y_label = title.split('.')[-1]  # Use the last part of the variable name as y_label
+                    try:
+                        plots = create_datashader_plot(df, title, y_label)
+                        all_plots.append(plots)
+                    except Exception as e:
+                        print(f"Error creating plot for {title}: {str(e)}")
+                        print(f"DataFrame info for {title}:")
+                        print(df.info())
+                        print(f"DataFrame head for {title}:")
+                        print(df.head())
+                
+                if all_plots:
+                    # Use column layout with sizing_mode='stretch_both' for responsive layout
+                    layout = column(*all_plots, sizing_mode='stretch_both')
+                    curdoc().add_root(layout)
+                else:
+                    print("No plots were created successfully.")
+            else:
+                print("No downsampled plots were created.")
         except Exception as e:
             print(f"An unexpected error occurred: {str(e)}")
-            print(f"Error details: {type(e).__name__}: {str(e)}")
-            print(f"DataFrame columns: {df.columns}")  # Add this line for debugging
+            import traceback
+            traceback.print_exc()
 
     if show_extreme_data:
         analysis.variableName = "attGuidMsg.omega_BR_B"
@@ -291,6 +435,8 @@ def run(show_plots):
     if optional_plots:
         # This section needs to be updated if you want to include optional plots
         pass
+
+    print("Run function completed")
 
 # The following must be commented out before this script can run.  It is provided here
 # to ensure that the sphinx documentation generation process does not
