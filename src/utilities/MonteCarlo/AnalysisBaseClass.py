@@ -1,383 +1,116 @@
-import glob
 import os
-import time
-
-import numpy as np
 import pandas as pd
-import dask.dataframe as dd
-
-from Basilisk.utilities import macros
+import numpy as np
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool, ColorBar, LinearColorMapper, BasicTicker, PrintfTickFormatter, Tabs, TabPanel
-from bokeh.transform import linear_cmap
+from bokeh.models import ColumnDataSource, HoverTool, Legend, ColorBar, BasicTicker, LinearColorMapper
 from bokeh.palettes import Viridis256
+from bokeh.layouts import column
+from bokeh.io import curdoc
 
-try:
-    import holoviews as hv
-    from bokeh.layouts import column, row
-    from bokeh.models import Slider
-    from bokeh.plotting import figure
-    from bokeh.models import ColumnDataSource
-    from bokeh.plotting import curdoc
-    from Basilisk.utilities.datashader_utilities import DS_Plot, curve_per_df_component
-except:
-    pass
-
-class mcAnalysisBaseClass:
-    def __init__(self):
-        self.variableName = ""
-        self.variableDim = 0
-        self.dataDir = ""
-        self.numExtrema = 0
-        self.extremaRuns = []
-        self.timeWindow = []
-        self.data = None
-
-    @staticmethod
-    def pull_and_format_df(path, varIdxLen):
-        df = pd.read_pickle(path)
-        if len(np.unique(df.columns.codes[1])) is not varIdxLen:
-            print("Warning: " + path + " not formatted correctly!")
-            newMultIndex = pd.MultiIndex.from_product([df.columns.codes[0], range(varIdxLen)],
-                                                      names=['runNum', 'varIdx'])
-            indices = pd.Index([0, 1])  # Need multiple rows for curves
-            df = df.reindex(columns=newMultIndex, index=indices)
-        return df
-
-    def getNominalRunIndices(self, maxNumber=50):
-        """
-        Find the specific MC run indices of the most nominal cases (by iteratively widdling away runs which
-        have the largest std)
-
-        :param maxNumber: the number of nominal runs to widdle down to.
-        :return: list of run indices
-        """
-        if self.data is None:
-            self.data = pd.read_pickle(self.dataDir + "/" + self.variableName + ".data")
-
-        dataBar = self.data[np.abs(self.data - self.data.mean()) < 0.5 * self.data.std()]
-        i = 5
-        while len(dataBar.columns.codes[0]) > maxNumber * self.variableDim:
-            i += 1
-            cols_to_delete = dataBar.columns[dataBar.isnull().sum() / len(dataBar) > 1. / np.sqrt(i)]
-            dataBar.drop(cols_to_delete, axis=1, inplace=True)
-
-        print("Nominal runs are ", list(dict.fromkeys(dataBar.columns.codes[0].tolist())))
-        return dataBar.columns.codes[0]
-
-    def getExtremaRunIndices(self, numExtrema, window):
-        """
-        Determine the MC run indices of the most deviant values within a particular time window
-
-        :param numExtrema: number of extreme runs to collect
-        :param window: window of time to search for the extremes in
-        :return: list of run indices
-        """
-        if self.data is None:
-            self.data = pd.read_pickle(self.dataDir + "/" + self.variableName + ".data")
-        times = self.data.index.tolist()
-
-        # Find the closest indices to the time window requested
-        indStart = min(range(len(times)), key=lambda i: abs(times[i] - window[0]))
-        indEnd = min(range(len(times)), key=lambda i: abs(times[i] - window[1]))
-        self.timeWindow = [indStart, indEnd]
-
-        # Find outliers based on largest deviation off of the mean
-        self.mean = self.data.mean(axis=1, level=1)
-        self.diff = self.data.subtract(self.mean)
-        self.diff = self.diff.abs()
-        self.diff = self.diff.iloc[indStart:indEnd].max(axis=0)
-        self.extremaRuns = self.diff.nlargest(numExtrema).index._codes[0]
-        print("Extreme runs are ", list(dict.fromkeys(self.extremaRuns.tolist())))
-        return self.extremaRuns
-
-    def generateStatCurves(self):
-        """
-        Generate curves that represent the mean, median, and standard deviation of a particular variable.
-        Not Tested.
-        """
-        if self.data is None:
-            self.data = pd.read_pickle(self.dataDir + "/" + self.variableName + ".data")
-
-        idx = pd.IndexSlice
-        self.runs, self.varNum = self.data.columns.values[-1]
-        self.runs += 1
-        self.varNum += 1
-        axesMean = []
-        axesMedian = []
-        axesStd = []
-        for j in range(self.varNum):
-            axisMean = self.data.loc[idx[:], idx[:, j]].mean(axis=1)
-            axisMedian = self.data.loc[idx[:], idx[:, j]].median(axis=1)
-            axisStd = self.data.loc[idx[:], idx[:, j]].std(axis=1)
-            axesMean.append(axisMean)
-            axesMedian.append(axisMedian)
-            axesStd.append(axisStd)
-
-        meanRun = pd.concat(axesMean, axis=1)
-        medianRun = pd.concat(axesMedian, axis=1)
-        stdRun = pd.concat(axesStd, axis=1)
-
-        return [meanRun, medianRun, stdRun]
-
-    def generateStatPlots(self):
-        """
-        Generate plots for the mean, median, and mode.
-        Not Tested.
-        :return: list of stats plots
-        """
-        if self.data is None:
-            self.data = self.pull_and_format_df(self.dataDir + "/" + self.variableName + ".data", self.variableDim)
-
-        meanRun, medianRun, stdRun = self.generateStatCurves()
-        varIdxList = range(self.variableDim)
-        varIdxListStr = str(varIdxList)
-
-        meanRun.columns = pd.MultiIndex.from_product([['mean'], [0,1,2]], names=["stats", "varIdx"])
-        medianRun.columns = pd.MultiIndex.from_product([['median'], [0,1,2]], names=["stats", "varIdx"])
-        stdRun.columns = pd.MultiIndex.from_product([['std'], [0,1,2]], names=["stats", "varIdx"])
-
-        meanRun_plot = DS_Plot(meanRun, title="Mean Plot: " + self.variableName,
-                                            xAxisLabel='time[s]', yAxisLabel= self.variableName.split('.')[-1],
-                                            macro_x=macros.NANO2SEC,
-                                            labels=['1', '2', '3'],
-                                            plotFcn=curve_per_df_component)
-
-        medRun_plot = DS_Plot(medianRun, title="Median Plot: " + self.variableName,
-                                            xAxisLabel='time[s]', yAxisLabel= self.variableName.split('.')[-1],
-                                            macro_x=macros.NANO2SEC,
-                                            labels=['1', '2', '3'],
-                                            plotFcn=curve_per_df_component)
-
-        stdRun_plot = DS_Plot(stdRun, title="Standard Dev Plot: " + self.variableName,
-                                            xAxisLabel='time[s]', yAxisLabel= self.variableName.split('.')[-1],
-                                            macro_x=macros.NANO2SEC,
-                                            labels=['1', '2', '3'],
-                                            plotFcn=curve_per_df_component)
-
-        statRun_plots = []
-        statRun_plots.append(meanRun_plot)
-        statRun_plots.append(medRun_plot)
-        statRun_plots.append(stdRun_plot)
-
-        return statRun_plots
-
-    def extractSubsetOfRuns(self, runIdx):
-        """
-        Create a separate folder in the data directory that contains the subset of data the user is looking to plot.
-        If the ``/subset/`` directory already exists, check if it already contains all runIdx requested, if so skip.
-
-        :param runIdx: list of run indices to extract
-        :return: nothing
-        """
-        idx = pd.IndexSlice
-        baseDir = self.dataDir
-
-        # check if a subset directory exists, and if it already contains all runIdx requested
-        if not os.path.exists(baseDir + "/subset/"):
-            os.mkdir(baseDir + "/subset/")
-        else:
-            filePaths = glob.glob(baseDir + "/subset" + "/*.data")
-            for filePath in filePaths:
-                if "MonteCarlo.data" in filePath:
-                    continue
-                if "run" in filePath and "overrun" not in filePath:
-                    continue
-                df = pd.read_pickle(filePath)
-                singleton = list(dict.fromkeys(np.array(df.columns.codes[0]).tolist()))
-                singletonRuns = list(dict.fromkeys(np.sort(np.array(runIdx)).tolist()))
-                if len(singleton) == len(singletonRuns):
-                    if singletonRuns == singleton:
-                        print("Subset directory already contains runIdx values. Skipping extraction")
-                        return
-                    else:
-                        break
-
-        # If no data in subset (or the wrong data), extract and save the right data.
-        print("Populating Subset Directory with Dataframes for runs: " + str(runIdx))
-        # shutil.rmtree(dataDir + "/subset/")
-        filePaths = glob.glob(baseDir + "/*.data")
-        for filePath in filePaths:
-            if "MonteCarlo.data" in filePath:
-                continue
-            if "run" in filePath and "overrun" not in filePath:
-                continue
-            df = pd.read_pickle(filePath)
-            dfSubSet = df.loc[idx[:], idx[runIdx, :]]
-            varName = filePath.rsplit("/")
-            pd.to_pickle(dfSubSet, baseDir + "/subset/" + varName[-1])
-        print("Finished Populating Subset Directory")
-
-    def create_bokeh_plots(self, figures):
-        return figures  # Assuming figures are already Bokeh plots
-    
-    def generateBokehCurves(self):
-        curves = []
-        for df in self.data:
-            source = ColumnDataSource(df)
-            p = figure(width=800, height=400, title=self.title)
-            p.line(x='x', y='y', source=source, line_width=2, color=self.cmap[0])  # Customize as needed
-            curves.append(p)
-        return curves
-
-    def renderPlots(self, plotList):
-        # Assuming plotList contains Bokeh figures
-        layout = column(*plotList)
-        curdoc().add_root(layout)
-
-class MonteCarloPlotter(mcAnalysisBaseClass):
+class MonteCarloPlotter:
     def __init__(self, dataDir):
-        super().__init__()
         self.dataDir = dataDir
         self.data = {}
         self.plots = {}
-        self.plot_info = {}  # Dictionary to store plot information
-        self.component_map = {0: 'x', 1: 'y', 2: 'z'}  # Mapping from component number to label
-
-    def pull_and_format_df(self, path, varIdxLen):
-        df = pd.read_pickle(path)
-        if len(np.unique(df.columns.codes[1])) != varIdxLen:
-            print(f"Warning: {path} not formatted correctly!")
-            newMultIndex = pd.MultiIndex.from_product([df.columns.codes[0], range(varIdxLen)],
-                                                      names=['runNum', 'varIdx'])
-            indices = pd.Index([0, 1])  # Need multiple rows for curves
-            df = df.reindex(columns=newMultIndex, index=indices)
-        
-        # Convert column names to strings and add a 'time' column in seconds
-        df.columns = df.columns.map(lambda x: f"run{x[0]}_{x[1]}")
-        df['time'] = df.index / 1e9  # Convert nanoseconds to seconds
-        return df
+        self.debug_info = []
 
     def load_data(self, variables):
         self.debug_info.append(f"Loading data for variables: {variables}")
         for variable in variables:
-            file_path = os.path.join(self.dataDir, f"{variable}.csv")
+            file_path = os.path.join(self.dataDir, f"{variable}.data")
             self.debug_info.append(f"Looking for file: {file_path}")
             if os.path.exists(file_path):
                 self.debug_info.append(f"File found: {file_path}")
-                df = pd.read_csv(file_path)
+                df = pd.read_pickle(file_path)
                 self.debug_info.append(f"DataFrame shape: {df.shape}")
+                self.debug_info.append(f"DataFrame columns: {df.columns}")
+                self.debug_info.append(f"DataFrame index: {df.index}")
+                if not pd.api.types.is_datetime64_any_dtype(df.index):
+                    df.index = pd.to_datetime(df.index, unit='ns')
                 self.data[variable] = df
             else:
                 self.debug_info.append(f"File not found: {file_path}")
         
         self.debug_info.append(f"Data loaded. Number of variables: {len(self.data)}")
-        for key, df in self.data.items():
-            self.debug_info.append(f"Variable: {key}, DataFrame shape: {df.shape}")
 
-    def generate_plots(self, components):
-        self.plots = {}
-        self.plot_info = {}  # Reset plot_info
-        for var_name, df in self.data.items():
-            for component in components:
-                component_label = self.component_map.get(component, str(component))
-                title = f"{var_name} - Component {component_label}"
-                plot_df = df[['time'] + [col for col in df.columns if col.endswith(f"_{component}")]]
-                self.plots[title] = plot_df
-                
-                # Store plot information
-                y_label = f"{var_name.replace('attGuidMsg.', '')} - Component {component_label}"
-                self.plot_info[title] = {'y_label': y_label}
-
-    def downsample_data(self, df, target_size=10000):
-        if len(df) <= target_size:
-            return df
+    def create_bokeh_plot(self, df, title):
+        self.debug_info.append(f"Creating plot for {title}")
+        p = figure(title=title, x_axis_label='Time', y_axis_label='Value', width=800, height=400)
         
-        step = len(df) // target_size
-        return df.iloc[::step].reset_index(drop=True)
-
-    def get_downsampled_plots(self):
-        self.debug_info.append("Starting get_downsampled_plots method")
-        downsampled_plots = {}
-        for key, df in self.data.items():
-            self.debug_info.append(f"\nProcessing {key}")
-            self.debug_info.append(f"DataFrame shape: {df.shape}")
-            self.debug_info.append(f"DataFrame columns: {df.columns}")
-            self.debug_info.append(f"First few rows of data:\n{df.head().to_string()}")
-            self.debug_info.append(f"Data types of columns:\n{df.dtypes}")
-            
-            if 'time' not in df.columns:
-                self.debug_info.append(f"Error: 'time' column not found in DataFrame for {key}")
-                continue
-            
-            self.debug_info.append(f"Time column data type: {df['time'].dtype}")
-            self.debug_info.append(f"Time column first few values: {df['time'].head().tolist()}")
-            
-            try:
-                # Convert 'time' to datetime if it's not already
-                if not pd.api.types.is_datetime64_any_dtype(df['time']):
-                    df['time'] = pd.to_datetime(df['time'], unit='ns')
-                
-                self.debug_info.append("Time conversion successful")
-                self.debug_info.append(f"Time column data type after conversion: {df['time'].dtype}")
-                self.debug_info.append(f"Time column first few values after conversion: {df['time'].head().tolist()}")
-                
-                # Perform downsampling
-                downsampled_df = df.groupby(df['time'].dt.floor('1s')).mean().reset_index()
-                self.debug_info.append(f"Downsampling successful")
-                self.debug_info.append(f"Downsampled DataFrame shape: {downsampled_df.shape}")
-                self.debug_info.append(f"Downsampled DataFrame columns: {downsampled_df.columns}")
-                self.debug_info.append(f"First few rows of downsampled data:\n{downsampled_df.head().to_string()}")
-                
-                if not downsampled_df.empty:
-                    downsampled_plots[key] = downsampled_df
-                else:
-                    self.debug_info.append(f"Warning: Downsampled DataFrame is empty for {key}")
-            except Exception as e:
-                self.debug_info.append(f"Error during downsampling for {key}: {str(e)}")
-                import traceback
-                self.debug_info.append(traceback.format_exc())
+        for col in df.columns:
+            source = ColumnDataSource(data=dict(x=df.index, y=df[col]))
+            p.line('x', 'y', source=source, line_width=2, alpha=0.8)
         
-        self.debug_info.append(f"\nNumber of downsampled plots: {len(downsampled_plots)}")
-        return downsampled_plots
+        p.add_tools(HoverTool(tooltips=[("Time", "@x{%F %T}"), ("Value", "@y{0.00000}")],
+                              formatters={"@x": "datetime"}))
+        
+        self.debug_info.append(f"Plot created for {title}")
+        return p
+
+    def create_datashader_plot(self, df, title, y_label, max_points=1000):
+        plots = []
+        component_map = {0: 'x', 1: 'y', 2: 'z'}
+        num_runs = len(set(col[0] for col in df.columns))
+        color_mapper = LinearColorMapper(palette=Viridis256, low=0, high=num_runs-1)
+        time_seconds = (df.index - df.index[0]).total_seconds()
+
+        for component in range(3):
+            component_label = component_map[component]
+            p = figure(title=f"{title} - {component_label.upper()} Component", x_axis_label='Time (s)', y_axis_label=f"{y_label} ({component_label})",
+                       width=800, height=400, tools='pan,wheel_zoom,box_zoom,reset')
+
+            for run in range(num_runs):
+                col_name = (run, component)
+                if col_name not in df.columns:
+                    continue
+                
+                source = ColumnDataSource(data=dict(x=time_seconds, y=df[col_name], run_num=[run]*len(time_seconds)))
+                p.line('x', 'y', source=source, color=color_mapper.palette[int(run * (len(color_mapper.palette) - 1) / (num_runs - 1))], 
+                       line_alpha=0.9, line_width=3, legend_label=f"Run {run}")
+
+            hover = HoverTool(
+                tooltips=[
+                    ('Time', '$x{0.000} s'),
+                    (f'{y_label} ({component_label})', '$y{0.0000}'),
+                    ('Run', '@run_num')
+                ],
+                mode='mouse'
+            )
+            p.add_tools(hover)
+
+            color_bar = ColorBar(color_mapper=color_mapper, ticker=BasicTicker(desired_num_ticks=10),
+                                 label_standoff=12, border_line_color=None, location=(0, 0))
+            p.add_layout(color_bar, 'right')
+
+            p.x_range.start = time_seconds.min()
+            p.x_range.end = time_seconds.max()
+            y_min = min(df[[(run, component) for run in range(num_runs)]].min().min() for component in range(3))
+            y_max = max(df[[(run, component) for run in range(num_runs)]].max().max() for component in range(3))
+            p.y_range.start = y_min
+            p.y_range.end = y_max
+
+            p.legend.click_policy = "hide"
+            p.legend.location = "top_left"
+
+            plots.append(p)
+
+        layout = column(*plots)
+        return layout
+
+    def generate_plots(self):
+        self.debug_info.append("Generating plots")
+        for variable, df in self.data.items():
+            self.plots[variable] = self.create_bokeh_plot(df, variable)
+        self.debug_info.append(f"Generated {len(self.plots)} plots")
+
+    def show_plots(self):
+        self.debug_info.append("Showing plots")
+        if self.plots:
+            layout = column(*self.plots.values())
+            curdoc().add_root(layout)
+            self.debug_info.append("Added plots to document")
+        else:
+            self.debug_info.append("No plots were created")
 
     def get_debug_info(self):
         return self.debug_info
-
-    def get_plot_info(self):
-        return self.plot_info
-
-    def create_bokeh_plot(self, df, var_name, component):
-        component_label = self.component_map.get(component, str(component))
-        
-        p = figure(width=1000, height=600, 
-                   title=f"{var_name} Monte Carlo Results - Component {component_label.upper()}",
-                   tools="pan,box_zoom,wheel_zoom,reset,save",
-                   x_axis_label='Time [s]',
-                   y_axis_label=f"{var_name.split('.')[-1]} - Component {component_label.upper()}",
-                   background_fill_color="white")
-
-        runs = sorted(df.columns.get_level_values('runNum').unique())
-        num_runs = len(runs)
-        
-        color_palette = Viridis256
-        
-        color_mapper = LinearColorMapper(palette=color_palette, low=runs[0], high=runs[-1])
-
-        source = ColumnDataSource(data=dict(
-            xs=[df.index * macros.NANO2SEC for _ in runs],
-            ys=[df.loc[:, (run, component)] for run in runs],
-            run=runs
-        ))
-
-        p.multi_line(xs='xs', ys='ys', source=source, line_width=2.5, alpha=0.7,
-                     color={'field': 'run', 'transform': color_mapper})
-
-        p.add_tools(HoverTool(tooltips=[("Time", "$x{0.00} s"), ("Value", "$y{0.000}"), ("Run", "@run")]))
-
-        ticker = BasicTicker(desired_num_ticks=min(10, num_runs))
-        formatter = PrintfTickFormatter(format="%d")
-        color_bar = ColorBar(
-            color_mapper=color_mapper, 
-            width=20, 
-            location=(0,0), 
-            title="Run Number",
-            ticker=ticker,
-            formatter=formatter
-        )
-        p.add_layout(color_bar, 'right')
-
-        return p
-
-    def render_plots(self):
-        layout = column(*self.plots.values())
