@@ -114,29 +114,9 @@ def run():
         return
 
     plotter = MonteCarloPlotter(data_dir)
-    plotter.save_as_static = False
-    plotter.staticDir = "/plots/"
-
     plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
-    downsampled_plots = plotter.get_downsampled_plots()
-    
-    if downsampled_plots:
-        all_plots = []
-        for title, df in downsampled_plots.items():
-            y_label = title.split('.')[-1]
-            try:
-                plots = plotter.create_plot(df, title, y_label)
-                all_plots.append(plots)
-            except Exception as e:
-                print(f"Error creating plot for {title}: {str(e)}")
-        
-        if all_plots:
-            layout = column(*all_plots, sizing_mode='stretch_both')
-            curdoc().add_root(layout)
-        else:
-            print("No plots were created successfully.")
-    else:
-        print("No downsampled plots were created.")
+    plotter.get_downsampled_plots()
+    plotter.show_plots()
 
 # Run the Monte Carlo Analysis script that plots the data. (Uncomment this if you want to silence this in tests)
 run()
