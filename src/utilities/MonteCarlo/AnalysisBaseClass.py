@@ -114,3 +114,27 @@ class MonteCarloPlotter:
 
     def get_debug_info(self):
         return self.debug_info
+
+class MonteCarloPlotterWrapper(MonteCarloPlotter):
+    def __init__(self, dataDir):
+        super().__init__(dataDir)
+
+    def load_data(self, variables):
+        for variable in variables:
+            file_path = os.path.join(self.dataDir, f"{variable}.data")
+            if os.path.exists(file_path):
+                df = pd.read_pickle(file_path)
+                self.data[variable] = df
+
+    def get_downsampled_plots(self):
+        downsampled_plots = {}
+        for key, df in self.data.items():
+            if not pd.api.types.is_datetime64_any_dtype(df.index):
+                df.index = pd.to_datetime(df.index, unit='ns')
+            
+            downsampled_df = df.groupby(df.index.floor('1s')).mean()
+            
+            if not downsampled_df.empty:
+                downsampled_plots[key] = downsampled_df
+        
+        return downsampled_plots
