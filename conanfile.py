@@ -129,6 +129,7 @@ class BasiliskConan(ConanFile):
             "conan>=1.40.1, <2.00.0",
             "setuptools>=70.1.0",
             "setuptools-scm>=8.0",
+            "packaging>=22",
             "cmake>=3.26",
         ]
 
