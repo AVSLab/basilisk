@@ -24,19 +24,7 @@ class MonteCarloPlotter:
                     df.index = pd.to_datetime(df.index, unit='ns')
                 self.data[variable] = df
 
-    def create_bokeh_plot(self, df, title):
-        p = figure(title=title, x_axis_label='Time', y_axis_label='Value', width=800, height=400)
-        
-        for col in df.columns:
-            source = ColumnDataSource(data=dict(x=df.index, y=df[col]))
-            p.line('x', 'y', source=source, line_width=2, alpha=0.8)
-        
-        p.add_tools(HoverTool(tooltips=[("Time", "@x{%F %T}"), ("Value", "@y{0.00000}")],
-                              formatters={"@x": "datetime"}))
-        
-        return p
-
-    def create_datashader_plot(self, df, title, y_label):
+    def create_plot(self, df, title, y_label):
         plots = []
         component_map = {0: 'x', 1: 'y', 2: 'z'}
         num_runs = len(set(col[0] for col in df.columns))
@@ -75,10 +63,6 @@ class MonteCarloPlotter:
 
         return column(*plots)
 
-    def generate_plots(self):
-        for variable, df in self.data.items():
-            self.plots[variable] = self.create_bokeh_plot(df, variable)
-
     def show_plots(self):
         if self.plots:
             layout = column(*self.plots.values())
@@ -88,11 +72,3 @@ class MonteCarloPlotter:
         return {key: df.groupby(df.index.floor('1s')).mean()
                 for key, df in self.data.items()
                 if not df.empty}
-
-    def getExtremaRunIndices(self, numExtrema=1, window=None):
-        # Implement this method if needed
-        pass
-
-    def extractSubsetOfRuns(self, runIdx):
-        # Implement this method if needed
-        pass

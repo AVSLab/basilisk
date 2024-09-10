@@ -105,12 +105,6 @@ from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.layouts import column
 from bokeh.io import curdoc
 
-def plotSuite(dataDir, components):
-    plotter = MonteCarloPlotter(dataDir)
-    plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
-    plotter.generate_plots(components)
-    return plotter.plots
-
 def run():
     data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenario_AttFeedbackMC")
 
@@ -119,50 +113,30 @@ def run():
         print("Make sure you've run the scenario_AttFeedbackMC.py script to generate the data files.")
         return
 
-    show_all_data = True
-    show_extreme_data = False
-    components_to_plot = [0, 1, 2]
-
     plotter = MonteCarloPlotter(data_dir)
     plotter.save_as_static = False
     plotter.staticDir = "/plots/"
 
-    if show_all_data:
-        plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
-        downsampled_plots = plotter.get_downsampled_plots()
+    plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
+    downsampled_plots = plotter.get_downsampled_plots()
+    
+    if downsampled_plots:
+        all_plots = []
+        for title, df in downsampled_plots.items():
+            y_label = title.split('.')[-1]
+            try:
+                plots = plotter.create_plot(df, title, y_label)
+                all_plots.append(plots)
+            except Exception as e:
+                print(f"Error creating plot for {title}: {str(e)}")
         
-        if downsampled_plots:
-            all_plots = []
-            for title, df in downsampled_plots.items():
-                y_label = title.split('.')[-1]
-                try:
-                    plots = plotter.create_datashader_plot(df, title, y_label)
-                    all_plots.append(plots)
-                except Exception as e:
-                    print(f"Error creating plot for {title}: {str(e)}")
-            
-            if all_plots:
-                layout = column(*all_plots, sizing_mode='stretch_both')
-                curdoc().add_root(layout)
-            else:
-                print("No plots were created successfully.")
+        if all_plots:
+            layout = column(*all_plots, sizing_mode='stretch_both')
+            curdoc().add_root(layout)
         else:
-            print("No downsampled plots were created.")
+            print("No plots were created successfully.")
+    else:
+        print("No downsampled plots were created.")
 
-    if show_extreme_data:
-        plotter.variableName = "attGuidMsg.omega_BR_B"
-        plotter.variableDim = 1
-
-        extremaRunNumbers = plotter.getExtremaRunIndices(numExtrema=1, window=[500 * 1E9, 550 * 1E9])
-
-        plotter.extractSubsetOfRuns(runIdx=extremaRunNumbers)
-        plotSuite(plotter.dataDir + "/subset", components_to_plot)
-
-# The following must be commented out before this script can run.  It is provided here
-# to ensure that the sphinx documentation generation process does not
-# run this script automatically.
-# if __name__ == "__main__":
-#     run(False)
-
-# uncomment the following line to run this script.
+# Run the Monte Carlo Analysis script that plots the data. (Uncomment this if you want to silence this in tests)
 run()
