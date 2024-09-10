@@ -208,7 +208,7 @@ def create_datashader_plot(df, title, y_label, max_points=1000):
             
             source = ColumnDataSource(data=dict(x=time_seconds, y=df[col_name], run_num=[run]*len(time_seconds)))
             p.line('x', 'y', source=source, color=color_mapper.palette[int(run * (len(color_mapper.palette) - 1) / (num_runs - 1))], 
-                   line_alpha=0.6, legend_label=f"Run {run}")
+                   line_alpha=0.9, line_width=3, legend_label=f"Run {run}")  # Increased line_width and line_alpha
 
         # Add HoverTool
         hover = HoverTool(
