@@ -21,6 +21,9 @@ Version |release|
 - :ref:`vizInterface` was not able to save to a binary data file.
   This is now fixed in the current release.
 - :ref:`vizInterface` was not saving the Vizard settings to the binary file.  Fixed now.
+- Installing Basilisk 2.4.0 while ``packaging<22`` is installed can lead to an incompatibility and raise a
+  "TypeError: ``canonicalize_version()`` got an unexpected keyword argument ``strip_trailing_zero``" error.
+  Newer versions of Basilisk now upgrade ``packaging>=22`` to solve this issue.
 
 
 Version 2.4.0
