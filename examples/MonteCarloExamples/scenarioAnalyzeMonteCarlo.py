@@ -101,7 +101,7 @@ bokeh server will keep running until stopped.
 """
 
 import os
-from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter, MonteCarloPlotterWrapper
+from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.layouts import column
 from bokeh.io import curdoc
 
@@ -111,7 +111,7 @@ def plotSuite(dataDir, components):
     plotter.generate_plots(components)
     return plotter.plots
 
-def run(show_plots):
+def run():
     data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenario_AttFeedbackMC")
 
     if not os.path.exists(data_dir) or not os.listdir(data_dir):
@@ -123,12 +123,11 @@ def run(show_plots):
     show_extreme_data = False
     components_to_plot = [0, 1, 2]
 
-    analysis = MonteCarloPlotter(data_dir)
-    analysis.save_as_static = False
-    analysis.staticDir = "/plots/"
+    plotter = MonteCarloPlotter(data_dir)
+    plotter.save_as_static = False
+    plotter.staticDir = "/plots/"
 
     if show_all_data:
-        plotter = MonteCarloPlotterWrapper(data_dir)
         plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
         downsampled_plots = plotter.get_downsampled_plots()
         
@@ -151,13 +150,13 @@ def run(show_plots):
             print("No downsampled plots were created.")
 
     if show_extreme_data:
-        analysis.variableName = "attGuidMsg.omega_BR_B"
-        analysis.variableDim = 1
+        plotter.variableName = "attGuidMsg.omega_BR_B"
+        plotter.variableDim = 1
 
-        extremaRunNumbers = analysis.getExtremaRunIndices(numExtrema=1, window=[500 * 1E9, 550 * 1E9])
+        extremaRunNumbers = plotter.getExtremaRunIndices(numExtrema=1, window=[500 * 1E9, 550 * 1E9])
 
-        analysis.extractSubsetOfRuns(runIdx=extremaRunNumbers)
-        plotSuite(analysis.dataDir + "/subset", components_to_plot)
+        plotter.extractSubsetOfRuns(runIdx=extremaRunNumbers)
+        plotSuite(plotter.dataDir + "/subset", components_to_plot)
 
 # The following must be commented out before this script can run.  It is provided here
 # to ensure that the sphinx documentation generation process does not
@@ -166,4 +165,4 @@ def run(show_plots):
 #     run(False)
 
 # uncomment the following line to run this script.
-run(False)
+run()
