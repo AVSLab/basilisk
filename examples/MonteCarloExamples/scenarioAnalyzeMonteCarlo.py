@@ -100,84 +100,16 @@ bokeh server will keep running until stopped.
 
 """
 
-import inspect
 import os
-FOUND_DATESHADER = True
-try:
-    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
-    from bokeh.plotting import figure
-    from bokeh.models import ColumnDataSource
-    from bokeh.palettes import RdYlBu9
-    from bokeh.palettes import Category10
-    from bokeh.models import HoverTool, Legend
-    from bokeh.layouts import column
-    from bokeh.io import curdoc
-
-    from bokeh.palettes import Blues9, Reds9, Greens9, \
-        Blues3, Reds3, Greens3, Oranges3, RdYlBu9
-except:
-    FOUND_DATESHADER = False
-
-import Basilisk.utilities.macros as macros
-import holoviews as hv
-from holoviews.operation.datashader import datashade, dynspread
-from holoviews import opts
-import datashader as ds
-import datashader.transfer_functions as tf
-import pandas as pd
-from bokeh.plotting import figure
-from bokeh.models import ColorBar, BasicTicker, LinearColorMapper, ColumnDataSource
-from bokeh.palettes import Viridis256
-
-hv.extension('bokeh')
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-fileNameString = os.path.basename(os.path.splitext(__file__)[0])
-path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
-
-bskPath = __path__[0]
+from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter, MonteCarloPlotterWrapper
+from bokeh.layouts import column
+from bokeh.io import curdoc
 
 def plotSuite(dataDir, components):
     plotter = MonteCarloPlotter(dataDir)
     plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
     plotter.generate_plots(components)
     return plotter.plots
-
-from bokeh.models import CustomJS, ColumnDataSource, HoverTool, Legend
-from bokeh.palettes import Category10
-
-import numpy as np
-from bokeh.models import HoverTool, Legend, ColorBar, BasicTicker, LinearColorMapper
-from bokeh.palettes import Viridis256
-from bokeh.plotting import figure
-from bokeh.layouts import column
-
-from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
-
-class MonteCarloPlotterWrapper(MonteCarloPlotter):
-    def __init__(self, dataDir):
-        super().__init__(dataDir)
-
-    def load_data(self, variables):
-        for variable in variables:
-            file_path = os.path.join(self.dataDir, f"{variable}.data")
-            if os.path.exists(file_path):
-                df = pd.read_pickle(file_path)
-                self.data[variable] = df
-
-    def get_downsampled_plots(self):
-        downsampled_plots = {}
-        for key, df in self.data.items():
-            if not pd.api.types.is_datetime64_any_dtype(df.index):
-                df.index = pd.to_datetime(df.index, unit='ns')
-            
-            downsampled_df = df.groupby(df.index.floor('1s')).mean()
-            
-            if not downsampled_df.empty:
-                downsampled_plots[key] = downsampled_df
-        
-        return downsampled_plots
 
 def run(show_plots):
     data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenario_AttFeedbackMC")
@@ -189,11 +121,7 @@ def run(show_plots):
 
     show_all_data = True
     show_extreme_data = False
-    optional_plots = False
-
     components_to_plot = [0, 1, 2]
-
-    plotList = []
 
     analysis = MonteCarloPlotter(data_dir)
     analysis.save_as_static = False
@@ -229,11 +157,7 @@ def run(show_plots):
         extremaRunNumbers = analysis.getExtremaRunIndices(numExtrema=1, window=[500 * 1E9, 550 * 1E9])
 
         analysis.extractSubsetOfRuns(runIdx=extremaRunNumbers)
-        plotList.extend(plotSuite(analysis.dataDir + "/subset", components_to_plot))
-
-    if optional_plots:
-        # This section needs to be updated if you want to include optional plots
-        pass
+        plotSuite(analysis.dataDir + "/subset", components_to_plot)
 
 # The following must be commented out before this script can run.  It is provided here
 # to ensure that the sphinx documentation generation process does not
