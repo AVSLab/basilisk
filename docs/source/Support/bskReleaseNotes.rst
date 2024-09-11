@@ -50,6 +50,8 @@ Version |release|
   and as a data structure inside modules.  The use of ``classicElements()`` is now depreciated
   for the use of ``ClassicElements()`` defined in :ref:`orbitalMotionutilities`.
 - Added ``packaging>=22`` dependency for installing Basilisk to solve an incompatibility issue with ``setuptools``.
+- Added support for macOS to the CI test builds, including opNav
+- Added CI support to build and test Basilisk documentation on the GitHub macOS platform
 
 
 Version 2.4.0 (August 23, 2024)

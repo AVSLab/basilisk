@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
       - id: file_changes
         uses: tj-actions/changed-files@v44
       - uses: pre-commit/action@v3.0.1
@@ -332,8 +334,8 @@ jobs:
       - name: "Upload pytest test results"
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-results-${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
+          name: pytest-results-pip-x${{ matrix.python-version }}
+          path: junit/test-results-pip-${{ matrix.python-version }}.xml
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
 
@@ -398,3 +400,94 @@ jobs:
           cd dist3
           ctest
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
+
+  build-macOS:
+    name: Build macOS
+    runs-on: macos-14
+    strategy:
+      matrix:
+        python-version: [ "3.11" ]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Homebrew
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew install swig doxygen
+
+      - name: "Create virtual Environment"
+        run: python3 -m venv .venv
+      - name: "Install wheel and conan package"
+        run: |
+          source .venv/bin/activate
+          pip3 install wheel 'conan<2.0' cmake
+
+      - name: "Build basilisk with OpNav"
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
+
+      - name: "Run Python Tests"
+        run: |
+          source .venv/bin/activate
+          cd src
+          pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+        if: ${{ always() }}
+      - name: "Run C/C++ Tests"
+        working-directory: ./dist3
+        run: ctest -C Release
+        if: ${{ always() }}
+
+      - name: "Build Documentation"
+        run: |
+          source .venv/bin/activate
+          cd docs
+          make html SPHINXOPTS="-W"
+        if: ${{ always() }}
+
+  build-macOS-no-vizInterface:
+    name: Build macOS no vizInterface
+    runs-on: macos-14
+    strategy:
+      matrix:
+        python-version: [ "3.11" ]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Homebrew
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew install swig
+
+      - name: "Create virtual Environment"
+        run: python3 -m venv .venv
+      - name: "Install wheel and conan package"
+        run: |
+          source .venv/bin/activate
+          pip3 install wheel 'conan<2.0' cmake
+
+      - name: "Build basilisk without vizInterface"
+        run: source .venv/bin/activate && python3 conanfile.py --vizInterface False
+      - name: "Run Python Tests"
+        run: |
+          source .venv/bin/activate
+          cd src
+          pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+
+        if: ${{ always() }}
