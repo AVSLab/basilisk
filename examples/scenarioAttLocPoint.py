@@ -82,11 +82,11 @@ from Basilisk.simulation import simpleNav
 from Basilisk.simulation import spacecraft
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.architecture import astroConstants
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -228,7 +228,7 @@ def run(show_plots):
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
     groundStation.ModelTag = "BoulderGroundStation"
-    groundStation.planetRadius = astroFunctions.E_radius*1e3  # meters
+    groundStation.planetRadius = astroConstants.REQ_EARTH*1e3  # meters
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     groundStation.minimumElevation = np.radians(10.)
     groundStation.maximumRange = 1e9  # meters

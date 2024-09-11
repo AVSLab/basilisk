@@ -108,11 +108,11 @@ from Basilisk.simulation import spacecraft
 from Basilisk.topLevelModules import pyswice
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.architecture import astroConstants
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
@@ -307,7 +307,7 @@ def run(show_plots, scCase):
     ax.ticklabel_format(useOffset=False, style='plain')
     ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
     if scCase == 'NewHorizons':
-        axesScale = astroFunctions.AU * 1000.  # convert to AU
+        axesScale = astroConstants.AU * 1000.  # convert to AU
         axesLabel = '[AU]'
         timeScale = macros.NANO2MIN  # convert to minutes
         timeLabel = '[min]'

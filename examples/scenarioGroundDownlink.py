@@ -44,7 +44,7 @@ demonstrate the data stored, generated, and downlinked.
 
 .. image:: /_images/Scenarios/scenarioGroundPassPolar.svg
    :align: center
-   
+
 .. image:: /_images/Scenarios/scenarioGroundPassRange.svg
    :align: center
 
@@ -76,7 +76,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import astroFunctions
+from Basilisk.architecture import astroConstants
 
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -115,7 +115,7 @@ def run(show_plots):
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
-    oe.a = astroFunctions.E_radius*1e3 + 418e3
+    oe.a = astroConstants.REQ_EARTH*1e3 + 418e3
     oe.e = 0.00061
     oe.i = 51.6418*macros.D2R
 
@@ -140,7 +140,7 @@ def run(show_plots):
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
     groundStation.ModelTag = "BoulderGroundStation"
-    groundStation.planetRadius = astroFunctions.E_radius*1e3
+    groundStation.planetRadius = astroConstants.REQ_EARTH*1e3
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     groundStation.planetInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
     groundStation.minimumElevation = np.radians(10.)

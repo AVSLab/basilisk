@@ -35,6 +35,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.architecture import astroConstants
 from numpy import linalg as la
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -128,17 +129,17 @@ def celestialTwoBodyPointTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.singularityThresh = 1.0 * af.D2R
+    module.singularityThresh = 1.0 * macros.D2R
 
 
     # Previous Computation of Initial Conditions for the test
-    a = af.E_radius * 2.8
+    a = astroConstants.REQ_EARTH * 2.8
     e = 0.0
     i = 0.0
     Omega = 0.0
     omega = 0.0
-    f = 60 * af.D2R
-    (r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+    f = 60 * macros.D2R
+    (r, v) = af.OE2RV(astroConstants.MU_EARTH, a, e, i, Omega, omega, f)
     r_BN_N = np.array([0., 0., 0.])
     v_BN_N = np.array([0., 0., 0.])
     celPositionVec = r
@@ -183,13 +184,13 @@ def celestialTwoBodyPointTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
 
     ## Set truth values
-    a = af.E_radius * 2.8
+    a = astroConstants.REQ_EARTH * 2.8
     e = 0.0
     i = 0.0
     Omega = 0.0
     omega = 0.0
-    f = 60 * af.D2R
-    (r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+    f = 60 * macros.D2R
+    (r, v) = af.OE2RV(astroConstants.MU_EARTH, a, e, i, Omega, omega, f)
     r_BN_N = np.array([0., 0., 0.])
     v_BN_N = np.array([0., 0., 0.])
     celPositionVec = r
@@ -289,15 +290,15 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.singularityThresh = 1.0 * af.D2R
+    module.singularityThresh = 1.0 * macros.D2R
 
     # Previous Computation of Initial Conditions for the test
-    a = af.E_radius * 2.8
+    a = astroConstants.REQ_EARTH * 2.8
     e = 0.0
     i = 0.0
     Omega = 0.0
     omega = 0.0
-    f = 60 * af.D2R
+    f = 60 * macros.D2R
     (r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
     r_BN_N = np.array([0., 0., 0.])
     v_BN_N = np.array([0., 0., 0.])
