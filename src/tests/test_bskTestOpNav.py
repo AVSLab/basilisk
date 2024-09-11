@@ -46,7 +46,7 @@ r"""
 Skip the following tests if all necessary modules do not exist
 Requirements:
     - Vizard downloaded and app path set properly (in basilisk/examples/OpNavScenarios/BSK_OpNav.py)
-    - Basilisk built with ZMQ, protobuffers, and OpenCV 
+    - Basilisk built with ZMQ, protobuffers, and OpenCV
 """
 
 import BSK_OpNav
@@ -76,6 +76,7 @@ except ImportError:
 
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
+@pytest.mark.ciSkip
 def test_opnavBskScenarios(show_plots):
     bskLogging.setDefaultLogLevel(bskLogging.BSK_SILENT)
 
