@@ -29,6 +29,7 @@ from Basilisk.fswAlgorithms import hillPoint  # import the module that is to be 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions as af
+from Basilisk.architecture import astroConstants
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
@@ -71,13 +72,14 @@ def hillPointTestFunction(show_plots, celMsgSet):
 
     # Initialize the test module configuration data
 
-    a = af.E_radius * 2.8
+    a = astroConstants.REQ_EARTH * 2.8 * 1000 # m
     e = 0.0
     i = 0.0
     Omega = 0.0
     omega = 0.0
-    f = 60 * af.D2R
-    (r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+    f = 60 * astroConstants.D2R
+    mu = astroConstants.MU_EARTH*1e9
+    (r, v) = af.OE2RV(mu, a, e, i, Omega, omega, f)
     r_BN_N = r
     v_BN_N = v
     planetPos = np.array([0.0, 0.0, 0.0])
@@ -149,10 +151,11 @@ def hillPointTestFunction(show_plots, celMsgSet):
     #
     moduleOutput = dataLog.omega_RN_N
     # set the filtered output truth states
+    fDot = np.sqrt(mu/(a*a*a))
     trueVector = [
-               [0.,              0.,              0.000264539877],
-               [0.,              0.,              0.000264539877],
-               [0.,              0.,              0.000264539877]
+               [0.,              0.,              fDot],
+               [0.,              0.,              fDot],
+               [0.,              0.,              fDot]
                ]
 
     # compare the module results to the truth values

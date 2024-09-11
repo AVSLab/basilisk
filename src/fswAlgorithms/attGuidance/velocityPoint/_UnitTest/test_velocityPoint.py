@@ -29,6 +29,7 @@ from Basilisk.fswAlgorithms import velocityPoint  # import the module that is to
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions as af
+from Basilisk.architecture import astroConstants
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
@@ -68,15 +69,16 @@ def velocityPointTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.mu = af.mu_E
 
-    a = af.E_radius * 2.8
+    module.mu = astroConstants.MU_EARTH*1e9  #  m^3/s^2
+
+    a = astroConstants.REQ_EARTH * 2.8 * 1000  # m
     e = 0.0
     i = 0.0
     Omega = 0.0
     omega = 0.0
-    f = 60 * af.D2R
-    (r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+    f = 60 * astroConstants.D2R
+    (r, v) = af.OE2RV(module.mu, a, e, i, Omega, omega, f)
     r_BN_N = r
     v_BN_N = v
     planetPos = np.array([0.0, 0.0, 0.0])
@@ -140,10 +142,11 @@ def velocityPointTestFunction(show_plots):
     # check omega_RN_N
     #
     # set the filtered output truth states
+    fDot = np.sqrt(module.mu / (a*a*a))
     trueVector = [
-               [0.,              0.,              0.000264539877],
-               [0.,              0.,              0.000264539877],
-               [0.,              0.,              0.000264539877]
+               [0.,              0.,              fDot],
+               [0.,              0.,              fDot],
+               [0.,              0.,              fDot]
                ]
 
     # compare the module results to the truth values
