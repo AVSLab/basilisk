@@ -20,7 +20,6 @@
 #include <iostream>
 #include "GravityGradientEffector.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
 
 GravityGradientEffector::GravityGradientEffector()
 {

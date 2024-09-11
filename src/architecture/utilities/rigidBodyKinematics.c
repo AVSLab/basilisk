@@ -20,7 +20,7 @@
 #include "rigidBodyKinematics.h"
 
 #include "linearAlgebra.h"
-#include "astroConstants.h"
+#include "math.h"
 #include "architecture/utilities/bsk_Print.h"
 #include <string.h>
 
@@ -368,7 +368,7 @@ void addPRV(double *qq1, double *qq2, double *result)
     double compSum[3];
     double q1[4];
     double q2[4];
-    
+
     v3Add(qq1, qq2, compSum);
 
     if((v3Norm(qq1) < 1.0E-7 || v3Norm(qq2) < 1.0E-7))
@@ -1239,7 +1239,7 @@ void BmatEuler323(double *q, double B[3][3])
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = -c3;
     B[0][1] = s3;
     B[0][2] = 0;
@@ -1296,9 +1296,9 @@ void BmatMRP(double *q, double B[3][3])
 }
 
 /*
- * BdotmatMRP(Q,dQ,B) returns the 3x3 matrix derivative of 
- * the BmatMRP matrix, and it is used to relate the 
- * body angular acceleration vector dw to the second order 
+ * BdotmatMRP(Q,dQ,B) returns the 3x3 matrix derivative of
+ * the BmatMRP matrix, and it is used to relate the
+ * body angular acceleration vector dw to the second order
  * derivative of the MRP vector Q.
  *
  * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
@@ -1569,7 +1569,7 @@ void C2Gibbs(double C[3][3], double *q)
 void C2MRP(double C[3][3], double *q)
 {
     double b[4];
-    
+
     v4SetZero(b);
     b[0] = 1.0;
     C2EP(C, b);
@@ -1832,9 +1832,9 @@ void dMRP(double *q, double *w, double *dq)
 
 /*
  * dMRP2omega(Q,dQ,W) returns the angular rate W
- * for a given MRP vector Q and 
+ * for a given MRP vector Q and
  * MRP derivative dQ.
- * 
+ *
  * w = 4 [B(Q)]^(-1) dQ/dt
  */
 void dMRP2Omega(double *q, double *dq, double *w)
@@ -1850,7 +1850,7 @@ void dMRP2Omega(double *q, double *dq, double *w)
  * ddMRP(Q,dQ,W,dW) returns the second order MRP derivative
  * for a given MRP vector Q, first MRP derivative dQ, body angular
  * velocity vector w and body angular acceleration vector dw.
- * 
+ *
  * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
  */
 void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
@@ -1870,9 +1870,9 @@ void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
 
 /*
  * ddMRP2omegaDot(Q,dQ,ddQ) returns the angular rate W
- * for a given MRP vector Q and 
+ * for a given MRP vector Q and
  * MRP derivative dQ.
- * 
+ *
  * dW/dt = 4 [B(Q)]^(-1) ( ddQ - [Bdot(Q,dQ)] [B(Q)]^(-1) dQ )
  */
 void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
@@ -3825,7 +3825,7 @@ void MRPswitch(double *q, double s2, double *s)
 void MRPshadow(double *qIn, double *qOut)
 {
     double q2;
-    
+
     q2 = v3Dot(qIn, qIn);
     v3Scale(-1. / q2, qIn, qOut);
     return;
@@ -3865,13 +3865,13 @@ void PRV2C(double *q, double C[3][3])
     double cp;
     double sp;
     double d1;
-    
+
     if(v3Norm(q) == 0.0)
     {
         m33SetIdentity(C);
         return;
     }
-    
+
     q0 = sqrt(v3Dot(q, q));
     q1 = q[0] / q0;
     q2 = q[1] / q0;

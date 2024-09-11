@@ -19,7 +19,6 @@
  */
 
 #include "atmosphereBase.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"

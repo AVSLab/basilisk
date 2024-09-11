@@ -26,7 +26,6 @@
 
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! @brief Module data structure */
@@ -38,9 +37,9 @@ typedef struct {
     CameraConfigMsg_C cameraConfigInMsg; //!< camera config inut message
 
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-    double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar. 
+    double faultMode; //!< What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar.
     double sigmaFault; //!< What is the sigma multiplication factor when comparing measurements
-    
+
     // added for bsk
     BSKLogger* bskLogger;                               //!< BSK Logging
 
@@ -49,12 +48,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID);
     void Update_faultDetection(FaultDetectionData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif
