@@ -74,8 +74,8 @@ def unitKeplerianOrbit(show_plots=False):
 
     # constructor without arguments
     orb = keplerianOrbit.KeplerianOrbit()
-    assert orb.a() == 100000.
-    if not orb.a() == 100000.:
+    assert orb.a() == 100000000.
+    if not orb.a() == 100000000.:
         testFailCount += 1
         testMessages.append('default constructor failure')
 
