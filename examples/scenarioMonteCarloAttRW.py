@@ -187,6 +187,9 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
+from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
+from bokeh.io import output_file, show
+from bokeh.layouts import column
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
@@ -298,7 +301,7 @@ def run(saveFigures, case, show_plots):
         retentionPolicy.setDataCallback(plotSim)
     if saveFigures:
         # plot data only if show_plots is true, otherwise just retain
-        retentionPolicy.setDataCallback(plotSimAndSave)
+        retentionPolicy.setDataCallback(plotSim)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     if case == 1:
@@ -369,7 +372,7 @@ def run(saveFigures, case, show_plots):
 
         # monteCarlo.executeCallbacks([4,6,7])
         runsList = list(range(numberICs))
-        monteCarlo.executeCallbacks(runsList)
+        monteCarloLoaded.executeCallbacks(runsList)
 
         # And possibly show the plots
         if show_plots:
@@ -384,8 +387,8 @@ def run(saveFigures, case, show_plots):
         assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
 
     # Now we clean up data from this test
-    shutil.rmtree(dirName)
-    assert not os.path.exists(dirName), "No leftover data should exist after the test"
+    # shutil.rmtree(dirName)
+    # assert not os.path.exists(dirName), "No leftover data should exist after the test"
 
     # And possibly show the plots
     if show_plots:
@@ -393,6 +396,8 @@ def run(saveFigures, case, show_plots):
         plt.show()
         # close the plots being saved off to avoid over-writing old and new figures
         plt.close("all")
+
+    return dirName
 
 # This function creates the simulation to be executed in parallel.
 def createScenarioAttitudeFeedbackRW():
@@ -709,22 +714,42 @@ def plotSim(data, retentionPolicy):
     return figureList
 
 
-def plotSimAndSave(data, retentionPolicy):
-    figureList = plotSim(data, retentionPolicy)
-    for pltName, plt in list(figureList.items()):
-        # plt.subplots_adjust(top = 0.6, bottom = 0.4)
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "_" + pltName
-            , plt, path + "/dataForExamples")
-
-    return
-
-#
 # This statement below ensures that the unit test script can be run as a
 # # stand-along python script
+# Run this script with the command:
+# python scenarioMonteCarloAttRW.py --bokeh-server
 #
 if __name__ == "__main__":
-    run(  saveFigures=False        # save figures to file
-        , case=2            # Case 1 is normal MC, case 2 is initial condition run
-        , show_plots=True         # show_plots.
-       )
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--bokeh-server":
+        from bokeh.server.server import Server
+        from bokeh.application import Application
+        from bokeh.application.handlers.function import FunctionHandler
+
+        def bk_worker(doc):
+            # Run the Monte Carlo simulation and get the directory name
+            dirName = run(saveFigures=True, case=1, show_plots=False)
+            
+            # Create the Bokeh application
+            plotter = MonteCarloPlotter(dirName)
+            plotter.load_data([
+                rwMotorTorqueMsgName + ".motorTorque",
+                guidMsgName + ".sigma_BR",
+                guidMsgName + ".omega_BR_B",
+                rwSpeedMsgName + ".wheelSpeeds",
+                voltMsgName + ".voltage"
+            ])
+            downsampled_data = plotter.get_downsampled_plots()
+            
+            # Add the plots to the document
+            for variable, plots in plotter.plots.items():
+                for plot in plots:
+                    doc.add_root(plot)
+
+        server = Server({'/': Application(FunctionHandler(bk_worker))})
+        server.start()
+        print('Opening Bokeh application on http://localhost:5006/')
+        server.io_loop.add_callback(server.show, "/")
+        server.io_loop.start()
+    else:
+        run(saveFigures=True, case=1, show_plots=True)
