@@ -24,7 +24,6 @@
 
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 const double epsilon = 1e-12;                           // module tolerance for zero
@@ -192,11 +191,11 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
     }
 
     // always make the absolute difference |thetaR-thetaC| smaller than 2*pi
-    if (thetaR - thetaC > MPI) {
-        hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC - 2*MPI;
+    if (thetaR - thetaC > M_PI) {
+        hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC - 2*M_PI;
     }
-    else if (thetaR - thetaC < - MPI) {
-        hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC + 2*MPI;
+    else if (thetaR - thetaC < - M_PI) {
+        hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC + 2*M_PI;
     }
     else {
         hingedRigidBodyRefOut.theta = hingedRigidBodyIn.theta + thetaR - thetaC;

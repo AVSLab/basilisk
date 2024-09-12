@@ -38,7 +38,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import sensorThermal                    # import the module that is to be tested
 from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.utilities import macros, astroFunctions
+from Basilisk.utilities import macros
+from Basilisk.architecture import astroConstants
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -127,7 +128,7 @@ def sensorThermalTest(show_plots, accuracy):
 
     #  set the sun message
     sunMsgPayload = messaging.SpicePlanetStateMsgPayload()
-    sunMsgPayload.PositionVector = [astroFunctions.AU*1000., 0., 0.]
+    sunMsgPayload.PositionVector = [astroConstants.AU*1000., 0., 0.]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunMsgPayload)
 
 

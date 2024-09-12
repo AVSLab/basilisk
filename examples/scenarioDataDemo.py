@@ -18,7 +18,7 @@
 Overview
 --------
 
-This is an illustration of how to use onboard data management modules to perform analysis of onboard data generated 
+This is an illustration of how to use onboard data management modules to perform analysis of onboard data generated
 by instruments, stored by computers, and downlinked by transmittters.
 
 This scenario is intended to provide both an overview and a concrete demonstration of the features and interface of the
@@ -78,10 +78,10 @@ from Basilisk.simulation import simpleTransmitter
 from Basilisk.simulation import spacecraft
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.architecture import astroConstants
 from matplotlib import pyplot as plt
 
 bskPath = __path__[0]
@@ -121,7 +121,7 @@ def run(show_plots):
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
-    oe.a = astroFunctions.E_radius*1e3 + 400e3
+    oe.a = astroConstants.REQ_EARTH*1e3 + 400e3
     oe.e = 0.0
     oe.i = 0.0*macros.D2R
 

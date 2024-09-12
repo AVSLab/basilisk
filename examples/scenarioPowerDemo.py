@@ -93,7 +93,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import astroFunctions
+from Basilisk.architecture import astroConstants
 
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -145,7 +145,7 @@ def run(show_plots):
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
-    oe.a = astroFunctions.E_radius*1e3 + 400e3
+    oe.a = astroConstants.REQ_EARTH*1e3 + 400e3
     oe.e = 0.0
     oe.i = 0.0*macros.D2R
 

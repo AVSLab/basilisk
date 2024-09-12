@@ -69,8 +69,8 @@ public:
     void set_f(double f);
 
 private:
-    double mu = MU_EARTH;
-    double semi_major_axis = 1E5;
+    double mu = MU_EARTH*pow(10,9); // convert to m^3/s^2
+    double semi_major_axis = 1E5*1000;  // convert to meters
     double eccentricity = 1E-5;
     double inclination{};
     double argument_of_periapsis{};

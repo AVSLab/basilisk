@@ -86,7 +86,6 @@ from Basilisk.simulation import spacecraft
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import planetStates
@@ -94,6 +93,7 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import (
     unitTestSupport,
 )  # general support file with common unit test functions
+from Basilisk.architecture import astroConstants
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -281,7 +281,7 @@ def run(show_plots, useCentral):
 
     # Generate the mapping points
     N = 500
-    mapping_points = generate_mapping_points(N, astroFunctions.E_radius * 1e3)
+    mapping_points = generate_mapping_points(N, astroConstants.REQ_EARTH * 1e3)
 
     # Create the ground mapping module
     groundMap = groundMapping.GroundMapping()

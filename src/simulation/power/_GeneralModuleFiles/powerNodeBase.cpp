@@ -17,7 +17,6 @@
 
  */
 
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "powerNodeBase.h"
 

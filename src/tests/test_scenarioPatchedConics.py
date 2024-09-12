@@ -67,7 +67,7 @@ def test_scenarioPatchedConics(show_plots):
 
     # setup truth data for unit test
     truePos = [
-        [19503460698.246426, 1948347074.142926, 0.0]
+        [19497456649.927856, 1947075805.9933228, 0.0]
     ]
 
 

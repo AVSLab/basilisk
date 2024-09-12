@@ -24,7 +24,6 @@
 
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 const double epsilon = 1e-12;                           // module tolerance for zero
@@ -131,7 +130,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
         BodyHeadingMsgPayload bodyHeadingIn = BodyHeadingMsg_C_read(&configData->bodyHeadingInMsg);
         v3Normalize(bodyHeadingIn.rHat_XB_B, hRefHat_B);
     }
-    
+
     /*! define the body frame orientation DCM BN */
     double BN[3][3];
     MRP2C(attNavIn.sigma_BN, BN);
@@ -174,7 +173,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     if (v3Norm(configData->h2Hat_B) > epsilon) {
         // compute second reference frame
         oasapComputeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
-        
+
         // compute the relative rotation DCM and Sun direction in relative frame
         m33MultM33t(RN, BN, RB);
         double rHat_SB_R2[3];
@@ -267,8 +266,8 @@ void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double 
     double e_phi[3];
     v3Cross(hRefHat_B, hReqHat_B, e_phi);
     // If phi = PI, e_phi can be any vector perpendicular to hRefHat_B
-    if (fabs(phi-MPI) < epsilon) {
-        phi = MPI;
+    if (fabs(phi-M_PI) < epsilon) {
+        phi = M_PI;
         v3Perpendicular(hRefHat_B, e_phi);
     }
     else if (fabs(phi) < epsilon) {
@@ -307,9 +306,9 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
     double t, t1, t2, y, y1, y2, psi;
     if (fabs(A) < epsilon) {
         if (fabs(B) < epsilon) {
-            // zero-th order equation has no solution 
-            // the solution of the minimum problem is psi = MPI
-            psi = MPI;
+            // zero-th order equation has no solution
+            // the solution of the minimum problem is psi = M_PI
+            psi = M_PI;
         }
         else {
             // first order equation
@@ -319,7 +318,7 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
     }
     else {
         if (Delta < 0) {
-            // second order equation has no solution 
+            // second order equation has no solution
             // the solution of the minimum problem is found
             if (fabs(B) < epsilon) {
                 t = 0.0;
@@ -339,9 +338,9 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
             }
             psi = 2*atan(t);
             y = (A*t*t + B*t + C) / (1 + t*t);
-            // check if the absolute fcn minimum is for psi = MPI
+            // check if the absolute fcn minimum is for psi = M_PI
             if (fabs(A) < fabs(y)) {
-                psi = MPI;
+                psi = M_PI;
             }
         }
         else {
@@ -350,7 +349,7 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
             t2 = (-B - sqrt(Delta)) / (2*A);
 
             // choose between t1 and t2 according to a2Hat
-            t = t1;            
+            t = t1;
             if (fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > epsilon) {
                 y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
                 y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
@@ -390,7 +389,7 @@ void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], doubl
         else {
             // if Sun direction and solar array drive are not perpendicular, project solar array drive a1Hat_B onto perpendicular plane (aPHat_B) and compute third rotation
             double e_theta[3], aPHat_B[3];
-            if (fabs(fabs(theta)-MPI/2) > epsilon) {
+            if (fabs(fabs(theta)-M_PI/2) > epsilon) {
                 for (int i = 0; i < 3; i++) {
                     aPHat_B[i] = (a1Hat_B[i] - sTheta * rHat_SB_R2[i]) / (1 - sTheta * sTheta);
                 }
@@ -442,4 +441,3 @@ void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rH
     m33MultM33(R2R1, R1N, R2N);
     m33MultM33(R3R2, R2N, RN);
 }
-

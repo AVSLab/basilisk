@@ -42,10 +42,11 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.architecture import astroConstants
 from Basilisk.utilities import astroFunctions
 
 
-@pytest.mark.parametrize("orbitDistance", [1000.*astroFunctions.AU, 1000.*1.52*astroFunctions.AU])
+@pytest.mark.parametrize("orbitDistance", [1000.*astroConstants.AU, 1000.*1.52*astroConstants.AU])
 @pytest.mark.parametrize("eclipseValue", [0,1])
 @pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
 def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
@@ -79,14 +80,14 @@ def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
 def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     #   Test initialization
-    testFailCount = 0                      
-    testMessages = []                      
-    unitTaskName = "unitTask"             
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
     #   Specify test-against parameter
     referencePower = astroFunctions.solarFluxEarth  # W/m^2 at Earth
-    sunDistanceMult = pow(astroFunctions.AU*1000., 2.)/pow(orbitDistance, 2.)
+    sunDistanceMult = pow(astroConstants.AU*1000., 2.)/pow(orbitDistance, 2.)
     scAttMult = np.cos(abs(np.arccos(0.5 * (np.trace(rbk.MRP2C(scAttitude))-1.))))  # extract cos(prv) to determine the attitude angle vs the sun
     referenceMultiplier = 1.0 * eclipseValue * sunDistanceMult * scAttMult  # Nominally set to 1.0; modified by other vals
 
@@ -120,14 +121,14 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     panel.sunInMsg.subscribeTo(sunMsg)
 
     unitTestSim.AddModelToTask(unitTaskName, panel)
-    
+
     dataLog = panel.nodePowerOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     #   Execute the sim for 1 second.
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
-    
+
     unitTestSim.ExecuteSimulation()
 
     powerData = dataLog.netPower
@@ -137,12 +138,12 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     if not unitTestSupport.isDoubleEqual(powerData[1], referencePower*referenceMultiplier, tol):
         testFailCount += 1
         testMessages.append('Error: simpleSolarPanel did not compute power correctly.')
-    
+
     return [testFailCount, ''.join(testMessages)]
 
 
 if __name__ == "__main__":
-    print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 1, rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0]))))
-    print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 1, [0,0,0]))
-    print(test_simpleSolarPanel(False, 1.52*1000.*astroFunctions.AU, 1, [0, 0, 0]))
-    print(test_simpleSolarPanel(False, 1000.*astroFunctions.AU, 0, [0,0,0]))
+    print(test_simpleSolarPanel(False, 1000.*astroConstants.AU, 1, rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0]))))
+    print(test_simpleSolarPanel(False, 1000.*astroConstants.AU, 1, [0,0,0]))
+    print(test_simpleSolarPanel(False, 1.52*1000.*astroConstants.AU, 1, [0, 0, 0]))
+    print(test_simpleSolarPanel(False, 1000.*astroConstants.AU, 0, [0,0,0]))

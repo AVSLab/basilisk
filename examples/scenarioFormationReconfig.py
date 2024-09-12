@@ -20,15 +20,15 @@
 r"""
 Overview
 --------
-This script sets up a formation flying scenario with two spacecraft. 
+This script sets up a formation flying scenario with two spacecraft.
 The deputy spacecraft reconfigures its relative orbit in one orbit from one initial orbital element difference to
 target orbital element difference.
 This script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioFormationReconfig.py
 
-The simulation layout is shown in the following illustration. 
-Two spacecraft are orbiting the earth at close distance. No perturbation in assumed. 
+The simulation layout is shown in the following illustration.
+Two spacecraft are orbiting the earth at close distance. No perturbation in assumed.
 Each spacecraft sends a :ref:`simpleNav` output message of type :ref:`NavAttMsgPayload` message at a certain period
 to :ref:`spacecraftReconfig`,
 where burn scheduling is executed to achieve reconfiguration.
@@ -76,6 +76,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk import __path__
 from Basilisk.architecture import messaging
+from Basilisk.architecture import astroConstants
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.fswAlgorithms import mrpFeedback
@@ -203,7 +204,7 @@ def run(show_plots, useRefAttitude):
     spacecraftReconfigModule.thrustConfigInMsg.subscribeTo(fswThrConfMsg)
     spacecraftReconfigModule.vehicleConfigInMsg.subscribeTo(vcMsg)
     thrusterEffector2.cmdsInMsg.subscribeTo(spacecraftReconfigModule.onTimeOutMsg)
-    spacecraftReconfigModule.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
+    spacecraftReconfigModule.mu = astroConstants.MU_EARTH*1e9  # [m^3/s^2]
     spacecraftReconfigModule.attControlTime = 400  # [s]
     spacecraftReconfigModule.targetClassicOED = [0.0000, 0.0001, 0.0002, -0.0001, -0.0002, -0.0003]
     scSim.AddModelToTask(fswTaskName, spacecraftReconfigModule, 10)

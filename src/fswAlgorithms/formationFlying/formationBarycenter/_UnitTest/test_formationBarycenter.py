@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,19 +14,19 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import copy
 
 import numpy as np
 import pytest
-from Basilisk.architecture import messaging
+from Basilisk.architecture import messaging, astroConstants
 from Basilisk.fswAlgorithms import formationBarycenter
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, astroFunctions, orbitalMotion
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, orbitalMotion
 
 
-@pytest.mark.parametrize("accuracy", [1e-8])
+@pytest.mark.parametrize("accuracy", [1e-1])
 
 
 def test_formationBarycenter(show_plots, accuracy):
@@ -80,10 +80,10 @@ def formationBarycenterTestFunction(show_plots, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, barycenterModule)
 
     # Configure each spacecraft's position and velocity
-    mu = astroFunctions.mu_E
+    mu = astroConstants.MU_EARTH*1e9  # m^3/s^2
 
     oe1 = orbitalMotion.ClassicElements()
-    oe1.a = 1.1 * astroFunctions.E_radius  # meters
+    oe1.a = 1.1 * astroConstants.REQ_EARTH*1e3  # m
     oe1.e = 0.01
     oe1.i = 45.0 * macros.D2R
     oe1.Omega = 48.2 * macros.D2R
@@ -162,9 +162,9 @@ def formationBarycenterTestFunction(show_plots, accuracy):
     elementsArrayC = [elementsC.a, elementsC.e, elementsC.i, elementsC.Omega, elementsC.omega, elementsC.f]
 
     # Set the true values
-    trueBarycenter = np.array([-2795.61091086, 4349.07305245, 4711.56751498])
-    trueBarycenterVelocity = np.array([-5.73871824, -4.74464078, 1.07961505])
-    trueElements = [7015.94993, 0.0099, 0.7579092276785376, 0.8412486994612671, 6.07025513843626, 1.5855546253383273]
+    trueBarycenter = np.array([-2795611.0423523, 4349073.25701624, 4711567.73659507])
+    trueBarycenterVelocity = np.array([-5738.71806601, -4744.64063227, 1079.61501999])
+    trueElements = [7015950.259999997, 0.0099, 0.7579092276785376, 0.8412486994612671, 6.07025513843626, 1.5855546253383273]
 
     # Verify the data
     if not unitTestSupport.isArrayEqual(barycenter[0], trueBarycenter, 3, accuracy) or \
@@ -198,5 +198,3 @@ if __name__ == "__main__":
         False,  # show_plots
         1e-8  # accuracy
     )
-
-

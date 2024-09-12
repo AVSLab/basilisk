@@ -34,7 +34,7 @@ PinholeCamera::PinholeCamera()
     this->eC_C << 0, 0, 1;
 
     /* Set no lighting conditions by default  */
-    this->maskSun = -MPI_2;
+    this->maskSun = -M_PI_2;
 }
 
 /*! Empty destructor method.
