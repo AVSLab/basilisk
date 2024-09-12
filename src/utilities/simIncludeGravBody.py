@@ -28,6 +28,7 @@ from dataclasses import dataclass
 
 from Basilisk import __path__
 from Basilisk.architecture import messaging
+from Basilisk.architecture import astroConstants
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spiceInterface
 from Basilisk.simulation.gravityEffector import (
@@ -72,8 +73,8 @@ BODY_DATA = {
         planetName="sun_planet_data",
         displayName="sun",
         modelDictionaryKey="",
-        mu=1.32712440018e20,
-        radEquator=695508000.0,
+        mu=astroConstants.MU_SUN*1e9,
+        radEquator=astroConstants.REQ_SUN*1e3,
         spicePlanetFrame="IAU_sun",
     ),
     "mercury": BodyData(
@@ -81,8 +82,8 @@ BODY_DATA = {
         planetName="mercury_planet_data",
         displayName="mercury",
         modelDictionaryKey="",
-        mu=0.022032e15,
-        radEquator=2439700.0,
+        mu=astroConstants.MU_MERCURY*1e9,
+        radEquator=astroConstants.REQ_MERCURY*1e3,
         spicePlanetFrame="IAU_mercury",
     ),
     "venus": BodyData(
@@ -90,8 +91,8 @@ BODY_DATA = {
         planetName="venus_planet_data",
         displayName="venus",
         modelDictionaryKey="",
-        mu=3.24858599e14,
-        radEquator=6051800.0,
+        mu=astroConstants.MU_VENUS*1e9,
+        radEquator=astroConstants.REQ_VENUS*1e3,
         spicePlanetFrame="IAU_venus",
     ),
     "earth": BodyData(
@@ -99,8 +100,8 @@ BODY_DATA = {
         planetName="earth_planet_data",
         displayName="earth",
         modelDictionaryKey="",
-        mu=0.3986004415e15,
-        radEquator=6378136.6,
+        mu=astroConstants.MU_EARTH*1e9,
+        radEquator=astroConstants.REQ_EARTH*1e3,
         spicePlanetFrame="IAU_earth",
     ),
     "moon": BodyData(
@@ -108,8 +109,8 @@ BODY_DATA = {
         planetName="moon_planet_data",
         displayName="moon",
         modelDictionaryKey="",
-        mu=4.902799e12,
-        radEquator=1738100.0,
+        mu=astroConstants.MU_MOON*1e9,
+        radEquator=astroConstants.REQ_MOON,
         spicePlanetFrame="IAU_moon",
     ),
     "mars": BodyData(
@@ -117,8 +118,8 @@ BODY_DATA = {
         planetName="mars_planet_data",
         displayName="mars",
         modelDictionaryKey="",
-        mu=4.28283100e13,
-        radEquator=3396190.0,
+        mu=astroConstants.MU_MARS*1e9,
+        radEquator=astroConstants.REQ_MARS*1e3,
         spicePlanetFrame="IAU_mars",
     ),
     "mars barycenter": BodyData(
@@ -126,8 +127,8 @@ BODY_DATA = {
         planetName="mars barycenter_planet_data",
         displayName="mars barycenter",
         modelDictionaryKey="",
-        mu=4.28283100e13,
-        radEquator=3396190.0,
+        mu=astroConstants.MU_MARS*1e9,
+        radEquator=astroConstants.REQ_MARS*1e3,
         spicePlanetFrame="IAU_mars",
     ),
     "jupiter barycenter": BodyData(
@@ -135,8 +136,8 @@ BODY_DATA = {
         planetName="jupiter barycenter_planet_data",
         displayName="jupiter",
         modelDictionaryKey="",
-        mu=1.266865349093058e17,
-        radEquator=71492000.0,
+        mu=astroConstants.MU_JUPITER*1e9,
+        radEquator=astroConstants.REQ_JUPITER*1e3,
         spicePlanetFrame="IAU_jupiter",
     ),
     "saturn": BodyData(
@@ -144,8 +145,8 @@ BODY_DATA = {
         planetName="saturn barycenter_planet_data",
         displayName="saturn",
         modelDictionaryKey="",
-        mu=3.79395000e16,
-        radEquator=60268000.0,
+        mu=astroConstants.MU_SATURN*1e9,
+        radEquator=astroConstants.REQ_SATURN*1e3,
         spicePlanetFrame="IAU_saturn",
     ),
     "uranus": BodyData(
@@ -153,8 +154,8 @@ BODY_DATA = {
         planetName="uranus barycenter_planet_data",
         displayName="uranus",
         modelDictionaryKey="",
-        mu=5.79396566e15,
-        radEquator=25559000.0,
+        mu=astroConstants.MU_URANUS*1e9,
+        radEquator=astroConstants.REQ_URANUS*1e3,
         spicePlanetFrame="IAU_uranus",
     ),
     "neptune": BodyData(
@@ -162,8 +163,8 @@ BODY_DATA = {
         planetName="neptune barycenter_planet_data",
         displayName="neptune",
         modelDictionaryKey="",
-        mu=6.83509920e15,
-        radEquator=24764000.0,
+        mu=astroConstants.MU_NEPTUNE*1e9,
+        radEquator=astroConstants.REQ_NEPTUNE*1e3,
         spicePlanetFrame="IAU_neptune",
     ),
 }
@@ -441,7 +442,7 @@ class gravBodyFactory:
             raise ValueError(
                 "'time' argument must be provided and a valid SPICE time string"
             )
-        
+
         if spiceKernalFileNames is not None:
             spiceKernelFileNames = spiceKernalFileNames
             deprecationWarn(
