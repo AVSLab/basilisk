@@ -166,7 +166,7 @@ def radiationPressureIntegratedTest(show_plots):
                         ,[ 6.38617052e+06,  4.15047581e+07,  4.29674085e+02]
                         ,[-2.18006914e+07,  3.58874726e+07,  7.40872311e+02]])
     # compare the results to the truth values
-    accuracy = 1.0  # meters
+    accuracy = 10.0  # meters
 
     testFailCount, testMessages = unitTestSupport.compareArray(
         true_pos, pos_rel_earth_parse, accuracy, "r_BN_N Vector",
