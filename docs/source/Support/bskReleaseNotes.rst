@@ -53,6 +53,9 @@ Version |release|
 - Added support for macOS to the CI test builds, including opNav
 - Added CI support to build and test Basilisk documentation on the GitHub macOS platform
 - Added new scenario :ref:`scenarioOrbitManeuverTH` to do Hohmann transfer using thrusters
+- Made sure that :ref:`astroFunctions` and :ref:`simIncludeGravBody` now all pull from the same set of
+  astronautical data in :ref:`astroConstants`.  These tools now all use a consisten set of planet data
+  referenced from NASA sources.
 
 
 Version 2.4.0 (August 23, 2024)
