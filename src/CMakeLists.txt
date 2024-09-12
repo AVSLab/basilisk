@@ -648,9 +648,11 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
 if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
-       "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n")
+       "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n"
+       "from Basilisk.architecture import messaging\n")
 else()
-  file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
+  file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
+      "from Basilisk.architecture import messaging # ensure recorders() work without first importing messaging\n")
 endif()
 
 # TODO: Iterate through all dist directories and add __init__.py's where they don't exist

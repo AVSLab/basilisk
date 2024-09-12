@@ -14,7 +14,7 @@ Architecture
 
 .. sidebar:: Basilisk Info
 
-    .. image:: _images/static/Basilisk-Logo.svg
+    .. image:: _images/static/Basilisk-Logo.png
        :align: center
        :width: 300
 

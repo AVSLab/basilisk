@@ -56,6 +56,8 @@ Version |release|
 - Made sure that :ref:`astroFunctions` and :ref:`simIncludeGravBody` now all pull from the same set of
   astronautical data in :ref:`astroConstants`.  These tools now all use a consisten set of planet data
   referenced from NASA sources.
+- If ``messaging`` was not imported then the msg ``recorder()`` modules couldn't be setup.  Now
+  ``messaging`` is imported as part of the Basilisk package so the ``recorder()`` modules always work.
 
 
 Version 2.4.0 (August 23, 2024)
