@@ -218,7 +218,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(.5)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -464,6 +464,7 @@ def run(show_plots):
                                          )
         viz.settings.trueTrajectoryLinesOn = 1
         viz.settings.orbitLinesOn = 2
+        viz.settings.messageBufferSize = -1 # force the full file to be read in at once
 
     #
     #   initialize Simulation
