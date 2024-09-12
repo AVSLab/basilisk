@@ -82,6 +82,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
+from Basilisk.architecture import astroConstants
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -172,9 +173,9 @@ def run(show_plots, useClassicElem, numOrbits):
         meanOEFeedbackObj.oeType = 0  # 0: classic
     else:
         meanOEFeedbackObj.oeType = 1  # 1: equinoctial
-    meanOEFeedbackObj.mu = orbitalMotion.MU_EARTH*1e9  # [m^3/s^2]
-    meanOEFeedbackObj.req = orbitalMotion.REQ_EARTH*1e3  # [m]
-    meanOEFeedbackObj.J2 = orbitalMotion.J2_EARTH      # []
+    meanOEFeedbackObj.mu = astroConstants.MU_EARTH*1e9  # [m^3/s^2]
+    meanOEFeedbackObj.req = astroConstants.REQ_EARTH*1e3  # [m]
+    meanOEFeedbackObj.J2 = astroConstants.J2_EARTH      # []
     scSim.AddModelToTask(fswTaskName, meanOEFeedbackObj, 1)
 
     # ----- Setup spacecraft initial states ----- #
