@@ -59,6 +59,9 @@ Dependencies
        # Tkinter
        $ apt-get install python3-tk
 
+       # if you want to build with opNav modules, install the following library
+       $ apt-get install libgtk2.0
+
        # Python PIP
        $ apt-get install python3-pip
 
