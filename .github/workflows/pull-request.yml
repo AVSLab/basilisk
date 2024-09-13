@@ -253,7 +253,7 @@ jobs:
         shell: pwsh
         run: |
           venv\Scripts\activate
-          python conanfile.py
+          python conanfile.py --opNav True
       - name: "Run Python Tests"
         shell: pwsh
         run: |
