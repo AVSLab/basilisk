@@ -53,7 +53,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          cd src && pytest -n auto -m "not ciSkip"
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -91,7 +91,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          cd src && pytest -n auto -m "not ciSkip"
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -128,7 +128,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          cd src && pytest -n auto -m "not ciSkip"
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -168,7 +168,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          cd src && pytest -n auto -m "not ciSkip"
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -206,7 +206,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}-pip.xml
+          cd src && pytest -n auto -m "not ciSkip"
 
 
   build-windows:
@@ -306,7 +306,7 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          pytest -n auto -m "not ciSkip"
         if: ${{ always() }}
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -356,6 +356,6 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          pytest -n auto -m "not ciSkip"
 
         if: ${{ always() }}
