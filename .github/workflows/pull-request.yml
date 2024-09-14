@@ -64,10 +64,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -102,10 +98,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -141,10 +133,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -175,10 +163,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     env:
       MPLBACKEND: agg
     steps:
@@ -235,10 +219,6 @@ jobs:
     strategy:
       matrix:
         python-version: [ "3.11" ]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -286,10 +266,6 @@ jobs:
     strategy:
       matrix:
         python-version: [ "3.11" ]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
