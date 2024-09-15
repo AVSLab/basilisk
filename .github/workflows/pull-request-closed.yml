@@ -6,6 +6,7 @@ on:
             - closed
         branches:
             - develop
+    workflow_dispatch:
 
 jobs:
     if_merged:
