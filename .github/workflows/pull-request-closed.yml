@@ -30,6 +30,9 @@ jobs:
 
     build_documentation:
       name: macOS Docs Deployment
+      needs: if_merged
+      # run even if the version bump failed.  If the merge is from an external fork the bump fails.
+      if: ${{ always() }}
       runs-on: macos-14
       strategy:
         matrix:
