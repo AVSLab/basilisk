@@ -67,6 +67,7 @@ Attitude Guidance
    Prescribing the spacecraft orientation <scenarioAttitudePrescribed>
    Layered spiral attitude guidance <scenarioInertialSpiral>
    Constrained Attitude Maneuver Guidance <scenarioAttitudeConstrainedManeuver>
+   Performing Sweeping Maneuvers <scenarioSweepingSpacecraft>
 
 
 
