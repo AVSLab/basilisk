@@ -58,6 +58,10 @@ Version |release|
   referenced from NASA sources.
 - If ``messaging`` was not imported then the msg ``recorder()`` modules couldn't be setup.  Now
   ``messaging`` is imported as part of the Basilisk package so the ``recorder()`` modules always work.
+- Added the ability for GitHub to rebuild the BSK documentation each time a branch is merged back into develop.
+  This way the online documentation for develop is up to date for each contribution, not just for the hand-built
+  documentation we did with major tagged releases.  The new Basilisk online documentation list is now
+  `<https://avslab.github.io/basilisk>`__.
 
 
 Version 2.4.0 (August 23, 2024)
