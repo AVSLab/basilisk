@@ -22,16 +22,12 @@ jobs:
         with:
           extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
 
-  build-linux-3-8:
-    name: Linux 20.04 python 3.8
-    runs-on: ubuntu-20.04
+  build-linux:
+    name: Linux 20.04
     strategy:
       matrix:
-        python-version: ["3.8"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
+        python-version: [3.8, 3.9]
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,127 +35,36 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Cache conan packages
-        id: cache-conan
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-conan-packages-ubuntu-20-04
-        with:
-          # conan cache files are stored in `~/.conan` on Linux/macOS
-          path: ~/.conan
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
-      - name: "Install python packages"
-        run: sudo apt-get install python3-setuptools python3-tk python3.9-venv
-      - name: "Create virtual Environment"
-        run: python3 -m venv .venv
-      - name: "Install wheel and conan package"
-        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0' pytest datashader holoviews pytest-xdist
-      - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py
-      - name: "Run Python Tests"
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install build-essential swig cmake -y
+          sudo apt-get install python${{ matrix.python-version }}-venv -y
+      - name: Create virtual environment and install packages
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install wheel 'conan<2.0'
+      - name: Build basilisk
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-      - name: "Upload pytest test results"
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-results-${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
+          python3 conanfile.py
+      - name: Run Python Tests
         if: ${{ always() }}
-      - name: "Run C/C++ Tests"
+        run: |
+          source .venv/bin/activate
+          cd src && pytest -n auto -m "not ciSkip"
+      - name: Run C/C++ Tests
+        if: ${{ always() }}
         working-directory: ./dist3
         run: ctest
-        if: ${{ always() }}
 
-  build-linux-3-9:
-    name: Linux 20.04 python 3.9
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        python-version: ["3.9"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Cache conan packages
-        id: cache-conan
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-conan-packages-ubuntu-20-04
-        with:
-          # conan cache files are stored in `~/.conan` on Linux/macOS
-          path: ~/.conan
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
-      - name: "Install python packages"
-        run: sudo apt-get install python3-setuptools python3-tk python3.9-venv
-      - name: "Create virtual Environment"
-        run: python3 -m venv .venv
-      - name: "Install wheel and conan package"
-        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0' pytest pytest-xdist
-      - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py
-      - name: "Run Python Tests"
-        run: |
-          source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-      - name: "Upload pytest test results"
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-results-${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
-      - name: "Run C/C++ Tests"
-        working-directory: ./dist3
-        run: ctest
-        if: ${{ always() }}
 
   build-linux-3-10:
-    name: Linux 22.04 python 3.10
+    name: Linux 22.04
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.10"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -167,27 +72,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Cache conan packages
-        id: cache-conan
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-conan-packages-ubuntu-22-04
-        with:
-          # conan cache files are stored in `~/.conan` on Linux/macOS
-          path: ~/.conan
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
       - name: "Install swig and cmake"
         run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
       - name: "Install python packages"
@@ -195,20 +79,14 @@ jobs:
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install wheel and conan package"
-        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0.0' pytest pytest-xdist
+        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0.0'
       - name: "Build basilisk"
         run: source .venv/bin/activate && python3 conanfile.py
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-      - name: "Upload pytest test results"
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-results-${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
+          cd src && pytest -n auto -m "not ciSkip"
+
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
         run: ctest
@@ -216,15 +94,11 @@ jobs:
 
 
   build-linux-3-11:
-    name: Linux 22.04 python 3.11
+    name: Linux 22.04 opNav
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.11"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -232,63 +106,34 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Cache conan packages
-        id: cache-conan
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-conan-packages-ubuntu-22-04
-        with:
-          # conan cache files are stored in `~/.conan` on Linux/macOS
-          path: ~/.conan
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+
       - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
+        run: sudo apt-get update && sudo apt-get install build-essential swig libgtk2.0 cmake -y
       - name: "Install python packages"
         run: sudo apt-get install python3-setuptools python3-tk python3.11-venv
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install wheel and conan package"
-        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0.0' pytest pytest-xdist
+        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0.0'
       - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True
+
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
-      - name: "Upload pytest test results"
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-results-${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
+          cd src && pytest -n auto -m "not ciSkip"
+
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
         run: ctest
         if: ${{ always() }}
 
   build-linux-3-11-pip:
-    name: Linux 22.04 python 3.11 pip
+    name: Linux 22.04 pip
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.11"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -296,27 +141,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Cache conan packages
-        id: cache-conan
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-conan-packages-ubuntu-22-04
-        with:
-          # conan cache files are stored in `~/.conan` on Linux/macOS
-          path: ~/.conan
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: Cache pip modules
-        id: cache-pip
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-pip-modules
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+
       - name: "Install swig and cmake"
         run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
       - name: "Install python packages"
@@ -330,25 +155,15 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}-pip.xml
-      - name: "Upload pytest test results"
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-results-pip-x${{ matrix.python-version }}
-          path: junit/test-results-pip-${{ matrix.python-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
+          cd src && pytest -n auto -m "not ciSkip"
+
 
   build-windows:
-    name: Build Windows
+    name: Windows opNav
     runs-on: windows-2019
     strategy:
       matrix:
         python-version: ["3.11"]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     env:
       MPLBACKEND: agg
     steps:
@@ -358,8 +173,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: '**/requirements.txt'
       - name: Choco help
         uses: crazy-max/ghaction-chocolatey@v3
         with:
@@ -374,7 +187,7 @@ jobs:
         shell: pwsh
         run: |
             venv\Scripts\activate
-            pip install wheel 'conan<2.0' six pytest-xdist
+            pip install wheel 'conan<2.0'
       - name: "Add basilisk and cmake path to env path"
         shell: pwsh
         run: |
@@ -385,7 +198,7 @@ jobs:
         shell: pwsh
         run: |
           venv\Scripts\activate
-          python conanfile.py
+          python conanfile.py --opNav True
       - name: "Run Python Tests"
         shell: pwsh
         run: |
@@ -395,6 +208,7 @@ jobs:
           pytest -n auto -m "not ciSkip"
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
       - name: "C/C++ Tests"
+        if: ${{ always() }}
         shell: pwsh
         run: |
           cd dist3
@@ -402,15 +216,11 @@ jobs:
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
 
   build-macOS:
-    name: Build macOS
+    name: macOS opNav Docs
     runs-on: macos-14
     strategy:
       matrix:
         python-version: [ "3.11" ]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -438,7 +248,7 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          pytest -n auto -m "not ciSkip"
         if: ${{ always() }}
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -453,15 +263,11 @@ jobs:
         if: ${{ always() }}
 
   build-macOS-no-vizInterface:
-    name: Build macOS no vizInterface
+    name: macOS no vizInterface
     runs-on: macos-14
     strategy:
       matrix:
         python-version: [ "3.11" ]
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -488,6 +294,6 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not ciSkip" --junitxml=../junit/test-results-${{ matrix.python-version }}.xml
+          pytest -n auto -m "not ciSkip"
 
         if: ${{ always() }}
