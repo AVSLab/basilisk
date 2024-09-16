@@ -2,18 +2,20 @@ import os
 import pandas as pd
 import numpy as np
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool, ColorBar, BasicTicker, LinearColorMapper, Range1d, Tabs, TabPanel
+from bokeh.models import ColumnDataSource, HoverTool, Select, Column
 from bokeh.palettes import Viridis256
-from bokeh.layouts import column
+from bokeh.layouts import column, row
 from bokeh.io import curdoc
+import time
 
 class MonteCarloPlotter:
     def __init__(self, dataDir):
         self.dataDir = dataDir
         self.data = {}
-        self.plots = {}
+        self.current_plot = None
         self.save_as_static = False
         self.staticDir = "/plots/"
+        self.initial_interval = '1s'
 
     def load_data(self, variables):
         for variable in variables:
@@ -23,66 +25,69 @@ class MonteCarloPlotter:
                 if not pd.api.types.is_datetime64_any_dtype(df.index):
                     df.index = pd.to_datetime(df.index, unit='ns')
                 self.data[variable] = df
+                self.smallest_interval = pd.Timedelta(df.index.to_series().diff().min())
+                print(f"Smallest interval in data: {self.smallest_interval}")
 
-    def create_plot(self, df, title, y_label):
-        plots = []
-        component_map = {0: 'x', 1: 'y', 2: 'z'}
+    def create_plot(self, variable, component):
+        df = self.data[variable]
         num_runs = len(set(col[0] for col in df.columns))
-        color_mapper = LinearColorMapper(palette=Viridis256, low=0, high=num_runs-1)
         time_seconds = (df.index - df.index[0]).total_seconds()
 
-        for component in range(3):
-            component_label = component_map[component]
-            p = figure(title=f"{title} - {component_label.upper()} Component", 
-                       x_axis_label='Time (s)', y_axis_label=f"{y_label} ({component_label})",
-                       width=800, height=400, tools='pan,wheel_zoom,box_zoom,reset')
+        print(f"Creating plot for {variable} - {component} component")
+        print(f"Number of runs: {num_runs}")
+        print(f"Time range: {time_seconds.min()} to {time_seconds.max()} seconds")
 
-            # Create independent ranges for each plot
-            p.x_range = Range1d(time_seconds.min(), time_seconds.max())
-            y_values = df.iloc[:, component::3].values
-            y_min, y_max = np.nanmin(y_values), np.nanmax(y_values)
-            y_range = y_max - y_min
-            p.y_range = Range1d(y_min - 0.1*y_range, y_max + 0.1*y_range)
+        p = figure(title=f"{variable} - {component.upper()} Component", 
+                   x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} ({component})",
+                   width=800, height=400, tools='pan,wheel_zoom,box_zoom,reset')
 
-            for run in range(num_runs):
-                col_name = (run, component)
-                if col_name in df.columns:
-                    source = ColumnDataSource(data=dict(x=time_seconds, y=df[col_name], run_num=[run]*len(time_seconds)))
-                    p.line('x', 'y', source=source, 
-                           color=color_mapper.palette[int(run * (len(color_mapper.palette) - 1) / (num_runs - 1))], 
-                           line_alpha=0.9, line_width=3)
+        component_index = ['x', 'y', 'z'].index(component)
+        y_values = df.iloc[:, component_index::3].values
+        y_min, y_max = np.nanmin(y_values), np.nanmax(y_values)
+        y_range = y_max - y_min
+        p.y_range.start = y_min - 0.1*y_range
+        p.y_range.end = y_max + 0.1*y_range
 
-            hover = HoverTool(tooltips=[('Time', '$x{0.000} s'),
-                                        (f'{y_label} ({component_label})', '$y{0.0000}'),
-                                        ('Run', '@run_num')],
-                              mode='mouse')
-            p.add_tools(hover)
+        print(f"Y range: {y_min} to {y_max}")
 
-            color_bar = ColorBar(color_mapper=color_mapper, ticker=BasicTicker(desired_num_ticks=10),
-                                 label_standoff=12, border_line_color=None, location=(0, 0))
-            p.add_layout(color_bar, 'right')
+        xs = [time_seconds for _ in range(num_runs)]
+        ys = [df.iloc[:, component_index + i*3].values for i in range(num_runs)]
+        colors = [Viridis256[int(i * (len(Viridis256) - 1) / (num_runs - 1))] for i in range(num_runs)]
 
-            plots.append(p)
+        source = ColumnDataSource(data=dict(xs=xs, ys=ys, color=colors))
+        
+        p.multi_line(xs='xs', ys='ys', line_color='color', line_alpha=0.1, line_width=1, source=source,
+                     level='underlay', nonselection_alpha=0.1, selection_alpha=0.5)
 
-        return plots
+        hover = HoverTool(tooltips=[("Time", "$x{0.00} s"), (variable.split('.')[-1], "$y{0.0000}"), ("Run", "$index")],
+                          mode='mouse')
+        p.add_tools(hover)
+
+        return p
+
+    def update_plot(self, attr, old, new):
+        variable, component = self.variable_select.value, self.component_select.value
+        new_plot = self.create_plot(variable, component)
+        self.plot_column.children[1] = new_plot
 
     def show_plots(self):
-        if self.plots:
-            tabs = []
-            for variable, plots in self.plots.items():
-                tab_panels = [TabPanel(child=plot, title=f"{component.upper()} Component") 
-                              for plot, component in zip(plots, ['x', 'y', 'z'])]
-                tabs.append(TabPanel(child=Tabs(tabs=tab_panels), title=variable))
-            
-            tabs_layout = Tabs(tabs=tabs)
-            curdoc().add_root(tabs_layout)
+        variables = list(self.data.keys())
+        components = ['x', 'y', 'z']
+
+        self.variable_select = Select(title="Variable", options=variables, value=variables[0])
+        self.component_select = Select(title="Component", options=components, value=components[0])
+
+        initial_plot = self.create_plot(self.variable_select.value, self.component_select.value)
+
+        self.variable_select.on_change('value', self.update_plot)
+        self.component_select.on_change('value', self.update_plot)
+
+        self.plot_column = column(row(self.variable_select, self.component_select), initial_plot)
+
+        curdoc().add_root(self.plot_column)
+        print("Plot should be visible now. If not, check the browser console for any errors.")
 
     def get_downsampled_plots(self):
-        downsampled_data = {key: df.groupby(df.index.floor('1s')).mean()
-                            for key, df in self.data.items()
-                            if not df.empty}
-        
-        for variable, df in downsampled_data.items():
-            self.plots[variable] = self.create_plot(df, variable, variable.split('.')[-1])
-        
-        return downsampled_data
+        # This method is no longer needed, but we'll keep it for compatibility
+        return self.data
+

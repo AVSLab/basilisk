@@ -101,6 +101,9 @@ bokeh server will keep running until stopped.
 """
 
 import os
+import logging
+import time
+logging.basicConfig(level=logging.INFO)
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.layouts import column
 from bokeh.io import curdoc
@@ -113,10 +116,14 @@ def run():
         print("Make sure you've run the scenario_AttFeedbackMC.py script to generate the data files.")
         return
 
+    start_time = time.time()
     plotter = MonteCarloPlotter(data_dir)
     plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
-    plotter.get_downsampled_plots()
     plotter.show_plots()
+    end_time = time.time()
+    print(f"Total time taken: {end_time - start_time:.2f} seconds")
+    print("Plot should be displayed now. If the page is blank, wait for a few more seconds and try refreshing.")
+    print("If the issue persists, check the browser console for any JavaScript errors.")
 
-# Run the Monte Carlo Analysis script that plots the data. (Uncomment this if you want to silence this in tests)
+# Run the Monte Carlo Analysis script that plots the data.
 run()
