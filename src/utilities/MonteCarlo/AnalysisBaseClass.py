@@ -2,11 +2,12 @@ import os
 import pandas as pd
 import numpy as np
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper
+from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper, TextInput
 from bokeh.palettes import Viridis256
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 import time
+import re
 
 class MonteCarloPlotter:
     def __init__(self, dataDir):
@@ -15,6 +16,7 @@ class MonteCarloPlotter:
         self.current_plot = None
         self.save_as_static = False
         self.staticDir = "/plots/"
+        self.initial_interval = '1s'
 
     def load_data(self, variables):
         for variable in variables:
@@ -27,7 +29,7 @@ class MonteCarloPlotter:
                 self.smallest_interval = pd.Timedelta(df.index.to_series().diff().min())
                 print(f"Smallest interval in data: {self.smallest_interval}")
 
-    def create_plot(self, variable, component):
+    def create_plot(self, variable, component, run_numbers=None):
         df = self.data[variable]
         num_runs = len(set(col[0] for col in df.columns))
         time_seconds = (df.index - df.index[0]).total_seconds()
@@ -54,15 +56,35 @@ class MonteCarloPlotter:
         ys = [df.iloc[:, component_index + i*3].values for i in range(num_runs)]
         
         # Create color mapper
-        color_mapper = LinearColorMapper(palette=Viridis256, low=0, high=num_runs-1)
+        color_mapper = LinearColorMapper(palette=Viridis256, low=1, high=num_runs)
         
-        source = ColumnDataSource(data=dict(xs=xs, ys=ys, color=list(range(num_runs))))
-        
-        p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
-                     line_alpha=0.1, line_width=1, source=source,
-                     level='underlay', nonselection_alpha=0.1, selection_alpha=0.5)
+        if run_numbers is not None:
+            # Plot background lines (all runs) with low alpha
+            background_source = ColumnDataSource(data=dict(
+                xs=xs, ys=ys, color=list(range(1, num_runs+1))
+            ))
+            p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
+                         line_alpha=0.05, line_width=1, source=background_source,
+                         level='underlay')
+            
+            # Plot selected runs with full opacity
+            xs_selected = [xs[i] for i in run_numbers]
+            ys_selected = [ys[i] for i in run_numbers]
+            colors_selected = [i+1 for i in run_numbers]
+            source = ColumnDataSource(data=dict(xs=xs_selected, ys=ys_selected, color=colors_selected))
+            p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
+                         line_alpha=1.0, line_width=2, source=source,
+                         level='overlay')
+        else:
+            # If no specific runs are selected, plot all runs with medium opacity
+            source = ColumnDataSource(data=dict(
+                xs=xs, ys=ys, color=list(range(1, num_runs+1))
+            ))
+            p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
+                         line_alpha=0.15, line_width=2, source=source,
+                         level='underlay')
 
-        hover = HoverTool(tooltips=[("Time", "$x{0.00} s"), (variable.split('.')[-1], "$y{0.0000}"), ("Run", "$index")],
+        hover = HoverTool(tooltips=[("Time", "$x{0.00} s"), (variable.split('.')[-1], "$y{0.0000}"), ("Run", "@color")],
                           mode='mouse')
         p.add_tools(hover)
 
@@ -80,8 +102,21 @@ class MonteCarloPlotter:
     def update_plot(self, attr, old, new):
         variable = self.variable_select.value
         component = self.component_select.value
-        new_plot = self.create_plot(variable, component)
+        run_numbers = self.parse_run_numbers(self.run_input.value)
+        new_plot = self.create_plot(variable, component, run_numbers)
         self.plot_column.children[1] = new_plot
+
+    def parse_run_numbers(self, input_string):
+        if not input_string.strip():
+            return None
+        # Split the input string by commas, spaces, or semicolons
+        run_strings = re.split(r'[,;\s]+', input_string)
+        try:
+            # Convert to integers and subtract 1 (for 0-based indexing)
+            return [int(run) - 1 for run in run_strings if run]
+        except ValueError:
+            print("Invalid input. Please enter run numbers separated by commas, spaces, or semicolons.")
+            return None
 
     def show_plots(self):
         variables = list(self.data.keys())
@@ -89,13 +124,15 @@ class MonteCarloPlotter:
 
         self.variable_select = Select(title="Variable", options=variables, value=variables[0])
         self.component_select = Select(title="Component", options=components, value=components[0])
+        self.run_input = TextInput(title="Enter run numbers (comma, space, or semicolon separated):")
 
         initial_plot = self.create_plot(self.variable_select.value, self.component_select.value)
 
         self.variable_select.on_change('value', self.update_plot)
         self.component_select.on_change('value', self.update_plot)
+        self.run_input.on_change('value', self.update_plot)
 
-        self.plot_column = column(row(self.variable_select, self.component_select), initial_plot)
+        self.plot_column = column(row(self.variable_select, self.component_select), self.run_input, initial_plot)
 
         curdoc().add_root(self.plot_column)
         print("Plot should be visible now. If not, check the browser console for any errors.")
