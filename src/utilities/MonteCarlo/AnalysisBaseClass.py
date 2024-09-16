@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool, Select, Column
+from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper
 from bokeh.palettes import Viridis256
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
@@ -15,7 +15,6 @@ class MonteCarloPlotter:
         self.current_plot = None
         self.save_as_static = False
         self.staticDir = "/plots/"
-        self.initial_interval = '1s'
 
     def load_data(self, variables):
         for variable in variables:
@@ -36,6 +35,7 @@ class MonteCarloPlotter:
         print(f"Creating plot for {variable} - {component} component")
         print(f"Number of runs: {num_runs}")
         print(f"Time range: {time_seconds.min()} to {time_seconds.max()} seconds")
+        print(f"Number of data points per run: {len(df)}")
 
         p = figure(title=f"{variable} - {component.upper()} Component", 
                    x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} ({component})",
@@ -52,21 +52,34 @@ class MonteCarloPlotter:
 
         xs = [time_seconds for _ in range(num_runs)]
         ys = [df.iloc[:, component_index + i*3].values for i in range(num_runs)]
-        colors = [Viridis256[int(i * (len(Viridis256) - 1) / (num_runs - 1))] for i in range(num_runs)]
-
-        source = ColumnDataSource(data=dict(xs=xs, ys=ys, color=colors))
         
-        p.multi_line(xs='xs', ys='ys', line_color='color', line_alpha=0.1, line_width=1, source=source,
+        # Create color mapper
+        color_mapper = LinearColorMapper(palette=Viridis256, low=0, high=num_runs-1)
+        
+        source = ColumnDataSource(data=dict(xs=xs, ys=ys, color=list(range(num_runs))))
+        
+        p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
+                     line_alpha=0.1, line_width=1, source=source,
                      level='underlay', nonselection_alpha=0.1, selection_alpha=0.5)
 
         hover = HoverTool(tooltips=[("Time", "$x{0.00} s"), (variable.split('.')[-1], "$y{0.0000}"), ("Run", "$index")],
                           mode='mouse')
         p.add_tools(hover)
 
+        # Add color bar
+        color_bar = ColorBar(color_mapper=color_mapper,
+                             label_standoff=12,
+                             border_line_color=None,
+                             location=(0,0),
+                             title="Run Number",
+                             ticker=BasicTicker(desired_num_ticks=10))
+        p.add_layout(color_bar, 'right')
+
         return p
 
     def update_plot(self, attr, old, new):
-        variable, component = self.variable_select.value, self.component_select.value
+        variable = self.variable_select.value
+        component = self.component_select.value
         new_plot = self.create_plot(variable, component)
         self.plot_column.children[1] = new_plot
 
