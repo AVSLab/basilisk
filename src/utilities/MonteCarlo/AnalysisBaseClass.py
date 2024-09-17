@@ -2,9 +2,9 @@ import os
 import pandas as pd
 import numpy as np
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper, TextInput
+from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper, TextInput, Button, Div
 from bokeh.palettes import Viridis256
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer, layout
 from bokeh.io import curdoc
 import time
 import re
@@ -17,8 +17,12 @@ class MonteCarloPlotter:
         self.save_as_static = False
         self.staticDir = "/plots/"
         self.initial_interval = '1s'
+        self.num_runs = 0
+        self.total_data_size = 0
+        self.title_div = None
 
     def load_data(self, variables):
+        self.total_data_size = 0  # Reset total data size before loading
         for variable in variables:
             file_path = os.path.join(self.dataDir, f"{variable}.data")
             if os.path.exists(file_path):
@@ -28,6 +32,12 @@ class MonteCarloPlotter:
                 self.data[variable] = df
                 self.smallest_interval = pd.Timedelta(df.index.to_series().diff().min())
                 print(f"Smallest interval in data: {self.smallest_interval}")
+                
+                # Calculate number of runs and total data size
+                self.num_runs = max(self.num_runs, len(set(col[0] for col in df.columns)))
+                self.total_data_size += df.memory_usage(deep=True).sum() / (1024 * 1024 * 1024)  # Size in GB
+
+        print(f"Data loaded: {self.num_runs} runs, {self.total_data_size:.2f} GB total")
 
     def create_plot(self, variable, component, run_numbers=None):
         df = self.data[variable]
@@ -58,34 +68,38 @@ class MonteCarloPlotter:
         # Create color mapper
         color_mapper = LinearColorMapper(palette=Viridis256, low=1, high=num_runs)
         
+        # Plot background lines (all runs) with low alpha
+        background_source = ColumnDataSource(data=dict(
+            xs=xs, ys=ys, color=list(range(1, num_runs+1))
+        ))
+        p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
+                     line_alpha=0.05, line_width=3, source=background_source,
+                     level='underlay')
+        
         if run_numbers is not None:
-            # Plot background lines (all runs) with low alpha
-            background_source = ColumnDataSource(data=dict(
-                xs=xs, ys=ys, color=list(range(1, num_runs+1))
-            ))
-            p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
-                         line_alpha=0.05, line_width=1, source=background_source,
-                         level='underlay')
-            
             # Plot selected runs with full opacity
             xs_selected = [xs[i] for i in run_numbers]
             ys_selected = [ys[i] for i in run_numbers]
             colors_selected = [i+1 for i in run_numbers]
             source = ColumnDataSource(data=dict(xs=xs_selected, ys=ys_selected, color=colors_selected))
             p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
-                         line_alpha=1.0, line_width=2, source=source,
+                         line_alpha=1.0, line_width=3, source=source,
                          level='overlay')
         else:
-            # If no specific runs are selected, plot all runs with medium opacity
-            source = ColumnDataSource(data=dict(
-                xs=xs, ys=ys, color=list(range(1, num_runs+1))
-            ))
-            p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
-                         line_alpha=0.15, line_width=2, source=source,
-                         level='underlay')
+            source = background_source
 
-        hover = HoverTool(tooltips=[("Time", "$x{0.00} s"), (variable.split('.')[-1], "$y{0.0000}"), ("Run", "@color")],
-                          mode='mouse')
+        # Add hover tool
+        hover = HoverTool(
+            tooltips=[
+                ("Time", "$x{0.00} s"),
+                (variable.split('.')[-1], "$y{0.0000}"),
+                ("Run", "@color")
+            ],
+            mode='mouse',
+            point_policy='snap_to_data',
+            line_policy='nearest',
+            renderers=[p.renderers[-1]]  # Apply to the last added renderer (selected runs or all runs)
+        )
         p.add_tools(hover)
 
         # Add color bar
@@ -104,7 +118,12 @@ class MonteCarloPlotter:
         component = self.component_select.value
         run_numbers = self.parse_run_numbers(self.run_input.value)
         new_plot = self.create_plot(variable, component, run_numbers)
-        self.plot_column.children[1] = new_plot
+        self.plot_column.children[-1] = new_plot
+
+    def update_title(self):
+        if self.title_div:
+            self.title_div.text = (f"Monte Carlo Visualization: {self.num_runs} runs, "
+                                   f"{self.total_data_size:.2f} GB total")
 
     def parse_run_numbers(self, input_string):
         if not input_string.strip():
@@ -118,13 +137,31 @@ class MonteCarloPlotter:
             print("Invalid input. Please enter run numbers separated by commas, spaces, or semicolons.")
             return None
 
+    def update_button_callback(self):
+        self.update_plot(None, None, None)
+
     def show_plots(self):
         variables = list(self.data.keys())
         components = ['x', 'y', 'z']
 
-        self.variable_select = Select(title="Variable", options=variables, value=variables[0])
-        self.component_select = Select(title="Component", options=components, value=components[0])
-        self.run_input = TextInput(title="Enter run numbers (comma, space, or semicolon separated):")
+        # Add title
+        self.title_div = Div(text="Monte Carlo Visualization",
+                             styles={'text-align': 'center', 'font-size': '18px', 'margin-bottom': '10px', 'color': '#555'})
+
+        self.variable_select = Select(title="Variable", options=variables, value=variables[0], width=200)
+        self.component_select = Select(title="Component", options=components, value=components[0], width=200)
+        
+        # Create a container for the search bar and button
+        search_container = Div(text="Enter run numbers (comma, space, or semicolon separated):", 
+                               styles={'display': 'flex', 'flex-direction': 'column', 'margin-bottom': '10px'})
+        
+        self.run_input = TextInput(title="", width=300)  # Remove title from TextInput
+        self.search_button = Button(label="Search", button_type="primary", width=100)
+        self.search_button.on_click(self.update_button_callback)
+
+        # Add a note about pressing Enter
+        self.enter_note = Div(text="<i>Tip: You can also press Enter after entering run numbers to update the plot.</i>", 
+                              styles={'font-size': '12px', 'color': '#666666', 'margin': '5px 0'})
 
         initial_plot = self.create_plot(self.variable_select.value, self.component_select.value)
 
@@ -132,7 +169,43 @@ class MonteCarloPlotter:
         self.component_select.on_change('value', self.update_plot)
         self.run_input.on_change('value', self.update_plot)
 
-        self.plot_column = column(row(self.variable_select, self.component_select), self.run_input, initial_plot)
+        # Create a centered layout
+        self.plot_column = column(
+            self.title_div,
+            row(self.variable_select, Spacer(width=20), self.component_select),
+            Spacer(height=20),
+            column(search_container,
+                   row(self.run_input, Spacer(width=20), self.search_button)),
+            self.enter_note,
+            Spacer(height=20),
+            initial_plot,
+            width=900,  # Adjust this value based on your preferred overall width
+            sizing_mode="stretch_width"
+        )
+
+        # Update the title after creating the layout
+        self.update_title()
+
+        # Add custom CSS to center the entire content
+        custom_css = """
+        <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .bk-root {
+            margin: 0 auto;
+        }
+        </style>
+        """
+
+        # Inject the custom CSS into the document head
+        curdoc().template_variables['custom_css'] = custom_css
 
         curdoc().add_root(self.plot_column)
         print("Plot should be visible now. If not, check the browser console for any errors.")
