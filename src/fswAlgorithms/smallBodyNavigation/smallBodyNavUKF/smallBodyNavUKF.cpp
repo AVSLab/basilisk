@@ -77,7 +77,7 @@ void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos)
     /* compute UT weights to be used in the UT */
     this->wm_sigma(0) = this->kappa / (this->kappa + this->numStates);
     this->wc_sigma(0) = this->wm_sigma(0) + 1 - pow(this->alpha,2) + this->beta;
-    for (int i = 0; i < this->numStates; i++) {
+    for (uint64_t i = 0; i < this->numStates; i++) {
         /* Assign weigths */
         this->wm_sigma(i+1) = 1 / (2*(this->numStates + this->kappa));
         this->wm_sigma(numStates+i+1) = this->wm_sigma(i+1);
@@ -119,7 +119,7 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     X_sigma_k.col(0) = this->x_hat_k;
 
     /* Loop to generate remaining sigma points */
-    for (int i = 0; i < this->numStates; i++) {
+    for (uint64_t i = 0; i < this->numStates; i++) {
         /* Generate sigma points */
         X_sigma_k.col(i+1) = this->x_hat_k
             - sqrt(this->numStates + this->kappa) * Psqrt_k.col(i);
@@ -136,7 +136,7 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     x_sigma_k.setZero(this->numStates);
     x_sigma_dot_k.setZero(this->numStates);
     this->x_hat_k1_.setZero(this->numStates);
-    for (int i = 0; i < this->numSigmas; i++) {
+    for (uint64_t i = 0; i < this->numSigmas; i++) {
         /* Extract sigma point */
         x_sigma_k = X_sigma_k.col(i);
 
@@ -161,7 +161,7 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     Eigen::VectorXd x_sigma_dev_k1_;
     x_sigma_dev_k1_.setZero(this->numStates);
     this->P_k1_.setZero(this->numStates, this->numStates);
-    for (int i = 0; i < numSigmas; i++) {
+    for (uint64_t i = 0; i < numSigmas; i++) {
         /* Compute deviation of sigma from the mean */
         x_sigma_dev_k1_ = this->X_sigma_k1_.col(i) - this->x_hat_k1_;
 
@@ -185,7 +185,7 @@ void SmallBodyNavUKF::measurementUT(){
     this->X_sigma_k1_.col(0) = this->x_hat_k1_;
 
     /* Loop to generate remaining sigma points */
-    for (int i = 0; i < this->numStates; i++) {
+    for (uint64_t i = 0; i < this->numStates; i++) {
         /* Generate sigma points */
         this->X_sigma_k1_.col(i+1) = this->x_hat_k1_
             - sqrt(this->numStates + this->kappa) * Psqrt_k1_.col(i);
@@ -197,7 +197,7 @@ void SmallBodyNavUKF::measurementUT(){
     Eigen::VectorXd x_sigma_k1_;
     x_sigma_k1_.setZero(this->numStates);
     this->y_hat_k1_.setZero(this->numMeas);
-    for (int i = 0; i < this->numSigmas; i++) {
+    for (uint64_t i = 0; i < this->numSigmas; i++) {
         /* Extract sigma point */
         x_sigma_k1_ = this->X_sigma_k1_.col(i);
 
@@ -215,7 +215,7 @@ void SmallBodyNavUKF::measurementUT(){
     y_sigma_dev_k1_.setZero(this->numStates);
     this->R_k1_.setZero(this->numMeas, this->numMeas);
     this->H.setZero(this->numStates, this->numMeas);
-    for (int i = 0; i < this->numSigmas; i++) {
+    for (uint64_t i = 0; i < this->numSigmas; i++) {
         /* Compute deviation of measurement sigma from the mean */
         x_sigma_dev_k1_ = this->X_sigma_k1_.col(i) - this->x_hat_k1_;
         y_sigma_dev_k1_ = this->Y_sigma_k1_.col(i) - this->y_hat_k1_;
