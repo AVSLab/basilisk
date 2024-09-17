@@ -58,6 +58,10 @@ Version |release|
   referenced from NASA sources.
 - If ``messaging`` was not imported then the msg ``recorder()`` modules couldn't be setup.  Now
   ``messaging`` is imported as part of the Basilisk package so the ``recorder()`` modules always work.
+- Added the ability for GitHub to rebuild the BSK documentation each time a branch is merged back into develop.
+  This way the online documentation for develop is up to date for each contribution, not just for the hand-built
+  documentation we did with major tagged releases.  The new Basilisk online documentation list is now
+  `<https://avslab.github.io/basilisk>`__.
 
 
 Version 2.4.0 (August 23, 2024)
@@ -550,8 +554,8 @@ Version 2.1.0 (Nov. 13, 2021)
     thread safe!
 
 
-Version 2.0.7
--------------
+**Version 2.0.7**
+
 - new :ref:`forceTorqueThrForceMapping` to map commanded forces and torques to a set of thrusters
 - updated Vizard documentation on the setting flags ``orbitLinesOn`` and ``trueTrajectoryLinesOn``
 - added power and fuel tank modules to the :ref:`BSK_MultiSatDynamics` class.
@@ -562,8 +566,8 @@ Version 2.0.7
 - updated BSK install instructions on the M1 Apple Silicon platform as Basiliks can now run natively
 
 
-Version 2.0.6
--------------
+**Version 2.0.6**
+
 - updated :ref:`vizInterface` to support Vizard 1.9.1 and the ability to visualize generic sensor types and
   antenna communication status
 - updated :ref:`ephemerisConverter` to also convert the planet orientation states, not just the
@@ -597,8 +601,8 @@ Version 2.0.6
 - updated :ref:`locationPointing` to support 3D rate damping as an option
 
 
-Version 2.0.5
--------------
+**Version 2.0.5**
+
 - fixed issue in :ref:`waypointReference` to interpolate between waypoint ``n`` and shadow set of
   waypoint ``n+1`` when these are described by opposite MRP sets. Updated documentation and corrected
   typos in :ref:`scenarioAttitudeConstraintViolation`.
@@ -628,8 +632,8 @@ Version 2.0.5
   zero so the module retains the earlier behavior if this optional input message is not connected.
 - added two lines in :ref:`waypointReference` to normalize the attitude quaternion that is read from file.
 
-Version 2.0.4
--------------
+**Version 2.0.4**
+
 - updated :ref:`spacecraft` ``Reset()`` method to write all spacecraft and effector state output messages
   with their initial values.  This way these output messages are correct as already as calling the
   ``InitializeSimulation()`` method.
@@ -650,8 +654,8 @@ Version 2.0.4
 
 
 
-Version 2.0.3
--------------
+**Version 2.0.3**
+
 - new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to display keep-in and keep-out constraint violations while
   performing slew maneuvers.
 - new :ref:`locationPointing` module to do 2-axis attitude control which aligns a body-fixed vector to a
@@ -666,8 +670,8 @@ Version 2.0.3
 - fixed custom RW support method in ``simIncludeRW.py``
 - fixed new C++20 related compiler warnings
 
-Version 2.0.2
--------------
+**Version 2.0.2**
+
 - new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file, likely generated outside Basilisk.
 - updated :ref:`gravityEffector` to allow the planet message module (``spiceInterface`` or ``planetEphemeris``) to
   be called either before or after the ``spacecraft`` module update is called
@@ -692,8 +696,8 @@ Version 2.0.2
 - provide scripting support for Vizard 1.8.2 release
 
 
-Version 2.0.1
--------------
+**Version 2.0.1**
+
 - Added the ability to clear the data of a message recorder using ``.clear()``
 - Fixed a rare issue where RW data didn't stick
 - Fixed an issue subscribing to a C++ wrapped message object from python
@@ -728,8 +732,8 @@ Version 2.0.1
 - new thermal motor module in :ref:`motorThermal`.  It it be used to simulate the temperature of a RW motor.
 
 
-Version 2.0.0
--------------
+**Version 2.0.0**
+
 - New message system with strong type checking.  You now get a much simpler method to create message objects,
   how to connect them within python, create stand-alone messages in python, etc.  If you engage with a message
   of the wrong type you get immediate compiler warnings.
