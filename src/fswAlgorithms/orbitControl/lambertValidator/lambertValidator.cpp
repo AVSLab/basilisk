@@ -470,3 +470,39 @@ Eigen::VectorXd LambertValidator::RK4(const std::function<Eigen::VectorXd(double
 
     return X;
 }
+
+void LambertValidator::setLambertSolutionSpecifier(const double value){
+    this->lambertSolutionSpecifier = value;
+}
+
+void LambertValidator::setFinalTime(const double value){
+    this->finalTime = value;
+}
+
+void LambertValidator::setManeuverTime(const double value){
+    this->maneuverTime = value;
+}
+
+void LambertValidator::setMaxDistanceTarget(const double value){
+    this->maxDistanceTarget = value;
+}
+
+void LambertValidator::setMinOrbitRadius(const double value){
+    this->minOrbitRadius = value;
+}
+
+void LambertValidator::setUncertaintyStates(const Eigen::MatrixXd& value){
+    this->uncertaintyStates = value;
+}
+
+void LambertValidator::setUncertaintyDV(const double value){
+    this->uncertaintyDV = value;
+}
+
+void LambertValidator::setDvConvergenceTolerance(const double value){
+    this->dvConvergenceTolerance = value;
+}
+
+void LambertValidator::setIgnoreConstraintViolations(const bool value){
+    this->ignoreConstraintViolations = value;
+}

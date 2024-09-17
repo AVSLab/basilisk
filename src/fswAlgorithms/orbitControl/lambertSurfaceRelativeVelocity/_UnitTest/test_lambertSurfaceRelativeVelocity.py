@@ -107,8 +107,8 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
     # setup module to be tested
     module = lambertSurfaceRelativeVelocity.LambertSurfaceRelativeVelocity()
     module.ModelTag = "lambertSurfaceRelativeVelocity"
-    module.vRelativeDesired_S = vRelativeDesired_S
-    module.time = tm
+    module.setVRelativeDesired_S(vRelativeDesired_S)
+    module.setTime(tm)
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure input messages

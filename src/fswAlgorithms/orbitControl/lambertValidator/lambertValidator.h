@@ -55,16 +55,42 @@ public:
 
     BSKLogger bskLogger;                                                    //!< BSK Logging
 
-    double lambertSolutionSpecifier = 1; //!< [-] which Lambert solution (1 or 2), if applicable, should be used
-    double finalTime{}; //!< [s] time at which target position should be reached
-    double maneuverTime{}; //!< [s] time at which maneuver should be executed
-    double maxDistanceTarget{}; //!< [m] maximum acceptable distance from target location at final time
-    double minOrbitRadius{}; //!< [m] minimum acceptable orbit radius
-    //!< 6x6 matrix square root of the covariance matrix to apply errors with, in Hill (Orbit) frame components
-    Eigen::MatrixXd uncertaintyStates;
-    double uncertaintyDV = 0.1; //!< [m/s] uncertainty of the Delta-V magnitude
-    double dvConvergenceTolerance = 1e-3; //!< [m/s] tolerance on difference between DeltaV solutions between time steps
-    bool ignoreConstraintViolations = false; //!< override flag to write DV message despite constraint violations
+    /** setter for `lambertSolutionSpecifier` */
+    void setLambertSolutionSpecifier(const double value);
+    /** getter for `lambertSolutionSpecifier` */
+    double getLambertSolutionSpecifier() const {return this->lambertSolutionSpecifier;}
+    /** setter for `finalTime` */
+    void setFinalTime(const double value);
+    /** getter for `finalTime` */
+    double getFinalTime() const {return this->finalTime;}
+    /** setter for `maneuverTime` */
+    void setManeuverTime(const double value);
+    /** getter for `maneuverTime` */
+    double getManeuverTime() const {return this->maneuverTime;}
+    /** setter for `maxDistanceTarget` */
+    void setMaxDistanceTarget(const double value);
+    /** getter for `maxDistanceTarget` */
+    double getMaxDistanceTarget() const {return this->maxDistanceTarget;}
+    /** setter for `minOrbitRadius` */
+    void setMinOrbitRadius(const double value);
+    /** getter for `minOrbitRadius` */
+    double getMinOrbitRadius() const {return this->minOrbitRadius;}
+    /** setter for `uncertaintyStates` */
+    void setUncertaintyStates(const Eigen::MatrixXd& value);
+    /** getter for `uncertaintyStates` */
+    Eigen::MatrixXd getUncertaintyStates() const {return this->uncertaintyStates;}
+    /** setter for `uncertaintyDV` */
+    void setUncertaintyDV(const double value);
+    /** getter for `uncertaintyDV` */
+    double getUncertaintyDV() const {return this->uncertaintyDV;}
+    /** setter for `dvConvergenceTolerance` */
+    void setDvConvergenceTolerance(const double value);
+    /** getter for `dvConvergenceTolerance` */
+    double getDvConvergenceTolerance() const {return this->dvConvergenceTolerance;}
+    /** setter for `ignoreConstraintViolations` */
+    void setIgnoreConstraintViolations(const bool value);
+    /** getter for `ignoreConstraintViolations` */
+    bool getIgnoreConstraintViolations() const {return this->ignoreConstraintViolations;}
 
 private:
     void readMessages();
@@ -83,6 +109,15 @@ private:
                         double t0,
                         double dt);
 
+    double lambertSolutionSpecifier = 1; //!< [-] which Lambert solution (1 or 2), if applicable, should be used
+    double finalTime{}; //!< [s] time at which target position should be reached
+    double maneuverTime{}; //!< [s] time at which maneuver should be executed
+    double maxDistanceTarget{}; //!< [m] maximum acceptable distance from target location at final time
+    double minOrbitRadius{}; //!< [m] minimum acceptable orbit radius
+    Eigen::MatrixXd uncertaintyStates; //!< 6x6 matrix square root of the covariance matrix of errors, in Hill frame
+    double uncertaintyDV = 0.1; //!< [m/s] uncertainty of the Delta-V magnitude
+    double dvConvergenceTolerance = 1e-3; //!< [m/s] tolerance on difference between DeltaV solutions between time steps
+    bool ignoreConstraintViolations = false; //!< override flag to write DV message despite constraint violations
     double time{}; //!< [s] Current vehicle time-tag associated with measurements
     Eigen::Vector3d r_N; //!< [m] Current inertial spacecraft position vector in inertial frame N components
     Eigen::Vector3d v_N; //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components

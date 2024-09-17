@@ -62,7 +62,7 @@ The module is first initialized as follows:
 
     lambertModule = lambertSolver.LambertSolver()
     lambertModule.ModelTag = "lambertSolver"
-    lambertModule.alignmentThreshold = 1.0 # module defaults this value to 1.0 degrees if not specified
+    lambertModule.setAlignmentThreshold(1.0) # module defaults this value to 1.0 degrees if not specified
     unitTestSim.AddModelToTask(unitTaskName, lambertModule)
 
 The lambert problem input message is either created as a standalone message in python

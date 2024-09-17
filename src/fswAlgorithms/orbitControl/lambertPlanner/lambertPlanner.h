@@ -48,11 +48,26 @@ public:
 
     BSKLogger bskLogger;                                                //!< BSK Logging
 
-    Eigen::Vector3d r_TN_N; //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
-    double finalTime{}; //!< [s] time at which target position should be reached
-    double maneuverTime{}; //!< [s] time at which maneuver should be executed
-    double mu{}; //!< [m^3 s^-2] gravitational parameter
-    int numRevolutions = 0; //!< [-] number of revolutions to be completed (completed orbits)
+    /** setter for `r_TN_N` */
+    void setR_TN_N(const Eigen::Vector3d value);
+    /** getter for `r_TN_N` */
+    Eigen::Vector3d getR_TN_N() const {return this->r_TN_N;}
+    /** setter for `finalTime` */
+    void setFinalTime(const double value);
+    /** getter for `finalTime` */
+    double getFinalTime() const {return this->finalTime;}
+    /** setter for `maneuverTime` */
+    void setManeuverTime(const double value);
+    /** getter for `maneuverTime` */
+    double getManeuverTime() const {return this->maneuverTime;}
+    /** setter for `mu` */
+    void setMu(const double value);
+    /** getter for `mu` */
+    double getMu() const {return this->mu;}
+    /** setter for `numRevolutions` */
+    void setNumRevolutions(const int value);
+    /** getter for `numRevolutions` */
+    int getNumRevolutions() const {return this->numRevolutions;}
 
 private:
     void readMessages();
@@ -67,6 +82,11 @@ private:
                         double t0,
                         double dt);
 
+    Eigen::Vector3d r_TN_N; //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
+    double finalTime{}; //!< [s] time at which target position should be reached
+    double maneuverTime{}; //!< [s] time at which maneuver should be executed
+    double mu{}; //!< [m^3 s^-2] gravitational parameter
+    int numRevolutions = 0; //!< [-] number of revolutions to be completed (completed orbits)
     SolverMethod solverMethod; //!< lambert solver algorithm (GOODING or IZZO)
     double time{}; //!< [s] Current vehicle time-tag associated with measurements
     Eigen::Vector3d r_N; //!< [m] Current inertial spacecraft position vector in inertial frame N components

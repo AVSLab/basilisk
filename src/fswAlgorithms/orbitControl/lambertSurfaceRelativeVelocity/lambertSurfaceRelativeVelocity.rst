@@ -59,8 +59,8 @@ The module is first initialized as follows:
 
     module = lambertSurfaceRelativeVelocity.LambertSurfaceRelativeVelocity()
     module.ModelTag = "lambertSurfaceRelativeVelocity"
-    module.vRelativeDesired_S = np.array([0., 0., 10.])  # in surface frame (East-North-Up)
-    module.time = 1000.
+    module.setVRelativeDesired_S(np.array([0., 0., 10.]))  # in surface frame (East-North-Up)
+    module.setTime(1000.)
     unitTestSim.AddModelToTask(unitTaskName, module)
 
 The input messages are then connected:

@@ -667,3 +667,7 @@ double LambertSolver::hypergeometricF(double z)
     }
     return Sj;
 }
+
+void LambertSolver::setAlignmentThreshold(const double value){
+    this->alignmentThreshold = value;
+}

@@ -222,11 +222,11 @@ def run(show_plots):
     # set up Lambert planner
     lamPlanner = lambertPlanner.LambertPlanner()
     lamPlanner.ModelTag = "lambertPlanner"
-    lamPlanner.r_TN_N = r_TN_N
-    lamPlanner.finalTime = tf
-    lamPlanner.maneuverTime = tm
-    lamPlanner.mu = mu
-    lamPlanner.numRevolutions = 0
+    lamPlanner.setR_TN_N(r_TN_N)
+    lamPlanner.setFinalTime(tf)
+    lamPlanner.setManeuverTime(tm)
+    lamPlanner.setMu(mu)
+    lamPlanner.setNumRevolutions(0)
     lamPlanner.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
 
     # set up Lambert Solver
@@ -237,14 +237,14 @@ def run(show_plots):
     # set up Lambert Validator
     lamValidator = lambertValidator.LambertValidator()
     lamValidator.ModelTag = "lambertValidator"
-    lamValidator.finalTime = tf
-    lamValidator.maneuverTime = tm
-    lamValidator.maxDistanceTarget = maxDistanceTarget
-    lamValidator.minOrbitRadius = minOrbitRadius
-    lamValidator.uncertaintyStates = np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
-                                              vel_sigma_sc, vel_sigma_sc, vel_sigma_sc])
-    lamValidator.uncertaintyDV = 0.1
-    lamValidator.dvConvergenceTolerance = 1.
+    lamValidator.setFinalTime(tf)
+    lamValidator.setManeuverTime(tm)
+    lamValidator.setMaxDistanceTarget(maxDistanceTarget)
+    lamValidator.setMinOrbitRadius(minOrbitRadius)
+    lamValidator.setUncertaintyStates(np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
+                                              vel_sigma_sc, vel_sigma_sc, vel_sigma_sc]))
+    lamValidator.setUncertaintyDV(0.1)
+    lamValidator.setDvConvergenceTolerance(1.)
     lamValidator.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
     lamValidator.lambertProblemInMsg.subscribeTo(lamPlanner.lambertProblemOutMsg)
     lamValidator.lambertPerformanceInMsg.subscribeTo(lamSolver.lambertPerformanceOutMsg)

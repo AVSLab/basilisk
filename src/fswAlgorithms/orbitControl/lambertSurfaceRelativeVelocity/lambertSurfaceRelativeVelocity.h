@@ -49,13 +49,21 @@ public:
 
     BSKLogger bskLogger;                                                //!< BSK Logging
 
-    Eigen::Vector3d vRelativeDesired_S; //!< [m/s] desired relative velocity, in surface frame S (East-North-Up)
-    double time{}; //!< [s] time for the desired velocity of the spacecraft
+    /** setter for `vRelativeDesired_S` */
+    void setVRelativeDesired_S(const Eigen::Vector3d value);
+    /** getter for `vRelativeDesired_S` */
+    Eigen::Vector3d getVRelativeDesired_S() const {return this->vRelativeDesired_S;}
+    /** setter for `time` */
+    void setTime(const double value);
+    /** getter for `time` */
+    double getTime() const {return this->time;}
 
 private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
 
+    Eigen::Vector3d vRelativeDesired_S; //!< [m/s] desired relative velocity, in surface frame S (East-North-Up)
+    double time{}; //!< [s] time for the desired velocity of the spacecraft
     Eigen::Vector3d r_BN_N; //!< [m] position of spacecraft, expressed in inertial frame N
     Eigen::Vector3d v_BN_N; //!< [m/s] velocity of spacecraft, expressed in inertial frame N
     Eigen::Matrix3d dcm_PN; //!< DCM of the orbital body fixed frame relative to inertial

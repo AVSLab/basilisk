@@ -102,3 +102,12 @@ void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos){
     // Write to the output messages
     this->desiredVelocityOutMsg.write(&desiredVelocityOutMsgBuffer, this->moduleID, currentSimNanos);
 }
+
+void LambertSurfaceRelativeVelocity::setVRelativeDesired_S(const Eigen::Vector3d value)
+{
+    this->vRelativeDesired_S = value;
+}
+
+void LambertSurfaceRelativeVelocity::setTime(const double value){
+    this->time = value;
+}

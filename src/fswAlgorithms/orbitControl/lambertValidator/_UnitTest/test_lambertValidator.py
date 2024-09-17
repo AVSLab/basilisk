@@ -293,13 +293,13 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     # setup module to be tested
     module = lambertValidator.LambertValidator()
     module.ModelTag = "lambertValidator"
-    module.finalTime = tf
-    module.maneuverTime = tm
-    module.maxDistanceTarget = maxDistanceTarget
-    module.minOrbitRadius = minOrbitRadius
-    module.uncertaintyStates = errStates
-    module.uncertaintyDV = errDV
-    module.dvConvergenceTolerance = np.linalg.norm(dv_N)/1000.
+    module.setFinalTime(tf)
+    module.setManeuverTime(tm)
+    module.setMaxDistanceTarget(maxDistanceTarget)
+    module.setMinOrbitRadius(minOrbitRadius)
+    module.setUncertaintyStates(errStates)
+    module.setUncertaintyDV(errDV)
+    module.setDvConvergenceTolerance(np.linalg.norm(dv_N)/1000.)
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure input messages

@@ -145,23 +145,23 @@ class scenario_LambertGuidance(BSKSim, BSKScenario):
         DynModels.simpleNavObject.PMatrix = p_matrix_sc
         DynModels.simpleNavObject.walkBounds = walk_bounds_sc
 
-        FswModels.lambertPlannerObject.r_TN_N = self.r_TN_N
-        FswModels.lambertPlannerObject.finalTime = self.tm2
-        FswModels.lambertPlannerObject.maneuverTime = self.tm1
-        FswModels.lambertPlannerObject.mu = DynModels.gravFactory.gravBodies['earth'].mu
-        FswModels.lambertPlannerObject.numRevolutions = 0
+        FswModels.lambertPlannerObject.setR_TN_N(self.r_TN_N)
+        FswModels.lambertPlannerObject.setFinalTime(self.tm2)
+        FswModels.lambertPlannerObject.setManeuverTime(self.tm1)
+        FswModels.lambertPlannerObject.setMu(DynModels.gravFactory.gravBodies['earth'].mu)
+        FswModels.lambertPlannerObject.setNumRevolutions(0)
 
-        FswModels.lambertValidatorObject.finalTime = self.tm2
-        FswModels.lambertValidatorObject.maneuverTime = self.tm1
-        FswModels.lambertValidatorObject.maxDistanceTarget = 500.
-        FswModels.lambertValidatorObject.minOrbitRadius = rEarth
-        FswModels.lambertValidatorObject.uncertaintyStates = np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
-                                                                      vel_sigma_sc, vel_sigma_sc, vel_sigma_sc])
-        FswModels.lambertValidatorObject.uncertaintyDV = 0.1
-        FswModels.lambertValidatorObject.dvConvergenceTolerance = 1.
+        FswModels.lambertValidatorObject.setFinalTime(self.tm2)
+        FswModels.lambertValidatorObject.setManeuverTime(self.tm1)
+        FswModels.lambertValidatorObject.setMaxDistanceTarget(500.)
+        FswModels.lambertValidatorObject.setMinOrbitRadius(rEarth)
+        FswModels.lambertValidatorObject.setUncertaintyStates(np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
+                                                                      vel_sigma_sc, vel_sigma_sc, vel_sigma_sc]))
+        FswModels.lambertValidatorObject.setUncertaintyDV(0.1)
+        FswModels.lambertValidatorObject.setDvConvergenceTolerance(1.)
 
-        FswModels.lambertSurfaceRelativeVelocityObject.vRelativeDesired_S = vRelativeDesired_S
-        FswModels.lambertSurfaceRelativeVelocityObject.time = self.tm2
+        FswModels.lambertSurfaceRelativeVelocityObject.setVRelativeDesired_S(vRelativeDesired_S)
+        FswModels.lambertSurfaceRelativeVelocityObject.setTime(self.tm2)
 
         self.configure_initial_conditions()
         self.log_outputs()

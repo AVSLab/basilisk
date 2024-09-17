@@ -116,3 +116,7 @@ void LambertSecondDV::writeMessages(uint64_t currentSimNanos)
     // Write to the output messages
     this->dvBurnCmdOutMsg.write(&dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
 }
+
+void LambertSecondDV::setLambertSolutionSpecifier(const double value){
+    this->lambertSolutionSpecifier = value;
+}

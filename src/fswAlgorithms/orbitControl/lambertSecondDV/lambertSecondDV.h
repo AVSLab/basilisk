@@ -46,12 +46,16 @@ public:
 
     BSKLogger bskLogger;                                                    //!< BSK Logging
 
-    double lambertSolutionSpecifier = 1; //!< [-] which Lambert solution (1 or 2), if applicable, should be used
+    /** setter for `lambertSolutionSpecifier` */
+    void setLambertSolutionSpecifier(const double value);
+    /** getter for `lambertSolutionSpecifier` */
+    double getLambertSolutionSpecifier() const {return this->lambertSolutionSpecifier;}
 
 private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
 
+    double lambertSolutionSpecifier = 1; //!< [-] which Lambert solution (1 or 2), if applicable, should be used
     Eigen::Vector3d vExpected_N; //!< [m/s] Expected velocity in inertial frame N components
     bool validLambert = false; //!< [-] valid Lambert solution if true
     Eigen::Vector3d vDesired_N; //!< [m/s] Desired velocity in inertial frame N

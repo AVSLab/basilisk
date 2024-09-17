@@ -132,11 +132,11 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
     # setup module to be tested
     module = lambertPlanner.LambertPlanner()
     module.ModelTag = "lambertPlanner"
-    module.r_TN_N = targetPosition
-    module.finalTime = tf
-    module.maneuverTime = tm
-    module.mu = muBody
-    module.numRevolutions = p1_revs
+    module.setR_TN_N(targetPosition)
+    module.setFinalTime(tf)
+    module.setManeuverTime(tm)
+    module.setMu(muBody)
+    module.setNumRevolutions(p1_revs)
     module.useSolverIzzoMethod()
     unitTestSim.AddModelToTask(unitTaskName, module)
 

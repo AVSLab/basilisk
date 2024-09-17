@@ -48,8 +48,10 @@ public:
 
     BSKLogger bskLogger;                                                //!< BSK Logging
 
-    //!< [deg] minimum angle between position vectors such that they are not considered too aligned.
-    double alignmentThreshold = 1.0;
+    /** setter for `alignmentThreshold` */
+    void setAlignmentThreshold(const double value);
+    /** getter for `alignmentThreshold` */
+    double getlignmentThreshold() const {return this->alignmentThreshold;}
 
 private:
     void readMessages();
@@ -66,6 +68,7 @@ private:
     double getTmin(double T0M, int N);
     double hypergeometricF(double z);
 
+    double alignmentThreshold = 1.0; //!< [deg] minimum angle between position vectors so they are not too aligned.
     SolverMethod solverMethod; //!< lambert solver algorithm (GOODING or IZZO)
     Eigen::Vector3d r1_N; //!< position vector at t0
     Eigen::Vector3d r2_N; //!< position vector at t1

@@ -44,9 +44,6 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
     }
 
     // check that the provided input module parameters are valid
-    if (this->mu < 0.0){
-        bskLogger.bskLog(BSK_ERROR, "lambertPlanner: mu must be positive.");
-    }
     if (this->finalTime - this->maneuverTime < 0.0){
         bskLogger.bskLog(BSK_ERROR,
                          "lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
@@ -209,4 +206,28 @@ Eigen::VectorXd LambertPlanner::RK4(const std::function<Eigen::VectorXd(double, 
     Eigen::VectorXd X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
 
     return X;
+}
+
+void LambertPlanner::setR_TN_N(const Eigen::Vector3d value)
+{
+    this->r_TN_N = value;
+}
+
+void LambertPlanner::setFinalTime(const double value){
+    this->finalTime = value;
+}
+
+void LambertPlanner::setManeuverTime(const double value){
+    this->maneuverTime = value;
+}
+
+void LambertPlanner::setMu(const double value){
+    if (value < 0.0){
+        bskLogger.bskLog(BSK_ERROR, "lambertPlanner: mu must be positive.");
+    }
+    this->mu = value;
+}
+
+void LambertPlanner::setNumRevolutions(const int value){
+    this->numRevolutions = value;
 }

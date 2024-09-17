@@ -87,13 +87,13 @@ The module is first initialized as follows:
 
     module = lambertValidator.LambertValidator()
     module.ModelTag = "lambertValidator"
-    module.finalTime = 2000.
-    module.maneuverTime = 1000.
-    module.maxDistanceTarget = 3000.
-    module.minOrbitRadius = 6378 * 1000.
-    module.uncertaintyStates = np.diag([5., 5., 5., 0.01, 0.01, 0.001])  # in Hill frame
-    module.uncertaintyDV = 0.1   # [m/s]
-    module.dvConvergenceTolerance = 0.01    # [m/s]
+    module.setFinalTime(2000.)
+    module.setManeuverTime(1000.)
+    module.setMaxDistanceTarget(3000.)
+    module.setMinOrbitRadius(6378 * 1000.)
+    module.setUncertaintyStates(np.diag([5., 5., 5., 0.01, 0.01, 0.001]))  # in Hill frame
+    module.setUncertaintyDV(0.1)   # [m/s]
+    module.setDvConvergenceTolerance(0.01)    # [m/s]
     unitTestSim.AddModelToTask(unitTaskName, module)
 
 The input messages are then connected:

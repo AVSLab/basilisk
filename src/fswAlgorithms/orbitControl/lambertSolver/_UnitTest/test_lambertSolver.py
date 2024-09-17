@@ -106,7 +106,7 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     module.ModelTag = "lambertSolver"
     if p6_align != 1.0:
         # alignmentThreshold equals 1.0 by default so does not have to be specified if equal to 1.0
-        module.alignmentThreshold = p6_align
+        module.setAlignmentThreshold(p6_align)
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # set up the transfer orbit using classical orbit elements
