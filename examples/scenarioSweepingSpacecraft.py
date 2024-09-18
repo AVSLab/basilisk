@@ -32,13 +32,13 @@ A single simulation process is created which contains both the spacecraft simula
 modules.
 
 The simulation setup is similar to the one used in the Hill pointing guidance example
-:ref:`scenarioAttitudeGuidance`. The main difference is based on the use of the :ref:`eulerRotation` to allow 3-2-1 Euler rotations of the Hill reference frame. 
-This rotating Hill frame becomes the new reference frame for the attitude tracking error evaluation module. 
-Two inputs are added : (1) A sequence of 3-2-1 Euler angle rate commands (in rad/s) of type numpy array, (2) A sequence of time commands (in min) of type numpy array, which specifies the duration of each angle rate command. 
+:ref:`scenarioAttitudeGuidance`. The main difference is based on the use of the :ref:`eulerRotation` to allow 3-2-1 Euler rotations of the Hill reference frame.
+This rotating Hill frame becomes the new reference frame for the attitude tracking error evaluation module.
+Two inputs are added : (1) A sequence of 3-2-1 Euler angle rate commands (in rad/s) of type numpy array, (2) A sequence of time commands (in min) of type numpy array, which specifies the duration of each angle rate command.
 
 When the simulation completes, 4 plots are shown : (1) The attitude error norm history, (2) The rate
 tracking error history, (3) The control torque vector history, as well as (4) The projection of the body-frame B
-axes :math:`\hat b_1`, :math:`\hat b_2` and :math:`\hat b_3` onto the 
+axes :math:`\hat b_1`, :math:`\hat b_2` and :math:`\hat b_3` onto the
 Hill frame axes :math:`\hat\imath_r`,
 :math:`\hat\imath_{\theta}` and :math:`\hat\imath_h`.  This latter plot illustrates how the spacecraft is rotating with respect to the Hill frame during the sweeping maneuvers.
 
@@ -50,10 +50,10 @@ Illustration of Simulation Results
 
     show_plots = True, useAltBodyFrame = False, angle_rate_command = np.array([[0.0,0,0.0],[0.0,0.002,0.0],[0.0,-0.002,0.0],[0.0,0,0.0]]), time_command = np.array([10,10,10,10])
 
-The default scenario shown has the ``useAltBodyFrame`` flag turned off. It means that we seek to perform 3-2-1 Euler rotations on the Hill frame, and not an alternate, corrected Hill frame. 
+The default scenario shown has the ``useAltBodyFrame`` flag turned off. It means that we seek to perform 3-2-1 Euler rotations on the Hill frame, and not an alternate, corrected Hill frame.
 
-The resulting attitude error norm and control torque histories are shown below.  Note that the projection 
-of the body frame axe :math:`\hat b_2` onto the Hill frame axe :math:`\hat\imath_{\theta}` converge to :math:`|1|`, indicating that the rotation occurs with respect to :math:`\hat\imath_{\theta}`. 
+The resulting attitude error norm and control torque histories are shown below.  Note that the projection
+of the body frame axe :math:`\hat b_2` onto the Hill frame axe :math:`\hat\imath_{\theta}` converge to :math:`|1|`, indicating that the rotation occurs with respect to :math:`\hat\imath_{\theta}`.
 
 .. image:: /_images/Scenarios/scenarioSweepingSpacecraft10.svg
    :align: center
@@ -74,8 +74,8 @@ through::
 
   attGuidanceEuler.angleSet = [0, np.pi, 0]
 
-The resulting attitude error norm history, rate tracking error history and the projection of the body-frame B onto the 
-Hill frame are shown below. 
+The resulting attitude error norm history, rate tracking error history and the projection of the body-frame B onto the
+Hill frame are shown below.
 
 .. image:: /_images/Scenarios/scenarioSweepingSpacecraft11.svg
    :align: center
@@ -89,7 +89,7 @@ Hill frame are shown below.
 """
 
 #
-# Basilisk Scenario Script 
+# Basilisk Scenario Script
 #
 # Purpose:  Illustrates how to perform sweeping maneuvers on a spacecraft in a very modular manner.
 # Author:   Anais Cheval
@@ -113,7 +113,7 @@ from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
 # import simulation related support
-from Basilisk.simulation import spacecraft      
+from Basilisk.simulation import spacecraft
 from Basilisk.utilities import RigidBodyKinematics
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -223,13 +223,13 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
-    # Create the SIM modules 
+    # Create the SIM modules
     #
 
     # Initialize spacecraft object and its properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
-    I = [900., 0., 0.,    
+    I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]  # Inertia of the spacecraft
     scObject.hub.mHub = 750.0  # kg - Mass of the spacecraft
@@ -237,7 +237,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # Setup earth gravity body 
+    # Setup earth gravity body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
@@ -250,15 +250,15 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
-    # Setup navigation sensor module 
+    # Setup navigation sensor module
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg) # scStateInMsg Input message name for spacecraft state
-    
+
     #
     #Create the FSW modules
-    #  
+    #
 
     #Setup HillPoint Guidance Module
     attGuidance = hillPoint.hillPoint()
@@ -266,7 +266,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg) # Incoming spacecraft tranlational message
     scSim.AddModelToTask(simTaskName, attGuidance)
 
-    #Setup Euler rotation of the Hill reference frame 
+    #Setup Euler rotation of the Hill reference frame
     attGuidanceEuler = eulerRotation.eulerRotation()
     attGuidanceEuler.ModelTag = "eulerRotation"
     attGuidanceEuler.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
@@ -283,7 +283,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     attError.attRefInMsg.subscribeTo(attGuidanceEuler.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
-    # Setup the MRP feeback control module 
+    # Setup the MRP feeback control module
     mrpControl = mrpFeedback.mrpFeedback()
     mrpControl.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
@@ -297,12 +297,12 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     mrpControl.P = 30.0
     mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
-    # Connect torque command to external torque effector 
+    # Connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
-    # 
+    #
     # Data logging
-    # 
+    #
 
     numDataPoints = 100
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
@@ -315,7 +315,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     scSim.AddModelToTask(simTaskName, snAttLog)
     scSim.AddModelToTask(simTaskName, snTransLog)
 
-    #Inititialize spacecraft state 
+    #Inititialize spacecraft state
     oe = orbitalMotion.ClassicElements()
     oe.a = 10000000.0  # meters
     oe.e = 0.1
@@ -336,23 +336,23 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
                                         , saveFile=fileName
                                         )
-    
+
     #
-    # Initialize Simulation 
+    # Initialize Simulation
     #
 
     scSim.InitializeSimulation()
 
 
     #
-    # Execute the simulation for the first angle rate and simulation time 
+    # Execute the simulation for the first angle rate and simulation time
     #
 
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
     #
-    # Update of the angle rate and simulation time 
+    # Update of the angle rate and simulation time
     #
 
     for i,j in zip(time_command[1:],angle_rate_command[1:]):
@@ -415,39 +415,5 @@ if __name__ == "__main__":
         True,  # show_plots
         True,  # useAltBodyFrame
         np.array([[0.0,0,0.0],[0.0,0.002,0.0],[0.0,-0.002,0.0],[0.0,0,0.0]]), # angle_rate_command
-        np.array([10,10,10,10]) # time_command 
+        np.array([10,10,10,10]) # time_command
     )
-
-
-
-    
-
-
-
-     
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-

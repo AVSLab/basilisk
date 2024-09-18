@@ -29,7 +29,7 @@ import scenarioSweepingSpacecraft
 
 def test_scenarioSweepingSpacecraft(show_plots, useAltBodyFrame, angle_rate_command, time_command):
     """This function is called by the py.test environment."""
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -44,7 +44,7 @@ def test_scenarioSweepingSpacecraft(show_plots, useAltBodyFrame, angle_rate_comm
         testFailCount += 1
         testMessages.append('scenarioSweepingSpacecraft test failed.')
 
-    # print out success message if no error were found
+    # print out success message if no error is found
     if testFailCount == 0:
         print('PASSED')
     else:
@@ -54,4 +54,3 @@ def test_scenarioSweepingSpacecraft(show_plots, useAltBodyFrame, angle_rate_comm
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-
