@@ -38,6 +38,8 @@ jobs:
         matrix:
           python-version: [ "3.11" ]
       steps:
+        - name: Wait for version number to be bumped
+          run: sleep 15
         - name: Checkout code
           uses: actions/checkout@v4
         - name: Set up Python ${{ matrix.python-version }}
