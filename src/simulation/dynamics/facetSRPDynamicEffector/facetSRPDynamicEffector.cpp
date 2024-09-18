@@ -109,7 +109,7 @@ void FacetSRPDynamicEffector::ReadMessages()
     if (this->articulatedFacetDataInMsgs.size() == this->numArticulatedFacets) {
         HingedRigidBodyMsgPayload facetAngleMsg;
         this->facetArticulationAngleList.clear();
-        for (int i = 0; i < this->numArticulatedFacets; i++) {
+        for (uint64_t i = 0; i < this->numArticulatedFacets; i++) {
             if (this->articulatedFacetDataInMsgs[i].isLinked() && this->articulatedFacetDataInMsgs[i].isWritten()) {
                     facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
                     this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
@@ -165,7 +165,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
     double SRPPressure = (solarRadFlux / speedLight) * numAU * numAU;
 
     // Loop through the facets and calculate the SRP force and torque acting on the spacecraft about point B
-    for (int i = 0; i < this->numFacets; i++) {
+    for (uint64_t i = 0; i < this->numFacets; i++) {
         double dcmBB0[3][3];
         Eigen::Matrix3d dcm_BB0;
 
