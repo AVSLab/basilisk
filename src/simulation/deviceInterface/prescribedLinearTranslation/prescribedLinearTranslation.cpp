@@ -639,9 +639,11 @@ void PrescribedLinearTranslation::computeTranslationComplete() {
 void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
     // Create the output buffer message
     PrescribedTranslationMsgPayload prescribedTranslationMsgOut;
+    LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyMsgOut;
 
     // Zero the output messages
     prescribedTranslationMsgOut = PrescribedTranslationMsgPayload();
+    linearTranslationRigidBodyMsgOut = LinearTranslationRigidBodyMsgPayload();
 
     // Compute the translational body position relative to the mount frame M expressed in M frame components
     Eigen::Vector3d r_FM_M = this->transPos * this->transHat_M;  // [m]
@@ -656,11 +658,14 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
     eigenVector3d2CArray(r_FM_M, prescribedTranslationMsgOut.r_FM_M);
     eigenVector3d2CArray(rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
     eigenVector3d2CArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
+    linearTranslationRigidBodyMsgOut.rho = this->transPos;
+    linearTranslationRigidBodyMsgOut.rhoDot = this->transVel;
 
     // Write the output messages
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
     PrescribedTranslationMsg_C_write(&prescribedTranslationMsgOut,
                                      &prescribedTranslationOutMsgC, this->moduleID, callTime);
+    this->linearTranslationRigidBodyOutMsg.write(&linearTranslationRigidBodyMsgOut, this->moduleID, callTime);
 }
 
 /*! Setter method for the coast option bang duration.
