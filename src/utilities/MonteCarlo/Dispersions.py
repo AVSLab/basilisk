@@ -76,6 +76,21 @@ class UniformDispersion(SingleVariableDispersion):
         return dispValue
 
 
+class UniformDispersionSymmetricBounds(SingleVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        SingleVariableDispersion.__init__(self, varName, bounds)
+        if self.bounds is None:
+             self.bounds = ([0.5, 1.0])  # defines a hard floor/ceiling
+
+    def generate(self, sim):
+        dispValue = random.uniform(self.bounds[0], self.bounds[1]) * random.choice([-1, 1])
+
+        mid = 0.0
+        scale = self.bounds[1] - mid
+        self.magnitude.append(str(round((dispValue - mid)/scale*100,2)) + " %")
+        return dispValue
+
+
 class NormalDispersion(SingleVariableDispersion):
     def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
         SingleVariableDispersion.__init__(self, varName, bounds)
@@ -314,6 +329,31 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         self.magnitude.append(str(round((thetaRnd - meanTheta) / self.thetaStd, 2)) + r" $\sigma$")
 
         return dispVec
+
+
+class NormalVectorSingleAngleDispersion(VectorVariableDispersion):
+    def __init__(self, varName, phiStd=np.pi/36.0, bounds=None):
+        super(NormalVectorSingleAngleDispersion, self).__init__(varName, None)
+
+        self.phiStd = phiStd
+        self.bounds = bounds
+
+        if bounds is None:
+            self.bounds = [-np.pi, np.pi]
+
+        self.magnitude = []
+
+    def generate(self, sim=None):
+        dirVec = eval('sim.' + self.varName)
+        angle = np.random.normal(0, self.phiStd)
+        angle = self.checkBounds(angle, self.bounds)
+        dirVec = np.array(dirVec).reshape(3).tolist()
+        dispVec = self.perturbVectorByAngle(dirVec, angle)
+        angleDisp = np.arccos(np.dot(dirVec, dispVec)/np.linalg.norm(dirVec)/np.linalg.norm(dispVec))
+        self.magnitude.append(str(round(angleDisp / self.phiStd, 2)) + " sigma")
+
+        return dispVec
+
 
 class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
     def __init__(self, varName, bounds=None):
