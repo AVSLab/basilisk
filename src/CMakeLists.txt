@@ -3,29 +3,7 @@ cmake_minimum_required(VERSION 3.26)
 # cmake>=3.26 is required for FindPython3 SABIModule.
 # XXX: Some versions of CMake around 3.21~3.26 crash CMake on Windows. Reason and range is still TBD.
 
-if(POLICY CMP0078)
-  cmake_policy(SET CMP0078 NEW)
-endif()
 
-if(POLICY CMP0025)
-  cmake_policy(SET CMP0025 NEW)
-endif()
-
-if(POLICY CMP0057)
-  cmake_policy(SET CMP0057 NEW)
-endif()
-
-if(POLICY CMP0086)
-  cmake_policy(SET CMP0086 NEW)
-endif()
-
-if(POLICY CMP0068)
-  cmake_policy(SET CMP0068 NEW)
-endif()
-
-if(POLICY CMP0046)
-  cmake_policy(SET CMP0046 NEW)
-endif()
 
 project("basilisk")
 
