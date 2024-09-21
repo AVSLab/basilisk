@@ -24,7 +24,8 @@ Version |release|
 - Installing Basilisk 2.4.0 while ``packaging<22`` is installed can lead to an incompatibility and raise a
   "TypeError: ``canonicalize_version()`` got an unexpected keyword argument ``strip_trailing_zero``" error.
   Newer versions of Basilisk now upgrade ``packaging>=22`` to solve this issue.
-
+- :ref:`simIncludeRW` didn't allow ``fCoulomb``, ``fStatic`` and ``cViscous`` to be
+  specified even if a prebuilt RW data set is used. This is corrected in the current release.
 
 Version 2.4.0
 -------------
