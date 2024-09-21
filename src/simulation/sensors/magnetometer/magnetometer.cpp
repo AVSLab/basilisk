@@ -68,7 +68,7 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos)
     }
 
     this->noiseModel.setUpperBounds(this->walkBounds);
-    auto nMatrix = (this->senNoiseStd * 1.5).asDiagonal();
+    auto nMatrix = this->senNoiseStd.asDiagonal();
     this->noiseModel.setNoiseMatrix(nMatrix);
     this->noiseModel.setRNGSeed(this->RNGSeed);
     Eigen::MatrixXd satBounds;
