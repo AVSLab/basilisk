@@ -222,7 +222,7 @@ void Albedo::UpdateState(uint64_t CurrentSimNanos)
     this->albOutData.clear();
     std::vector<SpicePlanetStateMsgPayload>::iterator planetIt;
     int idx;
-    for (size_t instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++)
+    for (int instIdx = 0; instIdx < (int) this->albOutMsgs.size(); instIdx++)
     {
         idx = 0;
         double tmpTot[4] = {};
