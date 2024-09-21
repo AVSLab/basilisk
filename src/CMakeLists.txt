@@ -666,18 +666,5 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
 file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
-# run python script to modify swig gen code
-add_custom_target(OverwriteSwig ALL)
-set(ARG utilities/overwriteSwig.py ${CMAKE_BINARY_DIR} ${SWIG_VERSION})
-add_custom_command(
-  TARGET OverwriteSwig
-  COMMAND ${Python3_EXECUTABLE} ${ARG}
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../src/)
-if(TARGET _thrusterDynamicEffector)
-  add_dependencies(OverwriteSwig _thrusterDynamicEffector _vscmgStateEffector _reactionWheelStateEffector)
-elseif(TARGET thrusterDynamicEffector)
-  add_dependencies(OverwriteSwig thrusterDynamicEffector vscmgStateEffector reactionWheelStateEffector)
-endif()
-
 # Tests targets
 add_subdirectory("architecture/utilities/tests")
