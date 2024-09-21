@@ -16,12 +16,10 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
 import os  # Don't worry about this, standard stuff plus file discovery
-
 import numpy
 from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.utilities import RigidBodyKinematics, macros
 
 
 def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
