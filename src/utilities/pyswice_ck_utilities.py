@@ -146,19 +146,6 @@ def ckRead(time, spacecraft_id=-62, reference_frame="J2000"):
 def ckInitialize(ck_file_in):
     pyswice.furnsh_c(ck_file_in)
 
+
 def ckClose(ck_file_in):
     pyswice.unload_c(ck_file_in)
-
-def spkRead(target, time, ref, observer):
-    et = pyswice.new_doubleArray(1)
-    pyswice.str2et_c(time, et)
-    state = pyswice.new_doubleArray(6)
-    lt = pyswice.new_doubleArray(1)
-
-    pyswice.spkezr_c(target, pyswice.doubleArray_getitem(et, 0), ref, "NONE",
-        observer, state, lt)
-    stateArray = numpy.zeros(6)
-    lightTime = pyswice.doubleArray_getitem(lt, 0)
-    for i in range(6):
-        stateArray[i] = pyswice.doubleArray_getitem(state, i)
-    return stateArray
