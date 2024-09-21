@@ -94,7 +94,8 @@ def ckWrite(handle, time, mrp_array, av_array, start_seg, spacecraft_id=-62, ref
     # Close the CK file
     pyswice.ckcls_c(pyswice.intArray_getitem(file_handle, 0))
 
-def ckRead(time, SCID=-62, rf="J2000"):
+
+def ckRead(time, spacecraft_id=-62, reference_frame="J2000"):
     """
     Purpose: Read information out of a CK Kernel for a single instance and returns a quaternion array
     and an angular velocity array
@@ -104,42 +105,43 @@ def ckRead(time, SCID=-62, rf="J2000"):
         Assumes that SCLK and CK kernels are already loaded using furnsh because pyswice gets mad when loading the same files over and over again.
 
     :param time: Should be in UTC Gregorian, and passed in as a string, ex: 'FEB 01,2021  14:00:55.9999 (UTC)'
-    :param SCID: Spacecraft ID -- Default: -62
-    :param rf: is a character string which specifies the, reference frame of the segment. Reference Frame, ex: "J2000"
+    :param spacecraft_id: Spacecraft ID -- Default: -62
+    :param reference_frame: is a character string which specifies the, reference frame of the segment. Reference Frame, ex: "J2000"
     :return: None
     """
-    #Getting time into usable format
-    et = pyswice.new_doubleArray(1)
-    pyswice.str2et_c(time, et)
+    # Find the elapsed seconds between initial time and reference ephemeris
+    ephemeris_time_container = pyswice.new_doubleArray(1)
+    pyswice.str2et_c(time, ephemeris_time_container)
+    ephemeris_time = pyswice.doubleArray_getitem(ephemeris_time_container, 0)
+
+    # Convert initial time to spacecraft clock tick
     tick = pyswice.new_doubleArray(1)
-    pyswice.sce2c_c(SCID, pyswice.doubleArray_getitem(et, 0), tick)
-    cmat = pyswice.new_doubleArray(9)
-    av = pyswice.new_doubleArray(3)
-    clkout = pyswice.new_doubleArray(1)
-    intArray = pyswice.new_intArray(1)
-    cmatConversion = numpy.zeros((3, 3))
-    kernalQuatArray = numpy.zeros((1, 4))
-    kernMRPArray = numpy.zeros((1, 3))
-    kernOmega = numpy.zeros((1, 3))
-    pyswice.ckgpav_c(SCID, pyswice.doubleArray_getitem(tick, 0), 0, rf, cmat, av, clkout, intArray)
-    for q in range(9):
-        if q < 3:
-            cmatConversion[0, q] = pyswice.doubleArray_getitem(cmat, q)
-            kernOmega[0, q] = pyswice.doubleArray_getitem(av, q)
-        elif q >= 6:
-            cmatConversion[2, (q - 6)] = pyswice.doubleArray_getitem(cmat, q)
-        else:
-            cmatConversion[1, (q - 3)] = pyswice.doubleArray_getitem(cmat, q)
-    kernalQuat = RigidBodyKinematics.C2EP(cmatConversion)
-    kernMRP = RigidBodyKinematics.C2MRP(cmatConversion)
-    for s in range(4):
-        if s < 3:
-            kernMRPArray[0, s] = -kernMRP[s]
-        kernalQuatArray[0, s] = -kernalQuat[s]
-        if s == 0:
-            kernalQuatArray[0, s] = -kernalQuatArray[0, s]
-    etout = pyswice.doubleArray_getitem(et, 0)
-    return etout, kernalQuatArray, kernOmega
+    pyswice.sce2c_c(spacecraft_id, ephemeris_time, tick)
+
+    # Get attitude and angular velocity for a specified spacecraft clock time
+    dcm_container = pyswice.new_doubleArray(9)
+    av_container = pyswice.new_doubleArray(3)
+    tick_container = pyswice.new_doubleArray(1)
+    requested_pointing_flag = pyswice.new_intArray(1)
+    pyswice.ckgpav_c(spacecraft_id, pyswice.doubleArray_getitem(tick, 0), 0, reference_frame, dcm_container,
+                     av_container, tick_container, requested_pointing_flag)
+
+    # Grab angular velocity
+    omega = numpy.zeros(3)
+    for i in range(3):
+        omega[i] = pyswice.doubleArray_getitem(av_container, i)
+
+    # Grab attitude as a DCM
+    dcm = numpy.zeros((3, 3))
+    for i in range(9):
+        dcm[i // 3, i % 3] = pyswice.doubleArray_getitem(dcm_container, i)  # Map 9D array into 3x3 matrix
+
+    # Convert attitude to quaternions
+    quat = RigidBodyKinematics.C2EP(dcm)
+    quat[1:4] = - quat[1:4]  # Convert to JPL-style quaternions
+
+    return ephemeris_time, quat, omega
+
 
 def ckInitialize(ck_file_in):
     pyswice.furnsh_c(ck_file_in)
