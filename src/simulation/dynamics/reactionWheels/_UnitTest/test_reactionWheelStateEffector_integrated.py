@@ -108,7 +108,19 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 ,rWB_B = [0.1,0.,0.]    # m
                 ,maxMomentum = varMaxMomentum
                 ,RWModel= varRWModel
+                ,fCoulomb=10
+                ,fStatic=5
+                ,cViscous=3
+                ,useRWfriction=True
                 )
+        assert rwFactory.rwList["RW1"].fCoulomb == 10, "wasn't able to set custom fCoulomb value"
+        assert rwFactory.rwList["RW1"].fStatic == 5, "wasn't able to set custom fStatic value"
+        assert rwFactory.rwList["RW1"].cViscous == 3, "wasn't able to set custom cViscous value"
+        # reset RW values to continue the test
+        rwFactory.rwList["RW1"].fCoulomb = 0.0
+        rwFactory.rwList["RW1"].fStatic = 0.0
+        rwFactory.rwList["RW1"].cViscous = 0.0
+
         rwFactory.create(
                 'Honeywell_HR16',
                 [0,1,0]                 # gsHat_B
@@ -533,6 +545,6 @@ def test_setJs(show_plots):
 
 
 if __name__ == "__main__":
+    reactionWheelIntegratedTest(True,True,'BalancedWheels')
     # reactionWheelIntegratedTest(True,True,'BalancedWheels')
-    # reactionWheelIntegratedTest(True,True,'BalancedWheels')
-    test_setJs(False)
+    # test_setJs(False)
