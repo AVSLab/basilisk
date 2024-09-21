@@ -51,6 +51,7 @@ Version |release|
   for the use of ``ClassicElements()`` defined in :ref:`orbitalMotionutilities`.
 - Added ``packaging>=22`` dependency for installing Basilisk to solve an incompatibility issue with ``setuptools``.
 - Added support for macOS to the CI test builds, including opNav for all three platforms
+- Added CI support to test Linux on latest Ubuntu with opNav
 - Added CI support to build and test Basilisk documentation on the GitHub macOS platform
 - Added new scenario :ref:`scenarioOrbitManeuverTH` to do Hohmann transfer using thrusters
 - Made sure that :ref:`astroFunctions` and :ref:`simIncludeGravBody` now all pull from the same set of
