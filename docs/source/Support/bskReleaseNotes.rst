@@ -56,6 +56,8 @@ Version |release|
 - Made sure that :ref:`astroFunctions` and :ref:`simIncludeGravBody` now all pull from the same set of
   astronautical data in :ref:`astroConstants`.  These tools now all use a consisten set of planet data
   referenced from NASA sources.
+- Updated :ref:`simIncludeRW` to allow values of ``fCoulomb``, ``fStatic`` and ``cViscous`` to be
+  specified even if a prebuilt RW data set is used.
 - If ``messaging`` was not imported then the msg ``recorder()`` modules couldn't be setup.  Now
   ``messaging`` is imported as part of the Basilisk package so the ``recorder()`` modules always work.
 - Added the ability for GitHub to rebuild the BSK documentation each time a branch is merged back into develop.
