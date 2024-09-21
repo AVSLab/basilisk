@@ -54,6 +54,7 @@ Version |release|
 - Added CI support to test Linux on latest Ubuntu with opNav
 - Added CI support to build and test Basilisk documentation on the GitHub macOS platform
 - Added new scenario :ref:`scenarioOrbitManeuverTH` to do Hohmann transfer using thrusters
+- Refactored :ref:`pyswice_ck_utilities` utility file, added unit test
 - Made sure that :ref:`astroFunctions` and :ref:`simIncludeGravBody` now all pull from the same set of
   astronautical data in :ref:`astroConstants`.  These tools now all use a consisten set of planet data
   referenced from NASA sources.
