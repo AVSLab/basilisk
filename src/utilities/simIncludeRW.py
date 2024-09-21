@@ -142,24 +142,6 @@ class rwFactory(object):
             varMaxPower = -1.0              # default value turns off max power limit
         RW.P_max = varMaxPower
 
-        if 'fCoulomb' in kwargs:
-            varfCoulomb = kwargs['fCoulomb']
-            if not isinstance(varfCoulomb, float):
-                print('ERROR: fCoulomb must be a FLOAT argument')
-                exit(1)
-        else:
-            varfCoulomb = 0.0       # default value
-        RW.fCoulomb = varfCoulomb
-
-        if 'fStatic' in kwargs:
-            varfStatic = kwargs['fStatic']
-            if not isinstance(varfStatic, float):
-                print('ERROR: fStatic must be a FLOAT argument')
-                exit(1)
-        else:
-            varfStatic = 0.0       # default value
-        RW.fStatic = varfStatic
-
         if 'betaStatic' in kwargs:
             varbetaStatic = kwargs['betaStatic']
             if not isinstance(varbetaStatic, float):
@@ -171,15 +153,6 @@ class rwFactory(object):
         else:
             varbetaStatic = -1.0       # default value turns off Stribeck friction model
         RW.betaStatic = varbetaStatic
-
-        if 'cViscous' in kwargs:
-            varcViscous =  kwargs['cViscous']
-            if not isinstance(varcViscous, float):
-                print('ERROR: cViscous must be a FLOAT argument')
-                exit(1)
-        else:
-            varcViscous = 0.0       # default value
-        RW.cViscous = varcViscous
 
         # set device label name
         if 'label' in kwargs:
@@ -200,6 +173,24 @@ class rwFactory(object):
         except:
             print('ERROR: RW type ' + rwType + ' is not implemented')
             exit(1)
+
+        if 'fCoulomb' in kwargs:
+            RW.fCoulomb = kwargs['fCoulomb']
+            if not isinstance(RW.fCoulomb, float):
+                print('ERROR: fCoulomb must be a FLOAT argument')
+                exit(1)
+
+        if 'fStatic' in kwargs:
+            RW.fStatic = kwargs['fStatic']
+            if not isinstance(RW.fStatic, float):
+                print('ERROR: fStatic must be a FLOAT argument')
+                exit(1)
+
+        if 'cViscous' in kwargs:
+            RW.cViscous =  kwargs['cViscous']
+            if not isinstance(RW.cViscous, float):
+                print('ERROR: cViscous must be a FLOAT argument')
+                exit(1)
 
         if 'u_min' in kwargs:
             varu_min = kwargs['u_min']
