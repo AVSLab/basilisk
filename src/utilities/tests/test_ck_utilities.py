@@ -16,6 +16,7 @@
 
 import numpy as np
 import os
+import shutil
 
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import SimulationBaseClass, macros, pyswice_ck_utilities, simIncludeGravBody, RigidBodyKinematics as rbk
@@ -60,10 +61,15 @@ def test_ck_read_write(show_plots):
     timeWrite = scObjectLogger.times()
     sigmaWrite = scObjectLogger.sigma_BN
     omegaWrite = scObjectLogger.omega_BN_B
-    pyswice_ck_utilities.ckWrite("test.bc", timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
+    tmpFolderName = "scapFolder"
+    testFileName = tmpFolderName + "/test.bc"
+    if os.path.exists(tmpFolderName):
+        shutil.rmtree(tmpFolderName)
+    os.mkdir(tmpFolderName)
+    pyswice_ck_utilities.ckWrite(testFileName, timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
 
     # Read the same CK file to check if the values are identical
-    pyswice_ck_utilities.ckInitialize("test.bc")
+    pyswice_ck_utilities.ckInitialize(testFileName)
     sigmaRead = np.empty_like(sigmaWrite)
     omegaRead = np.empty_like(omegaWrite)
     for idx in range(len(timeWrite)):
@@ -78,9 +84,9 @@ def test_ck_read_write(show_plots):
     np.testing.assert_allclose(sigmaRead, sigmaWrite)
     np.testing.assert_allclose(omegaRead, omegaWrite)
 
-    if os.path.exists("test.bc"):
-        # Delete the file
-        os.remove("test.bc")
+    if os.path.exists(tmpFolderName):
+        # Delete the scrap folder
+        shutil.rmtree(tmpFolderName)
 
 if __name__ == "__main__":
     test_ck_read_write(True)
