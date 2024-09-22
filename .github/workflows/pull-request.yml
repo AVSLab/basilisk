@@ -163,7 +163,7 @@ jobs:
     runs-on: windows-2019
     permissions:
       actions: read
-      contents: read
+      contents: write
       security-events: write
     strategy:
       matrix:
