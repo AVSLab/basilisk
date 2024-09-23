@@ -62,3 +62,4 @@ build/
 # Monte Carlo ignore generated data files and test init file.
 examples/MonteCarloExamples/scenario_AttFeedbackMC/
 src/utilities/tests/__init__.py
+examples/montecarlo_test*/

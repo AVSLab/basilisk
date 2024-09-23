@@ -104,11 +104,24 @@ It returns the failed jobs, which should not occur.  When the MC have been execu
 the data can be accessed and tested in different ways.
 This is explained in the example python code comments.
 
-.. note::
+Bokeh Visualization
+-------------------
+This script now includes an option for interactive visualization using Bokeh. To use this feature:
 
-    In these Monte Carlo simulations the retained data is stored as the data array with the time
-    information added as the first column.  This is the same retained data format as used
-    with BSK 1.x.
+1. Run the script with the --bokeh-server flag:
+   python scenarioMonteCarloAttRW.py --bokeh-server
+
+2. A Bokeh server will start, and your default web browser should open to http://localhost:5006/.
+
+3. The interactive plot allows you to:
+   - Select different variables to plot (e.g., attitude error, angular velocity, RW motor torque).
+   - Choose specific components (x, y, z) of vector quantities.
+   - Highlight particular simulation runs by entering their run numbers.
+   - Zoom, pan, and reset the view using the toolbar.
+   - Hover over data points for detailed information.
+
+This Bokeh visualization provides a more interactive way to explore the Monte Carlo simulation results,
+complementing the static matplotlib plots generated in the standard execution mode.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -190,6 +203,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.io import output_file, show
 from bokeh.layouts import column
+from bokeh.models import Div
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
@@ -355,6 +369,17 @@ def run(saveFigures, case, show_plots):
         # monteCarloLoaded.executeCallbacks([4,6,7])
         # or execute the plot on all runs
         monteCarloLoaded.executeCallbacks()
+
+        # Create the Bokeh application
+        plotter = MonteCarloPlotter(dirName)
+        plotter.load_data([
+            rwMotorTorqueMsgName + ".motorTorque",
+            guidMsgName + ".sigma_BR",
+            guidMsgName + ".omega_BR_B",
+            rwSpeedMsgName + ".wheelSpeeds",
+            voltMsgName + ".voltage"
+        ])
+        plotter.show_plots()
 
     #########################################################
     if case == 2:
@@ -727,11 +752,16 @@ if __name__ == "__main__":
         from bokeh.application.handlers.function import FunctionHandler
 
         def bk_worker(doc):
+            print("Bokeh worker function started")
+            
             # Run the Monte Carlo simulation and get the directory name
             dirName = run(saveFigures=True, case=1, show_plots=False)
+            print(f"Monte Carlo simulation completed. Data directory: {dirName}")
             
             # Create the Bokeh application
             plotter = MonteCarloPlotter(dirName)
+            print("MonteCarloPlotter instance created")
+            
             plotter.load_data([
                 rwMotorTorqueMsgName + ".motorTorque",
                 guidMsgName + ".sigma_BR",
@@ -739,13 +769,19 @@ if __name__ == "__main__":
                 rwSpeedMsgName + ".wheelSpeeds",
                 voltMsgName + ".voltage"
             ])
-            downsampled_data = plotter.get_downsampled_plots()
+            print("Data loaded into MonteCarloPlotter")
             
-            # Add the plots to the document
-            for variable, plots in plotter.plots.items():
-                for plot in plots:
-                    doc.add_root(plot)
+            # Create a layout with a title and the plot
+            title = Div(text="<h1>Monte Carlo Simulation Results</h1>")
+            plot_layout = plotter.show_plots()
+            if plot_layout is not None:
+                layout = column(title, plot_layout)
+                doc.add_root(layout)
+                print("Layout added to Bokeh document")
+            else:
+                print("Error: plot_layout is None")
 
+        print("Starting Bokeh server")
         server = Server({'/': Application(FunctionHandler(bk_worker))})
         server.start()
         print('Opening Bokeh application on http://localhost:5006/')

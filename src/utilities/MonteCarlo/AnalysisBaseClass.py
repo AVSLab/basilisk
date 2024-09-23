@@ -73,7 +73,7 @@ class MonteCarloPlotter:
             xs=xs, ys=ys, color=list(range(1, num_runs+1))
         ))
         p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
-                     line_alpha=0.05, line_width=3, source=background_source,
+                     line_alpha=0.5, line_width=3, source=background_source,
                      level='underlay')
         
         if run_numbers is not None:
@@ -186,29 +186,8 @@ class MonteCarloPlotter:
         # Update the title after creating the layout
         self.update_title()
 
-        # Add custom CSS to center the entire content
-        custom_css = """
-        <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .bk-root {
-            margin: 0 auto;
-        }
-        </style>
-        """
-
-        # Inject the custom CSS into the document head
-        curdoc().template_variables['custom_css'] = custom_css
-
-        curdoc().add_root(self.plot_column)
-        print("Plot should be visible now. If not, check the browser console for any errors.")
+        # Return the layout instead of adding it to curdoc
+        return self.plot_column
 
     def get_downsampled_plots(self):
         # This method is no longer needed, but we'll keep it for compatibility

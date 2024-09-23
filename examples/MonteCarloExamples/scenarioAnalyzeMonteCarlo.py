@@ -20,13 +20,9 @@
 r"""
 Motivation
 ----------
-This script is a basic demonstration of a script that can be used to plot Monte Carlo data with 
-bokeh and datashaders.   These tools are very efficient to plot large amounts of simulation data
-that is likely to occur with Monte Carlo sensitivity analysis studies.  For example, running this script will
-create an HTML interactive view of the simulation data.   Instead of seeing a fixed resolution, the user can
-zoom into the data dynamically to see more detail.  This process recreates a newly render view of the simulation data.
+This script demonstrates how to plot Monte Carlo data using Bokeh. This tool efficiently visualizes large amounts of simulation data typically generated in Monte Carlo sensitivity analysis studies. Running this script creates an interactive HTML view of the simulation data, allowing users to dynamically zoom into the data for more detail.
 
-The following two plots illustrate what this particular simulation setup will yield.
+The following plots illustrate what this particular simulation setup will yield:
 
 .. _scenarioAnalyzeMonteCarlo-ds0:
 .. figure:: /_images/static/ds-0.png
@@ -52,76 +48,101 @@ The next plot illustrates the output if you run ``scenario_AttFeedbackMC.py`` wi
 
     Figure 3: Larger simulation run with 40 simulation cases shown
 
+Efficient Handling of Large Datasets
+------------------------------------
+This implementation uses Bokeh to efficiently handle and visualize large datasets, including those exceeding one gigabyte in size. Here's how it achieves this:
+
+1. Data Loading: The script uses pandas to load data from pickle files, which is an efficient method for handling large datasets.
+
+2. Downsampling: While the full dataset is loaded, not all points are plotted at once. The plot is initially rendered at a lower resolution, and more detail is added as the user zooms in.
+
+3. Efficient Rendering: Bokeh uses HTML5 Canvas for rendering, which is highly efficient for displaying large numbers of data points.
+
+4. Client-Side Interaction: Most of the interactivity (panning, zooming) happens on the client-side in the browser, reducing the need for constant server communication.
+
+5. Data Streaming: The plot is updated dynamically as the user interacts with it, loading only the necessary data for the current view.
+
+This approach allows for smooth interaction with large datasets that would be impractical to plot all at once using traditional plotting libraries.
+
 Configuring a Python Environment For this Script
 ------------------------------------------------
-.. danger::
+To run this script, you need to set up a specific Python environment:
 
-    Running this script is different from running other BSK scripts.  There are very particular python
-    package requirements that must be carefully followed.  It is recommended the user create a
-    virtual python environment as discussed in the installation setup.  This environment might have to be
-    specific to running this script because of these dependency challenges.
+1. Use Python 3.8 or higher.
+2. Create a dedicated virtual environment and compile Basilisk for this environment.
+3. Install the required packages. The necessary dependencies are listed in the `requirements_optional.txt` file in the Basilisk root directory. You can install them using:
 
-The setup steps are as follows:
+   pip install -r requirements_optional.txt
 
-#. The datashaders etc. require that this script be run with Python 3.7, not higher
-#. Create dedicated virtual environment and compile Basilisk for this environment
-#. Install this particular version of ``panel`` package first.  It must be done alone as it upgrades
-   ``bokeh`` to a version that is too new::
-
-        pip3 install --upgrade panel==0.9.7
-
-#. Next, install the following particular python package versions::
-
-        pip3 install --upgrade bokeh==1.2.0 holoviews==1.12.3 param==1.9.3 hvplot==0.6.0
+   This will install Bokeh and other optional dependencies needed for this script.
 
 How to Run the Script
 ---------------------
-.. important::
+Follow these steps to run the script:
 
-    Read all three steps before advancing.
+1. First, run the `scenario_AttFeedbackMC.py` script to generate the necessary data files.
 
-The next steps outline how to run this script. 
+2. Ensure that the `run()` function call at the bottom of this script is uncommented.
 
-1.  This script can only be run once there exists data produced by the ``scenario_AttFeedbackMC.py`` script.
+3. Run this script from the command line using:
 
-2.  At the bottom of this script, comment out the name guard and associated ``run()`` statement,
-    and un-comment the following ``run()`` statement before this script can run.
-    These lines are provided in their commented/uncommented form
-    to ensure that the sphinx documentation generation process does not
-    run this script automatically.
+   python scenarioAnalyzeMonteCarlo.py
 
-3.  This script must be called from command line using::
+   This will process the data created by `scenario_AttFeedbackMC.py` and open a browser window showing the interactive plot.
 
-        /$path2bin/bokeh serve --show /$path2script/scenarioAnalyzeMonteCarlo.py
+4. Use the dropdown menus to select different variables and components to plot.
 
-This will process the data created with ``scenario_AttFeedbackMC.py`` and open a browser window showing
-Figure 1 above.  To end the script you need to press the typical key strokes to interrupt a process as the
-bokeh server will keep running until stopped.
+5. Enter specific run numbers in the text input field to highlight those runs on the plot.
+
+6. Use the pan, zoom, and reset tools to explore the data in detail.
+
+The script will display information about the loaded data, including the number of runs and total data size, at the top of the plot.
 
 """
 
-import os
-import logging
-import time
-logging.basicConfig(level=logging.INFO)
+# Import necessary modules
+import os  # For file and directory operations
+import logging  # For logging messages
+import time  # For timing the execution
+logging.basicConfig(level=logging.INFO)  # Set up basic logging configuration
+
+# Import the MonteCarloPlotter class from the Basilisk utilities
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
-from bokeh.layouts import column
+
+# Import curdoc from bokeh for adding the plot to the current document
 from bokeh.io import curdoc
 
 def run():
+    # Construct the path to the data directory
     data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenario_AttFeedbackMC")
 
+    # Check if the data directory exists and is not empty
     if not os.path.exists(data_dir) or not os.listdir(data_dir):
         print("Error: The data directory is empty or doesn't exist.")
         print("Make sure you've run the scenario_AttFeedbackMC.py script to generate the data files.")
         return
 
+    # Record the start time for performance measurement
     start_time = time.time()
+
+    # Create an instance of MonteCarloPlotter
     plotter = MonteCarloPlotter(data_dir)
+
+    # Load the specified data variables
     plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
-    plotter.show_plots()
+
+    # Generate the plot layout
+    layout = plotter.show_plots()
+
+    # If a layout was successfully created, add it to the current document
+    if layout is not None:
+        curdoc().add_root(layout)
+
+    # Record the end time and calculate total execution time
     end_time = time.time()
     print(f"Total time taken: {end_time - start_time:.2f} seconds")
+
+    # Provide user feedback about the plot display
     print("Plot should be displayed now. If the page is blank, wait for a few more seconds and try refreshing.")
     print("If the issue persists, check the browser console for any JavaScript errors.")
 
