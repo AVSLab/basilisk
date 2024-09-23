@@ -124,8 +124,8 @@ def run(saveFigures, case, show_plots):
     monteCarlo.setArchiveDir(dirName)
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
-    dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
-    # dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+    # dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+    dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     # dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
     # dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
     # dispInertia = 'hubref.IHubPntBc_B'
@@ -138,11 +138,11 @@ def run(saveFigures, case, show_plots):
     # dispVoltageIO_0 = 'rwVoltageIO.voltage2TorqueGain[0]'
     # dispVoltageIO_1 = 'rwVoltageIO.voltage2TorqueGain[1]'
     # dispVoltageIO_2 = 'rwVoltageIO.voltage2TorqueGain[2]'
-    dispList = [dispMRPInit]
+    dispList = [dispOmegaInit]
 
     # Add dispersions with their dispersion type
-    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
-    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
+    # monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
     # monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
     # monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
     # monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
