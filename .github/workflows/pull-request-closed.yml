@@ -28,18 +28,56 @@ jobs:
               git commit -a -m "[AUTO] Bump version number"
               git push
 
-    build_documentation:
-      name: macOS Docs Deployment
+
+    wait_for_version_bump:
+      name: Wait for version bump
       needs: if_merged
       # run even if the version bump failed.  If the merge is from an external fork the bump fails.
       if: ${{ always() }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: Wait for version number to be bumped
+          run: sleep 15
+
+
+    build-ubuntu-latest-wheels:
+      name: Build ubuntu-latest wheels
+      needs: wait_for_version_bump
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          python-version: ["3.9", "3.10", "3.11"]
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+        - name: Set up Python ${{ matrix.python-version }}
+          uses: actions/setup-python@v5
+          with:
+            python-version: ${{ matrix.python-version }}
+        - name: "Install swig and cmake"
+          run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
+        - name: "Install python packages"
+          run: sudo apt-get install python3-setuptools python3-tk python3-venv
+        - name: "Create virtual Environment"
+          run: python3 -m venv .venv
+        - name: "Build basilisk"
+          run: |
+            source .venv/bin/activate
+            pip wheel . -v --wheel-dir /tmp/wheelhouse
+        - uses: actions/upload-artifact@v4
+          with:
+            name: basilisk-wheels_ubuntu-latest_python${{ matrix.python-version }}
+            path: /tmp/wheelhouse/**/Basilisk*.whl
+
+
+    build_documentation:
+      name: macOS Docs Deployment
+      needs: wait_for_version_bump
       runs-on: macos-14
       strategy:
         matrix:
           python-version: [ "3.11" ]
       steps:
-        - name: Wait for version number to be bumped
-          run: sleep 15
         - name: Checkout code
           uses: actions/checkout@v4
         - name: Set up Python ${{ matrix.python-version }}
