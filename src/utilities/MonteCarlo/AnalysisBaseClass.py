@@ -97,12 +97,15 @@ class MonteCarloPlotter:
         # Create color mapper
         color_mapper = LinearColorMapper(palette=Viridis256, low=1, high=num_runs)
         
-        # Plot background lines (all runs) with low alpha
+        # Calculate opacity based on number of runs
+        base_opacity = max(0.1, min(0.8, 1 - (num_runs / 1000)))  # Adjust the divisor (1000) to fine-tune the opacity curve
+        
+        # Plot background lines (all runs) with calculated opacity
         background_source = ColumnDataSource(data=dict(
             xs=xs, ys=ys, color=list(range(1, num_runs+1))
         ))
         p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
-                     line_alpha=0.5, line_width=3, source=background_source,
+                     line_alpha=base_opacity, line_width=2, source=background_source,
                      level='underlay')
         
         if run_numbers is not None:
