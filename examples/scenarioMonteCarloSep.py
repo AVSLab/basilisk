@@ -54,7 +54,8 @@ from Basilisk.architecture import messaging
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
-                                                       NormalVectorCartDispersion, InertiaTensorDispersion)
+                                                       NormalVectorCartDispersion, InertiaTensorDispersion,
+                                                       NormalVectorSingleAngleDispersion)
 
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.io import output_file, show
@@ -74,7 +75,7 @@ guidMsgName = "guidMsg"
 
 
 # We also will need the simulationTime and samplingTimes
-simulationTime = macros.hour2nano(1)
+simulationTime = macros.hour2nano(2)
 simulationTimeStepDyn = macros.sec2nano(0.5)
 simulationTimeStepFsw = macros.sec2nano(2)
 simulationTimeStepPlt = macros.hour2nano(1)
@@ -126,26 +127,28 @@ def run(saveFigures, case, show_plots):
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     # dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
     dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
-    # dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
-    # dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    # dispInertia = 'hubref.IHubPntBc_B'
-    # dispRW1Axis = 'RW1.gsHat_B'
-    # dispRW2Axis = 'RW2.gsHat_B'
-    # dispRW3Axis = 'RW3.gsHat_B'
+    dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
+    dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+    # dispInertia = 'TaskList[0].TaskModels[0].hub.IHubPntBc_B'
+    dispRWAxis = []
+    for idx in range(4):
+        dispRWAxis.append(f"RW[{idx}].gsHat_B")
     # dispRW1Omega = 'RW1.Omega'
     # dispRW2Omega = 'RW2.Omega'
     # dispRW3Omega = 'RW3.Omega'
     # dispVoltageIO_0 = 'rwVoltageIO.voltage2TorqueGain[0]'
     # dispVoltageIO_1 = 'rwVoltageIO.voltage2TorqueGain[1]'
     # dispVoltageIO_2 = 'rwVoltageIO.voltage2TorqueGain[2]'
-    dispList = [dispOmegaInit]
+    dispList = [dispOmegaInit, dispMass, dispCoMOff] + dispRWAxis
 
     # Add dispersions with their dispersion type
     # monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
-    # monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
-    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.25 / 3.0 * np.pi / 180))
+    monteCarlo.addDispersion(UniformDispersion(dispMass, ([2500.0 * 0.95, 2500.0 * 1.05])))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.008, -0.010, 1.214], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
     # monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
+    for idx in range(4):
+        monteCarlo.addDispersion(NormalVectorSingleAngleDispersion(dispRWAxis[idx], phiStd=2.0 / 3 * np.pi / 180))
     # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
     # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
     # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
@@ -274,8 +277,8 @@ def run(saveFigures, case, show_plots):
 # This function creates the simulation to be executed in parallel.
 def createScenarioSepMomentumManagement():
 
-    momentumManagement = False
-    cmEstimation = False
+    momentumManagement = True
+    cmEstimation = True
 
     # Create simulation variable names
     fswTask = "fswTask"
@@ -385,6 +388,10 @@ def createScenarioSepMomentumManagement():
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwStateEffector.ModelTag = "RW_cluster"
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
+
+    scSim.RW = []
+    for idx in range(numRW):
+        scSim.RW.append(rwFactory.rwList[f"RW{idx+1}"])
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(dynTask, rwStateEffector, 2)
