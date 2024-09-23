@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -16,118 +16,266 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-r"""
-Overview
---------
+#
+# Basilisk Integrated Test
+#
+# Purpose:  Integrated test of the MonteCarlo module.  Runs multiple
+#           scenarioSepMomentumManagement with dispersed initial parameters
+#
 
-This script shows how to use a solar electric propulsion (SEP) thruster mounted on a dual-gimbaled platform to perform
-continuous momentum management of a spacecraft actuated with reaction wheels (RWs). The spacecraft is also equipped
-two large rotating solar arrays (SAs) which can continuously track the Sun to ensure maximum power generation.
-The goals for the SEP are to continuously point the thruster along the requested inertial thrust direction, while also
-maneuvering the gimbal in order to manage the momentum build-up on RWs due to external unmodeled perturbations. As a
-consequence, the optimal reference attitude for the spacecraft changes as the dual-gimbaled platform is articulated.
-In this script, the unmodeled perturbation consists in the solar radiation pressure (SRP) torque acting on the
-system, and modeled using :ref:`facetSRPDynamicEffector`. The main flight software modules used in this script are
-the following:
 
-- :ref:`oneAxisSolarArrayPoint`: computes the reference attitude for a spacecraft with multiple pointing requirements.
-  For this application, the first requirement is to align the thruster with the requested inertial direction; the
-  second requirement is to have the solar array drive axis as close to orthogonal as possible to the sunline.
-- :ref:`thrusterPlatformReference`: computes the reference tip and tilt angles for the dual-gimbaled platform on which
-  the SEP thruster is mounted on. Based on nominal expected thruster behavior, this module computes the gimbal angles
-  that ensure that the resulting thruster torque feeds back on RW momentum build-up, therefore ensuring that the total
-  net momentum is continuously dumped.
-- :ref:`thrustCMEstimation`: estimates the location of the system's center of mass (CM). In the presence of an
-  unmodeled disturbance such as SRP the estimate is biased, and the estimated point is the location of a point
-  :math:`C^*` such that, when the thruster is fired through this point, the resulting torque counterbalances external
-  unmodeled perturbations.
-
-To ensure that attitude convergence is reached, in order for :ref:`thrustCMEstimation` to process meaningful torque
-measurements, :ref:`thrusterPlatformReference` is run at the frequency of one update per hour, as opposed to the
-frequency of one update every other second (0.5 Hz) for every other flight software module. Dynamics frequency is 2 Hz.
-
-The script is found in the folder ``basilisk/examples`` and executed by using::
-
-      python3 scenarioSepMomentumManagement.py
-
-Illustration of Simulation Results
-----------------------------------
-
-The most interesting result of this analysis is shown comparing RW speeds with and without continuous momentum
-management. In the first plot, the thruster is fired through the system's center of mass and therefore the thrust is not
-used to perform momentum management. Exact knowledge of the system's CM location is used here. The wheel speeds increase
-linearly over time, eventually needing momentum dumping. In the second plot, the thruster is used to perform continuous
-momentum management, and the CM location is sequentially estimated. Wheel speeds oscillate in the beginning when the CM
-location is still poorly known, until finally settling once the estimate becomes accurate.
-
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement300.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement311.svg
-   :align: center
-
-The following two plots show the angle between the thrust vector and the true system CM. In the first plot, this
-angle immediately drops to zero, because knowledge of the CM is exact, and the guidance algorithm correctly aligns the
-thruster with the CM. In the second plot, the offset angle varies as the algorithm determines the location of the
-equilibrium point :math:`C^*`. At steady state, the thruster is fired at a small, constant offset with respect to the
-true CM.
-
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement600.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement611.svg
-   :align: center
-
-The final two plots show the net external torques about the CM, projected on the plane orthogonal to the thrust vector
-:math:`\boldsymbol{t}`. In the second plot, because the thruster is fired through the CM, the only contribution is given
-by the SRP torque. In the first plot, when the thruster is fired through the equilibrium point :math:`C^*`, the thruster
-torque exactly counters the action of the SRP torque according to:
-
-.. math::
-    \boldsymbol{L} = \boldsymbol{L}_\text{SRP} - (\boldsymbol{L}_\text{SRP} \cdot \boldsymbol{\hat{t}})\boldsymbol{\hat{t}} +
-    \boldsymbol{r}_{C^*/C} \times \boldsymbol{t} = 0.
-
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement1000.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement1011.svg
-   :align: center
-
-"""
-
+import inspect
+import math
 import os
+import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+fileNameString = os.path.basename(os.path.splitext(__file__)[0])
+path = os.path.dirname(os.path.abspath(filename))
+
+
 from Basilisk import __path__
-from Basilisk.architecture import messaging
+bskPath = __path__[0]
+
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarArrayPoint, rwMotorTorque,
                                     hingedRigidBodyPIDMotor, solarArrayReference, thrusterPlatformReference,
                                     thrusterPlatformState, thrustCMEstimation, torqueScheduler)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
-                                 spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector,
-                                 thrusterStateEffector, facetSRPDynamicEffector, boreAngCalc)
+                                 spinningBodyOneDOFStateEffector,
+                                 spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector)
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
                                 unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
 
-bskPath = __path__[0]
-fileName = os.path.basename(os.path.splitext(__file__)[0])
+# import message declarations
+from Basilisk.architecture import messaging
+
+from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
+                                                       NormalVectorCartDispersion, InertiaTensorDispersion)
+
+from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
+from bokeh.io import output_file, show
+from bokeh.layouts import column
+
+NUMBER_OF_RUNS = 6
+VERBOSE = True
 
 
-def SepSim():
+# Here are the name of some messages that we want to retain or otherwise use
+# rwMotorTorqueMsgName = "rwMotorTorqueMsg"
+guidMsgName = "guidMsg"
+# transMsgName = "transMsg"
+# rwSpeedMsgName = "rwSpeedMsg"
+# voltMsgName = "voltMsg"
+# rwOutName = ["rw1Msg", "rw2Msg", "rw3Msg", "rw4Msg"]
+
+
+# We also will need the simulationTime and samplingTimes
+simulationTime = macros.hour2nano(1)
+simulationTimeStepDyn = macros.sec2nano(0.5)
+simulationTimeStepFsw = macros.sec2nano(2)
+simulationTimeStepPlt = macros.hour2nano(1)
+numDataPoints = simulationTime / simulationTimeStepFsw
+samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStepFsw, numDataPoints)
+
+
+def run(saveFigures, case, show_plots):
     """
-    The scenario can be run with the followings setups parameters:
+    The scenarios can be run with the followings setups parameters:
 
     Args:
-        momentumManagement (bool): When false, the platform aligns the thruster with the CM location it receives as
-                                   input. When true, the thruster is used to perform momentum management.
-        cmEstimation (bool): When false, the platform is connected to the true CM location message. When true, the
-                             platform is connected to the estimated CM location.
-        showPlots (bool): Determines if the script should display plots.
-
+        saveFigures (bool): flag if the scenario figures should be saved for html documentation
+        case (int): Case 1 is normal MC, case 2 is initial condition run
+        show_plots (bool): Determines if the script should display plots
     """
-    momentumManagement = True
-    cmEstimation = True
+
+    # A MonteCarlo simulation can be created using the `MonteCarlo` module.
+    # This module is used to execute monte carlo simulations, and access
+    # retained data from previously executed MonteCarlo runs.
+
+    # First, the `Controller` class is used in order to define the simulation
+    monteCarlo = Controller()
+
+    # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to
+    # execute and returns it. Within this function, the simulation is created and configured
+    monteCarlo.setSimulationFunction(createScenarioSepMomentumManagement)
+
+    # Also, every MonteCarlo simulation must define a function which executes the simulation that was created.
+    monteCarlo.setExecutionFunction(executeScenario)
+
+    # A Monte Carlo simulation must define how many simulation runs to execute
+    monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+
+    # The simulations can have random seeds of each simulation dispersed randomly
+    monteCarlo.setShouldDisperseSeeds(True)
+
+    monteCarlo.setShowProgressBar(True)
+    # Optionally set the number of cores to use
+    # monteCarlo.setThreadCount(PROCESSES)
+
+    # Whether to print more verbose information during the run
+    monteCarlo.setVerbose(VERBOSE)
+
+    # We set up where to retain the data to.
+    dirName = "montecarlo_test" + str(os.getpid())
+    monteCarlo.setArchiveDir(dirName)
+
+    # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
+    dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+    # dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+    # dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
+    # dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+    # dispInertia = 'hubref.IHubPntBc_B'
+    # dispRW1Axis = 'RW1.gsHat_B'
+    # dispRW2Axis = 'RW2.gsHat_B'
+    # dispRW3Axis = 'RW3.gsHat_B'
+    # dispRW1Omega = 'RW1.Omega'
+    # dispRW2Omega = 'RW2.Omega'
+    # dispRW3Omega = 'RW3.Omega'
+    # dispVoltageIO_0 = 'rwVoltageIO.voltage2TorqueGain[0]'
+    # dispVoltageIO_1 = 'rwVoltageIO.voltage2TorqueGain[1]'
+    # dispVoltageIO_2 = 'rwVoltageIO.voltage2TorqueGain[2]'
+    dispList = [dispMRPInit]
+
+    # Add dispersions with their dispersion type
+    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
+    # monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
+    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    # monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
+    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
+    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
+    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
+    # monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
+    # monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
+    # monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
+    # monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    # monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    # monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+
+    # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
+    # is a list of messages and variables to log from each simulation run. It also has a callback,
+    # used for plotting/processing the retained data.
+    retentionPolicy = RetentionPolicy()
+    # define the data to retain
+    # retentionPolicy.addMessageLog(rwMotorTorqueMsgName, ["motorTorque"])
+    retentionPolicy.addMessageLog(guidMsgName, ["sigma_BR", "omega_BR_B"])
+    # retentionPolicy.addMessageLog(transMsgName, ["r_BN_N"])
+    # retentionPolicy.addMessageLog(rwSpeedMsgName, ["wheelSpeeds"])
+    # retentionPolicy.addMessageLog(voltMsgName, ["voltage"])
+    # for msgName in rwOutName:
+    #     retentionPolicy.addMessageLog(msgName, ["u_current"])
+    if show_plots:
+        # plot data only if show_plots is true, otherwise just retain
+        retentionPolicy.setDataCallback(plotSim)
+    if saveFigures:
+        # plot data only if show_plots is true, otherwise just retain
+        retentionPolicy.setDataCallback(plotSim)
+    monteCarlo.addRetentionPolicy(retentionPolicy)
+
+    if case == 1:
+        # After the monteCarlo run is configured, it is executed.
+        # This method returns the list of jobs that failed.
+        failures = monteCarlo.executeSimulations()
+
+        assert len(failures) == 0, "No runs should fail"
+
+        # Now in another script (or the current one), the data from this simulation can be easily loaded.
+        # This demonstrates loading it from disk
+        monteCarloLoaded = Controller.load(dirName)
+
+        # Then retained data from any run can then be accessed in the form of a dictionary
+        # with two sub-dictionaries for messages and variables:
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        assert retainedData is not None, "Retained data should be available after execution"
+        assert "messages" in retainedData, "Retained data should retain messages"
+        assert guidMsgName + ".sigma_BR" in retainedData["messages"], "Retained messages should exist"
+
+        # We also can rerun a case using the same parameters and random seeds
+        # If we rerun a properly set-up run, it should output the same data.
+        # Here we test that if we rerun the case the data doesn't change
+        oldOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
+
+        # Rerunning the case shouldn't fail
+        failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+        assert len(failed) == 0, "Should rerun case successfully"
+
+        # Now access the newly retained data to see if it changed
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        newOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
+        for k1, v1 in enumerate(oldOutput):
+            for k2, v2 in enumerate(v1):
+                assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+                "Outputs shouldn't change on runs if random seeds are same"
+
+        # We can also access the initial parameters
+        # The random seeds should differ between runs, so we will test that
+        params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+        params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+        assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+        for dispName in dispList:
+            assert dispName in params1, "dispersion should be applied"
+            # assert two different runs had different parameters.
+            assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+
+        # Now we execute our callback for the retained data.
+        # For this run, that means executing the plot.
+        # We can plot only runs 4,6,7 overlapped
+        # monteCarloLoaded.executeCallbacks([4,6,7])
+        # or execute the plot on all runs
+        monteCarloLoaded.executeCallbacks()
+
+    #########################################################
+    if case == 2:
+        # Now run initial conditions
+        icName = path + "/Support/run_MC_IC"
+        monteCarlo.setICDir(icName)
+        monteCarlo.setICRunFlag(True)
+        numberICs = 3
+        monteCarlo.setExecutionCount(numberICs)
+
+        # Rerunning the case shouldn't fail
+        runsList = list(range(numberICs))
+        failed = monteCarlo.runInitialConditions(runsList)
+        assert len(failed) == 0, "Should run ICs successfully"
+
+        # monteCarlo.executeCallbacks([4,6,7])
+        runsList = list(range(numberICs))
+        monteCarloLoaded.executeCallbacks(runsList)
+
+        # And possibly show the plots
+        if show_plots:
+            plt.show()
+            # close the plots being saved off to avoid over-writing old and new figures
+            plt.close("all")
+
+        # Now we clean up data from this test
+        os.remove(icName + '/' + 'MonteCarlo.data')
+        for i in range(numberICs):
+            os.remove(icName + '/' + 'run' + str(i) + '.data')
+        assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
+
+    # Now we clean up data from this test
+    # shutil.rmtree(dirName)
+    # assert not os.path.exists(dirName), "No leftover data should exist after the test"
+
+    # And possibly show the plots
+    if show_plots:
+        print("Test concluded, showing plots now via matplot...")
+        plt.show()
+        # close the plots being saved off to avoid over-writing old and new figures
+        plt.close("all")
+
+    return dirName
+
+# This function creates the simulation to be executed in parallel.
+def createScenarioSepMomentumManagement():
+
+    momentumManagement = False
+    cmEstimation = False
 
     # Create simulation variable names
     fswTask = "fswTask"
@@ -139,15 +287,10 @@ def SepSim():
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.SetProgressBar(True)
 
-    scSim.msgRecList = {}
-
     #  create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the simulation time and integration update time
-    simulationTimeStepDyn = macros.sec2nano(0.5)
-    simulationTimeStepFsw = macros.sec2nano(2)
-    simulationTimeStepPlt = macros.hour2nano(1)
     dynProcess.addTask(scSim.CreateNewTask(dynTask, simulationTimeStepDyn))
     dynProcess.addTask(scSim.CreateNewTask(pltRefTask, simulationTimeStepPlt))
     dynProcess.addTask(scSim.CreateNewTask(fswTask, simulationTimeStepFsw))
@@ -190,12 +333,12 @@ def SepSim():
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 100e9      # meters
+    oe.a = 150e9      # meters
     oe.e = 0.001
     oe.i = 0.0 * macros.D2R
     oe.Omega = 0.0 * macros.D2R
     oe.omega = 0.0 * macros.D2R
-    oe.f = -110.0 * macros.D2R
+    oe.f = -135.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
@@ -247,7 +390,7 @@ def SepSim():
     scSim.AddModelToTask(dynTask, rwStateEffector, 2)
 
     # Setup the FSW RW configuration message.
-    fswRwConfigMsg = rwFactory.getConfigMessage()
+    scSim.fswRwConfigMsg = rwFactory.getConfigMessage()
 
     # add the simple Navigation sensor module
     sNavObject = simpleNav.SimpleNav()
@@ -267,7 +410,7 @@ def SepSim():
     RSAList[0].r_SB_B = [0.75, 0.0, 0.45]
     RSAList[0].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[0].sHat_S = [0, 1, 0]
-    RSAList[0].dcm_S0B = [[0, 0, 1], [1, 0, 0], [0, 1, 0]]
+    RSAList[0].dcm_S0B = [[0, 0, -1], [1, 0, 0], [0, -1, 0]]
     RSAList[0].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -284,7 +427,7 @@ def SepSim():
     RSAList[1].r_SB_B = [-0.75, 0.0, 0.45]
     RSAList[1].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[1].sHat_S = [0, 1, 0]
-    RSAList[1].dcm_S0B = [[0, 0, -1], [-1, 0, 0], [0, 1, 0]]
+    RSAList[1].dcm_S0B = [[0, 0, 1], [-1, 0, 0], [0, -1, 0]]
     RSAList[1].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -296,18 +439,6 @@ def SepSim():
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
 
-    # Set up boresight modules on hub
-    hubBoresight = boreAngCalc.BoreAngCalc()
-    hubBoresight.boreVec_B = [0, -1, 0]
-    scSim.AddModelToTask(dynTask, hubBoresight)
-
-    # Set up boresight modules on SAs
-    saBoresightList = []
-    for item in range(numRSA):
-        saBoresightList.append(boreAngCalc.BoreAngCalc())
-        saBoresightList[item].boreVec_B = [0, 0, 1]
-        scSim.AddModelToTask(dynTask, saBoresightList[item])
-    
     # Set up the dual-gimbaled platform
     platform = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
     scSim.AddModelToTask(dynTask, platform)
@@ -332,31 +463,29 @@ def SepSim():
     platform.ModelTag = "platform1"
     scObject.addStateEffector(platform)
 
-    # Write THR Config Msg
-    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
-    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
-    THRConfig = messaging.THRConfigMsgPayload()
-    THRConfig.rThrust_B = r_TF_F
-    THRConfig.tHatThrust_B = tHat_F
-    THRConfig.maxThrust = 0.27
-    THRConfig.swirlTorque = 1.0e-3 * THRConfig.maxThrust
-    scSim.thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
-
     # Set up the SEP thruster
     sepThruster = thrusterStateEffector.ThrusterStateEffector()
     scSim.AddModelToTask(dynTask, sepThruster)
     thruster = thrusterStateEffector.THRSimConfig()
+    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
+    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
     thruster.thrLoc_B = r_TF_F
-    thruster.thrDir_B = (np.array(tHat_F) + np.array([0.01, -0.02, 0.0])) / np.linalg.norm(np.array(tHat_F) + np.array([0.01, -0.02, 0.0]))
-    thruster.MaxThrust = THRConfig.maxThrust * 0.9
+    thruster.thrDir_B = tHat_F
+    thruster.MaxThrust = 0.27
     thruster.steadyIsp = 1600
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
-    thruster.MaxSwirlTorque = THRConfig.swirlTorque * 0.9
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
     scObject.addStateEffector(sepThruster)
+
+    # Write THR Config Msg
+    THRConfig = messaging.THRConfigMsgPayload()
+    THRConfig.rThrust_B = r_TF_F
+    THRConfig.tHatThrust_B = tHat_F
+    THRConfig.maxThrust = thruster.MaxThrust
+    scSim.thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
 
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
@@ -445,7 +574,7 @@ def SepSim():
     cmEstimator.attitudeTol = 1e-6
     cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
-    cmEstimator.R0 = [1e-10, 1e-10, 1e-10]
+    cmEstimator.R0 = [4e-8, 4e-8, 4e-8]
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
 
     # create the FSW vehicle configuration message for CoM
@@ -504,8 +633,6 @@ def SepSim():
         saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
-        saReference[item].r_AB_B = [(-1)**item * (3.75 + 0.5 * lenXHub + 0.5 * 7.262), 0.0, 0.45]
-        saReference[item].pointingMode = 0
         scSim.AddModelToTask(fswTask, saReference[item], 24)
 
     # Set up solar array controller modules
@@ -541,45 +668,13 @@ def SepSim():
 
     # Configure thruster on-time message
     thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrOnTimeMsgData.OnTimeRequest = [3600*24*7]
+    thrOnTimeMsgData.OnTimeRequest = [3600*4*30]
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
     # This is needed because platformReference runs on its own task at a different frequency,
     # but it receives inputs and provides outputs to modules that run on the main flight software task
     messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, scSim.vcMsg_CoM)
-
-    # # Enable Vizard
-    # Create the effector lists and dictionaries for Vizard
-    rw_state_effector_list = []
-    sc_body_list = []
-    sc_body_list.append(scObject)
-    rw_state_effector_list.append(rwStateEffector)
-    sc_body_list.append([RSAList[0].ModelTag, RSAList[0].spinningBodyConfigLogOutMsg])
-    sc_body_list.append([RSAList[1].ModelTag, RSAList[1].spinningBodyConfigLogOutMsg])
-
-    viz = vizSupport.enableUnityVisualization(scSim, dynTask, sc_body_list, saveFile=__file__)
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[sc_body_list[0].ModelTag]
-                                 , modelPath="CUBE"
-                                 , customTexturePath="/Users/Riccardo/Downloads/avsLogo.png"
-                                 , offset=[0, 0, 0]
-                                 , scale=[2.5, 2.5, 2.5]
-                                 )
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[sc_body_list[1][0]]
-                                 , modelPath="CYLINDER"
-                                 , customTexturePath="/Users/Riccardo/Downloads/bskLogo2.png"
-                                 , offset=[-0.035, 0.25, -0.087]
-                                 , scale=[7, 7, 0.05]
-                                 )
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[sc_body_list[2][0]]
-                                 , modelPath="CYLINDER"
-                                 , customTexturePath="/Users/Riccardo/Downloads/bskLogo1.png"
-                                 , offset=[0.128, 0.25, -0.087]
-                                 , scale=[7, 7, 0.05]
-                                 )
 
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -598,11 +693,11 @@ def SepSim():
     cmEstimator.attGuidInMsg.subscribeTo(attError.attGuidOutMsg)
     cmEstimator.vehConfigInMsg.subscribeTo(simpleMassPropsObject.vehicleConfigOutMsg)
     if cmEstimation:
-        pltReference.vehConfigInMsg.subscribeTo(scSim.vcMsg_CoM)                           # connect to this msg for estimated CM
+        pltReference.vehConfigInMsg.subscribeTo(scSim.vcMsg_CoM)                                 # connect to this msg for estimated CM
     else:
         pltReference.vehConfigInMsg.subscribeTo(simpleMassPropsObject.vehicleConfigOutMsg) # connect to this msg for exact CM information
     pltReference.thrusterConfigFInMsg.subscribeTo(scSim.thrConfigFMsg)
-    pltReference.rwConfigDataInMsg.subscribeTo(fswRwConfigMsg)
+    pltReference.rwConfigDataInMsg.subscribeTo(scSim.fswRwConfigMsg)
     pltReference.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
     pltTorqueScheduler.motorTorque1InMsg.subscribeTo(pltController[0].motorTorqueOutMsg)
     pltTorqueScheduler.motorTorque2InMsg.subscribeTo(pltController[1].motorTorqueOutMsg)
@@ -612,106 +707,178 @@ def SepSim():
     attError.attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(scSim.vcMsg_I)
-    mrpControl.rwParamsInMsg.subscribeTo(fswRwConfigMsg)
+    mrpControl.rwParamsInMsg.subscribeTo(scSim.fswRwConfigMsg)
     mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfigMsg)
+    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(scSim.fswRwConfigMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
-    hubBoresight.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    hubBoresight.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(numRSA):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
         saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
-        saReference[item].rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-        saReference[item].rwConfigDataInMsg.subscribeTo(fswRwConfigMsg)
-        saReference[item].vehConfigInMsg.subscribeTo(scSim.vcMsg_CoM)
         saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
-        saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
-        saBoresightList[item].celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(2):
         pltController[item].hingedRigidBodyInMsg.subscribeTo(platform.spinningBodyOutMsgs[item])
     pltController[0].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef1OutMsg)
     pltController[1].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef2OutMsg)
     sepThruster.cmdsInMsg.subscribeTo(thrOnTimeMsg)
 
+    # store the msg recorder modules in a dictionary list so the retention policy class can pull the data
+    # when the simulation ends
+    scSim.msgRecList = {}
+
+    # scSim.msgRecList[rwMotorTorqueMsgName] = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    # scSim.AddModelToTask(dynTask, scSim.msgRecList[rwMotorTorqueMsgName])
+
+    scSim.msgRecList[guidMsgName] = attError.attGuidOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, scSim.msgRecList[guidMsgName])
+
+    # scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
+    # scSim.AddModelToTask(simTaskName, scSim.msgRecList[transMsgName])
     #
-    #   Setup data logging before the simulation is initialized
+    # scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    # scSim.AddModelToTask(dynTask, scSim.msgRecList[rwSpeedMsgName])
     #
-    samplingTime = simulationTimeStepFsw
+    # scSim.msgRecList[voltMsgName] = fswRWVoltage.voltageOutMsg.recorder(samplingTime)
+    # scSim.AddModelToTask(simTaskName, scSim.msgRecList[voltMsgName])
 
-    vehConfigLog = simpleMassPropsObject.vehicleConfigOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, vehConfigLog)
-    snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, snTransLog)
-    snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, snAttLog)
-    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, attErrorLog)
-    attRefLog = sepPoint.attRefOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, attRefLog)
-    rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, rwMotorLog)
-    rwSpeedLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, rwSpeedLog)
-    thrLog = sepThruster.thrusterOutMsgs[0].recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, thrLog)
-    cmEstLog = cmEstimator.cmEstDataOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, cmEstLog)
-    srpForceLog = SRP.logger("forceExternal_B", samplingTime)
-    scSim.AddModelToTask(dynTask, srpForceLog)
-    srpTorqueLog = SRP.logger("torqueExternalPntB_B", samplingTime)
-    scSim.AddModelToTask(dynTask, srpTorqueLog)
-    mrpTorqueLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, mrpTorqueLog)
-    hubBoresightLog = hubBoresight.angOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(dynTask, hubBoresightLog)
+    # c = 0
+    # for msgName in rwOutName:
+    #     scSim.msgRecList[msgName] = rwStateEffector.rwOutMsgs[c].recorder(samplingTime)
+    #     scSim.AddModelToTask(dynTask, scSim.msgRecList[msgName])
+    #     c += 1
 
-    # A message is created that stores an array of the Omega wheel speeds
-    rwLogs = []
-    for item in range(numRW):
-        rwLogs.append(rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
-        scSim.AddModelToTask(dynTask, rwLogs[item])
-
-    saAngleLogs = []
-    saRefAngleLogs = []
-    saBoresightLogs = []
-    for item in range(numRSA):
-        saAngleLogs.append(RSAList[item].spinningBodyOutMsg.recorder(samplingTime))
-        scSim.AddModelToTask(dynTask, saAngleLogs[item])
-        saRefAngleLogs.append(saReference[item].hingedRigidBodyRefOutMsg.recorder(samplingTime))
-        scSim.AddModelToTask(dynTask, saRefAngleLogs[item])
-        saBoresightLogs.append(saBoresightList[item].angOutMsg.recorder(samplingTime))
-        scSim.AddModelToTask(dynTask, saBoresightLogs[item])
-
-    pltAngleLogs = []
-    pltRefAngleLogs = []
-    pltRefAngleLogs.append(pltReference.hingedRigidBodyRef1OutMsg.recorder(samplingTime))
-    pltRefAngleLogs.append(pltReference.hingedRigidBodyRef2OutMsg.recorder(samplingTime))
-    for item in range(2):
-        scSim.AddModelToTask(dynTask, pltRefAngleLogs[item])
-        pltAngleLogs.append(platform.spinningBodyOutMsgs[item].recorder(samplingTime))
-        scSim.AddModelToTask(dynTask, pltAngleLogs[item])
+    # This is a hack because of a bug in Basilisk... leave this line it keeps
+    # variables from going out of scope after this function returns
+    scSim.additionalReferences = [scObject, gravBodies['sun'], rwMotorTorqueObj, mrpControl, attError]
 
     return scSim
 
 
-def run(momentumManagement, cmEstimation):
-
-    sim = SepSim()
-
-    simulationTime = macros.day2nano(1/4)
-
+def executeScenario(sim):
+    #   initialize Simulation
     sim.InitializeSimulation()
+
+    #   configure a simulation stop time and execute the simulation run
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
 
-    return
+
+# This method is used to plot the retained data of a simulation.
+# It is called once for each run of the simulation, overlapping the plots
+def plotSim(data, retentionPolicy):
+    #   retrieve the logged data
+    # dataUsReq = data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:,1:]
+    dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"][:,1:]
+    # dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"][:,1:]
+    # dataPos = data["messages"][transMsgName + ".r_BN_N"][:,1:]
+    # dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"][:,1:]
+    # dataVolt = data["messages"][voltMsgName + ".voltage"][:,1:]
+    # dataRW = []
+    # for msgName in rwOutName:
+    #     dataRW.append(data["messages"][msgName+".u_current"][:,1:])
+    np.set_printoptions(precision=16)
+
+    #
+    #   plot the results
+    #
+
+    timeData = data["messages"][guidMsgName + ".sigma_BR"][:,0] * macros.NANO2MIN
+
+    figureList = {}
+    plt.figure(1)
+    pltName = 'AttitudeError'
+    for idx in range(3):
+        plt.plot(timeData, dataSigmaBR[:, idx],
+                 label='Run ' + str(data["index"]) + r' $\sigma_'+str(idx)+'$')
+    # plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+    figureList[pltName] = plt.figure(1)
+
+    # plt.figure(2)
+    # pltName = 'RWMotorTorque'
+    # for idx in range(3):
+    #     plt.plot(timeData, dataUsReq[:, idx],
+    #              '--',
+    #              label='Run ' + str(data["index"]) + r' $\hat u_{s,'+str(idx)+'}$')
+    #     plt.plot(timeData, dataRW[idx],
+    #              label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
+    # # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('RW Motor Torque (Nm)')
+    # figureList[pltName] = plt.figure(2)
+
+    # plt.figure(3)
+    # pltName = 'RateTrackingError'
+    # for idx in range(3):
+    #     plt.plot(timeData, dataOmegaBR[:, idx],
+    #              label='Run ' + str(data["index"]) + r' $\omega_{BR,'+str(idx)+'}$')
+    # # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('Rate Tracking Error (rad/s) ')
+    # figureList[pltName] = plt.figure(3)
+    #
+    # plt.figure(4)
+    # pltName = 'RWSpeed'
+    # for idx in range(len(rwOutName)):
+    #     plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
+    #              label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
+    # # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('RW Speed (RPM) ')
+    # figureList[pltName] = plt.figure(4)
+
+    # plt.figure(5)
+    # pltName = 'RWVoltage'
+    # for idx in range(len(rwOutName)):
+    #     plt.plot(timeData, dataVolt[:, idx],
+    #              label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
+    # # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('RW Voltage (V) ')
+    # figureList[pltName] = plt.figure(5)
+
+    return figureList
 
 
+# This statement below ensures that the unit test script can be run as a
+# # stand-along python script
+# Run this script with the command:
+# python scenarioMonteCarloAttRW.py --bokeh-server
+#
 if __name__ == "__main__":
-    run(
-        True,
-        True
-    )
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--bokeh-server":
+        from bokeh.server.server import Server
+        from bokeh.application import Application
+        from bokeh.application.handlers.function import FunctionHandler
+
+        def bk_worker(doc):
+            # Run the Monte Carlo simulation and get the directory name
+            dirName = run(saveFigures=True, case=1, show_plots=False)
+            
+            # Create the Bokeh application
+            plotter = MonteCarloPlotter(dirName)
+            plotter.load_data([
+                # rwMotorTorqueMsgName + ".motorTorque",
+                guidMsgName + ".sigma_BR",
+                # guidMsgName + ".omega_BR_B",
+                # rwSpeedMsgName + ".wheelSpeeds",
+                # voltMsgName + ".voltage"
+            ])
+            downsampled_data = plotter.get_downsampled_plots()
+            
+            # Add the plots to the document
+            for variable, plots in plotter.plots.items():
+                for plot in plots:
+                    doc.add_root(plot)
+
+        server = Server({'/': Application(FunctionHandler(bk_worker))})
+        server.start()
+        print('Opening Bokeh application on http://localhost:5006/')
+        server.io_loop.add_callback(server.show, "/")
+        server.io_loop.start()
+    else:
+        run(saveFigures=True, case=1, show_plots=True)
