@@ -22,12 +22,11 @@ Overview
 
 Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 This script duplicates the scenario in :ref:`scenarioAttitudeFeedbackRW` where a
-6-DOF spacecraft  is orbiting the Earth.  Here some simulation parameters are dispersed randomly
-using a multi threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
-to the rigid spacecraft() hub, and what flight
-algorithm module is used to control these RWs. The scenario is run in a single configuration:
-by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
-to the variables in between each MC run.
+6-DOF spacecraft is orbiting the Earth. Here some simulation parameters are dispersed randomly
+using a multi-threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
+to the rigid spacecraft() hub, and what flight algorithm module is used to control these RWs.
+The scenario is run in a single configuration: by not using the Jitter model and by using the RW Voltage IO.
+Given this scenario we can add dispersions to the variables in between each MC run.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -35,6 +34,26 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
 For more information on the Attitude Feedback Simulation with RW, please see the documentation
 on the :ref:`scenarioAttitudeFeedbackRW` file.
+
+Bokeh Visualization and Data Management
+---------------------------------------
+
+This script now includes options for interactive visualization using Bokeh and automatic data cleanup:
+
+1. To use the Bokeh server for interactive visualization, run the script with:
+   
+   python scenarioMonteCarloAttRW.py --bokeh-server
+
+2. To automatically delete Monte Carlo data after generating plots, add the --delete-data flag:
+   
+   python scenarioMonteCarloAttRW.py --delete-data
+
+   or
+
+   python scenarioMonteCarloAttRW.py --bokeh-server --delete-data
+
+The --delete-data option will remove the Monte Carlo data directory after the plots are generated,
+helping to manage disk space when running multiple simulations.
 
 Enable Terminal Bar to Show Simulation Progress
 -----------------------------------------------
@@ -103,25 +122,6 @@ Next a retention policy is used to log the desired data. The simulation can now 
 It returns the failed jobs, which should not occur.  When the MC have been executed,
 the data can be accessed and tested in different ways.
 This is explained in the example python code comments.
-
-Bokeh Visualization
--------------------
-This script now includes an option for interactive visualization using Bokeh. To use this feature:
-
-1. Run the script with the --bokeh-server flag:
-   python scenarioMonteCarloAttRW.py --bokeh-server
-
-2. A Bokeh server will start, and your default web browser should open to http://localhost:5006/.
-
-3. The interactive plot allows you to:
-   - Select different variables to plot (e.g., attitude error, angular velocity, RW motor torque).
-   - Choose specific components (x, y, z) of vector quantities.
-   - Highlight particular simulation runs by entering their run numbers.
-   - Zoom, pan, and reset the view using the toolbar.
-   - Hover over data points for detailed information.
-
-This Bokeh visualization provides a more interactive way to explore the Monte Carlo simulation results,
-complementing the static matplotlib plots generated in the standard execution mode.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -224,7 +224,7 @@ simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime // (numDataPoints-1)
 
 
-def run(saveFigures, case, show_plots):
+def run(saveFigures, case, show_plots, delete_data=False):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -421,6 +421,10 @@ def run(saveFigures, case, show_plots):
         plt.show()
         # close the plots being saved off to avoid over-writing old and new figures
         plt.close("all")
+
+    # Delete Monte Carlo data if specified
+    if delete_data:
+        delete_monte_carlo_data(dirName)
 
     return dirName
 
@@ -739,6 +743,13 @@ def plotSim(data, retentionPolicy):
     return figureList
 
 
+def delete_monte_carlo_data(dirName):
+    if os.path.exists(dirName):
+        shutil.rmtree(dirName)
+        print(f"Deleted Monte Carlo data directory: {dirName}")
+    else:
+        print(f"Monte Carlo data directory not found: {dirName}")
+
 # This statement below ensures that the unit test script can be run as a
 # # stand-along python script
 # Run this script with the command:
@@ -746,7 +757,17 @@ def plotSim(data, retentionPolicy):
 #
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "--bokeh-server":
+    delete_data = False  # Default to not deleting data
+    bokeh_server = False
+
+    # Parse command line arguments
+    for arg in sys.argv[1:]:
+        if arg == "--delete-data":
+            delete_data = True
+        elif arg == "--bokeh-server":
+            bokeh_server = True
+
+    if bokeh_server:
         from bokeh.server.server import Server
         from bokeh.application import Application
         from bokeh.application.handlers.function import FunctionHandler
@@ -755,7 +776,7 @@ if __name__ == "__main__":
             print("Bokeh worker function started")
             
             # Run the Monte Carlo simulation and get the directory name
-            dirName = run(saveFigures=True, case=1, show_plots=False)
+            dirName = run(saveFigures=True, case=1, show_plots=False, delete_data=delete_data)
             print(f"Monte Carlo simulation completed. Data directory: {dirName}")
             
             # Create the Bokeh application
@@ -771,15 +792,19 @@ if __name__ == "__main__":
             ])
             print("Data loaded into MonteCarloPlotter")
             
-            # Create a layout with a title and the plot
-            title = Div(text="<h1>Monte Carlo Simulation Results</h1>")
+            # Use the show_plots method from MonteCarloPlotter to get the layout
             plot_layout = plotter.show_plots()
+            
             if plot_layout is not None:
-                layout = column(title, plot_layout)
-                doc.add_root(layout)
+                # The plot_layout should already include the title and all necessary elements
+                doc.add_root(plot_layout)
                 print("Layout added to Bokeh document")
             else:
                 print("Error: plot_layout is None")
+
+            # Delete Monte Carlo data if specified
+            if delete_data:
+                delete_monte_carlo_data(dirName)
 
         print("Starting Bokeh server")
         server = Server({'/': Application(FunctionHandler(bk_worker))})
@@ -788,4 +813,6 @@ if __name__ == "__main__":
         server.io_loop.add_callback(server.show, "/")
         server.io_loop.start()
     else:
-        run(saveFigures=True, case=1, show_plots=True)
+        dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=delete_data)
+        if delete_data:
+            delete_monte_carlo_data(dirName)
