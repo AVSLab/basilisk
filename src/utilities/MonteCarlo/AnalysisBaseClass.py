@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper, TextInput, Button, Div
+from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper, TextInput, Button, Div, SaveTool
 from bokeh.palettes import Viridis256
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
@@ -77,9 +77,12 @@ class MonteCarloPlotter:
         print(f"Time range: {time_seconds.min()} to {time_seconds.max()} seconds")
         print(f"Number of data points per run: {len(df)}")
 
+        # Add SaveTool to the tools list
+        tools = 'pan,wheel_zoom,box_zoom,reset,save'
+
         p = figure(title=f"{variable} - {component.upper()} Component", 
                    x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} ({component})",
-                   width=800, height=400, tools='pan,wheel_zoom,box_zoom,reset',
+                   width=800, height=400, tools=tools,
                    sizing_mode="fixed")
 
         component_index = ['x', 'y', 'z'].index(component)
@@ -146,6 +149,10 @@ class MonteCarloPlotter:
         # Add event listeners for zooming and panning
         p.on_event('pan_end', self.handle_plot_event)
         p.on_event('zoom_end', self.handle_plot_event)
+
+        # Customize the SaveTool
+        save_tool = p.select(type=SaveTool)[0]
+        save_tool.filename = f"{variable}_{component}_plot"
 
         self.update_status(is_loading=False)
         return p
