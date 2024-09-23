@@ -4,10 +4,11 @@ import numpy as np
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTicker, LinearColorMapper, TextInput, Button, Div
 from bokeh.palettes import Viridis256
-from bokeh.layouts import column, row, Spacer, layout
+from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 import time
 import re
+from bokeh.models import Div
 
 class MonteCarloPlotter:
     def __init__(self, dataDir):
@@ -16,10 +17,10 @@ class MonteCarloPlotter:
         self.current_plot = None
         self.save_as_static = False
         self.staticDir = "/plots/"
-        self.initial_interval = '1s'
         self.num_runs = 0
         self.total_data_size = 0
         self.title_div = None
+        self.status_indicator = None
 
     def load_data(self, variables):
         self.total_data_size = 0  # Reset total data size before loading
@@ -39,7 +40,34 @@ class MonteCarloPlotter:
 
         print(f"Data loaded: {self.num_runs} runs, {self.total_data_size:.2f} GB total")
 
+    def create_status_indicator(self):
+        status_text = Div(text="Plot Status:", styles={
+            'font-size': '14px',
+            'margin-right': '10px',
+            'color': '#555'
+        })
+        
+        self.status_indicator = Div(text="●", styles={
+            'color': 'green',  # Start with green
+            'font-size': '24px',
+            'margin-right': '10px'
+        })
+        
+        status_explanation = Div(text="(Green: Ready, Red: Loading/Updating)", styles={
+            'font-size': '12px',
+            'color': '#777'
+        })
+        
+        return row(status_text, self.status_indicator, status_explanation, 
+                   align='center', styles={'margin-bottom': '10px'})
+
+    def update_status(self, is_loading=False):  # Default to False (green/ready)
+        if self.status_indicator:
+            color = 'red' if is_loading else 'green'
+            self.status_indicator.styles['color'] = color
+
     def create_plot(self, variable, component, run_numbers=None):
+        self.update_status(is_loading=True)
         df = self.data[variable]
         num_runs = len(set(col[0] for col in df.columns))
         time_seconds = (df.index - df.index[0]).total_seconds()
@@ -51,7 +79,8 @@ class MonteCarloPlotter:
 
         p = figure(title=f"{variable} - {component.upper()} Component", 
                    x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} ({component})",
-                   width=800, height=400, tools='pan,wheel_zoom,box_zoom,reset')
+                   width=800, height=400, tools='pan,wheel_zoom,box_zoom,reset',
+                   sizing_mode="fixed")
 
         component_index = ['x', 'y', 'z'].index(component)
         y_values = df.iloc[:, component_index::3].values
@@ -111,19 +140,28 @@ class MonteCarloPlotter:
                              ticker=BasicTicker(desired_num_ticks=10))
         p.add_layout(color_bar, 'right')
 
+        # Add event listeners for zooming and panning
+        p.on_event('pan_end', self.handle_plot_event)
+        p.on_event('zoom_end', self.handle_plot_event)
+
+        self.update_status(is_loading=False)
         return p
 
     def update_plot(self, attr, old, new):
+        self.update_status(is_loading=True)
         variable = self.variable_select.value
         component = self.component_select.value
         run_numbers = self.parse_run_numbers(self.run_input.value)
         new_plot = self.create_plot(variable, component, run_numbers)
-        self.plot_column.children[-1] = new_plot
+        
+        # Replace the old plot with the new one, maintaining centering
+        self.plot_column.children[-1] = row(Spacer(width=20), new_plot, Spacer(width=20), sizing_mode="fixed", align="center")
+        
+        self.update_status(is_loading=False)
 
     def update_title(self):
         if self.title_div:
-            self.title_div.text = (f"Monte Carlo Visualization: {self.num_runs} runs, "
-                                   f"{self.total_data_size:.2f} GB total")
+            self.title_div.text = f"<div style='text-align: center; width: 100%;'>Monte Carlo Visualization: {self.num_runs} runs, {self.total_data_size:.2f} GB total</div>"
 
     def parse_run_numbers(self, input_string):
         if not input_string.strip():
@@ -144,24 +182,30 @@ class MonteCarloPlotter:
         variables = list(self.data.keys())
         components = ['x', 'y', 'z']
 
-        # Add title
+        # Add title with centering style
         self.title_div = Div(text="Monte Carlo Visualization",
-                             styles={'text-align': 'center', 'font-size': '18px', 'margin-bottom': '10px', 'color': '#555'})
+                             styles={'text-align': 'center', 'font-size': '24px', 'margin-bottom': '20px', 'color': '#555', 'width': '100%'})
 
         self.variable_select = Select(title="Variable", options=variables, value=variables[0], width=200)
         self.component_select = Select(title="Component", options=components, value=components[0], width=200)
         
-        # Create a container for the search bar and button
-        search_container = Div(text="Enter run numbers (comma, space, or semicolon separated):", 
-                               styles={'display': 'flex', 'flex-direction': 'column', 'margin-bottom': '10px'})
-        
-        self.run_input = TextInput(title="", width=300)  # Remove title from TextInput
+        # Create input elements before using them in the layout
+        self.run_input = TextInput(title="", width=300)
         self.search_button = Button(label="Search", button_type="primary", width=100)
         self.search_button.on_click(self.update_button_callback)
 
+        # Create a container for the search bar and button, ensuring it's centered
+        search_container = column(
+            Div(text="Enter run numbers (comma, space, or semicolon separated):", 
+                styles={'text-align': 'center', 'margin-bottom': '10px', 'width': '100%'}),
+            row(Spacer(width=20), self.run_input, Spacer(width=20), self.search_button, Spacer(width=20), 
+                sizing_mode="fixed", align="center"),
+            align="center"
+        )
+        
         # Add a note about pressing Enter
         self.enter_note = Div(text="<i>Tip: You can also press Enter after entering run numbers to update the plot.</i>", 
-                              styles={'font-size': '12px', 'color': '#666666', 'margin': '5px 0'})
+                              styles={'font-size': '12px', 'color': '#666666', 'margin': '5px 0', 'text-align': 'center', 'width': '100%'})
 
         initial_plot = self.create_plot(self.variable_select.value, self.component_select.value)
 
@@ -171,25 +215,39 @@ class MonteCarloPlotter:
 
         # Create a centered layout
         self.plot_column = column(
+            self.create_status_indicator(),
             self.title_div,
-            row(self.variable_select, Spacer(width=20), self.component_select),
+            row(Spacer(width=20), self.variable_select, Spacer(width=20), self.component_select, Spacer(width=20), 
+                sizing_mode="fixed", align="center"),
             Spacer(height=20),
-            column(search_container,
-                   row(self.run_input, Spacer(width=20), self.search_button)),
+            search_container,
             self.enter_note,
             Spacer(height=20),
-            initial_plot,
-            width=900,  # Adjust this value based on your preferred overall width
-            sizing_mode="stretch_width"
+            row(Spacer(width=20), initial_plot, Spacer(width=20), sizing_mode="fixed", align="center"),
+            sizing_mode="stretch_width",
+            align="center"
+        )
+
+        # Wrap the entire layout in a column for additional centering control
+        centered_layout = column(
+            self.plot_column,
+            sizing_mode="stretch_width",
+            align="center"
         )
 
         # Update the title after creating the layout
         self.update_title()
 
-        # Return the layout instead of adding it to curdoc
-        return self.plot_column
+        # Return the centered layout
+        return centered_layout
 
     def get_downsampled_plots(self):
         # This method is no longer needed, but we'll keep it for compatibility
         return self.data
+
+    def handle_plot_event(self, event):
+        self.update_status(is_loading=True)
+        # The actual zooming/panning is handled by Bokeh
+        # We just need to update the status when it's done
+        self.update_status(is_loading=False)
 
