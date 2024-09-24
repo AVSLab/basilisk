@@ -47,6 +47,7 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleI
  */
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    THRArrayCmdForceMsgPayload thrusterForceOut;
     double             *pAxis;                  /* pointer to the current control axis */
     uint32_t                 i;
     THRArrayConfigMsgPayload   localThrusterData;   /* local copy of the thruster data message */
@@ -97,6 +98,10 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
             configData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
         }
     }
+
+    /* zero the RCS thrust force command output message */
+    thrusterForceOut = THRArrayCmdForceMsg_C_zeroMsgPayload();
+    THRArrayCmdForceMsg_C_write(&thrusterForceOut, &configData->thrForceCmdOutMsg, moduleID, callTime);
 }
 
 /*! The module takes a body frame torque vector and projects it onto available RCS or DV thrusters.

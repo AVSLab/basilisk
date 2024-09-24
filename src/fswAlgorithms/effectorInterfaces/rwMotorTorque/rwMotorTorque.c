@@ -46,6 +46,7 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    ArrayMotorTorqueMsgPayload rwMotorTorques;      /*!< Msg struct to store the output message */
     double *pAxis;                 /* pointer to the current control axis */
     int i;
     
@@ -79,6 +80,10 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
             v3Copy(&configData->rwConfigParams.GsMatrix_B[i * 3], &configData->GsMatrix_B[i * 3]);
         }
     }
+
+    /* zero the RW motor torque output message */
+    rwMotorTorques = ArrayMotorTorqueMsg_C_zeroMsgPayload();
+    ArrayMotorTorqueMsg_C_write(&rwMotorTorques, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
 }
 
 /*! Add a description of what this main Update() routine does for this module

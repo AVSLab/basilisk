@@ -54,6 +54,7 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t modul
  */
 void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+	THRArrayOnTimeCmdMsgPayload thrOnTimeOut;       /* -- copy of the thruster on-time output message */
 	THRArrayConfigMsgPayload   localThrusterData;     /* local copy of the thruster data message */
 	int 				i;
 
@@ -78,6 +79,10 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
 		configData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
 		configData->lastThrustState[i] = BOOL_FALSE;
 	}
+
+	/* zero the thruster on-time command output message */
+	thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
+	THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->onTimeOutMsg, moduleID, callTime);
 }
 
 /*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.

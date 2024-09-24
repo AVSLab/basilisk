@@ -399,6 +399,7 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
 
     /* zero the RW wheel output message buffer */
     this->rwSpeedMsgBuffer = this->rwSpeedOutMsg.zeroMsgPayload;
+    this->rwSpeedOutMsg.write(&rwSpeedMsgBuffer, this->moduleID, CurrenSimNanos);
 }
 
 /*! This method is here to write the output message structure into the specified

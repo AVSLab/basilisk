@@ -52,6 +52,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];    /* [-]  [I_NxN] identity matrix */
     double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];         /* [-]  temp matrix */
     RWConstellationMsgPayload localRWData;          /*      local copy of RW configuration data */
+    ArrayMotorTorqueMsgPayload finalControl;
 
     // check if the required input messages are included
     if (!RWConstellationMsg_C_isLinked(&configData->rwConfigInMsg)) {
@@ -93,6 +94,8 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     mSubtract(identMatrix, configData->numWheels, configData->numWheels,    /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
               GsTemp, configData->tau);
 
+    finalControl = ArrayMotorTorqueMsg_C_zeroMsgPayload();
+    ArrayMotorTorqueMsg_C_write(&finalControl, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
 }
 
 /*! This method takes the input reaction wheel commands as well as the observed
