@@ -216,6 +216,7 @@ Complex Spacecraft Dynamics Simulations
    Prescribed Motion Rotational Solar Array Deployment <scenarioDeployingSolarArrays>
    Robotic Arm Effector with Profiler <scenarioRoboticArm>
    Two Spacecraft Connected Using Holonomic Constraints <scenarioConstrainedDynamics>
+   Spacecraft with an multi-link extending component <scenarioExtendingBoom>
 
 Mission Simulations
 ---------------------------------------

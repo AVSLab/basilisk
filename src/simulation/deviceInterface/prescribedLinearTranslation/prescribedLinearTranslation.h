@@ -48,6 +48,7 @@ public:
     double getTransPosInit() const;                                             //!< Getter method for the initial translating body position
 
     ReadFunctor<LinearTranslationRigidBodyMsgPayload> linearTranslationRigidBodyInMsg;    //!< Input msg for the translational reference position and velocity
+    Message<LinearTranslationRigidBodyMsgPayload> linearTranslationRigidBodyOutMsg;       //!< Output msg for the translational reference position and velocity
     Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;                 //!< Output msg for the translational body prescribed states
     PrescribedTranslationMsg_C prescribedTranslationOutMsgC = {};                         //!< C-wrapped Output msg for the translational body prescribed states
 

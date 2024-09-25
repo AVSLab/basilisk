@@ -75,6 +75,8 @@ Version |release|
 - Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert's problem FSW module package
 - Added :ref:`scenario_LambertGuidance` BSK-Sim scenario to illustrate the Lambert modules in different flight modes
 - Added new scenario :ref:`scenarioSweepingSpacecraft` to perform sweeping maneuvers.
+- Added a new :math:`N`-axis translating effector :ref:`linearTranslationNDOFStateEffector` and a corresponding scenario
+  :ref:`scenarioExtendingBoom`.
 
 
 Version 2.4.0 (August 23, 2024)
