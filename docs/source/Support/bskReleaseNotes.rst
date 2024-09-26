@@ -65,6 +65,7 @@ Version |release|
   This way the online documentation for develop is up to date for each contribution, not just for the hand-built
   documentation we did with major tagged releases.  The new Basilisk online documentation list is now
   `<https://avslab.github.io/basilisk>`__.
+- Small updates to the Cmake build process to remove unneeded policies and python 3 swig overwriting scripts
 - Added a Lambert's problem based FSW package to compute the DV maneuver required to get to a desired location at a
   desired time. At that location, another maneuver may be performed to match the surface velocity of a celestial body.
   This FSW package consists of the modules :ref:`lambertSolver` to solve Lambert's problem, :ref:`lambertPlanner` to

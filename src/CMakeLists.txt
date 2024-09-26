@@ -3,29 +3,7 @@ cmake_minimum_required(VERSION 3.26)
 # cmake>=3.26 is required for FindPython3 SABIModule.
 # XXX: Some versions of CMake around 3.21~3.26 crash CMake on Windows. Reason and range is still TBD.
 
-if(POLICY CMP0078)
-  cmake_policy(SET CMP0078 NEW)
-endif()
 
-if(POLICY CMP0025)
-  cmake_policy(SET CMP0025 NEW)
-endif()
-
-if(POLICY CMP0057)
-  cmake_policy(SET CMP0057 NEW)
-endif()
-
-if(POLICY CMP0086)
-  cmake_policy(SET CMP0086 NEW)
-endif()
-
-if(POLICY CMP0068)
-  cmake_policy(SET CMP0068 NEW)
-endif()
-
-if(POLICY CMP0046)
-  cmake_policy(SET CMP0046 NEW)
-endif()
 
 project("basilisk")
 
@@ -687,19 +665,6 @@ create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/utilities" ${pythonModules})
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
 file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
-
-# run python script to modify swig gen code
-add_custom_target(OverwriteSwig ALL)
-set(ARG utilities/overwriteSwig.py ${CMAKE_BINARY_DIR} ${SWIG_VERSION})
-add_custom_command(
-  TARGET OverwriteSwig
-  COMMAND ${Python3_EXECUTABLE} ${ARG}
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../src/)
-if(TARGET _thrusterDynamicEffector)
-  add_dependencies(OverwriteSwig _thrusterDynamicEffector _vscmgStateEffector _reactionWheelStateEffector)
-elseif(TARGET thrusterDynamicEffector)
-  add_dependencies(OverwriteSwig thrusterDynamicEffector vscmgStateEffector reactionWheelStateEffector)
-endif()
 
 # Tests targets
 add_subdirectory("architecture/utilities/tests")
