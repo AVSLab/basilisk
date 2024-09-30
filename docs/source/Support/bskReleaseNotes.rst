@@ -30,8 +30,8 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
 
 
-Version |release|
------------------
+Version 2.5.0 (Sept. 30, 2024)
+------------------------------
 - Added swirl torque information to :ref:`THRConfigMsgPayload`, :ref:`thrustCMEstimation`, and :ref:`thrusterPlatformState`
 - Updated required version of `setuptools` to avoid installation error ("invalid command ``bdist_wheel``") on
   some environments.
