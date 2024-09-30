@@ -32,8 +32,8 @@ Basilisk Release Notes
 
 Version  |release|
 ------------------
-- text here
-
+- Build ``ubuntu-latest`` wheels for Python 3.9, 3.10, and 3.11 on GitHub CI, allowing for
+  other CI systems to use these wheels for testing with Basilisk as a dependency.
 
 
 Version 2.5.0 (Sept. 30, 2024)
