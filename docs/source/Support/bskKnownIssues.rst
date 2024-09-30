@@ -12,6 +12,12 @@ Version |release|
 -----------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
   Developers and users alike should continue to use ``python conanfile.py`` installation.
+
+
+Version 2.5.0
+-------------
+- pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
+  Developers and users alike should continue to use ``python conanfile.py`` installation.
 - If the :ref:`simIncludeRW` python tool was provided a specific ``Js`` value, it was being falsely converted
   before being assigned.  This is now corrected.
 - If ``supportData/EphemerisData/de430.bsp`` is not present the current build system will download the file
