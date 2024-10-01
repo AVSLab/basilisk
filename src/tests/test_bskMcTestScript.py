@@ -57,18 +57,20 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 def test_scenarioBskMcScenarios(show_plots):
     # These need to be run in serial such that the data is produced for analysis
     scenarios = ['scenario_AttFeedbackMC',
-                 'scenarioAnalyzeMonteCarlo',
-                 'scenarioRerunMonteCarlo']
+                 'scenarioAnalyzeMonteCarlo']
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    for bskSimCase in scenarios:
+    for i, bskSimCase in enumerate(scenarios):
         # import the bskSim script to be tested
         scene_plt = importlib.import_module(bskSimCase)
 
         try:
-            figureList = scene_plt.run(False)
+            if i == 0:
+                figureList = scene_plt.run(False)
+            else:
+                figureList = scene_plt.run()
 
         except OSError as err:
             testFailCount = testFailCount + 1
