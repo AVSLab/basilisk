@@ -24,29 +24,17 @@ This script demonstrates how to plot Monte Carlo data using Bokeh. This tool eff
 
 The following plots illustrate what this particular simulation setup will yield:
 
-.. _scenarioAnalyzeMonteCarlo-ds0:
-.. figure:: /_images/static/ds-0.png
-    :align: center
-    :scale: 50%
+.. include:: docs/attGuidMsg.sigma_BR_x.rst
 
-    Figure 1: Full view of the attitude error plot data
+.. include:: docs/attGuidMsg.sigma_BR_y.rst
 
-.. _scenarioAnalyzeMonteCarlo-ds1:
-.. figure:: /_images/static/ds-1.png
-    :align: center
-    :scale: 50%
+.. include:: docs/attGuidMsg.sigma_BR_z.rst
 
-    Figure 2: Zoomed in and nearly rendered view of the attitude error data details
+.. include:: docs/attGuidMsg.omega_BR_B_x.rst
 
-The next plot illustrates the output if you run ``scenario_AttFeedbackMC.py`` with more simulation cases,
-40 in this plot.
+.. include:: docs/attGuidMsg.omega_BR_B_y.rst
 
-.. _scenarioAnalyzeMonteCarlo-ds2:
-.. figure:: /_images/static/ds-2.png
-    :align: center
-    :scale: 50%
-
-    Figure 3: Larger simulation run with 40 simulation cases shown
+.. include:: docs/attGuidMsg.omega_BR_B_z.rst
 
 Efficient Handling of Large Datasets
 ------------------------------------
@@ -115,6 +103,7 @@ from bokeh.io import curdoc
 def run():
     # Construct the path to the data directory
     data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenario_AttFeedbackMC")
+    doc_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
 
     # Check if the data directory exists and is not empty
     if not os.path.exists(data_dir) or not os.listdir(data_dir):
@@ -126,7 +115,7 @@ def run():
     start_time = time.time()
 
     # Create an instance of MonteCarloPlotter
-    plotter = MonteCarloPlotter(data_dir)
+    plotter = MonteCarloPlotter(data_dir, save_plots=True, doc_dir=doc_dir)
 
     # Load the specified data variables
     plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
