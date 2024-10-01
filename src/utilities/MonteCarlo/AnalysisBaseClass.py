@@ -6,12 +6,16 @@ from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTic
 from bokeh.palettes import Viridis256
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
+from bokeh.io import export_svgs, export_png  # Correct import
+from bokeh.io import output_file, save
+from bokeh.resources import CDN
 import time
 import re
 from bokeh.models import Div
+from bokeh.embed import file_html
 
 class MonteCarloPlotter:
-    def __init__(self, dataDir):
+    def __init__(self, dataDir, save_plots=False, doc_dir=None):
         self.dataDir = dataDir
         self.data = {}
         self.current_plot = None
@@ -21,6 +25,12 @@ class MonteCarloPlotter:
         self.total_data_size = 0
         self.title_div = None
         self.status_indicator = None
+        self.save_plots = save_plots
+        self.plot_save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../docs/source/_images/live/"))
+        self.doc_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../docs/source/examples/"))
+        if self.save_plots:
+            os.makedirs(self.plot_save_dir, exist_ok=True)
+            os.makedirs(self.doc_dir, exist_ok=True)
 
     def load_data(self, variables):
         self.total_data_size = 0  # Reset total data size before loading
@@ -33,9 +43,11 @@ class MonteCarloPlotter:
                 self.data[variable] = df
                 self.smallest_interval = pd.Timedelta(df.index.to_series().diff().min())
                 print(f"Smallest interval in data: {self.smallest_interval}")
-                
+
                 # Calculate number of runs and total data size
                 self.num_runs = max(self.num_runs, len(set(col[0] for col in df.columns)))
+                num_components = len(df.columns) // self.num_runs
+                print(f"Variable: {variable}, Number of components: {num_components}")
                 self.total_data_size += df.memory_usage(deep=True).sum() / (1024 * 1024 * 1024)  # Size in GB
 
         print(f"Data loaded: {self.num_runs} runs, {self.total_data_size:.2f} GB total")
@@ -46,19 +58,19 @@ class MonteCarloPlotter:
             'margin-right': '10px',
             'color': '#555'
         })
-        
+
         self.status_indicator = Div(text="●", styles={
             'color': 'green',  # Start with green
             'font-size': '24px',
             'margin-right': '10px'
         })
-        
+
         status_explanation = Div(text="(Green: Ready, Red: Loading/Updating)", styles={
             'font-size': '12px',
             'color': '#777'
         })
-        
-        return row(status_text, self.status_indicator, status_explanation, 
+
+        return row(status_text, self.status_indicator, status_explanation,
                    align='center', styles={'margin-bottom': '10px'})
 
     def update_status(self, is_loading=False):  # Default to False (green/ready)
@@ -72,37 +84,48 @@ class MonteCarloPlotter:
         num_runs = len(set(col[0] for col in df.columns))
         time_seconds = (df.index - df.index[0]).total_seconds()
 
-        print(f"Creating plot for {variable} - {component} component")
+        print(f"\nCreating plot for {variable} - component {component}")
         print(f"Number of runs: {num_runs}")
         print(f"Time range: {time_seconds.min()} to {time_seconds.max()} seconds")
         print(f"Number of data points per run: {len(df)}")
 
-        # Add SaveTool to the tools list
         tools = 'pan,wheel_zoom,box_zoom,reset,save'
-
-        p = figure(title=f"{variable} - {component.upper()} Component", 
-                   x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} ({component})",
+        p = figure(title=f"{variable} - component {component}",
+                   x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} (component {component})",
                    width=800, height=400, tools=tools,
                    sizing_mode="fixed")
 
-        component_index = ['x', 'y', 'z'].index(component)
-        y_values = df.iloc[:, component_index::3].values
+        # Determine the number of components
+        num_components = len(df.columns) // num_runs
+        print(f"Number of components: {num_components}")
+
+        # Find the index of the selected component
+        component_index = int(component) - 1  # Subtract 1 for 0-based indexing
+
+        print(f"Selected component index: {component_index}")
+
+        # Ensure component_index is within bounds
+        if component_index >= num_components:
+            print(f"Warning: Selected component index {component_index} is out of bounds. Using last available component.")
+            component_index = num_components - 1
+
+        # Extract y values for the selected component across all runs
+        y_values = df.iloc[:, component_index::num_components].values
         y_min, y_max = np.nanmin(y_values), np.nanmax(y_values)
         y_range = y_max - y_min
         p.y_range.start = y_min - 0.1*y_range
         p.y_range.end = y_max + 0.1*y_range
-
         print(f"Y range: {y_min} to {y_max}")
 
         xs = [time_seconds for _ in range(num_runs)]
-        ys = [df.iloc[:, component_index + i*3].values for i in range(num_runs)]
-        
+        ys = [df.iloc[:, component_index + i*num_components].values for i in range(num_runs)]
+
         # Create color mapper
         color_mapper = LinearColorMapper(palette=Viridis256, low=1, high=num_runs)
-        
+
         # Calculate opacity based on number of runs
-        base_opacity = max(0.1, min(0.8, 1 - (num_runs / 1000)))  # Adjust the divisor (1000) to fine-tune the opacity curve
-        
+        base_opacity = max(0.1, min(0.8, 1 - (num_runs / 1000)))
+
         # Plot background lines (all runs) with calculated opacity
         background_source = ColumnDataSource(data=dict(
             xs=xs, ys=ys, color=list(range(1, num_runs+1))
@@ -110,7 +133,7 @@ class MonteCarloPlotter:
         p.multi_line(xs='xs', ys='ys', line_color={'field': 'color', 'transform': color_mapper},
                      line_alpha=base_opacity, line_width=2, source=background_source,
                      level='underlay')
-        
+
         if run_numbers is not None:
             # Plot selected runs with full opacity
             xs_selected = [xs[i] for i in run_numbers]
@@ -133,7 +156,7 @@ class MonteCarloPlotter:
             mode='mouse',
             point_policy='snap_to_data',
             line_policy='nearest',
-            renderers=[p.renderers[-1]]  # Apply to the last added renderer (selected runs or all runs)
+            renderers=[p.renderers[-1]]
         )
         p.add_tools(hover)
 
@@ -155,6 +178,7 @@ class MonteCarloPlotter:
         save_tool.filename = f"{variable}_{component}_plot"
 
         self.update_status(is_loading=False)
+        print(f"Plot created for {variable} - component {component}")
         return p
 
     def update_plot(self, attr, old, new):
@@ -163,10 +187,10 @@ class MonteCarloPlotter:
         component = self.component_select.value
         run_numbers = self.parse_run_numbers(self.run_input.value)
         new_plot = self.create_plot(variable, component, run_numbers)
-        
+
         # Replace the old plot with the new one, maintaining centering
         self.plot_column.children[-1] = row(Spacer(width=20), new_plot, Spacer(width=20), sizing_mode="fixed", align="center")
-        
+
         self.update_status(is_loading=False)
 
     def update_title(self):
@@ -189,16 +213,33 @@ class MonteCarloPlotter:
         self.update_plot(None, None, None)
 
     def show_plots(self):
+        print("Starting show_plots method")
         variables = list(self.data.keys())
-        components = ['x', 'y', 'z']
+        print(f"Available variables: {variables}")
+
+        def update_component_options(attr, old, new):
+            variable = self.variable_select.value
+            num_components = len(self.data[variable].columns) // self.num_runs
+            components = [str(i) for i in range(1, num_components + 1)]
+            print(f"Updating component options for {variable}: {components}")
+            self.component_select.options = components
+            self.component_select.value = components[0]  # Always start with the first component
 
         # Add title with centering style
         self.title_div = Div(text="Monte Carlo Visualization",
                              styles={'text-align': 'center', 'font-size': '24px', 'margin-bottom': '20px', 'color': '#555', 'width': '100%'})
 
         self.variable_select = Select(title="Variable", options=variables, value=variables[0], width=200)
-        self.component_select = Select(title="Component", options=components, value=components[0], width=200)
-        
+        self.variable_select.on_change('value', update_component_options)
+
+        # Initialize component options based on the first variable
+        initial_variable = variables[0]
+        initial_num_components = len(self.data[initial_variable].columns) // self.num_runs
+        initial_components = [str(i) for i in range(1, initial_num_components + 1)]
+        print(f"Initial components for {initial_variable}: {initial_components}")
+
+        self.component_select = Select(title="Component", options=initial_components, value=initial_components[0], width=200)
+
         # Create input elements before using them in the layout
         self.run_input = TextInput(title="", width=300)
         self.search_button = Button(label="Search", button_type="primary", width=100)
@@ -206,18 +247,22 @@ class MonteCarloPlotter:
 
         # Create a container for the search bar and button, ensuring it's centered
         search_container = column(
-            Div(text="Enter run numbers (comma, space, or semicolon separated):", 
+            Div(text="Enter run numbers (comma, space, or semicolon separated):",
                 styles={'text-align': 'center', 'margin-bottom': '10px', 'width': '100%'}),
-            row(Spacer(width=20), self.run_input, Spacer(width=20), self.search_button, Spacer(width=20), 
+            row(Spacer(width=20), self.run_input, Spacer(width=20), self.search_button, Spacer(width=20),
                 sizing_mode="fixed", align="center"),
             align="center"
         )
-        
+
         # Add a note about pressing Enter
-        self.enter_note = Div(text="<i>Tip: You can also press Enter after entering run numbers to update the plot.</i>", 
+        self.enter_note = Div(text="<i>Tip: You can also press Enter after entering run numbers to update the plot.</i>",
                               styles={'font-size': '12px', 'color': '#666666', 'margin': '5px 0', 'text-align': 'center', 'width': '100%'})
 
         initial_plot = self.create_plot(self.variable_select.value, self.component_select.value)
+        print("Initial plot created")
+
+        # Save all initial plots if enabled
+        self.save_all_initial_plots()
 
         self.variable_select.on_change('value', self.update_plot)
         self.component_select.on_change('value', self.update_plot)
@@ -227,7 +272,7 @@ class MonteCarloPlotter:
         self.plot_column = column(
             self.create_status_indicator(),
             self.title_div,
-            row(Spacer(width=20), self.variable_select, Spacer(width=20), self.component_select, Spacer(width=20), 
+            row(Spacer(width=20), self.variable_select, Spacer(width=20), self.component_select, Spacer(width=20),
                 sizing_mode="fixed", align="center"),
             Spacer(height=20),
             search_container,
@@ -241,14 +286,14 @@ class MonteCarloPlotter:
         # Wrap the entire layout in a column for additional centering control
         centered_layout = column(
             self.plot_column,
-            sizing_mode="stretch_width",
+            sizing_mode="stretch_both",
             align="center"
         )
 
         # Update the title after creating the layout
         self.update_title()
 
-        # Return the centered layout
+        print("Returning centered layout")
         return centered_layout
 
     def get_downsampled_plots(self):
@@ -261,3 +306,49 @@ class MonteCarloPlotter:
         # We just need to update the status when it's done
         self.update_status(is_loading=False)
 
+    def save_plot(self, plot, variable, component):
+        if not self.save_plots:
+            return
+
+        base_filename = f"{variable}_{component}"
+
+        # Save as HTML
+        html_filename = os.path.join(self.plot_save_dir, f"{base_filename}.html")
+        output_file(html_filename)
+        save(plot)
+        print(f"Saved plot for {variable} - {component} as HTML")
+
+        # Generate RST content for documentation
+        rst_content = self.generate_rst_content(variable, component, html_filename)
+
+        # Save RST content
+        rst_filename = os.path.join(self.doc_dir, f"MonteCarloPlots_{base_filename}.rst")
+        with open(rst_filename, 'w') as f:
+            f.write(rst_content)
+        print(f"Generated RST documentation for {variable} - {component}")
+
+    def generate_rst_content(self, variable, component, filename):
+        title = f"{variable} - Component {component.upper()}"
+        underline = "=" * len(title)
+        content = f"""
+{title}
+{underline}
+
+.. raw:: html
+   :file: {filename}
+
+This plot shows component {component.upper()} of the {variable} variable.
+"""
+        return content
+
+    def save_all_initial_plots(self):
+        if not self.save_plots:
+            return
+
+        for variable in self.data.keys():
+            for component in ['1', '2', '3']:
+                plot = self.create_plot(variable, component)
+                self.save_plot(plot, variable, component)
+
+    def update_plot_callback(self, attr, old, new):
+        self.update_plot(None, None, None)

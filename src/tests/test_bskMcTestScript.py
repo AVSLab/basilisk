@@ -35,6 +35,16 @@ import sys
 
 import pytest
 
+bokeh_spec = importlib.util.find_spec("bokeh")
+bokeh_available = bokeh_spec is not None
+
+if bokeh_available:
+    from bokeh.io import output_file, save
+    from bokeh.server.server import Server
+    from bokeh.application import Application
+    from bokeh.application.handlers.function import FunctionHandler
+    from tornado.ioloop import IOLoop
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -50,35 +60,35 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 
 @pytest.mark.skipif(sys.version_info < (3, 9),
                     reason="Test has issues with Controller class and older python.")
-
+@pytest.mark.skipif(not bokeh_available,
+                    reason="Bokeh is not available. Skipping test.")
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
 
 def test_scenarioBskMcScenarios(show_plots):
     # These need to be run in serial such that the data is produced for analysis
-    scenarios = ['scenario_AttFeedbackMC',
-                 'scenarioAnalyzeMonteCarlo',
-                 'scenarioRerunMonteCarlo']
+    scenarios = ['scenarioBskSimAttFeedbackMC',
+                 'scenarioVisualizeMonteCarlo']
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    for bskSimCase in scenarios:
+    for i, bskSimCase in enumerate(scenarios):
         # import the bskSim script to be tested
         scene_plt = importlib.import_module(bskSimCase)
 
         try:
-            figureList = scene_plt.run(False)
+            if i == 0:
+                figureList = scene_plt.run(False)
+            else:
+                scene_plt.run()
 
-        except OSError as err:
-            testFailCount = testFailCount + 1
-            testMessages.append("OS error: {0}".format(err))
+        except Exception as err:
+            testFailCount += 1
+            testMessages.append(f"Error in {bskSimCase}: {str(err)}")
 
-
-    print(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
-    if os.path.exists(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/"):
-        shutil.rmtree(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
+    # Clean up
+    if os.path.exists(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/"):
+        shutil.rmtree(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/")
 
     assert testFailCount < 1, testMessages

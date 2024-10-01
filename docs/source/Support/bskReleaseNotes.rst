@@ -728,7 +728,7 @@ Version 2.1.0 (Nov. 13, 2021)
 - Fixed a rare issue where RW data didn't stick
 - Fixed an issue subscribing to a C++ wrapped message object from python
 - Cleaned up documentation on using datashaders and bokeh to interactively plot large simulation data sets.
-  The script :ref:`scenarioAnalyzeMonteCarlo` is updated to discuss the particular challenges in running this
+  The script :ref:`scenarioVisualizeMonteCarlo` is updated to discuss the particular challenges in running this
   datashader example of plotting data.
 - enable Monte Carlo ``pytest`` test scripts to run on macOS if Python 3.9 or higher is used
 - enable opNav scenario ``pytest`` test scripts to be tested by ``pytest`` if the build flag ``--opNav``
