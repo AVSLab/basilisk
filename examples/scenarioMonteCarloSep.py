@@ -53,7 +53,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simI
 from Basilisk.architecture import messaging
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
+from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion, UniformVectorDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion,
                                                        NormalVectorSingleAngleDispersion)
 
@@ -141,7 +141,12 @@ def run(saveFigures, case, show_plots):
     dispMassSA2 = 'TaskList[0].TaskModels[5].mass'
     dispInertiaSA1 = 'TaskList[0].TaskModels[4].IPntSc_S'
     dispInertiaSA2 = 'TaskList[0].TaskModels[5].IPntSc_S'
-    dispList = [dispOmegaInit, dispMass, dispInertia, dispCoMOff, dispMassSA1, dispMassSA2, dispInertiaSA1, dispInertiaSA2] + dispRWAxis + dispRWOmega + dispRWInertia
+    dispCMEstGuess = 'cmGuessOffset'
+    dispThrMag = 'TaskList[0].TaskModels[7].thrusterData[0].MaxThrust'
+    # dispThrAxis = 'TaskModels[7].thrusterData[0].thrDir_B'
+    dispList = [dispOmegaInit, dispMass, dispInertia, dispCoMOff,
+                dispMassSA1, dispMassSA2, dispInertiaSA1, dispInertiaSA2,
+                dispCMEstGuess, dispThrMag] + dispRWAxis + dispRWOmega + dispRWInertia
 
     # Add dispersions with their dispersion type
     # monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
@@ -152,12 +157,14 @@ def run(saveFigures, case, show_plots):
     Js = 0.15915494309189535
     for idx in range(4):
         monteCarlo.addDispersion(NormalVectorSingleAngleDispersion(dispRWAxis[idx], phiStd=2.0 / 3 * np.pi / 180))
-        monteCarlo.addDispersion(UniformDispersion(dispRWOmega[idx], ([-200.0, 200.0])))
+        monteCarlo.addDispersion(UniformDispersion(dispRWOmega[idx], ([-10.0, 10.0])))
         monteCarlo.addDispersion(UniformDispersion(dispRWInertia[idx], ([Js - 0.05*Js, Js + 0.05*Js])))
     monteCarlo.addDispersion(UniformDispersion(dispMassSA1, ([85 * 0.95, 85 * 1.05])))
     monteCarlo.addDispersion(UniformDispersion(dispMassSA2, ([85 * 0.95, 85 * 1.05])))
     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertiaSA1, stdAngle=1.0 / 3 * np.pi / 180))
     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertiaSA2, stdAngle=1.0 / 3 * np.pi / 180))
+    monteCarlo.addDispersion(UniformVectorDispersion(dispCMEstGuess, bounds=[-0.05, 0.05]))
+    monteCarlo.addDispersion(UniformDispersion(dispThrMag, ([0.27 * 0.95, 0.27 * 1.05])))
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also has a callback,
@@ -446,8 +453,6 @@ def createScenarioSepMomentumManagement():
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
 
-    # breakpoint()
-
     # Set up the dual-gimbaled platform
     platform = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
     scSim.AddModelToTask(dynTask, platform)
@@ -577,18 +582,18 @@ def createScenarioSepMomentumManagement():
     scSim.AddModelToTask(fswTask, pltState, 30)
 
     # Set up the CM estimator module
-    r_CB_B_0 = [0.04, -0.05, 1.25]
+    scSim.cmGuessOffset = [0.0, 0.0, 0.0]
     cmEstimator = thrustCMEstimation.ThrustCMEstimation()
     cmEstimator.ModelTag = "cmEstimator"
     cmEstimator.attitudeTol = 1e-6
-    cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
+    cmEstimator.r_CB_B = np.array([0.113244, 0.025605, 1.239834]) + np.array(scSim.cmGuessOffset)
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
     cmEstimator.R0 = [4e-8, 4e-8, 4e-8]
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
 
     # create the FSW vehicle configuration message for CoM
     vehicleConfigData = messaging.VehicleConfigMsgPayload()
-    vehicleConfigData.CoM_B = r_CB_B_0    # use the same initial CoM guess as the cmEstimator module
+    vehicleConfigData.CoM_B = np.array([0.113244, 0.025605, 1.239834]) + np.array(scSim.cmGuessOffset)    # use the same initial CoM guess as the cmEstimator module
     scSim.vcMsg_CoM = messaging.VehicleConfigMsg_C().write(vehicleConfigData)
 
     # create the FSW vehicle configuration message for inertias
