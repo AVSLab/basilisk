@@ -129,35 +129,35 @@ def run(saveFigures, case, show_plots):
     dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
     dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    # dispInertia = 'TaskList[0].TaskModels[0].hub.IHubPntBc_B'
+    dispInertia = 'TaskList[0].TaskModels[0].hub.IHubPntBc_B'
     dispRWAxis = []
+    dispRWOmega = []
+    dispRWInertia = []
     for idx in range(4):
         dispRWAxis.append(f"RW[{idx}].gsHat_B")
-    # dispRW1Omega = 'RW1.Omega'
-    # dispRW2Omega = 'RW2.Omega'
-    # dispRW3Omega = 'RW3.Omega'
-    # dispVoltageIO_0 = 'rwVoltageIO.voltage2TorqueGain[0]'
-    # dispVoltageIO_1 = 'rwVoltageIO.voltage2TorqueGain[1]'
-    # dispVoltageIO_2 = 'rwVoltageIO.voltage2TorqueGain[2]'
-    dispList = [dispOmegaInit, dispMass, dispCoMOff] + dispRWAxis
+        dispRWOmega.append(f"RW[{idx}].Omega")
+        dispRWInertia.append(f"RW[{idx}].Js")
+    dispMassSA1 = 'TaskList[0].TaskModels[4].mass'
+    dispMassSA2 = 'TaskList[0].TaskModels[5].mass'
+    dispInertiaSA1 = 'TaskList[0].TaskModels[4].IPntSc_S'
+    dispInertiaSA2 = 'TaskList[0].TaskModels[5].IPntSc_S'
+    dispList = [dispOmegaInit, dispMass, dispInertia, dispCoMOff, dispMassSA1, dispMassSA2, dispInertiaSA1, dispInertiaSA2] + dispRWAxis + dispRWOmega + dispRWInertia
 
     # Add dispersions with their dispersion type
     # monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
     monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.25 / 3.0 * np.pi / 180))
     monteCarlo.addDispersion(UniformDispersion(dispMass, ([2500.0 * 0.95, 2500.0 * 1.05])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.008, -0.010, 1.214], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
-    # monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
+    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=1.0 / 3 * np.pi / 180))
+    Js = 0.15915494309189535
     for idx in range(4):
         monteCarlo.addDispersion(NormalVectorSingleAngleDispersion(dispRWAxis[idx], phiStd=2.0 / 3 * np.pi / 180))
-    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
-    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
-    # monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
-    # monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
-    # monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
-    # monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
-    # monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    # monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    # monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+        monteCarlo.addDispersion(UniformDispersion(dispRWOmega[idx], ([-200.0, 200.0])))
+        monteCarlo.addDispersion(UniformDispersion(dispRWInertia[idx], ([Js - 0.05*Js, Js + 0.05*Js])))
+    monteCarlo.addDispersion(UniformDispersion(dispMassSA1, ([85 * 0.95, 85 * 1.05])))
+    monteCarlo.addDispersion(UniformDispersion(dispMassSA2, ([85 * 0.95, 85 * 1.05])))
+    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertiaSA1, stdAngle=1.0 / 3 * np.pi / 180))
+    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertiaSA2, stdAngle=1.0 / 3 * np.pi / 180))
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also has a callback,
@@ -445,6 +445,8 @@ def createScenarioSepMomentumManagement():
     RSAList[1].thetaDotInit = 0
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
+
+    # breakpoint()
 
     # Set up the dual-gimbaled platform
     platform = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
