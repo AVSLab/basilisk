@@ -6,12 +6,16 @@ from bokeh.models import ColumnDataSource, HoverTool, Select, ColorBar, BasicTic
 from bokeh.palettes import Viridis256
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
+from bokeh.io import export_svgs, export_png  # Correct import
+from bokeh.io import output_file, save
+from bokeh.resources import CDN
 import time
 import re
 from bokeh.models import Div
+from bokeh.embed import file_html
 
 class MonteCarloPlotter:
-    def __init__(self, dataDir):
+    def __init__(self, dataDir, save_plots=False, doc_dir=None):
         self.dataDir = dataDir
         self.data = {}
         self.current_plot = None
@@ -21,6 +25,12 @@ class MonteCarloPlotter:
         self.total_data_size = 0
         self.title_div = None
         self.status_indicator = None
+        self.save_plots = save_plots
+        self.plot_save_dir = os.path.abspath(os.path.join(os.path.dirname(dataDir), "saved_plots"))
+        self.doc_dir = os.path.abspath(doc_dir if doc_dir else os.path.join(os.path.dirname(dataDir), "docs"))
+        if self.save_plots:
+            os.makedirs(self.plot_save_dir, exist_ok=True)
+            os.makedirs(self.doc_dir, exist_ok=True)
 
     def load_data(self, variables):
         self.total_data_size = 0  # Reset total data size before loading
@@ -219,6 +229,9 @@ class MonteCarloPlotter:
 
         initial_plot = self.create_plot(self.variable_select.value, self.component_select.value)
 
+        # Save all initial plots if enabled
+        self.save_all_initial_plots()
+
         self.variable_select.on_change('value', self.update_plot)
         self.component_select.on_change('value', self.update_plot)
         self.run_input.on_change('value', self.update_plot)
@@ -241,7 +254,7 @@ class MonteCarloPlotter:
         # Wrap the entire layout in a column for additional centering control
         centered_layout = column(
             self.plot_column,
-            sizing_mode="stretch_width",
+            sizing_mode="stretch_both",
             align="center"
         )
 
@@ -261,3 +274,73 @@ class MonteCarloPlotter:
         # We just need to update the status when it's done
         self.update_status(is_loading=False)
 
+    def save_plot(self, plot, variable, component):
+        if not self.save_plots:
+            return
+        
+        base_filename = f"{variable}_{component}"
+        
+        # Ensure plot_save_dir is an absolute path
+        self.plot_save_dir = os.path.abspath(self.plot_save_dir)
+        
+        # Create the directory if it doesn't exist
+        os.makedirs(self.plot_save_dir, exist_ok=True)
+        
+        # Save as HTML
+        html_filename = os.path.join(self.plot_save_dir, f"{base_filename}.html")
+        
+        print(f"Attempting to save plot to: {html_filename}")
+        
+        try:
+            html = file_html(plot, CDN, f"{variable} - {component}")
+            with open(html_filename, 'w') as f:
+                f.write(html)
+            print(f"Successfully saved plot for {variable} - {component} as HTML")
+        except Exception as e:
+            print(f"Error saving plot: {str(e)}")
+        
+        # Generate RST content for documentation
+        rst_content = self.generate_rst_content(variable, component, html_filename)
+        
+        # Ensure doc_dir is an absolute path
+        self.doc_dir = os.path.abspath(self.doc_dir)
+        
+        # Create the directory if it doesn't exist
+        os.makedirs(self.doc_dir, exist_ok=True)
+        
+        # Save RST content
+        rst_filename = os.path.join(self.doc_dir, f"{base_filename}.rst")
+        
+        print(f"Attempting to save RST file to: {rst_filename}")
+        
+        try:
+            with open(rst_filename, 'w') as f:
+                f.write(rst_content)
+            print(f"Generated RST documentation for {variable} - {component}")
+        except Exception as e:
+            print(f"Error saving RST file: {str(e)}")
+
+    def generate_rst_content(self, variable, component, html_filename):
+        title = f"{variable} - {component} Component"
+        underline = "=" * len(title)
+        
+        rst_content = f"""
+{title}
+{underline}
+
+.. raw:: html
+   :file: {os.path.relpath(html_filename, self.doc_dir)}
+
+This plot shows the {component.upper()} component of the {variable} variable.
+
+"""
+        return rst_content
+
+    def save_all_initial_plots(self):
+        if not self.save_plots:
+            return
+        
+        for variable in self.data.keys():
+            for component in ['x', 'y', 'z']:
+                plot = self.create_plot(variable, component)
+                self.save_plot(plot, variable, component)
