@@ -43,6 +43,8 @@ public:
     double c = 0.0;                                                  //!< [N-m-s/rad] rotational damping coefficient
     double thetaInit = 0.0;                                          //!< [rad] initial spinning body angle
     double thetaDotInit = 0.0;                                       //!< [rad/s] initial spinning body angle rate
+    double theta_max = std::numeric_limits<double>::infinity();      //!< [rad] Maximum allowed angle
+    double theta_min = -std::numeric_limits<double>::infinity();     //!< [rad] Minimum allowed angle
     std::string nameOfThetaState;                                    //!< -- identifier for the theta state data container
     std::string nameOfThetaDotState;                                 //!< -- identifier for the thetaDot state data container
     Eigen::Vector3d r_SB_B{0.0, 0.0, 0.0};                  //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
@@ -75,6 +77,8 @@ public:
     void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
 
 private:
+    bool isMovingBeyondLimits(double theta, double thetaDot);
+
     static uint64_t effectorID;         //!< [] ID number of this panel
     double u = 0.0;                     //!< [N-m] optional motor torque
     int lockFlag = 0;                   //!< [] flag for locking the rotation axis
