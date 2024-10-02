@@ -161,6 +161,10 @@ jobs:
   build-windows:
     name: Windows opNav
     runs-on: windows-2019
+    permissions:
+      actions: read
+      contents: write
+      security-events: write
     strategy:
       matrix:
         python-version: ["3.11"]
