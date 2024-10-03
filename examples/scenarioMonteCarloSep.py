@@ -66,16 +66,13 @@ VERBOSE = True
 
 
 # Here are the name of some messages that we want to retain or otherwise use
-# rwMotorTorqueMsgName = "rwMotorTorqueMsg"
 guidMsgName = "guidMsg"
-# transMsgName = "transMsg"
-# rwSpeedMsgName = "rwSpeedMsg"
-# voltMsgName = "voltMsg"
-# rwOutName = ["rw1Msg", "rw2Msg", "rw3Msg", "rw4Msg"]
+rwSpeedMsgName = "rwSpeedMsg"
+rwOutName = ["rw1Msg", "rw2Msg", "rw3Msg", "rw4Msg"]
 
 
 # We also will need the simulationTime and samplingTimes
-simulationTime = macros.hour2nano(2)
+simulationTime = macros.hour2nano(12)
 simulationTimeStepDyn = macros.sec2nano(0.5)
 simulationTimeStepFsw = macros.sec2nano(2)
 simulationTimeStepPlt = macros.hour2nano(1)
@@ -143,10 +140,10 @@ def run(saveFigures, case, show_plots):
     dispInertiaSA2 = 'TaskList[0].TaskModels[5].IPntSc_S'
     dispCMEstGuess = 'cmGuessOffset'
     dispThrMag = 'TaskList[0].TaskModels[7].thrusterData[0].MaxThrust'
-    # dispThrAxis = 'TaskModels[7].thrusterData[0].thrDir_B'
-    dispList = [dispOmegaInit, dispMass, dispInertia, dispCoMOff,
+    dispThrAxis = 'TaskList[0].TaskModels[7].thrusterData[0].thrDir_B'
+    dispList = ([dispOmegaInit, dispMass, dispInertia, dispCoMOff,
                 dispMassSA1, dispMassSA2, dispInertiaSA1, dispInertiaSA2,
-                dispCMEstGuess, dispThrMag] + dispRWAxis + dispRWOmega + dispRWInertia
+                dispCMEstGuess, dispThrMag, dispThrAxis] + dispRWAxis + dispRWOmega + dispRWInertia)
 
     # Add dispersions with their dispersion type
     # monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
@@ -165,6 +162,7 @@ def run(saveFigures, case, show_plots):
     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertiaSA2, stdAngle=1.0 / 3 * np.pi / 180))
     monteCarlo.addDispersion(UniformVectorDispersion(dispCMEstGuess, bounds=[-0.05, 0.05]))
     monteCarlo.addDispersion(UniformDispersion(dispThrMag, ([0.27 * 0.95, 0.27 * 1.05])))
+    monteCarlo.addDispersion(NormalVectorSingleAngleDispersion(dispThrAxis, phiStd=0.5 / 3 * np.pi / 180))
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also has a callback,
@@ -173,11 +171,7 @@ def run(saveFigures, case, show_plots):
     # define the data to retain
     # retentionPolicy.addMessageLog(rwMotorTorqueMsgName, ["motorTorque"])
     retentionPolicy.addMessageLog(guidMsgName, ["sigma_BR", "omega_BR_B"])
-    # retentionPolicy.addMessageLog(transMsgName, ["r_BN_N"])
-    # retentionPolicy.addMessageLog(rwSpeedMsgName, ["wheelSpeeds"])
-    # retentionPolicy.addMessageLog(voltMsgName, ["voltage"])
-    # for msgName in rwOutName:
-    #     retentionPolicy.addMessageLog(msgName, ["u_current"])
+    retentionPolicy.addMessageLog(rwSpeedMsgName, ["wheelSpeeds"])
     if show_plots:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
@@ -285,7 +279,7 @@ def run(saveFigures, case, show_plots):
 def createScenarioSepMomentumManagement():
 
     momentumManagement = True
-    cmEstimation = True
+    cmEstimation = False
 
     # Create simulation variable names
     fswTask = "fswTask"
@@ -343,12 +337,12 @@ def createScenarioSepMomentumManagement():
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 150e9      # meters
+    oe.a = 100e9      # meters
     oe.e = 0.001
     oe.i = 0.0 * macros.D2R
     oe.Omega = 0.0 * macros.D2R
     oe.omega = 0.0 * macros.D2R
-    oe.f = -135.0 * macros.D2R
+    oe.f = -110.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
@@ -424,7 +418,7 @@ def createScenarioSepMomentumManagement():
     RSAList[0].r_SB_B = [0.75, 0.0, 0.45]
     RSAList[0].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[0].sHat_S = [0, 1, 0]
-    RSAList[0].dcm_S0B = [[0, 0, -1], [1, 0, 0], [0, -1, 0]]
+    RSAList[0].dcm_S0B = [[0, 0, 1], [1, 0, 0], [0, 1, 0]]
     RSAList[0].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -441,7 +435,7 @@ def createScenarioSepMomentumManagement():
     RSAList[1].r_SB_B = [-0.75, 0.0, 0.45]
     RSAList[1].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[1].sHat_S = [0, 1, 0]
-    RSAList[1].dcm_S0B = [[0, 0, 1], [-1, 0, 0], [0, -1, 0]]
+    RSAList[1].dcm_S0B = [[0, 0, -1], [-1, 0, 0], [0, 1, 0]]
     RSAList[1].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -477,29 +471,31 @@ def createScenarioSepMomentumManagement():
     platform.ModelTag = "platform1"
     scObject.addStateEffector(platform)
 
+    # Write THR Config Msg
+    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
+    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
+    THRConfig = messaging.THRConfigMsgPayload()
+    THRConfig.rThrust_B = r_TF_F
+    THRConfig.tHatThrust_B = tHat_F
+    THRConfig.maxThrust = 0.27
+    THRConfig.swirlTorque = 1.0e-3 * THRConfig.maxThrust
+    scSim.thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
+
     # Set up the SEP thruster
     sepThruster = thrusterStateEffector.ThrusterStateEffector()
     scSim.AddModelToTask(dynTask, sepThruster)
     thruster = thrusterStateEffector.THRSimConfig()
-    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
-    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
     thruster.thrLoc_B = r_TF_F
     thruster.thrDir_B = tHat_F
-    thruster.MaxThrust = 0.27
+    thruster.MaxThrust = THRConfig.maxThrust
     thruster.steadyIsp = 1600
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
+    thruster.MaxSwirlTorque = THRConfig.swirlTorque
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
     scObject.addStateEffector(sepThruster)
-
-    # Write THR Config Msg
-    THRConfig = messaging.THRConfigMsgPayload()
-    THRConfig.rThrust_B = r_TF_F
-    THRConfig.tHatThrust_B = tHat_F
-    THRConfig.maxThrust = thruster.MaxThrust
-    scSim.thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
 
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
@@ -683,12 +679,14 @@ def createScenarioSepMomentumManagement():
     # Configure thruster on-time message
     thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
     thrOnTimeMsgData.OnTimeRequest = [3600*4*30]
-    thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
+    scSim.thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
     # This is needed because platformReference runs on its own task at a different frequency,
     # but it receives inputs and provides outputs to modules that run on the main flight software task
     messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, scSim.vcMsg_CoM)
+
+    # breakpoint()
 
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -736,7 +734,7 @@ def createScenarioSepMomentumManagement():
         pltController[item].hingedRigidBodyInMsg.subscribeTo(platform.spinningBodyOutMsgs[item])
     pltController[0].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef1OutMsg)
     pltController[1].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef2OutMsg)
-    sepThruster.cmdsInMsg.subscribeTo(thrOnTimeMsg)
+    sepThruster.cmdsInMsg.subscribeTo(scSim.thrOnTimeMsg)
 
     # store the msg recorder modules in a dictionary list so the retention policy class can pull the data
     # when the simulation ends
@@ -751,8 +749,8 @@ def createScenarioSepMomentumManagement():
     # scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
     # scSim.AddModelToTask(simTaskName, scSim.msgRecList[transMsgName])
     #
-    # scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
-    # scSim.AddModelToTask(dynTask, scSim.msgRecList[rwSpeedMsgName])
+    scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, scSim.msgRecList[rwSpeedMsgName])
     #
     # scSim.msgRecList[voltMsgName] = fswRWVoltage.voltageOutMsg.recorder(samplingTime)
     # scSim.AddModelToTask(simTaskName, scSim.msgRecList[voltMsgName])
@@ -765,7 +763,7 @@ def createScenarioSepMomentumManagement():
 
     # This is a hack because of a bug in Basilisk... leave this line it keeps
     # variables from going out of scope after this function returns
-    scSim.additionalReferences = [scObject, gravBodies['sun'], rwMotorTorqueObj, mrpControl, attError]
+    scSim.additionalReferences = [scObject, gravBodies['sun'], rwMotorTorqueObj, mrpControl, attError, pltReference]
 
     return scSim
 
@@ -787,11 +785,15 @@ def plotSim(data, retentionPolicy):
     dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"][:,1:]
     # dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"][:,1:]
     # dataPos = data["messages"][transMsgName + ".r_BN_N"][:,1:]
-    # dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"][:,1:]
+    dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"][:,1:]
     # dataVolt = data["messages"][voltMsgName + ".voltage"][:,1:]
     # dataRW = []
     # for msgName in rwOutName:
     #     dataRW.append(data["messages"][msgName+".u_current"][:,1:])
+    dataPrvBR = []
+    for i in range(len(dataSigmaBR)):
+        dataPrvBR.append(4*np.arctan(np.linalg.norm(dataSigmaBR[i,:])))
+
     np.set_printoptions(precision=16)
 
     #
@@ -803,46 +805,20 @@ def plotSim(data, retentionPolicy):
     figureList = {}
     plt.figure(1)
     pltName = 'AttitudeError'
-    for idx in range(3):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 label='Run ' + str(data["index"]) + r' $\sigma_'+str(idx)+'$')
-    # plt.legend(loc='lower right')
+    plt.plot(timeData, dataPrvBR, label='Run ' + str(data["index"]))
     plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\text{PRA}_{B/R}$')
     figureList[pltName] = plt.figure(1)
 
-    # plt.figure(2)
-    # pltName = 'RWMotorTorque'
-    # for idx in range(3):
-    #     plt.plot(timeData, dataUsReq[:, idx],
-    #              '--',
-    #              label='Run ' + str(data["index"]) + r' $\hat u_{s,'+str(idx)+'}$')
-    #     plt.plot(timeData, dataRW[idx],
-    #              label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
-    # # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('RW Motor Torque (Nm)')
-    # figureList[pltName] = plt.figure(2)
-
-    # plt.figure(3)
-    # pltName = 'RateTrackingError'
-    # for idx in range(3):
-    #     plt.plot(timeData, dataOmegaBR[:, idx],
-    #              label='Run ' + str(data["index"]) + r' $\omega_{BR,'+str(idx)+'}$')
-    # # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('Rate Tracking Error (rad/s) ')
-    # figureList[pltName] = plt.figure(3)
-    #
-    # plt.figure(4)
-    # pltName = 'RWSpeed'
-    # for idx in range(len(rwOutName)):
-    #     plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-    #              label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
-    # # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('RW Speed (RPM) ')
-    # figureList[pltName] = plt.figure(4)
+    plt.figure(2)
+    pltName = 'RWSpeed'
+    for idx in range(len(rwOutName)):
+        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
+                 label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
+    # plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Speed (RPM) ')
+    figureList[pltName] = plt.figure(2)
 
     # plt.figure(5)
     # pltName = 'RWVoltage'
