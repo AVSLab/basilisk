@@ -44,8 +44,8 @@ from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarA
                                     hingedRigidBodyPIDMotor, solarArrayReference, thrusterPlatformReference,
                                     thrusterPlatformState, thrustCMEstimation, torqueScheduler)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
-                                 spinningBodyOneDOFStateEffector,
-                                 spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector)
+                                 spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector,
+                                 thrusterStateEffector, facetSRPDynamicEffector, boreAngCalc)
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
                                 unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
 
@@ -141,8 +141,8 @@ def run(saveFigures, case, show_plots):
     dispCMEstGuess = []
     for idx in range(3):
         dispCMEstGuess.append(f"TaskList[2].TaskModels[2].r_CB_B[{idx}][0]")
-    dispThrMag = 'TaskList[0].TaskModels[7].thrusterData[0].MaxThrust'
-    dispThrAxis = 'TaskList[0].TaskModels[7].thrusterData[0].thrDir_B'
+    dispThrMag = 'TaskList[0].TaskModels[10].thrusterData[0].MaxThrust'
+    dispThrAxis = 'TaskList[0].TaskModels[10].thrusterData[0].thrDir_B'
     dispList = ([dispOmegaInit, dispMass, dispInertia, dispCoMOff,
                 dispMassSA1, dispMassSA2, dispInertiaSA1, dispInertiaSA2,
                 dispThrMag, dispThrAxis] + dispRWAxis + dispRWOmega + dispRWInertia + dispCMEstGuess)
@@ -451,6 +451,20 @@ def createScenarioSepMomentumManagement():
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
 
+    # Set up boresight modules on hub
+    hubBoresight = boreAngCalc.BoreAngCalc()
+    hubBoresight.ModelTag = 'hubBoresight'
+    hubBoresight.boreVec_B = [0, -1, 0]
+    scSim.AddModelToTask(dynTask, hubBoresight)
+
+    # Set up boresight modules on SAs
+    saBoresightList = []
+    for item in range(numRSA):
+        saBoresightList.append(boreAngCalc.BoreAngCalc())
+        saBoresightList[item].ModelTag = 'saBoresight'+str(item+1)
+        saBoresightList[item].boreVec_B = [0, 0, 1]
+        scSim.AddModelToTask(dynTask, saBoresightList[item])
+
     # Set up the dual-gimbaled platform
     platform = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
     scSim.AddModelToTask(dynTask, platform)
@@ -690,6 +704,8 @@ def createScenarioSepMomentumManagement():
     # but it receives inputs and provides outputs to modules that run on the main flight software task
     messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, scSim.vcMsg_CoM)
 
+    # breakpoint()
+
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     sNavObject.sunStateInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
@@ -726,12 +742,16 @@ def createScenarioSepMomentumManagement():
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(scSim.fswRwConfigMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    hubBoresight.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    hubBoresight.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(numRSA):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
         saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
+        saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
+        saBoresightList[item].celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(2):
         pltController[item].hingedRigidBodyInMsg.subscribeTo(platform.spinningBodyOutMsgs[item])
     pltController[0].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef1OutMsg)
