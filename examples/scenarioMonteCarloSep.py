@@ -61,7 +61,7 @@ from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.io import output_file, show
 from bokeh.layouts import column
 
-NUMBER_OF_RUNS = 6
+NUMBER_OF_RUNS = 10
 VERBOSE = True
 
 
@@ -138,12 +138,14 @@ def run(saveFigures, case, show_plots):
     dispMassSA2 = 'TaskList[0].TaskModels[5].mass'
     dispInertiaSA1 = 'TaskList[0].TaskModels[4].IPntSc_S'
     dispInertiaSA2 = 'TaskList[0].TaskModels[5].IPntSc_S'
-    dispCMEstGuess = 'cmGuessOffset'
+    dispCMEstGuess = []
+    for idx in range(3):
+        dispCMEstGuess.append(f"TaskList[2].TaskModels[2].r_CB_B[{idx}][0]")
     dispThrMag = 'TaskList[0].TaskModels[7].thrusterData[0].MaxThrust'
     dispThrAxis = 'TaskList[0].TaskModels[7].thrusterData[0].thrDir_B'
     dispList = ([dispOmegaInit, dispMass, dispInertia, dispCoMOff,
                 dispMassSA1, dispMassSA2, dispInertiaSA1, dispInertiaSA2,
-                dispCMEstGuess, dispThrMag, dispThrAxis] + dispRWAxis + dispRWOmega + dispRWInertia)
+                dispThrMag, dispThrAxis] + dispRWAxis + dispRWOmega + dispRWInertia + dispCMEstGuess)
 
     # Add dispersions with their dispersion type
     # monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
@@ -152,6 +154,7 @@ def run(saveFigures, case, show_plots):
     monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.008, -0.010, 1.214], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=1.0 / 3 * np.pi / 180))
     Js = 0.15915494309189535
+    CoM = [0.113244, 0.025605, 1.239834]
     for idx in range(4):
         monteCarlo.addDispersion(NormalVectorSingleAngleDispersion(dispRWAxis[idx], phiStd=2.0 / 3 * np.pi / 180))
         monteCarlo.addDispersion(UniformDispersion(dispRWOmega[idx], ([-10.0, 10.0])))
@@ -160,7 +163,8 @@ def run(saveFigures, case, show_plots):
     monteCarlo.addDispersion(UniformDispersion(dispMassSA2, ([85 * 0.95, 85 * 1.05])))
     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertiaSA1, stdAngle=1.0 / 3 * np.pi / 180))
     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertiaSA2, stdAngle=1.0 / 3 * np.pi / 180))
-    monteCarlo.addDispersion(UniformVectorDispersion(dispCMEstGuess, bounds=[-0.05, 0.05]))
+    for idx in range(3):
+        monteCarlo.addDispersion(UniformDispersion(dispCMEstGuess[idx], bounds=[CoM[idx]-0.05, CoM[idx]+0.05]))
     monteCarlo.addDispersion(UniformDispersion(dispThrMag, ([0.27 * 0.95, 0.27 * 1.05])))
     monteCarlo.addDispersion(NormalVectorSingleAngleDispersion(dispThrAxis, phiStd=0.5 / 3 * np.pi / 180))
 
@@ -279,7 +283,7 @@ def run(saveFigures, case, show_plots):
 def createScenarioSepMomentumManagement():
 
     momentumManagement = True
-    cmEstimation = False
+    cmEstimation = True
 
     # Create simulation variable names
     fswTask = "fswTask"
@@ -578,18 +582,18 @@ def createScenarioSepMomentumManagement():
     scSim.AddModelToTask(fswTask, pltState, 30)
 
     # Set up the CM estimator module
-    scSim.cmGuessOffset = [0.0, 0.0, 0.0]
+    r_CB_B_0 = [0.04, -0.05, 1.25]
     cmEstimator = thrustCMEstimation.ThrustCMEstimation()
     cmEstimator.ModelTag = "cmEstimator"
     cmEstimator.attitudeTol = 1e-6
-    cmEstimator.r_CB_B = np.array([0.113244, 0.025605, 1.239834]) + np.array(scSim.cmGuessOffset)
+    cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
     cmEstimator.R0 = [4e-8, 4e-8, 4e-8]
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
 
     # create the FSW vehicle configuration message for CoM
     vehicleConfigData = messaging.VehicleConfigMsgPayload()
-    vehicleConfigData.CoM_B = np.array([0.113244, 0.025605, 1.239834]) + np.array(scSim.cmGuessOffset)    # use the same initial CoM guess as the cmEstimator module
+    vehicleConfigData.CoM_B = r_CB_B_0    # use the same initial CoM guess as the cmEstimator module
     scSim.vcMsg_CoM = messaging.VehicleConfigMsg_C().write(vehicleConfigData)
 
     # create the FSW vehicle configuration message for inertias
@@ -685,8 +689,6 @@ def createScenarioSepMomentumManagement():
     # This is needed because platformReference runs on its own task at a different frequency,
     # but it receives inputs and provides outputs to modules that run on the main flight software task
     messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, scSim.vcMsg_CoM)
-
-    # breakpoint()
 
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
