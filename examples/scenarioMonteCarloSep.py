@@ -69,10 +69,14 @@ VERBOSE = True
 guidMsgName = "guidMsg"
 rwSpeedMsgName = "rwSpeedMsg"
 rwOutName = ["rw1Msg", "rw2Msg", "rw3Msg", "rw4Msg"]
+hubBoresightMsgName = "hubBoresightMsg"
+thrBoresightMsgName = "thrBoresightMsg"
+saBoresightMsgName1 = "saBoresightMsg1"
+saBoresightMsgName2 = "saBoresightMsg2"
 
 
 # We also will need the simulationTime and samplingTimes
-simulationTime = macros.hour2nano(12)
+simulationTime = macros.day2nano(1.5)
 simulationTimeStepDyn = macros.sec2nano(0.5)
 simulationTimeStepFsw = macros.sec2nano(2)
 simulationTimeStepPlt = macros.hour2nano(1)
@@ -141,14 +145,14 @@ def run(saveFigures, case, show_plots):
     dispCMEstGuess = []
     for idx in range(3):
         dispCMEstGuess.append(f"TaskList[2].TaskModels[2].r_CB_B[{idx}][0]")
-    dispThrMag = 'TaskList[0].TaskModels[10].thrusterData[0].MaxThrust'
-    dispThrAxis = 'TaskList[0].TaskModels[10].thrusterData[0].thrDir_B'
+    dispThrMag = 'TaskList[0].TaskModels[11].thrusterData[0].MaxThrust'
+    dispThrAxis = 'TaskList[0].TaskModels[11].thrusterData[0].thrDir_B'
     dispList = ([dispOmegaInit, dispMass, dispInertia, dispCoMOff,
                 dispMassSA1, dispMassSA2, dispInertiaSA1, dispInertiaSA2,
                 dispThrMag, dispThrAxis] + dispRWAxis + dispRWOmega + dispRWInertia + dispCMEstGuess)
 
     # Add dispersions with their dispersion type
-    # monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+    # monteCarlo.addDispersion(UniformVectorDispersion(dispMRPInit, bounds=([-0.005, 0.005])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.25 / 3.0 * np.pi / 180))
     monteCarlo.addDispersion(UniformDispersion(dispMass, ([2500.0 * 0.95, 2500.0 * 1.05])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.008, -0.010, 1.214], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
@@ -173,9 +177,12 @@ def run(saveFigures, case, show_plots):
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
-    # retentionPolicy.addMessageLog(rwMotorTorqueMsgName, ["motorTorque"])
     retentionPolicy.addMessageLog(guidMsgName, ["sigma_BR", "omega_BR_B"])
     retentionPolicy.addMessageLog(rwSpeedMsgName, ["wheelSpeeds"])
+    retentionPolicy.addMessageLog(hubBoresightMsgName, ["missAngle"])
+    retentionPolicy.addMessageLog(thrBoresightMsgName, ["missAngle"])
+    retentionPolicy.addMessageLog(saBoresightMsgName1, ["missAngle"])
+    retentionPolicy.addMessageLog(saBoresightMsgName2, ["missAngle"])
     if show_plots:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
@@ -353,7 +360,7 @@ def createScenarioSepMomentumManagement():
     scObject.hub.r_CN_NInit = rN                          # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN                          # m/s - v_BN_N
     scObject.hub.sigma_BNInit = [0, 0., 0.]              # MRP set to customize initial inertial attitude
-    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]      # rad/s - omega_CN_B
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.05], [0.]]      # rad/s - omega_CN_B
 
     # define the simulation inertia
     I = [ 1725,    -5,   -12,
@@ -451,11 +458,18 @@ def createScenarioSepMomentumManagement():
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
 
-    # Set up boresight modules on hub
+    # Set up boresight module on platform
     hubBoresight = boreAngCalc.BoreAngCalc()
     hubBoresight.ModelTag = 'hubBoresight'
     hubBoresight.boreVec_B = [0, -1, 0]
     scSim.AddModelToTask(dynTask, hubBoresight)
+
+    # Set up boresight module on platform
+    thrBoresight = boreAngCalc.BoreAngCalc()
+    thrBoresight.ModelTag = 'thrBoresight'
+    thrBoresight.boreVec_B = [0, 0, 1]
+    thrBoresight.inertialHeadingVec_N = [1, 0, 0]
+    scSim.AddModelToTask(dynTask, thrBoresight)
 
     # Set up boresight modules on SAs
     saBoresightList = []
@@ -661,6 +675,8 @@ def createScenarioSepMomentumManagement():
         saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
+        saReference[item].r_AB_B = [(-1)**item * (3.75 + 0.5 * lenXHub + 0.5 * 7.262), 0.0, 0.45]
+        saReference[item].pointingMode = 0
         scSim.AddModelToTask(fswTask, saReference[item], 24)
 
     # Set up solar array controller modules
@@ -696,7 +712,7 @@ def createScenarioSepMomentumManagement():
 
     # Configure thruster on-time message
     thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrOnTimeMsgData.OnTimeRequest = [3600*4*30]
+    thrOnTimeMsgData.OnTimeRequest = [3600*24*6]
     scSim.thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
@@ -744,10 +760,14 @@ def createScenarioSepMomentumManagement():
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     hubBoresight.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     hubBoresight.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+    thrBoresight.scStateInMsg.subscribeTo(platform.spinningBodyConfigLogOutMsgs[1])
     for item in range(numRSA):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
         saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
+        saReference[item].rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+        saReference[item].rwConfigDataInMsg.subscribeTo(scSim.fswRwConfigMsg)
+        saReference[item].vehConfigInMsg.subscribeTo(scSim.vcMsg_CoM)
         saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
         saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
@@ -762,26 +782,23 @@ def createScenarioSepMomentumManagement():
     # when the simulation ends
     scSim.msgRecList = {}
 
-    # scSim.msgRecList[rwMotorTorqueMsgName] = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
-    # scSim.AddModelToTask(dynTask, scSim.msgRecList[rwMotorTorqueMsgName])
-
     scSim.msgRecList[guidMsgName] = attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, scSim.msgRecList[guidMsgName])
 
-    # scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
-    # scSim.AddModelToTask(simTaskName, scSim.msgRecList[transMsgName])
-    #
     scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, scSim.msgRecList[rwSpeedMsgName])
-    #
-    # scSim.msgRecList[voltMsgName] = fswRWVoltage.voltageOutMsg.recorder(samplingTime)
-    # scSim.AddModelToTask(simTaskName, scSim.msgRecList[voltMsgName])
 
-    # c = 0
-    # for msgName in rwOutName:
-    #     scSim.msgRecList[msgName] = rwStateEffector.rwOutMsgs[c].recorder(samplingTime)
-    #     scSim.AddModelToTask(dynTask, scSim.msgRecList[msgName])
-    #     c += 1
+    scSim.msgRecList[hubBoresightMsgName] = hubBoresight.angOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, scSim.msgRecList[hubBoresightMsgName])
+
+    scSim.msgRecList[thrBoresightMsgName] = thrBoresight.angOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, scSim.msgRecList[thrBoresightMsgName])
+
+    scSim.msgRecList[saBoresightMsgName1] = saBoresightList[0].angOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, scSim.msgRecList[saBoresightMsgName1])
+
+    scSim.msgRecList[saBoresightMsgName2] = saBoresightList[1].angOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, scSim.msgRecList[saBoresightMsgName2])
 
     # This is a hack because of a bug in Basilisk... leave this line it keeps
     # variables from going out of scope after this function returns
@@ -797,21 +814,26 @@ def executeScenario(sim):
     #   configure a simulation stop time and execute the simulation run
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
+    sim.TaskList[2].TaskModels[7].pointingMode = 1
+    sim.TaskList[2].TaskModels[8].pointingMode = 1
+    sim.TaskList[2].TaskModels[7].Reset(simulationTime)
+    sim.TaskList[2].TaskModels[8].Reset(simulationTime)
+    sim.ConfigureStopTime(2*simulationTime)
+    sim.ExecuteSimulation()
 
 
 # This method is used to plot the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
     #   retrieve the logged data
-    # dataUsReq = data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:,1:]
     dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"][:,1:]
-    # dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"][:,1:]
-    # dataPos = data["messages"][transMsgName + ".r_BN_N"][:,1:]
     dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"][:,1:]
-    # dataVolt = data["messages"][voltMsgName + ".voltage"][:,1:]
-    # dataRW = []
-    # for msgName in rwOutName:
-    #     dataRW.append(data["messages"][msgName+".u_current"][:,1:])
+    dataThermSurfAccuracy = data["messages"][hubBoresightMsgName + ".missAngle"][:,1:]
+    dataSepPointAccuracy = data["messages"][thrBoresightMsgName + ".missAngle"][:,1:]
+    dataSaPointAccuracy = []
+    dataSaPointAccuracy.append(data["messages"][saBoresightMsgName1 + ".missAngle"][:,1:])
+    dataSaPointAccuracy.append(data["messages"][saBoresightMsgName2 + ".missAngle"][:,1:])
+    dataSaPointAccuracy = np.array(dataSaPointAccuracy)
     dataPrvBR = []
     for i in range(len(dataSigmaBR)):
         dataPrvBR.append(4*np.arctan(np.linalg.norm(dataSigmaBR[i,:])))
@@ -822,14 +844,14 @@ def plotSim(data, retentionPolicy):
     #   plot the results
     #
 
-    timeData = data["messages"][guidMsgName + ".sigma_BR"][:,0] * macros.NANO2MIN
+    timeData = data["messages"][guidMsgName + ".sigma_BR"][:,0] * macros.NANO2HOUR / 24
 
     figureList = {}
     plt.figure(1)
     pltName = 'AttitudeError'
     plt.plot(timeData, dataPrvBR, label='Run ' + str(data["index"]))
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\text{PRA}_{B/R}$')
+    plt.xlabel('Time [days]')
+    plt.ylabel(r'Attitude PRA Error $\psi_{B/R}$')
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
@@ -838,19 +860,34 @@ def plotSim(data, retentionPolicy):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
                  label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
     # plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
+    plt.xlabel('Time [days]')
     plt.ylabel('RW Speed (RPM) ')
     figureList[pltName] = plt.figure(2)
 
-    # plt.figure(5)
-    # pltName = 'RWVoltage'
-    # for idx in range(len(rwOutName)):
-    #     plt.plot(timeData, dataVolt[:, idx],
-    #              label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
-    # # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('RW Voltage (V) ')
-    # figureList[pltName] = plt.figure(5)
+    plt.figure(3)
+    pltName = 'thrPointAccuracy'
+    plt.plot(timeData, dataThermSurfAccuracy/macros.D2R, label='Run ' + str(data["index"]))
+    # plt.legend(loc='lower right')
+    plt.xlabel('Time [days]')
+    plt.ylabel('Therm. Surf. Pointing [deg] ')
+    figureList[pltName] = plt.figure(3)
+
+    plt.figure(4)
+    pltName = 'thrPointAccuracy'
+    plt.plot(timeData, dataSepPointAccuracy/macros.D2R, label='Run ' + str(data["index"]))
+    # plt.legend(loc='lower right')
+    plt.xlabel('Time [days]')
+    plt.ylabel('Thr Pointing Accuracy [deg] ')
+    figureList[pltName] = plt.figure(4)
+
+    plt.figure(5)
+    pltName = 'saPointAccuracy'
+    plt.plot(timeData, dataSaPointAccuracy[0]/macros.D2R, label='Run ' + str(data["index"]))
+    plt.plot(timeData, dataSaPointAccuracy[1]/macros.D2R, label='Run ' + str(data["index"]))
+    # plt.legend(loc='lower right')
+    plt.xlabel('Time [days]')
+    plt.ylabel('SA Pointing Accuracy [deg] ')
+    figureList[pltName] = plt.figure(5)
 
     return figureList
 
