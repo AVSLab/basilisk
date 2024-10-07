@@ -35,6 +35,12 @@ import sys
 
 import pytest
 
+from bokeh.io import output_file, save
+from bokeh.server.server import Server
+from bokeh.application import Application
+from bokeh.application.handlers.function import FunctionHandler
+from tornado.ioloop import IOLoop
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -70,17 +76,23 @@ def test_scenarioBskMcScenarios(show_plots):
             if i == 0:
                 figureList = scene_plt.run(False)
             else:
-                figureList = scene_plt.run()
+                scene_plt.run()
+                # Check if plots were generated
+                plot_dir = os.path.join(path, "../../examples/MonteCarloExamples/saved_plots")
+                doc_dir = os.path.join(path, "../../examples/MonteCarloExamples/docs")
+                if not os.path.exists(plot_dir) or not os.listdir(plot_dir):
+                    testFailCount += 1
+                    testMessages.append("No plots were generated or saved.")
+                if not os.path.exists(doc_dir) or not os.listdir(doc_dir):
+                    testFailCount += 1
+                    testMessages.append("No RST files were generated.")
 
-        except OSError as err:
-            testFailCount = testFailCount + 1
-            testMessages.append("OS error: {0}".format(err))
+        except Exception as err:
+            testFailCount += 1
+            testMessages.append(f"Error in {bskSimCase}: {str(err)}")
 
-
-    print(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
-    if os.path.exists(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/"):
-        shutil.rmtree(path+ "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
+    # Clean up
+    if os.path.exists(path + "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/"):
+        shutil.rmtree(path + "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
 
     assert testFailCount < 1, testMessages

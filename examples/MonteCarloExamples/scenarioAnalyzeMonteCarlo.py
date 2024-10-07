@@ -92,13 +92,10 @@ The script will display information about the loaded data, including the number 
 import os  # For file and directory operations
 import logging  # For logging messages
 import time  # For timing the execution
-logging.basicConfig(level=logging.INFO)  # Set up basic logging configuration
-
-# Import the MonteCarloPlotter class from the Basilisk utilities
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
+from bokeh.io import output_file, save
 
-# Import curdoc from bokeh for adding the plot to the current document
-from bokeh.io import curdoc
+logging.basicConfig(level=logging.INFO)  # Set up basic logging configuration
 
 def run():
     # Construct the path to the data directory
@@ -120,20 +117,20 @@ def run():
     # Load the specified data variables
     plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
 
-    # Generate the plot layout
-    layout = plotter.show_plots()
-
-    # If a layout was successfully created, add it to the current document
-    if layout is not None:
-        curdoc().add_root(layout)
+    # Generate and save all initial plots
+    plotter.save_all_initial_plots()
 
     # Record the end time and calculate total execution time
     end_time = time.time()
     print(f"Total time taken: {end_time - start_time:.2f} seconds")
 
     # Provide user feedback about the plot display
-    print("Plot should be displayed now. If the page is blank, wait for a few more seconds and try refreshing.")
-    print("If the issue persists, check the browser console for any JavaScript errors.")
+    print("Plots have been generated and saved.")
+    print("Check the 'saved_plots' directory for the generated HTML files.")
+    print("Check the 'docs' directory for the generated RST files.")
 
-# Run the Monte Carlo Analysis script that plots the data.
-run()
+    return None
+
+# Only run this if the script is executed directly, not when imported
+if __name__ == "__main__":
+    run()
