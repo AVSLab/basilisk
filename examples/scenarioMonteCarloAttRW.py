@@ -204,6 +204,7 @@ from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.io import output_file, show
 from bokeh.layouts import column
 from bokeh.models import Div
+from bokeh.plotting import figure
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
@@ -224,7 +225,7 @@ simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime // (numDataPoints-1)
 
 
-def run(saveFigures, case, show_plots, delete_data=False):
+def run(saveFigures, case, show_plots, delete_data=False, use_bokeh=False):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -232,6 +233,8 @@ def run(saveFigures, case, show_plots, delete_data=False):
         saveFigures (bool): flag if the scenario figures should be saved for html documentation
         case (int): Case 1 is normal MC, case 2 is initial condition run
         show_plots (bool): Determines if the script should display plots
+        delete_data (bool): Flag to delete Monte Carlo data after running
+        use_bokeh (bool): Flag to use Bokeh for plotting instead of matplotlib
     """
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
@@ -311,10 +314,13 @@ def run(saveFigures, case, show_plots, delete_data=False):
     for msgName in rwOutName:
         retentionPolicy.addMessageLog(msgName, ["u_current"])
     if show_plots:
-        # plot data only if show_plots is true, otherwise just retain
-        retentionPolicy.setDataCallback(plotSim)
+        if use_bokeh:
+            # Don't set a callback for Bokeh, we'll handle it separately
+            pass
+        else:
+            # Use matplotlib for plotting
+            retentionPolicy.setDataCallback(plotSim)
     if saveFigures:
-        # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -363,23 +369,22 @@ def run(saveFigures, case, show_plots, delete_data=False):
             # assert two different runs had different parameters.
             assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-        # Now we execute our callback for the retained data.
-        # For this run, that means executing the plot.
-        # We can plot only runs 4,6,7 overlapped
-        # monteCarloLoaded.executeCallbacks([4,6,7])
-        # or execute the plot on all runs
-        monteCarloLoaded.executeCallbacks()
-
-        # Create the Bokeh application
-        plotter = MonteCarloPlotter(dirName)
-        plotter.load_data([
-            rwMotorTorqueMsgName + ".motorTorque",
-            guidMsgName + ".sigma_BR",
-            guidMsgName + ".omega_BR_B",
-            rwSpeedMsgName + ".wheelSpeeds",
-            voltMsgName + ".voltage"
-        ])
-        plotter.show_plots()
+        if use_bokeh:
+            # Create the Bokeh application
+            plotter = MonteCarloPlotter(dirName)
+            plotter.load_data([
+                rwMotorTorqueMsgName + ".motorTorque",
+                guidMsgName + ".sigma_BR",
+                guidMsgName + ".omega_BR_B",
+                rwSpeedMsgName + ".wheelSpeeds",
+                voltMsgName + ".voltage"
+            ])
+            plotter.show_plots()
+        elif show_plots:
+            # Use matplotlib for plotting
+            monteCarloLoaded.executeCallbacks()
+            plt.show()
+            plt.close("all")
 
     #########################################################
     if case == 2:
@@ -395,7 +400,10 @@ def run(saveFigures, case, show_plots, delete_data=False):
         failed = monteCarlo.runInitialConditions(runsList)
         assert len(failed) == 0, "Should run ICs successfully"
 
-        # monteCarlo.executeCallbacks([4,6,7])
+        # Load the Monte Carlo data
+        monteCarloLoaded = Controller.load(icName)
+
+        # Execute callbacks for the loaded data
         runsList = list(range(numberICs))
         monteCarloLoaded.executeCallbacks(runsList)
 
@@ -410,17 +418,6 @@ def run(saveFigures, case, show_plots, delete_data=False):
         for i in range(numberICs):
             os.remove(icName + '/' + 'run' + str(i) + '.data')
         assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
-
-    # Now we clean up data from this test
-    # shutil.rmtree(dirName)
-    # assert not os.path.exists(dirName), "No leftover data should exist after the test"
-
-    # And possibly show the plots
-    if show_plots:
-        print("Test concluded, showing plots now via matplot...")
-        plt.show()
-        # close the plots being saved off to avoid over-writing old and new figures
-        plt.close("all")
 
     # Delete Monte Carlo data if specified
     if delete_data:
@@ -750,61 +747,40 @@ def delete_monte_carlo_data(dirName):
     else:
         print(f"Monte Carlo data directory not found: {dirName}")
 
-# This statement below ensures that the unit test script can be run as a
-# # stand-along python script
-# Run this script with the command:
-# python scenarioMonteCarloAttRW.py --bokeh-server
-#
+# Modify the __main__ section
 if __name__ == "__main__":
     import sys
-    delete_data = False  # Default to not deleting data
-    bokeh_server = False
+    delete_data = False
+    use_bokeh = False
 
     # Parse command line arguments
     for arg in sys.argv[1:]:
         if arg == "--delete-data":
             delete_data = True
         elif arg == "--bokeh-server":
-            bokeh_server = True
+            use_bokeh = True
 
-    if bokeh_server:
+    if use_bokeh:
         from bokeh.server.server import Server
         from bokeh.application import Application
         from bokeh.application.handlers.function import FunctionHandler
+        from bokeh.layouts import column
 
         def bk_worker(doc):
-            print("Bokeh worker function started")
-            
-            # Run the Monte Carlo simulation and get the directory name
-            dirName = run(saveFigures=True, case=1, show_plots=False, delete_data=delete_data)
-            print(f"Monte Carlo simulation completed. Data directory: {dirName}")
-            
-            # Create the Bokeh application
-            plotter = MonteCarloPlotter(dirName)
-            print("MonteCarloPlotter instance created")
-            
-            plotter.load_data([
-                rwMotorTorqueMsgName + ".motorTorque",
-                guidMsgName + ".sigma_BR",
-                guidMsgName + ".omega_BR_B",
-                rwSpeedMsgName + ".wheelSpeeds",
-                voltMsgName + ".voltage"
-            ])
-            print("Data loaded into MonteCarloPlotter")
-            
-            # Use the show_plots method from MonteCarloPlotter to get the layout
-            plot_layout = plotter.show_plots()
-            
-            if plot_layout is not None:
-                # The plot_layout should already include the title and all necessary elements
-                doc.add_root(plot_layout)
-                print("Layout added to Bokeh document")
-            else:
-                print("Error: plot_layout is None")
+            def update():
+                dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=delete_data, use_bokeh=True)
+                plotter = MonteCarloPlotter(dirName)
+                plotter.load_data([
+                    rwMotorTorqueMsgName + ".motorTorque",
+                    guidMsgName + ".sigma_BR",
+                    guidMsgName + ".omega_BR_B",
+                    rwSpeedMsgName + ".wheelSpeeds",
+                    voltMsgName + ".voltage"
+                ])
+                layout = plotter.show_plots()
+                doc.add_root(layout)
 
-            # Delete Monte Carlo data if specified
-            if delete_data:
-                delete_monte_carlo_data(dirName)
+            doc.add_next_tick_callback(update)
 
         print("Starting Bokeh server")
         server = Server({'/': Application(FunctionHandler(bk_worker))})
@@ -813,6 +789,4 @@ if __name__ == "__main__":
         server.io_loop.add_callback(server.show, "/")
         server.io_loop.start()
     else:
-        dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=delete_data)
-        if delete_data:
-            delete_monte_carlo_data(dirName)
+        dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=delete_data, use_bokeh=False)
