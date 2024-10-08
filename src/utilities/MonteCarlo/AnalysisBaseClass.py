@@ -82,36 +82,47 @@ class MonteCarloPlotter:
         num_runs = len(set(col[0] for col in df.columns))
         time_seconds = (df.index - df.index[0]).total_seconds()
 
-        print(f"Creating plot for {variable} - {component} component")
+        print(f"\nCreating plot for {variable} - component {component}")
         print(f"Number of runs: {num_runs}")
         print(f"Time range: {time_seconds.min()} to {time_seconds.max()} seconds")
         print(f"Number of data points per run: {len(df)}")
 
-        # Add SaveTool to the tools list
         tools = 'pan,wheel_zoom,box_zoom,reset,save'
-
-        p = figure(title=f"{variable} - {component.upper()} Component", 
-                   x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} ({component})",
+        p = figure(title=f"{variable} - component {component}", 
+                   x_axis_label='Time (s)', y_axis_label=f"{variable.split('.')[-1]} (component {component})",
                    width=800, height=400, tools=tools,
                    sizing_mode="fixed")
 
-        component_index = ['x', 'y', 'z'].index(component)
-        y_values = df.iloc[:, component_index::3].values
+        # Determine the number of components
+        num_components = len(df.columns) // num_runs
+        print(f"Number of components: {num_components}")
+
+        # Find the index of the selected component
+        component_index = int(component) - 1  # Subtract 1 for 0-based indexing
+
+        print(f"Selected component index: {component_index}")
+
+        # Ensure component_index is within bounds
+        if component_index >= num_components:
+            print(f"Warning: Selected component index {component_index} is out of bounds. Using last available component.")
+            component_index = num_components - 1
+
+        # Extract y values for the selected component across all runs
+        y_values = df.iloc[:, component_index::num_components].values
         y_min, y_max = np.nanmin(y_values), np.nanmax(y_values)
         y_range = y_max - y_min
         p.y_range.start = y_min - 0.1*y_range
         p.y_range.end = y_max + 0.1*y_range
-
         print(f"Y range: {y_min} to {y_max}")
 
         xs = [time_seconds for _ in range(num_runs)]
-        ys = [df.iloc[:, component_index + i*3].values for i in range(num_runs)]
+        ys = [df.iloc[:, component_index + i*num_components].values for i in range(num_runs)]
         
         # Create color mapper
         color_mapper = LinearColorMapper(palette=Viridis256, low=1, high=num_runs)
         
         # Calculate opacity based on number of runs
-        base_opacity = max(0.1, min(0.8, 1 - (num_runs / 1000)))  # Adjust the divisor (1000) to fine-tune the opacity curve
+        base_opacity = max(0.1, min(0.8, 1 - (num_runs / 1000)))
         
         # Plot background lines (all runs) with calculated opacity
         background_source = ColumnDataSource(data=dict(
@@ -143,7 +154,7 @@ class MonteCarloPlotter:
             mode='mouse',
             point_policy='snap_to_data',
             line_policy='nearest',
-            renderers=[p.renderers[-1]]  # Apply to the last added renderer (selected runs or all runs)
+            renderers=[p.renderers[-1]]
         )
         p.add_tools(hover)
 
@@ -165,6 +176,7 @@ class MonteCarloPlotter:
         save_tool.filename = f"{variable}_{component}_plot"
 
         self.update_status(is_loading=False)
+        print(f"Plot created for {variable} - component {component}")
         return p
 
     def update_plot(self, attr, old, new):
@@ -199,15 +211,34 @@ class MonteCarloPlotter:
         self.update_plot(None, None, None)
 
     def show_plots(self):
+        print("Starting show_plots method")
         variables = list(self.data.keys())
-        components = ['x', 'y', 'z']
+        print(f"Available variables: {variables}")
+        
+        # Create a function to update component options
+        def update_component_options(attr, old, new):
+            variable = self.variable_select.value
+            num_components = len(self.data[variable].columns) // self.num_runs
+            components = [str(i) for i in range(1, num_components + 1)]
+            self.component_select.options = components
+            self.component_select.value = '1'  # Always start with component 1
+            print(f"Updated component options for {variable}: {components}")
 
         # Add title with centering style
         self.title_div = Div(text="Monte Carlo Visualization",
                              styles={'text-align': 'center', 'font-size': '24px', 'margin-bottom': '20px', 'color': '#555', 'width': '100%'})
 
         self.variable_select = Select(title="Variable", options=variables, value=variables[0], width=200)
-        self.component_select = Select(title="Component", options=components, value=components[0], width=200)
+        
+        # Initialize component options based on the first variable
+        initial_variable = variables[0]
+        initial_num_components = len(self.data[initial_variable].columns) // self.num_runs
+        initial_components = [str(i) for i in range(1, initial_num_components + 1)]
+        
+        self.component_select = Select(title="Component", options=initial_components, value=initial_components[0], width=200)
+        
+        # Add callback to update component options when variable changes
+        self.variable_select.on_change('value', update_component_options)
         
         # Create input elements before using them in the layout
         self.run_input = TextInput(title="", width=300)
@@ -228,6 +259,7 @@ class MonteCarloPlotter:
                               styles={'font-size': '12px', 'color': '#666666', 'margin': '5px 0', 'text-align': 'center', 'width': '100%'})
 
         initial_plot = self.create_plot(self.variable_select.value, self.component_select.value)
+        print("Initial plot created")
 
         # Save all initial plots if enabled
         self.save_all_initial_plots()
@@ -261,7 +293,7 @@ class MonteCarloPlotter:
         # Update the title after creating the layout
         self.update_title()
 
-        # Return the centered layout
+        print("Returning centered layout")
         return centered_layout
 
     def get_downsampled_plots(self):
