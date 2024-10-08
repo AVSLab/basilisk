@@ -373,7 +373,9 @@ def run(saveFigures, case, show_plots, delete_data=False, use_bokeh=False):
             # Create the Bokeh application
             plotter = MonteCarloPlotter(dirName)
             plotter.load_data([
-                rwMotorTorqueMsgName + ".motorTorque",
+                rwOutName[0] + ".u_current",
+                rwOutName[1] + ".u_current",
+                rwOutName[2] + ".u_current",
                 guidMsgName + ".sigma_BR",
                 guidMsgName + ".omega_BR_B",
                 rwSpeedMsgName + ".wheelSpeeds",
@@ -771,7 +773,9 @@ if __name__ == "__main__":
                 dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=delete_data, use_bokeh=True)
                 plotter = MonteCarloPlotter(dirName)
                 plotter.load_data([
-                    rwMotorTorqueMsgName + ".motorTorque",
+                    rwOutName[0] + ".u_current",
+                    rwOutName[1] + ".u_current",
+                    rwOutName[2] + ".u_current",
                     guidMsgName + ".sigma_BR",
                     guidMsgName + ".omega_BR_B",
                     rwSpeedMsgName + ".wheelSpeeds",
