@@ -26,8 +26,8 @@ class MonteCarloPlotter:
         self.title_div = None
         self.status_indicator = None
         self.save_plots = save_plots
-        self.plot_save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../docs/source/_images/MonteCarloPlots"))
-        self.doc_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../docs/source"))
+        self.plot_save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../docs/source/_images/live/"))
+        self.doc_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../docs/source/examples/"))
         if self.save_plots:
             os.makedirs(self.plot_save_dir, exist_ok=True)
             os.makedirs(self.doc_dir, exist_ok=True)
@@ -327,27 +327,25 @@ class MonteCarloPlotter:
             f.write(rst_content)
         print(f"Generated RST documentation for {variable} - {component}")
 
-    def generate_rst_content(self, variable, component, html_filename):
-        title = f"{variable} - {component} Component"
+    def generate_rst_content(self, variable, component, filename):
+        title = f"{variable} - {component.upper()} Component"
         underline = "=" * len(title)
-        
-        rst_content = f"""
+        content = f"""
 {title}
 {underline}
 
 .. raw:: html
-   :file: {os.path.relpath(html_filename, self.doc_dir)}
+   :file: {filename}
 
 This plot shows the {component.upper()} component of the {variable} variable.
-
 """
-        return rst_content
+        return content
 
     def save_all_initial_plots(self):
         if not self.save_plots:
             return
         
         for variable in self.data.keys():
-            for component in ['x', 'y', 'z']:
+            for component in ['1', '2', '3']:
                 plot = self.create_plot(variable, component)
                 self.save_plot(plot, variable, component)

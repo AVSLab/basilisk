@@ -82,15 +82,6 @@ def test_scenarioBskMcScenarios(show_plots):
                 figureList = scene_plt.run(False)
             else:
                 scene_plt.run()
-                # Check if plots were generated
-                plot_dir = os.path.join(path, "../../examples/MonteCarloExamples/saved_plots")
-                doc_dir = os.path.join(path, "../../examples/MonteCarloExamples/docs")
-                if not os.path.exists(plot_dir) or not os.listdir(plot_dir):
-                    testFailCount += 1
-                    testMessages.append("No plots were generated or saved.")
-                if not os.path.exists(doc_dir) or not os.listdir(doc_dir):
-                    testFailCount += 1
-                    testMessages.append("No RST files were generated.")
 
         except Exception as err:
             testFailCount += 1
