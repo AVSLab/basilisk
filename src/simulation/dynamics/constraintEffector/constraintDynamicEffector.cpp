@@ -226,11 +226,18 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
             this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
             this->forceExternal_N = this->Fc_N;
 
+            double mHub = 200.0;
+            Eigen::Vector3d r_CN_N = (r_B1N_N * mHub + r_B2N_N * mHub) / (mHub + mHub);
+            Eigen::Vector3d r_B1C_N = r_B1N_N - r_CN_N;
+            Eigen::Vector3d r_B2C_N = r_B2N_N - r_CN_N;
+
             // calculate the torque on each spacecraft from the direction constraint
             Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
-            Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
+            // Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
+            Eigen::Vector3d L_B1_len = dcm_B1N * -(r_B1C_N).cross(Fc_N);
             Eigen::Vector3d Fc_B2 = dcm_B2N * this->Fc_N;
-            Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
+            // Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
+            Eigen::Vector3d L_B2_len = dcm_B2N * r_B2C_N.cross(Fc_N);
 
             // calculate the constraint torque imparted on each spacecraft from the attitude constraint
             Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
