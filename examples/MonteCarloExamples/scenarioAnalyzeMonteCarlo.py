@@ -34,8 +34,12 @@ def create_document(doc):
         logging.error(error_message)
         doc.add_root(Div(text=error_message))
 
-# This is the entry point for Bokeh server
-curdoc().add_root(Div(text="Loading..."))
-curdoc().add_next_tick_callback(lambda: create_document(curdoc()))
+def run():
+    # This is the entry point for Bokeh server
+    curdoc().add_root(Div(text="BSK Monte Carlo Visualization"))
+    curdoc().add_next_tick_callback(lambda: create_document(curdoc()))
+
+# Always run the script, whether it's imported or run directly
+run()
 
 print("Script executed successfully!")
