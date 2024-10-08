@@ -110,7 +110,7 @@ def run(show_plots):
     monteCarlo = Controller()
     monteCarlo.setSimulationFunction(scenario_AttFeedback.scenario_AttFeedback)  # Required: function that configures the base scenario
     monteCarlo.setExecutionFunction(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
-    monteCarlo.setExecutionCount(100)  # Required: Number of MCs to run
+    monteCarlo.setExecutionCount(4)  # Required: Number of MCs to run
 
     monteCarlo.setArchiveDir(path + "/scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
     monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
