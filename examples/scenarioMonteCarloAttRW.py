@@ -200,11 +200,22 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
+# Add this import and check at the beginning of the file
+import importlib
+
+bokeh_spec = importlib.util.find_spec("bokeh")
+bokeh_available = bokeh_spec is not None
+
+if bokeh_available:
+    from bokeh.io import output_file, show
+    from bokeh.layouts import column
+    from bokeh.models import Div
+    from bokeh.plotting import figure
+    from bokeh.server.server import Server
+    from bokeh.application import Application
+    from bokeh.application.handlers.function import FunctionHandler
+
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
-from bokeh.io import output_file, show
-from bokeh.layouts import column
-from bokeh.models import Div
-from bokeh.plotting import figure
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
@@ -236,6 +247,10 @@ def run(saveFigures, case, show_plots, delete_data=False, use_bokeh=False):
         delete_data (bool): Flag to delete Monte Carlo data after running
         use_bokeh (bool): Flag to use Bokeh for plotting instead of matplotlib
     """
+
+    if use_bokeh and not bokeh_available:
+        print("Bokeh is not available. Falling back to matplotlib.")
+        use_bokeh = False
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
@@ -369,7 +384,7 @@ def run(saveFigures, case, show_plots, delete_data=False, use_bokeh=False):
             # assert two different runs had different parameters.
             assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-        if use_bokeh:
+        if use_bokeh and bokeh_available:
             # Create the Bokeh application
             plotter = MonteCarloPlotter(dirName)
             plotter.load_data([
@@ -762,7 +777,12 @@ if __name__ == "__main__":
         elif arg == "--bokeh-server":
             use_bokeh = True
 
-    if use_bokeh:
+    if use_bokeh and not bokeh_available:
+        print("Bokeh is not available. Falling back to matplotlib.")
+        use_bokeh = False
+
+    if use_bokeh and bokeh_available:
+        # ... (existing Bokeh server code)
         from bokeh.server.server import Server
         from bokeh.application import Application
         from bokeh.application.handlers.function import FunctionHandler

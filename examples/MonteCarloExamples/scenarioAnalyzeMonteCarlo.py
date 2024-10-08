@@ -1,11 +1,21 @@
 import os
 import logging
+import importlib
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.io import curdoc
 from bokeh.layouts import column
 from bokeh.models import Div
 
 logging.basicConfig(level=logging.INFO)
+
+bokeh_spec = importlib.util.find_spec("bokeh")
+bokeh_available = bokeh_spec is not None
+
+if bokeh_available:
+    from bokeh.io import curdoc
+    from bokeh.layouts import column
+    from bokeh.models import Div
+    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 
 def create_document(doc):
     logging.info("Starting the create_document function")
@@ -35,11 +45,19 @@ def create_document(doc):
         doc.add_root(Div(text=error_message))
 
 def run():
+    if not bokeh_available:
+        print("Bokeh is not available. This script requires Bokeh to run.")
+        return
+
     # This is the entry point for Bokeh server
     curdoc().add_root(Div(text="BSK Monte Carlo Visualization"))
     curdoc().add_next_tick_callback(lambda: create_document(curdoc()))
 
 # Always run the script, whether it's imported or run directly
-run()
+
+if not bokeh_available:
+    print("Bokeh is not available. This script requires Bokeh to run.")
+else:
+    run()
 
 print("Script executed successfully!")

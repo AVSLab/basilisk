@@ -35,11 +35,15 @@ import sys
 
 import pytest
 
-from bokeh.io import output_file, save
-from bokeh.server.server import Server
-from bokeh.application import Application
-from bokeh.application.handlers.function import FunctionHandler
-from tornado.ioloop import IOLoop
+bokeh_spec = importlib.util.find_spec("bokeh")
+bokeh_available = bokeh_spec is not None
+
+if bokeh_available:
+    from bokeh.io import output_file, save
+    from bokeh.server.server import Server
+    from bokeh.application import Application
+    from bokeh.application.handlers.function import FunctionHandler
+    from tornado.ioloop import IOLoop
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -56,7 +60,8 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 
 @pytest.mark.skipif(sys.version_info < (3, 9),
                     reason="Test has issues with Controller class and older python.")
-
+@pytest.mark.skipif(not bokeh_available,
+                    reason="Bokeh is not available. Skipping test.")
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
 
