@@ -100,6 +100,7 @@ try:
 except ImportError:
     pass
 
+
 def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
     """
     At the end of the python script you can specify the following example parameters.
@@ -260,7 +261,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
                                                   , broadcastStream=broadcastStream
                                                   )
         # Set key listeners
-        viz.settings.keyboardLiveInput = "bxz"
+        viz.settings.keyboardLiveInput = "bxpz"
 
         # To set 2-way port:
         viz.reqComProtocol = "tcp"
@@ -275,10 +276,10 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
         # Pre-instantiate panels
         infopanel = vizInterface.VizEventDialog()
         infopanel.eventHandlerID = "INFO PANEL"
-        infopanel.displayString = """This is an information panel. Vizard is reporting 'b', 'x' and 'z' \
+        infopanel.displayString = """This is an information panel. Vizard is reporting 'b', 'p', 'x' and 'z' \
 keystrokes back to BSK, which you can hook up to specific sim states. In this case, \
 press 'b' to show a burn panel. If you initiate a burn, press 'x' to stop the burn. \
-Press 'z' to stop the simulation."""
+Press 'p' to pause the simulation, or 'z' to stop the simulation."""
         infopanel.durationOfDisplay = 0  # stay open
         infopanel.dialogFormat = "CAUTION"
 
@@ -328,9 +329,17 @@ Press 'z' to stop the simulation."""
             viz.vizEventDialogs.append(hudpanel)
 
         # Here, I only want to run a single BSK timestep before checking for user responses.
-        incrementalStopTime += simulationTimeStep
-        scSim.ConfigureStopTime(incrementalStopTime)
-        scSim.ExecuteSimulation()
+        # If the 'pause' flag is set, only update vizInterface module and reset clockSync.
+        # If the 'end' flag is set,
+        if vizSupport.pauseFlag:
+            clockSync.Reset(0)
+            viz.UpdateState(incrementalStopTime)
+        elif vizSupport.endFlag:
+            exit(0)
+        else:
+            incrementalStopTime += simulationTimeStep
+            scSim.ConfigureStopTime(incrementalStopTime)
+            scSim.ExecuteSimulation()
 
         # Retrieve copy of user input message from Vizard
         if liveStream and vizSupport.vizFound:
@@ -358,7 +367,11 @@ Press 'z' to stop the simulation."""
                 if 'z' in keyInputs:
                     print("key - z")
                     priorKeyPressTime = now
-                    incrementalStopTime = simulationTime
+                    vizSupport.endFlag = True  # End scenario
+                if 'p' in keyInputs:
+                    print("key - p")
+                    priorKeyPressTime = now
+                    vizSupport.pauseFlag = not vizSupport.pauseFlag  # Toggle
 
             # Parse panel responses
             for response in eventInputs:

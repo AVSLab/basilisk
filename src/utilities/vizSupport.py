@@ -33,6 +33,9 @@ try:
 except ImportError:
     vizFound = False
 
+pauseFlag = False
+endFlag = False
+
 bskPath = __path__[0]
 
 firstSpacecraftName = ''
