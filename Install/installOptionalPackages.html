@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installing Optional Packages &mdash; Basilisk 2.5.3
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=4c58bd45" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=0bbe9fa5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using a Custom Python Installation" href="customPython.html" />
+    <link rel="prev" title="Building Custom Modules" href="buildExtModules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                version 2.5.3
+
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../Install.html">Install</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pullCloneBSK.html">Download Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnLinux.html">Setup On Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnMacOS.html">Setup On macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnWindows.html">Setup On Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installBuild.html">Building the Software Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buildExtModules.html">Building Custom Modules</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installing Optional Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-the-sphinx-basilisk-documentation">Creating the Sphinx Basilisk Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#formatting-code-files-using-pre-commit-and-clang-format">Formatting Code Files using <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> and <code class="docutils literal notranslate"><span class="pre">clang-format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customPython.html">Using a Custom Python Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installBuildConan.html">Advanced: Directly Building the Software Framework Using Conan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipInstall.html">Advanced: (Beta) Building and Installing Pre-Compiled Basilisk Wheels</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Install.html">Install</a></li>
+      <li class="breadcrumb-item active">Installing Optional Packages</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Install/installOptionalPackages.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8Ex1YE7YnoY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><section id="installing-optional-packages">
+<span id="installoptionalpackages"></span><h1>Installing Optional Packages<a class="headerlink" href="#installing-optional-packages" title="Link to this heading"></a></h1>
+<p>This page contains all the optional python packages that can be included to unlock additional Basilisk
+features or utilities.  For convenience the complete set of optional packages, including any constraints on
+acceptable versions, are listed here:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">breathe</span>
+<span class="n">docutils</span>
+<span class="n">recommonmark</span>
+<span class="n">sphinx</span><span class="o">&gt;</span><span class="mf">7.0.0</span><span class="p">,</span> <span class="o">&lt;</span><span class="mf">8.0.0</span>
+<span class="n">sphinx_rtd_theme</span><span class="o">==</span><span class="mf">2.0.0</span>
+<span class="n">pre</span><span class="o">-</span><span class="n">commit</span>
+<span class="n">clang</span><span class="o">-</span><span class="nb">format</span>
+</pre></div>
+</div>
+<p>To automatically ensure that the system has all optional packages installed, use the <code class="docutils literal notranslate"><span class="pre">allOptPkg</span></code>
+flag as discussed in <a class="reference internal" href="installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a>.</p>
+<section id="creating-the-sphinx-basilisk-documentation">
+<h2>Creating the Sphinx Basilisk Documentation<a class="headerlink" href="#creating-the-sphinx-basilisk-documentation" title="Link to this heading"></a></h2>
+<p>Go to <a class="reference internal" href="../Support/User/createHtmlDocumentation.html#createhtmldocumentation"><span class="std std-ref">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</span></a> to learn what associated python tools are required.
+The following python packages must be installed via <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="s1">&#39;sphinx&gt;7.0.0, &lt;8.0.0&#39;</span> <span class="n">sphinx_rtd_theme</span><span class="o">==</span><span class="mf">2.0.0</span> <span class="n">breathe</span> <span class="n">recommonmark</span> <span class="n">docutils</span>
+</pre></div>
+</div>
+<p>See the list at the top of this page for what versions of these packages are acceptable.</p>
+</section>
+<section id="formatting-code-files-using-pre-commit-and-clang-format">
+<h2>Formatting Code Files using <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> and <code class="docutils literal notranslate"><span class="pre">clang-format</span></code><a class="headerlink" href="#formatting-code-files-using-pre-commit-and-clang-format" title="Link to this heading"></a></h2>
+<p>If you are developing new code to contribute back to Basilisk it must follow the
+<a class="reference internal" href="../Support/Developer/CodingGuidlines.html#codingguidelines"><span class="std std-ref">Coding Guidelines</span></a>.  This requires installing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">clang</span><span class="o">-</span><span class="nb">format</span>
+</pre></div>
+</div>
+<p>The file <a class="reference external" href="https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md">CONTRIBUTING.md</a>
+explains how to setup and use these code formating tools.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="buildExtModules.html" class="btn btn-neutral float-left" title="Building Custom Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="customPython.html" class="btn btn-neutral float-right" title="Using a Custom Python Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

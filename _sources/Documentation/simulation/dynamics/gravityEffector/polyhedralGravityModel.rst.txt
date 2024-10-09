@@ -1,0 +1,8 @@
+.. _polyhedralGravityModel:
+
+Module: polyhedralGravityModel
+==============================
+
+.. autodoxygenfile:: polyhedralGravityModel.h
+   :project: gravityEffector
+

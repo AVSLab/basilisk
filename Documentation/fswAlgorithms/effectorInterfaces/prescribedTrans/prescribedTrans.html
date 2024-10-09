@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: prescribedTrans &mdash; Basilisk 2.5.3
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=4c58bd45" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=0bbe9fa5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="prescribedTrans" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                version 2.5.3
+
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">effectorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dipoleMapping/index.html">dipoleMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../errorConversion/index.html">errorConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../forceTorqueThrForceMapping/index.html">forceTorqueThrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyPIDMotor/index.html">hingedRigidBodyPIDMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot1DOF/index.html">prescribedRot1DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot2DOF/index.html">prescribedRot2DOF</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">prescribedTrans</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorTorque/index.html">rwMotorTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorVoltage/index.html">rwMotorVoltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwNullSpace/index.html">rwNullSpace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarArrayReference/index.html">solarArrayReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringRemainder/index.html">thrFiringRemainder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringSchmitt/index.html">thrFiringSchmitt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrForceMapping/index.html">thrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumDumping/index.html">thrMomentumDumping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrustRWDesat/index.html">thrustRWDesat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformReference/index.html">thrusterPlatformReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformState/index.html">thrusterPlatformState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torque2Dipole/index.html">torque2Dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torqueScheduler/index.html">torqueScheduler</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">effectorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">prescribedTrans</a></li>
+      <li class="breadcrumb-item active">Module: prescribedTrans</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/effectorInterfaces/prescribedTrans/prescribedTrans.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-prescribedtrans">
+<span id="prescribedtrans"></span><h1>Module: prescribedTrans<a class="headerlink" href="#module-prescribedtrans" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module profiles a <a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a> message for a specified 1 DOF translation
+for a secondary prescribed rigid body connected to a rigid spacecraft hub at a hub-fixed location, <span class="math notranslate nohighlight">\(\mathcal{M}\)</span>.
+The body frame for the prescribed body is designated by the frame <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>. Accordingly, the prescribed
+states for the secondary body are written with respect to the mount frame, <span class="math notranslate nohighlight">\(\mathcal{M}\)</span>. The prescribed states
+profiled in this module are: <code class="docutils literal notranslate"><span class="pre">r_FM_M</span></code>, <code class="docutils literal notranslate"><span class="pre">rPrime_FM_M</span></code>, and <code class="docutils literal notranslate"><span class="pre">rPrimePrime_FM_M</span></code>.</p>
+<p>To use this module for prescribed motion, it must be connected to the <a class="reference internal" href="../../../simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">Module: prescribedMotionStateEffector</span></a>
+dynamics module in order to profile the translational states of the secondary body. A second kinematic profiler
+module must also be connected to the prescribed motion dynamics module to profile the rotational states of the
+prescribed body. The required translation is determined from the user-specified scalar maximum acceleration
+<span class="math notranslate nohighlight">\(a_{\text{max}}\)</span>, the mount frame axis for the translational motion, the prescribed body’s initial position
+vector with respect to the mount frame <span class="math notranslate nohighlight">\(\boldsymbol{r}_{F/M}(t_0)\)</span>, and the reference position vector or the
+prescribed body with respect to the mount frame <span class="math notranslate nohighlight">\(\boldsymbol{r}_{F/M} (\text{ref})\)</span>.</p>
+<p>The maximum scalar acceleration is applied constant and positively for the first half of the translation and
+constant negatively for the second half of the translation. The resulting velocity of the prescribed body is
+linear, approaching a maximum magnitude halfway through the translation and ending with zero residual velocity.
+The corresponding translational trajectory the prescribed body moves through during the translation is parabolic in time.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This module is now deprecated. See the <a class="reference internal" href="../../../simulation/deviceInterface/prescribedLinearTranslation/prescribedLinearTranslation.html#prescribedlineartranslation"><span class="std std-ref">Module: prescribedLinearTranslation</span></a> module that replaces this module.</p>
+</div>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>linearTranslationRigidBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#lineartranslationrigidbodymsgpayload"><span class="std std-ref">LinearTranslationRigidBodyMsgPayload</span></a></p></td>
+<td><p>input msg with the prescribed body reference states</p></td>
+</tr>
+<tr class="row-odd"><td><p>prescribedTranslationOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a></p></td>
+<td><p>output message with the prescribed body translational states</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>This translational motion kinematic profiler module is written to profile a rigid body’s translational motion with
+respect to a hub-fixed mount frame. The inputs to the profiler are the scalar maximum acceleration for the translation
+<span class="math notranslate nohighlight">\(a_{\text{max}}\)</span>, the mount frame axis for the translational motion, the prescribed body’s initial position
+vector with respect to the mount frame <span class="math notranslate nohighlight">\(\boldsymbol{r}_{F/M}(t_0)\)</span>, and the reference position vector or the
+prescribed body with respect to the mount frame <span class="math notranslate nohighlight">\(\boldsymbol{r}_{F/M} (\text{ref})\)</span>.
+The magnitudes of the initial and final position vectors are denoted <span class="math notranslate nohighlight">\(r_0\)</span> and <span class="math notranslate nohighlight">\(r_{\text{ref}}\)</span>,
+respectively. The prescribed body is assumed to be at rest at the beginning of the translation.</p>
+<p>Subtracting the initial position from the reference position vector gives the required relative position vector in the
+direction of translation:</p>
+<div class="math notranslate nohighlight">
+\[\Delta \boldsymbol{r} = \boldsymbol{r}_{F/M}(\text{ref}) - \boldsymbol{r}_{F/M}(t_0)\]</div>
+<p>The magnitude of the determined relative position vector gives the required translational distance <span class="math notranslate nohighlight">\(\Delta r\)</span>.
+During the first half of the translation, the prescribed body is constantly accelerated with the given maximum
+acceleration. The prescribed body’s velocity increases linearly during the acceleration phase and reaches a maximum
+magnitude halfway through the translation.</p>
+<p>The switch time, <span class="math notranslate nohighlight">\(t_s\)</span> is the simulation time halfway through the translation:</p>
+<div class="math notranslate nohighlight">
+\[t_s = t_0 + \frac{\Delta t}{2}\]</div>
+<p>The time required for the translation <span class="math notranslate nohighlight">\(\Delta t\)</span> is determined using the inputs to the profiler:</p>
+<div class="math notranslate nohighlight">
+\[\Delta t = \sqrt{\frac{4 r_{\text{ref}} - 8 r_0}{\ddot{a}_{\text{max}}}}\]</div>
+<p>The resulting trajectory of the position vector <span class="math notranslate nohighlight">\(r = || \boldsymbol{r}_{F/M} ||_2\)</span> magnitude during the first
+half of the translation is parabolic. The profiled motion is concave upwards if the reference position magnitude
+<span class="math notranslate nohighlight">\(r_{\text{ref}}\)</span> is greater than the initial position magnitude <span class="math notranslate nohighlight">\(r_0\)</span>. If the converse is true,
+the profiled motion is instead concave downwards. The described motion during the first half of the translation
+is characterized by the expressions:</p>
+<div class="math notranslate nohighlight">
+\[r^{''}_{F / M}(t) = a_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[r^{'}_{F / M}(t) = a_{\text{max}} (t - t_0)\]</div>
+<div class="math notranslate nohighlight">
+\[r_{F / M}(t) = c_1 (t - t_0)^2  + r_0\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[c_1 = \frac{r_{\text{ref}} - r_0}{2(t_s - t_0)^2}\]</div>
+<p>Similarly, the second half of the translation decelerates the prescribed body constantly until it reaches the desired
+position with zero velocity. The prescribed body velocity decreases linearly from its maximum magnitude back to zero.
+The trajectory during the second half of the translation is quadratic and concave downwards if the reference position
+magnitude is greater than the initial position magnitude. If the converse is true, the profiled motion is instead
+concave upwards. The described motion during the second half of the translation is characterized by the expressions:</p>
+<div class="math notranslate nohighlight">
+\[r^{''}_{F / M}(t) = -a_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[r^{'}_{F / M}(t) = a_{\text{max}} (t - t_f)\]</div>
+<div class="math notranslate nohighlight">
+\[r_{F / M}(t) = c_2 (t - t_f)^2  + r_{\text{ref}}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[c_2 = \frac{r_{\text{ref}} - r_0}{2 (t_s - t_f)^2}\]</div>
+<section id="module-testing">
+<h3>Module Testing<a class="headerlink" href="#module-testing" title="Link to this heading"></a></h3>
+<p>This unit test for this module ensures that the profiled translation is properly computed for a series of
+initial and reference positions and maximum accelerations. The final prescribed position magnitude <code class="docutils literal notranslate"><span class="pre">r_FM_M_Final</span></code> and
+velocity magnitude <code class="docutils literal notranslate"><span class="pre">rPrime_FM_M_Final</span></code> are compared with the reference values <code class="docutils literal notranslate"><span class="pre">r_FM_M_Ref</span></code> and
+<code class="docutils literal notranslate"><span class="pre">rPrime_FM_M_Ref</span></code>, respectively.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The user-configurable inputs to the profiler are the scalar maximum acceleration for the translation
+<span class="math notranslate nohighlight">\(a_{\text{max}}\)</span>, the mount frame axis for the translational motion, the prescribed body’s initial position
+vector with respect to the mount frame <span class="math notranslate nohighlight">\(\boldsymbol{r}_{F/M}(t_0)\)</span>, and the reference position vector of the
+prescribed body with respect to the mount frame <span class="math notranslate nohighlight">\(\boldsymbol{r}_{F/M} (\text{ref})\)</span>.</p>
+<p>This module provides a <a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a> output message that can be connected to the
+<a class="reference internal" href="../../../simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">Module: prescribedMotionStateEffector</span></a> dynamics module to directly profile a state effector’s translational motion.
+Note that a separate rotational profiler module can be connected to the prescribed motion dynamics module
+to fully define the kinematic motion of the prescribed body.</p>
+<p>This section is to outline the steps needed to setup a prescribed translational module in python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the prescribedTrans class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Basilisk.fswAlgorithms</span> <span class="kn">import</span> <span class="n">prescribedTrans</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instantiation of a prescribed translational C module and the associated C++ container:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PrescribedTrans</span> <span class="o">=</span> <span class="n">prescribedTrans</span><span class="o">.</span><span class="n">prescribedTrans</span><span class="p">()</span>
+<span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;prescribedTrans&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define all of the configuration data associated with the module. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">transAxis_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">scalarAccelMax</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [m/s^2]</span>
+<span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">r_FM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">rPrime_FM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">rPrimePrime_FM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>The user is required to set the above configuration data parameters, as they are not initialized in the module.</p>
+<ol class="arabic">
+<li><p>Make sure to connect the required messages for this module.</p></li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">PrescribedTrans</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424SelfInit_prescribedTransP21PrescribedTransConfig7int64_t">
+<span id="_CPPv324SelfInit_prescribedTransP21PrescribedTransConfig7int64_t"></span><span id="_CPPv224SelfInit_prescribedTransP21PrescribedTransConfig7int64_t"></span><span id="SelfInit_prescribedTrans__PrescribedTransConfigP.int64_t"></span><span class="target" id="prescribed_trans_8h_1a38c023cae5cf80a399d647e9ad092fe6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_prescribedTrans</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421PrescribedTransConfig" title="PrescribedTransConfig"><span class="n"><span class="pre">PrescribedTransConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424SelfInit_prescribedTransP21PrescribedTransConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Import the module header file</p>
+<p>Import other required files</p>
+<p>This method initializes the output message for this module. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421Reset_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t">
+<span id="_CPPv321Reset_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t"></span><span id="_CPPv221Reset_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t"></span><span id="Reset_prescribedTrans__PrescribedTransConfigP.uint64_t.int64_t"></span><span class="target" id="prescribed_trans_8h_1ac2a575e67db8c68e3e389c59aead5c10"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_prescribedTrans</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421PrescribedTransConfig" title="PrescribedTransConfig"><span class="n"><span class="pre">PrescribedTransConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421Reset_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values. This method also checks if the module input message is linked. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] Time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422Update_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t">
+<span id="_CPPv322Update_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t"></span><span id="_CPPv222Update_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t"></span><span id="Update_prescribedTrans__PrescribedTransConfigP.uint64_t.int64_t"></span><span class="target" id="prescribed_trans_8h_1ae2cb1d55c21ea691e30e3b830d9b24f6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_prescribedTrans</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421PrescribedTransConfig" title="PrescribedTransConfig"><span class="n"><span class="pre">PrescribedTransConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422Update_prescribedTransP21PrescribedTransConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method uses the given initial and reference attitudes to compute the required attitude maneuver as a function of time. The profiled translational trajectory is updated in time and written to the module’s prescribed motion output message. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] Time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421PrescribedTransConfig">
+<span id="_CPPv321PrescribedTransConfig"></span><span id="_CPPv221PrescribedTransConfig"></span><span id="PrescribedTransConfig"></span><span class="target" id="struct_prescribed_trans_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PrescribedTransConfig</span></span></span><a class="headerlink" href="#_CPPv421PrescribedTransConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;prescribedTrans.h&gt;</em></div>
+<p>Top level structure for the sub-module routines. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig14scalarAccelMaxE">
+<span id="_CPPv3N21PrescribedTransConfig14scalarAccelMaxE"></span><span id="_CPPv2N21PrescribedTransConfig14scalarAccelMaxE"></span><span id="PrescribedTransConfig::scalarAccelMax__double"></span><span class="target" id="struct_prescribed_trans_config_1a72501b56d038444b46443ce9910fe13f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scalarAccelMax</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig14scalarAccelMaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] Maximum acceleration mag </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig11transAxis_ME">
+<span id="_CPPv3N21PrescribedTransConfig11transAxis_ME"></span><span id="_CPPv2N21PrescribedTransConfig11transAxis_ME"></span><span id="PrescribedTransConfig::transAxis_M__doubleA"></span><span class="target" id="struct_prescribed_trans_config_1aebaf92d6f335cf952915d7a916502c82"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transAxis_M</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig11transAxis_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>Axis along the direction of translation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig6r_FM_ME">
+<span id="_CPPv3N21PrescribedTransConfig6r_FM_ME"></span><span id="_CPPv2N21PrescribedTransConfig6r_FM_ME"></span><span id="PrescribedTransConfig::r_FM_M__doubleA"></span><span class="target" id="struct_prescribed_trans_config_1a71193ec839e738b50549757bede47423"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_FM_M</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig6r_FM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position of the frame F origin with respect to the M frame origin expressed in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig11rPrime_FM_ME">
+<span id="_CPPv3N21PrescribedTransConfig11rPrime_FM_ME"></span><span id="_CPPv2N21PrescribedTransConfig11rPrime_FM_ME"></span><span id="PrescribedTransConfig::rPrime_FM_M__doubleA"></span><span class="target" id="struct_prescribed_trans_config_1a8e30f3ffc18e3c74542374a85da4653b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_FM_M</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig11rPrime_FM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] B frame time derivative of r_FM_M expressed in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig16rPrimePrime_FM_ME">
+<span id="_CPPv3N21PrescribedTransConfig16rPrimePrime_FM_ME"></span><span id="_CPPv2N21PrescribedTransConfig16rPrimePrime_FM_ME"></span><span id="PrescribedTransConfig::rPrimePrime_FM_M__doubleA"></span><span class="target" id="struct_prescribed_trans_config_1ad34980d72e29465328feee377ac9b90c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimePrime_FM_M</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig16rPrimePrime_FM_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^] B frame time derivative of rPrime_FM_M expressed in M frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig11convergenceE">
+<span id="_CPPv3N21PrescribedTransConfig11convergenceE"></span><span id="_CPPv2N21PrescribedTransConfig11convergenceE"></span><span id="PrescribedTransConfig::convergence__b"></span><span class="target" id="struct_prescribed_trans_config_1abe457e7692044c2cc3d96edbef498200"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">convergence</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig11convergenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>Boolean variable is true when the maneuver is complete. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig5tInitE">
+<span id="_CPPv3N21PrescribedTransConfig5tInitE"></span><span id="_CPPv2N21PrescribedTransConfig5tInitE"></span><span id="PrescribedTransConfig::tInit__double"></span><span class="target" id="struct_prescribed_trans_config_1af79a0794cdbd8d305d033219ab536f59"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tInit</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig5tInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the start of the maneuver </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig13scalarPosInitE">
+<span id="_CPPv3N21PrescribedTransConfig13scalarPosInitE"></span><span id="_CPPv2N21PrescribedTransConfig13scalarPosInitE"></span><span id="PrescribedTransConfig::scalarPosInit__double"></span><span class="target" id="struct_prescribed_trans_config_1ac3d7d021563901d4fbf73507f2288ee4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scalarPosInit</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig13scalarPosInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial distance between the frame F and frame M origin </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig13scalarVelInitE">
+<span id="_CPPv3N21PrescribedTransConfig13scalarVelInitE"></span><span id="_CPPv2N21PrescribedTransConfig13scalarVelInitE"></span><span id="PrescribedTransConfig::scalarVelInit__double"></span><span class="target" id="struct_prescribed_trans_config_1a8cc4e5088d587cb18b9400609dca3f2a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scalarVelInit</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig13scalarVelInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Initial velocity between the frame F and frame M origin </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig12scalarPosRefE">
+<span id="_CPPv3N21PrescribedTransConfig12scalarPosRefE"></span><span id="_CPPv2N21PrescribedTransConfig12scalarPosRefE"></span><span id="PrescribedTransConfig::scalarPosRef__double"></span><span class="target" id="struct_prescribed_trans_config_1a72292b762e503ce9a2fa23f8b4d80c69"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scalarPosRef</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig12scalarPosRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Magnitude of the reference position vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig12scalarVelRefE">
+<span id="_CPPv3N21PrescribedTransConfig12scalarVelRefE"></span><span id="_CPPv2N21PrescribedTransConfig12scalarVelRefE"></span><span id="PrescribedTransConfig::scalarVelRef__double"></span><span class="target" id="struct_prescribed_trans_config_1a79899b9291c38e441f10ad4f5d743786"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scalarVelRef</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig12scalarVelRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Magnitude of the reference velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig2tsE">
+<span id="_CPPv3N21PrescribedTransConfig2tsE"></span><span id="_CPPv2N21PrescribedTransConfig2tsE"></span><span id="PrescribedTransConfig::ts__double"></span><span class="target" id="struct_prescribed_trans_config_1a94560e7f557ba0401a108258b9fbe018"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ts</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig2tsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time halfway through the maneuver </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig2tfE">
+<span id="_CPPv3N21PrescribedTransConfig2tfE"></span><span id="_CPPv2N21PrescribedTransConfig2tfE"></span><span id="PrescribedTransConfig::tf__double"></span><span class="target" id="struct_prescribed_trans_config_1a122633733239bbc911365004cc40f5a9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tf</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig2tfE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the time the maneuver is complete </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig1aE">
+<span id="_CPPv3N21PrescribedTransConfig1aE"></span><span id="_CPPv2N21PrescribedTransConfig1aE"></span><span id="PrescribedTransConfig::a__double"></span><span class="target" id="struct_prescribed_trans_config_1a0eac590bdee200442ad22039876bcf37"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig1aE" title="Link to this definition"></a><br /></dt>
+<dd><p>Parabolic constant for the first half of the maneuver. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig1bE">
+<span id="_CPPv3N21PrescribedTransConfig1bE"></span><span id="_CPPv2N21PrescribedTransConfig1bE"></span><span id="PrescribedTransConfig::b__double"></span><span class="target" id="struct_prescribed_trans_config_1a867499d30e13d4961e02267559407fa1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">b</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig1bE" title="Link to this definition"></a><br /></dt>
+<dd><p>Parabolic constant for the second half of the maneuver. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig31linearTranslationRigidBodyInMsgE">
+<span id="_CPPv3N21PrescribedTransConfig31linearTranslationRigidBodyInMsgE"></span><span id="_CPPv2N21PrescribedTransConfig31linearTranslationRigidBodyInMsgE"></span><span id="PrescribedTransConfig::linearTranslationRigidBodyInMsg__LinearTranslationRigidBodyMsg_C"></span><span class="target" id="struct_prescribed_trans_config_1a34ef2417e8c9626b71592661f05688bd"></span><span class="n"><span class="pre">LinearTranslationRigidBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linearTranslationRigidBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig31linearTranslationRigidBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input message for the reference states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig27prescribedTranslationOutMsgE">
+<span id="_CPPv3N21PrescribedTransConfig27prescribedTranslationOutMsgE"></span><span id="_CPPv2N21PrescribedTransConfig27prescribedTranslationOutMsgE"></span><span id="PrescribedTransConfig::prescribedTranslationOutMsg__PrescribedTranslationMsg_C"></span><span class="target" id="struct_prescribed_trans_config_1aadf64534f1f232a302c05f7680a65080"></span><span class="n"><span class="pre">PrescribedTranslationMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedTranslationOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig27prescribedTranslationOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output message for the prescribed translational states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21PrescribedTransConfig9bskLoggerE">
+<span id="_CPPv3N21PrescribedTransConfig9bskLoggerE"></span><span id="_CPPv2N21PrescribedTransConfig9bskLoggerE"></span><span id="PrescribedTransConfig::bskLogger__BSKLoggerP"></span><span class="target" id="struct_prescribed_trans_config_1afb29663595cc638d292a4d7b250d5f84"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N21PrescribedTransConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="prescribedTrans" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
