@@ -34,7 +34,8 @@ Version  |release|
 ------------------
 - Build ``ubuntu-latest`` wheels for Python 3.9, 3.10, and 3.11 on GitHub CI, allowing for
   other CI systems to use these wheels for testing with Basilisk as a dependency.
-
+- updated README file.  Links now point to local documentation instead of to the pages
+  on the AVS lab web page that used to host the documentation.
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
