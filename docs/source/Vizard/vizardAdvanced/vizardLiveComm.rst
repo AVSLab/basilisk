@@ -424,3 +424,14 @@ To use the ``noDisplay`` flag:
 	viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, scObject
                                               , noDisplay=True
                                               )
+
+
+Pausing/Exiting a Scenario
+==========================
+In some instances, it is convenient to have the ability to pause a BSK scenario that is connected to Vizard in ``liveStream`` mode. We can take advantage of the existing Vizard key listener for this behavior.
+
+It is important to still call the ``UpdateState()`` method for the ``vizInterface`` module while paused, which allows for the 'unpause' response to be acknowledged. Any panel responses or other Vizard inputs will still be received and processed, and will immediately take effect once unpaused.
+
+Additionally, repeatedly resetting the ``clock_sync`` module while paused keeps the visualization from trying to 'catch up' once unpaused.
+
+See :ref:`scenarioBasicOrbitStream` for an implementation that pauses/unpauses the scenario using the ``<p>`` key and cleanly quits the scenario using ``<z>``.
