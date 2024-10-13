@@ -36,6 +36,8 @@ Version  |release|
   other CI systems to use these wheels for testing with Basilisk as a dependency.
 - updated README file.  Links now point to local documentation instead of to the pages
   on the AVS lab web page that used to host the documentation.
+- Removed the false 1.5x multiplier in :ref:`magnetometer` and :ref:`coarsesunsensor`
+  when setting 'senNoiseStd'
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
