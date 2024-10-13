@@ -12,7 +12,10 @@ Version |release|
 -----------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
   Developers and users alike should continue to use ``python conanfile.py`` installation.
-
+- When using `senNoiseStd()` to set the sensor noise standard deviations
+  in :ref:`magnetometer` and :ref:`coarsesunsensor`
+  the value was being multiplied by 1.5 when creating the diagonal noise matrix.
+  This 1.5x multiplier has now been removed. This is corrected in current release.
 
 Version 2.5.0
 -------------
