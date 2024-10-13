@@ -128,7 +128,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         CSS.kellyFactor = kelly
         CSS.scaleFactor = scaleFactor
         CSS.senBias = bias
-        CSS.senNoiseStd = noiseStd
+        CSS.senNoiseStd = noiseStd*1.5  # test value is adjusted after we no longer use 1.5 in the code.  No impact on the test validity
         CSS.albedoValue = albedoValue
         CSS.minOutput = minIn
         CSS.maxOutput = maxIn

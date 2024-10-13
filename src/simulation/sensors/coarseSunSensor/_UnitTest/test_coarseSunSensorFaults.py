@@ -46,11 +46,11 @@ path = os.path.dirname(os.path.abspath(__file__))
 @pytest.mark.parametrize(
     "cssFault",
     [
-        "CSSFAULT_OFF",                           
-        "CSSFAULT_STUCK_CURRENT", 
-        "CSSFAULT_STUCK_MAX",     
-        "CSSFAULT_STUCK_RAND",    
-        "CSSFAULT_RAND",          
+        "CSSFAULT_OFF",
+        "CSSFAULT_STUCK_CURRENT",
+        "CSSFAULT_STUCK_MAX",
+        "CSSFAULT_STUCK_RAND",
+        "CSSFAULT_RAND",
     ])
 # provide a unique test method name, starting with test_
 def test_coarseSunSensor(cssFault):
@@ -73,7 +73,7 @@ def run(cssFault):
     # Create a simulation container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # unitTestSim.RNGSeed = 10
-    
+
     # Ensure simulation is empty
     testProc = unitTestSim.CreateNewProcess(testProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
@@ -120,10 +120,10 @@ def run(cssFault):
         truthValue = 2.0
     elif cssFault == "CSSFAULT_STUCK_RAND":
         cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_RAND
-        truthValue = 1.7278304838858731
+        truthValue = 1.7278304838858731/1.5
     elif cssFault == "CSSFAULT_RAND":
         cssFaultValue = coarseSunSensor.CSSFAULT_RAND
-        truthValue = 0.7974448327854251
+        truthValue = 0.7974448327854251/1.5
     else:
         NotImplementedError("Fault type specified does not exist.")
 
@@ -138,15 +138,20 @@ def run(cssFault):
     cssOutput = cssRecoder.OutputData[-1]
     print(cssOutput)
     print(truthValue)
-    
+
     if cssFault == "CSSFAULT_OFF":
         if not truthValue == cssOutput:
             testFailCount += 1
+            testMessages.append("css value didn't match")
     elif not unitTestSupport.isDoubleEqualRelative(cssOutput, truthValue, 1E-12):
         testFailCount += 1
+        testMessages.append("css value didn't match")
 
+    if testFailCount:
+        print(testFailCount)
+        print(testMessages)
     return [testFailCount, ''.join(testMessages)]
 
 
 if __name__ == "__main__":
-    run("CSSFAULT_STUCK_MAX")
+    run("CSSFAULT_STUCK_RAND")
