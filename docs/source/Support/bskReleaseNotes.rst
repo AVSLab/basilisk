@@ -50,6 +50,8 @@ Version  |release|
 - Updated :ref:`scenarioMonteCarloAttRW` to use more pythonic OOP for Monte Carlo data retention
 - Updated :ref:`scenarioMonteCarloSpice` to use more pythonic OOP for Monte Carlo data retention
 - Removed the now deprecated ``datashader_utilities.py`` in favor of the new bokeh plotting features in ``AnalysisBaseClass.py``
+- Removed the false 1.5x multiplier in :ref:`magnetometer` and :ref:`coarsesunsensor`
+  when setting 'senNoiseStd'
 
 
 Version 2.5.0 (Sept. 30, 2024)
