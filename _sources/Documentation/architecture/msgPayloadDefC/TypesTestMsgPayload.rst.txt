@@ -1,0 +1,8 @@
+.. _TypesTestMsgPayload:
+
+TypesTestMsgPayload
+===========================
+
+.. autodoxygenfile:: TypesTestMsgPayload.h
+   :project: msgPayloadDefC
+

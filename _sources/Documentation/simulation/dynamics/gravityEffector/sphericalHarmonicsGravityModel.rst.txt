@@ -1,0 +1,8 @@
+.. _sphericalHarmonicsGravityModel:
+
+Module: sphericalHarmonicsGravityModel
+======================================
+
+.. autodoxygenfile:: sphericalHarmonicsGravityModel.h
+   :project: gravityEffector
+
