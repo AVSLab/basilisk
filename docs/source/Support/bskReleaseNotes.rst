@@ -36,6 +36,7 @@ Version  |release|
   other CI systems to use these wheels for testing with Basilisk as a dependency.
 - updated README file.  Links now point to local documentation instead of to the pages
   on the AVS lab web page that used to host the documentation.
+- Updated :ref:`scenarioBasicOrbitStream` to add the ability to pause and resume the live BSK stream
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
