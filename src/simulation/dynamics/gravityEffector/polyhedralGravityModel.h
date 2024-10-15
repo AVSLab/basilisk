@@ -96,40 +96,40 @@ class PolyhedralGravityModel : public GravityModel {
 
   private:
     double volPoly = 0;  /**< [m^3] Volume of the polyhedral */
-    
+
     /**
      * This matrix contains the outward normal of each facet [-].
      */
     Eigen::MatrixX3d normalFacet;
-    
+
     /**
      * This matrix contains the center of each facet [m].
      */
     Eigen::MatrixX3d xyzFacet;
-    
+
     /**
      * This matrix contains the vertex initial and final indexes
      * for each edge [-].
      */
     Eigen::MatrixXi edgeVertex;
-    
+
     /**
      * This matrix contains the shared facet indexes for each
      * edge [-]
      */
     Eigen::MatrixXi edgeFacet;
-    
+
     /**
      * This vector contains the length of each edge [m]
      */
     Eigen::VectorXd edgeLength;
-    
+
     /**
      * The entries of this vector correspond to the
      * facet normal dyad product nf nf' [-]
      */
     std::vector<Eigen::Matrix3d> FfDyad;
-    
+
     /**
      * The entries of this vector correspond to the
      * edge dyad product as nFA n12' + nFB n21'
