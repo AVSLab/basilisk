@@ -7,10 +7,10 @@ The gravity acceleration is evaluated as
 
 .. math::
     :label: eq:acc_poly
-    
+
     \mathbf{a}^{P}=\frac{\mu}{V}\left(-\sum_{e\in\text{edges}}\mathbf{E}_e\mathbf{r}_eL_e
     +\sum_{f\in\text{faces}}\mathbf{F}_f\mathbf{r}_fw_f\right)
-    
+
 and the gravity potential as
 
 .. math::
@@ -21,7 +21,7 @@ and the gravity potential as
 
 Module Assumptions and Limitations
 ----------------------------------
-The evaluation point is referred to geographical coordinates with respect to the polyhedron gravity body. In other words, the input position is expressed in the planet centred rotating frame. The output gravity acceleration is also expressed in the previous frame. 
+The evaluation point is referred to geographical coordinates with respect to the polyhedron gravity body. In other words, the input position is expressed in the planet centred rotating frame. The output gravity acceleration is also expressed in the previous frame.
 
 The module assumes the polyhedron body has constant density.
 
@@ -50,7 +50,7 @@ To use the polyhedron gravity model, instantiate the ``simIncludeGravBody.gravBo
     erosGravBody = gravFactory.createCustomGravObject('eros_poly', mu=mu) # Create Eros gravity body
     erosGravBody.isCentralBody = True # (Optional) If the body is to be central
     erosGravBody.usePolyhedralGravityModel(file_poly) # Declare the use of a polyhedron model for Eros and set the shape file
-    
+
 For orbital propagation, the list of gravity bodies have to be appended to a spacecraft as
 
 .. code-block:: python
@@ -66,6 +66,7 @@ For gravity evaluations, the polyhedron gravity has to be initialized
     erosGravBody.initializeParameters() # Initializes polyhedron module internal variables
     pos = [40*1e3, 30*1e3, 10*1e3] # Evaluation point
     acc = erosGravBody.computeField(pos) # Gravity evaluation
-    
+
 Supported polyhedron shape files
-----------
+--------------------------------
+text
