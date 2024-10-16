@@ -86,13 +86,13 @@ The .obj files content is equivalent to the .tab extension but they admit commen
     :align: center
 
     Figure 1: Example of .obj polyhedron shape file
-    
+
 The .txt file has a first line as a header where the number of vertexes (first column) and faces (second column) are indicated. Then, it has 3 columns where vertexes coordinates and subsequently the faces correspondence with vertexes are provided
-    
+
 .. _glPixelSketch:
 .. figure:: /../../src/simulation/dynamics/gravityEffector/_Documentation/Figures/poly_txt_example.png
     :align: center
 
     Figure 1: Example of .txt polyhedron shape file
-    
+
 Additional file formats could be added to the function ``loadPolyFromFileToList(fileName: str)`` under ``gravCoeffOpps.py``.
