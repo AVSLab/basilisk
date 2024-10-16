@@ -68,5 +68,31 @@ For gravity evaluations, the polyhedron gravity has to be initialized
     acc = erosGravBody.computeField(pos) # Gravity evaluation
 
 Supported polyhedron shape files
---------------------------------
-text
+----------
+Polyhedron shape files contain vertexes coordinates and the vertexes indexes that form each triangular face. The vertexes coordinates are assumed to be expressed in kilometers. The following file formats .tab, .obj and .txt are supported as inputs:
+
+The .tab files do not have a header and have 4 columns where the first one denotes if the row refers to a vertex (v) coordinates or the face (f) composed of three vertexes
+
+.. _glPixelSketch:
+.. figure:: /../../src/simulation/dynamics/gravityEffector/_Documentation/Figures/poly_tab_example.png
+    :align: center
+
+    Figure 1: Example of .tab polyhedron shape file
+
+The .obj files content is equivalent to the .tab extension but they admit comments (#) and separate the vertexes and faces content with an empty line
+
+.. _glPixelSketch:
+.. figure:: /../../src/simulation/dynamics/gravityEffector/_Documentation/Figures/poly_obj_example.png
+    :align: center
+
+    Figure 1: Example of .obj polyhedron shape file
+    
+The .txt file has a first line as a header where the number of vertexes (first column) and faces (second column) are indicated. Then, it has 3 columns where vertexes coordinates and subsequently the faces correspondence with vertexes are provided
+    
+.. _glPixelSketch:
+.. figure:: /../../src/simulation/dynamics/gravityEffector/_Documentation/Figures/poly_txt_example.png
+    :align: center
+
+    Figure 1: Example of .txt polyhedron shape file
+    
+Additional file formats could be added to the function ``loadPolyFromFileToList(fileName: str)`` under ``gravCoeffOpps.py``.
