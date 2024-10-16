@@ -68,7 +68,7 @@ For gravity evaluations, the polyhedron gravity has to be initialized
     acc = erosGravBody.computeField(pos) # Gravity evaluation
 
 Supported polyhedron shape files
-----------
+--------------------------------
 Polyhedron shape files contain vertexes coordinates and the vertexes indexes that form each triangular face. The vertexes coordinates are assumed to be expressed in kilometers. The following file formats .tab, .obj and .txt are supported as inputs:
 
 The .tab files do not have a header and have 4 columns where the first one denotes if the row refers to a vertex (v) coordinates or the face (f) composed of three vertexes
