@@ -487,7 +487,14 @@ elseif(APPLE)
   set(CMAKE_SKIP_BUILD_RPATH FALSE) # use, i.e. don't skip the full RPATH for the build tree
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) # when building, don't use the install RPATH already (but later on when
                                            # installing)
-  set(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/Basilisk") # the RPATH to be used when installing
+  set(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/Basilisk"  # the RPATH to be used when installing
+      # Also add relative paths so we can install from wheel/sdist.
+      # TODO: Is there a proper way to set relative library paths without just
+      # guessing how many parent ".." directories to use?
+      "@loader_path"
+      "@loader_path/.."
+      "@loader_path/../.."
+  )
 
   # don't add the automatically determined parts of the RPATH which point to directories outside the build tree to the
   # install RPATH

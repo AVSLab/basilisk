@@ -61,6 +61,14 @@ The main benefit of this approach will come in the future, when a set of pre-com
 allowing most users to easily ``pip install Basilisk`` without compilation, in the same way that packages like
 ``numpy``, ``scipy``, and ``pandas`` are available.
 
+Alternatively, if you download a zip'd folder of the Basilisk source code you can install it via ``pip``
+using::
+
+    pip install Basilisk*.tar.gz
+
+The following command is used to both download the code and compile Basilisk with pip::
+
+    pip install git+https://github.com/AVSLab/basilisk.git
 
 Wheel Compatibility
 -------------------

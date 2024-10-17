@@ -28,7 +28,7 @@ packages = []  # XXX: Leave blank, populated automatically by setup.py.
 include-package-data = true
 
 [tool.setuptools.package-data]
-"*" = ["*.so", "*.dll", "*.lib", "*.pyd"]  # Include all built objects.
+"*" = ["*.so", "*.dll", "*.lib", "*.pyd", "*.a", "*.dylib"]  # Include all built objects.
 Basilisk = ["supportData/**/*"]            # Include all support data.
 
 [tool.setuptools.dynamic]
