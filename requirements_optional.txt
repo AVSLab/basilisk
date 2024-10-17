@@ -7,6 +7,4 @@ pre-commit
 clang-format
 bokeh
 dask-expr
-selenium
-webdriver_manager
-svgwrite
+
