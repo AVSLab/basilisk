@@ -74,7 +74,29 @@ Follow these steps to run the script:
 
 3. Run this script from the command line using:
 
-   python scenarioVisualizeMonteCarlo.py --bokeh-server
+    To generate a static HTML file:
+
+    .. code-block:: python
+
+        from scenarioVisualizeMonteCarlo import run
+        run(use_bokeh_server=False)
+
+    To start an interactive Bokeh server:
+
+    .. code-block:: python
+
+        from scenarioVisualizeMonteCarlo import run
+        run(use_bokeh_server=True)
+
+    Alternatively, you can run this script directly from the command line:
+
+    .. code-block:: bash
+
+        # For static HTML generation
+        python scenarioVisualizeMonteCarlo.py
+
+        # For interactive Bokeh server
+        python scenarioVisualizeMonteCarlo.py --bokeh-server
 
    This will process the data created by `scenarioBskSimAttFeedbackMC.py` and open a browser window showing the interactive plot.
 
