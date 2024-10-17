@@ -283,7 +283,7 @@ Monte Carlo Simulations
 
    MC run with RW control  <scenarioMonteCarloAttRW>
    MC run using Python Spice setup  <scenarioMonteCarloSpice>
-   MC bskSim example Folder with datashaders <MonteCarloExamples/index>
+   MC bskSim example folder with bokeh interactive visualization <MonteCarloExamples/index>
    Sensitivity Analysis of a differential drag spacecraft control <scenarioDragSensitivity>
 
 

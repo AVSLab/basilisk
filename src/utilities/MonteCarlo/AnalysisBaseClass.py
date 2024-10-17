@@ -237,8 +237,9 @@ class MonteCarloPlotter:
         
         self.component_select = Select(title="Component", options=initial_components, value=initial_components[0], width=200)
         
-        # Add callback to update component options when variable changes
-        self.variable_select.on_change('value', update_component_options)
+        # Update callback functions
+        self.variable_select.on_change('value', self.update_plot_callback)
+        self.component_select.on_change('value', self.update_plot_callback)
         
         # Create input elements before using them in the layout
         self.run_input = TextInput(title="", width=300)
@@ -337,7 +338,7 @@ class MonteCarloPlotter:
 .. raw:: html
    :file: {filename}
 
-This plot shows the {component.upper()} component of the {variable} variable.
+This plot shows component {component.upper()} of the {variable} variable.
 """
         return content
 
@@ -349,3 +350,6 @@ This plot shows the {component.upper()} component of the {variable} variable.
             for component in ['1', '2', '3']:
                 plot = self.create_plot(variable, component)
                 self.save_plot(plot, variable, component)
+
+    def update_plot_callback(self, attr, old, new):
+        self.update_plot(None, None, None)

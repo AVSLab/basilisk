@@ -67,8 +67,8 @@ sys.path.append(path + '/../../examples/MonteCarloExamples')
 
 def test_scenarioBskMcScenarios(show_plots):
     # These need to be run in serial such that the data is produced for analysis
-    scenarios = ['scenario_AttFeedbackMC',
-                 'scenarioAnalyzeMonteCarlo']
+    scenarios = ['scenarioBskSimAttFeedbackMC',
+                 'scenarioVisualizeMonteCarlo']
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -88,7 +88,7 @@ def test_scenarioBskMcScenarios(show_plots):
             testMessages.append(f"Error in {bskSimCase}: {str(err)}")
 
     # Clean up
-    if os.path.exists(path + "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/"):
-        shutil.rmtree(path + "/../../examples/MonteCarloExamples/scenario_AttFeedbackMC/")
+    if os.path.exists(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/"):
+        shutil.rmtree(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/")
 
     assert testFailCount < 1, testMessages

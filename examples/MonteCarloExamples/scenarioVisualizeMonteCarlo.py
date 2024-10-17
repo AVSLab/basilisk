@@ -68,15 +68,15 @@ How to Run the Script
 ---------------------
 Follow these steps to run the script:
 
-1. First, run the `scenario_AttFeedbackMC.py` script to generate the necessary data files.
+1. First, run the `scenarioBskSimAttFeedbackMC.py` script to generate the necessary data files.
 
 2. Ensure that the `run()` function call at the bottom of this script is uncommented.
 
 3. Run this script from the command line using:
 
-   python scenarioAnalyzeMonteCarlo.py
+   python scenarioVisualizeMonteCarlo.py --bokeh-server
 
-   This will process the data created by `scenario_AttFeedbackMC.py` and open a browser window showing the interactive plot.
+   This will process the data created by `scenarioBskSimAttFeedbackMC.py` and open a browser window showing the interactive plot.
 
 4. Use the dropdown menus to select different variables and components to plot.
 
@@ -91,6 +91,8 @@ The script will display information about the loaded data, including the number 
 import os
 import logging
 import importlib
+import webbrowser
+from threading import Timer
 from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 
 logging.basicConfig(level=logging.INFO)
@@ -100,14 +102,18 @@ bokeh_spec = importlib.util.find_spec("bokeh")
 bokeh_available = bokeh_spec is not None
 
 if bokeh_available:
-    from bokeh.io import output_file, show
+    from bokeh.io import output_file, show, curdoc
     from bokeh.layouts import column
     from bokeh.models import Div
+    from bokeh.server.server import Server
+    from bokeh.application import Application
+    from bokeh.application.handlers.function import FunctionHandler
+    from tornado.ioloop import IOLoop
 
-def create_document():
+def create_document(doc):
     logger.info("Starting the create_document function")
     
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenario_AttFeedbackMC")
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenarioBskSimAttFeedbackMC")
     doc_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
     plot_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saved_plots")
 
@@ -125,27 +131,44 @@ def create_document():
         logger.info("Creating plot layout")
         layout = plotter.show_plots()
 
-        return layout
+        doc.add_root(layout)
+        doc.title = "BSK Monte Carlo Visualization"
 
     except Exception as e:
         error_message = f"An error occurred: {str(e)}"
         logger.error(error_message)
-        return Div(text=error_message)
+        doc.add_root(Div(text=error_message))
 
-def run():
+def open_browser():
+    webbrowser.open("http://localhost:5006")
+
+def run(use_bokeh_server=False):
     if not bokeh_available:
         logger.error("Bokeh is not available. This script requires Bokeh to run.")
         return
 
-    # Create the layout
-    layout = create_document()
-    
-    # Set up the output file
-    output_file("monte_carlo_plots.html", title="BSK Monte Carlo Visualization")
-    
-    # Show the document
-    show(layout)
+    if use_bokeh_server:
+        def bk_worker():
+            app = Application(FunctionHandler(create_document))
+            server = Server({'/': app}, io_loop=IOLoop(), allow_websocket_origin=["*"])
+            server.start()
+            Timer(1, open_browser).start()  # Open browser after 1 second
+            server.io_loop.start()
+
+        logger.info("Starting Bokeh server. A browser window should open automatically.")
+        bk_worker()
+    else:
+        # Create a document for the static case
+        doc = curdoc()
+        create_document(doc)
+        
+        # Set up the output file
+        output_file("monte_carlo_plots.html", title="BSK Monte Carlo Visualization")
+        
+        # Show the layout
+        show(doc.roots[0])
 
 if __name__ == "__main__":
-    run()
-    logger.info("Script executed successfully!")
+    import sys
+    use_bokeh_server = "--bokeh-server" in sys.argv
+    run(use_bokeh_server)

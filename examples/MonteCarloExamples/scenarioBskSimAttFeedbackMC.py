@@ -36,17 +36,17 @@ How to Use:
 1. Ensure you have Basilisk installed with all required dependencies.
 2. Run this script directly to execute the Monte Carlo simulations:
    
-   python scenario_AttFeedbackMC.py
+   python scenarioBskSimAttFeedbackMC.py
 
 3. The script will run 20 Monte Carlo simulations by default.
-4. Results will be saved in the 'scenario_AttFeedbackMC' directory within the script's location.
+4. Results will be saved in the 'scenarioBskSimAttFeedbackMC' directory within the script's location.
 
 Monte Carlo Configuration:
 --------------------------
 - Simulation Function: Uses `scenario_AttFeedback.scenario_AttFeedback` to set up the base scenario.
 - Execution Function: Uses `scenario_AttFeedback.runScenario` to run each simulation.
 - Execution Count: Set to 20 simulations.
-- Archive Directory: Results are saved in 'scenario_AttFeedbackMC'.
+- Archive Directory: Results are saved in 'scenarioBskSimAttFeedbackMC'.
 - Seed Dispersion: Enabled to randomize the seed for each module.
 - Variable Casting: Downcasts retained numbers to float32 to save storage space.
 - Dispersion Magnitude File: Produces a .txt file showing dispersion in standard deviation units.
@@ -112,7 +112,7 @@ def run(show_plots):
     monteCarlo.setExecutionFunction(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
     monteCarlo.setExecutionCount(4)  # Required: Number of MCs to run
 
-    monteCarlo.setArchiveDir(path + "/scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
+    monteCarlo.setArchiveDir(path + "/scenarioBskSimAttFeedbackMC")  # Optional: If/where to save retained data.
     monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
     # monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on, automatically sizes for personal computer.
     # monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
