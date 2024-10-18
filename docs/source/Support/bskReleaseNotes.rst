@@ -37,6 +37,8 @@ Version  |release|
 - updated README file.  Links now point to local documentation instead of to the pages
   on the AVS lab web page that used to host the documentation.
 - Updated :ref:`scenarioBasicOrbitStream` to add the ability to pause and resume the live BSK stream
+- Added documenation on installing with ``pip`` via source code in :ref:`pipInstall`
+
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
