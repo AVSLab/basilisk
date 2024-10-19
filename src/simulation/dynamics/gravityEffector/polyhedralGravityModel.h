@@ -60,13 +60,9 @@ class PolyhedralGravityModel : public GravityModel {
 
     /** Returns the gravitational potential energy at a position around this body.
      *
-     * The current implementation returns the potential energy of a point-mass
-     * (the polyhedral shape of the body is ignored)
-     *
-     * The position is given relative to the body and in the inertial
-     * reference frame.
+     * The position is given in the body-fixed reference frame.
      */
-    double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
+    double computePotentialEnergy(const Eigen::Vector3d& position_planetFixed) const override;
 
   private:
     void initializeFacets();

@@ -145,7 +145,7 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& position_planetFixed
 }
 
 double
-PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const
+PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& position_planetFixed) const
 {
     const size_t nFacet = this->orderFacet.rows();
     const size_t nEdge = int(3*nFacet/2);
@@ -180,13 +180,13 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWr
 
         // Compute vector from spacecraft to an edge point
         re = this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
-             - positionWrtPlanet_N;
+             - position_planetFixed;
 
         // Compute edge wire potential
         a = (this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
-             - positionWrtPlanet_N).norm();
+             - position_planetFixed).norm();
         b = (this->xyzVertex.row(this->edgeVertex(n,1)).transpose()
-             - positionWrtPlanet_N).norm();
+             - position_planetFixed).norm();
         e = this->edgeLength(n);
         Le = log((a+b+e) / (a+b-e));
 
@@ -205,9 +205,9 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWr
             k = v[2] - 1;
 
             // Compute facet vertexes relative position w.r.t. spacecraft
-            ri = this->xyzVertex.row(i).transpose() - positionWrtPlanet_N;
-            rj = this->xyzVertex.row(j).transpose() - positionWrtPlanet_N;
-            rk = this->xyzVertex.row(k).transpose() - positionWrtPlanet_N;
+            ri = this->xyzVertex.row(i).transpose() - position_planetFixed;
+            rj = this->xyzVertex.row(j).transpose() - position_planetFixed;
+            rk = this->xyzVertex.row(k).transpose() - position_planetFixed;
 
             // Compute facet solid angle
             wf = computeSolidangle(ri, rj, rk);
