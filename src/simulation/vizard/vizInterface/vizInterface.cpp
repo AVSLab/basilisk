@@ -661,6 +661,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_messagebuffersize(this->settings.messageBufferSize);
         vizSettings->set_truepathprimarybody(this->settings.truePathPrimaryBody);
         vizSettings->set_truepathrotatingframe(this->settings.truePathRotatingFrame);
+        vizSettings->set_truepathfixedframe(this->settings.truePathFixedFrame);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
