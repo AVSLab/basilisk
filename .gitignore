@@ -35,6 +35,7 @@ supportData/*/__init__.py
 src/utilities/vizProtobuffer/__init__.py
 src/utilities/vizProtobuffer/vizMessage.pb.cc
 src/utilities/vizProtobuffer/vizMessage.pb.h
+src/utilities/vizProtobuffer/vizMessage_pb2.py
 externalTools/fswAuto/autosetter/sets/*
 externalTools/fswAuto/autowrapper/wraps/*
 **/outputFiles/*
