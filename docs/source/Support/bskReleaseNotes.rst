@@ -38,6 +38,7 @@ Version  |release|
   on the AVS lab web page that used to host the documentation.
 - Updated :ref:`scenarioBasicOrbitStream` to add the ability to pause and resume the live BSK stream
 - Added documenation on installing with ``pip`` via source code in :ref:`pipInstall`
+- Updated :ref:`scenarioOrbitManeuver` to include a SPICE module that rotates the Earth
 
 
 Version 2.5.0 (Sept. 30, 2024)
