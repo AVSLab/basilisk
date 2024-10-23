@@ -52,17 +52,17 @@ class PolyhedralGravityModel : public GravityModel {
 
     /** Returns the gravity acceleration at a position around this body.
      *
-     * The position is given in the body-fixed reference frame.
-     * Likewise, the resulting acceleration should be given in the
-     * body-fixed reference frame.
+     * The position is given in the gravity body-centred rotating reference frame.
+     * Likewise, the resulting acceleration is obtained in the
+     * gravity body-centred rotating reference frame
      */
-    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed) const override;
+    Eigen::Vector3d computeField(const Eigen::Vector3d& pos_BP_P) const override;
 
     /** Returns the gravitational potential energy at a position around this body.
      *
-     * The position is given in the body-fixed reference frame.
+     * The position is given in the body-centred rotating reference frame.
      */
-    double computePotentialEnergy(const Eigen::Vector3d& position_planetFixed) const override;
+    double computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) const override;
 
   private:
     void initializeFacets();
