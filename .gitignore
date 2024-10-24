@@ -50,6 +50,7 @@ supportData/EphemerisData/de430.bsp
 **/__pycache__/
 venv/
 .venv/
+.venv*/
 
 # VSCode
 .devcontainer
@@ -57,3 +58,8 @@ venv/
 # Python packaging
 *.egg-info
 build/
+
+# Monte Carlo ignore generated data files and test init file.
+examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/
+src/utilities/tests/__init__.py
+examples/montecarlo_test*/

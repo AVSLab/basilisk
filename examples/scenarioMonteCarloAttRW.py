@@ -22,12 +22,11 @@ Overview
 
 Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 This script duplicates the scenario in :ref:`scenarioAttitudeFeedbackRW` where a
-6-DOF spacecraft  is orbiting the Earth.  Here some simulation parameters are dispersed randomly
-using a multi threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
-to the rigid spacecraft() hub, and what flight
-algorithm module is used to control these RWs. The scenario is run in a single configuration:
-by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
-to the variables in between each MC run.
+6-DOF spacecraft is orbiting the Earth. Here some simulation parameters are dispersed randomly
+using a multi-threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
+to the rigid spacecraft() hub, and what flight algorithm module is used to control these RWs.
+The scenario is run in a single configuration: by not using the Jitter model and by using the RW Voltage IO.
+Given this scenario we can add dispersions to the variables in between each MC run.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -35,6 +34,26 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
 For more information on the Attitude Feedback Simulation with RW, please see the documentation
 on the :ref:`scenarioAttitudeFeedbackRW` file.
+
+Bokeh Visualization and Data Management
+---------------------------------------
+
+This script now includes options for interactive visualization using Bokeh and automatic data cleanup:
+
+1. To use the Bokeh server for interactive visualization, run the script with:
+
+   python scenarioMonteCarloAttRW.py --bokeh-server
+
+2. To automatically delete Monte Carlo data after generating plots, add the --delete-data flag:
+
+   python scenarioMonteCarloAttRW.py --delete-data
+
+   or
+
+   python scenarioMonteCarloAttRW.py --bokeh-server --delete-data
+
+The --delete-data option will remove the Monte Carlo data directory after the plots are generated,
+helping to manage disk space when running multiple simulations.
 
 Enable Terminal Bar to Show Simulation Progress
 -----------------------------------------------
@@ -104,18 +123,12 @@ It returns the failed jobs, which should not occur.  When the MC have been execu
 the data can be accessed and tested in different ways.
 This is explained in the example python code comments.
 
-.. note::
-
-    In these Monte Carlo simulations the retained data is stored as the data array with the time
-    information added as the first column.  This is the same retained data format as used
-    with BSK 1.x.
-
 Illustration of Simulation Results
 ----------------------------------
 
 ::
 
-    saveFigures = False, case = 1, show_plots = True, useDatashader = False
+    saveFigures = False, case = 1, show_plots = True, use_bokeh = False
 
 .. image:: /_images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.svg
    :align: center
@@ -187,6 +200,23 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
+# Add this import and check at the beginning of the file
+import importlib
+
+# Try to import Bokeh, set availability flag
+try:
+    import bokeh
+    from bokeh.io import output_file, show
+    from bokeh.layouts import column
+    from bokeh.models import Div
+    from bokeh.plotting import figure
+    from bokeh.server.server import Server
+    from bokeh.application import Application
+    from bokeh.application.handlers.function import FunctionHandler
+    bokeh_available = True
+    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
+except ImportError:
+    bokeh_available = False
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
@@ -207,7 +237,7 @@ simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime // (numDataPoints-1)
 
 
-def run(saveFigures, case, show_plots):
+def run(saveFigures, case, show_plots, delete_data=True, use_bokeh=False):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -215,7 +245,13 @@ def run(saveFigures, case, show_plots):
         saveFigures (bool): flag if the scenario figures should be saved for html documentation
         case (int): Case 1 is normal MC, case 2 is initial condition run
         show_plots (bool): Determines if the script should display plots
+        delete_data (bool): Flag to delete Monte Carlo data after running
+        use_bokeh (bool): Flag to use Bokeh for plotting instead of matplotlib
     """
+
+    if use_bokeh and not bokeh_available:
+        print("Bokeh is not available. Falling back to matplotlib.")
+        use_bokeh = False
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
@@ -294,10 +330,13 @@ def run(saveFigures, case, show_plots):
     for msgName in rwOutName:
         retentionPolicy.addMessageLog(msgName, ["u_current"])
     if show_plots:
-        # plot data only if show_plots is true, otherwise just retain
-        retentionPolicy.setDataCallback(plotSim)
+        if use_bokeh:
+            # Don't set a callback for Bokeh, we'll handle it separately
+            pass
+        else:
+            # Use matplotlib for plotting
+            retentionPolicy.setDataCallback(plotSim)
     if saveFigures:
-        # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSimAndSave)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -346,12 +385,24 @@ def run(saveFigures, case, show_plots):
             # assert two different runs had different parameters.
             assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-        # Now we execute our callback for the retained data.
-        # For this run, that means executing the plot.
-        # We can plot only runs 4,6,7 overlapped
-        # monteCarloLoaded.executeCallbacks([4,6,7])
-        # or execute the plot on all runs
-        monteCarloLoaded.executeCallbacks()
+        if use_bokeh and bokeh_available:
+            # Create the Bokeh application
+            plotter = MonteCarloPlotter(dirName)
+            plotter.load_data([
+                guidMsgName + ".sigma_BR",
+                guidMsgName + ".omega_BR_B",
+                rwSpeedMsgName + ".wheelSpeeds",
+                voltMsgName + ".voltage",
+                rwOutName[0] + ".u_current",
+                rwOutName[1] + ".u_current",
+                rwOutName[2] + ".u_current"
+            ])
+            plotter.show_plots()
+        elif show_plots:
+            # Use matplotlib for plotting
+            monteCarloLoaded.executeCallbacks()
+            plt.show()
+            plt.close("all")
 
     #########################################################
     if case == 2:
@@ -367,9 +418,12 @@ def run(saveFigures, case, show_plots):
         failed = monteCarlo.runInitialConditions(runsList)
         assert len(failed) == 0, "Should run ICs successfully"
 
-        # monteCarlo.executeCallbacks([4,6,7])
+        # Load the Monte Carlo data
+        monteCarloLoaded = Controller.load(icName)
+
+        # Execute callbacks for the loaded data
         runsList = list(range(numberICs))
-        monteCarlo.executeCallbacks(runsList)
+        monteCarloLoaded.executeCallbacks(runsList)
 
         # And possibly show the plots
         if show_plots:
@@ -383,16 +437,11 @@ def run(saveFigures, case, show_plots):
             os.remove(icName + '/' + 'run' + str(i) + '.data')
         assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
 
-    # Now we clean up data from this test
-    shutil.rmtree(dirName)
-    assert not os.path.exists(dirName), "No leftover data should exist after the test"
+    # Delete Monte Carlo data if configured to do so. (default is True)
+    if delete_data:
+        shutil.rmtree(dirName)
 
-    # And possibly show the plots
-    if show_plots:
-        print("Test concluded, showing plots now via matplot...")
-        plt.show()
-        # close the plots being saved off to avoid over-writing old and new figures
-        plt.close("all")
+    return dirName
 
 # This function creates the simulation to be executed in parallel.
 def createScenarioAttitudeFeedbackRW():
@@ -719,12 +768,54 @@ def plotSimAndSave(data, retentionPolicy):
 
     return
 
-#
-# This statement below ensures that the unit test script can be run as a
-# # stand-along python script
-#
+
+# Modify the __main__ section
 if __name__ == "__main__":
-    run(  saveFigures=False        # save figures to file
-        , case=2            # Case 1 is normal MC, case 2 is initial condition run
-        , show_plots=True         # show_plots.
-       )
+    import sys
+    delete_data = True
+    use_bokeh = False
+
+    # Parse command line arguments
+    for arg in sys.argv[1:]:
+        if arg == "--delete-data":
+            delete_data = True
+        elif arg == "--bokeh-server":
+            use_bokeh = True
+
+    if use_bokeh and not bokeh_available:
+        print("Bokeh is not available. Falling back to matplotlib.")
+        use_bokeh = False
+
+    if use_bokeh and bokeh_available:
+        # ... (existing Bokeh server code)
+        from bokeh.server.server import Server
+        from bokeh.application import Application
+        from bokeh.application.handlers.function import FunctionHandler
+        from bokeh.layouts import column
+
+        def bk_worker(doc):
+            def update():
+                dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=True, use_bokeh=True)
+                plotter = MonteCarloPlotter(dirName)
+                plotter.load_data([
+                    rwOutName[0] + ".u_current",
+                    rwOutName[1] + ".u_current",
+                    rwOutName[2] + ".u_current",
+                    guidMsgName + ".sigma_BR",
+                    guidMsgName + ".omega_BR_B",
+                    rwSpeedMsgName + ".wheelSpeeds",
+                    voltMsgName + ".voltage"
+                ])
+                layout = plotter.show_plots()
+                doc.add_root(layout)
+
+            doc.add_next_tick_callback(update)
+
+        print("Starting Bokeh server")
+        server = Server({'/': Application(FunctionHandler(bk_worker))})
+        server.start()
+        print('Opening Bokeh application on http://localhost:5006/')
+        server.io_loop.add_callback(server.show, "/")
+        server.io_loop.start()
+    else:
+        dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=True, use_bokeh=False)
