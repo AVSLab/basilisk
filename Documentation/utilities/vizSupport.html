@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vizSupport &mdash; Basilisk 2.5.6
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=4c58bd45" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=53b7011b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="MonteCarlo" href="MonteCarlo/index.html" />
+    <link rel="prev" title="unitTestSupport" href="unitTestSupport.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                version 2.5.6
+
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">vizSupport</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.createStandardCamera"><code class="docutils literal notranslate"><span class="pre">createStandardCamera()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.enableUnityVisualization"><code class="docutils literal notranslate"><span class="pre">enableUnityVisualization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.setActuatorGuiSetting"><code class="docutils literal notranslate"><span class="pre">setActuatorGuiSetting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.setInstrumentGuiSetting"><code class="docutils literal notranslate"><span class="pre">setInstrumentGuiSetting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vizSupport.setSprite"><code class="docutils literal notranslate"><span class="pre">setSprite()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">vizSupport</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/vizSupport.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="vizsupport">
+<span id="id1"></span><h1>vizSupport<a class="headerlink" href="#vizsupport" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-vizSupport">
+<dt class="sig sig-object py" id="vizSupport.createStandardCamera">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">createStandardCamera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#createStandardCamera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.createStandardCamera" title="Link to this definition"></a></dt>
+<dd><p>add a standard camera window</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.enableUnityVisualization">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">enableUnityVisualization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scSim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simTaskName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scList</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#enableUnityVisualization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.enableUnityVisualization" title="Link to this definition"></a></dt>
+<dd><p>This methods creates an instance of the vizInterface() modules and setups up associated Vizard
+configuration setting messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scSim</strong> – variable with the simulationBaseClass copy</p></li>
+<li><p><strong>simTaskName</strong> – task to which to add the vizInterface module</p></li>
+<li><p><strong>scList</strong> – <a class="reference internal" href="../simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> objects.  Can be a single object or list of objects</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>saveFile</strong> (<em>str</em>) – can be a single file name, or a full path + file name. In both cases a local results are stored
+in a local sub-folder.
+Default: empty string resulting in the data not being saved to a file</p></li>
+<li><p><strong>rwEffectorList</strong> (single or list of <code class="docutils literal notranslate"><span class="pre">ReactionWheelStateEffector</span></code>) – The list must have the same length <code class="docutils literal notranslate"><span class="pre">scList</span></code>.  Each entry is the <a class="reference internal" href="../simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">Module: reactionWheelStateEffector</span></a> instance
+for the spacecraft, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the spacecraft has no RW devices.</p></li>
+<li><p><strong>thrEffectorList</strong> (single or double-list of <a class="reference internal" href="../simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a>) – The list must have the same length <code class="docutils literal notranslate"><span class="pre">scList</span></code>.  Each entry is a list of <a class="reference internal" href="../simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">Module: reactionWheelStateEffector</span></a>
+instances
+for the spacecraft denoting a thruster cluster, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the spacecraft has no thruster devices.</p></li>
+<li><p><strong>thrColors</strong> (<em>single</em><em> or </em><em>vector</em><em> of </em><em>int</em><em>(</em><em>4</em><em>)</em>) – array of RGBA color values for each thruster set.  The list must have the same length as <code class="docutils literal notranslate"><span class="pre">scList</span></code>.
+Each list entry is a list of RGBA array values for each cluster set.</p></li>
+<li><p><strong>cssList</strong> – list of lists of <a class="reference internal" href="../simulation/sensors/coarseSunSensor/coarseSunSensor.html#coarsesunsensor"><span class="std std-ref">Module: coarseSunSensor</span></a> objects.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>genericSensorList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">GenericSensor</span></code> structures.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>genericSensorCmdInMsgs</strong> – list of lists of <a class="reference internal" href="../architecture/msgPayloadDefC/DeviceCmdMsgPayload.html#devicecmdmsgpayload"><span class="std std-ref">DeviceCmdMsgPayload</span></a> sensor state messages.  The outer list length must
+match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.  If the spacecraft has no sensor command msg, then use <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>opNavMode</strong> (<em>bool</em>) – flag if opNavMode should be used [DEPRECATED]</p></li>
+<li><p><strong>liveStream</strong> (<em>bool</em>) – flag if live data streaming to Vizard should be used</p></li>
+<li><p><strong>broadcastStream</strong> (<em>bool</em>) – flag if messages should be broadcast for listener Vizards to pick up.</p></li>
+<li><p><strong>noDisplay</strong> (<em>bool</em>) – flag if Vizard should run performance opNav (no Vizard display)</p></li>
+<li><p><strong>genericStorageList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">GenericStorage</span></code> structures.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>lightList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">Light</span></code> structures.   The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+<li><p><strong>spriteList</strong> – list of sprite information for each spacecraft</p></li>
+<li><p><strong>modelDictionaryKeyList</strong> – list of the spacecraft model dictionary.  Use <code class="docutils literal notranslate"><span class="pre">None</span></code> if default values are used</p></li>
+<li><p><strong>oscOrbitColorList</strong> – list of spacecraft osculating orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if default values should be used.  The array must be of the length of the spacecraft list</p></li>
+<li><p><strong>trueOrbitColorList</strong> – list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if default values should be used.  The array must be of the length of the spacecraft list</p></li>
+<li><p><strong>trueOrbitColorInMsgList</strong> – list of color messages to read and provide the true orbit color at each time step.  This overwrites
+the values set with trueOrbitColorList.</p></li>
+<li><p><strong>msmInfoList</strong> – list of MSM configuration messages</p></li>
+<li><p><strong>ellipsoidList</strong> – list of lists of <code class="docutils literal notranslate"><span class="pre">Ellipsoid</span></code> structures.  The outer list length must match <code class="docutils literal notranslate"><span class="pre">scList</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>copy of the vizInterface instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.setActuatorGuiSetting">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">setActuatorGuiSetting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#setActuatorGuiSetting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.setActuatorGuiSetting" title="Link to this definition"></a></dt>
+<dd><p>This method sets the actuator GUI properties for a particular spacecraft.  If no <code class="docutils literal notranslate"><span class="pre">spacecraftName</span></code> is
+provided, then the name of the first spacecraft in the simulation is assumed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>viz</strong> – copy of the vizInterface module</p></li>
+<li><p><strong>kwargs</strong> – list of keyword arguments that this method supports</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spacecraftName</strong> (<em>str</em>) – The name of the spacecraft for which the actuator GUI options are set.
+Default: If not provided, then the name of the first spacecraft in the simulation is used.</p></li>
+<li><p><strong>viewThrusterPanel</strong> (<em>bool</em>) – flag if the GUI panel should be shown illustrating the thruster states
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewRWPanel</strong> (<em>bool</em>) – flag if the GUI panel should be shown illustrating the reaction wheel states
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewThrusterHUD</strong> (<em>bool</em>) – flag if the HUD visualization of the thruster states should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewRWHUD</strong> (<em>bool</em>) – flag if the HUD visualization of the reaction wheel states should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showThrusterLabels</strong> (<em>bool</em>) – flag if the thruster labels should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showRWLabels</strong> (<em>bool</em>) – flag if the reaction wheel labels should be shown
+Default: if not provided, then the Vizard default settings are used</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.setInstrumentGuiSetting">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">setInstrumentGuiSetting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viz</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#setInstrumentGuiSetting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.setInstrumentGuiSetting" title="Link to this definition"></a></dt>
+<dd><p>This method sets the instrument GUI properties for a particular spacecraft.  If no <code class="docutils literal notranslate"><span class="pre">spacecraftName</span></code> is
+provided, then the name of the first spacecraft in the simulation is assumed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>viz</strong> – copy of the vizInterface module</p></li>
+<li><p><strong>kwargs</strong> – list of keyword arguments that this method supports</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>void</p>
+</dd>
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spacecraftName</strong> (<em>str</em>) – The name of the spacecraft for which the actuator GUI options are set.
+Default: 0 - If not provided, then the name of the first spacecraft in the simulation is used.</p></li>
+<li><p><strong>viewCSSPanel</strong> (<em>int</em>) – flag if the GUI panel should be shown (1) or hidden (-1) illustrating the CSS states
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewCSSCoverage</strong> (<em>int</em>) – flag if the HUD spherical coverage of the CSS states should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>viewCSSBoresight</strong> (<em>int</em>) – flag if the HUD boresight axes of the CSS states should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showCSSLabels</strong> (<em>int</em>) – flag if the CSS labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showGenericSensorLabels</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showTransceiverLabels</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showTransceiverFrustrum</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showGenericStoragePanel</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+<li><p><strong>showMultiSphereLabels</strong> (<em>int</em>) – flag if the generic sensor labels should be shown (1) or hidden (-1)
+Default: 0 - if not provided, then the Vizard default settings are used</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vizSupport.setSprite">
+<span class="sig-prename descclassname"><span class="pre">vizSupport.</span></span><span class="sig-name descname"><span class="pre">setSprite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vizSupport.html#setSprite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vizSupport.setSprite" title="Link to this definition"></a></dt>
+<dd><p>Helper function to set the sprite shape and optional sprite color.
+:param shape: Sprite shape, must be either “CIRCLE”, “SQUARE”, “TRIANGLE”, “STAR”, or “bskSat”
+:param kwargs: RGBA color, can be either color name string or a 4D list of [0,255] values
+:return: string of the protobuffer sprite setting</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="unitTestSupport.html" class="btn btn-neutral float-left" title="unitTestSupport" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MonteCarlo/index.html" class="btn btn-neutral float-right" title="MonteCarlo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+.. _VizUserInputMsgPayload:
+
+VizUserInputMsgPayload
+==============================
+
+.. autodoxygenfile:: VizUserInputMsgPayload.h
+   :project: msgPayloadDefCpp
+
