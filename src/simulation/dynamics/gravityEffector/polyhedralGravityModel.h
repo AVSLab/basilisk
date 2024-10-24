@@ -20,6 +20,7 @@
 #ifndef POLY_GRAVITY_MODEL_H
 #define POLY_GRAVITY_MODEL_H
 
+#include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
 
 /** The Polyhedral gravity model.
@@ -31,7 +32,6 @@
  */
 class PolyhedralGravityModel : public GravityModel {
   public:
-
     /** Initialize all parameters necessary for the computation of gravity.
      *
      * The attribute `muBody` must be set separately.
@@ -52,21 +52,22 @@ class PolyhedralGravityModel : public GravityModel {
 
     /** Returns the gravity acceleration at a position around this body.
      *
-     * The position is given in the body-fixed reference frame.
-     * Likewise, the resulting acceleration should be given in the
-     * body-fixed reference frame.
+     * The position is given in the gravity body-centred rotating reference frame.
+     * Likewise, the resulting acceleration is obtained in the
+     * gravity body-centred rotating reference frame
      */
-    Eigen::Vector3d computeField(const Eigen::Vector3d& position_planetFixed) const override;
+    Eigen::Vector3d computeField(const Eigen::Vector3d& pos_BP_P) const override;
 
     /** Returns the gravitational potential energy at a position around this body.
      *
-     * The current implementation returns the potential energy of a point-mass
-     * (the polyhedral shape of the body is ignored)
-     *
-     * The position is given relative to the body and in the inertial
-     * reference frame.
+     * The position is given in the body-centred rotating reference frame.
      */
-    double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
+    double computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) const override;
+
+  private:
+    void initializeFacets();
+    void initializeEdges();
+    bool addEdge(Eigen::Vector2i edge, int idx_edge, int idx_facet);
 
   public:
     double muBody = 0;  /**< [m^3/s^2] Gravitation parameter for the planet */
@@ -91,7 +92,46 @@ class PolyhedralGravityModel : public GravityModel {
 
   private:
     double volPoly = 0;  /**< [m^3] Volume of the polyhedral */
-    Eigen::MatrixX3d normalFacet;  /**< [-] Normal of a facet */
+
+    /**
+     * This matrix contains the outward normal of each facet [-].
+     */
+    Eigen::MatrixX3d normalFacet;
+
+    /**
+     * This matrix contains the center of each facet [m].
+     */
+    Eigen::MatrixX3d xyzFacet;
+
+    /**
+     * This matrix contains the vertex initial and final indexes
+     * for each edge [-].
+     */
+    Eigen::MatrixXi edgeVertex;
+
+    /**
+     * This matrix contains the shared facet indexes for each
+     * edge [-]
+     */
+    Eigen::MatrixXi edgeFacet;
+
+    /**
+     * This vector contains the length of each edge [m]
+     */
+    Eigen::VectorXd edgeLength;
+
+    /**
+     * The entries of this vector correspond to the
+     * facet normal dyad product nf nf' [-]
+     */
+    std::vector<Eigen::Matrix3d> FfDyad;
+
+    /**
+     * The entries of this vector correspond to the
+     * edge dyad product as nFA n12' + nFB n21'
+     * (Figure 7 Werner&Scheeres 1996) [-]
+     */
+    std::vector<Eigen::Matrix3d> EeDyad;
 };
 
 #endif /* POLY_GRAVITY_MODEL_H */
