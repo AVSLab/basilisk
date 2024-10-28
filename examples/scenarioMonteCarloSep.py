@@ -61,7 +61,7 @@ from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 from bokeh.io import output_file, show
 from bokeh.layouts import column
 
-NUMBER_OF_RUNS = 10
+NUMBER_OF_RUNS = 500
 VERBOSE = True
 
 
@@ -161,7 +161,7 @@ def run(saveFigures, case, show_plots):
     CoM = [0.113244, 0.025605, 1.239834]
     for idx in range(4):
         monteCarlo.addDispersion(NormalVectorSingleAngleDispersion(dispRWAxis[idx], phiStd=2.0 / 3 * np.pi / 180))
-        monteCarlo.addDispersion(UniformDispersion(dispRWOmega[idx], ([-10.0, 10.0])))
+        monteCarlo.addDispersion(UniformDispersion(dispRWOmega[idx], ([-100.0, 100.0])))
         monteCarlo.addDispersion(UniformDispersion(dispRWInertia[idx], ([Js - 0.05*Js, Js + 0.05*Js])))
     monteCarlo.addDispersion(UniformDispersion(dispMassSA1, ([85 * 0.95, 85 * 1.05])))
     monteCarlo.addDispersion(UniformDispersion(dispMassSA2, ([85 * 0.95, 85 * 1.05])))
@@ -509,7 +509,7 @@ def createScenarioSepMomentumManagement():
     THRConfig = messaging.THRConfigMsgPayload()
     THRConfig.rThrust_B = r_TF_F
     THRConfig.tHatThrust_B = tHat_F
-    THRConfig.maxThrust = 0.27
+    THRConfig.maxThrust = 0.54
     THRConfig.swirlTorque = 1.0e-3 * THRConfig.maxThrust
     scSim.thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
 
@@ -847,14 +847,14 @@ def plotSim(data, retentionPolicy):
     timeData = data["messages"][guidMsgName + ".sigma_BR"][:,0] * macros.NANO2HOUR / 24
 
     figureList = {}
-    plt.figure(1)
+    plt.figure(1, figsize=(5,2.75))
     pltName = 'AttitudeError'
     plt.plot(timeData, dataPrvBR, label='Run ' + str(data["index"]))
     plt.xlabel('Time [days]')
     plt.ylabel(r'Attitude PRA Error $\psi_{B/R}$')
     figureList[pltName] = plt.figure(1)
 
-    plt.figure(2)
+    plt.figure(2, figsize=(5,2.75))
     pltName = 'RWSpeed'
     for idx in range(len(rwOutName)):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
@@ -864,7 +864,7 @@ def plotSim(data, retentionPolicy):
     plt.ylabel('RW Speed (RPM) ')
     figureList[pltName] = plt.figure(2)
 
-    plt.figure(3)
+    plt.figure(3, figsize=(5,2.75))
     pltName = 'thrPointAccuracy'
     plt.plot(timeData, dataThermSurfAccuracy/macros.D2R, label='Run ' + str(data["index"]))
     # plt.legend(loc='lower right')
@@ -872,7 +872,7 @@ def plotSim(data, retentionPolicy):
     plt.ylabel('Therm. Surf. Pointing [deg] ')
     figureList[pltName] = plt.figure(3)
 
-    plt.figure(4)
+    plt.figure(4, figsize=(5,2.75))
     pltName = 'thrPointAccuracy'
     plt.plot(timeData, dataSepPointAccuracy/macros.D2R, label='Run ' + str(data["index"]))
     # plt.legend(loc='lower right')
@@ -880,7 +880,7 @@ def plotSim(data, retentionPolicy):
     plt.ylabel('Thr Pointing Accuracy [deg] ')
     figureList[pltName] = plt.figure(4)
 
-    plt.figure(5)
+    plt.figure(5, figsize=(5,2.75))
     pltName = 'saPointAccuracy'
     plt.plot(timeData, dataSaPointAccuracy[0]/macros.D2R, label='Run ' + str(data["index"]))
     plt.plot(timeData, dataSaPointAccuracy[1]/macros.D2R, label='Run ' + str(data["index"]))
@@ -907,7 +907,7 @@ if __name__ == "__main__":
         def bk_worker(doc):
             # Run the Monte Carlo simulation and get the directory name
             dirName = run(saveFigures=True, case=1, show_plots=False)
-            
+
             # Create the Bokeh application
             plotter = MonteCarloPlotter(dirName)
             plotter.load_data([
@@ -918,7 +918,7 @@ if __name__ == "__main__":
                 # voltMsgName + ".voltage"
             ])
             downsampled_data = plotter.get_downsampled_plots()
-            
+
             # Add the plots to the document
             for variable, plots in plotter.plots.items():
                 for plot in plots:

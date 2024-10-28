@@ -134,9 +134,9 @@ class VectorVariableDispersion(object):
     def perturbCartesianVectorUniform(self, vector):
         dispValues = np.zeros(3)
         for i in range(len(vector)):
-            dispValues[i] = random.uniform(self.bounds[0], self.bounds[1])
-            mid = (self.bounds[1] + self.bounds[0])
-            scale = self.bounds[1] - mid
+            dispValues[i] = random.uniform(self.bounds[i][0], self.bounds[i][1])
+            mid = (self.bounds[i][1] + self.bounds[i][0])
+            scale = self.bounds[i][1] - mid
             self.magnitude.append(str(round((dispValues[i] - mid)/scale*100,2)) + " %")
         return dispValues
 
@@ -306,6 +306,7 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         self.magnitude = []
 
     def generate(self, sim=None):
+        breakpoint()
         vectorCart = eval('sim.' + self.varName)
         vectorCart = vectorCart/np.linalg.norm(vectorCart)
         vectorSphere = self.cart2Spherical(vectorCart)
