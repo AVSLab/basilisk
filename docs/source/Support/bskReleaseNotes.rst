@@ -40,6 +40,7 @@ Version  |release|
 - Added documenation on installing with ``pip`` via source code in :ref:`pipInstall`
 - Updated :ref:`scenarioOrbitManeuver` to include a SPICE module that rotates the Earth
 - Changed the way polyhedron gravity is computed to be more computationally efficient
+- Updated :ref:`vizInterface` to flush the output buffer when saving binary files to avoid truncation
 
 
 Version 2.5.0 (Sept. 30, 2024)
