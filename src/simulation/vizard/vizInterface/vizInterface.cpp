@@ -1219,6 +1219,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {
             return;
         }
+        this->outputStream->flush();
     }
 
     delete message;
