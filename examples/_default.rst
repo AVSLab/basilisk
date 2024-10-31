@@ -32,7 +32,6 @@ Orbital Simulations
    Defining Motion Relative to Planet <scenarioCentralBody>
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
    Including Custom Gravitational Bodies <scenarioCustomGravBody>
-   Small Body Waypoint-to-Waypoint Control <scenarioSmallBodyFeedbackControl>
    Near-Halo Orbit Simulation <scenarioHaloOrbit>
 
 
@@ -229,72 +228,10 @@ Mission Simulations
    Asteroid Arrival <scenarioAsteroidArrival>
    Aerocapture Scenario <scenarioAerocapture>
 
-bskSim()-Based Simulation
--------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-
-   Basic Orbital Simulation  <BskSim/scenarios/scenario_BasicOrbit>
-   Attitude Detumble Control  <BskSim/scenarios/scenario_FeedbackRW>
-   Hill Pointing Attitude Control  <BskSim/scenarios/scenario_AttGuidance>
-   Velocity Frame Pointing Control  <BskSim/scenarios/scenario_AttGuidHyperbolic>
-   MRP Steering Attitude Control  <BskSim/scenarios/scenario_AttSteering>
-   Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
-   Alternating FSW Attitude Pointing Modes <BskSim/scenarios/scenario_AttModes>
-   Reaction Wheel Fault Scenario Simulation <BskSim/scenarios/scenario_AddRWFault>
-   Lambert Guidance Scenario <BskSim/scenarios/scenario_LambertGuidance>
-   bskSim Scenarios Folder <BskSim/index>
-
-Optical Navigation Simulations
-------------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   BSK OpNav Sim  <OpNavScenarios/BSK_OpNav>
-   Hough Circles for Pointing and Orbit Determination  <OpNavScenarios/scenariosOpNav/scenario_OpNavAttOD>
-   Limb-based method for Pointing and Orbit Determination  <OpNavScenarios/scenariosOpNav/scenario_OpNavAttODLimb>
-   CNN for Pointing and Orbit Determination   <OpNavScenarios/scenariosOpNav/scenario_CNNAttOD>
-   Perform fault detection with two OpNav methods  <OpNavScenarios/scenariosOpNav/scenario_faultDetOpNav>
-   Orbit Determination with Hough Circles  <OpNavScenarios/scenariosOpNav/scenario_OpNavOD>
-   Orbit Determination with Limb-based method   <OpNavScenarios/scenariosOpNav/scenario_OpNavODLimb>
-   Pointing with Hough Circles  <OpNavScenarios/scenariosOpNav/scenario_OpNavPoint>
-   Pointing with Limb-based method   <OpNavScenarios/scenariosOpNav/scenario_OpNavPointLimb>
-   Filter Heading measurements  <OpNavScenarios/scenariosOpNav/scenario_OpNavHeading>
-   OpNav Scenarios Folder <OpNavScenarios/index>
-
-Small Body Navigation Simulations
----------------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-    Proximity Operations Hybrid EKF <scenarioSmallBodyNav>
-    Non-Keplerian Acceleration Estimation using UKF <scenarioSmallBodyNavUKF>
-    Landmarks-based Navigation <scenarioSmallBodyLandmarks>
-
-Monte Carlo Simulations
------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   MC run with RW control  <scenarioMonteCarloAttRW>
-   MC run using Python Spice setup  <scenarioMonteCarloSpice>
-   MC run using BSK Sim Framework  <MonteCarloExamples/scenario_AttFeedbackMC>
-   MC rerun using prior MC run parameters  <MonteCarloExamples/scenarioRerunMonteCarlo>
-   MC Plotting using datashaders and bokeh  <MonteCarloExamples/scenarioAnalyzeMonteCarlo>
-   MC example Folder <MonteCarloExamples/index>
-   Sensitivity Analysis of a differential drag spacecraft control <scenarioDragSensitivity>
 
 
 Spacecraft Formation Flying
 ---------------------------
-
-Stand Alone Architecture
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
    :maxdepth: 1
@@ -307,27 +244,150 @@ Stand Alone Architecture
    Servicer approaching a debris object with 3 flight modes <scenarioRendezVous>
    Walker-Delta Satellite Constellation <scenarioSatelliteConstellation>
 
-
-``FormationBskSim`` Architecture
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Small Body Navigation Simulations
+---------------------------------
 
 .. toctree::
    :maxdepth: 1
+
+    Proximity Operations Hybrid EKF <scenarioSmallBodyNav>
+    Non-Keplerian Acceleration Estimation using UKF <scenarioSmallBodyNavUKF>
+    Landmarks-based Navigation <scenarioSmallBodyLandmarks>
+
+
+``bskSim()`` Architecture
+-------------------------
+
+Single Satellite
+^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+   :numbered:
+
+   Basic Orbital Simulation  <BskSim/scenarios/scenario_BasicOrbit>
+   Attitude Detumble Control with RW  <BskSim/scenarios/scenario_FeedbackRW>
+   Hill Pointing Attitude Control  <BskSim/scenarios/scenario_AttGuidance>
+   Velocity Frame Pointing Control  <BskSim/scenarios/scenario_AttGuidHyperbolic>
+   MRP Steering Attitude Control  <BskSim/scenarios/scenario_AttSteering>
+   Sun Pointing Mode Include Eclipse Evaluation  <BskSim/scenarios/scenario_AttEclipse>
+   Alternating FSW Attitude Pointing Modes <BskSim/scenarios/scenario_AttModes>
+   Reaction Wheel Fault Scenario Simulation <BskSim/scenarios/scenario_AddRWFault>
+   Lambert Guidance Scenario <BskSim/scenarios/scenario_LambertGuidance>
+   Attitude Control <BskSim/scenarios/scenario_AttFeedback>
+
+Satellite Formation
+^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+   :numbered:
 
    Two-Spacecraft Formation using BskSim  <BskSim/scenarios/scenario_BasicOrbitFormation>
    Relative Pointing Control  <BskSim/scenarios/scenario_RelativePointingFormation>
 
 
-``MultiSatBskSim`` Architecture
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Support Files
+"""""""""""""
 
 .. toctree::
    :maxdepth: 1
 
+   Master File <BskSim/BSK_masters>
+   Models Folder <BskSim/models/index>
+   Plotting Functions <BskSim/plotting/index>
+
+
+
+
+``MultiSatBskSim()`` Architecture
+---------------------------------
+
+Scenarios
+^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+   :numbered:
+
    Three-Spacecraft Formation using MultiSat architecture  <MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat>
    Attitude Guidance Modes Scheduling  <MultiSatBskSim/scenariosMultiSat/scenario_AttGuidMultiSat>
    Formation Flying Control  <MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat>
-   MultiSatBskSim Folder <MultiSatBskSim/index>
+
+Support Files
+"""""""""""""
+
+.. toctree::
+   :maxdepth: 1
+
+   Master file <MultiSatBskSim/BSK_MultiSatMasters>
+   Models Folder <MultiSatBskSim/modelsMultiSat/index>
+   Plotting Functions <MultiSatBskSim/plottingMultiSat/index>
+
+
+Optical Navigation Simulations
+------------------------------
+
+Scenarios
+^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+   :numbered:
+
+   BSK OpNav Sim Master File  <OpNavScenarios/BSK_OpNav>
+   Hough Circles for Pointing and Orbit Determination  <OpNavScenarios/scenariosOpNav/scenario_OpNavAttOD>
+   Limb-based method for Pointing and Orbit Determination  <OpNavScenarios/scenariosOpNav/scenario_OpNavAttODLimb>
+   CNN for Pointing and Orbit Determination   <OpNavScenarios/scenariosOpNav/scenario_CNNAttOD>
+   Perform fault detection with two OpNav methods  <OpNavScenarios/scenariosOpNav/scenario_faultDetOpNav>
+   Orbit Determination with Hough Circles  <OpNavScenarios/scenariosOpNav/scenario_OpNavOD>
+   Orbit Determination with Limb-based method   <OpNavScenarios/scenariosOpNav/scenario_OpNavODLimb>
+   Pointing with Hough Circles  <OpNavScenarios/scenariosOpNav/scenario_OpNavPoint>
+   Pointing with Limb-based method   <OpNavScenarios/scenariosOpNav/scenario_OpNavPointLimb>
+   Filter Heading measurements  <OpNavScenarios/scenariosOpNav/scenario_OpNavHeading>
+
+Support Files
+"""""""""""""
+
+.. toctree::
+   :maxdepth: 1
+
+   Models Folder <OpNavScenarios/modelsOpNav/index>
+   Plotting Functions <OpNavScenarios/plottingOpNav/index>
+
+CNN Image Generation
+^^^^^^^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   Monte-Carlo Script to Create Image Set  <OpNavScenarios/scenariosOpNav/CNN_ImageGen/OpNavMonteCarlo>
+   Scenario called by MC Image Generation Script  <OpNavScenarios/scenariosOpNav/CNN_ImageGen/scenario_CNNImages>
+
+CNN Image Generation
+^^^^^^^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   Monte-Carlo Simulations using a OpNav Scenario  <OpNavScenarios/scenariosOpNav/OpNavMC/MonteCarlo>
+   Optical Limb Tracking Scenario  <OpNavScenarios/scenariosOpNav/OpNavMC/scenario_LimbAttOD>
+   Optical Navitation Scenario  <OpNavScenarios/scenariosOpNav/OpNavMC/scenario_OpNavAttODMC>
+
+
+Monte Carlo Simulations
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   MC run with RW control  <scenarioMonteCarloAttRW>
+   MC run using Python Spice setup  <scenarioMonteCarloSpice>
+   MC run using BSK Sim Framework  <MonteCarloExamples/scenario_AttFeedbackMC>
+   MC rerun using prior MC run parameters  <MonteCarloExamples/scenarioRerunMonteCarlo>
+   MC Plotting using datashaders and bokeh  <MonteCarloExamples/scenarioAnalyzeMonteCarlo>
+   Sensitivity Analysis of a differential drag spacecraft control <scenarioDragSensitivity>
+
+
+
 
 
 Advanced Simulation Options
@@ -362,4 +422,4 @@ Interfacing with Vizard
 
    Live Streaming to Vizard  <scenarioBasicOrbitStream>
    Pointing a Vizard Camera  <scenarioVizPoint>
-   Convert Simulation Data file to Vizard File <scenarioDataToViz>
+   Convert Simulation Data File to Vizard File <scenarioDataToViz>
