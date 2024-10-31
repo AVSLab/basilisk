@@ -28,7 +28,7 @@ The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and exe
       python3 scenario_AttGuidHyperbolic.py
 
 
-The simulation mimics the basic simulation simulation in the earlier tutorial in
+The simulation mimics the basic simulation in the earlier tutorial in
 :ref:`scenarioAttGuideHyperbolic`.
 
 The simulation layout is shown in the following illustration.
