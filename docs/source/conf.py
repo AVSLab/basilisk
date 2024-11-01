@@ -76,7 +76,17 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = [
+    'examples/BskSim/scenarios/index.rst',
+    'examples/BskSim/index.rst',
+    'examples/MultiSatBskSim/scenariosMultiSat/index.rst',
+    'examples/MultiSatBskSim/index.rst',
+    'examples/OpNavScenarios/scenariosOpNav/index.rst',
+    'examples/OpNavScenarios/scenariosOpNav/CNN_ImageGen/index.rst',
+    'examples/OpNavScenarios/scenariosOpNav/OpNavMC/index.rst',
+    'examples/OpNavScenarios/index.rst',
+    'examples/MonteCarloExamples/index.rst'
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
