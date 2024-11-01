@@ -73,6 +73,7 @@ def test_ck_read_write(show_plots):
 
         sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
         omegaRead[idx, :] = kernOmega
+    pyswice_ck_utilities.ckClose("test.bc")
 
     # Compare the read and write data
     np.testing.assert_allclose(sigmaRead, sigmaWrite)
