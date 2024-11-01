@@ -303,12 +303,21 @@ public:
     void IntegratedInit(){};
     //! -- Read and record the message
     void UpdateState(uint64_t CurrentSimNanos){
-        if (CurrentSimNanos >= this->nextUpdateTime) {
+	    bool msgGood = this->readMessage.isLinked() && this->readMessage.isWritten();
+        if (CurrentSimNanos >= this->nextUpdateTime && msgGood) {
             this->msgRecordTimes.push_back(CurrentSimNanos);
             this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
             this->msgRecord.push_back(this->readMessage());
             this->nextUpdateTime += this->timeInterval;
         }
+	else
+	{
+	    this->msgRecordTimes.push_back(CurrentSimNanos);
+            this->msgWrittenTimes.push_back(0);
+	    messageType blnkMsg {};
+	    this->msgRecord.push_back(blnkMsg);
+	    this->nextUpdateTime += this->timeInterval;
+	}
     };
     //! Reset method
     void Reset(uint64_t CurrentSimNanos){
