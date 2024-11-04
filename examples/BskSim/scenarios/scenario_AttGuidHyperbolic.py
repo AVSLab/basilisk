@@ -28,7 +28,7 @@ The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and exe
       python3 scenario_AttGuidHyperbolic.py
 
 
-The simulation mimics the basic simulation simulation in the earlier tutorial in
+The simulation mimics the basic simulation in the earlier tutorial in
 :ref:`scenarioAttGuideHyperbolic`.
 
 The simulation layout is shown in the following illustration.
@@ -50,8 +50,7 @@ Unlike hill pointing, this module provides a pointing model relative to the velo
 
 The advantage of the BSK_Sim architecture becomes apparent here. All modules and setup required for the MRP Feedback task
 were already defined from an earlier scenario. The user simply adds the preconfigured task to the event without
-having to manually reconfigure the messages. Now there is an additional FSW mode available for all current and
-future :ref:`Folder_BskSim` files.
+having to manually reconfigure the messages. Now there is an additional FSW mode available for all ``bskSim()`` files.
 
 Illustration of Simulation Results
 ----------------------------------

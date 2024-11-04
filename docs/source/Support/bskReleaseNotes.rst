@@ -41,7 +41,9 @@ Version  |release|
 - Updated :ref:`scenarioOrbitManeuver` to include a SPICE module that rotates the Earth
 - Changed the way polyhedron gravity is computed to be more computationally efficient
 - Updated :ref:`vizInterface` to flush the output buffer when saving binary files to avoid truncation
-
+- Updated :ref:`examples` to better include folders of scenario tutorial scripts
+- Updated documentation build to use latest version of ``sphinx`` and ``sphinx_rtd_theme``.
+  Updated the install documenation and optional package requirements.
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------

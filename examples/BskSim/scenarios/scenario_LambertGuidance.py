@@ -57,9 +57,9 @@ Custom FSW Configurations Instructions
 
 The five Lambert modules were added to the :ref:`BSK_FSW` framework.
 
-The first maneuver event is triggered when a user calls `self.masterSim.modeRequest = 'lambertFirstDV'` in any
-current or future :ref:`Folder_BskSim` file, and the second maneuver using
-`self.masterSim.modeRequest = 'lambertSecondDV'`
+The first maneuver event is triggered when a user calls `self.modeRequest = 'lambertFirstDV'` in any
+``bskSim()`` simulation, and the second maneuver using
+`self.modeRequest = 'lambertSecondDV'`
 
 Illustration of Simulation Results
 ----------------------------------

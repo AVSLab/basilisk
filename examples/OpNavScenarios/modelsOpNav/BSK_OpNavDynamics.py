@@ -19,7 +19,7 @@ r"""
 Overview
 --------
 
-``OpNavScenarios/models/BSK_OpNavDynamics.py`` is similar to the :ref:`Folder_BskSim` versions seen previously.
+``OpNavScenarios/models/BSK_OpNavDynamics.py`` is similar to the ``bskSim()`` versions seen previously.
 The main additions are
 the instantiation of :ref:`vizInterface`, and the camera module.
 

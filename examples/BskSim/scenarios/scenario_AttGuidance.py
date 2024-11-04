@@ -29,7 +29,7 @@ The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and exe
 
       python3 scenario_AttGuidance.py
 
-The simulation mimics the basic simulation simulation in the earlier tutorial in
+The simulation mimics the basic simulation in the earlier tutorial in
 :ref:`scenarioAttitudeGuidance`.
 
 
@@ -55,13 +55,13 @@ within the :ref:`BSK_FSW` framework
 (``mrpFeedbackRWConfig()``, ``attTrackingErrorConfig()``, ``rwMotorTorqueConfig()``). The only remaining
 module is the hill pointing module itself which is set within ``__init__()``.
 
-These modules provide the initial setup for an attitude guidance system that makes use of an hill
+These modules provide the initial setup for an attitude guidance system that makes use of a hill
 pointing model, a module
 that tracks the error of the spacecraft's MRP parameters against the vector pointing towards the central, planetary
 body, and uses a module that takes that information to provide a torque to correct for the error.
 
-This event is triggered when a user calls `self.masterSim.modeRequest = 'hillPoint'` in any
-current or future :ref:`Folder_BskSim` file.
+This event is triggered when a user calls `self.modeRequest = 'hillPoint'` in any
+of file.
 
 Illustration of Simulation Results
 ----------------------------------
