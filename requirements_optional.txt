@@ -7,3 +7,4 @@ pre-commit
 clang-format
 bokeh
 dask-expr
+protobuf==5.27.0
