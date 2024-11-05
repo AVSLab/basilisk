@@ -109,9 +109,6 @@ class RetentionPolicy:
 
                 # record the message variables
                 for varName in msgParam.retainedVars:
-                    # To ensure the current datashaders utilities continue to work, the
-                    # retained data is combined with the time information as it was in
-                    # BSK1.x releases.
                     msgData = getattr(simInstance.msgRecList[msgParam.msgRecName], varName)
                     msgData = unitTestSupport.addTimeColumn(msgTimes, msgData)
                     data["messages"][msgParam.msgRecName + "." + varName] = msgData
