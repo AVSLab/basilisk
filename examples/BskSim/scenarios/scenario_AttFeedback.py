@@ -47,7 +47,7 @@ import BSK_Plotting as BSK_plt
 class scenario_AttFeedback(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_AttFeedback, self).__init__()
-        self.name = 'scenario_AttFeedbackMC'
+        self.name = 'scenarioBskSimAttFeedbackMC'
 
         # declare additional class variables
         self.msgRecList = {}
