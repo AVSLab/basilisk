@@ -52,6 +52,8 @@ Version  |release|
 - Removed the now deprecated ``datashader_utilities.py`` in favor of the new bokeh plotting features in ``AnalysisBaseClass.py``
 - Upgraded protoc compiler to v3.20.0, added ``protobuf`` to optional package install list
 - Created unit tests for protobuffer packing and saving in :ref:`vizInterface`
+- Added YouTube video links of Vizard illustrating the :ref:`scenarioFlexiblePanel` and
+  :ref:`scenarioRoboticArm` scenarios.
 
 
 Version 2.5.0 (Sept. 30, 2024)
