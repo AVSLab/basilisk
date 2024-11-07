@@ -44,6 +44,13 @@ Version  |release|
 - Updated :ref:`examples` to better include folders of scenario tutorial scripts
 - Updated documentation build to use latest version of ``sphinx`` and ``sphinx_rtd_theme``.
   Updated the install documenation and optional package requirements.
+- Updated ``MonteCarloExamples`` directory with a bokeh plotting feature robust to large Monte Carlo datasets
+- Updated :ref:`scenarioVisualizeMonteCarlo` to autogenerate live bokeh plots in Sphinx documentation
+- Updated :ref:`scenarioMonteCarloAttRW` to include the new ``useBokeh`` feature in the ``run()`` method
+- Updated :ref:`scenarioMonteCarloAttRW` to use more pythonic OOP for Monte Carlo data retention
+- Updated :ref:`scenarioMonteCarloSpice` to use more pythonic OOP for Monte Carlo data retention
+- Removed the now deprecated ``datashader_utilities.py`` in favor of the new bokeh plotting features in ``AnalysisBaseClass.py``
+
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
@@ -734,7 +741,7 @@ Version 2.1.0 (Nov. 13, 2021)
 - Fixed a rare issue where RW data didn't stick
 - Fixed an issue subscribing to a C++ wrapped message object from python
 - Cleaned up documentation on using datashaders and bokeh to interactively plot large simulation data sets.
-  The script :ref:`scenarioAnalyzeMonteCarlo` is updated to discuss the particular challenges in running this
+  The script ``scenarioAnalyzeMonteCarlo`` is updated to discuss the particular challenges in running this
   datashader example of plotting data.
 - enable Monte Carlo ``pytest`` test scripts to run on macOS if Python 3.9 or higher is used
 - enable opNav scenario ``pytest`` test scripts to be tested by ``pytest`` if the build flag ``--opNav``

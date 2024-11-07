@@ -101,10 +101,10 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
 
         self.dynProcess.addTask(self.CreateNewTask(simTaskName, macros.sec2nano(10.)))
 
-        scObject = spacecraft.Spacecraft()
-        self.AddModelToTask(simTaskName, scObject, 1)
-        scObject.hub.r_CN_NInit = [7000000.0, 0.0, 0.0]     # m   - r_CN_N
-        scObject.hub.v_CN_NInit = [0.0, 7500.0, 0.0]        # m/s - v_CN_N
+        self.scObject = spacecraft.Spacecraft()
+        self.AddModelToTask(simTaskName, self.scObject, 1)
+        self.scObject.hub.r_CN_NInit = [7000000.0, 0.0, 0.0]     # m   - r_CN_N
+        self.scObject.hub.v_CN_NInit = [0.0, 7500.0, 0.0]        # m/s - v_CN_N
 
 
         # operate on pyswice
@@ -117,10 +117,6 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         pyswice.furnsh_c(dataPath + 'hst_edited.bsp')
 
         self.accessSpiceKernel()
-
-        # This is a hack because of a bug in Basilisk... leave this line it keeps
-        # variables from going out of scope after this function returns
-        self.additionalReferences = [scObject]
 
     def accessSpiceKernel(self):
         startCalendarTime = '2012 APR 29 15:18:14.907 (UTC)'

@@ -22,12 +22,11 @@ Overview
 
 Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 This script duplicates the scenario in :ref:`scenarioAttitudeFeedbackRW` where a
-6-DOF spacecraft  is orbiting the Earth.  Here some simulation parameters are dispersed randomly
-using a multi threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
-to the rigid spacecraft() hub, and what flight
-algorithm module is used to control these RWs. The scenario is run in a single configuration:
-by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
-to the variables in between each MC run.
+6-DOF spacecraft is orbiting the Earth. Here some simulation parameters are dispersed randomly
+using a multi-threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
+to the rigid spacecraft() hub, and what flight algorithm module is used to control these RWs.
+The scenario is run in a single configuration: by not using the Jitter model and by using the RW Voltage IO.
+Given this scenario we can add dispersions to the variables in between each MC run.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
@@ -36,12 +35,36 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 For more information on the Attitude Feedback Simulation with RW, please see the documentation
 on the :ref:`scenarioAttitudeFeedbackRW` file.
 
+Bokeh Visualization and Data Management
+---------------------------------------
+
+This script includes options for interactive visualization using Bokeh and data management:
+
+1. To use the Bokeh server for interactive visualization, run the script with::
+
+        python scenarioMonteCarloAttRW.py --bokeh-server
+
+   IMPORTANT: When using Bokeh visualization, delete_data MUST be set to False in the run() function call.
+   The --delete-data flag must not be used, as Bokeh requires the data files to remain available for
+   interactive plotting. The run() function should be called with::
+
+      dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=False, useBokeh=True)
+
+2. For matplotlib visualization, you can automatically delete Monte Carlo data after generating plots
+   by adding the --delete-data flag::
+
+      python scenarioMonteCarloAttRW.py --delete-data
+
+The --delete-data option will remove the Monte Carlo data directory after the plots are generated,
+helping to manage disk space when running multiple simulations. However, this option is incompatible
+with Bokeh visualization since Bokeh requires the data files to remain available for interactive plotting.
+When using Bokeh, delete_data must be explicitly set to False to ensure the data remains available for
+the interactive visualization.
+
 Enable Terminal Bar to Show Simulation Progress
 -----------------------------------------------
 
-To enable progress bar, one need to set ``showProgressBar`` data member of class SimulationParameters to true.
-
-.. code-block:: python
+To enable progress bar, one need to set ``showProgressBar`` data member of class SimulationParameters to true::
 
      monteCarlo = Controller()
      monteCarlo.setShowProgressBar(True)
@@ -104,18 +127,12 @@ It returns the failed jobs, which should not occur.  When the MC have been execu
 the data can be accessed and tested in different ways.
 This is explained in the example python code comments.
 
-.. note::
-
-    In these Monte Carlo simulations the retained data is stored as the data array with the time
-    information added as the first column.  This is the same retained data format as used
-    with BSK 1.x.
-
 Illustration of Simulation Results
 ----------------------------------
 
 ::
 
-    saveFigures = False, case = 1, show_plots = True, useDatashader = False
+    saveFigures = False, case = 1, show_plots = True, useBokeh = False
 
 .. image:: /_images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.svg
    :align: center
@@ -132,6 +149,26 @@ Illustration of Simulation Results
 .. image:: /_images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg
    :align: center
 
+Object Management in Monte Carlo Simulations
+--------------------------------------------
+
+When creating Monte Carlo simulations, all simulation objects must be added as attributes to the
+simulation container (scSim). For example::
+
+    scSim.scObject = spacecraft.Spacecraft()
+    scSim.RW1 = RW1
+    scSim.rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
+
+This pattern is required for the Monte Carlo framework to:
+
+1. Access and modify object parameters between runs (for dispersions)
+2. Properly retain data through the RetentionPolicy mechanism
+3. Ensure objects persist between simulation runs
+4. Allow the Controller class to track and manage simulation state
+
+Without adding objects to scSim, the Monte Carlo framework wouldn't be able to properly manage
+the simulation across multiple runs and thus unexpected behavior will occur.
+
 """
 
 #
@@ -146,7 +183,7 @@ import inspect
 import math
 import os
 import shutil
-
+import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -160,7 +197,7 @@ bskPath = __path__[0]
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
@@ -187,6 +224,20 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
+# Add this import and check at the beginning of the file
+import importlib
+
+# Try to import Bokeh, set availability flag
+try:
+    import bokeh
+    bokeh_available = True
+    from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
+except ImportError:
+    bokeh_available = False
+
+# Add logger setup
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
@@ -207,7 +258,7 @@ simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime // (numDataPoints-1)
 
 
-def run(saveFigures, case, show_plots):
+def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -215,7 +266,13 @@ def run(saveFigures, case, show_plots):
         saveFigures (bool): flag if the scenario figures should be saved for html documentation
         case (int): Case 1 is normal MC, case 2 is initial condition run
         show_plots (bool): Determines if the script should display plots
+        delete_data (bool): Flag to delete Monte Carlo data after running
+        useBokeh (bool): Flag to use Bokeh for plotting instead of matplotlib
     """
+
+    if useBokeh and not bokeh_available:
+        print("Bokeh is not available. Falling back to matplotlib.")
+        useBokeh = False
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
@@ -294,10 +351,13 @@ def run(saveFigures, case, show_plots):
     for msgName in rwOutName:
         retentionPolicy.addMessageLog(msgName, ["u_current"])
     if show_plots:
-        # plot data only if show_plots is true, otherwise just retain
-        retentionPolicy.setDataCallback(plotSim)
+        if useBokeh:
+            # Don't set a callback for Bokeh, we'll handle it separately
+            pass
+        else:
+            # Use matplotlib for plotting
+            retentionPolicy.setDataCallback(plotSim)
     if saveFigures:
-        # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSimAndSave)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -346,12 +406,24 @@ def run(saveFigures, case, show_plots):
             # assert two different runs had different parameters.
             assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-        # Now we execute our callback for the retained data.
-        # For this run, that means executing the plot.
-        # We can plot only runs 4,6,7 overlapped
-        # monteCarloLoaded.executeCallbacks([4,6,7])
-        # or execute the plot on all runs
-        monteCarloLoaded.executeCallbacks()
+        if useBokeh and bokeh_available:
+            # Create the Bokeh application
+            plotter = MonteCarloPlotter(dirName)
+            plotter.load_data([
+                guidMsgName + ".sigma_BR",
+                guidMsgName + ".omega_BR_B",
+                rwSpeedMsgName + ".wheelSpeeds",
+                voltMsgName + ".voltage",
+                rwOutName[0] + ".u_current",
+                rwOutName[1] + ".u_current",
+                rwOutName[2] + ".u_current"
+            ])
+            plotter.show_plots()
+        elif show_plots:
+            # Use matplotlib for plotting
+            monteCarloLoaded.executeCallbacks()
+            plt.show()
+            plt.close("all")
 
     #########################################################
     if case == 2:
@@ -367,9 +439,12 @@ def run(saveFigures, case, show_plots):
         failed = monteCarlo.runInitialConditions(runsList)
         assert len(failed) == 0, "Should run ICs successfully"
 
-        # monteCarlo.executeCallbacks([4,6,7])
+        # Load the Monte Carlo data
+        monteCarloLoaded = Controller.load(icName)
+
+        # Execute callbacks for the loaded data
         runsList = list(range(numberICs))
-        monteCarlo.executeCallbacks(runsList)
+        monteCarloLoaded.executeCallbacks(runsList)
 
         # And possibly show the plots
         if show_plots:
@@ -383,16 +458,11 @@ def run(saveFigures, case, show_plots):
             os.remove(icName + '/' + 'run' + str(i) + '.data')
         assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
 
-    # Now we clean up data from this test
-    shutil.rmtree(dirName)
-    assert not os.path.exists(dirName), "No leftover data should exist after the test"
+    # Delete Monte Carlo data if configured to do so. (default is True)
+    if delete_data:
+        shutil.rmtree(dirName)
 
-    # And possibly show the plots
-    if show_plots:
-        print("Test concluded, showing plots now via matplot...")
-        plt.show()
-        # close the plots being saved off to avoid over-writing old and new figures
-        plt.close("all")
+    return dirName
 
 # This function creates the simulation to be executed in parallel.
 def createScenarioAttitudeFeedbackRW():
@@ -403,6 +473,11 @@ def createScenarioAttitudeFeedbackRW():
 
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
+
+    # All simulation objects are added as attributes to scSim (e.g., scSim.scObject, scSim.RW1, etc.)
+    # This is required for the Monte Carlo framework to:
+    # 1. Access and modify object parameters between runs (for dispersions)
+    # 2. Properly retain data through the RetentionPolicy mechanism
 
     #
     #  create the simulation process
@@ -418,41 +493,39 @@ def createScenarioAttitudeFeedbackRW():
     #
 
     # initialize spacecraft object and set properties
-    scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
+    scSim.scObject = spacecraft.Spacecraft()
+    scSim.scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
-    scSim.hubref = scObject.hub
+    scSim.scObject.hub.mHub = 750.0  # kg - spacecraft mass
+    scSim.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scSim.scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scSim.hubref = scSim.scObject.hub
 
     # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, 1)
+    scSim.AddModelToTask(simTaskName, scSim.scObject, 1)
 
-    rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
-    rwVoltageIO.ModelTag = "rwVoltageInterface"
+    scSim.rwVoltageIO = motorVoltageInterface.MotorVoltageInterface()
+    scSim.rwVoltageIO.ModelTag = "rwVoltageInterface"
 
     # set module parameters(s)
-    rwVoltageIO.setGains(np.array([0.2/10.]*3))  # [Nm/V] conversion gain
+    scSim.rwVoltageIO.setGains(np.array([0.2/10.]*3))  # [Nm/V] conversion gain
 
-    # Add RW Voltage to sim for dispersion
-    scSim.rwVoltageIO = rwVoltageIO
     # Add test module to runtime call list
-    scSim.AddModelToTask(simTaskName, rwVoltageIO)
+    scSim.AddModelToTask(simTaskName, scSim.rwVoltageIO)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # setup Earth Gravity Body
-    earth = gravFactory.createEarth()
-    earth.isCentralBody = True  # ensure this is the central gravitational body
-    mu = earth.mu
+    scSim.earth = gravFactory.createEarth()
+    scSim.earth.isCentralBody = True  # ensure this is the central gravitational body
+    mu = scSim.earth.mu
 
     # attach gravity model to spacecraft
-    gravFactory.addBodiesTo(scObject)
+    gravFactory.addBodiesTo(scSim.scObject)
     #
     # add RW devices
     #
@@ -485,8 +558,8 @@ def createScenarioAttitudeFeedbackRW():
     numRW = rwFactory.getNumOfDevices()
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwVoltageIO.motorTorqueOutMsg)
+    rwFactory.addToSpacecraft(scSim.scObject.ModelTag, rwStateEffector, scSim.scObject)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(scSim.rwVoltageIO.motorTorqueOutMsg)
 
     # Add RWs to sim for dispersion
     scSim.RW1 = RW1
@@ -500,7 +573,7 @@ def createScenarioAttitudeFeedbackRW():
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
-    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    sNavObject.scStateInMsg.subscribeTo(scSim.scObject.scStateOutMsg)
 
     #
     #   setup the FSW algorithm tasks
@@ -519,59 +592,59 @@ def createScenarioAttitudeFeedbackRW():
     fswRwConfMsg = fswSetupRW.writeConfigMessage()
 
     # setup inertial3D guidance module
-    inertial3DObj = inertial3D.inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    scSim.inertial3DObj = inertial3D.inertial3D()
+    scSim.inertial3DObj.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, scSim.inertial3DObj)
+    scSim.inertial3DObj.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
-    attError = attTrackingError.attTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attError)
-    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
-    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
+    scSim.attError = attTrackingError.attTrackingError()
+    scSim.attError.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, scSim.attError)
+    scSim.attError.attRefInMsg.subscribeTo(scSim.inertial3DObj.attRefOutMsg)
+    scSim.attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # setup the MRP Feedback control module
-    mrpControl = mrpFeedback.mrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControl)
-    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
-    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
-    mrpControl.rwParamsInMsg.subscribeTo(fswRwConfMsg)
-    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    mrpControl.K  =   3.5
-    mrpControl.Ki =   -1          # make value negative to turn off integral feedback
-    mrpControl.P  = 30.0
-    mrpControl.integralLimit = 2./mrpControl.Ki * 0.1
+    scSim.mrpControl = mrpFeedback.mrpFeedback()
+    scSim.mrpControl.ModelTag = "mrpFeedback"
+    scSim.AddModelToTask(simTaskName, scSim.mrpControl)
+    scSim.mrpControl.guidInMsg.subscribeTo(scSim.attError.attGuidOutMsg)
+    scSim.mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
+    scSim.mrpControl.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    scSim.mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    scSim.mrpControl.K  =   3.5
+    scSim.mrpControl.Ki =   -1          # make value negative to turn off integral feedback
+    scSim.mrpControl.P  = 30.0
+    scSim.mrpControl.integralLimit = 2./scSim.mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
-    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
+    scSim.rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
+    scSim.rwMotorTorqueObj.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, scSim.rwMotorTorqueObj)
     # Initialize the test module msg names
-    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
-    rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    scSim.rwMotorTorqueObj.vehControlInMsg.subscribeTo(scSim.mrpControl.cmdTorqueOutMsg)
+    scSim.rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfMsg)
     # Make the RW control all three body axes
     controlAxes_B = [
              1,0,0
             ,0,1,0
             ,0,0,1
         ]
-    rwMotorTorqueObj.controlAxes_B = controlAxes_B
+    scSim.rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
-    fswRWVoltage = rwMotorVoltage.rwMotorVoltage()
-    fswRWVoltage.ModelTag = "rwMotorVoltage"
+    scSim.fswRWVoltage = rwMotorVoltage.rwMotorVoltage()
+    scSim.fswRWVoltage.ModelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
-    scSim.AddModelToTask(simTaskName, fswRWVoltage)
+    scSim.AddModelToTask(simTaskName, scSim.fswRWVoltage)
 
     # Initialize the test module configuration data
-    fswRWVoltage.torqueInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
-    fswRWVoltage.rwParamsInMsg.subscribeTo(fswRwConfMsg)
-    rwVoltageIO.motorVoltageInMsg.subscribeTo(fswRWVoltage.voltageOutMsg)
+    scSim.fswRWVoltage.torqueInMsg.subscribeTo(scSim.rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    scSim.fswRWVoltage.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    scSim.rwVoltageIO.motorVoltageInMsg.subscribeTo(scSim.fswRWVoltage.voltageOutMsg)
     # set module parameters
-    fswRWVoltage.VMin = 0.0  # Volts
-    fswRWVoltage.VMax = 10.0  # Volts
+    scSim.fswRWVoltage.VMin = 0.0  # Volts
+    scSim.fswRWVoltage.VMax = 10.0  # Volts
 
     #
     #   set initial Spacecraft States
@@ -585,19 +658,19 @@ def createScenarioAttitudeFeedbackRW():
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_CN_B
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_CN_B
+    scSim.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
+    scSim.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
+    scSim.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_CN_B
+    scSim.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_CN_B
 
     # store the msg recorder modules in a dictionary list so the retention policy class can pull the data
     # when the simulation ends
     scSim.msgRecList = {}
 
-    scSim.msgRecList[rwMotorTorqueMsgName] = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    scSim.msgRecList[rwMotorTorqueMsgName] = scSim.rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwMotorTorqueMsgName])
 
-    scSim.msgRecList[guidMsgName] = attError.attGuidOutMsg.recorder(samplingTime)
+    scSim.msgRecList[guidMsgName] = scSim.attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[guidMsgName])
 
     scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
@@ -606,7 +679,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwSpeedMsgName])
 
-    scSim.msgRecList[voltMsgName] = fswRWVoltage.voltageOutMsg.recorder(samplingTime)
+    scSim.msgRecList[voltMsgName] = scSim.fswRWVoltage.voltageOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[voltMsgName])
 
     c = 0
@@ -614,10 +687,6 @@ def createScenarioAttitudeFeedbackRW():
         scSim.msgRecList[msgName] = rwStateEffector.rwOutMsgs[c].recorder(samplingTime)
         scSim.AddModelToTask(simTaskName, scSim.msgRecList[msgName])
         c += 1
-
-    # This is a hack because of a bug in Basilisk... leave this line it keeps
-    # variables from going out of scope after this function returns
-    scSim.additionalReferences = [rwVoltageIO, fswRWVoltage, scObject, earth, rwMotorTorqueObj, mrpControl, attError, inertial3DObj]
 
     return scSim
 
@@ -719,12 +788,87 @@ def plotSimAndSave(data, retentionPolicy):
 
     return
 
-#
-# This statement below ensures that the unit test script can be run as a
-# # stand-along python script
-#
+
+# Modify the __main__ section
 if __name__ == "__main__":
-    run(  saveFigures=False        # save figures to file
-        , case=2            # Case 1 is normal MC, case 2 is initial condition run
-        , show_plots=True         # show_plots.
-       )
+    import sys
+    delete_data = True
+    useBokeh = False
+
+    # Parse command line arguments
+    for arg in sys.argv[1:]:
+        if arg == "--delete-data":
+            delete_data = True
+        elif arg == "--bokeh-server":
+            useBokeh = True
+
+    if useBokeh and not bokeh_available:
+        print("Bokeh is not available. Falling back to matplotlib.")
+        useBokeh = False
+
+    if useBokeh and bokeh_available:
+        # ... (existing Bokeh server code)
+        from bokeh.server.server import Server
+        from bokeh.application import Application
+        from bokeh.application.handlers.function import FunctionHandler
+        from bokeh.models import Button
+        from bokeh.layouts import row, Spacer
+        from tornado.ioloop import IOLoop
+
+        def bk_worker(doc):
+            def update():
+                dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=False, useBokeh=True)
+                plotter = MonteCarloPlotter(dirName)
+                plotter.load_data([
+                    rwOutName[0] + ".u_current",
+                    rwOutName[1] + ".u_current",
+                    rwOutName[2] + ".u_current",
+                    guidMsgName + ".sigma_BR",
+                    guidMsgName + ".omega_BR_B",
+                    rwSpeedMsgName + ".wheelSpeeds",
+                    voltMsgName + ".voltage"
+                ])
+                layout = plotter.show_plots()
+
+                # Add close button functionality
+                def close_callback():
+                    try:
+                        # Add JavaScript to close the browser tab
+                        script = """
+                        setTimeout(function() {
+                            window.close();
+                            if(!window.closed) {
+                                window.location.href = "about:blank";
+                            }
+                        }, 100);
+                        """
+                        doc.add_next_tick_callback(lambda: doc.js_on_event(None, script))
+
+                        # Stop the Bokeh server
+                        doc.remove_root(layout)
+                        IOLoop.current().add_callback(IOLoop.current().stop)
+
+                        # Exit the Python process
+                        sys.exit()
+                    except Exception as e:
+                        logger.error(f"Error during shutdown: {str(e)}")
+                        sys.exit(1)
+
+                close_button = Button(label="Close Application", button_type="danger", width=150)
+                close_button.on_click(close_callback)
+                layout.children.insert(-1, row(Spacer(width=20), close_button, Spacer(width=20),
+                                            sizing_mode="fixed", align="center"))
+
+                doc.add_root(layout)
+                doc.title = "BSK Monte Carlo Visualization"
+
+            doc.add_next_tick_callback(update)
+
+        print("Starting Bokeh server")
+        server = Server({'/': Application(FunctionHandler(bk_worker))})
+        server.start()
+        print('Opening Bokeh application on http://localhost:5006/')
+        server.io_loop.add_callback(server.show, "/")
+        server.io_loop.start()
+    else:
+        dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=True, useBokeh=False)

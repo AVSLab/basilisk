@@ -30,10 +30,8 @@ class DataWriter(mp.Process):
         """
         while self._endToken is None:
             data, mcSimIndex, self._endToken = self._queue.get()
-            print("Starting to log: " + str(mcSimIndex))
             if self._endToken:
                 continue
-            print("Logging Dataframes from run " + str(mcSimIndex))
             for dictName, dictData in data.items(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
                 for itemName, itemData in dictData.items(): # Loop through all items and their data
 
@@ -89,10 +87,7 @@ class DataWriter(mp.Process):
                     with open(filePath, "a+b") as pkl:
                         pickle.dump([df], pkl)
 
-            print("Finished logging dataframes from run" + str(mcSimIndex))
-
         # Sort by the MultiIndex (first by run number then by variable component)
-        print("Starting to concatenate dataframes")
         for filePath in self._dataFiles:
             # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
             allData = []
@@ -110,7 +105,6 @@ class DataWriter(mp.Process):
             allData = allData.reindex(columns=newMultInd)
             allData.index.name = 'time[ns]'
             allData.to_pickle(filePath)
-        print("Finished concatenating dataframes")
 
     def setLogDir(self, logDir):
         self._logDir = logDir

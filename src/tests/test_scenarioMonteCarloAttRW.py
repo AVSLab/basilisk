@@ -38,12 +38,11 @@ import scenarioMonteCarloAttRW
 
 
 # Run initial conditions and plot with matplotlib
-@pytest.mark.parametrize("MCCases",
-                         [1,2])
+@pytest.mark.parametrize("MCCases", [1, 2])
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
 def test_MonteCarloSimulation(show_plots, MCCases):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
-    scenarioMonteCarloAttRW.run(True, MCCases , show_plots)
+    scenarioMonteCarloAttRW.run(True, MCCases, show_plots, useBokeh=False)
     return

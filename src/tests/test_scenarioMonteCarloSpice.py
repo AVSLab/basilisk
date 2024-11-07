@@ -39,7 +39,7 @@ import scenarioMonteCarloSpice
 @pytest.mark.skipif(sys.version_info < (3, 9)  and platform.system() == 'Darwin',
                     reason="Test has issues with Controller class and older python.")
 @pytest.mark.scenarioTest
-def test_MonteCarloSimulationDatashader(show_plots):
+def test_MonteCarloSimulationSpice(show_plots):
     """This function is called by the py.test environment."""
 
     testFailCount = 0                       # zero unit test result counter
@@ -55,5 +55,3 @@ def test_MonteCarloSimulationDatashader(show_plots):
     assert testFailCount < 1, testMessages
 
     return
-
-

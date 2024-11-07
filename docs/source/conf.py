@@ -84,8 +84,7 @@ exclude_patterns = [
     'examples/OpNavScenarios/scenariosOpNav/index.rst',
     'examples/OpNavScenarios/scenariosOpNav/CNN_ImageGen/index.rst',
     'examples/OpNavScenarios/scenariosOpNav/OpNavMC/index.rst',
-    'examples/OpNavScenarios/index.rst',
-    'examples/MonteCarloExamples/index.rst'
+    'examples/OpNavScenarios/index.rst'
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.

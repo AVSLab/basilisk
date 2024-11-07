@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -19,15 +19,62 @@
 
 
 r"""
-This script is a basic demonstration of how to run Monte Carlo simulations. Look at the source code for
-further discussion and instructions.
+Monte Carlo Simulation for Attitude Feedback Scenario
+=====================================================
 
-.. note::
+This script demonstrates how to set up and run Monte Carlo simulations using the Basilisk framework.
+It uses the attitude feedback scenario as a base and applies various dispersions to create multiple simulation runs.
 
-    In these Monte Carlo simulations the retained data is stored as the data array with the time
-    information added as the first column.  This is the same retained data format as used
-    with BSK 1.x.
+Key Features:
+-------------
+1. Monte Carlo Controller Setup: Uses the `Controller` class from Basilisk's Monte Carlo utilities.
+2. Dispersion Application: Applies statistical dispersions to initial parameters.
+3. Retention Policy: Defines which data should be retained from each simulation run.
+4. Data Analysis: Includes a callback function for plotting retained data.
 
+How to Use:
+-----------
+1. Ensure you have Basilisk installed with all required dependencies.
+2. Run this script directly to execute the Monte Carlo simulations::
+
+    python scenarioBskSimAttFeedbackMC.py
+
+3. The script will run 4 Monte Carlo simulations by default.
+4. Results will be saved in the 'scenarioBskSimAttFeedbackMC' directory within the script's location.
+
+Monte Carlo Configuration:
+--------------------------
+- Simulation Function: Uses ``scenario_AttFeedback.scenario_AttFeedback`` to set up the base scenario.
+- Execution Function: Uses ``scenario_AttFeedback.runScenario`` to run each simulation.
+- Execution Count: Set to 4 simulations.
+- Archive Directory: Results are saved in ``scenarioBskSimAttFeedbackMC``.
+- Seed Dispersion: Enabled to randomize the seed for each module.
+- Variable Casting: Downcasts retained numbers to float32 to save storage space.
+- Dispersion Magnitude File: Produces a ``.txt`` file showing dispersion in standard deviation units.
+
+Applied Dispersions:
+--------------------
+1. MRP Initial Condition: Uniform Euler Angle MRP Dispersion
+2. Angular Velocity Initial Condition: Normal Vector Cartesian Dispersion
+3. Hub Mass: Uniform Dispersion
+4. Center of Mass Offset: Normal Vector Cartesian Dispersion
+5. Hub Inertia: (Dispersion defined but not explicitly added in the provided code)
+
+Retention Policy:
+-----------------
+- Logs ``r_BN_N`` from ``sNavTransMsg``
+- Logs ``sigma_BR`` and ``omega_BR_B`` from ``attGuidMsg``
+- Uses a callback function ``displayPlots`` for data visualization
+
+Output:
+-------
+- The script generates plots of the retained data if run directly.
+- Plots show the evolution of attitude error (sigma_BR) over time for all simulation runs.
+
+Note:
+-----
+This script serves as a template for setting up Monte Carlo simulations in Basilisk.
+Users can modify the dispersions, retention policy, and analysis methods to suit their specific simulation needs.
 """
 
 import inspect
@@ -67,10 +114,10 @@ def run(show_plots):
     monteCarlo.setExecutionFunction(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
     monteCarlo.setExecutionCount(4)  # Required: Number of MCs to run
 
-    monteCarlo.setArchiveDir(path + "/scenario_AttFeedbackMC")  # Optional: If/where to save retained data.
+    monteCarlo.setArchiveDir(path + "/scenarioBskSimAttFeedbackMC")  # Optional: If/where to save retained data.
     monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
-    monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on
-    monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
+    # monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on, automatically sizes for personal computer.
+    # monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
     monteCarlo.setVarCast('float')  # Optional: Downcast the retained numbers to float32 to save on storage space
     monteCarlo.setDispMagnitudeFile(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
 
