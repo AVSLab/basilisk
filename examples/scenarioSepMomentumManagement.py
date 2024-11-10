@@ -424,8 +424,8 @@ def run(momentumManagement, cmEstimation, showPlots):
     facetR_CopB_BList = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
 
     # Define the facet optical coefficients
-    facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
-    facetDiffuseCoeffList = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+    facetSpecularCoeffList = np.array([0.336, 0.336, 0.336, 0.336, 0.336, 0.336, 0.16, 0.00, 0.16, 0.00])
+    facetDiffuseCoeffList = np.array([0.139, 0.139, 0.139, 0.139, 0.139, 0.139, 0.16, 0.56, 0.16, 0.56])
 
     # Populate the scGeometry structure with the facet information
     for i in range(len(facetAreaList)):
