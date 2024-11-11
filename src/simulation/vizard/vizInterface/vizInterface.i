@@ -59,6 +59,16 @@ namespace std {
 %include "vizInterface.h"
 %include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
+// Dan Padilha: Include the reactionWheelSupport to ensure that SWIG knows about the
+// RWModels enum, and can correctly interpret it as an integer and destroy it
+// without leaking memory. This needs to be imported here because of the way
+// that Basilisk is built, which causes copies of types to be scattered across
+// different modules. This means that instead of a model using the correct
+// message type of `Basilisk.architecture.messaging.RWConfigLogMsgPayload`, they
+// use `Basilisk.simulation.vizInterface.RWConfigLogMsgPayload` instead... :(
+// TODO: We should clean up the SWIG build system so such issues don't occur.
+%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
+
 %include "architecture/msgPayloadDefC/CameraConfigMsgPayload.h"
 struct CameraConfigMsg_C;
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
