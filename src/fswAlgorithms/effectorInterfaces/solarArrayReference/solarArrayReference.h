@@ -43,11 +43,14 @@ typedef enum pointingMode{
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
-    /* declare these user-defined quantities */
+    /*! declare these user-defined quantities */
     double a1Hat_B[3];              //!< solar array drive axis in body frame coordinates
     double a2Hat_B[3];              //!< solar array surface normal at zero rotation
     AttitudeFrame attitudeFrame;    //!< attitudeFrame = 1: compute theta reference based on body frame instead of reference frame
     double r_AB_B[3];               //!< location of the array center of pressure in body frame coordinates
+    double ThetaMax;                //!< [rad] maximum deflection angle allowed in momentum management mode
+    double sigma;                   //!< [-] gain of the momentum management control law
+    double n;                       //!< [-] design parameter of the momentum management control law
 
     /*! declare these variables for internal computations */
     int                       count;                     //!< counter variable for finite differences
@@ -76,9 +79,6 @@ extern "C" {
     void SelfInit_solarArrayReference(solarArrayReferenceConfig *configData, int64_t moduleID);
     void Reset_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t callTime, int64_t moduleID);
-
-    void computeSrpArrayNormal(double a1Hat_B[3], double a2Hat_B[3], double a3Hat_B[3],
-                               double sHat_R[3], double r_B[3], double H_B[3], double *thetaR, double *f);
 
 #ifdef __cplusplus
 }

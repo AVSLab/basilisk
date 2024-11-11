@@ -182,12 +182,14 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
             m33MultV3(RB, hs_B, hs_R);
         }
 
-        double thetaSrpR;   // reference solar array angle that maximizes SRP dumping torque
+        double L_R[3];       // direction of the SRP torque
+        v3Cross(rHat_SB_R, r_AC_B, L_R);
         double f;
-        computeSrpArrayNormal(a1Hat_B, a2Hat_B, a3Hat_B, rHat_SB_R, r_AC_B, hs_R, &thetaSrpR, &f);
+        f = v3Dot(L_R, hs_R);
 
-        // bias the reference angle towards thetaSrpR more if there is more potential to dump momentum (f = -1)
-        thetaR = thetaSunR - f * (thetaSrpR - thetaSunR);
+        if (f > 0) {
+            thetaR += 2 * configData->ThetaMax / M_PI * atan(configData->sigma * pow(f, configData->n));
+        }
     }
 
     // always make the absolute difference |thetaR-thetaC| smaller than 2*pi
@@ -217,58 +219,4 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
 
     /* write output message */
     HingedRigidBodyMsg_C_write(&hingedRigidBodyRefOut, &configData->hingedRigidBodyRefOutMsg, moduleID, callTime);
-}
-
-/*! This method computes the reference angle for the arrays that maximizes SRP torque in the direction
- * opposite to current RW momentum (thetaSrpR). It also outputs a coefficient f that is proportional to the projection
- * of the SRP torque along the RW net momentum.
- @return void
- */
-void computeSrpArrayNormal(double a1Hat_B[3], double a2Hat_B[3], double a3Hat_B[3],
-                           double sHat_R[3], double r_B[3], double H_B[3], double *thetaR, double *f)
-{
-    /*! Define map between body frame and array frame A */
-    double BA[3][3];        // DCM mapping between body frame and array frame
-    for (int i=0; i<3; ++i) {
-        BA[i][0] = a1Hat_B[i];
-        BA[i][1] = a2Hat_B[i];
-        BA[i][2] = a3Hat_B[i];
-    }
-
-    /*! Map vectors to array frame A */
-    double sHat_A[3];       // Sun heading in array frame
-    v3tMultM33(sHat_R, BA, sHat_A);
-    double hHat_B[3];       // h vector (see documentation) in body frame
-    v3Cross(r_B, H_B, hHat_B);
-    v3Normalize(hHat_B, hHat_B);
-    double hHat_A[3];       // h vector (see documentation) in array frame
-    v3tMultM33(hHat_B, BA, hHat_A);
-
-    /*! Define vector components in the local x-y plane */
-    double s2 = sHat_A[1];
-    double s3 = sHat_A[2];
-    double h2 = hHat_A[1];
-    double h3 = hHat_A[2];
-
-    // Discriminant of characteristic equation
-    double Delta = 8 * (pow(s2*h2, 2) + pow(s3*h3, 2) + pow(s2*h3, 2) + pow(s3*h2, 2)) + pow(s2*h2+s3*h3, 2);
-
-    // Solution that produces SRP torque opposite to current RW momentum
-    double t = atan( (3*(s3*h3 - s2*h2) - pow(Delta, 0.5)) / (4*s2*h3 + 2*s3*h2) );
-
-    // SA normal direction to maximize momentum dumping
-    double a2SrpHat_A[3] = {0.0, cos(t), sin(t)};
-
-    // Choose normal direction that is also power-positive
-    double dotS = v3Dot(sHat_A, a2SrpHat_A);
-    if (dotS < 0) {
-        v3Scale(-1, a2SrpHat_A, a2SrpHat_A);
-    }
-
-    double theta = atan2(a2SrpHat_A[2], a2SrpHat_A[1]);
-    double fVal = dotS * dotS * v3Dot(hHat_A, a2SrpHat_A);
-
-    // Return the corresponding solar array reference angle and momentum dumping coefficient
-    *thetaR = theta;
-    *f = fVal;
 }
