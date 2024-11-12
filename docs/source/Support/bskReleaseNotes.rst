@@ -54,6 +54,8 @@ Version  |release|
 - Created unit tests for protobuffer packing and saving in :ref:`vizInterface`
 - Added YouTube video links of Vizard illustrating the :ref:`scenarioFlexiblePanel` and
   :ref:`scenarioRoboticArm` scenarios.
+- Fixed issue in which reading ``RWModel`` from RW message payloads when :ref:`vizInterface` was also
+  imported would return a Swig Object instead of an enumerated integer.
 
 
 Version 2.5.0 (Sept. 30, 2024)
