@@ -676,7 +676,9 @@ def createScenarioSepMomentumManagement():
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
         saReference[item].r_AB_B = [(-1)**item * (3.75 + 0.5 * lenXHub + 0.5 * 7.262), 0.0, 0.45]
-        saReference[item].pointingMode = 0
+        saReference[item].n = 2
+        saReference[item].sigma = 5e-5
+        saReference[item].ThetaMax = np.pi / 3
         scSim.AddModelToTask(fswTask, saReference[item], 24)
 
     # Set up solar array controller modules
