@@ -21,7 +21,7 @@ license     = {file = "LICENSE"}
 description = "Basilisk: an Astrodynamics Simulation Framework"
 
 [project.urls]
-homepage = 'https://hanspeterschaub.info/basilisk/'
+homepage = 'https://avslab.github.io/basilisk/'
 
 [tool.setuptools]
 packages = []  # XXX: Leave blank, populated automatically by setup.py.
