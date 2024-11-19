@@ -23,6 +23,10 @@ description = "Basilisk: an Astrodynamics Simulation Framework"
 [project.urls]
 homepage = 'https://avslab.github.io/basilisk/'
 
+# Define console scripts here
+[project.scripts]
+bskLargeData = "Basilisk.utilities.bskLargeData:main"
+
 [tool.setuptools]
 packages = []  # XXX: Leave blank, populated automatically by setup.py.
 include-package-data = true
