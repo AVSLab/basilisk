@@ -176,9 +176,9 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
             double articulationAngle = facetArticulationAngleList.at(articulatedIndex);
 
             // Determine the required DCM that rotates the facet normal vector through the articulation angle
-            double prv_BB0[3] = {articulationAngle * scGeometry.facetRotAxes_B[i][0],
-                                 articulationAngle * scGeometry.facetRotAxes_B[i][1],
-                                 articulationAngle * scGeometry.facetRotAxes_B[i][2]};
+            double prv_BB0[3] = {-articulationAngle * scGeometry.facetRotAxes_B[i][0],
+                                 -articulationAngle * scGeometry.facetRotAxes_B[i][1],
+                                 -articulationAngle * scGeometry.facetRotAxes_B[i][2]};
             PRV2C(prv_BB0, dcmBB0);
             dcm_BB0 = c2DArray2EigenMatrix3d(dcmBB0);
 

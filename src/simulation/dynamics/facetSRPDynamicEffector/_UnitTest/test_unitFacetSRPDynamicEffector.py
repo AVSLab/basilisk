@@ -66,7 +66,7 @@ def test_facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
         facetRotAngle1 (double): [rad] Articulation angle for facets 7 and 8 (solar panel 1)
         facetRotAngle2 (double): [rad] Articulation angle for facets 9 and 10 (solar panel 2)
     """
-    
+
     [testResults, testMessage] = facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2)
 
     assert testResults < 1, testMessage
@@ -121,7 +121,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     facetRotAngle1MessageData.theta = facetRotAngle1
     facetRotAngle1MessageData.thetaDot = 0.0
     facetRotAngle1Message = messaging.HingedRigidBodyMsg().write(facetRotAngle1MessageData)
-    
+
     facetRotAngle2MessageData = messaging.HingedRigidBodyMsgPayload()
     facetRotAngle2MessageData.theta = facetRotAngle2
     facetRotAngle2MessageData.thetaDot = 0.0
@@ -291,11 +291,11 @@ def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, specCoeff, d
 
     # Rotate the articulated facet normal vectors
     if (index == 6 or index == 7):
-        prv_BB0 = facetRotAngle1 * facetRotAxis
+        prv_BB0 = - facetRotAngle1 * facetRotAxis
         dcm_BB0 = rbk.PRV2C(prv_BB0)
         facetNormal = np.matmul(dcm_BB0, facetNormal)
     if (index == 8 or index == 9):
-        prv_BB0 = facetRotAngle2 * facetRotAxis
+        prv_BB0 = - facetRotAngle2 * facetRotAxis
         dcm_BB0 = rbk.PRV2C(prv_BB0)
         facetNormal = np.matmul(dcm_BB0, facetNormal)
 
