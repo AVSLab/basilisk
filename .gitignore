@@ -42,7 +42,7 @@ externalTools/fswAuto/autowrapper/wraps/*
 src/moduleTemplates/autoCModule/*
 src/moduleTemplates/autoCppModule/*
 
-supportData/EphemerisData/de430.bsp
+supportData/EphemerisData/*.bsp
 
 *.fdb_latexmk
 *.fls
