@@ -26,6 +26,7 @@ homepage = 'https://avslab.github.io/basilisk/'
 # Define console scripts here
 [project.scripts]
 bskLargeData = "Basilisk.utilities.bskLargeData:main"
+bskExamples = "Basilisk.utilities.bskExamples:main"
 
 [tool.setuptools]
 packages = []  # XXX: Leave blank, populated automatically by setup.py.
