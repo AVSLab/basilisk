@@ -134,8 +134,11 @@ class ExtendedStateVector
      */
     ExtendedStateVector operator*(const double rhs) const;
 
-    /** Calls StateData::setState for every entry in in this */
+    /** Calls StateData::setState for every entry in this */
     void setStates(std::vector<DynamicObject*>& dynPtrs) const;
+
+    /** Calls StateData::setDerivative for every entry in this */
+    void setDerivatives(std::vector<DynamicObject*>& dynPtrs) const;
 
   private:
     static ExtendedStateVector fromStateData(const std::vector<DynamicObject*>& dynPtrs,

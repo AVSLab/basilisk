@@ -98,9 +98,20 @@ void ExtendedStateVector::setStates(std::vector<DynamicObject*>& dynPtrs) const
     this->apply([&dynPtrs](const size_t& dynObjIndex,
                                  const std::string& stateName,
                                  const Eigen::MatrixXd& thisState) {
-        StateData& stateData =
-            dynPtrs.at(dynObjIndex)->dynManager.stateContainer.stateMap.at(stateName);
-        stateData.setState(thisState);
+        dynPtrs.at(dynObjIndex)
+            ->dynManager.stateContainer.stateMap.at(stateName)
+            ->setState(thisState);
+    });
+}
+
+void ExtendedStateVector::setDerivatives(std::vector<DynamicObject*>& dynPtrs) const
+{
+    this->apply([&dynPtrs](const size_t& dynObjIndex,
+                           const std::string& stateName,
+                           const Eigen::MatrixXd& thisDerivative) {
+        dynPtrs.at(dynObjIndex)
+            ->dynManager.stateContainer.stateMap.at(stateName)
+            ->setDerivative(thisDerivative);
     });
 }
 
