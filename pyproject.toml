@@ -22,6 +22,8 @@ description = "Basilisk: an Astrodynamics Simulation Framework"
 
 [project.urls]
 homepage = 'https://avslab.github.io/basilisk/'
+source = "https://github.com/AVSLab/basilisk"
+tracker = "https://github.com/AVSLab/basilisk/issues"
 
 # Define console scripts here
 [project.scripts]
