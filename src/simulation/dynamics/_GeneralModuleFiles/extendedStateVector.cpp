@@ -73,6 +73,19 @@ ExtendedStateVector ExtendedStateVector::operator+=(const ExtendedStateVector& r
     return *this;
 }
 
+ExtendedStateVector ExtendedStateVector::operator-(const ExtendedStateVector& rhs) const
+{
+    ExtendedStateVector copy = *this;
+
+    copy.modify([&rhs](const size_t& dynObjIndex,
+                       const std::string& stateName,
+                       Eigen::MatrixXd& thisState) {
+        thisState -= rhs.at({dynObjIndex, stateName});
+    });
+
+    return copy;
+}
+
 ExtendedStateVector ExtendedStateVector::operator*(const double rhs) const
 {
     return this->map([rhs](const size_t& dynObjIndex,
