@@ -124,7 +124,7 @@ ExtendedStateVector::fromStateData(const std::vector<DynamicObject*>& dynPtrs,
     for (size_t dynIndex = 0; dynIndex < dynPtrs.size(); dynIndex++) {
         for (auto&& [stateName, stateData] :
              dynPtrs.at(dynIndex)->dynManager.stateContainer.stateMap) {
-            result.emplace(std::make_pair(dynIndex, stateName), functor(stateData));
+            result.emplace(std::make_pair(dynIndex, stateName), functor(*stateData.get()));
         }
     }
 
