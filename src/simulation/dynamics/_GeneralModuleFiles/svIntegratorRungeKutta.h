@@ -111,12 +111,19 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
                                              const ExtendedStateVector& currentStates);
 
     /**
-     * Adds the "k" coefficients, weighted by the "c" coefficients
-     * to find the state after the time step.
+     * Computes:
+     *
+     *      y = y_0 + dt*( coeff_0*k_0 + coeff_1*k_1 + ... + coeff_maxStage*k_maxStage )
+     *
+     * where y_0 is currentStates, dt is timeStep, [coeff_0, coeff_1, ...] is coefficients
+     * and [k_0, k_1, ...] is kVectors.
      */
-    ExtendedStateVector computeNextState(double timeStep,
-                                         const ExtendedStateVector& currentStates,
-                                         const KCoefficientsValues& kVectors);
+    ExtendedStateVector
+    propagateStateWithKVectors(double timeStep,
+                               const ExtendedStateVector& currentStates,
+                               const KCoefficientsValues& kVectors,
+                               const std::array<double, numberStages>& coefficients,
+                               size_t maxStage);
 
   protected:
     // coefficients is stored as a pointer to support polymorphism
@@ -146,7 +153,11 @@ void svIntegratorRungeKutta<numberStages>::integrate(double currentTime, double 
 {
     ExtendedStateVector currentState = ExtendedStateVector::fromStates(this->dynPtrs);
     KCoefficientsValues kValues = this->computeKCoefficients(currentTime, timeStep, currentState);
-    ExtendedStateVector nextState = this->computeNextState(timeStep, currentState, kValues);
+    ExtendedStateVector nextState = this->propagateStateWithKVectors(timeStep,
+                                                                     currentState,
+                                                                     kValues,
+                                                                     this->coefficients->bArray,
+                                                                     numberStages);
     nextState.setStates(this->dynPtrs);
 }
 
@@ -176,41 +187,53 @@ auto svIntegratorRungeKutta<numberStages>::computeKCoefficients(
     for (size_t stageIndex = 0; stageIndex < numberStages; stageIndex++) {
         double timeToComputeK = currentTime + this->coefficients->cArray.at(stageIndex) * timeStep;
 
-        if (stageIndex == 0) // Avoids one ExtendedStateVector copy
-        {
-            kVectors.at(stageIndex) =
-                this->computeDerivatives(timeToComputeK, timeStep, currentStates);
-            continue;
-        }
-
-        ExtendedStateVector stateToComputeK = currentStates;
-        for (size_t subStageIndex = 0; subStageIndex < stageIndex; subStageIndex++) {
-            if (this->coefficients->aMatrix.at(stageIndex).at(subStageIndex) == 0) continue;
-            stateToComputeK +=
-                kVectors.at(subStageIndex) *
-                (this->coefficients->aMatrix.at(stageIndex).at(subStageIndex) * timeStep);
-        }
-
+        auto stateToComputeTheDerivatesAt =
+            this->propagateStateWithKVectors(timeStep,
+                                             currentStates,
+                                             kVectors,
+                                             this->coefficients->aMatrix.at(stageIndex),
+                                             stageIndex);
         kVectors.at(stageIndex) =
-            this->computeDerivatives(timeToComputeK, timeStep, stateToComputeK);
+            this->computeDerivatives(timeToComputeK, timeStep, stateToComputeTheDerivatesAt);
     }
 
     return kVectors;
 }
 
 template <size_t numberStages>
-ExtendedStateVector
-svIntegratorRungeKutta<numberStages>::computeNextState(double timeStep,
-                                                       const ExtendedStateVector& currentStates,
-                                                       const KCoefficientsValues& kVectors)
+ExtendedStateVector svIntegratorRungeKutta<numberStages>::propagateStateWithKVectors(
+    double timeStep,
+    const ExtendedStateVector& currentStates,
+    const KCoefficientsValues& kVectors,
+    const std::array<double, numberStages>& coefficients,
+    size_t maxStage)
 {
-    ExtendedStateVector result = currentStates;
-    for (size_t stageIndex = 0; stageIndex < numberStages; stageIndex++) {
-        if (this->coefficients->bArray.at(stageIndex) == 0) continue;
-        result += kVectors.at(stageIndex) * (this->coefficients->bArray.at(stageIndex) * timeStep);
+    ExtendedStateVector derivative;
+    for (size_t stageIndex = 0; stageIndex < maxStage; stageIndex++) {
+        if (coefficients.at(stageIndex) == 0) continue;
+
+        auto scaledKVector = kVectors.at(stageIndex) * coefficients.at(stageIndex);
+        if (derivative.empty()) {
+            derivative = scaledKVector;
+        }
+        else {
+            derivative += scaledKVector;
+        }
     }
 
-    return result;
+    if (derivative.empty()) {
+        return currentStates;
+    }
+    else {
+        currentStates.setStates(this->dynPtrs);
+        derivative.setDerivatives(this->dynPtrs);
+
+        for (auto dynPtr : this->dynPtrs) {
+            dynPtr->dynManager.propagateStateVector(timeStep);
+        }
+
+        return ExtendedStateVector::fromStates(this->dynPtrs);
+    }
 }
 
 #endif /* svIntegratorRungeKutta_h */
