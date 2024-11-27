@@ -34,9 +34,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "constraintDynamicEffector.h"
 
 %include "architecture/msgPayloadDefC/ConstDynEffectorMsgPayload.h"

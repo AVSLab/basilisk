@@ -29,11 +29,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
-%include "../_GeneralModuleFiles/stateData.h"
+%include "../_GeneralModuleFiles/dynParamManager.i"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
-%include "../_GeneralModuleFiles/dynamicObject.h"
 %include "vscmgStateEffector.h"
 
 %include "architecture/msgPayloadDefC/VSCMGCmdMsgPayload.h"

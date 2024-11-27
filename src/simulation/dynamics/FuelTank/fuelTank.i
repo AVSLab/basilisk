@@ -30,9 +30,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "fuelTank.h"
 
 %include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"

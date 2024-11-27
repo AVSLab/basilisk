@@ -31,8 +31,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-%include "../_GeneralModuleFiles/dynParamManager.h"
-%include "../_GeneralModuleFiles/stateData.h"
+%include "../_GeneralModuleFiles/dynParamManager.i"
 %include "../../../architecture/utilities/avsEigenSupport.h"
 
 %pythoncode %{

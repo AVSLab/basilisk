@@ -32,9 +32,8 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 %include "dualHingedRigidBodyStateEffector.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
