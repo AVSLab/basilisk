@@ -205,6 +205,7 @@ Complex Spacecraft Dynamics Simulations
 .. toctree::
    :maxdepth: 1
 
+   IMU Gyro Random Walk <scenarioGaussMarkovRandomWalk>
    Fuel Slosh <scenarioFuelSlosh>
    Flexible (Hinged) Panels <scenarioHingedRigidBody>
    Bending and Torsional Flexible Panels <scenarioFlexiblePanel>
