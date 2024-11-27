@@ -62,6 +62,13 @@ Version  |release|
   :ref:`scenarioRoboticArm` scenarios.
 - Fixed issue in which reading ``RWModel`` from RW message payloads when :ref:`vizInterface` was also
   imported would return a Swig Object instead of an enumerated integer.
+- Refactored the ``GaussMarkov`` class to enforce walk bounds and remove the need for the 1.5x noise multiplier.
+  Note: Existing code that used this multiplier will need to be updated to maintain the same behavior.
+- Removed the deprecated 1.5x multiplier in :ref:`magnetometer` and :ref:`coarsesunsensor` when setting 'senNoiseStd'
+- Updated ``starTracker`` unit tests to properly convert EP's to rotation vector now that random walk exists
+- Added :ref:`scenarioGaussMarkovRandomWalk` to showcase ``GaussMarkov`` class functionality
+- Added unit test coverage for ``GaussMarkov`` implementation in :ref:`tempMeasurement`,
+  :ref:`simpleNav` and :ref:`planetNav`.
 
 
 Version 2.5.0 (Sept. 30, 2024)
@@ -1694,7 +1701,7 @@ Jupiter using a patched-conic Delta_v
 
    <li>
 
-Added the first image processing FSW module using OpenCV’s HoughCirlces.
+Added the first image processing FSW module using OpenCV's HoughCirlces.
 
 .. raw:: html
 
@@ -2123,7 +2130,7 @@ Visualization.
 
    <li>
 
-updated the ‘oeStateEphem()’ module to fit radius at periapses instead
+updated the 'oeStateEphem()' module to fit radius at periapses instead
 of SMA, and have the option to fit true versus mean anomaly angles.
 
 .. raw:: html
@@ -2135,7 +2142,7 @@ of SMA, and have the option to fit true versus mean anomaly angles.
    <li>
 
 updated
-’sunlineSuKF\ ``module which provides a switch Sunline UKF estimation filter.  New documentation and unit tests.     </li>     <li>         updated 'MRP_Steering' module documentation and unit tests     </li>     <li>         updated orbital motion library functions``\ rv2elem()\ ``and elem2rv()``
+'sunlineSuKF\ ``module which provides a switch Sunline UKF estimation filter.  New documentation and unit tests.     </li>     <li>         updated 'MRP_Steering' module documentation and unit tests     </li>     <li>         updated orbital motion library functions``\ rv2elem()\ ``and elem2rv()``
 
 .. raw:: html
 
@@ -2401,7 +2408,7 @@ updated Documentation on ``rwNullSpace`` FSW module
 
 updated how the FSW and Simulation modules are displayed with the
 DOxygen HTML documenation, as well as how the messages are shown. Now
-the use can click on the “Modules” tab in the web page to find a cleaner
+the use can click on the "Modules" tab in the web page to find a cleaner
 listing of all BSK modules, messages, utilities and architecture
 documentation.
 
@@ -2458,7 +2465,7 @@ updated documentation and unit tests of ``cssComm()`` module
 Integrated the ``conan`` package management system. This requires conan
 to be installed and configured. See the updated Basilisk installation
 instructions. It is simple to add this to a current install. Further,
-the CMake GUI application can’t be used directly with this
+the CMake GUI application can't be used directly with this
 implementation if the app is double-clicked. Either the GUI is launched
 form a terminal (see macOS installation instructions), or ``cmake`` is
 run from the command line (again see your platform specific installation
@@ -3079,7 +3086,7 @@ sun-pointing control while the spacecraft goes through a planets shadow.
 Improved how the ``fuelSloshSpringMassDamper`` effector class works. It
 is now renamed to ``LinearSpringMassDamper``. It can be used to simulate
 both fuel sloshing, but also structural modes. If the
-``LinearSpringMassDamper`` is connected to a fuel tank, then it’s mass
+``LinearSpringMassDamper`` is connected to a fuel tank, then it's mass
 depends on the amount of fuel left. The associated unit test illustrated
 how to setup this last capability. The module also contains
 documentation on the associated math.
@@ -3509,7 +3516,7 @@ Added CSS sun-heading estimation tutorial script
 
    <li>
 
-Added O’Keefe CSS sun-heading estimation module
+Added O'Keefe CSS sun-heading estimation module
 
 .. raw:: html
 
@@ -3844,7 +3851,7 @@ module
    <li>
 
 The CSS modules now use the planetary shadow message information to
-simulated being in a planet’s shadow
+simulated being in a planet's shadow
 
 .. raw:: html
 
@@ -3881,7 +3888,7 @@ documentation on using these libraries in
 
 Updated the RW and gravitational body (i.e. adding Earth, sun, etc. to
 the simulation) to use new factory classes. If you did use the older
-``simIncludeRW.py`` or ``simIncludeGravity.py`` libraries, you’ll need
+``simIncludeRW.py`` or ``simIncludeGravity.py`` libraries, you'll need
 to update your python code to work with the new factory classes.
 
 .. raw:: html
@@ -4023,7 +4030,7 @@ sets the proper B point position and velocity vectors.
 Specifying the initial spacecraft position and velocity states can now
 be done anywhere before the BSK initialization. The user sets init
 versions of the position and velocity vectors. The setState() method on
-the state engine thus doesn’t have to be used.
+the state engine thus doesn't have to be used.
 
 .. raw:: html
 
@@ -4087,7 +4094,7 @@ now been removed as they are no longer needed.
    <li>
 
 The position and velocity of the center of mass of the spacecraft was
-added to the messaging system, so now the spacecraft’s translational
+added to the messaging system, so now the spacecraft's translational
 states can be logged by the center of mass of the spacecraft (r_CN_N and
 v_CN_N) or the origin of the body frame which is fixed to the hub
 (r_BN_N and v_BN_N). Additionally, the mass properties of the spacecraft
