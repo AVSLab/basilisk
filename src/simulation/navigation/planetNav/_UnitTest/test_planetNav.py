@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import math
 
@@ -278,7 +278,129 @@ def planetNavTestFunction(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
+def test_gauss_markov_properties():
+    """
+    Test the statistical properties of the Gauss-Markov noise model in planetNav.
+    Tests:
+    1. Error bounds are not violated too often (<0.3% of samples)
+    2. Error bounds are actually being used (at least one >80% excursion)
+    """
+    [testResults, testMessage] = gauss_markov_test()
+    assert testResults < 1, testMessage
+
+def gauss_markov_test():
+    testFailCount = 0
+    testMessages = []
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitProcessName = "TestProcess"
+    unitTaskName = "unitTask"
+
+    unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
+    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+
+    # Initialize the test module
+    pNavObject = planetNav.PlanetNav()
+    unitTestSim.AddModelToTask(unitTaskName, pNavObject)
+
+    # Create the ephemeris message
+    ephemerisInMsgData = messaging.EphemerisMsgPayload()
+    ephemerisInMsgData.r_BN_N = [10000.0, 0.0, 0.0]
+    ephemerisInMsgData.v_BN_N = [0.0, 0.0, 0.0]
+    ephemerisInMsgData.sigma_BN = [0.0, 0.0, 0.0]
+    ephemerisInMsgData.omega_BN_B = [0.0, 0.0, 0.0]
+
+    # Setup required input messages
+    inputMessageData = messaging.EphemerisMsg().write(ephemerisInMsgData)
+    pNavObject.ephemerisInMsg.subscribeTo(inputMessageData)
+
+    # Configure noise parameters
+    posSigma = 5.0
+    velSigma = 0.035
+    attSigma = 1.0 / 360.0 * math.pi / 180.0
+    rateSigma = 0.05 * math.pi / 180.0
+
+    # Setup P matrix
+    pMatrix = [[posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma]]
+
+    # Setup error bounds
+    errorBounds = [[1000.], [1000.], [1000.],
+                  [1.], [1.], [1.],
+                  [0.005], [0.005], [0.005],
+                  [0.02], [0.02], [0.02]]
+
+    pNavObject.walkBounds = errorBounds
+    pNavObject.PMatrix = pMatrix
+
+    # Setup message logging
+    dataLog = pNavObject.ephemerisOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # Run simulation
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))  # Run for same duration as simpleNav test
+    unitTestSim.ExecuteSimulation()
+
+    # Extract position data for analysis
+    posNav = numpy.array(dataLog.r_BdyZero_N)
+
+    # Test 1: Statistical Checks
+    countAllow = posNav.shape[0] * 0.3/100.  # Allow 0.3% violations
+    posDiffCount = 0
+    i = 0
+    while i < posNav.shape[0]:
+        posVecDiff = posNav[i,:] - ephemerisInMsgData.r_BdyZero_N
+        j = 0
+        hasViolation = False
+        while j < 3:
+            if abs(posVecDiff[j]) > errorBounds[j][0]:
+                hasViolation = True
+            j += 1
+        if hasViolation:
+            posDiffCount += 1
+        i += 1
+
+    if posDiffCount > countAllow:
+        testFailCount += 1
+        testMessages.append(f"FAILED: Too many position errors ({posDiffCount} > {countAllow})")
+
+    # Test 2: Error Bound Usage Check
+    sigmaThreshold = 0.8
+    posDiffCount = 0
+    i = 0
+    while i < posNav.shape[0]:
+        posVecDiff = posNav[i,:] - ephemerisInMsgData.r_BdyZero_N
+        j = 0
+        hasLargeError = False
+        while j < 3:
+            if abs(posVecDiff[j]) > errorBounds[j][0] * sigmaThreshold:
+                hasLargeError = True
+            j += 1
+        if hasLargeError:
+            posDiffCount += 1
+        i += 1
+
+    if posDiffCount < 1:
+        testFailCount += 1
+        testMessages.append("FAILED: Position errors too small")
+
+    if testFailCount == 0:
+        print("PASSED: Gauss-Markov noise tests successful")
+
+    return [testFailCount, ''.join(testMessages)]
+
+
 if __name__ == "__main__":
     test_planetNav(True)
-
-

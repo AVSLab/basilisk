@@ -31,10 +31,12 @@
 #include "architecture/utilities/gauss_markov.h"
 
 typedef enum {
-    TEMP_FAULT_STUCK_CURRENT, /*!< temp measurement is set to current value for all future time */
-    TEMP_FAULT_STUCK_VALUE,     /*!< temp measurement is set to specified value for all future time */
-    TEMP_FAULT_SPIKING,    /*!< temp measurement has a probability of spiking at each time step */
-    TEMP_FAULT_NOMINAL
+    TEMP_FAULT_NOMINAL = 0,
+    TEMP_FAULT_STUCK_CURRENT = 1,
+    TEMP_FAULT_STUCK_VALUE = 2,
+    TEMP_FAULT_SPIKING = 3,
+    TEMP_FAULT_BIASED = 4,
+    TEMP_FAULT_GAUSS_MARKOV = 5
 } TempFaultState_t;
 
 /*! @brief Models a sensor to add noise, bias, and faults to temperature measurements.
