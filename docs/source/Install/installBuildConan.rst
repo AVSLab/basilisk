@@ -27,11 +27,11 @@ Step 1: Installing Basilisk Dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The first command, in its minimalist form, is::
 
-    conan install . -if dist3/conan --build=missing
+    conan install . --build=missing
 
 This conan command will create the distribution folder, ``dist3`` in the above case, if needed, collect all the
-require Basilisk 3rd party resources and compile them if their binaries are missing.  The cmake files to access these
-3rd party libraries are stored in ``dist3/conan``.
+require Basilisk 3rd party resources and compile them if their binaries are missing. All build files
+are stored in ``dist3``.
 
 There are several options that can be provided to this ``conan install`` command as shown in the following table.
 Note that the option names for groupings of Basilisk modules are the same as with the one-step build above.
@@ -81,7 +81,7 @@ Note that the option names for groupings of Basilisk modules are the same as wit
 Thus, using the same build example as in the one-step section, to create a build with ``opNav`` modes enabled,
 but no :ref:`vizInterface`, and using a clean distribution folder, and that is built right away, you could use::
 
-    conan install . -if dist3/conan --build=missing -o clean=True -o buildProject=True -o opNav=True -o vizInterface=False
+    conan install . --build=missing -o clean=True -o buildProject=True -o opNav=True -o vizInterface=False
 
 Note how much more verbose this is, but it gives you full control if you want to store the compiled binaries and
 cmake files in directories other than ``dist3/conan``.
@@ -91,7 +91,12 @@ Step 2: Creating the IDE Project
 The final step is to create the IDE project file and possibly build the executables directly.
 At this stage there are no options to be provided.  This step is done with::
 
-    conan build . -if dist3/conan
+    conan build .
+
+.. note::
+
+    If you provide the ``conan install`` step some optional arguments with ``-o``, the same
+    arguments must be provided for the ``conan build`` step.
 
 .. warning::
 
@@ -188,4 +193,3 @@ Example build commands forArch x64, MSVC Year 2019, MSVC Version 16::
     cmake -G “Visual Studio 16 2019” -A x64 ../src -DCMAKE_BUILD_TYPE=Release
 
     cmake -G “Visual Studio 15 2017 Win64” ../src -DCMAKE_BUILD_TYPE=Release
-
