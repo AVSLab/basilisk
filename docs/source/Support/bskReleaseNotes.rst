@@ -79,6 +79,13 @@ Version  |release|
   the added setters and getters must be used.
 - Fixed a bug in which the ``MtbEffector.py`` module was not being imported correctly in Python due to lack of ``swig_eigen.i``
   include file in ``MtbEffector.i``.
+- Update the build process to use ``conan`` version 2.x
+
+  .. warning::
+
+    You have to upgrade your python ``conan`` package to be able to build Basilisk.
+    Use ``python install --upgrade conan``.
+
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
