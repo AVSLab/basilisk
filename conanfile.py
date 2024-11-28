@@ -214,13 +214,6 @@ class BasiliskConan(ConanFile):
             self.options['opencv'].with_quirc = False  # QR code lib
             self.options['opencv'].with_webp = False  # raster graphics file format for web
 
-            # Raise an issue to conan-center to fix this bug. Using workaround to disable freetype for windows
-            # Issue link: https://github.com/conan-community/community/issues/341
-            #TODO Remove this once they fix this issue.
-            # TODO: Confirm if still needed.
-            if is_msvc(self):
-                self.options['opencv'].freetype = False
-
         if is_msvc(self):
             self.options["*"].shared = True
 
