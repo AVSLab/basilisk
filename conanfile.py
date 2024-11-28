@@ -271,7 +271,7 @@ class BasiliskConan(ConanFile):
         generatorString = str(self.options.get_safe("generator"))
         if generatorString == "":
             # Select default generator supplied to cmake based on os
-            if self.settings.os == "Macos":
+            if self.settings.os == "Macos" and not self.options.get_safe("buildProject"):
                 generatorString = "Xcode"
                 tc.generator = generatorString
             elif self.settings.os == "Windows":
