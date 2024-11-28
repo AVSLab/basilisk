@@ -43,7 +43,7 @@ jobs:
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install wheel 'conan<2.0'
+          pip install wheel conan
       - name: Build basilisk
         run: |
           source .venv/bin/activate
@@ -79,7 +79,7 @@ jobs:
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install wheel and conan package"
-        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0.0'
+        run: source .venv/bin/activate && pip3 install wheel conan
       - name: "Build basilisk"
         run: source .venv/bin/activate && python3 conanfile.py
       - name: "Run Python Tests"
@@ -114,7 +114,7 @@ jobs:
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install wheel and conan package"
-        run: source .venv/bin/activate && pip3 install wheel 'conan<2.0.0'
+        run: source .venv/bin/activate && pip3 install wheel conan
       - name: "Build basilisk"
         run: source .venv/bin/activate && python3 conanfile.py --opNav True
 
@@ -188,7 +188,7 @@ jobs:
         shell: pwsh
         run: |
             venv\Scripts\activate
-            pip install wheel 'conan<2.0'
+            pip install wheel conan
       - name: "Add basilisk and cmake path to env path"
         shell: pwsh
         run: |
@@ -240,7 +240,7 @@ jobs:
       - name: "Install wheel and conan package"
         run: |
           source .venv/bin/activate
-          pip3 install wheel 'conan<2.0' cmake
+          pip3 install wheel conan cmake
 
       - name: "Build basilisk with OpNav"
         run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
@@ -287,7 +287,7 @@ jobs:
       - name: "Install wheel and conan package"
         run: |
           source .venv/bin/activate
-          pip3 install wheel 'conan<2.0' cmake
+          pip3 install wheel conan cmake
 
       - name: "Build basilisk without vizInterface"
         run: source .venv/bin/activate && python3 conanfile.py --vizInterface False

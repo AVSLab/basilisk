@@ -95,7 +95,7 @@ jobs:
         - name: "Install wheel and conan package"
           run: |
             source .venv/bin/activate
-            pip3 install wheel 'conan<2.0' cmake
+            pip3 install wheel conan cmake
 
         - name: "Build basilisk with OpNav"
           run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
