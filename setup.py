@@ -76,7 +76,7 @@ class BuildConanExtCommand(Command, SubCommand):
 
         # Set limited ABI compatibility by default, targeting the minimum required Python version.
         # See https://docs.python.org/3/c-api/stable.html
-        # NOTE: Swig 4.2.0 is required, see https://github.com/swig/swig/pull/2727
+        # NOTE: Swig 4.2.1 or higher is required, see https://github.com/swig/swig/pull/2727
         min_version = next(self.distribution.python_requires.filter([f"3.{i}" for i in range(2, 100)])).replace(".", "")
         bdist_wheel = self.reinitialize_command("bdist_wheel", py_limited_api=f"cp{min_version}")
         bdist_wheel.ensure_finalized()
