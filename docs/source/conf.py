@@ -18,6 +18,73 @@ import sys
 
 import numpy as np
 
+#
+# create RST showing supportData folder information
+#
+folder_path = "../../supportData"
+output_file = "supportData.rst"
+# Files to exclude
+excluded_files = {".DS_Store", "__init__.py"}
+# loop over supportData folder and list all files
+
+# Dictionary to store files grouped by folder
+folder_files = {}
+
+# Collect files grouped by folder
+for root, dirs, files in os.walk(folder_path):
+    # Get the relative folder path
+    folder_relative_path = os.path.relpath(root, folder_path)
+    if folder_relative_path == ".":
+        folder_relative_path = ""
+
+    # Collect files for this folder
+    folder_files[folder_relative_path] = sorted(
+        [file_name for file_name in files if file_name not in excluded_files]
+    )
+
+with open(output_file, "w") as f:
+    f.write("Support Data Files\n")
+    f.write("==================\n\n")
+    f.write(".. note::\n\n")
+    f.write("    This folder contains a listing of all the data files in the folder ``basilisk/supportData`` "
+            "that are packaged into Basilisk.\n\n")
+
+    # Sort folders alphabetically and write each section
+    for folder in sorted(folder_files.keys()):
+        f.write(f"**{folder}**\n\n")
+        for file_name in folder_files[folder]:
+            f.write(f"- {file_name}\n")
+        f.write("\n")
+
+    # for root, dirs, files in os.walk(folder_path):
+    #     # Get the relative folder path
+    #     folder_relative_path = os.path.relpath(root, folder_path)
+    #     if folder_relative_path == ".":
+    #         folder_relative_path = ""
+    #
+    #     # Write folder name as a section
+    #     f.write(f"**{folder_relative_path}**\n\n")
+    #
+    #     # Process files in the current directory
+    #     for file_name in sorted(files):
+    #         if file_name not in excluded_files:
+    #             f.write(f"- {file_name}\n")
+    #     f.write("\n")
+
+    # for root, dirs, files in os.walk(folder_path):
+    #     # Write the current folder name as a heading
+    #     folder_relative_path = os.path.relpath(root, folder_path)
+    #     if folder_relative_path == ".":
+    #         folder_relative_path = ""
+    #     f.write(f"**{folder_relative_path}**\n\n")
+    #
+    #     # Process files in the current directory
+    #     for file_name in files:
+    #         if file_name not in excluded_files:
+    #             f.write(f"- {file_name}\n")
+    #     f.write("\n")
+
+
 # -- Project information -----------------------------------------------------
 
 now = datetime.datetime.now()
@@ -502,6 +569,7 @@ if rebuild:
     # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
     # breathe_projects_source = fileCrawler.run(officialSrc+"/architecture")
     breathe_projects_source = fileCrawler.run("../../examples")
+    # breathe_projects_source = fileCrawler.run("../../supportData")
     # breathe_projects_source = fileCrawler.run("../../externalTools")
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)

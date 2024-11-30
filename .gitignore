@@ -13,6 +13,7 @@ docs/source/_images/Scenarios/*
 docs/source/breathe.data
 docs/source/externalTools/*
 docs/source/examples/*
+docs/source/supportData.rst
 src/tests/scenarios/data
 bsk-dev-env/
 bin/

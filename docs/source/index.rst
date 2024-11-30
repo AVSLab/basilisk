@@ -200,6 +200,7 @@ Related Publications
    Learn
    Support
    Documentation/index
+   supportData
    ExternalSites
 
 .. toctree::
