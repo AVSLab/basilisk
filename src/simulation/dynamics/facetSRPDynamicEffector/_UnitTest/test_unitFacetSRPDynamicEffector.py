@@ -147,51 +147,51 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
         # Define facet areas
         area1 = 1.5 * 1.5
         area2 = np.pi * (0.5 * 7.5) * (0.5 * 7.5)
-        facetAreas = [area1, area1, area1, area1, area1, area1, area2, area2, area2, area2]
+        facetAreaList = [area1, area1, area1, area1, area1, area1, area2, area2, area2, area2]
 
         # Define the facet normal vectors in B frame components
-        facetNormals_B = [np.array([1.0, 0.0, 0.0]),
-                          np.array([0.0, 1.0, 0.0]),
-                          np.array([-1.0, 0.0, 0.0]),
-                          np.array([0.0, -1.0, 0.0]),
-                          np.array([0.0, 0.0, 1.0]),
-                          np.array([0.0, 0.0, -1.0]),
-                          np.array([0.0, 1.0, 0.0]),
-                          np.array([0.0, -1.0, 0.0]),
-                          np.array([0.0, 1.0, 0.0]),
-                          np.array([0.0, -1.0, 0.0])]
+        facetNHat_BList = [np.array([1.0, 0.0, 0.0]),
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([-1.0, 0.0, 0.0]),
+                           np.array([0.0, -1.0, 0.0]),
+                           np.array([0.0, 0.0, 1.0]),
+                           np.array([0.0, 0.0, -1.0]),
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, -1.0, 0.0]),
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, -1.0, 0.0])]
 
         # Define facet center of pressure locations relative to point B
-        locationsPntB_B = [np.array([0.75, 0.0, 0.0]),
-                       np.array([0.0, 0.75, 0.0]),
-                       np.array([-0.75, 0.0, 0.0]),
-                       np.array([0.0, -0.75, 0.0]),
-                       np.array([0.0, 0.0, 0.75]),
-                       np.array([0.0, 0.0, -0.75]),
-                       np.array([4.5, 0.0, 0.75]),
-                       np.array([4.5, 0.0, 0.75]),
-                       np.array([-4.5, 0.0, 0.75]),
-                       np.array([-4.5, 0.0, 0.75])]
+        facetR_CopB_BList = [np.array([0.75, 0.0, 0.0]),
+                             np.array([0.0, 0.75, 0.0]),
+                             np.array([-0.75, 0.0, 0.0]),
+                             np.array([0.0, -0.75, 0.0]),
+                             np.array([0.0, 0.0, 0.75]),
+                             np.array([0.0, 0.0, -0.75]),
+                             np.array([4.5, 0.0, 0.75]),
+                             np.array([4.5, 0.0, 0.75]),
+                             np.array([-4.5, 0.0, 0.75]),
+                             np.array([-4.5, 0.0, 0.75])]
 
         # Define facet articulation axes in B frame components
-        rotAxes_B = [np.array([0.0, 0.0, 0.0]),
-                     np.array([0.0, 0.0, 0.0]),
-                     np.array([0.0, 0.0, 0.0]),
-                     np.array([0.0, 0.0, 0.0]),
-                     np.array([0.0, 0.0, 0.0]),
-                     np.array([0.0, 0.0, 0.0]),
-                     np.array([1.0, 0.0, 0.0]),
-                     np.array([1.0, 0.0, 0.0]),
-                     np.array([-1.0, 0.0, 0.0]),
-                     np.array([-1.0, 0.0, 0.0])]
+        facetRotHat_BList = [np.array([0.0, 0.0, 0.0]),
+                             np.array([0.0, 0.0, 0.0]),
+                             np.array([0.0, 0.0, 0.0]),
+                             np.array([0.0, 0.0, 0.0]),
+                             np.array([0.0, 0.0, 0.0]),
+                             np.array([0.0, 0.0, 0.0]),
+                             np.array([1.0, 0.0, 0.0]),
+                             np.array([1.0, 0.0, 0.0]),
+                             np.array([-1.0, 0.0, 0.0]),
+                             np.array([-1.0, 0.0, 0.0])]
 
         # Define facet optical coefficients
-        specCoeff = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
-        diffCoeff = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+        facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
+        facetDiffuseCoeffList = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 
         # Populate the srpEffector spacecraft geometry structure with the facet information
         for i in range(numFacets):
-            srpEffector.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], facetNormals_B[i], locationsPntB_B[i], rotAxes_B[i])
+            srpEffector.addFacet(facetAreaList[i], facetSpecularCoeffList[i], facetDiffuseCoeffList[i], facetNHat_BList[i], facetR_CopB_BList[i], facetRotHat_BList[i])
     except:
         testFailCount += 1
         testMessages.append("ERROR: FacetSRP unit test failed while setting facet parameters.")
@@ -256,8 +256,8 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     # Validate the results by comparing the last srp force and torque simulation values with the predicted values
     accuracy = 1e-12
     test_val = np.zeros([3,])
-    for i in range(len(facetAreas)):
-        test_val += checkFacetSRPForce(i, facetRotAngle1, facetRotAngle2, facetAreas[i], specCoeff[i], diffCoeff[i], facetNormals_B[i], rotAxes_B[i], sigma_BN[-1], r_BN_N[-1], r_SN_N[-1])
+    for i in range(len(facetAreaList)):
+        test_val += checkFacetSRPForce(i, facetRotAngle1, facetRotAngle2, facetAreaList[i], facetSpecularCoeffList[i], facetDiffuseCoeffList[i], facetNHat_BList[i], facetRotHat_BList[i], sigma_BN[-1], r_BN_N[-1], r_SN_N[-1])
 
     if not unitTestSupport.isArrayEqual(srpForce_B[-1, :], test_val, 3, accuracy):
         testFailCount += 1
@@ -272,7 +272,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 
     return testFailCount, testMessages
 
-def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, specCoeff, diffCoeff, facetNormal, facetRotAxis, sigma_BN, scPos, sunPos):
+def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, facetSpecularCoeffList, facetDiffuseCoeffList, facetNormal, facetRotAxis, sigma_BN, scPos, sunPos):
     # Define required constants
     speedLight = 299792458.0  # [m/s] Speed of light
     AstU = 149597870700.0  # [m] Astronomical unit
@@ -309,7 +309,7 @@ def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, specCoeff, d
 
     # Compute the SRP force acting on the facet
     if projArea > 0:
-        srp_force = -SRPPressure * projArea * ((1-specCoeff) * sHat + 2 * ( (diffCoeff / 3) + specCoeff * cosTheta) * facetNormal)
+        srp_force = -SRPPressure * projArea * ((1-facetSpecularCoeffList) * sHat + 2 * ( (facetDiffuseCoeffList / 3) + facetSpecularCoeffList * cosTheta) * facetNormal)
     else:
         srp_force = np.zeros([3,])
 

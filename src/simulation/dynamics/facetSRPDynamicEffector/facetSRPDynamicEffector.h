@@ -34,12 +34,12 @@
 
 /*! @brief Spacecraft Geometry Data */
 typedef struct {
-    std::vector<double> facetAreas;                                   //!< [m^2] Vector of facet areas
-    std::vector<double> facetSpecCoeffs;                              //!< Vector of facet spectral reflection optical coefficients
-    std::vector<double> facetDiffCoeffs;                              //!< Vector of facet diffuse reflection optical coefficients
-    std::vector<Eigen::Vector3d> facetNormals_B;                      //!< Vector of facet normals expressed in B frame components
-    std::vector<Eigen::Vector3d> facetLocationsPntB_B;                //!< [m] Vector of facet COP locations wrt point B expressed in B frame components
-    std::vector<Eigen::Vector3d> facetRotAxes_B;                      //!< [m] Vector of facet rotation axes expressed in B frame components
+    std::vector<double> facetAreaList;                                //!< [m^2] Vector of facet areas
+    std::vector<double> facetSpecularCoeffList;                       //!< Vector of facet spectral reflection optical coefficients
+    std::vector<double> facetDiffuseCoeffList;                        //!< Vector of facet diffuse reflection optical coefficients
+    std::vector<Eigen::Vector3d> facetNHat_BList;                     //!< Vector of facet normals expressed in B frame components
+    std::vector<Eigen::Vector3d> facetR_CopB_BList;                   //!< [m] Vector of facet COP locations wrt point B expressed in B frame components
+    std::vector<Eigen::Vector3d> facetRotHat_BList;                   //!< [m] Vector of facet rotation axes expressed in B frame components
 }FacetedSRPSpacecraftGeometryData;
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
@@ -51,11 +51,11 @@ public:
     void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
     void addFacet(double area,
-                  double specCoeff,
-                  double diffCoeff,
-                  Eigen::Vector3d normal_B,
-                  Eigen::Vector3d locationPntB_B,
-                  Eigen::Vector3d rotAxis_B);                                            //!< Method for adding facets to the spacecraft geometry structure
+                  double specularCoeff,
+                  double diffuseCoeff,
+                  Eigen::Vector3d nHat_B,
+                  Eigen::Vector3d r_CopB_B,
+                  Eigen::Vector3d rotHat_B);                                             //!< Method for adding facets to the spacecraft geometry structure
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);
     void ReadMessages();
 
@@ -73,4 +73,4 @@ private:
     bool facetAngleMsgRead;                                                              //!< Boolean variable signaling that the facet articulation messages are read
 };
 
-#endif 
+#endif
