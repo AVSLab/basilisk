@@ -35,11 +35,11 @@
 /*! @brief Spacecraft Geometry Data */
 typedef struct {
     std::vector<double> facetAreaList;                                //!< [m^2] Vector of facet areas
-    std::vector<double> facetSpecularCoeffList;                       //!< Vector of facet spectral reflection optical coefficients
-    std::vector<double> facetDiffuseCoeffList;                        //!< Vector of facet diffuse reflection optical coefficients
     std::vector<Eigen::Vector3d> facetNHat_BList;                     //!< Vector of facet normals expressed in B frame components
-    std::vector<Eigen::Vector3d> facetR_CopB_BList;                   //!< [m] Vector of facet COP locations wrt point B expressed in B frame components
     std::vector<Eigen::Vector3d> facetRotHat_BList;                   //!< [m] Vector of facet rotation axes expressed in B frame components
+    std::vector<Eigen::Vector3d> facetR_CopB_BList;                   //!< [m] Vector of facet COP locations wrt point B expressed in B frame components
+    std::vector<double> facetDiffuseCoeffList;                        //!< Vector of facet diffuse reflection optical coefficients
+    std::vector<double> facetSpecularCoeffList;                       //!< Vector of facet spectral reflection optical coefficients
 }FacetedSRPSpacecraftGeometryData;
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
@@ -51,11 +51,11 @@ public:
     void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
     void addFacet(double area,
-                  double specularCoeff,
-                  double diffuseCoeff,
                   Eigen::Vector3d nHat_B,
+                  Eigen::Vector3d rotHat_B,
                   Eigen::Vector3d r_CopB_B,
-                  Eigen::Vector3d rotHat_B);                                             //!< Method for adding facets to the spacecraft geometry structure
+                  double diffuseCoeff,
+                  double specularCoeff);                                             //!< Method for adding facets to the spacecraft geometry structure
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);
     void ReadMessages();
 

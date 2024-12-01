@@ -161,18 +161,6 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
                            np.array([0.0, 1.0, 0.0]),
                            np.array([0.0, -1.0, 0.0])]
 
-        # Define facet center of pressure locations relative to point B
-        facetR_CopB_BList = [np.array([0.75, 0.0, 0.0]),
-                             np.array([0.0, 0.75, 0.0]),
-                             np.array([-0.75, 0.0, 0.0]),
-                             np.array([0.0, -0.75, 0.0]),
-                             np.array([0.0, 0.0, 0.75]),
-                             np.array([0.0, 0.0, -0.75]),
-                             np.array([4.5, 0.0, 0.75]),
-                             np.array([4.5, 0.0, 0.75]),
-                             np.array([-4.5, 0.0, 0.75]),
-                             np.array([-4.5, 0.0, 0.75])]
-
         # Define facet articulation axes in B frame components
         facetRotHat_BList = [np.array([0.0, 0.0, 0.0]),
                              np.array([0.0, 0.0, 0.0]),
@@ -185,13 +173,25 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
                              np.array([-1.0, 0.0, 0.0]),
                              np.array([-1.0, 0.0, 0.0])]
 
+        # Define facet center of pressure locations relative to point B
+        facetR_CopB_BList = [np.array([0.75, 0.0, 0.0]),
+                             np.array([0.0, 0.75, 0.0]),
+                             np.array([-0.75, 0.0, 0.0]),
+                             np.array([0.0, -0.75, 0.0]),
+                             np.array([0.0, 0.0, 0.75]),
+                             np.array([0.0, 0.0, -0.75]),
+                             np.array([4.5, 0.0, 0.75]),
+                             np.array([4.5, 0.0, 0.75]),
+                             np.array([-4.5, 0.0, 0.75]),
+                             np.array([-4.5, 0.0, 0.75])]
+
         # Define facet optical coefficients
-        facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
         facetDiffuseCoeffList = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+        facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
 
         # Populate the srpEffector spacecraft geometry structure with the facet information
         for i in range(numFacets):
-            srpEffector.addFacet(facetAreaList[i], facetSpecularCoeffList[i], facetDiffuseCoeffList[i], facetNHat_BList[i], facetR_CopB_BList[i], facetRotHat_BList[i])
+            srpEffector.addFacet(facetAreaList[i], facetNHat_BList[i], facetRotHat_BList[i], facetR_CopB_BList[i], facetDiffuseCoeffList[i], facetSpecularCoeffList[i])
     except:
         testFailCount += 1
         testMessages.append("ERROR: FacetSRP unit test failed while setting facet parameters.")

@@ -59,17 +59,17 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
  @param rotHat_B  Facet articulation axis expressed in B frame components
 */
 void FacetSRPDynamicEffector::addFacet(double area,
-                                       double specularCoeff,
-                                       double diffuseCoeff,
                                        Eigen::Vector3d nHat_B,
+                                       Eigen::Vector3d rotHat_B,
                                        Eigen::Vector3d r_CopB_B,
-                                       Eigen::Vector3d rotHat_B) {
+                                       double diffuseCoeff,
+                                       double specularCoeff) {
     this->scGeometry.facetAreaList.push_back(area);
-    this->scGeometry.facetSpecularCoeffList.push_back(specularCoeff);
-    this->scGeometry.facetDiffuseCoeffList.push_back(diffuseCoeff);
     this->scGeometry.facetNHat_BList.push_back(nHat_B);
-    this->scGeometry.facetR_CopB_BList.push_back(r_CopB_B);
     this->scGeometry.facetRotHat_BList.push_back(rotHat_B);
+    this->scGeometry.facetR_CopB_BList.push_back(r_CopB_B);
+    this->scGeometry.facetDiffuseCoeffList.push_back(diffuseCoeff);
+    this->scGeometry.facetSpecularCoeffList.push_back(specularCoeff);
 }
 
 /*! This method subscribes the articulated facet angle input messages to the module
