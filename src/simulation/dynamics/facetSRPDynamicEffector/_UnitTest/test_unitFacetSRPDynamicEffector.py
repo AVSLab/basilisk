@@ -230,8 +230,8 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     r_BN_N = scPosDataLog.r_BN_N  # [m]
     sigma_BN = scPosDataLog.sigma_BN
     r_SN_N = sunPosDataLog.PositionVector  # [m]
-    srpForce_B = srpDataLog.forceExternal_B  # [N]
-    srpTorque_B = srpDataLog.torqueExternalPntB_B  # [Nm]
+    srpForce_BSim = srpDataLog.forceExternal_B  # [N]
+    srpTorque_BSim = srpDataLog.torqueExternalPntB_B  # [Nm]
 
     # Plot spacecraft inertial position
     plt.figure()
@@ -246,9 +246,9 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     # Plot SRP force
     plt.figure()
     plt.clf()
-    plt.plot(timespan, srpForce_B[:, 0], label=r'$F_{SRP} \cdot \hat{b}_1$')
-    plt.plot(timespan, srpForce_B[:, 1], label=r'$F_{SRP} \cdot \hat{b}_2$')
-    plt.plot(timespan, srpForce_B[:, 2], label=r'$F_{SRP} \cdot \hat{b}_3$')
+    plt.plot(timespan, srpForce_BSim[:, 0], label=r'$F_{SRP} \cdot \hat{b}_1$')
+    plt.plot(timespan, srpForce_BSim[:, 1], label=r'$F_{SRP} \cdot \hat{b}_2$')
+    plt.plot(timespan, srpForce_BSim[:, 2], label=r'$F_{SRP} \cdot \hat{b}_3$')
     plt.xlabel('Time (s)')
     plt.ylabel(r'${}^B F_{SRP}$ (N)')
     plt.legend()
@@ -256,9 +256,9 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     # Plot SRP torque
     plt.figure()
     plt.clf()
-    plt.plot(timespan, srpTorque_B[:, 0], label=r'$L_{SRP} \cdot \hat{b}_1$')
-    plt.plot(timespan, srpTorque_B[:, 1], label=r'$L_{SRP} \cdot \hat{b}_2$')
-    plt.plot(timespan, srpTorque_B[:, 2], label=r'$L_{SRP} \cdot \hat{b}_3$')
+    plt.plot(timespan, srpTorque_BSim[:, 0], label=r'$L_{SRP} \cdot \hat{b}_1$')
+    plt.plot(timespan, srpTorque_BSim[:, 1], label=r'$L_{SRP} \cdot \hat{b}_2$')
+    plt.plot(timespan, srpTorque_BSim[:, 2], label=r'$L_{SRP} \cdot \hat{b}_3$')
     plt.xlabel('Time (s)')
     plt.ylabel(r'${}^B L_{SRP}$ (Nm)')
     plt.legend()
@@ -268,9 +268,9 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     plt.close("all")
 
     # Validate the results by comparing the last srp force and torque simulation values with the predicted values
-    test_val = np.zeros([3,])
+    srpForce_BTruth = np.zeros([3,])
     for i in range(len(facetAreaList)):
-        test_val += checkFacetSRPForce(i,
+        srpForce_BTruth += computeFacetSRPForce(i,
                                        facetRotAngle1,
                                        facetRotAngle2,
                                        facetAreaList[i],
@@ -284,23 +284,23 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
                                        r_SN_N[-1])
 
     for idx in range(3):
-        np.testing.assert_allclose(srpForce_B[-1, idx],
-                                   test_val[idx],
+        np.testing.assert_allclose(srpForce_BSim[-1, idx],
+                                   srpForce_BTruth[idx],
                                    atol=1e-12,
                                    verbose=True)
 
-def checkFacetSRPForce(index,
-                       facetRotAngle1,
-                       facetRotAngle2,
-                       facetArea,
-                       facetDcm_F0B,
-                       facetNHat_F,
-                       facetRotHat_F,
-                       facetDiffuseCoeff,
-                       facetSpecularCoeff,
-                       sigma_BN,
-                       scPos,
-                       sunPos):
+def computeFacetSRPForce(index,
+                         facetRotAngle1,
+                         facetRotAngle2,
+                         facetArea,
+                         facetDcm_F0B,
+                         facetNHat_F,
+                         facetRotHat_F,
+                         facetDiffuseCoeff,
+                         facetSpecularCoeff,
+                         sigma_BN,
+                         r_BN_N,
+                         r_SN_N):
     # Define required constants
     speedLight = 299792458.0  # [m/s] Speed of light
     AstU = 149597870700.0  # [m] Astronomical unit
@@ -310,8 +310,8 @@ def checkFacetSRPForce(index,
     dcm_BN = rbk.MRP2C(sigma_BN)
 
     # Compute Sun direction relative to point B in B frame components
-    r_BN_B = np.matmul(dcm_BN, scPos)  # [m]
-    r_SN_B = np.matmul(dcm_BN, sunPos)  # [m]
+    r_BN_B = np.matmul(dcm_BN, r_BN_N)  # [m]
+    r_SN_B = np.matmul(dcm_BN, r_SN_N)  # [m]
     r_SB_B = r_SN_B - r_BN_B  # [m]
 
     # Determine unit direction vector pointing from sc to the Sun
@@ -340,11 +340,11 @@ def checkFacetSRPForce(index,
 
     # Compute the SRP force acting on the facet
     if projArea > 0:
-        srp_force = -SRPPressure * projArea * ((1-facetSpecularCoeff) * sHat + 2 * ( (facetDiffuseCoeff / 3) + facetSpecularCoeff * cosTheta) * facetNHat_B)
+        srpForce_BTruth = -SRPPressure * projArea * ((1-facetSpecularCoeff) * sHat + 2 * ( (facetDiffuseCoeff / 3) + facetSpecularCoeff * cosTheta) * facetNHat_B)
     else:
-        srp_force = np.zeros([3,])
+        srpForce_BTruth = np.zeros([3,])
 
-    return srp_force
+    return srpForce_BTruth
 
 if __name__=="__main__":
     test_facetSRPDynamicEffector(
