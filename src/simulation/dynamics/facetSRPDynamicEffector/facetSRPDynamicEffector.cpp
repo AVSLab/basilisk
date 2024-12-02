@@ -60,14 +60,14 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
 */
 void FacetSRPDynamicEffector::addFacet(double area,
                                        Eigen::Matrix3d dcm_F0B,
-                                       Eigen::Vector3d nHat_B,
+                                       Eigen::Vector3d nHat_F,
                                        Eigen::Vector3d rotHat_B,
                                        Eigen::Vector3d r_CopB_B,
                                        double diffuseCoeff,
                                        double specularCoeff) {
     this->scGeometry.facetAreaList.push_back(area);
     this->scGeometry.facetDcm_F0BList.push_back(dcm_F0B);
-    this->scGeometry.facetNHat_BList.push_back(nHat_B);
+    this->scGeometry.facetNHat_FList.push_back(nHat_F);
     this->scGeometry.facetRotHat_BList.push_back(rotHat_B);
     this->scGeometry.facetR_CopB_BList.push_back(r_CopB_B);
     this->scGeometry.facetDiffuseCoeffList.push_back(diffuseCoeff);
@@ -185,11 +185,11 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
             dcm_BB0 = c2DArray2EigenMatrix3d(dcmBB0);
 
             // Rotate the facet normal vector through the current articulation angle
-            this->scGeometry.facetNHat_BList[i] = dcm_BB0 * this->scGeometry.facetNHat_BList[i];
+            this->scGeometry.facetNHat_FList[i] = dcm_BB0 * this->scGeometry.facetNHat_FList[i];
         }
 
         // Determine the facet projected area
-        cosTheta = this->scGeometry.facetNHat_BList[i].dot(sHat);
+        cosTheta = this->scGeometry.facetNHat_FList[i].dot(sHat);
         projectedArea = this->scGeometry.facetAreaList[i] * cosTheta;
 
         // Compute the SRP force and torque acting on the facet only if the facet is in view of the Sun
@@ -198,7 +198,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
                                   * ((1 - this->scGeometry.facetSpecularCoeffList[i])
                                   * sHat + 2 * ((this->scGeometry.facetDiffuseCoeffList[i] / 3)
                                   + this->scGeometry.facetSpecularCoeffList[i] * cosTheta)
-                                  * this->scGeometry.facetNHat_BList[i]);
+                                  * this->scGeometry.facetNHat_FList[i]);
             facetSRPTorquePntB_B = this->scGeometry.facetR_CopB_BList[i].cross(facetSRPForcePntB_B);
 
             // Add the facet contribution to the total SRP force and torque acting on the spacecraft
@@ -209,7 +209,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
         // Reset the articulating facet normals to the original directions given
         if ((this->numArticulatedFacets != 0) && (i >= (this->numFacets - this->numArticulatedFacets)) &&
             this->facetAngleMsgRead) {
-            this->scGeometry.facetNHat_BList[i] = dcm_BB0.transpose() * this->scGeometry.facetNHat_BList[i];
+            this->scGeometry.facetNHat_FList[i] = dcm_BB0.transpose() * this->scGeometry.facetNHat_FList[i];
         }
     }
 

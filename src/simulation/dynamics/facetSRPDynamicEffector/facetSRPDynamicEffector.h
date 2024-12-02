@@ -36,7 +36,7 @@
 typedef struct {
     std::vector<double> facetAreaList;                                //!< [m^2] Vector of facet areas
     std::vector<Eigen::Matrix3d> facetDcm_F0BList;                    //!< Vector of facet frame F initial attitude DCMs relative to the B frame
-    std::vector<Eigen::Vector3d> facetNHat_BList;                     //!< Vector of facet normals expressed in B frame components
+    std::vector<Eigen::Vector3d> facetNHat_FList;                     //!< Vector of facet normals expressed in facet F frame components
     std::vector<Eigen::Vector3d> facetRotHat_BList;                   //!< [m] Vector of facet rotation axes expressed in B frame components
     std::vector<Eigen::Vector3d> facetR_CopB_BList;                   //!< [m] Vector of facet COP locations wrt point B expressed in B frame components
     std::vector<double> facetDiffuseCoeffList;                        //!< Vector of facet diffuse reflection optical coefficients
@@ -53,7 +53,7 @@ public:
     void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
     void addFacet(double area,
                   Eigen::Matrix3d dcm_F0B,
-                  Eigen::Vector3d nHat_B,
+                  Eigen::Vector3d nHat_F,
                   Eigen::Vector3d rotHat_B,
                   Eigen::Vector3d r_CopB_B,
                   double diffuseCoeff,
