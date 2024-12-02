@@ -314,12 +314,12 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 def checkFacetSRPForce(index,
                        facetRotAngle1,
                        facetRotAngle2,
-                       area,
-                       dcm_F0B,
-                       facetSpecularCoeffList,
-                       facetDiffuseCoeffList,
-                       facetNormal,
-                       facetRotAxis,
+                       facetArea,
+                       facetDcm_F0B,
+                       facetSpecularCoeff,
+                       facetDiffuseCoeff,
+                       facetNHat_F,
+                       facetRotHat_B,
                        sigma_BN,
                        scPos,
                        sunPos):
@@ -340,20 +340,21 @@ def checkFacetSRPForce(index,
     sHat = r_SB_B / np.linalg.norm(r_SB_B)
 
     # Rotate the articulated facet normal vectors
+    facetNHat_F0 = facetNHat_F
     if (index == 6 or index == 7):
-        prv_F0F = - facetRotAngle1 * facetRotAxis
+        prv_F0F = - facetRotAngle1 * facetRotHat_B
         dcm_F0F = rbk.PRV2C(prv_F0F)
-        facetNormal = np.matmul(dcm_F0F, facetNormal)
+        facetNHat_F0 = np.matmul(dcm_F0F, facetNHat_F)
     if (index == 8 or index == 9):
-        prv_F0F = - facetRotAngle2 * facetRotAxis
+        prv_F0F = - facetRotAngle2 * facetRotHat_B
         dcm_F0F = rbk.PRV2C(prv_F0F)
-        facetNormal = np.matmul(dcm_F0F, facetNormal)
+        facetNHat_F0 = np.matmul(dcm_F0F, facetNHat_F)
 
-    facetNormal = np.matmul(dcm_F0B.transpose(), facetNormal)
+    facetNHat_B = np.matmul(facetDcm_F0B.transpose(), facetNHat_F0)
 
     # Determine the facet projected area
-    cosTheta = np.dot(sHat, facetNormal)
-    projArea = area * cosTheta
+    cosTheta = np.dot(sHat, facetNHat_B)
+    projArea = facetArea * cosTheta
 
     # Determine the SRP pressure at the current sc location
     numAU = AstU / np.linalg.norm(r_SB_B)
@@ -361,7 +362,7 @@ def checkFacetSRPForce(index,
 
     # Compute the SRP force acting on the facet
     if projArea > 0:
-        srp_force = -SRPPressure * projArea * ((1-facetSpecularCoeffList) * sHat + 2 * ( (facetDiffuseCoeffList / 3) + facetSpecularCoeffList * cosTheta) * facetNormal)
+        srp_force = -SRPPressure * projArea * ((1-facetSpecularCoeff) * sHat + 2 * ( (facetDiffuseCoeff / 3) + facetSpecularCoeff * cosTheta) * facetNHat_B)
     else:
         srp_force = np.zeros([3,])
 
