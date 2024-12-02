@@ -52,11 +52,13 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
 /*! This method populates the spacecraft facet geometry structure with user-input facet information
  @return void
  @param area  [m^2] Facet area
- @param specularCoeff  Facet spectral reflection optical coefficient
- @param diffuseCoeff  Facet diffuse reflection optical coefficient
- @param nHat_B  Facet normal expressed in B frame components
+ @param dcm_F0B Facet frame F initial attitude DCM relative to the B frame
+ @param nHat_F  Facet normal expressed in facet F frame components
+ @param rotHat_F  Facet articulation axis expressed in facet F frame components
  @param r_CopB_B  [m] Facet location wrt point B expressed in B frame components
- @param rotHat_B  Facet articulation axis expressed in B frame components
+ @param diffuseCoeff  Facet diffuse reflection optical coefficient
+ @param specularCoeff  Facet spectral reflection optical coefficient
+
 */
 void FacetSRPDynamicEffector::addFacet(double area,
                                        Eigen::Matrix3d dcm_F0B,
