@@ -184,15 +184,15 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
                            np.array([0.0, 1.0, 0.0])]
 
         # Define facet articulation axes in B frame components
-        facetRotHat_BList = [np.array([0.0, 0.0, 0.0]),
+        facetRotHat_FList = [np.array([0.0, 0.0, 0.0]),
                              np.array([0.0, 0.0, 0.0]),
                              np.array([0.0, 0.0, 0.0]),
                              np.array([0.0, 0.0, 0.0]),
                              np.array([0.0, 0.0, 0.0]),
                              np.array([0.0, 0.0, 0.0]),
-                             np.array([1.0, 0.0, 0.0]),
                              np.array([1.0, 0.0, 0.0]),
                              np.array([-1.0, 0.0, 0.0]),
+                             np.array([1.0, 0.0, 0.0]),
                              np.array([-1.0, 0.0, 0.0])]
 
         # Define facet center of pressure locations relative to point B
@@ -216,7 +216,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
             srpEffector.addFacet(facetAreaList[i],
                                  facetDcm_F0BList[i],
                                  facetNHat_FList[i],
-                                 facetRotHat_BList[i],
+                                 facetRotHat_FList[i],
                                  facetR_CopB_BList[i],
                                  facetDiffuseCoeffList[i],
                                  facetSpecularCoeffList[i])
@@ -291,7 +291,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
                                        facetAreaList[i],
                                        facetDcm_F0BList[i],
                                        facetNHat_FList[i],
-                                       facetRotHat_BList[i],
+                                       facetRotHat_FList[i],
                                        facetDiffuseCoeffList[i],
                                        facetSpecularCoeffList[i],
                                        sigma_BN[-1],
@@ -317,7 +317,7 @@ def checkFacetSRPForce(index,
                        facetArea,
                        facetDcm_F0B,
                        facetNHat_F,
-                       facetRotHat_B,
+                       facetRotHat_F,
                        facetDiffuseCoeff,
                        facetSpecularCoeff,
                        sigma_BN,
@@ -342,11 +342,11 @@ def checkFacetSRPForce(index,
     # Rotate the articulated facet normal vectors
     facetNHat_F0 = facetNHat_F
     if (index == 6 or index == 7):
-        prv_F0F = - facetRotAngle1 * facetRotHat_B
+        prv_F0F = - facetRotAngle1 * facetRotHat_F
         dcm_F0F = rbk.PRV2C(prv_F0F)
         facetNHat_F0 = np.matmul(dcm_F0F, facetNHat_F)
     if (index == 8 or index == 9):
-        prv_F0F = - facetRotAngle2 * facetRotHat_B
+        prv_F0F = - facetRotAngle2 * facetRotHat_F
         dcm_F0F = rbk.PRV2C(prv_F0F)
         facetNHat_F0 = np.matmul(dcm_F0F, facetNHat_F)
 

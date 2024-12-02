@@ -61,7 +61,7 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
 void FacetSRPDynamicEffector::addFacet(double area,
                                        Eigen::Matrix3d dcm_F0B,
                                        Eigen::Vector3d nHat_F,
-                                       Eigen::Vector3d rotHat_B,
+                                       Eigen::Vector3d rotHat_F,
                                        Eigen::Vector3d r_CopB_B,
                                        double diffuseCoeff,
                                        double specularCoeff) {
@@ -70,7 +70,7 @@ void FacetSRPDynamicEffector::addFacet(double area,
     this->scGeometry.facetNHat_FList.push_back(nHat_F);
     Eigen::Vector3d nHat_B = dcm_F0B.transpose() * nHat_F;
     this->facetNHat_BList.push_back(nHat_B);
-    this->scGeometry.facetRotHat_BList.push_back(rotHat_B);
+    this->scGeometry.facetRotHat_FList.push_back(rotHat_F);
     this->scGeometry.facetR_CopB_BList.push_back(r_CopB_B);
     this->scGeometry.facetDiffuseCoeffList.push_back(diffuseCoeff);
     this->scGeometry.facetSpecularCoeffList.push_back(specularCoeff);
@@ -180,9 +180,9 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
             double articulationAngle = facetArticulationAngleList.at(articulatedIndex);
 
             // Determine the required DCM that rotates the facet normal vector through the articulation angle
-            double prv_F0FArray[3] = {-articulationAngle * this->scGeometry.facetRotHat_BList[i][0],
-                                 -articulationAngle * this->scGeometry.facetRotHat_BList[i][1],
-                                 -articulationAngle * this->scGeometry.facetRotHat_BList[i][2]};
+            double prv_F0FArray[3] = {-articulationAngle * this->scGeometry.facetRotHat_FList[i][0],
+                                 -articulationAngle * this->scGeometry.facetRotHat_FList[i][1],
+                                 -articulationAngle * this->scGeometry.facetRotHat_FList[i][2]};
             PRV2C(prv_F0FArray, dcm_F0FArray);
             dcm_F0F = c2DArray2EigenMatrix3d(dcm_F0FArray);
 
