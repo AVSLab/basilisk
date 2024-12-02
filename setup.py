@@ -141,6 +141,8 @@ setup(
         )
     ],
 
+    url="https://avslab.github.io/basilisk/",  # Ensure this field is populated
+
     # XXX: Override build_ext with ConanExtension builder.
     cmdclass={'build_ext': BuildConanExtCommand},
 )

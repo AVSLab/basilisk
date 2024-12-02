@@ -69,7 +69,7 @@ def is_running_virtual_env():
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
-    homepage = "http://hanspeterschaub.info/basilisk"
+    homepage = "https://avslab.github.io/basilisk/"
     f = open('docs/source/bskVersion.txt', 'r')
     version = f.read()
     f.close()

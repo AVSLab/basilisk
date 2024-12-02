@@ -44,7 +44,7 @@ disabled). Always use the "Merge" strategy.
 
 ## Coding Conventions
 
-A [coding conventions](https://hanspeterschaub.info/basilisk/Support/Developer/CodingGuidlines.html) document exists to
+A [coding conventions](https://avslab.github.io/basilisk/Support/Developer/CodingGuidlines.html) document exists to
 explain peculiarities and assist in onboarding.
 
 -  All development should correspond to a GitHub ticket, and branch names and PRs should include the ticket name.

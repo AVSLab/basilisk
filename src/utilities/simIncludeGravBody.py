@@ -41,6 +41,11 @@ from Basilisk.utilities import unitTestSupport
 
 from Basilisk.utilities.deprecated import deprecationWarn
 
+# this statement is needed to enable Windows to print ANSI codes in the Terminal
+# see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
+import os
+os.system("")
+
 @dataclass
 class BodyData:
     """A class that contains information about a body in the simulation.
@@ -467,9 +472,15 @@ class gravBodyFactory:
         if len(self.spicePlanetFrames) > 0:
             self.spiceObject.planetFrames = list(self.spicePlanetFrames)
 
-        for fileName in set(self.spiceKernelFileNames):
-            self.spiceObject.loadSpiceKernel(fileName, path)
         self.spiceObject.SPICELoaded = True
+        for fileName in set(self.spiceKernelFileNames):
+            if self.spiceObject.loadSpiceKernel(fileName, path):
+                # error occured loading spice kernel
+                self.spiceObject.SPICELoaded = False
+                if fileName == "de430.bsp":
+                    print("\033[91mERROR loading the large file de430.bsp:\033[0m  If BSK was "
+                          "installed via a wheel, try running bskLargeData from the console to "
+                          "install the large BSK data files.\n")
 
         # subscribe Grav Body data to the spice state message
         for c, gravBodyDataItem in enumerate(self.gravBodies.values()):

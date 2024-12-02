@@ -49,6 +49,12 @@ Version  |release|
 - Updated :ref:`scenarioMonteCarloAttRW` to include the new ``useBokeh`` feature in the ``run()`` method
 - Updated :ref:`scenarioMonteCarloAttRW` to use more pythonic OOP for Monte Carlo data retention
 - Updated :ref:`scenarioMonteCarloSpice` to use more pythonic OOP for Monte Carlo data retention
+- Decreased the Basilisk wheel size by keeping large data files out of the wheel.
+- The wheel installs the local command tool ``bskLargeData`` to execute :ref:`bskLargeData`.
+  The purpose is to install the large Basilisk data files into the local Basilisk
+  python package.
+- The wheel installs the local command tool ``bskExamples`` to execute :ref:`bskExamples`.  This
+  tool downloads the Basilisk repo ``examples`` folder into the local folder
 - Removed the now deprecated ``datashader_utilities.py`` in favor of the new bokeh plotting features in ``AnalysisBaseClass.py``
 - Upgraded protoc compiler to v3.20.0, added ``protobuf`` to optional package install list
 - Created unit tests for protobuffer packing and saving in :ref:`vizInterface`

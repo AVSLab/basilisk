@@ -13,6 +13,7 @@ docs/source/_images/Scenarios/*
 docs/source/breathe.data
 docs/source/externalTools/*
 docs/source/examples/*
+docs/source/supportData.rst
 src/tests/scenarios/data
 bsk-dev-env/
 bin/
@@ -42,7 +43,7 @@ externalTools/fswAuto/autowrapper/wraps/*
 src/moduleTemplates/autoCModule/*
 src/moduleTemplates/autoCppModule/*
 
-supportData/EphemerisData/de430.bsp
+supportData/EphemerisData/*.bsp
 
 *.fdb_latexmk
 *.fls

@@ -7,3 +7,4 @@ Pillow
 pytest
 pytest-html
 pytest-xdist
+requests

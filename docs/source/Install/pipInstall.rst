@@ -44,6 +44,11 @@ Build options (as passed to ``conanfile.py`` and described in :ref:`configureBui
     installations (``pip install -e .``) are not currently supported. Please follow the standard
     :ref:`configureBuild` process.
 
+After installing
+
+Building Basilisk ``wheel`` File
+--------------------------------
+
 On its own, there is no significant benefit to installing Basilisk in this way. However, supporting standard Python
 packaging tools means that Basilisk can now be built into a pre-compiled `"wheel" (.whl) file
 <https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#wheels>`_ that can be shared
@@ -60,6 +65,31 @@ The resulting wheel file can then be installed using ``pip``::
 The main benefit of this approach will come in the future, when a set of pre-compiled wheels will be made available,
 allowing most users to easily ``pip install Basilisk`` without compilation, in the same way that packages like
 ``numpy``, ``scipy``, and ``pandas`` are available.
+
+To keep the wheel size smaller, the large BSK data files are not installed by default.  If the user
+wants to use script that assumes they are included into the Basilisk python package, then go to the
+command line, change the current directory to be inside the environment where Basilisk was ``pip`` installed,
+and run the command::
+
+    bskLargeData
+
+This command runs a python file stored in the ``src/utilities`` folder.
+The ``pip install`` process automatically
+creates this console command in the current python environment to call this python file.  The file
+directly downloads the missing large BSK data files and put them into the local Basilisk python
+package installation.
+
+.. note::
+
+    If the computer does not have local internet access and the ``pip install`` is done via
+    a local wheel, then these missing Spice ``*.bsp`` data files can be manually added to::
+
+        .../.venv/lib/python3.11/site-packages/Basilisk/supportData/EphemerisData
+
+If installing Basilisk via a wheel the user does not have direct access to the full Basilisk source
+folder which contains the ``examples`` folder.  The Terminal command ``bskExamples``
+will download a copy of the examples folder into the local directory.  This command will also
+call ``bskLargeData`` as the examples assume these data files are present.
 
 Alternatively, if you download a zip'd folder of the Basilisk source code you can install it via ``pip``
 using::
