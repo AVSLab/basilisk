@@ -172,16 +172,16 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
                             rbk.PRV2C(prv_F010B)]
 
         # Define the facet normal vectors in B frame components
-        facetNHat_BList = [np.array([1.0, 0.0, 0.0]),
+        facetNHat_FList = [np.array([0.0, 1.0, 0.0]),
                            np.array([0.0, 1.0, 0.0]),
-                           np.array([-1.0, 0.0, 0.0]),
-                           np.array([0.0, -1.0, 0.0]),
-                           np.array([0.0, 0.0, 1.0]),
-                           np.array([0.0, 0.0, -1.0]),
                            np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, -1.0, 0.0]),
                            np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, -1.0, 0.0])]
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, 1.0, 0.0]),
+                           np.array([0.0, 1.0, 0.0])]
 
         # Define facet articulation axes in B frame components
         facetRotHat_BList = [np.array([0.0, 0.0, 0.0]),
@@ -215,7 +215,7 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
         for i in range(numFacets):
             srpEffector.addFacet(facetAreaList[i],
                                  facetDcm_F0BList[i],
-                                 facetNHat_BList[i],
+                                 facetNHat_FList[i],
                                  facetRotHat_BList[i],
                                  facetR_CopB_BList[i],
                                  facetDiffuseCoeffList[i],
@@ -285,7 +285,18 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     accuracy = 1e-12
     test_val = np.zeros([3,])
     for i in range(len(facetAreaList)):
-        test_val += checkFacetSRPForce(i, facetRotAngle1, facetRotAngle2, facetAreaList[i], facetSpecularCoeffList[i], facetDiffuseCoeffList[i], facetNHat_BList[i], facetRotHat_BList[i], sigma_BN[-1], r_BN_N[-1], r_SN_N[-1])
+        test_val += checkFacetSRPForce(i,
+                                       facetRotAngle1,
+                                       facetRotAngle2,
+                                       facetAreaList[i],
+                                       facetDcm_F0BList[i],
+                                       facetSpecularCoeffList[i],
+                                       facetDiffuseCoeffList[i],
+                                       facetNHat_FList[i],
+                                       facetRotHat_BList[i],
+                                       sigma_BN[-1],
+                                       r_BN_N[-1],
+                                       r_SN_N[-1])
 
     if not unitTestSupport.isArrayEqual(srpForce_B[-1, :], test_val, 3, accuracy):
         testFailCount += 1
@@ -300,7 +311,18 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 
     return testFailCount, testMessages
 
-def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, facetSpecularCoeffList, facetDiffuseCoeffList, facetNormal, facetRotAxis, sigma_BN, scPos, sunPos):
+def checkFacetSRPForce(index,
+                       facetRotAngle1,
+                       facetRotAngle2,
+                       area,
+                       dcm_F0B,
+                       facetSpecularCoeffList,
+                       facetDiffuseCoeffList,
+                       facetNormal,
+                       facetRotAxis,
+                       sigma_BN,
+                       scPos,
+                       sunPos):
     # Define required constants
     speedLight = 299792458.0  # [m/s] Speed of light
     AstU = 149597870700.0  # [m] Astronomical unit
@@ -319,13 +341,15 @@ def checkFacetSRPForce(index, facetRotAngle1, facetRotAngle2, area, facetSpecula
 
     # Rotate the articulated facet normal vectors
     if (index == 6 or index == 7):
-        prv_BB0 = - facetRotAngle1 * facetRotAxis
-        dcm_BB0 = rbk.PRV2C(prv_BB0)
-        facetNormal = np.matmul(dcm_BB0, facetNormal)
+        prv_F0F = - facetRotAngle1 * facetRotAxis
+        dcm_F0F = rbk.PRV2C(prv_F0F)
+        facetNormal = np.matmul(dcm_F0F, facetNormal)
     if (index == 8 or index == 9):
-        prv_BB0 = - facetRotAngle2 * facetRotAxis
-        dcm_BB0 = rbk.PRV2C(prv_BB0)
-        facetNormal = np.matmul(dcm_BB0, facetNormal)
+        prv_F0F = - facetRotAngle2 * facetRotAxis
+        dcm_F0F = rbk.PRV2C(prv_F0F)
+        facetNormal = np.matmul(dcm_F0F, facetNormal)
+
+    facetNormal = np.matmul(dcm_F0B.transpose(), facetNormal)
 
     # Determine the facet projected area
     cosTheta = np.dot(sHat, facetNormal)
