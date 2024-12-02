@@ -38,7 +38,6 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import facetSRPDynamicEffector
 from Basilisk.simulation import spacecraft
@@ -47,7 +46,7 @@ from Basilisk.architecture import messaging
 # Vary the articulated facet initial angles
 @pytest.mark.parametrize("facetRotAngle1", [macros.D2R * -10.4, macros.D2R * 45.2, macros.D2R * 90.0, macros.D2R * 180.0])
 @pytest.mark.parametrize("facetRotAngle2", [macros.D2R * -28.0, macros.D2R * 45.2, macros.D2R * -90.0, macros.D2R * 180.0])
-def test_facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
+def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     r"""
     **Validation Test Description**
 
@@ -66,14 +65,6 @@ def test_facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
         facetRotAngle1 (double): [rad] Articulation angle for facets 7 and 8 (solar panel 1)
         facetRotAngle2 (double): [rad] Articulation angle for facets 9 and 10 (solar panel 2)
     """
-
-    [testResults, testMessage] = facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2)
-
-    assert testResults < 1, testMessage
-
-def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
-    testFailCount = 0                                           # Zero the unit test result counter
-    testMessages = []                                           # Create an empty array to store the test log messages
 
     # Set up the simulation, task, and process
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -143,87 +134,82 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     unitTestSim.AddModelToTask(unitTaskName, srpEffector)
 
     # Set up the srpEffector spacecraft geometry data structure
-    try:
-        # Define facet areas
-        area1 = 1.5 * 1.5
-        area2 = np.pi * (0.5 * 7.5) * (0.5 * 7.5)
-        facetAreaList = [area1, area1, area1, area1, area1, area1, area2, area2, area2, area2]
+    # Define facet areas
+    area1 = 1.5 * 1.5
+    area2 = np.pi * (0.5 * 7.5) * (0.5 * 7.5)
+    facetAreaList = [area1, area1, area1, area1, area1, area1, area2, area2, area2, area2]
 
-        # Define the initial facet attitudes relative to B frame
-        prv_F01B = (macros.D2R * -90.0) * np.array([0.0, 0.0, 1.0])
-        prv_F02B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
-        prv_F03B = (macros.D2R * 90.0) * np.array([0.0, 0.0, 1.0])
-        prv_F04B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
-        prv_F05B = (macros.D2R * 90.0) * np.array([1.0, 0.0, 0.0])
-        prv_F06B = (macros.D2R * -90.0) * np.array([1.0, 0.0, 0.0])
-        prv_F07B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
-        prv_F08B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
-        prv_F09B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
-        prv_F010B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
-        facetDcm_F0BList = [rbk.PRV2C(prv_F01B),
-                            rbk.PRV2C(prv_F02B),
-                            rbk.PRV2C(prv_F03B),
-                            rbk.PRV2C(prv_F04B),
-                            rbk.PRV2C(prv_F05B),
-                            rbk.PRV2C(prv_F06B),
-                            rbk.PRV2C(prv_F07B),
-                            rbk.PRV2C(prv_F08B),
-                            rbk.PRV2C(prv_F09B),
-                            rbk.PRV2C(prv_F010B)]
+    # Define the initial facet attitudes relative to B frame
+    prv_F01B = (macros.D2R * -90.0) * np.array([0.0, 0.0, 1.0])
+    prv_F02B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
+    prv_F03B = (macros.D2R * 90.0) * np.array([0.0, 0.0, 1.0])
+    prv_F04B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
+    prv_F05B = (macros.D2R * 90.0) * np.array([1.0, 0.0, 0.0])
+    prv_F06B = (macros.D2R * -90.0) * np.array([1.0, 0.0, 0.0])
+    prv_F07B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
+    prv_F08B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
+    prv_F09B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
+    prv_F010B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
+    facetDcm_F0BList = [rbk.PRV2C(prv_F01B),
+                        rbk.PRV2C(prv_F02B),
+                        rbk.PRV2C(prv_F03B),
+                        rbk.PRV2C(prv_F04B),
+                        rbk.PRV2C(prv_F05B),
+                        rbk.PRV2C(prv_F06B),
+                        rbk.PRV2C(prv_F07B),
+                        rbk.PRV2C(prv_F08B),
+                        rbk.PRV2C(prv_F09B),
+                        rbk.PRV2C(prv_F010B)]
 
-        # Define the facet normal vectors in B frame components
-        facetNHat_FList = [np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0]),
-                           np.array([0.0, 1.0, 0.0])]
+    # Define the facet normal vectors in B frame components
+    facetNHat_FList = [np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0])]
 
-        # Define facet articulation axes in B frame components
-        facetRotHat_FList = [np.array([0.0, 0.0, 0.0]),
-                             np.array([0.0, 0.0, 0.0]),
-                             np.array([0.0, 0.0, 0.0]),
-                             np.array([0.0, 0.0, 0.0]),
-                             np.array([0.0, 0.0, 0.0]),
-                             np.array([0.0, 0.0, 0.0]),
-                             np.array([1.0, 0.0, 0.0]),
-                             np.array([-1.0, 0.0, 0.0]),
-                             np.array([1.0, 0.0, 0.0]),
-                             np.array([-1.0, 0.0, 0.0])]
+    # Define facet articulation axes in B frame components
+    facetRotHat_FList = [np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([1.0, 0.0, 0.0]),
+                         np.array([-1.0, 0.0, 0.0]),
+                         np.array([1.0, 0.0, 0.0]),
+                         np.array([-1.0, 0.0, 0.0])]
 
-        # Define facet center of pressure locations relative to point B
-        facetR_CopB_BList = [np.array([0.75, 0.0, 0.0]),
-                             np.array([0.0, 0.75, 0.0]),
-                             np.array([-0.75, 0.0, 0.0]),
-                             np.array([0.0, -0.75, 0.0]),
-                             np.array([0.0, 0.0, 0.75]),
-                             np.array([0.0, 0.0, -0.75]),
-                             np.array([4.5, 0.0, 0.75]),
-                             np.array([4.5, 0.0, 0.75]),
-                             np.array([-4.5, 0.0, 0.75]),
-                             np.array([-4.5, 0.0, 0.75])]
+    # Define facet center of pressure locations relative to point B
+    facetR_CopB_BList = [np.array([0.75, 0.0, 0.0]),
+                         np.array([0.0, 0.75, 0.0]),
+                         np.array([-0.75, 0.0, 0.0]),
+                         np.array([0.0, -0.75, 0.0]),
+                         np.array([0.0, 0.0, 0.75]),
+                         np.array([0.0, 0.0, -0.75]),
+                         np.array([4.5, 0.0, 0.75]),
+                         np.array([4.5, 0.0, 0.75]),
+                         np.array([-4.5, 0.0, 0.75]),
+                         np.array([-4.5, 0.0, 0.75])]
 
-        # Define facet optical coefficients
-        facetDiffuseCoeffList = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
-        facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
+    # Define facet optical coefficients
+    facetDiffuseCoeffList = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+    facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
 
-        # Populate the srpEffector spacecraft geometry structure with the facet information
-        for i in range(numFacets):
-            srpEffector.addFacet(facetAreaList[i],
-                                 facetDcm_F0BList[i],
-                                 facetNHat_FList[i],
-                                 facetRotHat_FList[i],
-                                 facetR_CopB_BList[i],
-                                 facetDiffuseCoeffList[i],
-                                 facetSpecularCoeffList[i])
-    except:
-        testFailCount += 1
-        testMessages.append("ERROR: FacetSRP unit test failed while setting facet parameters.")
-        return testFailCount, testMessages
+    # Populate the srpEffector spacecraft geometry structure with the facet information
+    for i in range(numFacets):
+        srpEffector.addFacet(facetAreaList[i],
+                             facetDcm_F0BList[i],
+                             facetNHat_FList[i],
+                             facetRotHat_FList[i],
+                             facetR_CopB_BList[i],
+                             facetDiffuseCoeffList[i],
+                             facetSpecularCoeffList[i])
 
     # Set up data logging
     scPosDataLog = scObject.scStateOutMsg.recorder()
@@ -282,7 +268,6 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
     plt.close("all")
 
     # Validate the results by comparing the last srp force and torque simulation values with the predicted values
-    accuracy = 1e-12
     test_val = np.zeros([3,])
     for i in range(len(facetAreaList)):
         test_val += checkFacetSRPForce(i,
@@ -298,18 +283,11 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
                                        r_BN_N[-1],
                                        r_SN_N[-1])
 
-    if not unitTestSupport.isArrayEqual(srpForce_B[-1, :], test_val, 3, accuracy):
-        testFailCount += 1
-        testMessages.append("FAILED:  FacetSRPEffector failed unit test at t=" + str(
-            timespan[-1]) + "sec with a value difference of " + str(
-            srpForce_B[-1, :] - test_val))
-
-    if testFailCount:
-        print(testMessages)
-    else:
-        print("PASSED")
-
-    return testFailCount, testMessages
+    for idx in range(3):
+        np.testing.assert_allclose(srpForce_B[-1, idx],
+                                   test_val[idx],
+                                   atol=1e-12,
+                                   verbose=True)
 
 def checkFacetSRPForce(index,
                        facetRotAngle1,
@@ -369,7 +347,7 @@ def checkFacetSRPForce(index,
     return srp_force
 
 if __name__=="__main__":
-    facetSRPTestFunction(
+    test_facetSRPDynamicEffector(
         True,  # show plots
         macros.D2R * -10.0,  # facetRotAngle1
         macros.D2R * 45.0,  # facetRotAngle2
