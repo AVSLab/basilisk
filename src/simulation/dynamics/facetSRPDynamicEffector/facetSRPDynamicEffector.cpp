@@ -26,19 +26,6 @@ const double speedLight = 299792458.0;  // [m/s] Speed of light
 const double AstU = 149597870700.0;  // [m] Astronomical unit
 const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
 
-/*! The constructor */
-FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
-    this->forceExternal_B.fill(0.0);
-    this->torqueExternalPntB_B.fill(0.0);
-    this->numFacets = 0;
-    this->numArticulatedFacets = 0;
-    this->facetAngleMsgRead = false;
-}
-
-/*! The destructor */
-FacetSRPDynamicEffector::~FacetSRPDynamicEffector() {
-}
-
 /*! The reset method
  @return void
  @param currentSimNanos  [ns] Time the method is called

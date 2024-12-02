@@ -46,8 +46,8 @@ typedef struct {
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
 class FacetSRPDynamicEffector: public SysModel, public DynamicEffector {
 public:
-    FacetSRPDynamicEffector();                                                           //!< The module constructor
-    ~FacetSRPDynamicEffector();                                                          //!< The module destructor
+    FacetSRPDynamicEffector() = default;                                                 //!< Constructor
+    ~FacetSRPDynamicEffector() = default;                                                //!< Destructor
     void linkInStates(DynParamManager& states) override;                                 //!< Method for giving the effector access to the hub states
     void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
@@ -61,8 +61,8 @@ public:
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);
     void ReadMessages();
 
-    uint64_t numFacets;                                                                  //!< Total number of spacecraft facets
-    uint64_t numArticulatedFacets;                                                       //!< Number of articulated facets
+    uint64_t numFacets = 0;                                                              //!< Total number of spacecraft facets
+    uint64_t numArticulatedFacets = 0;                                                   //!< Number of articulated facets
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                    //!< Sun spice ephemeris input message
 
 private:
@@ -71,9 +71,9 @@ private:
     std::vector<Eigen::Vector3d> facetNHat_BList;                                        //!< Vector of facet normals expressed in B frame components
     FacetedSRPSpacecraftGeometryData scGeometry;                                         //!< Spacecraft facet data structure
     Eigen::Vector3d r_SN_N;                                                              //!< [m] Sun inertial position vector
-    StateData *hubPosition;                                                              //!< [m] Hub inertial position vector
-    StateData *hubSigma;                                                                 //!< Hub MRP inertial attitude
-    bool facetAngleMsgRead;                                                              //!< Boolean variable signaling that the facet articulation messages are read
+    StateData *hubPosition = nullptr;                                                    //!< [m] Hub inertial position vector
+    StateData *hubSigma = nullptr;                                                       //!< Hub MRP inertial attitude
+    bool facetAngleMsgRead = false;                                                      //!< Boolean variable signaling that the facet articulation messages are read
 };
 
 #endif
