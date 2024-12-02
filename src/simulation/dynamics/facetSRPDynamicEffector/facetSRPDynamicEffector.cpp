@@ -68,6 +68,8 @@ void FacetSRPDynamicEffector::addFacet(double area,
     this->scGeometry.facetAreaList.push_back(area);
     this->scGeometry.facetDcm_F0BList.push_back(dcm_F0B);
     this->scGeometry.facetNHat_FList.push_back(nHat_F);
+    Eigen::Vector3d nHat_B = dcm_F0B.transpose() * nHat_F;
+    this->facetNHat_BList.push_back(nHat_B);
     this->scGeometry.facetRotHat_BList.push_back(rotHat_B);
     this->scGeometry.facetR_CopB_BList.push_back(r_CopB_B);
     this->scGeometry.facetDiffuseCoeffList.push_back(diffuseCoeff);

@@ -68,6 +68,7 @@ public:
 private:
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;      //!< Articulated facet angle data input message
     std::vector<double> facetArticulationAngleList;                                      //!< [rad] Vector of facet rotation angles
+    std::vector<Eigen::Vector3d> facetNHat_BList;                                        //!< Vector of facet normals expressed in B frame components
     FacetedSRPSpacecraftGeometryData scGeometry;                                         //!< Spacecraft facet data structure
     Eigen::Vector3d r_SN_N;                                                              //!< [m] Sun inertial position vector
     StateData *hubPosition;                                                              //!< [m] Hub inertial position vector
