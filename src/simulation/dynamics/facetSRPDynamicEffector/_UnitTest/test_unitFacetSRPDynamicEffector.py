@@ -52,8 +52,8 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     on the spacecraft about the body-fixed point B is properly computed for either a static spacecraft or a spacecraft
     with any number of articulating facets. The spacecraft geometry defined in this test consists of a cubic hub and
     two circular solar arrays. Six static square facets represent the cubic hub and four articulated circular facets
-    describe the two articulating solar arrays. To verify the module functionality, the final SRP force simulation value
-    is checked with the true value computed in python.
+    describe the two articulating solar arrays. To verify the module functionality, the final SRP force and torque
+    simulation values are checked with the truth values computed in python.
 
     **Test Parameters**
 
@@ -266,38 +266,47 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
 
     # Verify the results by comparing the last srp force and torque simulation values with the calculated truth values
     srpForce_BTruth = np.zeros([3,])
+    srpTorque_BTruth = np.zeros([3,])
     for i in range(len(facetAreaList)):
-        srpForce_BTruth += computeFacetSRPForce(i,
-                                       facetRotAngle1,
-                                       facetRotAngle2,
-                                       facetAreaList[i],
-                                       facetDcm_F0BList[i],
-                                       facetNHat_FList[i],
-                                       facetRotHat_FList[i],
-                                       facetDiffuseCoeffList[i],
-                                       facetSpecularCoeffList[i],
-                                       sigma_BN[-1],
-                                       r_BN_N[-1],
-                                       r_SN_N[-1])
+        srpForce_BFacet, srpTorque_BFacet = computeFacetSRPForceTorque(i,
+                                                                       facetRotAngle1,
+                                                                       facetRotAngle2,
+                                                                       facetAreaList[i],
+                                                                       facetDcm_F0BList[i],
+                                                                       facetNHat_FList[i],
+                                                                       facetRotHat_FList[i],
+                                                                       facetR_CopB_BList[i],
+                                                                       facetDiffuseCoeffList[i],
+                                                                       facetSpecularCoeffList[i],
+                                                                       sigma_BN[-1],
+                                                                       r_BN_N[-1],
+                                                                       r_SN_N[-1])
+        srpForce_BTruth += srpForce_BFacet
+        srpTorque_BTruth += srpTorque_BFacet
 
     for idx in range(3):
         np.testing.assert_allclose(srpForce_BSim[-1, idx],
                                    srpForce_BTruth[idx],
                                    atol=1e-12,
                                    verbose=True)
+        np.testing.assert_allclose(srpTorque_BSim[-1, idx],
+                                   srpTorque_BTruth[idx],
+                                   atol=1e-12,
+                                   verbose=True)
 
-def computeFacetSRPForce(index,
-                         facetRotAngle1,
-                         facetRotAngle2,
-                         facetArea,
-                         facetDcm_F0B,
-                         facetNHat_F,
-                         facetRotHat_F,
-                         facetDiffuseCoeff,
-                         facetSpecularCoeff,
-                         sigma_BN,
-                         r_BN_N,
-                         r_SN_N):
+def computeFacetSRPForceTorque(index,
+                               facetRotAngle1,
+                               facetRotAngle2,
+                               facetArea,
+                               facetDcm_F0B,
+                               facetNHat_F,
+                               facetRotHat_F,
+                               facetR_CopB_B,
+                               facetDiffuseCoeff,
+                               facetSpecularCoeff,
+                               sigma_BN,
+                               r_BN_N,
+                               r_SN_N):
     # Define required constants
     speedLight = 299792458.0  # [m/s] Speed of light
     AstU = 149597870700.0  # [m] Astronomical unit
@@ -337,10 +346,12 @@ def computeFacetSRPForce(index,
     # Compute the SRP force acting on the facet
     if projArea > 0:
         srpForce_BTruth = -SRPPressure * projArea * ((1-facetSpecularCoeff) * sHat + 2 * ( (facetDiffuseCoeff / 3) + facetSpecularCoeff * cosTheta) * facetNHat_B)
+        srpTorque_BTruth = np.cross(facetR_CopB_B, srpForce_BTruth)
     else:
         srpForce_BTruth = np.zeros([3,])
+        srpTorque_BTruth = np.zeros([3,])
 
-    return srpForce_BTruth
+    return srpForce_BTruth, srpTorque_BTruth
 
 if __name__=="__main__":
     test_facetSRPDynamicEffector(
