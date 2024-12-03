@@ -129,7 +129,6 @@ class BasiliskConan(ConanFile):
             "setuptools>=70.1.0",
             "setuptools-scm>=8.0",
             "packaging>=22",
-            "cmake>=3.26",
         ]
 
         checkStr = "Required"
