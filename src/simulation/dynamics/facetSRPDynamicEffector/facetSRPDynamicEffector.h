@@ -35,6 +35,7 @@
 /*! @brief Spacecraft Geometry Data */
 typedef struct {
     std::vector<double> facetAreaList;                                //!< [m^2] Vector of facet areas
+    std::vector<Eigen::Matrix3d> facetDcm_F0BList;                    //!< Vector of facet frame F initial attitude DCMs relative to the B frame
     std::vector<Eigen::Vector3d> facetNHat_BList;                     //!< Vector of facet normals expressed in B frame components
     std::vector<Eigen::Vector3d> facetRotHat_BList;                   //!< [m] Vector of facet rotation axes expressed in B frame components
     std::vector<Eigen::Vector3d> facetR_CopB_BList;                   //!< [m] Vector of facet COP locations wrt point B expressed in B frame components
@@ -51,6 +52,7 @@ public:
     void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
     void addFacet(double area,
+                  Eigen::Matrix3d dcm_F0B,
                   Eigen::Vector3d nHat_B,
                   Eigen::Vector3d rotHat_B,
                   Eigen::Vector3d r_CopB_B,

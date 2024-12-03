@@ -59,12 +59,14 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
  @param rotHat_B  Facet articulation axis expressed in B frame components
 */
 void FacetSRPDynamicEffector::addFacet(double area,
+                                       Eigen::Matrix3d dcm_F0B,
                                        Eigen::Vector3d nHat_B,
                                        Eigen::Vector3d rotHat_B,
                                        Eigen::Vector3d r_CopB_B,
                                        double diffuseCoeff,
                                        double specularCoeff) {
     this->scGeometry.facetAreaList.push_back(area);
+    this->scGeometry.facetDcm_F0BList.push_back(dcm_F0B);
     this->scGeometry.facetNHat_BList.push_back(nHat_B);
     this->scGeometry.facetRotHat_BList.push_back(rotHat_B);
     this->scGeometry.facetR_CopB_BList.push_back(r_CopB_B);

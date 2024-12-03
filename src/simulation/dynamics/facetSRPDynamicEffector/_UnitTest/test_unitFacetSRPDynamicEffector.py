@@ -149,6 +149,28 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
         area2 = np.pi * (0.5 * 7.5) * (0.5 * 7.5)
         facetAreaList = [area1, area1, area1, area1, area1, area1, area2, area2, area2, area2]
 
+        # Define the initial facet attitudes relative to B frame
+        prv_F01B = (macros.D2R * -90.0) * np.array([0.0, 0.0, 1.0])
+        prv_F02B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
+        prv_F03B = (macros.D2R * 90.0) * np.array([0.0, 0.0, 1.0])
+        prv_F04B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
+        prv_F05B = (macros.D2R * 90.0) * np.array([1.0, 0.0, 0.0])
+        prv_F06B = (macros.D2R * -90.0) * np.array([1.0, 0.0, 0.0])
+        prv_F07B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
+        prv_F08B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
+        prv_F09B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
+        prv_F010B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
+        facetDcm_F0BList = [rbk.PRV2C(prv_F01B),
+                            rbk.PRV2C(prv_F02B),
+                            rbk.PRV2C(prv_F03B),
+                            rbk.PRV2C(prv_F04B),
+                            rbk.PRV2C(prv_F05B),
+                            rbk.PRV2C(prv_F06B),
+                            rbk.PRV2C(prv_F07B),
+                            rbk.PRV2C(prv_F08B),
+                            rbk.PRV2C(prv_F09B),
+                            rbk.PRV2C(prv_F010B)]
+
         # Define the facet normal vectors in B frame components
         facetNHat_BList = [np.array([1.0, 0.0, 0.0]),
                            np.array([0.0, 1.0, 0.0]),
@@ -191,7 +213,13 @@ def facetSRPTestFunction(show_plots, facetRotAngle1, facetRotAngle2):
 
         # Populate the srpEffector spacecraft geometry structure with the facet information
         for i in range(numFacets):
-            srpEffector.addFacet(facetAreaList[i], facetNHat_BList[i], facetRotHat_BList[i], facetR_CopB_BList[i], facetDiffuseCoeffList[i], facetSpecularCoeffList[i])
+            srpEffector.addFacet(facetAreaList[i],
+                                 facetDcm_F0BList[i],
+                                 facetNHat_BList[i],
+                                 facetRotHat_BList[i],
+                                 facetR_CopB_BList[i],
+                                 facetDiffuseCoeffList[i],
+                                 facetSpecularCoeffList[i])
     except:
         testFailCount += 1
         testMessages.append("ERROR: FacetSRP unit test failed while setting facet parameters.")
