@@ -1,7 +1,7 @@
 
 # ISC License
 #
-# Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -20,15 +20,13 @@
 #   Module Name:        facetSRPDynamicEffector
 #   Author:             Leah Kiner
 #   Creation Date:      Dec 18 2022
-#   Last Updated:       Dec 13 2023
+#   Last Updated:       Dec 2 2024
 #
-
-import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pytest
-
 from Basilisk import __path__
 
 bskPath = __path__[0]
@@ -48,25 +46,23 @@ from Basilisk.architecture import messaging
 @pytest.mark.parametrize("facetRotAngle2", [macros.D2R * -28.0, macros.D2R * 45.2, macros.D2R * -90.0, macros.D2R * 180.0])
 def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     r"""
-    **Validation Test Description**
+    **Verification Test Description**
 
     The unit test for this module ensures that the calculated Solar Radiation Pressure (SRP) force and torque acting
     on the spacecraft about the body-fixed point B is properly computed for either a static spacecraft or a spacecraft
     with any number of articulating facets. The spacecraft geometry defined in this test consists of a cubic hub and
     two circular solar arrays. Six static square facets represent the cubic hub and four articulated circular facets
-    describe the articulating solar arrays. To validate the module functionality, the final SRP force simulation value
+    describe the two articulating solar arrays. To verify the module functionality, the final SRP force simulation value
     is checked with the true value computed in python.
 
     **Test Parameters**
 
     Args:
-
         show_plots (bool): (True) Show plots, (False) Do not show plots
         facetRotAngle1 (double): [rad] Articulation angle for facets 7 and 8 (solar panel 1)
         facetRotAngle2 (double): [rad] Articulation angle for facets 9 and 10 (solar panel 2)
     """
 
-    # Set up the simulation, task, and process
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitProcessName = "simProcess"
     dynProcess = unitTestSim.CreateNewProcess(unitProcessName)
@@ -87,10 +83,9 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     sunMsg = messaging.SpicePlanetStateMsg().write(sunStateMsg)
     gravFactory.gravBodies['sun'].planetBodyInMsg.subscribeTo(sunMsg)
 
-    # Create the spacecraft object
+    # Create the spacecraft object and set the spacecraft orbit
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "scObject"
-
     oe = orbitalMotion.ClassicElements()
     oe.a = 149597870700.0  # [m]
     oe.e = 0.5
@@ -99,8 +94,7 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     oe.omega = 0.0 * macros.D2R
     oe.f = 0.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
-
+    oe = orbitalMotion.rv2elem(mu, rN, vN)
     scObject.hub.r_CN_NInit = rN  # [m] Spacecraft inertial position
     scObject.hub.v_CN_NInit = vN  # [m] Spacecraft inertial velocity
     scObject.hub.sigma_BNInit = np.array([0.0, 0.0, 0.0])
@@ -109,13 +103,13 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
 
     # Create the articulated facet angle messages
     facetRotAngle1MessageData = messaging.HingedRigidBodyMsgPayload()
-    facetRotAngle1MessageData.theta = facetRotAngle1
-    facetRotAngle1MessageData.thetaDot = 0.0
+    facetRotAngle1MessageData.theta = facetRotAngle1  # [rad]
+    facetRotAngle1MessageData.thetaDot = 0.0  # [rad]
     facetRotAngle1Message = messaging.HingedRigidBodyMsg().write(facetRotAngle1MessageData)
 
     facetRotAngle2MessageData = messaging.HingedRigidBodyMsgPayload()
-    facetRotAngle2MessageData.theta = facetRotAngle2
-    facetRotAngle2MessageData.thetaDot = 0.0
+    facetRotAngle2MessageData.theta = facetRotAngle2  # [rad]
+    facetRotAngle2MessageData.thetaDot = 0.0  # [rad]
     facetRotAngle2Message = messaging.HingedRigidBodyMsg().write(facetRotAngle2MessageData)
 
     # Create an instance of the facetSRPDynamicEffector module to be tested
@@ -233,12 +227,13 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     srpForce_BSim = srpDataLog.forceExternal_B  # [N]
     srpTorque_BSim = srpDataLog.torqueExternalPntB_B  # [Nm]
 
-    # Plot spacecraft inertial position
+    # Plot the spacecraft inertial position
     plt.figure()
     plt.clf()
     plt.plot(timespan, r_BN_N[:, 0], label=r'$r_{\mathcal{B}/\mathcal{N}} \cdot \hat{n}_1$')
     plt.plot(timespan, r_BN_N[:, 1], label=r'$r_{\mathcal{B}/\mathcal{N}} \cdot \hat{n}_2$')
     plt.plot(timespan, r_BN_N[:, 2], label=r'$r_{\mathcal{B}/\mathcal{N}} \cdot \hat{n}_3$')
+    plt.title("Spacecraft Inertial Position Components")
     plt.xlabel(r'Time (s)')
     plt.ylabel(r'${}^N r_{\mathcal{B}/\mathcal{N}}$ (m)')
     plt.legend()
@@ -249,6 +244,7 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     plt.plot(timespan, srpForce_BSim[:, 0], label=r'$F_{SRP} \cdot \hat{b}_1$')
     plt.plot(timespan, srpForce_BSim[:, 1], label=r'$F_{SRP} \cdot \hat{b}_2$')
     plt.plot(timespan, srpForce_BSim[:, 2], label=r'$F_{SRP} \cdot \hat{b}_3$')
+    plt.title("SRP Force Components")
     plt.xlabel('Time (s)')
     plt.ylabel(r'${}^B F_{SRP}$ (N)')
     plt.legend()
@@ -259,6 +255,7 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     plt.plot(timespan, srpTorque_BSim[:, 0], label=r'$L_{SRP} \cdot \hat{b}_1$')
     plt.plot(timespan, srpTorque_BSim[:, 1], label=r'$L_{SRP} \cdot \hat{b}_2$')
     plt.plot(timespan, srpTorque_BSim[:, 2], label=r'$L_{SRP} \cdot \hat{b}_3$')
+    plt.title("SRP Torque Components")
     plt.xlabel('Time (s)')
     plt.ylabel(r'${}^B L_{SRP}$ (Nm)')
     plt.legend()
@@ -267,7 +264,7 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
         plt.show()
     plt.close("all")
 
-    # Validate the results by comparing the last srp force and torque simulation values with the predicted values
+    # Verify the results by comparing the last srp force and torque simulation values with the calculated truth values
     srpForce_BTruth = np.zeros([3,])
     for i in range(len(facetAreaList)):
         srpForce_BTruth += computeFacetSRPForce(i,
@@ -306,10 +303,8 @@ def computeFacetSRPForce(index,
     AstU = 149597870700.0  # [m] Astronomical unit
     solarRadFlux = 1368.0  # [W/m^2] Solar radiation flux at 1 AU
 
-    # Compute dcm_BN
-    dcm_BN = rbk.MRP2C(sigma_BN)
-
     # Compute Sun direction relative to point B in B frame components
+    dcm_BN = rbk.MRP2C(sigma_BN)
     r_BN_B = np.matmul(dcm_BN, r_BN_N)  # [m]
     r_SN_B = np.matmul(dcm_BN, r_SN_N)  # [m]
     r_SB_B = r_SN_B - r_BN_B  # [m]
@@ -317,7 +312,7 @@ def computeFacetSRPForce(index,
     # Determine unit direction vector pointing from sc to the Sun
     sHat = r_SB_B / np.linalg.norm(r_SB_B)
 
-    # Rotate the articulated facet normal vectors
+    # Rotate the articulated facet normal vector
     facetNHat_F0 = facetNHat_F
     if (index == 6 or index == 7):
         prv_F0F = - facetRotAngle1 * facetRotHat_F
@@ -328,6 +323,7 @@ def computeFacetSRPForce(index,
         dcm_F0F = rbk.PRV2C(prv_F0F)
         facetNHat_F0 = np.matmul(dcm_F0F, facetNHat_F)
 
+    # Express the facet normal vector in the B frame
     facetNHat_B = np.matmul(facetDcm_F0B.transpose(), facetNHat_F0)
 
     # Determine the facet projected area
@@ -349,6 +345,6 @@ def computeFacetSRPForce(index,
 if __name__=="__main__":
     test_facetSRPDynamicEffector(
         True,  # show plots
-        macros.D2R * -10.0,  # facetRotAngle1
-        macros.D2R * 45.0,  # facetRotAngle2
+        macros.D2R * -10.0,  # [rad] facetRotAngle1
+        macros.D2R * 45.0,  # [rad] facetRotAngle2
     )
