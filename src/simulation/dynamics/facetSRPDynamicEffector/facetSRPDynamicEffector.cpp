@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- */
+*/
 
 #include "facetSRPDynamicEffector.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -26,9 +26,9 @@ const double speedLight = 299792458.0;  // [m/s] Speed of light
 const double AstU = 149597870700.0;  // [m] Astronomical unit
 const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
 
-/*! The reset method
+/*! This method resets required module variables and checks the input messages to ensure they are linked.
  @return void
- @param currentSimNanos  [ns] Time the method is called
+ @param currentSimNanos [ns] Time the method is called
 */
 void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
     if (!this->sunInMsg.isLinked()) {
@@ -36,7 +36,7 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
     }
 }
 
-/*! This method populates the spacecraft facet geometry structure with user-input facet information
+/*! This method populates the spacecraft facet geometry structure with user-input facet information.
  @return void
  @param area  [m^2] Facet area
  @param dcm_F0B Facet frame F initial attitude DCM relative to the B frame
@@ -45,7 +45,6 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
  @param r_CopB_B  [m] Facet location wrt point B expressed in B frame components
  @param diffuseCoeff  Facet diffuse reflection optical coefficient
  @param specularCoeff  Facet spectral reflection optical coefficient
-
 */
 void FacetSRPDynamicEffector::addFacet(double area,
                                        Eigen::Matrix3d dcm_F0B,
@@ -66,18 +65,17 @@ void FacetSRPDynamicEffector::addFacet(double area,
 }
 
 /*! This method subscribes the articulated facet angle input messages to the module
-articulatedFacetDataInMsgs input message
+articulatedFacetDataInMsgs input messages.
  @return void
- @param tmpMsg  hingedRigidBody input message containing facet articulation angle data
+ @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
 void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
     this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
 }
 
-/*! This method is used to link the faceted SRP effector to the hub attitude and position,
-which are required for calculating SRP forces and torques
+/*! This method gives the module access to the hub inertial attitude and position.
  @return void
- @param states  Dynamic parameter states
+ @param states Dynamic parameter states
 */
 void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
@@ -85,11 +83,10 @@ void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
 }
 
 /*! This method reads the Sun state input message. If time-varying facet articulations are considered,
-the articulation angle messages are also read
+the articulation angle messages are also read.
  @return void
 */
-void FacetSRPDynamicEffector::ReadMessages()
-{
+void FacetSRPDynamicEffector::ReadMessages() {
     // Read the Sun state input message
     if (this->sunInMsg.isLinked() && this->sunInMsg.isWritten()) {
         SpicePlanetStateMsgPayload sunMsgBuffer;
@@ -116,13 +113,13 @@ void FacetSRPDynamicEffector::ReadMessages()
     }
 }
 
-/*! This method computes the srp force and torque acting about the hub point B in B frame components
+/*! This method computes the srp force and torque acting about the hub point B in B frame components.
  @return void
- @param callTime  [s] Time the method is called
- @param timeStep  [s] Simulation time step
+ @param callTime [s] Time the method is called
+ @param timeStep [s] Simulation time step
 */
 void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeStep) {
-    // Read the articulated facet information
+    // Read the input messages
     ReadMessages();
 
     // Compute dcm_BN
@@ -157,7 +154,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
     double numAU = AstU / r_SB_B.norm();
     double SRPPressure = (solarRadFlux / speedLight) * numAU * numAU;
 
-    // Loop through the facets and calculate the SRP force and torque acting on the spacecraft about point B
+    // Loop through the facets and calculate the total SRP force and torque acting on the spacecraft about point B
     for (uint64_t i = 0; i < this->numFacets; i++) {
         double dcm_F0FArray[3][3];
         Eigen::Matrix3d dcm_F0F;

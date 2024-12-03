@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
- */
+*/
 
 #ifndef FACET_SRP_DYNAMIC_EFFECTOR_H
 #define FACET_SRP_DYNAMIC_EFFECTOR_H
@@ -49,21 +49,21 @@ public:
     FacetSRPDynamicEffector() = default;                                                 //!< Constructor
     ~FacetSRPDynamicEffector() = default;                                                //!< Destructor
     void linkInStates(DynParamManager& states) override;                                 //!< Method for giving the effector access to the hub states
-    void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the SRP force and torque about point B
+    void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the total SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
-    void setNumFacets(const uint64_t numFacets);                                         //!< Setter method for the coast option bang duration
-    void setNumArticulatedFacets(const uint64_t numArticulatedFacets);                   //!< Setter method for the coast option bang duration
-    uint64_t getNumFacets() const;                                                       //!< Getter method for the coast option bang duration
-    uint64_t getNumArticulatedFacets() const;                                            //!< Getter method for the coast option bang duration
+    void setNumFacets(const uint64_t numFacets);                                         //!< Setter method for the total number of spacecraft facets
+    void setNumArticulatedFacets(const uint64_t numArticulatedFacets);                   //!< Setter method for the number of articulated facets
+    uint64_t getNumFacets() const;                                                       //!< Getter method for the total number of spacecraft facets
+    uint64_t getNumArticulatedFacets() const;                                            //!< Getter method for the number of articulated facets
     void addFacet(double area,
                   Eigen::Matrix3d dcm_F0B,
                   Eigen::Vector3d nHat_F,
                   Eigen::Vector3d rotHat_F,
                   Eigen::Vector3d r_CopB_B,
                   double diffuseCoeff,
-                  double specularCoeff);                                             //!< Method for adding facets to the spacecraft geometry structure
-    void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);
-    void ReadMessages();
+                  double specularCoeff);                                                 //!< Method for adding facets to the spacecraft geometry structure
+    void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);                //!< Method for adding articulated facets to the spacecraft geometry structure
+    void ReadMessages();                                                                 //!< Method to read input messages
 
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                    //!< Sun spice ephemeris input message
 
