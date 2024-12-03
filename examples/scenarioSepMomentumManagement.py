@@ -343,8 +343,8 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
-    SRP.numFacets = 10
-    SRP.numArticulatedFacets = 4
+    SRP.setNumFacets(10)
+    SRP.setNumArticulatedFacets(4)
     scSim.AddModelToTask(dynTask, SRP)
 
     # Define the spacecraft geometry for populating the FacetedSRPSpacecraftGeometryData structure in the SRP module
@@ -353,20 +353,62 @@ def run(momentumManagement, cmEstimation, showPlots):
     lenYHub = 1.8  # [m]
     lenZHub = 2.86  # [m]
     area2 = np.pi*(0.5 * 7.262)*(0.5 * 7.262)  # [m^2]
-    facetAreas = [lenYHub * lenZHub, lenXHub * lenZHub, lenYHub * lenZHub, lenXHub * lenZHub, lenXHub * lenYHub, lenXHub * lenYHub, area2, area2, area2, area2]
+    facetAreaList = [lenYHub * lenZHub,
+                     lenXHub * lenZHub,
+                     lenYHub * lenZHub,
+                     lenXHub * lenZHub,
+                     lenXHub * lenYHub,
+                     lenXHub * lenYHub,
+                     area2,
+                     area2,
+                     area2,
+                     area2]
 
-    # Define the facet normals in B frame components
-    facetNormal1 = np.array([1.0, 0.0, 0.0])
-    facetNormal2 = np.array([0.0, 1.0, 0.0])
-    facetNormal3 = np.array([-1.0, 0.0, 0.0])
-    facetNormal4 = np.array([0.0, -1.0, 0.0])
-    facetNormal5 = np.array([0.0, 0.0, 1.0])
-    facetNormal6 = np.array([0.0, 0.0, -1.0])
-    facetNormal7 = np.array([0.0, 1.0, 0.0])
-    facetNormal8 = np.array([0.0, -1.0, 0.0])
-    facetNormal9 = np.array([0.0, 1.0, 0.0])
-    facetNormal10 = np.array([0.0, -1.0, 0.0])
-    normals_B = [facetNormal1, facetNormal2, facetNormal3, facetNormal4, facetNormal5, facetNormal6, facetNormal7, facetNormal8, facetNormal9, facetNormal10]
+    # Define the initial facet attitudes relative to B frame
+    prv_F01B = (macros.D2R * -90.0) * np.array([0.0, 0.0, 1.0])
+    prv_F02B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
+    prv_F03B = (macros.D2R * 90.0) * np.array([0.0, 0.0, 1.0])
+    prv_F04B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
+    prv_F05B = (macros.D2R * 90.0) * np.array([1.0, 0.0, 0.0])
+    prv_F06B = (macros.D2R * -90.0) * np.array([1.0, 0.0, 0.0])
+    prv_F07B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
+    prv_F08B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
+    prv_F09B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
+    prv_F010B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
+    facetDcm_F0BList = [rbk.PRV2C(prv_F01B),
+                        rbk.PRV2C(prv_F02B),
+                        rbk.PRV2C(prv_F03B),
+                        rbk.PRV2C(prv_F04B),
+                        rbk.PRV2C(prv_F05B),
+                        rbk.PRV2C(prv_F06B),
+                        rbk.PRV2C(prv_F07B),
+                        rbk.PRV2C(prv_F08B),
+                        rbk.PRV2C(prv_F09B),
+                        rbk.PRV2C(prv_F010B)]
+
+    # Define the facet normal vectors in B frame components
+    facetNHat_FList = [np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0]),
+                       np.array([0.0, 1.0, 0.0])]
+
+    # Define facet articulation axes in B frame components
+    facetRotHat_FList = [np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([0.0, 0.0, 0.0]),
+                         np.array([1.0, 0.0, 0.0]),
+                         np.array([-1.0, 0.0, 0.0]),
+                         np.array([-1.0, 0.0, 0.0]),
+                         np.array([1.0, 0.0, 0.0])]
 
     # Define the facet center of pressure locations with respect to point B in B frame components
     facetLoc1 = np.array([0.5 * lenXHub, 0.0, 0.5 * lenZHub])  # [m]
@@ -379,28 +421,21 @@ def run(momentumManagement, cmEstimation, showPlots):
     facetLoc8 = np.array([3.75 + 0.5 * lenXHub, 0.00, 0.45])  # [m]
     facetLoc9 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
     facetLoc10 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
-
-    locationsPntB_B = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
-
-    # Define facet articulation axes in B frame components
-    rotAxes_B = [np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([0.0, 0.0, 0.0]),
-                 np.array([1.0, 0.0, 0.0]),
-                 np.array([1.0, 0.0, 0.0]),
-                 np.array([-1.0, 0.0, 0.0]),
-                 np.array([-1.0, 0.0, 0.0])]
+    facetR_CopB_BList = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
 
     # Define the facet optical coefficients
-    specCoeff = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
-    diffCoeff = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+    facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
+    facetDiffuseCoeffList = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 
     # Populate the scGeometry structure with the facet information
-    for i in range(len(facetAreas)):
-        SRP.addFacet(facetAreas[i], specCoeff[i], diffCoeff[i], normals_B[i], locationsPntB_B[i], rotAxes_B[i])
+    for i in range(len(facetAreaList)):
+        SRP.addFacet(facetAreaList[i],
+                     facetDcm_F0BList[i],
+                     facetNHat_FList[i],
+                     facetRotHat_FList[i],
+                     facetR_CopB_BList[i],
+                     facetDiffuseCoeffList[i],
+                     facetSpecularCoeffList[i])
 
     SRP.ModelTag = "FacetSRP"
     SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
