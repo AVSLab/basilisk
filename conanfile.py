@@ -121,14 +121,11 @@ class BasiliskConan(ConanFile):
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
-        pkgList += [
-            # Also install build system requirements.
-            # TODO: Read these from the `pyproject.toml` file directly?
-            # NOTE: These are *NOT* runtime requirements and should *NOT* be in `requirements.txt`!
-            "setuptools>=70.1.0",
-            "setuptools-scm>=8.0",
-            "packaging>=22",
-        ]
+
+        reqFile = open('requirements_dev.txt', 'r')
+        required = reqFile.read().replace("`", "").split('\n')
+        reqFile.close()
+        pkgList += [x.lower() for x in required]
 
         checkStr = "Required"
         if self.options.get_safe("allOptPkg"):
