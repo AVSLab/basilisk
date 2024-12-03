@@ -125,7 +125,6 @@ class BasiliskConan(ConanFile):
             # Also install build system requirements.
             # TODO: Read these from the `pyproject.toml` file directly?
             # NOTE: These are *NOT* runtime requirements and should *NOT* be in `requirements.txt`!
-            "conan>=2.0.5",
             "setuptools>=70.1.0",
             "setuptools-scm>=8.0",
             "packaging>=22",
