@@ -129,7 +129,7 @@ class BasiliskConan(ConanFile):
 
         checkStr = "Required"
         if self.options.get_safe("allOptPkg"):
-            optFile = open('requirements_optional.txt', 'r')
+            optFile = open('requirements_doc.txt', 'r')
             optionalPkgs = optFile.read().replace("`", "").split('\n')
             optFile.close()
             optionalPkgs = [x.lower() for x in optionalPkgs]
