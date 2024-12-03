@@ -109,9 +109,9 @@ Dependencies
 
         (venv) $ deactivate
 
-#. Ensure ``wheel`` is installed and install ``conan`` using pip, an example is below::
+#. Ensure all build related pip packages are installed::
 
-       (venv) $ pip3 install wheel conan
+       (venv) $ pip3 install -r requirements_dev.txt
 
    The ``conan`` repositories information is automatically setup by ``conanfile.py``.
 
@@ -124,7 +124,6 @@ Dependencies
    local in your user directory ``.local`` folder, be sure to add
    ``~/.local/bin`` to your ``PATH`` variable.
 
-#. `Optional Packages:` The above directions install the Basilisk base software. There are a series of :ref:`optional packages<installOptionalPackages>` that enhance this capability.
 
 Build Process via Terminal
 --------------------------
