@@ -51,6 +51,10 @@ public:
     void linkInStates(DynParamManager& states) override;                                 //!< Method for giving the effector access to the hub states
     void computeForceTorque(double callTime, double timeStep) override;                  //!< Method for computing the SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;                                       //!< Reset method
+    void setNumFacets(const uint64_t numFacets);                                         //!< Setter method for the coast option bang duration
+    void setNumArticulatedFacets(const uint64_t numArticulatedFacets);                   //!< Setter method for the coast option bang duration
+    uint64_t getNumFacets() const;                                                       //!< Getter method for the coast option bang duration
+    uint64_t getNumArticulatedFacets() const;                                            //!< Getter method for the coast option bang duration
     void addFacet(double area,
                   Eigen::Matrix3d dcm_F0B,
                   Eigen::Vector3d nHat_F,
@@ -61,11 +65,11 @@ public:
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);
     void ReadMessages();
 
-    uint64_t numFacets = 0;                                                              //!< Total number of spacecraft facets
-    uint64_t numArticulatedFacets = 0;                                                   //!< Number of articulated facets
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                    //!< Sun spice ephemeris input message
 
 private:
+    uint64_t numFacets = 0;                                                              //!< Total number of spacecraft facets
+    uint64_t numArticulatedFacets = 0;                                                   //!< Number of articulated facets
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;      //!< Articulated facet angle data input message
     std::vector<double> facetArticulationAngleList;                                      //!< [rad] Vector of facet rotation angles
     std::vector<Eigen::Vector3d> facetNHat_BList;                                        //!< Vector of facet normals expressed in B frame components

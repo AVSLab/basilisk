@@ -202,3 +202,33 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
     this->forceExternal_B = totalSRPForcePntB_B;
     this->torqueExternalPntB_B = totalSRPTorquePntB_B;
 }
+
+/*! Setter method for the total number of facets used to model the spacecraft structure.
+ @return void
+ @param numFacets Total number of spacecraft facets
+*/
+void FacetSRPDynamicEffector::setNumFacets(const uint64_t numFacets) {
+    this->numFacets = numFacets;
+}
+
+/*! Setter method for the number of articulated facets used to model the spacecraft articulating components.
+ @return void
+ @param numArticulatedFacets Number of articulated spacecraft facets
+*/
+void FacetSRPDynamicEffector::setNumArticulatedFacets(const uint64_t numArticulatedFacets) {
+    this->numArticulatedFacets = numArticulatedFacets;
+}
+
+/*! Getter method for the total number of facets used to model the spacecraft structure.
+ @return uint64_t
+*/
+uint64_t FacetSRPDynamicEffector::getNumFacets() const {
+    return this->numFacets;
+}
+
+/*! Getter method for the number of articulated facets used to model the spacecraft articulating components.
+ @return uint64_t
+*/
+uint64_t FacetSRPDynamicEffector::getNumArticulatedFacets() const {
+    return this->numArticulatedFacets;
+}

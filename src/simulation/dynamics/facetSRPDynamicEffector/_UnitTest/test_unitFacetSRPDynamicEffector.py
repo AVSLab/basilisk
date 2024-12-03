@@ -123,8 +123,8 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     srpEffector.ModelTag = "srpEffector"
     numFacets = 10  # Total number of spacecraft facets
     numArticulatedFacets = 4  # Number of articulated facets
-    srpEffector.numFacets = numFacets
-    srpEffector.numArticulatedFacets = numArticulatedFacets
+    srpEffector.setNumFacets(numFacets)
+    srpEffector.setNumArticulatedFacets(numArticulatedFacets)
     srpEffector.sunInMsg.subscribeTo(sunMsg)
     srpEffector.addArticulatedFacet(facetRotAngle1Message)
     srpEffector.addArticulatedFacet(facetRotAngle1Message)
