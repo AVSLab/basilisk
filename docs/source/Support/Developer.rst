@@ -13,6 +13,7 @@ The following support files help with writing Basilisk modules.
    Developer/deprecatingCode
    Developer/makingNewBskModule
    Developer/addSphinxDoc
+   Developer/createHtmlDocumentation
    Developer/bskModuleCheckoutList
    Developer/UnderstandingBasilisk
    Developer/migratingBskModuleToBsk2

@@ -91,7 +91,7 @@ The script accepts the following options to customize this process.
     * - ``allOptPkg``
       -
       - None
-      - If flag is set the all optional Basilisk python package depenencies are installed
+      - If flag is set the Basilisk python package depenencies to build documentation are installed
     * - ``pathToExternalModules``
       - String
       - Empty
@@ -138,8 +138,7 @@ To run all tests execute the following from the project root directory
 
     python run_all_test.py
 
-To run only the python test use the following commands.  Please see :ref:`installOptionalPackages` on how to
-run an optional multi-processing version of ``pytest``.
+To run only the python test use the following commands.
 
 .. code-block:: console
 

@@ -7,7 +7,7 @@ Creating the HTML Basilisk Documentation using Sphinx/Doxygen
 Documentation Description
 -------------------------
 The `Sphinx <https://pypi.org/project/Sphinx/>`__ and `Doxygen <http://doxygen.nl>`__ software packages provide an elegant method to both include code explanations, definitions and module documentation, but also to create a full HTML based documentation folder for a software project. An online copy of this HTML documentation is hosted at `AVS Basilisk web site <http://hanspeterschaub.info/bskMain.html>`__ with the `Documentation <http://hanspeterschaub.info/bskHtml/index.html>`__ page.
- 
+
  .. image:: /_images/static/bskHTML.png
  	:align: center
 
@@ -21,7 +21,9 @@ convenient method to install Doxygen by typing in the terminal::
 
    brew install doxygen
 
-See :ref:`installOptionalPackages` to learn what python packages must be installed.
+To install the required python packages run the command::
+
+    pip install -r requirements_doc.txt
 
 Making the HTML Documentation Folder
 ------------------------------------
@@ -29,7 +31,7 @@ First generate the test plots::
 
     cd src
 
-    pytest
+    pytest -n auto
 
 Next, in a terminal window switch to the ``docs`` folder::
 
@@ -48,4 +50,3 @@ To open the HTML index file and view the documentation in the browser use::
 To clean out the sphinx generated documents and folder use::
 
     make clean
-

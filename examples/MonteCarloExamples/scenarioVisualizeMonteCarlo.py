@@ -64,17 +64,6 @@ including those exceeding one gigabyte in size. Here's how it achieves this:
 This approach allows for smooth interaction with large datasets that would be
 impractical to plot all at once using traditional plotting libraries.
 
-Configuring a Python Environment For this Script
-------------------------------------------------
-To run this script, you need to set up a specific Python environment:
-
-#. Ensure Basilisk is compiled for the Python environment you are using.
-#. Either compile Basilisk with the optional dependencies already installed,
-   or install them manually using::
-
-      pip install -r requirements_optional.txt
-
-This will install Bokeh and other optional dependencies needed for this script.
 
 How to Run the Script
 ---------------------
