@@ -156,8 +156,9 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
 
     // Loop through the facets and calculate the total SRP force and torque acting on the spacecraft about point B
     for (uint64_t i = 0; i < this->numFacets; i++) {
-        double dcm_F0FArray[3][3];
-        Eigen::Matrix3d dcm_F0F;
+        double dcm_FF0Array[3][3];
+        Eigen::Matrix3d dcm_FF0;
+        Eigen::Matrix3d dcm_FB;
 
         // Determine the current facet normal vector if the facet articulates
         if ((this->numArticulatedFacets != 0) && (i >= (this->numFacets - this->numArticulatedFacets)) &&
@@ -166,14 +167,15 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
             double articulationAngle = facetArticulationAngleList.at(articulatedIndex);
 
             // Determine the required DCM that rotates the facet normal vector through the articulation angle
-            double prv_F0FArray[3] = {-articulationAngle * this->scGeometry.facetRotHat_FList[i][0],
-                                 -articulationAngle * this->scGeometry.facetRotHat_FList[i][1],
-                                 -articulationAngle * this->scGeometry.facetRotHat_FList[i][2]};
-            PRV2C(prv_F0FArray, dcm_F0FArray);
-            dcm_F0F = c2DArray2EigenMatrix3d(dcm_F0FArray);
+            double prv_FF0Array[3] = {articulationAngle * this->scGeometry.facetRotHat_FList[i][0],
+                                 articulationAngle * this->scGeometry.facetRotHat_FList[i][1],
+                                 articulationAngle * this->scGeometry.facetRotHat_FList[i][2]};
+            PRV2C(prv_FF0Array, dcm_FF0Array);
+            dcm_FF0 = c2DArray2EigenMatrix3d(dcm_FF0Array);
 
-            // Rotate the facet normal vector through the current articulation angle
-            this->facetNHat_BList[i] = this->scGeometry.facetDcm_F0BList[i].transpose() * dcm_F0F * this->scGeometry.facetNHat_FList[i];
+            // Rotate the facet normal vector through the current articulation angle (Note: this is an active rotation)
+            dcm_FB = dcm_FF0 * this->scGeometry.facetDcm_F0BList[i];
+            this->facetNHat_BList[i] = dcm_FB.transpose() * this->scGeometry.facetNHat_FList[i];
         }
 
         // Determine the facet projected area

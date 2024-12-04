@@ -322,18 +322,17 @@ def computeFacetSRPForceTorque(index,
     sHat = r_SB_B / np.linalg.norm(r_SB_B)
 
     # Rotate the articulated facet normal vector
-    facetNHat_F0 = facetNHat_F
+    dcm_FF0 = np.eye(3)
     if (index == 6 or index == 7):
-        prv_F0F = - facetRotAngle1 * facetRotHat_F
-        dcm_F0F = rbk.PRV2C(prv_F0F)
-        facetNHat_F0 = np.matmul(dcm_F0F, facetNHat_F)
+        prv_FF0 = facetRotAngle1 * facetRotHat_F
+        dcm_FF0 = rbk.PRV2C(prv_FF0)
     if (index == 8 or index == 9):
-        prv_F0F = - facetRotAngle2 * facetRotHat_F
-        dcm_F0F = rbk.PRV2C(prv_F0F)
-        facetNHat_F0 = np.matmul(dcm_F0F, facetNHat_F)
+        prv_FF0 = facetRotAngle2 * facetRotHat_F
+        dcm_FF0 = rbk.PRV2C(prv_FF0)
 
-    # Express the facet normal vector in the B frame
-    facetNHat_B = np.matmul(facetDcm_F0B.transpose(), facetNHat_F0)
+    # Compute the facet normal vector in the B frame
+    dcm_FB = np.matmul(dcm_FF0, facetDcm_F0B)
+    facetNHat_B = np.matmul(dcm_FB.transpose(), facetNHat_F)
 
     # Determine the facet projected area
     cosTheta = np.dot(sHat, facetNHat_B)
