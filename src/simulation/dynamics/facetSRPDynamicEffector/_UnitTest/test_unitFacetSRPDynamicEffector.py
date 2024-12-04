@@ -140,10 +140,10 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
     prv_F04B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
     prv_F05B = (macros.D2R * 90.0) * np.array([1.0, 0.0, 0.0])
     prv_F06B = (macros.D2R * -90.0) * np.array([1.0, 0.0, 0.0])
-    prv_F07B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
-    prv_F08B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
-    prv_F09B = (macros.D2R * 0.0) * np.array([1.0, 0.0, 0.0])
-    prv_F010B = (macros.D2R * 180.0) * np.array([1.0, 0.0, 0.0])
+    prv_F07B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
+    prv_F08B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
+    prv_F09B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
+    prv_F010B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
     facetDcm_F0BList = [rbk.PRV2C(prv_F01B),
                         rbk.PRV2C(prv_F02B),
                         rbk.PRV2C(prv_F03B),
@@ -176,8 +176,8 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2):
                          np.array([0.0, 0.0, 0.0]),
                          np.array([1.0, 0.0, 0.0]),
                          np.array([-1.0, 0.0, 0.0]),
-                         np.array([1.0, 0.0, 0.0]),
-                         np.array([-1.0, 0.0, 0.0])]
+                         np.array([-1.0, 0.0, 0.0]),
+                         np.array([1.0, 0.0, 0.0])]
 
     # Define facet center of pressure locations relative to point B
     facetR_CopB_BList = [np.array([0.75, 0.0, 0.0]),
