@@ -69,6 +69,8 @@ Version  |release|
 - Added :ref:`scenarioGaussMarkovRandomWalk` to showcase ``GaussMarkov`` class functionality
 - Added unit test coverage for ``GaussMarkov`` implementation in :ref:`tempMeasurement`,
   :ref:`simpleNav` and :ref:`planetNav`.
+- Fixed SWIG array handling for message payloads on macOS, particularly addressing issues with uint8_t arrays and other
+  array types in message payloads. This resolves compatibility issues between SWIG's array typemaps and builds.
 
 
 Version 2.5.0 (Sept. 30, 2024)
