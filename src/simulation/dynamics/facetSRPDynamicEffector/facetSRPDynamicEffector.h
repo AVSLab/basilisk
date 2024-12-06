@@ -67,9 +67,9 @@ public:
 
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                    //!< Sun spice ephemeris input message
 
-private:
     uint64_t numFacets = 0;                                                              //!< Total number of spacecraft facets
     uint64_t numArticulatedFacets = 0;                                                   //!< Number of articulated facets
+private:
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;      //!< Articulated facet angle data input message
     std::vector<double> facetArticulationAngleList;                                      //!< [rad] Vector of facet rotation angles
     std::vector<Eigen::Vector3d> facetNHat_BList;                                        //!< Vector of facet normals expressed in B frame components
