@@ -386,7 +386,7 @@ def run(momentumManagement, cmEstimation, showPlots):
                         rbk.PRV2C(prv_F09B),
                         rbk.PRV2C(prv_F010B)]
 
-    # Define the facet normal vectors in B frame components
+    # Define the facet normal vectors in F frame components
     facetNHat_FList = [np.array([0.0, 1.0, 0.0]),
                        np.array([0.0, 1.0, 0.0]),
                        np.array([0.0, 1.0, 0.0]),
@@ -398,7 +398,7 @@ def run(momentumManagement, cmEstimation, showPlots):
                        np.array([0.0, 1.0, 0.0]),
                        np.array([0.0, 1.0, 0.0])]
 
-    # Define facet articulation axes in B frame components
+    # Define facet articulation axes in F frame components
     facetRotHat_FList = [np.array([0.0, 0.0, 0.0]),
                          np.array([0.0, 0.0, 0.0]),
                          np.array([0.0, 0.0, 0.0]),
