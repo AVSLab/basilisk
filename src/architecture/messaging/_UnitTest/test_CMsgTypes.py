@@ -46,6 +46,11 @@ def test_cMsgTypes():
     assert type(test.ui64Test) is int
     assert type(test.f32Test) is float
     assert type(test.f64Test) is float
+    assert type(test.uint8Test) is int
+    assert type(test.ucharTest) is int
+    assert type(test.int8Test) is int
+    assert type(test.scharTest) is int
+    assert type(test.boolTest) is bool
 
     assert type(test.i16TestArray[0]) is int
     assert type(test.ui16TestArray[0]) is int
@@ -65,6 +70,12 @@ def test_cMsgTypes():
     assert type(test.f32TestArray2[0][0]) is float
     assert type(test.f64TestArray2[0][0]) is float
 
+    assert type(test.uint8TestArray2[0][0]) is int
+    assert type(test.ucharTestArray2[0][0]) is int
+    assert type(test.int8TestArray2[0][0]) is int
+    assert type(test.scharTestArray2[0][0]) is int
+    assert type(test.boolTestArray2[0][0]) is bool
+
     assert len(test.i16TestArray) == messaging.TYPES_TEST_ARRAY_SIZE
     assert len(test.ui16TestArray) == messaging.TYPES_TEST_ARRAY_SIZE
     assert len(test.i32TestArray) == messaging.TYPES_TEST_ARRAY_SIZE
@@ -82,6 +93,18 @@ def test_cMsgTypes():
     assert len(test.ui64TestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
     assert len(test.f32TestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
     assert len(test.f64TestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
+
+    assert len(test.uint8TestArray) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.ucharTestArray) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.int8TestArray) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.scharTestArray) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.boolTestArray) == messaging.TYPES_TEST_ARRAY_SIZE
+
+    assert len(test.uint8TestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.ucharTestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.int8TestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.scharTestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
+    assert len(test.boolTestArray2[0]) == messaging.TYPES_TEST_ARRAY_SIZE
 
 
 if __name__ == "__main__":

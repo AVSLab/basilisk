@@ -16,6 +16,8 @@ Version |release|
   in :ref:`magnetometer` and :ref:`coarsesunsensor`
   the value was being multiplied by 1.5 when creating the diagonal noise matrix.
   This 1.5x multiplier has now been removed. This is corrected in current release.
+- SWIG wrapper does not fully support all array types in message payloads. This affects custom message
+  payloads that use these types for array members. Workaround is to add them to ``swig_conly_data.i``.
 
 Version 2.5.0
 -------------
