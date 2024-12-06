@@ -25,13 +25,15 @@
 GaussMarkov::GaussMarkov()
 {
     this->RNGSeed = 0x1badcad1;
-    std::normal_distribution<double>::param_type updatePair(0.0, 1.0/3.0);
-    this->rGen.seed((unsigned int)this->RNGSeed);
-    this->rNum.param(updatePair);
+    this->numStates = 0;
+    initializeRNG();
 }
 
-GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed) : GaussMarkov() {
+GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed)
+{
     this->RNGSeed = newSeed;
+    this->numStates = size;
+    initializeRNG();
     this->propMatrix.resize(size,size);
     this->propMatrix.fill(0.0);
     this->currentState.resize((int64_t) size);
@@ -39,9 +41,14 @@ GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed) : GaussMarkov() {
     this->noiseMatrix.resize((int64_t) size, (int64_t) size);
     this->noiseMatrix.fill(0.0);
     this->stateBounds.resize((int64_t) size);
-    this->stateBounds.fill(0.0);
-    this->numStates = size;
+    this->stateBounds.fill(DEFAULT_BOUND);
+}
+
+void GaussMarkov::initializeRNG() {
+    //! - Set up standard normal distribution N(0,1) parameters for random number generation
+    std::normal_distribution<double>::param_type updatePair(0.0, 1.0);
     this->rGen.seed((unsigned int)this->RNGSeed);
+    this->rNum.param(updatePair);
 }
 
 /*! The destructor is a placeholder for one that might do something*/
@@ -59,47 +66,41 @@ void GaussMarkov::computeNextState()
 {
     Eigen::VectorXd errorVector;
     Eigen::VectorXd ranNums;
-    size_t i;
 
-    //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
+    //! - Check for consistent sizes
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
        ((uint64_t) this->propMatrix.size() != this->numStates*this->numStates))
     {
-        bskLogger.bskLog(BSK_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your propagate and noise matrices be same size and that size is your number of states squared.  I quit.");
+        bskLogger.bskLog(BSK_ERROR, "Matrix size mismatch in Gauss Markov model");
         return;
     }
-    if( (uint64_t) this->stateBounds.size() != this->numStates)
+    if((uint64_t) this->stateBounds.size() != this->numStates)
     {
-        bskLogger.bskLog(BSK_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
+        bskLogger.bskLog(BSK_ERROR, "State bounds size mismatch in Gauss Markov model");
         return;
     }
 
-    //! - Propagate the state forward in time using the propMatrix and the currentState
-    errorVector = this->currentState;
-    this->currentState = this->propMatrix * errorVector;
-
-    //! - Compute the random numbers used for each state.  Note that the same generator is used for all
+    //! - Generate base random numbers
     ranNums.resize((int64_t) this->numStates);
-
-    for(i = 0; i<this->numStates; i++)
-    {
+    for(size_t i = 0; i < this->numStates; i++) {
         ranNums[i] = this->rNum(rGen);
-        if (this->stateBounds[i] > 0.0){
-
-            double stateCalc = fabs(this->currentState[i]) > this->stateBounds[i]*1E-10 ? fabs(this->currentState[i]) : this->stateBounds[i];
-
-            double boundCheck = (this->stateBounds[i]*2.0 - stateCalc)/stateCalc;
-            boundCheck = boundCheck > this->stateBounds[i]*1E-10 ? boundCheck : this->stateBounds[i]*1E-10;
-            boundCheck = 1.0/exp(boundCheck*boundCheck*boundCheck);
-            boundCheck *= copysign(boundCheck, -this->currentState[i]);
-            ranNums[i] += boundCheck;
-        }
     }
 
-    //! - Apply the noise matrix to the random numbers to get error values
+    //! - Apply noise first
     errorVector = this->noiseMatrix * ranNums;
 
-    //! - Add the new errors to the currentState to get a good currentState
+    //! - Then propagate previous state
+    this->currentState = this->propMatrix * this->currentState;
+
+    //! - Add noise to propagated state
     this->currentState += errorVector;
 
+    //! - Apply bounds if needed
+    for(size_t i = 0; i < this->numStates; i++) {
+        if(this->stateBounds[i] > 0.0) {
+            if(fabs(this->currentState[i]) > this->stateBounds[i]) {
+                this->currentState[i] = copysign(this->stateBounds[i], this->currentState[i]);
+            }
+        }
+    }
 }

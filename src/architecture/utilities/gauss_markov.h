@@ -35,7 +35,7 @@
 */
 class GaussMarkov
 {
-    
+
 public:
     GaussMarkov();
     GaussMarkov(uint64_t size, uint64_t newSeed = 0x1badcad1); //!< class constructor
@@ -54,7 +54,18 @@ public:
     /*!@brief Set the upper bounds on the random walk to newBounds
        @param newBounds the bounds to put on the random walk states
        @return void*/
-    void setUpperBounds(Eigen::VectorXd newBounds){stateBounds = newBounds;}
+    void setUpperBounds(Eigen::VectorXd newBounds) {
+        // For normal distribution, ~99.7% of values fall within ±3σ
+        // So bounds should be at least 3x the standard deviation
+        for(int i = 0; i < noiseMatrix.rows(); i++) {
+            // Only check for warning if bounds are positive (random walk enabled)
+            // and noise is non-zero (random walk active)
+            if(newBounds[i] > 0 && noiseMatrix(i,i) > 0 && newBounds[i] < 3.0 * noiseMatrix(i,i)) {
+                bskLogger.bskLog(BSK_WARNING, "GaussMarkov bounds set tighter than 3σ - distribution will be truncated");
+            }
+        }
+        stateBounds = newBounds;
+    }
 
     /*!@brief Set the noiseMatrix that is used to define error sigmas
        @param noise The new value to use for the noiseMatrix variable (error sigmas)
@@ -73,11 +84,17 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
+    void initializeRNG();
     uint64_t RNGSeed;                 //!< -- Seed for random number generator
     std::minstd_rand rGen; //!< -- Random number generator for model
     std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
     uint64_t numStates;             //!< -- Number of states to generate noise for
 };
 
+//! Default bound for the Gauss-Markov model
+static constexpr double DEFAULT_BOUND = -1.0;
+
+//! Minimum state factor for the Gauss-Markov model
+static constexpr double MIN_STATE_FACTOR = 1E-10;
 
 #endif /* _GaussMarkov_HH_ */

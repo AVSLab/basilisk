@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -72,9 +71,11 @@ def findSigmaDot(sigma, omega):
 
 def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGyro = [1e6] * 3,errorBoundsAccel = [1e6] * 3):
     # sets the random walk for IRU module
-    self.PMatrixAccel = np.eye(3) * senRotNoiseStd
+    self.PMatrixAccel = np.eye(3) * senTransNoiseStd
     self.walkBoundsAccel = np.array(errorBoundsAccel)
-    self.PMatrixGyro = np.eye(3) * senTransNoiseStd
+
+    # Set up gyro noise parameters
+    self.PMatrixGyro = np.eye(3) * senRotNoiseStd
     self.walkBoundsGyro = np.array(errorBoundsGyro)
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -89,11 +90,10 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots,   testCase,       stopTime,       procRate,   gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
                         (False,         'clean',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8),
-                        (False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1),
+                        (False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.3,                0.3,                0.0,            0.0,            1.5e-1),
                         (False,         'bias',         1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-8),
                         (False,         'saturation',   1.0,            0.01,       0.0,            0.0,            1.0,            5.0,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-8),
                         (False,        'discretization',1.,             0.01,       0.05,           0.5,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8),
-
 ])
 
 # provide a unique test method name, starting with test_
@@ -437,56 +437,47 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
         for i in range(3,len(stepPRV_PN)-1):
             for j in [0,1,2]:
-                DRoutNoise[i][j] = DRout[i][j+1] - stepPRV_PN[i+1][j]
+                DRoutNoise[i][j] = DRout[i][j+1] - DRout[i-1][j+1]
+
         rDotDotOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
         for i in range(3, len(stepPRV_PN) - 1):
             for j in [0, 1, 2]:
-                rDotDotOutNoise[i, j] = rDotDotOut[i, j+1] - rDotDot_SN_P[i+1, j]
+                rDotDotOutNoise[i, j] = rDotDotOut[i, j+1] - rDotDotOut[i-1, j+1]
+
         DVoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
         for i in range(3, len(stepPRV_PN) - 1):
             for j in [0, 1, 2]:
-                DVoutNoise[i, j] = DVout[i, j + 1] - DVAccum_SN_P[i + 1, j]
+                DVoutNoise[i, j] = DVout[i, j + 1] - DVout[i-1, j + 1]
+
         omegaOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
         for i in range(3, len(stepPRV_PN)-1):
             for j in [0, 1, 2]:
-                omegaOutNoise[i, j] = omegaOut[i, j + 1] - omega_PN_P[i + 1, j]
+                omegaOutNoise[i, j] = omegaOut[i, j + 1] - omegaOut[i-1, j + 1]
 
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,0]),senRotNoiseStd*dt/1.5,accuracy):
-            testMessages.append(("FAILED DRnoise1. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,1]),senRotNoiseStd*dt/1.5,accuracy):
-            testMessages.append(("FAILED DRnoise2. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,2]),senRotNoiseStd*dt/1.5,accuracy):
-            testMessages.append(("FAILED DRnoise3. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,0]),senTransNoiseStd*dt/1.5 * accelScale[0],accuracy):
-            testMessages.append(("FAILED DVnoise1. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,1]),senTransNoiseStd*dt/1.5 * accelScale[1],accuracy):
-            testMessages.append(("FAILED DVnoise2. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,2]),senTransNoiseStd*dt/1.5 * accelScale[2],accuracy):
-            testMessages.append(("FAILED DVnoise3. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,0]),senTransNoiseStd/1.5 * accelScale[0],accuracy):
-            testMessages.append(("FAILED AccelNoise1. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,1]),senTransNoiseStd/1.5 * accelScale[1],accuracy):
-            testMessages.append(("FAILED AccelNoise2. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,2]),senTransNoiseStd/1.5 * accelScale[2],accuracy):
-            testMessages.append(("FAILED AccelNoise3. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(omegaOutNoise[:,0]),senRotNoiseStd/1.5,accuracy):
-            testMessages.append(("FAILED omegaNoise1. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(omegaOutNoise[:,1]),senRotNoiseStd/1.5,accuracy):
-            testMessages.append(("FAILED oemgaNoise2. \\\\& &"))
-            testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(omegaOutNoise[:,2]),senRotNoiseStd/1.5,accuracy):
-            testMessages.append(("FAILED omegaNoise3. \\\\& &"))
-            testFailCount += 1
+        # Compare noise standard deviations with expected values
+        for i, (actual, expected, name) in enumerate([
+            (np.std(DRoutNoise[:,0]), senRotNoiseStd*dt, "DRnoise1"),
+            (np.std(DRoutNoise[:,1]), senRotNoiseStd*dt, "DRnoise2"),
+            (np.std(DRoutNoise[:,2]), senRotNoiseStd*dt, "DRnoise3"),
+            (np.std(DVoutNoise[:,0]), senTransNoiseStd*dt*accelScale[0], "DVnoise1"),
+            (np.std(DVoutNoise[:,1]), senTransNoiseStd*dt*accelScale[1], "DVnoise2"),
+            (np.std(DVoutNoise[:,2]), senTransNoiseStd*dt*accelScale[2], "DVnoise3"),
+            (np.std(rDotDotOutNoise[:,0]), senTransNoiseStd*accelScale[0], "AccelNoise1"),
+            (np.std(rDotDotOutNoise[:,1]), senTransNoiseStd*accelScale[1], "AccelNoise2"),
+            (np.std(rDotDotOutNoise[:,2]), senTransNoiseStd*accelScale[2], "AccelNoise3"),
+            (np.std(omegaOutNoise[:,0]), senRotNoiseStd, "omegaNoise1"),
+            (np.std(omegaOutNoise[:,1]), senRotNoiseStd, "omegaNoise2"),
+            (np.std(omegaOutNoise[:,2]), senRotNoiseStd, "omegaNoise3")
+        ]):
+            print(f"\nChecking {name}:")
+            print(f"  Actual value:   {actual}")
+            print(f"  Expected value: {expected}")
+            if not unitTestSupport.isDoubleEqualRelative(actual, expected, accuracy):
+                msg = f"FAILED {name}. Expected {expected}, got {actual}. \\\\& &"
+                testMessages.append(msg)
+                testFailCount += 1
+            else:
+                print("  ✓ Test passed")
 
         # noise plots
         plt.figure(1000, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')

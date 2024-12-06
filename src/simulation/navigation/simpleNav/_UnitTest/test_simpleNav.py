@@ -75,7 +75,7 @@ def unitSimpleNav(show_plots):
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
-    stateMessage.r_BN_N = vehPosition 
+    stateMessage.r_BN_N = vehPosition
     spiceMessage.PositionVector = sunPosition
     spiceMessage.PlanetName = "sun"
 
@@ -293,6 +293,139 @@ def unitSimpleNav(show_plots):
     assert testFailCount < 1, testMessages
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
+
+def test_gauss_markov_properties():
+    """
+    Test the statistical properties of the Gauss-Markov noise model in simpleNav.
+    Tests:
+    1. Standard deviation matches input parameters
+    2. Mean converges to zero
+    3. Bounds are properly enforced
+    """
+    [testResults, testMessage] = gauss_markov_test()
+    assert testResults < 1, testMessage
+
+def gauss_markov_test():
+    testFailCount = 0
+    testMessages = []
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitProcessName = "TestProcess"
+    unitTaskName = "unitTask"
+
+    unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
+    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+
+    # Initialize the test module
+    sNavObject = simpleNav.SimpleNav()
+    unitTestSim.AddModelToTask(unitTaskName, sNavObject)
+
+    # Create the spacecraft state message
+    scStateMsg = messaging.SCStatesMsgPayload()
+    scStateMsg.r_BN_N = [10000.0, 0.0, 0.0]  # Match original test position
+    scStateMsg.v_BN_N = [0.0, 0.0, 0.0]
+    scStateMsg.sigma_BN = [0.0, 0.0, 0.0]
+    scStateMsg.omega_BN_B = [0.0, 0.0, 0.0]
+
+    # Create and setup sun state message
+    spiceMessage = messaging.SpicePlanetStateMsgPayload()
+    spiceMessage.PositionVector = [10000.0, 10000.0, 0.0]  # Match documentation
+    spiceMessage.PlanetName = "sun"
+
+    # Setup required input messages
+    inputMessageData = messaging.SCStatesMsg().write(scStateMsg)
+    sunStateMsg = messaging.SpicePlanetStateMsg().write(spiceMessage)
+    sNavObject.scStateInMsg.subscribeTo(inputMessageData)
+    sNavObject.sunStateInMsg.subscribeTo(sunStateMsg)
+
+    # Configure noise parameters (matching original test)
+    posSigma = 5.0
+    velSigma = 0.035
+    attSigma = 1.0 / 360.0 * math.pi / 180.0
+    rateSigma = 0.05 * math.pi / 180.0
+    sunSigma = math.pi / 180.0
+    dvSigma = 0.1 * math.pi / 180.0
+
+    # Setup P matrix matching original test exactly
+    pMatrix = [[posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma]]
+
+    # Setup error bounds matching original test
+    errorBounds = [[1000.], [1000.], [1000.], [1.], [1.], [1.], [0.005], [0.005], [0.005], [0.02], [0.02], [0.02],
+                   [5.0 * math.pi / 180.0], [5.0 * math.pi / 180.0], [5.0 * math.pi / 180.0], [0.053], [0.053], [0.053]]
+
+    sNavObject.walkBounds = errorBounds
+    sNavObject.PMatrix = pMatrix
+    sNavObject.crossTrans = True
+    sNavObject.crossAtt = False
+
+    # Setup message logging
+    dataTransLog = sNavObject.transOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataTransLog)
+
+    # Run simulation
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))  # Match original test duration
+    unitTestSim.ExecuteSimulation()
+
+    # Extract position data for analysis
+    posNav = numpy.array(dataTransLog.r_BN_N)
+
+    # Test 1: Statistical Checks
+    countAllow = posNav.shape[0] * 0.3/100.  # Match original test threshold
+    posDiffCount = 0
+    i = 0
+    while i < posNav.shape[0]:
+        posVecDiff = posNav[i,:] - scStateMsg.r_BN_N
+        j = 0
+        while j < 3:
+            if abs(posVecDiff[j]) > errorBounds[j][0]:
+                posDiffCount += 1
+            j += 1
+        i += 1
+
+    if posDiffCount > countAllow:
+        testFailCount += 1
+        testMessages.append(f"FAILED: Too many position errors ({posDiffCount} > {countAllow})")
+
+    # Test 2: Error Bound Usage Check
+    sigmaThreshold = 0.8  # Match original 80% threshold
+    posDiffCount = 0
+    i = 0
+    while i < posNav.shape[0]:
+        posVecDiff = posNav[i,:] - scStateMsg.r_BN_N
+        j = 0
+        while j < 3:
+            if abs(posVecDiff[j]) > errorBounds[j][0] * sigmaThreshold:
+                posDiffCount += 1
+            j += 1
+        i += 1
+
+    if posDiffCount < 1:
+        testFailCount += 1
+        testMessages.append("FAILED: Position errors too small")
+
+    if testFailCount == 0:
+        print("PASSED: Gauss-Markov noise tests successful")
+
     return [testFailCount, ''.join(testMessages)]
 
 # This statement below ensures that the unit test scrip can be run as a

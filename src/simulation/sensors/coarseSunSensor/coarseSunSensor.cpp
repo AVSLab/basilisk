@@ -35,7 +35,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
     this->faultNoiseStd = 0.5;
-    this->walkBounds = 1E-15; //don't allow random walk by default
+    this->walkBounds = -1.0; // don't allow random walk by default
     this->noiseModel = GaussMarkov(1, this->RNGSeed);
     this->faultNoiseModel = GaussMarkov(1, this->RNGSeed+1);
     this->faultState = NOMINAL;
@@ -155,7 +155,7 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
 
     this->faultNoiseModel.setRNGSeed(this->RNGSeed+1);
 
-    nMatrixFault(0,0) = this->faultNoiseStd*1.5; // sensor noise standard dev
+    nMatrixFault(0,0) = this->faultNoiseStd; // sensor noise standard dev
     this->faultNoiseModel.setNoiseMatrix(nMatrixFault);
 
     boundsFault(0,0) = 2.0; // walk bounds

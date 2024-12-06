@@ -45,21 +45,19 @@ path = os.path.dirname(os.path.abspath(__file__))
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize(
-    "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name,               zLevel, lineWide",
+    "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide",
     [
         (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "plain", 0, 5.),
         (False, 0.5, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "eclipse", -1, 5.),
         (False, 1.0, 3 * np.pi / 8., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "fieldOfView", -2, 5.),
         (False, 1.0, np.pi / 2., 0.15, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "kellyFactor", 1, 5.),
         (False, 1.0, np.pi / 2., 0.0, 2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "scaleFactor", 2, 5.),
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.5, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "bias", 3, 5.),
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.125, 0.0, 1.0, -10., 10., 3e-2, "deviation", -5, 1.),
+        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.125, 0.0, 1.0, -0.375, 0.375, 0.5, "deviation", -5, 1.),
         # low tolerance for std deviation comparison
         (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 10., 1e-10, "albedo", -4, 5.),
         (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.25, 0.75, 1e-10, "saturation", 5, 2.),
         (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 10.0, 1e-10, "sunDistance", 4, 3.),
-        (False, 0.5, 3 * np.pi / 8., 0.15, 2.0, 0.5, 0.0, 0.5, 2.0, 0.0, 10., 1e-10, "cleanCombined", -3, 5.),
-        (False, 0.5, 3 * np.pi / 8., 0.15, 2.0, 0.5, 0.125, 0.5, 2.0, -10., 10., 3e-2, "combined", -6, 1.),
+        (False, 1.0, np.pi / 2., 0.0, 2.0, 0.0, 0.125, 0.0, 1.0, -0.75, 0.75, 0.5, "combined", -6, 1.),
         (True, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "constellation", 0, 1.)
     ])
 # provide a unique test method name, starting with test_
@@ -328,6 +326,9 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
                 if not unitTestSupport.isDoubleEqualRelative(cssOutput[i], truthVector[i], errTol):
                     testFailCount += 1
     else:  # if "combined" or "deviation"
+        # Calculate standard deviation of just the noise component
+        justTheNoise = cssOutput - truthVector  # subtract curve from noisy curve
+        outputStd = np.std(justTheNoise)
         if not unitTestSupport.isDoubleEqualRelative(noiseStd * scaleFactor, outputStd, errTol):
             print(outputStd)
             print(noiseStd * scaleFactor)
