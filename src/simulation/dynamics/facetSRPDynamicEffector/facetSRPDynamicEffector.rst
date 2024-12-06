@@ -6,6 +6,10 @@ point :math:`B`. The module can be configured for either a static spacecraft or 
 articulating facets. For example, a spacecraft with two articulating solar arrays can be configured using 4
 articulating facets. The unit test for this module shows how to set up this particular configuration.
 
+.. warning::
+    The module variables ``numFacets`` and ``numArticulatedFacets`` will be moved to private module variables
+    Dec 2025. Setters and getters are now added to access these variables.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.
@@ -117,6 +121,10 @@ The following steps are required to set up the ``facetSRPDynamicEffector`` modul
 
     SRPEffector.setNumFacets(10)
     SRPEffector.setNumArticulatedFacets(4)
+
+.. warning::
+    The module variables ``numFacets`` and ``numArticulatedFacets`` will be moved to private module variables
+    Dec 2025. Setters and getters are now added to access these variables.
 
 #. If the spacecraft contains articulated facets, a ``HingedRigidBodyMsgPayload`` articulation angle message must be configured for each articulated facet. An example using two stand-alone messages is provided below::
 
