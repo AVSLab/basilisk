@@ -134,7 +134,7 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
 
     this->noiseModel.setRNGSeed(this->RNGSeed);
 
-    nMatrix(0,0) = this->senNoiseStd*1.5;
+    nMatrix(0,0) = this->senNoiseStd;
     this->noiseModel.setNoiseMatrix(nMatrix);
 
     bounds(0,0) = this->walkBounds;

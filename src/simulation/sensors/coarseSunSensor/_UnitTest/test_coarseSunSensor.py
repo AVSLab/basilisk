@@ -52,7 +52,7 @@ path = os.path.dirname(os.path.abspath(__file__))
         (False, 1.0, 3 * np.pi / 8., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "fieldOfView", -2, 5.),
         (False, 1.0, np.pi / 2., 0.15, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "kellyFactor", 1, 5.),
         (False, 1.0, np.pi / 2., 0.0, 2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "scaleFactor", 2, 5.),
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.125, 0.0, 1.0, -0.375, 0.375, 0.5, "deviation", -5, 1.),
+        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.225, 0.0, 1.0, -0.375, 0.375, 3e-2, "deviation", -5, 1.),
         # low tolerance for std deviation comparison
         (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 10., 1e-10, "albedo", -4, 5.),
         (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.25, 0.75, 1e-10, "saturation", 5, 2.),
