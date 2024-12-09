@@ -174,13 +174,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Choco help
-        uses: crazy-max/ghaction-chocolatey@v3
-        with:
-          args: -h
-      - name: "Install swig and cmake"
-        shell: pwsh
-        run: choco install swig cmake -y
+#      - name: Choco help
+#        uses: crazy-max/ghaction-chocolatey@v3
+#        with:
+#          args: -h
+#      - name: "Install swig and cmake"
+#        shell: pwsh
+#        run: choco install swig cmake -y
       - name: "Create python virtual env"
         shell: pwsh
         run: python -m venv venv
