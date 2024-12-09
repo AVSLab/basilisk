@@ -18,6 +18,8 @@ Version |release|
   This 1.5x multiplier has now been removed. This is corrected in current release.
 - SWIG wrapper does not fully support all array types in message payloads. This affects custom message
   payloads that use these types for array members. Workaround is to add them to ``swig_conly_data.i``.
+- A bug was fixed in the :ref:`facetSRPDynamicEffector` module. A transpose was required to be added to a dcm
+  in order to correctly express rotated facet normals in the spacecraft body frame.
 
 Version 2.5.0
 -------------

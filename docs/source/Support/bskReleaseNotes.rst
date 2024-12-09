@@ -71,6 +71,12 @@ Version  |release|
   :ref:`simpleNav` and :ref:`planetNav`.
 - Fixed SWIG array handling for message payloads on macOS, particularly addressing issues with uint8_t arrays and other
   array types in message payloads. This resolves compatibility issues between SWIG's array typemaps and builds.
+- A bug was fixed in the :ref:`facetSRPDynamicEffector` module. A transpose was required to be added to a dcm
+  in order to correctly express rotated facet normals in the spacecraft body frame.
+- The :ref:`facetSRPDynamicEffector` module was refactored and setters and getters were added for the module
+  variables ``numFacets`` and ``numArticulatedFacets``. A deprecation warning is added to the module documentation
+  stating that these variables will be moved to private module variables in Dec 2025. To access these variables
+  the added setters and getters must be used.
 
 
 Version 2.5.0 (Sept. 30, 2024)
