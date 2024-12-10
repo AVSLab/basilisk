@@ -356,14 +356,6 @@ if __name__ == "__main__":
         # if profile already exists the above command returns an error.  Just ignore in this
         # case.  We don't want to overwrite an existing profile file
         pass
-
-    if platform.system() == "Linux":
-        try:
-            # XXX: This fixes a linker issue due to the dual C++ ABI.
-            subprocess.check_output(["conan", "profile", "update", "settings.compiler.libcxx=libstdc++11", "default"])
-            print("\nConfiguring: " + statusColor + "use libstdc++11 by default" + endColor)
-        except:
-            pass
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
