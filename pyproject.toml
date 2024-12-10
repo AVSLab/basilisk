@@ -6,9 +6,9 @@ requires = [
     "packaging>=22",        # Due to incompatibility: https://github.com/pypa/setuptools/issues/4483
 
     # Requirements for building Basilisk through conanfile
-    "conan>=1.40.1, <2.00.0",
+    "conan>=2.0.5",
     "cmake>=3.26",
-    "swig==4.2.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
+    "swig>=4.2.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
 ]
 
 [project]

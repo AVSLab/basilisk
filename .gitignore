@@ -42,6 +42,7 @@ externalTools/fswAuto/autowrapper/wraps/*
 **/outputFiles/*
 src/moduleTemplates/autoCModule/*
 src/moduleTemplates/autoCppModule/*
+src/CMakeUserPresets.json
 
 supportData/EphemerisData/*.bsp
 

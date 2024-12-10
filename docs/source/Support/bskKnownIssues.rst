@@ -23,6 +23,13 @@ Version |release|
 - The ``MtbEffector.py`` module was not being imported correctly in Python due to lack of ``swig_eigen.i``
   include file in ``MtbEffector.i``. This is fixed in the current release, however it remains unknown why
   the dynamics engine is re-swigged for every individual effector/dynamics related class.
+- This release uses ``conan`` version 2.x which creates a new folder ``.conan2`` in
+  the home folder.  Thus, the first time Basilisk is build the project dependencies will
+  be downloaded again into ``.conan2``
+- If configuring and building Basilisk directly with ``conan install`` and ``build`` commands,
+  the ``-if dist3/conan`` argument is no longer needed.  The Basilisk install location is
+  setup with ``conan 2`` arguments inside ``conanfile.py``.
+
 
 Version 2.5.0
 -------------

@@ -111,14 +111,9 @@ Dependencies
 
 #. Ensure ``wheel`` is installed and install ``conan`` using pip, an example is below::
 
-       (venv) $ pip3 install wheel 'conan<2.0'
+       (venv) $ pip3 install wheel conan
 
-   The conan repositories information is automatically setup by ``conanfile.py``.
-
-   .. warning::
-
-      If you are upgrading from a version of Basilisk prior to 1.8.0, be sure to delete the ``.conan`` folder in your
-      home directory to create a clean copy compatible with the current build system.
+   The ``conan`` repositories information is automatically setup by ``conanfile.py``.
 
 #. CMake: You can install cmake using pip3.  This makes it easy to overcome limitations of which version of ``cmake``
    the ``apt-get`` command provides::
