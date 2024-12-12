@@ -197,4 +197,4 @@ using:
          :scale: 50%
 
    -  Change the active config to Release instead of debug for solution properties.
-   -  Within Visual Studio now go under `Build menu/Build Solution` to build.
+   -  Within Visual Studio now go under ``Build menu/Build Solution`` to build.
