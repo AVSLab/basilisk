@@ -161,7 +161,7 @@ jobs:
 
   build-windows:
     name: Windows opNav
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       matrix:
         python-version: ["3.11"]
