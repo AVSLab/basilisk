@@ -6,7 +6,7 @@
 Setup On Windows
 ================
 
-The following was developed using Windows 7 and Visual Studio Community 15 2017 or 16 2019.
+The following was developed using Windows 11 and Visual Studio Community 17 2022.
 
 Software setup
 --------------
@@ -16,7 +16,7 @@ In order to run Basilisk, the following software will be necessary:
 -  `Python <https://www.python.org/downloads/windows/>`__ 3.8 to 3.13.
    Version 3.8 is deprecated and will be removed April 2026.
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
--  Visual Studios 15 2017 or greater
+-  Default compiler is Visual Studios 17 2022
 -  `Swig <http://www.swig.org/download.html>`__ version 4.X
 -  (Optional) A GiT GUI application such as `GitKraken <https://www.gitkraken.com>`__
    to manage your copy of the Basilisk repository
@@ -146,7 +146,7 @@ When all the prerequisite installations are complete, the project can be built a
 
     (.venv) $ python conanfile.py
 
-   This creates the Visual Studio 16 2019 IDE project in ``dist3`` and builds the project.
+   This creates the Visual Studio 17 2022 IDE project in ``dist3`` and builds the project.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.
    For other configure and build options, including running ``cmake`` directly, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
@@ -155,10 +155,9 @@ When all the prerequisite installations are complete, the project can be built a
 
    .. note::
 
-        The default Window compiler is Visual Studio 16.  If you had VS 17 installed and downgraded to VS 16,
-        then the system might still find VS 17 and give an error when running the above command.
-        If you want to compile with latest VS 17, then use
-        ``python conanfile.py --generator "Visual Studio 17 2022"``.
+        The default Window compiler is Visual Studio 17.
+        If you want to compile with VS 16, then use
+        ``python conanfile.py --generator "Visual Studio 16 2019"``.
 
    .. note::
 
