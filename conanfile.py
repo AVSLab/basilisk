@@ -284,7 +284,7 @@ class BasiliskConan(ConanFile):
                 generatorString = "Xcode"
                 tc.generator = generatorString
             elif self.settings.os == "Windows":
-                generatorString = "Visual Studio 16 2019"
+                generatorString = "Visual Studio 17 2022"
                 tc.generator = generatorString
                 self.options["*"].shared = True
             else:
