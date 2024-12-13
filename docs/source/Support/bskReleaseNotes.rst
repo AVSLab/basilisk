@@ -44,6 +44,12 @@ Version |release|
 - Support including an eclipse message in :ref:`SpacecraftLocation` to more accurately determine illumination.
 - Fixed an issue where the :ref:`spaceToGroundTransmitter` would check for the amount of data remaining in a different partition than the one being downlinked.
 - Fixed an issue where a high baud rate prevented the :ref:`spaceToGroundTransmitter` from downlinking data from the :ref:`simpleStorageUnit` or :ref:`partitionedStorageUnit`.
+- Updated default Windows compiler to be ``Visual Studio 17 2022``.  The CI test build now occurs on Windows 11.
+
+  .. warning::
+
+    If you still want to use Visual Studio 16, then be sure to set the generator
+    using ``python conanfile.py --generator "Visual Studio 16 2019``
 
 
 Version 2.7.0 (April 20, 2025)
@@ -157,7 +163,6 @@ Version  2.6.0  (Feb. 21, 2025)
 
     You have to upgrade your python ``conan`` package to be able to build Basilisk.
     Use ``python install --upgrade conan``.
-
 - Added support for subclassing ``StateData`` and overloading certain methods. This enables support for custom state
   behavior, such as quaternions, which have size 4 but their derivative is size 3. This is done in preparation of
   a future MuJoCo integration. Note the warning below regarding SWIG files for ``dynamicEffector`` and ``stateEffector``.
