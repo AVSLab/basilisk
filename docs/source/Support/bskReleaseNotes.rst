@@ -144,6 +144,12 @@ Version  2.6.0  (Feb. 21, 2025)
 
     You have to upgrade your python ``conan`` package to be able to build Basilisk.
     Use ``python install --upgrade conan``.
+- Updated default Windows compiler to be ``Visual Studio 17 2022``.  The CI test build now occurs on Windows 11.
+
+  .. warning::
+
+    If you still want to use Visual Studio 16, then be sure to set the generator
+    using ``python conanfile.py --generator "Visual Studio 16 2019``
 
 - Added support for subclassing ``StateData`` and overloading certain methods. This enables support for custom state
   behavior, such as quaternions, which have size 4 but their derivative is size 3. This is done in preparation of
