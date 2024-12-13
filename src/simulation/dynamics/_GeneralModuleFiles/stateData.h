@@ -31,7 +31,6 @@ public:
     Eigen::MatrixXd state;       //!< [-] State value storage
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
     const std::string stateName; //!< [-] Name of the state
-    bool stateEnabled = true;    //!< [-] Flag indicating state is enabled
     BSKLogger bskLogger;         //!< -- BSK Logging
 
 public:
@@ -73,18 +72,6 @@ public:
 
     /** Returns the column-size of the derivative of the state */
     uint32_t getDerivativeColumnSize() const { return ((uint32_t)stateDeriv.outerSize()); }
-
-    /** Returns whether the state is "enabled".
-     *
-     * Disabled states are ignored by the integrator and thus dynamic objects need
-     * not update the state derivative. */
-    bool isStateActive() { return stateEnabled; }
-
-    /** Marks the state is "disabled" */
-    void disable() { stateEnabled = false; }
-
-    /** Marks the state is "enabled" */
-    void enable() { stateEnabled = true; }
 
     /** Multiples the state by a scalar */
     void scaleState(double scaleFactor);

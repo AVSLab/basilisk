@@ -24,7 +24,6 @@ std::unique_ptr<StateData> StateData::clone() const
 {
     auto result = std::make_unique<StateData>(this->stateName, this->state);
     result->stateDeriv = this->stateDeriv;
-    result->stateEnabled = this->stateEnabled;
     return result;
 }
 
