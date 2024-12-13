@@ -275,9 +275,8 @@ def run(show_plots, integratorCase, relTol, absTol):
     if integratorCase == "rkf78":
         plt.close("all")
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return posData, figureList
+    # return some information of value for testing
+    return dataLog.times(), posData, velData, figureList
 
 
 #
