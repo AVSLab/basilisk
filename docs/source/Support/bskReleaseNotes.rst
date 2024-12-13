@@ -33,6 +33,12 @@ Version |release|
 - Added a new github workflow job ``canary`` to routinely check the compatibility of latest python dependencies with python 3.13 on the latest mac-os.
 - Fixed a bug in :ref:`spiceInterface` where multiple instances of the module were not properly managing SPICE kernel references, leading to potential conflicts and data corruption.
 - Deprecated :ref:`SpacecraftSystem`.  It was never completed and we have other ways to connect spacecraft components
+- Updated default Windows compiler to be ``Visual Studio 17 2022``.  The CI test build now occurs on Windows 11.
+
+  .. warning::
+
+    If you still want to use Visual Studio 16, then be sure to set the generator
+    using ``python conanfile.py --generator "Visual Studio 16 2019``
 
 
 Version 2.7.0 (April 20, 2025)
@@ -146,7 +152,6 @@ Version  2.6.0  (Feb. 21, 2025)
 
     You have to upgrade your python ``conan`` package to be able to build Basilisk.
     Use ``python install --upgrade conan``.
-
 - Added support for subclassing ``StateData`` and overloading certain methods. This enables support for custom state
   behavior, such as quaternions, which have size 4 but their derivative is size 3. This is done in preparation of
   a future MuJoCo integration. Note the warning below regarding SWIG files for ``dynamicEffector`` and ``stateEffector``.
