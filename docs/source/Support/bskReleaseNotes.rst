@@ -90,6 +90,17 @@ Version  |release|
     You have to upgrade your python ``conan`` package to be able to build Basilisk.
     Use ``python install --upgrade conan``.
 
+- Added support for subclassing ``StateData`` and overloading certain methods. This enables support for custom state
+  behavior, such as quaternions, which have size 4 but their derivative is size 3. This is done in preparation of
+  a future MuJoCo integration. Note the warning below regarding SWIG files for ``dynamicEffector`` and ``stateEffector``.
+
+  .. warning::
+
+    SWIG files for subclasses of ``dynamicEffector`` and ``stateEffector`` must now
+    ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"`` instead of
+    ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"``. See
+    ``src/simulation/dynamics/dragEffector/dragDynamicEffector.i`` for an example.
+
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
