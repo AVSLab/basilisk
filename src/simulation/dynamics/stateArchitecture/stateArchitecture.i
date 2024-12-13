@@ -31,6 +31,14 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
+// This method should not be exposed, but it's used in
+// test_stateArchitecture.py, so we enable it here. If
+// the test is every reworked, this extension should be removed.
+%extend DynParamManager
+{
+   StateVector getStateVector() {return self->stateContainer;}
+}
+
 %include "../_GeneralModuleFiles/dynParamManager.i"
 %include "../../../architecture/utilities/avsEigenSupport.h"
 
