@@ -183,7 +183,7 @@ class BasiliskConan(ConanFile):
 
     def requirements(self):
         if self.options.get_safe("opNav"):
-            self.requires("opencv/4.5.5")
+            self.requires("opencv/4.8.1")
 
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
             self.requires("protobuf/3.21.12")
