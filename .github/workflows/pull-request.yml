@@ -116,7 +116,7 @@ jobs:
       - name: "Install requirements_dev.txt"
         run: source .venv/bin/activate && pip3 install -r requirements_dev.txt
       - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py --opNav True
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
 
       - name: "Run Python Tests"
         run: |
@@ -200,7 +200,7 @@ jobs:
         shell: pwsh
         run: |
           venv\Scripts\activate
-          python conanfile.py --opNav True
+          python conanfile.py --opNav True --allOptPkg
       - name: "Run Python Tests"
         shell: pwsh
         run: |
