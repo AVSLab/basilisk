@@ -79,6 +79,10 @@ Version  |release|
   the added setters and getters must be used.
 - Fixed a bug in which the ``MtbEffector.py`` module was not being imported correctly in Python due to lack of ``swig_eigen.i``
   include file in ``MtbEffector.i``.
+- Cleaned up what python packages are required to build BSK (``requirements_dev.txt``),
+  to run BSK (``requirements.txt``) and to build BSK documentation (``requirements_doc.txt``).
+- The BSK install instructions are updated to ask users to install by first ``pip`` installing build
+  required packages through ``requirements_dev.txt``.
 - Update the build process to use ``conan`` version 2.x
 
   .. warning::
@@ -542,7 +546,7 @@ Version 2.1.3 (May 25, 2022)
 - added new :ref:`scenarioAerocapture` which simulates an aerocapture scenario
 - added new :ref:`hingedBodyLinearProfiler` to provide a panel deployment angular profile
 - added new :ref:`hingedRigidBodyMotor` to provide panel motor torque control
-- added new training videos to :ref:`configureBuild`, :ref:`installOptionalPackages`, :ref:`scenarioBasicOrbit`,
+- added new training videos to :ref:`configureBuild`, installOptionalPackages, :ref:`scenarioBasicOrbit`,
   :ref:`scenarioOrbitManeuver`, :ref:`scenarioOrbitMultiBody`, :ref:`scenarioCustomGravBody`
 - added support for Vizard 2.1 scripting
 

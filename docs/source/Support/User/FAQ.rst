@@ -12,7 +12,9 @@ The following Frequency Answer Questions are general and not operating system sp
 
 #. How do I run ``pytest`` to ensure all unit and integrated tests still pass
 
-    The following response assumes you have the Basilisk soure code. You need to install the python utility ``pytest`` if this is not available on your system. Instructions are found at :ref:`installOptionalPackages`. Next, navigate to the folder ``Basilisk\src`` and run ``pytest`` from there.
+    The following response assumes you have the Basilisk source code. You ensure the python utility ``pytest``.
+    It is installed in the setup process using ``requirements_dev.txt``. Next, navigate to the folder ``Basilisk\src``
+    and run ``pytest`` from there.
 
 #. How can I run ``pytest`` faster?
 
@@ -29,10 +31,10 @@ The following Frequency Answer Questions are general and not operating system sp
     or replace `8` with either the number of processors (virtual or otherwise) of your host machine, or "auto" to use all
     available processors.
 
-#. How can I used ``pytest`` to generate a Basilisk validation HTML report?
+#. How can I use ``pytest`` to generate a Basilisk validation HTML report?
 
-    You will need to install ``pytest-html`` package, see :ref:`installOptionalPackages`.  Then you
-    can do this with::
+    You will need to install ``pytest-html`` package which is installed in the setup process using ``requirements_dev.txt``.
+    Then you can do this with::
 
         python3 -m pytest --report
 

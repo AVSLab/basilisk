@@ -1,0 +1,12 @@
+wheel
+conan>2.0.5
+packaging>=22
+setuptools>=70.1.0
+setuptools-scm>=8.0
+
+pytest
+pytest-html
+pytest-xdist
+
+pre-commit
+clang-format

@@ -18,7 +18,6 @@ Install
    Install/installOnWindows
    Install/installBuild
    Install/buildExtModules
-   Install/installOptionalPackages
    Install/customPython
    Install/installBuildConan
    Install/pipInstall

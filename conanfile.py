@@ -6,7 +6,8 @@ import subprocess
 import sys
 from datetime import datetime
 
-import pkg_resources
+import importlib.metadata
+from packaging.requirements import Requirement
 
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
@@ -121,20 +122,15 @@ class BasiliskConan(ConanFile):
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
-        pkgList += [
-            # Also install build system requirements.
-            # TODO: Read these from the `pyproject.toml` file directly?
-            # NOTE: These are *NOT* runtime requirements and should *NOT* be in `requirements.txt`!
-            "conan>=2.0.5",
-            "setuptools>=70.1.0",
-            "setuptools-scm>=8.0",
-            "packaging>=22",
-            "cmake>=3.26",
-        ]
+
+        reqFile = open('requirements_dev.txt', 'r')
+        required = reqFile.read().replace("`", "").split('\n')
+        reqFile.close()
+        pkgList += [x.lower() for x in required]
 
         checkStr = "Required"
         if self.options.get_safe("allOptPkg"):
-            optFile = open('requirements_optional.txt', 'r')
+            optFile = open('requirements_doc.txt', 'r')
             optionalPkgs = optFile.read().replace("`", "").split('\n')
             optFile.close()
             optionalPkgs = [x.lower() for x in optionalPkgs]
@@ -144,15 +140,25 @@ class BasiliskConan(ConanFile):
         print("\nChecking " + checkStr + " Python packages:")
         missing_packages = []
         for elem in pkgList:
+            if not elem:  # Skip empty or falsy elements
+                continue
+
             try:
-                # TODO: pkg_resources is deprecated, but its replacement
-                # importlib does not provide a way to check for installed
-                # packages given a version specifier (e.g. "numpy<2")...
-                # NOTE: pkg_resources stops working if we upgrade "setuptools",
-                # so check all packages here first, then upgrade below.
-                pkg_resources.require(elem)
-                print("Found: " + statusColor + elem + endColor)
-            except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
+                # Parse the requirement (e.g., "numpy<2")
+                req = Requirement(elem)
+                # Get the installed version of the package
+                installed_version = importlib.metadata.version(req.name)
+
+                # Check if the installed version satisfies the requirement
+                if req.specifier.contains(installed_version):
+                    print("Found: " + statusColor + elem + endColor)
+                else:
+                    raise Exception(
+                        f"Version conflict for {req.name}: {installed_version} does not satisfy {req.specifier}")
+            except importlib.metadata.PackageNotFoundError:
+                missing_packages.append(elem)
+            except Exception as e:
+                print(f"Error: {e}")
                 missing_packages.append(elem)
 
         for elem in missing_packages:

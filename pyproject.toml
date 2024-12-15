@@ -13,7 +13,7 @@ requires = [
 
 [project]
 name        = 'Basilisk'
-dynamic     = ["version", "dependencies", "optional-dependencies"]
+dynamic     = ["version", "dependencies"]
 requires-python = ">=3.8, <3.12"
 
 readme      = "README.md"
@@ -51,7 +51,3 @@ Basilisk = [
 [tool.setuptools.dynamic]
 version = {file = "docs/source/bskVersion.txt"}
 dependencies = {file = "requirements.txt"}
-
-[tool.setuptools.dynamic.optional-dependencies]
-# TODO: Group optional requirements appropriately, e.g. "test", "docs"
-optional = {file = "requirements_optional.txt"}

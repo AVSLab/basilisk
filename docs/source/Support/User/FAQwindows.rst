@@ -12,7 +12,7 @@ The following Frequency Answer Questions are specific for the Microsoft Windows 
 
 
     It is recommended to run the ``pytest-xdist`` version which allows multi-threaded executions using ``pytest -n 8``
-    for 8 threads, for example.  See :ref:`installOptionalPackages` for more information on installing ``pytest-xdist``.
+    for 8 threads, for example.  This package is installed in the setup process using ``requirements_dev.txt``.
 
 #. I have upgraded to Basilisk version 1.8.0 or newer and I'm following the revised build process.  However,
    I'm seeing warnings in the terminal window saying I don't have the correct python packages installed

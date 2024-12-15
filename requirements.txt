@@ -1,10 +1,9 @@
 pandas
-matplotlib
+matplotlib<3.10.0
 numpy
 colorama
 tqdm
 Pillow
-pytest
-pytest-html
-pytest-xdist
 requests
+bokeh
+protobuf==5.27.0

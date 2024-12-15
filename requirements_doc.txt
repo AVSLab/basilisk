@@ -3,8 +3,3 @@ docutils
 recommonmark
 sphinx>7.0.0
 sphinx_rtd_theme>=3.0.0
-pre-commit
-clang-format
-bokeh
-dask-expr
-protobuf==5.27.0

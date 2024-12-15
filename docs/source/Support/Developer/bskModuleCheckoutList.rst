@@ -1,7 +1,7 @@
 
 .. _bskModuleCheckoutList:
 
-Basilisk Module Checkout List 
+Basilisk Module Checkout List
 =============================
 
 This documents contains a series of action items that should be checked
@@ -17,7 +17,7 @@ Building Basilisk and Testing
 -   Do a clean build of Basilisk and make sure all code compiles as expected (see :ref:`FAQ <FAQ>` on how to do a
     clean build)
 -   From the project root directory, run ``python run_all_test.py`` and ensure all python and C/C++ tests are passing
-    as expected (see :ref:`installOptionalPackages` for info on installing and running ``pytest``)
+    as expected
 
 Style and Formatting
 --------------------
