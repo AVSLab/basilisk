@@ -1,5 +1,5 @@
 pandas
-matplotlib
+matplotlib<3.10.0
 numpy
 colorama
 tqdm
