@@ -56,4 +56,3 @@ if ('--report' in sys.argv) and ('pytest-html' not in installed_packages):
 
 if 'pytest-html' in installed_packages:
     exec(open(path + "/reportconf.py").read(), globals())
-

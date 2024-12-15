@@ -52,7 +52,7 @@ jobs:
         if: ${{ always() }}
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip"
+          cd src && pytest -n auto -m "not ciSkip" -rs
       - name: Run C/C++ Tests
         if: ${{ always() }}
         working-directory: ./dist3
@@ -85,7 +85,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip"
+          cd src && pytest -n auto -m "not ciSkip" -rs
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -121,7 +121,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip"
+          cd src && pytest -n auto -m "not ciSkip" -rs
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -157,7 +157,7 @@ jobs:
         run: |
           source .venv/bin/activate
           pip install pytest pytest-xdist
-          cd src && pytest -n auto -m "not ciSkip"
+          cd src && pytest -n auto -m "not ciSkip" -rs
 
 
   build-windows:
@@ -207,7 +207,7 @@ jobs:
           Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name MPLBACKEND -Value ${MPLBACKEND}
           venv\Scripts\activate
           cd src
-          pytest -n auto -m "not ciSkip"
+          pytest -n auto -m "not ciSkip" -rs
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
       - name: "C/C++ Tests"
         if: ${{ always() }}
@@ -250,7 +250,7 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not ciSkip"
+          pytest -n auto -m "not ciSkip" -rs
         if: ${{ always() }}
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -296,6 +296,6 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not ciSkip"
+          pytest -n auto -m "not ciSkip" -rs
 
         if: ${{ always() }}
