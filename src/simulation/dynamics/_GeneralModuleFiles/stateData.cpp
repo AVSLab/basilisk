@@ -20,40 +20,24 @@
 
 #include "stateData.h"
 
-StateData::StateData()
+std::unique_ptr<StateData> StateData::clone() const
 {
-    return;
-}
-
-StateData::StateData(const StateData &inState)
-{
-    state = inState.state;
-    stateDeriv = inState.stateDeriv;
-    stateName = inState.stateName;
-    stateEnabled = inState.stateEnabled;
-}
-
-StateData::~StateData()
-{
-    return;
+    auto result = std::make_unique<StateData>(this->stateName, this->state);
+    result->stateDeriv = this->stateDeriv;
+    return result;
 }
 
 StateData::StateData(std::string inName, const Eigen::MatrixXd & newState)
+: stateName(inName)
 {
-    stateName = inName;
     setState(newState);
-    if(state.innerSize() != stateDeriv.innerSize() ||
-       state.outerSize() != stateDeriv.outerSize())
-    {
-        stateDeriv = state;
-    }
-    stateDeriv.setZero();
+    stateDeriv.resizeLike(state);
+    setDerivative( Eigen::MatrixXd::Zero(state.innerSize(), state.outerSize()) );
 }
 
 void StateData::setState(const Eigen::MatrixXd & newState)
 {
     state = newState;
-    return;
 }
 
 void StateData::propagateState(double dt)
@@ -72,14 +56,7 @@ void StateData::scaleState(double scaleFactor)
     state *= scaleFactor;
 }
 
-StateData StateData::operator+(const StateData& operand)
+void StateData::addState(const StateData& other)
 {
-    return StateData(stateName, state+operand.getState());
-}
-
-StateData StateData::operator* (double scaleFactor)
-{
-    StateData newState(stateName, state);
-    newState.scaleState(scaleFactor);
-    return(newState);
+    state += other.state;
 }

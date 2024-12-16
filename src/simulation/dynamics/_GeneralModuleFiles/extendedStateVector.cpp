@@ -73,6 +73,19 @@ ExtendedStateVector ExtendedStateVector::operator+=(const ExtendedStateVector& r
     return *this;
 }
 
+ExtendedStateVector ExtendedStateVector::operator-(const ExtendedStateVector& rhs) const
+{
+    ExtendedStateVector copy = *this;
+
+    copy.modify([&rhs](const size_t& dynObjIndex,
+                       const std::string& stateName,
+                       Eigen::MatrixXd& thisState) {
+        thisState -= rhs.at({dynObjIndex, stateName});
+    });
+
+    return copy;
+}
+
 ExtendedStateVector ExtendedStateVector::operator*(const double rhs) const
 {
     return this->map([rhs](const size_t& dynObjIndex,
@@ -85,9 +98,20 @@ void ExtendedStateVector::setStates(std::vector<DynamicObject*>& dynPtrs) const
     this->apply([&dynPtrs](const size_t& dynObjIndex,
                                  const std::string& stateName,
                                  const Eigen::MatrixXd& thisState) {
-        StateData& stateData =
-            dynPtrs.at(dynObjIndex)->dynManager.stateContainer.stateMap.at(stateName);
-        stateData.setState(thisState);
+        dynPtrs.at(dynObjIndex)
+            ->dynManager.stateContainer.stateMap.at(stateName)
+            ->setState(thisState);
+    });
+}
+
+void ExtendedStateVector::setDerivatives(std::vector<DynamicObject*>& dynPtrs) const
+{
+    this->apply([&dynPtrs](const size_t& dynObjIndex,
+                           const std::string& stateName,
+                           const Eigen::MatrixXd& thisDerivative) {
+        dynPtrs.at(dynObjIndex)
+            ->dynManager.stateContainer.stateMap.at(stateName)
+            ->setDerivative(thisDerivative);
     });
 }
 
@@ -100,7 +124,7 @@ ExtendedStateVector::fromStateData(const std::vector<DynamicObject*>& dynPtrs,
     for (size_t dynIndex = 0; dynIndex < dynPtrs.size(); dynIndex++) {
         for (auto&& [stateName, stateData] :
              dynPtrs.at(dynIndex)->dynManager.stateContainer.stateMap) {
-            result.emplace(std::make_pair(dynIndex, stateName), functor(stateData));
+            result.emplace(std::make_pair(dynIndex, stateName), functor(*stateData.get()));
         }
     }
 

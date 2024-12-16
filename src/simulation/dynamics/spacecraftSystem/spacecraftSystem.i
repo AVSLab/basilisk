@@ -32,8 +32,7 @@ from Basilisk.simulation.gravityEffector import GravBodyVector
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "../_GeneralModuleFiles/dynParamManager.i"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %import  "simulation/dynamics/gravityEffector/gravityEffector.i"
 %include "../_GeneralModuleFiles/stateEffector.h"

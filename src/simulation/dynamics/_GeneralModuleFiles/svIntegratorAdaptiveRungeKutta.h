@@ -215,8 +215,8 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      */
     double computeMaxRelativeError(
         double timeStep,
-        const ExtendedStateVector& candidateNextState,
-        const typename svIntegratorRungeKutta<numberStages>::KCoefficientsValues& kVectors) const;
+        const ExtendedStateVector& lowOrderNextState,
+        const ExtendedStateVector& highOrderNextState) const;
 
     /** Finds index of dynamicObject in dynPtrs (vector of pointers to DynamicObject) */
     size_t findDynamicObjectIndex(const DynamicObject& dynamicObject) const;
@@ -273,16 +273,33 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
     ExtendedStateVector state = ExtendedStateVector::fromStates(this->dynPtrs);
     typename svIntegratorRungeKutta<numberStages>::KCoefficientsValues kValues;
 
+    auto castCoefficients =
+        static_cast<RKAdaptiveCoefficients<numberStages>*>(this->coefficients.get());
+
     // Continue until we are done with the desired time step
     while (time < startingTime + desiredTimeStep) {
         // Much like regular Runge Kutta, we compute the
-        // "k" coefficients and the next state from them.
+        // "k" coefficients
         kValues = this->computeKCoefficients(time, timeStep, state);
-        ExtendedStateVector candidateNextState = this->computeNextState(timeStep, state, kValues);
+
+        // Now we generate two solutions, one of low order and one of
+        // high order by using either the b or b* coefficients
+        ExtendedStateVector lowOrderNextStep =
+            this->propagateStateWithKVectors(timeStep,
+                                             state,
+                                             kValues,
+                                             castCoefficients->bArray,
+                                             numberStages);
+        ExtendedStateVector highOrderNextStep =
+            this->propagateStateWithKVectors(timeStep,
+                                             state,
+                                             kValues,
+                                             castCoefficients->bStarArray,
+                                             numberStages);
 
         // For the adaptive RK, we also compute the maximum
         // relationship between error and tolerance
-        double maxRelError = this->computeMaxRelativeError(timeStep, candidateNextState, kValues);
+        double maxRelError = this->computeMaxRelativeError(timeStep, lowOrderNextStep, highOrderNextStep);
 
         // If maxRelError > 1, then we need a smaller time step,
         // so we should reject the current time step.
@@ -292,7 +309,7 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
         {
             // Advance time and set new state to the computed state
             time += timeStep;
-            state = std::move(candidateNextState);
+            state = std::move(highOrderNextStep);
         }
 
         // Regardless of accepting or not the step, we compute a new time step
@@ -312,23 +329,11 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
 template <size_t numberStages>
 double svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
     double timeStep,
-    const ExtendedStateVector& candidateNextState,
-    const typename svIntegratorRungeKutta<numberStages>::KCoefficientsValues& kVectors) const
+    const ExtendedStateVector& lowOrderNextStep,
+    const ExtendedStateVector& highOrderNextStep) const
 {
-    auto castCoefficients =
-        static_cast<RKAdaptiveCoefficients<numberStages>*>(this->coefficients.get());
-
     // Compute the absolute truncation error for every state
-    ExtendedStateVector truncationError =
-        kVectors.at(0) *
-        ((castCoefficients->bArray.at(0) - castCoefficients->bStarArray.at(0)) * timeStep);
-
-    for (size_t stageIndex = 1; stageIndex < numberStages; stageIndex++) {
-        double bDiff =
-            castCoefficients->bArray.at(stageIndex) - castCoefficients->bStarArray.at(stageIndex);
-        if (bDiff == 0) continue;
-        truncationError += kVectors.at(stageIndex) * (bDiff * timeStep);
-    }
+    ExtendedStateVector truncationError = highOrderNextStep - lowOrderNextStep;
 
     // Compute the maximum relative error being committed
     // Each state has a truncationError (thisTruncationError),
@@ -337,7 +342,7 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
     // truncation error and tolerance.
     double maxRelativeError = 0;
     auto maxRelativeErrorRef = std::ref(maxRelativeError);
-    candidateNextState.apply([this, &maxRelativeErrorRef, &truncationError](
+    highOrderNextStep.apply([this, &maxRelativeErrorRef, &truncationError](
                                  const size_t& dynObjIndex,
                                  const std::string& stateName,
                                  const Eigen::MatrixXd& thisState) {

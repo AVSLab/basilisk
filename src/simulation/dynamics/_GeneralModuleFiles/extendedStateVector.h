@@ -124,12 +124,21 @@ class ExtendedStateVector
      */
     ExtendedStateVector operator+=(const ExtendedStateVector& rhs);
 
+    /** Subtracts the values of `rhs` to from this
+     *
+     * This functions as a state-wise subtraction operation.
+     */
+    ExtendedStateVector operator-(const ExtendedStateVector& rhs) const;
+
     /** Returns a new ExtendedStateVector that is the result of multiplying each state by a constant
      */
     ExtendedStateVector operator*(const double rhs) const;
 
-    /** Calls StateData::setState for every entry in in this */
+    /** Calls StateData::setState for every entry in this */
     void setStates(std::vector<DynamicObject*>& dynPtrs) const;
+
+    /** Calls StateData::setDerivative for every entry in this */
+    void setDerivatives(std::vector<DynamicObject*>& dynPtrs) const;
 
   private:
     static ExtendedStateVector fromStateData(const std::vector<DynamicObject*>& dynPtrs,
