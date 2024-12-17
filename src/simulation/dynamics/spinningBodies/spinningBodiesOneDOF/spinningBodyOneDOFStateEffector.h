@@ -22,6 +22,7 @@
 
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -59,6 +60,7 @@ public:
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;        //!< -- (optional) motor torque input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;         //!< -- (optional) motor lock flag input message
     ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyRefInMsg;     //!< -- (optional) spinning body reference input message name
+    std::vector<DynamicEffector*> dynEffectors;                      //!< Vector of dynamic effectors attached
 
     SpinningBodyOneDOFStateEffector();  //!< -- Contructor
     ~SpinningBodyOneDOFStateEffector() override; //!< -- Destructor
@@ -67,6 +69,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override;             //!< -- Method for updating information
     void registerStates(DynParamManager& statesIn) override;         //!< -- Method for registering the SB states
     void linkInStates(DynParamManager& states) override;             //!< -- Method for getting access to other states
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment = 1) override;  //!< -- Method for adding attached dynamic effector
     void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the SB inertial properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN,

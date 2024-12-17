@@ -134,6 +134,20 @@ void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& states)
     registerProperties(states);
 }
 
+/*! This method attaches a dynamicEffector
+ @param newDynamicEffector the dynamic effector to be attached to the SB
+ @param segment defaults to the only segment for 1DOF (base segment 1) */
+void SpinningBodyOneDOFStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    if (segment != 1) {
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent spinning bodies linkage.");
+    }
+
+    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
+
+    this->dynEffectors.push_back(newDynamicEffector);
+}
+
 /*! This method registers the SB inertial properties with the dynamic parameter manager and links
  them into dependent dynamic effectors  */
 void SpinningBodyOneDOFStateEffector::registerProperties(DynParamManager& states)

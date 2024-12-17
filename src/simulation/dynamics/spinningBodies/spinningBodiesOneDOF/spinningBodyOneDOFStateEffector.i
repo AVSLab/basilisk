@@ -22,6 +22,7 @@
 
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
+%feature("python:kwargs") SpinningBodyOneDOFStateEffector::addDynamicEffector;
 
 %{
    #include "spinningBodyOneDOFStateEffector.h"
