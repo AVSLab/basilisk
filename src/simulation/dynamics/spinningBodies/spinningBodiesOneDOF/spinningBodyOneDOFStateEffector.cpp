@@ -91,8 +91,8 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
         // Logging the S frame is the body frame B of that object
         eigenVector3d2CArray(this->r_ScN_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_ScN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+        eigenMatrixXd2CArray(*this->sigma_SN, configLogMsg.sigma_BN);
+        eigenMatrixXd2CArray(*this->omega_SN_S, configLogMsg.omega_BN_B);
         this->spinningBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }
@@ -226,7 +226,7 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
         this->bTheta = -(IPntS_B - this->mass * rTilde_SB_B * rTilde_ScS_B) * this->sHat_B / this->mTheta;
 
         // Define cTheta
-        Eigen::Vector3d rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
+        this->rDot_SB_B = this->omegaTilde_BN_B * this->r_SB_B;
         Eigen::Vector3d gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
         this->cTheta = (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef)
                 + this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
@@ -308,13 +308,16 @@ void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
     // inertial attitude
     Eigen::Matrix3d dcm_SN;
     dcm_SN = (this->dcm_BS).transpose() * this->dcm_BN;
-    this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    *this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    *this->omega_SN_S = (this->dcm_BS).transpose() * this->omega_SN_B;
 
     // inertial position vector
     this->r_ScN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_ScB_B;
+    *this->r_SN_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * this->r_SB_B;
 
     // inertial velocity vector
     this->v_ScN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_ScB_B;
+    *this->v_SN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_SB_B;
 }
 
 /*! This method is used so that the simulation will ask SB to update messages */

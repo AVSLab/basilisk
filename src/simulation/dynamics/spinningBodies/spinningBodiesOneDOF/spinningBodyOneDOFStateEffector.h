@@ -93,6 +93,7 @@ private:
     Eigen::Vector3d r_ScB_B{0.0, 0.0, 0.0};            //!< [m] vector pointing from body frame B origin to point Sc in B frame components.
     Eigen::Vector3d rPrime_ScS_B{0.0, 0.0, 0.0};       //!< [m/s] body frame time derivative of r_ScS_B
     Eigen::Vector3d rPrime_ScB_B{0.0, 0.0, 0.0};       //!< [m/s] body frame time derivative of r_ScB_B
+    Eigen::Vector3d rDot_SB_B{0.0, 0.0, 0.0};          //!< [m/s] inertial frame time derivative of r_SB_B
     Eigen::Vector3d rDot_ScB_B{0.0, 0.0, 0.0};         //!< [m/s] inertial frame time derivative of r_ScB_B
     Eigen::Vector3d omega_SB_B{0.0, 0.0, 0.0};         //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components.
     Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};         //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components.
@@ -110,16 +111,18 @@ private:
     // Spinning body properties
     Eigen::Vector3d r_ScN_N{0.0, 0.0, 0.0};            //!< [m] position vector of spinning body center of mass Sc relative to the inertial frame origin N
     Eigen::Vector3d v_ScN_N{0.0, 0.0, 0.0};            //!< [m/s] inertial velocity vector of Sc relative to inertial frame
-    Eigen::Vector3d sigma_SN{0.0, 0.0, 0.0};           //!< -- MRP attitude of frame S relative to inertial frame
-    Eigen::Vector3d omega_SN_S{0.0, 0.0, 0.0};         //!< [rad/s] inertial spinning body frame angular velocity vector
+    Eigen::MatrixXd* r_SN_N;             //!< [m] position vector of spinning body origin S relative to the inertial frame origin N
+    Eigen::MatrixXd* v_SN_N;             //!< [m/s] inertial velocity vector of S relative to inertial frame
+    Eigen::MatrixXd* sigma_SN;           //!< -- MRP attitude of frame S relative to inertial frame
+    Eigen::MatrixXd* omega_SN_S;         //!< [rad/s] inertial spinning body frame angular velocity vector
 
     // States
     double theta = 0.0;                           //!< [rad] spinning body angle
     double thetaDot = 0.0;                        //!< [rad/s] spinning body angle rate
     Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-    StateData *thetaState = nullptr;              //!< -- state manager of theta for spinning body
-    StateData *thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
+    StateData* thetaState = nullptr;              //!< -- state manager of theta for spinning body
+    StateData* thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
 };
 
 
