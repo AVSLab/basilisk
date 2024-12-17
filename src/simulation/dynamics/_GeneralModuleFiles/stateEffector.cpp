@@ -95,6 +95,12 @@ void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
     return;
 }
 
+/*! This method allows the effector to register its properties */
+void StateEffector::registerProperties(DynParamManager& states)
+{
+    return;
+}
+
 /*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */
 void StateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
