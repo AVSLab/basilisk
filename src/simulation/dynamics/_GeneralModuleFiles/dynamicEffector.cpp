@@ -43,6 +43,12 @@ void DynamicEffector::computeStateContribution(double integTime)
     return;
 }
 
+/*! This method  */
+void DynamicEffector::linkInProperties(DynParamManager& properties)
+{
+    return;
+}
+
 void DynamicEffector::setStateNameOfPosition(std::string value)
 {
     // check that value is acceptable
