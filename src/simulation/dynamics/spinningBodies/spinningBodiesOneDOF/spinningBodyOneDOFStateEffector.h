@@ -45,6 +45,10 @@ public:
     double thetaDotInit = 0.0;                                       //!< [rad/s] initial spinning body angle rate
     std::string nameOfThetaState;                                    //!< -- identifier for the theta state data container
     std::string nameOfThetaDotState;                                 //!< -- identifier for the thetaDot state data container
+    std::string nameOfInertialPositionProperty;                      //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;                      //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
     Eigen::Vector3d r_SB_B{0.0, 0.0, 0.0};                  //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
     Eigen::Vector3d r_ScS_S{0.0, 0.0, 0.0};                 //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
     Eigen::Vector3d sHat_S{1.0, 0.0, 0.0};                  //!< -- spinning axis in S frame components.
@@ -63,6 +67,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override;             //!< -- Method for updating information
     void registerStates(DynParamManager& statesIn) override;         //!< -- Method for registering the SB states
     void linkInStates(DynParamManager& states) override;             //!< -- Method for getting access to other states
+    void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the SB inertial properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;   //!< -- Method for back-substitution contributions
@@ -80,6 +85,15 @@ private:
     int lockFlag = 0;                   //!< [] flag for locking the rotation axis
     double thetaRef = 0.0;              //!< [rad] spinning body reference angle
     double thetaDotRef = 0.0;           //!< [rad] spinning body reference angle rate
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    };
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta{0.0, 0.0, 0.0};             //!< -- rDDot_BN term for back substitution

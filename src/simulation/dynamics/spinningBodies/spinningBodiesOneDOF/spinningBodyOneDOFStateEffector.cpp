@@ -47,6 +47,10 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
 
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+    this->nameOfInertialPositionProperty = "spinningBodyInertialPosition" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+    this->nameOfInertialVelocityProperty = "spinningBodyInertialVelocity" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+    this->nameOfInertialAttitudeProperty = "spinningBodyInertialAttitude" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+    this->nameOfInertialAngVelocityProperty = "spinningBodyInertialAngVelocity" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     SpinningBodyOneDOFStateEffector::effectorID++;
 }
 
@@ -126,6 +130,25 @@ void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& states)
     Eigen::MatrixXd thetaDotInitMatrix(1,1);
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
+
+    registerProperties(states);
+}
+
+/*! This method registers the SB inertial properties with the dynamic parameter manager and links
+ them into dependent dynamic effectors  */
+void SpinningBodyOneDOFStateEffector::registerProperties(DynParamManager& states)
+{
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_SN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
+    this->v_SN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
+    this->sigma_SN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
+    this->omega_SN_S = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->linkInProperties(states);
+    }
 }
 
 /*! This method allows the SB state effector to provide its contributions to the mass props and mass prop rates of the
