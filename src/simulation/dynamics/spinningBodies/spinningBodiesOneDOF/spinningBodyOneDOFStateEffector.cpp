@@ -246,6 +246,18 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     // Define auxiliary variable mTheta
     this->mTheta = this->sHat_B.transpose() * IPntS_B * this->sHat_B;
 
+    // Loop through to collect forces and torques from any connected dynamic effectors
+    Eigen::Vector3d attBodyForce_S = Eigen::Vector3d::Zero();  // sum of external forces in S frame components
+    Eigen::Vector3d attBodyTorquePntS_S = Eigen::Vector3d::Zero();  // sum of external torque about point S in S frame components
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        // Compute the force and torque contributions from the dynamicEffectors in parent frame
+        (*dynIt)->computeForceTorque(integTime, double(0.0));
+        attBodyForce_S += (*dynIt)->forceExternal_B; // here parent frame is S, not B
+        attBodyTorquePntS_S += (*dynIt)->torqueExternalPntB_B; // here parent frame is S, not B
+    }
+
     // Lock the axis if the flag is set to 1
     if (this->lockFlag == 1)
     {
@@ -267,8 +279,8 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
         Eigen::Vector3d gravityTorquePntS_B = rTilde_ScS_B * this->mass * g_B;
         this->cTheta = (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef)
                 + this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
-                - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B
-                - this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B)) / this->mTheta;
+                - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B + this->dcm_BS * attBodyTorquePntS_S
+                - this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * this->rDot_SB_B)) / this->mTheta;
     }
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
@@ -276,7 +288,7 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     backSubContr.matrixA = -this->mass * rTilde_ScS_B * this->sHat_B * this->aTheta.transpose();
     backSubContr.matrixB = -this->mass * rTilde_ScS_B * this->sHat_B * this->bTheta.transpose();
     backSubContr.vecTrans = -this->mass * this->omegaTilde_SB_B * this->rPrime_ScS_B
-            + this->mass * rTilde_ScS_B * this->sHat_B * this->cTheta;
+            + this->mass * rTilde_ScS_B * this->sHat_B * this->cTheta + this->dcm_BS * attBodyForce_S;
 
     // Rotation contributions
     backSubContr.matrixC = (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B)
@@ -286,7 +298,8 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     backSubContr.vecRot = -omegaTilde_SN_B * this->IPntSc_B * this->omega_SB_B
             - this->mass * this->omegaTilde_BN_B * this->rTilde_ScB_B * this->rPrime_ScB_B
             - this->mass * this->rTilde_ScB_B * this->omegaTilde_SB_B * this->rPrime_ScS_B
-            - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->cTheta;
+            - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->cTheta
+            + this->dcm_BS * attBodyTorquePntS_S + eigenTilde(this->r_SB_B) * (this->dcm_BS * attBodyForce_S);
 }
 
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
