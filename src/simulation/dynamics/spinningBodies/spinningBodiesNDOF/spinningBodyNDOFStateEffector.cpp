@@ -30,7 +30,7 @@ SpinningBodyNDOFStateEffector::SpinningBodyNDOFStateEffector()
     this->effProps.IEffPntB_B.fill(0.0);
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
-    
+
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
     SpinningBodyNDOFStateEffector::effectorID++;
@@ -145,10 +145,10 @@ void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
             SCStatesMsgPayload configLogMsg = this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->zeroMsgPayload;
 
             // Logging the S frame is the body frame B of that object
-            eigenVector3d2CArray(spinningBody.r_ScN_N, configLogMsg.r_BN_N);
-            eigenVector3d2CArray(spinningBody.v_ScN_N, configLogMsg.v_BN_N);
-            eigenVector3d2CArray(spinningBody.sigma_SN, configLogMsg.sigma_BN);
-            eigenVector3d2CArray(spinningBody.omega_SN_S, configLogMsg.omega_BN_B);
+            eigenMatrixXd2CArray(*spinningBody.r_ScN_N, configLogMsg.r_BN_N);
+            eigenMatrixXd2CArray(*spinningBody.v_ScN_N, configLogMsg.v_BN_N);
+            eigenMatrixXd2CArray(*spinningBody.sigma_SN, configLogMsg.sigma_BN);
+            eigenMatrixXd2CArray(*spinningBody.omega_SN_S, configLogMsg.omega_BN_B);
             this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->write(&configLogMsg, this->moduleID, CurrentClock);
         }
         spinningBodyIndex++;
@@ -505,12 +505,12 @@ void SpinningBodyNDOFStateEffector::computeSpinningBodyInertialStates()
     for(auto& spinningBody: this->spinningBodyVec) {
         // Compute the rotational properties
         Eigen::Matrix3d dcm_SN = spinningBody.dcm_BS.transpose() * this->dcm_BN;
-        spinningBody.sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
-        spinningBody.omega_SN_S = spinningBody.dcm_BS.transpose() * spinningBody.omega_SN_B;
+        *spinningBody.sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+        *spinningBody.omega_SN_S = spinningBody.dcm_BS.transpose() * spinningBody.omega_SN_B;
 
         // Compute the translation properties
-        spinningBody.r_ScN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * spinningBody.r_ScB_B;
-        spinningBody.v_ScN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * spinningBody.rDot_ScB_B;
+        *spinningBody.r_ScN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * spinningBody.r_ScB_B;
+        *spinningBody.v_ScN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * spinningBody.rDot_ScB_B;
     }
 }
 

@@ -22,6 +22,7 @@
 
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -122,10 +123,10 @@ private:
     Eigen::Matrix3d omegaTilde_SP_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SP_B
     Eigen::Matrix3d omegaTilde_SB_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SB_B
 
-    Eigen::Vector3d r_ScN_N = Eigen::Vector3d::Zero();           //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
-    Eigen::Vector3d v_ScN_N = Eigen::Vector3d::Zero();           //!< [m/s] inertial velocity vector of Sc relative to inertial frame
-    Eigen::Vector3d sigma_SN = Eigen::Vector3d::Zero();          //!< MRP attitude of frame S relative to inertial frame
-    Eigen::Vector3d omega_SN_S = Eigen::Vector3d::Zero();        //!< [rad/s] inertial spinning body frame angular velocity vector
+    Eigen::MatrixXd* r_ScN_N;           //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
+    Eigen::MatrixXd* v_ScN_N;           //!< [m/s] inertial velocity vector of Sc relative to inertial frame
+    Eigen::MatrixXd* sigma_SN;          //!< MRP attitude of frame S relative to inertial frame
+    Eigen::MatrixXd* omega_SN_S;        //!< [rad/s] inertial spinning body frame angular velocity vector
 
     BSKLogger bskLogger;
 };
