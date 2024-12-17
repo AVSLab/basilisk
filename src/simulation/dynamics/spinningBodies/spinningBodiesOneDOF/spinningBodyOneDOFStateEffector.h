@@ -108,18 +108,18 @@ private:
     Eigen::Matrix3d IPntSc_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
 
     // Spinning body properties
-    Eigen::Vector3d r_ScN_N{0.0, 0.0, 0.0};            //!< [m] position vector of spinning body center of mass Sc relative to the inertial frame origin N
-    Eigen::Vector3d v_ScN_N{0.0, 0.0, 0.0};            //!< [m/s] inertial velocity vector of Sc relative to inertial frame
-    Eigen::Vector3d sigma_SN{0.0, 0.0, 0.0};           //!< -- MRP attitude of frame S relative to inertial frame
-    Eigen::Vector3d omega_SN_S{0.0, 0.0, 0.0};         //!< [rad/s] inertial spinning body frame angular velocity vector
+    Eigen::MatrixXd* r_ScN_N;            //!< [m] position vector of spinning body center of mass Sc relative to the inertial frame origin N
+    Eigen::MatrixXd* v_ScN_N;            //!< [m/s] inertial velocity vector of Sc relative to inertial frame
+    Eigen::MatrixXd* sigma_SN;           //!< -- MRP attitude of frame S relative to inertial frame
+    Eigen::MatrixXd* omega_SN_S;         //!< [rad/s] inertial spinning body frame angular velocity vector
 
     // States
     double theta = 0.0;                           //!< [rad] spinning body angle
     double thetaDot = 0.0;                        //!< [rad/s] spinning body angle rate
     Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-    StateData *thetaState = nullptr;              //!< -- state manager of theta for spinning body
-    StateData *thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
+    StateData* thetaState = nullptr;              //!< -- state manager of theta for spinning body
+    StateData* thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
 };
 
 
