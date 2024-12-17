@@ -92,6 +92,14 @@ public:
     void setPropName_inertialVelocity(std::string value);
     /** getter for `propName_inertialVelocity` property */
     const std::string getPropName_inertialVelocity() const { return this->propName_inertialVelocity; }
+    /** setter for `propName_inertialAttitude` property */
+    void setPropName_inertialAttitude(std::string value);
+    /** getter for `propName_inertialAttitude` property */
+    const std::string getPropName_inertialAttitude() const { return this->propName_inertialAttitude; }
+    /** setter for `propName_inertialAngVelocity` property */
+    void setPropName_inertialAngVelocity(std::string value);
+    /** getter for `propName_inertialAngVelocity` property */
+    const std::string getPropName_inertialAngVelocity() const { return this->propName_inertialAngVelocity; }
     /** setter for `propName_vehicleGravity` property */
     void setPropName_vehicleGravity(std::string value);
     /** getter for `propName_vehicleGravity` property */
@@ -114,6 +122,8 @@ protected:
     std::string propName_centerOfMassDotSC = "";                    //!< property name of centerOfMassDotSC
     std::string propName_inertialPosition = "";                     //!< property name of inertialPosition
     std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
+    std::string propName_inertialAttitude = "";                     //!< property name of inertialAttitude
+    std::string propName_inertialAngVelocity = "";                  //!< property name of inertialAngVelocity
     std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
 
     bool isAttachableToStateEffector = false;      //!< Whether or not this effector can be attached onto a state effector

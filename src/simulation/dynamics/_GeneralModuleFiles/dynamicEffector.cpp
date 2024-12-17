@@ -182,6 +182,26 @@ void DynamicEffector::setPropName_inertialVelocity(std::string value)
     }
 }
 
+void DynamicEffector::setPropName_inertialAttitude(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialAttitude = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertialAttitude variable must be a non-empty string");
+    }
+}
+
+void DynamicEffector::setPropName_inertialAngVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialAngVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertialAngVelocity variable must be a non-empty string");
+    }
+}
+
 void DynamicEffector::setPropName_vehicleGravity(std::string value)
 {
     // check that value is acceptable
