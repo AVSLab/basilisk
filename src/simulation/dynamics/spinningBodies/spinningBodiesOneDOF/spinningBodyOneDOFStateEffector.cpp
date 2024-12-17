@@ -134,6 +134,17 @@ void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& states)
     registerProperties(states);
 }
 
+void SpinningBodyOneDOFStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment = 0)
+{
+    if (segment != 0 && segment != 1) {
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent spinning bodies linkage.");
+    }
+
+    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
+
+    this->dynEffectors.push_back(newDynamicEffector);
+}
+
 void SpinningBodyOneDOFStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
