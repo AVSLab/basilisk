@@ -31,6 +31,7 @@ public:
     virtual ~DynamicEffector();             //!< Destructor
     virtual void computeStateContribution(double integTime);
     virtual void linkInStates(DynParamManager& states) = 0;  //!< Method to get access to other states/stateEffectors
+    virtual void linkInProperties(DynParamManager& properties);  //!< Method to get access to other properties/stateEffectors
     virtual void computeForceTorque(double integTime, double timeStep) = 0;  //!< -- Method to computeForce and torque on the body
 
 public:
@@ -115,6 +116,7 @@ protected:
     std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
     std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
 
+    bool isAttachableToStateEffector = false;      //!< Whether or not this effector can be attached onto a state effector
 };
 
 

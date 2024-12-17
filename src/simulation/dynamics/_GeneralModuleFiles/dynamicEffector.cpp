@@ -43,6 +43,15 @@ void DynamicEffector::computeStateContribution(double integTime)
     return;
 }
 
+/*! This method is used to link in properties from a parent body that isn't the hub */
+void DynamicEffector::linkInProperties(DynParamManager& properties)
+{
+    // check that this effector can be attached to a state effector
+    if (!this->isAttachableToStateEffector) {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: This effector cannot be attached to a state effector.");
+    }
+}
+
 void DynamicEffector::setStateNameOfPosition(std::string value)
 {
     // check that value is acceptable
