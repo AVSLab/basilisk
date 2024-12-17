@@ -45,13 +45,14 @@ class ThrusterDynamicEffector: public SysModel, public DynamicEffector {
 public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
-    void linkInStates(DynParamManager& states);
-    void computeForceTorque(double integTime, double timeStep);
-    void computeStateContribution(double integTime);
-    void Reset(uint64_t CurrentSimNanos);
+    void linkInStates(DynParamManager& states) override;
+    void linkInProperties(DynParamManager& properties) override;
+    void computeForceTorque(double integTime, double timeStep) override;
+    void computeStateContribution(double integTime) override;
+    void Reset(uint64_t CurrentSimNanos) override;
     void addThruster(std::shared_ptr<THRSimConfig> newThruster);
     void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void UpdateState(uint64_t CurrentSimNanos) override;
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
@@ -75,6 +76,8 @@ public:
 	StateData *hubSigma;                           //!< pointer to the hub attitude states
     StateData *hubOmega;                           //!< pointer to the hub angular velocity states
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialAttitudeProperty;  //!< attitude relative to inertial frame
+    Eigen::MatrixXd* inertialAngVelocityProperty;  //!< [rad/s] inertial angular velocity relative to inertial frame
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
