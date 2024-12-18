@@ -176,6 +176,23 @@ void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
     this->scInitCounter++;
 }
 
+/*! This method is used to link properties to the thrusters
+ @return void
+ @param properties The parameter manager to collect from
+ */
+void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
+    if (this->scInitCounter > 1) {
+        bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 spacecraft");
+    }
+
+    this->inertialAttitudeProperty.push_back(properties.getPropertyReference(this->propName_inertialAttitude));
+    this->inertialAngVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialAngVelocity));
+    this->inertialPositionProperty.push_back(properties.getPropertyReference(this->propName_inertialPosition));
+    this->inertialVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialVelocity));
+
+    this->scInitCounter++;
+}
+
 /*! This method computes the forces on torques on each spacecraft body.
  @return void
  @param integTime Integration time
@@ -186,17 +203,35 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
     if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
         // alternate assigning the constraint force and torque
         if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
-            // - Collect states from both spacecraft
-            Eigen::Vector3d r_B1N_N = this->hubPosition[0]->getState();
-            Eigen::Vector3d rDot_B1N_N = this->hubVelocity[0]->getState();
-            Eigen::Vector3d omega_B1N_B1 = this->hubOmega[0]->getState();
+            Eigen::Vector3d r_B1N_N;
+            Eigen::Vector3d rDot_B1N_N;
+            Eigen::Vector3d omega_B1N_B1;
             Eigen::MRPd sigma_B1N;
-            sigma_B1N = (Eigen::Vector3d)this->hubSigma[0]->getState();
-            Eigen::Vector3d r_B2N_N = this->hubPosition[1]->getState();
-            Eigen::Vector3d rDot_B2N_N = this->hubVelocity[1]->getState();
-            Eigen::Vector3d omega_B2N_B2 = this->hubOmega[1]->getState();
+            Eigen::Vector3d r_B2N_N;
+            Eigen::Vector3d rDot_B2N_N;
+            Eigen::Vector3d omega_B2N_B2;
             Eigen::MRPd sigma_B2N;
-            sigma_B2N = (Eigen::Vector3d)this->hubSigma[1]->getState();
+            if (!this->hubPosition.empty()) {
+                // - Collect states from both spacecraft
+                r_B1N_N = this->hubPosition[0]->getState();
+                rDot_B1N_N = this->hubVelocity[0]->getState();
+                omega_B1N_B1 = this->hubOmega[0]->getState();
+                sigma_B1N = (Eigen::Vector3d)this->hubSigma[0]->getState();
+                r_B2N_N = this->hubPosition[1]->getState();
+                rDot_B2N_N = this->hubVelocity[1]->getState();
+                omega_B2N_B2 = this->hubOmega[1]->getState();
+                sigma_B2N = (Eigen::Vector3d)this->hubSigma[1]->getState();
+            } else {
+                // - Collect properties from parent effector
+                r_B1N_N = *this->inertialPositionProperty[0];
+                rDot_B1N_N = *this->inertialVelocityProperty[0];
+                omega_B1N_B1 = *this->inertialAngVelocityProperty[0];
+                sigma_B1N = (Eigen::Vector3d)*this->inertialAttitudeProperty[0];
+                r_B2N_N = *this->inertialPositionProperty[1];
+                rDot_B2N_N = *this->inertialVelocityProperty[1];
+                omega_B2N_B2 = *this->inertialAngVelocityProperty[1];
+                sigma_B2N = (Eigen::Vector3d)*this->inertialAttitudeProperty[1];
+            }
 
             // computing direction constraint psi in the N frame
             Eigen::Matrix3d dcm_B1N = (sigma_B1N.toRotationMatrix()).transpose();

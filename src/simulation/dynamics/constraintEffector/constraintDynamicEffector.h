@@ -38,10 +38,11 @@ class ConstraintDynamicEffector: public SysModel, public DynamicEffector {
 public:
     ConstraintDynamicEffector();
     ~ConstraintDynamicEffector();
-    void Reset(uint64_t CurrentSimNanos);
-    void linkInStates(DynParamManager& states);
-    void computeForceTorque(double integTime, double timeStep);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void Reset(uint64_t CurrentSimNanos) override;
+    void linkInStates(DynParamManager& states) override;
+    void linkInProperties(DynParamManager& properties) override;
+    void computeForceTorque(double integTime, double timeStep) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
     void writeOutputStateMessage(uint64_t CurrentClock);
     void computeFilteredForce(uint64_t CurrentClock);
     void computeFilteredTorque(uint64_t CurrentClock);
@@ -141,6 +142,12 @@ private:
     std::vector<StateData*> hubVelocity;    //!< [m/s] parent inertial velocity vector
     std::vector<StateData*> hubSigma;       //!< parent attitude Modified Rodrigues Parameters (MRPs)
     std::vector<StateData*> hubOmega;       //!< [rad/s] parent inertial angular velocity vector
+
+    // Parent body inertial properties
+    std::vector<Eigen::MatrixXd*> inertialPositionProperty;  //!< [m] position relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialVelocityProperty;  //!< [m/s] velocity relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialAttitudeProperty;  //!< attitude relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialAngVelocityProperty;  //!< [rad/s] inertial angular velocity relative to inertial frame
 
     // Constraint violations
     Eigen::Vector3d psi_N = Eigen::Vector3d::Zero(); //!< [m] direction constraint violation in inertial frame
