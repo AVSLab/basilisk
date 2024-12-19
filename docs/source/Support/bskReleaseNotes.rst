@@ -79,6 +79,7 @@ Version  |release|
   the added setters and getters must be used.
 - Fixed a bug in which the ``MtbEffector.py`` module was not being imported correctly in Python due to lack of ``swig_eigen.i``
   include file in ``MtbEffector.i``.
+- Added the capability to simulate a fault in the :ref:`simpleBattery` module that reduces the actual storage capacity without directly altering the stated capacity.
 - Cleaned up what python packages are required to build BSK (``requirements_dev.txt``),
   to run BSK (``requirements.txt``) and to build BSK documentation (``requirements_doc.txt``).
 - The BSK install instructions are updated to ask users to install by first ``pip`` installing build
