@@ -73,7 +73,7 @@ namespace std {
     }
 }
 
-%include "sys_model_task.h"
+%include "architecture/_GeneralModuleFiles/sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sim_model.h"
