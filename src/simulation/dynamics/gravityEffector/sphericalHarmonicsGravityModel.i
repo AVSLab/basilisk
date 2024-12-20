@@ -35,7 +35,7 @@
 
 %include "swig_eigen.i"
 
-%import "simulation/dynamics/gravityEffector/gravityModel.i"
+%import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
 
 %include "std_vector.i"
 %template() std::vector<double>;
