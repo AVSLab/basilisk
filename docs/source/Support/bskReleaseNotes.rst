@@ -100,7 +100,6 @@ Version  |release|
     ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"`` instead of
     ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"``. See
     ``src/simulation/dynamics/dragEffector/dragDynamicEffector.i`` for an example.
-
 - Update CI Linux build with ``opNav`` to use Ubuntu 22.04, not latest (i.e. 24.02).  The latter does not
   support directly Python 3.11, and Basilisk does not support Python 3.13 yet.
 - :ref:`simIncludeGravBody` set the moon equatorial radius in km, not meters.
@@ -111,6 +110,12 @@ Version  |release|
 - Updated :ref:`groundMapping` to correct behavior if ``maximumRange == -1``
 - Updated scripts to work with ``matplotlib`` version 3.10.x without errors or warnings
 - Add support for Python 3.12
+- Resolved inconstencies in sensor noise handling for the :ref:`imuSensor`, :ref:`coarseSunsensor`,
+  :ref:`magnetometer`, :ref:`starTracker`, and :ref:`simpleVoltEstimator` modules.
+- Added setter and getter methods for the propagation matrices in the :ref:`simpleVoltEstimator`
+  and :ref:`starTracker` modules as their ``Amatrix`` attributes were private.
+- Name change warning added to module documentation for the ``imuSensor`` ``walkBounds`` attribute to ``errorBounds``
+  and a note on specifying sensor properties in  :ref:`scenarioGaussMarkovRandomWalk`.
 
 
 Version 2.5.0 (Sept. 30, 2024)
