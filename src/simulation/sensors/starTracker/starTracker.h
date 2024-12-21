@@ -33,12 +33,33 @@
 #include "architecture/utilities/bskLogging.h"
 
 
-/*! @brief star tracker class */
+/*! @class StarTracker
+ * @brief Star tracker sensor model that simulates quaternion measurements with configurable noise
+ *
+ * The star tracker supports noise configuration through:
+ * - Walk bounds: Maximum allowed deviations from truth [rad]
+ * - PMatrix: Noise covariance matrix (diagonal elements = noiseStd)
+ * - AMatrix: Propagation matrix for error model (defaults to identity)
+ *
+ * Example Python usage:
+ * @code
+ *     starTracker = StarTracker()
+ *
+ *     # Configure noise (rad)
+ *     noiseStd = 0.001  # Standard deviation
+ *     PMatrix = [0.0] * 9  # 3x3 matrix
+ *     PMatrix[0] = PMatrix[4] = PMatrix[8] = noiseStd
+ *     starTracker.PMatrix = PMatrix
+ *
+ *     # Set maximum error bounds (rad)
+ *     starTracker.setWalkBounds([0.01, 0.01, 0.01])
+ * @endcode
+ */
 class StarTracker: public SysModel {
 public:
     StarTracker();
     ~StarTracker();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void readInputMessages();
@@ -47,9 +68,18 @@ public:
     void applySensorErrors();
     void computeTrueOutput();
     void computeQuaternion(double *sigma, STSensorMsgPayload *sensorValue);
-    
+
+    void setAMatrix(const Eigen::MatrixXd& propMatrix);
+    Eigen::MatrixXd getAMatrix() const;
+
+    /*! Sets walk bounds [rad] */
+    void setWalkBounds(const Eigen::Vector3d& bounds);
+
+    /*! Gets current walk bounds [rad] */
+    Eigen::Vector3d getWalkBounds() const;
+
 public:
-    
+
     uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;    //!< [-] sc input state message
     Message<STSensorMsgPayload> sensorOutMsg;   //!< [-] sensor output state message
