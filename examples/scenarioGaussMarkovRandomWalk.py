@@ -54,6 +54,11 @@ are configured with different parameters:
 
 Both IMUs use the same process noise level (P Matrix) to ensure comparable noise magnitudes.
 
+Note that any sensors using the ``GaussMarkov`` noise model should be configured with
+user-defined configuration parameters such as ``walkBounds`` and ``AMatrix``. While this
+scenario intentionally configures noise to demonstrate different behaviors, in normal usage
+these parameters should start disabled by default and only be enabled when explicitly needed.
+
 Illustration of Simulation Results
 -----------------------------------
 
@@ -152,7 +157,7 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
         [0.0, -0.1, 0.0],
         [0.0, 0.0, -0.1]
     ]
-    imuSensor1.walkBoundsGyro = [walkBounds, walkBounds, walkBounds]
+    imuSensor1.setWalkBoundsGyro(np.array([walkBounds, walkBounds, walkBounds], dtype=np.float64))
     imuSensor1.applySensorErrors = True
     imuSensor1.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -183,7 +188,7 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
 
     scSim.InitializeSimulation()
 
-    # Set IMU2's A Matrix to zero AFTER initialization
+    # Set IMU2's A Matrix to zero to demonstrate different error propagation behavior.
     imuSensor2.AMatrixGyro = [
         [0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0],
