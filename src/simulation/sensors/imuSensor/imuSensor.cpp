@@ -51,13 +51,11 @@ ImuSensor::ImuSensor()
     this->senRotMax = 1e6;
     this->senTransMax = 1e6;
     this->PMatrixGyro.fill(0.0);
-    this->AMatrixGyro.fill(0.0);
+    this->AMatrixGyro.setIdentity();
     this->PMatrixAccel.fill(0.0);
     this->AMatrixAccel.fill(0.0);
-    this->walkBoundsGyro.fill(0.0);
-    this->walkBoundsAccel.fill(0.0);
-    this->navErrorsGyro.fill(0.0);
-    this->navErrorsAccel.fill(0.0);
+    this->walkBoundsGyro.fill(-1.0);  // Default to -1 to detect if user sets it
+    this->walkBoundsAccel.fill(-1.0); // Default to -1 to detect if user sets it
     this->previous_omega_BN_B.fill(0.0);
     this->current_omega_BN_B.fill(0.0);
     this->current_nonConservativeAccelpntB_B.fill(0.0);
@@ -72,6 +70,8 @@ ImuSensor::ImuSensor()
     this->gyroScale.fill(1.);
     this->sensorPos_B.fill(0.0);
     this->dcm_PB.setIdentity();
+    this->errorBoundsGyro.fill(0.0);  // Default to no noise
+    this->errorBoundsAccel.fill(0.0); // Default to no noise
 
     return;
 }
@@ -103,8 +103,6 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "imuSensor.scStateInMsg was not linked.");
     }
 
-    this->AMatrixAccel.setIdentity(this->numStates,this->numStates);
-
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates)
     {
@@ -114,8 +112,6 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
     this->errorModelAccel.setRNGSeed(this->RNGSeed);
     this->errorModelAccel.setUpperBounds(this->walkBoundsAccel);
-
-    this->AMatrixGyro.setIdentity(this->numStates, this->numStates);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
@@ -146,6 +142,17 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     aSatBounds(2,0) = -this->senTransMax;
     aSatBounds(2,1) = this->senTransMax;
     this->aSat.setBounds(aSatBounds);
+
+    // Check if user set deprecated walkBounds
+    if(this->walkBoundsAccel(0) != -1.0 || this->walkBoundsAccel(1) != -1.0 || this->walkBoundsAccel(2) != -1.0) {
+        bskLogger.bskLog(BSK_WARNING, "ImuSensor: walkBoundsAccel is deprecated. Please use setErrorBoundsAccel() instead.");
+        this->setErrorBoundsAccel(this->walkBoundsAccel);
+    }
+
+    if(this->walkBoundsGyro(0) != -1.0 || this->walkBoundsGyro(1) != -1.0 || this->walkBoundsGyro(2) != -1.0) {
+        bskLogger.bskLog(BSK_WARNING, "ImuSensor: walkBoundsGyro is deprecated. Please use setErrorBoundsGyro() instead.");
+        this->setErrorBoundsGyro(this->walkBoundsGyro);
+    }
 
     return;
 }
@@ -415,4 +422,118 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
     this->NominalReady = true;
 
     return;
+}
+
+/*!
+    Setter for `AMatrixAccel`
+    @param propMatrix Matrix to set
+*/
+void ImuSensor::setAMatrixAccel(const Eigen::MatrixXd& propMatrix)
+{
+    this->AMatrixAccel = propMatrix;
+    this->errorModelAccel.setPropMatrix(propMatrix);
+}
+
+/*!
+    Setter for `AMatrixGyro`
+    @param propMatrix Matrix to set
+*/
+void ImuSensor::setAMatrixGyro(const Eigen::MatrixXd& propMatrix)
+{
+    this->AMatrixGyro = propMatrix;
+    this->errorModelGyro.setPropMatrix(propMatrix);
+}
+
+/*!
+    Getter for `AMatrixAccel`
+    @return Current matrix
+*/
+Eigen::MatrixXd ImuSensor::getAMatrixAccel() const
+{
+    return this->AMatrixAccel;
+}
+
+/*!
+    Getter for `AMatrixGyro`
+    @return Current matrix
+*/
+Eigen::MatrixXd ImuSensor::getAMatrixGyro() const
+{
+    return this->AMatrixGyro;
+}
+
+/*!
+    Setter for `walkBoundsAccel`
+    @param bounds Bounds vector to set
+*/
+void ImuSensor::setWalkBoundsAccel(const Eigen::Vector3d& bounds)
+{
+    this->walkBoundsAccel = bounds;
+    this->errorModelAccel.setUpperBounds(bounds);
+}
+
+/*!
+    Setter for `walkBoundsGyro`
+    @param bounds Bounds vector to set
+*/
+void ImuSensor::setWalkBoundsGyro(const Eigen::Vector3d& bounds)
+{
+    this->walkBoundsGyro = bounds;
+    this->errorModelGyro.setUpperBounds(bounds);
+}
+
+/*!
+    Getter for `walkBoundsAccel`
+    @return Current bounds
+*/
+Eigen::Vector3d ImuSensor::getWalkBoundsAccel() const
+{
+    return this->walkBoundsAccel;
+}
+
+/*!
+    Getter for `walkBoundsGyro`
+    @return Current bounds
+*/
+Eigen::Vector3d ImuSensor::getWalkBoundsGyro() const
+{
+    return this->walkBoundsGyro;
+}
+
+/*!
+    Setter for `errorBoundsAccel`
+    @param bounds Bounds vector to set
+*/
+void ImuSensor::setErrorBoundsAccel(const Eigen::Vector3d& bounds)
+{
+    this->errorBoundsAccel = bounds;
+    this->errorModelAccel.setUpperBounds(bounds);
+}
+
+/*!
+    Setter for `errorBoundsGyro`
+    @param bounds Bounds vector to set
+*/
+void ImuSensor::setErrorBoundsGyro(const Eigen::Vector3d& bounds)
+{
+    this->errorBoundsGyro = bounds;
+    this->errorModelGyro.setUpperBounds(bounds);
+}
+
+/*!
+    Getter for `errorBoundsAccel`
+    @return Current bounds
+*/
+Eigen::Vector3d ImuSensor::getErrorBoundsAccel() const
+{
+    return this->errorBoundsAccel;
+}
+
+/*!
+    Getter for `errorBoundsGyro`
+    @return Current bounds
+*/
+Eigen::Vector3d ImuSensor::getErrorBoundsGyro() const
+{
+    return this->errorBoundsGyro;
 }
