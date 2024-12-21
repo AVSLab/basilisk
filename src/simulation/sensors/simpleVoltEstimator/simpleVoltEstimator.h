@@ -41,6 +41,9 @@ public:
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
 
+    void setAMatrix(const Eigen::MatrixXd& propMatrix);
+    Eigen::MatrixXd getAMatrix() const;
+
 public:
     Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
@@ -49,7 +52,7 @@ public:
     VoltMsgPayload trueVoltState;    //!< -- voltage state without errors
     VoltMsgPayload estVoltState;     //!< -- voltage state including errors
     BSKLogger bskLogger;              //!< -- BSK Logging
-    
+
     ReadFunctor<VoltMsgPayload> voltInMsg;          //!< voltage input msg
 
 private:
