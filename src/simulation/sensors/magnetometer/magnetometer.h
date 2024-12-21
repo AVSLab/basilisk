@@ -33,7 +33,30 @@
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 
-/*! @brief magnetometer class */
+/*! @class Magnetometer
+ * @brief Magnetometer sensor model that simulates magnetic field measurements with configurable noise
+ *
+ * The magnetometer supports noise configuration through:
+ * - Walk bounds: Maximum allowed deviations from truth [T]
+ * - Noise std: Standard deviation of measurement noise [T]
+ * - AMatrix: Propagation matrix for error model (defaults to identity)
+ * - Bias: Static measurement bias [T]
+ *
+ * Example Python usage:
+ * @code
+ *     magSensor = Magnetometer()
+ *
+ *     # Configure noise (Tesla)
+ *     magSensor.senNoiseStd = [0.001, 0.001, 0.001]  # Standard deviation per axis
+ *     magSensor.setWalkBounds([0.01, 0.01, 0.01])    # Maximum error bounds
+ *
+ *     # Optional: Set static bias (Tesla)
+ *     magSensor.senBias = [0.0001, 0.0001, 0.0001]
+ *
+ *     # Optional: Configure error propagation (default is identity)
+ *     magSensor.setAMatrix([[1,0,0], [0,1,0], [0,0,1]])
+ * @endcode
+ */
 class Magnetometer : public SysModel {
 public:
     Magnetometer();
@@ -47,6 +70,12 @@ public:
     void applySaturation();                     //!< Apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock);   //!< Method to write the output message to the system
     Eigen::Matrix3d setBodyToSensorDCM(double yaw, double pitch, double roll); //!< Utility method to configure the sensor DCM
+
+    /*! Sets propagation matrix for error model */
+    void setAMatrix(const Eigen::Matrix3d& matrix);
+
+    /*! Gets current propagation matrix */
+    Eigen::Matrix3d getAMatrix() const;
 
 public:
     ReadFunctor<SCStatesMsgPayload> stateInMsg;        //!< [-] input message for spacecraft states
@@ -71,6 +100,7 @@ private:
     uint64_t numStates;                          //!< [-] Number of States for Gauss Markov Models
     GaussMarkov noiseModel;                      //!< [-] Gauss Markov noise generation model
     Saturate saturateUtility;                    //!< [-] Saturation utility
+    Eigen::Matrix3d AMatrix;      //!< [-] Error propagation matrix
 };
 
 
