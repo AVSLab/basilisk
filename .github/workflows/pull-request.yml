@@ -94,8 +94,8 @@ jobs:
 
 
   build-linux-3-11:
-    name: Linux Latest opNav
-    runs-on: ubuntu-latest
+    name: Linux 22.04 opNav
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.11"]
