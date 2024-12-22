@@ -101,6 +101,9 @@ Version  |release|
     ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"``. See
     ``src/simulation/dynamics/dragEffector/dragDynamicEffector.i`` for an example.
 
+- Update CI Linux build with ``opNav`` to use Ubuntu 22.04, not latest (i.e. 24.02).  The latter does not
+  support directly Python 3.11, and Basilisk does not support Python 3.13 yet.
+
 
 Version 2.5.0 (Sept. 30, 2024)
 ------------------------------
