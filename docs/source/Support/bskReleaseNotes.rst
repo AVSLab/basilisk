@@ -105,6 +105,7 @@ Version  |release|
   support directly Python 3.11, and Basilisk does not support Python 3.13 yet.
 - :ref:`simIncludeGravBody` set the moon equatorial radius in km, not meters.
 - fixed ``subMRP()`` routine in :ref:`RigidBodyKinematics`
+- Updated :ref:`solarArrayReference` to correct the wrong assumption of reflective solar arrays for momentum management pointing mode.
 
 
 Version 2.5.0 (Sept. 30, 2024)
