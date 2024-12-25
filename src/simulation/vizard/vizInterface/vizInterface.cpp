@@ -505,8 +505,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         // define if true orbit lines should be shown
         vizSettings->set_truetrajectorylineson(this->settings.trueTrajectoryLinesOn);
-        if (abs(this->settings.trueTrajectoryLinesOn)>2) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard trueTrajectoryLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.", this->settings.trueTrajectoryLinesOn);
+        if (abs(this->settings.trueTrajectoryLinesOn)>5) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard trueTrajectoryLinesOn flag must be either -1, 0, 1 2, 3, 4 or 5.  A value of %d was received.", this->settings.trueTrajectoryLinesOn);
         }
 
         // define if spacecraft axes should be shown
