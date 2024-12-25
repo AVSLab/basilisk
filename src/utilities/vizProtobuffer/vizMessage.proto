@@ -1,3 +1,4 @@
+// Copyright © AVS Lab, 2024 University of Colorado. All rights reserved.
 /* vizMessage is a protobuffer message template to relay messages from the
  * Basilisk Sim to an external visualization application.
  * To generate the asscociate files for C++, run from a terminal window
@@ -20,31 +21,31 @@ message VizMessage{
 
     message EpochDateTime{
         //FIELDS 1-6 FIRST MESSAGE ONLY
-        int32 year = 1;  //default: 2019
-        int32 month = 2; //default: 1
-        int32 day = 3;   //default: 1
-        int32 hours = 4;    //default: 0
-        int32 minutes = 5; //default: 0
-        double seconds = 6; //default: 0.00
+        int32 year = 1;     // default: 2019
+        int32 month = 2;    // default: 1
+        int32 day = 3;      // default: 1
+        int32 hours = 4;    // default: 0
+        int32 minutes = 5;  // default: 0
+        double seconds = 6; // default: 0.00
     }
 
-    message TimeStamp{//REQUIRED EVERY TIME STEP
+    message TimeStamp{ //REQUIRED EVERY TIME STEP
         // FIELDS 1-2 SENT EVERY TIMESTEP
-        int64 frameNumber = 1; //Current message's index
-        double simTimeElapsed = 2; //Elapsed time since sim start
+        int64 frameNumber = 1;     // Current message's index
+        double simTimeElapsed = 2; // [ns] Elapsed time since sim start
     }
 
     //CelestialBody messages will carry position, velocity, and rotation data for all celestial bodies to visualized in the current run (including sun, planets, and moon)
     message CelestialBody{
         //FIELDS 1-4 EVERY TIMESTEP, FIELDS 5-8 NEED ONLY BE SENT FIRST MESSAGE
         string bodyName = 1;
-        repeated double position = 2;   //SpicePlanetStateSimMsg.PositionVector
-        repeated double velocity = 3;   //SpicePlanetStateSimMsg.VelocityVector
-        repeated double rotation = 4;  //SpicePlanetStateSimMsg.J20002Pfix
-        double mu = 5; // [km^3/s^2] Gravitational parameter must be provided if body name is not in the basic Vizard body dictionary
-        double radiusEq = 6; //[km] Equatorial radius must be provided if body name is not in the basic Vizard body dictionary
-        double radiusRatio = 7; //[radiusPolar/radiusEq] Used to compute ellipticity. It is optional and is provided for bodies in the basic Vizard body dictionary.  Default is 1.
-        string modelDictionaryKey = 8; //"" will result in using the current default for the celestial body's given name, otherwise key will be matched if possible to available model in internal model dictionary
+        repeated double position = 2;  // [m] SpicePlanetStateSimMsg.PositionVector
+        repeated double velocity = 3;  // [m/s] SpicePlanetStateSimMsg.VelocityVector
+        repeated double rotation = 4;  // [DCM] SpicePlanetStateSimMsg.J20002Pfix
+        double mu = 5;                 // [km^3/s^2] Gravitational parameter must be provided if body name is not in the basic Vizard body dictionary
+        double radiusEq = 6;           // [km] Equatorial radius must be provided if body name is not in the basic Vizard body dictionary
+        double radiusRatio = 7;        // [radiusPolar/radiusEq] Used to compute ellipticity. It is optional and is provided for bodies in the basic Vizard body dictionary.  Default is 1.
+        string modelDictionaryKey = 8; // "" will result in using the current default for the celestial body's given name, otherwise key will be matched if possible to available model in internal model dictionary
     }
 
     //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
@@ -54,37 +55,36 @@ message VizMessage{
         //FIELDS 9, 13, 16, 19 NEED ONLY BE SENT IN FIRST MESSAGE
         //FIELDS 14-15 OPTIONAL FIELDS THAT CAN BE UPDATED EVERY TIMESTEP IF DESIRED, BUT NEED NEVER BE INCLUDED
         string spacecraftName = 1;
-        repeated double position = 2;  //SCStatesMsg.r_BN_N
-        repeated double velocity = 3;  //SCStatesMsg.v_BN_N
-        repeated double rotation = 4;  //SCStatesMsg.sigma_BN
-
+        repeated double position = 2;                 // [m] SCStatesMsg.r_BN_N
+        repeated double velocity = 3;                 // [m] SCStatesMsg.v_BN_N
+        repeated double rotation = 4;                 // [DCM] SCStatesMsg.sigma_BN
         repeated ReactionWheel reactionWheels = 5;
         repeated Thruster thrusters = 6;
         repeated CoarseSunSensor CSS = 7;
         repeated GenericSensor genericSensors = 8;
-        string spacecraftSprite = 9; // Set sprite for this spacecraft only through shape name and optional int RGBA color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+        string spacecraftSprite = 9;                  // Set sprite for this spacecraft only through shape name and optional int RGBA color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
         repeated Transceiver transceivers = 10;
         repeated GenericStorage storageDevices = 11;
         repeated Light lights = 12;
-        string modelDictionaryKey = 13; // ""  or "bskSat" will result in the default BSKSat model, "6USat" to use a built-in 6U model, "3USat" to use a built-in 3U model
-        repeated int32 oscOrbitLineColor = 14; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
-        repeated int32 trueTrajectoryLineColor = 15; // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
-        string logoTexture = 16; //Path to image texture to be used to customize built-in spacecraft models
-        repeated MultiSphere multiSpheres = 17; // (Optional) Multi-Sphere-Model (MSM) charging model information
-        repeated Ellipsoid ellipsoids = 18; //(Optional) Ellipsoid Heads Up Displays
-        string parentSpacecraftName = 19; // Name of the main spacecraft body that this spacecraft object should be considered a component of. Required if this spacecraft object is a subcomponent of a larger craft (i.e. deployable solar panel)
+        string modelDictionaryKey = 13;               // ""  or "bskSat" will result in the default BSKSat model, "6USat" to use a built-in 6U model, "3USat" to use a built-in 3U model
+        repeated int32 oscOrbitLineColor = 14;        // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+        repeated int32 trueTrajectoryLineColor = 15;  // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+        string logoTexture = 16;                      // Path to image texture to be used to customize built-in spacecraft models
+        repeated MultiSphere multiSpheres = 17;       // (Optional) Multi-Sphere-Model (MSM) charging model information
+        repeated Ellipsoid ellipsoids = 18;           // (Optional) Ellipsoid Heads Up Displays
+        string parentSpacecraftName = 19;             // Name of the main spacecraft body that this spacecraft object should be considered a component of. Required if this spacecraft object is a subcomponent of a larger craft (i.e. deployable solar panel)
 }
 
     message ReactionWheel{ //ONLY REQUIRED IF RW HUD/PANEL DESIRED
         //FIELDS 2, 4 ONLY IN FIRST MESSAGE
         //FIELDS 5, 6 EVERY MESSAGE
         //FIELDS 7, 8 OPTIONAL, IF USED ONLY READ IN FIRST MESSAGE
-        repeated double position = 2; // [m] position of the reaction wheel in body frame components. Note that this is not currently populated or used in Basilisk
+        repeated double position = 2;       // [m] position of the reaction wheel in body frame components. Note that this is not currently populated or used in Basilisk
         repeated double spinAxisVector = 4; // reaction wheel spin axis in body frame components
-        double wheelSpeed = 5;  //[rad/s] RWSpeedIntMsg.wheelSpeeds
-        double wheelTorque = 6; //[N m] RWArrayTorqueIntMsg.motorTorque
-        double maxSpeed = 7; //[rad/s] (Optional) maximum RW speed capability
-        double maxTorque = 8; //[N m] (Optional) maximum RW torque capability
+        double wheelSpeed = 5;              // [rad/s] RWSpeedIntMsg.wheelSpeeds
+        double wheelTorque = 6;             // [N m] RWArrayTorqueIntMsg.motorTorque
+        double maxSpeed = 7;                // [rad/s] (Optional) maximum RW speed capability
+        double maxTorque = 8;               // [N m] (Optional) maximum RW torque capability
     }
 
     message Thruster{ //ONLY REQUIRED IF THRUSTER HUD/PANEL DESIRED
@@ -96,14 +96,14 @@ message VizMessage{
         double maxThrust = 6;
         //int32 thrusterGroupID = 7;
         string thrusterTag = 8;
-        repeated int32 color = 9; //Send desired RGBA as values between 0 and 255
+        repeated int32 color = 9;          // Send desired RGBA as values between 0 and 255
     }
 
-    message CoarseSunSensor{//ONLY REQUIRED IF CSS HUD/PANEL DESIRED
+    message CoarseSunSensor{ //ONLY REQUIRED IF CSS HUD/PANEL DESIRED
         //FIELDS 2-4, 6-8 ONLY IN FIRST MESSAGE
         //FIELD 5 EVERY MESSAGE
-        repeated double position = 2; // [m] position of the CSS in body frame
-        double fieldOfView = 3; //[deg] angle is measured edge-to-edge
+        repeated double position = 2;      // [m] position of the CSS in body frame
+        double fieldOfView = 3;            // [deg] angle is measured edge-to-edge
         repeated double normalVector = 4;
         double currentMsmt = 5;
         double maxMsmt = 6;
@@ -114,167 +114,167 @@ message VizMessage{
     message GenericSensor{ //ONLY REQUIRED IF GENERIC SENSOR HUD DESIRED
         //FIELDS 2-4, 7-9 ONLY IN FIRST MESSAGE
         //FIELDS 5,6 OPTIONAL, BUT CAN BE UPDATED IN EVERY MESSAGE
-        repeated double position = 2; // [m] position of the sensor in body frame
-        repeated double fieldOfView = 3; //[deg] Sensor will be assumed to be circular if Field of View has single entry, rectangular (width x height) if two values are provided, angle is measured edge-to-edge
+        repeated double position = 2;      // [m] position of the sensor in body frame
+        repeated double fieldOfView = 3;   // [deg] Sensor will be assumed to be circular if Field of View has single entry, rectangular (width x height) if two values are provided, angle is measured edge-to-edge
         repeated double normalVector = 4;  // [] normal vector of the sensor bore sight axis
-        bool isHidden = 5; // (Optional) true to hide sensor HUD, false to show sensor HUD (default)
-        int32 activityStatus = 6; // (Optional) 0 for sensor inactive, 1 for sensor active, additional modes can be added and viz will attempt to use corresponding mode colors if they are provided in the color array
-        double size = 7; // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
-        repeated int32 color = 8; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.
-        string label = 9; // (Optional) string to display on sensor label
+        bool isHidden = 5;                 // (Optional) true to hide sensor HUD, false to show sensor HUD (default)
+        int32 activityStatus = 6;          // (Optional) 0 for sensor inactive, 1 for sensor active, additional modes can be added and viz will attempt to use corresponding mode colors if they are provided in the color array
+        double size = 7;                   // [m] (Optional) Value of 0 (protobuffer default) to show HUD at viz default size
+        repeated int32 color = 8;          // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be assigned to the additional mode (Modes 0 and 1 will use the 0th color, Mode 2 will use the color indexed to 1, etc.
+        string label = 9;                  // (Optional) string to display on sensor label
     }
 
     message GenericStorage{ //ONLY REQUIRED IF GENERIC STORAGE PANEL DESIRED
         //FIELDS 2, 5 ONLY IN FIRST MESSAGE
         //FIELDS 3, 4 EVERY MESSAGE
         //FIELDS 6,7 OPTIONAL, ONLY CHECKED IN FIRST MESSAGE
-        string label = 2; //Name of storage device
-        double currentValue = 3; // current absolute value of the storage device
-        double maxValue = 4; // maximum absolute value of the storage device
-        string units = 5; // (Optional) Units of stored quantity, i.e. "bytes", "TB", "kg", etc.
-        repeated int32 color = 6; // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be used to color the bar graph between thresholds (i.e. the first color will be used between values of 0 and threshold 1, the second color will be used between threshold 1 and 2,..., the last color will be used between threshold n and the maxValue
-        repeated int32 thresholds = 7; //(Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
+        string label = 2;              // Name of storage device
+        double currentValue = 3;       // current absolute value of the storage device
+        double maxValue = 4;           // maximum absolute value of the storage device
+        string units = 5;              // (Optional) Units of stored quantity, i.e. "bytes", "TB", "kg", etc.
+        repeated int32 color = 6;      // (Optional) Send desired RGBA as values between 0 and 255, multiple colors can be populated in this field and will be used to color the bar graph between thresholds (i.e. the first color will be used between values of 0 and threshold 1, the second color will be used between threshold 1 and 2,..., the last color will be used between threshold n and the maxValue
+        repeated int32 thresholds = 7; // (Optional) Percentages of maxValue at which to change color, note that there should be one fewer threshold values than colors
     }
 
-    message Light{//ONLY REQUIRED IF LIGHT DESIRED
+    message Light{ //ONLY REQUIRED IF LIGHT DESIRED
         // FIELDS 1-4,6-14 ONLY IN FIRST MESSAGE
         // FIELD 5 OPTIONAL, BUT CAN BE CHANGED EVERY MESSAGE
-        string label = 1; //[Optional] Name to use to identify light
-        repeated double position = 2; // [m] position of the light in body frame
-        double fieldOfView = 3; //[deg] angle is measured edge-to-edge
-        repeated double normalVector = 4;  // [] normal vector of the light in the body frame
-        int32 lightOn = 5;// (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        double range = 6; // [m] Distance light will act over
-        double intensity = 7; // (Optional) Intensity of light at light origin, default is 1.0
-        int32 showLightMarker = 8; //(Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        double markerDiameter = 9; //[m] (Optional) Size to draw the visible lens of the light, default is 0.01 m
-        repeated int32 color = 10; // (Optional) Send desired RGBA as values between 0 and 255, default is pure white
-        double gammaSaturation = 11; //(Optional) Desired gamma saturation of the light lens, 0 to match light color, 1.0 for pure white, default is 0.8
-        int32 showLensFlare = 12; // (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        double lensFlareBrightness = 13; // (Optional) Simulates refraction of light in camera lens, this value controls the size and brightness of the lens flare, default is 0.3
-        double lensFlareFadeSpeed = 14; //(Optional) Speed with which the lens flare fades, default is 10.0
+        string label = 1;                 // [Optional] Name to use to identify light
+        repeated double position = 2;     // [m] position of the light in body frame
+        double fieldOfView = 3;           // [deg] angle is measured edge-to-edge
+        repeated double normalVector = 4; // [] normal vector of the light in the body frame
+        int32 lightOn = 5;                // (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double range = 6;                 // [m] Distance light will act over
+        double intensity = 7;             // (Optional) Intensity of light at light origin, default is 1.0
+        int32 showLightMarker = 8;        // (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double markerDiameter = 9;        // [m] (Optional) Size to draw the visible lens of the light, default is 0.01 m
+        repeated int32 color = 10;        // (Optional) Send desired RGBA as values between 0 and 255, default is pure white
+        double gammaSaturation = 11;      // (Optional) Desired gamma saturation of the light lens, 0 to match light color, 1.0 for pure white, default is 0.8
+        int32 showLensFlare = 12;         // (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double lensFlareBrightness = 13;  // (Optional) Simulates refraction of light in camera lens, this value controls the size and brightness of the lens flare, default is 0.3
+        double lensFlareFadeSpeed = 14;   // (Optional) Speed with which the lens flare fades, default is 10.0
     }
 
-    message Transceiver{//ONLY REQUIRED IF TRANSCEIVER DESIRED
+    message Transceiver{ //ONLY REQUIRED IF TRANSCEIVER DESIRED
         //FIELDS 2-4, 8,9 ONLY FIRST MESSAGE
         //FIELDS 5, 6, 10 OPTIONAL, BUT CHECKED EVERY MESSAGE
-        repeated double position = 2; // [m] position of the transceiver in body frame
-        double fieldOfView = 3; //[deg] angle is measured edge-to-edge
+        repeated double position = 2;      // [m] position of the transceiver in body frame
+        double fieldOfView = 3;            // [deg] angle is measured edge-to-edge
         repeated double normalVector = 4;  // [] normal vector of the transceiver bore sight axis
-        bool isHidden = 5; // (Optional) true to hide transceiver HUD, false to show transceiver HUD (default)
-        int32 transmitStatus = 6; // (Optional) 0 for transceiver inactive, 1 for sending, 2 for receiving, 3 for sending and receiving
-        repeated int32 color = 8; // (Optional) Send desired RGBA of transmission animation as values between 0 and 255
-        string label = 9; // (Optional) string to display on sensor label
-        int32 animationSpeed = 10; //(Optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
+        bool isHidden = 5;                 // (Optional) true to hide transceiver HUD, false to show transceiver HUD (default)
+        int32 transmitStatus = 6;          // (Optional) 0 for transceiver inactive, 1 for sending, 2 for receiving, 3 for sending and receiving
+        repeated int32 color = 8;          // (Optional) Send desired RGBA of transmission animation as values between 0 and 255
+        string label = 9;                  // (Optional) string to display on sensor label
+        int32 animationSpeed = 10;         // (Optional) Set transmission animation speed to a value between 1(slowest) to 10 (fastest), or 0 to use viz default
     }
 
-    message CameraConfig{//ONLY REQUIRED IF CUSTOM CAMERA DESIRED
+    message CameraConfig{ //ONLY REQUIRED IF CUSTOM CAMERA DESIRED
         // ALL FIELDS CAN BE CHECKED IN ANY MESSAGE IF AN OPNAV IMAGE REQUEST IS RECEIVED WITH THE MESSAGE
-        int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
-        string parentName = 2;  //[-] Name of the parent body to which the camera should be attached
-        double fieldOfView = 3;  //[deg] Camera Field of View edge-to-edge along camera y axis
-        repeated int64 resolution = 4;  //[pixels] Desired image width and height
-        bool updateCameraParameters = 5; // If true, commands camera to update Instrument Camera to current message's parameters
-        repeated double cameraPos_B = 7;  //[m] Camera position in body frame
-        repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
-        uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
-        string skybox = 10; // ' ' to use default (black for headless, NASA SVS otherwise), "NASA_SVS" provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background,
-        int64 postProcessingOn = 11; // (Optional) Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        double ppFocusDistance = 12; // (Optional) Distance to the point of focus, minimum value of 0.1, Value of 0 to leave this option off
-        double ppAperture = 13; //  (Optional) Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to leave this option off.
-        double ppFocalLength = 14; // [mm] (Optional) Value of -1 to calculate the focal length automatically from the field-of-view value set on the camera, otherwise provide positive non-zero value in range. Valid setting range: 1mm to 300mm. Value of 0 to leave this option off.
-        int64 ppMaxBlurSize = 15; //(Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to leave this option off.
-        int64 renderMode = 16; //(Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
-        repeated double depthMapClippingPlanes = 17; //(Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
+        int64 cameraID = 1;                          // [-] ID of the camera that took the snapshot
+        string parentName = 2;                       // [-] Name of the parent body to which the camera should be attached
+        double fieldOfView = 3;                      // [deg] Camera Field of View edge-to-edge along camera y axis
+        repeated int64 resolution = 4;               // [pixels] Desired image width and height
+        bool updateCameraParameters = 5;             // If true, commands camera to update Instrument Camera to current message's parameters
+        repeated double cameraPos_B = 7;             // [m] Camera position in body frame
+        repeated double cameraDir_B = 8;             // [-] Rotation to the camera frame MRP
+        uint64 renderRate = 9;                       // [ns] Sim elapsed time between saved camera images
+        string skybox = 10;                          // ' ' to use default (black for headless, NASA SVS otherwise), "NASA_SVS" provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background,
+        int64 postProcessingOn = 11;                 // (Optional) Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double ppFocusDistance = 12;                 // (Optional) Distance to the point of focus, minimum value of 0.1, Value of 0 to leave this option off
+        double ppAperture = 13;                      // (Optional) Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to leave this option off.
+        double ppFocalLength = 14;                   // [mm] (Optional) Value of -1 to calculate the focal length automatically from the field-of-view value set on the camera, otherwise provide positive non-zero value in range. Valid setting range: 1mm to 300mm. Value of 0 to leave this option off.
+        int64 ppMaxBlurSize = 15;                    // (Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to leave this option off.
+        int64 renderMode = 16;                       // (Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
+        repeated double depthMapClippingPlanes = 17; // (Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
 
     }
 
 
-    message PointLine{//ONLY NEEDED IF POINT-LINES DESIRED
+    message PointLine{ //ONLY NEEDED IF POINT-LINES DESIRED
         //IF POINT-LINE CREATED IN LIVEVIZSETTINGS, WILL BE UPDATED EVERY MESSAGE
         //IF POINT-LINE CREATED IN VIZSETTINGSPB, CHECKED ONLY AT START
-        string fromBodyName = 1; //Can be spacecraft, celestial body, or ground location
-        string toBodyName = 2; //Can be spacecraft, celestial body, or ground location
-        repeated int32 lineColor = 3; //Send desired RGBA as values between 0 and 255
+        string fromBodyName = 1;       // Can be spacecraft, celestial body, or ground location
+        string toBodyName = 2;         // Can be spacecraft, celestial body, or ground location
+        repeated int32 lineColor = 3;  // Send desired RGBA as values between 0 and 255
     }
 
-    message KeepOutInCone{//ONLY NEEDED IF KEEP OUT OR KEEP IN CONE DESIRED
+    message KeepOutInCone{ //ONLY NEEDED IF KEEP OUT OR KEEP IN CONE DESIRED
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE
-        bool isKeepIn = 1; //True -> keep in cone created, False -> keep out cone created
-        repeated double position = 2; //relative to from body coordinate frame
+        bool isKeepIn = 1;                // True -> keep in cone created, False -> keep out cone created
+        repeated double position = 2;     // relative to from body coordinate frame
         repeated double normalVector = 3;
-        double incidenceAngle = 4; //degrees
-        double coneHeight = 5; //sets height of visible cone (asthetic only, does not impact function)
-        string fromBodyName = 6; //body to attach cone onto
-        string toBodyName = 7; //detect changes in this bodies impingement on cone
-        repeated int32 coneColor = 8; //Send desired RGBA as values between 0 and 255
-        string coneName = 9; //If unspecified, viz will autogenerate name
+        double incidenceAngle = 4;        // degrees
+        double coneHeight = 5;            // sets height of visible cone (asthetic only, does not impact function)
+        string fromBodyName = 6;          // body to attach cone onto
+        string toBodyName = 7;            // detect changes in this bodies impingement on cone
+        repeated int32 coneColor = 8;     // Send desired RGBA as values between 0 and 255
+        string coneName = 9;              // If unspecified, viz will autogenerate name
     }
 
     message StandardCameraSettings{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY NEEDED IF STANDARD CAMERA PANEL AUTOMATIC SET-UP IS DESIRED
-        string spacecraftName = 1; //Body to attach camera to (default is the first spacecraft in messages)
-//        bool viewPanel = 2; //False (default) -> panel is not visible on screen
-        int32 setMode = 3; // 0 -> body targeting, 1 -> pointing vector
-//        bool spacecraftVisible = 4; //False (default) -> parent spacecraft will not be visible in camera view
-        double fieldOfView = 5; // angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
-        string bodyTarget = 6; // Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
-        int32 setView = 7; //0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
-        repeated double pointingVector = 8; //x,y,z, vector (default to 1, 0, 0). This is a setting for pointing vector mode.
-        repeated double position = 9; // [m] (Optional) If populated, sets camera position relative to parent body coordinate frame in meters using B frame components. If unpopulated, camera is positioned automatically along camera view direction outside of parent body's mesh to prevent obstruction of view.
-        string displayName = 10; //(Optional) Camera name to display on panel and floating labels.
+        string spacecraftName = 1;          // Body to attach camera to (default is the first spacecraft in messages)
+//        bool viewPanel = 2;               // False (default) -> panel is not visible on screen
+        int32 setMode = 3;                  // 0 -> body targeting, 1 -> pointing vector
+//        bool spacecraftVisible = 4;       // False (default) -> parent spacecraft will not be visible in camera view
+        double fieldOfView = 5;             // angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
+        string bodyTarget = 6;              // Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
+        int32 setView = 7;                  // 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
+        repeated double pointingVector = 8; // x,y,z, vector (default to 1, 0, 0). This is a setting for pointing vector mode.
+        repeated double position = 9;       // [m] (Optional) If populated, sets camera position relative to parent body coordinate frame in meters using B frame components. If unpopulated, camera is positioned automatically along camera view direction outside of parent body's mesh to prevent obstruction of view.
+        string displayName = 10;            // (Optional) Camera name to display on panel and floating labels.
     }
 
     message ActuatorSettings{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, NONE ARE REQUIRED
-        string spacecraftName = 1; //Which spacecraft's actuators to set
-        int32 viewThrusterPanel = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewThrusterHUD = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewRWPanel = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewRWHUD = 5; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        string spacecraftName = 1;    // Which spacecraft's actuators to set
+        int32 viewThrusterPanel = 2;  // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewThrusterHUD = 3;    // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewRWPanel = 4;        // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewRWHUD = 5;          // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showThrusterLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showRWLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showRWLabels = 7;       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
 
     message InstrumentSettings{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, NONE ARE REQUIRED
-        string spacecraftName = 1; //Which spacecraft's instruments to set
-        int32 viewCSSPanel = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewCSSCoverage = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showCSSLabels = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewCSSBoresight = 5;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        string spacecraftName = 1;         // Which spacecraft's instruments to set
+        int32 viewCSSPanel = 2;            // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCSSCoverage = 3;         // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCSSLabels = 4;           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCSSBoresight = 5;        // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showGenericSensorLabels = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showTransceiverLabels = 7; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showTransceiverLabels = 7;   // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showTransceiverFrustrum = 8; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showGenericStoragePanel = 9; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showMultiSphereLabels = 10; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showMultiSphereLabels = 10;  // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
 
     message CustomModel{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY NEEDED IF A CUSTOM MODEL IS BEING APPLIED
-        string modelPath = 1; //Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape or "HI_DEF_SPHERE" to use the high vertex count icosphere
-        repeated string simBodiesToModify = 2; //Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" in the first string to apply custom model to all spacecraft in simulation
-        repeated double offset = 3; //meters
-        repeated double rotation = 4; // degrees, euler rotation about x, y, z axes in spacecraft CS
-        repeated double scale = 5; //desired model scale in x, y, z in spacecraft CS
-        string customTexturePath = 6; //(Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
-        string normalMapPath = 7; //(Optional) Path to the normal map for the customTexture
-        int32 shader = 8; //(Optional) Value of -1 (protobuffer default) or 0 to use the viz default: Unity Specular Standard Shader, 1 for Unity Standard Shader
-        repeated int32 color = 9; // (optional) Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
+        string modelPath = 1;                  // Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape or "HI_DEF_SPHERE" to use the high vertex count icosphere
+        repeated string simBodiesToModify = 2; // Which bodies in scene to replace with this model, use "ALL_SPACECRAFT" in the first string to apply custom model to all spacecraft in simulation
+        repeated double offset = 3;            // meters
+        repeated double rotation = 4;          // degrees, euler rotation about x, y, z axes in spacecraft CS
+        repeated double scale = 5;             // desired model scale in x, y, z in spacecraft CS
+        string customTexturePath = 6;          // (Optional) Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
+        string normalMapPath = 7;              // (Optional) Path to the normal map for the customTexture
+        int32 shader = 8;                      // (Optional) Value of -1 (protobuffer default) or 0 to use the viz default: Unity Specular Standard Shader, 1 for Unity Standard Shader
+        repeated int32 color = 9;              // (Optional) Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
     }
 
     message LiveVizSettingsPb{
         // ALL FIELDS CHECKED EVERY MESSAGE, ONLY NEEDED IF THESE SETTINGS ARE DESIRED
         repeated PointLine targetLines = 1; // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
-        string relativeOrbitChief = 2; // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
+        string relativeOrbitChief = 2;      // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     }
 
     message VizSettingsPb{
         // ALL FIELDS CHECKED ONLY IN FIRST MESSAGE, ONLY THE SETTINGS THE USER WANTS HAVE TO BE SET
-        double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 1
-        int32 orbitLinesOn = 2; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
-        int32 spacecraftCSon = 3; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 planetCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double ambient = 1;                                 // Value of -1 to use viz default or specify value between 0 and 1
+        int32 orbitLinesOn = 2;                             // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
+        int32 spacecraftCSon = 3;                           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 planetCSon = 4;                               // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         repeated PointLine pointLines = 5;
         repeated KeepOutInCone keepOutInCones = 6;
         repeated StandardCameraSettings standardCameraSettings = 7;
@@ -282,49 +282,49 @@ message VizMessage{
 //        PlanetCameraSettings planetCamera = 9;
         repeated InstrumentSettings instrumentSettings = 9;
         repeated ActuatorSettings actuatorSettings = 10;
-        string skybox = 11; // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
+        string skybox = 11;                                 // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
         repeated CustomModel customModels = 12;
-        int32 viewCameraBoresightHUD = 13; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewCameraConeHUD = 14; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showCSLabels = 15; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showCelestialBodyLabels = 16; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showSpacecraftLabels = 17; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showCameraLabels = 18; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        double customGUIScale = 19; //Value of -1 or 0 to use viz default
-        string defaultSpacecraftSprite = 20; // Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
-        int32 showSpacecraftAsSprites = 21; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showCelestialBodiesAsSprites =22; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 show24hrClock = 23; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showDataRateDisplay = 24;// Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        double keyboardAngularRate = 25; // [deg/sec] Value of less than/equal to zero to use viz default
-        double keyboardZoomRate = 26; // Value of less than/equal to zero to use viz default
-        repeated int32 defaultThrusterColor = 27; //Send desired RGBA as values between 0 and 255
-        double defaultThrusterPlumeLifeScalar = 28; // Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
-        int32 orbitLineSegments = 29; //Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4
-        int32 relativeOrbitRange = 30; //[deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 1
-        int32 showHillFrame = 31; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showVelocityFrame = 32; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 relativeOrbitFrame = 33; // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
-        string mainCameraTarget = 34; // If valid spacecraft or celestial body name is provided, the main camera will be targeted at that body at start
-        double spacecraftShadowBrightness = 35; // Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
-        double spacecraftSizeMultiplier = 36; // Control the display size of spacecraft in Planet View, values greater than 0, use negative value to use viz default
-        int32 showLocationCommLines = 37; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showLocationCones = 38; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 showLocationLabels = 39; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 trueTrajectoryLinesOn = 40; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
-        int32 atmospheresOff = 41; //Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
-        int32 scViewToPlanetViewBoundaryMultiplier = 42; //Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view. Valid range from 1 to 10 or 0 to use viz default.
-        int32 planetViewToHelioViewBoundaryMultiplier = 43; //Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
-        double sunIntensity = 44; //Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
-        int32 attenuateSunLightWithDistance = 45; //Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
-        int32 showLightLabels = 46; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        double celestialBodyHelioViewSizeMultiplier = 47; // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
-        int32 showMissionTime = 48; //Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
-        double spacecraftHelioViewSizeMultiplier = 49; // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
-        int32 forceStartAtSpacecraftLocalView = 50; // Require Vizard to start up in spacecraft-view on start up
-        int32 useSimpleLocationMarkers = 51; // Value of 0 (protobuffer default) to use simplified Location markers when number of locations is greater than 100, -1 to force use of full-featured Location, 1 to force use of simplified Location (no cones, range, or communication lines)
-        string keyboardLiveInput = 52; // string of alphanumeric key inputs to listen for during 2-way communication
-	    int64 messageBufferSize = 53; //[bytes] Maximum size of vizMessages to be loaded into memory at one time, -1 to force loading of entire file into memory, 0 to use viz default
+        int32 viewCameraBoresightHUD = 13;                  // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCameraConeHUD = 14;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCSLabels = 15;                            // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCelestialBodyLabels = 16;                 // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showSpacecraftLabels = 17;                    // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCameraLabels = 18;                        // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double customGUIScale = 19;                         // Value of -1 or 0 to use viz default
+        string defaultSpacecraftSprite = 20;                // Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
+        int32 showSpacecraftAsSprites = 21;                 // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showCelestialBodiesAsSprites = 22;            // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 show24hrClock = 23;                           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showDataRateDisplay = 24;                     // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double keyboardAngularRate = 25;                    // [deg/sec] Value of less than/equal to zero to use viz default
+        double keyboardZoomRate = 26;                       // Value of less than/equal to zero to use viz default
+        repeated int32 defaultThrusterColor = 27;           // Send desired RGBA as values between 0 and 255
+        double defaultThrusterPlumeLifeScalar = 28;         // Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all plumes, >1 will increase lengths of all plumes
+        int32 orbitLineSegments = 29;                       // Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4
+        int32 relativeOrbitRange = 30;                      // [deg] Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 1
+        int32 showHillFrame = 31;                           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showVelocityFrame = 32;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 relativeOrbitFrame = 33;                      // Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame, 3 for inertial
+        string mainCameraTarget = 34;                       // If valid spacecraft or celestial body name is provided, the main camera will be targeted at that body at start
+        double spacecraftShadowBrightness = 35;             // Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value to use viz default
+        double spacecraftSizeMultiplier = 36;               // Control the display size of spacecraft in Planet View, values greater than 0, use negative value to use viz default
+        int32 showLocationCommLines = 37;                   // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showLocationCones = 38;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showLocationLabels = 39;                      // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 trueTrajectoryLinesOn = 40;                   // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body, 3 for relative to a celestial body, 4 for rotating frame of two celestial bodies
+        int32 atmospheresOff = 41;                          // Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
+        int32 scViewToPlanetViewBoundaryMultiplier = 42;    // Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view. Valid range from 1 to 10 or 0 to use viz default.
+        int32 planetViewToHelioViewBoundaryMultiplier = 43; // Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar system view. Valid range from 1 to 10 or 0 to use viz default.
+        double sunIntensity = 44;                           // Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default
+        int32 attenuateSunLightWithDistance = 45;           // Toggle to reduce brightness of sun lighting with the square of the distance from the sun. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
+        int32 showLightLabels = 46;                         // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double celestialBodyHelioViewSizeMultiplier = 47;   // Control the display size of celestial bodies in the Solar System View, values greater than 0, use negative value to use viz default
+        int32 showMissionTime = 48;                         // Toggle to show Mission Time instead of Sim Elapsed Time, -1 for false, 0 for viz default, 1 for true
+        double spacecraftHelioViewSizeMultiplier = 49;      // Control the display size of spacecraft in the Solar System View, values greater than 0, use negative value to use viz default
+        int32 forceStartAtSpacecraftLocalView = 50;         // Require Vizard to start up in spacecraft-view on start up
+        int32 useSimpleLocationMarkers = 51;                // Value of 0 (protobuffer default) to use simplified Location markers when number of locations is greater than 100, -1 to force use of full-featured Location, 1 to force use of simplified Location (no cones, range, or communication lines)
+        string keyboardLiveInput = 52;                      // string of alphanumeric key inputs to listen for during 2-way communication
+	    int64 messageBufferSize = 53;                       // [bytes] Maximum size of vizMessages to be loaded into memory at one time, -1 to force loading of entire file into memory, 0 to use viz default
 	    string truePathRelativeBody = 54;                   // string of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body, "NONE" to show the uncorrected inertial trajectory line
 	    string truePathRotatingFrame = 55;                  // string must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
         string truePathFixedFrame = 56;                     // string of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
@@ -334,48 +334,48 @@ message VizMessage{
         //FIELDS 2,3, 5 CHECKED FIRST MESSAGE ONLY
         //FIELD 1,4 CHECKED EVERY MESSAGE
         //FIELDS 6, 7,8  OPTIONAL, CHECKED FIRST MESSAGE ONLY
-        int32 isOn = 1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        repeated double position = 2; //[m] position in the body frame
-        double radius = 3; //[m] radius of the sphere
-        double currentValue = 4; // [Coulomb] current sphere charge value
-        double maxValue = 5; // [Coulomb] maximum sphere charge value
+        int32 isOn = 1;                   // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated double position = 2;     // [m] position in the body frame
+        double radius = 3;                // [m] radius of the sphere
+        double currentValue = 4;          // [Coulomb] current sphere charge value
+        double maxValue = 5;              // [Coulomb] maximum sphere charge value
         repeated int32 positiveColor = 6; // (optional) Send desired RGBA as values between 0 and 255, default is green
         repeated int32 negativeColor = 7; // (optional) Send desired RGBA as values between 0 and 255, default is red
-        int32 neutralOpacity = 8; // (optional) Send desired opacity value between 0 and 255 for when charge is neutral, negative value yields default
+        int32 neutralOpacity = 8;         // (optional) Send desired opacity value between 0 and 255 for when charge is neutral, negative value yields default
     }
 
     message Location{ //ONLY NEEDED IF LOCATION DESIRED
         // ALL FIELDS CHECKED EVERY MESSAGE
-        string stationName = 1; // location text label
-        string parentBodyName = 2; // name of the parent body P (spacecraft or planet) on which the location G is positioned
-        repeated double r_GP_P = 3; //[m] Position of G relative to parent body frame P
-        repeated double gHat_P = 4; // location Normal relative to parent body frame.
-        double fieldOfView = 5; // [deg] angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
-        repeated int32 color = 6; //Send desired RGBA as values between 0 and 255, default is white
-        double range = 7; // [m] Value of 0 (protobuffer default) to use viz default
+        string stationName = 1;      // location text label
+        string parentBodyName = 2;   // name of the parent body P (spacecraft or planet) on which the location G is positioned
+        repeated double r_GP_P = 3;  // [m] Position of G relative to parent body frame P
+        repeated double gHat_P = 4;  // location Normal relative to parent body frame.
+        double fieldOfView = 5;      // [deg] angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
+        repeated int32 color = 6;    // Send desired RGBA as values between 0 and 255, default is white
+        double range = 7;            // [m] Value of 0 (protobuffer default) to use viz default
     }
 
-    message Ellipsoid{//ONLY NEEDED IF ELLIPSOID DESIRED
+    message Ellipsoid{ //ONLY NEEDED IF ELLIPSOID DESIRED
         // ALL FIELDS CHECKED EVERY MESSAGE
-        int32 isOn =1; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 useBodyFrame = 2; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        repeated double position = 3; //[m] Position of ellipsoid center in xyz (if using body frame) or r-theta-h (if Hill frame)
+        int32 isOn = 1;                    // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 useBodyFrame = 2;            // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated double position = 3;      // [m] Position of ellipsoid center in xyz (if using body frame) or r-theta-h (if Hill frame)
         repeated double semiMajorAxes = 4; // [m] Semi-major axes in xyz (if using body frame) or r-theta-h (if Hill frame)
-        repeated int32 color = 5; //Send desired RGBA as values between 0 and 255
-        int32 showGridLines = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated int32 color = 5;          // Send desired RGBA as values between 0 and 255
+        int32 showGridLines = 6;           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
 
-    TimeStamp currentTime = 1; //CHECKED EVERY MESSAGE
-    repeated CelestialBody celestialBodies = 2; //CHECKED EVERY MESSAGE
-    repeated Spacecraft spacecraft = 3; //CHECKED EVERY MESSAGE
-    repeated CameraConfig cameras = 4; //CHECKED EVERY MESSAGE
+    TimeStamp currentTime = 1;                     // CHECKED EVERY MESSAGE
+    repeated CelestialBody celestialBodies = 2;    // CHECKED EVERY MESSAGE
+    repeated Spacecraft spacecraft = 3;            // CHECKED EVERY MESSAGE
+    repeated CameraConfig cameras = 4;             // CHECKED EVERY MESSAGE
     //repeated cameraImage cameraImages = 5;
     //repeated ImageRequest imageRequests = 6;
-    VizSettingsPb settings = 7; //CHECKED FIRST MESSAGE ONLY
-    EpochDateTime epoch = 8; //CHECKED FIRST MESSAGE ONLY
-    repeated Location locations = 9; //CHECKED EVERY MESSAGE
-    LiveVizSettingsPb liveSettings = 10; //CHECKED EVERY MESSAGE
-    repeated VizEventDialog vizEventDialogs = 11; //CHECKED EVERY MESSAGE
+    VizSettingsPb settings = 7;                    // CHECKED FIRST MESSAGE ONLY
+    EpochDateTime epoch = 8;                       // CHECKED FIRST MESSAGE ONLY
+    repeated Location locations = 9;               // CHECKED EVERY MESSAGE
+    LiveVizSettingsPb liveSettings = 10;           // CHECKED EVERY MESSAGE
+    repeated VizEventDialog vizEventDialogs = 11;  // CHECKED EVERY MESSAGE
 }
 
 message VizInput{ // Message sent from Vizard to BSK containing user inputs since last send
@@ -384,42 +384,42 @@ message VizInput{ // Message sent from Vizard to BSK containing user inputs sinc
         string keys = 1;
     }
 
-    int64 frameNumber = 1; // Frame number when message was sent
+    int64 frameNumber = 1;                               // Frame number when message was sent
     KeyboardInput keyInputs = 2;
-    repeated VizEventReply replies = 3; // Vector of VizEventReply submessages
-    VizBroadcastSyncSettings broadcastSyncSettings = 4; // Sync settings submessage
+    repeated VizEventReply replies = 3;                  // Vector of VizEventReply submessages
+    VizBroadcastSyncSettings broadcastSyncSettings = 4;  // Sync settings submessage
 }
 
 message VizEventReply{
-    string eventHandlerID = 1; //Name provided when setting up the EventDialog object
-    string reply = 2; //Which user option was selected
-    bool eventHandlerDestroyed = 3; //Was the panel closed and destroyed?
+    string eventHandlerID = 1;       // Name provided when setting up the EventDialog object
+    string reply = 2;                // Which user option was selected
+    bool eventHandlerDestroyed = 3;  // Was the panel closed and destroyed?
 }
 
 message VizEventDialog{
     //ONLY NEEDED IF AN DIALOG BOX IS DESIRED OR EXISTING DIALOG BOX REQUIRES UPDATE
     // ALL FIELDS CHECKED EVERY MESSAGE
     // FIELD 1 IS REQUIRED
-    string eventHandlerID = 1; //Name of Vizard event handler to be returned with VizEventReply responses
-    string displayString = 2; //Contains the information or choice that should be posed to the user
-    repeated string userOptions = 3; //Determines how many user choices will be shown and what the displayed string will say. If this is empty, the dialog is assumed to be informational only
-    bool forceEventDialogMaximize = 4; // If true, panel will be displayed in Vizard on update even if user has minimized, false will allow panel to stay minimized
-    double durationOfDisplay = 5; //[ns] How long to display the dialog box for, use 0 to leave panel on display until closed by user, -1 to override and close panel immediately
-    bool useSimElapsedTimeForDuration = 6; //If true and duration of display is set, use the sim elapsed time to calculate when to hide window. If false, use real time (system clock).
-    int32 useConfirmationPanel = 7; //Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
-    int32 hideOnSelection = 8; //Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to hide panel after user makes a selection, 2 to destroy panel after user makes a selection
-    string dialogFormat = 9; //Select format for dialog box: WARNING, CAUTION, or none to use viz default format
+    string eventHandlerID = 1;             // Name of Vizard event handler to be returned with VizEventReply responses
+    string displayString = 2;              // Contains the information or choice that should be posed to the user
+    repeated string userOptions = 3;       // Determines how many user choices will be shown and what the displayed string will say. If this is empty, the dialog is assumed to be informational only
+    bool forceEventDialogMaximize = 4;     // If true, panel will be displayed in Vizard on update even if user has minimized, false will allow panel to stay minimized
+    double durationOfDisplay = 5;          // [ns] How long to display the dialog box for, use 0 to leave panel on display until closed by user, -1 to override and close panel immediately
+    bool useSimElapsedTimeForDuration = 6; // If true and duration of display is set, use the sim elapsed time to calculate when to hide window. If false, use real time (system clock).
+    int32 useConfirmationPanel = 7;        // Should event handler pop up a confirmation window before sending back response, -1 to not show confirmation panel, 0 to use viz default, and 1 to require a user confirmation of their selection
+    int32 hideOnSelection = 8;             // Should the panel disappear after the user has selected an option?, -1 to continue to show panel, 0 to use viz default, and 1 to remove panel after option selection
+    string dialogFormat = 9;               // Select format for dialog box: WARNING, CAUTION, or none to use viz default format
 }
 
 message VizBroadcastSyncSettings{
-    bool forceTrainerSettings = 1; // If true, the BroadcastSyncSettings will be forced to match in the viewers' Vizard instances
-    int32 orbitLinesOn = 2; // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
-    int32 trueTrajectoryLinesOn = 3; // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
-    int32 spacecraftCSon = 4; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int32 planetCSon = 5; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int32 showHillFrame = 6; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    repeated VizEventReply dialogEvents = 7; //Pass trainer EventDialog selections to the viewers
-    repeated VizEventDialog currentEventDialogs = 8; //Pass all existing EventDialogs to viewers (to allow late joiners to see all dialog boxes)
+    bool forceTrainerSettings = 1;                    // If true, the BroadcastSyncSettings will be forced to match in the viewers' Vizard instances
+    int32 orbitLinesOn = 2;                           // Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
+    int32 trueTrajectoryLinesOn = 3;                  // Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
+    int32 spacecraftCSon = 4;                         // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 planetCSon = 5;                             // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int32 showHillFrame = 6;                          // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    repeated VizEventReply dialogEvents = 7;          // Pass trainer EventDialog selections to the viewers
+    repeated VizEventDialog currentEventDialogs = 8;  // Pass all existing EventDialogs to viewers (to allow late joiners to see all dialog boxes)
     int32 showVelocityFrame = 9;                      // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     repeated int32 truePathBodySetting = 10;          // First value: is desired body setting a spacecraft? 1 for true, -1 for false, 0 to use viz default setting; Second value: index of desired body; Third Value: index of second body if rotating frame desired
 }
