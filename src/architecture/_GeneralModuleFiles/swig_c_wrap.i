@@ -23,6 +23,8 @@
     #include <architecture/utilities/bskLogging.h>
     #include <memory>
     #include <type_traits>
+    #include <vector>
+    #include <functional>
 %}
 %include <std_string.i>
 
@@ -63,6 +65,22 @@ class CWrapper : public SysModel {
     std::unique_ptr<TConfig> config; //!< class variable
 };
 
+class CModuleWrapper {
+private:
+    std::vector<std::function<void()>> destructionCallbacks;
+
+public:
+    void addDestructionCallback(std::function<void()> callback) {
+        destructionCallbacks.push_back(callback);
+    }
+
+    ~CModuleWrapper() {
+        for (auto& callback : destructionCallbacks) {
+            callback();
+        }
+    }
+};
+
 %}
 
 %define %c_wrap_3(moduleName, configName, functionSuffix)
@@ -83,7 +101,7 @@ class CWrapper : public SysModel {
     in overload resolution than methods using the explicit type.
 
     This means that:
-    
+
     Reset_hillPoint(hillPointConfig*, uint64_t, int64_t) { ... }
 
     will always be chosen before:
@@ -103,7 +121,7 @@ class CWrapper : public SysModel {
         if (len(args)) > 0:
             args[0].thisown = False
     %}
-    
+
     %include "moduleName.h"
 
     %template(moduleName) CWrapper<configName,Update_ ## functionSuffix,SelfInit_ ## functionSuffix,Reset_ ## functionSuffix>;
