@@ -233,6 +233,15 @@ default setting for that behavior.
       - int
       - [bytes] Maximum size of vizMessages to be loaded into memory at one time,
         -1 to force loading of entire file into memory, 0 to use viz default
+    * - ``truePathRelativeBody``
+      - string
+      - String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body
+    * - ``truePathRotatingFrame``
+      - string
+      - String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
+    * - ``truePathFixedFrame``
+      - string
+      - String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
 
 
 While the prior settings are only read once during start up, the following settings are checked
