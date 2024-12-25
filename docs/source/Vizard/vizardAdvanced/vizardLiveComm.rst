@@ -331,6 +331,8 @@ The trainer has the option to force certain visual settings to the broadcast:
     * - ``spacecraftCSon``
     * - ``planetCSon``
     * - ``showHillFrame``
+    * - ``showVelocityFrame``
+    * - ``truePathBodySetting``
 
 See :ref:`vizardSettings` for types and descriptions of these variables.
 
