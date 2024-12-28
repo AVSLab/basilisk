@@ -29,7 +29,7 @@ Version |release|
 - If configuring and building Basilisk directly with ``conan install`` and ``build`` commands,
   the ``-if dist3/conan`` argument is no longer needed.  The Basilisk install location is
   setup with ``conan 2`` arguments inside ``conanfile.py``.
-
+- :ref:`simIncludeGravBody` set the moon radius in km, not meters, and was thus 1000x too small when visualized.
 
 Version 2.5.0
 -------------

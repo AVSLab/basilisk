@@ -115,7 +115,7 @@ BODY_DATA = {
         displayName="moon",
         modelDictionaryKey="",
         mu=astroConstants.MU_MOON*1e9,
-        radEquator=astroConstants.REQ_MOON,
+        radEquator=astroConstants.REQ_MOON*1e3,
         spicePlanetFrame="IAU_moon",
     ),
     "mars": BodyData(
