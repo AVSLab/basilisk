@@ -30,6 +30,9 @@ Version |release|
   the ``-if dist3/conan`` argument is no longer needed.  The Basilisk install location is
   setup with ``conan 2`` arguments inside ``conanfile.py``.
 - :ref:`simIncludeGravBody` set the moon radius in km, not meters, and was thus 1000x too small when visualized.
+- In the python library :ref:`RigidBodyKinematics` the ``subMRP()`` routine didn't compute the expected
+  result if the denominator was small.  This is now corrected.
+
 
 Version 2.5.0
 -------------
