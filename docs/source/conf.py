@@ -121,6 +121,11 @@ extensions = [
     'breathe'
 ]
 
+breathe_doxygen_config_options = {
+    'WARN_AS_ERROR': 'YES'
+    , 'WARN_IF_UNDOCUMENTED': 'YES'  # Ensure undocumented variables, functions, etc., raise warnings
+}
+
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['_templates']
 
