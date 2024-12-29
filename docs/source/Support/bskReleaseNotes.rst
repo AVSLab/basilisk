@@ -84,6 +84,8 @@ Version  |release|
 - The BSK install instructions are updated to ask users to install by first ``pip`` installing build
   required packages through ``requirements_dev.txt``.
 - Update the build process to use ``conan`` version 2.x
+- Support for Vizard release 2.3.0, including rotating frame settings and documentation for support of ``.glb`` shape files
+- ``vizProtobuffer`` upgraded to use latest C++ compiler, ``protobuf`` Python/C++ library upgraded
 
   .. warning::
 
