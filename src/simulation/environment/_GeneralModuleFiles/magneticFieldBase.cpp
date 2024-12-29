@@ -23,7 +23,7 @@
 #include "architecture/utilities/simDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
- @return void
+
  */
 MagneticFieldBase::MagneticFieldBase()
 {
@@ -55,7 +55,7 @@ MagneticFieldBase::MagneticFieldBase()
 }
 
 /*! Destructor.
- @return void
+
  */
 MagneticFieldBase::~MagneticFieldBase()
 {
@@ -66,7 +66,7 @@ MagneticFieldBase::~MagneticFieldBase()
 }
 
 /*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
- @return void
+
  @param tmpScMsg A spacecraft state message name.
  */
 void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg){
@@ -88,7 +88,7 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 {
@@ -115,7 +115,7 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
- @return void
+
  */
 void MagneticFieldBase::customReset(uint64_t CurrentClock)
 {
@@ -124,7 +124,7 @@ void MagneticFieldBase::customReset(uint64_t CurrentClock)
 
 /*! Custom customSetEpochFromVariable() method.  This allows a child class to specify how the module epoch information
  is set by a module variable.
- @return void
+
  */
 void MagneticFieldBase::customSetEpochFromVariable()
 {
@@ -133,7 +133,7 @@ void MagneticFieldBase::customSetEpochFromVariable()
 
 /*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 {
@@ -148,7 +148,7 @@ void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 }
 
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
- @return void
+
  */
 void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
 {
@@ -157,7 +157,7 @@ void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
- @return void
+
  */
 bool MagneticFieldBase::readMessages()
 {
@@ -199,7 +199,7 @@ bool MagneticFieldBase::readMessages()
 
 
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
- @return void
+
  */
 bool MagneticFieldBase::customReadMessages()
 {
@@ -207,7 +207,7 @@ bool MagneticFieldBase::customReadMessages()
 }
 
 /*! This method is used to update the local magnetic field based on each spacecraft's position.
-  @return void
+
  */
 void MagneticFieldBase::updateLocalMagField(double currentTime)
 {
@@ -238,7 +238,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
  @param scState A spacecraft states message struct.
- @return void
+
  */
 void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState)
 {
@@ -255,7 +255,7 @@ void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload *planetStat
 }
 
 /*! Computes the current local magnetic field for each spacecraft and writes their respective messages.
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)

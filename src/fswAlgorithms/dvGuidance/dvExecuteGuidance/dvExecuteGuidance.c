@@ -26,7 +26,7 @@
 /*! This method initializes the configData for the nominal delta-V maneuver guidance.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param moduleID The ID associated with the configData
  */
@@ -38,7 +38,7 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t mod
 
 
 /*! @brief This resets the module.
- @return void
+
  @param configData The configuration data associated with this module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The unique module identifier
@@ -58,10 +58,10 @@ void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callT
 
 
 
-/*! This method takes its own internal variables and creates an output attitude 
-    command to use for burn execution.  It also flags whether the burn should 
+/*! This method takes its own internal variables and creates an output attitude
+    command to use for burn execution.  It also flags whether the burn should
     be happening or not.
- @return void
+
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -97,14 +97,14 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     {
         v3Subtract(navData.vehAccumDV, configData->dvInit, burnAccum);
     }
-    
+
     dvMag = v3Norm(localBurnData.dvInrtlCmd);
     dvExecuteMag = v3Norm(burnAccum);
     configData->burnComplete = configData->burnComplete == 1 ||
         dvExecuteMag > dvMag;
     configData->burnExecuting = configData->burnComplete != 1 &&
         configData->burnExecuting == 1;
-    
+
     if(configData->burnComplete)
     {
         effCmd = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
@@ -115,7 +115,6 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     localExeData.burnComplete = configData->burnComplete;
     localExeData.burnExecuting = configData->burnExecuting;
     DvExecutionDataMsg_C_write(&localExeData, &configData->burnExecOutMsg, moduleID, callTime);
-    
+
     return;
 }
-

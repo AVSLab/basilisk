@@ -35,7 +35,7 @@ static double adjust_range(double lower, double upper, double angle);
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
@@ -47,7 +47,7 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
  message output buffer should be cleared.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -75,7 +75,7 @@ void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, i
 }
 
 /*! Add a description of what this main Update() routine does for this module
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -101,7 +101,7 @@ void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, 
 
 /*! This function calculates Lyapunov Feedback Control output based on current orbital element difference
  and target orbital element difference. Mean orbital elements are used.
- @return void
+
  @param configData The configuration data associated with the module
  @param chiefTransMsg Chief's position and velocity
  @param deputyTransMsg Deputy's position and velocity
@@ -175,7 +175,7 @@ static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgP
  Especially, this function assumes using classic orbital elements.
  The B matrix description is provided in
  "Analytical Mechanics of Space Systems by H. Schaub and J. L. Junkins"
- @return void
+
  @param mu
  @param oe_cl nonsingular orbital elements
  @param B
@@ -229,7 +229,7 @@ static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]) {
  "Naasz, B. J., Karlgaard, C. D., & Hall, C. D. (2002). Application of several control techniques for
  the ionospheric observation nanosatellite formation."
  Be careful, our definition of equinoctial orbital elements are different from the one used in this paper.
- @return void
+
  @param mu
  @param oe_eq nonsingular orbital elements
  @param B

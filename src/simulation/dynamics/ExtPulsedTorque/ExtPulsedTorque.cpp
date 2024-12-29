@@ -45,7 +45,7 @@ void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
 
 /*! This module does not write any output messages.
  @param currentClock The current time used for time-stamping the message
- @return void
+
  */
 void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
 {
@@ -54,7 +54,7 @@ void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
 
 /*! This method is used to read the incoming message and set the
  associated buffer structure.
- @return void
+
  */
 void ExtPulsedTorque::readInputMessages()
 {

@@ -44,7 +44,7 @@ void SimpleBattery::customReset(uint64_t CurrentClock) {
 
 /*! This method integrates the current net power, and checks to see whether the integrated power falls between 0 and the battery's storageCapacity.
  @param *msg:  pointer to a PowerStorageStatusMsgPayload instance
- @return void
+
  */
 void SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) {
 

@@ -63,7 +63,6 @@ SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSim
 /*! This method provides a synchronization mechanism for the "child" thread
     ensuring that it can be held at a fixed point after it finishes the
     execution of a given frame until it is released by the "parent" thread.
- @return void
  */
 void SimThreadExecution::lockThread() {
     this->selfThreadLock.acquire();
@@ -72,7 +71,6 @@ void SimThreadExecution::lockThread() {
 /*! This method provides a forced synchronization on the "parent" thread so that
     the parent and all other threads in the system can be forced to wait at a
     known time until this thread has finished its execution for that time.
- @return void
  */
 void SimThreadExecution::lockParent() {
     this->parentThreadLock.acquire();
@@ -81,7 +79,6 @@ void SimThreadExecution::lockParent() {
 /*! This method provides an entry point for the "parent" thread to release the
     child thread for a single frame's execution.  It is intended to only be
     called from the parent thread.
- @return void
  */
 void SimThreadExecution::unlockThread() {
     this->selfThreadLock.release();
@@ -91,7 +88,6 @@ void SimThreadExecution::unlockThread() {
     parent thread after it has finished its execution in a frame.  That way the
     parent and all of its other children have to wait for this child to finish
     its execution.
- @return void
  */
 void SimThreadExecution::unlockParent() {
     this->parentThreadLock.release();
@@ -101,7 +97,6 @@ void SimThreadExecution::unlockParent() {
     increments the internal simulation time appropriately as the simulation
     processes are triggered
     @param stopPri The priority level below which the sim won't go
-    @return void
 */
 void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
 {
@@ -138,7 +133,6 @@ void SimThreadExecution::SingleStepProcesses(int64_t stopPri)
 
 /*! This method steps the simulation until the specified stop time and
  stop priority have been reached.
- @return void
  */
 void SimThreadExecution::StepUntilStop()
 {
@@ -159,7 +153,6 @@ void SimThreadExecution::StepUntilStop()
 /*! This method is currently vestigial and needs to be populated once the message
     sharing process between different threads is handled.
     TODO: Make this method move messages safely between threads
- @return void
  */
 void SimThreadExecution::moveProcessMessages() const {
 //    for(auto const& process : this->processList)
@@ -173,7 +166,6 @@ void SimThreadExecution::moveProcessMessages() const {
     their startup before the system starts to go through its initialization
     activities.  It's very similar to the locking process, but provides different
     functionality.
- @return void
  */
 void SimThreadExecution::waitOnInit() {
     std::unique_lock<std::mutex> lck(this->initReadyLock);
@@ -186,7 +178,6 @@ void SimThreadExecution::waitOnInit() {
 /*! This method allows the startup activities to alert the parent thread once
     they have cleared their construction phase and are ready to go through
     initialization.
- @return void
  */
 void SimThreadExecution::postInit() {
     std::unique_lock<std::mutex> lck(this->initReadyLock);
@@ -197,7 +188,6 @@ void SimThreadExecution::postInit() {
 /*! This method is used by the "child" thread to walk through all of its tasks
     and processes and initialize them serially.  Note that other threads can also
     be initializing their systems simultaneously.
- @return void
  */
 void SimThreadExecution::selfInitProcesses() const {
     for(auto const& process : this->processList)
@@ -208,7 +198,6 @@ void SimThreadExecution::selfInitProcesses() const {
 
 /*! This method is vestigial and should probably be removed once MT message
     movement has been completed.
- @return void
  */
 void SimThreadExecution::crossInitProcesses() const {
 //    for(auto const& process : this->processList)
@@ -220,7 +209,6 @@ void SimThreadExecution::crossInitProcesses() const {
 /*! This method allows the "child" thread to reset both its timing/scheduling, as
     well as all of its allocated tasks/modules when commanded.  This is always
     called during init, but can be called during runtime as well.
- @return void
  */
 void SimThreadExecution::resetProcesses() {
     this->currentThreadNanos = 0;
@@ -235,7 +223,6 @@ void SimThreadExecution::resetProcesses() {
 /*! This method pops a new process onto the execution stack for the "child"
     thread.  It allows the user to put specific processes onto specific threads
     if that is desired.
- @return void
  */
 void SimThreadExecution::addNewProcess(SysProcess* newProc) {
     processList.push_back(newProc);
@@ -261,7 +248,6 @@ SimModel::~SimModel()
  stop priority have been reached.
  @param SimStopTime Nanoseconds to step the simulation for
  @param stopPri The priority level below which the sim won't go
- @return void
  */
 void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
@@ -297,7 +283,7 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     execution.  Note that the priority level of the process determines what
     order it gets called in: higher priorities are called before lower
     priorities. If priorities are the same, the proc added first goes first.
-    @return void
+
     @param newProc the new process to be added
 */
 void SimModel::addNewProcess(SysProcess *newProc)
@@ -316,7 +302,6 @@ void SimModel::addNewProcess(SysProcess *newProc)
 /*! This method goes through all of the processes in the simulation,
  *  all of the tasks within each process, and all of the models within
  *  each task and self-inits them.
- @return void
  */
 void SimModel::selfInitSimulation()
 {
@@ -336,7 +321,6 @@ void SimModel::selfInitSimulation()
 /*! This method goes through all of the processes in the simulation,
  *  all of the tasks within each process, and all of the models within
  *  each task and resets them.
- @return void
  */
 void SimModel::resetInitSimulation() const
 {
@@ -358,7 +342,6 @@ void SimModel::resetInitSimulation() const
     increments the internal simulation time appropriately as the simulation
     processes are triggered
     @param stopPri The priority level below which the sim won't go
-    @return void
 */
 
 void SimModel::SingleStepProcesses(int64_t stopPri)
@@ -397,7 +380,6 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
 /*! This method is used to reset a simulation to time 0. It sets all process and
  * tasks back to the initial call times. It clears all message logs. However,
  * it does not clear all message buffers and does not reset individual models.
- @return void
  */
 void SimModel::ResetSimulation()
 {
@@ -418,7 +400,7 @@ void SimModel::ResetSimulation()
 /*! This method removes all of the active processes from the "thread pool" that
     has been established.  It is needed during init and if sims are restarted or
     threads need to be reallocated.  Otherwise it is basically a no-op.
- @return void
+
  */
 void SimModel::clearProcsFromThreads() const {
 
@@ -439,7 +421,6 @@ void SimModel::clearProcsFromThreads() const {
     You tell the method how many threads you want in the system, it clears out
     any existing thread data, and then allocates fresh threads for the runtime.
  @param threadCount number of threads
- @return void
  */
 void SimModel::resetThreads(uint64_t threadCount)
 {
@@ -459,7 +440,6 @@ void SimModel::resetThreads(uint64_t threadCount)
     the system, detaches them from the architecture, and then cleans up any
     memory that has been allocated to them in the architecture.  It just ensures
     clean shutdown of any existing runtime stuff.
- @return void
  */
 void SimModel::deleteThreads() {
     for(auto const& simThread : this->threadList)
@@ -479,7 +459,7 @@ void SimModel::deleteThreads() {
     for any processes that haven't already been placed onto a thread.  If the
     user has allocated N threads, this method just walks through those threads
     and pops all of the processes onto those threads in a round-robin fashion.
- @return void
+
  */
 void SimModel::assignRemainingProcs() {
 
@@ -522,7 +502,6 @@ void SimModel::assignRemainingProcs() {
  @param newProc The process that needs to get emplaced on the specified thread
  @param threadSel The thread index in the thread-pool that the process gets added
                   to
- @return void
  */
 void SimModel::addProcessToThread(SysProcess *newProc, uint64_t threadSel)
 {

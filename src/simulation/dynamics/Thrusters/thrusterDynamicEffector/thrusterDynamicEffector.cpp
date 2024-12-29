@@ -52,7 +52,7 @@ ThrusterDynamicEffector::~ThrusterDynamicEffector()
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
@@ -67,7 +67,7 @@ void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
 /*! This method is here to write the output message structure into the specified
  message.
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 {
@@ -97,7 +97,7 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method is used to read the incoming command message and set the
  associated command structure for operating the thrusters.
- @return void
+
  */
 bool ThrusterDynamicEffector::ReadInputs()
 {
@@ -135,7 +135,7 @@ bool ThrusterDynamicEffector::ReadInputs()
  run successfully.  It honors all previous thruster firings if they are still
  active.  Note that for unit testing purposes you can insert firings directly
  into NewThrustCmds.
- @return void
+
  @param currentTime The current simulation time converted to a double
  */
 void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
@@ -173,7 +173,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 /*! This method is used to update the location and orientation of the thrusters
 * at every UpdateState call when the thrusters are attached to a body other than
 * the hub.
- @return void
+
  */
 void ThrusterDynamicEffector::UpdateThrusterProperties()
 {
@@ -222,7 +222,7 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
 }
 
 /*! This method is used to link the states to the thrusters
- @return void
+
  @param states The states to link
  */
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
@@ -241,7 +241,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
- @return void
+
  @param integTime Integration time
  @param timeStep Current integration time step used
  */
@@ -348,7 +348,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 }
 
 /*! This method adds new thruster(s) to the thruster set.
- @return void
+
  @param newThruster thruster sim config(s)
  */
 void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster)
@@ -373,7 +373,7 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster)
 }
 
 /*! This method adds new thruster(s) to the thruster set connected to a different body than the hub.
- @return void
+
  @param newThruster thruster sim config(s)
  @param bodyStateMsg body states to which thruster(s) are attached
  */
@@ -403,7 +403,7 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCS
 /*! This method is used to update the blow down effects to the thrust and/or Isp
 * at every computeForceTorque call when the thrusters are attached to a fuel
 * tank subject to blow down effects.
- @return void
+
  */
 void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster)
 {
@@ -460,7 +460,7 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
 /*! This method is used to get the current force for a thruster firing.  It uses
  the configuration data associated with a given thruster and the current clock
  time to determine what state and force the thruster should be in.
- @return void
+
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
@@ -519,7 +519,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
  once it has been commanded off.  It uses the configuration data associated with
  a given thruster and the current clock time to turn off the thruster according
  to the ramp profile.
- @return void
+
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
@@ -621,7 +621,7 @@ double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
  configuration data based on that incoming command set.  Note that the main
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)

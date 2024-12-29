@@ -31,7 +31,7 @@ void ThrustCMEstimation::SelfInit(){
 
 /*! Reset the flyby OD filter to an initial state and
  initializes the internal estimation matrices.
- @return void
+
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
@@ -67,7 +67,7 @@ void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
 
 /*! Take the relative position measurements and outputs an estimate of the
  spacecraft states in the inertial frame.
- @return void
+
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)

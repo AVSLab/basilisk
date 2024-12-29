@@ -50,14 +50,14 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
 
 
 /*! This method reads necessary input messages
- @return void */
+  */
 void NHingedRigidBodyStateEffector::readInputMessages()
 {
     return;
 }
 
 /*! This method takes the computed theta states and outputs them to the messaging system.
- @return void
+
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
@@ -508,7 +508,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
     return;
 }
 /*! This method is used so that the simulation will ask HRB to update messages.
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)

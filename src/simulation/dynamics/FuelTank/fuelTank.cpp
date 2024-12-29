@@ -49,7 +49,7 @@ void FuelTank::setNameOfMassState(const std::string nameOfMassState) {
 }
 
 /*! set fuel tank model
- @return void
+
  @param model fuel tank model type
  */
 void FuelTank::setTankModel(FuelTankModel *model) {
@@ -208,7 +208,7 @@ void FuelTank::updateEnergyMomContributions(double integTime,
 }
 
 /*! Compute fuel tank mass properties and outputs them as a message.
- @return void
+
  @param currentClock The current simulation time (used for time stamping)
  */
 void FuelTank::writeOutputMessages(uint64_t currentClock) {
@@ -220,7 +220,7 @@ void FuelTank::writeOutputMessages(uint64_t currentClock) {
 }
 
 /*! Fuel tank writes out its messages
- @return void
+
  @param currentSimNanos The current simulation time in nanoseconds
  */
 void FuelTank::UpdateState(uint64_t currentSimNanos) {

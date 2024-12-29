@@ -32,7 +32,7 @@ LambertSecondDV::~LambertSecondDV() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertSecondDV::Reset(uint64_t currentSimNanos)
 {
@@ -47,7 +47,7 @@ void LambertSecondDV::Reset(uint64_t currentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertSecondDV::UpdateState(uint64_t currentSimNanos)
 {
@@ -63,7 +63,7 @@ void LambertSecondDV::UpdateState(uint64_t currentSimNanos)
 
 /*! This method reads the input messages each call of updateState.
     It also checks if the message contents are valid for this module.
-    @return void
+
 */
 void LambertSecondDV::readMessages()
 {
@@ -91,7 +91,7 @@ void LambertSecondDV::readMessages()
 
 /*! This method writes the output messages each call of updateState
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertSecondDV::writeMessages(uint64_t currentSimNanos)
 {

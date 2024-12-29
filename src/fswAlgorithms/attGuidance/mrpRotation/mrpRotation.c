@@ -30,7 +30,7 @@
 
 /*! @brief This method initializes the configData for mrpRotation model.  It creates the module
  output message.
- @return void
+
  @param configData The configuration data associated with the null space control
  @param moduleID The ID associated with the configData
  */
@@ -43,7 +43,7 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
 
 
 /*! @brief This resets the module to original states.
- @return void
+
  @param configData The configuration data associated with the null space control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -64,7 +64,7 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t
 
 /*! @brief This method takes the input attitude reference frame, and and superimposes the dynamics MRP
  scanning motion on top of this.
- @return void
+
  @param configData The configuration data associated with the mrpRotation module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -116,7 +116,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
 
 
 /*! @brief This function checks if there is a new commanded raster maneuver message available
- @return void
+
  @param configData The configuration data associated with the mrpRotation module
  */
 void checkRasterCommands(mrpRotationConfig *configData)
@@ -137,7 +137,7 @@ void checkRasterCommands(mrpRotationConfig *configData)
 }
 
 /*! @brief This function computes control update time
- @return void
+
  @param configData The configuration data associated with the mrpRotation module
  @param callTime The clock time at which the function was called (nanoseconds)
 */
@@ -154,7 +154,7 @@ void computeTimeStep(mrpRotationConfig *configData, uint64_t callTime)
 
 /*! @brief This function computes the reference (MRP attitude Set, angular velocity and angular acceleration)
  associated with a rotation defined in terms of an initial MRP set and a constant angular velocity vector
- @return void
+
  @param configData The configuration data associated with the mrpRotation module
  @param sigma_R0N The input reference attitude using MRPs
  @param omega_R0N_N The input reference frame angular rate vector

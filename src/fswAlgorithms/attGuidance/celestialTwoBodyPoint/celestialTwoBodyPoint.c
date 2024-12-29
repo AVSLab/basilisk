@@ -27,7 +27,7 @@
 /*! This method initializes the configData for the nominal delta-V maneuver guidance.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the celestial body guidance
  @param moduleID The ID associated with the configData
  */
@@ -59,7 +59,7 @@ void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64
  celestial body specified in the configuration data.  It generates the
  commanded attitude and assumes that the control errors are computed
  downstream.
- @return void
+
  @param configData The configuration data associated with the celestial body guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -78,7 +78,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
 /*! This method takes the navigation translational info as well as the spice data of the
  primary celestial body and, if applicable, the second one, and computes the relative state vectors
  necessary to create the restricted 2-body pointing reference frame.
- @return void
+
  @param configData The configuration data associated with the celestial body guidance
  @param moduleID The ID associated with the configData
  */
@@ -135,7 +135,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleI
  celestial body specified in the configuration data.  It generates the
  commanded attitude and assumes that the control errors are computed
  downstream.
- @return void
+
  @param configData The configuration data associated with the celestial body guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */

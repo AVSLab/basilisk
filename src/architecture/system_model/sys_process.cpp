@@ -23,7 +23,6 @@
 
 /*! Make a process AND attach a storage bucket with the provided name. Give
     the process the same name.
-    @return void
  */
 SysProcess::SysProcess(std::string name) : SysProcess()
 {
@@ -32,7 +31,6 @@ SysProcess::SysProcess(std::string name) : SysProcess()
 
 /*! This method sets the nextTaskTime = 0 and calls SelfInitTaskList() for
  * all process tasks.
- @return void
  */
 void SysProcess::selfInitProcess()
 {
@@ -50,7 +48,6 @@ void SysProcess::selfInitProcess()
 
 /*! This method resets each task and associated model-set inside the process
     ensuring that all parameters go back to their default state.
-    @return void
     @param currentTime Current simulation time in ns that reset is occurring at
 */
 void SysProcess::resetProcess(uint64_t currentTime)
@@ -67,7 +64,6 @@ void SysProcess::resetProcess(uint64_t currentTime)
 /*! This method does two things: 1) resets the next task time for
  *  all process tasks to the first task time. 2) clears the process list
  *  and then adds everything back into the process with the correct priority.
-    @return void
 */
 void SysProcess::reInitProcess()
 {
@@ -87,7 +83,6 @@ void SysProcess::reInitProcess()
 
 /*! This method steps the next task up to currentNanos
  * unless it isn't supposed to run yet.
- @return void
  */
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
@@ -134,7 +129,6 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
 
 /*! This method adds a new task into the Task list.  Note that
  * taskPriority parameter is option as it defaults to -1 (lowest)
- @return void
  @param newTask The new task that we are adding to the list
  @param taskPriority The selected priority of the task being added
  */
@@ -154,7 +148,6 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  place in the simulation schedule.  The transaction for this model is that
  the caller will set the correct parameters in the calling argument and that
  the simulation will faithfully schedule it.
- @return void
  @param taskCall Pointer to a struct that contains start time and task handle.
  */
 void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
@@ -178,7 +171,6 @@ void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
 /*! The name kind of says it all right?  It is a shotgun used to disable all of
     a process' tasks.  It is handy for a FSW scheme where you have tons of tasks
     and you are really only turning one on at a time.
-    @return void
 */
 void SysProcess::disableAllTasks() const
 {
@@ -191,7 +183,6 @@ void SysProcess::disableAllTasks() const
 /*! The name kind of says it all right?  It is a shotgun used to enable all of
  a processes tasks.  It is handy for a process that starts out almost entirely
  inhibited but you want to turn it all on at once.
- @return void
  */
 void SysProcess::enableAllTasks() const
 {
@@ -204,7 +195,6 @@ void SysProcess::enableAllTasks() const
 
 /*! This method updates a specified task's period once it locates that task
     in the list.  It will warn the user if a task is not found.
-    @return void
 	@param taskName The name of the task you want to change period of
 	@param newPeriod the new number of nanoseconds you want between calls
 */

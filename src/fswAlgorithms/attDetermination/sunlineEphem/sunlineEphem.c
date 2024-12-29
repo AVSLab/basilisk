@@ -26,7 +26,7 @@
  \verbatim embed:rst
     This method sets up the module output message of type :ref:`NavAttMsgPayload`
  \endverbatim
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -38,7 +38,7 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -49,7 +49,7 @@ void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64
 }
 
 /*! Updates the sun heading based on ephemeris data. Returns the heading as a unit vector in the body frame.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

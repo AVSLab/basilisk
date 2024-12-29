@@ -28,7 +28,7 @@ PlanetHeading::PlanetHeading()
 
 
 /*! This method reads messages, calculates the planet heading, and writes out the heading message
- @return void
+
  */
 void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -43,7 +43,7 @@ void PlanetHeading::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! Read input messages and save data to member variables
- @return void
+
  */
 void PlanetHeading::readMessages() {
     SpicePlanetStateMsgPayload planetPositionMsgData;
@@ -59,7 +59,7 @@ void PlanetHeading::readMessages() {
 }
 
 /*! This method is used to write out the planet heading message
- @return void
+
  */
 void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
     BodyHeadingMsgPayload planetHeadingOutMsgData;
@@ -71,7 +71,7 @@ void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
 }
 
 /*! This method is used to reset the module. Currently no tasks are required.
- @return void
+
  */
 void PlanetHeading::Reset(uint64_t CurrentSimNanos)
 {

@@ -21,7 +21,7 @@
 #include "powerNodeBase.h"
 
 /*! This method initializes the messaging parameters to either empty strings for message names or -1 for message IDs.
- @return void
+
  */
 PowerNodeBase::PowerNodeBase()
 {
@@ -31,7 +31,7 @@ PowerNodeBase::PowerNodeBase()
 }
 
 /*! Destructor.
- @return void
+
  */
 PowerNodeBase::~PowerNodeBase()
 {
@@ -40,7 +40,7 @@ PowerNodeBase::~PowerNodeBase()
 
 
 /*! This method is used to reset the module. In general, no functionality must be reset.
- @return void
+
  */
 void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
 {
@@ -51,7 +51,7 @@ void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method writes out a message.
- @return void
+
  */
 void PowerNodeBase::writeMessages(uint64_t CurrentClock)
 {
@@ -66,7 +66,7 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
 
 
 /*! This method is used to read incoming power status messages.
- @return void
+
  */
 bool PowerNodeBase::readMessages()
 {
@@ -131,7 +131,7 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
 
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
- @return void
+
  */
 void PowerNodeBase::customReset(uint64_t CurrentClock)
 {
@@ -139,7 +139,7 @@ void PowerNodeBase::customReset(uint64_t CurrentClock)
 }
 
 /*! custom Write method, similar to customSelfInit.
- @return void
+
  */
 void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
 {
@@ -147,7 +147,7 @@ void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
 }
 
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
- @return void
+
  */
 bool PowerNodeBase::customReadMessages()
 {

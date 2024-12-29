@@ -118,7 +118,7 @@ void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method writes out a message.
- @return void
+
  */
 void SensorThermal::writeMessages(uint64_t CurrentClock)
 {
@@ -129,7 +129,7 @@ void SensorThermal::writeMessages(uint64_t CurrentClock)
 }
 
 /*! This method computes the spacecraft-sun vector, the sensor's projected area, and the sunDistanceFactor based on the magnitude of the spacecraft sun vector.
- @return void
+
  */
 void SensorThermal::computeSunData()
 {
@@ -168,7 +168,7 @@ void SensorThermal::computeSunData()
 3. Computing the thermal power radiated to the environment
 4. Computing the change in temperature
 5. Computing the current temperature based on the change in temperature
- @return void
+
  */
 void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
 

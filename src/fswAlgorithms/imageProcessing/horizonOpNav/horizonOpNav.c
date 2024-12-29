@@ -25,7 +25,7 @@
 
 
 /*! This method transforms pixel, line, and diameter data into heading data for orbit determination or heading determination.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
@@ -36,7 +36,7 @@ void SelfInit_horizonOpNav(HorizonOpNavData *configData, int64_t moduleID)
 
 
 /*! This resets the module to original states.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
@@ -57,7 +57,7 @@ void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_t
 }
 
 /*! This method reads in the camera and circle messages and extracts navigation data from them. It outputs the heading (norm and direction) to the celestial body identified in the inertial frame. It provides the heading to the most robust circle identified by the image processing algorithm.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
@@ -267,7 +267,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
 
 
 /*! This performs a QR decomposition on a input matrix. In this method it's used on the H matrix made up of the limb points
- @return void
+
  @param inMat The input matrix to decompose
  @param nRow  The number of rows
  @param Q     The output Q matrix (numbLimb x 3)
@@ -311,7 +311,7 @@ void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
 }
 
 /*! This performs a backsubstitution solve. This methods solves for n given Rn = V with R an upper triangular matrix.
- @return void
+
  @param R     The upper triangular matrix for the backsolve
  @param inVec Vector on the Right-Hand-Side of the Rn = V equation
  @param nRow  The number of rows/columns

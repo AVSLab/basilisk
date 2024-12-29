@@ -32,7 +32,6 @@ SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime) :
 }
 
 /*! This method self-initializes all of the models that have been added to the Task.
- @return void
  */
 void SysModelTask::SelfInitTaskList() const
 {
@@ -46,8 +45,7 @@ void SysModelTask::SelfInitTaskList() const
 
 
 /*! This method resets all of the models that have been added to the Task at the CurrentSimTime.
- * See sys_model_task.h for related method ResetTask()
- @return void
+ See sys_model_task.h for related method ResetTask()
  @param CurrentSimTime The time to start at after reset
 */
 void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
@@ -62,7 +60,6 @@ void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 
 /*! This method executes all of the models on the Task during runtime.
  Then, it sets its NextStartTime appropriately.
- @return void
  @param CurrentSimNanos The current simulation time in [ns]
  */
 void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
@@ -81,7 +78,6 @@ void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
 
 /*! This method adds a new model into the Task list.  Note that the Priority
  parameter is option as it defaults to -1 (lowest, latest)
- @return void
  @param NewModel The new model that we are adding to the Task
  @param Priority The selected priority of the model being added (highest goes first)
  */
@@ -111,7 +107,6 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
 /*! This method changes the period of a given task over to the requested period.
    It attempts to keep the same offset relative to the original offset that
    was specified at task creation.
- @return void
  @param newPeriod The period that the task should run at going forward
  */
 void SysModelTask::updatePeriod(uint64_t newPeriod)

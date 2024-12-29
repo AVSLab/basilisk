@@ -49,7 +49,7 @@ PlanetNav::~PlanetNav()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
     @param CurrentSimNanos The clock time associated with the module call
 */
 void PlanetNav::Reset(uint64_t CurrentSimNanos)
@@ -89,7 +89,7 @@ void PlanetNav::readInputMessages()
 }
 
 /*! This method writes the aggregate nav information into the output state message.
- @return void
+
  @param CurrentSimNanos The clock time associated with the model call
  */
 void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
@@ -99,7 +99,7 @@ void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
 }
 
 /*! This method applies the errors to the truePlanetState
- @return void
+
  */
 void PlanetNav::applyErrors()
 {
@@ -112,7 +112,7 @@ void PlanetNav::applyErrors()
 
 /*! This method sets the propagation matrix and requests new random errors from
  its GaussMarkov model.
- @return void
+
  @param CurrentSimNanos The clock time associated with the model call
  */
 void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
@@ -136,7 +136,7 @@ void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-    @return void
+
     @param CurrentSimNanos The clock time associated with the model call
 */
 void PlanetNav::UpdateState(uint64_t CurrentSimNanos)
@@ -150,4 +150,3 @@ void PlanetNav::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
     this->prevTime = CurrentSimNanos;
 }
-

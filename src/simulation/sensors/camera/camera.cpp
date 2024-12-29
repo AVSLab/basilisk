@@ -46,7 +46,7 @@ Camera::~Camera() = default;
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
- @return void
+
  @param currentSimNanos current time (ns)
  */
 void Camera::Reset(uint64_t currentSimNanos)
@@ -58,7 +58,7 @@ void Camera::Reset(uint64_t currentSimNanos)
  * Can be used to shift the hue, saturation, and brightness of an image.
  * @param mSrc source image
  * @param mDst destination of modified image
- * @return void
+ *
  */
 void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat localHsv;
@@ -96,7 +96,7 @@ void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat &mDst){
  * Can be used to simulate a sensor with different sensitivities to B, G, and R.
  * @param mSrc source image
  * @param mDst destination of modified image
- * @return void
+ *
  */
 void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
@@ -127,7 +127,7 @@ void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat &mDst){
  * @param mDst destination of modified image
  * @param Mean mean pixel value
  * @param StdDev standard deviation of pixel value
- * @return void
+ *
  */
 void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, double StdDev)
 {
@@ -149,7 +149,7 @@ void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat &mDst, double Mean, d
  * @param mDst destination of modified image
  * @param pa probability of dead pixels
  * @param pb probability of hot pixels
- * @return void
+ *
  */
 void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float pb){
     /*! These lines will make the hot and dead pixels different every time.*/
@@ -197,7 +197,7 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
  * @param probThreshhold probability of getting a ray each frame
  * @param randOffset if adding multiple rays pass in the number of each to guarantee a random ray
  * @param maxSize max length of cosmic ray
- * @return void
+ *
  */
 void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
@@ -230,7 +230,7 @@ void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshho
  * @param mSrc source image
  * @param mDst destination of modified image
  * @param num number of cosmic rays to be added
- * @return void
+ *
  */
 void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
@@ -253,7 +253,7 @@ void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat &mDst, double num){
  * being applied.
  * @param mSource source image
  * @param mDst destination of modified image
- * @return void
+ *
  */
 void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
 
@@ -299,7 +299,7 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle
  * Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
- @return void
+
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void Camera::UpdateState(uint64_t currentSimNanos)

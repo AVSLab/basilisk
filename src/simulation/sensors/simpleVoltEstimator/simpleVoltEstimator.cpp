@@ -46,7 +46,7 @@ SimpleVoltEstimator::~SimpleVoltEstimator()
  output message.  The error states are allocated as follows:
  Total states: 1
      - Voltage error [0]
- @return void
+
  */
 void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos)
 {
@@ -83,7 +83,7 @@ void SimpleVoltEstimator::readInputMessages()
 }
 
 /*! This method writes the voltage information into the output state message.
- @return void
+
  @param Clock The clock time associated with the model call
  */
 void SimpleVoltEstimator::writeOutputMessages(uint64_t Clock)
@@ -99,7 +99,7 @@ void SimpleVoltEstimator::applyErrors()
 
 /*! This method sets the propagation matrix and requests new random errors from
  its GaussMarkov model.
- @return void
+
  */
 void SimpleVoltEstimator::computeErrors()
 {
@@ -112,7 +112,7 @@ void SimpleVoltEstimator::computeErrors()
 }
 
 /*! This method calls all of the run-time operations for the simpleVoltEstimator module.
-    @return void
+
     @param CurrentSimNanos The clock time associated with the model call
 */
 void SimpleVoltEstimator::UpdateState(uint64_t CurrentSimNanos)

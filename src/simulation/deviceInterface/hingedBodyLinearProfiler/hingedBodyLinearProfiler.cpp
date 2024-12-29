@@ -39,7 +39,7 @@ HingedBodyLinearProfiler::~HingedBodyLinearProfiler()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connected.
-    @return void
+
 */
 void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos)
 {
@@ -54,7 +54,7 @@ void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated. Outputs a reference theta and theta dot based on the current simulation time
     relative to the start and stop times for the linear deployment.
-    @return void
+
 */
 void HingedBodyLinearProfiler::UpdateState(uint64_t CurrentSimNanos)
 {

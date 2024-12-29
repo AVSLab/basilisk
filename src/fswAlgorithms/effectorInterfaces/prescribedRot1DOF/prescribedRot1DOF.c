@@ -28,7 +28,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! This method initializes the output messages for this module.
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -41,7 +41,7 @@ void SelfInit_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, int64_t mod
 
 
 /*! This method performs a complete reset of the module. The input messages are checked to ensure they are linked.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
@@ -64,7 +64,7 @@ void Reset_prescribedRot1DOF(PrescribedRot1DOFConfig *configData, uint64_t callT
 
 /*! This method profiles the prescribed trajectory and updates the prescribed states as a function of time.
 The prescribed states are then written to the output message.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier

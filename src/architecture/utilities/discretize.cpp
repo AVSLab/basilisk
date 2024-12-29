@@ -44,12 +44,12 @@ Discretize::~Discretize()
 
 ///*! This method calculates the least significant bit size given the maximum state value,
 //    minimum state value, and number of bits to use..
-//    @return void */
+//     */
 //void setLSBByBits(uint8_t numBits, double min, double max);
 
 /*!@brief Sets the round direction (toZero, fromZero, near) for discretization
  @param direction
- @return void*/
+ */
 void Discretize::setRoundDirection(roundDirection_t direction){
 
     this->roundDirection = direction;

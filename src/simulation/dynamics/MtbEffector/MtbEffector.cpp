@@ -36,7 +36,7 @@ MtbEffector::~MtbEffector()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
 */
 void MtbEffector::Reset(uint64_t CurrentSimNanos)
 {
@@ -64,7 +64,7 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-    @return void
+
 */
 void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -78,7 +78,7 @@ void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 
 
 /*! This method is used to link the magnetic torque bar effector to the hub attitude.
- @return void
+
  */
 void MtbEffector::linkInStates(DynParamManager& states)
 {
@@ -91,7 +91,7 @@ void MtbEffector::linkInStates(DynParamManager& states)
 }
 
 /*! This method computes the body torque contribution from all magnetic torque bars.
- @return void
+
 */
 void MtbEffector::computeForceTorque(double integTime, double timeStep)
 {
@@ -156,7 +156,7 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
 }
 
 /*! Write the magnetic torque bar output message.
-@return void
+
  */
 void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
 {

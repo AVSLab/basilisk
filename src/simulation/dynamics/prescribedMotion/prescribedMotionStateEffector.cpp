@@ -70,7 +70,7 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 }
 
 /*! This method is used to reset the module.
- @return void
+
  @param currentClock [ns] Time the method is called
 */
 void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
@@ -78,7 +78,7 @@ void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
 }
 
 /*! This method takes the computed states and outputs them to the messaging system.
- @return void
+
  @param currentClock [ns] Time the method is called
 */
 void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
@@ -120,7 +120,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 }
 
 /*! This method allows the effector to have access to the hub states.
- @return void
+
  @param statesIn Pointer to give the state effector access the hub states
 */
 void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
@@ -131,7 +131,7 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 }
 
 /*! This method allows the state effector to register its states with the dynamic parameter manager.
- @return void
+
  @param states Pointer to give the state effector access the hub states
 */
 void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
@@ -147,7 +147,7 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft.
- @return void
+
  @param integTime [s] Time the method is called
 */
 void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
@@ -211,7 +211,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
 /*! This method allows the state effector to give its contributions to the matrices needed for the back-sub.
  method
- @return void
+
  @param integTime [s] Time the method is called
  @param backSubContr State effector contribution matrices for back-substitution
  @param sigma_BN Current B frame attitude with respect to the inertial frame
@@ -251,7 +251,7 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
 }
 
 /*! This method is for defining the state effector's MRP state derivative
- @return void
+
  @param integTime [s] Time the method is called
  @param rDDot_BN_N [m/s^2] Acceleration of the vector pointing from the inertial frame origin to the B frame origin,
  expressed in inertial frame components
@@ -270,7 +270,7 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
 }
 
 /*! This method is for calculating the contributions of the effector to the energy and momentum of the spacecraft.
- @return void
+
  @param integTime [s] Time the method is called
  @param rotAngMomPntCContr_B [kg m^2/s] Contribution of stateEffector to total rotational angular mom
  @param rotEnergyContr [J] Contribution of stateEffector to total rotational energy
@@ -299,7 +299,7 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
 }
 
 /*! This method computes the effector states relative to the inertial frame.
- @return void
+
 */
 void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 {
@@ -315,7 +315,7 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 }
 
 /*! This method updates the effector state at the dynamics frequency.
- @return void
+
  @param currentSimNanos [ns] Time the method is called
 */
 void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)

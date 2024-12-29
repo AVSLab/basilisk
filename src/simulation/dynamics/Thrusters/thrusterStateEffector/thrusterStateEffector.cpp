@@ -70,7 +70,7 @@ ThrusterStateEffector::~ThrusterStateEffector()
 }
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
 {
@@ -86,7 +86,7 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
 
 /*! This method is used to read the incoming command message and set the
  associated command structure for operating the thrusters.
- @return void
+
  */
 bool ThrusterStateEffector::ReadInputs()
 {
@@ -124,7 +124,7 @@ bool ThrusterStateEffector::ReadInputs()
 /*! This method is here to write the output message structure into the specified
  message.
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
@@ -154,7 +154,7 @@ void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
  run successfully.  It honors all previous thruster firings if they are still
  active.  Note that for unit testing purposes you can insert firings directly
  into NewThrustCmds.
- @return void
+
  */
 void ThrusterStateEffector::ConfigureThrustRequests()
 {
@@ -188,7 +188,7 @@ void ThrusterStateEffector::ConfigureThrustRequests()
 /*! This method is used to update the location and orientation of the thrusters
 * at every UpdateState call when the thrusters are attached to a body other than
 * the hub.
- @return void
+
  */
 void ThrusterStateEffector::UpdateThrusterProperties()
 {
@@ -288,7 +288,7 @@ void ThrusterStateEffector::addThruster(THRSimConfig* newThruster, Message<SCSta
 }
 
 /*! This method is used to link the states to the thrusters
- @return void
+
  @param states The states to link
  */
 void ThrusterStateEffector::linkInStates(DynParamManager& states){
@@ -469,7 +469,7 @@ void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
  configuration data based on that incoming command set.  Note that the main
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void ThrusterStateEffector::UpdateState(uint64_t CurrentSimNanos)

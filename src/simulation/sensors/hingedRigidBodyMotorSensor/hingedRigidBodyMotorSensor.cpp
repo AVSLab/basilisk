@@ -47,7 +47,7 @@ HingedRigidBodyMotorSensor::~HingedRigidBodyMotorSensor()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
 */
 void HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos)
 {
@@ -59,7 +59,7 @@ void HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This allows the RNGSeed to be changed.
-    @return void
+
 */
 void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
 {
@@ -67,7 +67,7 @@ void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
 }
 
 /*! This is the main method that gets called every time the module is updated.  Adds Gaussian noise and bias and diescretizes output.
-    @return void
+
 */
 void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
 {

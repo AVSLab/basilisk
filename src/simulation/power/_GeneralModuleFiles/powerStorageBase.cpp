@@ -23,7 +23,7 @@
 
 
 /*! This method initializes some basic parameters for the module.
- @return void
+
  */
 PowerStorageBase::PowerStorageBase()
 {
@@ -37,7 +37,7 @@ PowerStorageBase::PowerStorageBase()
 }
 
 /*! Destructor.
- @return void
+
  */
 PowerStorageBase::~PowerStorageBase()
 {
@@ -46,7 +46,7 @@ PowerStorageBase::~PowerStorageBase()
 
 
 /*! Adds a PowerNodeUsageMsgPayload input message to iterate over
- @return void
+
  @param tmpNodeMsg Message name corresponding to a PowerNodeUsageMsgPayload.
  */
 void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tmpNodeMsg){
@@ -56,7 +56,7 @@ void PowerStorageBase::addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tm
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
 {
@@ -75,7 +75,7 @@ void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
 
 /*! Writes out one PowerStorageStatusMsgPayload
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void PowerStorageBase::writeMessages(uint64_t CurrentClock)
 {
@@ -88,7 +88,7 @@ void PowerStorageBase::writeMessages(uint64_t CurrentClock)
 }
 
 /*! This method is used to read the incoming power supply/usage messages and store them for future use.
- @return void
+
  */
 bool PowerStorageBase::readMessages()
 {
@@ -137,7 +137,7 @@ double PowerStorageBase::sumAllInputs(){
 }
 
 /*! This method integrates the power use provided by the attached modules.
-  @return void
+
  */
 void PowerStorageBase::integratePowerStatus(double currentTime)
 {
@@ -151,7 +151,7 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
 
 
 /*! Implements readMessages, integratePowerStatus, and writeMessages for the rest of the sim.
- @return void
+
  @param currentSimNanos The current simulation time in nanoseconds
  */
 void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
@@ -173,7 +173,7 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
 
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
- @return void
+
  */
 void PowerStorageBase::customReset(uint64_t CurrentClock)
 {
@@ -181,7 +181,7 @@ void PowerStorageBase::customReset(uint64_t CurrentClock)
 }
 
 /*! custom Write method, similar to customSelfInit.
- @return void
+
  */
 void PowerStorageBase::customWriteMessages(uint64_t CurrentClock)
 {
@@ -189,7 +189,7 @@ void PowerStorageBase::customWriteMessages(uint64_t CurrentClock)
 }
 
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
- @return void
+
  */
 bool PowerStorageBase::customReadMessages()
 {

@@ -31,7 +31,7 @@
 #include <math.h>
 
 /*! @brief This method sets up the module output message of type :ref:`CmdTorqueBodyMsgPayload`
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
 */
@@ -44,7 +44,7 @@ void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param callTime The clock time at which the function was called (nanoseconds)
  @param configData The configuration data associated with the MRP steering control
  @param moduleID The module identifier
@@ -97,7 +97,7 @@ void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
- @return void
+
  @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

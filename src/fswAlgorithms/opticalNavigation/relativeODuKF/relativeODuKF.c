@@ -23,7 +23,7 @@
 #include "architecture/utilities/ukfUtilities.h"
 
 /*! This method creates the two moduel output messages.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param moduleId The ID associated with the configData
 */
@@ -36,7 +36,7 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 
 /*! This method resets the relative OD filter to an initial state and
  initializes the internal estimation matrices.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
@@ -126,7 +126,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
 
 /*! This method takes the relative position measurements and outputs an estimate of the
  spacecraft states in the intertial frame.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
@@ -219,7 +219,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
 
 /*! This method propagates a relative OD state vector forward in time.  Note
  that the calling parameter is updated in place to save on data copies.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param stateInOut The state that is propagated
  @param dt Time step (s)
@@ -285,7 +285,7 @@ void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *s
 /*! This method performs the time update for the relative OD kalman filter.
  It propagates the sigma points forward in time and then gets the current
  covariance and state estimates.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
@@ -406,7 +406,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 
 /*! This method computes the measurement model.  Given that the data is coming from
  the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.
- @return void
+
  @param configData The configuration data associated with the OD filter
  */
 void relODuKFMeasModel(RelODuKFConfig *configData)
@@ -429,7 +429,7 @@ void relODuKFMeasModel(RelODuKFConfig *configData)
 /*! This method performs the measurement update for the kalman filter.
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
- @return void
+
  @param configData The configuration data associated with the OD filter
  */
 int relODuKFMeasUpdate(RelODuKFConfig *configData)
@@ -571,7 +571,7 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
 /*! This method cleans the filter states after a bad upadate on the fly.
  It removes the potentially corrupted previous estimates and puts the filter
  back to a working state.
- @return void
+
  @param configData The configuration data associated with the OD filter
  */
 void relODuKFCleanUpdate(RelODuKFConfig *configData){

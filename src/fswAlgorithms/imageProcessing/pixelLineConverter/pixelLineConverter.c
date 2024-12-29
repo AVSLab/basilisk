@@ -25,7 +25,7 @@
 
 
 /*! This method transforms pixel, line, and diameter data into heading data for orbit determination or heading determination.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
@@ -36,7 +36,7 @@ void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t modul
 
 
 /*! This resets the module to original states.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
@@ -57,7 +57,7 @@ void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTim
 }
 
 /*! This method reads in the camera and circle messages and extracts navigation data from them. It outputs the heading (norm and direction) to the celestial body identified in the inertial frame. It provides the heading to the most robust circle identified by the image processing algorithm.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
@@ -77,7 +77,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
     circlesIn = OpNavCirclesMsg_C_read(&configData->circlesInMsg);
     attInfo = NavAttMsg_C_read(&configData->attInMsg);
-    
+
     if (circlesIn.valid == 0){
         opNavMsgOut.valid = 0;
         OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
@@ -113,7 +113,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     v3Set(rtilde_C[0], rtilde_C[1], 1.0, rHat_BN_C);
     v3Scale(-1, rHat_BN_C, rHat_BN_C);
     v3Normalize(rHat_BN_C, rHat_BN_C);
-    
+
     m33MultV3(dcm_NC, rHat_BN_C, rHat_BN_N);
     m33tMultV3(dcm_CB, rHat_BN_C, rHat_BN_B);
 
@@ -130,10 +130,10 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
             planetRad = REQ_JUPITER;//in km
             opNavMsgOut.planetID = configData->planetTarget;
         }
-        
+
         denom = sin(atan(X*circlesIn.circlesRadii[0]));
         rNorm = planetRad/denom; //in km
-        
+
         /*! - Compute the uncertainty */
         x_map = planetRad/denom*(X);
         y_map = planetRad/denom*(Y);
@@ -152,7 +152,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         mtMultM(dcm_CB, 3, 3, covar_In_C, 3, 3, covar_In_B);
         mMultM(covar_In_B, 3, 3, dcm_CB, 3, 3, covar_In_B);
     }
-    
+
     /*! - write output message */
     v3Scale(rNorm*1E3, rHat_BN_N, opNavMsgOut.r_BN_N); //in m
     v3Scale(rNorm*1E3, rHat_BN_C, opNavMsgOut.r_BN_C); //in m

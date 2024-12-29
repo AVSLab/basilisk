@@ -90,7 +90,7 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos)
 {
@@ -359,7 +359,7 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
 
 /*! This method takes the computed theta states and outputs them to the m
  messaging system.
- @return void
+
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
@@ -392,7 +392,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
 
 
 /*! This method is used so that the simulation will ask DHRB to update messages.
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
@@ -414,7 +414,7 @@ void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method computes the panel states relative to the inertial frame
- @return void
+
  */
 void DualHingedRigidBodyStateEffector::computePanelInertialStates()
 {

@@ -31,7 +31,7 @@ DentonFluxModel::~DentonFluxModel() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connect.
     @param CurrentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 {
@@ -127,7 +127,7 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
     @param CurrentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -263,7 +263,7 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 /*! method to calculate the local time of the spacecraft within the GEO belt
     @param r_SE_N sun position vector relative to the Earth
     @param r_BE_N spacecraft position vector relative to the Earth
-    @return void
+
 */
 void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 {
@@ -293,7 +293,7 @@ void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 }
 
 /*! Bilinear interpolation method
-    @return void
+
 */
 double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y, double f11, double f12, double f13,
                                  double f14)
@@ -319,7 +319,7 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
 /*! Read in the Denton data file
     @param fileName data file name
     @param data data array pointer
-    @return void
+
 */
 void DentonFluxModel::readDentonDataFile(std::string fileName,
                                          double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])

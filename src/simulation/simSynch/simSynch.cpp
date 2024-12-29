@@ -43,7 +43,7 @@ ClockSynch::~ClockSynch()
 
 /*! Reset the module variables.
     @param currentSimNanos
-    @return void
+
 */
 void ClockSynch::Reset(uint64_t currentSimNanos)
 {
@@ -54,11 +54,11 @@ void ClockSynch::Reset(uint64_t currentSimNanos)
 
 
 /*! This method performs all of the runtime behavior for the clock synch model.
-    It initializes the timers present in the model on the first pass and then 
-	ensures that the model stays stuck on the synchronization pulse.  Note that we 
-	do the init on the first pass instead of the init routines so that we don't 
+    It initializes the timers present in the model on the first pass and then
+	ensures that the model stays stuck on the synchronization pulse.  Note that we
+	do the init on the first pass instead of the init routines so that we don't
 	have a big lag between initialization and runtime which messes up our clocking.
-    @return void
+
     @param currentSimNanos The clock time associated with the model call
 */
 void ClockSynch::UpdateState(uint64_t currentSimNanos)
@@ -76,23 +76,23 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 		this->startSimTimeNano = currentSimNanos;
 		this->timeInitialized = true;
 	}
-	
+
     //! - Compute the number of nanoseconds that have elapsed in the simulation
     simTimeNano = (int64_t) ((currentSimNanos - this->startSimTimeNano)/this->accelFactor);
-    
+
     //! - Compute the current time and get the actually elapsed nanoseconds since init time
 	currentTime = std::chrono::high_resolution_clock::now();
 	realTimeNano = (int64_t) (std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
-    
+
     //! - Save off the observed time-delta for analysis and flag any unexpected overruns
     initTimeDeltaNano = simTimeNano - realTimeNano;
-   
+
     if(initTimeDeltaNano < -this->accuracyNanos)
     {
         this->outputData.overrunCounter++;
     }
 	this->outputData.initTimeDelta = initTimeDeltaNano * NANO2SEC;
-    
+
     /*! - Loop behavior is fairly straightforward.  While we haven't reached the specified accuracy:
             -# Compute the current time
             -# Determine how many nanoseconds are left in our synch frame
@@ -108,11 +108,11 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 		sleepAmountNano = (simTimeNano - realTimeNano) / (2);
 		std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmountNano));
 	}
-    
+
     //! - Save off the output message information for analysis
     this->outputData.finalTimeDelta = (double) (simTimeNano - realTimeNano - sleepAmountNano);
     this->outputData.finalTimeDelta *= NANO2SEC;
-    
+
     //! - Write the composite information into the output synch message.
     this->clockOutMsg.write(&this->outputData, this->moduleID, currentSimNanos);
 

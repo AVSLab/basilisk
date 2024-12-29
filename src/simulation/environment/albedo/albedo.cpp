@@ -20,7 +20,7 @@
 #include "albedo.h"
 
 /*! Albedo module constructor
- @return void
+
  */
 Albedo::Albedo()
 {
@@ -61,7 +61,7 @@ Albedo::Albedo()
 }
 
 /*! Albedo module destructor
- @return void
+
  */
 Albedo::~Albedo()
 {
@@ -83,7 +83,7 @@ Config::~Config() {
 }
 
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function)
- @return void
+
  */
 void Albedo::addInstrumentConfig(instConfig_t configMsg) {
     // add a albedo output message for this instrument
@@ -115,7 +115,7 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg) {
 }
 
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function)
- @return void
+
  */
 void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B) {
     // add a albedo output message for this instrument
@@ -148,7 +148,7 @@ void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vect
 }
 
 /*! This method subscribes to the planet msg and sets the albedo average model (overloaded function)
- @return void
+
  */
 void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg)
 {
@@ -170,7 +170,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
 }
 
 /*! This method subscribes to the  planet msg and sets the albedo average model (overloaded function)
- @return void
+
  */
 void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, double ALB_avg, int numLat, int numLon)
 {
@@ -190,7 +190,7 @@ void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload> 
 }
 
 /*! This method subscribes to the planet msg and sets the albedo data model
- @return void
+
  */
 void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *planetSpiceMsg, std::string dataPath, std::string fileName)
 {
@@ -214,7 +214,7 @@ void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload> *pl
 
 
 /*! Read Messages, calculate albedo then write it out
- @return void
+
  */
 void Albedo::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -240,7 +240,7 @@ void Albedo::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method resets the module
- @return void
+
  */
 void Albedo::Reset(uint64_t CurrentSimNanos)
 {
@@ -276,7 +276,7 @@ void Albedo::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method reads the messages and saves the values to member attributes
- @return void
+
  */
 void Albedo::readMessages() {
     //! - Read in planet state message (required)
@@ -295,7 +295,7 @@ void Albedo::readMessages() {
 }
 
 /*! This method writes the output albedo messages
- @return void
+
  */
 void Albedo::writeMessages(uint64_t CurrentSimNanos) {
     AlbedoMsgPayload localMessage;
@@ -312,7 +312,7 @@ void Albedo::writeMessages(uint64_t CurrentSimNanos) {
 }
 
 /*! Planet's equatorial radii and polar radii (if exists) in meters
- @return void
+
  */
 void Albedo::getPlanetRadius(std::string planetSpiceName)
 {
@@ -397,7 +397,7 @@ double Albedo::getAlbedoAverage(std::string planetSpiceName)
 }
 
 /*! This method evaluates the albedo model
- @return void
+
  */
 void Albedo::evaluateAlbedoModel(int idx)
 {
@@ -499,7 +499,7 @@ void Albedo::evaluateAlbedoModel(int idx)
 }
 
 /*! This method calculates the albedo at instrument
- @return void
+
  */
 void Albedo::computeAlbedo(int idx, int instIdx, SpicePlanetStateMsgPayload planetMsg, bool albArray, double outData[]) {
     //! - Letters denoting the frames:

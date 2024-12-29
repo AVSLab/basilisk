@@ -28,7 +28,7 @@
  \verbatim embed:rst
     This method initializes the module's hillStateOutMsg.
  \endverbatim
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -38,7 +38,7 @@ void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t m
 }
 
 /*! This message checks to see that both of the input translational state messages were connected; if not, it errors.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -55,7 +55,7 @@ void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t cal
 }
 
 /*! Computes the relative state of the deputy vs the chief in chief Hill-frame coordinates and writes an output message.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

@@ -36,7 +36,7 @@ ConstraintDynamicEffector::~ConstraintDynamicEffector()
 }
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
@@ -124,7 +124,7 @@ void ConstraintDynamicEffector::setC_a(double c_a) {
 }
 
 /*! This method allows the user to set the cut-off frequency of the low pass filter which is then used to calculate the coefficients for numerical low pass filtering based on a second-order low pass filter design.
- @return void
+
  @param wc The cut-off frequency of the low pass filter.
  @param h The constant digital time step.
  @param k The damping coefficient
@@ -145,7 +145,7 @@ void ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k){
 }
 
 /*! This method allows the user to set the status of the constraint dynamic effector
- @return void
+
 */
 void ConstraintDynamicEffector::readInputMessage(){
      if(this->effectorStatusInMsg.isLinked()){
@@ -159,7 +159,7 @@ void ConstraintDynamicEffector::readInputMessage(){
 }
 
 /*! This method allows the constraint effector to have access to the parent states
- @return void
+
  @param states The states to link
  */
 void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
@@ -177,7 +177,7 @@ void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
 }
 
 /*! This method computes the forces on torques on each spacecraft body.
- @return void
+
  @param integTime Integration time
  @param timeStep Current integration time step used
  */
@@ -254,7 +254,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
 
 /*! This method takes the computed constraint force and torque states and outputs them to the m
  messaging system.
- @return void
+
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
@@ -272,7 +272,7 @@ void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 }
 
 /*! Update state method
- @return void
+
  @param CurrentSimNanos The current simulation time
  */
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
@@ -286,7 +286,7 @@ void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! Filtering method to calculate filtered Constraint Force
- @return void
+
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
@@ -305,7 +305,7 @@ void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
 }
 
 /*! Filtering method to calculate filtered Constraint Torque
- @return void
+
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock)

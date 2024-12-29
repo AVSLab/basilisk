@@ -26,7 +26,7 @@
 /*! This method initializes the configData for the sun safe attitude guidance.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the sun safe guidance
  @param moduleID The Basilisk module identifier
  */
@@ -39,7 +39,7 @@ void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the guidance module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -80,7 +80,7 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
 
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
- @return void
+
  @param configData The configuration data associated with the sun safe attitude guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier

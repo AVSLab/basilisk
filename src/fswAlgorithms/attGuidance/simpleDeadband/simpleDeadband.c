@@ -36,7 +36,7 @@
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
@@ -48,7 +48,7 @@ void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the MRP steering control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -64,7 +64,7 @@ void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, i
 
 /*! This method parses the input data, checks if the deadband needs to be applied and outputs
  the guidance command with simples either zeroed (control OFF) or left unchanged (control ON)
- @return void
+
  @param configData The configuration data associated with the attitude tracking simple module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -89,7 +89,7 @@ void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, 
 
 /*! This method applies a two-level deadbanding logic (according to the current average simple compared with the set threshold)
  and decides whether control should be switched ON/OFF or not.
- @return void
+
  @param configData The configuration data associated with the attitude tracking simple module
  */
 void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData)

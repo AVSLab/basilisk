@@ -22,7 +22,7 @@
 
 
 /*! This method is used to reset the module. Currently no tasks are required.
- @return void
+
  */
 void SolarFlux::Reset(uint64_t CurrentSimNanos)
 {
@@ -38,7 +38,7 @@ void SolarFlux::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! Read Messages and scale the solar flux then write it out
- @return void
+
  */
 void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -57,7 +57,7 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method is used to  read messages and save values to member attributes
- @return void
+
  */
 void SolarFlux::readMessages()
 {
@@ -81,7 +81,7 @@ void SolarFlux::readMessages()
 }
 
 /*! This method is used to write the output flux message
- @return void
+
  */
 void SolarFlux::writeMessages(uint64_t CurrentSimNanos) {
     SolarFluxMsgPayload fluxMsgOutData = {this->fluxAtSpacecraft};

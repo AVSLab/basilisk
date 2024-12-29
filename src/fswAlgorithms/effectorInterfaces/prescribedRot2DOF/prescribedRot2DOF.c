@@ -27,7 +27,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! This method initializes the output message for this module.
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -39,7 +39,7 @@ void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t mod
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values. A check is also
  performed to ensure the user sets the configurable module variables.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
@@ -82,7 +82,7 @@ void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callT
 
 /*! This method profiles a 1DOF rotational trajectory given two rotation angles and rotation axes. The prescribed states
 are updated in this routine as a function of time and written to the prescribedMotion output message.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier

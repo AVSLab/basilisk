@@ -26,7 +26,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! This method creates the two moduel output messages.
- @return void
+
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleId The module identifier
  */
@@ -39,7 +39,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 
 /*! This method resets the inertial inertial filter to an initial state and
  initializes the internal estimation matrices.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The module identifier
@@ -47,7 +47,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                       int64_t moduleId)
 {
-    
+
     size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
@@ -79,7 +79,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     configData->firstPassComplete = 0;
     configData->speedDt = 0.0;
     configData->timeWheelPrev = 0;
-    
+
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(configData->obs, configData->numObs);
     vSetZero(configData->wM, configData->countHalfSPs * 2 + 1);
@@ -88,13 +88,13 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     mSetZero(configData->SP, configData->countHalfSPs * 2 + 1,
              configData->numStates);
     mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
-    
+
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
         (configData->numStates + configData->kappa) - configData->numStates;
     configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
-    
-    
+
+
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
     configData->wM[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal);
@@ -106,9 +106,9 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                                              configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }
-    
+
     vCopy(configData->stateInit, configData->numStates, configData->state);
-    
+
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->sBar);
@@ -117,7 +117,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, (int32_t) configData->numStates,
                   (int32_t) configData->numStates, tempMatrix);
-    
+
     badUpdate += ukfCholDecomp(configData->qNoise, (int32_t) configData->numStates,
                                (int32_t) configData->numStates, configData->sQnoise);
 
@@ -125,7 +125,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
           configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
-    
+
     v3Copy(configData->state, configData->sigma_BNOut);
     v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
     configData->timeTagOut = configData->timeTag;
@@ -138,7 +138,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 }
 
 /*! This method reads in the messages from all available star trackers and orders them with respect to time of measurement
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  */
 void Read_STMessages(InertialUKFConfig *configData)
@@ -148,7 +148,7 @@ void Read_STMessages(InertialUKFConfig *configData)
     int bufferSTIndice; /* Local ST message to copy and organize  */
     int i;
     int j;
-    
+
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
         /*! - Read the input parsed CSS sensor data message*/
@@ -175,12 +175,12 @@ void Read_STMessages(InertialUKFConfig *configData)
             }
         }
     }
-    
+
 
 }
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -196,7 +196,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     AccDataMsgPayload gyrBuffer; /* [-] Buffer of IMU messages for gyro prop*/
     NavAttMsgPayload outputInertial;
     int i;
-    
+
     // Reset update check to zero
     if (v3Norm(configData->state) > configData->switchMag) //Little extra margin
     {
@@ -243,7 +243,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 
     configData->speedDt = (timeOfRWSpeeds - configData->timeWheelPrev)*NANO2SEC;
     configData->timeWheelPrev = timeOfRWSpeeds;
-    
+
     inertialDataOutBuffer.numObs = 0;
     trackerValid = 0;
     for (i = 0; i < configData->STDatasStruct.numST; i++)
@@ -275,7 +275,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         /*! - If no star tracker measurement was available, propagate the state
          on the gyro measurements received since the last ST update.  Note
          that the rate estimate is just smoothed gyro data in this case*/
-        
+
         /*! - Assemble the aggregrate rotation from the gyro buffer*/
         inertialUKFAggGyrData(configData, configData->timeTagOut,
                               newTimeTag, &gyrBuffer);
@@ -296,7 +296,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
             configData->omega_BN_BOut[i] = configData->gyroFilt[i].currentState;
         }
         configData->timeTagOut = configData->gyrAggTimeTag;
-        
+
     }
     else
     {
@@ -306,14 +306,14 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
         configData->timeTagOut = configData->timeTag;
     }
-    
+
     /*! - Write the inertial estimate into the copy of the navigation message structure*/
     v3Copy(configData->sigma_BNOut, outputInertial.sigma_BN);
     v3Copy(configData->omega_BN_BOut, outputInertial.omega_BN_B);
     outputInertial.timeTag = configData->timeTagOut;
-	
+
     NavAttMsg_C_write(&outputInertial, &configData->navStateOutMsg, moduleID, callTime);
-    
+
     /*! - Populate the filter states output buffer and write the output message*/
     inertialDataOutBuffer.timeTag = configData->timeTag;
     memmove(inertialDataOutBuffer.covar, configData->covar,
@@ -324,9 +324,9 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     return;
 }
 
-/*! This method propagates a inertial state vector forward in time.  Note 
+/*! This method propagates a inertial state vector forward in time.  Note
     that the calling parameter is updated in place to save on data copies.
-	@return void
+
     @param configData The configuration data associated with this module
     @param stateInOut The state that is propagated
     @param dt Time step (s)
@@ -341,7 +341,7 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
     double torqueSingle[3];
     double angAccelTotal[3];
     int i;
-    
+
     /*! - Convert the state derivative (body rate) to sigmaDot and propagate
           the attitude MRPs*/
     BmatMRP(stateInOut, BMatrix);
@@ -349,7 +349,7 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
     m33MultV3(BMatrix, &(stateInOut[3]), sigmaDot);
     v3Scale(dt, sigmaDot, sigmaDot);
     v3Add(stateInOut, sigmaDot, stateInOut);
-    
+
     /*! - Assemble the total torque from the reaction wheels to get the forcing
      function from any wheels present*/
     v3SetZero(torqueTotal);
@@ -373,9 +373,9 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
 }
 
 /*! This method performs the time update for the inertial kalman filter.
-     It propagates the sigma points forward in time and then gets the current 
+     It propagates the sigma points forward in time and then gets the current
 	 covariance and state estimates.
-	 @return void
+
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
@@ -385,17 +385,17 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     int Index, k;
 	double sBarT[AKF_N_STATES*AKF_N_STATES];
 	double xComp[AKF_N_STATES], AT[(2 * AKF_N_STATES + AKF_N_STATES)*AKF_N_STATES];
-	double aRow[AKF_N_STATES], rAT[AKF_N_STATES*AKF_N_STATES], xErr[AKF_N_STATES]; 
+	double aRow[AKF_N_STATES], rAT[AKF_N_STATES*AKF_N_STATES], xErr[AKF_N_STATES];
 	double sBarUp[AKF_N_STATES*AKF_N_STATES];
 	double *spPtr;
     double procNoise[AKF_N_STATES*AKF_N_STATES];
     int32_t badUpdate=0;
-    
+
 	configData->dt = updateTime - configData->timeTag;
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
-    
+
     mSetZero(rAT, AKF_N_STATES, AKF_N_STATES);
     mCopy(configData->sQnoise, AKF_N_STATES, AKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
@@ -435,8 +435,8 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     /*! - Zero the AT matrix prior to assembly*/
     mSetZero(AT, (2 * configData->countHalfSPs + configData->numStates),
         configData->countHalfSPs);
-	/*! - Assemble the AT matrix.  Note that this matrix is the internals of 
-          the qr decomposition call in the source design documentation.  It is 
+	/*! - Assemble the AT matrix.  Note that this matrix is the internals of
+          the qr decomposition call in the source design documentation.  It is
           the inside of equation 20 in that document*/
 	for (i = 0; i<2 * configData->countHalfSPs; i++)
 	{
@@ -450,7 +450,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
 		memcpy((void *)&AT[i* (int) configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
-        
+
 	}
    /*! - Scale sQNoise matrix depending on the dt*/
     for (k=0;k<3;k++){
@@ -468,15 +468,15 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates,
         configData->sBar);
-    
-    /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight 
+
+    /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight
           like in equation 21 in design document.*/
     vScale(-1.0, configData->xBar, configData->numStates, xErr);
     vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
     badUpdate += ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
                                  (int32_t) configData->numStates, sBarUp);
 
-    
+
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, configData->numStates, configData->numStates, configData->sBar);
     mTranspose(configData->sBar, configData->numStates, configData->numStates,
@@ -485,7 +485,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
         configData->covar, configData->numStates, configData->numStates,
            configData->covar);
     vCopy(&(configData->SP[0]), configData->numStates, configData->state);
-	
+
     if (badUpdate<0){
         inertialUKFCleanUpdate(configData);
         return(-1);}
@@ -495,11 +495,11 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     return(0);
 }
 
-/*! This method computes what the expected measurement vector is for each CSS 
-    that is present on the spacecraft.  All data is transacted from the main 
-    data structure for the model because there are many variables that would 
+/*! This method computes what the expected measurement vector is for each CSS
+    that is present on the spacecraft.  All data is transacted from the main
+    data structure for the model because there are many variables that would
     have to be updated otherwise.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param currentST current star tracker state
 
@@ -511,12 +511,12 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
     double EPSum[4];
     double mrpSum[3];
     size_t i;
-    
+
     /*! This math seems more difficult than it should be, but there is a method.
         The input MRP may or may not be in the same "shadow" set as the state estimate.
-        So, if they are different in terms of light/shadow, you have to get them 
-        to the same representation otherwise your residuals will show 360 degree 
-        errors.  Which is not ideal.  So that's why it is so blessed complicated.  
+        So, if they are different in terms of light/shadow, you have to get them
+        to the same representation otherwise your residuals will show 360 degree
+        errors.  Which is not ideal.  So that's why it is so blessed complicated.
         The measurement is shadowed into the same representation as the state.*/
     MRP2EP(configData->state, quatTranspose);
     v3Scale(-1.0, &(quatTranspose[1]), &(quatTranspose[1]));
@@ -528,23 +528,23 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
         MRPshadow(configData->stSensorIn[currentST].MRP_BdyInrtl,
                   configData->stSensorIn[currentST].MRP_BdyInrtl);
     }
-    
-    /*! - The measurement model is the same as the states since the star tracker 
+
+    /*! - The measurement model is the same as the states since the star tracker
           measures the inertial attitude directly.*/
     for(i=0; i<configData->countHalfSPs*2+1; i++)
     {
         v3Copy(&(configData->SP[i*AKF_N_STATES]), &(configData->yMeas[i*3]));
     }
-    
+
     v3Copy(configData->stSensorIn[currentST].MRP_BdyInrtl, configData->obs);
     configData->numObs = 3;
-    
+
 }
 
-/*! This method aggregates the input gyro data into a combined total quaternion 
-    rotation to push the state forward by.  This information is stored in the 
+/*! This method aggregates the input gyro data into a combined total quaternion
+    rotation to push the state forward by.  This information is stored in the
     main data structure for use in the propagation routines.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param prevTime [s] Previous time step
  @param propTime The time that we need to fix the filter to (seconds)
@@ -558,14 +558,14 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
     double minFutTime;   /* [s] smallest future measurement time-tag*/
     double measTime;     /* [s] measurement time*/
     /*! Note that the math here is tortured to avoid the issues of adding
-          PRVs together.  That is numerically problematic, so we convert to 
+          PRVs together.  That is numerically problematic, so we convert to
           euler parameters (quaternions) and add those*/
     double ep_BpropB0[4], ep_B1B0[4], epTemp[4], omeg_BN_B[3], prvTemp[3];
     double dt;
-    
+
     minFutInd = 0;
     minFutTime = -1;
-    /*! - Loop through the entire gyro buffer to find the first index that is 
+    /*! - Loop through the entire gyro buffer to find the first index that is
           in the future compared to prevTime*/
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
@@ -581,7 +581,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
     ep_BpropB0[0] = 1.0;
     i=0;
     measTime = prevTime;
-    /*! - Loop through buffer for all valid measurements to assemble the 
+    /*! - Loop through buffer for all valid measurements to assemble the
           composite rotation since the previous time*/
     while(minFutTime > prevTime && i<MAX_ACC_BUF_PKT)
     {
@@ -589,8 +589,8 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
         /*! - Treat rates scaled by dt as a PRV (small angle approximation)*/
         v3Copy(gyrData->accPkts[minFutInd].gyro_B, omeg_BN_B);
         v3Scale(dt, omeg_BN_B, prvTemp);
-        
-        /*! - Convert the PRV to euler parameters and add that delta-rotation 
+
+        /*! - Convert the PRV to euler parameters and add that delta-rotation
               to the running sum (ep_BpropB0)*/
         PRV2EP(prvTemp, ep_B1B0);
         v4Copy(ep_BpropB0, epTemp);
@@ -599,7 +599,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
         i++;
         /*! - Prepare for the next measurement and set time-tags for termination*/
         measTime = minFutTime;
-        /*% operator used because gyro buffer is a ring-buffer and this operator 
+        /*% operator used because gyro buffer is a ring-buffer and this operator
             wraps the index back to zero when we overflow.*/
         minFutInd = (minFutInd + 1)%MAX_ACC_BUF_PKT;
         minFutTime = gyrData->accPkts[minFutInd].measTime*NANO2SEC;
@@ -613,14 +613,14 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
           as that is our filter representation*/
     configData->numUsedGyros = (uint32_t) i;
     EP2MRP(ep_BpropB0, configData->aggSigma_b2b1);
-    
+
     return;
 }
 
 /*! This method performs the measurement update for the inertial kalman filter.
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param currentST Current star tracker state
  */
@@ -635,7 +635,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     double sy[3*3];
     double updMat[3*3], pXY[AKF_N_STATES*3], Umat[AKF_N_STATES*3];
     int32_t badUpdate=0;
-    
+
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
@@ -653,9 +653,9 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
         vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
         vAdd(yBar, configData->numObs, tempYVec, yBar);
     }
-    
-    /*! - Populate the matrix that we perform the QR decomposition on in the measurement 
-          update section of the code.  This is based on the differenence between the yBar 
+
+    /*! - Populate the matrix that we perform the QR decomposition on in the measurement
+          update section of the code.  This is based on the differenence between the yBar
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
     mSetZero(AT, configData->countHalfSPs*2+configData->numObs,
         configData->numObs);
@@ -669,21 +669,21 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
         memcpy(&(AT[i*configData->numObs]), tempYVec,
                configData->numObs*sizeof(double));
     }
-    
+
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
-        decomposition of the observation variance matrix constructed for our number 
+        decomposition of the observation variance matrix constructed for our number
         of observations*/
     badUpdate += ukfCholDecomp(configData->STDatasStruct.STMessages[currentST].noise, (int32_t) configData->numObs, (int32_t) configData->numObs, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            qChol, configData->numObs*configData->numObs*sizeof(double));
-    /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
+    /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
           current Sy matrix*/
     ukfQRDJustR(AT, (int32_t) (2*configData->countHalfSPs+configData->numObs),
                 (int32_t) configData->numObs, rAT);
 
     mCopy(rAT, configData->numObs, configData->numObs, syT);
     mTranspose(syT, configData->numObs, configData->numObs, sy);
-    /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
+    /*! - Shift the matrix over by the difference between the 0th SP-based measurement
           model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, configData->numObs, tempYVec);
     vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
@@ -694,7 +694,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     mCopy(updMat, configData->numObs, configData->numObs, sy);
     mTranspose(sy, configData->numObs, configData->numObs, syT);
 
-    /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
+    /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
     mSetZero(pXY, configData->numStates, configData->numObs);
     for(i=0; i<2*configData->countHalfSPs+1; i++)
@@ -711,31 +711,31 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     }
 
     /*! - Then we need to invert the SyT*Sy matrix to get the Kalman gain factor.  Since
-          The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
-          a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
+          The Sy matrix is lower triangular, we can do a back-sub inversion instead of
+          a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that
           multiplication is done (equation 27), we have the Kalman Gain.*/
     badUpdate += ukfUInv(syT, (int32_t) configData->numObs, (int32_t) configData->numObs, syInv);
-    
+
     mMultM(pXY, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
     badUpdate += ukfLInv(sy, (int32_t) configData->numObs, (int32_t) configData->numObs, syInv);
     mMultM(kMat, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
-    
-    
-    /*! - Difference the yBar and the observations to get the observed error and 
-          multiply by the Kalman Gain to get the state update.  Add the state update 
+
+
+    /*! - Difference the yBar and the observations to get the observed error and
+          multiply by the Kalman Gain to get the state update.  Add the state update
           to the state to get the updated state value (equation 27).*/
     vSubtract(configData->obs, configData->numObs, yBar, tempYVec);
     mMultM(kMat, configData->numStates, configData->numObs, tempYVec,
         configData->numObs, 1, xHat);
     vAdd(configData->state, configData->numStates, xHat, configData->state);
-    /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
+    /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it
          so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, configData->numStates, configData->numObs, sy,
            configData->numObs, configData->numObs, Umat);
     mTranspose(Umat, configData->numStates, configData->numObs, Umat);
-    /*! - For each column in the update matrix, perform a cholesky down-date on it to 
+    /*! - For each column in the update matrix, perform a cholesky down-date on it to
           get the total shifted S matrix (called sBar in internal parameters*/
     for(i=0; i<configData->numObs; i++)
     {
@@ -751,7 +751,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     mMultM(configData->sBar, configData->numStates, configData->numStates,
            configData->covar, configData->numStates, configData->numStates,
            configData->covar);
-    
+
     if (badUpdate<0){
         inertialUKFCleanUpdate(configData);
         return(-1);}
@@ -761,7 +761,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
 /*! This method cleans the filter states after a bad upadate on the fly.
  It removes the potentially corrupted previous estimates and puts the filter
  back to a working state.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  */
 void inertialUKFCleanUpdate(InertialUKFConfig *configData){
@@ -771,7 +771,7 @@ void inertialUKFCleanUpdate(InertialUKFConfig *configData){
     vCopy(configData->statePrev, configData->numStates, configData->state);
     mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
     mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
-    
+
     /*! - Reset the wM/wC vectors to standard values for unscented kalman filters*/
     configData->wM[0] = configData->lambdaVal / (configData->numStates +
                                                  configData->lambdaVal);
@@ -783,7 +783,6 @@ void inertialUKFCleanUpdate(InertialUKFConfig *configData){
                                              configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }
-    
+
     return;
 }
-

@@ -38,7 +38,7 @@ SimpleTransmitter::~SimpleTransmitter(){
 }
 
 /*! Adds a dataStorageStatusMsgPayload to be accessed by transmitter.
- @return void
+
  @param tmpStorageUnitMsg A spacecraft state message name.
  */
 void SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg){
@@ -85,7 +85,7 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
 
     this->currentIndex = this->getMaxIndex();
-    
+
     //! - If we have not transmitted any of the packet, we select a new type of data to downlink
     if (this->currentIndex != -1) {
         if (this->packetTransmitted == 0.0) {
@@ -120,7 +120,7 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
     }
     this->previousTime = currentTime;
     return;
-   
+
 }
 
 int SimpleTransmitter::getMaxIndex() {

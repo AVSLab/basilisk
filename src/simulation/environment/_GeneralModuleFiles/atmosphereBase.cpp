@@ -24,7 +24,7 @@
 #include "architecture/utilities/simDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
- @return void
+
  */
 AtmosphereBase::AtmosphereBase()
 {
@@ -60,7 +60,7 @@ AtmosphereBase::AtmosphereBase()
 }
 
 /*! Destructor.
- @return void
+
  */
 AtmosphereBase::~AtmosphereBase()
 {
@@ -71,7 +71,7 @@ AtmosphereBase::~AtmosphereBase()
 }
 
 /*! Adds the spacecraft message to a vector of sc messages and automatically creates the corresponding output message.
- @return void
+
  @param tmpScMsg A spacecraft state message name.
  */
 void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg){
@@ -95,7 +95,7 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
 {
@@ -126,7 +126,7 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
 
 /*! Custom customSetEpochFromVariable() method.  This allows a child class to specify how the module epoch information
  is set by a module variable.
- @return void
+
  */
 void AtmosphereBase::customSetEpochFromVariable()
 {
@@ -135,7 +135,7 @@ void AtmosphereBase::customSetEpochFromVariable()
 
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
- @return void
+
  */
 void AtmosphereBase::customReset(uint64_t CurrentClock)
 {
@@ -144,7 +144,7 @@ void AtmosphereBase::customReset(uint64_t CurrentClock)
 
 /*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void AtmosphereBase::writeMessages(uint64_t CurrentClock)
 {
@@ -160,7 +160,7 @@ void AtmosphereBase::writeMessages(uint64_t CurrentClock)
 }
 
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
- @return void
+
  */
 void AtmosphereBase::customWriteMessages(uint64_t CurrentClock)
 {
@@ -169,7 +169,7 @@ void AtmosphereBase::customWriteMessages(uint64_t CurrentClock)
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
- @return void
+
  */
 bool AtmosphereBase::readMessages()
 {
@@ -211,7 +211,7 @@ bool AtmosphereBase::readMessages()
 
 
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
- @return void
+
  */
 bool AtmosphereBase::customReadMessages()
 {
@@ -221,7 +221,7 @@ bool AtmosphereBase::customReadMessages()
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
  @param scState A spacecraft states message struct.
- @return void
+
  */
 void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, SCStatesMsgPayload *scState)
 {
@@ -239,7 +239,7 @@ void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, 
 }
 
 /*! This method is used to update the local magnetic field based on each spacecraft's position.
-  @return void
+
  */
 void AtmosphereBase::updateLocalAtmosphere(double currentTime)
 {
@@ -268,7 +268,7 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
 
 
 /*! Computes the current local magnetic field for each spacecraft and writes their respective messages.
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)

@@ -23,7 +23,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! This method initializes the configData for the ST sensor interface.
- @return void
+
  @param configData The configuration data associated with the ST sensor interface
  @param moduleID The ID associated with the configData
  */
@@ -35,7 +35,7 @@ void SelfInit_stProcessTelem(STConfigData *configData, int64_t moduleID)
 
 
 /*! This method resets the module.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -50,7 +50,7 @@ void Reset_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t m
 
 /*! This method takes the raw sensor data from the star tracker and
  converts that information to the format used by the ST nav.
- @return void
+
  @param configData The configuration data associated with the ST interface
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

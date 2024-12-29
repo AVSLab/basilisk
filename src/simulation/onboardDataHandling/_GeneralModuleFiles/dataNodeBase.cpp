@@ -22,7 +22,7 @@
 #include "string.h"
 
 /*! Constructor.
- @return void
+
  */
 DataNodeBase::DataNodeBase()
 {
@@ -33,7 +33,7 @@ DataNodeBase::DataNodeBase()
 }
 
 /*! Destructor.
- @return void
+
  */
 DataNodeBase::~DataNodeBase()
 {
@@ -43,7 +43,7 @@ DataNodeBase::~DataNodeBase()
 
 /*! This method is used to reset the module. In general, no functionality is reset.
  @param CurrentSimNanos
- @return void
+
  */
 void DataNodeBase::Reset(uint64_t CurrentSimNanos)
 {
@@ -55,7 +55,7 @@ void DataNodeBase::Reset(uint64_t CurrentSimNanos)
 
 /*! This method writes out the data node messages (dataName, baudRate)
  @param CurrentClock
- @return void
+
  */
 void DataNodeBase::writeMessages(uint64_t CurrentClock)
 {
@@ -90,7 +90,7 @@ bool DataNodeBase::readMessages()
 
 /*! This method evaluates the implementation-specific data model if the device is set to on.
  @param CurrentTime
- @return void
+
  */
 void DataNodeBase::computeDataStatus(double CurrentTime)
 {
@@ -107,7 +107,7 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
 
 /*! This method updates the state by reading messages, calling computeDataStatus, and writing messages
  @param CurrentSimNanos
- @return void
+
  */
 void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -126,7 +126,7 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
- @return void
+
  */
 void DataNodeBase::customReset(uint64_t CurrentClock)
 {
@@ -134,7 +134,7 @@ void DataNodeBase::customReset(uint64_t CurrentClock)
 }
 
 /*! custom Write method, similar to customSelfInit.
- @return void
+
  */
 void DataNodeBase::customWriteMessages(uint64_t CurrentClock)
 {
@@ -142,11 +142,9 @@ void DataNodeBase::customWriteMessages(uint64_t CurrentClock)
 }
 
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
- @return void
+
  */
 bool DataNodeBase::customReadMessages()
 {
     return true;
 }
-
-

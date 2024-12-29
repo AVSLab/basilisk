@@ -33,7 +33,6 @@
 an output C array. Note that this routine would convert an inbound type
 to a MatrixXd and then transpose the matrix which would be inefficient
 in a lot of cases.
-@return void
 @param inMat The source Eigen matrix that we are converting
 @param outArray The destination array (sized by the user!) we copy into
 */
@@ -47,7 +46,7 @@ void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray)
 an output C array. Note that this routine would convert an inbound type
 to a MatrixXd and then transpose the matrix which would be inefficient
 in a lot of cases.
-@return void
+
 @param inMat The source Eigen matrix that we are converting
 @param outArray The destination array (sized by the user!) we copy into
 */
@@ -60,7 +59,7 @@ void eigenMatrixXi2CArray(Eigen::MatrixXi inMat, int *outArray)
 /*! This function provides a direct conversion between a 3-vector and an
 output C array. We are providing this function to save on the  inline conversion
 and the transpose that would have been performed by the general case.
-@return void
+
 @param inMat The source Eigen matrix that we are converting
 @param outArray The destination array we copy into
 */
@@ -72,7 +71,7 @@ void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray)
 /*! This function provides a direct conversion between an MRP and an
 output C array. We are providing this function to save on the inline conversion
 and the transpose that would have been performed by the general case.
-@return void
+
 @param inMat The source Eigen MRP that we are converting
 @param outArray The destination array we copy into
 */
@@ -84,7 +83,7 @@ void eigenMRPd2CArray(Eigen::Vector3d& inMat, double* outArray)
 /*! This function provides a direct conversion between a 3x3 matrix and an
 output C array. We are providing this function to save on the inline conversion
 that would have been performed by the general case.
-@return void
+
 @param inMat The source Eigen matrix that we are converting
 @param outArray The destination array we copy into
 */
@@ -147,7 +146,7 @@ Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
 	return Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3).transpose();
 }
 
-/*! This function performs the conversion between an input C 3x3 
+/*! This function performs the conversion between an input C 3x3
 2D-array and an output Eigen vector3d. This function is provided
 in order to save an unnecessary conversion between types
 @return Eigen::Matrix3d
@@ -298,4 +297,3 @@ double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy,
 	}
 	return currentEstimate;
 }
-

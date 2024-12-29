@@ -33,7 +33,7 @@
 
 /*!
  Constructs the module
- @return void
+
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
@@ -44,7 +44,7 @@ void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
 
 
 /*! This method performs the module reset capability.  This module has no actions.
- @return void
+
  @param configData The configuration data associated with this module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -56,7 +56,7 @@ void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t m
 
 /*! This method creates a fixed attitude reference message.  The desired orientation is
     defined within the module.
- @return void
+
  @param configData The configuration data associated with the null space control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -79,7 +79,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t 
 
 /*! Generate attitude reference associated with Intertial 3D Pointing.  In this case this is a fixed attitude
     with zero angular rate and acceleration vectors
- @return void
+
  @param configData The configuration data associated with the null space control
  @param attRefOut Output message
  */

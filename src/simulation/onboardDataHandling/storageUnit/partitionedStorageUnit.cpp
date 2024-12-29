@@ -25,7 +25,7 @@
 
 
 /*! The constructor creates a partitionedStorageUnit instance with zero stored data
- @return void;
+ ;
  */
 PartitionedStorageUnit::PartitionedStorageUnit(){
     this->storageCapacity = 0;
@@ -34,7 +34,7 @@ PartitionedStorageUnit::PartitionedStorageUnit(){
 }
 
 /*! Destructor.
- @return void
+
  */
 PartitionedStorageUnit::~PartitionedStorageUnit(){
     return;
@@ -42,7 +42,7 @@ PartitionedStorageUnit::~PartitionedStorageUnit(){
 
 /*! Custom reset function.
  @param currentClock
- @return void
+
  */
 void PartitionedStorageUnit::customReset(uint64_t currentClock){
     if (this->storageCapacity <= 0) {
@@ -53,7 +53,7 @@ void PartitionedStorageUnit::customReset(uint64_t currentClock){
 
 /*! Adds a partition to the storageUnit
  @param dataName
- @return void
+
  */
 void PartitionedStorageUnit::addPartition(std::string dataName){
     dataInstance tmpDataInstance;
@@ -66,7 +66,7 @@ void PartitionedStorageUnit::addPartition(std::string dataName){
 /*! Adds a specific amount of data to the specified partitions once
  @param partitionNames  //Vector of partition names
  @param data            //Vector of data to be added to each partition in partitionNames
- @return void
+
  */
 void PartitionedStorageUnit::setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data){
 

@@ -34,7 +34,7 @@ SimpleMassProps::~SimpleMassProps()
 
 
 /*! This method is used to reset the module.
-    @return void
+
  */
 void SimpleMassProps::Reset(uint64_t CurrentSimNanos)
 {
@@ -63,7 +63,7 @@ void SimpleMassProps::readInputMessages()
 }
 
 /*! This method writes the vehicle configuration output message.
- @return void
+
  @param CurrentClock The clock time associated with the model call
  */
 void SimpleMassProps::writeOutputMessages(uint64_t CurrentClock)
@@ -96,7 +96,7 @@ void SimpleMassProps::computeMassProperties()
 
 
 /*! This is the main method that gets called every time the module is updated. It reads the simulation message, transfers its contents and writes to an output FSW message.
-    @return void
+
  */
 void SimpleMassProps::UpdateState(uint64_t CurrentSimNanos)
 {

@@ -23,7 +23,7 @@
 #include "EGM9615.h"
 
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
- @return void
+
  */
 MagneticFieldWMM::MagneticFieldWMM()
 {
@@ -34,7 +34,7 @@ MagneticFieldWMM::MagneticFieldWMM()
 }
 
 /*! Clean up any memory allocations.
- @return void
+
  */
 MagneticFieldWMM::~MagneticFieldWMM()
 {
@@ -44,7 +44,7 @@ MagneticFieldWMM::~MagneticFieldWMM()
 }
 
 /*! Custom Reset() method.  This loads the WMM coefficient file and gets the model setup.
- @return void
+
  */
 void MagneticFieldWMM::customReset(uint64_t CurrentClock)
 {
@@ -65,7 +65,7 @@ void MagneticFieldWMM::customReset(uint64_t CurrentClock)
 }
 
 /*! Custom customSetEpochFromVariable() method.  This allows specifying epochDateFractionYear directly from Python.  If an epoch message is set then this variable is not used.
- @return void
+
  */
 void MagneticFieldWMM::customSetEpochFromVariable()
 {
@@ -76,7 +76,7 @@ void MagneticFieldWMM::customSetEpochFromVariable()
 }
 
 /*! Convert a fraction year double value into a time structure with gregorian date/time information
- @return void
+
  */
 void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *gregorian)
 {
@@ -153,7 +153,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
 /*! This method is evaluates the centered dipole magnetic field model.
  @param msg magnetic field message structure
  @param currentTime current time (s)
- @return void
+
  */
 void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
 {
@@ -191,7 +191,7 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, 
 }
 
 /*! Performs memory cleanup necessary for magnetic field models
- @return void
+
  */
 void MagneticFieldWMM::cleanupEarthMagFieldModel()
 {

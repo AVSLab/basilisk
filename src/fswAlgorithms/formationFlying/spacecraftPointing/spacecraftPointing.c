@@ -26,7 +26,7 @@
 /*! This method initializes the configData for the spacecraft pointing module
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the spacecraft pointing module
  @param moduleID The Basilisk module identifier
  */
@@ -38,7 +38,7 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t m
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the pointing module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -87,7 +87,7 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t cal
  and calculates the orientation, angular velocity and angular acceleration of this vector with
  respect to the inertial reference frame in inertial reference frame components and passes them to
  the attitude tracking error module, where that attitude error can be calculated.
- @return void
+
  @param configData The configuration data associated with the spacecraft pointing module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier

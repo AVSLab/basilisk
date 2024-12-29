@@ -28,7 +28,7 @@
     It checks to ensure that the inputs are sane and then creates the
     output message of type :ref:`MTBCmdMsgPayload` and :ref:`ArrayMotorTorqueMsgPayload`.
  \endverbatim
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -44,7 +44,7 @@ void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig *configData, int
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
  message output buffer should be cleared.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -79,7 +79,7 @@ void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64
 
 
 /*! Computes the appropriate wheel torques and magnetic torque bar dipoles to bias the wheels to their desired speeds.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

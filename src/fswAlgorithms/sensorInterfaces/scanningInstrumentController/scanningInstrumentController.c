@@ -22,7 +22,7 @@
 
 /*!
     This method initializes the output messages for this module.
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -32,7 +32,7 @@ void SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig  *
 }
 
 /*! This method checks if required input messages (accessInMsg and attGuidInMsg) are connected.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -48,9 +48,9 @@ void Reset_scanningInstrumentController(scanningInstrumentControllerConfig *conf
     }
 }
 
-/*! This method checks the status of the device and if there is access to target, as well if the magnitude of the attitude 
+/*! This method checks the status of the device and if there is access to target, as well if the magnitude of the attitude
 error and attitude rate are within the tolerance. If so, the instrument is turned on, otherwise it is turned off.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -81,7 +81,7 @@ void Update_scanningInstrumentController(scanningInstrumentControllerConfig *con
     // Compute the norms of the attitude and rate errors
     sigma_BR_norm = v3Norm(attGuidInMsgBuffer.sigma_BR);
     omega_BR_norm = v3Norm(attGuidInMsgBuffer.omega_BR_B);
-    
+
     // If the controller is active
     if (configData->controllerStatus) {
         /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate

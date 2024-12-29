@@ -257,7 +257,7 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 
 /*! This method is the state update. It reads the information from the interpolated
 trajectory and writes the output message.
- @return void
+
  @param CurrentSimNanos The current simulation time for system
  */
 void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
@@ -293,7 +293,7 @@ void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 
 /*! This method reads the input messages in from the system and sets the
  appropriate parameters
- @return void
+
  */
 void ConstrainedAttitudeManeuver::ReadInputs()
 {
@@ -328,7 +328,7 @@ void ConstrainedAttitudeManeuver::ReadInputs()
 }
 
 /*! This method generates the MRP grid and connects the free neighboring nodes
- @return void
+
  */
 void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 {
@@ -514,7 +514,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 }
 
 /*! This method is used inside A* to track the path from goal to start, order it from start to goal and store in class variable path
- @return void
+
  */
 void ConstrainedAttitudeManeuver::backtrack(Node *p)
 {
@@ -530,7 +530,7 @@ void ConstrainedAttitudeManeuver::backtrack(Node *p)
 }
 
 /*! This method applies standard distance-based A* to find a valid path
- @return void
+
  */
 void ConstrainedAttitudeManeuver::AStar()
 {
@@ -585,7 +585,7 @@ void ConstrainedAttitudeManeuver::AStar()
 }
 
 /*! This method applies the effort-based A* to find a valid path
- @return void
+
  */
 void ConstrainedAttitudeManeuver::effortBasedAStar()
 {
@@ -644,7 +644,7 @@ void ConstrainedAttitudeManeuver::effortBasedAStar()
 }
 
 /*! This method takes a path of waypoints and returns an Input structure suitable for BSpline interpolation/approximation
- @return void
+
  */
 void ConstrainedAttitudeManeuver::pathHandle()
 {
@@ -697,7 +697,7 @@ void ConstrainedAttitudeManeuver::pathHandle()
 }
 
 /*! This method performs the BSpline interpolation/approximation and outputs an Output structure
- @return void
+
  */
 void ConstrainedAttitudeManeuver::spline()
 {
@@ -724,7 +724,7 @@ void ConstrainedAttitudeManeuver::spline()
 }
 
 /*! This method computes the torque vector required at time step with index n
- @return void
+
  */
 void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 {
@@ -742,7 +742,7 @@ void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 }
 
 /*! This method computes the torque vector required at time step with index n
- @return void
+
  */
 double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I[9])
 {
@@ -753,7 +753,7 @@ double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I[9])
 }
 
 /*! This method integrates the control torque norm over maneuver time and returns the cost for the effort-based A*.
- @return void
+
  */
 double ConstrainedAttitudeManeuver::effortEvaluation()
 {
@@ -777,7 +777,7 @@ double ConstrainedAttitudeManeuver::effortEvaluation()
 
 /*! This method  allows to access the coordinates of a Node in NodesMap without swigging the C++ Map.
     It is designed to be used in the UnitTest primarily.
- @return void
+
  */
 double ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
 {
@@ -791,7 +791,7 @@ double ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
 
 /*! This method  allows to access the state of a Node (free or not free) in NodesMap without swigging the C++ Map.
     It is designed to be used in the UnitTest primarily.
- @return void
+
  */
 bool ConstrainedAttitudeManeuver::returnNodeState(int key[3])
 {
@@ -805,7 +805,7 @@ bool ConstrainedAttitudeManeuver::returnNodeState(int key[3])
 
 /*! This method allows to access the coordinates of path Nodes in without swigging NodesList C++.
     It is designed to be used in the UnitTest primarily.
- @return void
+
  */
 double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
 {

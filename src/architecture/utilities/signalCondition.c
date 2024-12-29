@@ -22,7 +22,6 @@
 
 /*! This method applies the low-pass filter configuration to the newMeas that
     is passed in.  The state is maintained in the LowPassFilterData structure
- @return void
  @param lpData The configuration data and history of the LP filter
  @param newMeas The new measurement to take in to the filter
  */

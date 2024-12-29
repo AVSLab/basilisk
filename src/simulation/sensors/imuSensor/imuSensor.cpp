@@ -93,7 +93,7 @@ ImuSensor::~ImuSensor()
 
 
 /*! Reset the module
- @return void
+
  @param CurrentSimNanos current time (ns)
  */
 void ImuSensor::Reset(uint64_t CurrentSimNanos)

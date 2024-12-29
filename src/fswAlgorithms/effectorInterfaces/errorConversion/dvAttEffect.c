@@ -25,7 +25,7 @@
 /*! This method initializes the configData for the sun safe ACS control.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the sun safe control
  @param moduleID The ID associated with the configData
  */
@@ -43,7 +43,7 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 }
 
 /*! This method resets the module.
- @return void
+
  @param configData The configuration data associated with the sun safe ACS control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -66,7 +66,7 @@ void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
 
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
- @return void
+
  @param configData The configuration data associated with the sun safe ACS control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

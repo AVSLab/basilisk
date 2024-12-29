@@ -24,7 +24,7 @@
 #include <iostream>
 
 /*! @brief Creates an instance of the SpacecraftLocation class
- @return void
+
  */
 SpacecraftLocation::SpacecraftLocation()
 {
@@ -44,7 +44,7 @@ SpacecraftLocation::SpacecraftLocation()
 }
 
 /*! Empty destructor method.
- @return void
+
  */
 SpacecraftLocation::~SpacecraftLocation()
 {

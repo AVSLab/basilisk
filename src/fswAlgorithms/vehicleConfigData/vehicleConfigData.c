@@ -23,7 +23,7 @@
 
 /*! This method initializes the configData for the veh config algorithm.
     It initializes the output message in the messaging system.
- @return void
+
  @param configData The configuration data associated with the vehcle config interface
  @param moduleID The ID associated with the configData
  */
@@ -56,7 +56,7 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
 
 /*! There are no runtime operations performed by the vehicle configuration
     module.
- @return void
+
  @param configData The configuration data associated with the veh config module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

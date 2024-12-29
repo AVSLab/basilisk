@@ -31,7 +31,7 @@
  \verbatim embed:rst
     This method initializes the configData for this module.  It creates a single output message of type :ref:`THRArrayOnTimeCmdMsgPayload`.
  \endverbatim
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
@@ -43,7 +43,7 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t m
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -102,7 +102,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 /*! This method reads in the requested thruster impulse message.  If it is a new message then a fresh
  thruster firing cycle is setup to achieve the desired RW momentum dumping.  The the same message is read
  in, then the thrust continue to periodically fire to achieve the net thruster impuleses requested.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

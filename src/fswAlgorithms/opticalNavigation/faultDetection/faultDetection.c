@@ -24,7 +24,7 @@
 
 
 /*! Self-init for the fault detection module
- @return void
+
  @param configData The configuration data associated with the model
  @param moduleID The module identification integer
  */
@@ -35,7 +35,7 @@ void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 
 
 /*! This resets the module to original states.
- @return void
+
  @param configData The configuration data associated with the model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
@@ -63,7 +63,7 @@ void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int
  FaultMode = 0 is the less restricitve: it uses either of the measurements availabe and merges them if they are both available
  FaultMode = 1 is more restricitve: only the primary is used if both are available and the secondary is only used for a dissimilar check
  FaultMode = 2 is most restricive: the primary is not used in the abscence of the secondary measurement
- @return void
+
  @param configData The configuration data associated with the model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer

@@ -36,7 +36,7 @@ HingedRigidBodyMotor::~HingedRigidBodyMotor()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
 */
 void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
 {
@@ -55,7 +55,7 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
 
 
 /*! This is the main method that gets called every time the module is updated.  It calculates a motor torque on a hinged rigid body using a simple PD control law.
-    @return void
+
 */
 void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
 {

@@ -26,7 +26,7 @@
 
 /*! This method initializes the configData for the nav aggregation algorithm.
     It initializes the output message in the messaging system.
- @return void
+
  @param configData The configuration data associated with the Nav aggregation interface
  @param moduleID The Basilisk module identifier
  */
@@ -97,7 +97,7 @@ int dvAccumulation_partition(AccPktDataMsgPayload *A, int start, int end){
 }
 
 /*! Sort the AccPktDataMsgPaylaod by the measTime with an iterative quickSort.
-  @return void
+
   @param A --> Array to be sorted,
   @param start  --> Starting index,
   @param end  --> Ending index */
@@ -148,7 +148,7 @@ void dvAccumulation_QuickSort (AccPktDataMsgPayload *A, int start, int end)
 /*! This method takes the navigation message snippets created by the various
     navigation components in the FSW and aggregates them into a single complete
     navigation message.
- @return void
+
  @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
