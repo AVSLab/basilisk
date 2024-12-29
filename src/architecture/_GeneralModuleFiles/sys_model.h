@@ -29,7 +29,16 @@ class SysModel
 {
 public:
     SysModel();
-    SysModel(const SysModel &obj); //!< constructor definition
+
+    /**
+     * @brief Copy constructor for SysModel.
+     *
+     * This constructor initializes a new SysModel instance by copying data
+     * from another SysModel instance.
+     *
+     * @param obj The SysModel object to copy data from.
+     */
+    SysModel(const SysModel &obj);
 
     virtual ~SysModel(){};
 
