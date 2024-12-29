@@ -172,6 +172,8 @@ def run(show_plots, attType):
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scList
                                                   # , saveFile=fileName
                                                   )
+
+        viz.settings.trueTrajectoryLinesOn = 2  # relative to chief spacecraft
         viz.settings.showSpacecraftLabels = 1
         viz.settings.spacecraftShadowBrightness = 0.2
         # load CAD for target spacecraft

@@ -501,7 +501,12 @@ def run(show_plots):
                                                   # , saveFile=fileName
                                                   )
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
+
         viz.settings.showCelestialBodyLabels = 1
+        viz.settings.showSpacecraftLabels = 1
+        viz.settings.truePathFixedFrame = "bennu"
+        viz.settings.trueTrajectoryLinesOn = 5  # relative to celestial body fixed frame
+
         viz.settings.scViewToPlanetViewBoundaryMultiplier = 100
         viz.settings.planetViewToHelioViewBoundaryMultiplier = 100
         viz.settings.orbitLinesOn = -1

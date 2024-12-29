@@ -212,7 +212,10 @@ def run(show_plots, maneuverCase):
                                                   # , saveFile=fileName
                                                   )
         viz.settings.mainCameraTarget = "earth"
-        viz.settings.trueTrajectoryLinesOn = 1
+        viz.settings.showCelestialBodyLabels = 1
+        viz.settings.showSpacecraftLabels = 1
+        viz.settings.truePathRelativeBody = "earth"
+        viz.settings.trueTrajectoryLinesOn = 3  # relative to celestial body inertial frame
 
     #
     #   initialize Simulation
