@@ -340,6 +340,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     rDotDotOut = dataLog.AccelPlatform
     DVout = dataLog.DVFramePlatform
 
+    plt.close('all')
     # truth/output comparison plots and AutoTex output
     time = dataLog.times()/1e9
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
@@ -522,7 +523,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                          'height=0.7\\textwidth, keepaspectratio', path)
         if show_plots:
             plt.show()
-            plt.close('all')
+        plt.close('all')
 
     #
     # Outputs to AutoTex

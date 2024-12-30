@@ -232,8 +232,6 @@ def unitSimpleNav(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts -" + str(count))
 
-    plt.figure(1)
-    plt.clf()
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,0], label='x-position')
     plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,1], label='y-position')
@@ -247,8 +245,6 @@ def unitSimpleNav(show_plots):
         plt.show()
         plt.close('all')
 
-    plt.figure(2)
-    plt.clf()
     plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 0], label='x-rotation')
     plt.plot(dataAttLog.times() * 1.0E-9, attNav[:, 1], label='y-rotation')
@@ -260,7 +256,7 @@ def unitSimpleNav(show_plots):
     unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
-        plt.close('all')
+    plt.close('all')
 
     # Corner case usage
     pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],

@@ -198,9 +198,7 @@ def planetNavTestFunction(show_plots):
         if count < 1:
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts - " + str(count))
-
-    plt.figure(1)
-    plt.clf()
+    plt.close('all')
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, r_BN_N[:,0], label='x-position')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, r_BN_N[:,1], label='y-position')
@@ -210,8 +208,6 @@ def planetNavTestFunction(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('Position (m)')
 
-    plt.figure(2)
-    plt.clf()
     plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, v_BN_N[:,0], label='x-velocity')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, v_BN_N[:,1], label='y-velocity')
@@ -221,8 +217,7 @@ def planetNavTestFunction(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('Velocity (m/s)')
 
-    plt.figure(3)
-    plt.clf()
+
     plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, sigma_BN[:, 0], label='x-rotation')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, sigma_BN[:, 1], label='y-rotation')
@@ -232,8 +227,6 @@ def planetNavTestFunction(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('Attitude (rad)')
 
-    plt.figure(4)
-    plt.clf()
     plt.figure(4, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, omega_BN_B[:, 0], label='x-angular vel.')
     plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, omega_BN_B[:, 1], label='y-angular vel.')
@@ -245,7 +238,7 @@ def planetNavTestFunction(show_plots):
 
     if show_plots:
         plt.show()
-        plt.close('all')
+    plt.close('all')
 
     # Corner case usage
     pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],

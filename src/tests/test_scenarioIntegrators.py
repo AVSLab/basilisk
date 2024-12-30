@@ -55,7 +55,7 @@ def test_scenarioIntegrators(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    for integratorCase in ["rk4", "rkf45", "rkf78", "euler", "rk2"]:
+    for integratorCase in ["rk4", "rkf45", "rkf78", "euler", "rk2", "bogackiShampine"]:
 
         # each test method requires a single assert method to be called
         posData, figureList = scenarioIntegrators.run(show_plots, integratorCase)
@@ -104,6 +104,14 @@ def test_scenarioIntegrators(show_plots):
                 ,[-2230174.317580403,  -6410466.966948945,  -1714609.1414605032]
                 ,[ 4614818.45321768,   -3602456.431072683,  -3837076.4216056713]
                 ,[ 5879286.370365726,   3561242.507948514,  -1319786.6261035257]
+            ]
+        if integratorCase == "bogackiShampine":
+            truePos = [
+                [-2816801.601023492,  5248174.846916147,   3677157.2646772973]
+                , [-6380593.356301512,  -1467889.8216560283,  2481802.3429243616]
+                , [-2234294.4280201513, -6411056.176926798,  -1712849.5540222875]
+                , [ 4611359.466030476,  -3607692.026362182,  -3837674.903973699 ]
+                , [ 5882019.471581395,   3556295.378996462,  -1323290.9895207654]
             ]
 
     # compare the results to the truth values

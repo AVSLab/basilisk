@@ -474,9 +474,9 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     # create plot
     # txt = 'e = ' + str(e) + ' and a = ' + str(a) + 'km'
     fact = (len(str(abs(a)))-3.0)
+    plt.close('all')
 
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.clf()
     # fig1.text(.5, .05, txt, ha='center')
     ax1 = plt.subplot(211)
     ax1.cla()

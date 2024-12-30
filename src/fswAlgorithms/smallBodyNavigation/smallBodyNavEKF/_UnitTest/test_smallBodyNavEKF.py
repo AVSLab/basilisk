@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import numpy as np
 from Basilisk.architecture import messaging
@@ -136,8 +136,8 @@ def smallBodyNavEKFTestFunction(show_plots):
         true_x_hat, np.array([x_hat_c_wrapped[-1,:]]), 0.1, "x_hat_c_wrapped",
         testFailCount, testMessages)
 
-    plt.figure(1)
-    plt.clf()
+    plt.close('all')
+
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.ticklabel_format(useOffset=False)
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,0], label='x-pos')
@@ -148,8 +148,6 @@ def smallBodyNavEKFTestFunction(show_plots):
     plt.ylabel('r_BO_O (m)')
     plt.title('Estimated Relative Spacecraft Position')
 
-    plt.figure(2)
-    plt.clf()
     plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,3], label='x-vel')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,4], label='y-vel')
@@ -159,8 +157,6 @@ def smallBodyNavEKFTestFunction(show_plots):
     plt.ylabel('v_BO_O (m/s)')
     plt.title('Estimated Spacecraft Velocity')
 
-    plt.figure(5)
-    plt.clf()
     plt.figure(5, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,6], label='s1')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,7], label='s2')
@@ -170,8 +166,6 @@ def smallBodyNavEKFTestFunction(show_plots):
     plt.ylabel('sigma_AN (rad)')
     plt.title('Estimated Asteroid Attitude')
 
-    plt.figure(6)
-    plt.clf()
     plt.figure(6, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,9], label='omega1')
     plt.plot(navTransOutMsgRec.times() * 1.0E-9, x_hat[:,10], label='omega2')

@@ -124,8 +124,7 @@ def unitSimpleVoltEstimator(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts - " + str(count))
 
-    plt.figure(1)
-    plt.clf()
+    plt.close('all')
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(dataVoltLog.times() * 1.0E-9, volt[:])
 
@@ -135,7 +134,7 @@ def unitSimpleVoltEstimator(show_plots):
                                      r'height=0.4\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
-        plt.close('all')
+    plt.close('all')
 
     # check if BSK_ERROR is returned if pMatrix is wrong size
     pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
