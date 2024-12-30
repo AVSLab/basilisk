@@ -25,7 +25,7 @@
 #
 
 import pytest
-import os, inspect, random
+import math
 import numpy as np
 
 
@@ -64,22 +64,6 @@ def computeSunReferenceAngle(sigma_RN, rHat_SB_N, a1Hat_B, a2Hat_B, theta0):
         theta += np.pi
 
     return theta
-
-def computeSrpReferenceAngle(sHat, hHat, thetaSunR):
-
-    s2 = sHat[1]
-    s3 = sHat[2]
-    h2 = hHat[1]
-    h3 = hHat[2]
-    Delta = 8 * ((s2*h2)**2 + (s3*h3)**2 + (s2*h3)**2 + (s3*h2)**2) + (s2*h2 + s3*h3)**2
-    t = np.arctan( (3*(s3*h3 - s2*h2) - Delta**0.5) / (4*s2*h3 + 2*s3*h2) )
-    yHat = np.array([0.0, np.cos(t), np.sin(t)])
-    if np.dot(sHat, yHat) < 0:
-        yHat = -1 * yHat
-    theta = np.arctan2(yHat[2], yHat[1])
-    f = np.dot(hHat, yHat) * (np.dot(sHat, yHat))**2
-
-    return thetaSunR - f * (theta - thetaSunR)
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -169,6 +153,9 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
     solarArray.r_AB_B = r_AB_B
     solarArray.pointingMode = pointingMode
     solarArray.attitudeFrame = attitudeFrame
+    solarArray.ThetaMax = np.pi/2
+    solarArray.sigma = 1
+    solarArray.n = 1
 
     # Create input attitude navigation message
     natAttInMsgData = messaging.NavAttMsgPayload()
@@ -247,13 +234,25 @@ def solarArrayRotationTestFunction(show_plots, rHat_SB_N, sigma_BN, sigma_RN, at
             RB = np.matmul(RN, BN.transpose())
             sHat = np.matmul(RB, rHat_SB_B)
             H_R = np.matmul(RB, H_B)
-            hHat = np.cross(r_AB_B, H_R)
         else:
             sHat = rHat_SB_B
-            hHat = np.cross(r_AB_B, H_B)
-        hHat = hHat / np.linalg.norm(hHat)
+            H_R = H_B
 
-        thetaR = computeSrpReferenceAngle(sHat, hHat, thetaSunR)
+        F_R = np.cross(sHat, r_AB_B)
+        f = np.dot(F_R, H_R)
+
+        if f > 0:
+            thetaR = thetaSunR + 2 * solarArray.ThetaMax / np.pi * np.arctan(solarArray.sigma * f**(solarArray.n))
+        else:
+            thetaR = thetaSunR
+
+    # If the angle difference is greater than PI, adjust it to the range [-PI, PI]
+    thetaDiff = math.fmod(thetaR-thetaC, 2 * np.pi)
+
+    if thetaDiff > np.pi:
+        thetaR -= 2*np.pi
+    elif thetaDiff < -np.pi:
+        thetaR += 2*np.pi
 
     # compare the module results to the truth values
     if not unitTestSupport.isDoubleEqual(dataLog.theta[0], thetaR, accuracy):

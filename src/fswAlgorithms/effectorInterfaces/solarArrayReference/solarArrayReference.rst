@@ -73,36 +73,26 @@ and then normalizing to obtain :math:`{}^\mathcal{R}\boldsymbol{\hat{a}}_2`. The
     \theta_{\text{Sun,}R} = \arccos ({}^\mathcal{B}\boldsymbol{\hat{a}}_2 \cdot {}^\mathcal{R}\boldsymbol{\hat{a}}_2).
 
 
-Maximum Momentum Dumping
+Momentum Dumping
 +++++++++++++++++++++++++++
-In this pointing mode, the reference angle is computed in order to leverage solar radiation pressure (SRP) to produce a torque whose component in the opposite direction to the local net reaction wheel momentum (:math:`\boldsymbol{H}`) is maximum. Because the array can only rotate about the :math:`\boldsymbol{\hat{a}}_1` axis, the desired solar array normal :math:`\boldsymbol{\hat{y}}` can be expressed as follows, in the solar array frame :math:`\mathcal{A}`:
+In this pointing mode, the reference angle is computed in order to leverage solar radiation pressure (SRP) to produce a torque on the spacecraft opposing the local net reaction wheel momentum (:math:`\boldsymbol{H}`). This functionality applies to a set of two rotating solar arrays whose rotation axes are opposite to one another, and it consists in articulating the two arrays differentially in order to generate a net SRP torque.
+
+With respect to a ''zero rotation'' configuration, where zero rotation consists in having the power-generating surface of the array directly facing the Sun, the desire is to drive one of the two arrays at an offset inclination angle :math:`\theta` with respect to the Sun direction. This offset is defined as:
 
 .. math::
-    {}^\mathcal{A}\boldsymbol{\hat{y}} = \{0, \cos t, \sin t \}^T.
+    \theta = \left\{ \begin{array}[c|c|c] \\ \Theta_\text{max} \cdot \arctan(\sigma \nu^n) & \text{if} & \nu \geq 0 \\ 0 & \text{if} & \nu < 0 \\  \end{array} \right.
 
-The dot product between the solar array torque and the net wheel momentum is the function to minimize:
 
-.. math::
-    f(t) = \boldsymbol{L} \cdot \boldsymbol{H} = (\boldsymbol{\hat{s}} \cdot \boldsymbol{\hat{y}})^2 (\boldsymbol{r} \times (-\boldsymbol{\hat{y}})) \cdot \boldsymbol{H} = (\boldsymbol{\hat{s}} \cdot \boldsymbol{\hat{y}})^2 (\boldsymbol{h} \cdot \boldsymbol{\hat{y}})
-
-where :math:`\boldsymbol{h} = \boldsymbol{r} \times \boldsymbol{H}` and :math:`\boldsymbol{r}` is the position of the array center of pressure with respect to the system's center of mass. Taking the derivative with respect to :math:`t` and equating it to zero results in the third-order equation in :math:`\tan t`:
+where :math:`\Theta_\text{max}`, :math:`\sigma`, and :math:`n` are user-defined parameters, and :math:`\nu` is defined as:
 
 .. math::
-    (s_2 \cos t + s_3 \sin t) \left[(2s_2h_3+s_3h_2) \tan^2 t -3(s_3h_3-s_2h_2) \tan t - (2s_3h_2+s_2h_3) \right] = 0
+    \nu = - (\boldsymbol{r}_{O/C} \times \boldsymbol{\hat{r}}_\text{S}) \cdot \boldsymbol{H}_\text{RW}
 
-whose desired solution is:
+where :math:`\boldsymbol{r}_{O/C}` is the location of the array center of pressure with recpect to the system CM, :math:`\boldsymbol{\hat{r}}_\text{S}` is the direction of the Sun wirh respect to the spacecraft, and :math:`\boldsymbol{H}_\text{RW}` is the net wheel momentum.
 
-.. math::
-    \theta_{\text{Srp,}R} = t = \frac{3(s_3h_3-s_2h_2) - \sqrt{\Delta}}{4s_3h_2+2s_2h_3}.
+The parameter :math:`\Theta_\text{max}` allows to specify a maximum deflection of the array with respect to the Sun, in order to prevent it from ever reaching an edge-on configuration. The parameter :math:`\sigma` is a tuning gain, whether the exponent :math:`n > 1` allows to introduce a deadband around the zero rotation to avoid chattering.
 
-In the presence of two solar arrays, it is not desirable to maneuver both to the angle that minimizes :math:`f(t)`. This is because one array will always reach an edge-on configuration, thus resulting in a SRP torque imbalance between the arrays. For this reason, the array(s) are maneuvered to the reference angle
-
-.. math::
-    \theta_R = \theta_{\text{Sun,}R} - f(t) \left( \theta_{\text{Srp,}R} - \theta_{\text{Sun,}R} \right)
-
-to ensure that both arrays remain, on average, pointed at the Sun. When one array has the ability to generate a lot of dumping torque (:math:`f(t) \rightarrow -1`), its reference angle is skewed towards :math:`\theta_{\text{Srp,}R}`. Conversely, when :math:`f(t) \rightarrow 0` and there is not much momentum dumping capability, the array remains close to the maximum power-generating angle :math:`\theta_{\text{Sun,}R}`.
-
-For more details on the mathematical derivation, see R. Calaon, C. Allard and H. Schaub, "Momentum Management of a Spacecraft equipped with a Dual-Gimballed Electric Thruster", currently in preparation for submission to the Journal of Spacecraft and Rockets.
+For more details on the mathematical derivation and stability considerations, see R. Calaon, C. Allard and H. Schaub, "Momentum Management of a Spacecraft equipped with a Dual-Gimballed Electric Thruster", currently in preparation for submission to the Journal of Spacecraft and Rockets.
 
 
 User Guide
@@ -115,6 +105,9 @@ The required module configuration is::
     saReference.a2Hat_B = [0, 0, 1]
     saReference.attitudeFrame = 0
     saReference.pointingMode = 0
+    saReference.ThetaMax = np.pi/2
+    saReference.sigma = 1
+    saReference.n = 1
     unitTestSim.AddModelToTask(unitTaskName, saReference)
 
 The module is configurable with the following parameters:
@@ -133,3 +126,9 @@ The module is configurable with the following parameters:
      - 0 for reference angle computed w.r.t reference frame; 1 for reference angle computed w.r.t. body frame; defaults to 0 if not specified
    * - ``pointingMode``
      - 0 for maximum power generation; 1 maximum momentum dumping; defaults to 0 if not specified
+   * - ``ThetaMax``
+     - between 0 and Pi
+   * - ``sigma``
+     - tuning gain; setting to zero removes momentum management capability
+   * - ``n``
+     - n > 1 introduces a deadband around zero rotation.
