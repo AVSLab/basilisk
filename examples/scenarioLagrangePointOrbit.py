@@ -273,7 +273,7 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
 
     # First plot: Draw orbit in inertial frame
-    fig = plt.figure(1, figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
+    fig = plt.figure(1, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     ax = fig.gca()
     ax.ticklabel_format(style='scientific', scilimits=[-5, 3])
@@ -317,7 +317,7 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     figureList[pltName] = plt.figure(1)
 
     # Second plot: Draw orbit in frame rotating with the Moon
-    fig = plt.figure(2, figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
+    fig = plt.figure(2, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     ax = fig.gca()
     ax.ticklabel_format(style='scientific', scilimits=[-5, 3])
@@ -387,5 +387,3 @@ if __name__ == "__main__":
         300,       # Timestep (seconds)
         True    # Show plots
     )
-
-

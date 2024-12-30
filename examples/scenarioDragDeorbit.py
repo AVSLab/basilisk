@@ -312,7 +312,7 @@ def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet,
 
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
-    plt.figure(1, figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
+    plt.figure(1, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     # draw the planet
     fig, ax = register_fig(1)
