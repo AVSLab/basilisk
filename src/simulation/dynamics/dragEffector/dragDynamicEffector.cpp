@@ -44,7 +44,7 @@ DragDynamicEffector::~DragDynamicEffector()
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
@@ -56,7 +56,7 @@ void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
-@return void
+
  */
 void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
@@ -66,7 +66,7 @@ void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 
 /*! This method is used to read the incoming density message and update the internal density/
 atmospheric data.
- @return void
+
  */
 bool DragDynamicEffector::ReadInputs()
 {
@@ -79,7 +79,7 @@ bool DragDynamicEffector::ReadInputs()
 /*!
     This method is used to link the dragEffector to the hub attitude and velocity,
     which are required for calculating drag forces and torques.
-    @return void
+
     @param states simulation states
  */
 void DragDynamicEffector::linkInStates(DynParamManager& states){
@@ -127,7 +127,7 @@ void DragDynamicEffector::computeForceTorque(double integTime, double timeStep){
 
 /*! This method is called to update the local atmospheric conditions at each timestep.
 Naturally, this means that conditions are held piecewise-constant over an integration step.
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)

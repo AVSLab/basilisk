@@ -353,7 +353,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
     return;
 }
 
-/*! add a RW data object to the reactionWheelStateEffector @return void
+/*! add a RW data object to the reactionWheelStateEffector
  */
 void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
 {
@@ -368,7 +368,7 @@ void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
 
 
 /*! Reset the module to origina configuration values.
- @return void
+
  */
 void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
 {
@@ -404,7 +404,7 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
 /*! This method is here to write the output message structure into the specified
  message.
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
@@ -448,7 +448,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 /*! This method is here to write the output message structure into the specified
  message.
  @param integTimeNanos The current time used for time-stamping the message
- @return void
+
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
@@ -471,7 +471,7 @@ void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNano
 
 /*! This method is used to read the incoming command message and set the
  associated command structure for operating the RWs.
- @return void
+
  */
 void ReactionWheelStateEffector::ReadInputs()
 {
@@ -496,7 +496,7 @@ void ReactionWheelStateEffector::ReadInputs()
 /*! This method is used to read the new commands vector and set the RW
  firings appropriately.  It assumes that the ReadInputs method has already been
  run successfully.
- @return void
+
  @param CurrentTime The current simulation time converted to a double
  */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
@@ -551,7 +551,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
  configuration data based on that incoming command set.  Note that the main
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)

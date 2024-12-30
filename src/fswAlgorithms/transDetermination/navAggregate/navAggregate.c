@@ -24,7 +24,7 @@
 
 /*! This method initializes the configData for the nav aggregation algorithm.
     It initializes the output messages in the messaging system.
- @return void
+
  @param configData The configuration data associated with the Nav aggregation interface
  @param moduleID The Basilisk module identifier
  */
@@ -36,7 +36,7 @@ void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 
 
 /*! This resets the module to original states.
- @return void
+
  @param configData The configuration data associated with this module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -157,7 +157,7 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
 /*! This method takes the navigation message snippets created by the various
     navigation components in the FSW and aggregates them into a single complete
     navigation message.
- @return void
+
  @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier

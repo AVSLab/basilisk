@@ -35,7 +35,7 @@ typedef enum {
 */
 class Discretize
 {
-    
+
 public:
     Discretize();
     Discretize(uint8_t numStates);
@@ -46,14 +46,14 @@ public:
 
     /*!@brief Avoid calculating bit value (bin size) and just set it because a resolution is known
        @param givenLSB
-       @return void*/
+     */
     void setLSB(Eigen::VectorXd givenLSB) {this->LSB = givenLSB;}
 
     void setRoundDirection(roundDirection_t direction);
 
     /*!@brief Sets the round direction (toZero, fromZero, near) for discretization
      @param carryErrorIn
-     @return void*/
+     */
     void setCarryError(bool carryErrorIn){this->carryError = carryErrorIn;}
 
     /*!@brief Discretizes the given truth vector according to a least significant bit (binSize)
@@ -66,7 +66,7 @@ public:
     Eigen::VectorXd getDiscretizationErrors(){return(this->discErrors);}
 
     Eigen::VectorXd LSB;                //!< -- size of bin, bit value, least significant bit
-    
+
 private:
     roundDirection_t roundDirection;    //!< -- Direction to round when discretizing. "toZero", "fromZero", and "near" are the options.
     uint8_t numStates;                  //!< -- Number of states to be discretized (length of vector fed in)

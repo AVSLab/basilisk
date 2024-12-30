@@ -34,7 +34,7 @@
 
 
 /*! self init method
- @return void
+
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
@@ -45,7 +45,7 @@ void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID)
 
 
 /*! This method performs the module reset capability.  This module has no actions.
- @return void
+
  @param configData The configuration data associated with this module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -61,7 +61,7 @@ void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int
 
 /*! This method creates a orbit velocity frame reference message.  The desired orientation is
  defined within the module.
- @return void
+
  @param configData The configuration data associated with the null space control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

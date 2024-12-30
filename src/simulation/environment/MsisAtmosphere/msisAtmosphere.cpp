@@ -23,7 +23,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 /*! This method initializes some basic parameters for the module.
- @return void
+
  */
 MsisAtmosphere::MsisAtmosphere()
 {
@@ -85,7 +85,7 @@ MsisAtmosphere::MsisAtmosphere()
 }
 
 /*! Destructor.
- @return void
+
  */
 MsisAtmosphere::~MsisAtmosphere()
 {
@@ -94,7 +94,7 @@ MsisAtmosphere::~MsisAtmosphere()
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
 {
@@ -107,7 +107,7 @@ void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
 
 
 /*! Custom customSetEpochFromVariable() method.  This allows specifying epochDoy directly from Python.  If an epoch message is set then this variable is not used.
- @return void
+
  */
 void MsisAtmosphere::customSetEpochFromVariable()
 {
@@ -124,7 +124,7 @@ void MsisAtmosphere::customSetEpochFromVariable()
 
 /*! This method is used to write the output densities whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock)
 {
@@ -135,7 +135,7 @@ void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock)
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
- @return void
+
  */
 bool MsisAtmosphere::customReadMessages(){
     bool swRead = false;

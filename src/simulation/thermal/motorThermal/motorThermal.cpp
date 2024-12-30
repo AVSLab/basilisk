@@ -39,7 +39,7 @@ MotorThermal::~MotorThermal()
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void MotorThermal::Reset(uint64_t CurrentSimNanos)
 {
@@ -94,7 +94,7 @@ void MotorThermal::readInputMessages()
 }
 
 /*! This method writes the motor temperature output state message.
- @return void
+
  @param CurrentClock The clock time associated with the model call
  */
 void MotorThermal::writeOutputMessages(uint64_t CurrentClock)

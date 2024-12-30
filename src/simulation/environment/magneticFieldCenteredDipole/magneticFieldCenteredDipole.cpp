@@ -21,7 +21,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
- @return void
+
  */
 MagneticFieldCenteredDipole::MagneticFieldCenteredDipole()
 {
@@ -35,7 +35,7 @@ MagneticFieldCenteredDipole::MagneticFieldCenteredDipole()
 }
 
 /*! Empty destructor method.
- @return void
+
  */
 MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
 {
@@ -45,7 +45,7 @@ MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
 /*! This method is evaluates the centered dipole magnetic field model.
  @param msg magnetic field message structure
  @param currentTime current time (s)
- @return void
+
  */
 void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
 {

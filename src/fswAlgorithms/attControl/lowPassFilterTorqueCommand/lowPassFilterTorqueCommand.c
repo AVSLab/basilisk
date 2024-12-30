@@ -32,7 +32,7 @@
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -45,7 +45,7 @@ void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *confi
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the MRP steering control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -69,7 +69,7 @@ void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configDa
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
- @return void
+
  @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

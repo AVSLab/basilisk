@@ -27,7 +27,7 @@
  \verbatim embed:rst
     This method creates the module output message of type :ref:`ArrayMotorTorqueMsgPayload`.
  \endverbatim
- @return void
+
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
@@ -38,7 +38,7 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 
 
 /*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any module specific variables.  The output message is reset to zero.
-    @return void
+
     @param configData The configuration data associated with the null space control
     @param callTime The clock time at which the function was called (nanoseconds)
     @param moduleID The ID associated with the configData
@@ -98,7 +98,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 /*! This method takes the input reaction wheel commands as well as the observed
     reaction wheel speeds and balances the commands so that the overall vehicle
 	momentum is minimized.
- @return void
+
  @param configData The configuration data associated with the null space control
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

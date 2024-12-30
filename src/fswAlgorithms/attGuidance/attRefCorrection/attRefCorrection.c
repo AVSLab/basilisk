@@ -24,7 +24,7 @@
 
 /*!
     This method initializes the output messages for this module.
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -37,7 +37,7 @@ void SelfInit_attRefCorrection(attRefCorrectionConfig  *configData, int64_t modu
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
     Check if required input messages are connected.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -52,7 +52,7 @@ void Reset_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTim
 
 
 /*! Corrects the reference attitude message by a fixed rotation
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

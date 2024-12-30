@@ -24,7 +24,7 @@
 /*! This method initializes the configData for theIMU sensor interface.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the IMU sensor interface
  @param moduleID The ID associated with the configData
  */
@@ -36,7 +36,7 @@ void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
 
 
 /*! This method resets the module.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -51,7 +51,7 @@ void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
  converts that information to the format used by the IMU nav.
- @return void
+
  @param configData The configuration data associated with the IMU interface
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

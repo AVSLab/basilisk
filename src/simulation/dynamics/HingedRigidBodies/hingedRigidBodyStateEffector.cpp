@@ -63,7 +63,7 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 
 /*! This method takes the computed theta states and outputs them to the m
  messaging system.
- @return void
+
  @param CurrentClock The current simulation time (used for time stamping)
  */
 void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
@@ -292,7 +292,7 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
     return;
 }
 /*! This method is used so that the simulation will ask HRB to update messages.
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
@@ -363,7 +363,7 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime, Eigen
 }
 
 /*! This method computes the panel states relative to the inertial frame
- @return void
+
  */
 void HingedRigidBodyStateEffector::computePanelInertialStates()
 {

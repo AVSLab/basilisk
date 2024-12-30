@@ -39,7 +39,7 @@
 
 /*!
     This method initializes the output messages for this module.
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -52,7 +52,7 @@ void SelfInit_etSphericalControl(etSphericalControlConfig *configData, int64_t m
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -110,7 +110,7 @@ void Reset_etSphericalControl(etSphericalControlConfig *configData, uint64_t cal
 }
 
 /*! Add a description of what this main Update() routine does for this module
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -152,7 +152,7 @@ void Update_etSphericalControl(etSphericalControlConfig *configData, uint64_t ca
 
 /*! This function calculates the control force of the Electrostatic Tractor Relative Motion Control based on
  current relative position and velocity, and desired relative position
- @return void
+
  @param configData The configuration data associated with the module
  @param servicerTransInMsgBuffer Servicer's position and velocity
  @param debrisTransInMsgBuffer Debris' position and velocity

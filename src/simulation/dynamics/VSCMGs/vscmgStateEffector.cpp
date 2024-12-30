@@ -483,7 +483,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
 
 
 /*! Reset the module to origina configuration values.
- @return void
+
  */
 void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos)
 {
@@ -535,7 +535,7 @@ void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos)
 /*! This method is here to write the output message structure into the specified
  message.
  @param CurrentClock The current time used for time-stamping the message
- @return void
+
  */
 void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
@@ -587,7 +587,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 
 /*! This method is used to read the incoming command message and set the
  associated command structure for operating the VSCMGs.
- @return void
+
  */
 void VSCMGStateEffector::ReadInputs()
 {
@@ -632,7 +632,7 @@ void VSCMGStateEffector::ReadInputs()
 /*! This method is used to read the new commands vector and set the VSCMG
  torque commands appropriately.  It assumes that the ReadInputs method has
  already been run successfully.
- @return void
+
  @param CurrentTime The current simulation time converted to a double
  */
 void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
@@ -743,7 +743,7 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
  configuration data based on that incoming command set.  Note that the main
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
@@ -756,7 +756,7 @@ void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 
 /*!
  This method allows VSCMG devices to be added to this effector
- @return void
+
  @param NewVSCMG VSCMG device to be added
  */
 void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG)

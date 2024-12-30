@@ -43,7 +43,7 @@ MsmForceTorque::~MsmForceTorque()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
 */
 void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
 {
@@ -140,7 +140,7 @@ void MsmForceTorque::readMessages()
 
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-    @return void
+
 */
 void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 {

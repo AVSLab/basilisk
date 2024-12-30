@@ -27,7 +27,7 @@ const double AstU = 149597870700.0;  // [m] Astronomical unit
 const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
- @return void
+
  @param currentSimNanos [ns] Time the method is called
 */
 void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
@@ -37,7 +37,7 @@ void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
 }
 
 /*! This method populates the spacecraft facet geometry structure with user-input facet information.
- @return void
+
  @param area  [m^2] Facet area
  @param dcm_F0B Facet frame F initial attitude DCM relative to the B frame
  @param nHat_F  Facet normal expressed in facet F frame components
@@ -66,7 +66,7 @@ void FacetSRPDynamicEffector::addFacet(double area,
 
 /*! This method subscribes the articulated facet angle input messages to the module
 articulatedFacetDataInMsgs input messages.
- @return void
+
  @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
 void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
@@ -74,7 +74,7 @@ void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayl
 }
 
 /*! This method gives the module access to the hub inertial attitude and position.
- @return void
+
  @param states Dynamic parameter states
 */
 void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
@@ -84,7 +84,7 @@ void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
 
 /*! This method reads the Sun state input message. If time-varying facet articulations are considered,
 the articulation angle messages are also read.
- @return void
+
 */
 void FacetSRPDynamicEffector::ReadMessages() {
     // Read the Sun state input message
@@ -114,7 +114,7 @@ void FacetSRPDynamicEffector::ReadMessages() {
 }
 
 /*! This method computes the srp force and torque acting about the hub point B in B frame components.
- @return void
+
  @param callTime [s] Time the method is called
  @param timeStep [s] Simulation time step
 */
@@ -203,7 +203,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
 }
 
 /*! Setter method for the total number of facets used to model the spacecraft structure.
- @return void
+
  @param numFacets Total number of spacecraft facets
 */
 void FacetSRPDynamicEffector::setNumFacets(const uint64_t numFacets) {
@@ -211,7 +211,7 @@ void FacetSRPDynamicEffector::setNumFacets(const uint64_t numFacets) {
 }
 
 /*! Setter method for the number of articulated facets used to model the spacecraft articulating components.
- @return void
+
  @param numArticulatedFacets Number of articulated spacecraft facets
 */
 void FacetSRPDynamicEffector::setNumArticulatedFacets(const uint64_t numArticulatedFacets) {

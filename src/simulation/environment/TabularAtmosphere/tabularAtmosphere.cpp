@@ -22,7 +22,7 @@
 #include <iostream>
 
 /*! The constructor method initializes data list lengths to zero.
- @return void
+
  */
 TabularAtmosphere::TabularAtmosphere()
 {
@@ -34,7 +34,7 @@ TabularAtmosphere::TabularAtmosphere()
 }
 
 /*! Empty destructor method.
- @return void
+
  */
 TabularAtmosphere::~TabularAtmosphere()
 {
@@ -42,19 +42,19 @@ TabularAtmosphere::~TabularAtmosphere()
 }
 
 /*! Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero lengths.
-* @return void
+*
 */
 void TabularAtmosphere::customReset(uint64_t CurrentClock)
 {
     this->altList_length = (int) this->altList.size();
     this->rhoList_length = (int) this->rhoList.size();
     this->tempList_length = (int) this->tempList.size();
-    
+
 
     if((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)){
         bskLogger.bskLog(BSK_ERROR, "Input arrays not of equal length.");
     }
-    
+
     if(this->altList_length == 0){
         bskLogger.bskLog(BSK_ERROR, "No data in altitude list.");
     } else if(this->rhoList_length == 0){
@@ -62,12 +62,12 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock)
     } else if(this->tempList_length == 0){
         bskLogger.bskLog(BSK_ERROR, "No data in temperature list.");
     }
-    
+
     return;
 }
 
 /*! evaluate function interpolates from given data lists. Sets density and temp to 0 if altitude outside bounds of input lists OR if outside bounds of envMinReach and envMaxReach.
-* @return void
+*
 */
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {

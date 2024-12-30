@@ -37,7 +37,7 @@ TempMeasurement::TempMeasurement() : faultState{TEMP_FAULT_NOMINAL},
 TempMeasurement::~TempMeasurement() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
-    @return void
+
 */
 void TempMeasurement::Reset(uint64_t CurrentSimNanos)
 {
@@ -66,7 +66,7 @@ void TempMeasurement::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method adds noise, bias, and fault behaviors to the read-in temperature message.
-    @return void
+
 */
 void TempMeasurement::applySensorErrors()
 {
@@ -82,12 +82,12 @@ void TempMeasurement::applySensorErrors()
         sensorError = this->senBias + sensorNoise;
     }
     this->sensedTemperature = this->trueTemperature + sensorError;
-    
+
     // apply fault conditions
     if(this->faultState == TEMP_FAULT_STUCK_VALUE){ // stuck at specified value
         this->sensedTemperature = this->stuckValue;
     } else if (this->faultState == TEMP_FAULT_STUCK_CURRENT){ // stuck at last value before flag turned on
-        this->sensedTemperature = this->pastValue; 
+        this->sensedTemperature = this->pastValue;
     } else if (this->faultState == TEMP_FAULT_SPIKING){ // spiking periodically with specified probability
         // have to make a new distribution every time because SWIG can't parse putting this in the H file....?
         std::uniform_real_distribution<double> spikeProbabilityDistribution(0.0,1.0);
@@ -96,12 +96,12 @@ void TempMeasurement::applySensorErrors()
             this->sensedTemperature = this->sensedTemperature*this->spikeAmount;
         }
     }
-    
+
     this->pastValue = this->sensedTemperature; // update past value
 }
 
 /*! This is the main method that gets called every time the module is updated.
-    @return void
+
 */
 void TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -122,4 +122,3 @@ void TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
     // write to the output messages
     this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
-

@@ -1,12 +1,12 @@
 /*
  ISC License
- 
+
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -23,7 +23,7 @@
             and adds this info to a msg of type NavAttMsgPayload.
     Author: Hanspeter Schaub
     Date:   June 30, 2018
- 
+
  */
 
 #include <string.h>
@@ -33,7 +33,7 @@
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
@@ -45,7 +45,7 @@ void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t modul
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -59,7 +59,7 @@ void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTim
 }
 
 /*! This method performs a time step update of the module.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -68,16 +68,16 @@ void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTi
 {
     IMUSensorBodyMsgPayload inMsg;
     NavAttMsgPayload outMsg;
-    
+
     /*! - read in the message of type IMUSensorBodyMsgPayload */
     inMsg = IMUSensorBodyMsg_C_read(&configData->imuRateInMsg);
-    
+
     /*! - create a zero message of type NavAttMsgPayload which has the rate vector from the input message */
     outMsg = NavAttMsg_C_zeroMsgPayload();
     v3Copy(inMsg.AngVelBody, outMsg.omega_BN_B);
-    
+
     /*! - write output message */
     NavAttMsg_C_write(&outMsg, &configData->navRateOutMsg, moduleID, callTime);
-    
+
     return;
 }

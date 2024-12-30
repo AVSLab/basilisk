@@ -26,7 +26,7 @@
 
 
 /*! @brief Creates an instance of the PinholeCamera class with a prescribed focal direction in camera frame and -90º of Sun's mask angle (that is, no lighting constraint).
- @return void
+
  */
 PinholeCamera::PinholeCamera()
 {
@@ -38,7 +38,7 @@ PinholeCamera::PinholeCamera()
 }
 
 /*! Empty destructor method.
- @return void
+
  */
 PinholeCamera::~PinholeCamera()
 {

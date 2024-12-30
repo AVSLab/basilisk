@@ -34,7 +34,7 @@ OrbElemConvert::~OrbElemConvert()
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void OrbElemConvert::Reset(uint64_t CurrentSimNanos)
 {
@@ -63,7 +63,7 @@ void OrbElemConvert::Reset(uint64_t CurrentSimNanos)
 /*! This method writes the output data out into the messaging system.  It does
  switch depending on whether it is outputting cartesian position/velocity or
  orbital elements.
- @return void
+
  @param CurrentClock The current time in the system for output stamping
  */
 void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
@@ -99,7 +99,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 /*! The name kind of says it all right?  Converts CurrentElem to pos/vel.
- @return void
+
  */
 void OrbElemConvert::Elements2Cartesian()
 {
@@ -107,7 +107,7 @@ void OrbElemConvert::Elements2Cartesian()
 }
 
 /*! The name kind of says it all right?  Converts pos/vel to CurrentElem.
- @return void
+
  */
 void OrbElemConvert::Cartesian2Elements()
 {
@@ -116,7 +116,7 @@ void OrbElemConvert::Cartesian2Elements()
 
 /*! This method reads the input message in from the system and sets the
  appropriate parameters based on which direction the module is running
- @return void
+
  */
 void OrbElemConvert::ReadInputs()
 {
@@ -156,7 +156,7 @@ void OrbElemConvert::ReadInputs()
 /*! This method is the main carrier for the conversion routine.  If it detects
  that it needs to re-init (direction change maybe) it will re-init itself.
  The it either converts elements to cartesian or cartesian to elements.
- @return void
+
  @param CurrentSimNanos The current simulation time for system
  */
 void OrbElemConvert::UpdateState(uint64_t CurrentSimNanos)

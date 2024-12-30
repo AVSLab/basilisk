@@ -39,7 +39,7 @@ BoreAngCalc::~BoreAngCalc() = default;
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
 {
@@ -61,7 +61,7 @@ void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method writes the output data out into the messaging system.
- @return void
+
  @param CurrentClock The current time in the system for output stamping
  */
 void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
@@ -71,7 +71,7 @@ void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
 
 /*! This method reads the input messages in from the system and sets the
  appropriate parameters
- @return void
+
  */
 void BoreAngCalc::ReadInputs()
 {
@@ -89,7 +89,7 @@ void BoreAngCalc::ReadInputs()
 /*! This method computes the vector specified in the input file in the LVLH
     reference frame of the spacecraft above the target celestial body.  This
     is used later to compute how far off that vector is in an angular sense.
-    @return void
+
 */
 void BoreAngCalc::computeCelestialAxisPoint()
 {
@@ -122,7 +122,7 @@ void BoreAngCalc::computeCelestialAxisPoint()
     absolute distance between the desired body point and the specified structural
     vector.  The aximuth angle is the angle between the y pointing axis and the
     desired pointing vector projected into the y/z plane.
-    @return void
+
 */
 void BoreAngCalc::computeCelestialOutputData()
 {
@@ -142,7 +142,7 @@ void BoreAngCalc::computeCelestialOutputData()
 
 /*! This method computes the output structure for messaging. The miss angle is
     computed using the body heading and the provided inertial heading
-    @return void
+
 */
 void BoreAngCalc::computeInertialOutputData()
 {
@@ -162,7 +162,7 @@ void BoreAngCalc::computeInertialOutputData()
 /*! This method is the main carrier for the boresight calculation routine.  If it detects
  that it needs to re-init (direction change maybe) it will re-init itself.
  Then it will compute the angles away that the boresight is from the celestial target.
- @return void
+
  @param CurrentSimNanos The current simulation time for system
  */
 void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)

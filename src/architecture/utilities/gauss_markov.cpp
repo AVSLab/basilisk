@@ -60,7 +60,6 @@ GaussMarkov::~GaussMarkov()
     walk.  It uses the current random walk configuration, propagates the current
     state, and then applies appropriate errors to the states to set the current
     error level.
-    @return void
 */
 void GaussMarkov::computeNextState()
 {

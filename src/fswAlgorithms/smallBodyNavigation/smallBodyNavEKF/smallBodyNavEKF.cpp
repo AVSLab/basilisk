@@ -77,7 +77,7 @@ void SmallBodyNavEKF::SelfInit(){
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
 */
 void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos)
 {
@@ -98,7 +98,7 @@ void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method is used to add a thruster to the filter.
-    @return void
+
 */
 void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg){
     this->thrusterInMsgs.push_back(tmpThrusterMsg->addSubscriber());
@@ -107,7 +107,7 @@ void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrus
 
 /*! This method is used to read the input messages.
     @param CurrentSimNanos
-    @return void
+
 */
 void SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos){
     /* Read in the input messages */
@@ -144,7 +144,7 @@ void SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos){
 
 /*! This method performs the KF prediction step
     @param CurrentSimNanos
-    @return void
+
 */
 void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
@@ -188,7 +188,7 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
 
 /*! This method computes the apriori state estimate using RK4 integration
     @param CurrentSimNanos
-    @return void
+
 */
 void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     /* First RK4 step */
@@ -219,7 +219,7 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
 /*! This method calculates the EOMs of the state vector and state transition matrix
     @param x_hat
     @param Phi
-    @return void
+
 */
 void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::MatrixXd Phi){
     /* Create temporary state vectors for readability */
@@ -264,7 +264,7 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
 
 /*! This method compute the apriori estimation error covariance through euler integration
     @param CurrentSimNanos
-    @return void
+
 */
 void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
     /* Compute the apriori covariance */
@@ -273,7 +273,7 @@ void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
 
 /*! This method checks the propagated MRP states to see if they exceed a norm of 1. If they do, the appropriate
     states are transferred to the shadow set and the covariance is updated.
-    @return void
+
  */
 void SmallBodyNavEKF::checkMRPSwitching(){
     /* Create temporary values for sigma_AN */
@@ -307,7 +307,7 @@ void SmallBodyNavEKF::checkMRPSwitching(){
 
 
 /*! This method performs the KF measurement update step
-    @return void
+
 */
 void SmallBodyNavEKF::measurementUpdate(){
     /* Compute Kalman gain */
@@ -354,7 +354,7 @@ void SmallBodyNavEKF::measurementUpdate(){
 }
 
 /*! This method computes the state dynamics matrix, A, for the next iteration
-    @return void
+
 */
 void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
     /* Create temporary state vectors for readability */
@@ -390,7 +390,7 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
 }
 
 /*! This is the main method that gets called every time the module is updated.
-    @return void
+
 */
 void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -410,7 +410,7 @@ void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method writes the output messages
-    @return void
+
 */
 void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos){
     /* Create output msg buffers */

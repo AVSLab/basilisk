@@ -54,7 +54,7 @@ GroundMapping::~GroundMapping()
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
 */
 void GroundMapping::Reset(uint64_t CurrentSimNanos)
 {
@@ -215,7 +215,7 @@ void GroundMapping::WriteMessages(uint64_t CurrentClock)
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-    @return void
+
 */
 void GroundMapping::UpdateState(uint64_t CurrentSimNanos)
 {

@@ -41,7 +41,7 @@ MotorVoltageInterface::~MotorVoltageInterface()
 }
 
 /*! Reset the module to original configuration values.
- @return void
+
  */
 void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
 {
@@ -64,7 +64,7 @@ void MotorVoltageInterface::readInputMessages()
 }
 
 /*! This method evaluates the motor torque output states.
- @return void
+
  */
 void MotorVoltageInterface::computeMotorTorque()
 {
@@ -76,7 +76,7 @@ void MotorVoltageInterface::computeMotorTorque()
 }
 
 /*! This method sets (per motor) voltage to torque scale factors (linear proportional error)
- @return void
+
  */
 void MotorVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
     for (int i = 0; i < this->scaleFactor.rows(); i++)
@@ -91,7 +91,7 @@ void MotorVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
 }
 
 /*! This method sets the list of motor voltage to torque gains.
- @return void
+
  */
 void MotorVoltageInterface::setGains(Eigen::VectorXd gains)
 {
@@ -107,7 +107,7 @@ void MotorVoltageInterface::setGains(Eigen::VectorXd gains)
 }
 
 /*! This method sets the list of voltage to torque biases (per rw)
- @return void
+
  */
 void MotorVoltageInterface::setBiases(Eigen::VectorXd biases)
 {
@@ -123,7 +123,7 @@ void MotorVoltageInterface::setBiases(Eigen::VectorXd biases)
 }
 
 /*! This method writes the Motor torque output state message.
- @return void
+
  @param CurrentClock The clock time associated with the model call
  */
 void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
@@ -134,7 +134,7 @@ void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 }
 
 /*! This method calls all of the run-time operations for the motor voltage interface module.
-    @return void
+
     @param CurrentSimNanos The clock time associated with the model call
 */
 void MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)

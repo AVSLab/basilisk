@@ -49,7 +49,7 @@ CenterRadiusCNN::~CenterRadiusCNN()
 
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
- @return void
+
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
@@ -73,7 +73,7 @@ void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
- @return void
+
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)

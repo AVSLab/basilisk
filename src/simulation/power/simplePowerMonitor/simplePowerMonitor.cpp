@@ -33,7 +33,7 @@ SimplePowerMonitor::~SimplePowerMonitor(){
 }
 
 /*! This method integrates the net power across all the attached devices and stores it.
- @return void
+
  */
 void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) {
 

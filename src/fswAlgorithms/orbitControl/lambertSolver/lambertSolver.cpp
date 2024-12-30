@@ -30,7 +30,7 @@ LambertSolver::~LambertSolver() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertSolver::Reset(uint64_t currentSimNanos)
 {
@@ -43,7 +43,7 @@ void LambertSolver::Reset(uint64_t currentSimNanos)
 /*! This is the main method that gets called every time the module is updated.
     It computes the solution of Lambert's problem.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertSolver::UpdateState(uint64_t currentSimNanos)
 {
@@ -67,7 +67,7 @@ void LambertSolver::UpdateState(uint64_t currentSimNanos)
 
 /*! This method reads the input messages each call of updateState. It also checks if the message contents are valid for
     this module.
-    @return void
+
 */
 void LambertSolver::readMessages(){
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
@@ -95,7 +95,7 @@ void LambertSolver::readMessages(){
 
 /*! This method writes the output messages each call of updateState
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertSolver::writeMessages(uint64_t currentSimNanos){
     // Make local copies of messages
@@ -148,7 +148,7 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos){
 
 /*! This method computes the problem geometry for the given parameters of Lambert's problem.
     The orbit frame is also determined.
-    @return void
+
 */
 void LambertSolver::problemGeometry()
 {
@@ -194,7 +194,7 @@ void LambertSolver::problemGeometry()
 }
 
 /*! This method finds the free variable x that satisfies the requested time of flight TOF.
-    @return void
+
 */
 void LambertSolver::findx()
 {

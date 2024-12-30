@@ -29,7 +29,16 @@ class SysModel
 {
 public:
     SysModel();
-    SysModel(const SysModel &obj); //!< constructor definition
+
+    /**
+     * @brief Copy constructor for SysModel.
+     *
+     * This constructor initializes a new SysModel instance by copying data
+     * from another SysModel instance.
+     *
+     * @param obj The SysModel object to copy data from.
+     */
+    SysModel(const SysModel &obj);
 
     virtual ~SysModel(){};
 
@@ -45,27 +54,11 @@ public:
     /** Called at simulation initialization, resets module to specified time */
     virtual void Reset(uint64_t CurrentSimNanos){};
 
-    std::string ModelTag = "";     //!< -- name for the algorithm to base off of
-    uint64_t CallCounts = 0;       //!< -- Counts on the model being called
-    uint32_t RNGSeed = 0x1badcad1; //!< -- Giving everyone a random seed for ease of MC
-    int64_t moduleID;              //!< -- Module ID for this module  (handed out by module_id_generator)
+    std::string ModelTag = "";     //!< Basilisk module tag name
+    uint64_t CallCounts = 0;       //!< Counts on the model being called
+    uint32_t RNGSeed = 0x1badcad1; //!< Giving everyone a random seed for ease of MC
+    int64_t moduleID;              //!< Module ID for this module  (handed out by module_id_generator)
 };
 
-// The following code helps users who defined their own module classes
-// to transition to using the SWIG file for sys_model instead of the header file.
-// After a period of 12 months from 2023/09/15, this message can be removed.
-#ifdef SWIG
-%extend SysModel
-{
-    %pythoncode %{
-        def logger(self, *args, **kwargs):
-            raise TypeError(
-                f"The 'logger' function is not supported for this type ('{type(self).__qualname__}'). "
-                "To fix this, update the SWIG file for this module. Change "
-                """'%include "sys_model.h"' to '%include "sys_model.i"'"""
-            )
-    %}
-}
-#endif
 
 #endif /* _SYS_MODEL_H_ */

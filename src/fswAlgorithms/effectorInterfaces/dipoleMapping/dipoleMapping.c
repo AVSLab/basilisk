@@ -24,7 +24,6 @@
 
 /*!
     This method initializes the output messages for this module.
- @return void
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -40,7 +39,7 @@ void SelfInit_dipoleMapping(dipoleMappingConfig  *configData, int64_t moduleID)
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
     Check if required input messages are connected.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -56,7 +55,7 @@ void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int
     if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)){
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.mtbArrayConfigParamsInMsg is not connected.");
     }
-    
+
     /*! - Read in the torque rod input configuration message. This gives us the number of torque rods
          being used on the vehicle.*/
     configData->mtbArrayConfigParams = MTBArrayConfigMsg_C_read(&configData->mtbArrayConfigParamsInMsg);
@@ -65,7 +64,7 @@ void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int
 
 /*! This method computes takes a requested Body frame dipole into individual torque rod dipole commands using a
     psuedoinverse taking into account saturation limits of the torque rods.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -76,7 +75,7 @@ void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, in
      * Initialize local variables.
      */
     int j = 0;  // counter used in loop over magnetic torque rods
-    
+
     /*
      * Read the input messages and initialize output message.
      */
@@ -85,7 +84,7 @@ void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, in
 
     /*! - Map the requested Body frame dipole request to individual torque rod dipoles.*/
     mMultV(configData->steeringMatrix, configData->mtbArrayConfigParams.numMTB, 3, dipoleRequestBodyInMsgBuffer.dipole_B, dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
-    
+
     /*! - Saturate the dipole commands if necesarry.*/
     for (j = 0; j < configData->mtbArrayConfigParams.numMTB; j++)
     {

@@ -106,6 +106,8 @@ Version  |release|
 - :ref:`simIncludeGravBody` set the moon equatorial radius in km, not meters.
 - fixed ``subMRP()`` routine in :ref:`RigidBodyKinematics`
 - Updated :ref:`solarArrayReference` to correct the wrong assumption of reflective solar arrays for momentum management pointing mode.
+- Updated the CI build that includes the documentation to fail if a doxygen warning happens
+- Removed deprecated swig code that allowed still importing `sys_model.h` instead of `sys_model.i`
 
 
 Version 2.5.0 (Sept. 30, 2024)

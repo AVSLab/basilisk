@@ -31,7 +31,7 @@
     This method initializes the configData for this module.  It creates a single output message of type
     :ref:`CmdTorqueBodyMsgPayload`.
  \endverbatim
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
@@ -43,7 +43,7 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -68,7 +68,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64
 /*! The RW momentum level is assessed to determine if a momentum dumping maneuver is required.
  This checking only happens once after the reset function is called.  To run this again afterwards,
  the reset function must be called again.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

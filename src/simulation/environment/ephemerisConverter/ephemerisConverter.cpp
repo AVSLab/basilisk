@@ -33,7 +33,7 @@ EphemerisConverter::~EphemerisConverter()
 }
 
 /*! Reset the module to origina configuration values.
- @return void
+
  */
 void EphemerisConverter::Reset(uint64_t CurrenSimNanos)
 {

@@ -36,7 +36,7 @@ MappingInstrument::~MappingInstrument()
 
 /*! This method is used to reset the module. The nodeBaudRate is checked for a non-zero value.
  @param CurrentSimNanos
- @return void
+
  */
 void MappingInstrument::Reset(uint64_t CurrentSimNanos)
 {
@@ -50,7 +50,7 @@ void MappingInstrument::Reset(uint64_t CurrentSimNanos)
 
 /*! This method updates the state by reading messages, calling computeDataStatus, and writing messages
  @param CurrentSimNanos
- @return void
+
  */
 void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -81,7 +81,7 @@ void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
 
 
 /*! Adds a mapping point (access message and name) to the module
- * @return void
+ *
 */
 void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName){
     /* Add the name of the mapping point */

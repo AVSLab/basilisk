@@ -22,7 +22,7 @@
 
 /*! This method creates the output navigation message (translation only) for
     the ephemeris model
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
@@ -33,7 +33,7 @@ void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t modul
 
 
 /*! This resets the module to original states.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
@@ -48,7 +48,7 @@ void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTim
 
 /*! This method reads in the ephemeris messages and copies the translation
     ephemeris to the navigation translation interface message.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer

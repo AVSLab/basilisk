@@ -23,7 +23,7 @@
 #include "architecture/utilities/ukfUtilities.h"
 
 /*! This method creates the two moduel output messages.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param moduleId The ID associated with the configData
  */
@@ -36,7 +36,7 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t modul
 
 /*! This method resets the relative OD filter to an initial state and
  initializes the internal estimation matrices.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
@@ -127,7 +127,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
 
 /*! This method takes the relative position measurements and outputs an estimate of the
  spacecraft states in the intertial frame.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
@@ -221,7 +221,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
 
 /*! This method propagates a relative OD state vector forward in time.  Note
  that the calling parameter is updated in place to save on data copies.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param stateInOut The state that is propagated
  @param dt Time step (s)
@@ -287,7 +287,7 @@ void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlane
 /*! This method performs the time update for the relative OD kalman filter.
  It propagates the sigma points forward in time and then gets the current
  covariance and state estimates.
- @return void
+
  @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
@@ -408,7 +408,7 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
 
 /*! This method computes the measurement model.  Given that the data is coming from
  the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.
- @return void
+
  @param configData The configuration data associated with the OD filter
  */
 void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
@@ -488,7 +488,7 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
 /*! This method performs the measurement update for the kalman filter.
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
- @return void
+
  @param configData The configuration data associated with the OD filter
  */
 int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
@@ -633,7 +633,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
 /*! This method cleans the filter states after a bad upadate on the fly.
  It removes the potentially corrupted previous estimates and puts the filter
  back to a working state.
- @return void
+
  @param configData The configuration data associated with the OD filter
  */
 void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig *configData){

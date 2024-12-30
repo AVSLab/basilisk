@@ -25,7 +25,7 @@
 /*! This method initializes the configData for the TAM sensor interface.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the TAM sensor interface
  @param moduleID The ID associated with the configData
  */
@@ -37,7 +37,7 @@ void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the guidance module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -58,7 +58,7 @@ void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t
 
 /*! This method takes the sensor data from the magnetometers and
  converts that information to the format used by the TAM nav.
- @return void
+
  @param configData The configuration data associated with the TAM interface
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

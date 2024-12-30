@@ -42,7 +42,7 @@ StarTracker::~StarTracker()
 
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
- @return void */
+  */
 void StarTracker::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included

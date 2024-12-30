@@ -49,7 +49,7 @@ RadiationPressure::~RadiationPressure()
 
 
 /*! Reset the module to origina configuration values.
- @return void
+
  */
 void RadiationPressure::Reset(uint64_t CurrenSimNanos)
 {
@@ -61,7 +61,7 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos)
 
 /*! This method retrieves pointers to parameters/data stored
  in the dynamic parameter manager
- @return void
+
  @param states Dynamic parameter manager
  */
 void RadiationPressure::linkInStates(DynParamManager& states)
@@ -73,7 +73,7 @@ void RadiationPressure::linkInStates(DynParamManager& states)
 /*! This method is used to read the incoming ephmeris and
  spacecraft state messages. The data is stored in the associated
  buffer structure.
- @return void
+
  */
 void RadiationPressure::readInputMessages()
 {
@@ -90,7 +90,7 @@ void RadiationPressure::readInputMessages()
 /*! This method computes the dynamic effect due to solar raidation pressure.
  It is an inherited method from the DynamicEffector class and
  is designed to be called by the simulation dynamics engine.
- @return void
+
  @param integTime Current simulation integration time
  @param timeStep Current integration time step used
  */
@@ -122,7 +122,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
 }
 
 /*! Update model state by reading in new message data
- @return void
+
  @param CurrentSimNanos current simulation time in nanoseconds
  */
 void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
@@ -131,7 +131,7 @@ void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! Sets the model to the cannonball model in computing the solar radiation force
- @return void
+
  */
 void RadiationPressure::setUseCannonballModel()
 {
@@ -139,7 +139,7 @@ void RadiationPressure::setUseCannonballModel()
 }
 
 /*! Sets the model to the faceted table-lookup model, evaluted on the CPU, in computing the solar radiation force
- @return void
+
  */
 void RadiationPressure::setUseFacetedCPUModel()
 {
@@ -155,7 +155,7 @@ void RadiationPressure::setUseFacetedCPUModel()
  *
  *   Solar Radiation Equations obtained from
  *   Earth Space and Planets Journal Vol. 51, 1999 pp. 979-986
- @return void
+
  @param s_N (m) Position vector to the Sun relative to the inertial frame
  */
 void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_N)
@@ -176,7 +176,7 @@ void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_N)
  *   It is assumed that the lookup table has been generated
  *   with a solar flux at 1AU. Force and torque values are scaled.
  *
- @return void
+
  @param s_B (m) Position vector of the Sun relative to the body frame
  */
 void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
@@ -216,7 +216,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
 
 /*! Add force vector in the body frame to lookup table.
  *
- @return void
+
  @param vec (N) Force vector for particular attitude in lookup table
  */
 void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
@@ -226,7 +226,7 @@ void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
 
 /*! Add torque vector to lookup table.
  *
- @return void
+
  @param vec (Nm) Torque vector for particular attitude in lookup table
  */
 void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
@@ -236,7 +236,7 @@ void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
 
 /*! Add sun unit direction vector in body frame to lookup table.
  *
- @return void
+
  @param vec sun unit direction vector in body frame
  */
 void RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec)

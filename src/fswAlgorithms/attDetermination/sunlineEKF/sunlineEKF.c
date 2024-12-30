@@ -26,7 +26,7 @@
 /*! This method initializes the configData for theCSS WLS estimator.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
@@ -39,7 +39,7 @@ void SelfInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID)
 
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -105,7 +105,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
 
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -170,7 +170,7 @@ void Update_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
 /*! This method performs the time update for the sunline kalman filter.
      It calls for the updated Dynamics Matrix, as well as the new states and STM.
      It then updates the covariance, with process noise.
-	 @return void
+
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
@@ -215,7 +215,7 @@ void sunlineTimeUpdate(sunlineEKFConfig *configData, double updateTime)
 /*! This method propagates a sunline state vector forward in time.  Note
     that the calling parameter is updated in place to save on data copies.
     This also updates the STM using the dynamics matrix.
-	@return void
+
     @param dynMat
     @param dt
     @param stateInOut
@@ -257,7 +257,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, do
 /*! This method computes the dynamics matrix, which is the derivative of the
  dynamics F by the state X, evaluated at the reference state. It takes in the
  configure data and updates this A matrix pointer called dynMat
- @return void
+
  @param states Updated states
  @param dt Time step
  @param dynMat Pointer to the Dynamic Matrix
@@ -321,7 +321,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double *dynMat)
 /*! This method performs the measurement update for the sunline kalman filter.
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
@@ -347,7 +347,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *configData, double updateTime)
 }
 
 /*! This method computes the updated with a Classical Kalman Filter
- @return void
+
  @param xBar The state after a time update
  @param kalmanGain The computed Kalman Gain
  @param covarBar The time updated covariance
@@ -407,7 +407,7 @@ void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*
 }
 
 /*! This method computes the updated with a Extended Kalman Filter
- @return void
+
  @param kalmanGain The computed Kalman Gain
  @param covarBar The time updated covariance
  @param qObsVal The observation noise
@@ -467,7 +467,7 @@ void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double cov
 /*! This method computes the H matrix, defined by dGdX. As well as computing the
  innovation, difference between the measurements and the expected measurements.
  This methods modifies the numObs, measMat, and yMeas.
- @return void
+
  @param states
  @param numCSS The total number of CSS
  @param cssSensorCos The list of the measurements from the CSSs
@@ -509,7 +509,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
 
 
 /*! This method computes the Kalman gain given the measurements.
- @return void
+
  @param covarBar The time updated covariance
  @param hObs The H matrix filled with the observations
  @param qObsVal The observation noise

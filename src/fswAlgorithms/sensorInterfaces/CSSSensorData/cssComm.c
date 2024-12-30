@@ -20,12 +20,12 @@
 #include "fswAlgorithms/sensorInterfaces/CSSSensorData/cssComm.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
-#include <stdio.h> 
+#include <stdio.h>
 
 /*! This method initializes the configData for theCSS sensor interface.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the CSS sensor interface
  @param moduleID The ID associated with the configData
  */
@@ -37,7 +37,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the guidance module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -61,7 +61,7 @@ void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t
     {
         _bskLog(configData->bskLogger, BSK_WARNING, "There are zero CSS configured!");
     }
-    
+
     if (configData->maxSensorValue == 0)
     {
         _bskLog(configData->bskLogger, BSK_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!");
@@ -75,7 +75,7 @@ void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
  converts that information to the format used by the CSS nav.
- @return void
+
  @param configData The configuration data associated with the CSS interface
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -106,7 +106,7 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
     for(i=0; i<configData->numSensors; i++)
     {
         outputBuffer.CosValue[i] = (float) inputValues[i]/configData->maxSensorValue; /* Scale Sensor Data */
-        
+
         /* Seed the polynomial computations */
         ValueMult = 2.0*outputBuffer.CosValue[i];
         ChebyPrev = 1.0;
@@ -114,7 +114,7 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
         ChebyDiffFactor = 0.0;
         ChebyDiffFactor = configData->chebyCount > 0 ? ChebyPrev*configData->kellyCheby[0] : ChebyDiffFactor; /* if only first order correction */
         ChebyDiffFactor = configData->chebyCount > 1 ? ChebyNow*configData->kellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor; /* if higher order (> first) corrections */
-        
+
         /* Loop over remaining polynomials and add in values */
         for(j=2; j<configData->chebyCount; j = j+1)
         {
@@ -123,9 +123,9 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
             ChebyPrev = ChebyLocalPrev;
             ChebyDiffFactor += configData->kellyCheby[j]*ChebyNow;
         }
-        
+
         outputBuffer.CosValue[i] = outputBuffer.CosValue[i] + ChebyDiffFactor;
-        
+
         if(outputBuffer.CosValue[i] > 1.0)
         {
             outputBuffer.CosValue[i] = 1.0;
@@ -135,9 +135,9 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
             outputBuffer.CosValue[i] = 0.0;
         }
     }
-    
+
     /*! - Write aggregate output into output message */
     CSSArraySensorMsg_C_write(&outputBuffer, &configData->cssArrayOutMsg, moduleID, callTime);
-    
+
     return;
 }

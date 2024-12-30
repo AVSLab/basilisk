@@ -41,8 +41,8 @@ ExtForceTorque::~ExtForceTorque()
 }
 
 
-/*! This method is used to reset the module. 
- @return void
+/*! This method is used to reset the module.
+
  */
 void ExtForceTorque::Reset(uint64_t CurrentSimNanos)
 {
@@ -61,7 +61,7 @@ void ExtForceTorque::linkInStates(DynParamManager& statesIn)
 
 /*! This module does not write any output messages.
  @param currentClock The current time used for time-stamping the message
- @return void
+
  */
 void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
 {
@@ -70,7 +70,7 @@ void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
 
 /*! This method is used to read the incoming message and set the
  associated buffer structure.
- @return void
+
  */
 void ExtForceTorque::readInputMessages()
 {

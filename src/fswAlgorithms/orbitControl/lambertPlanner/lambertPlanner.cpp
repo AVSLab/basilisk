@@ -34,7 +34,7 @@ LambertPlanner::~LambertPlanner() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertPlanner::Reset(uint64_t currentSimNanos)
 {
@@ -52,7 +52,7 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertPlanner::UpdateState(uint64_t currentSimNanos)
 {
@@ -90,7 +90,7 @@ void LambertPlanner::UpdateState(uint64_t currentSimNanos)
 }
 
 /*! This method sets the lambert solver algorithm that should be used to the method by Izzo.
-    @return void
+
 */
 void LambertPlanner::useSolverIzzoMethod()
 {
@@ -98,7 +98,7 @@ void LambertPlanner::useSolverIzzoMethod()
 }
 
 /*! This method sets the lambert solver algorithm that should be used to the method by Gooding.
-    @return void
+
 */
 void LambertPlanner::useSolverGoodingMethod()
 {
@@ -107,7 +107,7 @@ void LambertPlanner::useSolverGoodingMethod()
 
 /*! This method reads the input messages each call of updateState.
     It also checks if the message contents are valid for this module.
-    @return void
+
 */
 void LambertPlanner::readMessages()
 {
@@ -125,7 +125,7 @@ void LambertPlanner::readMessages()
 
 /*! This method writes the output messages each call of updateState
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertPlanner::writeMessages(uint64_t currentSimNanos)
 {

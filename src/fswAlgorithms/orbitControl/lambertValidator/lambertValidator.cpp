@@ -38,7 +38,7 @@ LambertValidator::~LambertValidator() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertValidator::Reset(uint64_t currentSimNanos)
 {
@@ -65,7 +65,7 @@ void LambertValidator::Reset(uint64_t currentSimNanos)
 
 /*! This is the main method that gets called every time the module is updated.
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertValidator::UpdateState(uint64_t currentSimNanos)
 {
@@ -122,7 +122,7 @@ void LambertValidator::UpdateState(uint64_t currentSimNanos)
 
 /*! This method reads the input messages each call of updateState.
     It also checks if the message contents are valid for this module.
-    @return void
+
 */
 void LambertValidator::readMessages()
 {
@@ -174,7 +174,7 @@ void LambertValidator::readMessages()
 
 /*! This method writes the output messages each call of updateState
     @param currentSimNanos current simulation time in nano-seconds
-    @return void
+
 */
 void LambertValidator::writeMessages(uint64_t currentSimNanos)
 {
@@ -329,7 +329,7 @@ std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialState
 
 /*! This method propagates the various initial states and counts the number of constraints that are violated
     @param initialStates array of initial state vectors to be propagated
-    @return void
+
 */
 void LambertValidator::countViolations(std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates)
 {
@@ -355,7 +355,7 @@ void LambertValidator::countViolations(std::array<Eigen::VectorXd, NUM_INITIALST
 /*! This method checks if the provided trajectory violates any constraints
     @param t time steps
     @param X state for each time step
-    @return void
+
 */
 void LambertValidator::checkConstraintViolations(std::vector<double> t, std::vector<Eigen::VectorXd> X)
 {

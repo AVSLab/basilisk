@@ -38,7 +38,7 @@ ReactionWheelPower::~ReactionWheelPower(){
 
 
 /*! This method is used to reset the module. Here variables are checked for correct values.
- @return void
+
  */
 void ReactionWheelPower::customReset(uint64_t CurrentSimNanos)
 {
@@ -50,7 +50,7 @@ void ReactionWheelPower::customReset(uint64_t CurrentSimNanos)
 }
 
 /*! This method is used to read incoming RW state message.
- @return void
+
  */
 bool ReactionWheelPower::customReadMessages()
 {

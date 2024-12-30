@@ -29,7 +29,7 @@
 const double epsilon = 1e-12;                           // module tolerance for zero
 
 /*! This method initializes the output messages for this module.
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -41,7 +41,7 @@ void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, i
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -92,7 +92,7 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
 }
 
 /*! The Update() function computes the reference MRP attitude, reference angular rate and acceleration
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier

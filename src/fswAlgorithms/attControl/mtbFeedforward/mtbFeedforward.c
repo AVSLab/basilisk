@@ -24,7 +24,7 @@
 
 /*!
     This method initializes the output messages for this module.
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
@@ -40,7 +40,7 @@ void SelfInit_mtbFeedforward(mtbFeedforwardConfig  *configData, int64_t moduleID
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
     Check if required input messages are connected.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
@@ -62,7 +62,7 @@ void Reset_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, i
     if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)){
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbFeedForward.mtbArrayConfigParamsInMsg is not connected.");
     }
-    
+
     /*! - Read in the torque rod input configuration message. This gives us the transformation from the
          torque rod space the the Body frame.*/
     configData->mtbArrayConfigParams = MTBArrayConfigMsg_C_read(&configData->mtbArrayConfigParamsInMsg);
@@ -70,7 +70,7 @@ void Reset_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, i
 
 
 /*! Computes the feedforward torque rod torque.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -83,7 +83,7 @@ void Update_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, 
      */
     double mtbDipoleCmd_B[3] = {0.0, 0.0, 0.0};     // the commanded dipole in the Body frame
     double tauMtbFF_B[3] = {0.0, 0.0, 0.0};         // the torque rod feedforward term in the Body frame
-    
+
     /*
      * Read the input messages and initialize output message.
      */
@@ -94,7 +94,7 @@ void Update_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, 
     /*! -  Compute net torque produced on the vehicle from the torque bars.*/
     mMultV(configData->mtbArrayConfigParams.GtMatrix_B, 3, configData->mtbArrayConfigParams.numMTB, dipoleRequestMtbInMsgBuffer.mtbDipoleCmds, mtbDipoleCmd_B);
     v3Cross(mtbDipoleCmd_B, tamSensorBodyInMsgBuffer.tam_B, tauMtbFF_B);
-    
+
     /*! -  Negate the net rod torque to spin wheels in appropriate direction. */
     v3Subtract(vehControlOutMsgBuffer.torqueRequestBody, tauMtbFF_B, vehControlOutMsgBuffer.torqueRequestBody);
 

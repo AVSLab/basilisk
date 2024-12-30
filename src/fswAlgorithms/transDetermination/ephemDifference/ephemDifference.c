@@ -21,7 +21,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! @brief This method creates the output ephemeris messages for each body.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
@@ -37,7 +37,7 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 
 
 /*! @brief This method resets the module.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
@@ -68,7 +68,7 @@ void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
 /*! @brief This method recomputes the body postions and velocities relative to
     the base body ephemeris and writes out updated ephemeris position and velocity
     for each body.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer

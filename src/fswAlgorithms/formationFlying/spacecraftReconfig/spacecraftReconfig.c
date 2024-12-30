@@ -28,7 +28,7 @@
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
@@ -43,7 +43,7 @@ void SelfInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t m
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
  message output buffer should be cleared.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -77,7 +77,7 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
 }
 
 /*! Add a description of what this main Update() routine does for this module
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -131,7 +131,7 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
 
 /*! based on burn schedule, this function creates a message of
  reference attitude and thruster on time
- @return void
+
  @param configData The configuration data associated with the module
  @param chiefTransMsgBuffer chief's position and velocity
  @param deputyTransMsgBuffer deputy's position and velocity
@@ -302,7 +302,7 @@ double AdjustRange(double lower, double upper, double angle)
 
 /*! This function is used to sort an array of
  spacecraftReconfigConfigBurnInfo in ascending order.
- @return void
+
  @param n1
  @param n2
  */
@@ -324,7 +324,7 @@ int CompareTime(const void * n1, const void * n2)
 
 /*! This function is used to sort an array of
  spacecraftReconfigConfigBurnInfo in ascending order.
- @return void
+
  @param configData The configuration data associated with this module
  @param oe_c chief's orbital element
  @param oe_d deputy's orbital element

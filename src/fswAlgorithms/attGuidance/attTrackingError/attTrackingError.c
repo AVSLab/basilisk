@@ -25,7 +25,7 @@
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the attitude tracking error module
  @param moduleID The ID associated with the configData
  */
@@ -36,7 +36,7 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t modul
 
 
 /*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the attitude tracking error module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -55,7 +55,7 @@ void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTim
 }
 
 /*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance message.
- @return void
+
  @param configData The configuration data associated with the attitude tracking error module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -80,7 +80,7 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
 }
 
 /*! This method performs the attitude computations in order to extract the error.
- @return void
+
  @param sigma_R0R Reference frame state
  @param nav The spacecraft attitude information
  @param ref The reference attitude

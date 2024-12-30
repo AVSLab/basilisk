@@ -57,7 +57,7 @@ Spacecraft::~Spacecraft()
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void Spacecraft::Reset(uint64_t CurrentSimNanos)
 {

@@ -28,7 +28,7 @@ void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID){
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -38,7 +38,7 @@ void Reset_hillToAttRef(HillToAttRefConfig *configData,  uint64_t callTime, int6
     if (!HillRelStateMsg_C_isLinked(&configData->hillStateInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef.hillStateInMsg wasn't connected.");
     }
-    
+
     if (AttRefMsg_C_isLinked(&configData->attRefInMsg) && NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef can't have both attRefInMsg and attNavInMsg connected.");
     }
@@ -67,8 +67,8 @@ AttRefMsgPayload RelativeToInertialMRP(HillToAttRefConfig *configData, double re
     return(attRefOut);
 }
 
-/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
- @return void
+/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -79,7 +79,7 @@ void Update_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int6
     NavAttMsgPayload attStateInPayload;
     AttRefMsgPayload attRefInPayload;
     AttRefMsgPayload attRefOutPayload;
-    
+
     double baseSigma[3];
     double relativeAtt[3];
     double hillState[6];
@@ -111,7 +111,7 @@ void Update_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int6
     mMultV(&configData->gainMatrix, 3, 6,
                    hillState,
                    relativeAtt);
-                   
+
     // std::cout<<"Relative att components: "<<relativeAtt[0]<<" "<<relativeAtt[1]<<" "<<relativeAtt[2]<<std::endl;
     //  Convert that to an inertial attitude and write the attRef msg
     attRefOutPayload = RelativeToInertialMRP(configData, relativeAtt, baseSigma);
@@ -119,4 +119,3 @@ void Update_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int6
 
     // this->matrixIndex += 1;
 }
-

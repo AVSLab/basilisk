@@ -34,7 +34,7 @@
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
@@ -46,7 +46,7 @@ void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
@@ -75,7 +75,7 @@ void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int6
 }
 
 /*! Add a description of what this main Update() routine does for this module
- @return void
+
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData

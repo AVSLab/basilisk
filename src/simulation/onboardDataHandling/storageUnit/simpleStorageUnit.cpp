@@ -24,7 +24,7 @@
 
 
 /*! The constructor creates a SimpleStorageUnit instance with zero stored data
- @return void
+
  */
 SimpleStorageUnit::SimpleStorageUnit(){
     this->storageCapacity = 0;
@@ -33,7 +33,7 @@ SimpleStorageUnit::SimpleStorageUnit(){
 }
 
 /*! Destructor
- @return void
+
  */
 SimpleStorageUnit::~SimpleStorageUnit(){
     return;
@@ -51,7 +51,7 @@ void SimpleStorageUnit::customReset(uint64_t currentClock){
 
 /*! Overwrites the integrateDataStatus method to create a single partition in the storage unit ("STORED DATA")
  @param currentTime
- @return void
+
  */
 void SimpleStorageUnit::integrateDataStatus(double currentTime){
     this->currentTimestep = currentTime - this->previousTime;
@@ -82,7 +82,7 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
 
 /*! Adds a specific amount of data to the storedData vector once
  @param data //Data to be added to the "STORED DATA" partition
- @return void
+
  */
 void SimpleStorageUnit::setDataBuffer(int64_t data){
     std::string partitionName = "STORED DATA";

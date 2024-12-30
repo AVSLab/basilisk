@@ -39,7 +39,7 @@ SpaceToGroundTransmitter::~SpaceToGroundTransmitter(){
 }
 
 /*! Adds a dataStorageStatusMsgPayload name to be accessed by transmitter.
- @return void
+
  @param tmpStorageUnitMsg A spacecraft state message name.
  */
 void SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg)
@@ -50,7 +50,7 @@ void SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageSt
 }
 
 /*! Adds a msg name to ground location access list
-    @return void
+
     @param tmpAccessMsg input name.
 */
 void SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayload> *tmpAccessMsg)

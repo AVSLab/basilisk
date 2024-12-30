@@ -72,7 +72,7 @@ void SpacecraftUnit::SelfInitSC(int64_t moduleID)
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void SpacecraftUnit::ResetSC(uint64_t CurrentSimNanos)
 {
@@ -321,7 +321,7 @@ void SpacecraftSystem::attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, 
 
 
 /*! This method is used to reset the module.
- @return void
+
  */
 void SpacecraftSystem::Reset(uint64_t CurrentSimNanos)
 {

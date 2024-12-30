@@ -51,7 +51,7 @@ void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
-@return void
+
  */
 void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
@@ -61,7 +61,7 @@ void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 
 /*! This method is used to read the incoming density message and update the internal density/
 atmospheric data.
- @return void
+
  */
 bool FacetDragDynamicEffector::ReadInputs()
 {
@@ -88,7 +88,7 @@ void FacetDragDynamicEffector::addFacet(double area, double dragCoeff, Eigen::Ve
 
 /*! This method is used to link the dragEffector to the hub attitude and velocity,
 which are required for calculating drag forces and torques.
- @return void
+
  @param states dynamic parameter states
  */
 
@@ -153,7 +153,7 @@ void FacetDragDynamicEffector::computeForceTorque(double integTime, double timeS
 
 /*! This method is called to update the local atmospheric conditions at each timestep.
 Naturally, this means that conditions are held piecewise-constant over an integration step.
- @return void
+
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)

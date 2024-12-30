@@ -26,7 +26,7 @@
 
 /*! This method creates the output navigation message (translation only) for
     the ephemeris model
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The Basilisk module identifier
  */
@@ -39,7 +39,7 @@ void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 /*! This method takes the chebyshev coefficients loaded for the position
     estimator and computes the coefficients needed to estimate the time
     derivative of that position vector (velocity).
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
@@ -84,7 +84,7 @@ void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
 /*! This method takes the current time and computes the state of the object
     using that time and the stored Chebyshev coefficients.  If the time provided
     is outside the specified range, the position vectors rail high/low appropriately.
- @return void
+
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier

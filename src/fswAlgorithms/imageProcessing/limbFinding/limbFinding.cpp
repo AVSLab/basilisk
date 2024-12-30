@@ -50,7 +50,7 @@ LimbFinding::~LimbFinding()
 
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
- @return void
+
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void LimbFinding::Reset(uint64_t CurrentSimNanos)
@@ -62,7 +62,7 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It performs a greyscale, and blur on the image to facilitate edge-detection.
- @return void
+
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
 void LimbFinding::UpdateState(uint64_t CurrentSimNanos)

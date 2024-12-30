@@ -59,7 +59,7 @@ SimpleNav::~SimpleNav()
      - Body Rate errors [9-11]
      - Sun Point error [12-14]
      - Accumulated DV errors [15-17]
- @return void
+
  */
 void SimpleNav::Reset(uint64_t CurrentSimNanos)
 {
@@ -105,7 +105,7 @@ void SimpleNav::readInputMessages()
 }
 
 /*! This method writes the aggregate nav information into the output state message.
- @return void
+
  @param Clock The clock time associated with the model call
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock)
@@ -113,7 +113,7 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
     /* time tage the output message */
     this->estAttState.timeTag = (double) Clock * NANO2SEC;
     this->estTransState.timeTag = (double) Clock * NANO2SEC;
-    
+
     this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
     this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
 }
@@ -139,7 +139,7 @@ void SimpleNav::applyErrors()
 
 /*! This method uses the input messages as well as the calculated model errors to
  compute what the output navigation state should be.
-    @return void
+
     @param Clock The clock time associated with the model's update call
 */
 void SimpleNav::computeTrueOutput(uint64_t Clock)
@@ -166,7 +166,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
 
 /*! This method sets the propagation matrix and requests new random errors from
  its GaussMarkov model.
- @return void
+
  @param CurrentSimNanos The clock time associated with the model call
  */
 void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
@@ -190,7 +190,7 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 }
 
 /*! This method calls all of the run-time operations for the simple nav model.
-    @return void
+
     @param CurrentSimNanos The clock time associated with the model call
 */
 void SimpleNav::UpdateState(uint64_t CurrentSimNanos)

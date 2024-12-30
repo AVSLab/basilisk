@@ -56,7 +56,6 @@ Eigen::VectorXd Saturate::saturate(Eigen::VectorXd unsaturatedStates)
 /*!
     @brief sets upper and lower bounds for each state
     @param bounds one row for each state. lower bounds in left column, upper in right column
-    @return void
  */
 void Saturate::setBounds(Eigen::MatrixXd bounds) {
     this->stateBounds = bounds;

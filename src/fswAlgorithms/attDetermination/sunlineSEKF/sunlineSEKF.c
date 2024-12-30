@@ -27,7 +27,7 @@
 /*! This method initializes the configData for theCSS WLS estimator.
  It checks to ensure that the inputs are sane and then creates the
  output message
- @return void
+
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
@@ -40,7 +40,7 @@ void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -109,7 +109,7 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
 
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
@@ -189,7 +189,7 @@ void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
 /*! This method performs the time update for the sunline kalman filter.
      It calls for the updated Dynamics Matrix, as well as the new states and STM.
      It then updates the covariance, with process noise.
-	 @return void
+
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
@@ -242,7 +242,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig *configData, double updateTime)
 /*! This method propagates a sunline state vector forward in time.  Note
  that the calling parameter is updated in place to save on data copies.
  This also updates the STM using the dynamics matrix.
-	@return void
+
 	@param stateInOut
     @param dynMat
     @param bVec
@@ -285,7 +285,7 @@ void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH],
 /*! This method computes the dynamics matrix, which is the derivative of the
  dynamics F by the state X, evaluated at the reference state. It takes in the
  configure data and updates this A matrix pointer called dynMat
- @return void
+
  @param states Updated states
  @param bVec b vector
  @param dt Time step
@@ -327,7 +327,7 @@ void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
 /*! This method performs the measurement update for the sunline kalman filter.
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
- @return void
+
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
@@ -354,7 +354,7 @@ void sunlineMeasUpdate(sunlineSEKFConfig *configData, double updateTime)
 }
 
 /*! This method computes the updated with a Classical Kalman Filter
- @return void
+
  @param xBar The state after a time update
  @param kalmanGain The computed Kalman Gain
  @param covarBar The time updated covariance
@@ -414,7 +414,7 @@ void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH], double kalmanGain[EKF_N_
 }
 
 /*! This method computes the updated with a Extended Kalman Filter
- @return void
+
  @param kalmanGain The computed Kalman Gain
  @param covarBar The time updated covariance
  @param qObsVal The observation noise
@@ -474,7 +474,7 @@ void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], do
 /*! This method computes the H matrix, defined by dGdX. As well as computing the
  innovation, difference between the measurements and the expected measurements.
  This methods modifies the numObs, measMat, and yMeas.
- @return void
+
  @param states
  @param numCSS The total number of CSS
  @param cssSensorCos The list of the measurements from the CSSs
@@ -514,7 +514,7 @@ void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], size_t numCSS, doub
 
 
 /*! This method computes the Kalman gain given the measurements.
- @return void
+
  @param covarBar The time updated covariance
  @param hObs The H matrix filled with the observations
  @param qObsVal The observation noise
@@ -559,7 +559,7 @@ void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH],
 
 /*! This method computes the dcms necessary for the switch between the two frames.
  It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.
- @return void
+
  @param bVec_B Pointer to b vector
  @param states Pointer to the states
  @param covar Pointer to the covariance
@@ -614,7 +614,7 @@ void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
  @param sunheading array of sun heading measurement states
  @param bVec    array of bVec values
  @param dcm DCM pointer to be returned
- @return void
+
  */
 void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm){
     double s1_B[SKF_N_STATES_HALF];

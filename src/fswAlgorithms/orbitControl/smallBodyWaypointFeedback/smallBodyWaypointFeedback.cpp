@@ -50,7 +50,7 @@ void SmallBodyWaypointFeedback::SelfInit(){
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-    @return void
+
 */
 void SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos)
 {
@@ -71,7 +71,7 @@ void SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method reads the input messages each call of updateState
-    @return void
+
 */
 void SmallBodyWaypointFeedback::readMessages(){
     /* read in the input messages */
@@ -82,7 +82,7 @@ void SmallBodyWaypointFeedback::readMessages(){
 }
 
 /*! This method computes the control using a Lyapunov feedback law
-    @return void
+
 */
 void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
@@ -148,7 +148,7 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-    @return void
+
 */
 void SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
 {
@@ -159,7 +159,7 @@ void SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! This method reads the input messages each call of updateState
-    @return void
+
 */
 void SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos){
     /* Create the output message buffer */
