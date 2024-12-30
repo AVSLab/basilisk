@@ -32,6 +32,7 @@ Version |release|
 - :ref:`simIncludeGravBody` set the moon radius in km, not meters, and was thus 1000x too small when visualized.
 - In the python library :ref:`RigidBodyKinematics` the ``subMRP()`` routine didn't compute the expected
   result if the denominator was small.  This is now corrected.
+- :ref:`groundLocation` was not respecting the case where ``maximumRange == -1.0`` in the method ``checkInstrumentFOV``.
 
 
 Version 2.5.0
