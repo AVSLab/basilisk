@@ -109,6 +109,7 @@ Version  |release|
 - Updated the CI build that includes the documentation to fail if a doxygen warning happens
 - Removed deprecated swig code that allowed still importing `sys_model.h` instead of `sys_model.i`
 - Updated :ref:`groundMapping` to correct behavior if ``maximumRange == -1``
+- Updated scripts to work with ``matplotlib`` version 3.10.x without errors or warnings
 
 
 Version 2.5.0 (Sept. 30, 2024)
