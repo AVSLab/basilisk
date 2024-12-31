@@ -393,7 +393,7 @@ def run(show_plots):
     plt.close("all")  # clears out plots from earlier test runs
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
     p = oe.a * (1 - oe.e * oe.e)
-    plt.figure(1) #, figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
+    plt.figure(1) #, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     # plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     plt.axis('equal')
     plt.axis([-20000, 50000, -10000, 10000])

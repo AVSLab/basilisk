@@ -271,7 +271,7 @@ def plot_rw_friction(timeData, dataFrictionRW, numRW, dataFaultLog=[],  id=None,
 
 def plot_planet(oe, planet):
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
-    plt.figure(figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
+    plt.figure(figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.a, oe.a, -b, b]) / 1000 * 1.75)
     # draw the planet
     fig = plt.gcf()

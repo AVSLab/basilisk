@@ -262,8 +262,8 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         constellationP1data = dataLogP1.CosValue
         constellationP2data = dataLogP2.CosValue
 
-        plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-        plt.clf()
+        if name == 'plain':
+            plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.subplot(2, 1, 1)
         for i in range(4):
             sensorlabel = "cssP1" + str(i + 1)
@@ -293,7 +293,8 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     else:
         justTheNoise = cssOutput - truthVector  # subtract curve from noisy curve
         outputStd = np.std(justTheNoise)
-        plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        if name == 'plain':
+            plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.plot(dataLogSingle.times() * macros.NANO2MIN, cssOutput, label=name, zorder=zLevel, linewidth=lineWide)
         plt.legend()
         plt.xlabel('Time [min]')

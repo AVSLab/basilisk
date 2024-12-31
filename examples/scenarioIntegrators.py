@@ -328,7 +328,8 @@ def run(show_plots, integratorCase):
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
     p = oe.a * (1 - oe.e * oe.e)
-    plt.figure(1, figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
+    if integratorCase == 'rk4':
+        plt.figure(1, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     # draw the planet
     fig = plt.gcf()

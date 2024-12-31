@@ -173,7 +173,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
     """Plot the spacecraft orbit trajectory."""
     # draw orbit in perifocal frame
     p = oe.a * (1 - oe.e * oe.e)
-    plt.figure(4, figsize=np.array((1.0, 1.)) * 4.75, dpi=100)
+    plt.figure(4, figsize=tuple(np.array((1.0, 1.)) * 4.75), dpi=100)
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()

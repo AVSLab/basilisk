@@ -336,7 +336,7 @@ def run(show_plots, scCase):
         omega0 = oeData.omega
         b = oeData.a * np.sqrt(1 - oeData.e * oeData.e)
         p = oeData.a * (1 - oeData.e * oeData.e)
-        plt.figure(2, figsize=np.array((1.0, b / oeData.a)) * 4.75, dpi=100)
+        plt.figure(2, figsize=tuple(np.array((1.0, b / oeData.a)) * 4.75), dpi=100)
         plt.axis(np.array([-oeData.rApoap, oeData.rPeriap, -b, b]) / 1000 * 1.25)
 
         # draw the planet
