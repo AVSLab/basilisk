@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import math
 
@@ -26,8 +26,11 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 
+import pytest
 
-def test_groundMapping():
+@pytest.mark.parametrize("maxRange", [1e-12, 0.001, -1.0])
+
+def test_groundMapping(maxRange):
     r"""
     This test checks two points to determine if they are accessible for mapping or not. One point should be mapped,
     and one point should not be mapped.
@@ -39,11 +42,11 @@ def test_groundMapping():
     not accessible because the spacecraft is not within the point's visibility cone and the point is not within the
     spacecraft's visibility cone.
     """
-    [testResults, testMessage] = groundMappingTestFunction()
+    [testResults, testMessage] = groundMappingTestFunction(maxRange)
     assert testResults < 1, testMessage
 
 
-def groundMappingTestFunction():
+def groundMappingTestFunction(maxRange):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -72,7 +75,8 @@ def groundMappingTestFunction():
     groundMap.addPointToModel([0., -0.1, 0.])
     groundMap.addPointToModel([0., 0., math.tan(np.radians(22.5))+0.1])
     groundMap.minimumElevation = np.radians(45.)
-    groundMap.maximumRange = 1e9
+    if maxRange > 0.0:
+        groundMap.maximumRange = maxRange
     groundMap.cameraPos_B = [0, 0, 0]
     groundMap.nHat_B = [0, 1, 0]
     groundMap.halfFieldOfView = np.radians(22.5)
@@ -103,7 +107,7 @@ def groundMappingTestFunction():
             map_access[idx] = 1
 
     # If the first target is not mapped, failure
-    if not map_access[0]:
+    if not map_access[0] and (maxRange > 1.0 or maxRange < 0.0) :
         testFailCount += 1
 
     # If the second target is mapped, failure
@@ -119,4 +123,4 @@ def groundMappingTestFunction():
 
 
 if __name__ == "__main__":
-    test_groundMapping()
+    test_groundMapping(1e9)
