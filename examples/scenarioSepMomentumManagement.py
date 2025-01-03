@@ -578,6 +578,45 @@ def run(momentumManagement, cmEstimation, showPlots):
     # but it receives inputs and provides outputs to modules that run on the main flight software task
     messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
 
+    # Uncomment to Enable Vizard
+    # Create the effector lists and dictionaries for Vizard
+    rw_state_effector_list = []
+    sc_body_list = []
+    sc_body_list.append(scObject)
+    rw_state_effector_list.append(rwStateEffector)
+    sc_body_list.append([RSAList[0].ModelTag, RSAList[0].spinningBodyConfigLogOutMsg])
+    sc_body_list.append([RSAList[1].ModelTag, RSAList[1].spinningBodyConfigLogOutMsg])
+
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, dynTask, sc_body_list
+                                                  # , saveFile=__file__
+                                                  )
+        viz.settings.ambient = 0.7  # increase ambient light to make the shaded spacecraft more visible
+        viz.settings.orbitLinesOn = -1  # turn off osculating orbit line
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        texture_path = os.path.join(current_path, 'dataForExamples', 'texture')
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[sc_body_list[0].ModelTag]
+                                     , modelPath="CUBE"
+                                     , customTexturePath=os.path.join(texture_path, 'foil_n.png')
+                                     , offset=[0, 0, 0]
+                                     , scale=[2.5, 2.5, 2.5]
+                                     )
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[sc_body_list[1][0]]
+                                     , modelPath="CYLINDER"
+                                     , customTexturePath=os.path.join(texture_path, 'panel.jpg')
+                                     , offset=[-0.035, 0.25, -0.087]
+                                     , scale=[7, 7, 0.05]
+                                     )
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[sc_body_list[2][0]]
+                                     , modelPath="CYLINDER"
+                                     , customTexturePath=os.path.join(texture_path, 'panel.jpg')
+                                     , offset=[0.128, 0.25, -0.087]
+                                     , scale=[7, 7, 0.05]
+                                     )
+
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     sNavObject.sunStateInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
