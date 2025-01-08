@@ -114,15 +114,17 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
+def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots):
     """
     The scenario can be run with the followings setups parameters:
 
     Args:
         swirlTorque (bool): When true, a swirl torque about the thrust vector is added, to simulate the swirling motion
                             of the ejecta.
-        momentumManagement (bool): When false, the platform aligns the thruster with the CM location it receives as
+        thrMomManagement (bool): When false, the platform aligns the thruster with the CM location it receives as
                                    input. When true, the thruster is used to perform momentum management.
+        saMomManagement (bool): When true, performs differential articulation of the solar arrays to exploit SRP
+                                to offload the reaction wheels.
         cmEstimation (bool): When false, the platform is connected to the true CM location message. When true, the
                              platform is connected to the estimated CM location.
         showPlots (bool): Determines if the script should display plots.
@@ -266,7 +268,7 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     RSAList[0].r_SB_B = [0.75, 0.0, 0.45]
     RSAList[0].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[0].sHat_S = [0, 1, 0]
-    RSAList[0].dcm_S0B = [[0, 0, -1], [1, 0, 0], [0, -1, 0]]
+    RSAList[0].dcm_S0B = [[0, 0, 1], [1, 0, 0], [0, 1, 0]]
     RSAList[0].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -283,7 +285,7 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     RSAList[1].r_SB_B = [-0.75, 0.0, 0.45]
     RSAList[1].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[1].sHat_S = [0, 1, 0]
-    RSAList[1].dcm_S0B = [[0, 0, 1], [-1, 0, 0], [0, -1, 0]]
+    RSAList[1].dcm_S0B = [[0, 0, -1], [-1, 0, 0], [0, 1, 0]]
     RSAList[1].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -304,7 +306,7 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     saBoresightList = []
     for item in range(numRSA):
         saBoresightList.append(boreAngCalc.BoreAngCalc())
-        saBoresightList[item].boreVec_B = [0, 0, -1]
+        saBoresightList[item].boreVec_B = [0, 0, 1]
         scSim.AddModelToTask(dynTask, saBoresightList[item])
 
     # Set up the dual-gimbaled platform
@@ -370,7 +372,8 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     lenXHub = 1.50  # [m]
     lenYHub = 1.8  # [m]
     lenZHub = 2.86  # [m]
-    area2 = np.pi*(0.5 * 7.262)*(0.5 * 7.262)  # [m^2]
+    arrayDiam = 7.262
+    area2 = np.pi*(0.5 * arrayDiam)*(0.5 * arrayDiam)  # [m^2]
     facetAreaList = [lenYHub * lenZHub,
                      lenXHub * lenZHub,
                      lenYHub * lenZHub,
@@ -503,7 +506,7 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     pltReference.r_FM_F = pltState.r_FM_F
     pltReference.theta1Max = np.pi/12
     pltReference.theta2Max = np.pi/12
-    if momentumManagement:
+    if thrMomManagement:
         pltReference.K = 2.5e-4
     else:
         pltReference.K = 0
@@ -541,6 +544,11 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
         saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
+        saReference[item].r_AB_B = [(-1)**item * 0.5 * (lenXHub + arrayDiam), 0.0, 0.45]
+        saReference[item].pointingMode = 0
+        saReference[item].n = 2
+        saReference[item].sigma = 1e-3
+        saReference[item].ThetaMax = np.pi / 3
         scSim.AddModelToTask(fswTask, saReference[item], 24)
 
     # Set up solar array controller modules
@@ -665,6 +673,12 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
         saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
+        saReference[item].rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+        saReference[item].rwConfigDataInMsg.subscribeTo(fswRwConfigMsg)
+        if cmEstimation:
+            saReference[item].vehConfigInMsg.subscribeTo(vcMsg_CoM)
+        else:
+            saReference[item].vehConfigInMsg.subscribeTo(simpleMassPropsObject.vehicleConfigOutMsg)
         saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
         saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
@@ -739,6 +753,13 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     scSim.InitializeSimulation()
 
     # configure a simulation stop time and execute the simulation run
+    if saMomManagement:
+        scSim.ConfigureStopTime(simulationTime // 2)
+        scSim.ExecuteSimulation()
+        saReference[0].pointingMode = 1
+        saReference[1].pointingMode = 1
+        saReference[0].Reset(simulationTime // 2)
+        saReference[1].Reset(simulationTime // 2)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
@@ -793,45 +814,46 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     # Plot the results
     figureList = {}
     plot_attitude(timeData, dataSigmaBN, dataSigmaRN, figID=1)
-    pltName = fileName+"1"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"1"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(1)
     plot_attitude_error(timeData, dataSigmaBR, figID=2)
-    pltName = fileName+"2"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"2"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(2)
     plot_rw_speeds(timeData, dataOmegaRW, numRW, figID=3)
-    pltName = fileName+"3"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"3"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(3)
     plot_solar_array_angle(timeData, dataAlpha, dataAlphaRef, figID=4)
-    pltName = fileName+"4"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"4"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(4)
     plot_platform_angle(timeData, dataNu, dataNuRef, figID=5)
-    pltName = fileName+"5"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"5"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(5)
     plot_thruster_cm_offset(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrDir_F, figID=6)
-    pltName = fileName+"6"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"6"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(6)
     plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, platform.dcm_S10B, thrDir_F, figID=7)
-    pltName = fileName+"7"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"7"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(7)
     plot_external_torque(timeData, dataSRPTorquePntC, yString='SRP', figID=8)
-    pltName = fileName+"8"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"8"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(8)
     plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, figID=9)
-    pltName = fileName+"9"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"9"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(9)
     plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, dataSRPTorquePntC, figID=10)
-    pltName = fileName+"10"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"10"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(10)
     plot_solar_array_pointing_error(timeData, dataSAPointing, figID=11)
+    pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(11)
     plot_neg_Y_pointing_error(timeData, dataNegYPointing, figID=12)
-    pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(12)
     plot_state_errors(timeData, dataStateError, dataCovariance, figID=13)
-    pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(13)
     plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=14)
-    pltName = fileName+"12"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"12"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(14)
 
     if showPlots:
@@ -1067,6 +1089,7 @@ if __name__ == "__main__":
     run(
         False,
         True,
+        False,
         True,
         True
     )
