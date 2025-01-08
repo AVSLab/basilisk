@@ -105,8 +105,8 @@ from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarA
                                     hingedRigidBodyPIDMotor, solarArrayReference, thrusterPlatformReference,
                                     thrusterPlatformState, thrustCMEstimation, torqueScheduler)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
-                                 spinningBodyOneDOFStateEffector,
-                                 spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector)
+                                 spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector,
+                                 thrusterStateEffector, facetSRPDynamicEffector, boreAngCalc)
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
                                 unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
 
@@ -292,6 +292,18 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[1].thetaDotInit = 0
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
+
+    # Set up boresight modules on hub
+    hubBoresight = boreAngCalc.BoreAngCalc()
+    hubBoresight.boreVec_B = [0, -1, 0]
+    scSim.AddModelToTask(dynTask, hubBoresight)
+
+    # Set up boresight modules on SAs
+    saBoresightList = []
+    for item in range(numRSA):
+        saBoresightList.append(boreAngCalc.BoreAngCalc())
+        saBoresightList[item].boreVec_B = [0, 0, -1]
+        scSim.AddModelToTask(dynTask, saBoresightList[item])
 
     # Set up the dual-gimbaled platform
     platform = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
@@ -602,12 +614,16 @@ def run(momentumManagement, cmEstimation, showPlots):
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfigMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    hubBoresight.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    hubBoresight.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(numRSA):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
         saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
+        saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
+        saBoresightList[item].celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(2):
         pltController[item].hingedRigidBodyInMsg.subscribeTo(platform.spinningBodyOutMsgs[item])
     pltController[0].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef1OutMsg)
@@ -644,6 +660,8 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.AddModelToTask(dynTask, srpTorqueLog)
     mrpTorqueLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, mrpTorqueLog)
+    hubBoresightLog = hubBoresight.angOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, hubBoresightLog)
 
     # A message is created that stores an array of the Omega wheel speeds
     rwLogs = []
@@ -653,11 +671,14 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     saAngleLogs = []
     saRefAngleLogs = []
+    saBoresightLogs = []
     for item in range(numRSA):
         saAngleLogs.append(RSAList[item].spinningBodyOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(dynTask, saAngleLogs[item])
         saRefAngleLogs.append(saReference[item].hingedRigidBodyRefOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(dynTask, saRefAngleLogs[item])
+        saBoresightLogs.append(saBoresightList[item].angOutMsg.recorder(samplingTime))
+        scSim.AddModelToTask(dynTask, saBoresightLogs[item])
 
     pltAngleLogs = []
     pltRefAngleLogs = []
@@ -688,6 +709,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     dataCovariance = cmEstLog.covariance
     dataPreFit = cmEstLog.preFitRes
     dataPostFit = cmEstLog.postFitRes
+    dataNegYPointing = hubBoresightLog.missAngle
 
     dataRW = []
     for i in range(numRW):
@@ -701,9 +723,11 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     dataAlpha = []
     dataAlphaRef = []
+    dataSAPointing = []
     for item in range(numRSA):
         dataAlpha.append(saAngleLogs[item].theta)
         dataAlphaRef.append(saRefAngleLogs[item].theta)
+        dataSAPointing.append(saBoresightLogs[item].missAngle)
 
     # Map SRP torque from point B to CM
     dataSRPForce = srpForceLog.forceExternal_B
@@ -753,12 +777,17 @@ def run(momentumManagement, cmEstimation, showPlots):
     plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, dataSRPTorquePntC, figID=10)
     pltName = fileName+"10"+str(int(momentumManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(10)
-    plot_state_errors(timeData, dataStateError, dataCovariance, figID=11)
-    pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
+    plot_solar_array_pointing_error(timeData, dataSAPointing, figID=11)
     figureList[pltName] = plt.figure(11)
-    plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=12)
-    pltName = fileName+"12"+str(int(momentumManagement))+str(int(cmEstimation))
+    plot_neg_Y_pointing_error(timeData, dataNegYPointing, figID=12)
+    pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(12)
+    plot_state_errors(timeData, dataStateError, dataCovariance, figID=13)
+    pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
+    figureList[pltName] = plt.figure(13)
+    plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=14)
+    pltName = fileName+"12"+str(int(momentumManagement))+str(int(cmEstimation))
+    figureList[pltName] = plt.figure(14)
 
     if showPlots:
         plt.show()
@@ -970,6 +999,23 @@ def plot_residuals(timeData, preFit, postFit, R, figID=None):
     plt.ylabel('Post-Fit residuals [mNm]')
     plt.grid()
     plt.xlabel('Time [hours]')
+
+def plot_solar_array_pointing_error(timeData, dataAngle, figID=None):
+    """Plot the solar array angles w.r.t references."""
+    plt.figure(figID, figsize=(5, 2.75))
+    for i, angle in enumerate(dataAngle):
+        plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), label=r'$\gamma_' + str(i+1) + '$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [hours]')
+    plt.ylabel(r'Solar Array Pointing Error [deg]')
+
+def plot_neg_Y_pointing_error(timeData, dataAngle, figID=None):
+    """Plot the solar array angles w.r.t references."""
+    plt.figure(figID, figsize=(5, 2.75))
+    plt.plot(timeData, dataAngle / np.pi * 180, color='C'+str(3), label=r'$\delta$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [hours]')
+    plt.ylabel(r'Sensitive Platform Pointing [deg]')
 
 
 if __name__ == "__main__":
