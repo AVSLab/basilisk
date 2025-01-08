@@ -56,9 +56,10 @@ Illustration of Simulation Results
 The most interesting result of this analysis is shown comparing RW speeds with and without continuous momentum
 management. In the first plot, the thruster is fired through the system's center of mass and therefore the thrust is not
 used to perform momentum management. Exact knowledge of the system's CM location is used here. The wheel speeds increase
-linearly over time, eventually needing momentum dumping. In the second plot, the thruster is used to perform continuous
-momentum management, and the CM location is sequentially estimated. Wheel speeds oscillate in the beginning when the CM
-location is still poorly known, until finally settling once the estimate becomes accurate.
+linearly over time to compensate for the solar radiation pressure, eventually needing momentum dumping. In the second plot,
+the thruster is used to perform continuous momentum management, and the CM location is sequentially estimated. Wheel speeds
+oscillate during the initial transients when the CM estimate is bad, as a result of the thruster torque acting on the system.
+When the CM becomes good, the RW speeds settle without diverging. The value at which each wheel settles depends on the transients.
 
 .. image:: /_images/Scenarios/scenarioSepMomentumManagement300.svg
    :align: center
@@ -79,18 +80,19 @@ true CM.
    :align: center
 
 The final two plots show the net external torques about the CM, projected on the plane orthogonal to the thrust vector
-:math:`\boldsymbol{t}`. In the second plot, because the thruster is fired through the CM, the only contribution is given
-by the SRP torque. In the first plot, when the thruster is fired through the equilibrium point :math:`C^*`, the thruster
-torque exactly counters the action of the SRP torque according to:
+:math:`\boldsymbol{t}`. In the first plot, because the thruster is fired through the CM, the only contribution is given
+by the SRP torque. In the second plot, the net torque goes to zero as the CM location becomes more accurate and the
+thruster is fired through the equilibrium point :math:`C^*`. In this situation the thruster torque exactly counters the
+action of the SRP torque according to:
 
 .. math::
-    \boldsymbol{L} = \boldsymbol{L}_\text{SRP} - (\boldsymbol{L}_\text{SRP} \cdot \boldsymbol{\hat{t}})\boldsymbol{\hat{t}} +
+    \boldsymbol{L}_\text{net} = \boldsymbol{L}_\text{SRP} - (\boldsymbol{L}_\text{SRP} \cdot \boldsymbol{\hat{t}})\boldsymbol{\hat{t}} +
     \boldsymbol{r}_{C^*/C} \times \boldsymbol{t} = 0.
 
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement1000.svg
+.. image:: /_images/Scenarios/scenarioSepMomentumManagement900.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement1011.svg
+.. image:: /_images/Scenarios/scenarioSepMomentumManagement911.svg
    :align: center
 
 """
@@ -831,30 +833,28 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     plot_thruster_cm_offset(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrDir_F, figID=6)
     pltName = fileName+"6"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(6)
-    plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, platform.dcm_S10B, thrDir_F, figID=7)
+    plot_external_torque(timeData, dataSRPTorquePntC, yString='SRP', figID=7)
     pltName = fileName+"7"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(7)
-    plot_external_torque(timeData, dataSRPTorquePntC, yString='SRP', figID=8)
+    plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, figID=8)
     pltName = fileName+"8"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(8)
-    plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, figID=9)
+    plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, dataSRPTorquePntC, figID=9)
     pltName = fileName+"9"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(9)
-    plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, dataSRPTorquePntC, figID=10)
+    plot_solar_array_pointing_error(timeData, dataSAPointing, figID=10)
     pltName = fileName+"10"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(10)
-    plot_solar_array_pointing_error(timeData, dataSAPointing, figID=11)
+    plot_neg_Y_pointing_error(timeData, dataNegYPointing, figID=11)
     pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(11)
-    plot_neg_Y_pointing_error(timeData, dataNegYPointing, figID=12)
-    pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
-    figureList[pltName] = plt.figure(12)
-    plot_state_errors(timeData, dataStateError, dataCovariance, figID=13)
-    pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
-    figureList[pltName] = plt.figure(13)
-    plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=14)
-    pltName = fileName+"12"+str(int(thrMomManagement))+str(int(cmEstimation))
-    figureList[pltName] = plt.figure(14)
+    if cmEstimation:
+        plot_state_errors(timeData, dataStateError, dataCovariance, figID=12)
+        pltName = fileName+"12"+str(int(thrMomManagement))+str(int(cmEstimation))
+        figureList[pltName] = plt.figure(12)
+        plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=13)
+        pltName = fileName+"13"+str(int(thrMomManagement))+str(int(cmEstimation))
+        figureList[pltName] = plt.figure(13)
 
     if showPlots:
         plt.show()
@@ -947,33 +947,6 @@ def plot_thruster_cm_offset(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThr
     plt.legend(loc='lower right')
     plt.xlabel('Time [hours]')
     plt.ylabel('CM Offset Ang [deg]')
-
-def plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, dataM0B, dataThrDir_F, figID=None):
-    """Plot the angle between thrust vector and net momentum on RWs."""
-    dataAngle = []
-    for i in range(len(timeData)):
-        FM0 = rbk.euler1232C([dataNu[0][i], dataNu[1][i], 0.0])
-        FB = np.matmul(FM0, dataM0B)
-        BF = FB.transpose()
-        thrDir_B = np.matmul(BF, dataThrDir_F[i])
-        h_B = np.array([0, 0, 0])
-        for j in range(len(Gs)):
-            h_B = h_B + dataOmegaRW[i][j] * Gs[j]
-        h_B_norm = np.linalg.norm(h_B)
-        if h_B_norm == 0:
-            dataAngle.append(0.0)
-        else:
-            dataAngle.append(np.arccos(min(max(np.dot(h_B, thrDir_B) / np.linalg.norm(h_B), -1), 1)))
-        cross = np.cross(h_B, thrDir_B)
-        if np.arctan2(cross[1], cross[0]) < 0:
-            dataAngle[-1] = -dataAngle[-1]
-
-    dataAngle = np.array(dataAngle) * macros.R2D
-    plt.figure(figID, figsize=(5, 2.75))
-    plt.plot(timeData, dataAngle, color='C3', label=r'$\Delta \phi$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel('Thr-to-Momentum Angle [deg]')
 
 def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
     """Plot the external torques."""
