@@ -481,7 +481,7 @@ def run(swirlTorque, momentumManagement, cmEstimation, showPlots):
     cmEstimator.attitudeTol = 1e-6
     cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
-    cmEstimator.R0 = [4e-8, 4e-8, 4e-8]
+    cmEstimator.R0 = [1e-10, 1e-10, 1e-10]
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
 
     # create the FSW vehicle configuration message for CoM
