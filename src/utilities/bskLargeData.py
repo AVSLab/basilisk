@@ -92,13 +92,13 @@ def main():
 
     # Step 2: Define the download URLs and destination paths
     files_to_download = {
-        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp": os.path.join(
+        "https://hanspeterschaub.info/bskFiles/Spice/de430.bsp": os.path.join(
             basilisk_path, "supportData", "EphemerisData", "de430.bsp"
         ),
-        "https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp": os.path.join(
+        "https://hanspeterschaub.info/bskFiles/Spice/hst_edited.bsp": os.path.join(
             basilisk_path, "supportData", "EphemerisData", "hst_edited.bsp"
         ),
-        "https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp": os.path.join(
+        "https://hanspeterschaub.info/bskFiles/Spice/nh_pred_od077.bsp": os.path.join(
             basilisk_path, "supportData", "EphemerisData", "nh_pred_od077.bsp"
         ),
     }
