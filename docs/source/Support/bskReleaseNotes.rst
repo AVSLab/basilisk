@@ -161,6 +161,8 @@ Version 2.5.0 (Sept. 30, 2024)
 - Added new scenario :ref:`scenarioSweepingSpacecraft` to perform sweeping maneuvers.
 - Added a new :math:`N`-axis translating effector :ref:`linearTranslationNDOFStateEffector` and a corresponding scenario
   :ref:`scenarioExtendingBoom`.
+- Enhanced :ref:`scenarioSepMomentumManagement` with the options to model the thruster swirl torque and to use
+  :ref:`solarArrayReference` in momentum management mode.
 
 
 Version 2.4.0 (August 23, 2024)
