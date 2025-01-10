@@ -56,9 +56,10 @@ Illustration of Simulation Results
 The most interesting result of this analysis is shown comparing RW speeds with and without continuous momentum
 management. In the first plot, the thruster is fired through the system's center of mass and therefore the thrust is not
 used to perform momentum management. Exact knowledge of the system's CM location is used here. The wheel speeds increase
-linearly over time, eventually needing momentum dumping. In the second plot, the thruster is used to perform continuous
-momentum management, and the CM location is sequentially estimated. Wheel speeds oscillate in the beginning when the CM
-location is still poorly known, until finally settling once the estimate becomes accurate.
+linearly over time to compensate for the solar radiation pressure, eventually needing momentum dumping. In the second plot,
+the thruster is used to perform continuous momentum management, and the CM location is sequentially estimated. Wheel speeds
+oscillate during the initial transients when the CM estimate is bad, as a result of the thruster torque acting on the system.
+When the CM becomes good, the RW speeds settle without diverging. The value at which each wheel settles depends on the transients.
 
 .. image:: /_images/Scenarios/scenarioSepMomentumManagement300.svg
    :align: center
@@ -79,18 +80,19 @@ true CM.
    :align: center
 
 The final two plots show the net external torques about the CM, projected on the plane orthogonal to the thrust vector
-:math:`\boldsymbol{t}`. In the second plot, because the thruster is fired through the CM, the only contribution is given
-by the SRP torque. In the first plot, when the thruster is fired through the equilibrium point :math:`C^*`, the thruster
-torque exactly counters the action of the SRP torque according to:
+:math:`\boldsymbol{t}`. In the first plot, because the thruster is fired through the CM, the only contribution is given
+by the SRP torque. In the second plot, the net torque goes to zero as the CM location becomes more accurate and the
+thruster is fired through the equilibrium point :math:`C^*`. In this situation the thruster torque exactly counters the
+action of the SRP torque according to:
 
 .. math::
-    \boldsymbol{L} = \boldsymbol{L}_\text{SRP} - (\boldsymbol{L}_\text{SRP} \cdot \boldsymbol{\hat{t}})\boldsymbol{\hat{t}} +
+    \boldsymbol{L}_\text{net} = \boldsymbol{L}_\text{SRP} - (\boldsymbol{L}_\text{SRP} \cdot \boldsymbol{\hat{t}})\boldsymbol{\hat{t}} +
     \boldsymbol{r}_{C^*/C} \times \boldsymbol{t} = 0.
 
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement1000.svg
+.. image:: /_images/Scenarios/scenarioSepMomentumManagement900.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioSepMomentumManagement1011.svg
+.. image:: /_images/Scenarios/scenarioSepMomentumManagement911.svg
    :align: center
 
 """
@@ -105,8 +107,8 @@ from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarA
                                     hingedRigidBodyPIDMotor, solarArrayReference, thrusterPlatformReference,
                                     thrusterPlatformState, thrustCMEstimation, torqueScheduler)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
-                                 spinningBodyOneDOFStateEffector,
-                                 spinningBodyTwoDOFStateEffector, thrusterStateEffector, facetSRPDynamicEffector)
+                                 spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector,
+                                 thrusterStateEffector, facetSRPDynamicEffector, boreAngCalc)
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
                                 unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
 
@@ -114,13 +116,17 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(momentumManagement, cmEstimation, showPlots):
+def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots):
     """
     The scenario can be run with the followings setups parameters:
 
     Args:
-        momentumManagement (bool): When false, the platform aligns the thruster with the CM location it receives as
+        swirlTorque (bool): When true, a swirl torque about the thrust vector is added, to simulate the swirling motion
+                            of the ejecta.
+        thrMomManagement (bool): When false, the platform aligns the thruster with the CM location it receives as
                                    input. When true, the thruster is used to perform momentum management.
+        saMomManagement (bool): When true, performs differential articulation of the solar arrays to exploit SRP
+                                to offload the reaction wheels.
         cmEstimation (bool): When false, the platform is connected to the true CM location message. When true, the
                              platform is connected to the estimated CM location.
         showPlots (bool): Determines if the script should display plots.
@@ -187,12 +193,12 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 150e9      # meters
+    oe.a = 100e9      # meters
     oe.e = 0.001
     oe.i = 0.0 * macros.D2R
     oe.Omega = 0.0 * macros.D2R
     oe.omega = 0.0 * macros.D2R
-    oe.f = -135.0 * macros.D2R
+    oe.f = -110.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
@@ -264,7 +270,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[0].r_SB_B = [0.75, 0.0, 0.45]
     RSAList[0].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[0].sHat_S = [0, 1, 0]
-    RSAList[0].dcm_S0B = [[0, 0, -1], [1, 0, 0], [0, -1, 0]]
+    RSAList[0].dcm_S0B = [[0, 0, 1], [1, 0, 0], [0, 1, 0]]
     RSAList[0].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -281,7 +287,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[1].r_SB_B = [-0.75, 0.0, 0.45]
     RSAList[1].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[1].sHat_S = [0, 1, 0]
-    RSAList[1].dcm_S0B = [[0, 0, 1], [-1, 0, 0], [0, -1, 0]]
+    RSAList[1].dcm_S0B = [[0, 0, -1], [-1, 0, 0], [0, 1, 0]]
     RSAList[1].IPntSc_S = [[250.0, 0.0, 0.0],
                            [0.0, 250.0, 0.0],
                            [0.0, 0.0, 500.0]]
@@ -292,6 +298,18 @@ def run(momentumManagement, cmEstimation, showPlots):
     RSAList[1].thetaDotInit = 0
     RSAList[1].ModelTag = "solarArray2"
     scObject.addStateEffector(RSAList[1])
+
+    # Set up boresight modules on hub
+    hubBoresight = boreAngCalc.BoreAngCalc()
+    hubBoresight.boreVec_B = [0, -1, 0]
+    scSim.AddModelToTask(dynTask, hubBoresight)
+
+    # Set up boresight modules on SAs
+    saBoresightList = []
+    for item in range(numRSA):
+        saBoresightList.append(boreAngCalc.BoreAngCalc())
+        saBoresightList[item].boreVec_B = [0, 0, 1]
+        scSim.AddModelToTask(dynTask, saBoresightList[item])
 
     # Set up the dual-gimbaled platform
     platform = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
@@ -317,29 +335,33 @@ def run(momentumManagement, cmEstimation, showPlots):
     platform.ModelTag = "platform1"
     scObject.addStateEffector(platform)
 
+    # Write THR Config Msg
+    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
+    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
+    THRConfig = messaging.THRConfigMsgPayload()
+    THRConfig.rThrust_B = r_TF_F
+    THRConfig.tHatThrust_B = tHat_F
+    THRConfig.maxThrust = 0.27
+    THRConfig.swirlTorque = 0
+    if swirlTorque:
+        THRConfig.swirlTorque = 1.0e-3 * THRConfig.maxThrust
+    thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
+
     # Set up the SEP thruster
     sepThruster = thrusterStateEffector.ThrusterStateEffector()
     scSim.AddModelToTask(dynTask, sepThruster)
     thruster = thrusterStateEffector.THRSimConfig()
-    r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
-    tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
     thruster.thrLoc_B = r_TF_F
-    thruster.thrDir_B = tHat_F
-    thruster.MaxThrust = 0.27
+    thruster.thrDir_B = THRConfig.tHatThrust_B
+    thruster.MaxThrust = THRConfig.maxThrust
     thruster.steadyIsp = 1600
     thruster.MinOnTime = 0.006
     thruster.cutoffFrequency = 5
+    thruster.MaxSwirlTorque = THRConfig.swirlTorque
     sepThruster.addThruster(thruster, platform.spinningBodyConfigLogOutMsgs[1])
     sepThruster.kappaInit = messaging.DoubleVector([0.0])
     sepThruster.ModelTag = "sepThruster"
     scObject.addStateEffector(sepThruster)
-
-    # Write THR Config Msg
-    THRConfig = messaging.THRConfigMsgPayload()
-    THRConfig.rThrust_B = r_TF_F
-    THRConfig.tHatThrust_B = tHat_F
-    THRConfig.maxThrust = thruster.MaxThrust
-    thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
 
     # Set up the SRP dynamic effector
     SRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
@@ -352,7 +374,8 @@ def run(momentumManagement, cmEstimation, showPlots):
     lenXHub = 1.50  # [m]
     lenYHub = 1.8  # [m]
     lenZHub = 2.86  # [m]
-    area2 = np.pi*(0.5 * 7.262)*(0.5 * 7.262)  # [m^2]
+    arrayDiam = 7.262
+    area2 = np.pi*(0.5 * arrayDiam)*(0.5 * arrayDiam)  # [m^2]
     facetAreaList = [lenYHub * lenZHub,
                      lenXHub * lenZHub,
                      lenYHub * lenZHub,
@@ -424,8 +447,8 @@ def run(momentumManagement, cmEstimation, showPlots):
     facetR_CopB_BList = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
 
     # Define the facet optical coefficients
-    facetSpecularCoeffList = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
-    facetDiffuseCoeffList = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+    facetSpecularCoeffList = np.array([0.336, 0.336, 0.336, 0.336, 0.336, 0.336, 0.16, 0.00, 0.16, 0.00])
+    facetDiffuseCoeffList = np.array([0.139, 0.139, 0.139, 0.139, 0.139, 0.139, 0.16, 0.56, 0.16, 0.56])
 
     # Populate the scGeometry structure with the facet information
     for i in range(len(facetAreaList)):
@@ -463,7 +486,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     cmEstimator.attitudeTol = 1e-6
     cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
-    cmEstimator.R0 = [4e-8, 4e-8, 4e-8]
+    cmEstimator.R0 = [1e-10, 1e-10, 1e-10]
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
 
     # create the FSW vehicle configuration message for CoM
@@ -485,7 +508,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     pltReference.r_FM_F = pltState.r_FM_F
     pltReference.theta1Max = np.pi/12
     pltReference.theta2Max = np.pi/12
-    if momentumManagement:
+    if thrMomManagement:
         pltReference.K = 2.5e-4
     else:
         pltReference.K = 0
@@ -523,6 +546,11 @@ def run(momentumManagement, cmEstimation, showPlots):
         saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
         saReference[item].a1Hat_B = [(-1)**item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
+        saReference[item].r_AB_B = [(-1)**item * 0.5 * (lenXHub + arrayDiam), 0.0, 0.45]
+        saReference[item].pointingMode = 0
+        saReference[item].n = 2
+        saReference[item].sigma = 1e-3
+        saReference[item].ThetaMax = np.pi / 3
         scSim.AddModelToTask(fswTask, saReference[item], 24)
 
     # Set up solar array controller modules
@@ -558,13 +586,52 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     # Configure thruster on-time message
     thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrOnTimeMsgData.OnTimeRequest = [3600*4*30]
+    thrOnTimeMsgData.OnTimeRequest = [3600*24*7]
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
     # This is needed because platformReference runs on its own task at a different frequency,
     # but it receives inputs and provides outputs to modules that run on the main flight software task
     messaging.VehicleConfigMsg_C_addAuthor(cmEstimator.vehConfigOutMsgC, vcMsg_CoM)
+
+    # Uncomment to Enable Vizard
+    # Create the effector lists and dictionaries for Vizard
+    rw_state_effector_list = []
+    sc_body_list = []
+    sc_body_list.append(scObject)
+    rw_state_effector_list.append(rwStateEffector)
+    sc_body_list.append([RSAList[0].ModelTag, RSAList[0].spinningBodyConfigLogOutMsg])
+    sc_body_list.append([RSAList[1].ModelTag, RSAList[1].spinningBodyConfigLogOutMsg])
+
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, dynTask, sc_body_list
+                                                  # , saveFile=__file__
+                                                  )
+        viz.settings.ambient = 0.7  # increase ambient light to make the shaded spacecraft more visible
+        viz.settings.orbitLinesOn = -1  # turn off osculating orbit line
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        texture_path = os.path.join(current_path, 'dataForExamples', 'texture')
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[sc_body_list[0].ModelTag]
+                                     , modelPath="CUBE"
+                                     , customTexturePath=os.path.join(texture_path, 'foil_n.png')
+                                     , offset=[0, 0, 0]
+                                     , scale=[2.5, 2.5, 2.5]
+                                     )
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[sc_body_list[1][0]]
+                                     , modelPath="CYLINDER"
+                                     , customTexturePath=os.path.join(texture_path, 'panel.jpg')
+                                     , offset=[-0.035, 0.25, -0.087]
+                                     , scale=[7, 7, 0.05]
+                                     )
+        vizSupport.createCustomModel(viz
+                                     , simBodiesToModify=[sc_body_list[2][0]]
+                                     , modelPath="CYLINDER"
+                                     , customTexturePath=os.path.join(texture_path, 'panel.jpg')
+                                     , offset=[0.128, 0.25, -0.087]
+                                     , scale=[7, 7, 0.05]
+                                     )
 
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -602,12 +669,22 @@ def run(momentumManagement, cmEstimation, showPlots):
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfigMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    hubBoresight.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
+    hubBoresight.celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(numRSA):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
         saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
+        saReference[item].rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+        saReference[item].rwConfigDataInMsg.subscribeTo(fswRwConfigMsg)
+        if cmEstimation:
+            saReference[item].vehConfigInMsg.subscribeTo(vcMsg_CoM)
+        else:
+            saReference[item].vehConfigInMsg.subscribeTo(simpleMassPropsObject.vehicleConfigOutMsg)
         saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
         saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
+        saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
+        saBoresightList[item].celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
     for item in range(2):
         pltController[item].hingedRigidBodyInMsg.subscribeTo(platform.spinningBodyOutMsgs[item])
     pltController[0].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef1OutMsg)
@@ -644,6 +721,8 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.AddModelToTask(dynTask, srpTorqueLog)
     mrpTorqueLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, mrpTorqueLog)
+    hubBoresightLog = hubBoresight.angOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(dynTask, hubBoresightLog)
 
     # A message is created that stores an array of the Omega wheel speeds
     rwLogs = []
@@ -653,11 +732,14 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     saAngleLogs = []
     saRefAngleLogs = []
+    saBoresightLogs = []
     for item in range(numRSA):
         saAngleLogs.append(RSAList[item].spinningBodyOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(dynTask, saAngleLogs[item])
         saRefAngleLogs.append(saReference[item].hingedRigidBodyRefOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(dynTask, saRefAngleLogs[item])
+        saBoresightLogs.append(saBoresightList[item].angOutMsg.recorder(samplingTime))
+        scSim.AddModelToTask(dynTask, saBoresightLogs[item])
 
     pltAngleLogs = []
     pltRefAngleLogs = []
@@ -673,6 +755,13 @@ def run(momentumManagement, cmEstimation, showPlots):
     scSim.InitializeSimulation()
 
     # configure a simulation stop time and execute the simulation run
+    if saMomManagement:
+        scSim.ConfigureStopTime(simulationTime // 2)
+        scSim.ExecuteSimulation()
+        saReference[0].pointingMode = 1
+        saReference[1].pointingMode = 1
+        saReference[0].Reset(simulationTime // 2)
+        saReference[1].Reset(simulationTime // 2)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
@@ -688,6 +777,7 @@ def run(momentumManagement, cmEstimation, showPlots):
     dataCovariance = cmEstLog.covariance
     dataPreFit = cmEstLog.preFitRes
     dataPostFit = cmEstLog.postFitRes
+    dataNegYPointing = hubBoresightLog.missAngle
 
     dataRW = []
     for i in range(numRW):
@@ -701,9 +791,11 @@ def run(momentumManagement, cmEstimation, showPlots):
 
     dataAlpha = []
     dataAlphaRef = []
+    dataSAPointing = []
     for item in range(numRSA):
         dataAlpha.append(saAngleLogs[item].theta)
         dataAlphaRef.append(saRefAngleLogs[item].theta)
+        dataSAPointing.append(saBoresightLogs[item].missAngle)
 
     # Map SRP torque from point B to CM
     dataSRPForce = srpForceLog.forceExternal_B
@@ -724,41 +816,45 @@ def run(momentumManagement, cmEstimation, showPlots):
     # Plot the results
     figureList = {}
     plot_attitude(timeData, dataSigmaBN, dataSigmaRN, figID=1)
-    pltName = fileName+"1"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"1"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(1)
     plot_attitude_error(timeData, dataSigmaBR, figID=2)
-    pltName = fileName+"2"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"2"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(2)
     plot_rw_speeds(timeData, dataOmegaRW, numRW, figID=3)
-    pltName = fileName+"3"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"3"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(3)
     plot_solar_array_angle(timeData, dataAlpha, dataAlphaRef, figID=4)
-    pltName = fileName+"4"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"4"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(4)
     plot_platform_angle(timeData, dataNu, dataNuRef, figID=5)
-    pltName = fileName+"5"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"5"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(5)
     plot_thruster_cm_offset(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrDir_F, figID=6)
-    pltName = fileName+"6"+str(int(momentumManagement))+str(int(cmEstimation))
+    pltName = fileName+"6"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(6)
-    plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, platform.dcm_S10B, thrDir_F, figID=7)
-    pltName = fileName+"7"+str(int(momentumManagement))+str(int(cmEstimation))
+    plot_external_torque(timeData, dataSRPTorquePntC, yString='SRP', figID=7)
+    pltName = fileName+"7"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(7)
-    plot_external_torque(timeData, dataSRPTorquePntC, yString='SRP', figID=8)
-    pltName = fileName+"8"+str(int(momentumManagement))+str(int(cmEstimation))
+    plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, figID=8)
+    pltName = fileName+"8"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(8)
-    plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, figID=9)
-    pltName = fileName+"9"+str(int(momentumManagement))+str(int(cmEstimation))
+    plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, dataSRPTorquePntC, figID=9)
+    pltName = fileName+"9"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(9)
-    plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, dataSRPTorquePntC, figID=10)
-    pltName = fileName+"10"+str(int(momentumManagement))+str(int(cmEstimation))
+    plot_solar_array_pointing_error(timeData, dataSAPointing, figID=10)
+    pltName = fileName+"10"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(10)
-    plot_state_errors(timeData, dataStateError, dataCovariance, figID=11)
-    pltName = fileName+"11"+str(int(momentumManagement))+str(int(cmEstimation))
+    plot_neg_Y_pointing_error(timeData, dataNegYPointing, figID=11)
+    pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
     figureList[pltName] = plt.figure(11)
-    plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=12)
-    pltName = fileName+"12"+str(int(momentumManagement))+str(int(cmEstimation))
-    figureList[pltName] = plt.figure(12)
+    if cmEstimation:
+        plot_state_errors(timeData, dataStateError, dataCovariance, figID=12)
+        pltName = fileName+"12"+str(int(thrMomManagement))+str(int(cmEstimation))
+        figureList[pltName] = plt.figure(12)
+        plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=13)
+        pltName = fileName+"13"+str(int(thrMomManagement))+str(int(cmEstimation))
+        figureList[pltName] = plt.figure(13)
 
     if showPlots:
         plt.show()
@@ -852,33 +948,6 @@ def plot_thruster_cm_offset(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThr
     plt.xlabel('Time [hours]')
     plt.ylabel('CM Offset Ang [deg]')
 
-def plot_thrust_to_momentum_angle(timeData, dataOmegaRW, Gs, dataNu, dataM0B, dataThrDir_F, figID=None):
-    """Plot the angle between thrust vector and net momentum on RWs."""
-    dataAngle = []
-    for i in range(len(timeData)):
-        FM0 = rbk.euler1232C([dataNu[0][i], dataNu[1][i], 0.0])
-        FB = np.matmul(FM0, dataM0B)
-        BF = FB.transpose()
-        thrDir_B = np.matmul(BF, dataThrDir_F[i])
-        h_B = np.array([0, 0, 0])
-        for j in range(len(Gs)):
-            h_B = h_B + dataOmegaRW[i][j] * Gs[j]
-        h_B_norm = np.linalg.norm(h_B)
-        if h_B_norm == 0:
-            dataAngle.append(0.0)
-        else:
-            dataAngle.append(np.arccos(min(max(np.dot(h_B, thrDir_B) / np.linalg.norm(h_B), -1), 1)))
-        cross = np.cross(h_B, thrDir_B)
-        if np.arctan2(cross[1], cross[0]) < 0:
-            dataAngle[-1] = -dataAngle[-1]
-
-    dataAngle = np.array(dataAngle) * macros.R2D
-    plt.figure(figID, figsize=(5, 2.75))
-    plt.plot(timeData, dataAngle, color='C3', label=r'$\Delta \phi$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel('Thr-to-Momentum Angle [deg]')
-
 def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
     """Plot the external torques."""
     plt.figure(figID, figsize=(5, 2.75))
@@ -893,7 +962,7 @@ def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
     else:
         plt.ylabel('Torque [mNm]')
 
-def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, figID=None):
+def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, swirlTorque, figID=None):
     """Plot the thruster torque about CM."""
     r_MB_B = np.array([dataMB_B[0][0], dataMB_B[1][0], dataMB_B[2][0]])
     dataThrTorque = []
@@ -904,11 +973,11 @@ def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, d
         r_TM_B = np.matmul(BF, dataThrLoc_F[i])
         r_TC_B = r_TM_B + r_MB_B - dataCM[i]
         thrVec_B = np.matmul(BF, dataThrVec_F[i])
-        dataThrTorque.append(np.cross(r_TC_B, thrVec_B))
+        dataThrTorque.append(np.cross(r_TC_B, thrVec_B) + thrVec_B * swirlTorque)
     dataThrTorque = np.array(dataThrTorque)
     plot_external_torque(timeData, dataThrTorque, yString=r'Thruster', figID=figID)
 
-def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, dataSRP, figID=None):
+def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, swirlTorque, dataSRP, figID=None):
     """Plot the net external torques in the plane perpendicular to the thrust vector."""
     r_MB_B = np.array([dataMB_B[0][0], dataMB_B[1][0], dataMB_B[2][0]])
     dataDeltaL = []
@@ -919,7 +988,7 @@ def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, 
         r_TM_B = np.matmul(BF, dataThrLoc_F[i])
         r_TC_B = r_TM_B + r_MB_B - dataCM[i]
         thrVec_B = np.matmul(BF, dataThrVec_F[i])
-        thrTorque_B = np.cross(r_TC_B, thrVec_B)
+        thrTorque_B = np.cross(r_TC_B, thrVec_B) + thrVec_B * swirlTorque
         dataDeltaL.append(dataSRP[i] + thrTorque_B)
     dataDeltaL = np.array(dataDeltaL)
     plot_external_torque(timeData, dataDeltaL, yString=r'Net Ext.', figID=figID)
@@ -971,10 +1040,29 @@ def plot_residuals(timeData, preFit, postFit, R, figID=None):
     plt.grid()
     plt.xlabel('Time [hours]')
 
+def plot_solar_array_pointing_error(timeData, dataAngle, figID=None):
+    """Plot the solar array angles w.r.t references."""
+    plt.figure(figID, figsize=(5, 2.75))
+    for i, angle in enumerate(dataAngle):
+        plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), label=r'$\gamma_' + str(i+1) + '$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [hours]')
+    plt.ylabel(r'Solar Array Pointing Error [deg]')
+
+def plot_neg_Y_pointing_error(timeData, dataAngle, figID=None):
+    """Plot the solar array angles w.r.t references."""
+    plt.figure(figID, figsize=(5, 2.75))
+    plt.plot(timeData, dataAngle / np.pi * 180, color='C'+str(3), label=r'$\delta$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [hours]')
+    plt.ylabel(r'Sensitive Platform Pointing [deg]')
+
 
 if __name__ == "__main__":
     run(
+        False,
         True,
+        False,
         True,
         True
     )
