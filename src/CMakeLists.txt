@@ -386,12 +386,9 @@ endfunction()
 
 # Define download URLs and target paths
 set(SPICE_FILES
-#    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp"
-#    "https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/hst_edited.bsp"
-#   "https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/nh_pred_od077.bsp"
-    "https://hanspeterschaub.info/bskFiles/Spice/de430.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp"
-    "https://hanspeterschaub.info/bskFiles/Spice/hst_edited.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/hst_edited.bsp"
-    "https://hanspeterschaub.info/bskFiles/Spice/nh_pred_od077.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/nh_pred_od077.bsp"
+    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/de430.bsp"
+    "https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/hst_edited.bsp"
+    "https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp::${CMAKE_SOURCE_DIR}/../supportData/EphemerisData/nh_pred_od077.bsp"
 )
 
 # Process each large data file
