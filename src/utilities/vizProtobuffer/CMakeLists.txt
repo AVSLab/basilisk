@@ -41,11 +41,6 @@ if(BUILD_VIZINTERFACE)
                  protobuf::protobuf
          )
 
-         set_target_properties(${PROTO_TARGET} PROPERTIES
-             CXX_STANDARD 11
-             POSITION_INDEPENDENT_CODE ON
-         )
-
          set_target_properties(${PROTO_TARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
          set_target_properties(${PROTO_TARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
          set_target_properties(${PROTO_TARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")
