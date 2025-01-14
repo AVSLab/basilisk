@@ -116,6 +116,7 @@ Version  |release|
   and :ref:`starTracker` modules as their ``Amatrix`` attributes were private.
 - Name change warning added to module documentation for the ``imuSensor`` ``walkBounds`` attribute to ``errorBounds``
   and a note on specifying sensor properties in  :ref:`scenarioGaussMarkovRandomWalk`.
+- Update :ref:`makingModules-2` on how to make messages available to Basilisk modules
 
 
 Version 2.5.0 (Sept. 30, 2024)
