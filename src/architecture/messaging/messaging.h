@@ -23,6 +23,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
 #include <stdlib.h>
+#include <functional>
 
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
@@ -38,6 +39,8 @@ private:
     messageType* payloadPointer;    //!< -- pointer to the incoming msg data
     MsgHeader *headerPointer;      //!< -- pointer to the incoming msg header
     bool initialized;               //!< -- flag indicating if the input message is connect to another message
+    std::function<void()> refIncCallback;
+    std::function<void()> refDecCallback;
 
 public:
     //!< -- BSK Logging
@@ -46,10 +49,18 @@ public:
 
 
     //! constructor
-    ReadFunctor() : initialized(false) {};
+    ReadFunctor() :
+        initialized(false),
+        refIncCallback([](){}),
+        refDecCallback([](){}) {}
 
     //! constructor
-    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) :
+        payloadPointer(payloadPtr),
+        headerPointer(headerPtr),
+        initialized(true),
+        refIncCallback([](){}),
+        refDecCallback([](){}) {}
 
     //! constructor
     const messageType& operator()(){
@@ -174,6 +185,42 @@ public:
 
     //! Recorder method description
     Recorder<messageType> recorder(uint64_t timeDiff = 0){return Recorder<messageType>(this, timeDiff);}
+
+    /**
+     * @brief Set the reference counting callbacks for the source message
+     * @param incRef Function to increment source reference count
+     * @param decRef Function to decrement source reference count
+     */
+    void setSourceRef(std::function<void()> incRef, std::function<void()> decRef) {
+        if (refDecCallback) {
+            refDecCallback();
+        }
+        refIncCallback = incRef;
+        refDecCallback = decRef;
+        if (refIncCallback) {
+            refIncCallback();
+        }
+    }
+
+    /*! Check if this reader is subscribed to a specific message source
+     * @param source Pointer to message source to check
+     * @return 1 if subscribed, 0 if not
+     */
+    uint8_t isSubscribedTo(const Message<messageType>* source) const {
+        if (!source) return 0;
+        return (this->payloadPointer == source->getPayloadPtr() &&
+                this->headerPointer == source->getHeaderPtr());
+    }
+
+    /*! Check if this reader is subscribed to a void pointer source
+     * @param source Void pointer to message source to check
+     * @return 1 if subscribed, 0 if not
+     */
+    uint8_t isSubscribedTo(const void* source) const {
+        const Message<messageType>* msgSource =
+            static_cast<const Message<messageType>*>(source);
+        return isSubscribedTo(msgSource);
+    }
 };
 
 /*! Write Functor */
@@ -232,6 +279,16 @@ public:
 
     //! Return the memory size of the payload, be careful about dynamically sized things
     uint64_t getPayloadSize() {return sizeof(messageType);};
+
+    /*! Get pointer to message payload
+     * @return Const pointer to payload data
+     */
+    const messageType* getPayloadPtr() const { return &payload; }
+
+    /*! Get pointer to message header
+     * @return Const pointer to message header
+     */
+    const MsgHeader* getHeaderPtr() const { return &header; }
 };
 
 

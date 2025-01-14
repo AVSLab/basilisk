@@ -110,6 +110,8 @@ Version  |release|
 - Removed deprecated swig code that allowed still importing `sys_model.h` instead of `sys_model.i`
 - Updated :ref:`groundMapping` to correct behavior if ``maximumRange == -1``
 - Updated scripts to work with ``matplotlib`` version 3.10.x without errors or warnings
+- Added a fix for the message subscription bug in which the message data was not retained after going out of scope.
+- Added unit test for message subscription and message data retention after going out of scope to ``test_messaging.py``.
 
 
 Version 2.5.0 (Sept. 30, 2024)
