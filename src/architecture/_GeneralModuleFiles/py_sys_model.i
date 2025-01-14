@@ -1,5 +1,5 @@
 
-%module(directors="1") sysModel
+%module(directors="1",threads="1") sysModel
 %{
    #include "sys_model.h"
 %}

@@ -1,6 +1,4 @@
-#undef SWIGPYTHON_BUILTIN
-
-%module {type}Payload
+%module(threads="1") {type}Payload
 %{{
     #include "{baseDir}/{type}Payload.h"
     #include "architecture/messaging/messaging.h"
@@ -55,4 +53,3 @@ INSTANTIATE_TEMPLATES({type}, {type}Payload, {baseDir})
 %template({type}OutMsgsVector) std::vector<Message<{type}Payload>, std::allocator<Message<{type}Payload>> >;
 %template({type}OutMsgsPtrVector) std::vector<Message<{type}Payload>*, std::allocator<Message<{type}Payload>*> >;
 %template({type}InMsgsVector) std::vector<ReadFunctor<{type}Payload>, std::allocator<ReadFunctor<{type}Payload>> >;
-
