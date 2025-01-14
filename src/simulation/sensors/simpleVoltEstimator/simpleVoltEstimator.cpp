@@ -27,11 +27,20 @@ SimpleVoltEstimator::SimpleVoltEstimator()
 {
     this->estVoltState = this->voltOutMsg.zeroMsgPayload;
     this->trueVoltState = this->voltOutMsg.zeroMsgPayload;
+
+    // Initialize matrices with proper sizes and default values
     this->PMatrix.resize(1,1);
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(1);
     this->walkBounds.fill(0.0);
-    this->errorModel =  GaussMarkov(1, this->RNGSeed);
+    this->AMatrix.resize(1,1);
+    this->AMatrix.setIdentity(1,1);
+
+    // Initialize noise model and set default parameters
+    this->errorModel = GaussMarkov(1, this->RNGSeed);
+    this->errorModel.setNoiseMatrix(this->PMatrix);
+    this->errorModel.setUpperBounds(this->walkBounds);
+    this->errorModel.setPropMatrix(this->AMatrix);
 }
 
 /*! Destructor.  Nothing here. */
@@ -57,20 +66,18 @@ void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos)
 
     int64_t numStates = 1;
 
-    //! - Initialize the propagation matrix to default values for use in update
-    this->AMatrix.setIdentity(numStates, numStates);
-
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not %ld*%ld. Size is %ld.  Quitting", numStates, numStates, this->PMatrix.size());
         return;
     }
-    //! - Set the matrices of the lower level error propagation (GaussMarkov)
-    this->errorModel.setNoiseMatrix(this->PMatrix);
-    this->errorModel.setRNGSeed(this->RNGSeed);
     if (this->walkBounds.size() != numStates) {
         bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not %ld elements. Quitting", numStates);
     }
+
+    //! - Update the noise model parameters
+    this->errorModel.setNoiseMatrix(this->PMatrix);
+    this->errorModel.setRNGSeed(this->RNGSeed);
     this->errorModel.setUpperBounds(this->walkBounds);
 }
 
@@ -121,4 +128,27 @@ void SimpleVoltEstimator::UpdateState(uint64_t CurrentSimNanos)
     this->computeErrors();
     this->applyErrors();
     this->writeOutputMessages(CurrentSimNanos);
+}
+
+/*!
+    Setter for `AMatrix` used for error propagation
+    @param propMatrix Matrix to set
+*/
+void SimpleVoltEstimator::setAMatrix(const Eigen::MatrixXd& propMatrix)
+{
+    if(propMatrix.rows() != 1 || propMatrix.cols() != 1) {
+        bskLogger.bskLog(BSK_ERROR, "SimpleVoltEstimator: Propagation matrix must be 1x1");
+        return;
+    }
+    this->AMatrix = propMatrix;
+    this->errorModel.setPropMatrix(propMatrix);
+}
+
+/*!
+    Getter for `AMatrix` used for error propagation
+    @return Current matrix
+*/
+Eigen::MatrixXd SimpleVoltEstimator::getAMatrix() const
+{
+    return this->AMatrix;
 }

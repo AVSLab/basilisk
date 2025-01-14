@@ -30,12 +30,29 @@ Magnetometer::Magnetometer()
     this->senBias.fill(0.0); // Tesla
     this->senNoiseStd.fill(-1.0); // Tesla
     this->walkBounds.fill(0.0);
-    this->noiseModel = GaussMarkov(this->numStates);
+
+    // Initialize noise model
+    this->noiseModel = GaussMarkov(this->numStates, this->RNGSeed);
+
+    // Initialize noise matrices with defaults
+    Eigen::MatrixXd nMatrix;
+    nMatrix.resize(3,3);
+    nMatrix.setZero();
+    this->noiseModel.setNoiseMatrix(nMatrix);
+
+    Eigen::MatrixXd pMatrix;
+    pMatrix.setIdentity(3,3);
+    this->noiseModel.setPropMatrix(pMatrix);
+
+    this->noiseModel.setUpperBounds(this->walkBounds);
+
+    // Initialize other parameters
     this->scaleFactor = 1.0;
     this->maxOutput = 1e200; // Tesla
     this->minOutput = -1e200; // Tesla
     this->saturateUtility = Saturate(this->numStates);
     this->dcm_SB.setIdentity(3, 3);
+    this->AMatrix.setIdentity();
     return;
 }
 
@@ -67,10 +84,20 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "Spacecraft state message name (stateInMsg) is empty.");
     }
 
-    this->noiseModel.setUpperBounds(this->walkBounds);
-    auto nMatrix = (this->senNoiseStd).asDiagonal();
-    this->noiseModel.setNoiseMatrix(nMatrix);
-    this->noiseModel.setRNGSeed(this->RNGSeed);
+    // Only apply noise if user has configured it
+    if (this->walkBounds.norm() > 0 || this->senNoiseStd.norm() > 0) {
+        this->noiseModel.setUpperBounds(this->walkBounds);
+
+        Eigen::MatrixXd nMatrix;
+        nMatrix.resize(3,3);
+        nMatrix.setZero();
+        nMatrix(0,0) = this->senNoiseStd(0);
+        nMatrix(1,1) = this->senNoiseStd(1);
+        nMatrix(2,2) = this->senNoiseStd(2);
+        this->noiseModel.setNoiseMatrix(nMatrix);
+    }
+
+    // Set saturation bounds
     Eigen::MatrixXd satBounds;
     satBounds.resize(this->numStates, 2);
     satBounds(0, 0) = this->minOutput;
@@ -174,4 +201,15 @@ void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
     this->applySaturation();
     //! - Write output data
     this->writeOutputMessages(CurrentSimNanos);
+}
+
+void Magnetometer::setAMatrix(const Eigen::Matrix3d& matrix)
+{
+    this->AMatrix = matrix;
+    this->noiseModel.setPropMatrix(matrix);
+}
+
+Eigen::Matrix3d Magnetometer::getAMatrix() const
+{
+    return this->AMatrix;
 }

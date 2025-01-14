@@ -47,7 +47,30 @@ typedef enum {
     NOMINAL
 } CSSFaultState_t;
 
-/*! @brief coarse sun sensor class */
+/*! @class CoarseSunSensor
+ * @brief Coarse sun sensor model that simulates sun vector measurements with configurable noise
+ *
+ * The CSS supports noise configuration through:
+ * - Walk bounds: Maximum allowed deviations from truth [-]
+ * - Noise std: Standard deviation of measurement noise [-]
+ * - AMatrix: Propagation matrix for error model (defaults to identity)
+ * - Fault noise: Additional noise when in fault state [-]
+ *
+ * Example Python usage:
+ * @code
+ *     cssSensor = CoarseSunSensor()
+ *
+ *     # Configure noise (dimensionless)
+ *     cssSensor.senNoiseStd = 0.001      # Standard deviation
+ *     cssSensor.walkBounds = 0.01        # Maximum error bound
+ *
+ *     # Optional: Configure error propagation (default is identity)
+ *     cssSensor.setAMatrix([[1]])        # 1x1 matrix for scalar measurement
+ *
+ *     # Optional: Configure fault noise
+ *     cssSensor.faultNoiseStd = 0.5      # Noise when in fault state
+ * @endcode
+ */
 class CoarseSunSensor: public SysModel {
 public:
     CoarseSunSensor();
@@ -64,7 +87,7 @@ public:
     void scaleSensorValues();  //!< scale the sensor values
     void applySaturation();     //!< apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
-    
+
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg; //!< [-] input message for sun data
     ReadFunctor<SCStatesMsgPayload> stateInMsg;   //!< [-] input message for spacecraft state
@@ -88,7 +111,7 @@ public:
     double              kellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
     Eigen::Vector3d     r_B;                    //!< [m] position vector in body frame
-    Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame 
+    Eigen::Vector3d     r_PB_B;                 //!< [m] misalignment of CSS platform wrt spacecraft body frame
     double              senBias;                //!< [-] Sensor bias value
     double              senNoiseStd;            //!< [-] Sensor noise value
     double              faultNoiseStd;          //!< [-] Sensor noise value if CSSFAULT_RAND is triggered
@@ -99,6 +122,9 @@ public:
     int                 CSSGroupID=-1;          //!< [-] (optional) CSS group id identifier, -1 means it is not set and default is used
     BSKLogger bskLogger;                        //!< -- BSK Logging
 
+    void setAMatrix(const Eigen::Matrix<double, -1, 1, 0, -1, 1>& propMatrix);
+    Eigen::Matrix<double, -1, 1, 0, -1, 1> getAMatrix() const;
+
 private:
     SpicePlanetStateMsgPayload sunData;             //!< [-] Unused for now, but including it for future
     SCStatesMsgPayload stateCurrent;            //!< [-] Current SSBI-relative state
@@ -107,11 +133,12 @@ private:
     GaussMarkov noiseModel;                     //! [-] Gauss Markov noise generation model
     GaussMarkov faultNoiseModel;                //! [-] Gauss Markov noise generation model exclusively for CSS fault
     Saturate saturateUtility;                   //! [-] Saturation utility
+    Eigen::Matrix<double, -1, 1, 0, -1, 1> propagationMatrix;  // Store the propagation matrix
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
-/*! This class is a thin container on top of the above coarse-sun sensor class.  
-It is used to aggregate the output messages of the coarse sun-sensors into a 
+/*! This class is a thin container on top of the above coarse-sun sensor class.
+It is used to aggregate the output messages of the coarse sun-sensors into a
 a single output for use by downstream models.*/
 class CSSConstellation: public SysModel {
  public:
@@ -120,7 +147,7 @@ class CSSConstellation: public SysModel {
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation
     void appendCSS(CoarseSunSensor *newSensor); //!< @brief [-] Method for adding sensor to list
-    
+
  public:
     Message<CSSArraySensorMsgPayload> constellationOutMsg;  //!< [-] CSS constellation output message
     std::vector<CoarseSunSensor *> sensorList;    //!< [-] List of coarse sun sensors in constellation

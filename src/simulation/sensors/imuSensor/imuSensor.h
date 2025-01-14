@@ -36,12 +36,45 @@
 #include "architecture/utilities/bskLogging.h"
 
 
-/*! @brief IMU sensor class */
+/*! @class ImuSensor
+ * @brief An IMU sensor model that simulates accelerometer and gyro measurements with configurable noise
+ *
+ * The IMU sensor supports various noise configurations through:
+ * - Error bounds: Maximum allowed deviations from truth
+ * - PMatrix: Noise covariance matrix (diagonal elements = noiseStd * 1.5)
+ * - AMatrix: Propagation matrix for error model (defaults to 3x3 identity matrix)
+ *
+ * Default behaviors:
+ * - AMatrixGyro: Initialized as 3x3 identity matrix
+ * - AMatrixAccel: Initialized as 3x3 identity matrix
+ * - Error bounds: Set to zero by default
+ * - Noise matrices: Set to zero by default
+ *
+ * Example Python usage:
+ * @code
+ *     # Configure accelerometer noise (m/s^2)
+ *     senTransNoiseStd = 0.001
+ *     PMatrixAccel = [0.0] * 9
+ *     PMatrixAccel[0] = PMatrixAccel[4] = PMatrixAccel[8] = senTransNoiseStd * 1.5
+ *     imuSensor.PMatrixAccel = PMatrixAccel
+ *     imuSensor.setErrorBoundsAccel([0.1, 0.1, 0.1])
+ *
+ *     # Configure gyro noise (rad/s)
+ *     senRotNoiseStd = 0.0001
+ *     PMatrixGyro = [0.0] * 9
+ *     PMatrixGyro[0] = PMatrixGyro[4] = PMatrixGyro[8] = senRotNoiseStd * 1.5
+ *     imuSensor.PMatrixGyro = PMatrixGyro
+ *     imuSensor.setErrorBoundsGyro([0.01, 0.01, 0.01])
+ * @endcode
+ *
+ * @note walkBoundsAccel and walkBoundsGyro are deprecated and will be removed in December 2025.
+ * Use setErrorBoundsAccel() and setErrorBoundsGyro() instead.
+ */
 class ImuSensor: public SysModel {
 public:
     ImuSensor();
     ~ImuSensor();
-    
+
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void readInputMessages();
@@ -59,6 +92,25 @@ public:
     void setRoundDirection(roundDirection_t aRound, roundDirection_t oRound);
     void set_oSatBounds(Eigen::MatrixXd oSatBounds);
     void set_aSatBounds(Eigen::MatrixXd aSatBounds);
+    void setAMatrixAccel(const Eigen::MatrixXd& propMatrix);
+    void setAMatrixGyro(const Eigen::MatrixXd& propMatrix);
+    Eigen::MatrixXd getAMatrixAccel() const;
+    Eigen::MatrixXd getAMatrixGyro() const;
+    void setWalkBoundsAccel(const Eigen::Vector3d& bounds);
+    void setWalkBoundsGyro(const Eigen::Vector3d& bounds);
+    Eigen::Vector3d getWalkBoundsAccel() const;
+    Eigen::Vector3d getWalkBoundsGyro() const;
+    /*! Sets accelerometer error bounds [m/s^2] */
+    void setErrorBoundsAccel(const Eigen::Vector3d& bounds);
+
+    /*! Sets gyro error bounds [rad/s] */
+    void setErrorBoundsGyro(const Eigen::Vector3d& bounds);
+
+    /*! Gets accelerometer error bounds [m/s^2] */
+    Eigen::Vector3d getErrorBoundsAccel() const;
+
+    /*! Gets gyro error bounds [rad/s] */
+    Eigen::Vector3d getErrorBoundsGyro() const;
 
 public:
     ReadFunctor<SCStatesMsgPayload> scStateInMsg; /*!< input essage name for spacecraft state */
@@ -73,19 +125,19 @@ public:
     bool NominalReady;                  //!< -- Flag indicating that system is in run
     Eigen::Matrix3d PMatrixAccel;   //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
 	Eigen::Matrix3d AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
-	Eigen::Vector3d walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
+	Eigen::Vector3d walkBoundsAccel;  //!< @warning Use setErrorBoundsAccel() instead, will be removed in December 2025
 	Eigen::Vector3d navErrorsAccel; //!< [-] Current navigation errors applied to truth
 	Eigen::Matrix3d PMatrixGyro;    //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
 	Eigen::Matrix3d AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
-	Eigen::Vector3d walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
+	Eigen::Vector3d walkBoundsGyro;   //!< @warning Use setErrorBoundsGyro() instead, will be removed in December 2025
 	Eigen::Vector3d navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
     IMUSensorMsgPayload trueValues;         //!< [-] total measurement without perturbations
     IMUSensorMsgPayload sensedValues;       //!< [-] total measurement including perturbations
-    
+
     Eigen::Vector3d accelScale;         //!< (-) scale factor for acceleration axes
     Eigen::Vector3d gyroScale;          //!< (-) scale factors for acceleration axes
-    
+
     Discretize aDisc;                  //!<  (-) instance of discretization utility for linear acceleration
     Discretize oDisc;                  //!<  (-) instance of idscretization utility for angular rate
     Saturate aSat;                     //!<  (-) instance of saturate utility for linear acceleration
@@ -100,7 +152,7 @@ private:
     SCStatesMsgPayload StateCurrent;    //!< -- Current SSBI-relative state
     GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
     GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
-    
+
     Eigen::MRPd previous_sigma_BN;              //!< -- sigma_BN from the previous spacecraft message
     Eigen::MRPd current_sigma_BN;               //!< -- sigma_BN from the most recent spacecraft message
     Eigen::Vector3d previous_omega_BN_B;        //!< -- omega_BN_B from the previous spacecraft message
@@ -109,11 +161,14 @@ private:
     Eigen::Vector3d current_omegaDot_BN_B;      //!< -- omegaDot_BN_B from the curret spacecraft message
     Eigen::Vector3d previous_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the previous spacecraft message
     Eigen::Vector3d current_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the current spacecraft message
-    
+
     Eigen::Vector3d accel_SN_P_out;             //!< -- rDotDot_SN_P for either next method or output messages
     Eigen::Vector3d DV_SN_P_out;                //!< -- time step deltaV for either next method or output messages
     Eigen::Vector3d omega_PN_P_out;             //!< -- omega_PN_P for either next method or output messages
     Eigen::Vector3d prv_PN_out;                 //!< -- time step PRV_PN for either next method or output messages
+
+    Eigen::Vector3d errorBoundsAccel;  //!< [-] Total error bounds for accelerometer states
+    Eigen::Vector3d errorBoundsGyro;   //!< [-] Total error bounds for gyro states
 };
 
 

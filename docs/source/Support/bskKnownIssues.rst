@@ -33,6 +33,10 @@ Version |release|
 - In the python library :ref:`RigidBodyKinematics` the ``subMRP()`` routine didn't compute the expected
   result if the denominator was small.  This is now corrected.
 - :ref:`groundLocation` was not respecting the case where ``maximumRange == -1.0`` in the method ``checkInstrumentFOV``.
+- Sensor noise models were not being initialized correctly in sensor models such as
+  :ref:`magnetometer` and :ref:`simpleVoltEstimator` modules. This is now fixed in the current release.
+- Propagation matrices were private in the :ref:`simpleVoltEstimator` and :ref:`starTracker` modules.
+  This is now fixed in the current release by the addition of public methods to set and get the propagation matrices.
 
 
 Version 2.5.0

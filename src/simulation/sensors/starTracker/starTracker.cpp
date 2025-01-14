@@ -27,9 +27,17 @@ StarTracker::StarTracker()
 {
     this->sensorTimeTag = 0;
     m33SetIdentity(RECAST3X3 this->dcm_CB);
+
+    // Initialize noise model
     this->errorModel = GaussMarkov(3, this->RNGSeed);
+
+    // Initialize matrices
+    this->PMatrix.resize(3, 3);
+    this->AMatrix.resize(3, 3);
+    this->walkBounds.resize(3);
+
     this->PMatrix.fill(0.0);
-    this->AMatrix.fill(0.0);
+    this->AMatrix.setIdentity(3, 3);
     this->walkBounds.fill(0.0);
     return;
 }
@@ -50,20 +58,17 @@ void StarTracker::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked.");
     }
 
-    int numStates = 3;
-
-    this->AMatrix.setIdentity(numStates, numStates);
-
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(this->PMatrix.size() != numStates*numStates)
+    if(this->PMatrix.size() != 9)
     {
         bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
         return;
     }
-    if(this->walkBounds.size() != numStates){
+    if(this->walkBounds.size() != 3){
         bskLogger.bskLog(BSK_ERROR, "Your walkbounds is not size 3. Quitting");
         return;
     }
+
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
     this->errorModel.setUpperBounds(this->walkBounds);
@@ -141,4 +146,38 @@ void StarTracker::UpdateState(uint64_t CurrentSimNanos)
     this->computeTrueOutput();
     this->applySensorErrors();
     this->writeOutputMessages(CurrentSimNanos);
+}
+
+/*!
+    Setter for `AMatrix` used for error propagation
+    @param propMatrix Matrix to set
+*/
+void StarTracker::setAMatrix(const Eigen::MatrixXd& propMatrix)
+{
+    if(propMatrix.rows() != 3 || propMatrix.cols() != 3) {
+        bskLogger.bskLog(BSK_ERROR, "StarTracker: Propagation matrix must be 3x3");
+        return;
+    }
+    this->AMatrix = propMatrix;
+    this->errorModel.setPropMatrix(propMatrix);
+}
+
+/*!
+    Getter for `AMatrix` used for error propagation
+    @return Current matrix
+*/
+Eigen::MatrixXd StarTracker::getAMatrix() const
+{
+    return this->AMatrix;
+}
+
+void StarTracker::setWalkBounds(const Eigen::Vector3d& bounds)
+{
+    this->walkBounds = bounds;
+    this->errorModel.setUpperBounds(bounds);
+}
+
+Eigen::Vector3d StarTracker::getWalkBounds() const
+{
+    return this->walkBounds;
 }
