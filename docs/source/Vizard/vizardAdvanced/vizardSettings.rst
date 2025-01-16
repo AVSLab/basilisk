@@ -709,35 +709,30 @@ rendered texture and can be set as part of the camera configuration.
 
 .. warning::
 
-      Three channel output (RGB) of depth is unavailable as of Vizard 2.2.0 until further notice,
-      due to a change in how Unity writes the color output from the fragment shader in Unity 2022.3.
-      Until this is resolved, the depth is encoded only in the red channel (R) of the pixel color.
-
-
-.. warning::
-
     The internal depth texture values are more accurate for objects closer to the camera. Error in
     the calculated depth increases with distance from the camera.
 
 
-To decode the depth for a specific pixel, sample its color. If your color sampler returns a float red
-channel value between 0 and 1.0, calculate the depth as:
+To decode the depth for a specific pixel, sample its color. If your color sampler returns float RGB
+channel values between 0 and 1.0, calculate the depth as:
 
 .. math::
 
-	depth = (farClippingPlane)(pixelColor.r)
+	depth = (farClippingPlane)*\left[(pixelColor.r)+\left(\frac{pixelColor.g}{255}\right)+\left(\frac{pixelColor.b}{255^2}\right)\right]
 
 If your color sampler returns an integer red channel value between 0 and 255, calculate the depth as:
 
 .. math::
 
-	depth = (farClippingPlane)(\frac{pixelColor.r} {255})
+	depth = (farClippingPlane)*\left[\left(\frac{pixelColor.r}{255}\right)+\left(\frac{pixelColor.g}{255^2}\right)+\left(\frac{pixelColor.b}{255^3}\right)\right]
 
 
 If the depth is equal to or greater than the far clipping plane of the instrument camera, the
 pixel color will be white (255, 255, 255).
 
+.. note::
 
+    The color output shown on screen is dependent on the specific display used and may appear different, but the encoded values are accurate.
 
 
 
