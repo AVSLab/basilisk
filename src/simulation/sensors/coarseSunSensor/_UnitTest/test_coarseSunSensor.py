@@ -294,7 +294,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         justTheNoise = cssOutput - truthVector  # subtract curve from noisy curve
         outputStd = np.std(justTheNoise)
         if name == 'plain':
-            plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+            plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.plot(dataLogSingle.times() * macros.NANO2MIN, cssOutput, label=name, zorder=zLevel, linewidth=lineWide)
         plt.legend()
         plt.xlabel('Time [min]')

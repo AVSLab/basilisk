@@ -403,6 +403,9 @@ VizSettings
     int showMissionTime = 0;                              //!< flag to show the mission time instead of the simulation time. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     std::string keyboardLiveInput = "";                   //!< string of alphanumeric key inputs to listen for during 2-way communication
     int64_t messageBufferSize = 0;                        //!< [bytes] Maximum size of vizMessages to be loaded into memory at one time, -1 to force loading of entire file into memory, 0 to use viz default
+    std::string truePathRelativeBody = "";                //!< String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body
+    std::string truePathRotatingFrame = "";               //!< String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
+    std::string truePathFixedFrame = "";                  //!< String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
 }VizSettings;
 
 

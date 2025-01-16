@@ -6,4 +6,4 @@ tqdm
 Pillow
 requests
 bokeh
-protobuf==5.27.0
+protobuf

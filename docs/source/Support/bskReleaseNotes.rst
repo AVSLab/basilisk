@@ -117,6 +117,8 @@ Version  |release|
 - Name change warning added to module documentation for the ``imuSensor`` ``walkBounds`` attribute to ``errorBounds``
   and a note on specifying sensor properties in  :ref:`scenarioGaussMarkovRandomWalk`.
 - Update :ref:`makingModules-2` on how to make messages available to Basilisk modules
+- Support for Vizard release 2.2.1, including rotating frame settings and documentation for support of ``.glb`` shape files
+- ``vizProtobuffer`` upgraded to use latest C++ compiler, ``protobuf`` Python/C++ library upgraded
 
 
 Version 2.5.0 (Sept. 30, 2024)

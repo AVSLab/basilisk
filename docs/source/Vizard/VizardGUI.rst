@@ -111,11 +111,55 @@ inside a sub-folder ``VizardData`` inside the user's home directory.
 
 ``View`` Menu Item
 ------------------
-The ``View`` menu tab contains a range of Vizard options. A range of coordinate frames can be toggled on or off.
+The ``View`` menu tab contains a range of Vizard options.
+
+Coordinate Frames
+^^^^^^^^^^^^^^^^^
+A range of coordinate frames can be toggled on or off, including ``Camera Target CS``, ``All Spacecraft CS``, ``All Effector CS``, ``All Planet/Moon CS``, ``Hill Frame`` and ``Velocity Frame``.
 
 .. image:: ../_images/static/vizard-imgAxes.jpg
    :align: center
    :width: 90 %
+
+Orbit Lines
+^^^^^^^^^^^
+Both ``Osculating Orbit Lines`` and ``True Trajectory Lines`` can be shown in a variety of frames as described below. Example scenarios highlight different orbit line view settings.
+
+Osculating Orbit Lines
+~~~~~~~~~~~~~~~~~~~~~~
+The osculating orbit is the instantaneous Keplerian orbit disregarding perturbations. These lines can be shown in the following modes:
+
+- ``Celestial Body Relative Inertial`` (default). The relative celestial body is the parent by default, but can be changed through the ``Set Celestial Body (Relative Inertial)`` menu item.
+- ``Spacecraft Relative``. This mode is available in scenarios with multiple spacecraft. The relative orbit chief is selected based on the camera target, but can be changed manually through the ``Set Spacecraft Relative Orbit Chief`` menu item.
+
+True Trajectory Lines
+~~~~~~~~~~~~~~~~~~~~~
+The true trajectory lines can be shown in the following modes:
+
+- Un-corrected Inertial (default). Inertial trajectories shown with respect to the solar system origin.
+- ``Celestial Body Relative Inertial``. The relative celestial body is the parent by default, but can be changed through the ``Set Celestial Body (Relative Inertial)`` menu item. This view mode is highlighted in :ref:`scenarioOrbitManeuver` as shown below.
+
+.. image:: ../_images/static/vizard-bodyInertialFrame.jpg
+   :align: center
+   :width: 50 %
+
+- ``Spacecraft Relative``. This mode is available in scenarios with multiple spacecraft. The relative orbit chief is selected based on the camera target, but can be changed manually through the ``Set Spacecraft Relative Orbit Chief`` menu item. These can be expressed in the Hill frame, velocity frame, or inertial frame of the chief. This view mode is highlighted in :ref:`scenarioDataToViz` as shown below.
+
+.. image:: ../_images/static/vizard-scRelative.jpg
+   :align: center
+   :width: 50 %
+
+- ``Two-Body Rotating Frame``. In scenarios with two celestial bodies, the primary is selected to be the larger of the two, per 3-body problem convention. In scenarios with more than two celestial bodies, the bodies must be manually selected using through the ``Set Rotating Frame Celestial Bodies`` menu item. This view mode is highlighted in :ref:`scenarioHaloOrbit` as shown below.
+
+.. image:: ../_images/static/vizard-rotatingFrame.jpg
+   :align: center
+   :width: 50 %
+
+- ``Body-Fixed Frame``. The primary celestial body is default, but can be changed through the ``Set Body-Fixed Frame Body`` menu item. This view mode is highlighted in :ref:`scenarioAsteroidArrival` as shown below.
+
+.. image:: ../_images/static/vizard-fixedFrame.jpg
+   :align: center
+   :width: 50 %
 
 
 Edit Pointing Vector
@@ -259,20 +303,14 @@ as a PNG image within the user's home directory.
 
 Import a Custom Shape Model
 ---------------------------
-When Vizard starts up it represents the spacecraft using a default CAD model called ``bsk-Sat``.  The following section illustrates how this default spacecraft model can be replaced with with a custom CAD model in an ``.obj`` file format, or by using a built-in shape primitive.
-
-.. image:: ../_images/static/vizard-ImgCAD-1.jpg
-   :align: center
-   :width: 90 %
-
-Vizard starts up showing a default spacecraft shape.  To select a different shape, a custom CAD model can be imported using the OBJ file format.  Go to the ``File`` menu and select ``Import OBJ Model``:
+When Vizard starts up it represents the spacecraft using a default CAD model called ``bsk-Sat``.  This default spacecraft model can be replaced with with a custom CAD model in an ``.obj`` or ``.glb`` file format, or by using a built-in shape primitive. Go to the ``File`` menu and select ``Import Model``:
 
 
 .. image:: ../_images/static/vizard-ImgCAD-2.jpg
    :align: center
    :width: 90 %
 
-Next, select the OBJ file that is to be imported into Vizard.
+Next, select the file that is to be imported into Vizard.
 
 
 .. image:: ../_images/static/vizard-ImgCAD-3.jpg
@@ -293,8 +331,7 @@ configured to script this OBJ import process as illustrated in :ref:`vizardSetti
 
 At this point a panel appears that allows you select the object for which you want to apply a new
 shape, and what shape you want to apply.  When ready, press `Apply Models to Selected Objects` to
-apply the custom space object shape.  Note that instead of an OBJ file a custom shape can also be
-selected such as a sphere, cylinder or cube.
+apply the custom space object shape.  Note that instead of an ``.obj`` or ``.glb`` file a custom shape can also be selected such as a sphere, cylinder or cube.
 
 .. image:: ../_images/static/vizard-ImgCAD-5.jpg
    :align: center

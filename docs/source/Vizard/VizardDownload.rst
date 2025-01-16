@@ -72,9 +72,15 @@ Download the platform specific bundles file, unzip it, and move the contents to 
       - :download:`macOS<https://hanspeterschaub.info/bskFiles/Assets/martianmoons_macOS.zip>`
       - :download:`Linux<https://hanspeterschaub.info/bskFiles/Assets/martianmoons_Linux.zip>`
       - :download:`Windows<https://hanspeterschaub.info/bskFiles/Assets/martianmoons_Windows.zip>`
+    * - :ref:`assetIceSat2_Kepler`
+      - Package including models for spacecraft IceSat2 and Kepler
+      - :download:`macOS<https://hanspeterschaub.info/bskFiles/Assets/IceSat2_Kepler_macOS.zip>`
+      - :download:`Linux<https://hanspeterschaub.info/bskFiles/Assets/IceSat2_Kepler_Linux.zip>`
+      - :download:`Windows<https://hanspeterschaub.info/bskFiles/Assets/IceSat2_Kepler_Windows.zip>`
 
 .. toctree::
    :hidden:
 
    assetAsteroids
    assetMartianMoons
+   assetIceSat2_Kepler

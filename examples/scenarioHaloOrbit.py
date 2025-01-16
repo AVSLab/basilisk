@@ -180,9 +180,15 @@ def run(showPlots=True):
     scSim.AddModelToTask(simTaskName, scDataRec)
     scSim.AddModelToTask(simTaskName, MoonDataRec)
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__
-                                              )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
+                                                  # saveFile=__file__
+                                                  )
+        viz.settings.showCelestialBodyLabels = 1
+        viz.settings.mainCameraTarget = "earth"
+        viz.settings.trueTrajectoryLinesOn = 4
+        viz.settings.truePathRotatingFrame = "earth moon"
+
     # Initialize simulation
     scSim.InitializeSimulation()
 
