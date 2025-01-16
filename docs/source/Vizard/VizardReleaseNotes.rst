@@ -19,6 +19,22 @@ Release Notes
     - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
+**Version 2.2.1 (January 13, 2025)**
+
+- Added support for loading .glb model files at runtime using the Import Model GUI Panel or using the custom model import VizMessage
+- Added ability to plot each spacecraft’s true path trajectory relative to a parent body (default), another body selected by user, or relative to the origin of the inertial frame (old default), user can select how to plot the true path trajectory with an option button in the View menu
+- Added ability to visualize true path trajectory in a two-body rotating frame, user can select which two celestial bodies make up the rotating frame under the View menu
+- Added ability to plot each spacecraft’s true path trajectory in a selected spacecraft or celestial body’s fixed frame
+- Revised True Path Trajectory settings and organization under View Menu to improve use and support added trajectory view settings
+- Added support for the new True Path Trajectory view settings to VizMessage settings
+- Added “Open Scenario File” button to File Menu to allow user to load a different playback file without quitting Vizard
+- Added support for forcing any trainer selections in the View menu coordinate frames, osculating orbit lines, and true path trajectory lines to the broadcast viewers (trainees) when in ForcedSyncMode
+- Pointing line vectors will increase their length when their source object is a large model to remain visible
+- Reordered the View menu to put the chief selection button next to the orbit visualization toggles
+- Bug fix: three-channel precision restored on depth map camera images
+- Bug fix: protected against bad raycast call while loading obj at start that would cause app to freeze
+- Added addressables for IceSat and Kepler satellites
+
 **Version 2.2.0 (August 20, 2024)**
 
 - Added VizEventDialog message type to VizMessage.proto. EventDialogs allow the user to create a GUI
