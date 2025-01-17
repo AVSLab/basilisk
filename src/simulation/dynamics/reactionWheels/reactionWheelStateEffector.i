@@ -17,6 +17,15 @@
 
  */
 %module reactionWheelStateEffector
+
+// Add destructor for RWConfigElementMsgPayload
+%feature("autodoc", "Destructor") ~RWConfigElementMsgPayload;
+%extend RWConfigElementMsgPayload {
+    ~RWConfigElementMsgPayload() {
+        delete $self;
+    }
+}
+
 %{
    #include "reactionWheelStateEffector.h"
 %}
