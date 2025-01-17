@@ -498,21 +498,16 @@ endif()
 
 # TODO: Move the cspice library extension into a custom pyswice CMakeList.txt Manually create list of libraries
 # depending on system
+find_package(cspice REQUIRED CONFIG)
+set(library_dependencies cspice::cspice)
 if(WIN32)
   set(CMAKE_MSVCIDE_RUN_PATH "${CMAKE_BINARY_DIR}/Basilisk")
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
-  set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib)
   # fix for opencv not finding conan gflags for opencv sfm lib on windows when the finding is fixed, the following line
   # should be removed https://github.com/conan-community/community/issues/210
   list(REMOVE_ITEM CONAN_LIBS opencv_sfm411d multiview)
 
 elseif(APPLE)
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64")
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx_arm64.a)
-  else()
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx.a)
-  endif()
-
   set(CMAKE_SKIP_BUILD_RPATH FALSE) # use, i.e. don't skip the full RPATH for the build tree
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) # when building, don't use the install RPATH already (but later on when
                                            # installing)
@@ -529,11 +524,6 @@ elseif(APPLE)
   # install RPATH
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 else()
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "^(arm64|aarch64)$")
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_arm64.a)
-  else()
-    set(library_dependencies ${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice.a)
-  endif()
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
   set(CMAKE_INSTALL_RPATH "\$ORIGIN/../../")
 endif()
