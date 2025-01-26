@@ -232,6 +232,7 @@ def unitSimpleNav(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts -" + str(count))
 
+    plt.close('all')
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,0], label='x-position')
     plt.plot(dataTransLog.times() * 1.0E-9, posNav[:,1], label='y-position')
