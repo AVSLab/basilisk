@@ -482,11 +482,15 @@ def createScenarioAttitudeFeedbackRW():
     #
     #  create the simulation process
     #
-    dynProcess = scSim.CreateNewProcess(simProcessName)
+    # We store simulation objects on the simulation object itself (scSim)
+    # to prevent Python's garbage collection from destroying C++ wrapped objects.
+    # This is critical as the C++ simulation still needs these objects to function.
+    # Without maintaining these references, the simulation may crash with segmentation faults.
+    scSim.dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(.1)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    scSim.dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
     #   setup the simulation tasks/objects
@@ -517,56 +521,52 @@ def createScenarioAttitudeFeedbackRW():
     scSim.AddModelToTask(simTaskName, scSim.rwVoltageIO)
 
     # clear prior gravitational body and SPICE setup definitions
-    gravFactory = simIncludeGravBody.gravBodyFactory()
+    scSim.gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # setup Earth Gravity Body
-    scSim.earth = gravFactory.createEarth()
+    scSim.earth = scSim.gravFactory.createEarth()
     scSim.earth.isCentralBody = True  # ensure this is the central gravitational body
     mu = scSim.earth.mu
 
     # attach gravity model to spacecraft
-    gravFactory.addBodiesTo(scSim.scObject)
+    scSim.gravFactory.addBodiesTo(scSim.scObject)
     #
     # add RW devices
     #
     # Make a fresh RW factory instance, this is critical to run multiple times
-    rwFactory = simIncludeRW.rwFactory()
+    scSim.rwFactory = simIncludeRW.rwFactory()
 
     # store the RW dynamical model type
-    varRWModel = messaging.BalancedWheels
+    scSim.varRWModel = messaging.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('Honeywell_HR16'
+    scSim.RW1 = scSim.rwFactory.create('Honeywell_HR16'
                            , [1, 0, 0]
                            , maxMomentum=50.
                            , Omega=100.                 # RPM
-                           , RWModel= varRWModel
+                           , RWModel= scSim.varRWModel
                            )
-    RW2 = rwFactory.create('Honeywell_HR16'
+    scSim.RW2 = scSim.rwFactory.create('Honeywell_HR16'
                            , [0, 1, 0]
                            , maxMomentum=50.
                            , Omega=200.                 # RPM
-                           , RWModel= varRWModel
+                           , RWModel= scSim.varRWModel
                            )
-    RW3 = rwFactory.create('Honeywell_HR16'
+    scSim.RW3 = scSim.rwFactory.create('Honeywell_HR16'
                            , [0, 0, 1]
                            , maxMomentum=50.
                            , Omega=300.                 # RPM
                            , rWB_B = [0.5, 0.5, 0.5]    # meters
-                           , RWModel= varRWModel
+                           , RWModel= scSim.varRWModel
                            )
-    numRW = rwFactory.getNumOfDevices()
+    numRW = scSim.rwFactory.getNumOfDevices()
     # create RW object container and tie to spacecraft object
-    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwFactory.addToSpacecraft(scSim.scObject.ModelTag, rwStateEffector, scSim.scObject)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(scSim.rwVoltageIO.motorTorqueOutMsg)
+    scSim.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+    scSim.rwFactory.addToSpacecraft(scSim.scObject.ModelTag, scSim.rwStateEffector, scSim.scObject)
+    scSim.rwStateEffector.rwMotorCmdInMsg.subscribeTo(scSim.rwVoltageIO.motorTorqueOutMsg)
 
-    # Add RWs to sim for dispersion
-    scSim.RW1 = RW1
-    scSim.RW2 = RW2
-    scSim.RW3 = RW3
     # add RW object array to the simulation process
-    scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
+    scSim.AddModelToTask(simTaskName, scSim.rwStateEffector, 2)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
@@ -587,9 +587,9 @@ def createScenarioAttitudeFeedbackRW():
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.items():
+    for key, rw in scSim.rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswRwConfMsg = fswSetupRW.writeConfigMessage()
+    scSim.fswRwConfMsg = fswSetupRW.writeConfigMessage()
 
     # setup inertial3D guidance module
     scSim.inertial3DObj = inertial3D.inertial3D()
@@ -610,8 +610,8 @@ def createScenarioAttitudeFeedbackRW():
     scSim.AddModelToTask(simTaskName, scSim.mrpControl)
     scSim.mrpControl.guidInMsg.subscribeTo(scSim.attError.attGuidOutMsg)
     scSim.mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
-    scSim.mrpControl.rwParamsInMsg.subscribeTo(fswRwConfMsg)
-    scSim.mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    scSim.mrpControl.rwParamsInMsg.subscribeTo(scSim.fswRwConfMsg)
+    scSim.mrpControl.rwSpeedsInMsg.subscribeTo(scSim.rwStateEffector.rwSpeedOutMsg)
     scSim.mrpControl.K  =   3.5
     scSim.mrpControl.Ki =   -1          # make value negative to turn off integral feedback
     scSim.mrpControl.P  = 30.0
@@ -623,7 +623,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.AddModelToTask(simTaskName, scSim.rwMotorTorqueObj)
     # Initialize the test module msg names
     scSim.rwMotorTorqueObj.vehControlInMsg.subscribeTo(scSim.mrpControl.cmdTorqueOutMsg)
-    scSim.rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    scSim.rwMotorTorqueObj.rwParamsInMsg.subscribeTo(scSim.fswRwConfMsg)
     # Make the RW control all three body axes
     controlAxes_B = [
              1,0,0
@@ -640,7 +640,7 @@ def createScenarioAttitudeFeedbackRW():
 
     # Initialize the test module configuration data
     scSim.fswRWVoltage.torqueInMsg.subscribeTo(scSim.rwMotorTorqueObj.rwMotorTorqueOutMsg)
-    scSim.fswRWVoltage.rwParamsInMsg.subscribeTo(fswRwConfMsg)
+    scSim.fswRWVoltage.rwParamsInMsg.subscribeTo(scSim.fswRwConfMsg)
     scSim.rwVoltageIO.motorVoltageInMsg.subscribeTo(scSim.fswRWVoltage.voltageOutMsg)
     # set module parameters
     scSim.fswRWVoltage.VMin = 0.0  # Volts
@@ -676,7 +676,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[transMsgName])
 
-    scSim.msgRecList[rwSpeedMsgName] = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    scSim.msgRecList[rwSpeedMsgName] = scSim.rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwSpeedMsgName])
 
     scSim.msgRecList[voltMsgName] = scSim.fswRWVoltage.voltageOutMsg.recorder(samplingTime)
@@ -684,7 +684,7 @@ def createScenarioAttitudeFeedbackRW():
 
     c = 0
     for msgName in rwOutName:
-        scSim.msgRecList[msgName] = rwStateEffector.rwOutMsgs[c].recorder(samplingTime)
+        scSim.msgRecList[msgName] = scSim.rwStateEffector.rwOutMsgs[c].recorder(samplingTime)
         scSim.AddModelToTask(simTaskName, scSim.msgRecList[msgName])
         c += 1
 
