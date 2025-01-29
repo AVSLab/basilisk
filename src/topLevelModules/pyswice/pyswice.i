@@ -31,46 +31,48 @@
 %include "carrays.i"
 %include "cstring.i"
 %include "typemaps.i"
-%array_functions(double, doubleArray);
-%array_functions(int, intArray);
 
-// NOTE: These typedefs are for the C code
-//       These should be defined by SpiceUsr.h but may not be on some platforms
-%{
-    typedef const char ConstSpiceChar;
-    typedef double SpiceDouble;
-    typedef const double ConstSpiceDouble;
-    typedef int SpiceInt;
-    typedef const int ConstSpiceInt;
-    typedef int SpiceBoolean;
-%}
-// NOTE: These typedefs are for SWIG generation
 typedef const char ConstSpiceChar;
 typedef double SpiceDouble;
 typedef const double ConstSpiceDouble;
-typedef int SpiceInt;
-typedef const int ConstSpiceInt;
 typedef int SpiceBoolean;
+typedef const int ConstSpiceBoolean;
 
-%define SPICE2DARRAYMAP(ctype, spicetype)
+%define SPICEINT(spicetype)
+%typemap(in) spicetype {
+    $1 = (spicetype)PyLong_AsLong($input);
+}
+%typemap(out) spicetype {
+    $result = PyLong_FromLong($1);
+}
+%enddef
+
+SPICEINT(SpiceInt)
+SPICEINT(ConstSpiceInt)
+
+%array_functions(double, doubleArray);
+%array_functions(SpiceInt, spiceIntArray);
+%array_functions(SpiceBoolean, spiceBoolArray);
+
+%define SPICE2DARRAYMAP(spicetype)
 %typemap(in) spicetype [ANY][ANY] {
     void *dataPtr;
     SWIG_ConvertPtr($input, &dataPtr, $descriptor(spicetype *), 0 |  0);
-    ctype **actData = (ctype**) dataPtr;
+    spicetype **actData = (spicetype**) dataPtr;
     $1 = (spicetype (*)[$1_dim1]) actData;
 }
 %typemap(in) spicetype [][ANY] {
     void *dataPtr;
     SWIG_ConvertPtr($input, &dataPtr, $descriptor(spicetype *), 0 |  0);
-    ctype **actData = (ctype**) dataPtr;
+    spicetype **actData = (spicetype**) dataPtr;
     $1 = (spicetype (*)[$1_dim0]) actData;
 }
 %enddef
 
-SPICE2DARRAYMAP(double, ConstSpiceDouble)
-SPICE2DARRAYMAP(double, SpiceDouble)
-SPICE2DARRAYMAP(int, ConstSpiceInt)
-SPICE2DARRAYMAP(int, SpiceInt)
+SPICE2DARRAYMAP(ConstSpiceDouble)
+SPICE2DARRAYMAP(SpiceDouble)
+SPICE2DARRAYMAP(ConstSpiceInt)
+SPICE2DARRAYMAP(SpiceInt)
 
 
 %cstring_bounded_mutable(SpiceChar *utcstr, 1024);

@@ -45,7 +45,7 @@ def ckWrite(handle, time, mrp_array, av_array, start_seg, spacecraft_id=-62, ref
         pass
 
     # Open the CK file
-    file_handle = pyswice.new_intArray(1)
+    file_handle = pyswice.new_spiceIntArray(1)
     pyswice.ckopn_c(handle, "my-ckernel", 0, file_handle)
 
     # Create empty containers for time, attitude and angular velocity
@@ -87,12 +87,12 @@ def ckWrite(handle, time, mrp_array, av_array, start_seg, spacecraft_id=-62, ref
     encoded_end_time = pyswice.doubleArray_getitem(time_array, num_data_points - 1) + 1.0e-3  # Pad the end for roundoff
 
     # Save the date into a CK file
-    pyswice.ckw03_c(pyswice.intArray_getitem(file_handle, 0), encoded_start_time, encoded_end_time, spacecraft_id,
+    pyswice.ckw03_c(pyswice.spiceIntArray_getitem(file_handle, 0), encoded_start_time, encoded_end_time, spacecraft_id,
                     reference_frame, 1, "InertialData", num_data_points, time_array, quat_array, vel_array, 1,
                     start_ticks)
 
     # Close the CK file
-    pyswice.ckcls_c(pyswice.intArray_getitem(file_handle, 0))
+    pyswice.ckcls_c(pyswice.spiceIntArray_getitem(file_handle, 0))
 
 
 def ckRead(time, spacecraft_id=-62, reference_frame="J2000"):
@@ -122,7 +122,7 @@ def ckRead(time, spacecraft_id=-62, reference_frame="J2000"):
     dcm_container = pyswice.new_doubleArray(9)
     av_container = pyswice.new_doubleArray(3)
     tick_container = pyswice.new_doubleArray(1)
-    requested_pointing_flag = pyswice.new_intArray(1)
+    requested_pointing_flag = pyswice.new_spiceBoolArray(1)
     pyswice.ckgpav_c(spacecraft_id, pyswice.doubleArray_getitem(tick, 0), 0, reference_frame, dcm_container,
                      av_container, tick_container, requested_pointing_flag)
 
