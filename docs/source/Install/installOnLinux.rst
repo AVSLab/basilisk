@@ -31,12 +31,17 @@ The following python package dependencies are automatically checked and installe
     experimental support for Linux on ARM processors.  However, this option is not currently
     tested on a regular manner.
 
-Dependencies
-------------
+Package Dependencies
+--------------------
 
-.. Note:: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies. Some distributions of Linux will use other package management commands such as ``yum``, ``dnf``, of ``pgk``.
+.. Note:: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies.
 
-#. On a new Linux system various developer packages and support libraries are requried::
+
+Debian/Ubuntu
+^^^^^^^^^^^^^
+Basilisk development mainly occurs in Debian-based systems. Other distributions of Linux will use other package management commands such as ``yum``, ``dnf``, of ``pgk``. Specific instructions for Red Hat / Fedora systems are given below.
+
+#. On Debian-based systems, install the following developer packages and support libraries::
 
        # Update current software
        $ apt-get update
@@ -79,6 +84,60 @@ Dependencies
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
+
+Fedora
+^^^^^^
+
+#. On Fedora, install the following developer packages and support libraries::
+
+    # Update current software
+    $ dnf check-update
+    $ dnf update
+
+    # Get GIT for source code version control
+    # dnf install git
+
+    # All packages need to compile such as gcc and g++ compilers and other utils.
+    $ sudo dnf install -y git curl @development-tools dkms perl wget
+    $ sudo dnf install -y gcc make mysql-devel openssl-devel
+    $ sudo dnf install -y zlib-devel bzip2-devel readline-devel \
+      sqlite-devel llvm ncurses-devel ncurses-libs xz \
+      tk-devel libffi-devel xz-devel python3-pyOpenSSL
+
+    # Install Python 3.
+    # On Fedora, you may have to install an older version since Basilisk maintainers test on Ubuntu and  Fedora adopts new versions earlier than Ubuntu.
+    # Replace .xx below with the specific subversion.
+    $ dnf install python3.xx
+
+    # Package development process library to facilitate packaging Python packages
+    $ dnf install python3-setuptools
+
+    # ensure that the python developer libraries are installed
+    $ dnf install python3.xx-devel
+
+    # Tkinter
+    $ dnf install python3.xx-tkinter
+
+    # if you want to build with opNav modules, install the following library
+    $ dnf install gtk2-devel
+
+    # Python PIP
+    $ dnf install python3-pip
+
+    #Check python version installed
+    $ python3.xx --version
+
+#. SWIG: Available using::
+
+    $ dnf install swig
+
+#. A C/C++ Compiler: This is included by default with most Linux systems (``gcc``), but is necessary to build Basilisk.
+
+#. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
+
+Python Environment
+------------------
+
 #. Using a Python Virtual Environment
 
    .. attention:: We strongly recommend using a python virtual environment while installing basilisk or running basilisk modules.
@@ -95,6 +154,12 @@ Dependencies
      then create a virtual environment using::
 
         $ python3 -m venv .venv
+
+     Or for a specific Python version::
+
+         $ python3.xx -m venv .venv
+
+     where .xx is the subversion (such as .12 in Python3.12).
 
      This creates a hidden folder inside the Basilisk folder which will store all the python packages and
      environment information.
