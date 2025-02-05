@@ -36,6 +36,17 @@ Version |release|
 - Added support for Vizard release 2.2.2, including transition from MultiSphere to MultiShape, and SWIG structure deprecation through aliasing.
 - Fixed scenario name mismatch in :ref:`scenarioRerunMonteCarlo` that prevented rerunning example Monte Carlo simulation scenarios.
 - Fixed bug in :ref:`thrusterPlatformReference` where a DCM had an incorrect transpose operation.
+- Memory Leak for ``reactionWheelStateEffector`` fixed via destructor update, swig update,
+  and removing ``.disown()`` in RW factory classes.
+- Removed the use of ``.disown()`` in all BSK scripts.  Python code is modified to ensure
+  required message of class instance are retained in memory  if needed.  This removes
+  a memory leak issue when running lots of instances of BSK in Monte Carlo runs.
+- C++ wrapped sensor objects (CSS, thrusters, reaction wheels) must now be stored
+  on the simulation object to prevent premature garbage collection. This change affects all scenarios
+  using these components. See :ref:`bskKnownIssues` for detailed explanation and examples. Users
+  upgrading from previous versions must update their scripts to store these objects on their
+  simulation instance to prevent segmentation faults. Once again, this change replaces the previous use of
+  ``.disown()`` with a more robust memory management approach.
 
 
 Version  2.6.0  (Feb. 21, 2025)
