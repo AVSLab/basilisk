@@ -30,6 +30,12 @@ Version |release|
 - Updated CI scripts to run on latest macOS and no longer use Ubuntu 20.04
 - Updated :ref:`makeDraftModule` to remove redundant comments and implementation of the destructor,
   using only a header-defaulted destructor with ``= default;`` syntax.
+- Memory Leak for ``reactionWheelStateEffector`` fixed via destructor update, swig update,
+  and removing ``.disown()`` in RW factory classes.
+- Removed the use of ``.disown()`` in all BSK scripts.  Python code is modified to ensure
+  required message of class instance are retained in memory  if needed.  This removes
+  a memory leak issue when running lots of instances of BSK in Monte Carlo runs.
+
 
 Version  2.6.0  (Feb. 21, 2025)
 -------------------------------
