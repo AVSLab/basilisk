@@ -43,6 +43,8 @@ jobs:
     build-ubuntu-latest-wheels:
       name: Build ubuntu-latest wheels
       needs: wait_for_version_bump
+      # Allow for manual runs to generate new wheels
+      if: ${{ always() }}
       runs-on: ubuntu-22.04
       strategy:
         matrix:
