@@ -292,6 +292,28 @@ class BSKFswModels:
             self.spacecraftReconfig.onTimeOutMsg)
 
     def zeroGateWayMsgs(self):
-        """Zero all the FSW gateway message payloads"""
+        """Zero all FSW gateway message payloads"""
         self.attRefMsg.write(messaging.AttRefMsgPayload())
         self.attGuidMsg.write(messaging.AttGuidMsgPayload())
+
+        # Zero all actuator commands
+        self.rwMotorTorque.rwMotorTorqueOutMsg.write(messaging.ArrayMotorTorqueMsgPayload())
+        self.spacecraftReconfig.onTimeOutMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
+
+        # If CMGs are present in the configuration:
+        # self.cmgCmdMsg.write(messaging.CMGCmdMsgPayload())
+
+    def resetCheck(self, module, unitTestSim, dataLog, numThrusters, resetCheck, testFailCount, testMessages):
+        if resetCheck:
+            module.Reset(mc.sec2nano(2.0))
+
+            # Run simulation briefly after reset to capture output
+            unitTestSim.ConfigureStopTime(mc.sec2nano(2.1))
+            unitTestSim.ExecuteSimulation()
+
+            # Verify zero output after reset
+            zeroCheck = all(ontime == 0.0 for ontime in dataLog.OnTimeRequest[-1])
+            if not zeroCheck:
+                testFailCount += 1
+                testMessages.append("FAIL: Reset didn't zero outputs")
+        return testFailCount, testMessages

@@ -59,6 +59,10 @@ void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int
     /*! - Read in the torque rod input configuration message. This gives us the number of torque rods
          being used on the vehicle.*/
     configData->mtbArrayConfigParams = MTBArrayConfigMsg_C_read(&configData->mtbArrayConfigParamsInMsg);
+
+    /* zero the MTB dipole command output message */
+    MTBCmdMsgPayload dipoleRequestMtbOutMsgBuffer = MTBCmdMsg_C_zeroMsgPayload();
+    MTBCmdMsg_C_write(&dipoleRequestMtbOutMsgBuffer, &configData->dipoleRequestMtbOutMsg, moduleID, callTime);
 }
 
 
@@ -80,7 +84,7 @@ void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, in
      * Read the input messages and initialize output message.
      */
     DipoleRequestBodyMsgPayload dipoleRequestBodyInMsgBuffer = DipoleRequestBodyMsg_C_read(&configData->dipoleRequestBodyInMsg);
-    MTBCmdMsgPayload dipoleRequestMtbOutMsgBuffer = MTBCmdMsg_C_zeroMsgPayload(&configData->dipoleRequestMtbOutMsg);
+    MTBCmdMsgPayload dipoleRequestMtbOutMsgBuffer = MTBCmdMsg_C_zeroMsgPayload();
 
     /*! - Map the requested Body frame dipole request to individual torque rod dipoles.*/
     mMultV(configData->steeringMatrix, configData->mtbArrayConfigParams.numMTB, 3, dipoleRequestBodyInMsgBuffer.dipole_B, dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
