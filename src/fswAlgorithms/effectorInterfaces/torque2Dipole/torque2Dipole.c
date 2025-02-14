@@ -56,6 +56,10 @@ void Reset_torque2Dipole(torque2DipoleConfig *configData, uint64_t callTime, int
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->tauRequestInMsg)){
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: torque2Dipole.tauRequestInMsg is not connected.");
     }
+
+    /* zero the dipole request output message */
+    DipoleRequestBodyMsgPayload dipoleRequestOutMsgBuffer = DipoleRequestBodyMsg_C_zeroMsgPayload();
+    DipoleRequestBodyMsg_C_write(&dipoleRequestOutMsgBuffer, &configData->dipoleRequestOutMsg, moduleID, callTime);
 }
 
 

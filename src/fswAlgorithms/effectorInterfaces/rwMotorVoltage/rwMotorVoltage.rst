@@ -38,5 +38,6 @@ provides information on what this message is used for.
       - :ref:`RWSpeedMsgPayload`
       - (optional) RW device speed message
 
- 
-
+Module Assumptions and Limitations
+----------------------------------
+The module ``Reset()`` function zeros the output message to ensure safe management of effector states when the algorithm is disabled.

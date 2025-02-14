@@ -84,6 +84,9 @@ void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int
     v3SetZero(configData->accumulatedImp);
     configData->totalAccumFiring = 0.0;
 
+    // Add zero output message
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
+    THRArrayOnTimeCmdMsg_C_write(&thrOnTimeOut, &configData->thrCmdOutMsg, moduleID, callTime);
 }
 
 /*! This method takes in the current oberved reaction wheel angular velocities.

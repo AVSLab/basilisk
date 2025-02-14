@@ -12,9 +12,9 @@ onto a set of thrusters.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 Both the `cmdTorqueInMsg` and `cmdForceInMsg` are optional.
 
@@ -139,3 +139,7 @@ Then, the relevant messages must be subscribed to by the module::
     module.vehConfigInMsg.subscribeTo(vehConfigInMsg)
 
 For more information on how to set up and use this module, see the unit test.
+
+Module Assumptions and Limitations
+----------------------------------
+The module ``Reset()`` function zeros the output message to ensure safe management of effector states when the algorithm is disabled.
