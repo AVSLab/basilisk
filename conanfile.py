@@ -12,6 +12,7 @@ from packaging.requirements import Requirement
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.microsoft import is_msvc
+from conan.tools.files import copy
 from pathlib import Path
 
 sys.path.insert(1, './src/utilities/')
@@ -234,11 +235,6 @@ class BasiliskConan(ConanFile):
             else:
                 self.info.settings.compiler.runtime = "MT/MTd"
 
-    def imports(self):
-        if self.settings.os == "Windows":
-            self.keep_imports = True
-            self.copy("*.dll", "../Basilisk", "bin")
-
     def layout(self):
         cmake_layout(self,
                      src_folder=str(self.options.get_safe("sourceFolder")),
@@ -252,6 +248,11 @@ class BasiliskConan(ConanFile):
         self.folders.build = str(self.options.get_safe("buildFolder"))
 
     def generate(self):
+        if self.settings.os == "Windows":
+            for dep in self.dependencies.values():
+                for libdir in dep.cpp_info.bindirs:
+                    copy(self, "*.dll", libdir, "../Basilisk")
+
         if self.options.get_safe("pathToExternalModules"):
             print(statusColor + "Including External Folder: " + endColor + str(self.options.pathToExternalModules))
 
