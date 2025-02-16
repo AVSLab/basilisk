@@ -120,6 +120,7 @@ Version  |release|
 - Support for Vizard release 2.2.1, including rotating frame settings and documentation for support of ``.glb`` shape files
 - ``vizProtobuffer`` upgraded to use latest C++ compiler, ``protobuf`` Python/C++ library upgraded
 - Updated :ref:`installLinux` to discuss installing BSK on Fedora Linux systems.
+- Updated CI scripts to catch cases where tests are skipped that should be.  Windows now builds properly with `conan2`.
 
 
 Version 2.5.0 (Sept. 30, 2024)
