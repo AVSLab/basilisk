@@ -161,7 +161,8 @@ exclude_patterns = [
     'examples/OpNavScenarios/scenariosOpNav/index.rst',
     'examples/OpNavScenarios/scenariosOpNav/CNN_ImageGen/index.rst',
     'examples/OpNavScenarios/scenariosOpNav/OpNavMC/index.rst',
-    'examples/OpNavScenarios/index.rst'
+    'examples/OpNavScenarios/index.rst',
+    'examples/mujoco/index.rst',
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
@@ -328,7 +329,8 @@ class fileCrawler():
                     "msgAutoSource" in dirs_in_dir[i] or \
                     "alg_contain" in dirs_in_dir[i] or \
                     "dataForExamples" in dirs_in_dir[i] or \
-                    "tests" in dirs_in_dir[i]:
+                    "tests" in dirs_in_dir[i] or \
+                    "mujocoUtils" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
             del dirs_in_dir[i]
