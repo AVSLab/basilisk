@@ -1,0 +1,40 @@
+<mujoco>
+	<option gravity="0 0 0" integrator="RK4" timestep="0.1"/>
+
+	<default class="main">
+		<default class="panel">
+			<geom type="box" pos="0 0 2" size="1.1 0.05 2" rgba="0 1 0 1"/>
+		</default>
+    </default>
+
+	<worldbody>
+		<body name="cube">
+			<freejoint/>
+			<geom name="hub_box" type="box" size="1 1 1" rgba="1 0 0 1"/>
+
+			<body name="panel_1" childclass="panel" pos="1 0 0" xyaxes="0 1 0 0 0 1">
+				<site name="test_site"/>
+				<geom name="panel_1_box"/>
+				<joint name="panel_1_elevation" axis="1 0 0"/>
+			</body>
+			<body name="panel_2" childclass="panel" pos="-1 0 0" xyaxes="0 -1 0 0 0 1">
+				<geom name="panel_2_box"/>
+				<joint name="panel_2_elevation" axis="1 0 0"/>
+			</body>
+		</body>
+	</worldbody>
+
+	<actuator>
+		<motor name="panel_1_elevation" joint="panel_1_elevation"/>
+		<motor name="panel_2_elevation" joint="panel_2_elevation"/>
+	</actuator>
+
+	<keyframe>
+		<key qpos='0 0 0 1 0 0 0 0 0' qvel="0 0 0 0.1 0.2 0.3 0.1 0.1"/>
+	</keyframe>
+
+	<custom>
+		<text name="basilisk:forceactuator" data="test_act_1@cube_com test_act_2@panel_1_com"/>
+		<text name="basilisk:forcetorqueactuator" data="test_act_3@cube_com test_act_4@panel_2_com"/>
+	</custom>
+</mujoco>
