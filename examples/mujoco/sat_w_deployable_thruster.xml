@@ -1,0 +1,47 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<worldbody>
+		<body name="hub">
+			<freejoint/>
+			<geom name="hub_box" type="box" size="1 1 1" rgba="1 0 0 0.5" contype="1" conaffinity="2" density="200"/>
+
+			<body name="arm_1" pos="1 0 0" xyaxes="1 0 0 0 0 1">
+				<geom name="arm_1" type="capsule" size="0.1" fromto="0 0 0 0 0 1" rgba="1 0 0 1" contype="1" conaffinity="2" />
+				<joint name="arm_1_roll" axis="1 0 0"/>
+				<joint name="arm_1_elev" axis="0 1 0" range="0 45"/>
+
+				<body name="arm_2" pos="0 0 1">
+					<geom name="arm_2" type="capsule" size="0.1" fromto="0 0 0 0 0 0.8159264" rgba="1 0 0 1" contype="1" conaffinity="2" />
+					<joint name="arm_2_elev" axis="0 1 0" range="74.93 180"/>
+
+					<body name="arm_3" pos="0 0 0.8159264">
+						<geom name="arm_3" type="capsule" size="0.1" fromto="0 0 0 0 0 0.3" rgba="1 0 0 1" contype="1" conaffinity="2" />
+						<joint name="arm_3_elev" axis="0 1 0" range="60.06941955 180"/>
+
+						<site name="thruster_1" pos="0 0 0.3"/>
+					</body>
+
+					<body name="arm_4" pos="0 0 0.8159264">
+						<geom name="arm_4" type="capsule" size="0.1" fromto="0 0 0 0 0 0.3" rgba="1 0 0 1" contype="1" conaffinity="2" />
+						<joint name="arm_4_elev" axis="1 0 0" range="90 180"/>
+
+						<site name="thruster_2" pos="0 0 0.3"/>
+					</body>
+				</body>
+
+
+			</body>
+
+
+		</body>
+
+	</worldbody>
+
+	<actuator>
+		<motor name="thruster_1" site="thruster_1"  gear="0 0 -1 0 0 0"/>
+		<motor name="thruster_2" site="thruster_2"  gear="0 0 -1 0 0 0"/>
+
+	</actuator>
+
+</mujoco>

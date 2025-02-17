@@ -1,0 +1,87 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<asset>
+		<texture name="checker" builtin="checker" width="10" height="10"/>
+		<material name="checker" texture="checker" />
+	</asset>
+
+	<default class="main">
+		<default class="panel">
+			<geom type="box" pos="0 0 1" size="1 0.05 1" rgba="0 1 0 1" contype="1" conaffinity="2"/>
+		</default>
+		<default class="moment_wheel">
+			<geom type="cylinder" size="0.4 0.2" density="2000" material="checker" contype="1" conaffinity="2"/>
+		</default>
+    </default>
+
+	<worldbody>
+		<body name="hub">
+			<freejoint/>
+			<geom name="hub_box" type="box" size="1 1 1" rgba="1 0 0 0.5" contype="1" conaffinity="2" density="200"/>
+
+			<body name="panel_p1" childclass="panel" pos="1 0 -1" xyaxes="0 -1 0 0 0 -1">
+				<geom name="panel_p1_box"/>
+				<joint name="panel_p1_deploy" axis="1 0 0" range="0 90"/>
+				<site name="panel_p1_centroid" pos="0 0 1" zaxis="0 -1 0"/>
+                <body name="panel_p2" childclass="panel" pos="0 0 2">
+                    <geom name="panel_p2_box"/>
+                    <joint name="panel_p2_deploy" axis="-1 0 0" range="0 180"/>
+					<site name="panel_p2_centroid" pos="0 0 1" zaxis="0 -1 0"/>
+					<body name="panel_p3" childclass="panel" pos="0 0 2">
+						<geom name="panel_p3_box"/>
+						<joint name="panel_p3_deploy" axis="1 0 0" range="0 180"/>
+					    <site name="panel_p3_centroid" pos="0 0 1" zaxis="0 -1 0"/>
+					</body>
+                </body>
+			</body>
+
+			<body name="panel_n1" childclass="panel" pos="-1 0 -1" xyaxes="0 1 0 0 0 -1">
+				<geom name="panel_n1_box"/>
+				<joint name="panel_n1_deploy" axis="1 0 0" range="0 90"/>
+				<site name="panel_n1_centroid" pos="0 0 1" zaxis="0 -1 0"/>
+                <body name="panel_n2" childclass="panel" pos="0 0 2">
+                    <geom name="panel_n2_box"/>
+                    <joint name="panel_n2_deploy" axis="-1 0 0" range="0 180"/>
+					<site name="panel_n2_centroid" pos="0 0 1" zaxis="0 -1 0"/>
+					<body name="panel_n3" childclass="panel" pos="0 0 2">
+						<geom name="panel_n3_box"/>
+						<joint name="panel_n3_deploy" axis="1 0 0" range="0 180"/>
+          				<site name="panel_n3_centroid" pos="0 0 1" zaxis="0 -1 0"/>
+					</body>
+                </body>
+			</body>
+
+			<body name="wheel_1" childclass="moment_wheel" pos="0 0 0" xyaxes="1 0 0 0 0 1">
+				<geom name="wheel_1"/>
+			</body>
+
+		</body>
+
+	</worldbody>
+
+	<actuator>
+		<motor name="panel_p1_deploy" joint="panel_p1_deploy" />
+		<motor name="panel_p2_deploy" joint="panel_p2_deploy" />
+		<motor name="panel_p3_deploy" joint="panel_p3_deploy" />
+
+		<motor name="panel_n1_deploy" joint="panel_n1_deploy" />
+		<motor name="panel_n2_deploy" joint="panel_n2_deploy" />
+		<motor name="panel_n3_deploy" joint="panel_n3_deploy" />
+
+		<motor name="panel_p1_srp" site="panel_p1_centroid"  gear="0 0 -1 0 0 0"/>
+		<motor name="panel_p2_srp" site="panel_p2_centroid"  gear="0 0 -1 0 0 0"/>
+		<motor name="panel_p3_srp" site="panel_p3_centroid"  gear="0 0 -1 0 0 0"/>
+		<motor name="panel_n1_srp" site="panel_n1_centroid"  gear="0 0 -1 0 0 0"/>
+		<motor name="panel_n2_srp" site="panel_n2_centroid"  gear="0 0 -1 0 0 0"/>
+		<motor name="panel_n3_srp" site="panel_n3_centroid"  gear="0 0 -1 0 0 0"/>
+
+	</actuator>
+
+	<keyframe>
+		<key qpos='0 0 0 1 0 0 0 1.571 3.142 3.142 1.571 3.142 3.142' ctrl="-1 -0.5 -0.25 -1 -0.5 -0.25 0 0 0 0 0 0"/>
+		<key qpos='0 0 0 1 0 0 0 1.571 3.142 3.142 1.571 3.142 3.142' qvel="0 0 0 0 0.3 0 0 0 0 0 0 0"/>
+
+	</keyframe>
+
+</mujoco>

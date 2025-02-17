@@ -1,0 +1,45 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<default class="main">
+		<default class="thruster_tank">
+			<geom type="capsule" size="0.3 0.3" density="2000"/>
+		</default>
+    </default>
+
+	<worldbody>
+		<body name="hub">
+			<freejoint/>
+			<geom name="hub_box" type="box" size="1 1 1" rgba="1 0 0 0.25" density="200"/>
+
+			<body name="tank_1" pos="0.6 0.6 -0.35" zaxis="0 0 -1">
+				<geom name="tank_1" class="thruster_tank"/>
+				<site name="tank_1_thrust_point" pos="0 0 0.65" />
+			</body>
+
+			<body name="tank_2" pos="-0.6 0.6 -0.35" zaxis="0 0 -1">
+				<geom name="tank_2" class="thruster_tank"/>
+				<site name="tank_2_thrust_point" pos="0 0 0.65" />
+			</body>
+
+			<body name="tank_3" pos="0.6 -0.6 -0.35" zaxis="0 0 -1">
+				<geom name="tank_3" class="thruster_tank"/>
+				<site name="tank_3_thrust_point" pos="0 0 0.65" />
+			</body>
+
+			<body name="tank_4" pos="-0.6 -0.6 -0.35" zaxis="0 0 -1">
+				<geom name="tank_4" class="thruster_tank"/>
+				<site name="tank_4_thrust_point" pos="0 0 0.65" />
+			</body>
+		</body>
+
+	</worldbody>
+
+	<actuator>
+		<motor name="tank_1_thrust" site="tank_1_thrust_point" gear="0 0 -1 0 0 0" />
+		<motor name="tank_2_thrust" site="tank_2_thrust_point" gear="0 0 -1 0 0 0" />
+		<motor name="tank_3_thrust" site="tank_3_thrust_point" gear="0 0 -1 0 0 0" />
+		<motor name="tank_4_thrust" site="tank_4_thrust_point" gear="0 0 -1 0 0 0" />
+	</actuator>
+
+</mujoco>

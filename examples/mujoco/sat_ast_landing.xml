@@ -1,0 +1,58 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<default class="main">
+		<default class="panel">
+			<geom type="box" pos="0 0 2" size="1.1 0.05 2" rgba="0 1 0 1"/>
+		</default>
+		<default class="leg">
+			<geom type="capsule" size="0.1" fromto="0 0 0 0 0 1.25" rgba="1 0 1 1"/>
+		</default>
+    </default>
+
+	<asset>
+	  <mesh name="asteroid" file="ItokawaHayabusa.obj" scale="1000 1000 1000"/>
+	</asset>
+
+	<worldbody>
+		<body name="hub">
+			<freejoint/>
+			<site name="hub_origin"/>
+
+			<geom name="hub_box" type="box" size="1 1 1" rgba="1 0 0 0.5" density="200"/>
+
+			<body name="panel_1" childclass="panel" pos="1 0 0" xyaxes="0 1 0 0 1 1">
+				<geom name="panel_1_box"/>
+			</body>
+			<body name="panel_2" childclass="panel" pos="-1 0 0" xyaxes="0 -1 0 0 1 1">
+				<geom name="panel_2_box"/>
+			</body>
+
+			<body name="leg_1" pos="0.6 0.6 -1" zaxis="0.6 0.6 -2">
+				<geom name="leg_1" class="leg"/>
+			</body>
+
+			<body name="leg_2" pos="-0.6 0.6 -1" zaxis="-0.6 0.6 -2">
+				<geom name="leg_2" class="leg"/>
+			</body>
+
+			<body name="leg_3" pos="-0.6 -0.6 -1" zaxis="-0.6 -0.6 -2">
+				<geom name="leg_3" class="leg"/>
+			</body>
+
+			<body name="leg_4" pos="0.6 -0.6 -1" zaxis="0.6 -0.6 -2">
+				<geom name="leg_4" class="leg"/>
+			</body>
+		</body>
+
+		<body name="asteroid" pos="0 0 -150">
+			<geom name="asteroid" type="mesh" mesh="asteroid"/>
+		</body>
+
+
+	</worldbody>
+
+	<actuator>
+		<motor name="thrust" site="hub_origin" gear="0 0 1 0 0 0"/>
+	</actuator>
+</mujoco>
