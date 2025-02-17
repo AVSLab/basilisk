@@ -28,6 +28,9 @@ Version |release|
 -----------------
 - Updated Linux and Windows CI builds to use ``swig`` 4.2.1
 - Updated CI scripts to run on latest macOS and no longer use Ubuntu 20.04
+- Added a new ``DynamicObject`` for multi-body dynamics that uses the `MuJoCo <https://mujoco.org>`_ library.
+  This is a work in progress, and is not yet ready for general use. This system will be expanded to include more
+  features and capabilities in future releases.
 
 
 Version  2.6.0  (Feb. 21, 2025)
