@@ -250,7 +250,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     }
 }
 
-/*! This method is used to link the states to the thrusters
+/*! This method is used to link properties to the thrusters
  @return void
  @param properties The parameter manager to collect from
  */
