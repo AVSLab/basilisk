@@ -1,10 +1,12 @@
 import argparse
 import os
 import platform
+import json
 import shutil
 import subprocess
 import sys
 from datetime import datetime
+from typing import Optional, Callable
 
 import importlib.metadata
 from packaging.requirements import Requirement
@@ -201,6 +203,9 @@ class BasiliskConan(ConanFile):
             self.requires("protobuf/3.21.12") # For compatibility with openCV
             self.requires("cppzmq/4.5.0")
 
+        if self.options.get_safe("mujoco"):
+            self.requires(f"mujoco/{get_mujoco_version()}")
+
     def configure(self):
         if self.options.get_safe("clean"):
             # clean the distribution folder to start fresh
@@ -354,13 +359,48 @@ class BasiliskConan(ConanFile):
             if err.decode() != "":
                 print("This resulted in the stderr: \n%s" % err.decode())
 
+def get_mujoco_version():
+    with open("./libs/mujoco/version.txt") as f:
+        return f.read().strip()
+
+def is_conan_package_available(ref: str):
+    """
+    Run 'conan list' and return True if package exists in local or remote caches.
+    """
+    try:
+        output = subprocess.check_output(
+            [sys.executable, "-m", "conans.conan", "list", ref, "-c", "-f", "json", "-verror"],
+            stderr=subprocess.STDOUT,
+            universal_newlines=True
+        )
+        parsed = json.loads(output)
+        return any( "error" not in v for v in parsed.values() )
+    except subprocess.CalledProcessError:
+        return False
+
+def conan_create_mujoco(print_fn: Optional[Callable[[str], None]] = print):
+    """
+    If the 'mujoco/VERSION' package is not found in any remote or the local cache,
+    then the mujoco project (as defined in '/libs/mujoco/conanfile.py') is created
+    into the local cache.
+    """
+    ref = f"mujoco/{get_mujoco_version()}"
+    if not is_conan_package_available(ref):
+        if print_fn is not None:
+            print_fn(f"Package {ref} not found locally, creating it...")
+        # Run 'conan create' in the external recipe directory
+        subprocess.run([sys.executable, "-m", "conans.conan", "create", ".", "-s" ,"compiler.cppstd=17"], cwd="./libs/mujoco" )
+    else:
+        if print_fn is not None:
+            print_fn(f"Package {ref} already available, skipping creation.")
+
 if __name__ == "__main__":
     # make sure conan is configured to use the libstdc++11 by default
     # XXX: This needs to be run before dispatching to Conan (i.e. outside of the
     # ConanFile object), because it affects the configuration of the first run.
     # (Running it here fixes https://github.com/AVSLab/basilisk/issues/525)
     try:
-        subprocess.check_output(["conan", "profile", "detect", "--exist-ok"])
+        subprocess.check_output([sys.executable, "-m", "conans.conan", "profile", "detect", "--exist-ok"])
     except:
         # if profile already exists the above command returns an error.  Just ignore in this
         # case.  We don't want to overwrite an existing profile file
@@ -406,12 +446,24 @@ if __name__ == "__main__":
     genMod.createCModule()
     print("Done")
 
+    # If we're missing MuJoCo, create the conan package
+    if args.mujoco:
+        conan_create_mujoco()
+
+    if args.mujocoReplay:
+        print(f"{statusColor}Building 'replay' tool, since '--mujocoReplay true' was used")
+        try:
+            subprocess.check_output([sys.executable, "-m", "conans.conan", "build", ".", "-s" ,"compiler.cppstd=17", "--build=missing"], cwd="./src/utilities/mujocoUtils" )
+        except:
+            raise RuntimeError("Failed to install MuJoCo replay! See error above.")
+
     # setup conan install command arguments
     conanInstallList = list()
     conanInstallList.append(f'{sys.executable} -m conans.conan install . --build=missing')
     conanInstallList.append(' -s build_type=' + str(args.buildType))
+    conanInstallList.append(' -s compiler.cppstd=17')
     conanBuildOptionsList = list()  # setup list of conan build arguments
-    # The following options go to both conan install and build commands
+    conanBuildOptionsList.append(' -s compiler.cppstd=17')
     if args.generator:
         conanBuildOptionsList.append(' -o "&:generator=' + str(args.generator) + '"')
     for opt, value in bskModuleOptionsBool.items():
