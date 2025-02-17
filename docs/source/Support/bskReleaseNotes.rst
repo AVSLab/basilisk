@@ -51,6 +51,9 @@ Version |release|
   and conversions.
 - Updated install requirements to not manually install ``cmake``, but have it installed with pip by including it
   in ``requirements_dev.txt``.  A ``conan`` dependency requires Basilisk to use ``cmake<4.0`` for now.
+- :beta:`Mujoco Support`: Added a new ``DynamicObject`` for multi-body dynamics that uses the `MuJoCo <https://mujoco.org>`_ library.
+  Information about using mujoco is found in :ref:`mujocoDynObject`. This is a work in progress, and is not
+  yet ready for general use. This system will be expanded to include more features and capabilities in future releases.
 
 
 Version  2.6.0  (Feb. 21, 2025)
