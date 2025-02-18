@@ -426,12 +426,12 @@ if __name__ == "__main__":
         if vars(args)[opt]:
             conanCmdString.append(' -o "&:' + opt + '=True"')
     conanCmdString = ''.join(conanCmdString)
-    print(statusColor + "Running:" + endColor)
+    print(statusColor + "Running conan install:" + endColor)
     print(conanCmdString)
     completedProcess = subprocess.run(conanCmdString, shell=True, check=True)
 
     # run conan build
     buildCmdString = f'{sys.executable} -m conans.conan build . ' + ''.join(optionsString)
-    print(statusColor + "Running:" + endColor)
+    print(statusColor + "Running conan build:" + endColor)
     print(buildCmdString)
     completedProcess = subprocess.run(buildCmdString, shell=True, check=True)
