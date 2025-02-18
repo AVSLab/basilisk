@@ -237,6 +237,7 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
 
     # Create figure dictionary to store plots
     figureList = {}
+    plt.close('all')
 
     # Create the plot
     plt.figure(1, figsize=(12, 8))

@@ -18,7 +18,7 @@
  */
 #include "simulation/environment/spiceInterface/spiceInterface.h"
 #include <sstream>
-#include "../libs/cspice/include/SpiceUsr.h"
+#include "SpiceUsr.h"
 #include <string.h>
 #include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"

@@ -122,6 +122,8 @@ Version  |release|
 - ``vizProtobuffer`` upgraded to use latest C++ compiler, ``protobuf`` Python/C++ library upgraded
 - Updated :ref:`installLinux` to discuss installing BSK on Fedora Linux systems.
 - Updated CI scripts to catch cases where tests are skipped that should be.  Windows now builds properly with `conan2`.
+- Download ``cspice`` using ``conan`` instead of providing custom libraries.  This ensures all platforms are using
+  the same version of ``cspice``.
 
 
 Version 2.5.0 (Sept. 30, 2024)
