@@ -405,27 +405,35 @@ if __name__ == "__main__":
     conanCmdString.append(f'{sys.executable} -m conans.conan install . --build=missing')
     conanCmdString.append(' -s build_type=' + str(args.buildType))
     optionsString = list()
+    # all of the following options go to both conan install and build commands
     if args.generator:
         optionsString.append(' -o "&:generator=' + str(args.generator) + '"')
     for opt, value in bskModuleOptionsBool.items():
         optionsString.append(' -o "&:' + opt + '=' + str(vars(args)[opt]) + '"')
     conanCmdString.append(''.join(optionsString))
 
+    # most of these options go to both conan install and build commands
     for opt, value in bskModuleOptionsString.items():
         if str(vars(args)[opt]):
             if opt == "pathToExternalModules":
                 externalPath = os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep))
                 if os.path.exists(externalPath):
                     conanCmdString.append(' -o "&:' + opt + '=' + externalPath + '"')
+                    optionsString.append(' -o "&:' + opt + '=' + externalPath + '"')
                 else:
                     print(f"{failColor}Error: path {str(vars(args)[opt])} does not exist{endColor}")
                     sys.exit(1)
             else:
-                conanCmdString.append(' -o "&:' + opt + '=' + str(vars(args)[opt]) + '"')
+                if opt != "autoKey":
+                    conanCmdString.append(' -o "&:' + opt + '=' + str(vars(args)[opt]) + '"')
+                    optionsString.append(' -o "&:' + opt + '=' + str(vars(args)[opt]) + '"')
+
+    # only used for conan install command, not build
     for opt, value in bskModuleOptionsFlag.items():
         if vars(args)[opt]:
             conanCmdString.append(' -o "&:' + opt + '=True"')
     conanCmdString = ''.join(conanCmdString)
+
     print(statusColor + "Running conan install:" + endColor)
     print(conanCmdString)
     completedProcess = subprocess.run(conanCmdString, shell=True, check=True)
