@@ -33,6 +33,7 @@ endColor = '\033[0m'
 bskModuleOptionsBool = {
     "opNav": [[True, False], False],
     "vizInterface": [[True, False], True],
+    "mujoco": [[True, False], False],
     "buildProject": [[True, False], True],
 
     # XXX: Set managePipEnvironment to True to keep the old behaviour of
@@ -290,6 +291,7 @@ class BasiliskConan(ConanFile):
 
         tc.cache_variables["BUILD_OPNAV"] = bool(self.options.get_safe("opNav"))
         tc.cache_variables["BUILD_VIZINTERFACE"] = bool(self.options.get_safe("vizInterface"))
+        tc.cache_variables["BUILD_MUJOCO"] = bool(self.options.get_safe("mujoco"))
         if self.options.get_safe("pathToExternalModules"):
             tc.cache_variables["EXTERNAL_MODULES_PATH"] = Path(str(self.options.pathToExternalModules)).resolve().as_posix()
         tc.cache_variables["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
@@ -370,6 +372,11 @@ if __name__ == "__main__":
     # define the optional arguments
     parser.add_argument("--generator", help="cmake generator")
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
+    parser.add_argument("--mujocoReplay",
+                        help="Whether to build the 'replay' utility for visualizing MuJoCo results",
+                        default=False,
+                        type=lambda x: (str(x).lower() == 'true'),
+                        choices=[True, False])
     # parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
     for opt, value in bskModuleOptionsBool.items():
         parser.add_argument("--" + opt, help="build modules for " + opt + " behavior", default=value[1],
