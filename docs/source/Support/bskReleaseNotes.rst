@@ -124,6 +124,7 @@ Version  |release|
 - Updated CI scripts to catch cases where tests are skipped that should be.  Windows now builds properly with `conan2`.
 - Download ``cspice`` using ``conan`` instead of providing custom libraries.  This ensures all platforms are using
   the same version of ``cspice``.
+- Ensured that the ability to designate an external BSK folder still works with ``conan2``
 
 
 Version 2.5.0 (Sept. 30, 2024)
