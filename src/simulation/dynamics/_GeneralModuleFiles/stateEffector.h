@@ -24,6 +24,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 
 
 /*! back substitution matrix structure*/
@@ -130,6 +131,8 @@ public:
     virtual void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< Force and torque on s/c due to stateEffector
     virtual void writeOutputStateMessages(uint64_t integTimeNanos); //!< Write State Messages after integration
     virtual void registerStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to register states
+    virtual void registerProperties(DynParamManager& states);  //!< Method for stateEffectors to register properties
+    virtual void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment);  //!< Method to attach a dynamic effector
     virtual void linkInStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates();
