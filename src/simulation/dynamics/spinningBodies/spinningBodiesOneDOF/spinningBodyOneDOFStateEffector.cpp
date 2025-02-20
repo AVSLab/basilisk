@@ -68,6 +68,17 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock)
     else {
         bskLogger.bskLog(BSK_ERROR, "Norm of sHat must be greater than 0. sHat may not have been set by the user.");
     }
+    // Ensure user specified valid angular limits
+    if (this->theta_max < this->theta_min) {
+        throw std::invalid_argument("theta_max (" + std::to_string(this->theta_max)
+            + ") must be greater than theta_min (" + std::to_string(this->theta_min) + ").");
+    }
+    // Ensure that user specified valid initial angle
+    if ((this->thetaInit > this->theta_max) || (this->thetaInit < this->theta_min)) {
+        throw std::invalid_argument("Initial angle (" + std::to_string(this->thetaInit)
+            + ") must be inside of body angle bounds (" + std::to_string(this->theta_min) + ", "
+            + std::to_string(this->theta_max) + ").");
+    }
 }
 
 
@@ -128,6 +139,11 @@ void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& states)
     this->thetaDotState->setState(thetaDotInitMatrix);
 }
 
+// Determine if body is attempting to move beyond specified limits.
+bool SpinningBodyOneDOFStateEffector::isMovingBeyondLimits(double theta, double thetaDot) {
+    return (((theta >= this->theta_max) && (thetaDot > 0)) || ((theta <= this->theta_min) && (thetaDot < 0)));
+}
+
 /*! This method allows the SB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
 void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
@@ -135,11 +151,20 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
     // Give the mass of the spinning body to the effProps mass
     this->effProps.mEff = this->mass;
 
-    // Lock the axis if the flag is set to 1
-    if (this->lockFlag == 1)
-    {
+    // Lock the axis if the flag is set to 1 or attempting to move beyond bounds
+    if (this->lockFlag == 1
+        || this->isMovingBeyondLimits(this->thetaState->getState()(0, 0), this->thetaDotState->getState()(0, 0))) {
         Eigen::MatrixXd zeroMatrix = Eigen::MatrixXd::Constant(1, 1, 0.0);
         this->thetaDotState->setState(zeroMatrix);
+        // Zeroing thetaDot (just above) won't stop body exactly at limit (depending on timestep),
+        // so set the theta state to be exactly at the limit
+        if (this->theta >= this->theta_max) {
+            Eigen::MatrixXd limMatrix = Eigen::MatrixXd::Constant(1, 1, this->theta_max);
+            this->thetaState->setState(limMatrix);
+        } else if (this->theta <= this->theta_min) {
+            Eigen::MatrixXd limMatrix = Eigen::MatrixXd::Constant(1, 1, this->theta_min);
+            this->thetaState->setState(limMatrix);
+        }
     }
 
     // Grab current states
@@ -232,6 +257,16 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
                 + this->sHat_B.dot(gravityTorquePntS_B - omegaTilde_SN_B * IPntS_B * this->omega_SN_B
                 - IPntS_B * this->omegaTilde_BN_B * this->omega_SB_B
                 - this->mass * rTilde_ScS_B * this->omegaTilde_BN_B * rDot_SB_B)) / this->mTheta;
+
+        // After computing interations between body and hub, if hub is moving
+        // further against limits, zero out the motion to simulate the physical
+        // barrier there.
+        if ((this->theta == this->theta_max && this->cTheta > 0)
+            || (this->theta == this->theta_min && this->cTheta < 0)) {
+            this->aTheta.setZero();
+            this->bTheta.setZero();
+            this->cTheta = 0.0;
+        }
     }
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
