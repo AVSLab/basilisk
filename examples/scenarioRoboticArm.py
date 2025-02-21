@@ -178,7 +178,6 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
     hingedRigidBodyMessageData.theta = -30 * macros.D2R  # [rad]
     hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
     hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
-    hingedRigidBodyMessage1.this.disown()
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
 
     spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
@@ -208,7 +207,6 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
     hingedRigidBodyMessageData.theta = 45 * macros.D2R  # [rad]
     hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
     hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
-    hingedRigidBodyMessage2.this.disown()
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
 
 
@@ -238,7 +236,6 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
     hingedRigidBodyMessageData.theta = 90 * macros.D2R  # [rad]
     hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
     hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
-    hingedRigidBodyMessage1.this.disown()
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
 
     spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
@@ -268,7 +265,6 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
     hingedRigidBodyMessageData.theta = -20 * macros.D2R  # [rad]
     hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
     hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
-    hingedRigidBodyMessage2.this.disown()
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
 
 

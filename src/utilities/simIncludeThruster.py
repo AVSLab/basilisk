@@ -267,7 +267,6 @@ class thrusterFactory(object):
         thrMessage.numThrusters = len(self.thrusterList.values())
 
         thrConfigMsg = messaging.THRArrayConfigMsg().write(thrMessage)
-        thrConfigMsg.this.disown()
 
         return thrConfigMsg
 

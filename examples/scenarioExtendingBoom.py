@@ -179,7 +179,6 @@ def run(show_plots):
     translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
     translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
     translatingRigidBodyMsg2 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
-    translatingRigidBodyMsg2.this.disown()
     profiler2.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg2)
 
     translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
@@ -211,7 +210,6 @@ def run(show_plots):
     translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
     translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
     translatingRigidBodyMsg3 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
-    translatingRigidBodyMsg3.this.disown()
     profiler3.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg3)
 
     translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
@@ -243,7 +241,6 @@ def run(show_plots):
     translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
     translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
     translatingRigidBodyMsg4 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
-    translatingRigidBodyMsg4.this.disown()
     profiler4.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg4)
 
     scLog = scObject.scStateOutMsg.recorder()
