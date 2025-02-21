@@ -12,6 +12,44 @@ Version |release|
 -----------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
   Developers and users alike should continue to use ``python conanfile.py`` installation.
+- When using C++ wrapped sensor objects (CSS, thrusters, reaction wheels), Python references
+  must be explicitly retained to prevent premature garbage collection. The recommended approach
+  is to store these objects directly on your simulation object. For example:
+
+  .. code-block:: python
+     :linenos:
+
+     # Create and configure a CSS device
+     cssDevice = coarseSunSensor.CoarseSunSensor()
+     cssDevice.ModelTag = "css1"
+
+     # Store it on the simulation object to keep it alive
+     scSim.cssDevice = cssDevice  # Prevents garbage collection
+
+  Alternatively, for multiple devices, you can use a list or registry:
+
+  .. code-block:: python
+     :linenos:
+
+     # Store multiple devices
+     scSim.css_devices = []
+     for i in range(4):
+         cssDevice = coarseSunSensor.CoarseSunSensor()
+         cssDevice.ModelTag = f"css{i}"
+         scSim.css_devices.append(cssDevice)
+
+  See specific documentation for:
+
+  - :ref:`coarsesunsensor`
+  - :ref:`reactionWheelStateEffector`
+  - :ref:`thrusterDynamicEffector`
+
+  For working examples, refer to these scenarios:
+
+  - :ref:`scenarioAttitudeFeedback`
+  - :ref:`scenarioCSS`
+
+  Failure to retain references will cause segmentation faults when accessing collected objects.
 
 
 Version 2.6.0
@@ -977,7 +1015,7 @@ solution to this issue.
 
    <li>
 
-The ``numpy`` python package can’t be the current version 1.16.x as this
+The ``numpy`` python package can't be the current version 1.16.x as this
 causes some incompatibilities and massive amounts of depreciated
 warnings. These warnings are not related to BSK python code, but other
 support code. Thus, for now be sure to install version 1.15.14 of
@@ -1028,7 +1066,7 @@ free to install the latest version of pytest.
 
    <li>
 
-As we are now using the conan package management system, you can’t
+As we are now using the conan package management system, you can't
 double the the Cmake GUI application. Instead, you must either launch
 the Cmake GUI application from the command line, or run CMake from the
 command line directly. See the platform specific Basilisk installation
@@ -1042,7 +1080,7 @@ instructions.
 
    <li>
 
-The ``numpy`` python package can’t be the current version 1.16.x as this
+The ``numpy`` python package can't be the current version 1.16.x as this
 causes some incompatibilities and massive amounts of depreciated
 warnings. These warnings are not related to BSK python code, but other
 support code. Thus, for now be sure to install version 1.15.14 of
