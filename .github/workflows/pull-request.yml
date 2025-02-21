@@ -107,8 +107,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig libgtk2.0 cmake -y
+      - name: "Install cmake"
+        run: sudo apt-get update && sudo apt-get install build-essential libgtk2.0 cmake -y
+      - name: Install SWIG 4.2.1
+        uses: mmomtchev/setup-swig@v3
+        with:
+          version: v4.2.1
       - name: "Install python packages"
         run: sudo apt-get install python3-setuptools python3-tk python3.11-venv
       - name: "Create virtual Environment"
