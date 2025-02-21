@@ -30,8 +30,8 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
 
 
-Version  |release|
-------------------
+Version  |release|  (Feb. 21, 2025)
+-----------------------------------
 - Build ``ubuntu-latest`` wheels for Python 3.9, 3.10, and 3.11 on GitHub CI, allowing for
   other CI systems to use these wheels for testing with Basilisk as a dependency.
 - updated README file.  Links now point to local documentation instead of to the pages
