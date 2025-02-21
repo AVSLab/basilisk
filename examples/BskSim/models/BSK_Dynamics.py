@@ -79,12 +79,12 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, 204)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
-        
+
         SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
             ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
             ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
 
-        
+
         SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
             ["self.repeatRWFaultFlag==1"],
             ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
@@ -167,7 +167,7 @@ class BSKDynamicModels():
                                          gsHat,
                                          maxMomentum=maxRWMomentum,
                                          rWB_B=rwPosVector[0])
-        
+
         gsHat = (rbk.Mi(-rwAzimuthAngle[1], 3).dot(rbk.Mi(rwElAngle[1], 2))).dot(np.array([1, 0, 0]))
         self.RW2 = self.rwFactory.create('Honeywell_HR16',
                                          gsHat,
@@ -179,7 +179,7 @@ class BSKDynamicModels():
                                          gsHat,
                                          maxMomentum=maxRWMomentum,
                                          rWB_B=rwPosVector[2])
-            
+
         gsHat = (rbk.Mi(-rwAzimuthAngle[3], 3).dot(rbk.Mi(rwElAngle[3], 2))).dot(np.array([1, 0, 0]))
         self.RW4 = self.rwFactory.create('Honeywell_HR16',
                                          gsHat,
@@ -229,13 +229,18 @@ class BSKDynamicModels():
         """Set the 8 CSS sensors"""
         self.CSSConstellationObject.ModelTag = "cssConstellation"
 
+        # Create class-level registry if it doesn't exist
+        if not hasattr(self, '_css_registry'):
+            self._css_registry = []
+
         def setupCSS(cssDevice):
             cssDevice.fov = 80. * mc.D2R         # half-angle field of view value
             cssDevice.scaleFactor = 2.0
             cssDevice.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
             cssDevice.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
             cssDevice.sunEclipseInMsg.subscribeTo(self.eclipseObject.eclipseOutMsgs[0])
-            cssDevice.this.disown()
+            # Store CSS in class-level registry
+            self._css_registry.append(cssDevice)
 
         # setup CSS sensor normal vectors in body frame components
         nHat_B_List = [
@@ -269,9 +274,9 @@ class BSKDynamicModels():
         """
         if np.random.uniform() < probability:
             self.AddRWFault(faultType, fault, faultRW, currentTime)
-        
-        
-    
+
+
+
     def AddRWFault(self, faultType, fault, faultRW, currentTime):
         """
         Adds a static friction fault to the reaction wheel.
@@ -303,4 +308,3 @@ class BSKDynamicModels():
 
         self.SetReactionWheelDynEffector()
         self.SetThrusterStateEffector()
-

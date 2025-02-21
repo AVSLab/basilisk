@@ -318,7 +318,6 @@ def setUpControl(scSim, extFTObject, attError, scGeometry):
     configData.IHubPntB_B = list(IHubPntB_B.flatten())
     configDataMsg = messaging.VehicleConfigMsg()
     configDataMsg.write(configData)
-    configDataMsg.this.disown()
 
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
