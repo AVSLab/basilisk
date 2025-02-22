@@ -32,7 +32,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text goes here
+- Updated Linux and Windows CI builds to use ``swig`` 4.2.1
 
 
 
