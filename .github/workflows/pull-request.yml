@@ -238,7 +238,7 @@ jobs:
 
   build-macOS:
     name: macOS All Tests Docs
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 75
     strategy:
       matrix:
@@ -286,7 +286,7 @@ jobs:
 
   build-macOS-no-vizInterface:
     name: macOS no vizInterface
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 75
     strategy:
       matrix:
