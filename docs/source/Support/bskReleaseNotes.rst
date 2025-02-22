@@ -11,12 +11,6 @@ Basilisk Release Notes
     folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``basilisk/examples``
     folder, described in :ref:`examples`.  To learn how to use and program Basilisk, see :ref:`learningBasilisk`.
 
-.. Danger::
-
-   This next generation of Basilisk 2.0+ introduces a new messaging system and file architecture.  As a result
-   using BSK2 requires upgrading existing Basilisk 1.x simulation scripts (see :ref:`migratingToBsk2`) and C/C++ modules
-   (see :ref:`migratingModuleToBsk2`) to be used with 2.x and onwards.  All unit test and example scenario scripts
-   are updated and form a good source for examples on how to use the new software framework.
 
 .. sidebar:: In Progress Features
 
