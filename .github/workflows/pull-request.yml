@@ -94,7 +94,7 @@ jobs:
 
 
   build-linux-3-11:
-    name: Linux 22.04 opNav
+    name: Linux 22.04 All Tests
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -107,8 +107,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: "Install swig and cmake"
-        run: sudo apt-get update && sudo apt-get install build-essential swig libgtk2.0 cmake -y
+      - name: "Install cmake"
+        run: sudo apt-get update && sudo apt-get install build-essential libgtk2.0 cmake -y
+      - name: Install SWIG 4.2.1
+        uses: mmomtchev/setup-swig@v3
+        with:
+          version: v4.2.1
       - name: "Install python packages"
         run: sudo apt-get install python3-setuptools python3-tk python3.11-venv
       - name: "Create virtual Environment"
@@ -116,7 +120,7 @@ jobs:
       - name: "Install requirements_dev.txt"
         run: source .venv/bin/activate && pip3 install -r requirements_dev.txt pytest-error-for-skips
       - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py --opNav True
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True --mujoco True --mujocoReplay True
 
       - name: "Run Python Tests"
         run: |
@@ -161,7 +165,7 @@ jobs:
 
 
   build-windows:
-    name: Windows opNav
+    name: Windows All Tests
     runs-on: windows-2019
     strategy:
       matrix:
@@ -182,6 +186,16 @@ jobs:
 #      - name: "Install swig and cmake"
 #        shell: pwsh
 #        run: choco install swig cmake -y
+      - name: "Install SWIG 4.2.1"
+        shell: pwsh
+        run: |
+            $swigDir = "C:\Program Files\SWIG"
+            if (!(Test-Path $swigDir)) {New-Item -ItemType Directory -Path $swigDir | Out-Null}
+            $swigZip = "$swigDir\swigwin-4.2.1.zip"
+            $swigUrl = "https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.2.1/swigwin-4.2.1.zip/download"
+            Start-Process -NoNewWindow -Wait -FilePath "curl.exe" -ArgumentList "-L -o `"$swigZip`" `"$swigUrl`""
+            if (!(Test-Path $swigZip) -or ((Get-Item $swigZip).Length -lt 500KB)) { Write-Host "Download failed or file is corrupted." }
+            Expand-Archive -Path $swigZip -DestinationPath $swigDir -Force
       - name: "Create python virtual env"
         shell: pwsh
         run: python -m venv venv
@@ -190,17 +204,17 @@ jobs:
         run: |
             venv\Scripts\activate
             pip install -r requirements_dev.txt pytest-error-for-skips
-      - name: "Add basilisk and cmake path to env path"
+      - name: "Add basilisk, swig, and cmake path to env path"
         shell: pwsh
         run: |
           $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
-          $newpath = “$oldpath;${{ env.GITHUB_WORKSPACE }}\dist3\Basilisk;C:\Program Files\CMake\bin”
-          Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
+          $newPath = “C:\Program Files\SWIG\swigwin-4.2.1;$oldpath;${{ env.GITHUB_WORKSPACE }}\dist3\Basilisk;C:\Program Files\CMake\bin”
+          echo "PATH=$newPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: "Build basilisk"
         shell: pwsh
         run: |
           venv\Scripts\activate
-          python conanfile.py --opNav True
+          python conanfile.py --opNav True --mujoco True --mujocoReplay True
       - name: "Run Python Tests"
         shell: pwsh
         run: |
@@ -218,7 +232,7 @@ jobs:
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
 
   build-macOS:
-    name: macOS opNav Docs
+    name: macOS All Tests Docs
     runs-on: macos-14
     strategy:
       matrix:
@@ -244,7 +258,7 @@ jobs:
           pip3 install cmake -r requirements_dev.txt pytest-error-for-skips
 
       - name: "Build basilisk with OpNav"
-        run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg --mujoco True --mujocoReplay True
 
       - name: "Run Python Tests"
         run: |

@@ -24,14 +24,15 @@ Basilisk Release Notes
     - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
       CAD asteroid or lunar surface terrain.
     - spacecraft charging related modules
-    - automated documentation build system when code is pushed to the repo
     - ability to add select branching to spacecraft effectors
     - More effector and sensor fault modeling
     - `pip`-based installation and pre-compiled releases
+    - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
+
 
 Version |release|
 -----------------
-- text goes here
+- Updated Linux and Windows CI builds to use ``swig`` 4.2.1
 
 
 
