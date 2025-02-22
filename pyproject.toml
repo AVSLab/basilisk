@@ -8,7 +8,13 @@ requires = [
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5",
     "cmake>=3.26",
-    "swig>=4.2.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
+    "swig>=4.2.1",  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
+
+    # Add test requirements directly
+    "pytest",
+    "pytest-html",
+    "pytest-xdist",
+    "psutil"
 ]
 
 [project]
@@ -30,6 +36,14 @@ tracker = "https://github.com/AVSLab/basilisk/issues"
 bskLargeData = "Basilisk.utilities.bskLargeData:main"
 bskExamples = "Basilisk.utilities.bskExamples:main"
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-html",
+    "pytest-xdist",
+    "psutil>=5.9.4"  # Explicit version for compatibility
+]
+
 [tool.setuptools]
 packages = []  # XXX: Leave blank, populated automatically by setup.py.
 include-package-data = true
@@ -50,4 +64,4 @@ Basilisk = [
 
 [tool.setuptools.dynamic]
 version = {file = "docs/source/bskVersion.txt"}
-dependencies = {file = "requirements.txt"}
+dependencies = {file = ["requirements.txt", "requirements_dev.txt"]}  # Combine both files
