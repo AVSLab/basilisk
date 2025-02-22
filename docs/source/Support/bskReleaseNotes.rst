@@ -27,7 +27,7 @@ Basilisk Release Notes
 Version |release|
 -----------------
 - Updated Linux and Windows CI builds to use ``swig`` 4.2.1
-
+- Updated CI scripts to run on latest macOS and no longer use Ubuntu 20.04
 
 
 Version  2.6.0  (Feb. 21, 2025)
