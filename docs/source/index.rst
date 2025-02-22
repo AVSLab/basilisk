@@ -8,6 +8,11 @@ Welcome to Basilisk: an Astrodynamics Simulation Framework
        :align: center
        :width: 100%
 
+.. tip::
+
+   This documentation is for the latest release on ``develop``.
+   If you are looking for documenation for prior tagged releases, they can be found at
+   `here <https://hanspeterschaub.info/bskOlderDocs.html>`_.
 
 Architecture
 ------------
