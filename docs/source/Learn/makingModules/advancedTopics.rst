@@ -9,5 +9,4 @@ This section covers advanced BSK module writing topics.
    :maxdepth: 2
 
    advancedTopics/creatingDynObject
-
-
+   advancedTopics/mujocoDynObject
