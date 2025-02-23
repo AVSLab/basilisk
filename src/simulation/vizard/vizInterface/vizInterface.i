@@ -50,7 +50,7 @@ namespace std {
     %template(LightVector) vector<Light *>;
     %template(TransceiverVector) vector<Transceiver *>;
     %template(GenericStorageVector) vector<GenericStorage *>;
-    %template(MultiSphereVector) vector<MultiSphere *>;
+    %template(MultiShapeVector) vector<MultiShape *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
     %template(VizEventDialogVector) vector<VizEventDialog *>;
     %template(VizEventReplyVector) vector<VizEventReply>;
@@ -91,5 +91,94 @@ struct EpochMsg_C;
 
 %pythoncode %{
 import sys
+import warnings
+
+mod = sys.modules[__name__]
+
+class _DeprecatedWrapper:
+    def __init__(self, target, aliasName=None, targetName=None, deprecatedFields=None, removalDate=None):
+        self._target = target
+        self._aliasName = aliasName
+        self._targetName = targetName
+        self._deprecatedFields = deprecatedFields or {}
+        self._removalDate = removalDate
+
+    def __call__(self, *args, **kwargs):
+        """Handles alias deprecation and returns an instance of the target class."""
+        if self._aliasName:
+            warnings.warn(
+                f"'{self._aliasName}' is deprecated and will be removed after {self._removalDate}. "
+                f"Use '{self._targetName}' instead.",
+                DeprecationWarning,
+                stacklevel=2
+            )
+
+        instance = self._target(*args, **kwargs)
+
+        # Inject deprecation warnings dynamically without changing the instance type
+        for old_attr, new_attr in self._deprecatedFields.items():
+            if hasattr(instance, new_attr):  # Ensure new attribute exists
+                _inject_deprecated_property(instance, old_attr, new_attr, self._removalDate)
+
+        return instance  # Always return the original instance
+
+def _inject_deprecated_property(instance, old_attr, new_attr, removal_date):
+    """Dynamically injects a deprecated property that redirects to the new attribute."""
+    def getter(self):
+        warnings.warn(
+            f"'{old_attr}' is deprecated and will be removed after {removal_date}. "
+            f"Use '{new_attr}' instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return getattr(self, new_attr)
+
+    def setter(self, value):
+        warnings.warn(
+            f"Setting '{old_attr}' is deprecated and will be removed after {removal_date}. "
+            f"Use '{new_attr}' instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        if new_attr == "dimensions":
+            setattr(self, new_attr, [value, value, value])
+        else:
+            setattr(self, new_attr, value)
+
+    # Inject property into the class itself (not instance-specific)
+    setattr(instance.__class__, old_attr, property(getter, setter))
+
+# ------ Deprecated variable/structure list ------ #
+# Remove from here when support is expired.
+
+# Since dimensions is a 3-element list while radius is a scalar, there is an extra if/else conversion above which will
+# need to be removed as well.
+mod.MultiShape = _DeprecatedWrapper(
+    mod.MultiShape,
+    targetName="MultiShape",
+    deprecatedFields={"radius": "dimensions"},
+    removalDate="02/21/26"
+)
+mod.MultiSphere = _DeprecatedWrapper(
+    mod.MultiShape,
+    aliasName="MultiSphere",
+    targetName="MultiShape",
+    removalDate="02/21/26"
+)
+mod.MultiSphereInfo = _DeprecatedWrapper(
+    mod.MultiShapeInfo,
+    aliasName="MultiSphereInfo",
+    targetName="MultiShapeInfo",
+    removalDate="02/21/26"
+)
+mod.MultiSphereVector = _DeprecatedWrapper(
+    mod.MultiShapeVector,
+    aliasName="MultiSphereVector",
+    targetName="MultiShapeVector",
+    removalDate="02/21/26"
+)
+
+warnings.simplefilter("default", DeprecationWarning)
+
 protectAllClasses(sys.modules[__name__])
 %}
