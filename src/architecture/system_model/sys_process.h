@@ -20,7 +20,7 @@
 #ifndef _SysProcess_HH_
 #define _SysProcess_HH_
 
-#include "architecture/system_model/sys_model_task.h"
+#include "architecture/_GeneralModuleFiles/sys_model_task.h"
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 #include <vector>

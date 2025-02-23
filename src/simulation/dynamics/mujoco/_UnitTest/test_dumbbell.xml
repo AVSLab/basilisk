@@ -1,0 +1,16 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<worldbody>
+		<body name="center">
+			<freejoint/>
+
+			<body name="left" pos="-100 0 0">
+				<inertial pos="0 0 0" quat="1 0 0 0" mass="10000" diaginertia="10000 10000 10000"/>
+			</body>
+			<body name="right" pos="100 0 0">
+				<inertial pos="0 0 0" quat="1 0 0 0" mass="10000" diaginertia="10000 10000 10000"/>
+			</body>
+		</body>
+	</worldbody>
+</mujoco>

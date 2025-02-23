@@ -199,6 +199,21 @@ Thermal Sub-System
   Thermal Modeling of a Sensor  <scenarioSensorThermal>
   Temperature Measurement with Random Seed Noise <scenarioTempMeasurementAttitude>
 
+Multi-Body Dynamics Simulations with MuJoCo
+-------------------------------------------
+It's recommended to study the first 6 scenarios in order:
+
+.. toctree::
+  :maxdepth: 1
+
+  CubeSat with Reaction Wheel <mujoco/scenarioReactionWheel>
+  CubeSat with 4 Unbalanced Thrusters and Fuel Tanks <mujoco/scenarioUnbalancedThrusters>
+  Branching Deployable Arm with Thrusters <mujoco/scenarioArmWithThrusters>
+  Chained Hinged Panel Deployment <mujoco/scenarioDeployPanels>
+  Solar Radiation Pressure Model on Arbitrary Surfaces <mujoco/scenarioSRPInPanels>
+  Landing on Asteroid with Contact Physics <mujoco/scenarioAsteroidLanding>
+  Docking between Two CubeSats <mujoco/scenarioSimpleDocking>
+
 Complex Spacecraft Dynamics Simulations
 ---------------------------------------
 
