@@ -811,6 +811,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         for (int i=0; i<4; i++) {
             glp->add_color((*glIt)->color[i]);
         }
+        glp->set_markerscale((*glIt)->markerScale);
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;
