@@ -181,13 +181,13 @@ default setting for that behavior.
       - Require Vizard to start up in spacecraft-view on start up
     * - ``showLocationCommLines``
       - int
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+      - Shows a line when a spacecraft enters the FOV of a ground station or another spacecraft. These can become computationally expensive because they perform ray casting, so if obstruction detection is not necessary it would be easier to use target lines (see live settings table). Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - ``showLocationCones``
       - int
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+      - Shows a cone protruding from a celestial body or spacecraft location. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - ``showLocationLabels``
       - int
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+      - Shows labels for a celestial body or spacecraft location. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - ``useSimpleLocationMarkers``
       - int
       - Value of 0 (protobuffer default) to use simplified Location markers when number
