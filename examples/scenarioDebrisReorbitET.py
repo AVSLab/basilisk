@@ -172,9 +172,9 @@ def run(show_plots):
 
     # create a list of sphere body-fixed locations and associated radii
     spPosListServicer = [[0., 0., 0.]]  # one sphere located at origin of body frame
-    rListServicer = [2.]  # radius of sphere is 2m
+    rListServicer = [5.]  # radius of sphere is 5m
     spPosListDebris = [[0., 0., 0.]]  # one sphere located at origin of body frame
-    rListDebris = [3.]  # radius of sphere is 3m
+    rListDebris = [4.]  # radius of sphere is 4m
 
     # add spacecraft to state
     MSMmodule.addSpacecraftToModel(scObjectServicer.scStateOutMsg, messaging.DoubleVector(rListServicer),
