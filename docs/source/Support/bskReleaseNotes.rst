@@ -30,6 +30,9 @@ Version |release|
 - Updated CI scripts to run on latest macOS and no longer use Ubuntu 20.04
 - Updated :ref:`makeDraftModule` to remove redundant comments and implementation of the destructor,
   using only a header-defaulted destructor with ``= default;`` syntax.
+- Fixed issue where reaction wheels with unlimited torque (``useMaxTorque=False``) would end simulation prematurely
+- Added safety mechanism to limit excessive wheel acceleration and provide warning messages
+
 
 Version  2.6.0  (Feb. 21, 2025)
 -------------------------------
