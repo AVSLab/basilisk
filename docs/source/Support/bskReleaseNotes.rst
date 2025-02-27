@@ -58,6 +58,9 @@ Version |release|
 - Fixed a bug in :ref:`radiationPressure` where ``parseAndLoadXML()`` would raise a ValueError when using VS Code's debugger.
   The error occurred in Python 3.10.12 because numpy arrays that reference other arrays cannot be resized
   without setting ``refcheck=False``. This fix allows debugging scenarios that use the radiation pressure module.
+- Enhanced FSW effector interface modules to zero output messages in their reset methods, ensuring safe management
+  of effector states when algorithms are disabled. This prevents potential runaway operations by clearing stale
+  control values.
 
 
 Version  2.6.0  (Feb. 21, 2025)
