@@ -239,6 +239,54 @@ void SpacecraftLocation::computeAccess()
         //storing the two angles in the output butter
         this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
         this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
+        // Compute scalar triple product
+        double scalarTripleProduct = (this->sunVector_N.cross(r_SL_P)).dot(aHat_N);
+
+        // Check coplanarity & glare condition
+        bool isCoplanar = fabs(scalarTripleProduct) < 1e-3;  // Tolerance for numerical precision // TODO: we should think about slightly off-coplanar... it still has some glare
+        double epsilon = 10.0 * M_PI / 180.0; // [rad] if the two angles are within epsilon degrees then it will be glared
+        bool glare = isCoplanar && (fabs(sunIncidenceAngle - scViewAngle) * 180.0 / M_PI <= 10.0);
+
+//        // GLARE AS A BOOLEAN
+//        // Glare occurs if angles are within epsilon and vectors are coplanar
+//        bool glare = isCoplanar && (std::abs(sunIncidenceAngle - scViewAngle) < 10.0 * M_PI / 180.0);
+
+        // GLARE AS A
+        // Initialize glare variable as 0 (default: no glare)
+        double glare = 0.0;
+
+        // Check if either angle exceeds 90 degrees (π/2 radians)
+        if (sunIncidenceAngle > M_PI_2 || scViewAngle > M_PI_2)
+        {
+            glare = -1.0;  // Invalid case
+        }
+        // Check glare condition: angles within epsilon & coplanar
+        else if (isCoplanar && fabs(sunIncidenceAngle - scViewAngle) <= epsilon)
+        {
+            glare = 1.0;  // Glare detected
+        }
+
+//        ////GLARE AS A FLOAT with linear transition between 'glare' and 'no glare'////
+//        // Compute cosine similarity (normalized dot product) for glare intensity
+//        double sunAlignment = fabs(aHat_N.dot(this->sunVector_N) / (aHat_N.norm() * this->sunVector_N.norm())); // Range [0,1]
+//        double deputyAlignment = fabs(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm())); // Range [0,1]
+//
+//        // Compute glare as a continuous value between 0 and 1
+//        double glare = 0.0;  // Default: no glare
+//
+//        // If either angle is greater than 90° (π/2), set glare to -1
+//        if (sunIncidenceAngle > M_PI_2 || scViewAngle > M_PI_2)
+//        {
+//            glare = -1.0;
+//        }
+//        // If coplanar and within epsilon, compute glare intensity
+//        else if (isCoplanar && fabs(sunIncidenceAngle - scViewAngle) <= epsilon)
+//        {
+//            glare = 1.0 - fabs(sunAlignment - deputyAlignment);  // Higher similarity → Higher glare
+//        }
+//
+//        // Store results in output message
+        this->accessMsgBuffer.at(c).glare = glare;  // Store glare result
     }
 }
 
