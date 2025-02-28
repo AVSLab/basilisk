@@ -228,6 +228,17 @@ void SpacecraftLocation::computeAccess()
                 }
             }
         }
+
+        // aHat vector in inertial frame
+        Eigen::Vector3d aHat_N = dcm_NB * this->aHat_B;
+
+        // calculating the sun-incidence-angle and the deputy-view-angle
+        double sunIncidenceAngle = safeAcos(aHat_N.dot(this->sunVector_N) / (aHat_N.norm() * this->sunVector_N.norm()));
+        double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
+
+        //storing the two angles in the output butter
+        this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
+        this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
     }
 }
 
