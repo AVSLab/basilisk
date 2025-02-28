@@ -210,6 +210,8 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
 
             gsList = []
+            # Initialize the vizPanels list before the loop
+            self.vizPanels = []
             for i in range(self.numberSpacecraft):
                 batteryPanel = vizSupport.vizInterface.GenericStorage()
                 batteryPanel.label = "Battery"
@@ -219,7 +221,6 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 batteryInMsg = messaging.PowerStorageStatusMsgReader()
                 batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
                 batteryPanel.batteryStateInMsg = batteryInMsg
-                batteryPanel.this.disown()
 
                 tankPanel = vizSupport.vizInterface.GenericStorage()
                 tankPanel.label = "Tank"
@@ -228,8 +229,10 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 tankInMsg = messaging.FuelTankMsgReader()
                 tankInMsg.subscribeTo(self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg)
                 tankPanel.fuelTankStateInMsg = tankInMsg
-                tankPanel.this.disown()
 
+                # Append panels to the class-level list
+                self.vizPanels.append(batteryPanel)
+                self.vizPanels.append(tankPanel)
                 gsList.append([batteryPanel, tankPanel])
 
             viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList

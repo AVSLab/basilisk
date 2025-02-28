@@ -1072,7 +1072,8 @@ def createCameraConfigMsg(viz, **kwargs):
         cameraConfigMsgPayload.depthMapClippingPlanes = [-1.0, -1.0]
 
     cameraConfigMsg = messaging.CameraConfigMsg().write(cameraConfigMsgPayload)
-    cameraConfigMsg.this.disown()
+    # need to add code to retain camera config msg in memory.  Below
+    # the function makes vizInterface subscribe to the pointer to this Msg object
     viz.addCamMsgToModule(cameraConfigMsg)
 
     return

@@ -328,13 +328,18 @@ class BSKDynamicModels():
         """Set the 8 CSS sensors"""
         self.CSSConstellationObject.ModelTag = "cssConstellation"
 
+        # Create class-level registry if it doesn't exist
+        if not hasattr(self, '_css_registry'):
+            self._css_registry = []
+
         def setupCSS(cssDevice):
             cssDevice.fov = 80. * mc.D2R         # half-angle field of view value
             cssDevice.scaleFactor = 2.0
             cssDevice.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
             cssDevice.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
             cssDevice.sunEclipseInMsg.subscribeTo(self.eclipseObject.eclipseOutMsgs[0])
-            cssDevice.this.disown()
+            # Store CSS in class-level registry
+            self._css_registry.append(cssDevice)
 
         # setup CSS sensor normal vectors in body frame components
         nHat_B_List = [

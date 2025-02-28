@@ -19,10 +19,6 @@
 
 
 #include "reactionWheelStateEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
 
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {
@@ -44,10 +40,17 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector()
 {
-    for (long unsigned int c=0; c<this->rwOutMsgs.size(); c++) {
-        free(this->rwOutMsgs.at(c));
+    // Clear output messages vector
+    for (unsigned int i = 0; i < this->rwOutMsgs.size(); i++) {
+        if (this->rwOutMsgs[i]) {
+            delete this->rwOutMsgs[i];
+            this->rwOutMsgs[i] = nullptr;
+        }
     }
-    return;
+    rwOutMsgs.clear();
+
+    // Clear reaction wheel data vector - these are owned by SWIG
+    ReactionWheelData.clear();
 }
 
 void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)

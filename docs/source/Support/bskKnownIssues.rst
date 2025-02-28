@@ -12,6 +12,28 @@ Version |release|
 -----------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
   Developers and users alike should continue to use ``python conanfile.py`` installation.
+- When using C++ wrapped sensor objects (CSS, thrusters, reaction wheels), Python references
+  must be explicitly retained to prevent premature garbage collection.  If your python code
+  does not do this you might experience ``seg fault`` errors after upgrading the code base.
+  Basilisk used to use the python
+  ``.disown()`` command to avoid a class or message instance going out of scope and its memory
+  being freed.  Instead of using ``.disown()``, one can also maintain an object registry like:
+
+  .. code-block:: python
+     :linenos:
+
+     class BSKDynamicModels():
+         def SetCSSConstellation(self):
+             if not hasattr(self, '_css_registry'):
+                 self._css_registry = []
+             def setupCSS(cssDevice):
+                 self._css_registry.append(cssDevice)
+             # Create and configure CSS devices...
+
+  Objects created in a function can also be returned to the parent method calling this function
+  and retained there in memory.
+
+  Failure to retain references will cause segmentation faults when accessing collected objects.
 
 
 Version 2.6.0
@@ -977,7 +999,7 @@ solution to this issue.
 
    <li>
 
-The ``numpy`` python package can’t be the current version 1.16.x as this
+The ``numpy`` python package can't be the current version 1.16.x as this
 causes some incompatibilities and massive amounts of depreciated
 warnings. These warnings are not related to BSK python code, but other
 support code. Thus, for now be sure to install version 1.15.14 of
@@ -1028,7 +1050,7 @@ free to install the latest version of pytest.
 
    <li>
 
-As we are now using the conan package management system, you can’t
+As we are now using the conan package management system, you can't
 double the the Cmake GUI application. Instead, you must either launch
 the Cmake GUI application from the command line, or run CMake from the
 command line directly. See the platform specific Basilisk installation
@@ -1042,7 +1064,7 @@ instructions.
 
    <li>
 
-The ``numpy`` python package can’t be the current version 1.16.x as this
+The ``numpy`` python package can't be the current version 1.16.x as this
 causes some incompatibilities and massive amounts of depreciated
 warnings. These warnings are not related to BSK python code, but other
 support code. Thus, for now be sure to install version 1.15.14 of

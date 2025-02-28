@@ -41,14 +41,14 @@ inline constexpr bool always_false_v = false;
 %fragment("castPyToC", "header", fragment="static_fail") %{
 /*
 The following method takes a Python object and tries to convert it to the type T
-If this is succesful, the value is returned. If it is unsucessful, an appropriate 
+If this is succesful, the value is returned. If it is unsucessful, an appropriate
 error message is returned.
 */
 template<class T>
 std::variant<T, std::string> castPyToC(PyObject *input)
-{        
+{
     if (PyErr_Occurred()) return "castPyToC was pre-errored!";
-    
+
     if constexpr (std::is_same_v<T, bool>)
     {
         if (!PyBool_Check(input))
@@ -60,7 +60,7 @@ std::variant<T, std::string> castPyToC(PyObject *input)
     }
     else if constexpr (std::is_integral_v<T>)
     {
-        // Before 3.10, PyLong_AsLong could call __int__, which silently casts float 
+        // Before 3.10, PyLong_AsLong could call __int__, which silently casts float
         // objects to int (with loss of data). We want to prevent that, so instead we
         // call PyNumber_Index beforehand, which will call __index__, which does not
         // allow implicit casts to int (and appropriately raises a warning)
@@ -96,14 +96,14 @@ std::variant<T, std::string> castPyToC(PyObject *input)
     else if constexpr (std::is_floating_point_v<T>)
     {
         double val = PyFloat_AsDouble(input);
-        
+
         if (PyErr_Occurred())
         {
             PyErr_Clear();
             return "Cannot parse value as a floating point.";
         }
 
-        return (T) val;    
+        return (T) val;
     }
     else
     {
@@ -157,7 +157,7 @@ struct RotationCoversion<Eigen::Vector3d, To>
 
 template<class To>
 struct RotationCoversion<Eigen::Vector4d, To>
-{ 
+{
     inline static To convert(const Eigen::Vector4d& input) {return To{ (Eigen::Quaterniond{ input[0], input[1], input[2], input[3] }).toRotationMatrix() };};
 };
 
@@ -219,18 +219,18 @@ std::optional<std::string> checkPyObjectIsMatrixLike(PyObject *input)
         return "Input is not a sequence";
     }
 
-    auto [numberRows, numberColumns] = maybeSize.value(); 
+    auto [numberRows, numberColumns] = maybeSize.value();
 
     if (T::RowsAtCompileTime != -1 && T::RowsAtCompileTime != numberRows)
     {
-        std::string errorMsg = "Input does not have the correct number of rows. Expected " 
+        std::string errorMsg = "Input does not have the correct number of rows. Expected "
             + std::to_string(T::RowsAtCompileTime) + " but found " + std::to_string(numberRows);
         return errorMsg;
     }
 
     if (T::ColsAtCompileTime != -1 && T::ColsAtCompileTime != numberColumns)
     {
-        std::string errorMsg = "Input does not have the correct number of columns. Expected " 
+        std::string errorMsg = "Input does not have the correct number of columns. Expected "
             + std::to_string(T::ColsAtCompileTime) + " but found " + std::to_string(numberColumns);
         return errorMsg;
     }
@@ -238,13 +238,19 @@ std::optional<std::string> checkPyObjectIsMatrixLike(PyObject *input)
     for(Py_ssize_t row=0; row<numberRows; row++)
     {
         PyObject *rowPyObj = PySequence_GetItem(input, row);
+        if (!rowPyObj) {
+            return "Failed to get row item";
+        }
+
         Py_ssize_t localNumberColumns = PySequence_Check(rowPyObj) ? PySequence_Length(rowPyObj) : 1;
         if (localNumberColumns != numberColumns)
         {
+            Py_DECREF(rowPyObj);  // Decrement before early return
             return "All rows must be the same length! Row " + std::to_string(row) + " is not.";
         }
+        Py_DECREF(rowPyObj);  // Decrement after processing row
     }
-    
+
     return {};
 }
 }
@@ -273,9 +279,9 @@ T pyObjToEigenMatrix(PyObject *input)
     T result;
 
     auto [numberRows, numberColumns] = getInputSize(input).value();
-    
+
     // Resize can be called even for non-dynamic matrices as long as the
-    // fixed-sizes do not change. 
+    // fixed-sizes do not change.
     result.resize(numberRows, numberColumns);
 
     for(Py_ssize_t row=0; row<numberRows; row++)
@@ -296,7 +302,7 @@ T pyObjToEigenMatrix(PyObject *input)
             else
             {
                 valueOrErrorMsg = castPyToC<ScalarType>(rowPyObj);
-            } 
+            }
 
             if (std::holds_alternative<std::string>(valueOrErrorMsg))
             {
@@ -304,7 +310,7 @@ T pyObjToEigenMatrix(PyObject *input)
                     "Row " + std::to_string(row) + ", Column " + std::to_string(col) +": "
                     + std::get<std::string>(valueOrErrorMsg)
                 ).c_str());
-                
+
                 Py_DECREF(rowPyObj);
 
                 return {};
@@ -324,7 +330,7 @@ T pyObjToEigenMatrix(PyObject *input)
 {
 /*
 Creates a new rotation of the templated type T with the given 'input'.
-Translation might fail, in which case the error flag will be set (disambiguate 
+Translation might fail, in which case the error flag will be set (disambiguate
 using PyErr_Occurred()). If this happens, the returned value is undefined.
 */
 template<class T>
@@ -339,7 +345,7 @@ T pyObjToRotation(PyObject *input)
         return {};
     }
 
-    auto [numberRows, numberColumns] = maybeSize.value(); 
+    auto [numberRows, numberColumns] = maybeSize.value();
 
     if (numberRows == 3 && numberColumns == 1)
     {
@@ -355,7 +361,7 @@ T pyObjToRotation(PyObject *input)
     }
     else
     {
-        std::string errorMsg = "Unknown rotation dimensions: " 
+        std::string errorMsg = "Unknown rotation dimensions: "
             + std::to_string(numberRows) + "x" + std::to_string(numberColumns)
             + ". Expected dimensions 3x1, 4x1, or 3x3.";
         PyErr_SetString(PyExc_ValueError, errorMsg.c_str());
@@ -376,7 +382,7 @@ void fillPyObjList(PyObject *input, const T& value)
     {
         PyObject *locRow = PyList_New(0);
         for(auto j=0; j<value.outerSize(); j++)
-        {            
+        {
             auto toAppend = castCToPy<typename T::Scalar>(value(i,j));
             PyList_Append(locRow, toAppend);
             Py_DECREF(toAppend);
@@ -532,7 +538,7 @@ void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond
 // Types partially fixed-size should have precedence 160 < precedence < 165
 // Fully dynamically sized should have precedence 165 < precendence < 170
 //
-// Boolean matrices should have lower precendence than integer matrices, 
+// Boolean matrices should have lower precendence than integer matrices,
 // which should have lower precendence than double matrices.
 //
 // For reference, std::array has precendence 155, and std::vector has precendence 160
@@ -561,9 +567,9 @@ EIGEN_MAT_WRAP(Eigen::MatrixXd, 169)
 // Rotation wrappers work so that they can be set from Python on any
 // of the three ways we have of representing rotations: MRPs (3x1 vector),
 // quaternions (4x1 vector), or rotation matrix (3x3 vector).
-// 
+//
 // Their return type, however, is always an MRPd.
 //
-// The precedence should be that of fixed-size double eigen matrices (159). 
+// The precedence should be that of fixed-size double eigen matrices (159).
 EIGEN_ROT_WRAP(Eigen::MRPd       , 159)
 EIGEN_ROT_WRAP(Eigen::Quaterniond, 159)
