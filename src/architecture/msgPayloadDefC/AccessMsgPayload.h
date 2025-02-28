@@ -33,6 +33,9 @@ typedef struct {
     double az_dot; //!< [rad/s] Azimuth angle rate for a given spacecraft in the SEZ rotating frame.
     double r_BL_L[3]; //!<[m] Spacecraft position relative to the groundLocation in the SEZ frame.
     double v_BL_L[3]; //!<[m/s] SEZ relative time derivative of r_BL vector in SEZ vector components.
+    double sunIncidenceAngle; //!<[rad] New: Angle between bore-sight and Sun vector
+    double scViewAngle;  //!<[rad] New: Angle between bore-sight and deputy SC vector
+    double glare; //!<[-] New: float value between 0 - 1 as a measure of expected glare
 }AccessMsgPayload;
 
 
