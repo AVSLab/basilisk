@@ -309,7 +309,7 @@ class moduleGenerator:
         headerFile += f'class {self._className}: public SysModel {{\n'
         headerFile += 'public:\n'
         headerFile += f'    {self._className}();\n'
-        headerFile += f'    ~{self._className}();\n'
+        headerFile += f'    ~{self._className}() = default;\n'
         headerFile += '\n'
         headerFile += '    void Reset(uint64_t CurrentSimNanos);\n'
         headerFile += '    void UpdateState(uint64_t CurrentSimNanos);\n'
@@ -364,11 +364,6 @@ class moduleGenerator:
             for msg in variableList:
                 defFile += f'    this->{msg["var"]} = {{}};\n'
 
-        defFile += '}\n'
-        defFile += '\n'
-        defFile += '/*! Module Destructor */\n'
-        defFile += f'{self._className}::~{self._className}()\n'
-        defFile += '{\n'
         defFile += '}\n'
         defFile += '\n'
         defFile += '/*! This method is used to reset the module and checks that required input messages are connect.\n'
