@@ -1,0 +1,8 @@
+.. _pointMassGravityModel:
+
+Module: pointMassGravityModel
+=============================
+
+.. autodoxygenfile:: pointMassGravityModel.h
+   :project: _GeneralModuleFiles3
+
