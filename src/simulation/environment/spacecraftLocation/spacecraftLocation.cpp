@@ -135,7 +135,19 @@ bool SpacecraftLocation::ReadMessages()
         this->planetState = this->planetInMsg();
     }
 
-    return(planetRead && scRead);
+    bool sunRead = true;
+    if (this->sunVectorInMsg.isLinked())
+    {
+        sunRead = this->sunVectorInMsg.isWritten();
+        this->sunVector_N = cArray2EigenVector3d(this->sunVectorInMsg().sunVector);
+    } else {
+        sunRead = false;
+        this->sunVector_N.setZero();
+    }
+
+    return (planetRead && scRead && sunRead);
+//    return(planetRead && scRead);
+
 }
 
 /*! write module messages
