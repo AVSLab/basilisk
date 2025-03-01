@@ -80,6 +80,10 @@ void SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
         }
         this->aHat_B.normalize();
     }
+
+    if (!this->sunInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
+    }
 }
 
 
@@ -139,7 +143,8 @@ bool SpacecraftLocation::ReadMessages()
     if (this->sunVectorInMsg.isLinked())
     {
         sunRead = this->sunVectorInMsg.isWritten();
-        this->sunVector_N = cArray2EigenVector3d(this->sunVectorInMsg().sunVector);
+        //this->sunVector_N = cArray2EigenVector3d(this->sunVectorInMsg().sunVector);
+        this->sunInMsgState = this->sunInMsg();
     } else {
         sunRead = false;
         this->sunVector_N.setZero();
@@ -169,6 +174,9 @@ void SpacecraftLocation::computeAccess()
     // get planet position and orientation relative to inertial frame
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
+
+    // get sun position in inertial frame from sunInMsg
+    Eigen::Vector3d r_HN_N(this->sunInMsgState.PositionVector); // r_sun
 
     // compute primary spacecraft relative to planet
     Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->primaryScStatesBuffer.sigma_BN);
@@ -233,14 +241,17 @@ void SpacecraftLocation::computeAccess()
         Eigen::Vector3d aHat_N = dcm_NB * this->aHat_B;
 
         // calculating the sun-incidence-angle and the deputy-view-angle
-        double sunIncidenceAngle = safeAcos(aHat_N.dot(this->sunVector_N) / (aHat_N.norm() * this->sunVector_N.norm()));
+        double sunIncidenceAngle = safeAcos(aHat_N.dot(r_HN_N) / (aHat_N.norm() * r_HN_N.norm()));
         double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
 
         //storing the two angles in the output butter
         this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
         this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
+
         // Compute scalar triple product
-        double scalarTripleProduct = (this->sunVector_N.cross(r_SL_P)).dot(aHat_N);
+        r_HN_N_normalized = r_HN_N/r_HN_N.norm()
+        r_SL_P_normalized = r_SL_P/r_SL_P.norm()
+        double scalarTripleProduct = (r_HN_N_normalized.cross(r_SL_P_normalized)).dot(aHat_N);
 
         // Check coplanarity & glare condition
         bool isCoplanar = fabs(scalarTripleProduct) < 1e-3;  // Tolerance for numerical precision // TODO: we should think about slightly off-coplanar... it still has some glare
