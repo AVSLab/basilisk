@@ -64,7 +64,7 @@ public:
 
     //DHP
     ReadFunctor<SunVectorMsgPayload> sunVectorInMsg;  // Input message for the Sun vector
-    Eigen::Vector3d sunVector_N;  // Sun vector in inertial frame
+    Eigen::Vector3d r_HN_N;  // Sun position vector in inertial frame
     
     BSKLogger bskLogger;         //!< -- BSK Logging
 
