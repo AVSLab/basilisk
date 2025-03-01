@@ -34,16 +34,33 @@ provides information on what this message is used for.
       - :ref:`RWConfigLogMsgPayload`
       - vector of RW log output messages
 
+User Guide
+-----------
 
+The reaction wheel state effector module provides functionality for simulating reaction wheels in a spacecraft.
+It includes safety mechanisms to prevent numerical instability that can occur with excessive wheel acceleration
+or when using unlimited torque with small spacecraft inertia.
 
+Threshold Parameters
+~~~~~~~~~~~~~~~~~~~~
 
+The module includes two configurable threshold parameters:
 
+* ``maxWheelAcceleration``: Maximum allowed wheel acceleration to prevent numerical instability. Default value is 1.0e6 rad/s^2.
+* ``largeTorqueThreshold``: Threshold for warning about large torque with unlimited torque setting. Default value is 10.0 Nm.
 
+These parameters can be accessed and modified using the following getter and setter methods:
 
+.. code-block:: python
 
+    # Get the current maximum wheel acceleration threshold
+    current_max_accel = reactionWheelStateEffector.getMaxWheelAcceleration()
 
+    # Set a new maximum wheel acceleration threshold
+    reactionWheelStateEffector.setMaxWheelAcceleration(2.0e6)  # rad/s^2
 
+    # Get the current large torque threshold
+    current_torque_threshold = reactionWheelStateEffector.getLargeTorqueThreshold()
 
-
-
-
+    # Set a new large torque threshold
+    reactionWheelStateEffector.setLargeTorqueThreshold(15.0)  # Nm
