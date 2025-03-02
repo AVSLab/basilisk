@@ -19,14 +19,14 @@
 It's recommended to review the following scenario(s) first (and any
 recommended scenario(s) that they may have):
 
-#. examples/mujoco/scenarioDeployPanels.py
+#. ``examples/mujoco/scenarioDeployPanels.py``
 
 This scenario showcases how solar-radiation pressure (SRP) can be modeled
 ona spacecraft with deployable panels. This script uses the MuJoCo-based
-`DynamicObject` `MJScene`.
+:ref:`DynamicObject<dynamicObject>` :ref:`MJScene<MJScene>`.
 
-The multi-body system is defined in the XML file `sat_w_deployable_panels.xml`.
-In `mujoco/scenarioDeployPanels.py` we saw how to use a PD controller to compute
+The multi-body system is defined in the XML file ``sat_w_deployable_panels.xml``.
+In ``mujoco/scenarioDeployPanels.py`` we saw how to use a PD controller to compute
 the torque necessary to deploy the panels of this same multi-body system. In
 this script, we opt for constraining the panel joint angles to guarantee a smooth
 deployment.
@@ -37,7 +37,7 @@ The formula for the magnitude of SRP acting on a flat surface can be written as:
 
     SRP_force_mag = C_SRP * cos(incidence_angle)**2
 
-where `C_SRP` is a fixed* coefficient and `incidence_angle` is the angle between
+where ``C_SRP`` is a fixed* coefficient and `incidence_angle` is the angle between
 the sunlight vector and the normal vector to the surface. The direction of this
 force is along the normal to the surface, and in the direction of the sunlight (
 imagine the sunrays 'pushing' the surface). The point of application is the
@@ -56,8 +56,8 @@ surface normal in the site reference frame (which is constant since both the sur
 normal and site frame are fixed in the same rigid body), then we can easily compute
 the direction of the surface normal in the inertial frame.
 
-The `SysModel` class `SRPPanel` performs this calculation for a single panel.
-This accepts three class attribtues: `C_SRP`, the direction of sunlight in the
+The :ref:`SysModel<sys_model>` class ``SRPPanel`` performs this calculation for a single panel.
+This accepts three class attributes: ``C_SRP``, the direction of sunlight in the
 inertial frame, and the normal vector in the site-fixed reference frame.
 It also takes an input message, which defines the state of said site frame (i.e.
 it's attitude, among other information). Finally, it outputs a message with
@@ -65,14 +65,14 @@ the magnitude of the SRP force. This can, in turn, be tied to the control input
 of a (single/scalar) actuator that acts on the same site, and with the ``gear``
 attribute that corresponds to the frame-fixed surface normal defined in ``SRPPanel``.
 
-We can create a `SRPPanel` for every single facet for which we want to model
+We can create a ``SRPPanel`` for every single facet for which we want to model
 the SRP force. In this script, we apply it to the sunlit sides of the 6 panels.
 However, we could also apply the same model for the sunlit side of our CubeSat.
 We could even implement a system to detect when a surface is in shadow or sunlit,
-and then apply the `SRPPanel` to every surface of our spacecraft (all sides of
+and then apply the ``SRPPanel`` to every surface of our spacecraft (all sides of
 our CubeSat, both sides of the panels, etc.).
 
-This script is a good example of how `MJScene`-based simulations are flexible
+This script is a good example of how :ref:`MJScene<MJScene>`-based simulations are flexible
 and require less modeling effort. The dynamic engine takes care of complicated
 frame transformations, so we can retrieve the state of arbitrary frames defined
 in the multi-body and apply forces/torques in local reference frames.
@@ -81,8 +81,8 @@ types, joint limits, constraints, etc. Because all bodies, sites, joints, and
 actuators are treated equally by the engine, we obtain a very modular architecture
 that reduces development effort.
 
-Note: * There are many reasons why `C_SRP` may not actually be constant in reality
-(distance from sun, eclipses, material degradation...). This is a simplication!
+Note: * There are many reasons why ``C_SRP`` may not actually be constant in reality
+(distance from sun, eclipses, material degradation...). This is a simplification!
 """
 
 import os

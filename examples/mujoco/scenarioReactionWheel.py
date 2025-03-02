@@ -18,18 +18,18 @@
 """
 Recommended first scenario to learn MuJoCo-based simulation!
 
-This script shows how to simulate a a CubeSat with a reaction wheel using the
+This script shows how to simulate a CubeSat with a reaction wheel using the
 Mujoco-based dynamic object in Basilisk.
 
-Traditional Basilisk simulations (which use the `spacecraft` `DynamicObject`)
-are 'hub'-centric. This means that one usually considers a single body to be
+Traditional Basilisk simulations (which use the :ref:`spacecraft` :ref:`DynamicObject<dynamicObject>`)
+are '`hub`'-centric. This means that one usually considers a single body to be
 the 'main' body of the simulation, where forces and torques are applied.
-DynamicEffectors and StateEffectors are attached to this `DynamicObject`, which
+``DynamicEffectors`` and ``StateEffectors`` are attached to this :ref:`DynamicObject<dynamicObject>`, which
 simulate these forces/torques or provide some (limited) multi-body behavior.
-For example, the `reactionWheelStateEffector` can be used to simulate a reaction
-wheel on a `spacecraft` `DynamicObject`.
+For example, the ``reactionWheelStateEffector`` can be used to simulate a reaction
+wheel on a :ref:`spacecraft` :ref:`DynamicObject<dynamicObject>`.
 
-On the other hand, the Mujoco-based `DynamicObject` (`MJScene`) is more general
+On the other hand, the Mujoco-based :ref:`DynamicObject<dynamicObject>` (:ref:`MJScene<MJScene>`) is more general
 and allows for more complex multi-body dynamics. Under this formulation, there
 is no 'main' body, and all bodies are treated equally. Forces and torques can
 be applied at any point of any body. Two bodies can be connected by joints (like
@@ -37,13 +37,13 @@ the revolute joint of a wheel, or a prismatic joint of a linear actuator). Throu
 these joints, forces and torques from one body can be transmitted to another.
 This allows to model a plethora of multi-body systems, without the need to
 explicitly model the dynamics of each body. The same system can model a CubeSat,
-a set of CubeSats, a robotic arm, reaction wheels, etc. Moreover, `MJScene` (a
-`DynamicObject`) does not use `DynamicEffectors` and `StateEffectors`. Instead,
-`MJScene` has an internal "dynamics task", similar to other tasks in Basilisk.
-This task can hold arbitrary `SysModel`, some of which can output forces and
-torques to be applied at specific points of the multi-body system in `MJScene`.
+a set of CubeSats, a robotic arm, reaction wheels, etc. Moreover, :ref:`MJScene<MJScene>` (a
+:ref:`DynamicObject<dynamicObject>`) does not use ``DynamicEffectors`` and ``StateEffectors``. Instead,
+:ref:`MJScene<MJScene>` has an internal "dynamics task", similar to other tasks in Basilisk.
+This task can hold arbitrary :ref:`SysModel<sys_model>`, some of which can output forces and
+torques to be applied at specific points of the multi-body system in :ref:`MJScene<MJScene>`.
 Unlike regular tasks in Basilisk, which run at specific time intervals, the
-dynamics task in `MJScene` runs at every time step of the integrator.
+dynamics task in :ref:`MJScene<MJScene>` runs at every time step of the integrator.
 
 In this example, we show how to simulate a CubeSat with a reaction wheel using
 the Mujoco-based dynamic object. The multi-body system consists of a 'hub' body
@@ -51,7 +51,7 @@ and a 'wheel' body. The wheel is connected to the hub by a revolute joint, which
 allows the wheel to rotate around the hub. The wheel is actuated by a torque
 applied at the center of mass of the wheel. The hub is allowed to move and rotate
 freely. This system definition must be translated into the XML format that Mujoco
-understands, which is done in the `sat_w_wheel.xml` file. The following is a
+understands, which is done in the ``sat_w_wheel.xml`` file. The following is a
 simplified version of this file, line numbers have been added on the left:
 
 ::
@@ -76,10 +76,10 @@ simplified version of this file, line numbers have been added on the left:
     18 </mujoco>
 
 
-Every MuJoCo XML file must have a `<mujoco>` root element (line 1 and 18). The `<worldbody>`
+Every MuJoCo XML file must have a `<mujoco>` root element (line 1 and 18). The ``<worldbody>``
 element (line 2) contains the bodies of the system. In this case, there are two bodies:
 the 'hub' body (line 3) and the 'wheel_1' body (line 7). The 'hub' body is connected to
-the world by a `freejoint` (line 4), which allows it to move and rotate freely. The 'hub'
+the world by a ``freejoint`` (line 4), which allows it to move and rotate freely. The 'hub'
 body has a box geometry (line 5), which is used to define the visual representation,
 mass properties, and collision properties of the body.
 
@@ -93,13 +93,13 @@ sub-bodies, but only one parent, which means that multi-body systems are (topolo
 trees. Closed-loop topologies can be simulated, but this is not covered in this example.
 
 Each body has an 'origin' reference frame, which is the frame in which all sub-elements of
-the body are defined. In the defintiion of the 'wheel_1' body, we define the position
+the body are defined. In the definition of the 'wheel_1' body, we define the position
 and orientation of the 'origin' frame of the 'wheel_1' body with respect to the 'origin'
 frame of the 'hub' body using the ``pos`` and ``xyaxes`` attributes (line 7). Geometries
 of bodies are defined with respect to the 'origin' frame of said body. Similarly, the
 ``axis`` attribute of the joint is defined with respect to the 'origin' frame of the body.
 
-The `<actuator>` element (line 14) contains the actuators of the system. In this case, there
+The ``<actuator>`` element (line 14) contains the actuators of the system. In this case, there
 is a single actuator called 'wheel_1' (line 15), which is linked to the 'wheel_1' joint.
 This actuator can apply a torque to the 'wheel_1' joint. This actuator simulates a motor
 applying the torque on the reaction wheel. The torque value can be controlled through
@@ -115,7 +115,7 @@ its rotation in the first 60 seconds and then decelerate in the next 60 seconds.
 The final angular velocity should be zero.
 
 The system states are recorded and optionally plotted and/or visualized in a 3D
-geometry visualization environment using `mujoco.visualize`. It's possible that
+geometry visualization environment using ``mujoco.visualize``. It's possible that
 this function is not available in your system, depending on whether you chose to
 build the additional 'replay' utility when building Basilisk.
 """

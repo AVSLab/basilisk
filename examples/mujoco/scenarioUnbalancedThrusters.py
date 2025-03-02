@@ -19,15 +19,15 @@
 It's recommended to review the following scenario(s) first (and any
 recommended scenario(s) that they may have):
 
-#. examples/mujoco/scenarioReactionWheel.py
+#. ``examples/mujoco/scenarioReactionWheel.py``
 
 This script shows how to simulate a CubeSat with 4 thrusters attached
 each to a different fuel tank. All thrusters produce the same thrust,
 but one of the consumes fuel at twice the rate of the others (which
-simulates a defect). This is done using the MuJoCo-based `DynamicObject`
-`MJScene`.
+simulates a defect). This is done using the MuJoCo-based :ref:`DynamicObject<dynamicObject>`
+:ref:`MJScene<MJScene>`.
 
-The multi-body system is defined in the XML file `sat_w_thrusters.xml`.
+The multi-body system is defined in the XML file ``sat_w_thrusters.xml``.
 This XML file defines a 'hub' body with 4 tank bodies as their
 sub-bodies ('tank_1', 'tank_2', etc.). The 'hub' body is a cube, while the
 'tank' bodies are 'pills' and are contained within the 'hub' body. Each
@@ -45,15 +45,15 @@ To model a thruster, two things must be achieved:
 #. The thrust force must be applied.
 #. The fuel consumption must be modeled.
 
-To accomplish the first, a we tie a standalone `SingleActuatorMsg` to
+To accomplish the first, we tie a standalone ``SingleActuatorMsg`` to
 the control input of each of the thrusters. The payload of this message
 is kept constant at 5 N.
 
 To model the fuel consumption, we need to tell the system that the mass
 of the tank bodies is decreasing. The mass of each of the bodies in the
 system is a state, and thus should be updated by defining its time
-derivative. This is done by tying a `SCMassPropsMsg` to the
-`derivativeMassPropertiesInMsg` of the tank bodies. In this script,
+derivative. This is done by tying a ``SCMassPropsMsg`` to the
+``derivativeMassPropertiesInMsg`` of the tank bodies. In this script,
 the payload of this message is kept constant at -1 kg/s for the first 3
 tanks, and -2 kg/s for the last tank.
 

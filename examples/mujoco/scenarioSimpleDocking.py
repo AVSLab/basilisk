@@ -19,18 +19,18 @@
 It's recommended to review the following scenario(s) first (and any
 recommended scenario(s) that they may have):
 
-#. examples/mujoco/scenarioArmWithThrusters.py
+#. ``examples/mujoco/scenarioArmWithThrusters.py``
 
 This scripts shows how one can simulate two independent spacecraft
 docking and constraining their movement with respect to each other.
-This illustrates the use of MuJoCo `equality` in `MJScene`.
+This illustrates the use of MuJoCo ``equality`` in :ref:`MJScene<MJScene>`.
 
-The multi-body system is defined in the XML file `sats_dock.xml`.
+The multi-body system is defined in the XML file ``sats_dock.xml``.
 The system defined in this XML file is simple, but it illustrates some
 of the tools MuJoCo offers for our simulation needs. First, this shows
-how contact physics can be disabled through `flag contact="disable"`.
+how contact physics can be disabled through ``flag contact="disable"``.
 Second, it illustrates how two free-floating bodies can be defined.
-Third, it shows how to declare an `equality`.
+Third, it shows how to declare an ``equality``.
 
 Equalities are a way to add dynamical constraints to a system. In this
 case, we use a 'weld' constraint between two sites, which tells MuJoCo

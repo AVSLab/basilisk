@@ -19,20 +19,20 @@
 It's recommended to review the following scenario(s) first (and any
 recommended scenario(s) that they may have):
 
-#. examples/mujoco/scenarioArmWithThrusters.py
+#. ``examples/mujoco/scenarioArmWithThrusters.py``
 
 This script demonstrates how to simulate a spacecraft with solar panels deployed
 using a Proportional-Derivative (PD) controller. This script uses the MuJoCo-based
-`DynamicObject` `MJScene`.
+:ref:`DynamicObject<dynamicObject>` :ref:`MJScene<MJScene>`.
 
-In `mujoco/scenarioArmWithThrusters.py`, we saw how we can constrain joints to
+In ``mujoco/scenarioArmWithThrusters.py``, we saw how we can constrain joints to
 follow a specific angle by letting the dynamic engine figure out and apply
 the necessary torques. In this script, we are controlling the joints using a
 PD controller. This is a more adequate simulation setup when you want to simulate
 or design the control system for these joints. It is also generally more
 computationally efficient than letting the dynamic engine figure out the torques.
 
-The multi-body system is defined in the XML file `sat_w_deployable_panels.xml`.
+The multi-body system is defined in the XML file ``sat_w_deployable_panels.xml``.
 This XML file defines a 'hub' body and six deployable solar panels. The panels
 are attached to the 'hub' body via revolute joints, allowing them to rotate
 from a stowed position to a deployed position.
@@ -51,10 +51,10 @@ generated using a trapezoidal/triangular velocity profile. These profiles are
 then used as inputs to the PD controller, which computes the torque required to achieve
 the desired motion.
 
-The simulation is run for 80 minutes, and the state of the system is recorded.
+The simulation is run for 80 minutes and the state of the system is recorded.
 The desired and achieved joint angles, as well as the torque applied to each
 joint, are plotted. The system can also be visualized in a 3D environment using
-the `mujoco.visualize` function.
+the ``mujoco.visualize`` function.
 """
 
 import os
