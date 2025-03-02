@@ -96,6 +96,14 @@ The script accepts the following options to customize this process.
       - String
       - Empty
       - path to external modules folder, see :ref:`buildExtModules`
+    * - ``mujoco``
+      - Boolean
+      - False
+      - :beta:`Mujoco Support` Includes the `MuJoCo <https://mujoco.org>`_ dependencies
+    * - ``mujocoReplay``
+      - Boolean
+      - False
+      - :beta:`Mujoco Support` Includes the `MuJoCo <https://mujoco.org>`_ visualization dependencies
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::
