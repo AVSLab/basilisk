@@ -19,13 +19,13 @@
 It's recommended to review the following scenario(s) first (and any
 recommended scenario(s) that they may have):
 
-#. examples/mujoco/scenarioReactionWheel.py
+#. ``examples/mujoco/scenarioReactionWheel.py``
 
 This scripts shows how to simulate a spacecraft that deploys two thrusters
 at the end of a 4-link branching deployable arm. This uses the MuJoCo-based
-`DynamicObject` `MJScene`.
+:ref:`DynamicObject<dynamicObject>` :ref:`MJScene<MJScene>`.
 
-The multi-body system is defined in the XML file `sat_w_deployable_thruster.xml`.
+The multi-body system is defined in the XML file ``sat_w_deployable_thruster.xml``.
 This XML file defines a 'hub' body and a branching deployable arm with 4 links.
 The first link ('arm_1') is attached to the 'hub' body, and the second link ('arm_2')
 is attached to the first link. The third link ('arm_3') AND the fourth link ('arm_4')
@@ -43,7 +43,7 @@ Note that the only actuators defined are the ones used to model the thrusters ('
 and 'thruster_2'). We could opt to define actuators for the joints of the arm, so that
 deploying the arm is modeled as an actuation. In this case, the script would have to
 define the torque to be applied at these joints to deploy the arm. This is complex, and
-generally requires a control system to be implemented (see `mujoco/scenarioDeployPanels.py`).
+generally requires a control system to be implemented (see ``mujoco/scenarioDeployPanels.py``).
 Instead, we opt for a simpler approach: we constrain the motion of the joints.
 
 Prescribing the motion of joints can be useful to model a system that we can
@@ -55,10 +55,10 @@ solving the inverse dynamic problem (i.e., given the motion, what are the forces
 However, the motion will be very close to what we constrain. It should be noted that
 this comes at a considerable computational cost.
 
-To constrain the motion of the joints, we connect to the `constrainedStateInMsg` of
+To constrain the motion of the joints, we connect to the ``constrainedStateInMsg`` of
 the joint object.
 
-This script also showcases the use of the `XXXInterpolator` models, which
+This script also showcases the use of the ``XXXInterpolator`` models, which
 are utility models that interpolate a set of points to generate a profile
 between them. In this script these are used in two occasions:
 
@@ -70,12 +70,12 @@ at a constant rate. For the second case, we use a piecewise interpolation,
 so that the thrusters are turned on and off at specific times.
 
 The datapoints for each interpolator are defined in the dictionaries
-`JOINT_INTERPOLATION_POINTS` and `ACTUATOR_INTERPOLATION_POINTS`. Each
+``JOINT_INTERPOLATION_POINTS`` and ``ACTUATOR_INTERPOLATION_POINTS``. Each
 interpolator takes a numpy matrix with >=2 columns, where the first column
 is the time at which the point is defined, and the rest of the columns
 are the values of the points. In this script we demonstrate the use
-of `mujoco.SingleActuatorInterpolator` and `mujoco.ScalarJointStateInterpolator`,
-both of wich need only 2 columns.
+of ``mujoco.SingleActuatorInterpolator`` and ``mujoco.ScalarJointStateInterpolator``,
+both of which need only 2 columns.
 
 Note that the interpolator models are added to the dynamics task, so that
 the interpolation happens at every integrator step. All models in the dynamics

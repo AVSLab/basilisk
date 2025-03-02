@@ -19,42 +19,42 @@
 It's recommended to review the following scenario(s) first (and any
 recommended scenario(s) that they may have):
 
-#. examples/mujoco/scenarioArmWithThrusters.py
+#. ``examples/mujoco/scenarioArmWithThrusters.py``
 
 This scripts shows how one could simulate a spacecraft landing on
-an ansteroid. It illustrates force-vector actuators, loading meshes
+an asteroid. It illustrates force-vector actuators, loading meshes
 for bodies, and collisions. This is done using the MuJoCo-based
-`DynamicObject` `MJScene`.
+:ref:`DynamicObject<dynamicObject>` :ref:`MJScene<MJScene>`.
 
 The multi-body system is defined in the XML file ``sat_ast_landing.xml``.
 This XML illustrates various interesting features. First, is the use
-of the `<default>` element to avoid data repetition in the XML file.
+of the ``<default>`` element to avoid data repetition in the XML file.
 Second, it's the use of multiple free-floating bodies, in this case
 the 'hub' of the spacecraft and the 'asteroid' body. Multiple independent
-spacecraft are also possible (see `examples/mujoco/scenarioSimpleDocking.py`).
+spacecraft are also possible (see ``examples/mujoco/scenarioSimpleDocking.py``).
 Finally, this showcases how to load a mesh (for the geometry of the
-asteroid). The actual file path must then provided on construction of `MJScene`.
+asteroid). The actual file path must then be provided on construction of :ref:`MJScene<MJScene>`.
 
-Unless specifically included, gravity is not modeled in `MJScene`
+Unless specifically included, gravity is not modeled in `:ref:`MJScene<MJScene>`
 simulations. However, in this scenario we want to simulate a spacecraft
 landing on the asteroid, thus we need to model gravity. This is done by
-creating a custom `ConstantGravity` model that applies a constant force
+creating a custom ``ConstantGravity`` model that applies a constant force
 in the inertial frame. This is obviously a simplification, akin to
 considering a constant downward gravity near the surface of the Earth.
 
 Previously seen scenarios have always used actuators defined in
-the XML file, and of the `MJSingularActuator` type. `MJSingularActuator`
+the XML file, and of the `MJSingularActuator` type. ``MJSingularActuator``
 are characterized by being controlled by a single scalar value.
-For the case of `MJSingularActuator` tied to a site, these generate
-a force/torque in the local frame of the their site. The resulting
+For the case of ``MJSingularActuator`` tied to a site, these generate
+a force/torque in the local frame of their site. The resulting
 force and/or torque vectors are the product of the scalar input of the
-`MJSingularActuator` times the constant direction vectors in the site
+``MJSingularActuator`` times the constant direction vectors in the site
 reference frame defined by the `gear` attribute of this actuator.
 
-`MJSingularActuator` are ideal to model forces/torques that always
+``MJSingularActuator`` are ideal to model forces/torques that always
 applied along a fixed direction in the site frame. However, in this scenario,
 we need to apply a force in the inertial frame. To do so, we use a
-`MJForceActuator`, which allows us to define a force vector with arbitrary
+``MJForceActuator``, which allows us to define a force vector with arbitrary
 direction and magnitude (thus 3 scalar values are used to control it).
 Still, the desired force vector given to this actuator is still in the
 site reference frame. To produce a force fixed in the inertial frame,
@@ -64,17 +64,17 @@ same inertial direction.
 
 This is implemented through two mechanisms. First, we need to add
 a new actuator. Previous scripts retrieved actuators defined in
-the XML through `getSingleActuator`. In this case, we create an
-new actuator of the `MJForceActuator` type with `addForceActuator`.
-Second, we use the `ConstantGravity` model, which accounts for
+the XML through ``getSingleActuator``. In this case, we create a
+new actuator of the ``MJForceActuator`` type with ``addForceActuator``.
+Second, we use the ``ConstantGravity`` model, which accounts for
 the rotation of the site frame to produce a force vector that
 produces a gravity force that is constant in the inertial frame.
 
-It is possible to add `MJSingleActuator`, `MJForceActuator`,
-`MJTorqueActuator`, and `MJForceTorqueActuator` through Python
-or C++ function calls (`addSingleActuator`, `addForceActuator`, etc.).
-These can later be retrieved with `getSingleActuator`,
-`getForceActuator`, etc.
+It is possible to add ``MJSingleActuator``, ``MJForceActuator``,
+``MJTorqueActuator``, and ``MJForceTorqueActuator`` through Python
+or C++ function calls (``addSingleActuator``, ``addForceActuator``, etc.).
+These can later be retrieved with ``getSingleActuator``,
+``getForceActuator``, etc.
 """
 
 import os
