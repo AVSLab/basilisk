@@ -18,6 +18,15 @@ import sys
 
 import numpy as np
 
+from docutils import nodes
+from docutils.parsers.rst import roles
+
+def beta_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    node = nodes.inline(rawtext, f"[BETA] {text}", classes=['beta-label'])
+    return [node], []
+
+roles.register_local_role('beta', beta_role)
+
 #
 # create RST showing supportData folder information
 #

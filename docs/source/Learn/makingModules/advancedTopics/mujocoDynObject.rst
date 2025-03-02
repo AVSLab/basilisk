@@ -5,7 +5,7 @@ Multi-body Dynamics with MuJoCo
 
 .. warning::
 
-    The following feature is a work in progress! Extensive validation has not been performed.
+    :beta:`Mujoco Support` The following feature is a work in progress! Extensive validation has not been performed.
     Some features might be missing, and APIs are subject to change between releases.
 
 

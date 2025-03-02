@@ -3,12 +3,12 @@
 
 .. _pipInstall:
 
-Advanced: (Beta) Building and Installing Pre-Compiled Basilisk Wheels
-=====================================================================
+Advanced: Building and Installing Pre-Compiled Basilisk Wheels
+==============================================================
 
 .. warning::
 
-    This method of building Basilisk is currently a beta feature, and should only be attempted by advanced users
+    :beta:`Pip Wheel Support` This method of building Basilisk is currently a beta feature, and should only be attempted by advanced users
     familiar with `Python packaging and distribution
     <https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/>`_.
     This method is not yet guaranteed to work on every platform, and there are still some annoyances
