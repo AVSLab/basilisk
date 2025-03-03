@@ -55,6 +55,8 @@ public:
     double theta;               //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
     Eigen::Vector3d sunVector_N;//!< [] (optional) unit direction vector pointing to the Sun
 
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
+    Eigen::Vector3d r_HN_N;  // Sun position vector in inertial frame
 
     ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
@@ -62,10 +64,6 @@ public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
     Eigen::Vector3d r_LB_B;      //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
 
-    //DHP
-    ReadFunctor<SunVectorMsgPayload> sunVectorInMsg;  // Input message for the Sun vector
-    Eigen::Vector3d r_HN_N;  // Sun position vector in inertial frame
-    
     BSKLogger bskLogger;         //!< -- BSK Logging
 
 private:
@@ -73,6 +71,7 @@ private:
     std::vector<SCStatesMsgPayload> scStatesBuffer;             //!< buffer of other spacecraft states
     SCStatesMsgPayload primaryScStatesBuffer;                   //!< buffer of primary spacecraft states
     SpicePlanetStateMsgPayload planetState;                         //!< buffer of planet data
+    SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
 
     Eigen::Matrix3d dcm_PN; //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P
     Eigen::Vector3d r_PN_N; //!< [m] Planet to inertial frame origin vector.
