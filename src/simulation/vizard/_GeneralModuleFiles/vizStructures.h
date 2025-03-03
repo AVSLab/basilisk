@@ -159,6 +159,7 @@ LocationPbMsg
     double fieldOfView = -1;            //!< [rad] Edge-to-Edge, -1 -> use default, values between 0.0001deg and 179.9999deg valid
     int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default
     double range = 0;                   //!< [m] range of the ground location, use 0 (protobuffer default) to use viz default
+    double markerScale = 0;             //!< (Optional) Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
 }LocationPbMsg;
 
 /*! Structure defining generic sensor information
