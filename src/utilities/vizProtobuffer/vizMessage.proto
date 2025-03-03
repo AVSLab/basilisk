@@ -69,7 +69,7 @@ message VizMessage{
         string modelDictionaryKey = 13;               // ""  or "bskSat" will result in the default BSKSat model, "6USat" to use a built-in 6U model, "3USat" to use a built-in 3U model
         repeated int32 oscOrbitLineColor = 14;        // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
         repeated int32 trueTrajectoryLineColor = 15;  // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
-        string logoTexture = 16;                      // Path to image texture to be used to customize built-in spacecraft models
+        string logoTexture = 16;                      // (Optional) Path to image texture to be used to customize built-in spacecraft models
         repeated MultiShape multiShapes = 17;         // (Optional) Multi-Shape-Model (MSM)
         repeated Ellipsoid ellipsoids = 18;           // (Optional) Ellipsoid Heads Up Displays
         string parentSpacecraftName = 19;             // Name of the main spacecraft body that this spacecraft object should be considered a component of. Required if this spacecraft object is a subcomponent of a larger craft (i.e. deployable solar panel)
