@@ -140,14 +140,14 @@ bool SpacecraftLocation::ReadMessages()
     }
 
     bool sunRead = true;
-    if (this->sunVectorInMsg.isLinked())
+    if (this->sunInMsg.isLinked())
     {
-        sunRead = this->sunVectorInMsg.isWritten();
+        sunRead = this->sunInMsg.isWritten();
         //this->sunVector_N = cArray2EigenVector3d(this->sunVectorInMsg().sunVector);
         this->sunInMsgState = this->sunInMsg();
     } else {
         sunRead = false;
-        this->sunVector_N.setZero();
+//        this->sunInMsgState.setZero();
     }
 
     return (planetRead && scRead && sunRead);
@@ -240,6 +240,8 @@ void SpacecraftLocation::computeAccess()
         // aHat vector in inertial frame
         Eigen::Vector3d aHat_N = dcm_NB * this->aHat_B;
 
+        Eigen::Vector3d r_SL_N = r_SN_N - this->r_BN_N;
+
         // calculating the sun-incidence-angle and the deputy-view-angle
         double sunIncidenceAngle = safeAcos(aHat_N.dot(r_HN_N) / (aHat_N.norm() * r_HN_N.norm()));
         double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
@@ -249,20 +251,20 @@ void SpacecraftLocation::computeAccess()
         this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
 
         // Compute scalar triple product
-        r_HN_N_normalized = r_HN_N/r_HN_N.norm()
-        r_SL_P_normalized = r_SL_P/r_SL_P.norm()
-        double scalarTripleProduct = (r_HN_N_normalized.cross(r_SL_P_normalized)).dot(aHat_N);
+        Eigen::Vector3d r_HN_N_normalized = r_HN_N/r_HN_N.norm();
+        Eigen::Vector3d r_SL_N_normalized = r_SL_N/r_SL_N.norm();
+        double scalarTripleProduct = (r_HN_N_normalized.cross(r_SL_N_normalized)).dot(aHat_N);
 
         // Check coplanarity & glare condition
         bool isCoplanar = fabs(scalarTripleProduct) < 1e-3;  // Tolerance for numerical precision // TODO: we should think about slightly off-coplanar... it still has some glare
         double epsilon = 10.0 * M_PI / 180.0; // [rad] if the two angles are within epsilon degrees then it will be glared
-        bool glare = isCoplanar && (fabs(sunIncidenceAngle - scViewAngle) * 180.0 / M_PI <= 10.0);
+//        bool glare = isCoplanar && (fabs(sunIncidenceAngle - scViewAngle) * 180.0 / M_PI <= 10.0);
 
 //        // GLARE AS A BOOLEAN
 //        // Glare occurs if angles are within epsilon and vectors are coplanar
 //        bool glare = isCoplanar && (std::abs(sunIncidenceAngle - scViewAngle) < 10.0 * M_PI / 180.0);
 
-        // GLARE AS A
+        // GLARE AS A DOUBLe
         // Initialize glare variable as 0 (default: no glare)
         double glare = 0.0;
 
