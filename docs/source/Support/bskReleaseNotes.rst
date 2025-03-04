@@ -32,6 +32,7 @@ Version |release|
   using only a header-defaulted destructor with ``= default;`` syntax.
 - Fixed issue where reaction wheels with unlimited torque (``useMaxTorque=False``) would end simulation prematurely
 - Added safety mechanism to limit excessive wheel acceleration and provide warning messages
+- Fixed a bug in the :ref:`SpacecraftLocation` module that prevented proper eclipse calculation in some cases.
 
 
 Version  2.6.0  (Feb. 21, 2025)
