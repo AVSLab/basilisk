@@ -20,7 +20,7 @@
 #
 # Integrated tests
 #
-# Purpose:  This script runs a series of test to ensure that the messaging 
+# Purpose:  This script runs a series of test to ensure that the messaging
 # interface is properly set up for C and Cpp messages
 # Author:   Benjamin Bercovici
 # Creation Date:  June 4th, 2021
@@ -56,17 +56,17 @@ def test_cpp_msg_subscription_check():
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-    
+
 
     # Try out all the existing cpp messages
-    cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")] 
-    
+    cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")]
+
     for el in cppMessages:
-        
+
         # Create three messages
-        msgA = eval("messaging." + el + "()")
-        msgB = eval("messaging." + el + "()")
-        msgC = eval("messaging." + el + "()")
+        msgA = getattr(messaging, el)()
+        msgB = getattr(messaging, el)()
+        msgC = getattr(messaging, el)()
 
         # Create subscribers to pair messages
         msgB_subscriber = msgB.addSubscriber()
@@ -86,8 +86,8 @@ def test_cpp_msg_subscription_check():
         if msgC_subscriber.isSubscribedTo(msgA) != 0:
             testFailCount += 1
             testMessages.append(el + ": msgC_subscriber.isSubscribedTo(msgA) should be False")
-        
-        
+
+
         # Change subscription pattern
         msgB_subscriber.subscribeTo(msgC) # Subscribe B to C
         msgC_subscriber.subscribeTo(msgA) # Subscribe C to A
@@ -103,8 +103,8 @@ def test_cpp_msg_subscription_check():
             testFailCount += 1
             testMessages.append(el + ": msgC_subscriber.isSubscribedTo(msgB) should be False")
 
-        
-    
+
+
     if testFailCount == 0:
         print("PASSED")
     else:
@@ -122,18 +122,18 @@ def test_c_msg_subscription_check():
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-    
+
 
     # Try out all the existing c messages
-    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")] 
+    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")]
 
-    
+
     for el in cMessages:
-        
+
         # Create three messages
-        msgA = eval("messaging." + el + "()")
-        msgB = eval("messaging." + el + "()")
-        msgC = eval("messaging." + el + "()")
+        msgA = getattr(messaging, el)()
+        msgB = getattr(messaging, el)()
+        msgC = getattr(messaging, el)()
 
         # Subscribe
         msgB.subscribeTo(msgA) # Subscribe B to A
@@ -149,8 +149,8 @@ def test_c_msg_subscription_check():
         if msgC.isSubscribedTo(msgA) != 0:
             testFailCount += 1
             testMessages.append(el + ": msgC.isSubscribedTo(msgA) should be False")
-        
-        
+
+
         # Change subscription pattern
         msgB.subscribeTo(msgC) # Subscribe B to C
         msgC.subscribeTo(msgA) # Subscribe C to A
@@ -166,8 +166,8 @@ def test_c_msg_subscription_check():
             testFailCount += 1
             testMessages.append(el + ": msgC.isSubscribedTo(msgB) should be False")
 
-        
-    
+
+
     if testFailCount == 0:
         print("PASSED")
     else:
@@ -176,34 +176,34 @@ def test_c_msg_subscription_check():
 
 
 def test_c_2_cpp_msg_subscription_check():
-    
+
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-    
+
 
     # Try out all the existing messages
-    cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")] 
-    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")] 
-        
+    cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")]
+    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")]
+
     # Find common messages
     common_messages = [el for el in cppMessages if el + "_C" in cMessages]
 
 
     for el in common_messages:
-        
+
         # Create c and cpp messages
-        msgA = eval("messaging." + el + "()")
-        msgB = eval("messaging." + el + "()")
+        msgA = getattr(messaging, el)()
+        msgB = getattr(messaging, el)()
 
-        msgC = eval("messaging." + el + "_C()")
-        msgD = eval("messaging." + el + "_C()")
+        msgC = getattr(messaging, el + "_C")()
+        msgD = getattr(messaging, el + "_C")()
 
-    
+
         # Subscribe
         msgC.subscribeTo(msgA) # Subscribe C to A
         msgD.subscribeTo(msgB) # Subscribe D to B
-        
+
         # Check
         if msgC.isSubscribedTo(msgA) != 1:
             testFailCount += 1
@@ -217,7 +217,7 @@ def test_c_2_cpp_msg_subscription_check():
         if msgC.isSubscribedTo(msgB) != 0:
             testFailCount += 1
             testMessages.append(el + ": msgC.isSubscribedTo(msgB) should be False")
-       
+
         # Change subscription pattern
         msgC.subscribeTo(msgB) # Subscribe C to B
         msgD.subscribeTo(msgA) # Subscribe D to A
@@ -236,8 +236,8 @@ def test_c_2_cpp_msg_subscription_check():
             testFailCount += 1
             testMessages.append(el + ": msgD.isSubscribedTo(msgB) should be False")
 
-        
-    
+
+
     if testFailCount == 0:
         print("PASSED")
     else:
@@ -249,29 +249,29 @@ def test_cpp_2_c_msg_subscription_check():
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-    
+
 
     # Try out all the existing messages
-    cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")] 
-    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")] 
-        
+    cppMessages = [ el for el in dir(messaging) if el.endswith("Msg")]
+    cMessages = [ el for el in dir(messaging) if el.endswith("Msg_C")]
+
     # Find common messages
     common_messages = [el for el in cppMessages if el + "_C" in cMessages]
 
 
     for el in common_messages:
-        
-        # Create c and cpp messages
-        msgA = eval("messaging." + el + "_C()")
-        msgB = eval("messaging." + el + "_C()")
 
-        msgC = eval("messaging." + el + "()")
-        msgD = eval("messaging." + el + "()")
+        # Create c and cpp messages
+        msgA = getattr(messaging, el + "_C")()
+        msgB = getattr(messaging, el + "_C")()
+
+        msgC = getattr(messaging, el)()
+        msgD = getattr(messaging, el)()
 
         # Create subscribers to pair messages
         msgC_subscriber = msgC.addSubscriber()
         msgD_subscriber = msgD.addSubscriber()
-    
+
         # Subscribe
         msgC_subscriber.subscribeTo(msgA) # Subscribe C to A
         msgD_subscriber.subscribeTo(msgB) # Subscribe D to B
@@ -289,7 +289,7 @@ def test_cpp_2_c_msg_subscription_check():
         if msgC_subscriber.isSubscribedTo(msgB) != 0:
             testFailCount += 1
             testMessages.append(el + ": msgC_subscriber.isSubscribedTo(msgB) should be False")
-       
+
         # Change subscription pattern
         msgC_subscriber.subscribeTo(msgB) # Subscribe C to B
         msgD_subscriber.subscribeTo(msgA) # Subscribe D to A
@@ -308,8 +308,8 @@ def test_cpp_2_c_msg_subscription_check():
             testFailCount += 1
             testMessages.append(el + ": msgD_subscriber.isSubscribedTo(msgB) should be False")
 
-        
-    
+
+
     if testFailCount == 0:
         print("PASSED")
     else:
