@@ -169,7 +169,7 @@ class rwFactory(object):
 
         # populate the RW object with the type specific parameters
         try:
-            eval('self.' + rwType + '(RW)')
+            getattr(self, rwType)(RW)
         except:
             print('ERROR: RW type ' + rwType + ' is not implemented')
             exit(1)
