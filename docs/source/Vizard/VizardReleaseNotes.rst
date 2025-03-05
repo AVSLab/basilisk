@@ -19,6 +19,22 @@ Release Notes
     - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
+**Version 2.2.2 (March 7, 2025)**
+
+- Migrated to Unity 6
+- TargetLines can target LocationMarkers
+- Improved support for scenarios with Locations in the thousands
+- Added support for scaling of Location markers, size can be increased or decreased from Vizard default dynamically per Location
+- MSM Heads Up Display - added support for other primitive shapes (cube, cylinder, capsule, as well as original sphere) which required adding sub-message fields for Shape, Dimensions, and Rotation of each MSM
+- Added effectors visibility at planet scale and solar system scale (effectors correctly scaled and offset relative to parent spacecraft)
+- Added support for “CAPSULE” primitive shape when importing CustomModel
+- Bug fix: if a normal map texture is imported when generating a custom material, the normal map is enabled in the shader
+- Bug fix: if imported model has multiple meshes, apply custom material to all meshes in model
+- Added input field to AdjustModel panel to control normal map height
+- Bug fix: when using buffered playback, chief spacecraft Hill or Velocity matrices are now automatically recalculated after buffer rollover
+- Bug fix: if camera target is a spacecraft on start-up and the settings flag SpacecraftCSon is set to 1, the spacecraft coordinate system will be shown and the cameraTarget CS on toggle will be on under the View Menu.
+- Added support for relative paths for importing custom models and textures (their paths should be relative to the location of the playback .bin file or the directory the scenario is being executed from, if showing a live simulation)
+
 **Version 2.2.1 (January 13, 2025)**
 
 - Added support for loading .glb model files at runtime using the Import Model GUI Panel or using the custom model import VizMessage
