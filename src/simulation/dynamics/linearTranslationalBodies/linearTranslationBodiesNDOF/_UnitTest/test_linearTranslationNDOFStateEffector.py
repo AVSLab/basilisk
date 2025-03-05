@@ -71,8 +71,12 @@ def test_translatingBody(show_plots, function):
 
     against their initial values.
     """
-    eval(function + '(show_plots)')
+    testFunction = globals().get(function)
 
+    if testFunction is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    testFunction(show_plots)
 
 def translatingBodyNoInput(show_plots):
     r"""

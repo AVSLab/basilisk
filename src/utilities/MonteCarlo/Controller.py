@@ -826,10 +826,9 @@ class SimulationExecutor:
 
             # apply the dispersions and the random seeds
             for variable, value in list(modifications.items()):
-                disperseStatement = "simInstance." + variable + "=" + value
                 if simParams.verbose:
-                    print("Executing parameter modification -> ", disperseStatement)
-                exec(disperseStatement)
+                    print(f"Setting attribute {variable} to {value} on simInstance")
+                setattr(simInstance, variable, value)
 
             # setup data logging
             if len(simParams.retentionPolicies) > 0:
@@ -900,7 +899,7 @@ class SimulationExecutor:
                 rand = str(random.randint(0, 1 << 32 - 1))
                 try:
                     execStatement = "simInstance." + taskVar + "=" + str(rand)
-                    exec(execStatement)  # if this fails don't add to the list of modification
+                    setattr(simInstance, taskVar, rand)  # if this fails don't add to the list of modification
                     randomSeeds[taskVar] = rand
                 except:
                     pass
@@ -920,5 +919,4 @@ class SimulationExecutor:
         for variable, value in modifications.items():
             if ".RNGSeed" in variable:
                 rngStatement = "simInstance." + variable + "=" + value
-                exec(rngStatement)
-
+                setattr(simInstance, variable, value)

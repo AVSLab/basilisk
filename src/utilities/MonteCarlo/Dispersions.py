@@ -93,7 +93,7 @@ class NormalDispersion(SingleVariableDispersion):
 
 class VectorVariableDispersion(object):
     __metaclass__ = abc.ABCMeta
-    
+
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
@@ -209,7 +209,7 @@ class UniformVectorDispersion(VectorVariableDispersion):
             self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     def generate(self, sim):
-        vector = eval('sim.' + self.varName)
+        vector = getattr(sim, self.varName)
         dispValue = self.perturbCartesianVectorUniform(vector)
         return dispValue
 
@@ -221,7 +221,7 @@ class NormalVectorDispersion(VectorVariableDispersion):
             self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     def generate(self, sim):
-        vector = eval('sim.' + self.varName)
+        vector = getattr(sim, self.varName)
         dispValue = self.perturbCartesianVectorNormal(vector, self.mean, self.stdDeviation)
         return dispValue
 
@@ -243,7 +243,7 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
 
     def generate(self, sim=None):
         # Note this dispersion is applied off of the nominal
-        vectorCart = eval('sim.' + self.varName)
+        vectorCart = getattr(sim, self.varName)
         vectorCart = vectorCart/np.linalg.norm(vectorCart)
         vectorSphere = self.cart2Spherical(vectorCart)
 
@@ -291,7 +291,7 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         self.magnitude = []
 
     def generate(self, sim=None):
-        vectorCart = eval('sim.' + self.varName)
+        vectorCart = getattr(sim, self.varName)
         vectorCart = vectorCart/np.linalg.norm(vectorCart)
         vectorSphere = self.cart2Spherical(vectorCart)
 
@@ -394,7 +394,8 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
             separator = '.'
             thrusterObject = getattr(sim, self.varNameComponents[0])
             totalVar = separator.join(self.varNameComponents[0:-1])
-            dirVec = eval('sim.' + totalVar + '.thrDir_B')
+            simObject = getattr(sim, totalVar)  # sim.totalVar
+            dirVec = getattr(simObject, 'thrDir_B')  # sim.totalVar.thrDir_B
             angle = np.random.normal(0, self.phiStd, 1)
             dirVec = np.array(dirVec).reshape(3).tolist()
             dispVec = self.perturbVectorByAngle(dirVec, angle)
@@ -477,7 +478,11 @@ class InertiaTensorDispersion:
             return
         else:
             vehDynObject = getattr(sim, self.varNameComponents[0])
-            I = np.array(eval('sim.' + self.varName)).reshape(3, 3)
+            parts = self.varName.split('.')
+            attr = sim
+            for part in parts:
+                attr = getattr(attr, part)
+            I = np.array(attr).reshape(3, 3)
 
             # generate random values for the diagonals
             temp = []
@@ -560,10 +565,12 @@ class OrbitalElementDispersion:
         elems = orbitalMotion.ClassicElements
         for key in self.oeDict.keys():
             if self.oeDict[key] is not None and key != "mu":
-                exec("elems."+ key + " = np.random." + self.oeDict[key][0] + "(" +  str(self.oeDict[key][1]) + ', ' +  str(self.oeDict[key][2]) + ")")
+                distribution = getattr(np.random, self.oeDict[key][0])
+                random_value = distribution(self.oeDict[key][1], self.oeDict[key][2])
+                setattr(elems, key, random_value)
             else:
                 if key != "mu":
-                    exec("elems." + key + " = 0.")
+                    setattr(elems, key, 0.0)
         if elems.e < 0:
             elems.e = 0
         r, v =orbitalMotion.elem2rv_parab( self.oeDict["mu"], elems)
