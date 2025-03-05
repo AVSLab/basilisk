@@ -59,8 +59,9 @@ class EventHandlerClass:
         self.terminal = terminal
 
     def methodizeEvent(self):
-        if self.checkCall != None:
+        if self.checkCall is not None:
             return
+
         funcString = 'def EVENT_check_' + self.eventName + '(self):\n'
         funcString += '    if('
         for condValue in self.conditionList:
@@ -69,15 +70,18 @@ class EventHandlerClass:
         funcString += '        return 1\n'
         funcString += '    return 0'
 
-        exec (funcString)
-        self.checkCall = eval('EVENT_check_' + self.eventName)
+        local_namespace = {}
+        exec(funcString, globals(), local_namespace)
+        self.checkCall = local_namespace['EVENT_check_' + self.eventName]
+
         funcString = 'def EVENT_operate_' + self.eventName + '(self):\n'
         for actionValue in self.actionList:
-            funcString += '    '
-            funcString += actionValue + '\n'
+            funcString += '    ' + actionValue + '\n'
         funcString += '    return 0'
-        exec (funcString)
-        self.operateCall = eval('EVENT_operate_' + self.eventName)
+
+        local_namespace = {}
+        exec(funcString, globals(), local_namespace)
+        self.operateCall = local_namespace['EVENT_operate_' + self.eventName]
 
     def checkEvent(self, parentSim):
         nextTime = int(-1)
