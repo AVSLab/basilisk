@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
+ Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,34 +15,33 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-*/
-
-%module locationPointing
+ */
+%module stripLocation
 %{
-    #include "locationPointing.h"
+    #include "stripLocation.h"
 %}
-
-%include "swig_c_wrap.i"
-%c_wrap(locationPointing);
 
 %pythoncode %{
-    from Basilisk.architecture.swig_common_model import *
+from Basilisk.architecture.swig_common_model import *
 %}
+%include "std_string.i"
+%include "swig_conly_data.i"
+%include "swig_eigen.i"
 
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-struct NavTransMsg_C;
-%include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-struct NavAttMsg_C;
-%include "architecture/msgPayloadDefC/GroundStateMsgPayload.h"
-struct GroundStateMsg_C;
+%include "sys_model.i"
+%include "stripLocation.h"
+%include "std_vector.i"
+
+
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+struct AccessMsg_C;
 %include "architecture/msgPayloadDefC/StripStateMsgPayload.h"
 struct StripStateMsg_C;
-%include "architecture/msgPayloadDefC/AttGuidMsgPayload.h"
-struct AttGuidMsg_C;
-%include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
-struct AttRefMsg_C;
-%include "architecture/msgPayloadDefC/EphemerisMsgPayload.h"
-struct EphemerisMsg_C;
+
 
 %pythoncode %{
 import sys

@@ -25,10 +25,12 @@
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/GroundStateMsg_C.h"
+#include "cMsgCInterface/StripStateMsg_C.h"
 #include "cMsgCInterface/AttGuidMsg_C.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "architecture/utilities/bskLogging.h"
+#include <stdbool.h>
 
 /*! @brief This module is used to generate the attitude reference message in order to have a spacecraft point at a location on the ground
  */
@@ -36,6 +38,7 @@ typedef struct {
 
     /* user configurable variables */
     double pHat_B[3];           /*!< body fixed vector that is to be aimed at a location */
+    double cHat_B[3];           /*!< body fixed vector, perpendicular to pHat by definition. This vector needs to become perpendicular to the central line of the strip (the velocity vector of the target  point) */
     double smallAngle;          /*!< rad An angle value that specifies what is near 0 or 180 degrees */
     int useBoresightRateDamping; /*!< [int] flag to use rate damping about the sensor boresight */
 
@@ -49,6 +52,7 @@ typedef struct {
     NavAttMsg_C scAttInMsg;                 //!< input msg with inertial spacecraft attitude states
     NavTransMsg_C scTransInMsg;             //!< input msg with inertial spacecraft position states
     GroundStateMsg_C locationInMsg;         //!< input msg with location relative to planet
+    StripStateMsg_C locationstripInMsg;     //!< input msg with location relative to planet
     EphemerisMsg_C celBodyInMsg;            //!< input celestial body message
     NavTransMsg_C scTargetInMsg;            //!< input msg with inertial target spacecraft position states
     AttGuidMsg_C attGuidOutMsg;             //!< attitude guidance output message
