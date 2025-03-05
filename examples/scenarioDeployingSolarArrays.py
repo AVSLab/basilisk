@@ -421,13 +421,19 @@ def run(show_plots):
         for i in range(num_elements):
             vizSupport.createCustomModel(viz,
                                          simBodiesToModify=["Array1Element" + str(i+1)],
-                                         modelPath=path + "/dataForExamples/triangularPanel.obj",
+                                         # Specifying relative model path is useful for sharing scenarios and resources:
+                                         modelPath=os.path.join("..", "dataForExamples", "triangularPanel.obj"),
+                                         # Specifying absolute model path is preferable for live-streaming:
+                                         # modelPath=os.path.join(path, "dataForExamples", "triangularPanel.obj"),
                                          rotation=[-np.pi/2, 0, np.pi/2],
                                          scale=[1.3, 1.3, 1.3],
                                          color=vizSupport.toRGBA255("green"))
             vizSupport.createCustomModel(viz,
                                          simBodiesToModify=["Array2Element" + str(i+1)],
-                                         modelPath=path + "/dataForExamples/triangularPanel.obj",
+                                         # Specifying relative model path is useful for sharing scenarios and resources:
+                                         modelPath=os.path.join("..", "dataForExamples", "triangularPanel.obj"),
+                                         # Specifying absolute model path is preferable for live-streaming:
+                                         # modelPath=os.path.join(path, "dataForExamples", "triangularPanel.obj"),
                                          rotation=[-np.pi/2, 0, np.pi/2],
                                          scale=[1.3, 1.3, 1.3],
                                          color=vizSupport.toRGBA255("blue"))
