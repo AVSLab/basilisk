@@ -780,6 +780,8 @@ This functionality can be controlled by using the ``createCustomModel()`` helper
 	                            modelPath="/Users/hp/Downloads/Topex-Posidon/Topex-Posidon-composite.obj",
 	                            scale=[2, 2, 10])
 
+.. note::
+    The model path can either be defined as an absolute or relative path. When playing back from a saved binary scenario file, the relative model path will be relative to the playback file (which may be in a different location than the scenario itself). Relative paths can be particularly useful when sharing binaries with custom resources. Absolute paths are more robust for live-streaming, or scenarios where both live-streaming and saving playback files are used.
 
 The following table illustrates the arguments for the ``createCustomModel`` method.
 
@@ -796,7 +798,7 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
       - string
       -
       - Yes
-      - Path to model obj -OR- "CUBE", "CYLINDER", "CAPSULE", or "SPHERE" to use a primitive shape
+      - Path to model obj (can be specified as either absolute or relative path) -OR- "CUBE", "CYLINDER", "CAPSULE", or "SPHERE" to use a primitive shape.
     * - ``simBodiesToModify``
       - string
       -
