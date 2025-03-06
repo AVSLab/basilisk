@@ -369,7 +369,7 @@ The following table includes the keyword options for this method.
       - Boolean
       - No
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    * - ``showMultiSphereLabels``
+    * - ``showMultiShapeLabels``
       - Boolean
       - No
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -771,7 +771,7 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
       - string
       -
       - Yes
-      - Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+      - Path to model obj -OR- "CUBE", "CYLINDER", "CAPSULE", or "SPHERE" to use a primitive shape
     * - ``simBodiesToModify``
       - string
       -
@@ -1767,19 +1767,19 @@ sphere has a spacecraft-fixed location and radius.  Vizard can display such sphe
 and color them using the current sphere charge value.  See :ref:`scenarioDebrisReorbitET`
 for an example of this visualization tool being used.
 
-The MSM information is added using the ``enableUnityVisualization()`` method with the
+There are also applications where it could be useful to display other shape primitives, such as cuboids, cylinders, capsules, or ellipsoids for visualizing electrostatically-charged pads and surfaces. To generalize different shape primitive use cases, the BSK/Vizard support structure is named ``MultiShape``. The MSM information is added using the ``enableUnityVisualization()`` method with the
 keyword ``msmInfoList``.  This information must be provided for each spacecraft in the
-simulation as a list of ``vizInterface.MultiSphereInfo()`` structures.
+simulation as a list of ``vizInterface.MultiShapeInfo()`` structures.
 Each craft can use a different MSM setup.  If the spacecraft has no MSM model then
 use ``None`` in the list for that spacecraft.
 
-The ``MultiSphereInfo`` structure contains the input message ``msmChargeInMsg``
+The ``MultiShapeInfo`` structure contains the input message ``msmChargeInMsg``
 where the spacecraft sphere charge values are read in from.  It also
 contains a vector of MSM configuration information structures of
-type ``MultiSphere``.  The following list show all ``MultiSphere`` structure
+type ``MultiShape``.  The following list show all ``MultiShape`` structure
 variables.
 
-.. list-table:: ``MultiSphere`` variables
+.. list-table:: ``MultiShape`` variables
     :widths: 20 10 10 10 100
     :header-rows: 1
 
@@ -1803,7 +1803,7 @@ variables.
       - double
       - meter
       - Yes
-      - radius of the sphere
+      - radius of the sphere (deprecated)
     * - ``currentValue``
       - double
       - Coulomb
@@ -1832,6 +1832,21 @@ variables.
       - No
       - desired opacity value between 0 and 255 for when charge is neutral.  Default
         is -1 which yield the Vizard default opacity value.
+    * - ``shape``
+      - string
+      -
+      - No
+      - Set shape to use "CUBE", "CYLINDER", "CAPSULE", or "SPHERE" (default)
+    * - ``dimensions``
+      - double(3)
+      - meters
+      - Yes
+      - Desired dimensions of selected shape in x, y, and z (For cylinder, z is height)
+    * - ``rotation``
+      - double(3)
+      - MRP
+      - Yes
+      - Desired orientation of the MultiShape in the spacecraft body frame
 
 
 The following code illustrates how to add support for visualizing
@@ -1840,16 +1855,16 @@ an :ref:`msmForceTorque` to emulate the charging.  The charge values are read in
 message.  The MSM body-fixed positions are stored in the list ``spPosListDebris``, while
 the MSM radii are stored in the list ``rListDebris``.  The sample code is::
 
-    msmInfoDebris = vizInterface.MultiSphereInfo()
+    msmInfoDebris = vizInterface.MultiShapeInfo()
     msmInfoDebris.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[0])
     msmDebrisList = []
     for (pos, rad) in zip(spPosListDebris, rListDebris):
-        msmDebris = vizInterface.MultiSphere()
+        msmDebris = vizInterface.MultiShape()
         msmDebris.position = pos
         msmDebris.radius = rad
         msmDebris.maxValue = 30e-6  # Coulomb
         msmDebrisList.append(msmDebris)
-    msmInfoDebris.msmList = vizInterface.MultiSphereVector(msmDebrisList)
+    msmInfoDebris.msmList = vizInterface.MultiShapeVector(msmDebrisList)
 
     viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectDebris]
                                               , saveFile=fileName
