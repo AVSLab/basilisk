@@ -35,6 +35,8 @@ SpacecraftLocation::SpacecraftLocation()
     this->r_LB_B.fill(0.0);
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
+    this->theta_solar = -1.0;
+    this->shadow_factor_limit = 1.0;
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -150,7 +152,18 @@ bool SpacecraftLocation::ReadMessages()
 //        this->sunInMsgState.setZero();
     }
 
-    return (planetRead && scRead && sunRead);
+    bool eclipseRead = true;
+    if (this->eclipseInMsg.isLinked())
+    {
+        eclipseRead = this->eclipseInMsg.isWritten();
+        //this->sunVector_N = cArray2EigenVector3d(this->sunVectorInMsg().sunVector);
+        this->eclipseInMsgState = this->eclipseInMsg();
+    } else {
+        eclipseRead = false;
+//        this->sunInMsgState.setZero();
+    }
+
+    return (planetRead && scRead && sunRead && eclipseRead);
 //    return(planetRead && scRead);
 
 }
@@ -245,6 +258,20 @@ void SpacecraftLocation::computeAccess()
         // calculating the sun-incidence-angle and the deputy-view-angle
         double sunIncidenceAngle = safeAcos(aHat_N.dot(r_HN_N) / (aHat_N.norm() * r_HN_N.norm()));
         double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
+
+        if (this->theta_solar > 0.0) {
+            // check if the sun is within the solar cone
+            if (sunIncidenceAngle > this->theta_solar) {
+                this->accessMsgBuffer.at(c).hasAccess = 0;
+            }
+        }
+
+        if (this->shadow_factor_limit < 1.0) {
+            // check if the shadow factor is within the limit
+            if (eclipseInMsgState.shadowFactor >= this->shadow_factor_limit) {
+                this->accessMsgBuffer.at(c).hasAccess = 0;
+            }
+        }
 
         //storing the two angles in the output butter
         this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
