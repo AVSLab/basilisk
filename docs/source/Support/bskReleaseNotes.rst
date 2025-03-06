@@ -33,6 +33,7 @@ Version |release|
 - Fixed issue where reaction wheels with unlimited torque (``useMaxTorque=False``) would end simulation prematurely
 - Added safety mechanism to limit excessive wheel acceleration and provide warning messages
 - Fixed a bug in the :ref:`SpacecraftLocation` module that prevented proper eclipse calculation in some cases.
+- Added support for Vizard release 2.2.2, including transition from MultiSphere to MultiShape, and SWIG structure deprecation through aliasing.
 
 
 Version  2.6.0  (Feb. 21, 2025)
