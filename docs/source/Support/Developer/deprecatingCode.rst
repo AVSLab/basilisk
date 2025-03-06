@@ -238,3 +238,44 @@ This time, we call the macro ``%deprecated_variable``, although always
 before ``%include "example.h"``. In this case, the two first arguments to ``%deprecated_variable``
 are the name of the class that contains the variable, and then the name of the varible.
 The final two arguments are the expected removal date and the message.
+
+If a C++ structure or one of its fields are renamed, an alias can be used to deprecate the entity while retaining support for the old name. This is done using the ``_DeprecatedWrapper`` class defined in ``"swig_deprecated.i"``. Its implementation is detailed below.
+
+.. code-block::
+
+    // example.i
+
+    %module example
+    %{
+        #include "example.h"
+    %}
+
+    %include "swig_deprecated.i"
+    %include example.h
+
+    %pythoncode %{
+    import sys
+
+    mod = sys.modules[__name__]
+
+    mod.ExampleStruct = _DeprecatedWrapper(
+        mod.ExampleStruct,
+        targetName="ExampleStruct",
+        deprecatedFields={"oldField": "newField"},
+        typeConversion="scalarTo3D",
+        removalDate="YYYY/MM/DD"
+    )
+
+    mod.OldStructure = _DeprecatedWrapper(
+        mod.NewStructure,
+        aliasName="OldStructure",
+        targetName="NewStructure",
+        removalDate="YYYY/MM/DD"
+    )
+
+    protectAllClasses(sys.modules[__name__])
+    %}
+
+If a field is renamed, the top chunk creates a wrapper that contains the old field name and handles deprecation warnings and getter/setter behavior. The ``typeConversion`` parameter can be set to ``"scalarTo3D"`` to deprecate a scalar variable and alias to a new 3D variable with repeated values.
+
+If a structure is renamed, the second chunk creates a wrapper that generates an alias using the old structure name for continued support.
