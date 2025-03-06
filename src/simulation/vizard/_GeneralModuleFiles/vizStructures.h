@@ -124,7 +124,7 @@ InstrumentGuiSettings
     int showTransceiverLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showTransceiverFrustrum=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showGenericStoragePanel=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int showMultiSphereLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showMultiShapeLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;
 
 /*! Structure defining a custom CAD model to load to represent a simulation object.
@@ -225,11 +225,11 @@ Light
 
 
 
-/*! Structure defining Multi-Sphere-Method (MSM) sphere configurations
+/*! Structure defining Multi-Shape-Method (MSM) configurations
  */
 typedef struct
 //@cond DOXYGEN_IGNORE
-MultiSphere
+MultiShape
 //@endcond
 {
     int isOn=0;                         //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
@@ -240,18 +240,22 @@ MultiSphere
     std::vector<int> positiveColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is green
     std::vector<int> negativeColor;     //!< (optional) Send desired RGBA as values between 0 and 255, default is red
     int neutralOpacity=-1;              //!< (optional) Send desired opacity value between 0 and 255 for when charge is neutral
-}MultiSphere;
+    std::string shape = "";             //!< (optional) Set shape to use "CUBE", "CYLINDER", or "SPHERE" (default)
+    double dimensions[3];               //!< [m] Desired dimensions of selected shape in x, y, and z (For cylinder, z is height)
+    double rotation[3];                 //!< [MRP] Desired orientation of the Multi Shape in the spacecraft body frame
+}MultiShape;
 
-/*! Structure defining Multi-Sphere-Method (MSM) information
+
+/*! Structure defining Multi-Shape-Method (MSM) information
  */
 typedef struct
 //@cond DOXYGEN_IGNORE
-MultiSphereInfo
+MultiShapeInfo
 //@endcond
 {
-    std::vector<MultiSphere *> msmList;                     //!< list of MSM configuration information
+    std::vector<MultiShape *> msmList;                      //!< list of MSM configuration information
     ReadFunctor<ChargeMsmMsgPayload> msmChargeInMsg;        //!< input message to read current MSM charges.  If not connected, currentValue can be set directly from python
-}MultiSphereInfo;
+}MultiShapeInfo;
 
 
 
@@ -335,7 +339,7 @@ VizSpacecraftData
     std::vector<int> oscOrbitLineColor;                         //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     std::vector<int>  trueTrajectoryLineColor;                  //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     ReadFunctor<ColorMsgPayload> trueTrajectoryLineColorInMsg;  //!< (Optional) Messages specifying true trajectory orbit line RGBA colors.  If connected, this replaces the values set in trueTrajectoryLineColor
-    MultiSphereInfo msmInfo;                                    //!< (Optional) MSM configuration information
+    MultiShapeInfo msmInfo;                                     //!< (Optional) MSM configuration information
     std::vector<Ellipsoid *> ellipsoidList;                     //!< (Optional) ellipsoid about the spacecraft location
 }VizSpacecraftData;
 

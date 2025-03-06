@@ -67,6 +67,7 @@ Illustration of Simulation Results
 #
 
 import os
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -75,7 +76,7 @@ from Basilisk.fswAlgorithms import etSphericalControl
 from Basilisk.simulation import simpleNav, spacecraft, extForceTorque, msmForceTorque
 from Basilisk.utilities import (SimulationBaseClass, macros,
                                 orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, vizSupport)
+                                unitTestSupport, vizSupport, deprecated)
 
 try:
     from Basilisk.simulation import vizInterface
@@ -301,32 +302,38 @@ def run(show_plots):
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizSupport.vizFound:
         # setup MSM information
-        msmInfoServicer = vizInterface.MultiSphereInfo()
+        msmInfoServicer = vizInterface.MultiShapeInfo()
         msmInfoServicer.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[0])
         msmServicerList = []
         for (pos, rad) in zip(spPosListServicer, rListServicer):
-            msmServicer = vizInterface.MultiSphere()
+            msmServicer = vizInterface.MultiShape()
             msmServicer.position = pos
-            msmServicer.radius = rad
+            msmServicer.dimensions = [rad, rad, rad]
             msmServicer.isOn = 1
             msmServicer.maxValue = 30e-6  # Coulomb
             msmServicer.currentValue = 4e-6  # Coulomb
             msmServicerList.append(msmServicer)
-        msmInfoServicer.msmList = vizInterface.MultiSphereVector(msmServicerList)
+        msmInfoServicer.msmList = vizInterface.MultiShapeVector(msmServicerList)
 
-        msmInfoDebris = vizInterface.MultiSphereInfo()
+        msmInfoDebris = vizInterface.MultiShapeInfo()
         msmInfoDebris.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[1])
         msmDebrisList = []
         for (pos, rad) in zip(spPosListDebris, rListDebris):
-            msmDebris = vizInterface.MultiSphere()
+            msmDebris = vizInterface.MultiShape()
             msmDebris.position = pos
-            msmDebris.radius = rad
+            msmDebris.dimensions = [rad, rad, rad]
             msmDebris.isOn = 1
             msmDebris.maxValue = 30e-6  # Coulomb
             msmDebris.currentValue = 4e-6  # Coulomb
             msmDebris.neutralOpacity = 50  # opacity value between 0 and 255
             msmDebrisList.append(msmDebris)
-        msmInfoDebris.msmList = vizInterface.MultiSphereVector(msmDebrisList)
+        msmInfoDebris.msmList = vizInterface.MultiShapeVector(msmDebrisList)
+
+        # Check MultiSphere deprecation
+        warnings.simplefilter("ignore", deprecated.BSKDeprecationWarning)
+        vizInterface.MultiSphere().radius = 0
+        vizInterface.MultiSphereInfo()
+        vizInterface.MultiSphereVector()
 
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectServicer, scObjectDebris]
                                                   # , saveFile=fileName
