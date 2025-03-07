@@ -229,7 +229,7 @@ void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
     {
         // - Compute the force and torque contributions from the dynamicEffectors
         (*dynIt)->computeForceTorque(integTime, double(0.0));
-        attBodyForce_F += (*dynIt)->forceExternal_B;
+        attBodyForce_F += (*dynIt)->forceExternal_N;
         attBodyTorquePntFc_F += (*dynIt)->torqueExternalPntB_B;
     }
 
