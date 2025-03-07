@@ -190,7 +190,7 @@ def run(show_plots):
     r_M1S1_B = [0.0, 0.0, 0.0]  # [m]
     r_M2S2_B = [0.0, 0.0, 0.0]  # [m]
 
-    # Position vector of solar array frame origin points with respect to hub frame origin point B 
+    # Position vector of solar array frame origin points with respect to hub frame origin point B
     # expressed in B frame components
     rArray1SB_B = np.array([2.0, 0.0, 0.0])   # [m]
     rArray2SB_B = np.array([-2.0, 0.0, 0.0])   # [m]
@@ -216,7 +216,7 @@ def run(show_plots):
     IElement_PntFc_F = [[I_element_11, 0.0, 0.0],
                         [0.0, I_element_22, 0.0],
                         [0.0, 0.0, I_element_33]]  # [kg m^2] (Elements approximated as rectangular prisms)
-    
+
     # Deployment temporal information
     ramp_duration = 2.0  # [s]
     init_deploy_duration = 5.0 * 60.0  # [s]
@@ -346,7 +346,7 @@ def run(show_plots):
         array2RotProfilerList[i].setThetaDDotMax(array2MaxRotAccelList1[i])  # [rad/s^2]
         array1RotProfilerList[i].setThetaInit(array1ThetaInit1)  # [rad]
         array2RotProfilerList[i].setThetaInit(array2ThetaInit1)  # [rad]
-    
+
         scSim.AddModelToTask(fswTaskName, array1RotProfilerList[i])
         scSim.AddModelToTask(fswTaskName, array2RotProfilerList[i])
         array1RotProfilerList[i].spinningBodyInMsg.subscribeTo(array1ElementRefMsgList1[i])
@@ -378,7 +378,7 @@ def run(show_plots):
     array2Element8PrescribedDataLog = array2RotProfilerList[7].spinningBodyOutMsg.recorder(dataRecRate)
     array2Element9PrescribedDataLog = array2RotProfilerList[8].spinningBodyOutMsg.recorder(dataRecRate)
     array2Element10PrescribedDataLog = array2RotProfilerList[9].spinningBodyOutMsg.recorder(dataRecRate)
-    
+
     scSim.AddModelToTask(fswTaskName, scStateData)
     scSim.AddModelToTask(fswTaskName, array1Element1PrescribedDataLog)
     scSim.AddModelToTask(fswTaskName, array1Element2PrescribedDataLog)
@@ -499,7 +499,7 @@ def run(show_plots):
         array2ElementRefMsgList2.append(messaging.HingedRigidBodyMsg().write(array2ElementMessageData))
 
         array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(array2ElementRefMsgList2[i])
-        
+
     simTime3 = init_deploy_duration + 10  # [s]
     scSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2 + simTime3))
     scSim.ExecuteSimulation()
@@ -739,4 +739,3 @@ if __name__ == "__main__":
     run(
         True,   # show_plots
     )
-    
