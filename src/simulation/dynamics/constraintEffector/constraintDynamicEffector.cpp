@@ -229,10 +229,10 @@ void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
         bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 parents");
     }
 
-    this->hubSigma.push_back(states.getStateObject(this->stateNameOfSigma[scInitCounter]));
-	this->hubOmega.push_back(states.getStateObject(this->stateNameOfOmega[scInitCounter]));
-    this->hubPosition.push_back(states.getStateObject(this->stateNameOfPosition[scInitCounter]));
-    this->hubVelocity.push_back(states.getStateObject(this->stateNameOfVelocity[scInitCounter]));
+    this->hubSigma.push_back(states.getStateObject(this->stateNameOfSigma[hubCounter]));
+	this->hubOmega.push_back(states.getStateObject(this->stateNameOfOmega[hubCounter]));
+    this->hubPosition.push_back(states.getStateObject(this->stateNameOfPosition[hubCounter]));
+    this->hubVelocity.push_back(states.getStateObject(this->stateNameOfVelocity[hubCounter]));
 
     if (this->scInitCounter == 0) {
         this->parent1.parentType = "hub";
@@ -260,10 +260,10 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
         bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 parents");
     }
 
-    this->inertialAttitudeProperty.push_back(properties.getPropertyReference(this->propName_inertialAttitude[scInitCounter]));
-    this->inertialAngVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialAngVelocity[scInitCounter]));
-    this->inertialPositionProperty.push_back(properties.getPropertyReference(this->propName_inertialPosition[scInitCounter]));
-    this->inertialVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialVelocity[scInitCounter]));
+    this->inertialAttitudeProperty.push_back(properties.getPropertyReference(this->propName_inertialAttitude[effectorCounter]));
+    this->inertialAngVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialAngVelocity[effectorCounter]));
+    this->inertialPositionProperty.push_back(properties.getPropertyReference(this->propName_inertialPosition[effectorCounter]));
+    this->inertialVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialVelocity[effectorCounter]));
 
     if (this->scInitCounter == 0) {
         this->parent1.parentType = "effector";
@@ -305,7 +305,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 rDot_B1N_N = this->hubVelocity[parent1.idx]->getState();
                 omega_B1N_B1 = this->hubOmega[parent1.idx]->getState();
                 sigma_B1N = (Eigen::Vector3d)this->hubSigma[parent1.idx]->getState();
-            } else if (this->parent2.parentType == "effector") {
+            } else if (this->parent1.parentType == "effector") {
                 // - Collect properties from parent effector
                 r_B1N_N = *this->inertialPositionProperty[parent1.idx];
                 rDot_B1N_N = *this->inertialVelocityProperty[parent1.idx];
