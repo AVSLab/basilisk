@@ -986,6 +986,11 @@ The following table lists all required and optional arguments that can be provid
       - m
       - No
       - range of the location station, use 0 or negative value (protobuffer default) to use viz default
+    * - ``markerScale``
+      - double
+      -
+      - No
+      - Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
 
 
 Adding Generic Sensor Visualization
