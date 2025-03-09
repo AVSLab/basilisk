@@ -204,8 +204,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     np.set_printoptions(precision=16)
     fileNameString = filename[len(path) + 6:-3]
-    if integratorCase == "bogackiShampine":
-        plt.close("all")  # clears out plots from earlier test runs
+    plt.close("all")  # clears out plots from earlier test runs
 
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
