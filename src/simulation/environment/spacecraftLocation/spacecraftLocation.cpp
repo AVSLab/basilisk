@@ -52,6 +52,7 @@ SpacecraftLocation::~SpacecraftLocation()
 {
     for (long unsigned int c=0; c<this->accessOutMsgs.size(); c++) {
         delete this->accessOutMsgs.at(c);
+        delete this->illuminationOutMsgs.at(c);
     }
     return;
 }
@@ -99,10 +100,14 @@ void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpSc
     Message<AccessMsgPayload> *msg;
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
+    Message<AccessMsgPayload> *ilmsg;
+    this->illuminationOutMsgs.push_back(ilmsg);
 
     /* expand the buffer vector */
     AccessMsgPayload accMsg;
     this->accessMsgBuffer.push_back(accMsg);
+    AccessMsgPayload illMsg;
+    this->illuminationMsgBuffer.push_back(illMsg);
 }
 
 
@@ -175,6 +180,7 @@ void SpacecraftLocation::WriteMessages(uint64_t CurrentClock)
     //! - write access message for each spacecraft
     for (long unsigned int c=0; c< this->accessMsgBuffer.size(); c++) {
         this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
+        this->illuminationOutMsgs.at(c)->write(&this->illuminationMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
 
@@ -225,6 +231,7 @@ void SpacecraftLocation::computeAccess()
 
         // determine access output message
         this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
+        this->illuminationMsgBuffer.at(c) = this->illuminationOutMsgs.at(c)->zeroMsgPayload;
         if (rClose.norm() > this->rEquator) {
             r_SL_P[2] = r_SL_P[2] / this->zScale;
             double range = r_SL_P.norm();
@@ -259,10 +266,13 @@ void SpacecraftLocation::computeAccess()
         double sunIncidenceAngle = safeAcos(aHat_N.dot(r_HN_N) / (aHat_N.norm() * r_HN_N.norm()));
         double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
 
+
+        this->illuminationMsgBuffer.at(c).hasAccess = 1;
         if (this->theta_solar > 0.0) {
             // check if the sun is within the solar cone
             if (sunIncidenceAngle > this->theta_solar) {
                 this->accessMsgBuffer.at(c).hasAccess = 0;
+                this->illuminationMsgBuffer.at(c).hasAccess = 0;
             }
         }
 
@@ -270,6 +280,7 @@ void SpacecraftLocation::computeAccess()
             // check if the shadow factor is within the limit
             if (eclipseInMsgState.shadowFactor >= this->shadow_factor_limit) {
                 this->accessMsgBuffer.at(c).hasAccess = 0;
+                this->illuminationMsgBuffer.at(c).hasAccess = 0;
             }
         }
 

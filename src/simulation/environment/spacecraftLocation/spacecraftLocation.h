@@ -65,6 +65,7 @@ public:
     ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;           //!< vector of ground location access messages
+    std::vector<Message<AccessMsgPayload>*> illuminationOutMsgs;           //!< vector of ground location access messages
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
     Eigen::Vector3d r_LB_B;      //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
 
@@ -72,6 +73,7 @@ public:
 
 private:
     std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
+    std::vector<AccessMsgPayload> illuminationMsgBuffer;            //!< buffer of illumination output data
     std::vector<SCStatesMsgPayload> scStatesBuffer;             //!< buffer of other spacecraft states
     SCStatesMsgPayload primaryScStatesBuffer;                   //!< buffer of primary spacecraft states
     SpicePlanetStateMsgPayload planetState;                         //!< buffer of planet data
