@@ -231,6 +231,26 @@ void StateEffector::setPropName_inertialVelocity(std::string value)
     }
 }
 
+void StateEffector::setPropName_inertialAttitude(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialAttitude = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_inertialAttitude variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_inertialAngVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialAngVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_inertialAngVelocity variable must be a non-empty string");
+    }
+}
+
 void StateEffector::setPropName_vehicleGravity(std::string value)
 {
     // check that value is acceptable
