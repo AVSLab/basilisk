@@ -113,10 +113,10 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
         SCStatesMsgPayload configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
 
         // Note that the configLogMsg B frame represents the effector body frame (frame F)
-        eigenVector3d2CArray(this->r_FcN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_FN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_FN_F, configLogMsg.omega_BN_B);
+        eigenMatrixXd2CArray(*this->r_FcN_N, configLogMsg.r_BN_N);
+        eigenMatrixXd2CArray(*this->v_FcN_N, configLogMsg.v_BN_N);
+        eigenMatrixXd2CArray(*this->sigma_FN, configLogMsg.sigma_BN);
+        eigenMatrixXd2CArray(*this->omega_FN_F, configLogMsg.omega_BN_B);
         this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentClock);
     }
 }
@@ -307,13 +307,16 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 {
     // Compute the effector's attitude with respect to the inertial frame
     Eigen::Matrix3d dcm_FN = (this->dcm_BF).transpose() * this->dcm_BN;
-    this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
+    *this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
+
+    // Compute effector's angular velocity with respect to the inertial frame
+    *this->omega_FN_F = this->dcm_BF.transpose() * this->omega_FN_B;
 
     // Compute the effector's inertial position vector
-    this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
+    *this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
 
     // Compute the effector's inertial velocity vector
-    this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_FcB_B;
+    *this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_FcB_B;
 }
 
 /*! This method updates the effector state at the dynamics frequency.

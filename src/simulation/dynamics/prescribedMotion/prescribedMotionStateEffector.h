@@ -121,10 +121,10 @@ private:
     Eigen::Matrix3d omegaTilde_FB_B;                    //!< [rad/s] Tilde cross product matrix of omega_FB_B
 
     // Effector properties relative to the inertial frame
-    Eigen::Vector3d r_FcN_N;                            //!< [m] Position of frame F center of mass relative to the inertial frame in inertial frame components
-    Eigen::Vector3d v_FcN_N;                            //!< [m/s] Inertial velocity of frame F center of mass relative to the inertial frame in inertial frame components
-    Eigen::Vector3d sigma_FN;                           //!< MRP attitude of frame F relative to the inertial frame
-    Eigen::Vector3d omega_FN_F;                         //!< [rad/s] Angular velocity of frame F relative to the inertial frame in F frame components
+    Eigen::MatrixXd* r_FcN_N;                            //!< [m] Position of frame F center of mass relative to the inertial frame in inertial frame components
+    Eigen::MatrixXd* v_FcN_N;                            //!< [m/s] Inertial velocity of frame F center of mass relative to the inertial frame in inertial frame components
+    Eigen::MatrixXd* sigma_FN;                           //!< MRP attitude of frame F relative to the inertial frame
+    Eigen::MatrixXd* omega_FN_F;                         //!< [rad/s] Angular velocity of frame F relative to the inertial frame in F frame components
 
     // Hub states
     Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
