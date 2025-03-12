@@ -55,6 +55,7 @@ public:
                                       double & rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
+    void addStateEffector(StateEffector *newStateEffector);          //!< Method to attach a state effector
 
     double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                        //!< [kg] Effector mass
@@ -135,6 +136,8 @@ private:
     Eigen::Vector3d omegaEpoch_FM_F;                    //!< [rad/s] Angular velocity of frame F relative to frame M in F frame components
     StateData *sigma_FMState;                           //!< MRP attitude of frame F relative to frame M
 
+    std::string spacecraftName;                         //!< Name of prescribed object
+    std::vector<StateEffector*> stateEffectors;         //!< Vector of attached state effectors
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */

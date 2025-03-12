@@ -55,6 +55,8 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->rPrimeEpoch_FM_M.setZero();
     this->omegaEpoch_FM_F.setZero();
 
+    this->spacecraftName = "prescribedObject";
+
     // Set the sigma_FM state name
     this->nameOfsigma_FMState = "prescribedMotionsigma_FM" + std::to_string(this->effectorID);
 
@@ -355,4 +357,15 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
 
     // Call the method to write the output messages
     this->writeOutputStateMessages(currentSimNanos);
+}
+
+/*! This method attaches a stateEffector to the prescribedMotionStateEffector */
+void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffector)
+{
+    this->assignStateParamNames<StateEffector *>(newStateEffector);
+
+    this->stateEffectors.push_back(newStateEffector);
+
+    // Give the stateEffector the name of the prescribed object it is attached to
+    newStateEffector->nameOfSpacecraftAttachedTo = this->spacecraftName;
 }
