@@ -101,6 +101,7 @@ void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpSc
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
     Message<AccessMsgPayload> *ilmsg;
+    ilmsg = new Message<AccessMsgPayload>;
     this->illuminationOutMsgs.push_back(ilmsg);
 
     /* expand the buffer vector */
