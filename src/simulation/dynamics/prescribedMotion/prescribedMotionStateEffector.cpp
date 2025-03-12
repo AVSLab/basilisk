@@ -60,6 +60,12 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     // Set the sigma_FM state name
     this->nameOfsigma_FMState = "prescribedMotionsigma_FM" + std::to_string(this->effectorID);
 
+    // Set the property names
+    this->nameOfInertialPositionProperty = "prescribedMotionInertialPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialVelocityProperty = "prescribedMotionInertialVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialAttitudeProperty = "prescribedMotionInertialAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialAngVelocityProperty = "prescribedMotionInertialAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+
     PrescribedMotionStateEffector::effectorID++;
 }
 
@@ -145,6 +151,23 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
         sigma_FMInitMatrix(1) = sigma_FM_loc[1];
         sigma_FMInitMatrix(2) = sigma_FM_loc[2];
         this->sigma_FMState->setState(sigma_FMInitMatrix);
+
+        registerProperties(states);
+}
+
+void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
+{
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_FcN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
+    this->v_FcN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
+    this->sigma_FN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
+    this->omega_FN_F = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+
+    std::vector<StateEffector*>::iterator stateIt;
+    for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
+    {
+        (*stateIt)->linkInProperties(states);
+    }
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the

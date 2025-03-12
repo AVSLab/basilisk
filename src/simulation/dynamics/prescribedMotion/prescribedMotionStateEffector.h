@@ -40,6 +40,7 @@ public:
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
     void registerStates(DynParamManager& statesIn) override;         //!< Method for registering the effector's states
     void linkInStates(DynParamManager& states) override;             //!< Method for giving the effector access to hub states
+    void registerProperties(DynParamManager& states) override;       //!< Method for registering the PM inertial properties
     void updateContributions(double integTime,
                              BackSubMatrices & backSubContr,
                              Eigen::Vector3d sigma_BN,
@@ -138,6 +139,22 @@ private:
 
     std::string spacecraftName;                         //!< Name of prescribed object
     std::vector<StateEffector*> stateEffectors;         //!< Vector of attached state effectors
+
+    // Prescribed motion properties
+    std::string nameOfInertialPositionProperty;                      //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;                      //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    };
+
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */
