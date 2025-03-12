@@ -65,3 +65,85 @@ See src\architecture\utilitiesSelfCheck\swigDeprecatedCheck.i
     %}
 }
 %enddef
+
+/** Used to deprecate a structure in C++ that is exposed to Python through SWIG. This is specifically
+for aliasing, where a structure is renamed and support for both names is desired. Fields can also be
+aliased within structures.
+
+Usage within .i interface files:
+
+- Renaming 'MultiSphere' to 'MultiShape':
+
+%pythoncode %{
+import sys
+mod = sys.modules[__name__]
+mod.MultiSphere = _DeprecatedWrapper(
+    mod.MultiShape,
+    aliasName="MultiSphere",
+    targetName="MultiShape",
+    removalDate="2026/02/21"
+)
+protectAllClasses(sys.modules[__name__])
+%}
+
+- Renaming 'radius' to 'dimensions':
+
+%pythoncode %{
+import sys
+mod = sys.modules[__name__]
+mod.MultiShape = _DeprecatedWrapper(
+    mod.MultiShape,
+    targetName="MultiShape",
+    deprecatedFields={"radius": "dimensions"},
+    typeConversion="scalarTo3D"
+    removalDate="2026/02/21"
+)
+protectAllClasses(sys.modules[__name__])
+%}
+
+*/
+%pythoncode %{
+import sys
+from Basilisk.utilities import deprecated
+
+class _DeprecatedWrapper:
+    def __init__(self, target, aliasName=None,
+                               targetName=None,
+                               deprecatedFields=None,
+                               typeConversion=None,
+                               removalDate=None):
+        self._target = target
+        self._aliasName = aliasName
+        self._targetName = targetName
+        self._deprecatedFields = deprecatedFields or {}
+        self._typeConversion = typeConversion
+        self._removalDate = removalDate
+
+    def __call__(self, *args, **kwargs):
+        if self._aliasName:
+            deprecated.deprecationWarn(self._aliasName, self._removalDate, f"Use '{self._targetName}' instead.")
+
+        instance = self._target(*args, **kwargs)
+
+        for old_attr, new_attr in self._deprecatedFields.items():
+            if hasattr(instance, new_attr):  # Ensure new attribute exists
+                _inject_deprecated_property(instance, old_attr, new_attr, self._removalDate, self._typeConversion)
+
+        return instance  # Always return the original instance
+
+def _inject_deprecated_property(instance, old_attr, new_attr, removal_date, typeConversion=None):
+    def getter(self):
+        deprecated.deprecationWarn(old_attr, removal_date, f"Use '{new_attr}' instead.")
+        return getattr(self, new_attr)
+
+    def setter(self, value):
+        deprecated.deprecationWarn(old_attr, removal_date, f"Use '{new_attr}' instead.")
+        # Conduct type conversions if new variable type is changed
+        if typeConversion and typeConversion == "scalarTo3D":
+            setattr(self, new_attr, [value, value, value])
+        else:
+            setattr(self, new_attr, value)
+
+    setattr(instance.__class__, old_attr, property(getter, setter))
+
+%}

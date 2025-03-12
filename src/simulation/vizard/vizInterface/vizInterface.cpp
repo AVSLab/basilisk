@@ -687,7 +687,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_showtransceiverlabels(this->settings.instrumentGuiSettingsList[idx].showTransceiverLabels);
             il->set_showtransceiverfrustrum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustrum);
             il->set_showgenericstoragepanel(this->settings.instrumentGuiSettingsList[idx].showGenericStoragePanel);
-            il->set_showmultispherelabels(this->settings.instrumentGuiSettingsList[idx].showMultiSphereLabels);
+            il->set_showmultishapelabels(this->settings.instrumentGuiSettingsList[idx].showMultiShapeLabels);
         }
 
 
@@ -811,6 +811,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         for (int i=0; i<4; i++) {
             glp->add_color((*glIt)->color[i]);
         }
+        glp->set_markerscale((*glIt)->markerScale);
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;
@@ -1005,9 +1006,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
-            // Write Multi-Sphere-Model messages
+            // Write Multi-Shape-Model messages
             for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
-                vizProtobufferMessage::VizMessage::MultiSphere* msmp = scp->add_multispheres();
+                vizProtobufferMessage::VizMessage::MultiShape* msmp = scp->add_multishapes();
 
                 msmp->set_ison(scIt->msmInfo.msmList[idx]->isOn);
                 for (uint64_t j=0; j<3; j++) {
@@ -1023,6 +1024,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     msmp->add_negativecolor(scIt->msmInfo.msmList[idx]->negativeColor[j]);
                 }
                 msmp->set_neutralopacity(scIt->msmInfo.msmList[idx]->neutralOpacity);
+                msmp->set_shape(scIt->msmInfo.msmList[idx]->shape);
+                for (int j=0; j<3; j++) {
+                    msmp->add_dimensions(scIt->msmInfo.msmList[idx]->dimensions[j]);
+                }
+                for (int j=0; j<3; j++) {
+                    msmp->add_rotation(scIt->msmInfo.msmList[idx]->rotation[j]);
+                }
             }
 
         }

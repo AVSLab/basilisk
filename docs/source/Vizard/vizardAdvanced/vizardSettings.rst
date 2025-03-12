@@ -65,73 +65,81 @@ default setting for that behavior.
     * - Variable
       - Type
       - Description
-    * - ``ambient``
-      - [0,1]
-      - float value to specify the ambient Vizard lighting.
+    * - **Labels**
+      -
+      -
+    * - ``showCSLabels``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the coordinate system labels. Value of 0 (protobuffer default) to use viz default.
+    * - ``showSpacecraftLabels``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the spacecraft labels. Value of 0 (protobuffer default) to use viz default.
+    * - ``showCameraLabels``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the camera labels. Value of 0 (protobuffer default) to use viz default.
+    * - ``showLightLabels``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the light labels. Value of 0 (protobuffer default) to use viz default.
+    * - ``showCelestialBodyLabels``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the celestial body labels. Value of 0 (protobuffer default) to use viz default.
+    * - ``showLocationLabels``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) labels for a celestial body or spacecraft location. Value of 0 (protobuffer default) to use viz default.
+    * - **Coordinate Frame Settings**
+      -
+      -
+    * - ``spacecraftCSon``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the spacecraft coordinate axes. Value of 0 (protobuffer default) to use viz default.
+    * - ``planetCSon``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the planet coordinate axes. Value of 0 (protobuffer default) to use viz default.
+    * - ``showHillFrame``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the orbit Hill frame of the spacecraft camera target. Value of 0 (protobuffer default) to use viz default.
+    * - ``showVelocityFrame``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the orbit velocity frame of the spacecraft camera target. Value of 0 (protobuffer default) to use viz default.
+    * - **Orbit Line Settings**
+      -
+      -
     * - ``orbitLinesOn``
       - (-1,0,1,2)
-      - Toggle to show osculating orbit lines, Value of 0 (protobuffer default) to use viz default,
-        -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body
+      - Toggle to show osculating orbit lines. Value of 0 (protobuffer default) to use viz default,
+        -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body.
+    * - ``orbitLineSegments``
+      - int
+      - Number of line segments to use when drawing an osculating trajectory. Value of 0 (protobuffer default)
+        to use viz default or any value greater than or equal to 4.
+    * - ``relativeOrbitRange``
+      - int
+      - +/- Angular range in degrees of the osculating trajectory to show. Value of 0 (protobuffer default) to use
+        viz default or any value greater than or equal to 1.
+    * - ``relativeOrbitFrame``
+      - (0,1,2)
+      - Flag to set with respect to which frame the spacecraft relative orbit trajectory is drawn. Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame.
     * - ``trueTrajectoryLinesOn``
-      - (-1,0,1,2)
-      - Toggle to show true orbit lines, Value of 0 (protobuffer default) to use viz default,
-        -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body
-    * - ``spacecraftCSon``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the spacecraft coordinate axes
-    * - ``planetCSon``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the planet coordinate axes
-    * - ``skyBox``
-      - String
-      - Used determine what star background should be shown. The empty string "" provides default NASA SVS Starmap,
-        “ESO” shows the ESO Milky Way skybox, “black” provides a black background, or the user can provide a
-        filepath to custom background image file.
-    * - ``viewCameraBoresightHUD``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the camera boresight line
-    * - ``viewCameraConeHUD``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the camera cone
-    * - ``showCSLabels``
-      - (-1,1)
-      - flag to show (1) or hide (-) the coordinate system labels
-    * - ``showCelestialBodyLabels``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the celestial body labels
-    * - ``showSpacecraftLabels``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the spacecraft labels
-    * - ``showCameraLabels``
-      - (-1,1)
-      - flag to show (1) or hide (-1) the camera labels
-    * - ``customGUIScale``
-      - pos. double
-      - GUI scaling factor, default is -1 which uses Vizard default.
-    * - ``defaultSpacecraftSprite``
+      - (-1,0,1,2,3,4,5)
+      - Toggle to show true orbit lines. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body, 3 for relative to a celestial body, 4 for rotating frame of two celestial bodies, 5 for fixed frame of spacecraft or celestial body.
+    * - ``truePathRelativeBody``
       - string
-      - Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255].
-        Possible settings: ``CIRCLE``, ``SQUARE``, ``STAR``, ``TRIANGLE`` or ``bskSat`` for a 2D spacecraft
-        sprite of the bskSat shape.  Default value is empty yielding a white ``CIRCLE``.
-        To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``
-    * - ``showSpacecraftAsSprites``
-      - (-1,1)
-      - Flag to show spacecraft as sprites if their visual size gets too small
-    * - ``showCelestialBodiesAsSprites``
-      - (-1,1)
-      - Flag to show celestial bodies as sprites if their visual size gets too small
-    * - ``show24hrClock``
-      - (-1,1)
-      - Flag to make mission date/time use a 24h clock instead of a 12h clock with am/pm
-    * - ``showDataRateDisplay``
-      - (-1,1)
-      - Flag to show the data frame rate
-    * - ``keyboardAngularRate``
-      - pos. double
-      - [rad/sec] controls the angular rate at which the camera rotates with keyboard hot-keys.
-    * - ``keyboardZoomRate``
-      - pos. double
-      - Non-dimensional speed at which the camera zooms in and out with hot-keys.
+      - String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body.
+    * - ``truePathRotatingFrame``
+      - string
+      - String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories.
+    * - ``truePathFixedFrame``
+      - string
+      - String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against.
+    * - **Spacecraft Settings**
+      -
+      -
+    * - ``viewCameraBoresightHUD``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the camera boresight line. Value of 0 (protobuffer default) to use viz default.
+    * - ``viewCameraConeHUD``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the camera cone. Value of 0 (protobuffer default) to use viz default.
     * - ``defaultThrusterColor``
       - int(4)
       - RGBA color values between (0,255).  Default values of -1 makes Vizard use the default thruster plume color
@@ -139,109 +147,126 @@ default setting for that behavior.
     * - ``defaultThrusterPlumeLifeScalar``
       - double
       - Value of 1.0 or 0.0 to use viz default, values between 0 and 1 will decrease the length of all thruster plumes,
-        >1 will increase lengths of all thruster plumes
-    * - ``orbitLineSegments``
-      - int
-      - Number of line segments to use when drawing an osculating trajectory. Value of 0 (protobuffer default)
-        to use viz default or any value greater than or equal to 4
-    * - ``relativeOrbitRange``
-      - int
-      - +/- angular range in degrees of the osculating trajectory to show.  Value of 0 (protobuffer default) to use
-        viz default or any value greater than or equal to 1
-    * - ``showHillFrame``
-      - int
-      - flag to show the orbit Hill frame of the spacecraft camera target. Value of 0 (protobuffer default)
-        to use viz default, -1 for false, 1 for true
-    * - ``showVelocityFrame``
-      - int
-      - flag to show the orbit velocity frame of the spacecraft camera target. Value of 0 (protobuffer default)
-        to use viz default, -1 for false, 1 for true
-    * - ``relativeOrbitFrame``
-      - int
-      - flag to set with respect to which frame the relative orbit trajectory is drawn.
-        Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame
-    * - ``mainCameraTarget``
+        >1 will increase lengths of all thruster plumes.
+    * - **Sprites**
+      -
+      -
+    * - ``defaultSpacecraftSprite``
       - string
-      - If valid spacecraft or celestial body name is provided, the main camera will be targeted at
-        that body at start
-    * - ``spacecraftShadowBrightness``
-      - double
-      - Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value
-        to use viz default
+      - Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255].
+        Possible settings: ``CIRCLE``, ``SQUARE``, ``STAR``, ``TRIANGLE`` or ``bskSat`` for a 2D spacecraft
+        sprite of the bskSat shape.  Default value is empty yielding a white ``CIRCLE``.
+        To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``.
+    * - ``showSpacecraftAsSprites``
+      - (-1,0,1)
+      - Flag to show spacecraft as sprites if their visual size gets too small (1). Value of -1 or 0 (protobuffer default) to use viz default.
+    * - ``showCelestialBodiesAsSprites``
+      - (-1,0,1)
+      - Flag to show celestial bodies as sprites if their visual size gets too small (1). Value of -1 or 0 (protobuffer default) to use viz default.
+    * - **Location Settings**
+      -
+      -
+    * - ``showLocationCones``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) a cone protruding from a celestial body or spacecraft location. Value of 0 (protobuffer default) to use viz default.
+    * - ``showLocationCommLines``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) a line when a spacecraft enters the FOV of a ground station or another spacecraft. Value of 0 (protobuffer default) to use viz default. These can become computationally expensive because they perform ray casting, so if obstruction detection is not necessary it would be easier to use target lines (see live settings table).
+    * - ``useSimpleLocationMarkers``
+      - (-1,0,1)
+      - Flag to use simplified Location markers (no cones, range, or communication lines) when the number of locations is greater than 100 (1), or force use of full-featured Location (-1). Value of 0 (protobuffer default) to use viz default.
+    * - **View Settings**
+      -
+      -
+    * - ``skyBox``
+      - String
+      - Used determine what star background should be shown. The empty string "" provides default NASA SVS Starmap,
+        “ESO” shows the ESO Milky Way skybox, “black” provides a black background, or the user can provide a
+        filepath to custom background image file.
+    * - ``atmospheresOff``
+      - (-1,0,1)
+      - Flag to disable the atmosphere effect on celestial bodies (1). Value of -1 or 0 (protobuffer default) to use viz default.
+    * - ``forceStartAtSpacecraftLocalView``
+      - (-1,0,1)
+      - Flag to force Vizard to initialize in spacecraft-view on start up (1). Value of -1 or 0 (protobuffer default) to use viz default.
     * - ``spacecraftSizeMultiplier``
       - double
-      - Control the display size of spacecraft in the Planet and Solar System Views, values greater than 0,
-        use negative value to use viz default
-    * - ``spacecraftHelioViewSizeMultiplier``
-      - double
-      - Control the display size of spacecraft in the Solar System View, values greater than 0, use negative
-        value to use viz default
-    * - ``forceStartAtSpacecraftLocalView``
-      - int
-      - Require Vizard to start up in spacecraft-view on start up
-    * - ``showLocationCommLines``
-      - int
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    * - ``showLocationCones``
-      - int
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    * - ``showLocationLabels``
-      - int
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    * - ``useSimpleLocationMarkers``
-      - int
-      - Value of 0 (protobuffer default) to use simplified Location markers when number
-        of locations is greater than 100, -1 to force use of full-featured Location, 1 to
-        force use of simplified Location (no cones, range, or communication lines)
-    * - ``atmospheresOff``
-      - int
-      - Toggle to disable the atmosphere effect on celestial bodies, Value of 0 (protobuffer default to use
-        viz default, -1 for false, 1 for true.
+      - Control the display size of spacecraft in the Planet View, values greater than 0,
+        use negative value to use viz default.
     * - ``scViewToPlanetViewBoundaryMultiplier``
       - int
       - Multiplier x 1000m to set the boundary at which the spacecraft local view transitions to planet view.
         Valid range from 1 to 10 or 0 to use viz default.
+    * - ``spacecraftHelioViewSizeMultiplier``
+      - double
+      - Control the display size of spacecraft in the Solar System View, values greater than 0, use negative
+        value to use viz default.
     * - ``planetViewToHelioViewBoundaryMultiplier``
       - int
       - Multiplier x (10000 * current planet local scale) at which the planet view transitions to the solar
         system view. Valid range from 1 to 10 or 0 to use viz default.
-    * - ``sunIntensity``
-      - double
-      - Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use
-        viz default
-    * - ``attenuateSunLightWithDistance``
-      - int
-      - Toggle to reduce brightness of sun lighting with the square of the distance from the sun.
-        Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true.
-    * - ``showLightLabels``
-      - int
-      - Toggle to label spacecraft light elements, Value of 0 (protobuffer default) to use viz
-        default, -1 for false, 1 for true
     * - ``celestialBodyHelioViewSizeMultiplier``
       - double
       - Control the display size of celestial bodies in the Solar System View,
         values greater than 0, use negative value to use viz default.
-        Default value is -1 to use Vizard default value.
-    * - ``showMissionTime``
-      - int
-      - flag to show the mission time instead of the simulation time. Value of 0 (protobuffer default)
-        to use viz default, -1 for false, 1 for true
-    * - ``keyboardLiveInput``
+    * - **Lighting Settings**
+      -
+      -
+    * - ``ambient``
+      - double
+      - Float value between 0.0 and 1.0 to specify the ambient Vizard lighting.
+    * - ``spacecraftShadowBrightness``
+      - double
+      - Control the ambient light specific to spacecraft objects, value between 0 and 1, use negative value
+        to use viz default.
+    * - ``sunIntensity``
+      - double
+      - Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default.
+    * - ``attenuateSunLightWithDistance``
+      - (-1,0,1)
+      - Flag to reduce brightness of sun lighting with the square of the distance from the sun (1). Value of -1 or 0 (protobuffer default) to use viz default.
+    * - **Main Camera Settings**
+      -
+      -
+    * - ``mainCameraTarget``
       - string
-      - string of alphanumeric key inputs to listen for during 2-way communication
+      - If valid spacecraft or celestial body name is provided, the main camera will be targeted at
+        that body at start.
+    * - ``keyboardAngularRate``
+      - pos. double
+      - Non-dimensional angular rate at which the camera rotates with keyboard hot-keys.
+    * - ``keyboardZoomRate``
+      - pos. double
+      - Non-dimensional speed at which the camera zooms in and out with keyboard hot-keys.
+    * - **Playback Settings**
+      -
+      -
     * - ``messageBufferSize``
       - int
       - [bytes] Maximum size of vizMessages to be loaded into memory at one time,
-        -1 to force loading of entire file into memory, 0 to use viz default
-    * - ``truePathRelativeBody``
+        -1 to force loading of entire file into memory, 0 to use viz default.
+    * - **GUI Settings**
+      -
+      -
+    * - ``customGUIScale``
+      - pos. double
+      - GUI scaling factor, use negative value to use viz default.
+    * - ``show24hrClock``
+      - (-1,0,1)
+      - Flag to make mission date/time use a 24h clock instead of a 12h clock with AM/PM (1). Value of -1 or 0 (protobuffer default) to use viz default.
+    * - ``showDataRateDisplay``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the data rate. Value of 0 (protobuffer default) to use viz default.
+    * - ``showMissionTime``
+      - (-1,0,1)
+      - Flag to show the mission time instead of the simulation time (1). Value of -1 or 0 (protobuffer default)
+        to use viz default.
+    * - **Live Communication Settings**
+      -
+      -
+    * - ``keyboardLiveInput``
       - string
-      - String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body
-    * - ``truePathRotatingFrame``
-      - string
-      - String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
-    * - ``truePathFixedFrame``
-      - string
-      - String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
+      - String of alphanumeric key inputs to listen for during 2-way communication.
 
 
 While the prior settings are only read once during start up, the following settings are checked
@@ -285,29 +310,29 @@ The following table includes the keyword options for this method.
       - Required
       - Description
     * - ``viewThrusterPanel``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the thruster panel
+      - Show (1) or hide (-1) the thruster panel. Value of 0 (protobuffer default) to use viz default.
     * - ``viewThrusterHUD``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the thruster particle streams
+      - Show (1) or hide (-1) the thruster particle streams. Value of 0 (protobuffer default) to use viz default.
     * - ``showThrusterLabels``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the thruster labels
+      - Show (1) or hide (-1) the thruster labels. Value of 0 (protobuffer default) to use viz default.
     * - ``viewRWPanel``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the reaction wheel panel
+      - Show (1) or hide (-1) the reaction wheel panel. Value of 0 (protobuffer default) to use viz default.
     * - ``viewRWHUD``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the reaction wheel disks configuration outside the spacecraft
+      - Show (1) or hide (-1) the reaction wheel disks configuration outside the spacecraft. Value of 0 (protobuffer default) to use viz default.
     * - ``showRWLabels``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the reaction wheel labels
+      - Show (1) or hide (-1) the reaction wheel labels. Value of 0 (protobuffer default) to use viz default.
     * - ``spacecraftName``
       - string
       - No, sc name default
@@ -333,46 +358,46 @@ The following table includes the keyword options for this method.
       - Required
       - Description
     * - ``viewCSSPanel``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the CSS panel
+      - Show (1) or hide (-1) the CSS panel. Value of 0 (protobuffer default) to use viz default.
     * - ``viewCSSCoverage``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the CSS coverage spheres
+      - Show (1) or hide (-1) the CSS coverage spheres. Value of 0 (protobuffer default) to use viz default.
     * - ``viewCSSBoresight``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the CSS boresight axes
+      - Show (1) or hide (-1) the CSS boresight axes. Value of 0 (protobuffer default) to use viz default.
     * - ``showCSSLabels``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Show the CSS labels
+      - Show (1) or hide (-1) the CSS labels. Value of 0 (protobuffer default) to use viz default.
     * - ``spacecraftName``
       - string
       - No, sc name default
       - Specify which spacecraft should show actuator information. If not provided then
         the ``viz.spacecraftName`` is used.
     * - ``showGenericSensorLabels``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+      - Show (1) or hide (-1) generic sensor labels. Value of 0 (protobuffer default) to use viz default.
     * - ``showTransceiverLabels``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+      - Show (1) or hide (-1) transceiver labels. Value of 0 (protobuffer default) to use viz default.
     * - ``showTransceiverFrustrum``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+      - Show (1) or hide (-1) transceiver frustums. Value of 0 (protobuffer default) to use viz default.
     * - ``showGenericStoragePanel``
-      - Boolean
+      - (-1,0,1)
       - No
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    * - ``showMultiSphereLabels``
-      - Boolean
+      - Show (1) or hide (-1) generic storage panels. Value of 0 (protobuffer default) to use viz default.
+    * - ``showMultiShapeLabels``
+      - (-1,0,1)
       - No
-      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+      - Show (1) or hide (-1) MultiShape labels. Value of 0 (protobuffer default) to use viz default.
 
 
 Defining a Pointing Line
@@ -755,6 +780,8 @@ This functionality can be controlled by using the ``createCustomModel()`` helper
 	                            modelPath="/Users/hp/Downloads/Topex-Posidon/Topex-Posidon-composite.obj",
 	                            scale=[2, 2, 10])
 
+.. note::
+    The model path can either be defined as an absolute or relative path. When playing back from a saved binary scenario file, the relative model path will be relative to the playback file (which may be in a different location than the scenario itself). Relative paths can be particularly useful when sharing binaries with custom resources. Absolute paths are more robust for live-streaming, or scenarios where both live-streaming and saving playback files are used.
 
 The following table illustrates the arguments for the ``createCustomModel`` method.
 
@@ -771,7 +798,7 @@ The following table illustrates the arguments for the ``createCustomModel`` meth
       - string
       -
       - Yes
-      - Path to model obj -OR- "CUBE", "CYLINDER", or "SPHERE" to use a primitive shape
+      - Path to model obj (can be specified as either absolute or relative path) -OR- "CUBE", "CYLINDER", "CAPSULE", or "SPHERE" to use a primitive shape.
     * - ``simBodiesToModify``
       - string
       -
@@ -986,6 +1013,11 @@ The following table lists all required and optional arguments that can be provid
       - m
       - No
       - range of the location station, use 0 or negative value (protobuffer default) to use viz default
+    * - ``markerScale``
+      - double
+      -
+      - No
+      - Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
 
 
 Adding Generic Sensor Visualization
@@ -1767,19 +1799,19 @@ sphere has a spacecraft-fixed location and radius.  Vizard can display such sphe
 and color them using the current sphere charge value.  See :ref:`scenarioDebrisReorbitET`
 for an example of this visualization tool being used.
 
-The MSM information is added using the ``enableUnityVisualization()`` method with the
+There are also applications where it could be useful to display other shape primitives, such as cuboids, cylinders, capsules, or ellipsoids for visualizing electrostatically-charged pads and surfaces. To generalize different shape primitive use cases, the BSK/Vizard support structure is named ``MultiShape``. The MSM information is added using the ``enableUnityVisualization()`` method with the
 keyword ``msmInfoList``.  This information must be provided for each spacecraft in the
-simulation as a list of ``vizInterface.MultiSphereInfo()`` structures.
+simulation as a list of ``vizInterface.MultiShapeInfo()`` structures.
 Each craft can use a different MSM setup.  If the spacecraft has no MSM model then
 use ``None`` in the list for that spacecraft.
 
-The ``MultiSphereInfo`` structure contains the input message ``msmChargeInMsg``
+The ``MultiShapeInfo`` structure contains the input message ``msmChargeInMsg``
 where the spacecraft sphere charge values are read in from.  It also
 contains a vector of MSM configuration information structures of
-type ``MultiSphere``.  The following list show all ``MultiSphere`` structure
+type ``MultiShape``.  The following list show all ``MultiShape`` structure
 variables.
 
-.. list-table:: ``MultiSphere`` variables
+.. list-table:: ``MultiShape`` variables
     :widths: 20 10 10 10 100
     :header-rows: 1
 
@@ -1803,7 +1835,7 @@ variables.
       - double
       - meter
       - Yes
-      - radius of the sphere
+      - radius of the sphere (deprecated)
     * - ``currentValue``
       - double
       - Coulomb
@@ -1832,6 +1864,21 @@ variables.
       - No
       - desired opacity value between 0 and 255 for when charge is neutral.  Default
         is -1 which yield the Vizard default opacity value.
+    * - ``shape``
+      - string
+      -
+      - No
+      - Set shape to use "CUBE", "CYLINDER", "CAPSULE", or "SPHERE" (default)
+    * - ``dimensions``
+      - double(3)
+      - meters
+      - Yes
+      - Desired dimensions of selected shape in x, y, and z (For cylinder, z is height)
+    * - ``rotation``
+      - double(3)
+      - MRP
+      - Yes
+      - Desired orientation of the MultiShape in the spacecraft body frame
 
 
 The following code illustrates how to add support for visualizing
@@ -1840,16 +1887,16 @@ an :ref:`msmForceTorque` to emulate the charging.  The charge values are read in
 message.  The MSM body-fixed positions are stored in the list ``spPosListDebris``, while
 the MSM radii are stored in the list ``rListDebris``.  The sample code is::
 
-    msmInfoDebris = vizInterface.MultiSphereInfo()
+    msmInfoDebris = vizInterface.MultiShapeInfo()
     msmInfoDebris.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[0])
     msmDebrisList = []
     for (pos, rad) in zip(spPosListDebris, rListDebris):
-        msmDebris = vizInterface.MultiSphere()
+        msmDebris = vizInterface.MultiShape()
         msmDebris.position = pos
         msmDebris.radius = rad
         msmDebris.maxValue = 30e-6  # Coulomb
         msmDebrisList.append(msmDebris)
-    msmInfoDebris.msmList = vizInterface.MultiSphereVector(msmDebrisList)
+    msmInfoDebris.msmList = vizInterface.MultiShapeVector(msmDebrisList)
 
     viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectDebris]
                                               , saveFile=fileName
