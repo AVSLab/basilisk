@@ -240,3 +240,15 @@ void StateEffector::setPropName_vehicleGravity(std::string value)
         bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_vehicleGravity variable must be a non-empty string");
     }
 }
+
+/*! This method allows the effector to register its properties */
+void StateEffector::registerProperties(DynParamManager& states)
+{
+    return;
+}
+
+/*! This method allows the effector to link its properties */
+void StateEffector::linkInProperties(DynParamManager& properties)
+{
+    return;
+}
