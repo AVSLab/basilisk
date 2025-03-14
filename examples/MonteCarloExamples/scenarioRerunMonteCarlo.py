@@ -57,23 +57,23 @@ def run(time=None):
     """
 
     # Step 1-3: Change to the relevant scenario
-    scenarioName = "scenario_AttFeedback"
+    scenarioName = "scenario_AttFeedback"  # This is the actual scenario module name
+    mcName = "scenarioBskSimAttFeedbackMC" # This is the MC script name
 
     monteCarlo = Controller()
-    monteCarlo.numProcess = 3 # Specify number of processes to spawn
-    runsList = [1]  # Specify the run numbers to be rerun
+    monteCarlo.numProcess = 3
+    runsList = [1]
 
-    #
-    # # Generic initialization
-    icName = path + "/" + scenarioName + "MC/"
-    newDataDir = path + "/" + scenarioName + "MC/rerun"
+    # Generic initialization
+    icName = path + "/" + mcName  # Use MC script name for directory
+    newDataDir = path + "/" + mcName + "/rerun"
 
-
+    # Import the base scenario module, not the MC script
     exec('import '+ scenarioName)
-    simulationModule = eval(scenarioName + "." + scenarioName) # ex. scenarioMonteCarlo.scenarioMonteCarlo
+    simulationModule = eval(scenarioName + ".scenario_AttFeedback")  # Use the actual scenario function
     if time is not None:
-        exec (scenarioName + '.' + scenarioName + '.simBaseTime = time')  # ex. scenarioMonteCarlo.scenarioMonteCarlo.simBaseTime = time
-    executionModule = eval(scenarioName + ".runScenario") # ex. scenarioMonteCarlo.run
+        exec (scenarioName + '.scenario_AttFeedback.simBaseTime = time')
+    executionModule = eval(scenarioName + ".runScenario")
 
     monteCarlo.setSimulationFunction(simulationModule)
     monteCarlo.setExecutionFunction(executionModule)
