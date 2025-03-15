@@ -68,7 +68,7 @@ import os
 # Basilisk imports
 from Basilisk.architecture import messaging
 from Basilisk.utilities import (SimulationBaseClass, orbitalMotion, macros, RigidBodyKinematics)
-from Basilisk.simulation import (spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators, linearTranslationNDOFStateEffector, prescribedLinearTranslation)
+from Basilisk.simulation import (spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators, linearTranslationOneDOFStateEffector, prescribedLinearTranslation)
 import matplotlib.pyplot as plt
 
 # Utility imports
@@ -96,7 +96,7 @@ def run(show_plots, env):
     simProcessName = "simProcess"  # arbitrary name (don't change)
 
     # Create the simulation process and specify the integration update time
-    simulationTimeStep = macros.sec2nano(0.1)  # update process rate update time
+    simulationTimeStep = macros.sec2nano(0.01)  # update process rate update time
     dynProcess = scSim.CreateNewProcess(simProcessName)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
@@ -176,77 +176,79 @@ def run(show_plots, env):
     scObject2.hub.r_CN_NInit = r_B2N_N_0
     scObject2.hub.v_CN_NInit = rDot_B2N_N_0
     scObject2.hub.omega_BN_BInit = omega_B2N_B2_0
+    print(r_B1N_N_0)
+    print(rDot_B1N_N_0)
+    print(r_B2N_N_0)
+    print(rDot_B2N_N_0)
 
-    # Set up translating body
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
-    translatingBodyEffector.ModelTag = "translatingBodyEffector"
-    scObject1.addStateEffector(translatingBodyEffector)
-    scSim.AddModelToTask(simTaskName, translatingBodyEffector)
+    # Create a linear translating effector
+    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
 
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
-    translatingBody1.setMass(100)
-    translatingBody1.setIPntFc_F([[translatingBody1.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],
-                               [0.0, translatingBody1.getMass() / 12 * (scGeometry.diameterArm / 2) ** 2, 0.0],
-                               [0.0, 0.0, translatingBody1.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2)]])
-    translatingBody1.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody1.setR_FcF_F([[0.0], [scGeometry.heightArm / 2], [0.0]])
-    translatingBody1.setR_F0P_P([[0], [scGeometry.lengthHub / 2], [0]])
-    translatingBody1.setFHat_P([[0], [1], [0]])
-    translatingBody1.setRhoInit(0.0)
-    translatingBody1.setRhoDotInit(0.0)
-    translatingBody1.setC(400.0)
-    translatingBody1.setK(100.0)
-    translatingBodyEffector.addTranslatingBody(translatingBody1)
+    # Define properties of translating body
+    mass = 1.0
+    rhoInit = 0.0
+    rhoDotInit = 0.0
+    fHat_B = r_P2P1_B1Init/np.linalg.norm(r_P2P1_B1Init)#[[3.0 / 5.0], [4.0 / 5.0], [0.0]]
+    r_FcF_F = [[0.0], [0.0], [0.0]]#[[-1.0], [1.0], [0.0]]
+    r_F0B_B = [[0.0], [0.0], [0.0]]#r_P1B1_B1#[[-5.0], [4.0], [3.0]]
+    IPntFc_F = [[1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0]]
+    dcm_FB = [[1.0, 0.0, 0.0],
+              [0.0, 1.0, 0.0],
+              [0.0, 0.0, 1.0]]
+    k = 100.0
+    c = 10.0
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
-    translatingBody2.setMass(100)
-    translatingBody2.setIPntFc_F([[translatingBody2.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],
-                                  [0.0, translatingBody2.getMass() / 12 * (scGeometry.diameterArm / 2) ** 2, 0.0],
-                                  [0.0, 0.0, translatingBody2.getMass() / 12 * (
-                                              3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2)]])
-    translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody2.setR_FcF_F([[0.0], [scGeometry.heightArm / 2], [0.0]])
-    translatingBody2.setR_F0P_P([[0], [0], [0]])
-    translatingBody2.setFHat_P([[0], [1], [0]])
-    translatingBody2.setRhoInit(0.0)
-    translatingBody2.setRhoDotInit(0.0)
-    translatingBody2.setC(400.0)
-    translatingBody2.setK(100.0)
-    translatingBodyEffector.addTranslatingBody(translatingBody2)
+    # test1 = r_B1N_N_0 + r_P1B1_B1 + r_P2P1_B1Init - r_P2B2_B2 - r_B2N_N_0
+    # print(test1)
+    # test2 = r_B1N_N_0 + r_F0B_B + rhoInit*fHat_B - r_P2B2_B2 - r_B2N_N_0
+    # print(test2)
 
-    profiler2 = prescribedLinearTranslation.PrescribedLinearTranslation()
-    profiler2.ModelTag = "profiler"
-    profiler2.setTransAccelMax(0.0005)
-    profiler2.setTransPosInit(translatingBody2.getRhoInit())
-    profiler2.setSmoothingDuration(10)
-    scSim.AddModelToTask(simTaskName, profiler2)
-    translatingBodyEffector.translatingBodyRefInMsgs[1].subscribeTo(profiler2.linearTranslationRigidBodyOutMsg)
+    # set parameters above
+    translatingBody.setMass(mass)
+    translatingBody.setK(k)
+    translatingBody.setC(c)
+    translatingBody.setRhoInit(rhoInit)
+    translatingBody.setRhoDotInit(rhoDotInit)
+    translatingBody.setFHat_B(fHat_B)
+    translatingBody.setR_FcF_F(r_FcF_F)
+    translatingBody.setR_F0B_B(r_F0B_B)
+    translatingBody.setIPntFc_F(IPntFc_F)
+    translatingBody.setDCM_FB(dcm_FB)
 
-    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload()
-    translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
-    translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
-    translatingRigidBodyMsg2 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
-    translatingRigidBodyMsg2.this.disown()
-    profiler2.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg2)
+    lockArray = messaging.ArrayEffectorLockMsgPayload()
+    lockArray.effectorLockFlag = [1]
+    lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
+    translatingBody.motorLockInMsg.subscribeTo(lockMsg)
+
+    translatingBody.ModelTag = "translatingBody"
+
+    # Add translating body to spacecraft
+    scObject1.addStateEffector(translatingBody)
+    rhoData = translatingBody.translatingBodyOutMsg.recorder()
+    scSim.AddModelToTask(simTaskName, rhoData)
 
     # Create the constraint effector module
     constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
     # Set up the constraint effector physical parameters
     constraintEffector.setR_P1B1_B1(r_P1B1_B1)
     constraintEffector.setR_P2B2_B2(r_P2B2_B2)
-    constraintEffector.setR_P2P1_B1Init(r_P2P1_B1Init)
-    constraintEffector.setAlpha(1E2)
-    constraintEffector.setBeta(1e3)
+    constraintEffector.setR_P2P1_B1Init(r_P2P1_B1Init)#[[0.0], [0.0], [0.0]])#
+    constraintEffector.setAlpha(1E3)
+    constraintEffector.setBeta(1E3)
     constraintEffector.ModelTag = "constraintEffector"
 
     # Add the constraint to both spacecraft
-    translatingBody2.addDynamicEffector(constraintEffector)
+    translatingBody.addDynamicEffector(constraintEffector,1)
+    # scObject1.addDynamicEffector(constraintEffector)
     scObject2.addDynamicEffector(constraintEffector)
 
     # Add the modules to runtime call list
-    scSim.AddModelToTask(simTaskName, scObject1)
-    scSim.AddModelToTask(simTaskName, scObject2)
-    scSim.AddModelToTask(simTaskName, constraintEffector)
+    scSim.AddModelToTask(simTaskName, scObject1)#, ModelPriority=30)
+    scSim.AddModelToTask(simTaskName, scObject2)#, ModelPriority=30)
+    scSim.AddModelToTask(simTaskName, translatingBody)#, ModelPriority=10)
+    scSim.AddModelToTask(simTaskName, constraintEffector)#, ModelPriority=50)
 
     # Record the spacecraft states
     datLog1 = scObject1.scStateOutMsg.recorder()
@@ -269,6 +271,9 @@ def run(show_plots, env):
     sigma_B1N_hist = datLog1.sigma_BN
     r_B2N_N_hist = datLog2.r_BN_N
     sigma_B2N_hist = datLog2.sigma_BN
+
+    rho = rhoData.rho
+    rhoDot = rhoData.rhoDot
 
     # Compute constraint violations
     r_B1N_B1 = np.empty(r_B1N_N_hist.shape)
@@ -313,6 +318,18 @@ def run(show_plots, env):
     plt.title('Attitude Constraint Violation Components')
     pltName = fileName + "attitudeConstraint"
     figureList[pltName] = plt.figure(2)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(constraintTimeData, rho)
+    plt.xlabel('time (s)')
+    plt.ylabel('rho')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(constraintTimeData, rhoDot)
+    plt.xlabel('time (s)')
+    plt.ylabel('rhoDot')
 
     if show_plots:
         plt.show()
