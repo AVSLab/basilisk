@@ -35,6 +35,8 @@ Version |release|
 - Fixed a bug in the :ref:`SpacecraftLocation` module that prevented proper eclipse calculation in some cases.
 - Added support for Vizard release 2.2.2, including transition from MultiSphere to MultiShape, and SWIG structure deprecation through aliasing.
 - Fixed scenario name mismatch in :ref:`scenarioRerunMonteCarlo` that prevented rerunning example Monte Carlo simulation scenarios.
+- Fixed bug in :ref:`thrusterPlatformReference` where a DCM had an incorrect transpose operation.
+
 
 Version  2.6.0  (Feb. 21, 2025)
 -------------------------------
