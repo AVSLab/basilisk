@@ -467,7 +467,7 @@ def run(show_plots):
             range=2000.0 * 1000,  # meters
         )
 
-        # Add the Santiago target
+        # Add the Singapore target
         vizSupport.addLocation(
             viz,
             stationName="Singapore Station",
