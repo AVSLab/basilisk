@@ -8,7 +8,7 @@ clc;
 % 
 % set(groot,'DefaultFigureWindowStyle','docked'); % Dock all figures!
 
-set(groot,'defaultAxesFontSize',30); % Font size is monitor-dependent!
+set(groot,'defaultAxesFontSize',36); % Font size is monitor-dependent!
 set(groot, 'defaultLineLineWidth', 1.5);  % Axes line width
 
 % set(0, 'DefaultAxesXLimMode', 'auto');
@@ -60,7 +60,8 @@ end
 
 % Extract file name:
 [~, export_case_name, ~] = fileparts(dataPath); 
-export_plots_path = "/home/thomas/Documents/gits/basilisk-fork/dev/MultiSatBskSim/ResultPlotsMATLAB/" + export_case_name + "/";
+% export_plots_path = "/home/thomas/Documents/gits/basilisk-fork/dev/MultiSatBskSim/ResultPlotsMATLAB/" + export_case_name + "/";
+export_plots_path = "/home/thomas/Documents/gits/basilisk-fork/dev/MultiSatBskSim/ResultPlotsMATLAB_Feb2025/" + export_case_name + "/";
 
 
 %%
@@ -226,14 +227,14 @@ if controllerOn
     title(title_text_base, "Commanded Control Torque");
     legend('$L_x$','$L_y$','$L_z$');
 
-% 7) RW Actuations (motorTorque):
+% 7) RW Actuations (motorTorque): -> applied = actuated
     L_RW = squeeze(dataRW(i,:,:))'; % MATLAB `squeeze()` to reduce a dimension!
     
     fig(7) = figure('Name','L_RW'); % apply_custom_style();
     plot(t_zoom,L_RW(1:idx_t_zoom,:)); 
-    title(title_text_base, "RW Actuated Torque");
+    title(title_text_base, "RW Applied Torque");
     xlabel('Time $t \ [min]$'); 
-    ylabel('Actuated Torque $L_{RW} \ [Nm]$');
+    ylabel('Applied Torque $L_{RW} \ [Nm]$');
     legend('RW $x$','RW $y$','RW $z$'); % Currently hard-coded for 3 RWs.
 
 % 8) Combined - Cmd v.s. Applied (summing +/- components per x,y,z axis) Forces
@@ -247,15 +248,15 @@ if controllerOn
     subplot(3,1,1); plot(t_zoom, L_applied(1:idx_t_zoom,1), 'g-', t_zoom, L_cmd(1:idx_t_zoom,1), 'r--');
     title(title_text_base, "Applied v.s. Commanded Control Torque");
     xlabel('Time $t \ [min]$'); 
-    ylabel('$L_x \ [N]$');
+    ylabel('$L_x \ [Nm]$');
     legend('$L_{applied, x}$','$L_{cmd, x}$');
     subplot(3,1,2); plot(t_zoom, L_applied(1:idx_t_zoom,2), 'g-', t_zoom, L_cmd(1:idx_t_zoom,2), 'r--');
     xlabel('Time $t \ [min]$'); 
-    ylabel('$L_y \ [N]$');
+    ylabel('$L_y \ [Nm]$');
     legend('$L_{applied, y}$','$L_{cmd, y}$');
     subplot(3,1,3); plot(t_zoom, L_applied(1:idx_t_zoom,3), 'g-', t_zoom, L_cmd(1:idx_t_zoom,3), 'r--');
     xlabel('Time $t \ [min]$'); 
-    ylabel('$L_z \ [N]$');
+    ylabel('$L_z \ [Nm]$');
     legend('$L_{applied, z}$','$L_{cmd, z}$');
 
 end
