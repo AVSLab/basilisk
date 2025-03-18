@@ -817,6 +817,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     thrVec_F = np.array(thrVec_F)
 
     # Plot the results
+    plt.close("all")
     figureList = {}
     plot_attitude(timeData, dataSigmaBN, dataSigmaRN, figID=1)
     pltName = fileName+"1"+str(int(thrMomManagement))+str(int(cmEstimation))

@@ -10,3 +10,5 @@ pytest-xdist
 
 pre-commit
 clang-format
+
+psutil

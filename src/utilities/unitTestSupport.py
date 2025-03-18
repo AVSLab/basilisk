@@ -520,22 +520,36 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     ep1 = pyswice.et2utc_c(etEpoch, 'C', 6, 255, "Yo")
     pyswice.unload_c(dataPath + 'naif0012.tls')  # leap second file
 
-    # convert UTC string to datetime object
-    datetime_object = datetime.strptime(ep1, '%Y %b %d %H:%M:%S.%f')
+    try:
+        # convert UTC string to datetime object
+        datetime_object = datetime.strptime(ep1, '%Y %b %d %H:%M:%S.%f')
 
-    # populate the epochMsg with the gregorian UTC date/time information
-    epochMsgStructure = messaging.EpochMsgPayload()
-    epochMsgStructure.year = datetime_object.year
-    epochMsgStructure.month = datetime_object.month
-    epochMsgStructure.day = datetime_object.day
-    epochMsgStructure.hours = datetime_object.hour
-    epochMsgStructure.minutes = datetime_object.minute
-    epochMsgStructure.seconds = datetime_object.second + datetime_object.microsecond / 1e6
+        # Validate month is in range 1-12
+        if datetime_object.month < 1 or datetime_object.month > 12:
+            raise ValueError(f"Invalid month value: {datetime_object.month}")
 
-    epochMsg = messaging.EpochMsg().write(epochMsgStructure)
-    epochMsg.this.disown()
+        # populate the epochMsg with the gregorian UTC date/time information
+        epochMsgStructure = messaging.EpochMsgPayload()
+        epochMsgStructure.year = datetime_object.year
+        epochMsgStructure.month = datetime_object.month
+        epochMsgStructure.day = datetime_object.day
+        epochMsgStructure.hours = datetime_object.hour
+        epochMsgStructure.minutes = datetime_object.minute
+        epochMsgStructure.seconds = datetime_object.second + datetime_object.microsecond / 1e6
 
-    return epochMsg
+        epochMsg = messaging.EpochMsg().write(epochMsgStructure)
+
+        # Store the message in a global registry to prevent garbage collection
+        if not hasattr(timeStringToGregorianUTCMsg, '_msg_registry'):
+            timeStringToGregorianUTCMsg._msg_registry = []
+        timeStringToGregorianUTCMsg._msg_registry.append(epochMsg)
+
+        return epochMsg
+
+    except Exception as e:
+        print(f"Error processing date string '{ep1}': {str(e)}")
+        print(f"Original input string was: {DateSpice}")
+        raise
 
 def columnToRowList(set):
     """Loop through a column list and return a row list"""
@@ -573,4 +587,3 @@ def samplingTime(simTime, baseTimeStep, numDataPoints):
     if deltaTime < 1:
         deltaTime = 1
     return deltaTime
-
