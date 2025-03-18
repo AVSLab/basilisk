@@ -30,7 +30,7 @@
 /*! This structure is used to define the overall configuration of an entire
  thruster.  It holds the current operational data for the thruster, the
  ramp/max/min configuration data, and the physical location/orientation data for
- a thruster.*/
+ a thruster. This structure is managed using a `std::shared_ptr` to avoid duplication of configuration data across the simulation and to enable access and updates to the parameters during simulation.*/
 typedef struct
 //@cond DOXYGEN_IGNORE
 THRSimConfig

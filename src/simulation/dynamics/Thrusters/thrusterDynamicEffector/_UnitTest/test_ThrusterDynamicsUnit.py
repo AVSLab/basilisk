@@ -419,9 +419,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
             rampOffList.append(newElement)
 
         # Set up the ramps
-        thrusterSet.thrusterData[0].ThrusterOnRamp = \
+        thruster1.ThrusterOnRamp = \
             thrusterDynamicEffector.ThrusterTimeVector(rampOnList)
-        thrusterSet.thrusterData[0].ThrusterOffRamp = \
+        thruster1.ThrusterOffRamp = \
             thrusterDynamicEffector.ThrusterTimeVector(rampOffList)
 
         if rampDown == "OFF":

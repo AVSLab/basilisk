@@ -72,11 +72,13 @@ void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
 void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 {
     int idx = 0;
-    std::vector<THRSimConfig>::iterator it;
+    std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
+    std::shared_ptr<THRSimConfig> it;
 
     THROutputMsgPayload tmpThruster;
-    for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
+    for (itp = this->thrusterData.begin(); itp != this->thrusterData.end(); ++itp)
     {
+        it = *itp;
         tmpThruster = this->thrusterOutMsgs[idx]->zeroMsgPayload;
         eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
         eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
@@ -140,32 +142,32 @@ bool ThrusterDynamicEffector::ReadInputs()
  */
 void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
-    std::vector<THRSimConfig>::iterator it;
     std::vector<double>::iterator CmdIt;
+    size_t THIter = 0;
     // Iterate through the list of thruster commands that we read in.
-    for(CmdIt = NewThrustCmds.begin(), it = this->thrusterData.begin();
-        it != this->thrusterData.end(); it++, CmdIt++)
+    for(CmdIt = NewThrustCmds.begin(); CmdIt != NewThrustCmds.end(); CmdIt++)
     {
-        if(*CmdIt >= it->MinOnTime) // Check to see if we have met minimum for each thruster
+        if(*CmdIt >= this->thrusterData[THIter]->MinOnTime) // Check to see if we have met minimum for each thruster
         {
             // For each case where we are above the minimum firing request, reset the thruster
-            it->ThrustOps.ThrustOnCmd = *CmdIt;
-            it->ThrustOps.fireCounter += it->ThrustOps.ThrustFactor > 0.0
+            this->thrusterData[THIter]->ThrustOps.ThrustOnCmd = *CmdIt;
+            this->thrusterData[THIter]->ThrustOps.fireCounter += this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0
             ? 0 : 1;
         }
         else
         {
             // Will ensure that thruster shuts down once this cmd expires
-            it->ThrustOps.ThrustOnCmd = it->ThrustOps.ThrustFactor > 0.0
+            this->thrusterData[THIter]->ThrustOps.ThrustOnCmd = this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0
             ? *CmdIt : 0.0;
         }
-        it->ThrustOps.ThrusterStartTime = currentTime;
-        it->ThrustOps.PreviousIterTime = currentTime;
-        it->ThrustOps.ThrustOnRampTime = 0.0;
-        it->ThrustOps.ThrustOnSteadyTime = 0.0;
-        it->ThrustOps.ThrustOffRampTime = 0.0;
+        this->thrusterData[THIter]->ThrustOps.ThrusterStartTime = currentTime;
+        this->thrusterData[THIter]->ThrustOps.PreviousIterTime = currentTime;
+        this->thrusterData[THIter]->ThrustOps.ThrustOnRampTime = 0.0;
+        this->thrusterData[THIter]->ThrustOps.ThrustOnSteadyTime = 0.0;
+        this->thrusterData[THIter]->ThrustOps.ThrustOffRampTime = 0.0;
         // After we have assigned the firing to the internal thruster, zero the command request.
         *CmdIt = 0.0;
+        THIter++;
     }
 
 }
@@ -233,7 +235,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
 
     for(const auto& thrusterConfig : this->thrusterData) {
         if (this->fuelMass < 0.0 &&
-            (!thrusterConfig.thrBlowDownCoeff.empty() || !thrusterConfig.ispBlowDownCoeff.empty())) {
+            (!thrusterConfig->thrBlowDownCoeff.empty() || !thrusterConfig->ispBlowDownCoeff.empty())) {
             bskLogger.bskLog(BSK_WARNING,"ThrusterDynamicEffector: blow down coefficients have been "
                                           "specified, but no fuel tank is attached.");
         }
@@ -274,13 +276,14 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 	axesWeightMatrix << 2, 0, 0, 0, 1, 0, 0, 0, 1;
 
     // Loop variables
-    std::vector<THRSimConfig>::iterator it;
+    std::shared_ptr<THRSimConfig> it;
     THROperation* ops;
 
     // Iterate through all of the thrusters to aggregate the force/torque in the system
     int index;
-    for(it = this->thrusterData.begin(), index = 0; it != this->thrusterData.end(); it++, index++)
+    for(index = 0; index < this->thrusterData.size(); ++index)
     {
+        it = this->thrusterData[index];
         ops = &it->ThrustOps;
 
         // Compute the thruster properties wrt the hub (note that B refers to the F frame when extracting from the thruster info)
@@ -289,23 +292,24 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 
         // If the connected fuel tank is subject to blow down effects, update them here
         if (this->fuelMass >= 0.0 && (!it->thrBlowDownCoeff.empty() || !it->ispBlowDownCoeff.empty())) {
-            this->computeBlowDownDecay(&(*it));
+            this->computeBlowDownDecay(it);
         }
 
         // For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
         if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= -dt*10E-10 &&
            ops->ThrustOnCmd > 0.0)
         {
-            ComputeThrusterFire(&(*it), integTime);
+            ComputeThrusterFire(it, integTime);
         }
         // If we are not actively firing, continue shutdown process for active thrusters
         else if(ops->ThrustFactor > 0.0)
         {
-            ComputeThrusterShut(&(*it), integTime);
+            ComputeThrusterShut(it, integTime);
         }
 
         // For each thruster, aggregate the current thrust direction into composite body force
         tmpThrustMag = it->MaxThrust * ops->ThrustFactor * ops->thrustBlowDownFactor;
+
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = tmpThrustMag * thrustDirection_B;
@@ -351,9 +355,9 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
 
  @param newThruster thruster sim config(s)
  */
-void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster)
+void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
 {
-    this->thrusterData.push_back(*newThruster);
+    this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
     Message<THROutputMsgPayload>* msg;
@@ -377,9 +381,9 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster)
  @param newThruster thruster sim config(s)
  @param bodyStateMsg body states to which thruster(s) are attached
  */
-void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
+void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
 {
-    this->thrusterData.push_back(*newThruster);
+    this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
     Message<THROutputMsgPayload>* msg;
@@ -405,7 +409,7 @@ void ThrusterDynamicEffector::addThruster(THRSimConfig* newThruster, Message<SCS
 * tank subject to blow down effects.
 
  */
-void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster)
+void ThrusterDynamicEffector::computeBlowDownDecay(std::shared_ptr<THRSimConfig> currentThruster)
 {
     THROperation *ops = &(currentThruster->ThrustOps);
 
@@ -435,14 +439,16 @@ void ThrusterDynamicEffector::computeBlowDownDecay(THRSimConfig *currentThruster
 /*! This method computes contributions to the fuel mass depletion. */
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
 
-    std::vector<THRSimConfig>::iterator it;
+    std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
+    std::shared_ptr<THRSimConfig> it;
     THROperation *ops;
     double mDotSingle=0.0;
     this->mDotTotal = 0.0;
 	this->stateDerivContribution.setZero();
     // Iterate through all of the thrusters to aggregate the force/torque in the system
-    for(it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
+    for(itp = this->thrusterData.begin(); itp != this->thrusterData.end(); itp++)
     {
+        it = *itp;
         ops = &it->ThrustOps;
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor > 0.0)
@@ -464,7 +470,7 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterFire(std::shared_ptr<THRSimConfig> CurrentThruster,
                                                   double currentTime)
 {
     std::vector<THRTimePair>::iterator it;
@@ -523,7 +529,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRSimConfig *CurrentThruster,
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterShut(std::shared_ptr<THRSimConfig> CurrentThruster,
                                                   double currentTime)
 {
     std::vector<THRTimePair>::iterator it;
@@ -576,7 +582,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRSimConfig *CurrentThruster,
  @param thrData The data for the thruster that we are currently firing
  @param thrRamp This just allows us to avoid switching to figure out which ramp
  */
-double ThrusterDynamicEffector::thrFactorToTime(THRSimConfig *thrData,
+double ThrusterDynamicEffector::thrFactorToTime(std::shared_ptr<THRSimConfig> thrData,
                                                 std::vector<THRTimePair> *thrRamp)
 {
     std::vector<THRTimePair>::iterator it;
