@@ -57,6 +57,7 @@ public:
                                       Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
     void addStateEffector(StateEffector *newStateEffector);          //!< Method to attach a state effector
+    void prependSpacecraftNameToStates() override;                   //!< Method used for multiple spacecraft
 
     double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                        //!< [kg] Effector mass
@@ -87,7 +88,6 @@ private:
 
     // Given quantities from user in python
     Eigen::Matrix3d IPntFc_B;                           //!< [kg-m^2] Inertia of the effector about its center of mass in B frame components
-    Eigen::Vector3d r_FB_B;                             //!< [m] Position of point F relative to point B in B frame components
     Eigen::Vector3d r_FcF_B;                            //!< [m] Position of the effector center of mass relative to point F in B frame components
 
     // Prescribed parameters in body frame components
@@ -127,6 +127,14 @@ private:
     Eigen::MatrixXd* sigma_FN;                           //!< MRP attitude of frame F relative to the inertial frame
     Eigen::MatrixXd* omega_FN_F;                         //!< [rad/s] Angular velocity of frame F relative to the inertial frame in F frame components
 
+    // Effector prescribed properties
+    Eigen::MatrixXd* r_FB_B;
+    Eigen::MatrixXd* rPrime_FB_B;
+    Eigen::MatrixXd* rPrimePrime_FB_B;
+    Eigen::MatrixXd* sigma_FB;
+    Eigen::MatrixXd* omega_FB_F;
+    Eigen::MatrixXd* omegaPrime_FB_F;
+
     // Hub states
     Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;          //!< [m] v_N Inertial velocity relative to system spice zeroBase/refBase
@@ -146,6 +154,13 @@ private:
     std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
     std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
 
+    std::string nameOfPrescribedPositionProperty;
+    std::string nameOfPrescribedVelocityProperty;
+    std::string nameOfPrescribedAccelerationProperty;
+    std::string nameOfPrescribedAttitudeProperty;
+    std::string nameOfPrescribedAngVelocityProperty;
+    std::string nameOfPrescribedAngAccelerationProperty;
+
     template <typename Type>
     /** Assign the state engine parameter names */
     void assignStateParamNames(Type effector) {
@@ -153,6 +168,13 @@ private:
         effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
         effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
         effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+
+        effector->setPropName_prescribedPosition(this->nameOfPrescribedPositionProperty);
+        effector->setPropName_prescribedVelocity(this->nameOfPrescribedVelocityProperty);
+        effector->setPropName_prescribedAcceleration(this->nameOfPrescribedAccelerationProperty);
+        effector->setPropName_prescribedAttitude(this->nameOfPrescribedAttitudeProperty);
+        effector->setPropName_prescribedAngVelocity(this->nameOfPrescribedAngVelocityProperty);
+        effector->setPropName_prescribedAngAcceleration(this->nameOfPrescribedAngAccelerationProperty);
     };
 
 };

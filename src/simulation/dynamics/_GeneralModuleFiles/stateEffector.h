@@ -125,6 +125,31 @@ public:
     /** getter for `propName_vehicleGravity` property */
     const std::string getPropName_vehicleGravity() const { return this->propName_vehicleGravity; }
 
+    /** setter for `propName_prescribedPosition` property */
+    void setPropName_prescribedPosition(std::string value);
+    /** getter for `propName_prescribedPosition` property */
+    const std::string getPropName_prescribedPosition() const { return this->propName_prescribedPosition; }
+    /** setter for `propName_prescribedVelocity` property */
+    void setPropName_prescribedVelocity(std::string value);
+    /** getter for `propName_prescribedVelocity` property */
+    const std::string getPropName_prescribedVelocity() const { return this->propName_prescribedVelocity; }
+    /** setter for `propName_prescribedAcceleration` property */
+    void setPropName_prescribedAcceleration(std::string value);
+    /** getter for `propName_prescribedAcceleration` property */
+    const std::string getPropName_prescribedAcceleration() const { return this->propName_prescribedAcceleration; }
+    /** setter for `propName_prescribedAttitude` property */
+    void setPropName_prescribedAttitude(std::string value);
+    /** getter for `propName_prescribedAttitude` property */
+    const std::string getPropName_prescribedAttitude() const { return this->propName_prescribedAttitude; }
+    /** setter for `propName_prescribedAngVelocity` property */
+    void setPropName_prescribedAngVelocity(std::string value);
+    /** getter for `propName_prescribedAngVelocity` property */
+    const std::string getPropName_prescribedAngVelocity() const { return this->propName_prescribedAngVelocity; }
+    /** setter for `propName_prescribedAngAcceleration` property */
+    void setPropName_prescribedAngAcceleration(std::string value);
+    /** getter for `propName_prescribedAngAcceleration` property */
+    const std::string getPropName_prescribedAngAcceleration() const { return this->propName_prescribedAngAcceleration; }
+
     BSKLogger bskLogger;                   //!< BSK Logging
 
 public:
@@ -140,7 +165,7 @@ public:
     virtual void registerStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to register states
     virtual void registerProperties(DynParamManager& states);  //!< Method for stateEffectors to register properties
     virtual void linkInStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to get other states
-    virtual void linkInProperties(DynParamManager& properties);  //!< Method to get access to other properties/stateEffectors
+//    virtual void linkInProperties(DynParamManager& properties);  //!< Method to get access to other properties/stateEffectors
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates();
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP); //!< class method
@@ -164,6 +189,12 @@ protected:
     std::string propName_inertialAngVelocity = "";                  //!< property name of inertialAngVelocity
     std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
 
+    std::string propName_prescribedPosition = "";
+    std::string propName_prescribedVelocity = "";
+    std::string propName_prescribedAcceleration = "";
+    std::string propName_prescribedAttitude = "";
+    std::string propName_prescribedAngVelocity = "";
+    std::string propName_prescribedAngAcceleration = "";
 };
 
 

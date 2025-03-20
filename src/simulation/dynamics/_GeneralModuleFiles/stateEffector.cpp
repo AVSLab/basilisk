@@ -261,14 +261,74 @@ void StateEffector::setPropName_vehicleGravity(std::string value)
     }
 }
 
+void StateEffector::setPropName_prescribedPosition(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedPosition = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedPosition variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedVelocity variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAcceleration(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAcceleration = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAcceleration variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAttitude(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAttitude = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAttitude variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAngVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAngVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAngVelocity variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAngAcceleration(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAngAcceleration = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAngAcceleration variable must be a non-empty string");
+    }
+}
+
 /*! This method allows the effector to register its properties */
 void StateEffector::registerProperties(DynParamManager& states)
 {
     return;
 }
 
-/*! This method allows the effector to link its properties */
-void StateEffector::linkInProperties(DynParamManager& properties)
-{
-    return;
-}
+///*! This method allows the effector to link its properties */
+//void StateEffector::linkInProperties(DynParamManager& properties)
+//{
+//    return;
+//}
