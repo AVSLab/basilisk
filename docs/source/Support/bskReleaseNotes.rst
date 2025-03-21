@@ -47,6 +47,8 @@ Version |release|
   upgrading from previous versions must update their scripts to store these objects on their
   simulation instance to prevent segmentation faults. Once again, this change replaces the previous use of
   ``.disown()`` with a more robust memory management approach.
+- Added comprehensive unit tests for :ref:`avsEigenSupport` including tests for vector and matrix operations
+  and conversions.
 
 
 Version  2.6.0  (Feb. 21, 2025)
