@@ -69,7 +69,7 @@ jobs:
         - uses: actions/upload-artifact@v4
           with:
             name: basilisk-wheels_ubuntu-22.04_python${{ matrix.python-version }}
-            path: /tmp/wheelhouse/**/Basilisk*.whl
+            path: /tmp/wheelhouse/**/*asilisk*.whl
 
 
     build_documentation:
