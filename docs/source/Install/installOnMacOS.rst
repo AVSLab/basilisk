@@ -61,25 +61,6 @@ Install HomeBrew Support Packages
 
    $ brew install swig
 
-
-Setting up the Python Environment
----------------------------------
-
-.. Note:: The following instructions recommend installing all the required python packages
-   either in a virtual environment or in the user ``~/Library/Python`` folder. This has the benefit that
-   no ``sudo`` command is required to install and run Basilisk, and the user Python folder can readily
-   be replaced if needed. If you are familiar with python you can install in other locations as well.
-
-.. Note:: If you wish to use the HomeBrew version of python, or generally have multiple copies of
-   python installed on your system, configure the CMake Python paths as described in
-   :ref:`customPython` after following these instructions.
-
-.. Note:: We suggest you remove any other python packages (such as Anaconda), or change the path in
-   your terminal shell if you really want to keep it.
-
-In the following instructions, be sure to follow the sequence of tasks as outlined below.
-
-
 Using A Python Virtual Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. attention:: We strongly recommend using a python virtual environment while installing basilisk or running basilisk modules.
@@ -144,7 +125,7 @@ When all the prerequisite installations are complete, the project can be built a
 
    .. Note:: If you wish to use the another version of python 3 configure the Python paths in :ref:`customPython`
 
-   .. Warning:: If you get an error message in `cmake` saying it can’t find the compiler tools, open a Terminal window and type::
+   .. Warning:: If you get an error message in ``cmake`` saying it can’t find the compiler tools, open a Terminal window and type::
 
         $ xcode-select -p
 
