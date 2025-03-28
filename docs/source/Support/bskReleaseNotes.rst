@@ -49,6 +49,8 @@ Version |release|
   ``.disown()`` with a more robust memory management approach.
 - Added comprehensive unit tests for :ref:`avsEigenSupport` including tests for vector and matrix operations
   and conversions.
+- Updated install requirements to not manually install ``cmake``, but have it installed with pip by including it
+  in ``requirements_dev.txt``.  A ``conan`` dependency requires Basilisk to use ``cmake<4.0`` for now.
 
 
 Version  2.6.0  (Feb. 21, 2025)
