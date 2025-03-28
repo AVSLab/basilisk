@@ -1,4 +1,5 @@
 wheel
+cmake<4.0
 conan>2.0.5
 packaging>=22
 setuptools>=70.1.0
