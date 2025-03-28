@@ -118,8 +118,13 @@ extensions = [
     'sphinx.ext.napoleon',
     "sphinx_rtd_theme",
     'recommonmark',
-    'breathe'
+    'breathe',
+    'sphinx_copybutton'
 ]
+
+# filter out terminal prompt text from the code blocks
+copybutton_prompt_text = r"\(\.venv\) \$ |\$ "
+copybutton_prompt_is_regexp = True
 
 breathe_doxygen_config_options = {
     'WARN_AS_ERROR': 'YES'
