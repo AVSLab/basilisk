@@ -61,11 +61,6 @@ Install HomeBrew Support Packages
 
    $ brew install swig
 
-#. If you want to install the HomeBrew version of ``cmake``, you can do so with::
-
-   $ brew install cmake
-   $ brew link cmake
-
 
 Setting up the Python Environment
 ---------------------------------

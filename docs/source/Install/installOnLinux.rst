@@ -12,7 +12,6 @@ Software setup
 
 In order to run Basilisk, the following software will be necessary. This document outline how to install this support software.
 
--  `Cmake <https://cmake.org/>`__ 3.14 or higher
 -  `Python <https://www.python.org/>`__ 3.8 to 3.12
 -  `SWIG <http://www.swig.org/>`__ (version 4.x)
 -  `GCC <https://gcc.gnu.org/>`__
@@ -179,11 +178,6 @@ Python Environment
        (.venv) $ pip3 install -r requirements_dev.txt
 
    The ``conan`` repositories information is automatically setup by ``conanfile.py``.
-
-#. CMake: You can install cmake using pip3.  This makes it easy to overcome limitations of which version of ``cmake``
-   the ``apt-get`` command provides::
-
-       (.venv) $ pip3 install cmake
 
 #. Note, if are you not using a virtual environment and you choose to install python packages
    local in your user directory ``.local`` folder, be sure to add
