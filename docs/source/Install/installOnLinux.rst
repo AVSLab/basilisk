@@ -168,22 +168,22 @@ Python Environment
 
         $ source .venv/bin/activate
 
-     The above step will add (venv) before the prompt.
+     The above step will add (.venv) before the prompt.
 
    - Deactivate the virtual environment to return to the normal operating system environment::
 
-        (venv) $ deactivate
+        (.venv) $ deactivate
 
 #. Ensure all build related pip packages are installed::
 
-       (venv) $ pip3 install -r requirements_dev.txt
+       (.venv) $ pip3 install -r requirements_dev.txt
 
    The ``conan`` repositories information is automatically setup by ``conanfile.py``.
 
 #. CMake: You can install cmake using pip3.  This makes it easy to overcome limitations of which version of ``cmake``
    the ``apt-get`` command provides::
 
-       (venv) $ pip3 install cmake
+       (.venv) $ pip3 install cmake
 
 #. Note, if are you not using a virtual environment and you choose to install python packages
    local in your user directory ``.local`` folder, be sure to add
@@ -196,7 +196,7 @@ Build Process via Terminal
 #. The ``conanfile.py`` will setup, configure and run the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::
 
-        (venv) $ python3 conanfile.py
+        (.venv) $ python3 conanfile.py
 
    For other configure and build options, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
@@ -209,7 +209,7 @@ Build Process via Terminal
       current directory.
    -  Run one of the example scripts, such as::
 
-       (venv) $ python3 scenarioBasicOrbit.py
+       (.venv) $ python3 scenarioBasicOrbit.py
 
 
 Building the Project Separately
@@ -224,8 +224,8 @@ If you are developing new modules you often just want to configure the Basilisk 
 
 #. Next, move to the distribution folder to build using a makefile::
 
-        (venv) $ cd dist3
+        (.venv) $ cd dist3
 
 #. You can do a multi core make by running ``make -j<number of cores +1>`` such as::
 
-       (venv) $ make -j5
+       (.venv) $ make -j5

@@ -181,7 +181,7 @@ using:
 
 #. Set the ``buildProject`` argument to ``False`` using::
 
-    (venv) $ python3 conanfile.py --buildProject False
+    (.venv) $ python3 conanfile.py --buildProject False
 
 #. Open the Xcode project file inside ``dist3``.  This is ``basilisk.xcodeproj`` on macOS.
 

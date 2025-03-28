@@ -113,11 +113,11 @@ steps work regardless if done within a virtual environment or not.
 
      $ .venv\Scripts\activate
 
-   If the virtual environment is activated, users will see (venv) before the prompt
+   If the virtual environment is activated, users will see (.venv) before the prompt
 
 #. Deactivate the virtual environment to return to the normal operating system environment::
 
-     (venv) $ deactivate
+     (.venv) $ deactivate
 
 
 Installing required python support packages
@@ -126,7 +126,7 @@ Installing required python support packages
 #. Basilisk uses conan for package managing. In order to do so, users
    must first install all build related pip packages using::
 
-       (venv) $ pip install -r requirements_dev.txt
+       (.venv) $ pip install -r requirements_dev.txt
 
    The ``conan`` repositories information is automatically setup by ``conanfile.py``.
 
@@ -146,7 +146,7 @@ When all the prerequisite installations are complete, the project can be built a
 #. The ``conanfile.py`` will setup, configure and run the Basilisk build.  For a basic installation,
    from the root Basilisk folder use::
 
-    (venv) $ python conanfile.py
+    (.venv) $ python conanfile.py
 
    This creates the Visual Studio 16 2019 IDE project in ``dist3`` and builds the project.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.
@@ -174,7 +174,7 @@ When all the prerequisite installations are complete, the project can be built a
       current directory.
    -  Run one of the tutorial scenarios, such as::
 
-       (venv) $ python scenarioBasicOrbit.py
+       (.venv) $ python scenarioBasicOrbit.py
 
 
 
