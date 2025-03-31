@@ -50,7 +50,13 @@ def addTimeColumn(time, data):
                                       ])
 def test_spacecraftSystemAllTest(show_plots, function):
     """Module Unit Test"""
-    [testResults, testMessage] = eval(function + '(show_plots)')
+    func = globals().get(function)
+
+    if func is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    [testResults, testMessage] = func(show_plots)
+
     assert testResults < 1, testMessage
 
 

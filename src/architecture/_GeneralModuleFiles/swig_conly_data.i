@@ -250,7 +250,12 @@ ARRAY2ASLIST(bool, PyBool_FromLong, PyObject_IsTrue)
 
 def getStructSize(self):
     try:
-        return eval('sizeof_' + repr(self).split(';')[0].split('.')[-1])
+        class_name = repr(self).split(';')[0].split('.')[-1]
+        sizeof_variable_name = 'sizeof_' + class_name
+        size = globals().get(sizeof_variable_name)
+
+        if size is None:
+            raise ValueError(f"{sizeof_variable_name} not found in globals()")
     except (NameError) as e:
         typeString = 'sizeof_' + repr(self).split(';')[0].split('.')[-1]
         raise NameError(e.message + '\nYou tried to get this size macro: ' + typeString +

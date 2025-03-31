@@ -87,7 +87,7 @@ class thrusterFactory(object):
 
         # populate the thruster object with the type specific parameters
         try:
-            eval('self.' + thrusterType + '(TH)')
+            getattr(self, thrusterType)(TH)
         except:
             print('ERROR: Thruster type ' + thrusterType + ' is not implemented')
             exit(1)

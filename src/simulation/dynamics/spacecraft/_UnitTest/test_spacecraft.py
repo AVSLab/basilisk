@@ -59,12 +59,18 @@ def addTimeColumn(time, data):
                                       ])
 def test_spacecraftAllTest(show_plots, function):
     """Module Unit Test"""
+    func = globals().get(function)
+
+    if func is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
     if function == "scOptionalRef":
-        [testResults, testMessage] = eval(function + '(show_plots, 1e-3)')
-    elif function == "scAccumDV" or function == "scAccumDVExtForce":
-        [testResults, testMessage] = eval(function + '()')
+        [testResults, testMessage] = func(show_plots, 1e-3)
+    elif function in ["scAccumDV", "scAccumDVExtForce"]:
+        [testResults, testMessage] = func()
     else:
-        [testResults, testMessage] = eval(function + '(show_plots)')
+        [testResults, testMessage] = func(show_plots)
+
     assert testResults < 1, testMessage
 
 

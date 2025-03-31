@@ -54,7 +54,12 @@ from Basilisk.architecture import messaging
                                       ])
 def test_hingedRigidBody(show_plots, function):
     """Module Unit Test"""
-    [testResults, testMessage] = eval(function + '(show_plots)')
+    testFunction = globals().get(function)
+
+    if testFunction is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    [testResults, testMessage] = testFunction(show_plots)
     assert testResults < 1, testMessage
 
 @pytest.mark.parametrize("useScPlus", [True, False])
@@ -296,18 +301,18 @@ def hingedRigidBodyNoGravity(show_plots):
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter  
+    testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraftSystem.SpacecraftSystem()
     scObject.ModelTag = "spacecraftBody"
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -360,7 +365,7 @@ def hingedRigidBodyNoGravity(show_plots):
 
     dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
-    
+
     scLog = pythonVariableLogger.PythonVariableLogger({
         "totOrbEnergy": lambda _: scObject.primaryCentralSpacecraft.totOrbEnergy,
         "totOrbAngMomPntN_N": lambda _: scObject.primaryCentralSpacecraft.totOrbAngMomPntN_N,
@@ -878,7 +883,7 @@ def hingedRigidBodyThetaSS(show_plots):
     PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
     format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-    
+
     if show_plots:
         plt.show()
     plt.close("all")

@@ -61,7 +61,10 @@ def Honeywell_HR16(maxMomentum_level):
     else:
         raise ValueError('Honeywell_HR16(maxMomentum_level) only has arg options maxMomentum = [large, medium, small]')
 
-    maxMomentum = eval('maxMomentum_'+ maxMomentum_level)
+    maxMomentum = globals().get('maxMomentum_' + maxMomentum_level)
+    if maxMomentum is None:
+        raise ValueError(f"maxMomentum_{maxMomentum_level} not found")
+
     return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d, maxMomentum)
 
 

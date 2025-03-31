@@ -99,7 +99,7 @@ void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *confi
      * Read the input message and initialize output message.
      */
     RWSpeedMsgPayload rwSpeedsInMsgBuffer = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
-    CmdTorqueBodyMsgPayload tauMtbRequestOutMsgBuffer = CmdTorqueBodyMsg_C_zeroMsgPayload(&configData->tauMtbRequestOutMsg);
+    CmdTorqueBodyMsgPayload tauMtbRequestOutMsgBuffer = CmdTorqueBodyMsg_C_zeroMsgPayload();
 
     /*! - Compute wheel momentum in Body frame components by calculating it first in the wheel frame and then
          transforming it from the wheel space into the body frame using Gs.*/

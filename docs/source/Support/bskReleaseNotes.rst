@@ -51,6 +51,9 @@ Version |release|
   and conversions.
 - Updated install requirements to not manually install ``cmake``, but have it installed with pip by including it
   in ``requirements_dev.txt``.  A ``conan`` dependency requires Basilisk to use ``cmake<4.0`` for now.
+- Add support for python 3.13 by removing the use of ``eval()`` and most ``exec()`` methods,
+  rewrote ``methodizeEvent()`` in ``SimulationBaseClass.py``.  If you use python 3.13+ the
+  scope of the ``eval()`` method has changed (see https://peps.python.org/pep-0667/).
 
 
 Version  2.6.0  (Feb. 21, 2025)

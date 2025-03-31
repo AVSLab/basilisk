@@ -67,7 +67,12 @@ def test_spinningBody(show_plots, function):
 
     against their initial values.
     """
-    eval(function + '(show_plots)')
+    func = globals().get(function)
+
+    if func is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
+    func(show_plots)
 
 
 def spinningBodyNoInput(show_plots):

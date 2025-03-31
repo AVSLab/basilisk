@@ -71,12 +71,18 @@ def test_translatingBody(show_plots, function):
 
     should be constant when tested against their initial values.
     """
+
+    func = globals().get(function)
+
+    if func is None:
+        raise ValueError(f"Function '{function}' not found in global scope")
+
     if function == "translatingBodyCommandedForce":
-        eval(function + '(show_plots, 1.0)')
+        func(show_plots, 1.0)
     elif function == "translatingBodyRhoReference":
-        eval(function + '(show_plots, 0.5)')
+        func(show_plots, 0.5)
     else:
-        eval(function + '(show_plots)')
+        func(show_plots)
 
 
 # rho ref and cmd force are zero, no lock flag
