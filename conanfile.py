@@ -211,8 +211,6 @@ class BasiliskConan(ConanFile):
         if self.settings.get_safe("build_type") == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
-        self.options['zeromq'].encryption = False  # Basilisk does not use data streaming encryption.
-
         # Install additional opencv methods
         if self.options.get_safe("opNav"):
             self.options['opencv'].contrib = True
@@ -227,7 +225,8 @@ class BasiliskConan(ConanFile):
             self.options["*"].shared = True
 
         # Other dependency options
-        self.options['zeromq'].encryption = False # Basilisk does not use data streaming encryption.
+        if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
+            self.options['zeromq'].encryption = False # Basilisk does not use data streaming encryption.
 
 
     def package_id(self):
