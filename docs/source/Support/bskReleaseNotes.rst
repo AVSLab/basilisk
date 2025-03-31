@@ -146,6 +146,8 @@ Version  2.6.0  (Feb. 21, 2025)
 - Download ``cspice`` using ``conan`` instead of providing custom libraries.  This ensures all platforms are using
   the same version of ``cspice``.
 - Ensured that the ability to designate an external BSK folder still works with ``conan2``
+- Added a fix for the message subscription bug in which the message data was not retained after going out of scope.
+- Added unit test for message subscription and message data retention after going out of scope to ``test_messaging.py``.
 
 
 Version 2.5.0 (Sept. 30, 2024)
