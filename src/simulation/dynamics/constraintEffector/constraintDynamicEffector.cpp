@@ -288,93 +288,116 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
  */
 void ConstraintDynamicEffector::computeForceTorque(double integTime, double timeStep)
 {
-    if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
-        // alternate assigning the constraint force and torque
-        if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
-            Eigen::Vector3d r_B1N_N;
-            Eigen::Vector3d rDot_B1N_N;
-            Eigen::Vector3d omega_B1N_B1;
-            Eigen::MRPd sigma_B1N;
-            Eigen::Vector3d r_B2N_N;
-            Eigen::Vector3d rDot_B2N_N;
-            Eigen::Vector3d omega_B2N_B2;
-            Eigen::MRPd sigma_B2N;
-            if (this->parent1.parentType == "hub") {
-                // - Collect states from parent spacecraft hub
-                r_B1N_N = this->hubPosition[parent1.idx]->getState();
-                rDot_B1N_N = this->hubVelocity[parent1.idx]->getState();
-                omega_B1N_B1 = this->hubOmega[parent1.idx]->getState();
-                sigma_B1N = (Eigen::Vector3d)this->hubSigma[parent1.idx]->getState();
-            } else if (this->parent1.parentType == "effector") {
-                // - Collect properties from parent effector
-                r_B1N_N = *this->inertialPositionProperty[parent1.idx];
-                rDot_B1N_N = *this->inertialVelocityProperty[parent1.idx];
-                omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1.idx];
-                sigma_B1N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent1.idx];
+    if (this->effectorStatus){
+        if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
+            // alternate assigning the constraint force and torque
+            if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
+                Eigen::Vector3d r_B1N_N;
+                Eigen::Vector3d rDot_B1N_N;
+                Eigen::Vector3d omega_B1N_B1;
+                Eigen::MRPd sigma_B1N;
+                Eigen::Vector3d r_B2N_N;
+                Eigen::Vector3d rDot_B2N_N;
+                Eigen::Vector3d omega_B2N_B2;
+                Eigen::MRPd sigma_B2N;
+
+                // std::cout << "this->parent1.parentType = " << this->parent1.parentType << std::endl;
+                // std::cout << "this->parent2.parentType = " << this->parent2.parentType << std::endl;
+                if (this->parent1.parentType == "hub") {
+                    // - Collect states from parent spacecraft hub
+                    r_B1N_N = this->hubPosition[parent1.idx]->getState();
+                    rDot_B1N_N = this->hubVelocity[parent1.idx]->getState();
+                    omega_B1N_B1 = this->hubOmega[parent1.idx]->getState();
+                    sigma_B1N = (Eigen::Vector3d)this->hubSigma[parent1.idx]->getState();
+                } else if (this->parent1.parentType == "effector") {
+                    // - Collect properties from parent effector
+                    r_B1N_N = *this->inertialPositionProperty[parent1.idx];
+                    rDot_B1N_N = *this->inertialVelocityProperty[parent1.idx];
+                    omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1.idx];
+                    sigma_B1N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent1.idx];
+                }
+                if (this->parent2.parentType == "hub") {
+                    r_B2N_N = this->hubPosition[parent2.idx]->getState();
+                    rDot_B2N_N = this->hubVelocity[parent2.idx]->getState();
+                    omega_B2N_B2 = this->hubOmega[parent2.idx]->getState();
+                    sigma_B2N = (Eigen::Vector3d)this->hubSigma[parent2.idx]->getState();
+                } else if (this->parent2.parentType == "effector") {
+                    r_B2N_N = *this->inertialPositionProperty[parent2.idx];
+                    rDot_B2N_N = *this->inertialVelocityProperty[parent2.idx];
+                    omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2.idx];
+                    sigma_B2N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent2.idx];
+                }
+
+                // computing direction constraint psi in the N frame
+                Eigen::Matrix3d dcm_B1N = (sigma_B1N.toRotationMatrix()).transpose();
+                Eigen::Matrix3d dcm_B2N = (sigma_B2N.toRotationMatrix()).transpose();
+                Eigen::Vector3d r_P1B1_N = dcm_B1N.transpose() * this->r_P1B1_B1;
+                Eigen::Vector3d r_P2B2_N = dcm_B2N.transpose() * this->r_P2B2_B2;
+                Eigen::Vector3d r_P2P1_N = r_P2B2_N + r_B2N_N - r_P1B1_N - r_B1N_N;
+
+                // std::cout << "r_P1B1_N = " << r_P1B1_N.transpose() << std::endl;
+                // std::cout << "r_P2B2_N = " << r_P2B2_N.transpose() << std::endl;
+                // std::cout << "r_B2N_N = " << r_B2N_N.transpose() << std::endl;
+                // std::cout << "r_B1N_N = " << r_B1N_N.transpose() << std::endl;
+
+                // computing length constraint rate of change psiPrime in the N frame
+                Eigen::Vector3d rDot_P1B1_B1 = omega_B1N_B1.cross(this->r_P1B1_B1);
+                Eigen::Vector3d rDot_P2B2_B2 = omega_B2N_B2.cross(this->r_P2B2_B2);
+                Eigen::Vector3d rDot_P1N_N = dcm_B1N.transpose() * rDot_P1B1_B1 + rDot_B1N_N;
+                Eigen::Vector3d rDot_P2N_N = dcm_B2N.transpose() * rDot_P2B2_B2 + rDot_B2N_N;
+                Eigen::Vector3d rDot_P2P1_N = rDot_P2N_N - rDot_P1N_N;
+                Eigen::Vector3d omega_B1N_N = dcm_B1N.transpose() * omega_B1N_B1;
+
+                // calculate the direction constraint violations
+                this->psi_N = r_P2P1_N - dcm_B1N.transpose() * this->r_P2P1_B1Init;
+                this->psiPrime_N = rDot_P2P1_N - omega_B1N_N.cross(r_P2P1_N);
+
+                // std::cout << "psi_N = " << this->psi_N.transpose() << std::endl;
+                // std::cout << "r_P2P1_N = " << r_P2P1_N.transpose() << std::endl;
+                //std::cout << "r_P2P1_B1Init = " << this->r_P2P1_B1Init.transpose() << std::endl;
+
+                // calculate the attitude constraint violations
+                this->sigma_B2B1 = eigenC2MRP(dcm_B2N * dcm_B1N.transpose()); // calculate the difference in attitude
+                Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
+                this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
+
+                // calculate the constraint force
+                this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
+                this->forceExternal_N = this->Fc_N;
+
+                //std::cout << "Fc_N = " << this->Fc_N.transpose() << std::endl;
+
+                // calculate the torque on each spacecraft from the direction constraint
+                Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
+                Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
+                Eigen::Vector3d Fc_B2 = (dcm_B2N * this->Fc_N);
+                Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
+
+                //std::cout << "Fc_B1 = " << Fc_B1.transpose() << std::endl;
+                //std::cout << "Fc_B2 = " << Fc_B2.transpose() << std::endl;
+
+                // calculate the constraint torque imparted on each spacecraft from the attitude constraint
+                Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
+                Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(sigma_B2B1) - this->c_a * 0.25 * sigma_B2B1.Bmat() * omega_B2B1_B2;
+                Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
+                this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
+
+                // assign forces and torques for spacecraft 1
+                this->forceExternal_N = this->Fc_N;
+                this->torqueExternalPntB_B = L_B1_len + L_B1_att;
+                this->T_B1 = this->torqueExternalPntB_B;
             }
-            if (this->parent2.parentType == "hub") {
-                r_B2N_N = this->hubPosition[parent2.idx]->getState();
-                rDot_B2N_N = this->hubVelocity[parent2.idx]->getState();
-                omega_B2N_B2 = this->hubOmega[parent2.idx]->getState();
-                sigma_B2N = (Eigen::Vector3d)this->hubSigma[parent2.idx]->getState();
-            } else if (this->parent2.parentType == "effector") {
-                r_B2N_N = *this->inertialPositionProperty[parent2.idx];
-                rDot_B2N_N = *this->inertialVelocityProperty[parent2.idx];
-                omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2.idx];
-                sigma_B2N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent2.idx];
+            else if (this->scID == 1) {
+                // assign forces and torques for spacecraft 2
+                this->forceExternal_N = -this->Fc_N;
+                this->torqueExternalPntB_B = this->T_B2;
             }
-
-            // computing direction constraint psi in the N frame
-            Eigen::Matrix3d dcm_B1N = (sigma_B1N.toRotationMatrix()).transpose();
-            Eigen::Matrix3d dcm_B2N = (sigma_B2N.toRotationMatrix()).transpose();
-            Eigen::Vector3d r_P1B1_N = dcm_B1N.transpose() * this->r_P1B1_B1;
-            Eigen::Vector3d r_P2B2_N = dcm_B2N.transpose() * this->r_P2B2_B2;
-            Eigen::Vector3d r_P2P1_N = r_P2B2_N + r_B2N_N - r_P1B1_N - r_B1N_N;
-
-            // computing length constraint rate of change psiPrime in the N frame
-            Eigen::Vector3d rDot_P1B1_B1 = omega_B1N_B1.cross(this->r_P1B1_B1);
-            Eigen::Vector3d rDot_P2B2_B2 = omega_B2N_B2.cross(this->r_P2B2_B2);
-            Eigen::Vector3d rDot_P1N_N = dcm_B1N.transpose() * rDot_P1B1_B1 + rDot_B1N_N;
-            Eigen::Vector3d rDot_P2N_N = dcm_B2N.transpose() * rDot_P2B2_B2 + rDot_B2N_N;
-            Eigen::Vector3d rDot_P2P1_N = rDot_P2N_N - rDot_P1N_N;
-            Eigen::Vector3d omega_B1N_N = dcm_B1N.transpose() * omega_B1N_B1;
-
-            // calculate the direction constraint violations
-            this->psi_N = r_P2P1_N - dcm_B1N.transpose() * this->r_P2P1_B1Init;
-            this->psiPrime_N = rDot_P2P1_N - omega_B1N_N.cross(r_P2P1_N);
-
-            // calculate the attitude constraint violations
-            this->sigma_B2B1 = eigenC2MRP(dcm_B2N * dcm_B1N.transpose()); // calculate the difference in attitude
-            Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
-            this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
-
-            // calculate the constraint force
-            this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
-            this->forceExternal_N = this->Fc_N;
-
-            // calculate the torque on each spacecraft from the direction constraint
-            Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
-            Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
-            Eigen::Vector3d Fc_B2 = dcm_B2N * this->Fc_N;
-            Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
-
-            // calculate the constraint torque imparted on each spacecraft from the attitude constraint
-            Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
-            Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(sigma_B2B1) - this->c_a * 0.25 * sigma_B2B1.Bmat() * omega_B2B1_B2;
-            Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
-            this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
-
-            // assign forces and torques for spacecraft 1
-            this->forceExternal_N = this->Fc_N;
-            this->torqueExternalPntB_B = L_B1_len + L_B1_att;
-            this->T_B1 = this->torqueExternalPntB_B;
+            this->scID = (1 + pow(-1,this->scID))/2; // toggle spacecraft to be assigned forces and torques
         }
-        else if (this->scID == 1) {
-            // assign forces and torques for spacecraft 2
-            this->forceExternal_N = - this->Fc_N;
-            this->torqueExternalPntB_B = this->T_B2;
-        }
-        this->scID = (1 + pow(-1,this->scID))/2; // toggle spacecraft to be assigned forces and torques
+    }
+    else{
+        this->forceExternal_N = Eigen::Vector3d::Zero();
+        this->torqueExternalPntB_B = Eigen::Vector3d::Zero();
     }
 }
 
