@@ -51,7 +51,7 @@ public:
     /** setter for `k` property */
     void setK(double k);
     /** setter for `c` property */
-    void setC(double c);                
+    void setC(double c);
     /** setter for `rhoInit` property */
     void setRhoInit(double rhoInit) {this->rhoInit = rhoInit;};
     /** setter for `rhoDotInit` property */
@@ -128,8 +128,8 @@ private:
     StateData *rhoState = nullptr;		    //!< state data for displacement from equilibrium
     StateData *rhoDotState = nullptr;	    //!< state data for time derivative of rho;
     Eigen::MatrixXd *g_N = nullptr;         //!< [m/s^2] gravitational acceleration in N frame components
-    Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
-    Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+//    Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+//    Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     static uint64_t effectorID;    //!< ID number of this panel
 
     Eigen::Vector3d r_FcN_N = Eigen::Vector3d::Zero();            //!< [m] position vector of translating body's center of mass Fc relative to the inertial frame origin N
@@ -156,6 +156,23 @@ private:
     void computeTranslatingBodyInertialStates();
     void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g);
     void readInputMessages();
+
+    Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialAttitudeProperty = nullptr;  //!<
+    Eigen::MatrixXd* inertialAngVelocityProperty = nullptr;  //!<
+
+    StateData* hubPosition;    //!< [m] parent inertial position vector
+    StateData* hubVelocity;    //!< [m/s] parent inertial velocity vector
+    StateData* hubSigma;       //!< parent attitude Modified Rodrigues Parameters (MRPs)
+    StateData* hubOmega;       //!< [rad/s] parent inertial angular velocity vector
+
+    Eigen::MatrixXd* prescribedPositionProperty = nullptr;         //!<
+    Eigen::MatrixXd* prescribedVelocityProperty = nullptr;         //!<
+    Eigen::MatrixXd* prescribedAccelerationProperty = nullptr;     //!<
+    Eigen::MatrixXd* prescribedAttitudeProperty = nullptr;         //!<
+    Eigen::MatrixXd* prescribedAngVelocityProperty = nullptr;      //!<
+    Eigen::MatrixXd* prescribedAngAccelerationProperty = nullptr;  //!<
 };
 
 #endif /* LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H */
