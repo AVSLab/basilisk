@@ -461,13 +461,13 @@ def run(show_plots):
             viz,
             stationName="Santiago Target",
             parentBodyName=earth.displayName,
-            r_GP_P=[1761771.6422437236, -5022201.882030934, -3515898.6046771165],
+            lla_GP=[np.deg2rad(-33.4489), np.deg2rad(-70.6693), 569.7],
             fieldOfView=np.radians(160.0),
             color="pink",
             range=2000.0 * 1000,  # meters
         )
 
-        # Add the Santiago target
+        # Add the Singapore target
         vizSupport.addLocation(
             viz,
             stationName="Singapore Station",

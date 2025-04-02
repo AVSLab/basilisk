@@ -992,7 +992,12 @@ The following table lists all required and optional arguments that can be provid
       - float(3)
       - m
       - Yes
-      - position vector of the location G relatiave to parent body (planet or spacecraft) frame P in P frame components
+      - position vector of the location G relative to parent body (planet or spacecraft) frame P in P frame components
+    * - ``lla_GP``
+      - float(3)
+      - [rad, rad, m]
+      - No
+      - position vector of the location G in latitude/longitude/altitude components. Required if ``r_GP_P`` is not specified.
     * - ``gHat_P``
       - float(3)
       -
