@@ -54,6 +54,7 @@ Version |release|
 - Add support for python 3.13 by removing the use of ``eval()`` and most ``exec()`` methods,
   rewrote ``methodizeEvent()`` in ``SimulationBaseClass.py``.  If you use python 3.13+ the
   scope of the ``eval()`` method has changed (see https://peps.python.org/pep-0667/).
+- Added ``lla2fixedframe()`` function in :ref:`vizSupport` which provides ability to define Locations on a parent body by providing latitude/longitude/altitude relative to reference ellipsoid.
 
 
 Version  2.6.0  (Feb. 21, 2025)
