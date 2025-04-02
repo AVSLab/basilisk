@@ -97,6 +97,40 @@ def setSprite(shape, **kwargs):
     return answer
 
 
+def lla2fixedframe(lla_GP, radEquator, radRatio):
+    """
+    This method receives a latitude/longitude/altitude point above a reference
+    ellipsoid with equatorial radius and flattening ratio, then converts to the
+    point to body-fixed frame coordinates.
+
+    Parameters
+    ----------
+    lla_GP:
+        position vector of the location G relative to the parent body in lat/lon/alt components
+    radEquator:
+        equatorial radius of the parent body
+    radRatio:
+        ratio of polar radius to equatorial radius
+
+    Returns
+    -------
+    3-element list
+        r_GP_P, position vector of the location G relative to parent body frame P in P frame components
+
+    """
+    lat = lla_GP[0]
+    lon = lla_GP[1]
+    alt = lla_GP[2]
+    N = radEquator / np.sqrt(1 - (1 - radRatio**2) * np.sin(lat)**2)
+
+    X = (N + alt) * np.cos(lat) * np.cos(lon)
+    Y = (N + alt) * np.cos(lat) * np.sin(lon)
+    Z = (N * (1 - (1 - radRatio**2)) + alt) * np.sin(lat)
+    r_GP_P = [X, Y, Z]
+
+    return r_GP_P
+
+
 locationList = []
 def addLocation(viz, **kwargs):
     if not vizFound:
@@ -106,7 +140,7 @@ def addLocation(viz, **kwargs):
     vizElement = vizInterface.LocationPbMsg()
 
     unitTestSupport.checkMethodKeyword(
-        ['stationName', 'parentBodyName', 'r_GP_P', 'gHat_P', 'fieldOfView', 'color', 'range'],
+        ['stationName', 'parentBodyName', 'r_GP_P', 'lla_GP', 'gHat_P', 'fieldOfView', 'color', 'range'],
         kwargs)
 
     if 'stationName' in kwargs:
@@ -148,8 +182,29 @@ def addLocation(viz, **kwargs):
                 vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
             except:
                 pass
+    elif 'lla_GP' in kwargs:
+        lla_GP = kwargs['lla_GP']
+        if not isinstance(lla_GP, list):
+            print('ERROR: lla_GP must be a list of floats')
+            print(lla_GP)
+            exit(1)
+        if len(lla_GP) != 3:
+            print('ERROR: lla_GP must be a list of three floats')
+            exit(1)
+        if lla_GP[0] > np.pi/2 or lla_GP[0] < -np.pi/2:
+            print('ERROR: Latitude must be between -pi/2 and pi/2 radians')
+            print(lla_GP)
+            exit(1)
+        # find gravity body
+        gravBody = next((s for s in viz.gravBodyInformation if s.bodyName == parentBodyName), None)
+        if gravBody is None:
+            print(f'ERROR: Cannot use LLA to set location for {parentBodyName}')
+            exit(1)
+        # convert lat/lon/altitude to fixed frame
+        r_GP_P = lla2fixedframe(lla_GP, gravBody.radEquator, gravBody.radiusRatio)
+        vizElement.r_GP_P = r_GP_P
     else:
-        print("ERROR: r_GP_P argument must be provided to addLocation")
+        print("ERROR: r_GP_P or lla_GP argument must be provided to addLocation")
         exit(0)
 
     if 'gHat_P' in kwargs:
