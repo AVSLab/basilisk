@@ -55,6 +55,9 @@ Version |release|
   rewrote ``methodizeEvent()`` in ``SimulationBaseClass.py``.  If you use python 3.13+ the
   scope of the ``eval()`` method has changed (see https://peps.python.org/pep-0667/).
 - Added ``lla2fixedframe()`` function in :ref:`vizSupport` which provides ability to define Locations on a parent body by providing latitude/longitude/altitude relative to reference ellipsoid.
+- Fixed a bug in :ref:`radiationPressure` where ``parseAndLoadXML()`` would raise a ValueError when using VS Code's debugger.
+  The error occurred in Python 3.10.12 because numpy arrays that reference other arrays cannot be resized
+  without setting ``refcheck=False``. This fix allows debugging scenarios that use the radiation pressure module.
 
 
 Version  2.6.0  (Feb. 21, 2025)
