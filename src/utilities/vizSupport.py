@@ -41,7 +41,6 @@ bskPath = __path__[0]
 firstSpacecraftName = ''
 
 def toRGBA255(color, alpha=None):
-    answer = [0, 0, 0, 0]
     if isinstance(color, str):
         # convert color name to 4D array of values with 0-255
         if is_color_like(color):
@@ -77,7 +76,7 @@ def setSprite(shape, **kwargs):
         print("In setSprite() the shape argument must be a string using " + str(shapeList))
         exit(1)
 
-    if (shape not in shapeList):
+    if shape not in shapeList:
         print("The setSprite() method was provided this unknown sprite shape primitive: " + shape)
         exit(1)
 
@@ -211,7 +210,6 @@ def addLocation(viz, **kwargs):
         print("ERROR: parentBodyName argument must be provided to addLocation")
         exit(1)
 
-    r_GP_P = [0, 0, 0]
     if 'r_GP_P' in kwargs:
         r_GP_P = kwargs['r_GP_P']
         if not isinstance(r_GP_P, list):
@@ -224,11 +222,11 @@ def addLocation(viz, **kwargs):
         try:
             # check if vector is a list
             vizElement.r_GP_P = r_GP_P
-        except:
+        except TypeError:
             try:
                 # convert Eigen array to list
                 vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
-            except:
+            except TypeError:
                 pass
     elif 'lla_GP' in kwargs:
         lla_GP = kwargs['lla_GP']
@@ -282,11 +280,11 @@ def addLocation(viz, **kwargs):
         vizElement.color = toRGBA255(color)
 
     if 'range' in kwargs:
-        range = kwargs['range']
-        if not isinstance(range, float):
+        rangeParam = kwargs['range']
+        if not isinstance(rangeParam, float):
             print('ERROR: range must be a float')
             exit(1)
-        vizElement.range = range
+        vizElement.range = rangeParam
 
     locationList.append(vizElement)
     del viz.locations[:]  # clear settings list to replace it with updated list
@@ -437,6 +435,7 @@ def createPointLine(viz, **kwargs):
     del viz.settings.pointLineList[:]  # clear settings list to replace it with updated list
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
+
 
 targetLineList = []
 def createTargetLine(viz, **kwargs):
@@ -607,6 +606,7 @@ def createCustomModel(viz, **kwargs):
     del viz.settings.customModelList[:]  # clear settings list to replace it with updated list
     viz.settings.customModelList = vizInterface.CustomModelConfig(customModelList)
     return
+
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
@@ -891,6 +891,7 @@ def setInstrumentGuiSetting(viz, **kwargs):
     viz.settings.instrumentGuiSettingsList = vizInterface.InstrumentGuiSettingsConfig(instrumentGuiSettingList)
     return
 
+
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
     if not vizFound:
@@ -992,11 +993,10 @@ def createConeInOut(viz, **kwargs):
     viz.settings.coneList = vizInterface.KeepOutInConeConfig(coneInOutList)
     return
 
+
 stdCameraList = []
 def createStandardCamera(viz, **kwargs):
-    '''
-    add a standard camera window
-    '''
+    # add a standard camera window
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -1285,7 +1285,7 @@ def createCameraConfigMsg(viz, **kwargs):
 
 def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     """
-    This methods creates an instance of the vizInterface() modules and setups up associated Vizard
+    This method creates an instance of the vizInterface() modules and sets up associated Vizard
     configuration setting messages.
 
     Parameters
@@ -1373,7 +1373,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
          'msmInfoList', 'ellipsoidList', 'trueOrbitColorInMsgList'],
         kwargs)
 
-    # setup the Vizard interface module
+    # set up the Vizard interface module
     vizMessenger = vizInterface.VizInterface()
     vizMessenger.ModelTag = "vizMessenger"
     scSim.AddModelToTask(simTaskName, vizMessenger)
@@ -1661,7 +1661,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         # process spacecraft lights
         if liScList:
             liList = []
-            if liScList[c] is not None: # light objects(s) have been added to this spacecraft
+            if liScList[c] is not None:  # light objects(s) have been added to this spacecraft
                 for li in liScList[c]:
                     liList.append(li)
                 scData.lightList = vizInterface.LightVector(liList)
@@ -1782,11 +1782,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if val == 1:
             vizMessenger.liveStream = True
         if val == 2:
-            if (vizMessenger.liveStream or vizMessenger.broadcastStream):
+            if vizMessenger.liveStream or vizMessenger.broadcastStream:
                 print("ERROR: vizSupport: noDisplay mode cannot be used with liveStream or broadcastStream.")
             else:
                 vizMessenger.noDisplay = True
-
 
     return vizMessenger
 

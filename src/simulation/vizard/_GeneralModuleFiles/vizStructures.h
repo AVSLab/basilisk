@@ -37,6 +37,7 @@ MsgCurrStatus
     bool dataFresh = false;                     //!< Flag indicating that new data has been read
 }MsgCurrStatus;
 
+
 /*! Structure to store a thruster group information. */
 typedef struct
 //@cond DOXYGEN_IGNORE
@@ -47,20 +48,30 @@ ThrClusterMap
     int color[4] = {-1};  //!< RGBA thruster plume color for all thrusters in this group
 }ThrClusterMap;
 
+
 /*! Vizard setting structure to define a pointing line feature.  This is used to draw a colored
     line from one space object to another space object.
  */
-typedef struct {
+typedef struct
+//@cond DOXYGEN_IGNORE
+PointLine
+//@endcond
+{
     std::string fromBodyName;   //!< name of the body to start the line
     std::string toBodyName;     //!< name of the body to point the line towards
     int lineColor[4];           //!< desired RGBA as values between 0 and 255
 }PointLine;
 
+
 /*! Vizard setting structure to define a keep out/in cone visual feature.  Here cone is drawn
     attached to one body with a body-fixed position and heading.  If a second celestial object
     is within or outside this code, then the opacity of the cone changes.
 */
-typedef struct {
+typedef struct
+//@cond DOXYGEN_IGNORE
+KeepOutInCone
+//@endcond
+{
     bool isKeepIn;              //!< True -> keep in cone created, False -> keep out cone created
     double position_B[3];       //!< [m] cone start relative to from body coordinate frame
     double normalVector_B[3];   //!< cone normal direction vector
@@ -71,6 +82,7 @@ typedef struct {
     int coneColor[4];           //!< desired RGBA as values between 0 and 255
     std::string coneName;       //!< cone name, if unspecified, viz will autogenerate name
 }KeepOutInCone;
+
 
 /*! Vizard setting structure to define a standard Vizard camera.  These can be assigned to
     any spacecraft and set to point at either another object, or to point in a body-fixed direction.
@@ -90,6 +102,7 @@ StdCameraSettings
     std::string displayName=""; //!< (optional) name of the standard camera panel
 }StdCameraSettings;
 
+
 /*! Vizard User Interface structure specifying what actuator visualizations to show.
 */
 typedef struct
@@ -106,6 +119,7 @@ ActuatorGuiSettings
     int showThrusterLabels=0;      //!< [bool] should the thruster labels be shown, -1 (off), 0 (default), 1 (on)
     int showRWLabels=0;            //!< [bool] should the reaction wheel labels be shown, -1 (off), 0 (default), 1 (on)
 }ActuatorGuiSettings;
+
 
 /*! Vizard User Interface structure InstrumentGuiSettings InstrumentGuiSettings specify what instrument visualizations to show
  */
@@ -127,6 +141,7 @@ InstrumentGuiSettings
     int showMultiShapeLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;
 
+
 /*! Structure defining a custom CAD model to load to represent a simulation object.
 */
 typedef struct
@@ -145,6 +160,7 @@ CustomModel
     std::vector<int> color;                     //!< Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
 }CustomModel;
 
+
 /*! Structure defining ground location information
  */
 typedef struct
@@ -162,6 +178,7 @@ LocationPbMsg
     double markerScale = 0;             //!< (Optional) Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
 }LocationPbMsg;
 
+
 /*! Structure defining generic sensor information
  */
 typedef struct
@@ -170,7 +187,7 @@ GenericSensor
 //@endcond
 {
     double r_SB_B[3];                   //!< [m] Position of sensor relative to body frame, in body frame components
-    std::vector<double> fieldOfView;    //!< [rad] edgle-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
+    std::vector<double> fieldOfView;    //!< [rad] edge-to-edge field of view, single positive value means a conical sensor, 2 positive values are for a rectangular sensor
     double normalVector[3];             //!< normal vector of the sensor bore sight axis
     int isHidden = 0;                   //!< (optional) true to hide sensor HUD, false to show sensor HUD (default)
     double size = 0;                    //!< [m] (optional) size of the sensor visualization, use 0 (protobuffer default) to use viz default size
@@ -239,8 +256,6 @@ Light
 }Light;
 
 
-
-
 /*! Structure defining Multi-Shape-Method (MSM) configurations
  */
 typedef struct
@@ -272,7 +287,6 @@ MultiShapeInfo
     std::vector<MultiShape *> msmList;                      //!< list of MSM configuration information
     ReadFunctor<ChargeMsmMsgPayload> msmChargeInMsg;        //!< input message to read current MSM charges.  If not connected, currentValue can be set directly from python
 }MultiShapeInfo;
-
 
 
 /*! Structure defining generic storage information
@@ -359,6 +373,7 @@ VizSpacecraftData
     std::vector<Ellipsoid *> ellipsoidList;                     //!< (Optional) ellipsoid about the spacecraft location
 }VizSpacecraftData;
 
+
 /*! Structure defining various Vizard options
 */
 typedef struct
@@ -441,6 +456,7 @@ LiveVizSettings
     std::string relativeOrbitChief = "";         //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
 }LiveVizSettings;
 
+
 /*! Structure defining Vizard dialog boxes
 */
 typedef struct
@@ -459,9 +475,12 @@ VizEventDialog
 }VizEventDialog;
 
 
-
 /*! Structure defining vizard gravity body values */
-typedef struct{
+typedef struct
+//@cond DOXYGEN_IGNORE
+GravBodyInfo
+//@endcond
+{
     std::string bodyName;            //!< celestial body name
     double mu;                       //!< [m^3/s^2] celestial body gravity constant
     double radEquator;               //!< [m] celestial body radius at equator
