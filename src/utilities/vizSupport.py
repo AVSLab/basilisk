@@ -247,6 +247,107 @@ def addLocation(viz, **kwargs):
     return
 
 
+quadMapList = []
+def addQuadMap(viz, **kwargs):
+    """
+    This method creates a QuadMap element for displaying shaded regions in Vizard.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    ID: int
+        The reference ID of the QuadMap instance. Once instantiated, can be used to change the QuadMap settings.
+        Required
+    parentBodyName: str
+        Name of the parent body to draw the QuadMap in reference to.
+        Required
+    vertices: single or double-list
+        Specifies the internal mesh coordinates of the QuadMap, in body-fixed frame.
+        Required
+    color: int list
+        Color of the QuadMap.  Can be 4 RGBA integer value (0-255) or a color string.
+        Required
+    isHidden: bool
+        Flag if the QuadMap should be hidden (1) or shown (-1).
+        Optional. Default: 0 - if not provided, then the Vizard default settings are used.
+    label: str
+        Label to display in the center of QuadMap region.
+        Optional. Send "NOLABEL" to delete label.
+    """
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+
+    vizElement = vizInterface.QuadMap()
+
+    unitTestSupport.checkMethodKeyword(
+        ['ID', 'parentBodyName', 'vertices', 'color', 'isHidden', 'label'],
+        kwargs)
+
+    if 'ID' in kwargs:
+        ID = kwargs['ID']
+        if not isinstance(ID, int):
+            print('ERROR: ID must be an integer')
+            exit(1)
+        vizElement.ID = ID
+    else:
+        print("ERROR: ID argument must be provided to addQuadMap")
+        exit(1)
+
+    if 'parentBodyName' in kwargs:
+        parentBodyName = kwargs['parentBodyName']
+        if not isinstance(parentBodyName, str):
+            print('ERROR: parentBodyName must be a string')
+            exit(1)
+        vizElement.parentBodyName = parentBodyName
+    else:
+        print("ERROR: parentBodyName argument must be provided to addQuadMap")
+        exit(1)
+
+    if 'vertices' in kwargs:
+        vertices = kwargs['vertices']
+        if not isinstance(vertices, list):
+            print('ERROR: vertices must be a list of floats')
+            exit(1)
+        if len(vertices) % 4 != 0:
+            print('ERROR: vertices must be list of floats with length divisible by four')
+            exit(1)
+        vizElement.vertices = vizInterface.DoubleVector(vertices)
+    else:
+        print('ERROR: vertices argument must be provided to addQuadMap')
+        exit(1)
+
+    if 'color' in kwargs:
+        color = kwargs['color']
+        vizElement.color = vizInterface.IntVector(toRGBA255(color))
+    else:
+        print('ERROR: color argument must be provided to addQuadMap')
+        exit(1)
+
+    if 'isHidden' in kwargs:
+        isHidden = kwargs['isHidden']
+        if not isinstance(isHidden, bool):
+            print('Error: isHidden must be boolean')
+            exit(1)
+        vizElement.isHidden = isHidden
+
+    if 'label' in kwargs:
+        label = kwargs['label']
+        if not isinstance(label, str):
+            print('Error: label must be a string')
+            exit(1)
+        vizElement.label = label
+
+    quadMapList.append(vizElement)
+    del viz.quadMaps[:]  # clear settings list to replace it with updated list
+    viz.quadMaps = vizInterface.QuadMapVector(quadMapList)
+
+    return
+
+
 pointLineList = []
 def createPointLine(viz, **kwargs):
     if not vizFound:
