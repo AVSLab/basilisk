@@ -34,6 +34,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
 from Basilisk.architecture import bskLogging
+from Basilisk.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("theta1", [0, np.pi/36, np.pi/18])
@@ -157,6 +158,99 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     np.testing.assert_allclose(tSwirl, np.linalg.norm(T_F) * swirlFactor, rtol=0, atol=accuracy, verbose=True)
 
     return
+
+
+def test_reset():
+    """Test that Reset() zeros the output message"""
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(1)     # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C container
+    platform = thrusterPlatformState.thrusterPlatformState()
+    platform.ModelTag = "platformState"
+    platform.sigma_MB = [0., 0., 0.]
+    platform.r_BM_M = [0.0, 0.1, 1.4]
+    platform.r_FM_F = [0.0, 0.0, -0.1]
+    unitTestSim.AddModelToTask(unitTaskName, platform)
+
+    # Create input THR Config Msg with non-zero values
+    THRConfig = messaging.THRConfigMsgPayload()
+    THRConfig.rThrust_B = [1.0, 2.0, 3.0]
+    THRConfig.maxThrust = 10.0
+    THRConfig.swirlTorque = 1.0
+    THRConfig.tHatThrust_B = [0.1, 0.2, 0.3]
+    thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
+    platform.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
+
+    # Create input hinged rigid body messages with non-zero angles
+    hingedBodyMsg1 = messaging.HingedRigidBodyMsgPayload()
+    hingedBodyMsg1.theta = np.pi/36
+    hingedBody1InMsg = messaging.HingedRigidBodyMsg().write(hingedBodyMsg1)
+    platform.hingedRigidBody1InMsg.subscribeTo(hingedBody1InMsg)
+
+    hingedBodyMsg2 = messaging.HingedRigidBodyMsgPayload()
+    hingedBodyMsg2.theta = np.pi/36
+    hingedBody2InMsg = messaging.HingedRigidBodyMsg().write(hingedBodyMsg2)
+    platform.hingedRigidBody2InMsg.subscribeTo(hingedBody2InMsg)
+
+    # Setup logging on the test module output messages
+    thrConfigLog = platform.thrusterConfigBOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, thrConfigLog)
+
+    # Initialize simulation
+    unitTestSim.InitializeSimulation()
+
+    # Run simulation for a short time to get non-zero outputs
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
+    unitTestSim.ExecuteSimulation()
+
+    # Now call Reset() and verify outputs are zeroed
+    platform.Reset(0)  # Pass 0 as currentSimNanos
+
+    # Check that thruster config output is zeroed
+    expectedConfig = messaging.THRConfigMsgPayload()  # This creates a zeroed message
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedConfig.rThrust_B),
+                                                               np.array(platform.thrusterConfigBOutMsg.read().rThrust_B),
+                                                               1e-12,
+                                                               "Reset() zeroed rThrust_B",
+                                                               testFailCount, testMessages)
+
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedConfig.tHatThrust_B),
+                                                               np.array(platform.thrusterConfigBOutMsg.read().tHatThrust_B),
+                                                               1e-12,
+                                                               "Reset() zeroed tHatThrust_B",
+                                                               testFailCount, testMessages)
+
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array([expectedConfig.maxThrust]),
+                                                               np.array([platform.thrusterConfigBOutMsg.read().maxThrust]),
+                                                               1e-12,
+                                                               "Reset() zeroed maxThrust",
+                                                               testFailCount, testMessages)
+
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array([expectedConfig.swirlTorque]),
+                                                               np.array([platform.thrusterConfigBOutMsg.read().swirlTorque]),
+                                                               1e-12,
+                                                               "Reset() zeroed swirlTorque",
+                                                               testFailCount, testMessages)
+
+    # Print success message if no errors were found
+    if testFailCount == 0:
+        print("PASSED: " + platform.ModelTag + " Reset() test")
+    else:
+        print("Failed: " + platform.ModelTag + " Reset() test")
+
+    assert testFailCount == 0, ''.join(testMessages)
 
 
 #

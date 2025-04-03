@@ -7,6 +7,7 @@
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import thrustRWDesat
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, fswSetupThrusters
+import numpy as np
 
 
 def test_thrustRWDesat():
@@ -111,22 +112,48 @@ def thrustRWDesatTestFunction():
     # Set these messages
     rwSpeedInMsg = messaging.RWSpeedMsg().write(inputSpeedMsg)
     rwConstInMsg = messaging.RWConstellationMsg().write(inputRWConstellationMsg)
-    vcConfigInMsg = messaging.VehicleConfigMsg().write(inputVehicleMsg)
+    vehConfigInMsg = messaging.VehicleConfigMsg().write(inputVehicleMsg)
 
+    # Set the module's input messages
+    module.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
+    module.rwConfigInMsg.subscribeTo(rwConstInMsg)
+    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
+    module.vecConfigInMsg.subscribeTo(vehConfigInMsg)
+
+    # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.thrCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    module.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
-    module.rwConfigInMsg.subscribeTo(rwConstInMsg)
-    module.vecConfigInMsg.subscribeTo(vcConfigInMsg)
-    module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
-
-    # Initialize the simulation
+    # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    #   Step the simulation to 9*process rate so 10 total steps including zero
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
+    # Set the simulation time.
+    # NOTE: the total simulation time may be longer than this value. The
+    # simulation is stopped at the next logging event on or after the
+    # simulation end time.
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+
+    # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
+
+    # First set a non-zero RW speed to trigger desaturation
+    inputSpeedMsg.wheelSpeeds = [30, 20, 40]  # Higher speeds to trigger desaturation
+    rwSpeedInMsg = messaging.RWSpeedMsg().write(inputSpeedMsg)
+    module.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ExecuteSimulation()
+
+    # Now call Reset() and verify output is zeroed
+    module.Reset(0)  # Pass 0 as currentSimNanos
+    expectedOnTime = [0.] * numThrusters
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedOnTime),
+                                                                np.array(dataLog.OnTimeRequest[0][:numThrusters]),
+                                                                1e-3,
+                                                                "Reset() zeroed onTime",
+                                                                testFailCount, testMessages)
+
+    print("Accuracy used: " + str(1e-3))
 
     # This doesn't work if only 1 number is passed in as the second argument, but we don't need the second
     outputThrData = dataLog.OnTimeRequest[:, :numThrusters]
@@ -143,7 +170,7 @@ def thrustRWDesatTestFunction():
     accuracy = 1e-6
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputThrData,
+    testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector[:len(outputThrData)], outputThrData,
                                                                  accuracy,
                                                                  "ThrustRWDesat output",
                                                                  numThrusters, testFailCount, testMessages)
