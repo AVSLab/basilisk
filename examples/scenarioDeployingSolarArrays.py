@@ -213,7 +213,7 @@ def run(show_plots):
                                             + width_element * width_element)  # [kg m^2]
     I_element_33 = (1/12) * mass_element * (width_element * width_element
                                             + thickness_element * thickness_element)  # [kg m^2]
-    IElement_PntFc_F = [[I_element_11, 0.0, 0.0],
+    IElement_PntPc_P = [[I_element_11, 0.0, 0.0],
                         [0.0, I_element_22, 0.0],
                         [0.0, 0.0, I_element_33]]  # [kg m^2] (Elements approximated as rectangular prisms)
 
@@ -227,22 +227,22 @@ def run(show_plots):
     # Rotation 1 initial parameters
     array1ThetaInit1 = 0.0 * macros.D2R  # [rad]
     array2ThetaInit1 = 0.0 * macros.D2R  # [rad]
-    prv_FM1Init1 = array1ThetaInit1 * rot_hat_M
-    prv_FM2Init1 = array2ThetaInit1 * rot_hat_M
-    sigma_FM1Init1 = rbk.PRV2MRP(prv_FM1Init1)
-    sigma_FM2Init1 = rbk.PRV2MRP(prv_FM2Init1)
-    r_FM1_M1Init1 = [0.0, 0.0, 0.0]  # [m]
-    r_FM2_M2Init1 = [0.0, 0.0, 0.0]  # [m]
+    prv_PM1Init1 = array1ThetaInit1 * rot_hat_M
+    prv_PM2Init1 = array2ThetaInit1 * rot_hat_M
+    sigma_PM1Init1 = rbk.PRV2MRP(prv_PM1Init1)
+    sigma_PM2Init1 = rbk.PRV2MRP(prv_PM2Init1)
+    r_PM1_M1Init1 = [0.0, 0.0, 0.0]  # [m]
+    r_PM2_M2Init1 = [0.0, 0.0, 0.0]  # [m]
 
     # Rotation 2 initial parameters
     array1ThetaInit2 = 108.0 * macros.D2R  # [rad]
     array2ThetaInit2 = -108.0 * macros.D2R  # [rad]
-    prv_FM1Init2 = array1ThetaInit2 * rot_hat_M
-    prv_FM2Init2 = array2ThetaInit2 * rot_hat_M
-    sigma_FM1Init2 = rbk.PRV2MRP(prv_FM1Init2)
-    sigma_FM2Init2 = rbk.PRV2MRP(prv_FM2Init2)
-    r_FM1_M1Init2 = [radius_array, 0.0, 0.0]  # [m]
-    r_FM2_M2Init2 = [-radius_array, 0.0, 0.0]  # [m]
+    prv_PM1Init2 = array1ThetaInit2 * rot_hat_M
+    prv_PM2Init2 = array2ThetaInit2 * rot_hat_M
+    sigma_PM1Init2 = rbk.PRV2MRP(prv_PM1Init2)
+    sigma_PM2Init2 = rbk.PRV2MRP(prv_PM2Init2)
+    r_PM1_M1Init2 = [radius_array, 0.0, 0.0]  # [m]
+    r_PM2_M2Init2 = [-radius_array, 0.0, 0.0]  # [m]
 
     # Create the solar array elements
     array1ElementList = list()
@@ -254,28 +254,28 @@ def run(show_plots):
         array2ElementList[i].ModelTag = "array2Element" + str(i + 1)
         array1ElementList[i].mass = mass_element  # [kg]
         array2ElementList[i].mass = mass_element  # [kg]
-        array1ElementList[i].IPntFc_F = IElement_PntFc_F  # [kg m^2]
-        array2ElementList[i].IPntFc_F = IElement_PntFc_F  # [kg m^2]
+        array1ElementList[i].IPntPc_P = IElement_PntPc_P  # [kg m^2]
+        array2ElementList[i].IPntPc_P = IElement_PntPc_P  # [kg m^2]
         array1ElementList[i].r_MB_B = r_M1B_B  # [m]
         array2ElementList[i].r_MB_B = r_M2B_B  # [m]
-        array1ElementList[i].r_FcF_F = [- radius_array * np.cos(72 * macros.D2R),
+        array1ElementList[i].r_PcP_P = [- radius_array * np.cos(72 * macros.D2R),
                                         0.0,
                                         (1/3) * radius_array * np.sin(72 * macros.D2R)]  # [m] For triangular wedge
-        array2ElementList[i].r_FcF_F = [radius_array * np.cos(72 * macros.D2R),
+        array2ElementList[i].r_PcP_P = [radius_array * np.cos(72 * macros.D2R),
                                         0.0,
                                         (1/3) * radius_array * np.sin(72 * macros.D2R)]  # [m] For triangular wedge
-        array1ElementList[i].r_FM_M = r_FM1_M1Init1  # [m]
-        array2ElementList[i].r_FM_M = r_FM2_M2Init1  # [m]
-        array1ElementList[i].rPrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-        array2ElementList[i].rPrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-        array1ElementList[i].rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
-        array2ElementList[i].rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
-        array1ElementList[i].omega_FM_F = np.array([0.0, 0.0, 0.0])  # [rad/s]
-        array2ElementList[i].omega_FM_F = np.array([0.0, 0.0, 0.0])  # [rad/s]
-        array1ElementList[i].omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])  # [rad/s^2]
-        array2ElementList[i].omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])  # [rad/s^2]
-        array1ElementList[i].sigma_FM = sigma_FM1Init1
-        array2ElementList[i].sigma_FM = sigma_FM2Init1
+        array1ElementList[i].r_PM_M = r_PM1_M1Init1  # [m]
+        array2ElementList[i].r_PM_M = r_PM2_M2Init1  # [m]
+        array1ElementList[i].rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
+        array2ElementList[i].rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
+        array1ElementList[i].rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+        array2ElementList[i].rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+        array1ElementList[i].omega_PM_P = np.array([0.0, 0.0, 0.0])  # [rad/s]
+        array2ElementList[i].omega_PM_P = np.array([0.0, 0.0, 0.0])  # [rad/s]
+        array1ElementList[i].omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])  # [rad/s^2]
+        array2ElementList[i].omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])  # [rad/s^2]
+        array1ElementList[i].sigma_PM = sigma_PM1Init1
+        array2ElementList[i].sigma_PM = sigma_PM2Init1
         array1ElementList[i].omega_MB_B = [0.0, 0.0, 0.0]  # [rad/s]
         array2ElementList[i].omega_MB_B = [0.0, 0.0, 0.0]  # [rad/s]
         array1ElementList[i].omegaPrime_MB_B = [0.0, 0.0, 0.0]  # [rad/s^2]
@@ -304,12 +304,12 @@ def run(show_plots):
     # Create stand-alone element translational state messages
     array1ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
     array2ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
-    array1ElementTranslationMessageData.r_FM_M = r_FM1_M1Init1  # [m]
-    array2ElementTranslationMessageData.r_FM_M = r_FM2_M2Init1  # [m]
-    array1ElementTranslationMessageData.rPrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array2ElementTranslationMessageData.rPrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array1ElementTranslationMessageData.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
-    array2ElementTranslationMessageData.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+    array1ElementTranslationMessageData.r_PM_M = r_PM1_M1Init1  # [m]
+    array2ElementTranslationMessageData.r_PM_M = r_PM2_M2Init1  # [m]
+    array1ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
+    array2ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
+    array1ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+    array2ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
     array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array1ElementTranslationMessageData)
     array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array2ElementTranslationMessageData)
 
@@ -454,17 +454,17 @@ def run(show_plots):
 
     # Update the array 1 stand-alone element translational state messages
     array1ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
-    array1ElementTranslationMessageData.r_FM_M = r_FM1_M1Init2  # [m]
-    array1ElementTranslationMessageData.rPrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array1ElementTranslationMessageData.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+    array1ElementTranslationMessageData.r_PM_M = r_PM1_M1Init2  # [m]
+    array1ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
+    array1ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
     array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array1ElementTranslationMessageData)
 
     array1ElementRefMsgList2 = list()
     for i in range(num_elements):
         array1ElementList[i].prescribedTranslationInMsg.subscribeTo(array1ElementTranslationMessage)
-        array1ElementList[i].r_FcF_F = [0.0, 0.0, - (2/3) * radius_array * np.sin(72 * macros.D2R)]
-        array1ElementList[i].r_FM_M = r_FM1_M1Init2  # [m]
-        array1ElementList[i].sigma_FM = sigma_FM1Init2
+        array1ElementList[i].r_PcP_P = [0.0, 0.0, - (2/3) * radius_array * np.sin(72 * macros.D2R)]
+        array1ElementList[i].r_PM_M = r_PM1_M1Init2  # [m]
+        array1ElementList[i].sigma_PM = sigma_PM1Init2
 
         array1RotProfilerList[i].setThetaInit(array1ThetaInit2)  # [rad]
         array1RotProfilerList[i].setThetaDDotMax(array1MaxRotAccelList2[i])  # [rad/s^2]
@@ -515,17 +515,17 @@ def run(show_plots):
 
     # Update the array 2 stand-alone element translational state messages
     array2ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
-    array2ElementTranslationMessageData.r_FM_M = r_FM2_M2Init2  # [m]
-    array2ElementTranslationMessageData.rPrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array2ElementTranslationMessageData.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+    array2ElementTranslationMessageData.r_PM_M = r_PM2_M2Init2  # [m]
+    array2ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
+    array2ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
     array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array2ElementTranslationMessageData)
 
     array2ElementRefMsgList3 = list()
     for i in range(num_elements):
         array2ElementList[i].prescribedTranslationInMsg.subscribeTo(array2ElementTranslationMessage)
-        array2ElementList[i].r_FcF_F = [0.0, 0.0, - (2/3) * radius_array * np.sin(72 * macros.D2R)]
-        array2ElementList[i].r_FM_M = r_FM2_M2Init2  # [m]
-        array2ElementList[i].sigma_FM = sigma_FM2Init2
+        array2ElementList[i].r_PcP_P = [0.0, 0.0, - (2/3) * radius_array * np.sin(72 * macros.D2R)]
+        array2ElementList[i].r_PM_M = r_PM2_M2Init2  # [m]
+        array2ElementList[i].sigma_PM = sigma_PM2Init2
 
         array2RotProfilerList[i].setThetaInit(array2ThetaInit2)  # [rad]
         array2RotProfilerList[i].setThetaDDotMax(array2MaxRotAccelList3[i])  # [rad/s^2]
