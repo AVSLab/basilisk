@@ -78,23 +78,23 @@ def test_PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref,
 
     Args:
         rotTest (bool): (True) Runs the rotational motion test. (False) Runs the translational motion test.
-        thetaInit (float): [rad] Initial PRV angle of the F frame with respect to the M frame
-        theta_Ref (float): [rad] Reference PRV angle of the F frame with respect to the M frame
+        thetaInit (float): [rad] Initial PRV angle of the P frame with respect to the M frame
+        theta_Ref (float): [rad] Reference PRV angle of the P frame with respect to the M frame
         thetaDDotMax (float): [rad/s^2] Maximum angular acceleration for the attitude maneuver
-        scalarPosInit (float): [m] Initial scalar position of the F frame with respect to the M frame
-        scalarPosRef (float): [m] Reference scalar position of the F frame with respect to the M frame
+        scalarPosInit (float): [m] Initial scalar position of the P frame with respect to the M frame
+        scalarPosRef (float): [m] Reference scalar position of the P frame with respect to the M frame
         scalarAccelMax (float): [m/s^2] Maximum acceleration for the translational maneuver
         accuracy (float): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
 
     This unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of
-    initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
+    initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_PM_Pinal``
     and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and
     ``thetaDot_Ref``, respectively. This unit test also ensures that the profiled translational maneuver is properly
     computed for a series of initial and reference positions and maximum accelerations. The final prescribed position
-    magnitude ``r_FM_M_Final`` and velocity magnitude ``rPrime_FM_M_Final`` are compared with the reference values
-    ``r_FM_M_Ref`` and ``rPrime_FM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities
+    magnitude ``r_PM_M_Final`` and velocity magnitude ``rPrime_PM_M_Final`` are compared with the reference values
+    ``r_PM_M_Ref`` and ``rPrime_PM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities
     of orbital angular momentum, rotational angular momentum, and orbital energy are checked to validate the module
     dynamics.
     """
@@ -146,20 +146,20 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     # Define the state effector properties
     transAxis_M = np.array([1.0, 0.0, 0.0])
     rotAxis_M = np.array([1.0, 0.0, 0.0])
-    r_FM_M = posInit * transAxis_M
-    prvInit_FM = thetaInit * rotAxis_M
-    sigma_FM = rbk.PRV2MRP(prvInit_FM)
+    r_PM_M = posInit * transAxis_M
+    prvInit_PM = thetaInit * rotAxis_M
+    sigma_PM = rbk.PRV2MRP(prvInit_PM)
 
     platform.mass = 100.0
-    platform.IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    platform.IPntPc_P= [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     platform.r_MB_B = [0.0, 0.0, 0.0]
-    platform.r_FcF_F = [0.0, 0.0, 0.0]
-    platform.r_FM_M = r_FM_M
-    platform.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    platform.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    platform.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    platform.sigma_FM = sigma_FM
+    platform.r_PcP_P= [0.0, 0.0, 0.0]
+    platform.r_PM_M = r_PM_M
+    platform.rPrime_PM_M = np.array([0.0, 0.0, 0.0])
+    platform.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])
+    platform.omega_PM_P= np.array([0.0, 0.0, 0.0])
+    platform.omegaPrime_PM_P= np.array([0.0, 0.0, 0.0])
+    platform.sigma_PM = sigma_PM
     platform.omega_MB_B = [0.0, 0.0, 0.0]
     platform.omegaPrime_MB_B = [0.0, 0.0, 0.0]
     platform.sigma_MB = [0.0, 0.0, 0.0]
@@ -172,7 +172,7 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     unitTestSim.AddModelToTask(unitTaskName, platform)
 
     if rotTest:
-    
+
         # ** ** ** ** ** ROTATIONAL 1 DOF INTEGRATED TEST: ** ** ** ** **
 
         # Create an instance of the prescribedRotation1DOF module to be tested
@@ -233,13 +233,13 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         omega_BN_B = scStateData.omega_BN_B
         r_BN_N = scStateData.r_BN_N
         sigma_BN = scStateData.sigma_BN
-        omega_FM_F = prescribedRotStateData.omega_FM_F
-        omegaPrime_FM_F = prescribedRotStateData.omegaPrime_FM_F
-        sigma_FM = prescribedRotStateData.sigma_FM
+        omega_PM_P= prescribedRotStateData.omega_PM_P
+        omegaPrime_PM_P= prescribedRotStateData.omegaPrime_PM_P
+        sigma_PM = prescribedRotStateData.sigma_PM
         timespan = prescribedRotStateData.times()
-        thetaDot_Final = np.linalg.norm(omega_FM_F[-1, :])
-        sigma_FM_Final = sigma_FM[-1, :]
-        theta_FM_Final = 4 * np.arctan(np.linalg.norm(sigma_FM_Final))
+        thetaDot_Final = np.linalg.norm(omega_PM_P[-1, :])
+        sigma_PM_Pinal = sigma_PM[-1, :]
+        theta_PM_Pinal = 4 * np.arctan(np.linalg.norm(sigma_PM_Pinal))
 
         # Setup the conservation quantities
         initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
@@ -249,45 +249,45 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         initialOrbEnergy = [[orbEnergy[0, 1]]]
         finalOrbEnergy = [orbEnergy[-1]]
 
-        # Convert the logged sigma_FM MRPs to a scalar theta_FM array
+        # Convert the logged sigma_PM MRPs to a scalar theta_PM array
         n = len(timespan)
-        theta_FM = []
+        theta_PM = []
         for i in range(n):
-            theta_FM.append((180 / np.pi) * (4 * np.arctan(np.linalg.norm(sigma_FM[i, :]))))
+            theta_PM.append((180 / np.pi) * (4 * np.arctan(np.linalg.norm(sigma_PM[i, :]))))
 
         plt.close("all")
 
-        # Plot theta_FM
+        # Plot theta_PM
         theta_Ref_plotting = np.ones(len(timespan)) * theta_Ref
         thetaInit_plotting = np.ones(len(timespan)) * thetaInit
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, theta_FM, label=r'$\Phi$')
+        plt.plot(timespan * macros.NANO2SEC, theta_PM, label=r'$\Phi$')
         plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * theta_Ref_plotting, '--', label=r'$\Phi_{Ref}$')
         plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * thetaInit_plotting, '--', label=r'$\Phi_{0}$')
-        plt.title(r'$\Phi_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.title(r'$\Phi_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(deg)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='center right', prop={'size': 16})
 
-        # Plot omega_FM_F
+        # Plot omega_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_FM_F[:, 2], label=r'$\omega_{3}$')
-        plt.title(r'${}^\mathcal{F} \omega_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_PM_P[:, 0], label=r'$\omega_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_PM_P[:, 1], label=r'$\omega_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_PM_P[:, 2], label=r'$\omega_{3}$')
+        plt.title(r'${}^\mathcal{P} \omega_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(deg/s)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='upper right', prop={'size': 16})
 
-        # Plotting omegaPrime_FM_F
+        # Plotting omegaPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_FM_F[:, 0], label='1')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_FM_F[:, 1], label='2')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_FM_F[:, 2], label='3')
-        plt.title(r'${}^\mathcal{F} \omega Prime_{\mathcal{F}/\mathcal{M}}$ Profiled Angular Acceleration', fontsize=14)
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 0], label='1')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 1], label='2')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 2], label='3')
+        plt.title(r'${}^\mathcal{P} \omega Prime_{\mathcal{P}/\mathcal{M}}$ Profiled Angular Acceleration', fontsize=14)
         plt.ylabel(r'(deg/$s^2$)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='upper right', prop={'size': 16})
@@ -390,10 +390,10 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
             testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "thetaDot_Final and thetaDot_Ref do not match")
 
         # Check to ensure the initial angle converged to the reference angle
-        if not unitTestSupport.isDoubleEqual(theta_FM_Final, theta_Ref, accuracy):
+        if not unitTestSupport.isDoubleEqual(theta_PM_Pinal, theta_Ref, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "theta_FM_Final and theta_Ref do not match")
-            # testMessages.append("theta_FM_Final: " + str(theta_FM_Final) + " theta_Ref: " + str(theta_Ref))
+            testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "theta_PM_Pinal and theta_Ref do not match")
+            # testMessages.append("theta_PM_Pinal: " + str(theta_PM_Pinal) + " theta_Ref: " + str(theta_Ref))
 
         if testFailCount == 0:
             print("PASSED: " + "prescribedMotion and prescribedRot1DOF integrated test")
@@ -460,12 +460,12 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         r_BN_N = scStateData.r_BN_N
         sigma_BN = scStateData.sigma_BN
         omega_BN_B = scStateData.omega_BN_B
-        r_FM_M = prescribedTransStateData.r_FM_M
-        rPrime_FM_M = prescribedTransStateData.rPrime_FM_M
-        rPrimePrime_FM_M = prescribedTransStateData.rPrimePrime_FM_M
+        r_PM_M = prescribedTransStateData.r_PM_M
+        rPrime_PM_M = prescribedTransStateData.rPrime_PM_M
+        rPrimePrime_PM_M = prescribedTransStateData.rPrimePrime_PM_M
         timespan = prescribedTransStateData.times()
-        r_FM_M_Final = r_FM_M[-1, :]
-        rPrime_FM_M_Final = rPrime_FM_M[-1, :]
+        r_PM_M_Final = r_PM_M[-1, :]
+        rPrime_PM_M_Final = rPrime_PM_M[-1, :]
 
         # Setup the conservation quantities
         initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
@@ -477,43 +477,43 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         initialRotEnergy = [[rotEnergy[0, 1]]]
         finalRotEnergy = [rotEnergy[-1]]
 
-        # Plot r_FM_F
-        r_FM_M_Ref = posRef * transAxis_M
-        r_FM_M_1_Ref = np.ones(len(timespan)) * r_FM_M_Ref[0]
-        r_FM_M_2_Ref = np.ones(len(timespan)) * r_FM_M_Ref[1]
-        r_FM_M_3_Ref = np.ones(len(timespan)) * r_FM_M_Ref[2]
+        # Plot r_PM_P
+        r_PM_M_Ref = posRef * transAxis_M
+        r_PM_M_1_Ref = np.ones(len(timespan)) * r_PM_M_Ref[0]
+        r_PM_M_2_Ref = np.ones(len(timespan)) * r_PM_M_Ref[1]
+        r_PM_M_3_Ref = np.ones(len(timespan)) * r_PM_M_Ref[2]
 
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 0], label=r'$r_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 1], label=r'$r_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, r_FM_M[:, 2], label=r'$r_{3}$')
-        plt.plot(timespan * macros.NANO2SEC, r_FM_M_1_Ref, '--', label=r'$r_{1 Ref}$')
-        plt.plot(timespan * macros.NANO2SEC, r_FM_M_2_Ref, '--', label=r'$r_{2 Ref}$')
-        plt.plot(timespan * macros.NANO2SEC, r_FM_M_3_Ref, '--', label=r'$r_{3 Ref}$')
-        plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 0], label=r'$r_{1}$')
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 1], label=r'$r_{2}$')
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 2], label=r'$r_{3}$')
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M_1_Ref, '--', label=r'$r_{1 Ref}$')
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M_2_Ref, '--', label=r'$r_{2 Ref}$')
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M_3_Ref, '--', label=r'$r_{3 Ref}$')
+        plt.title(r'${}^\mathcal{M} r_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='center left', prop={'size': 16})
 
-        # Plot rPrime_FM_F
+        # Plot rPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 0], label='1')
-        plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 1], label='2')
-        plt.plot(timespan * macros.NANO2SEC, rPrime_FM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} rPrime_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 0], label='1')
+        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 1], label='2')
+        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} rPrime_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m/s)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='upper left', prop={'size': 16})
 
-        # Plotting rPrimePrime_FM_M
+        # Plotting rPrimePrime_PM_M
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_FM_M[:, 0], label='1')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_FM_M[:, 1], label='2')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_FM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} rPrimePrime_{\mathcal{F}/\mathcal{M}}$ Profiled Acceleration', fontsize=14)
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_PM_M[:, 0], label='1')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_PM_M[:, 1], label='2')
+        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_PM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} rPrimePrime_{\mathcal{P}/\mathcal{M}}$ Profiled Acceleration', fontsize=14)
         plt.ylabel(r'(m/s$^2$)', fontsize=16)
         plt.xlabel('Time (s)', fontsize=16)
         plt.legend(loc='lower left', prop={'size': 16})
@@ -611,18 +611,18 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
                 testMessages.append("FAILED: Prescribed Motion integrated test failed orbital energy unit test")
 
         # Check to ensure the initial velocity converged to the reference velocity
-        rPrime_FM_M_Ref = np.array([0.0, 0.0, 0.0])
-        if not unitTestSupport.isArrayEqual(rPrime_FM_M_Final, rPrime_FM_M_Ref, 3, accuracy):
+        rPrime_PM_M_Ref = np.array([0.0, 0.0, 0.0])
+        if not unitTestSupport.isArrayEqual(rPrime_PM_M_Final, rPrime_PM_M_Ref, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "rPrime_FM_M_Final and rPrime_FM_M_Ref do not match")
-            testMessages.append("rPrime_FM_M_Final: " + str(rPrime_FM_M_Final) + " rPrime_FM_M_Ref: " + str(rPrime_FM_M_Ref))
+            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "rPrime_PM_M_Final and rPrime_PM_M_Ref do not match")
+            testMessages.append("rPrime_PM_M_Final: " + str(rPrime_PM_M_Final) + " rPrime_PM_M_Ref: " + str(rPrime_PM_M_Ref))
 
         # Check to ensure the initial position converged to the reference position
-        r_FM_M_Ref = np.array([posRef, 0.0, 0.0])
-        if not unitTestSupport.isArrayEqual(r_FM_M_Final, r_FM_M_Ref, 3, accuracy):
+        r_PM_M_Ref = np.array([posRef, 0.0, 0.0])
+        if not unitTestSupport.isArrayEqual(r_PM_M_Final, r_PM_M_Ref, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "r_FM_M_Final and r_FM_M_Ref do not match")
-            testMessages.append("r_FM_M_Final: " + str(r_FM_M_Final) + " r_FM_M_Ref: " + str(r_FM_M_Ref))
+            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "r_PM_M_Final and r_PM_M_Ref do not match")
+            testMessages.append("r_PM_M_Final: " + str(r_PM_M_Final) + " r_PM_M_Ref: " + str(r_PM_M_Ref))
 
         if testFailCount == 0:
             print("PASSED: " + "prescribedMotion and prescribedLinearTranslation integrated test")

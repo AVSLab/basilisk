@@ -3,11 +3,11 @@ Executive Summary
 -----------------
 The prescribed motion class is an instantiation of the state effector abstract class. This module describes the dynamics
 of a six-degree of freedom (6 DOF) prescribed rigid body connected to a central rigid spacecraft hub. The body frame
-for the prescribed body is designated by the frame :math:`\mathcal{F}`. The prescribed body is mounted onto a hub-fixed
+for the prescribed body is designated by the frame :math:`\mathcal{P}`. The prescribed body is mounted onto a hub-fixed
 interface described by a mount frame :math:`\mathcal{M}`. The prescribed body may be commanded to translate and rotate
 in three-dimensional space with respect to the interface it is mounted on. Accordingly, the prescribed states for
 the secondary body are written with respect to the mount frame, :math:`\mathcal{M}`. The prescribed states are:
-``r_FM_M``, ``rPrime_FM_M``, ``rPrimePrime_FM_M``, ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``.
+``r_PM_M``, ``rPrime_PM_M``, ``rPrimePrime_PM_M``, ``omega_PM_P``, ``omegaPrime_PM_P``, and ``sigma_PM``.
 
 The states of the prescribed body are not defined in this module. Therefore, separate kinematic profiler modules must
 be connected to this module's :ref:`PrescribedTranslationMsgPayload` and :ref:`PrescribedRotationMsgPayload`
@@ -65,7 +65,7 @@ The translational equations of motion are:
 The rotational equations of motion are:
 
 .. math::
-    m_{\text{sc}} [\tilde{\boldsymbol{c}}] \ddot{\boldsymbol{r}}_{B/N} + [I_{\text{sc},B}] \dot{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}} =  \boldsymbol{L}_B -  m_{\text{P}} [\tilde{\boldsymbol{r}}_{F_c/B}] \boldsymbol{r}^{''}_{F_c/B} - \left ( [I^{'}_{\text{sc},B}] + [\tilde{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}}][I_{\text{sc},B}] \right ) \boldsymbol{\omega}_{\mathcal{B}/\mathcal{N}} \\ - \left ( [I^{'}_{\text{P},F_c}] + [\tilde{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}}] [I_{\text{P},F_c}] \right ) \boldsymbol{\omega}_{\mathcal{F}/\mathcal{B}} \ - \ [I_{\text{P},F_c}] \boldsymbol{\omega}^{'}_{\mathcal{F}/\mathcal{B}} \ - \ m_{\text{P}} [\tilde{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}}] [\tilde{\boldsymbol{r}}_{F_c/B}] \boldsymbol{r}^{'}_{F_c/B}
+    m_{\text{sc}} [\tilde{\boldsymbol{c}}] \ddot{\boldsymbol{r}}_{B/N} + [I_{\text{sc},B}] \dot{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}} =  \boldsymbol{L}_B -  m_{\text{P}} [\tilde{\boldsymbol{r}}_{P_c/B}] \boldsymbol{r}^{''}_{P_c/B} - \left ( [I^{'}_{\text{sc},B}] + [\tilde{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}}][I_{\text{sc},B}] \right ) \boldsymbol{\omega}_{\mathcal{B}/\mathcal{N}} \\ - \left ( [I^{'}_{\text{P},P_c}] + [\tilde{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}}] [I_{\text{P},P_c}] \right ) \boldsymbol{\omega}_{\mathcal{P}/\mathcal{B}} \ - \ [I_{\text{P},P_c}] \boldsymbol{\omega}^{'}_{\mathcal{P}/\mathcal{B}} \ - \ m_{\text{P}} [\tilde{\boldsymbol{\omega}}_{\mathcal{B}/\mathcal{N}}] [\tilde{\boldsymbol{r}}_{P_c/B}] \boldsymbol{r}^{'}_{P_c/B}
 
 Module Testing
 ^^^^^^^^^^^^^^
@@ -77,12 +77,12 @@ prescribed body using the :ref:`prescribedRotation1DOF` profiler module. The sec
 linear translation for the prescribed body using the :ref:`prescribedLinearTranslation` profiler module.
 
 The unit test ensures that the profiled 1 DOF rotation is properly computed for a series of
-initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_FM_Final``
+initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_PM_Final``
 and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and
 ``thetaDot_Ref``, respectively. The unit test also ensures that the profiled translation is properly computed for a
 series of initial and reference positions and maximum accelerations. The final prescribed position magnitude
-``r_FM_M_Final`` and velocity magnitude ``rPrime_FM_M_Final`` are compared with the reference values ``r_FM_M_Ref``
-and ``rPrime_FM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities of orbital angular
+``r_PM_M_Final`` and velocity magnitude ``rPrime_PM_M_Final`` are compared with the reference values ``r_PM_M_Ref``
+and ``rPrime_PM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities of orbital angular
 momentum, rotational angular momentum, and orbital energy are checked to verify the module dynamics.
 
 User Guide
@@ -100,15 +100,15 @@ This section is to outline the steps needed to setup a Prescribed Motion State E
 #. Define the state effector module parameters::
 
     platform.mass = 100.0
-    platform.IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    platform.IPntPc_P = [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     platform.r_MB_B = np.array([0.0, 0.0, 0.0])
-    platform.r_FcF_F = np.array([0.0, 0.0, 0.0])
-    platform.r_FM_M = np.array([1.0, 0.0, 0.0])
-    platform.rPrime_FM_M = np.array([0.0, 0.0, 0.0])
-    platform.rPrimePrime_FM_M = np.array([0.0, 0.0, 0.0])
-    platform.omega_FM_F = np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])
-    platform.sigma_FM = np.array([0.0, 0.0, 0.0])
+    platform.r_PcP_P = np.array([0.0, 0.0, 0.0])
+    platform.r_PM_M = np.array([1.0, 0.0, 0.0])
+    platform.rPrime_PM_M = np.array([0.0, 0.0, 0.0])
+    platform.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])
+    platform.omega_PM_P = np.array([0.0, 0.0, 0.0])
+    platform.omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])
+    platform.sigma_PM = np.array([0.0, 0.0, 0.0])
     platform.omega_MB_B = np.array([0.0, 0.0, 0.0])
     platform.omegaPrime_MB_B = np.array([0.0, 0.0, 0.0])
     platform.sigma_MB = np.array([0.0, 0.0, 0.0])
@@ -132,5 +132,3 @@ default.
 
 See the example script :ref:`scenarioDeployingSolarArrays` for more information about how to set up hub-relative
 multi-body prescribed motion using this state effector module and the associated kinematic profiler modules.
-
-
