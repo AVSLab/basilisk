@@ -58,15 +58,15 @@ def test_PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaR
     to a rigid spacecraft hub. Two rotations are simulated to ensure that the module correctly updates
     the required relative PRV attitude when a new attitude reference message is written. This unit test checks that the
     prescribed body's MRP attitude converges to both reference attitudes for a series of initial and reference attitudes
-    and maximum angular accelerations. (``sigma_FM_Final1`` is checked to converge to ``sigma_FM_Ref1``, and
-    ``sigma_FM_Final2`` is checked to converge to ``sigma_FM_Ref2``). Additionally, the prescribed body's final angular
+    and maximum angular accelerations. (``sigma_PM_Final1`` is checked to converge to ``sigma_PM_Ref1``, and
+    ``sigma_PM_Final2`` is checked to converge to ``sigma_PM_Ref2``). Additionally, the prescribed body's final angular
     velocity magnitude ``thetaDot_Final`` is checked for convergence to the reference angular velocity magnitude,
     ``thetaDot_Ref``.
 
     **Test Parameters**
 
     Args:
-        thetaInit (float): [rad] Initial PRV angle of the F frame with respect to the M frame
+        thetaInit (float): [rad] Initial PRV angle of the P frame with respect to the M frame
         thetaRef1a (float): [rad] First reference PRV angle for the first rotation
         thetaRef2a (float): [rad] Second reference PRV angle for the first rotation
         thetaRef1b (float): [rad] First reference PRV angle for the second rotation
@@ -76,9 +76,9 @@ def test_PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaR
 
     **Description of Variables Being Tested**
 
-    The prescribed body's MRP attitude at the end of the first rotation ``sigma_FM_Final1`` is checked to converge to
-    the first reference attitude ``sigma_FM_Ref1``. The prescribed body's MRP attitude at the end of the second
-    rotation ``sigma_FM_Final2`` is checked to converge to the second reference attitude ``sigma_FM_Ref2``.
+    The prescribed body's MRP attitude at the end of the first rotation ``sigma_PM_Final1`` is checked to converge to
+    the first reference attitude ``sigma_PM_Ref1``. The prescribed body's MRP attitude at the end of the second
+    rotation ``sigma_PM_Final2`` is checked to converge to the second reference attitude ``sigma_PM_Ref2``.
     Additionally, the prescribed body's final angular velocity magnitude ``thetaDot_Final`` is checked for convergence
     to the reference angular velocity magnitude, ``thetaDot_Ref``.
     """
@@ -110,13 +110,13 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
 
     # Initialize the test module configuration data
     rotAxis1_M = np.array([0.0, 1.0, 0.0])                                      # Rotation axis for the first reference rotation angle, thetaRef1a
-    rotAxis2_F1 = np.array([0.0, 0.0, 1.0])                                     # Rotation axis for the second reference rotation angle, thetaRef2a
+    rotAxis2_P1 = np.array([0.0, 0.0, 1.0])                                     # Rotation axis for the second reference rotation angle, thetaRef2a
     prescribedRot2DOFObj.rotAxis1_M = rotAxis1_M
-    prescribedRot2DOFObj.rotAxis2_F1 = rotAxis2_F1
+    prescribedRot2DOFObj.rotAxis2_P1 = rotAxis2_P1
     prescribedRot2DOFObj.phiDDotMax = phiDDotMax
-    prescribedRot2DOFObj.omega_FM_F = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame F relative to frame M in F frame components
-    prescribedRot2DOFObj.omegaPrime_FM_F = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in F frame components
-    prescribedRot2DOFObj.sigma_FM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame F relative to frame M
+    prescribedRot2DOFObj.omega_PM_P = np.array([0.0, 0.0, 0.0])              # [rad/s] Angular velocity of frame P relative to frame M in P frame components
+    prescribedRot2DOFObj.omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])         # [rad/s^2] B frame time derivative of omega_FB_F in P frame components
+    prescribedRot2DOFObj.sigma_PM = np.array([0.0, 0.0, 0.0])                # MRP attitude of frame P relative to frame M
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, prescribedRot2DOFObj)
@@ -146,49 +146,49 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     unitTestSim.InitializeSimulation()
 
     # Calculate the two reference PRVs for the first rotation
-    prv_F0M_a = thetaRef1a * rotAxis1_M[0], thetaRef1a * rotAxis1_M[1], thetaRef1a * rotAxis1_M[2]
-    prv_F1F0_a = thetaRef2a * rotAxis2_F1[0], thetaRef2a * rotAxis2_F1[1], thetaRef2a * rotAxis2_F1[2]
+    prv_P0M_a = thetaRef1a * rotAxis1_M[0], thetaRef1a * rotAxis1_M[1], thetaRef1a * rotAxis1_M[2]
+    prv_P1P0_a = thetaRef2a * rotAxis2_P1[0], thetaRef2a * rotAxis2_P1[1], thetaRef2a * rotAxis2_P1[2]
 
     # Calculate a single reference PRV for the first rotation and the associated MRP attitude
     if (thetaRef1a == 0 and thetaRef2a == 0):  # Prevent a (0,0,0) error using rbk.addPRV()
-        prv_F1M_a = np.array([0.0, 0.0, 0.0])
-        phi_F1M_a = 0.0
-        sigma_FM_Ref1 = np.array([0.0, 0.0, 0.0])
+        prv_P1M_a = np.array([0.0, 0.0, 0.0])
+        phi_P1M_a = 0.0
+        sigma_PM_Ref1 = np.array([0.0, 0.0, 0.0])
     else:
-        prv_F1M_a = rbk.addPRV(prv_F0M_a, prv_F1F0_a)
-        phi_F1M_a = np.linalg.norm(prv_F1M_a)
-        sigma_FM_Ref1 = rbk.PRV2MRP(prv_F1M_a)
+        prv_P1M_a = rbk.addPRV(prv_P0M_a, prv_P1P0_a)
+        phi_P1M_a = np.linalg.norm(prv_P1M_a)
+        sigma_PM_Ref1 = rbk.PRV2MRP(prv_P1M_a)
 
     # Set the simulation time for the first rotation
-    simTime1 = np.sqrt(((0.5 * np.abs(phi_F1M_a)) * 8) / phiDDotMax) + 10
+    simTime1 = np.sqrt(((0.5 * np.abs(phi_P1M_a)) * 8) / phiDDotMax) + 10
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1))
 
     # Execute the first rotation
     unitTestSim.ExecuteSimulation()
 
-    # Extract the logged sigma_FM MRPs for data comparison
-    sigma_FM_FirstMan = dataLog.sigma_FM
-    sigma_FM_Final1 = sigma_FM_FirstMan[-1, :]
+    # Extract the logged sigma_PM MRPs for data comparison
+    sigma_PM_FirstMan = dataLog.sigma_PM
+    sigma_PM_Final1 = sigma_PM_FirstMan[-1, :]
 
     # Calculate the two reference PRVs for the second rotation
-    prv_F2M_b = thetaRef1b * rotAxis1_M[0], thetaRef1b * rotAxis1_M[1], thetaRef1b * rotAxis1_M[2]
-    prv_F3F2_b = thetaRef2b * rotAxis2_F1[0], thetaRef2b * rotAxis2_F1[1], thetaRef2b * rotAxis2_F1[2]
+    prv_P2M_b = thetaRef1b * rotAxis1_M[0], thetaRef1b * rotAxis1_M[1], thetaRef1b * rotAxis1_M[2]
+    prv_P3P2_b = thetaRef2b * rotAxis2_P1[0], thetaRef2b * rotAxis2_P1[1], thetaRef2b * rotAxis2_P1[2]
 
-    # Calculate a single reference PRV (prv_F3M_b) for the second rotation beginning from the M frame
+    # Calculate a single reference PRV (prv_P3M_b) for the second rotation beginning from the M frame
     if (thetaRef1b == 0 and thetaRef2b == 0):  # Prevent a (0,0,0) error using rbk.addPRV()
-        prv_F3M_b = np.array([0.0, 0.0, 0.0])
+        prv_P3M_b = np.array([0.0, 0.0, 0.0])
     else:
-        prv_F3M_b = rbk.addPRV(prv_F2M_b, prv_F3F2_b)
+        prv_P3M_b = rbk.addPRV(prv_P2M_b, prv_P3P2_b)
 
-    # Calculate a single reference PRV (prv_F3F1_b) for the second rotation beginning from the spinning body location after the first rotation (F1)
+    # Calculate a single reference PRV (prv_P3P1_b) for the second rotation beginning from the spinning body location after the first rotation (P1)
     # Also calculate the MRP representing the desired final attitude of the spinning body with respesct to the M frame
-    if not unitTestSupport.isArrayEqual(prv_F1M_a, prv_F3M_b, 3, 1e-12):
-        prv_F3F1_b = rbk.subPRV(prv_F1M_a, prv_F3M_b)
-        sigma_FM_Ref2 = rbk.PRV2MRP(prv_F3M_b)
+    if not unitTestSupport.isArrayEqual(prv_P1M_a, prv_P3M_b, 3, 1e-12):
+        prv_P3P1_b = rbk.subPRV(prv_P1M_a, prv_P3M_b)
+        sigma_PM_Ref2 = rbk.PRV2MRP(prv_P3M_b)
     else:
-        prv_F3F1_b = np.array([0.0, 0.0, 0.0])
-        sigma_FM_Ref2 = sigma_FM_Ref1
-    phi_F3F1_b = np.linalg.norm(prv_F3F1_b)
+        prv_P3P1_b = np.array([0.0, 0.0, 0.0])
+        sigma_PM_Ref2 = sigma_PM_Ref1
+    phi_P3P1_b = np.linalg.norm(prv_P3P1_b)
 
     # Write the HingedRigidBody reference messages for the second rotation
     hingedRigidBodyMessageData1 = messaging.HingedRigidBodyMsgPayload()
@@ -203,7 +203,7 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
     prescribedRot2DOFObj.spinningBodyRef2InMsg.subscribeTo(HingedRigidBodyMessage2)
 
     # Set the simulation time for the second rotation
-    simTime2 = np.sqrt(((0.5 * np.abs(phi_F3F1_b)) * 8) / phiDDotMax) + 10
+    simTime2 = np.sqrt(((0.5 * np.abs(phi_P3P1_b)) * 8) / phiDDotMax) + 10
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2))
 
     # Execute the second rotation
@@ -211,39 +211,39 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
 
     # Extract the recorded data for data comparison and plotting
     timespan = dataLog.times()
-    omega_FM_F = dataLog.omega_FM_F
-    sigma_FM = dataLog.sigma_FM
+    omega_PM_P = dataLog.omega_PM_P
+    sigma_PM = dataLog.sigma_PM
 
     # Extract the logged module variables
     phi = prescribedRot2DOFObjLog.phi
     phiAccum = prescribedRot2DOFObjLog.phiAccum
 
     # Store the final angular velocity of the spinning body
-    thetaDot_Final = np.linalg.norm(omega_FM_F[-1, :])
+    thetaDot_Final = np.linalg.norm(omega_PM_P[-1, :])
 
     # Store the final MRP of the spinning body with respect to the M frame
-    sigma_FM_Final2 = sigma_FM[-1, :]
+    sigma_PM_Final2 = sigma_PM[-1, :]
 
-    # Convert the logged omega_FM_F data to scalar thetaDot data
+    # Convert the logged omega_PM_P data to scalar thetaDot data
     n = len(timespan)
-    thetaDot_FM = []
+    thetaDot_PM = []
     for i in range(n):
-        thetaDot_FM.append((np.linalg.norm(omega_FM_F[i, :])))
+        thetaDot_PM.append((np.linalg.norm(omega_PM_P[i, :])))
 
     # Plot omega_FB_F
     plt.figure()
     plt.clf()
-    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 0], label=r'$\omega_{1}$')
-    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 1], label=r'$\omega_{2}$')
-    plt.plot(timespan * macros.NANO2SEC, omega_FM_F[:, 2], label=r'$\omega_{3}$')
-    plt.title(r'Prescribed Angular Velocity ${}^\mathcal{F} \omega_{\mathcal{F}/\mathcal{M}}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_PM_P[:, 0], label=r'$\omega_{1}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_PM_P[:, 1], label=r'$\omega_{2}$')
+    plt.plot(timespan * macros.NANO2SEC, omega_PM_P[:, 2], label=r'$\omega_{3}$')
+    plt.title(r'Prescribed Angular Velocity ${}^\mathcal{P} \omega_{\mathcal{P}/\mathcal{M}}$')
     plt.xlabel('Time (s)')
     plt.ylabel('(rad/s)')
     plt.legend(loc='upper right', prop={'size': 12})
 
     # Plot phi
-    thetaRef1_plotting = np.ones(len(timespan)) * phi_F1M_a
-    thetaRef2_plotting = np.ones(len(timespan)) * phi_F3F1_b
+    thetaRef1_plotting = np.ones(len(timespan)) * phi_P1M_a
+    thetaRef2_plotting = np.ones(len(timespan)) * phi_P3P1_b
     thetaInit_plotting = np.ones(len(timespan)) * thetaInit
     plt.figure()
     plt.clf()
@@ -277,21 +277,21 @@ def PrescribedRot2DOFTestFunction(show_plots, thetaInit, thetaRef1a, thetaRef2a,
         print("thetaDot_Ref: ")
         print(thetaDot_Ref)
 
-    if not unitTestSupport.isArrayEqual(sigma_FM_Final1, sigma_FM_Ref1, 3, accuracy):
+    if not unitTestSupport.isArrayEqual(sigma_PM_Final1, sigma_PM_Ref1, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_FM_Final1 and sigma_FM_Ref1 do not match")
-        print("sigma_FM_Final1: ")
-        print(sigma_FM_Final1)
-        print("sigma_FM_Ref1: ")
-        print(sigma_FM_Ref1)
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_PM_Final1 and sigma_PM_Ref1 do not match")
+        print("sigma_PM_Final1: ")
+        print(sigma_PM_Final1)
+        print("sigma_PM_Ref1: ")
+        print(sigma_PM_Ref1)
 
-    if not unitTestSupport.isArrayEqual(sigma_FM_Final2, sigma_FM_Ref2, 3, accuracy):
+    if not unitTestSupport.isArrayEqual(sigma_PM_Final2, sigma_PM_Ref2, 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_FM_Final2 and sigma_FM_Ref2 do not match")
-        print("sigma_FM_Final2: ")
-        print(sigma_FM_Final2)
-        print("sigma_FM_Ref2: ")
-        print(sigma_FM_Ref2)
+        testMessages.append("FAILED: " + prescribedRot2DOFObj.ModelTag + " MRPs sigma_PM_Final2 and sigma_PM_Ref2 do not match")
+        print("sigma_PM_Final2: ")
+        print(sigma_PM_Final2)
+        print("sigma_PM_Ref2: ")
+        print(sigma_PM_Ref2)
 
     return [testFailCount, ''.join(testMessages)]
 
