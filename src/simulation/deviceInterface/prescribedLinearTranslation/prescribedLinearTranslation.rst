@@ -1,10 +1,10 @@
 Executive Summary
 -----------------
 This module profiles linear translational motion for a rigid body connected to a rigid spacecraft hub. The body frame of
-the translating body is designated by the frame :math:`\mathcal{F}`. The states of the translating body are profiled
+the translating body is designated by the frame :math:`\mathcal{P}`. The states of the translating body are profiled
 relative to a hub-fixed frame :math:`\mathcal{M}`. The :ref:`PrescribedTranslationMsgPayload` message is used to output
-the prescribed translational states from the module. The prescribed states profiled in this module are: ``r_FM_M``,
-``rPrime_FM_M``, and ``rPrimePrime_FM_M``. This module has four options to profile the linear translation.
+the prescribed translational states from the module. The prescribed states profiled in this module are: ``r_PM_M``,
+``rPrime_PM_M``, and ``rPrimePrime_PM_M``. This module has four options to profile the linear translation.
 The first option is a bang-bang acceleration profile that minimizes the time required to complete the translation.
 The second option is a bang-coast-bang acceleration profile that adds a coast period of zero acceleration between the
 acceleration ramp segments. The third option is a smoothed bang-bang acceleration profile that uses cubic splines to
@@ -36,9 +36,9 @@ set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -64,11 +64,11 @@ Detailed Module Description
 Non-Smoothed Bang-Bang Profiler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The first option to profile the linear translation is a pure bang-bang acceleration profile. If the given reference 
+The first option to profile the linear translation is a pure bang-bang acceleration profile. If the given reference
 position is greater than the given initial position, the user-specified maximum acceleration value
 is applied positively to the first half of the translation and negatively to the second half of the translation.
 However, if the reference position is less than the initial position, the acceleration is instead applied
-negatively during the first half of the translation and positively during the second half of the translation. As a 
+negatively during the first half of the translation and positively during the second half of the translation. As a
 result of this acceleration profile, the translational body's hub-relative velocity changes linearly with time and
 reaches a maximum in magnitude halfway through the translation. Note that the velocity is assumed to both start and
 end at zero in this module. The resulting translational position profile is parabolic in time.
@@ -201,7 +201,7 @@ and :math:`\Delta \rho_{\text{coast}}` is the distance traveled during the coast
     t_c = t_{b1} + \frac{\Delta \rho_{\text{coast}}}{\dot{\rho}(t_{b1})}
 
 Using the given translation axis ``transHat_M``, the scalar states are then transformed to the prescribed translational
-states ``r_FM_M``, ``rPrime_FM_M``, and ``rPrimePrime_FM_M``. The states are then written to the
+states ``r_PM_M``, ``rPrime_PM_M``, and ``rPrimePrime_PM_M``. The states are then written to the
 :ref:`PrescribedTranslationMsgPayload` module output message.
 
 Smoothed Bang-Bang Profiler
@@ -471,4 +471,3 @@ This section is to outline the steps needed to setup the prescribed linear trans
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, prescribedLinearTrans)
-
