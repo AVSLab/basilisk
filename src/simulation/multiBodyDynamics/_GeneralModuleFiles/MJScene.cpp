@@ -21,7 +21,7 @@
 
 #include "MJFwdKinematics.h"
 
-#include "../_GeneralModuleFiles/svIntegratorRK4.h"
+#include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 #include <fstream>

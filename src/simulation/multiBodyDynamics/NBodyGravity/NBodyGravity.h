@@ -32,9 +32,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
 
-#include "MJBody.h"
-#include "MJSite.h"
-#include "MJActuator.h"
+#include "simulation/multiBodyDynamics/_GeneralModuleFiles/MJScene.h"
 
 /**
  * @brief Represents a gravity source in an N-body simulation.

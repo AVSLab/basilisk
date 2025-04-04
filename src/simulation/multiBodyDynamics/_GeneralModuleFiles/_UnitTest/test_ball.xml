@@ -1,0 +1,15 @@
+<mujoco>
+	<option gravity="0 0 0" integrator="RK4" timestep="0.1"/>
+
+	<worldbody>
+		<body name="ball">
+			<freejoint/>
+			<site name="center" />
+			<geom size="1" rgba="1 0 0 1"/>
+		</body>
+	</worldbody>
+
+	<actuator>
+		<general name="ball" site="center"/>
+	</actuator>
+</mujoco>

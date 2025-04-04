@@ -22,7 +22,7 @@
 %{
    #include "NBodyGravity.h"
    #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
-   #include "MJInterpolators.h"
+   #include "simulation/multiBodyDynamics/_GeneralModuleFiles/MJInterpolators.h"
 %}
 
 %pythoncode %{
@@ -32,7 +32,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "exception.i"
 
-%import "mujoco.i"
+%import "simulation/multiBodyDynamics/_GeneralModuleFiles/mujoco.i"
 %import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
 
 %include "sys_model.i"
