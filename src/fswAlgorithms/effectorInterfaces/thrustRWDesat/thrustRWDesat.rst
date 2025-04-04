@@ -34,4 +34,6 @@ provides information on what this message is used for.
       - :ref:`THRArrayOnTimeCmdMsgPayload`
       - thruster array commanded on time output message
 
-
+Module Assumptions and Limitations
+----------------------------------
+The module ``Reset()`` function zeros the output message to ensure safe management of effector states when the algorithm is disabled.

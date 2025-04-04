@@ -32,7 +32,7 @@
 typedef struct {
     /* Configs.*/
     double steeringMatrix[MAX_EFF_CNT * 3];             //!< matrix for mapping body frame dipole request to individual torque bar dipoles
-    
+
     /* Inputs. */
     MTBArrayConfigMsg_C mtbArrayConfigParamsInMsg;      //!< input message containing configuration parameters for all the torque bars on the vehicle
     DipoleRequestBodyMsg_C dipoleRequestBodyInMsg;      //!< [A-m2] input message containing the requested body frame dipole
@@ -49,11 +49,17 @@ typedef struct {
 extern "C" {
 #endif
     void SelfInit_dipoleMapping(dipoleMappingConfig *configData, int64_t moduleID);
-    void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int64_t moduleID);
+    void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
+
+/*! @brief This module maps a requested body frame dipole to individual torque rod dipoles.
+ *
+ * @section MdlRst Module Reset
+ * The module reset function reads in the torque rod configuration message and zeros the output message.
+ */
 
 #endif

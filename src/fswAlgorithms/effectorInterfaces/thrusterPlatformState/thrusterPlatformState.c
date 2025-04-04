@@ -50,6 +50,10 @@ void Reset_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64
     if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBody2InMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformState.hingedRigidBody2InMsg wasn't connected.");
     }
+
+    /* zero the thruster configuration output message */
+    THRConfigMsgPayload thrusterConfigBOut = THRConfigMsg_C_zeroMsgPayload();
+    THRConfigMsg_C_write(&thrusterConfigBOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
 }
 
 

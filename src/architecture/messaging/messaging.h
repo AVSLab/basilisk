@@ -304,6 +304,13 @@ public:
     //! -- Read and record the message
     void UpdateState(uint64_t CurrentSimNanos){
         if (CurrentSimNanos >= this->nextUpdateTime) {
+            // Log warning if message is invalid but don't change behavior
+            if (!this->readMessage.isLinked() || !this->readMessage.isWritten()) {
+                messageType var;
+                bskLogger.bskLog(BSK_WARNING, "Recording message of type %s that is not properly initialized or written", typeid(var).name());
+            }
+
+            // Record the message
             this->msgRecordTimes.push_back(CurrentSimNanos);
             this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
             this->msgRecord.push_back(this->readMessage());

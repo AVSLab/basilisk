@@ -45,7 +45,7 @@ The required module configuration is::
     platformState.r_BM_M = r_BM_M
     platformState.r_FM_F = r_FM_F
     scSim.AddModelToTaskAddModelToTask(simTaskName, platformState)
- 	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters
@@ -64,3 +64,7 @@ The module is configurable with the following parameters:
     * - ``r_FM_F``
       - [0, 0, 0]
       - relative position of point :math:`F` with respect to point :math:`M`, in :math:`\mathcal{F}`-frame coordinates
+
+Module Assumptions and Limitations
+----------------------------------
+The module ``Reset()`` function zeros the output message to ensure safe management of effector states when the algorithm is disabled.

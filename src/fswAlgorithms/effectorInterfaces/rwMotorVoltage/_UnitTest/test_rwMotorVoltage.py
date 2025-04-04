@@ -64,6 +64,76 @@ def test_module(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, tes
     [testResults, testMessage] = run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName)
     assert testResults < 1, testMessage
 
+def test_reset():
+    """Test that Reset() zeros the output message"""
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    module = rwMotorVoltage.rwMotorVoltage()
+    module.ModelTag = "rwMotorVoltage"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, module)
+
+    # Initialize the test module configuration data
+    module.VMin = 1.0     # Volts
+    module.VMax = 11.0    # Volts
+
+    # Create RW configuration parameter input message
+    GsMatrix_B = [
+        [1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],
+        [1.0, 1.0, 1.0]
+    ]
+    fswSetupRW.clearSetup()
+    for i in range(4):
+        fswSetupRW.create(GsMatrix_B[i],    # spin axis
+                          0.1,              # kg*m^2    J2
+                          0.2)              # Nm        uMax
+    rwConfigInMsg = fswSetupRW.writeConfigMessage()
+    module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
+
+    # Create RW motor torque input message with non-zero values
+    usMessageData = messaging.ArrayMotorTorqueMsgPayload()
+    usMessageData.motorTorque = [0.5, 0.0, -0.15, -0.5]  # [Nm] RW motor torque cmds
+    rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(usMessageData)
+    module.torqueInMsg.subscribeTo(rwMotorTorqueInMsg)
+
+    # Need to call the self-init and cross-init methods
+    unitTestSim.InitializeSimulation()
+
+    # Run simulation to get non-zero output
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
+    unitTestSim.ExecuteSimulation()
+
+    # Now call Reset() and verify output is zeroed
+    module.Reset(0)  # Pass 0 as currentSimNanos
+    expectedVoltage = [0.] * messaging.MAX_EFF_CNT
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedVoltage),
+                                                                np.array(module.voltageOutMsg.read().voltage),
+                                                                1e-3,
+                                                                "Reset() zeroed voltage",
+                                                                testFailCount, testMessages)
+
+    # Print success message if no errors were found
+    if testFailCount == 0:
+        print("PASSED: " + module.ModelTag + " Reset() test")
+    else:
+        print("Failed: " + module.ModelTag + " Reset() test")
+
+    assert testFailCount == 0, ''.join(testMessages)
 
 def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     testFailCount = 0                       # zero unit test result counter

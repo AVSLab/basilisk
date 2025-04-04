@@ -41,3 +41,7 @@ matrix that transforms the individual rod dipoles to the Body frame.
 User Guide
 ----------
 See the example script :ref:`scenarioMtbMomentumManagementSimple` for an illustration on how to use this module.
+
+Module Assumptions and Limitations
+----------------------------------
+The module ``Reset()`` function zeros the output message to ensure safe management of effector states when the algorithm is disabled.

@@ -292,6 +292,13 @@ class BSKFswModels:
             self.spacecraftReconfig.onTimeOutMsg)
 
     def zeroGateWayMsgs(self):
-        """Zero all the FSW gateway message payloads"""
+        """Zero all FSW gateway message payloads"""
         self.attRefMsg.write(messaging.AttRefMsgPayload())
         self.attGuidMsg.write(messaging.AttGuidMsgPayload())
+
+        # Zero all actuator commands
+        self.rwMotorTorque.rwMotorTorqueOutMsg.write(messaging.ArrayMotorTorqueMsgPayload())
+        self.spacecraftReconfig.onTimeOutMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
+
+        # If CMGs are present in the configuration:
+        # self.cmgCmdMsg.write(messaging.CMGCmdMsgPayload())

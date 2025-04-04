@@ -32,6 +32,7 @@ from Basilisk.fswAlgorithms import torqueScheduler  # import the module that is 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+import numpy as np
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -53,7 +54,7 @@ def test_torqueScheduler(lockFlag, tSwitch, accuracy):
     **Validation Test Description**
 
     This unit test verifies the correctness of the output motor torque :ref:`torqueScheduler`.
-    The inputs provided are the lock flag and the time at which thr control is switched from 
+    The inputs provided are the lock flag and the time at which thr control is switched from
     one degree of freedom to the other.
 
     **Test Parameters**
@@ -191,12 +192,88 @@ def torqueSchedulerTestFunction(lockFlag, tSwitch, accuracy):
     return [testFailCount, ''.join(testMessages)]
 
 
+def test_reset():
+    """Test that Reset() zeros both output messages"""
+    testFailCount = 0
+    testMessages = []
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(1)     # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C container
+    scheduler = torqueScheduler.torqueScheduler()
+    scheduler.ModelTag = "torqueScheduler"
+    scheduler.lockFlag = 0  # Both torques enabled
+    scheduler.tSwitch = 3.0
+    unitTestSim.AddModelToTask(unitTaskName, scheduler)
+
+    # Create input array motor torque msg #1
+    motorTorque1InMsgData = messaging.ArrayMotorTorqueMsgPayload()
+    motorTorque1InMsgData.motorTorque = [1.0] * messaging.MAX_EFF_CNT  # Fill with non-zero values
+    motorTorque1InMsg = messaging.ArrayMotorTorqueMsg().write(motorTorque1InMsgData)
+    scheduler.motorTorque1InMsg.subscribeTo(motorTorque1InMsg)
+
+    # Create input array motor torque msg #2
+    motorTorque2InMsgData = messaging.ArrayMotorTorqueMsgPayload()
+    motorTorque2InMsgData.motorTorque = [3.0] * messaging.MAX_EFF_CNT  # Fill with non-zero values
+    motorTorque2InMsg = messaging.ArrayMotorTorqueMsg().write(motorTorque2InMsgData)
+    scheduler.motorTorque2InMsg.subscribeTo(motorTorque2InMsg)
+
+    # Setup logging on the test module output messages
+    torqueLog = scheduler.motorTorqueOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, torqueLog)
+    lockLog = scheduler.effectorLockOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, lockLog)
+
+    # Initialize simulation
+    unitTestSim.InitializeSimulation()
+
+    # Run simulation for a short time to get non-zero outputs
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
+    unitTestSim.ExecuteSimulation()
+
+    # Now call Reset() and verify outputs are zeroed
+    scheduler.Reset(0)  # Pass 0 as currentSimNanos
+
+    # Check that motor torque output is zeroed
+    expectedTorque = [0.0] * messaging.MAX_EFF_CNT  # Array of zeros with correct size
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedTorque),
+                                                               np.array(scheduler.motorTorqueOutMsg.read().motorTorque),
+                                                               1e-12,
+                                                               "Reset() zeroed motor torque",
+                                                               testFailCount, testMessages)
+
+    # Check that effector lock output is zeroed
+    expectedLock = [0] * messaging.MAX_EFF_CNT  # Array of zeros with correct size
+    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedLock),
+                                                               np.array(scheduler.effectorLockOutMsg.read().effectorLockFlag),
+                                                               1e-12,
+                                                               "Reset() zeroed effector lock",
+                                                               testFailCount, testMessages)
+
+    # Print success message if no errors were found
+    if testFailCount == 0:
+        print("PASSED: " + scheduler.ModelTag + " Reset() test")
+    else:
+        print("Failed: " + scheduler.ModelTag + " Reset() test")
+
+    assert testFailCount == 0, ''.join(testMessages)
+
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_torqueScheduler( 
+    test_torqueScheduler(
                  1,
                  5,
                  1e-12
