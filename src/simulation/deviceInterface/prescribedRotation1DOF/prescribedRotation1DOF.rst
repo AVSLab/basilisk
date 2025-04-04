@@ -1,10 +1,10 @@
 Executive Summary
 -----------------
 This module profiles a 1 DOF rotation for a spinning rigid body connected to a rigid spacecraft hub. The body frame
-of the spinning body is designated by the frame :math:`\mathcal{F}`. The spinning body's states are profiled
+of the spinning body is designated by the frame :math:`\mathcal{P}`. The spinning body's states are profiled
 relative to a hub-fixed frame :math:`\mathcal{M}`. The :ref:`PrescribedRotationMsgPayload` message
 is used to output the prescribed rotational states from the module. The prescribed states profiled in this module
-are: ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``. This module has four options to profile the spinning body
+are: ``omega_PM_P``, ``omegaPrime_PM_P``, and ``sigma_PM``. This module has four options to profile the spinning body
 rotation. The first option is a bang-bang acceleration profile that minimizes the time required for the rotation.
 The second option is a bang-coast-bang acceleration profile that adds a coast period of zero acceleration between the
 acceleration ramp segments. The third option is a smoothed bang-bang acceleration profile that uses cubic splines to
@@ -36,9 +36,9 @@ set to nonzero values, the smoothed bang-coast-bang profiler is selected.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what the message is used for.
 
 .. list-table:: Module I/O Messages
@@ -211,7 +211,7 @@ and :math:`\Delta \theta_{\text{coast}}` is the angle traveled during the coast 
     t_c = t_{b1} + \frac{\Delta \theta_{\text{coast}}}{\dot{\theta}(t_{b1})}
 
 Using the given rotation axis ``rotHat_M``, the scalar states are then transformed to the spinning body
-rotational states ``omega_FM_F``, ``omegaPrime_FM_F``, and ``sigma_FM``. The states are then written to the
+rotational states ``omega_PM_P``, ``omegaPrime_PM_P``, and ``sigma_PM``. The states are then written to the
 :ref:`PrescribedRotationMsgPayload` module output message.
 
 Smoothed Bang-Bang Profiler

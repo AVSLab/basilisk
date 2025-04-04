@@ -148,12 +148,12 @@ def test_prescribedRotation1DOF(show_plots,
 
     # Extract logged data
     timespan = macros.NANO2SEC * scalarAngleDataLog.times()  # [s]
-    omega_FM_F = macros.R2D * prescribedRotStatesDataLog.omega_FM_F  # [deg/s]
-    omegaPrime_FM_F = macros.R2D * prescribedRotStatesDataLog.omegaPrime_FM_F  # [deg/s^2]
-    sigma_FM = prescribedRotStatesDataLog.sigma_FM
+    omega_PM_P = macros.R2D * prescribedRotStatesDataLog.omega_PM_P  # [deg/s]
+    omegaPrime_PM_P = macros.R2D * prescribedRotStatesDataLog.omegaPrime_PM_P  # [deg/s^2]
+    sigma_PM = prescribedRotStatesDataLog.sigma_PM
     theta = macros.R2D * scalarAngleDataLog.theta  # [deg]
     thetaDot = macros.R2D * scalarAngleDataLog.thetaDot  # [deg/s]
-    thetaDDot = omegaPrime_FM_F.dot(rotAxis_M)  # [deg/s^2]
+    thetaDDot = omegaPrime_PM_P.dot(rotAxis_M)  # [deg/s^2]
 
     # Unit test validation 1: Check that the profiler converges to the required final angles
     tf_1_index = int(round(simTime / testTimeStepSec)) + 1
@@ -205,7 +205,7 @@ def test_prescribedRotation1DOF(show_plots,
         plt.plot(timespan, thetaInitPlotting, '--', label=r'$\theta_{0}$')
         plt.plot(timespan, thetaRef1Plotting, '--', label=r'$\theta_{Ref_1}$')
         plt.plot(timespan, thetaRef2Plotting, '--', label=r'$\theta_{Ref_2}$')
-        plt.title(r'Profiled Angle $\theta_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.title(r'Profiled Angle $\theta_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(deg)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
@@ -215,7 +215,7 @@ def test_prescribedRotation1DOF(show_plots,
         plt.figure()
         plt.clf()
         plt.plot(timespan, thetaDot, label=r"$\dot{\theta}$")
-        plt.title(r'Profiled Angle Rate $\dot{\theta}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.title(r'Profiled Angle Rate $\dot{\theta}_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(deg/s)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
@@ -225,46 +225,46 @@ def test_prescribedRotation1DOF(show_plots,
         plt.figure()
         plt.clf()
         plt.plot(timespan, thetaDDot, label=r"$\ddot{\theta}$")
-        plt.title(r'Profiled Angular Acceleration $\ddot{\theta}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+        plt.title(r'Profiled Angular Acceleration $\ddot{\theta}_{\mathcal{P}/\mathcal{M}}$ ', fontsize=14)
         plt.ylabel('(deg/s$^2$)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
         plt.grid(True)
 
         # 2. Plot the spinning body prescribed rotational states
-        # 2A. Plot PRV angle from sigma_FM
-        phi_FM = []
+        # 2A. Plot PRV angle from sigma_PM
+        phi_PM = []
         for i in range(len(timespan)):
-            phi_FM.append(macros.R2D * 4 * np.arctan(np.linalg.norm(sigma_FM[i, :])))  # [deg]
+            phi_PM.append(macros.R2D * 4 * np.arctan(np.linalg.norm(sigma_PM[i, :])))  # [deg]
 
         plt.figure()
         plt.clf()
-        plt.plot(timespan, phi_FM, label=r"$\Phi$")
-        plt.title(r'Profiled PRV Angle $\Phi_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.plot(timespan, phi_PM, label=r"$\Phi$")
+        plt.title(r'Profiled PRV Angle $\Phi_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(deg)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='center right', prop={'size': 14})
         plt.grid(True)
 
-        # 2B. Plot omega_FM_F
+        # 2B. Plot omega_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, omega_FM_F[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan, omega_FM_F[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan, omega_FM_F[:, 2], label=r'$\omega_{3}$')
-        plt.title(r'Profiled Angular Velocity ${}^\mathcal{F} \omega_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.plot(timespan, omega_PM_P[:, 0], label=r'$\omega_{1}$')
+        plt.plot(timespan, omega_PM_P[:, 1], label=r'$\omega_{2}$')
+        plt.plot(timespan, omega_PM_P[:, 2], label=r'$\omega_{3}$')
+        plt.title(r'Profiled Angular Velocity ${}^\mathcal{P} \omega_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(deg/s)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 14})
         plt.grid(True)
 
-        # 2C. Plot omegaPrime_FM_F
+        # 2C. Plot omegaPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, omegaPrime_FM_F[:, 0], label=r'1')
-        plt.plot(timespan, omegaPrime_FM_F[:, 1], label=r'2')
-        plt.plot(timespan, omegaPrime_FM_F[:, 2], label=r'3')
-        plt.title(r'Profiled Angular Acceleration ${}^\mathcal{F} \omega$Prime$_{\mathcal{F}/\mathcal{M}}$',
+        plt.plot(timespan, omegaPrime_PM_P[:, 0], label=r'1')
+        plt.plot(timespan, omegaPrime_PM_P[:, 1], label=r'2')
+        plt.plot(timespan, omegaPrime_PM_P[:, 2], label=r'3')
+        plt.title(r'Profiled Angular Acceleration ${}^\mathcal{P} \omega$Prime$_{\mathcal{P}/\mathcal{M}}$',
                   fontsize=14)
         plt.ylabel('(deg/s$^2$)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
