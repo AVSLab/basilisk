@@ -452,7 +452,7 @@ def translatingBodyLockFlag(show_plots):
     prescribedRotationMessageData.theta = prescribedThetaRef
     prescribedRotationMessageData.thetaDot = 0.0  # [rad/s]
     prescribedRotationMessage = messaging.HingedRigidBodyMsg().write(prescribedRotationMessageData)
-    prescribedRotation.translatingBodyInMsg.subscribeTo(prescribedRotationMessage)
+    prescribedRotation.spinningBodyInMsg.subscribeTo(prescribedRotationMessage)
     platform.prescribedRotationInMsg.subscribeTo(prescribedRotation.prescribedRotationOutMsg)
 
     # Create translational motion profiler
@@ -679,7 +679,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     scObject.hub.IHubPntBc_B = [[IHub_11, 0.0, 0.0], [0.0, IHub_22, 0.0], [0.0, 0.0, IHub_33]]  # [kg m^2] (Hub approximated as a cube)
     scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
     scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [0.01]]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
@@ -731,12 +731,12 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     unitTestSim.AddModelToTask(unitTaskName, prescribedRotation)
 
     # Create the rotational motion reference message
-    prescribedThetaRef = 10.0 * macros.D2R  # [rad]
+    prescribedThetaRef = 90.0 * macros.D2R #10.0 * macros.D2R  # [rad]
     prescribedRotationMessageData = messaging.HingedRigidBodyMsgPayload()
     prescribedRotationMessageData.theta = prescribedThetaRef
     prescribedRotationMessageData.thetaDot = 0.0  # [rad/s]
     prescribedRotationMessage = messaging.HingedRigidBodyMsg().write(prescribedRotationMessageData)
-    prescribedRotation.translatingBodyInMsg.subscribeTo(prescribedRotationMessage)
+    prescribedRotation.spinningBodyInMsg.subscribeTo(prescribedRotationMessage)
     platform.prescribedRotationInMsg.subscribeTo(prescribedRotation.prescribedRotationOutMsg)
 
     # Create translational motion profiler
@@ -751,7 +751,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     unitTestSim.AddModelToTask(unitTaskName, prescribedTranslation)
 
     # Create the translational motion reference message
-    posRef = 0.1  # [m]
+    posRef = 1.0  #0.1  # [m]
     prescribedTranslationMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
     prescribedTranslationMessageData.rho = posRef
     prescribedTranslationMessageData.rhoDot = 0.0
@@ -817,8 +817,14 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     # Add energy and momentum variables to log
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"])
     rhoData = translatingBody.translatingBodyOutMsg.recorder()
+    prescribed_rot_state_data_log = platform.prescribedRotationOutMsg.recorder()
+    theta_data_log = prescribedRotation.spinningBodyOutMsg.recorder()
+    prescribed_trans_state_data_log = platform.prescribedTranslationOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
     unitTestSim.AddModelToTask(unitTaskName, rhoData)
+    unitTestSim.AddModelToTask(unitTaskName, prescribed_rot_state_data_log)
+    unitTestSim.AddModelToTask(unitTaskName, theta_data_log)
+    unitTestSim.AddModelToTask(unitTaskName, prescribed_trans_state_data_log)
 
     # Add Vizard
     scBodyList = [scObject]
@@ -850,7 +856,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
 
     # Run the simulation
     unitTestSim.InitializeSimulation()
-    simTime = 15.0  # [s]
+    simTime = 120.0  # [s]
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
     unitTestSim.ExecuteSimulation()
 
@@ -860,6 +866,13 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     orbEnergy = scObjectLog.totOrbEnergy
     rho = rhoData.rho
     rhoDot = rhoData.rhoDot
+    timespan = prescribed_rot_state_data_log.times() * macros.NANO2SEC  # [s]
+    prescribed_theta = macros.R2D * theta_data_log.theta  # [deg]
+    omega_fm_f = prescribed_rot_state_data_log.omega_FM_F * macros.R2D  # [deg]
+    omega_prime_fm_f = prescribed_rot_state_data_log.omegaPrime_FM_F * macros.R2D  # [deg]
+    r_fm_m = prescribed_trans_state_data_log.r_FM_M
+    r_prime_fm_m = prescribed_trans_state_data_log.rPrime_FM_M
+    r_prime_prime_fm_m = prescribed_trans_state_data_log.rPrimePrime_FM_M
 
     # Set up the conservation quantities
     timeSec = scObjectLog.times() * 1e-9
@@ -896,6 +909,73 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     plt.xlabel('time (s)')
     plt.ylabel('Relative Difference')
     plt.title('Rotational Angular Momentum')
+
+    theta_ref_plotting = np.ones(len(timespan)) * prescribedThetaRef * macros.R2D  # [deg]
+    rhoRefs = np.ones(len(timespan)) * posRef  # [m]
+    rhos = np.linalg.norm(r_fm_m, axis=1)  # [m]
+    rhoDots = np.linalg.norm(r_prime_fm_m, axis=1)  # [m/s]
+    rhoDDots = np.linalg.norm(r_prime_prime_fm_m, axis=1)  # [m/s^2]
+    thetaDots = np.linalg.norm(omega_fm_f, axis=1)  # [deg/s]
+    thetaDDots = np.linalg.norm(omega_prime_fm_f, axis=1)  # [deg/s^2]
+
+    # Plot prescribed position and angle
+    fig1, ax1 = plt.subplots()
+    ax1.plot(timespan, prescribed_theta, label=r"$\theta$", color="teal")
+    ax1.plot(timespan, theta_ref_plotting, "--", label=r"$\theta_{\text{ref}}$", color="teal")
+    ax1.tick_params(axis="y", labelcolor="teal")
+    ax1.set_xlabel("Time (s)", fontsize=16)
+    ax1.set_ylabel("Angle (deg)", color="teal", fontsize=16)
+    # ax1.set_ylim(0.0, 11.0)
+    ax2 = ax1.twinx()
+    ax2.plot(timespan, 100.0 * rhos, label=r"$\rho$", color="darkviolet")
+    ax2.plot(timespan, 100.0 * rhoRefs, "--", label=r"$\rho_{\text{ref}}$", color="darkviolet")
+    ax2.set_ylabel("Displacement (cm)", color="darkviolet", fontsize=16)
+    ax2.tick_params(axis="y", labelcolor="darkviolet")
+    # ax2.set_ylim(0.0, 11.0)
+    handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
+    handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
+    handles = handles_ax1 + handles_ax2
+    labels = labels_ax1 + labels_ax2
+    plt.legend(handles=handles, labels=labels, loc="center left", prop={"size": 16})
+    plt.grid(True)
+
+    # Plot prescribed velocities
+    fig2, ax1 = plt.subplots()
+    ax1.plot(timespan, thetaDots, label=r"$\dot{\theta}$", color="teal")
+    ax1.tick_params(axis="y", labelcolor="teal")
+    ax1.set_xlabel("Time (s)", fontsize=16)
+    ax1.set_ylabel("Angle Rate (deg/s)", color="teal", fontsize=16)
+    # ax1.set_ylim(0.0, 1.1)
+    ax2 = ax1.twinx()
+    ax2.plot(timespan, 100.0 * rhoDots, label=r"$\dot{\rho}$", color="darkviolet")
+    ax2.set_ylabel("Displacement Rate (cm/s)", color="darkviolet", fontsize=16)
+    ax2.tick_params(axis="y", labelcolor="darkviolet")
+    # ax2.set_ylim(0.0, 1.1)
+    handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
+    handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
+    handles = handles_ax1 + handles_ax2
+    labels = labels_ax1 + labels_ax2
+    plt.legend(handles=handles, labels=labels, loc="center", prop={"size": 16})
+    plt.grid(True)
+
+    # Plot prescribed accelerations
+    fig3, ax1 = plt.subplots()
+    ax1.plot(timespan, omega_prime_fm_f[:, 0], label=r"$\ddot{\theta}$", color="teal")
+    ax1.tick_params(axis="y", labelcolor="teal")
+    ax1.set_xlabel("Time (s)", fontsize=16)
+    ax1.set_ylabel("Angular Acceleration (deg/$s^2$)", color="teal", fontsize=16)
+    # ax1.set_ylim(-0.6, 0.6)
+    ax2 = ax1.twinx()
+    ax2.plot(timespan, 100.0 * r_prime_prime_fm_m[:, 0], label=r"$\ddot{\rho}$", color="darkviolet")
+    ax2.set_ylabel("Linear Acceleration (cm/$s^2$)", color="darkviolet", fontsize=16)
+    ax2.tick_params(axis="y", labelcolor="darkviolet")
+    # ax2.set_ylim(-0.6, 0.6)
+    handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
+    handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
+    handles = handles_ax1 + handles_ax2
+    labels = labels_ax1 + labels_ax2
+    plt.legend(handles=handles, labels=labels, loc="upper right", prop={"size": 16})
+    plt.grid(True)
 
     plt.figure()
     plt.clf()
@@ -956,7 +1036,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     scObject.hub.IHubPntBc_B = [[IHub_11, 0.0, 0.0], [0.0, IHub_22, 0.0], [0.0, 0.0, IHub_33]]  # [kg m^2] (Hub approximated as a cube)
     scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
     scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [0.01]]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
@@ -1008,7 +1088,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     unitTestSim.AddModelToTask(unitTaskName, prescribedRotation)
 
     # Create the rotational motion reference message
-    prescribedThetaRef = 10.0 * macros.D2R  # [rad]
+    prescribedThetaRef = 90.0 * macros.D2R #10.0 * macros.D2R  # [rad]
     prescribedRotationMessageData = messaging.HingedRigidBodyMsgPayload()
     prescribedRotationMessageData.theta = prescribedThetaRef
     prescribedRotationMessageData.thetaDot = 0.0  # [rad/s]
@@ -1028,7 +1108,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     unitTestSim.AddModelToTask(unitTaskName, prescribedTranslation)
 
     # Create the translational motion reference message
-    posRef = 0.1  # [m]
+    posRef = 1.0  #0.1  # [m]
     prescribedTranslationMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
     prescribedTranslationMessageData.rho = posRef
     prescribedTranslationMessageData.rhoDot = 0.0
@@ -1091,8 +1171,14 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     # Add energy and momentum variables to log
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"])
     rhoData = translatingBody.translatingBodyOutMsg.recorder()
+    prescribed_rot_state_data_log = platform.prescribedRotationOutMsg.recorder()
+    theta_data_log = prescribedRotation.spinningBodyOutMsg.recorder()
+    prescribed_trans_state_data_log = platform.prescribedTranslationOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
     unitTestSim.AddModelToTask(unitTaskName, rhoData)
+    unitTestSim.AddModelToTask(unitTaskName, prescribed_rot_state_data_log)
+    unitTestSim.AddModelToTask(unitTaskName, theta_data_log)
+    unitTestSim.AddModelToTask(unitTaskName, prescribed_trans_state_data_log)
 
     # Add Vizard
     scBodyList = [scObject]
@@ -1123,7 +1209,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
 
     # Run the simulation
     unitTestSim.InitializeSimulation()
-    simTime = 15.0  # [s]
+    simTime = 120.0  # [s]
     unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
     unitTestSim.ExecuteSimulation()
 
@@ -1133,6 +1219,13 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     orbEnergy = scObjectLog.totOrbEnergy
     rho = rhoData.rho
     rhoDot = rhoData.rhoDot
+    timespan = prescribed_rot_state_data_log.times() * macros.NANO2SEC  # [s]
+    prescribed_theta = macros.R2D * theta_data_log.theta  # [deg]
+    omega_fm_f = prescribed_rot_state_data_log.omega_FM_F * macros.R2D  # [deg]
+    omega_prime_fm_f = prescribed_rot_state_data_log.omegaPrime_FM_F * macros.R2D  # [deg]
+    r_fm_m = prescribed_trans_state_data_log.r_FM_M
+    r_prime_fm_m = prescribed_trans_state_data_log.rPrime_FM_M
+    r_prime_prime_fm_m = prescribed_trans_state_data_log.rPrimePrime_FM_M
 
     # Set up the conservation quantities
     timeSec = scObjectLog.times() * 1e-9
@@ -1171,6 +1264,73 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     plt.ylabel('Relative Difference')
     plt.title('Rotational Angular Momentum')
 
+    theta_ref_plotting = np.ones(len(timespan)) * prescribedThetaRef * macros.R2D  # [deg]
+    rhoRefs = np.ones(len(timespan)) * posRef  # [m]
+    rhos = np.linalg.norm(r_fm_m, axis=1)  # [m]
+    rhoDots = np.linalg.norm(r_prime_fm_m, axis=1)  # [m/s]
+    rhoDDots = np.linalg.norm(r_prime_prime_fm_m, axis=1)  # [m/s^2]
+    thetaDots = np.linalg.norm(omega_fm_f, axis=1)  # [deg/s]
+    thetaDDots = np.linalg.norm(omega_prime_fm_f, axis=1)  # [deg/s^2]
+
+    # Plot prescribed position and angle
+    fig1, ax1 = plt.subplots()
+    ax1.plot(timespan, prescribed_theta, label=r"$\theta$", color="teal")
+    ax1.plot(timespan, theta_ref_plotting, "--", label=r"$\theta_{\text{ref}}$", color="teal")
+    ax1.tick_params(axis="y", labelcolor="teal")
+    ax1.set_xlabel("Time (s)", fontsize=16)
+    ax1.set_ylabel("Angle (deg)", color="teal", fontsize=16)
+    # ax1.set_ylim(0.0, 11.0)
+    ax2 = ax1.twinx()
+    ax2.plot(timespan, 100.0 * rhos, label=r"$\rho$", color="darkviolet")
+    ax2.plot(timespan, 100.0 * rhoRefs, "--", label=r"$\rho_{\text{ref}}$", color="darkviolet")
+    ax2.set_ylabel("Displacement (cm)", color="darkviolet", fontsize=16)
+    ax2.tick_params(axis="y", labelcolor="darkviolet")
+    # ax2.set_ylim(0.0, 11.0)
+    handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
+    handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
+    handles = handles_ax1 + handles_ax2
+    labels = labels_ax1 + labels_ax2
+    plt.legend(handles=handles, labels=labels, loc="center left", prop={"size": 16})
+    plt.grid(True)
+
+    # Plot prescribed velocities
+    fig2, ax1 = plt.subplots()
+    ax1.plot(timespan, thetaDots, label=r"$\dot{\theta}$", color="teal")
+    ax1.tick_params(axis="y", labelcolor="teal")
+    ax1.set_xlabel("Time (s)", fontsize=16)
+    ax1.set_ylabel("Angle Rate (deg/s)", color="teal", fontsize=16)
+    # ax1.set_ylim(0.0, 1.1)
+    ax2 = ax1.twinx()
+    ax2.plot(timespan, 100.0 * rhoDots, label=r"$\dot{\rho}$", color="darkviolet")
+    ax2.set_ylabel("Displacement Rate (cm/s)", color="darkviolet", fontsize=16)
+    ax2.tick_params(axis="y", labelcolor="darkviolet")
+    # ax2.set_ylim(0.0, 1.1)
+    handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
+    handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
+    handles = handles_ax1 + handles_ax2
+    labels = labels_ax1 + labels_ax2
+    plt.legend(handles=handles, labels=labels, loc="center", prop={"size": 16})
+    plt.grid(True)
+
+    # Plot prescribed accelerations
+    fig3, ax1 = plt.subplots()
+    ax1.plot(timespan, omega_prime_fm_f[:, 0], label=r"$\ddot{\theta}$", color="teal")
+    ax1.tick_params(axis="y", labelcolor="teal")
+    ax1.set_xlabel("Time (s)", fontsize=16)
+    ax1.set_ylabel("Angular Acceleration (deg/$s^2$)", color="teal", fontsize=16)
+    # ax1.set_ylim(-0.6, 0.6)
+    ax2 = ax1.twinx()
+    ax2.plot(timespan, 100.0 * r_prime_prime_fm_m[:, 0], label=r"$\ddot{\rho}$", color="darkviolet")
+    ax2.set_ylabel("Linear Acceleration (cm/$s^2$)", color="darkviolet", fontsize=16)
+    ax2.tick_params(axis="y", labelcolor="darkviolet")
+    # ax2.set_ylim(-0.6, 0.6)
+    handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
+    handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
+    handles = handles_ax1 + handles_ax2
+    labels = labels_ax1 + labels_ax2
+    plt.legend(handles=handles, labels=labels, loc="upper right", prop={"size": 16})
+    plt.grid(True)
+
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rho)
@@ -1200,5 +1360,5 @@ def translatingBodyRhoReference(show_plots, rhoRef):
 if __name__ == "__main__":
     # translatingBodyNoInput(True)
     # translatingBodyLockFlag(True)
-    # translatingBodyCommandedForce(True, 1)
-    translatingBodyRhoReference(True, 0.5)
+    translatingBodyCommandedForce(True, 1)
+    # translatingBodyRhoReference(True, 0.1)
