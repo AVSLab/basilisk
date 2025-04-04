@@ -237,6 +237,20 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i")
 
+    # multiBodyDynamics is special in that it also gets to see the
+    # dynamics/_GeneralModuleFiles headers
+    if(${MODULE_DIR} STREQUAL "simulation/multiBodyDynamics")
+      file(
+        GLOB
+        GEN_FILES_DYNAMICS
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.c"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.cpp"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.h"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.i"
+      )
+      list (APPEND GEN_FILES ${GEN_FILES_DYNAMICS})
+    endif()
+
     if(${MODULE_DIR} STREQUAL "ExternalModules")
       file(
         GLOB
@@ -566,6 +580,7 @@ set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cM
 
 # Finds relative path of all .i files within the directory
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/dynamics" DYN_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/multiBodyDynamics" MULTI_BODY_DYN_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/environment" ENV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/onboardDataHandling" DATA_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/deviceInterface" DEVICE_INTERFACE_TARGETS)
@@ -588,6 +603,7 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+generate_package_targets("${MULTI_BODY_DYN_TARGETS}" "multiBodyDynamicsLib;dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
 generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
