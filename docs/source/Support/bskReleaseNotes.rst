@@ -462,10 +462,10 @@ Version 2.1.7 (March 24, 2023)
   use of flag in update to :ref:`scenarioDragDeorbit`.
 - Created a :ref:`prescribedMotionStateEffector` dynamics module for appending rigid bodies with prescribed motion
   to the spacecraft hub.
-- Created a :ref:`prescribedRot1DOF` fsw module to profile a prescribed rotational maneuver for a secondary rigid body
+- Created a ``prescribedRot1DOF`` fsw module to profile a prescribed rotational maneuver for a secondary rigid body
   connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
   :ref:`prescribedMotionStateEffector` dynamics module.
-- Created a :ref:`prescribedTrans` fsw module to profile a prescribed translational maneuver for a secondary rigid body
+- Created a ``prescribedTrans`` fsw module to profile a prescribed translational maneuver for a secondary rigid body
   connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
   :ref:`prescribedMotionStateEffector` dynamics module.
 - Added :ref:`solarArrayReference` to compute the reference angle and angle rate for a rotating solar array.
