@@ -61,6 +61,9 @@ Version |release|
 - Enhanced FSW effector interface modules to zero output messages in their reset methods, ensuring safe management
   of effector states when algorithms are disabled. This prevents potential runaway operations by clearing stale
   control values.
+- Updated :ref:`scenarioDeployingSolarArrays` to use the new ``P``-frame designation for the prescribed motion body
+- Deleted deprecated ``prescribedRot1DOF`` and ``prescribedTrans`` modules.  They have been replaced a while ago
+  with :ref:`prescribedRotation1DOF` and :ref:`prescribedLinearTranslation`.
 
 
 Version  2.6.0  (Feb. 21, 2025)
