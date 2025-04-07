@@ -57,6 +57,13 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
 
     // Set the sigma_PM state name
     this->nameOfsigma_PMState = "prescribedMotionsigma_PM" + std::to_string(this->effectorID);
+    // Set the property names
+    this->nameOfPrescribedPositionProperty = "prescribedObjectPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedVelocityProperty = "prescribedObjectVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAccelerationProperty = "prescribedObjectAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAttitudeProperty = "prescribedObjectAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAngVelocityProperty = "prescribedObjectAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAngAccelerationProperty = "prescribedObjectAngAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
 
     PrescribedMotionStateEffector::effectorID++;
 }
@@ -186,9 +193,9 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     this->rPrimePrime_PM_B = this->dcm_BM * this->rPrimePrime_PM_M;
 
     // Compute the effector's CoM with respect to point B
-    this->r_PB_B = this->r_PM_B + this->r_MB_B;
+    *this->r_PB_B = this->r_PM_B + this->r_MB_B;
     this->r_PcP_B = this->dcm_BP * this->r_PcP_P;
-    this->r_PcB_B = this->r_PcP_B + this->r_PB_B;
+    this->r_PcB_B = this->r_PcP_B + *this->r_PB_B;
     this->effProps.rEff_CB_B = this->r_PcB_B;
 
     // Find the effector inertia about point B
