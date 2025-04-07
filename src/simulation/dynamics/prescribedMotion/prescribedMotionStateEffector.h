@@ -56,6 +56,7 @@ public:
                                       double & rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
+    void addStateEffector(StateEffector *newStateEffector);          //!< Method to attach a state effector to prescribed motion
     void prependSpacecraftNameToStates() override;
 
     double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
@@ -139,6 +140,9 @@ private:
     StateData *sigma_PMState;                           //!< MRP attitude of frame P relative to frame M
 
     // Parameters required for effector branching
+    std::string spacecraftName;                         //!< Name of prescribed object used for effector branching
+    std::vector<StateEffector*> stateEffectors;         //!< Vector of attached state effectors
+
     Eigen::MatrixXd* r_PB_B;                            //!< [m] Position of point P relative to point B in B frame components
     Eigen::MatrixXd* rPrime_PB_B;                       //!< [m/s] B frame time derivative of r_PB_B in B frame components
     Eigen::MatrixXd* rPrimePrime_PB_B;                  //!< [m/s^2] B frame time derivative of rPrime_PB_B in B frame components
@@ -157,6 +161,22 @@ private:
     std::string nameOfInertialVelocityProperty;           //!< Identifier for prescribed motion inertial velocity property v_PN_N
     std::string nameOfInertialAttitudeProperty;           //!< Identifier for the prescribed motion inertial attitude property sigma_PN
     std::string nameOfInertialAngVelocityProperty;        //!< Identifier for the prescribed motion inertial angular velocity property omega_PN_P
+
+    template <typename Type>
+    /** Assign the state engine parameter names to attached effectors*/
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+
+        effector->setPropName_prescribedPosition(this->nameOfPrescribedPositionProperty);
+        effector->setPropName_prescribedVelocity(this->nameOfPrescribedVelocityProperty);
+        effector->setPropName_prescribedAcceleration(this->nameOfPrescribedAccelerationProperty);
+        effector->setPropName_prescribedAttitude(this->nameOfPrescribedAttitudeProperty);
+        effector->setPropName_prescribedAngVelocity(this->nameOfPrescribedAngVelocityProperty);
+        effector->setPropName_prescribedAngAcceleration(this->nameOfPrescribedAngAccelerationProperty);
+    };
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */
