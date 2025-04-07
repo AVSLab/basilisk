@@ -56,6 +56,7 @@ public:
                                       double & rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
+    void prependSpacecraftNameToStates() override;
 
     double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                        //!< [kg] Effector mass
