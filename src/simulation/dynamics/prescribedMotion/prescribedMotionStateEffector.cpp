@@ -136,13 +136,13 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 */
 void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 {
-        this->sigma_PMState = states.registerState(3, 1, this->nameOfsigma_PMState);
-        Eigen::Vector3d sigma_PM_loc = eigenMRPd2Vector3d(this->sigma_PM);
-        Eigen::Vector3d sigma_PMInitMatrix;
-        sigma_PMInitMatrix(0) = sigma_PM_loc[0];
-        sigma_PMInitMatrix(1) = sigma_PM_loc[1];
-        sigma_PMInitMatrix(2) = sigma_PM_loc[2];
-        this->sigma_PMState->setState(sigma_PMInitMatrix);
+    this->sigma_PMState = states.registerState(3, 1, this->nameOfsigma_PMState);
+    Eigen::Vector3d sigma_PM_loc = eigenMRPd2Vector3d(this->sigma_PM);
+    Eigen::Vector3d sigma_PMInitMatrix;
+    sigma_PMInitMatrix(0) = sigma_PM_loc[0];
+    sigma_PMInitMatrix(1) = sigma_PM_loc[1];
+    sigma_PMInitMatrix(2) = sigma_PM_loc[2];
+    this->sigma_PMState->setState(sigma_PMInitMatrix);
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
