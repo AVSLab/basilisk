@@ -61,6 +61,9 @@ Version |release|
 - Enhanced FSW effector interface modules to zero output messages in their reset methods, ensuring safe management
   of effector states when algorithms are disabled. This prevents potential runaway operations by clearing stale
   control values.
+- Updated :ref:`scenarioDeployingSolarArrays` to use the new ``P``-frame designation for the prescribed motion body
+- Deleted deprecated ``prescribedRot1DOF`` and ``prescribedTrans`` modules.  They have been replaced a while ago
+  with :ref:`prescribedRotation1DOF` and :ref:`prescribedLinearTranslation`.
 
 
 Version  2.6.0  (Feb. 21, 2025)
@@ -459,10 +462,10 @@ Version 2.1.7 (March 24, 2023)
   use of flag in update to :ref:`scenarioDragDeorbit`.
 - Created a :ref:`prescribedMotionStateEffector` dynamics module for appending rigid bodies with prescribed motion
   to the spacecraft hub.
-- Created a :ref:`prescribedRot1DOF` fsw module to profile a prescribed rotational maneuver for a secondary rigid body
+- Created a ``prescribedRot1DOF`` fsw module to profile a prescribed rotational maneuver for a secondary rigid body
   connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
   :ref:`prescribedMotionStateEffector` dynamics module.
-- Created a :ref:`prescribedTrans` fsw module to profile a prescribed translational maneuver for a secondary rigid body
+- Created a ``prescribedTrans`` fsw module to profile a prescribed translational maneuver for a secondary rigid body
   connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
   :ref:`prescribedMotionStateEffector` dynamics module.
 - Added :ref:`solarArrayReference` to compute the reference angle and angle rate for a rotating solar array.

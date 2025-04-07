@@ -148,14 +148,14 @@ def test_prescribedLinearTranslation(show_plots,
 
     # Extract the logged data for plotting and data comparison
     timespan = macros.NANO2SEC * prescribedStatesDataLog.times()  # [s]
-    r_FM_M = prescribedStatesDataLog.r_FM_M  # [m]
-    rPrime_FM_M = prescribedStatesDataLog.rPrime_FM_M  # [m/s]
-    rPrimePrime_FM_M = prescribedStatesDataLog.rPrimePrime_FM_M  # [m/s^2]
+    r_PM_M = prescribedStatesDataLog.r_PM_M  # [m]
+    rPrime_PM_M = prescribedStatesDataLog.rPrime_PM_M  # [m/s]
+    rPrimePrime_PM_M = prescribedStatesDataLog.rPrimePrime_PM_M  # [m/s^2]
 
     # Unit test validation 1: Check that the profiler converges to the required final positions
     tf_1_index = int(round(simTime / testTimeStepSec)) + 1
-    transPosFinal1 = r_FM_M[tf_1_index].dot(transAxis_M)
-    transPosFinal2 = r_FM_M[-1].dot(transAxis_M)
+    transPosFinal1 = r_PM_M[tf_1_index].dot(transAxis_M)
+    transPosFinal2 = r_PM_M[-1].dot(transAxis_M)
     transPosFinalList = [transPosFinal1, transPosFinal2]  # [m]
     transPosRefList = [transPosRef1, transPosRef2]  # [m]
     np.testing.assert_allclose(transPosRefList,
@@ -166,9 +166,9 @@ def test_prescribedLinearTranslation(show_plots,
     # Unit test validation 2: Numerically check that the profiled accelerations,
     # velocities, and displacements are correct
     if (smoothingDuration > 0.0):
-        transAccel = rPrimePrime_FM_M.dot(transAxis_M)
-        transVel = rPrime_FM_M.dot(transAxis_M)
-        transPos = r_FM_M.dot(transAxis_M)
+        transAccel = rPrimePrime_PM_M.dot(transAxis_M)
+        transVel = rPrime_PM_M.dot(transAxis_M)
+        transPos = r_PM_M.dot(transAxis_M)
         transAccelNumerical = []
         transVelNumerical = []
         for i in range(len(timespan) - 1):
@@ -202,11 +202,11 @@ def test_prescribedLinearTranslation(show_plots,
         transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2
         plt.figure()
         plt.clf()
-        plt.plot(timespan, r_FM_M.dot(transAxis_M), label=r"$l$")
+        plt.plot(timespan, r_PM_M.dot(transAxis_M), label=r"$l$")
         plt.plot(timespan, transPosInitPlotting, '--', label=r'$\rho_{0}$')
         plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
         plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
-        plt.title(r'Profiled Translational Position $\rho_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.title(r'Profiled Translational Position $\rho_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(m)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
@@ -215,8 +215,8 @@ def test_prescribedLinearTranslation(show_plots,
         # 1B. Plot transVel
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrime_FM_M.dot(transAxis_M), label=r"$\dot{\rho}$")
-        plt.title(r'Profiled Translational Velocity $\dot{\rho}_{\mathcal{F}/\mathcal{M}}$', fontsize=14)
+        plt.plot(timespan, rPrime_PM_M.dot(transAxis_M), label=r"$\dot{\rho}$")
+        plt.title(r'Profiled Translational Velocity $\dot{\rho}_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
         plt.ylabel('(m/s)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
@@ -225,49 +225,49 @@ def test_prescribedLinearTranslation(show_plots,
         # 1C. Plot transAccel
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrimePrime_FM_M.dot(transAxis_M), label=r"$\ddot{\rho}$")
-        plt.title(r'Profiled Translational Acceleration $\ddot{\rho}_{\mathcal{F}/\mathcal{M}}$ ', fontsize=14)
+        plt.plot(timespan, rPrimePrime_PM_M.dot(transAxis_M), label=r"$\ddot{\rho}$")
+        plt.title(r'Profiled Translational Acceleration $\ddot{\rho}_{\mathcal{P}/\mathcal{M}}$ ', fontsize=14)
         plt.ylabel('(m/s$^2$)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper right', prop={'size': 12})
         plt.grid(True)
 
         # 2. Plot the prescribed translational states
-        # 2A. Plot r_FM_M
+        # 2A. Plot r_PM_M
         transPosRef1Plotting = np.ones(len(timespan)) * transPosRef1  # [m]
         transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2  # [m]
         plt.figure()
         plt.clf()
-        plt.plot(timespan, r_FM_M[:, 0], label=r'$r_{1}$')
-        plt.plot(timespan, r_FM_M[:, 1], label=r'$r_{2}$')
-        plt.plot(timespan, r_FM_M[:, 2], label=r'$r_{3}$')
+        plt.plot(timespan, r_PM_M[:, 0], label=r'$r_{1}$')
+        plt.plot(timespan, r_PM_M[:, 1], label=r'$r_{2}$')
+        plt.plot(timespan, r_PM_M[:, 2], label=r'$r_{3}$')
         plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
         plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
-        plt.title(r'${}^\mathcal{M} r_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.title(r'${}^\mathcal{M} r_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='center left', prop={'size': 12})
         plt.grid(True)
 
-        # 2B. Plot rPrime_FM_F
+        # 2B. Plot rPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrime_FM_M[:, 0], label='1')
-        plt.plot(timespan, rPrime_FM_M[:, 1], label='2')
-        plt.plot(timespan, rPrime_FM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} r$Prime$_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.plot(timespan, rPrime_PM_M[:, 0], label='1')
+        plt.plot(timespan, rPrime_PM_M[:, 1], label='2')
+        plt.plot(timespan, rPrime_PM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} r$Prime$_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m/s)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper left', prop={'size': 12})
         plt.grid(True)
 
-        # 2C. Plot rPrimePrime_FM_F
+        # 2C. Plot rPrimePrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrimePrime_FM_M[:, 0], label='1')
-        plt.plot(timespan, rPrimePrime_FM_M[:, 1], label='2')
-        plt.plot(timespan, rPrimePrime_FM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} r$PrimePrime$_{\mathcal{F}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
+        plt.plot(timespan, rPrimePrime_PM_M[:, 0], label='1')
+        plt.plot(timespan, rPrimePrime_PM_M[:, 1], label='2')
+        plt.plot(timespan, rPrimePrime_PM_M[:, 2], label='3')
+        plt.title(r'${}^\mathcal{M} r$PrimePrime$_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
         plt.ylabel('(m/s$^2$)', fontsize=14)
         plt.xlabel('Time (s)', fontsize=14)
         plt.legend(loc='upper left', prop={'size': 12})
@@ -287,4 +287,3 @@ if __name__ == "__main__":
         0.01,  # [m/s^2] transAccelMax
         1e-8  # accuracy
     )
-    

@@ -82,7 +82,7 @@ private:
     void computeRotationComplete();                                        //!< Method for computing the scalar rotational states when the rotation is complete
 
     void writeOutputMessages(uint64_t CurrentSimNanos);                    //!< Method for writing the module output messages and computing the output message data
-    Eigen::Vector3d computeSigma_FM();                                     //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_FM
+    Eigen::Vector3d computeSigma_PM();                                     //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_PM
 
     /* User-configurable variables */
     double coastOptionBangDuration;                                        //!< [s] Time used for the coast option bang segment
@@ -91,8 +91,8 @@ private:
     Eigen::Vector3d rotHat_M;                                              //!< Spinning body rotation axis in M frame components
 
     /* Scalar rotational states */
-    double thetaInit;                                                      //!< [rad] Initial spinning body angle from frame M to frame F about rotHat_M
-    double thetaRef;                                                       //!< [rad] Spinning body reference angle from frame M to frame F about rotHat_M
+    double thetaInit;                                                      //!< [rad] Initial spinning body angle from frame M to frame P about rotHat_M
+    double thetaRef;                                                       //!< [rad] Spinning body reference angle from frame M to frame P about rotHat_M
     double theta;                                                          //!< [rad] Current angle
     double thetaDot;                                                       //!< [rad/s] Current angle rate
     double thetaDDot;                                                      //!< [rad/s^2] Current angular acceleration

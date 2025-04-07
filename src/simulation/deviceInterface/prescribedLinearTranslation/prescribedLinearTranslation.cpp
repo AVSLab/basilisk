@@ -646,18 +646,18 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
     linearTranslationRigidBodyMsgOut = LinearTranslationRigidBodyMsgPayload();
 
     // Compute the translational body position relative to the mount frame M expressed in M frame components
-    Eigen::Vector3d r_FM_M = this->transPos * this->transHat_M;  // [m]
+    Eigen::Vector3d r_PM_M = this->transPos * this->transHat_M;  // [m]
 
     // Compute the translational body velocity relative to the mount frame M expressed in M frame components
-    Eigen::Vector3d rPrime_FM_M = this->transVel * this->transHat_M;  // [m/s]
+    Eigen::Vector3d rPrime_PM_M = this->transVel * this->transHat_M;  // [m/s]
 
     // Compute the translational body acceleration relative to the mount frame M expressed in M frame components
-    Eigen::Vector3d rPrimePrime_FM_M = this->transAccel * this->transHat_M;  // [m/s^2]
+    Eigen::Vector3d rPrimePrime_PM_M = this->transAccel * this->transHat_M;  // [m/s^2]
 
     // Copy the module variables to the output buffer message
-    eigenVector3d2CArray(r_FM_M, prescribedTranslationMsgOut.r_FM_M);
-    eigenVector3d2CArray(rPrime_FM_M, prescribedTranslationMsgOut.rPrime_FM_M);
-    eigenVector3d2CArray(rPrimePrime_FM_M, prescribedTranslationMsgOut.rPrimePrime_FM_M);
+    eigenVector3d2CArray(r_PM_M, prescribedTranslationMsgOut.r_PM_M);
+    eigenVector3d2CArray(rPrime_PM_M, prescribedTranslationMsgOut.rPrime_PM_M);
+    eigenVector3d2CArray(rPrimePrime_PM_M, prescribedTranslationMsgOut.rPrimePrime_PM_M);
     linearTranslationRigidBodyMsgOut.rho = this->transPos;
     linearTranslationRigidBodyMsgOut.rhoDot = this->transVel;
 
