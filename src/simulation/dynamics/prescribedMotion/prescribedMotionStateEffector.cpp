@@ -168,16 +168,16 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     // Compute dcm_PM
     this->dcm_PM = (this->sigma_PM.toRotationMatrix()).transpose();
 
-    // Compute dcm_BF
-    this->dcm_BF = this->dcm_BM * this->dcm_PM.transpose();
+    // Compute dcm_BP
+    this->dcm_BP = this->dcm_BM * this->dcm_PM.transpose();
 
     // Compute omega_PB_B given the user inputs omega_MB_M and omega_PM_P
-    this->omega_PM_B = this->dcm_BF * this->omega_PM_P;
+    this->omega_PM_B = this->dcm_BP * this->omega_PM_P;
     this->omega_PB_B = this->omega_PM_B + this->omega_MB_B;
 
     // Compute omegaPrime_PB_B given the user inputs
     this->omegaTilde_PB_B = eigenTilde(this->omega_PB_B);
-    this->omegaPrime_PM_B = this->dcm_BF * this->omegaPrime_PM_P;
+    this->omegaPrime_PM_B = this->dcm_BP * this->omegaPrime_PM_P;
     this->omegaPrime_PB_B = this->omegaPrime_PM_B + this->omegaTilde_PB_B * this->omega_PM_B;
 
     // Convert the prescribed variables to the B frame
@@ -187,13 +187,13 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
     // Compute the effector's CoM with respect to point B
     this->r_PB_B = this->r_PM_B + this->r_MB_B;
-    this->r_PcP_B = this->dcm_BF * this->r_PcP_P;
+    this->r_PcP_B = this->dcm_BP * this->r_PcP_P;
     this->r_PcB_B = this->r_PcP_B + this->r_PB_B;
     this->effProps.rEff_CB_B = this->r_PcB_B;
 
     // Find the effector inertia about point B
     this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
-    this->IPntPc_B = this->dcm_BF * this->IPntPc_P * this->dcm_BF.transpose();
+    this->IPntPc_B = this->dcm_BP * this->IPntPc_P * this->dcm_BP.transpose();
     this->effProps.IEffPntB_B = this->IPntPc_B - this->mass * this->rTilde_PcB_B * this->rTilde_PcB_B;
 
     // Find the B frame time derivative of r_PcB_B
@@ -304,7 +304,7 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
 void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 {
     // Compute the effector's attitude with respect to the inertial frame
-    Eigen::Matrix3d dcm_PN = (this->dcm_BF).transpose() * this->dcm_BN;
+    Eigen::Matrix3d dcm_PN = (this->dcm_BP).transpose() * this->dcm_BN;
     this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
 
     // Compute the effector's inertial position vector

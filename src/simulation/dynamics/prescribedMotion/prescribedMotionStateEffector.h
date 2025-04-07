@@ -112,7 +112,7 @@ private:
     Eigen::Matrix3d dcm_BN;                             //!< DCM from inertial frame to frame B
     Eigen::Matrix3d dcm_BM;                             //!< DCM from frame M to frame B
     Eigen::Matrix3d dcm_PM;                             //!< DCM from frame M to frame P
-    Eigen::Matrix3d dcm_BF;                             //!< DCM from frame P to frame B
+    Eigen::Matrix3d dcm_BP;                             //!< DCM from frame P to frame B
 
     // Other matrix quantities
     Eigen::Matrix3d rTilde_PcB_B;                       //!< [m] Tilde cross product matrix of r_PcB_B
