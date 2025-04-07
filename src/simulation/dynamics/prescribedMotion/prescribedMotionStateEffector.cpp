@@ -81,6 +81,24 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
     PrescribedMotionStateEffector::effectorID = 1;
 }
 
+/*! This method prepends the name of the parent spacecraft to the effector state and property names. */
+void PrescribedMotionStateEffector::prependSpacecraftNameToStates()
+{
+    this->nameOfsigma_PMState = this->nameOfSpacecraftAttachedTo + this->nameOfsigma_PMState;
+
+    this->nameOfInertialPositionProperty = this->nameOfSpacecraftAttachedTo + this->nameOfInertialPositionProperty;
+    this->nameOfInertialVelocityProperty = this->nameOfSpacecraftAttachedTo + this->nameOfInertialVelocityProperty;
+    this->nameOfInertialAttitudeProperty = this->nameOfSpacecraftAttachedTo + this->nameOfInertialAttitudeProperty;
+    this->nameOfInertialAngVelocityProperty = this->nameOfSpacecraftAttachedTo + this->nameOfInertialAngVelocityProperty;
+
+    this->nameOfPrescribedPositionProperty = this->nameOfSpacecraftAttachedTo + this->nameOfPrescribedPositionProperty;
+    this->nameOfPrescribedVelocityProperty = this->nameOfSpacecraftAttachedTo + this->nameOfPrescribedVelocityProperty;
+    this->nameOfPrescribedAccelerationProperty = this->nameOfSpacecraftAttachedTo + this->nameOfPrescribedAccelerationProperty;
+    this->nameOfPrescribedAttitudeProperty = this->nameOfSpacecraftAttachedTo + this->nameOfPrescribedAttitudeProperty;
+    this->nameOfPrescribedAngVelocityProperty = this->nameOfSpacecraftAttachedTo + this->nameOfPrescribedAngVelocityProperty;
+    this->nameOfPrescribedAngAccelerationProperty = this->nameOfSpacecraftAttachedTo + this->nameOfPrescribedAngAccelerationProperty;
+}
+
 /*! This method is used to reset the module.
 
  @param currentClock [ns] Time the method is called
@@ -137,9 +155,11 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 */
 void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 {
+    this->prependSpacecraftNameToStates();
+
     // Get access to the hub states needed for dynamic coupling
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
 }
 
 /*! This method allows the state effector to register its states with the dynamic parameter manager.
