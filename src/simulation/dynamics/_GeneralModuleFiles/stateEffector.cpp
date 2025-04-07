@@ -95,6 +95,18 @@ void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
     return;
 }
 
+/*! This method allows the effector to register its properties */
+void StateEffector::registerProperties(DynParamManager& states)
+{
+    return;
+}
+
+/*! This method allows the effector to link its properties */
+void StateEffector::linkInProperties(DynParamManager& properties)
+{
+    return;
+}
+
 /*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */
 void StateEffector::prependSpacecraftNameToStates()
 {
