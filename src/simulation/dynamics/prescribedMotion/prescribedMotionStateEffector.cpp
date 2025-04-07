@@ -54,9 +54,9 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->rEpoch_PM_M.setZero();
     this->rPrimeEpoch_PM_M.setZero();
     this->omegaEpoch_PM_P.setZero();
-
-    // Set the sigma_PM state name
-    this->nameOfsigma_PMState = "prescribedMotionsigma_PM" + std::to_string(this->effectorID);
+    
+    this->spacecraftName = "prescribedObject";
+    this->nameOfsigma_PMState = "prescribedObjectsigma_PM" + std::to_string(this->effectorID);
 
     // Set the property names
     this->nameOfInertialPositionProperty = "prescribedObjectInertialPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
@@ -160,6 +160,13 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
     // Get access to the hub states needed for dynamic coupling
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+
+    // Loop through attached stateEffectors to link in their states
+    std::vector<StateEffector*>::iterator stateIt;
+    for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
+    {
+        (*stateIt)->linkInStates(statesIn);
+    }
 }
 
 /*! This method allows the state effector to register its states with the dynamic parameter manager.
@@ -178,6 +185,13 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 
     // Call method to register the prescribed motion properties
     registerProperties(states);
+
+    // Loop through attached stateEffectors to register their states
+    std::vector<StateEffector*>::iterator stateIt;
+    for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
+    {
+        (*stateIt)->registerStates(states);
+    }
 }
 
 /*! This method allows the state effector to register its properties with the dynamic parameter manager.
@@ -198,6 +212,13 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
     this->sigma_PB = states.createProperty(this->nameOfPrescribedAttitudeProperty, stateInit);
     this->omega_PB_P = states.createProperty(this->nameOfPrescribedAngVelocityProperty, stateInit);
     this->omegaPrime_PB_P = states.createProperty(this->nameOfPrescribedAngAccelerationProperty, stateInit);
+
+    // Loop over attached state effectors and link in prescribed motion properties
+    std::vector<StateEffector*>::iterator stateIt;
+    for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
+    {
+        (*stateIt)->linkInProperties(states);
+    }
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
@@ -413,4 +434,15 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
 
     // Call the method to write the output messages
     this->writeOutputStateMessages(currentSimNanos);
+}
+
+/*! This method attaches a stateEffector to the prescribedMotionStateEffector */
+void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffector)
+{
+    this->assignStateParamNames<StateEffector *>(newStateEffector);
+
+    this->stateEffectors.push_back(newStateEffector);
+
+    // Give the stateEffector the name of the prescribed object it is attached to
+    newStateEffector->nameOfSpacecraftAttachedTo = this->spacecraftName;
 }
