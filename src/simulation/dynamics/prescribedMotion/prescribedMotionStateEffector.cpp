@@ -443,6 +443,33 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
     Eigen::MRPd sigma_PM_loc;
     sigma_PM_loc = (Eigen::Vector3d)this->sigma_PMState->getState();
     this->sigma_PMState->setDerivative(0.25*sigma_PM_loc.Bmat()*this->omega_PM_P);
+
+    // Loop through attached state effectors for compute derivatives
+    if (!this->stateEffectors.empty()) {
+        // Update sigma_BN and dcm_BN
+        this->sigma_BN = sigma_BN;
+        this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
+
+        // Compute dcm_FN and sigma_FN
+        Eigen::Matrix3d dcm_PN = this->dcm_BP.transpose() * this->dcm_BN;
+        *this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
+
+        // Compute omegaDot_PN_P
+        Eigen::Vector3d omegaDot_PN_B = this->omegaPrime_PM_B + this->omegaTilde_BN_B * this->omega_PM_B + omegaDot_BN_B;
+        Eigen::Vector3d omegaDot_PN_P = this->dcm_BP.transpose() * omegaDot_PN_B;
+
+        // Compute rDDot_PN_N
+        Eigen::Matrix3d omegaDotTilde_BN_B = eigenTilde(omegaDot_BN_B);
+        Eigen::Vector3d rDDot_PB_B = this->rPrimePrime_PM_B + 2 * this->omegaTilde_BN_B * this->rPrime_PM_B
+                                     + omegaDotTilde_BN_B * (*this->r_PB_B)
+                                     + this->omegaTilde_BN_B * this->omegaTilde_BN_B * (*this->r_PB_B);
+        Eigen::Vector3d rDDot_PN_N = this->dcm_BN.transpose() * rDDot_PB_B + rDDot_BN_N;
+
+        std::vector<StateEffector*>::iterator it;
+        for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
+            (*it)->computeDerivatives(integTime, rDDot_PN_N, omegaDot_PN_P, *this->sigma_PN);
+        }
+    }
 }
 
 /*! This method is for calculating the contributions of the effector to the energy and momentum of the spacecraft.
