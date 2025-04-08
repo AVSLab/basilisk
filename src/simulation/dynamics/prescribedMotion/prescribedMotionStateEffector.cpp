@@ -54,7 +54,7 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->rEpoch_PM_M.setZero();
     this->rPrimeEpoch_PM_M.setZero();
     this->omegaEpoch_PM_P.setZero();
-    
+
     this->spacecraftName = "prescribedObject";
     this->nameOfsigma_PMState = "prescribedObjectsigma_PM" + std::to_string(this->effectorID);
 
@@ -246,26 +246,29 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
     // Compute dcm_BP
     this->dcm_BP = this->dcm_BM * this->dcm_PM.transpose();
+    *this->sigma_PB = eigenMRPd2Vector3d(eigenC2MRP(this->dcm_BP.transpose()));
 
     // Compute omega_PB_B given the user inputs omega_MB_M and omega_PM_P
     this->omega_PM_B = this->dcm_BP * this->omega_PM_P;
     this->omega_PB_B = this->omega_PM_B + this->omega_MB_B;
+    *this->omega_PB_P = this->dcm_BP.transpose() * this->omega_PB_B;
 
     // Compute omegaPrime_PB_B given the user inputs
     this->omegaTilde_PB_B = eigenTilde(this->omega_PB_B);
     this->omegaPrime_PM_B = this->dcm_BP * this->omegaPrime_PM_P;
-    this->omegaPrime_PB_B = this->omegaPrime_PM_B + this->omegaTilde_PB_B * this->omega_PM_B;
+    this->omegaPrime_PB_B = this->omegaPrime_PM_B;
+    *this->omegaPrime_PB_P = this->omegaPrime_PM_P;
 
     // Convert the prescribed variables to the B frame
     this->r_PM_B = this->dcm_BM * this->r_PM_M;
     this->rPrime_PM_B = this->dcm_BM * this->rPrime_PM_M;
     this->rPrimePrime_PM_B = this->dcm_BM * this->rPrimePrime_PM_M;
+    *this->rPrimePrime_PB_B = this->rPrimePrime_PM_B;
 
     // Compute the effector's CoM with respect to point B
     *this->r_PB_B = this->r_PM_B + this->r_MB_B;
     this->r_PcP_B = this->dcm_BP * this->r_PcP_P;
     this->r_PcB_B = this->r_PcP_B + *this->r_PB_B;
-    this->effProps.rEff_CB_B = this->r_PcB_B;
 
     // Find the effector inertia about point B
     this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
@@ -273,9 +276,15 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPntB_B = this->IPntPc_B - this->mass * this->rTilde_PcB_B * this->rTilde_PcB_B;
 
     // Find the B frame time derivative of r_PcB_B
-    this->omegaTilde_PB_B = eigenTilde(this->omega_PB_B);
     this->rPrime_PcB_B = this->omegaTilde_PB_B * this->r_PcP_B + this->rPrime_PM_B;
-    this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
+
+    if (this->stateEffectors.empty()) {
+        this->effProps.rEff_CB_B = this->r_PcB_B;
+        this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
+    } else {
+        this->effProps.rEff_CB_B = this->mass * this->r_PcB_B;
+        this->effProps.rEffPrime_CB_B = this->mass * this->rPrime_PcB_B;
+    }
 
     // Find the B frame time derivative of IPntPc_B
     Eigen::Matrix3d rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
@@ -283,6 +292,51 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
                                      - this->IPntPc_B * this->omegaTilde_PB_B
                                      + this->mass * (rPrimeTilde_PcB_B * this->rTilde_PcB_B.transpose()
                                      + this->rTilde_PcB_B * rPrimeTilde_PcB_B.transpose());
+
+
+    // Loop through attached state effectors and compute their contributions
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
+        (*it)->updateEffectorMassProps(integTime);
+
+        this->effProps.mEff += (*it)->effProps.mEff;
+        this->effProps.mEffDot += (*it)->effProps.mEffDot;
+
+        Eigen::Vector3d r_EcP_P = (*it)->effProps.rEff_CB_B;
+        Eigen::Vector3d r_EcP_B = this->dcm_BP * r_EcP_P;
+        Eigen::Vector3d r_EcB_B = r_EcP_B + *this->r_PB_B;
+        this->effProps.rEff_CB_B += (*it)->effProps.mEff * r_EcB_B;
+
+        Eigen::Vector3d rPPrime_EcP_P = (*it)->effProps.rEffPrime_CB_B;
+        Eigen::Vector3d rPrime_EcP_B = this->dcm_BP * rPPrime_EcP_P + this->omegaTilde_PB_B * r_EcP_B;
+        *this->rPrime_PB_B = this->rPrime_PM_B;
+        Eigen::Vector3d rPrime_EcB_B = rPrime_EcP_B + *this->rPrime_PB_B;
+        this->effProps.rEffPrime_CB_B += (*it)->effProps.mEff * rPrime_EcB_B;
+
+        Eigen::Matrix3d IEffPntP_P = (*it)->effProps.IEffPntB_B;
+        Eigen::Matrix3d IEffPntP_B = this->dcm_BP * IEffPntP_P * this->dcm_BP.transpose();
+        Eigen::Matrix3d rTilde_EcB_B = eigenTilde(r_EcB_B);
+        Eigen::Matrix3d rTilde_EcP_B = eigenTilde(r_EcP_B);
+        this->effProps.IEffPntB_B += IEffPntP_B + (*it)->effProps.mEff * (rTilde_EcP_B * rTilde_EcP_B
+                                                                          - rTilde_EcB_B * rTilde_EcB_B);
+
+        Eigen::Matrix3d rPrimeTilde_EcB_B = eigenTilde(rPrime_EcB_B);
+        Eigen::Matrix3d rPrimeTilde_EcP_B = eigenTilde(rPrime_EcP_B);
+        Eigen::Matrix3d IEffPPrimePntP_P = (*it)->effProps.IEffPrimePntB_B;
+        Eigen::Matrix3d IEffPPrimePntP_B = this->dcm_BP * IEffPPrimePntP_P * this->dcm_BP.transpose();
+        Eigen::Matrix3d IEffPrimePntP_B = IEffPPrimePntP_B + this->omegaTilde_PB_B * IEffPntP_B
+                                           + IEffPntP_B * this->omegaTilde_PB_B.transpose();
+        this->effProps.IEffPrimePntB_B += IEffPrimePntP_B - (*it)->effProps.mEff * rPrimeTilde_EcP_B * rTilde_EcP_B.transpose()
+                                          - (*it)->effProps.mEff * rTilde_EcP_B * rPrimeTilde_EcP_B.transpose()
+                                          + (*it)->effProps.mEff * rPrimeTilde_EcB_B * rTilde_EcB_B.transpose()
+                                          + (*it)->effProps.mEff * rTilde_EcB_B * rPrimeTilde_EcB_B.transpose();
+    }
+
+    // Divide by the total mass of the prescribed component plus attached effectors to finalize mass props
+    if (!this->stateEffectors.empty()) {
+        this->effProps.rEff_CB_B = this->effProps.rEff_CB_B / this->effProps.mEff;
+        this->effProps.rEffPrime_CB_B = this->effProps.rEffPrime_CB_B / this->effProps.mEff;
+    }
 }
 
 /*! This method allows the state effector to give its contributions to the matrices needed for the back-sub.
