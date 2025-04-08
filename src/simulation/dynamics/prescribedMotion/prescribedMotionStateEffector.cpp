@@ -355,26 +355,72 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
                                                         Eigen::Vector3d omega_BN_B,
                                                         Eigen::Vector3d g_N)
 {
-    // Compute dcm_BN
+    // Update sigma_BN and dcm_BN
     this->sigma_BN = sigma_BN;
     this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
 
-    // Define omega_BN_B
+    // Update omega_BN_B
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 
-    // Define omegaPrimeTilde_PB_B
+    // Update sigma_PN
+    Eigen::Matrix3d dcm_PN = this->dcm_BP.transpose() * this->dcm_BN;
+    *this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
+
+    // Update omega_PN_P
+    *this->omega_PN_P = *this->omega_PB_P + this->dcm_BP.transpose() * this->omega_BN_B;
+
+    Eigen::Matrix3d totMatrixA;
+    Eigen::Matrix3d totMatrixB;
+    Eigen::Matrix3d totMatrixC;
+    Eigen::Matrix3d totMatrixD;
+    Eigen::Vector3d totVecTrans;
+    Eigen::Vector3d totVecRot;
+    totMatrixA.setZero();
+    totMatrixB.setZero();
+    totMatrixC.setZero();
+    totMatrixD.setZero();
+    totVecTrans.setZero();
+    totVecRot.setZero();
+
+    // Loop through attached state effectors and compute their contributions
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++)
+    {
+        backSubContr.matrixA.setZero();
+        backSubContr.matrixB.setZero();
+        backSubContr.matrixC.setZero();
+        backSubContr.matrixD.setZero();
+        backSubContr.vecTrans.setZero();
+        backSubContr.vecRot.setZero();
+
+        (*it)->updateContributions(integTime, backSubContr, *this->sigma_PN, *this->omega_PN_P, g_N);
+
+        totMatrixA += backSubContr.matrixA;
+        totMatrixB += backSubContr.matrixB;
+        totMatrixC += backSubContr.matrixC;
+        totMatrixD += backSubContr.matrixD;
+        totVecTrans += backSubContr.vecTrans;
+        totVecRot += backSubContr.vecRot;
+    }
+
+    backSubContr.matrixA = totMatrixA;
+    backSubContr.matrixB = totMatrixB;
+    backSubContr.matrixC = totMatrixC;
+    backSubContr.matrixD = totMatrixD;
+    backSubContr.vecTrans = totVecTrans;
+    backSubContr.vecRot = totVecRot;
+
+    // Prescribed motion translation contributions
     Eigen::Matrix3d omegaPrimeTilde_PB_B = eigenTilde(this->omegaPrime_PB_B);
+    this->rPrimePrime_PcB_B = (omegaPrimeTilde_PB_B + this->omegaTilde_PB_B * this->omegaTilde_PB_B) * this->r_PcP_B +
+                              this->rPrimePrime_PM_B;
+    backSubContr.vecTrans += -this->mass * this->rPrimePrime_PcB_B;
 
-    // Compute rPrimePrime_PcB_B
-    this->rPrimePrime_PcB_B = (omegaPrimeTilde_PB_B + this->omegaTilde_PB_B * this->omegaTilde_PB_B) * this->r_PcP_B + this->rPrimePrime_PM_B;
-
-    // Translation contributions
-    backSubContr.vecTrans = -this->mass * this->rPrimePrime_PcB_B;
-
-    // Rotation contributions
-    Eigen::Matrix3d IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B;
-    backSubContr.vecRot = -(this->mass * this->rTilde_PcB_B * this->rPrimePrime_PcB_B)
+    // Prescribed motion rotation contributions
+    Eigen::Matrix3d IPrimePntPc_B;
+    IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B;
+    backSubContr.vecRot += -(this->mass * this->rTilde_PcB_B * this->rPrimePrime_PcB_B)
                           - (IPrimePntPc_B + this->omegaTilde_BN_B * this->IPntPc_B) * this->omega_PB_B
                           - this->IPntPc_B * this->omegaPrime_PB_B
                           - this->mass * this->omegaTilde_BN_B * rTilde_PcB_B * this->rPrime_PcB_B;
