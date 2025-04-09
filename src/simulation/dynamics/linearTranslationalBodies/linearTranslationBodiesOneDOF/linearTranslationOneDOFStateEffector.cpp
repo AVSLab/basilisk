@@ -366,15 +366,49 @@ void linearTranslationOneDOFStateEffector::updateEnergyMomContributions(double i
                                                                         double & rotEnergyContr,
                                                                         Eigen::Vector3d omega_BN_B)
 {
+    // Update omega_BN_B and omega_FN_B
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     Eigen::Vector3d omega_FN_B = this->omega_BN_B;
 
-    Eigen::Vector3d rDotFcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
-    rotAngMomPntCContr_B = this->IPntFc_B * omega_FN_B + this->mass * this->r_FcB_B.cross(rDotFcB_B);
-    rotEnergyContr = 1.0 / 2.0 * omega_FN_B.dot(this->IPntFc_B * omega_FN_B)
-            + 1.0 / 2.0 * this->mass * rDotFcB_B.dot(rDotFcB_B)
-            + 1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
+    // Compute rDot_FcB_B
+    Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
+
+    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
+        // Access prescribed motion properties
+        Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
+        Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
+        Eigen::MRPd sigma_PB;
+        sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
+        Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
+        Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
+
+        Eigen::Vector3d omega_PN_b = dcm_PB.transpose() * this->omega_BN_B;  // omega_PN_B
+        Eigen::Vector3d omega_FN_b = omega_PN_b;  // omega_FN_B
+        Eigen::Vector3d omega_bn_b = omega_PN_b - dcm_PB.transpose() * omega_PB_P;  // omega_BN_B
+        Eigen::Matrix3d omegaTilde_bn_b = eigenTilde(omega_bn_b);  // omegaTilde_BN_B
+        Eigen::Matrix3d IPntFc_b = dcm_PB.transpose() * this->IPntFc_B * dcm_PB;  // IPntFc_B
+        Eigen::Vector3d r_Fcb_b = dcm_PB.transpose() * this->r_FcB_B + r_PB_B;  // r_FcB_B
+        Eigen::Matrix3d rTilde_Fcb_b = eigenTilde(r_Fcb_b);  // rTilde_FcB_B
+        Eigen::Vector3d rDot_PB_B = rPrime_PB_B + omegaTilde_bn_b * r_PB_B;
+        Eigen::Vector3d rDot_Fcb_b = dcm_PB.transpose() * rDot_FcB_B + rDot_PB_B;  // rDot_FcB_B
+
+        // Find rotational angular momentum contribution
+        rotAngMomPntCContr_B = IPntFc_b * omega_FN_b + this->mass * rTilde_Fcb_b * rDot_Fcb_b;
+
+        // Find rotational energy contribution
+        rotEnergyContr = 1.0 / 2.0 * omega_FN_b.dot(IPntFc_b * omega_FN_b)
+                         + 1.0 / 2.0 * this->mass * rDot_Fcb_b.dot(rDot_Fcb_b)
+                         + 1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
+    } else {
+        // Find rotational angular momentum contribution
+        rotAngMomPntCContr_B = this->IPntFc_B * omega_FN_B + this->mass * this->r_FcB_B.cross(rDot_FcB_B);
+
+        // Find rotational energy contribution
+        rotEnergyContr = 1.0 / 2.0 * omega_FN_B.dot(this->IPntFc_B * omega_FN_B)
+                         + 1.0 / 2.0 * this->mass * rDot_FcB_B.dot(rDot_FcB_B)
+                         + 1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
+    }
 }
 
 void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates()
