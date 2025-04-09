@@ -78,9 +78,50 @@ void linearTranslationOneDOFStateEffector::setC(double c) {
 
 void linearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    // Get access to the hub's states needed for dynamic coupling
+    this->hubSigma = statesIn.getStateObject("hubSigma");
+    this->hubOmega = statesIn.getStateObject("hubOmega");
+    this->hubPosition = statesIn.getStateObject("hubPosition");
+    this->hubVelocity = statesIn.getStateObject("hubVelocity");
+
+    // Get access to properties needed for dynamic coupling (Hub or prescribed)
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
+    this->inertialAttitudeProperty = statesIn.getPropertyReference(this->propName_inertialAttitude);
+    this->inertialAngVelocityProperty = statesIn.getPropertyReference(this->propName_inertialAngVelocity);
     this->g_N = statesIn.getPropertyReference("g_N");
+
+    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
+        this->prescribedPositionProperty = statesIn.getPropertyReference(this->propName_prescribedPosition);
+        this->prescribedVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedVelocity);
+        this->prescribedAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAcceleration);
+        this->prescribedAttitudeProperty = statesIn.getPropertyReference(this->propName_prescribedAttitude);
+        this->prescribedAngVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedAngVelocity);
+        this->prescribedAngAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAngAcceleration);
+    }
+}
+
+/*! This method is used to link properties
+ @return void
+ @param properties The parameter manager to collect from
+ */
+void linearTranslationOneDOFStateEffector::linkInProperties(DynParamManager& properties)
+{
+    // Get access to properties needed for dynamic coupling (Hub or prescribed)
+    this->inertialPositionProperty = properties.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = properties.getPropertyReference(this->propName_inertialVelocity);
+    this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
+    this->inertialAngVelocityProperty = properties.getPropertyReference(this->propName_inertialAngVelocity);
+    this->g_N = properties.getPropertyReference("g_N");
+
+    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
+        this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
+        this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
+        this->prescribedAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAcceleration);
+        this->prescribedAttitudeProperty = properties.getPropertyReference(this->propName_prescribedAttitude);
+        this->prescribedAngVelocityProperty = properties.getPropertyReference(this->propName_prescribedAngVelocity);
+        this->prescribedAngAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAngAcceleration);
+    }
 }
 
 void linearTranslationOneDOFStateEffector::registerStates(DynParamManager& states)
