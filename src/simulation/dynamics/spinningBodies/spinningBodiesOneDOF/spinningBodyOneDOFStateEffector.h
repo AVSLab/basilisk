@@ -63,6 +63,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override;             //!< -- Method for updating information
     void registerStates(DynParamManager& statesIn) override;         //!< -- Method for registering the SB states
     void linkInStates(DynParamManager& states) override;             //!< -- Method for getting access to other states
+    void linkInProperties(DynParamManager& states) override;         //!< -- Method for getting access to other properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;   //!< -- Method for back-substitution contributions
@@ -117,9 +118,24 @@ private:
     double theta = 0.0;                           //!< [rad] spinning body angle
     double thetaDot = 0.0;                        //!< [rad/s] spinning body angle rate
     Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
-    Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialAttitudeProperty = nullptr;  //!< sigma_BN inertial attitude relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialAngVelocityProperty = nullptr;  //!< [rad/s] omega_N inertial angular velocity relative to system spice zeroBase/refBase
     StateData *thetaState = nullptr;              //!< -- state manager of theta for spinning body
     StateData *thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
+
+    // Properties required for prescribed motion branching/attachment
+    StateData* hubPosition;    //!< [m] r_BN_N hub inertial position vector
+    StateData* hubVelocity;    //!< [m/s] v_BN_N hub inertial velocity vector
+    StateData* hubSigma;       //!< hub inertial MRP attitude
+    StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
+
+    Eigen::MatrixXd* prescribedPositionProperty = nullptr;         //!< [m] r_PB_B prescribed position relative to hub
+    Eigen::MatrixXd* prescribedVelocityProperty = nullptr;         //!< [m/s] rPrime_PB_B prescribed velocity relative to hub
+    Eigen::MatrixXd* prescribedAccelerationProperty = nullptr;     //!< [m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub
+    Eigen::MatrixXd* prescribedAttitudeProperty = nullptr;         //!< sigma_PB prescribed MRP attitude relative to hub
+    Eigen::MatrixXd* prescribedAngVelocityProperty = nullptr;      //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
+    Eigen::MatrixXd* prescribedAngAccelerationProperty = nullptr;  //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
 };
 
 
