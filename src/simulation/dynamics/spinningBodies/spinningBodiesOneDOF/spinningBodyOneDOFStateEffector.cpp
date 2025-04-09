@@ -455,13 +455,42 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
     // Compute rDot_ScB_B
     this->rDot_ScB_B = this->rPrime_ScB_B + this->omegaTilde_BN_B * this->r_ScB_B;
 
-    // Find rotational angular momentum contribution from hub
-    rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;
+    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
 
-    // Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B)
-            + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B)
-            + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
+        // Access prescribed motion properties
+        Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
+        Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
+        Eigen::MRPd sigma_PB;
+        sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
+        Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
+        Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
+
+        Eigen::Vector3d omega_SN_b = dcm_PB.transpose() * this->omega_SN_B;  // omega_SN_B
+        Eigen::Vector3d omega_PN_b = dcm_PB.transpose() * this->omega_BN_B;  // omega_PN_B
+        Eigen::Vector3d omega_bn_b = omega_PN_b - dcm_PB.transpose() * omega_PB_P;  // omega_BN_B
+        Eigen::Matrix3d omegaTilde_bn_b = eigenTilde(omega_bn_b);  // omegaTilde_BN_B
+        Eigen::Vector3d r_Scb_b = dcm_PB.transpose() * this->r_ScB_B + r_PB_B;  // r_ScB_B
+        Eigen::Matrix3d rTilde_Scb_b = eigenTilde(r_Scb_b);  // rTilde_ScB_B
+        Eigen::Matrix3d IPntSc_b = dcm_PB.transpose() * this->IPntSc_B * dcm_PB;  // IPntSc_B
+        Eigen::Vector3d rDot_PB_B = rPrime_PB_B + omegaTilde_bn_b * r_PB_B;
+        Eigen::Vector3d rDot_Scb_b = dcm_PB.transpose() * this->rDot_ScB_B + rDot_PB_B;  // rDot_ScB_B
+
+        // Find rotational angular momentum contribution
+        rotAngMomPntCContr_B = IPntSc_b * omega_SN_b + this->mass * rTilde_Scb_b * rDot_Scb_b;
+
+        // Find rotational energy contribution
+        rotEnergyContr = 1.0 / 2.0 * omega_SN_b.dot(IPntSc_b * omega_SN_b)
+                         + 1.0 / 2.0 * this->mass * rDot_Scb_b.dot(rDot_Scb_b)
+                         + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
+    } else {
+        // Find rotational angular momentum contribution
+        rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;
+
+        // Find rotational energy contribution
+        rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B)
+                         + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B)
+                         + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
+    }
 }
 
 /*! This method computes the spinning body states relative to the inertial frame */
