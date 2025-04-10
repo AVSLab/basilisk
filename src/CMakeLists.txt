@@ -188,6 +188,9 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
     target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON3_MODULE})
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
+    if(${PARENT_DIR_NAME} STREQUAL "mujocoDynamics")
+      target_link_libraries(${LIB_NAME} PUBLIC dynamicsLib)
+    endif()
 
     # define build location, IDE generation specifications
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
@@ -236,6 +239,20 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i")
+
+    # mujocoDynamics is special in that it also gets to see the
+    # dynamics/_GeneralModuleFiles headers
+    if(${MODULE_DIR} STREQUAL "simulation/mujocoDynamics")
+      file(
+        GLOB
+        GEN_FILES_DYNAMICS
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.c"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.cpp"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.h"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.i"
+      )
+      list (APPEND GEN_FILES ${GEN_FILES_DYNAMICS})
+    endif()
 
     if(${MODULE_DIR} STREQUAL "ExternalModules")
       file(
@@ -566,6 +583,7 @@ set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cM
 
 # Finds relative path of all .i files within the directory
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/dynamics" DYN_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/mujocoDynamics" MULTI_BODY_DYN_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/environment" ENV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/onboardDataHandling" DATA_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/deviceInterface" DEVICE_INTERFACE_TARGETS)
@@ -588,6 +606,10 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+# Only build mujocoDynamics targets if the mujocoDynamics library is available
+if(NOT ("mujocoDynamics" IN_LIST EXCLUDED_BSK_LIBRARIES))
+  generate_package_targets("${MULTI_BODY_DYN_TARGETS}" "mujocoDynamicsLib;dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+endif()
 generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
