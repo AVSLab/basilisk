@@ -176,6 +176,12 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Add to list of library
     list(APPEND AllLibs ${LIB_NAME})
 
+    # If the library directory has a Custom.cmake, include that
+    if(EXISTS "${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+      message(STATUS "Including custom Custom.cmake for package lib: ${LIB_DIR}")
+      include("${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+    endif()
+
     # Link all necessary libraries
     target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
@@ -292,6 +298,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
       message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
       include("${PARENT_DIR}/Custom.cmake")
+    endif()
+    # Also look for a Custom.cmake on the _GeneralModuleFiles
+    if(EXISTS "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
+      message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
+      include("${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
     endif()
 
     target_include_directories(${TARGET_NAME} PRIVATE ${Python3_INCLUDE_DIRS}) # Exposes python.h to wrap.c(xx) file
