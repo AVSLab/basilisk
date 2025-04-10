@@ -37,7 +37,7 @@
 from Basilisk.architecture import messaging
 %}
 
-%pythoncode "pythonUtils.py"
+%pythoncode "simulation/mujocoDynamics/_GeneralModuleFiles/pythonUtils.py"
 
 %include "sys_model.i"
 

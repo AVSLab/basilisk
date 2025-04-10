@@ -21,8 +21,6 @@
 
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-#include "MJScene.h"
-
 void
 NBodyGravity::Reset(uint64_t CurrentSimNanos)
 {
