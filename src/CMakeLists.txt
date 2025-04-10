@@ -156,6 +156,11 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     math(EXPR DIR_NAME_IDX "${DIR_NAME_IDX} + 1") # "simulation/"
     string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be "power"
 
+    if(${PARENT_DIR_NAME} IN_LIST EXCLUDED_BSK_LIBRARIES)
+      message("Skipped Package Library: ${PARENT_DIR_NAME}")
+        continue()
+    endif()
+
     # Set the library name (ex. dynamicsLib, environmentLib, etc)
     set(LIB_NAME "${PARENT_DIR_NAME}Lib")
     # Added to build ExternalModulesLib
