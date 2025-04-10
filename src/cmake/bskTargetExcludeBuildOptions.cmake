@@ -10,5 +10,5 @@ endif()
 
 option(BUILD_MUJOCO "Build MuJoCo Modules" OFF)
 if(NOT BUILD_MUJOCO)
-  list(APPEND EXCLUDED_BSK_TARGETS "mujoco", "NBodyGravity")
+  list(APPEND EXCLUDED_BSK_LIBRARIES "mujocoDynamics")
 endif()
