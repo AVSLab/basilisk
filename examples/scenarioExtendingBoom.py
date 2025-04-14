@@ -257,7 +257,7 @@ def run(show_plots):
                       ["arm3", translatingBodyEffector.translatingBodyConfigLogOutMsgs[2]],
                       ["arm4", translatingBodyEffector.translatingBodyConfigLogOutMsgs[3]]]
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, scBodyList
-                                                  # , saveFile=fileName
+                                                  , saveFile=fileName
                                                   )
         vizSupport.createCustomModel(viz
                                      , simBodiesToModify=[scObject.ModelTag]
