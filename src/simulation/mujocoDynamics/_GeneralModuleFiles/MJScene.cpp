@@ -20,6 +20,7 @@
 #include "MJScene.h"
 
 #include "MJFwdKinematics.h"
+#include "StatefulSysModel.h"
 
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -79,7 +80,10 @@ void MJScene::initializeDynamics()
     this->actState = this->dynManager.registerState(1, 1, "mujocoAct");
 
     for (auto&& body : this->spec.getBodies()) {
-        body.registerStates(this->dynManager);
+        body.registerStates(DynParamRegisterer(
+            this->dynManager,
+            "body_" + body.getName() + "_"
+        ));
     }
 
     // Make sure the spec is compiled
