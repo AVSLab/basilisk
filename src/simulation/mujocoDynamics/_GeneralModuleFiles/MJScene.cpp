@@ -93,6 +93,19 @@ void MJScene::initializeDynamics()
     if (!recompiled) {
         this->spec.configure();
     }
+
+    // Register the states of the models in the dynamics task
+    for (auto[_, sysModelPtr] : this->dynamicsTask.TaskModels)
+    {
+        if (auto statefulSysModelPtr = dynamic_cast<StatefulSysModel*>(sysModelPtr))
+        {
+            statefulSysModelPtr->registerStates(DynParamRegisterer(
+                this->dynManager,
+                sysModelPtr->ModelTag.empty() ? std::string("model") : sysModelPtr->ModelTag
+                + "_" + std::to_string(sysModelPtr->moduleID) + "_"
+            ));
+        }
+    }
 }
 
 void MJScene::UpdateState(uint64_t CurrentSimNanos)
