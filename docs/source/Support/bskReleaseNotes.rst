@@ -64,6 +64,9 @@ Version |release|
 - Updated :ref:`scenarioDeployingSolarArrays` to use the new ``P``-frame designation for the prescribed motion body
 - Deleted deprecated ``prescribedRot1DOF`` and ``prescribedTrans`` modules.  They have been replaced a while ago
   with :ref:`prescribedRotation1DOF` and :ref:`prescribedLinearTranslation`.
+- :beta:`Mujoco Support`: Added a new ``DynamicObject`` for multi-body dynamics that uses the `MuJoCo <https://mujoco.org>`_ library.
+  Information about using mujoco is found in :ref:`mujocoDynObject`. This is a work in progress, and is not
+  yet ready for general use. This system will be expanded to include more features and capabilities in future releases.
 
 
 Version  2.6.0  (Feb. 21, 2025)

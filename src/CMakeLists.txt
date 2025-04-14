@@ -156,6 +156,11 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     math(EXPR DIR_NAME_IDX "${DIR_NAME_IDX} + 1") # "simulation/"
     string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be "power"
 
+    if(${PARENT_DIR_NAME} IN_LIST EXCLUDED_BSK_LIBRARIES)
+      message("Skipped Package Library: ${PARENT_DIR_NAME}")
+        continue()
+    endif()
+
     # Set the library name (ex. dynamicsLib, environmentLib, etc)
     set(LIB_NAME "${PARENT_DIR_NAME}Lib")
     # Added to build ExternalModulesLib
@@ -176,12 +181,21 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Add to list of library
     list(APPEND AllLibs ${LIB_NAME})
 
+    # If the library directory has a Custom.cmake, include that
+    if(EXISTS "${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+      message(STATUS "Including custom Custom.cmake for package lib: ${LIB_DIR}")
+      include("${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+    endif()
+
     # Link all necessary libraries
     target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
     target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
     target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON3_MODULE})
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
+    if(${PARENT_DIR_NAME} STREQUAL "mujocoDynamics")
+      target_link_libraries(${LIB_NAME} PUBLIC dynamicsLib)
+    endif()
 
     # define build location, IDE generation specifications
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
@@ -230,6 +244,20 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i")
+
+    # mujocoDynamics is special in that it also gets to see the
+    # dynamics/_GeneralModuleFiles headers
+    if(${MODULE_DIR} STREQUAL "simulation/mujocoDynamics")
+      file(
+        GLOB
+        GEN_FILES_DYNAMICS
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.c"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.cpp"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.h"
+        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.i"
+      )
+      list (APPEND GEN_FILES ${GEN_FILES_DYNAMICS})
+    endif()
 
     if(${MODULE_DIR} STREQUAL "ExternalModules")
       file(
@@ -292,6 +320,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
       message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
       include("${PARENT_DIR}/Custom.cmake")
+    endif()
+    # Also look for a Custom.cmake on the _GeneralModuleFiles
+    if(EXISTS "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
+      message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
+      include("${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
     endif()
 
     target_include_directories(${TARGET_NAME} PRIVATE ${Python3_INCLUDE_DIRS}) # Exposes python.h to wrap.c(xx) file
@@ -555,6 +588,7 @@ set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cM
 
 # Finds relative path of all .i files within the directory
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/dynamics" DYN_TARGETS)
+find_package_targets("${CMAKE_SOURCE_DIR}/simulation/mujocoDynamics" MULTI_BODY_DYN_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/environment" ENV_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/onboardDataHandling" DATA_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/simulation/deviceInterface" DEVICE_INTERFACE_TARGETS)
@@ -577,6 +611,10 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list
 generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+# Only build mujocoDynamics targets if the mujocoDynamics library is available
+if(NOT ("mujocoDynamics" IN_LIST EXCLUDED_BSK_LIBRARIES))
+  generate_package_targets("${MULTI_BODY_DYN_TARGETS}" "mujocoDynamicsLib;dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+endif()
 generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
 generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
