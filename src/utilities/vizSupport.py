@@ -1151,7 +1151,7 @@ def createStandardCamera(viz, **kwargs):
 
     :param viz: copy of the vizInterface module
     :param kwargs: list of keyword arguments that this method supports
-    :return: void
+    :return: camera instance
 
     Keyword Args
     ------------
@@ -1277,7 +1277,7 @@ def createStandardCamera(viz, **kwargs):
     stdCameraList.append(cam)
     del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list
     viz.settings.stdCameraList = vizInterface.StdCameraConfig(stdCameraList)
-    return
+    return cam
 
 
 def createCameraConfigMsg(viz, **kwargs):
@@ -1286,7 +1286,7 @@ def createCameraConfigMsg(viz, **kwargs):
 
     :param viz: copy of the vizInterface module
     :param kwargs: list of keyword arguments that this method supports
-    :return: void
+    :return: camera instance
 
     Keyword Args
     ------------
@@ -1521,7 +1521,7 @@ def createCameraConfigMsg(viz, **kwargs):
     # the function makes vizInterface subscribe to the pointer to this Msg object
     viz.addCamMsgToModule(cameraConfigMsg)
 
-    return
+    return cameraConfigMsgPayload
 
 
 def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
