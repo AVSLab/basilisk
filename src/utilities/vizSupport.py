@@ -99,22 +99,23 @@ def setSprite(shape, **kwargs):
 def lla2fixedframe(lla_GP, radEquator, radRatio):
     """
     This method receives a latitude/longitude/altitude point above a reference
-    ellipsoid with equatorial radius and flattening ratio, then converts to the
-    point to body-fixed frame coordinates.
+    ellipsoid with equatorial radius and flattening ratio, then converts to
+    body-fixed frame coordinates.
 
     Parameters
     ----------
     lla_GP:
-        position vector of the location G relative to the parent body in lat/lon/alt components
+        [rad,rad,m] position vector of the location G relative to the parent body
+        in lat/lon/alt components
     radEquator:
-        equatorial radius of the parent body
+        [m] equatorial radius of the parent body
     radRatio:
         ratio of polar radius to equatorial radius
 
     Returns
     -------
     3-element list
-        r_GP_P, position vector of the location G relative to parent body frame P in P frame components
+        [m] r_GP_P, position vector of the location G relative to parent body frame P in P frame components
 
     """
     lat = lla_GP[0]
@@ -197,12 +198,15 @@ def addLocation(viz, **kwargs):
         Required
     r_GP_P: 3-element double-list
         Position of G relative to parent body frame P.
-        Required
+        Required, if lla_GP not provided
+    lla_GP: 3-element double-list
+        Position of G relative to parent body in lat/lon/alt coordinates.
+        Required, if r_GP_P not provided
     ghat_P: 3-element double-list
         Location normal relative to parent body frame.
         Required
     fieldOfView: double
-        [deg] FOV angle measured edge-to-edge.
+        [rad] FOV angle measured edge-to-edge.
         Required
     color: int-list
         Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.
