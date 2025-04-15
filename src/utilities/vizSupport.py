@@ -131,6 +131,54 @@ def lla2fixedframe(lla_GP, radEquator, radRatio):
     return r_GP_P
 
 
+def fixedframe2lla(r_GP_P, radEquator, radRatio):
+    """
+    This method receives a cartesian point above a reference ellipsoid with
+    equatorial radius and flattening ratio, then converts to lat/lon/alt.
+
+    Parameters
+    ----------
+    r_GP_P:
+        [m] position vector of the location G relative to the parent body
+    radEquator:
+        [m] equatorial radius of the parent body
+    radRatio:
+        ratio of polar radius to equatorial radius
+
+    Returns
+    -------
+    3-element list
+        [rad,rad,m] lla_GP, position vector of the location G relative to parent body frame P in lat/lon/alt
+
+    """
+    X = r_GP_P[0]
+    Y = r_GP_P[1]
+    Z = r_GP_P[2]
+
+    a = radEquator
+    b = radEquator * radRatio
+
+    e2 = 1 - (b / a) ** 2  # First eccentricity squared
+    ep2 = (a ** 2 - b ** 2) / b ** 2  # Second eccentricity squared
+
+    r = np.sqrt(X ** 2 + Y ** 2)
+    lon = np.arctan2(Y, X)
+
+    theta = np.arctan2(Z * a, r * b)
+    stheta = np.sin(theta)
+    ctheta = np.cos(theta)
+
+    lat = np.arctan2(Z + ep2 * b * stheta ** 3,
+                     r - e2 * a * ctheta ** 3)
+
+    N = a / np.sqrt(1 - e2 * np.sin(lat) ** 2)
+    h = r / np.cos(lat) - N
+
+    lla_GP = [lat, lon, h]
+
+    return lla_GP
+
+
 locationList = []
 def addLocation(viz, **kwargs):
     if not vizFound:
