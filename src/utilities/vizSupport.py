@@ -24,6 +24,7 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import deprecated
+from Basilisk.utilities import quadMapSupport as qms
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 
