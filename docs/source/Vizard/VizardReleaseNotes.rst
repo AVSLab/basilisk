@@ -19,6 +19,13 @@ Release Notes
     - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
+**Version 2.2.3 (April 20, 2025)**
+
+- Added QuadMap sub message to VizMessage.proto, allows user to draw a mesh of quads on celestial body or spacecraft
+- Added logging of QuadMap sub message in VizMessage panel
+- Added support for turning all QuadMap object labels on or off from Labels panel
+- Fixed bug with effectors not hiding when parent spacecraft is in sprite mode in planet local or solar system view
+
 **Version 2.2.2 (March 7, 2025)**
 
 - Migrated to Unity 6
