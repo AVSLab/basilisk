@@ -198,6 +198,21 @@ Ellipsoid
 }Ellipsoid;
 
 
+/*! Structure defining spcecraft QuadMap information
+ */
+typedef struct
+//@cond DOXYGEN_IGNORE
+QuadMap
+//@endcond
+{
+    int ID;                        //!< ID of QuadMap to be used for updates
+    std::string parentBodyName;    //!< Name of the parent body P (spacecraft or planet) on which the QuadMap is positioned
+    std::vector<double> vertices;  //!< [m] Four vertices (x,y,z) required per quad, order them clockwise about perimeter of quad in parent body frame P
+    std::vector<int> color;        //!< (optional) Send desired RGBA as values between 0 and 255
+    bool isHidden;                 //!< (optional) Send string to display in center of QuadMap region, send "NOLABEL" to delete label
+    std::string label;             //!< (optional)
+}QuadMap;
+
 
 /*! Structure defining spacecraft light information
  */
@@ -411,6 +426,7 @@ VizSettings
     std::string truePathRelativeBody = "";                //!< String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body
     std::string truePathRotatingFrame = "";               //!< String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
     std::string truePathFixedFrame = "";                  //!< String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
+    int32_t showQuadMapLabels = 0;                        //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 
