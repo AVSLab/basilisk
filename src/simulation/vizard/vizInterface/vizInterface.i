@@ -52,6 +52,7 @@ namespace std {
     %template(GenericStorageVector) vector<GenericStorage *>;
     %template(MultiShapeVector) vector<MultiShape *>;
     %template(EllipsoidVector) vector<Ellipsoid *>;
+    %template(QuadMapVector) vector<QuadMap *>;
     %template(VizEventDialogVector) vector<VizEventDialog *>;
     %template(VizEventReplyVector) vector<VizEventReply>;
 }

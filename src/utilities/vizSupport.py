@@ -24,6 +24,7 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import deprecated
+from Basilisk.utilities import quadMapSupport as qms
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 
@@ -41,7 +42,6 @@ bskPath = __path__[0]
 firstSpacecraftName = ''
 
 def toRGBA255(color, alpha=None):
-    answer = [0, 0, 0, 0]
     if isinstance(color, str):
         # convert color name to 4D array of values with 0-255
         if is_color_like(color):
@@ -77,7 +77,7 @@ def setSprite(shape, **kwargs):
         print("In setSprite() the shape argument must be a string using " + str(shapeList))
         exit(1)
 
-    if (shape not in shapeList):
+    if shape not in shapeList:
         print("The setSprite() method was provided this unknown sprite shape primitive: " + shape)
         exit(1)
 
@@ -100,22 +100,23 @@ def setSprite(shape, **kwargs):
 def lla2fixedframe(lla_GP, radEquator, radRatio):
     """
     This method receives a latitude/longitude/altitude point above a reference
-    ellipsoid with equatorial radius and flattening ratio, then converts to the
-    point to body-fixed frame coordinates.
+    ellipsoid with equatorial radius and flattening ratio, then converts to
+    body-fixed frame coordinates.
 
     Parameters
     ----------
     lla_GP:
-        position vector of the location G relative to the parent body in lat/lon/alt components
+        [rad,rad,m] position vector of the location G relative to the parent body
+        in lat/lon/alt components
     radEquator:
-        equatorial radius of the parent body
+        [m] equatorial radius of the parent body
     radRatio:
         ratio of polar radius to equatorial radius
 
     Returns
     -------
     3-element list
-        r_GP_P, position vector of the location G relative to parent body frame P in P frame components
+        [m] r_GP_P, position vector of the location G relative to parent body frame P in P frame components
 
     """
     lat = lla_GP[0]
@@ -131,8 +132,93 @@ def lla2fixedframe(lla_GP, radEquator, radRatio):
     return r_GP_P
 
 
+def fixedframe2lla(r_GP_P, radEquator, radRatio):
+    """
+    This method receives a cartesian point above a reference ellipsoid with
+    equatorial radius and flattening ratio, then converts to lat/lon/alt.
+
+    Parameters
+    ----------
+    r_GP_P:
+        [m] position vector of the location G relative to the parent body
+    radEquator:
+        [m] equatorial radius of the parent body
+    radRatio:
+        ratio of polar radius to equatorial radius
+
+    Returns
+    -------
+    3-element list
+        [rad,rad,m] lla_GP, position vector of the location G relative to parent body frame P in lat/lon/alt
+
+    """
+    X = r_GP_P[0]
+    Y = r_GP_P[1]
+    Z = r_GP_P[2]
+
+    a = radEquator
+    b = radEquator * radRatio
+
+    e2 = 1 - (b / a) ** 2  # First eccentricity squared
+    ep2 = (a ** 2 - b ** 2) / b ** 2  # Second eccentricity squared
+
+    r = np.sqrt(X ** 2 + Y ** 2)
+    lon = np.arctan2(Y, X)
+
+    theta = np.arctan2(Z * a, r * b)
+    stheta = np.sin(theta)
+    ctheta = np.cos(theta)
+
+    lat = np.arctan2(Z + ep2 * b * stheta ** 3,
+                     r - e2 * a * ctheta ** 3)
+
+    N = a / np.sqrt(1 - e2 * np.sin(lat) ** 2)
+    h = r / np.cos(lat) - N
+
+    lla_GP = [lat, lon, h]
+
+    return lla_GP
+
+
 locationList = []
 def addLocation(viz, **kwargs):
+    """
+    This method creates a Location instance on a parent body.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    stationName: str
+        Location text label
+        Required
+    parentBodyName: str
+        Name of the parent body P (spacecraft or planet) on which the location G is positioned.
+        Required
+    r_GP_P: 3-element double-list
+        Position of G relative to parent body frame P.
+        Required, if lla_GP not provided
+    lla_GP: 3-element double-list
+        Position of G relative to parent body in lat/lon/alt coordinates.
+        Required, if r_GP_P not provided
+    ghat_P: 3-element double-list
+        Location normal relative to parent body frame.
+        Required
+    fieldOfView: double
+        [rad] FOV angle measured edge-to-edge.
+        Required
+    color: int-list
+        Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.
+        Required
+    range: double
+        [m] Range of the ground Location.
+        Required
+    markerScale: double
+        Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.
+        Optional
+    """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -163,7 +249,6 @@ def addLocation(viz, **kwargs):
         print("ERROR: parentBodyName argument must be provided to addLocation")
         exit(1)
 
-    r_GP_P = [0, 0, 0]
     if 'r_GP_P' in kwargs:
         r_GP_P = kwargs['r_GP_P']
         if not isinstance(r_GP_P, list):
@@ -176,11 +261,11 @@ def addLocation(viz, **kwargs):
         try:
             # check if vector is a list
             vizElement.r_GP_P = r_GP_P
-        except:
+        except TypeError:
             try:
                 # convert Eigen array to list
                 vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
-            except:
+            except TypeError:
                 pass
     elif 'lla_GP' in kwargs:
         lla_GP = kwargs['lla_GP']
@@ -234,11 +319,11 @@ def addLocation(viz, **kwargs):
         vizElement.color = toRGBA255(color)
 
     if 'range' in kwargs:
-        range = kwargs['range']
-        if not isinstance(range, float):
+        rangeParam = kwargs['range']
+        if not isinstance(rangeParam, float):
             print('ERROR: range must be a float')
             exit(1)
-        vizElement.range = range
+        vizElement.range = rangeParam
 
     locationList.append(vizElement)
     del viz.locations[:]  # clear settings list to replace it with updated list
@@ -247,8 +332,128 @@ def addLocation(viz, **kwargs):
     return
 
 
+quadMapList = []
+def addQuadMap(viz, **kwargs):
+    """
+    This method creates a QuadMap element for displaying shaded regions in Vizard.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    ID: int
+        The reference ID of the QuadMap instance. Once instantiated, can be used to change the QuadMap settings.
+        Required
+    parentBodyName: str
+        Name of the parent body to draw the QuadMap in reference to.
+        Required
+    vertices: single or double-list
+        Specifies the internal mesh coordinates of the QuadMap, in body-fixed frame.
+        Required
+    color: int list
+        Color of the QuadMap.  Can be 4 RGBA integer value (0-255) or a color string.
+        Required
+    isHidden: bool
+        Flag if the QuadMap should be hidden (1) or shown (-1).
+        Optional. Default: 0 - if not provided, then the Vizard default settings are used.
+    label: str
+        Label to display in the center of QuadMap region.
+        Optional. Send "NOLABEL" to delete label.
+    """
+    if not vizFound:
+        print('vizFound is false. Skipping this method.')
+        return
+
+    vizElement = vizInterface.QuadMap()
+
+    unitTestSupport.checkMethodKeyword(
+        ['ID', 'parentBodyName', 'vertices', 'color', 'isHidden', 'label'],
+        kwargs)
+
+    if 'ID' in kwargs:
+        ID = kwargs['ID']
+        if not isinstance(ID, int):
+            print('ERROR: ID must be an integer')
+            exit(1)
+        vizElement.ID = ID
+    else:
+        print("ERROR: ID argument must be provided to addQuadMap")
+        exit(1)
+
+    if 'parentBodyName' in kwargs:
+        parentBodyName = kwargs['parentBodyName']
+        if not isinstance(parentBodyName, str):
+            print('ERROR: parentBodyName must be a string')
+            exit(1)
+        vizElement.parentBodyName = parentBodyName
+    else:
+        print("ERROR: parentBodyName argument must be provided to addQuadMap")
+        exit(1)
+
+    if 'vertices' in kwargs:
+        vertices = kwargs['vertices']
+        if not isinstance(vertices, list):
+            print('ERROR: vertices must be a list of floats')
+            exit(1)
+        if len(vertices) % 4 != 0:
+            print('ERROR: vertices must be list of floats with length divisible by four')
+            exit(1)
+        vizElement.vertices = vizInterface.DoubleVector(vertices)
+    else:
+        print('ERROR: vertices argument must be provided to addQuadMap')
+        exit(1)
+
+    if 'color' in kwargs:
+        color = kwargs['color']
+        vizElement.color = vizInterface.IntVector(toRGBA255(color))
+    else:
+        print('ERROR: color argument must be provided to addQuadMap')
+        exit(1)
+
+    if 'isHidden' in kwargs:
+        isHidden = kwargs['isHidden']
+        if not isinstance(isHidden, bool):
+            print('Error: isHidden must be boolean')
+            exit(1)
+        vizElement.isHidden = isHidden
+
+    if 'label' in kwargs:
+        label = kwargs['label']
+        if not isinstance(label, str):
+            print('Error: label must be a string')
+            exit(1)
+        vizElement.label = label
+
+    quadMapList.append(vizElement)
+    del viz.quadMaps[:]  # clear settings list to replace it with updated list
+    viz.quadMaps = vizInterface.QuadMapVector(quadMapList)
+
+    return
+
+
 pointLineList = []
 def createPointLine(viz, **kwargs):
+    """
+    This method creates a PointLine between two bodies.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    fromBodyName: str
+        Body from which PointLine originates.
+        Optional, default selects ``firstSpacecraftName``
+    toBodyName: str
+        Body which the PointLine points to.
+        Required
+    lineColor: int list
+        Color of the PointLine.  Can be 4 RGBA integer value (0-255) or a color string.
+        Required
+    """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -289,8 +494,28 @@ def createPointLine(viz, **kwargs):
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
 
+
 targetLineList = []
 def createTargetLine(viz, **kwargs):
+    """
+    This method creates a TargetLine between two bodies.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    fromBodyName: str
+        Body from which PointLine originates.
+        Optional, default selects ``firstSpacecraftName``
+    toBodyName: str
+        Body which the PointLine points to.
+        Required
+    lineColor: int list
+        Color of the PointLine.  Can be 4 RGBA integer value (0-255) or a color string.
+        Required
+    """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -339,6 +564,43 @@ def updateTargetLineList(viz):
 
 customModelList = []
 def createCustomModel(viz, **kwargs):
+    """
+    This method creates a CustomModel.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    modelPath: str
+        Path to model obj -OR- ``CUBE``, ``CYLINDER``, or ``SPHERE`` to use a primitive shape
+        Required
+    simBodiesToModify: list
+        Which bodies in scene to replace with this model, use ``ALL_SPACECRAFT`` to apply custom model to all spacecraft in simulation
+        Optional, default modifies ``firstSpacecraftName``
+    offset: 3-element double-list
+        [m] Offset to use to draw the model
+        Optional, default is [0.0, 0.0, 0.0]
+    rotation: 3-element double-list
+        [rad] 3-2-1 Euler angles to rotate CAD about z, y, x axes
+        Optional, default is [0.0, 0.0, 0.0]
+    scale: 3-element double-list
+        Desired model scaling factor along the body x, y, z, axes in spacecraft CS
+        Optional, default is [1.0, 1.0, 1.0]
+    customTexturePath: str
+        Path to texture to apply to model (note that a custom model's .mtl will be automatically imported with its textures during custom model import)
+        Optional
+    normalMapPath: str
+        Path to the normal map for the customTexture
+        Optional
+    shader: int
+        Value of -1 to use viz default, 0 for Unity Specular Standard Shader, 1 for Unity Standard Shader
+        Optional
+    color: int list
+        Send desired RGBA as values between 0 and 255, default is gray, and will be applied to the albedo color setting
+        Optional
+    """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -458,6 +720,7 @@ def createCustomModel(viz, **kwargs):
     del viz.settings.customModelList[:]  # clear settings list to replace it with updated list
     viz.settings.customModelList = vizInterface.CustomModelConfig(customModelList)
     return
+
 
 actuatorGuiSettingList = []
 def setActuatorGuiSetting(viz, **kwargs):
@@ -742,8 +1005,46 @@ def setInstrumentGuiSetting(viz, **kwargs):
     viz.settings.instrumentGuiSettingsList = vizInterface.InstrumentGuiSettingsConfig(instrumentGuiSettingList)
     return
 
+
 coneInOutList = []
 def createConeInOut(viz, **kwargs):
+    """
+    This method creates a ``KeepOutInCone``.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: void
+
+    Keyword Args
+    ------------
+    fromBodyName: str
+        Name of body to attach cone onto.
+        Optional, default selects ``firstSpacecraftName``
+    toBodyName: str
+        Detect changes if this body has impingement on cone.
+        Required
+    coneColor: int list
+        Color of the KeepOutInCone.  Can be 4 RGBA integer value (0-255) or a color string.
+        Required
+    isKeepIn: bool
+        True -> keep-in cone created, False -> keep-out cone created
+        Required
+    position_B: 3-element double-list
+        [m] Cone start relative to from-body coordinate frame.
+        Optional, default [0.0, 0.0, 0.0]
+    normalVector_B: 3-element double-list
+        Cone normal direction vector
+        Required
+    incidenceAngle: double
+        [rad] Cone incidence angle
+        Required
+    coneHeight: double
+        [m] Sets height of visible cone (aesthetic only, does not impact function)
+        Required
+    coneName: str
+        Cone name, if unspecified, viz will autogenerate name
+        Optional
+    """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -843,11 +1144,43 @@ def createConeInOut(viz, **kwargs):
     viz.settings.coneList = vizInterface.KeepOutInConeConfig(coneInOutList)
     return
 
+
 stdCameraList = []
 def createStandardCamera(viz, **kwargs):
-    '''
-    add a standard camera window
-    '''
+    """
+    This method creates a Standard Camera.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: camera instance
+
+    Keyword Args
+    ------------
+    spacecraftName: str
+        Name of spacecraft to attach camera onto.
+        Optional, default selects ``firstSpacecraftName``
+    setMode: int
+        0 -> body targeting, 1 -> pointing vector (default).
+        Optional
+    setView: int
+        0 -> nadir (default), 1 -> orbit normal, 2 -> along track. This is a setting for body targeting mode.
+        Optional
+    fieldOfView: double
+        [rad] FOV angle measured edge-to-edge, -1 to use viz default.
+        Optional
+    bodyTarget: str
+        Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
+        Optional
+    pointingVector_B: 3-element double-list
+        Camera pointing vector in the spacecraft body frame.
+        Optional, default [1.0, 0.0, 0.0]
+    position_B: 3-element double-list
+        If a non-zero vector, this determines the location of the camera.  If a zero vector, then the camera is placed outside the spacecraft along the pointing vector direction.
+        Optional, default [0.0, 0.0, 0.0]
+    displayName: str
+        Name of the standard camera panel.
+        Optional
+    """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -945,10 +1278,68 @@ def createStandardCamera(viz, **kwargs):
     stdCameraList.append(cam)
     del viz.settings.stdCameraList[:]  # clear settings list to replace it with updated list
     viz.settings.stdCameraList = vizInterface.StdCameraConfig(stdCameraList)
-    return
+    return cam
 
 
 def createCameraConfigMsg(viz, **kwargs):
+    """
+    This method configures camera settings.
+
+    :param viz: copy of the vizInterface module
+    :param kwargs: list of keyword arguments that this method supports
+    :return: camera instance
+
+    Keyword Args
+    ------------
+    cameraID: int
+        ID of the camera that took the snapshot.
+        Required
+    parentName: str
+        Name of the parent body to which the camera should be attached
+        Optional, default is ``firstSpacecraftName``
+    fieldOfView: double
+        [rad] Camera FOV, edge-to-edge along camera y-axis.
+        Required
+    resolution: 2-element int-list
+        Camera resolution, width/height in pixels.
+        Required
+    renderRate: int
+        [ns] Frame time interval at which to capture images.
+        Optional
+    cameraPos_B: 3-element double-list
+        [m] Camera position in body frame.
+        Required
+    sigma_CB: 3-element double-list
+        MRP defining the orientation of the camera frame relative to the body frame.
+        Required
+    skyBox: str
+        String containing the star field preference.
+        Optional
+    postProcessingOn: int
+        Enable post-processing of camera image. Value of 0 (protobuffer default) to use viz default which is off, -1 for false, 1 for true.
+        Optional
+    ppFocusDistance: double
+        Distance to the point of focus, minimum value of 0.1, Value of 0 to turn off this parameter entirely.
+        Optional
+    ppAperature: double
+        Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off this parameter entirely.
+        Optional
+    ppFocalLength: double
+        Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.
+        Optional
+    ppMaxBlurSize: int
+        Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to turn off this parameter entirely.
+        Optional
+    updateCameraParameters: int
+        If true, commands camera to update Instrument Camera to current message's parameters.
+        Optional
+    renderMode: int
+        Value of 0 to render visual image (default), value of 1 to render depth buffer to image.
+        Optional
+    depthMapClippingPlanes: 2-element double-list
+        [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
+        Optional
+    """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
         return
@@ -1131,12 +1522,12 @@ def createCameraConfigMsg(viz, **kwargs):
     # the function makes vizInterface subscribe to the pointer to this Msg object
     viz.addCamMsgToModule(cameraConfigMsg)
 
-    return
+    return cameraConfigMsgPayload
 
 
 def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     """
-    This methods creates an instance of the vizInterface() modules and setups up associated Vizard
+    This method creates an instance of the vizInterface() modules and sets up associated Vizard
     configuration setting messages.
 
     Parameters
@@ -1224,7 +1615,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
          'msmInfoList', 'ellipsoidList', 'trueOrbitColorInMsgList'],
         kwargs)
 
-    # setup the Vizard interface module
+    # set up the Vizard interface module
     vizMessenger = vizInterface.VizInterface()
     vizMessenger.ModelTag = "vizMessenger"
     scSim.AddModelToTask(simTaskName, vizMessenger)
@@ -1512,7 +1903,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         # process spacecraft lights
         if liScList:
             liList = []
-            if liScList[c] is not None: # light objects(s) have been added to this spacecraft
+            if liScList[c] is not None:  # light objects(s) have been added to this spacecraft
                 for li in liScList[c]:
                     liList.append(li)
                 scData.lightList = vizInterface.LightVector(liList)
@@ -1633,11 +2024,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
         if val == 1:
             vizMessenger.liveStream = True
         if val == 2:
-            if (vizMessenger.liveStream or vizMessenger.broadcastStream):
+            if vizMessenger.liveStream or vizMessenger.broadcastStream:
                 print("ERROR: vizSupport: noDisplay mode cannot be used with liveStream or broadcastStream.")
             else:
                 vizMessenger.noDisplay = True
-
 
     return vizMessenger
 

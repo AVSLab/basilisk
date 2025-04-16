@@ -56,7 +56,7 @@ message VizMessage{
         //FIELDS 14-15 OPTIONAL FIELDS THAT CAN BE UPDATED EVERY TIMESTEP IF DESIRED, BUT NEED NEVER BE INCLUDED
         string spacecraftName = 1;
         repeated double position = 2;                 // [m] SCStatesMsg.r_BN_N
-        repeated double velocity = 3;                 // [m] SCStatesMsg.v_BN_N
+        repeated double velocity = 3;                 // [m/s] SCStatesMsg.v_BN_N
         repeated double rotation = 4;                 // [DCM] SCStatesMsg.sigma_BN
         repeated ReactionWheel reactionWheels = 5;
         repeated Thruster thrusters = 6;
@@ -328,6 +328,7 @@ message VizMessage{
 	    string truePathRelativeBody = 54;                   // string of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body, "NONE" to show the uncorrected inertial trajectory line
 	    string truePathRotatingFrame = 55;                  // string must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
         string truePathFixedFrame = 56;                     // string of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
+        int32 showQuadMapLabels = 57;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
 
     message MultiShape{ //ONLY NEEDED IF MSM DESIRED
@@ -369,11 +370,20 @@ message VizMessage{
         int32 showGridLines = 6;           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
 
+    message QuadMap{ //ONLY SEND TO CREATE NEW QUADMAP OR WHEN UPDATES REQUIRED
+        int32 ID = 1;                       // ID of QuadMap to be used for updates
+        string parentBodyName = 2;          // Name of the parent body P (spacecraft or planet) on which the QuadMap is positioned
+        repeated double vertices = 3;       // [m] Four vertices (x,y,z) required per quad, order them clockwise about perimeter of quad in parent body frame P
+        repeated int32 color = 6;           // (optional) Send desired RGBA as values between 0 and 255
+        bool isHidden = 4;                  // True to hide QuadMap, false to show (vizDefault)
+        string label = 5;                   // (optional) Send string to display in center of QuadMap region, send "NOLABEL" to delete label
+    }
+
     TimeStamp currentTime = 1;                     // CHECKED EVERY MESSAGE
     repeated CelestialBody celestialBodies = 2;    // CHECKED EVERY MESSAGE
     repeated Spacecraft spacecraft = 3;            // CHECKED EVERY MESSAGE
     repeated CameraConfig cameras = 4;             // CHECKED EVERY MESSAGE
-    //repeated cameraImage cameraImages = 5;
+    repeated QuadMap quadMaps = 5;                 // CHECKED EVERY MESSAGE
     //repeated ImageRequest imageRequests = 6;
     VizSettingsPb settings = 7;                    // CHECKED FIRST MESSAGE ONLY
     EpochDateTime epoch = 8;                       // CHECKED FIRST MESSAGE ONLY

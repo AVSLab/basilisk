@@ -662,6 +662,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_truepathrelativebody(this->settings.truePathRelativeBody);
         vizSettings->set_truepathrotatingframe(this->settings.truePathRotatingFrame);
         vizSettings->set_truepathfixedframe(this->settings.truePathFixedFrame);
+        vizSettings->set_showquadmaplabels(this->settings.showQuadMapLabels);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -813,6 +814,23 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
         glp->set_markerscale((*glIt)->markerScale);
     }
+
+    // Write QuadMap messages
+    for (size_t k=0; k<this->quadMaps.size(); k++)
+    {
+        vizProtobufferMessage::VizMessage::QuadMap* qm = message->add_quadmaps();
+        qm->set_id(this->quadMaps.at(k)->ID);
+        qm->set_parentbodyname(this->quadMaps.at(k)->parentBodyName);
+        for (size_t idx=0; idx<this->quadMaps.at(k)->vertices.size(); idx++) {
+            qm->add_vertices(this->quadMaps.at(k)->vertices[idx]);
+        }
+        for (size_t idx=0; idx<this->quadMaps.at(k)->color.size(); idx++) {
+            qm->add_color(this->quadMaps.at(k)->color[idx]);
+        }
+        qm->set_ishidden(this->quadMaps.at(k)->isHidden);
+        qm->set_label(this->quadMaps.at(k)->label);
+    }
+    this->quadMaps.clear(); // QuadMaps should only send to Vizard once
 
     std::vector<VizSpacecraftData>::iterator scIt;
     for (scIt = scData.begin(); scIt != scData.end(); scIt++)

@@ -437,3 +437,4 @@ Interfacing with Vizard
    Live Streaming to Vizard  <scenarioBasicOrbitStream>
    Pointing a Vizard Camera  <scenarioVizPoint>
    Convert Simulation Data File to Vizard File <scenarioDataToViz>
+   Creating QuadMap Surface Visualizations <scenarioQuadMaps>

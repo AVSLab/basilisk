@@ -67,6 +67,9 @@ Version |release|
 - :beta:`Mujoco Support`: Added a new ``DynamicObject`` for multi-body dynamics that uses the `MuJoCo <https://mujoco.org>`_ library.
   Information about using mujoco is found in :ref:`mujocoDynObject`. This is a work in progress, and is not
   yet ready for general use. This system will be expanded to include more features and capabilities in future releases.
+- Added support for showing ``QuadMap`` quadrilateral surface meshes in Vizard, with scenario :ref:`scenarioQuadMaps` detailing usage. Allows users to draw quads on celestial bodies and spacecraft.
+- Added ``fixedframe2lla()`` function in :ref:`vizSupport` which is useful for computing QuadMap mesh interpolations
+- Added QuadMap mesh support functions (:ref:`quadMapSupport`) for displaying camera FOV boxes as projected on the surface of a reference ellipsoid, and drawing rectangular latitude/longitude defined regions.
 
 
 Version  2.6.0  (Feb. 21, 2025)

@@ -70,6 +70,7 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioRoboticArm'
                                         , 'scenarioOrbitManeuverTH'
                                         , 'scenarioLambertSolver'
+                                        , 'scenarioQuadMaps'
                                         , 'scenarioExtendingBoom'
                                         ])
 @pytest.mark.scenarioTest

@@ -86,6 +86,9 @@ default setting for that behavior.
     * - ``showLocationLabels``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) labels for a celestial body or spacecraft location. Value of 0 (protobuffer default) to use viz default.
+    * - ``showQuadMapLabels``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) labels for QuadMap regions. Value of 0 (protobuffer default) to use viz default.
     * - **Coordinate Frame Settings**
       -
       -
@@ -1907,3 +1910,52 @@ the MSM radii are stored in the list ``rListDebris``.  The sample code is::
                                               , saveFile=fileName
                                               , msmInfoList=[msmInfoDebris]
                                               )
+
+Adding Surface Highlighting using QuadMaps
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QuadMaps are meshes composed of quadrilaterals, which highlight regions for visualization. QuadMaps can be created on both celestial bodies and spacecraft, with potential use cases including visualizing imaging swaths, flood regions, regions of interest, etc. The following list shows all QuadMap settings.
+
+.. list-table:: ``QuadMap`` variables
+    :widths: 20 10 10 10 100
+    :header-rows: 1
+
+    * - Variable
+      - Type
+      - Units
+      - Required
+      - Description
+    * - ``ID``
+      - int
+      -
+      - Yes
+      - ID of QuadMap to be used for updates.
+    * - ``parentBodyName``
+      - string
+      -
+      - Yes
+      - Name of the parent body P (spacecraft or planet) on which the QuadMap is positioned.
+    * - ``vertices``
+      - double(12n)
+      - m
+      - Yes
+      - Four vertices (x,y,z) required per quad, ordered clockwise about perimeter of quad in parent body frame P.
+    * - ``color``
+      - int(4)
+      -
+      - Yes
+      - Send desired RGBA as values between 0 and 255.
+    * - ``isHidden``
+      - bool
+      -
+      - No
+      - True to hide QuadMap, false to show (vizDefault).
+    * - ``label``
+      - string
+      -
+      - No
+      - Send string to display in center of QuadMap region, send "NOLABEL" to delete label.
+
+
+In order to create a QuadMap, the helper function in :ref:`vizSupport` can be used. The ``ID`` for each QuadMap must be a unique integer, sending a message with an existing ``ID`` edits the existing QuadMap.
+
+The vertices list must be provided as a series of quads. Several helper functions have been developed to build these meshes. The :ref:`quadMapSupport` file is imported with :ref:`vizSupport`, and provides functions for defining polar regions (using latitude/longitude bounds), as well as projecting camera field-of-view bounding boxes onto a reference ellipsoid. Note that these functions take inputs for mesh resolution, which is useful when wrapping QuadMaps on convex surfaces (i.e. planet surfaces). See :ref:`scenarioQuadMaps` for detailed implementation and usage of defining QuadMaps and modifying their settings.
