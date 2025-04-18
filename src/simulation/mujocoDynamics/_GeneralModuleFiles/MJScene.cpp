@@ -20,6 +20,7 @@
 #include "MJScene.h"
 
 #include "MJFwdKinematics.h"
+#include "StatefulSysModel.h"
 
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -79,7 +80,10 @@ void MJScene::initializeDynamics()
     this->actState = this->dynManager.registerState(1, 1, "mujocoAct");
 
     for (auto&& body : this->spec.getBodies()) {
-        body.registerStates(this->dynManager);
+        body.registerStates(DynParamRegisterer(
+            this->dynManager,
+            "body_" + body.getName() + "_"
+        ));
     }
 
     // Make sure the spec is compiled
@@ -88,6 +92,19 @@ void MJScene::initializeDynamics()
     // Always call `configure`, which will reshape the states size
     if (!recompiled) {
         this->spec.configure();
+    }
+
+    // Register the states of the models in the dynamics task
+    for (auto[_, sysModelPtr] : this->dynamicsTask.TaskModels)
+    {
+        if (auto statefulSysModelPtr = dynamic_cast<StatefulSysModel*>(sysModelPtr))
+        {
+            statefulSysModelPtr->registerStates(DynParamRegisterer(
+                this->dynManager,
+                sysModelPtr->ModelTag.empty() ? std::string("model") : sysModelPtr->ModelTag
+                + "_" + std::to_string(sysModelPtr->moduleID) + "_"
+            ));
+        }
     }
 }
 

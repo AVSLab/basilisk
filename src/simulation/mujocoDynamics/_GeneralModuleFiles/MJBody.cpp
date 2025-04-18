@@ -207,9 +207,9 @@ void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
     }
 }
 
-void MJBody::registerStates(DynParamManager& paramManager)
+void MJBody::registerStates(DynParamRegisterer paramManager)
 {
-    this->massState = paramManager.registerState(1, 1, "mujocoBodyMass_" + this->name);
+    this->massState = paramManager.registerState(1, 1, "mass");
 }
 
 void MJBody::updateMujocoModelFromMassProps()

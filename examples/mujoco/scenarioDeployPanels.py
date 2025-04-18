@@ -22,13 +22,13 @@ recommended scenario(s) that they may have):
 #. ``examples/mujoco/scenarioArmWithThrusters.py``
 
 This script demonstrates how to simulate a spacecraft with solar panels deployed
-using a Proportional-Derivative (PD) controller. This script uses the MuJoCo-based
-:ref:`DynamicObject<dynamicObject>` :ref:`MJScene<MJScene>`.
+using a Proportional-Integral-Derivative (PID) controller. This script uses the
+MuJoCo-based :ref:`DynamicObject<dynamicObject>` :ref:`MJScene<MJScene>`.
 
 In ``mujoco/scenarioArmWithThrusters.py``, we saw how we can constrain joints to
 follow a specific angle by letting the dynamic engine figure out and apply
 the necessary torques. In this script, we are controlling the joints using a
-PD controller. This is a more adequate simulation setup when you want to simulate
+PID controller. This is a more adequate simulation setup when you want to simulate
 or design the control system for these joints. It is also generally more
 computationally efficient than letting the dynamic engine figure out the torques.
 
@@ -45,11 +45,13 @@ prevent it from doing so (akin to a physical stop on the system). Note in the
 plots and in the 3D visualization how the panels never get deployed over their
 joint limit.
 
-The deployment of the panels is controlled using a Proportional-Derivative (PD)
-controller. The desired position and velocity profiles for the joints are
+The deployment of the panels is controlled using an analog PID controller.
+The desired position and velocity profiles for the joints are
 generated using a trapezoidal/triangular velocity profile. These profiles are
-then used as inputs to the PD controller, which computes the torque required to achieve
-the desired motion.
+then used as inputs to the PID controller, which computes the torque required to achieve
+the desired motion. Note that the controller class extends ``StatefulSysModel``,
+instead of ``SysModel``, since we need to register the integral error as a
+continuous state.
 
 The simulation is run for 80 minutes and the state of the system is recorded.
 The desired and achieved joint angles, as well as the torque applied to each
@@ -65,7 +67,7 @@ from contextlib import contextmanager
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.architecture import sysModel
+from Basilisk.simulation import StatefulSysModel
 from Basilisk.architecture import messaging
 from Basilisk.simulation import svIntegrators
 
@@ -252,7 +254,7 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
         # the measured position and velocity of the joint (in this case the
         # exact values are used, but in a real system these may be the product
         # of a sensor), and the output is the torque to be applied to the joint.
-        pdController = PDController()
+        pdController = PIDController()
         pdController.ModelTag = f"{actuatorName}_controller"
 
         # Connect the interpolators to the PD controller for the desired
@@ -385,13 +387,17 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
 
 # The following is an example of a Python-based SysModel that
 # can be added to the dynamics task of a MJScene.
-class PDController(sysModel.SysModel):
+class PIDController(StatefulSysModel.StatefulSysModel):
     """
-    A Proportional-Derivative (PD) Controller class for controlling joint states.
+    A Proportional-Integral-Derivative (PID) Controller class for controlling joint states.
+
+    This models an analog PID controller, which means that its output evolves in continuous
+    time, not discrete time. Thus, it should be used within the dynamics task of ``MJScene``.
 
     Attributes:
-        K (float): Proportional gain.
-        P (float): Derivative gain.
+        K_p (float): Proportional gain.
+        K_d (float): Derivative gain.
+        K_i (float): Integral gain.
 
         measuredInMsg (messaging.ScalarJointStateMsgReader): Reader for the measured joint state.
         desiredInMsg (messaging.ScalarJointStateMsgReader): Reader for the desired joint state.
@@ -404,8 +410,9 @@ class PDController(sysModel.SysModel):
     def __init__(self, *args: Any):
         """Initialize"""
         super().__init__(*args)
-        self.K = 0.1
-        self.P = 0.002
+        self.K_p = 0.1
+        self.K_d = 0.002
+        self.K_i = 0.0001
 
         self.measuredInMsg = messaging.ScalarJointStateMsgReader()
         self.desiredInMsg = messaging.ScalarJointStateMsgReader()
@@ -415,15 +422,23 @@ class PDController(sysModel.SysModel):
 
         self.outputOutMsg = messaging.SingleActuatorMsg()
 
+    def registerStates(self, registerer: StatefulSysModel.DynParamRegisterer):
+        self.integralErrorState = registerer.registerState(1, 1, "integralError")
+        self.integralErrorState.setState([[0]]) # explicitely zero initialize
+
     def UpdateState(self, CurrentSimNanos: int):
         """Computes the control command from the measured and desired
         joint position and velocity."""
         # Compute the error in the state and its derivative
         stateError = self.desiredInMsg().state - self.measuredInMsg().state
         stateDotError = self.desiredDotInMsg().state - self.measuredDotInMsg().state
+        stateIntegralError = self.integralErrorState.getState()[0][0]
 
         # Compute the control output
-        control_output = self.K * stateError + self.P * stateDotError
+        control_output = self.K_p * stateError + self.K_d * stateDotError + self.K_i * stateIntegralError
+
+        # Set the derivative of the integral error inner state
+        self.integralErrorState.setDerivative([[stateError]])
 
         # Write the control output to the output message
         payload = messaging.SingleActuatorMsgPayload()

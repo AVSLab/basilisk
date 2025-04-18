@@ -36,6 +36,7 @@
 #include "MJJoint.h"
 #include "MJObject.h"
 #include "MJSite.h"
+#include "StatefulSysModel.h"
 
 /// @cond
 /**
@@ -252,13 +253,13 @@ public:
     void writeStateDependentOutputMessages(uint64_t CurrentSimNanos);
 
     /**
-     * @brief Registers the body's states with a dynamic parameter manager.
+     * @brief Registers the body's states with a dynamic parameter registerer.
      *
      * Currently, only the mass of the body is considered a parameter.
      *
-     * @param paramManager Reference to the dynamic parameter manager.
+     * @param paramManager The dynamic parameter registerer.
      */
-    void registerStates(DynParamManager& paramManager);
+    void registerStates(DynParamRegisterer paramManager);
 
     /**
      * @brief Updates the MuJoCo model from the mass properties of the body.
