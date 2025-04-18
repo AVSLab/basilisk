@@ -1,9 +1,0 @@
-pandas
-matplotlib
-numpy
-colorama
-tqdm
-Pillow
-requests
-bokeh
-protobuf

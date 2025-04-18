@@ -1,24 +1,57 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-    "setuptools>=70.1.0",   # Required for "bdist_wheel" to work correctly.
-    "setuptools-scm>=8.0",  # Automatically include all Git-controlled files in sdist
-    "packaging>=22",        # Due to incompatibility: https://github.com/pypa/setuptools/issues/4483
-
-    # Requirements for building Basilisk through conanfile
-    "conan>=2.0.5",
-    "cmake>=3.26,<4.0",
-    "swig>=4.2.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
+    "setuptools>=69.0.3",
+    "setuptools-scm>=8.0.4",
+    "packaging>=23.2",
+    "wheel>=0.42.0",
+    "tomli>=2.0.1; python_version < '3.11'",
 ]
 
 [project]
-name        = 'Basilisk'
-dynamic     = ["version", "dependencies"]
+name = "Basilisk"
+dynamic = ["version"]
 requires-python = ">=3.8, <3.14"
 
-readme      = "README.md"
-license     = {file = "LICENSE"}
+readme = "README.md"
+license = {file = "LICENSE"}
 description = "Basilisk: an Astrodynamics Simulation Framework"
+
+dependencies = [
+    "pandas>=2.2.3",
+    "matplotlib==3.8.2",
+    "numpy==1.26.3",
+    "colorama==0.4.6",
+    "tqdm==4.66.1",
+    "Pillow==10.1.0",
+    "requests==2.31.0",
+    "bokeh==3.3.2",
+    "protobuf==4.25.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.0.0",
+    "pytest-html==4.1.1",
+    "pytest-xdist==3.5.0",
+    "pre-commit==3.6.0",
+    "clang-format==17.0.6",
+    "psutil==5.9.8",
+]
+
+build = [
+    "cmake==3.27.7",
+    "conan==2.0.15",
+]
+
+doc = [
+    "breathe==4.35.0",
+    "docutils==0.20.1",
+    "recommonmark==0.7.1",
+    "sphinx==7.2.6",
+    "sphinx-rtd-theme==2.0.0",
+    "sphinx-copybutton==0.5.2",
+]
 
 [project.urls]
 homepage = 'https://avslab.github.io/basilisk/'
@@ -50,4 +83,3 @@ Basilisk = [
 
 [tool.setuptools.dynamic]
 version = {file = "docs/source/bskVersion.txt"}
-dependencies = {file = "requirements.txt"}
