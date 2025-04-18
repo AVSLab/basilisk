@@ -107,6 +107,28 @@ class BasiliskConan(ConanFile):
         options.update({opt: value[0]})
         default_options.update({opt: value[1]})
 
+    def get_dependencies_from_pyproject(self):
+        """Read dependencies from pyproject.toml"""
+        if sys.version_info >= (3, 11):
+            import tomllib
+            with open("pyproject.toml", "rb") as f:
+                pyproject = tomllib.load(f)
+        else:
+            import tomli
+            with open("pyproject.toml", "rb") as f:
+                pyproject = tomli.load(f)
+
+        # Get all dependencies
+        dependencies = []
+        if "project" in pyproject and "dependencies" in pyproject["project"]:
+            dependencies.extend(pyproject["project"]["dependencies"])
+
+        if "project" in pyproject and "optional-dependencies" in pyproject["project"]:
+            for group in pyproject["project"]["optional-dependencies"].values():
+                dependencies.extend(group)
+
+        return dependencies
+
     def system_requirements(self):
         if not self.options.get_safe("managePipEnvironment"):
             return  # Don't need to manage any pip requirements
@@ -120,26 +142,11 @@ class BasiliskConan(ConanFile):
         print(cmakeCmdString)
         os.system(cmakeCmdString)
 
-        # TODO: Remove this: requirements and optional requirements are
-        # installed automatically by add_basilisk_to_sys_path(). Only build
-        # system requirements need to be installed here.
-        reqFile = open('requirements.txt', 'r')
-        required = reqFile.read().replace("`", "").split('\n')
-        reqFile.close()
-        pkgList = [x.lower() for x in required]
-
-        reqFile = open('requirements_dev.txt', 'r')
-        required = reqFile.read().replace("`", "").split('\n')
-        reqFile.close()
-        pkgList += [x.lower() for x in required]
+        # Get dependencies from pyproject.toml
+        pkgList = self.get_dependencies_from_pyproject()
 
         checkStr = "Required"
         if self.options.get_safe("allOptPkg"):
-            optFile = open('requirements_doc.txt', 'r')
-            optionalPkgs = optFile.read().replace("`", "").split('\n')
-            optFile.close()
-            optionalPkgs = [x.lower() for x in optionalPkgs]
-            pkgList += optionalPkgs
             checkStr += " and All Optional"
 
         print("\nChecking " + checkStr + " Python packages:")
@@ -235,7 +242,7 @@ class BasiliskConan(ConanFile):
 
 
     def package_id(self):
-        if self.info.settings.compiler == "Visual Studio":
+        if self.info.settings.compiler == "msvc":
             if "MD" in self.settings.compiler.runtime:
                 self.info.settings.compiler.runtime = "MD/MDd"
             else:
@@ -400,11 +407,19 @@ if __name__ == "__main__":
     # ConanFile object), because it affects the configuration of the first run.
     # (Running it here fixes https://github.com/AVSLab/basilisk/issues/525)
     try:
-        subprocess.check_output([sys.executable, "-m", "conans.conan", "profile", "detect", "--exist-ok"])
-    except:
-        # if profile already exists the above command returns an error.  Just ignore in this
-        # case.  We don't want to overwrite an existing profile file
-        pass
+        # Try without --exist-ok first (newer Conan versions)
+        subprocess.check_output([sys.executable, "-m", "conans.conan", "profile", "detect"])
+    except subprocess.CalledProcessError as e:
+        if "Profile" in str(e.output) and "already exists" in str(e.output):
+            # Profile exists, which is fine
+            pass
+        else:
+            try:
+                # Try with --exist-ok (older Conan versions)
+                subprocess.check_output([sys.executable, "-m", "conans.conan", "profile", "detect", "--exist-ok"])
+            except:
+                # If both fail, just continue - the profile might already exist
+                pass
     print(statusColor + "Checking conan configuration:" + endColor + " Done")
 
     parser = argparse.ArgumentParser(description="Configure the Basilisk framework.")
