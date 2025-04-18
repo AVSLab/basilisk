@@ -432,7 +432,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     #Set the simulation time
-    pre_imaging_time = macros.min2nano(4)
+    pre_imaging_time = macros.min2nano(5)
     simulationTime = macros.min2nano(11.0)+ pre_imaging_time
 
     #Create the simulation process
@@ -517,14 +517,14 @@ def run(show_plots):
     striptarget = stripLocation.StripLocation()
     striptarget.ModelTag = "ImagingBoulderDenverStrip"
     striptarget.planetRadius = astroConstants.REQ_EARTH * 1e3
-    striptarget.acquisition_speed = 3*1e-6
+    striptarget.acquisition_speed = 6*1e-6
     striptarget.pre_imaging_time= pre_imaging_time;
     striptarget.specifyLocationStart(np.radians(39.99), np.radians(-105.26), 0)
     striptarget.specifyLocationEnd(np.radians(33.48), np.radians(-112.078232), 0)
     # striptarget.specifyLocationEnd(np.radians(0), np.radians(-136.629), 0)
     # striptarget.specifyLocationStart(np.radians(0), np.radians(-142.078232), 0)
     striptarget.newpstart()
-    striptarget.minimumElevation = np.radians(20.0)
+    striptarget.minimumElevation = np.radians(10.0)
     striptarget.maximumRange = 1e9
     striptarget.OldSimNanos=0
     striptarget.duration_strip_imaging=0
