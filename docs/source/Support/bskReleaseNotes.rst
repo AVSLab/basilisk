@@ -70,6 +70,7 @@ Version |release|
 - Added support for showing ``QuadMap`` quadrilateral surface meshes in Vizard, with scenario :ref:`scenarioQuadMaps` detailing usage. Allows users to draw quads on celestial bodies and spacecraft.
 - Added ``fixedframe2lla()`` function in :ref:`vizSupport` which is useful for computing QuadMap mesh interpolations
 - Added QuadMap mesh support functions (:ref:`quadMapSupport`) for displaying camera FOV boxes as projected on the surface of a reference ellipsoid, and drawing rectangular latitude/longitude defined regions.
+- Updated ``THRSimConfig`` to use a shared pointer to avoid duplication of configuration data across the simulation and to enable access and updates to the parameters during simulation. This change has been implemented in both the ``thrusterDynamicsEffector`` and ``thrusterStateEffector`` modules.
 - :beta:`Mujoco Support`: Added ``StatefulSysModel`` for models in the dynamics task of ``MJScene`` that need to declare
   continuous-time states. Modified :ref:`scenarioDeployPanels` to illustrate the use of ``StatefulSysModel``.
 
