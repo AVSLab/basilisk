@@ -45,6 +45,9 @@ from Basilisk import __path__
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.colors import LightSource
 from scipy.spatial.transform import Rotation
+import matplotlib.pyplot as plt
+from matplotlib.colors import Normalize
+from matplotlib.cm import get_cmap, ScalarMappable
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -183,6 +186,7 @@ def plot_pointing_error_km(pre_imaging_time,timeLineSet,r_LP_N,intersections):
     plt.plot(timeLineSet[int((pre_imaging_time/1e9)/3):],error_m[int((pre_imaging_time/1e9)/3):]/1000,color='black')
     plt.xlabel('Time [min]')
     plt.ylabel('Error pointing vector [km]')
+    plt.ylim(0, 1)
 
 def plot_scanline_angle_degrees(pre_imaging_time,timeLineSet,angle,angle_ref):
     plt.figure(4)
@@ -191,6 +195,7 @@ def plot_scanline_angle_degrees(pre_imaging_time,timeLineSet,angle,angle_ref):
     plt.xlabel('Time [min]')
     plt.ylabel('Angle scan vector [degrees]')
     plt.legend(loc='lower right')  
+    plt.ylim(89, 91)
 
 def plot_pointing_error_velocity(pre_imaging_time, timeLineSet, r_LP_N, intersections):
     plt.figure(5)
@@ -367,7 +372,7 @@ def plot_3D_R_LP_N(ax,pre_imaging_time,r_LP_N, earth_radius, tran, camera_vector
         ax.set_xlabel('X [m]')
         ax.set_ylabel('Y [m]')
         ax.set_zlabel('Z [m]')
-        ax.set_title('Imaging of the Strip Boulder-Pheonix')
+        #ax.set_title('Imaging of the Strip Boulder-Pheonix')
     
     clear_previous_plot(ax)
     
@@ -512,15 +517,17 @@ def run(show_plots):
     striptarget = stripLocation.StripLocation()
     striptarget.ModelTag = "ImagingBoulderDenverStrip"
     striptarget.planetRadius = astroConstants.REQ_EARTH * 1e3
-    striptarget.acquisition_speed = 6*1e-6
+    striptarget.acquisition_speed = 3*1e-6
     striptarget.pre_imaging_time= pre_imaging_time;
-    # striptarget.specifyLocationStart(np.radians(39.99), np.radians(-105.26), 0)
-    # striptarget.specifyLocationEnd(np.radians(33.48), np.radians(-112.078232), 0)
-    striptarget.specifyLocationEnd(np.radians(0), np.radians(-136.629), 0)
-    striptarget.specifyLocationStart(np.radians(0), np.radians(-142.078232), 0)
+    striptarget.specifyLocationStart(np.radians(39.99), np.radians(-105.26), 0)
+    striptarget.specifyLocationEnd(np.radians(33.48), np.radians(-112.078232), 0)
+    # striptarget.specifyLocationEnd(np.radians(0), np.radians(-136.629), 0)
+    # striptarget.specifyLocationStart(np.radians(0), np.radians(-142.078232), 0)
     striptarget.newpstart()
     striptarget.minimumElevation = np.radians(20.0)
     striptarget.maximumRange = 1e9
+    striptarget.OldSimNanos=0
+    striptarget.duration_strip_imaging=0
     striptarget.addSpacecraftToModel(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, striptarget)
 
@@ -622,8 +629,8 @@ def run(show_plots):
 
     oe = orbitalMotion.ClassicElements()
     oe.a = (6378 + 600) * 1000.0  # meters
-    oe.e = 0
-    oe.i = 0 #63.3 * macros.D2R
+    oe.e = 0.1
+    oe.i = 45 * macros.D2R
     oe.Omega = 88.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = 125.3 * macros.D2R

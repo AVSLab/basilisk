@@ -78,7 +78,8 @@ public:
     double lenght_central_line; //!< [m] Lenght of the central line
     Eigen::Vector3d r_PN_N; //!< [m] Planet position vector relative to inertial frame origin.
     Eigen::Vector3d v_LP_N; //!< [m] Velocity vector of the current target point on the central line of the strip in the inertial frame 
-
+    uint64_t duration_strip_imaging; //!< [s] Time already spent to image the strip
+    uint64_t OldSimNanos; //!< [s] Previous CurrentSimNanos
 
 private:
     StripStateMsgPayload currentStripStateBuffer;  //!< buffer of ground station output data
@@ -86,8 +87,6 @@ private:
     Eigen::Vector3d r_North_N; //!<[-] Inertial 3rd axis, defined internally as "North".
     Eigen::Vector3d r_LP_P; //!< [m] Ground location of the current target point on the central line of the strip relative to PCPF
     Eigen::Vector3d v_LP_P; //!< [m/s] Velocity of the current target point on the central line of the strip relative to PCPF
-    uint64_t duration_strip_imaging; //!< [s] Time already spent to image the strip
-    uint64_t OldSimNanos; //!< [s] Previous CurrentSimNanos
    
 
     std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
