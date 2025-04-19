@@ -1,0 +1,15 @@
+wheel
+cmake<4.0
+conan
+packaging
+setuptools
+setuptools-scm
+
+pytest
+pytest-html
+pytest-xdist
+
+pre-commit
+clang-format
+
+psutil

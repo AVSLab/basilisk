@@ -1,0 +1,98 @@
+name: "Canary Build"
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - '.github/workflows/canary.yml'
+      - '.github/workflows/requirements.txt'
+      - '.github/workflows/requirements_dev.txt'
+      - '.github/workflows/requirements_doc.txt'
+      - 'conanfile.py'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-macOS-canary:
+    name: macOS Latest Dependencies
+    runs-on: macos-latest
+    timeout-minutes: 75
+    strategy:
+      matrix:
+        python-version: [ "3.13" ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Homebrew
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew install swig doxygen
+
+      - name: "Create virtual Environment"
+        run: python3 -m venv .venv
+      - name: "Capture initial package versions"
+        run: |
+          source .venv/bin/activate
+          pip freeze > initial_versions.txt
+          echo "Initial package versions:" >> $GITHUB_STEP_SUMMARY
+          cat initial_versions.txt >> $GITHUB_STEP_SUMMARY
+          echo "\n" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Install canary requirements"
+        run: |
+          source .venv/bin/activate
+          pip3 install -r .github/workflows/requirements.txt
+          pip3 install -r .github/workflows/requirements_dev.txt
+          pip3 install -r .github/workflows/requirements_doc.txt
+          pip3 install pytest-error-for-skips
+
+      - name: "Capture final package versions"
+        run: |
+          source .venv/bin/activate
+          pip freeze > final_versions.txt
+          echo "Final package versions:" >> $GITHUB_STEP_SUMMARY
+          cat final_versions.txt >> $GITHUB_STEP_SUMMARY
+          echo "\n" >> $GITHUB_STEP_SUMMARY
+          echo "Package version changes:" >> $GITHUB_STEP_SUMMARY
+          diff -u initial_versions.txt final_versions.txt | grep -E '^[+-]' | grep -v '^+++' | grep -v '^---' >> $GITHUB_STEP_SUMMARY
+
+      - name: "Build basilisk with latest dependencies"
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg --mujoco True --mujocoReplay True --pyPkgCanary True
+
+      - name: "Run Python Tests"
+        run: |
+          source .venv/bin/activate
+          cd src
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips
+        if: ${{ always() }}
+      - name: "Run C/C++ Tests"
+        working-directory: ./dist3
+        run: ctest -C Release
+        if: ${{ always() }}
+
+      - name: "Build Documentation"
+        run: |
+          source .venv/bin/activate
+          cd docs
+          make html SPHINXOPTS="-W"
+        if: ${{ always() }}
+
+      - name: "Upload package version logs"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-versions
+          path: |
+            initial_versions.txt
+            final_versions.txt
