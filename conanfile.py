@@ -37,6 +37,7 @@ bskModuleOptionsBool = {
     "vizInterface": [[True, False], True],
     "mujoco": [[True, False], False],
     "buildProject": [[True, False], True],
+    "pyPkgCanary": [[True, False], False],
 
     # XXX: Set managePipEnvironment to True to keep the old behaviour of
     # managing the `pip` environment directly (upgrading, installing Python
@@ -123,19 +124,21 @@ class BasiliskConan(ConanFile):
         # TODO: Remove this: requirements and optional requirements are
         # installed automatically by add_basilisk_to_sys_path(). Only build
         # system requirements need to be installed here.
-        reqFile = open('requirements.txt', 'r')
+        reqPath = '.github/workflows/' if self.options.get_safe("pyPkgCanary") else ''
+
+        reqFile = open(f'{reqPath}requirements.txt', 'r')
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList = [x.lower() for x in required]
 
-        reqFile = open('requirements_dev.txt', 'r')
+        reqFile = open(f'{reqPath}requirements_dev.txt', 'r')
         required = reqFile.read().replace("`", "").split('\n')
         reqFile.close()
         pkgList += [x.lower() for x in required]
 
         checkStr = "Required"
         if self.options.get_safe("allOptPkg"):
-            optFile = open('requirements_doc.txt', 'r')
+            optFile = open(f'{reqPath}requirements_doc.txt', 'r')
             optionalPkgs = optFile.read().replace("`", "").split('\n')
             optFile.close()
             optionalPkgs = [x.lower() for x in optionalPkgs]
