@@ -99,8 +99,10 @@ jobs:
             source .venv/bin/activate
             pip3 install cmake -r requirements_dev.txt
 
-        - name: "Build basilisk with OpNav"
-          run: source .venv/bin/activate && python3 conanfile.py --opNav True --allOptPkg
+        - name: "Build basilisk with all options"
+          run: |
+            source .venv/bin/activate
+            python3 conanfile.py --opNav True --allOptPkg --mujoco True --mujocoReplay True
 
         - name: "Run Python Tests"
           run: |
