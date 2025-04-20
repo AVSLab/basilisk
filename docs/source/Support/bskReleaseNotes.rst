@@ -26,7 +26,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
-- text here
+- Marked the use of python 3.8 as deprecated
 
 
 
