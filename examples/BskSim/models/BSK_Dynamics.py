@@ -192,6 +192,7 @@ class BSKDynamicModels():
         """Set the 8 ACS thrusters."""
         # Make a fresh TH factory instance, this is critical to run multiple times
         thFactory = simIncludeThruster.thrusterFactory()
+        self.thFactory = thFactory
 
         # 8 thrusters are modeled that act in pairs to provide the desired torque
         thPos = [
@@ -221,7 +222,7 @@ class BSKDynamicModels():
                 , dir_B
             )
         # create thruster object container and tie to spacecraft object
-        thFactory.addToSpacecraft("ACS Thrusters",
+        self.thFactory.addToSpacecraft("ACS Thrusters",
                                   self.thrustersDynamicEffector,
                                   self.scObject)
 

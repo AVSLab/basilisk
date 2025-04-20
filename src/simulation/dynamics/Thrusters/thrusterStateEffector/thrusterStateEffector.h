@@ -57,8 +57,8 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 
-    void addThruster(THRSimConfig* newThruster); //!< -- Add a new thruster to the thruster set
-    void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster); //!< -- Add a new thruster to the thruster set
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
 
@@ -66,7 +66,7 @@ public:
     // Input and output messages
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
-    std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
+    std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
 
     // State information

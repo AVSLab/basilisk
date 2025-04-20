@@ -49,28 +49,28 @@ public:
     void computeForceTorque(double integTime, double timeStep);
     void computeStateContribution(double integTime);
     void Reset(uint64_t CurrentSimNanos);
-    void addThruster(THRSimConfig* newThruster);
-    void addThruster(THRSimConfig* newThruster, Message<SCStatesMsgPayload>* bodyStateMsg);
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster);
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(THRSimConfig *CurrentThruster, double currentTime);
-    void ComputeThrusterShut(THRSimConfig *CurrentThruster, double currentTime);
+    void ComputeThrusterFire(std::shared_ptr<THRSimConfig> CurrentThruster, double currentTime);
+    void ComputeThrusterShut(std::shared_ptr<THRSimConfig> CurrentThruster, double currentTime);
     void UpdateThrusterProperties();
-    void computeBlowDownDecay(THRSimConfig *CurrentThruster);
+    void computeBlowDownDecay(std::shared_ptr<THRSimConfig> CurrentThruster);
 
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
 
     int stepsInRamp;                               //!< class variable
-    std::vector<THRSimConfig> thrusterData; //!< -- Thruster information
+    std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< -- Thruster information
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double fuelMass;                               //!< kg Current total fuel mass of connected fuel tank
     double prevFireTime;                           //!< s  Previous thruster firing time
-	double thrFactorToTime(THRSimConfig *thrData,
+	double thrFactorToTime(std::shared_ptr<THRSimConfig> thrData,
 		std::vector<THRTimePair> *thrRamp);
 	StateData *hubSigma;                           //!< pointer to the hub attitude states
     StateData *hubOmega;                           //!< pointer to the hub angular velocity states
