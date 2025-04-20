@@ -12,6 +12,12 @@ Version |release|
 -----------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
   Developers and users alike should continue to use ``python conanfile.py`` installation.
+
+
+Version 2.7.0
+-------------
+- pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
+  Developers and users alike should continue to use ``python conanfile.py`` installation.
 - When using C++ wrapped sensor objects (CSS, thrusters, reaction wheels), Python references
   must be explicitly retained to prevent premature garbage collection. The recommended approach
   is to store these objects directly on your simulation object. For example:
