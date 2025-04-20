@@ -54,7 +54,7 @@ using mjVFSDeleter = mjDeleter<mjVFS, mj_deleteVFS>;
 
 /** Loggs an error message and then throws an error. */
 template <typename T = std::invalid_argument>
-inline void logAndThrow (const std::string& error, BSKLogger* logger = nullptr)
+[[noreturn]] inline void logAndThrow (const std::string& error, BSKLogger* logger = nullptr)
 {
     if (logger) {
         logger->bskLog(BSK_ERROR, error.c_str());
