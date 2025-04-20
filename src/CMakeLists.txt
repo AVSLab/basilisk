@@ -31,8 +31,20 @@ if(Python3_VERSION VERSION_LESS "3.9")
     message(WARNING "You are using Python ${Python3_VERSION}, but support for Python < 3.9 is deprecated and will be removed in April 2026.")
 endif()
 
-if((${Python3_VERSION} VERSION_GREATER_EQUAL 3.12))
-  message(WARNING "Basilisk on Python 3.12+ (found version ${Python3_VERSION}) requires SWIG 4.2.0+.")
+# Find SWIG early (no version requirement yet)
+find_package(SWIG REQUIRED COMPONENTS python)
+
+# Check both versions
+if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
+  if(SWIG_VERSION VERSION_LESS "4.2.0")
+    message(FATAL_ERROR
+      "Python ${Python3_VERSION} requires SWIG 4.2.0 or newer, but found SWIG ${SWIG_VERSION}."
+    )
+  endif()
+endif()
+
+# Now safely require SWIG in the appropriate version range
+if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
   find_package(SWIG 4.2...<5 REQUIRED COMPONENTS python)
 else()
   find_package(SWIG 4.0...<5 REQUIRED COMPONENTS python)
