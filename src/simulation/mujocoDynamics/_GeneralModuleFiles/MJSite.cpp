@@ -77,7 +77,7 @@ void MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t Cu
     mrpd = rot;
 
     double res[6];
-    mj_objectVelocity(model, data, mjOBJ_SITE, this->getId(), res, 0);
+    mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res, 0);
 
     // TODO: Double check this is right
     std::copy_n(res, 3, payload.omega_BN_B);
