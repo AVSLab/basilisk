@@ -26,6 +26,11 @@ include(bskTargetExcludeBuildOptions)
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
 
+# check for deprecated python 3.8
+if(Python3_VERSION VERSION_LESS "3.9")
+    message(WARNING "You are using Python ${Python3_VERSION}, but support for Python < 3.9 is deprecated and will be removed in April 2026.")
+endif()
+
 if((${Python3_VERSION} VERSION_GREATER_EQUAL 3.12))
   message(WARNING "Basilisk on Python 3.12+ (found version ${Python3_VERSION}) requires SWIG 4.2.0+.")
   find_package(SWIG 4.2...<5 REQUIRED COMPONENTS python)
