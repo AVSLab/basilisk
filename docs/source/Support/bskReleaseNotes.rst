@@ -24,8 +24,8 @@ Basilisk Release Notes
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
 
-Version |release|
------------------
+Version |release| (April 20, 2025)
+----------------------------------
 - Updated Linux and Windows CI builds to use ``swig`` 4.2.1
 - Updated CI scripts to run on latest macOS and no longer use Ubuntu 20.04
 - Updated :ref:`makeDraftModule` to remove redundant comments and implementation of the destructor,
