@@ -87,6 +87,11 @@ void SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
     }
+
+    if (!this->eclipseInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "No ECLIPSE.");
+    }
+
 }
 
 
@@ -277,10 +282,9 @@ void SpacecraftLocation::computeAccess()
             }
         }
 
-        std::cout << "shadow factor limit: " << this->shadow_factor_limit << std::endl;
         if (this->shadow_factor_limit < 1.0) {
             // check if the shadow factor is within the limit
-            std::cout << "shadow factor: " << eclipseInMsgState.shadowFactor << std::endl;
+            // std::cout << "shadow factor a: " << this->eclipseInMsgState.shadowFactor << std::endl;
             if (eclipseInMsgState.shadowFactor >= this->shadow_factor_limit) {
                 this->accessMsgBuffer.at(c).hasAccess = 0;
                 this->illuminationMsgBuffer.at(c).hasAccess = 0;
