@@ -519,7 +519,7 @@ public:
      * @param error The error message.
      */
     template <typename T = std::invalid_argument>
-    void logAndThrow (const std::string& error);
+    [[noreturn]] void logAndThrow (const std::string& error);
 
 public:
     static const int FWD_KINEMATICS_PRIORITY = 10000; ///< Priority for default forward kinematics model.

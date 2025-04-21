@@ -188,13 +188,16 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     endif()
 
     # Link all necessary libraries
-    target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
-    target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
     target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON3_MODULE})
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
     if(${PARENT_DIR_NAME} STREQUAL "mujocoDynamics")
       target_link_libraries(${LIB_NAME} PUBLIC dynamicsLib)
+      # dynamicsLib already has ArchitectureUtilities and cMsgCInterface
+      # publicly linked, so no need to add them (again) for mujocoDynamics
+    else()
+      target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
+      target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
     endif()
 
     # define build location, IDE generation specifications

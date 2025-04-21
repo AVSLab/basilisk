@@ -50,7 +50,7 @@ public:
      *
      * @return A unique pointer to the cloned `StateData` object.
      */
-    virtual std::unique_ptr<StateData> clone() const;
+    virtual std::unique_ptr<StateData> clone() const override;
 
     /**
      * @brief Configures the state data with the given MuJoCo model.
