@@ -277,8 +277,10 @@ void SpacecraftLocation::computeAccess()
             }
         }
 
+        std::cout << "shadow factor limit: " << this->shadow_factor_limit << std::endl;
         if (this->shadow_factor_limit < 1.0) {
             // check if the shadow factor is within the limit
+            std::cout << "shadow factor: " << eclipseInMsgState.shadowFactor << std::endl;
             if (eclipseInMsgState.shadowFactor >= this->shadow_factor_limit) {
                 this->accessMsgBuffer.at(c).hasAccess = 0;
                 this->illuminationMsgBuffer.at(c).hasAccess = 0;
