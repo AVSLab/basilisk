@@ -13,7 +13,8 @@ Software setup
 
 In order to run Basilisk, the following software will be necessary:
 
--  `Python <https://www.python.org/downloads/windows/>`__ 3.8 to 3.13
+-  `Python <https://www.python.org/downloads/windows/>`__ 3.8 to 3.13.
+   Version 3.8 is deprecated and will be removed April 2026.
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Visual Studios 15 2017 or greater
 -  `Swig <http://www.swig.org/download.html>`__ version 4.X
