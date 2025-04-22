@@ -485,19 +485,37 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
                                                                  double & rotEnergyContr,
                                                                  Eigen::Vector3d omega_BN_B)
 {
-    // Update omega_BN_B and omega_PN_B
+    // Update omega_BN_B, omega_PN_B, and omega_PN_P
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     this->omega_PN_B = this->omega_PB_B + this->omega_BN_B;
+    *this->omega_PN_P = this->dcm_BP.transpose() * this->omega_PN_B;
 
-    // Compute rDot_PcB_B
+    Eigen::Vector3d totRotAngMomPntC_B;
+    totRotAngMomPntC_B.setZero();
+    double totRotEnergy = 0.0;
+
+    // Loop through attached state effectors for contributions
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
+        rotAngMomPntCContr_B.setZero();
+        rotEnergyContr = 0.0;
+
+        (*it)->updateEnergyMomContributions(integTime, rotAngMomPntCContr_B, rotEnergyContr, *this->omega_PN_P);
+
+        totRotAngMomPntC_B += rotAngMomPntCContr_B;
+        totRotEnergy += rotEnergyContr;
+    }
+
+    rotAngMomPntCContr_B = totRotAngMomPntC_B;
+    rotEnergyContr = totRotEnergy;
+
+    // Prescribed motion rotational angular momentum contribution
     this->rDot_PcB_B = this->rPrime_PcB_B + this->omegaTilde_BN_B * this->r_PcB_B;
+    rotAngMomPntCContr_B += this->IPntPc_B * this->omega_PN_B + this->mass * this->rTilde_PcB_B * this->rDot_PcB_B;
 
-    // Find the rotational angular momentum contribution from hub
-    rotAngMomPntCContr_B = this->IPntPc_B * this->omega_PN_B + this->mass * this->rTilde_PcB_B * this->rDot_PcB_B;
-
-    // Find the rotational energy contribution from the hub
-    rotEnergyContr = 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B)
+    // Prescribed motion rotational energy contribution
+    rotEnergyContr += 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B)
                      + 0.5 * this->mass * this->rDot_PcB_B.dot(this->rDot_PcB_B);
 }
 
