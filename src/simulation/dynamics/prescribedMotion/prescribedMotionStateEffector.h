@@ -40,6 +40,7 @@ public:
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
     void registerStates(DynParamManager& statesIn) override;         //!< Method for registering the effector's states
     void linkInStates(DynParamManager& states) override;             //!< Method for giving the effector access to hub states
+    void registerProperties(DynParamManager& states) override;       //!< Method for registering the prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices & backSubContr,
                              Eigen::Vector3d sigma_BN,

@@ -155,6 +155,29 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
     sigma_PMInitMatrix(1) = sigma_PM_loc[1];
     sigma_PMInitMatrix(2) = sigma_PM_loc[2];
     this->sigma_PMState->setState(sigma_PMInitMatrix);
+
+    // Call method to register the prescribed motion properties
+    registerProperties(states);
+}
+
+/*! This method allows the state effector to register its properties with the dynamic parameter manager.
+
+ @param states Pointer to give the state effector access the hub states
+*/
+void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
+{
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_PN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
+    this->v_PN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
+    this->sigma_PN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
+    this->omega_PN_P = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+
+    this->r_PB_B = states.createProperty(this->nameOfPrescribedPositionProperty, stateInit);
+    this->rPrime_PB_B = states.createProperty(this->nameOfPrescribedVelocityProperty, stateInit);
+    this->rPrimePrime_PB_B = states.createProperty(this->nameOfPrescribedAccelerationProperty, stateInit);
+    this->sigma_PB = states.createProperty(this->nameOfPrescribedAttitudeProperty, stateInit);
+    this->omega_PB_P = states.createProperty(this->nameOfPrescribedAngVelocityProperty, stateInit);
+    this->omegaPrime_PB_P = states.createProperty(this->nameOfPrescribedAngAccelerationProperty, stateInit);
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
