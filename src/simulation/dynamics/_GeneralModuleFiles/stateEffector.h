@@ -117,6 +117,31 @@ public:
     /** getter for `propName_vehicleGravity` property */
     const std::string getPropName_vehicleGravity() const { return this->propName_vehicleGravity; }
 
+    /** setter for `propName_prescribedPosition` property */
+    void setPropName_prescribedPosition(std::string value);
+    /** getter for `propName_prescribedPosition` property */
+    const std::string getPropName_prescribedPosition() const { return this->propName_prescribedPosition; }
+    /** setter for `propName_prescribedVelocity` property */
+    void setPropName_prescribedVelocity(std::string value);
+    /** getter for `propName_prescribedVelocity` property */
+    const std::string getPropName_prescribedVelocity() const { return this->propName_prescribedVelocity; }
+    /** setter for `propName_prescribedAcceleration` property */
+    void setPropName_prescribedAcceleration(std::string value);
+    /** getter for `propName_prescribedAcceleration` property */
+    const std::string getPropName_prescribedAcceleration() const { return this->propName_prescribedAcceleration; }
+    /** setter for `propName_prescribedAttitude` property */
+    void setPropName_prescribedAttitude(std::string value);
+    /** getter for `propName_prescribedAttitude` property */
+    const std::string getPropName_prescribedAttitude() const { return this->propName_prescribedAttitude; }
+    /** setter for `propName_prescribedAngVelocity` property */
+    void setPropName_prescribedAngVelocity(std::string value);
+    /** getter for `propName_prescribedAngVelocity` property */
+    const std::string getPropName_prescribedAngVelocity() const { return this->propName_prescribedAngVelocity; }
+    /** setter for `propName_prescribedAngAcceleration` property */
+    void setPropName_prescribedAngAcceleration(std::string value);
+    /** getter for `propName_prescribedAngAcceleration` property */
+    const std::string getPropName_prescribedAngAcceleration() const { return this->propName_prescribedAngAcceleration; }
+
     BSKLogger bskLogger;                   //!< BSK Logging
 
 public:
@@ -152,6 +177,12 @@ protected:
     std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
     std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
 
+    std::string propName_prescribedPosition = "";                   //!< property name of prescribedPosition
+    std::string propName_prescribedVelocity = "";                   //!< property name of prescribedVelocity
+    std::string propName_prescribedAcceleration = "";               //!< property name of prescribedAcceleration
+    std::string propName_prescribedAttitude = "";                   //!< property name of prescribedAttitude
+    std::string propName_prescribedAngVelocity = "";                //!< property name of prescribedAngVelocity
+    std::string propName_prescribedAngAcceleration = "";            //!< property name of prescribedAngAcceleration
 };
 
 
