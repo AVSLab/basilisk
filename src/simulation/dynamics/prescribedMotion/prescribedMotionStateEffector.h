@@ -121,8 +121,10 @@ private:
     // Effector properties relative to the inertial frame
     Eigen::Vector3d r_PcN_N;                            //!< [m] Position of frame P center of mass relative to the inertial frame in inertial frame components
     Eigen::Vector3d v_PcN_N;                            //!< [m/s] Inertial velocity of frame P center of mass relative to the inertial frame in inertial frame components
-    Eigen::Vector3d sigma_PN;                           //!< MRP attitude of frame P relative to the inertial frame
-    Eigen::Vector3d omega_PN_P;                         //!< [rad/s] Angular velocity of frame P relative to the inertial frame in P frame components
+    Eigen::MatrixXd* r_PN_N;                            //!< [m] Position of frame P relative to the inertial frame in inertial frame components
+    Eigen::MatrixXd* v_PN_N;                            //!< [m/s] Inertial velocity of frame P relative to the inertial frame in inertial frame components
+    Eigen::MatrixXd* sigma_PN;                          //!< MRP attitude of frame P relative to the inertial frame
+    Eigen::MatrixXd* omega_PN_P;                        //!< [rad/s] Angular velocity of frame P relative to the inertial frame in P frame components
 
     // Hub states
     Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
@@ -148,6 +150,11 @@ private:
     std::string nameOfPrescribedAttitudeProperty;         //!< Identifier for prescribed attitude sigma_PB
     std::string nameOfPrescribedAngVelocityProperty;      //!< Identifier for prescribed angular velocity omega_PB_P
     std::string nameOfPrescribedAngAccelerationProperty;  //!< Identifier for prescribed angular acceleration omegaPrime_PB_P
+
+    std::string nameOfInertialPositionProperty;           //!< Identifier for prescribed motion inertial position r_PN_N
+    std::string nameOfInertialVelocityProperty;           //!< Identifier for prescribed motion inertial velocity property v_PN_N
+    std::string nameOfInertialAttitudeProperty;           //!< Identifier for the prescribed motion inertial attitude property sigma_PN
+    std::string nameOfInertialAngVelocityProperty;        //!< Identifier for the prescribed motion inertial angular velocity property omega_PN_P
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */

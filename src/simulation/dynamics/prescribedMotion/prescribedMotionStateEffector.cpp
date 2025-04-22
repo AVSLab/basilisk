@@ -57,7 +57,12 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
 
     // Set the sigma_PM state name
     this->nameOfsigma_PMState = "prescribedMotionsigma_PM" + std::to_string(this->effectorID);
+
     // Set the property names
+    this->nameOfInertialPositionProperty = "prescribedObjectInertialPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialVelocityProperty = "prescribedObjectInertialVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialAttitudeProperty = "prescribedObjectInertialAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialAngVelocityProperty = "prescribedObjectInertialAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedPositionProperty = "prescribedObjectPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedVelocityProperty = "prescribedObjectVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedAccelerationProperty = "prescribedObjectAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
@@ -120,8 +125,8 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
         // Note that the configLogMsg B frame represents the effector body frame (frame P)
         eigenVector3d2CArray(this->r_PcN_N, configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_PcN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_PN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_PN_P, configLogMsg.omega_BN_B);
+        eigenMatrixXd2CArray(*this->sigma_PN, configLogMsg.sigma_BN);
+        eigenMatrixXd2CArray(*this->omega_PN_P, configLogMsg.omega_BN_B);
         this->prescribedMotionConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentClock);
     }
 }
@@ -312,7 +317,10 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 {
     // Compute the effector's attitude with respect to the inertial frame
     Eigen::Matrix3d dcm_PN = (this->dcm_BP).transpose() * this->dcm_BN;
-    this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
+    *this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
+
+    // Compute the effector's inertial angular velocity
+    *this->omega_PN_P = (this->dcm_BP).transpose() * this->omega_PN_B;
 
     // Compute the effector's inertial position vector
     this->r_PcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_PcB_B;
