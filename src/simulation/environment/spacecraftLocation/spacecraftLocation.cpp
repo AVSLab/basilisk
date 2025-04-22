@@ -36,7 +36,7 @@ SpacecraftLocation::SpacecraftLocation()
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
     this->theta_solar = -1.0;
-    this->shadow_factor_limit = 1.0;
+    this->shadow_factor_limit = -1.0;
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -282,10 +282,10 @@ void SpacecraftLocation::computeAccess()
             }
         }
 
-        if (this->shadow_factor_limit < 1.0) {
+        if (this->shadow_factor_limit > -1.0) {
             // check if the shadow factor is within the limit
             // std::cout << "shadow factor a: " << this->eclipseInMsgState.shadowFactor << std::endl;
-            if (eclipseInMsgState.shadowFactor >= this->shadow_factor_limit) {
+            if (eclipseInMsgState.shadowFactor <= this->shadow_factor_limit) {
                 this->accessMsgBuffer.at(c).hasAccess = 0;
                 this->illuminationMsgBuffer.at(c).hasAccess = 0;
             }
