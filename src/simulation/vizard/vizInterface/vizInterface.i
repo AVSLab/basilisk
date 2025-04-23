@@ -22,7 +22,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %}
 
 %include "swig_deprecated.i"
-%deprecated_variable(VizInterface, opNavMode, "2025/04/17", "opNavMode is deprecated. Use liveStream and noDisplay flags instead.")
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *

@@ -1562,8 +1562,6 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     genericSensorCmdInMsgs:
         list of lists of :ref:`DeviceCmdMsgPayload` sensor state messages.  The outer list length must
         match ``scList``.  If the spacecraft has no sensor command msg, then use ``None``.
-    opNavMode: bool
-        flag if opNavMode should be used [DEPRECATED]
     liveStream: bool
         flag if live data streaming to Vizard should be used
     broadcastStream: bool
@@ -1609,7 +1607,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     global firstSpacecraftName
 
     unitTestSupport.checkMethodKeyword(
-        ['saveFile', 'opNavMode', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'cssList', 'liveStream', 'broadcastStream',
+        ['saveFile', 'rwEffectorList', 'thrEffectorList', 'thrColors', 'cssList', 'liveStream', 'broadcastStream',
          'noDisplay', 'genericSensorList', 'transceiverList', 'genericStorageList', 'lightList', 'spriteList',
          'modelDictionaryKeyList', 'oscOrbitColorList', 'trueOrbitColorList', 'logoTextureList',
          'msmInfoList', 'ellipsoidList', 'trueOrbitColorInMsgList'],
@@ -2012,25 +2010,4 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             exit(1)
         vizMessenger.noDisplay = val
 
-    if 'opNavMode' in kwargs:
-        deprecateOpNav()
-        val = kwargs['opNavMode']
-        if not isinstance(val, int):
-            print('ERROR: vizSupport: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
-            exit(1)
-        if val < 0 or val > 2:
-            print('ERROR: vizSupport: opNavMode must be 0 (off), 1 (regular opNav) or 2 (high performance opNav)')
-            exit(1)
-        if val == 1:
-            vizMessenger.liveStream = True
-        if val == 2:
-            if vizMessenger.liveStream or vizMessenger.broadcastStream:
-                print("ERROR: vizSupport: noDisplay mode cannot be used with liveStream or broadcastStream.")
-            else:
-                vizMessenger.noDisplay = True
-
     return vizMessenger
-
-@deprecated.deprecated("2025/04/17", "opNavMode has been deprecated. Use 'liveStream' or 'noDisplay' flags instead.")
-def deprecateOpNav():
-    return
