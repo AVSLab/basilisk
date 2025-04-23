@@ -33,7 +33,6 @@ void message_buffer_deallocate(void *data, void *hint);
  */
 VizInterface::VizInterface()
 {
-    this->opNavMode = 0;
     this->saveFile = false;
     this->liveStream = false;
     this->broadcastStream = false;
@@ -92,7 +91,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_INFORMATION, text.c_str());
     }
 
-    if (this->liveStream || this->noDisplay || this->opNavMode > 0) {
+    if (this->liveStream || this->noDisplay) {
         // Reset cameras
         for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = NULL;
@@ -1154,16 +1153,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // Check whether noDisplay mode should generate imagery from Vizard at this timestep
-        bool opNavModeStatus = false;
-        if (this->noDisplay || this->opNavMode == 2) {
+        bool returnCamImgStatus = false;
+        if (this->noDisplay) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
                 if ((CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
-                    opNavModeStatus = true;
+                    returnCamImgStatus = true;
                 }
             }
         }
 
-        if (this->liveStream || (this->noDisplay && opNavModeStatus) || (this->opNavMode == 1) || (this->opNavMode == 2 && opNavModeStatus)) {
+        if (this->liveStream || (this->noDisplay && returnCamImgStatus)) {
             // Receive pong
             // Viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before attempting to go into noDisplay mode
             if (this->firstPass < 11){
@@ -1232,7 +1231,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     this->requestImage(camCounter, CurrentSimNanos);
                 }
             }
-            if (opNavModeStatus) {
+            if (returnCamImgStatus) {
                 /*! -- Ping the Viz back to continue the lock-step */
                 void* keep_alive = malloc(4 * sizeof(char));
                 memcpy(keep_alive, "PING", 4);
