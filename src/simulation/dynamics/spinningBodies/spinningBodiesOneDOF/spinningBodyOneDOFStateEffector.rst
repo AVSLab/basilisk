@@ -107,6 +107,11 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
     angleRefMsg = messaging.HingedRigidBodyMsg().write(angleRef)
     spinningBody.spinningBodyRefInMsg.subscribeTo(angleRefMsg)
 
+#. (Optional) Specify angular limits for the body's rotation::
+
+    spinningBody.theta_max = 90.0 * macros.D2R
+    spinningBody.theta_min = -90.0 * macros.D2R
+
 #. The angular states of the body are created using an output message ``spinningBodyOutMsg``.
 
 #. The spinning body config log state output message is ``spinningBodyConfigLogOutMsg``.
