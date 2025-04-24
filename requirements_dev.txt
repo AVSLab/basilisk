@@ -1,15 +1,15 @@
-wheel
-cmake<4.0
-conan>2.0.5
-packaging>=22
-setuptools>=70.1.0
-setuptools-scm>=8.0
+wheel>=0.45.1,<=0.46.1
+cmake>=3.26,<4.0
+conan>=2.0.5,<=2.15.1
+packaging>=22,<=24.2
+setuptools>=70.1.0,<=78.1.0
+setuptools-scm>=8.0,<=8.2.1
 
-pytest
-pytest-html
-pytest-xdist
+pytest==8.3.5
+pytest-html==4.1.1
+pytest-xdist==3.6.1
 
-pre-commit
-clang-format
+pre-commit>=3.5.0,<=4.2.0
+clang-format==20.1.0
 
-psutil
+psutil==7.0.0
