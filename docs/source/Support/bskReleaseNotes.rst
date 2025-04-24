@@ -28,6 +28,7 @@ Version |release|
 -----------------
 - Marked the use of python 3.8 as deprecated
 - Support for ``opNavMode`` flag within vizSupport was removed, as its deprecation period ended
+- Demo video was added to :ref:`scenarioQuadMaps` documentation
 
 
 Version 2.7.0 (April 20, 2025)
