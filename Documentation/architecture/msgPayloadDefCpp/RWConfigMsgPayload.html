@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RWConfigMsgPayload &mdash; Basilisk 2.7.6
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b01d95a9"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="THROutputMsgPayload" href="THROutputMsgPayload.html" />
+    <link rel="prev" title="MJSceneStateMsgPayload" href="MJSceneStateMsgPayload.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">msgPayloadDefCpp</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="CSSConfigLogMsgPayload.html">CSSConfigLogMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ChargeMsmMsgPayload.html">ChargeMsmMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DataStorageStatusMsgPayload.html">DataStorageStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MJSceneStateMsgPayload.html">MJSceneStateMsgPayload</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">RWConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THROutputMsgPayload.html">THROutputMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGConfigMsgPayload.html">VSCMGConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VizUserInputMsgPayload.html">VizUserInputMsgPayload</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">msgPayloadDefCpp</a></li>
+      <li class="breadcrumb-item active">RWConfigMsgPayload</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/msgPayloadDefCpp/RWConfigMsgPayload.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rwconfigmsgpayload">
+<span id="id1"></span><h1>RWConfigMsgPayload<a class="headerlink" href="#rwconfigmsgpayload" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418RWConfigMsgPayload">
+<span id="_CPPv318RWConfigMsgPayload"></span><span id="_CPPv218RWConfigMsgPayload"></span><span id="RWConfigMsgPayload"></span><span class="target" id="struct_r_w_config_msg_payload"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RWConfigMsgPayload</span></span></span><a class="headerlink" href="#_CPPv418RWConfigMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;RWConfigMsgPayload.h&gt;</em></div>
+<p>Structure used to define the individual RW configuration data message. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload5rWB_BE">
+<span id="_CPPv3N18RWConfigMsgPayload5rWB_BE"></span><span id="_CPPv2N18RWConfigMsgPayload5rWB_BE"></span><span id="RWConfigMsgPayload::rWB_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a2a0c71da95afe48778ddc9ec52350807"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rWB_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload5rWB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m], position vector of the RW relative to the spacecraft body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload7gsHat_BE">
+<span id="_CPPv3N18RWConfigMsgPayload7gsHat_BE"></span><span id="_CPPv2N18RWConfigMsgPayload7gsHat_BE"></span><span id="RWConfigMsgPayload::gsHat_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1acd33fd838db9a04c346c3c19f3c54b9f"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gsHat_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload7gsHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] spin axis unit vector in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload8w2Hat0_BE">
+<span id="_CPPv3N18RWConfigMsgPayload8w2Hat0_BE"></span><span id="_CPPv2N18RWConfigMsgPayload8w2Hat0_BE"></span><span id="RWConfigMsgPayload::w2Hat0_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1ab603cc30af17456827698f75f93678a4"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w2Hat0_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload8w2Hat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] initial torque axis unit vector in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload8w3Hat0_BE">
+<span id="_CPPv3N18RWConfigMsgPayload8w3Hat0_BE"></span><span id="_CPPv2N18RWConfigMsgPayload8w3Hat0_BE"></span><span id="RWConfigMsgPayload::w3Hat0_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a0fb273ab2c8dc39e1ff70a90e1c11945"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w3Hat0_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload8w3Hat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] initial gimbal axis unit vector in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload4massE">
+<span id="_CPPv3N18RWConfigMsgPayload4massE"></span><span id="_CPPv2N18RWConfigMsgPayload4massE"></span><span id="RWConfigMsgPayload::mass__double"></span><span class="target" id="struct_r_w_config_msg_payload_1adca5e82a8ccf464a4fa3b0bc2311a797"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mass</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload4massE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg], reaction wheel rotor mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload5thetaE">
+<span id="_CPPv3N18RWConfigMsgPayload5thetaE"></span><span id="_CPPv2N18RWConfigMsgPayload5thetaE"></span><span id="RWConfigMsgPayload::theta__double"></span><span class="target" id="struct_r_w_config_msg_payload_1ac978d79366712702f71cb8a37e8a349e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad], wheel angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload5OmegaE">
+<span id="_CPPv3N18RWConfigMsgPayload5OmegaE"></span><span id="_CPPv2N18RWConfigMsgPayload5OmegaE"></span><span id="RWConfigMsgPayload::Omega__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a0e838e06f73ad4130e2599e8ac2bdb69"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Omega</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload5OmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], wheel speed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload2JsE">
+<span id="_CPPv3N18RWConfigMsgPayload2JsE"></span><span id="_CPPv2N18RWConfigMsgPayload2JsE"></span><span id="RWConfigMsgPayload::Js__double"></span><span class="target" id="struct_r_w_config_msg_payload_1ab288bd2156e3425029e45136d760564b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Js</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload2JsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], spin axis gsHat rotor moment of inertia </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload2JtE">
+<span id="_CPPv3N18RWConfigMsgPayload2JtE"></span><span id="_CPPv2N18RWConfigMsgPayload2JtE"></span><span id="RWConfigMsgPayload::Jt__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a5e623dc9b208e582899c5f8b36490263"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Jt</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload2JtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], gtHat axis rotor moment of inertia </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload2JgE">
+<span id="_CPPv3N18RWConfigMsgPayload2JgE"></span><span id="_CPPv2N18RWConfigMsgPayload2JgE"></span><span id="RWConfigMsgPayload::Jg__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a63b66f3d82c4b2249837b53030380c5d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Jg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload2JgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], ggHat axis rotor moment of inertia </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload3U_sE">
+<span id="_CPPv3N18RWConfigMsgPayload3U_sE"></span><span id="_CPPv2N18RWConfigMsgPayload3U_sE"></span><span id="RWConfigMsgPayload::U_s__double"></span><span class="target" id="struct_r_w_config_msg_payload_1adb5a74bcd83c7f0a7a4be7cd4189e247"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U_s</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload3U_sE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m], static imbalance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload3U_dE">
+<span id="_CPPv3N18RWConfigMsgPayload3U_dE"></span><span id="_CPPv2N18RWConfigMsgPayload3U_dE"></span><span id="RWConfigMsgPayload::U_d__double"></span><span class="target" id="struct_r_w_config_msg_payload_1af4b6144409121fecd750403665769fd8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U_d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload3U_dE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], dynamic imbalance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload1dE">
+<span id="_CPPv3N18RWConfigMsgPayload1dE"></span><span id="_CPPv2N18RWConfigMsgPayload1dE"></span><span id="RWConfigMsgPayload::d__double"></span><span class="target" id="struct_r_w_config_msg_payload_1adc4feffd1f7a0252cb6fe5af4ffc0e3c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload1dE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m], wheel center of mass offset from wheel frame origin </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload3J13E">
+<span id="_CPPv3N18RWConfigMsgPayload3J13E"></span><span id="_CPPv2N18RWConfigMsgPayload3J13E"></span><span id="RWConfigMsgPayload::J13__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a37db51d45950e2133ed54fdb3245de0b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">J13</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload3J13E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload9u_currentE">
+<span id="_CPPv3N18RWConfigMsgPayload9u_currentE"></span><span id="_CPPv2N18RWConfigMsgPayload9u_currentE"></span><span id="RWConfigMsgPayload::u_current__double"></span><span class="target" id="struct_r_w_config_msg_payload_1aa137e3faa08c61b669f7a7c090cd63c5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_current</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload9u_currentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], current motor torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload5u_maxE">
+<span id="_CPPv3N18RWConfigMsgPayload5u_maxE"></span><span id="_CPPv2N18RWConfigMsgPayload5u_maxE"></span><span id="RWConfigMsgPayload::u_max__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a61bbf509f11938fa2c3d72178f6eadbf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload5u_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Max torque, negative value turns off saturating the wheel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload5u_minE">
+<span id="_CPPv3N18RWConfigMsgPayload5u_minE"></span><span id="_CPPv2N18RWConfigMsgPayload5u_minE"></span><span id="RWConfigMsgPayload::u_min__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a99081a7a18808ae1a790a3542694d6ae"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_min</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload5u_minE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Min torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload8fCoulombE">
+<span id="_CPPv3N18RWConfigMsgPayload8fCoulombE"></span><span id="_CPPv2N18RWConfigMsgPayload8fCoulombE"></span><span id="RWConfigMsgPayload::fCoulomb__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a609427483d328c09005ad1d866b0c582"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fCoulomb</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload8fCoulombE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Coulomb friction torque magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload7fStaticE">
+<span id="_CPPv3N18RWConfigMsgPayload7fStaticE"></span><span id="_CPPv2N18RWConfigMsgPayload7fStaticE"></span><span id="RWConfigMsgPayload::fStatic__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a046b4f4d7fff3b6f95b928fe1ed0fe9c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fStatic</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload7fStaticE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Static friction torque magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload10betaStaticE">
+<span id="_CPPv3N18RWConfigMsgPayload10betaStaticE"></span><span id="_CPPv2N18RWConfigMsgPayload10betaStaticE"></span><span id="RWConfigMsgPayload::betaStatic__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a635ca4e7062d9ad09f8f352015f404ed"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">betaStatic</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload10betaStaticE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stribeck friction coefficient; For stribeck friction to be activiated, user must change this variable to a positive non-zero number. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload8cViscousE">
+<span id="_CPPv3N18RWConfigMsgPayload8cViscousE"></span><span id="_CPPv2N18RWConfigMsgPayload8cViscousE"></span><span id="RWConfigMsgPayload::cViscous__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a3379f955b8953a05bbbbc7ddddbf42a8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cViscous</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload8cViscousE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m-s/rad] Viscous fricion coefficient </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload15omegaLimitCycleE">
+<span id="_CPPv3N18RWConfigMsgPayload15omegaLimitCycleE"></span><span id="_CPPv2N18RWConfigMsgPayload15omegaLimitCycleE"></span><span id="RWConfigMsgPayload::omegaLimitCycle__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a1fb5c31efbd0400c6586ffecee38b509"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaLimitCycle</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0001</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload15omegaLimitCycleE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], wheel speed that avoids limit cycle with friction </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload14frictionTorqueE">
+<span id="_CPPv3N18RWConfigMsgPayload14frictionTorqueE"></span><span id="_CPPv2N18RWConfigMsgPayload14frictionTorqueE"></span><span id="RWConfigMsgPayload::frictionTorque__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a246e84ffbb42134eaa049a24db71a461"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frictionTorque</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload14frictionTorqueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] friction torque, this is a computed value, don’t set it directly </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload11omegaBeforeE">
+<span id="_CPPv3N18RWConfigMsgPayload11omegaBeforeE"></span><span id="_CPPv2N18RWConfigMsgPayload11omegaBeforeE"></span><span id="RWConfigMsgPayload::omegaBefore__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a8f2ee880d49205b95a373e67dd445373"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaBefore</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload11omegaBeforeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], wheel speed one time step before </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload16frictionStribeckE">
+<span id="_CPPv3N18RWConfigMsgPayload16frictionStribeckE"></span><span id="_CPPv2N18RWConfigMsgPayload16frictionStribeckE"></span><span id="RWConfigMsgPayload::frictionStribeck__b"></span><span class="target" id="struct_r_w_config_msg_payload_1ab98578f4756fe0cd0ef1ed7685bcdcdc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frictionStribeck</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload16frictionStribeckE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Boolenian to determine if stribeck friction model is used or not, 0 is non-stribeck, 1 is stribeck; Parameter is set internally. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload9Omega_maxE">
+<span id="_CPPv3N18RWConfigMsgPayload9Omega_maxE"></span><span id="_CPPv2N18RWConfigMsgPayload9Omega_maxE"></span><span id="RWConfigMsgPayload::Omega_max__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a9662847ca44f86618e8e0c234efcc2e0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Omega_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload9Omega_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], max wheel speed, negative values turn off wheel saturation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload5P_maxE">
+<span id="_CPPv3N18RWConfigMsgPayload5P_maxE"></span><span id="_CPPv2N18RWConfigMsgPayload5P_maxE"></span><span id="RWConfigMsgPayload::P_max__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a3a390919edb7a1113d23c667df8236e6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload5P_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m/s], maximum wheel power, negative values turn off power limit </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload7RWModelE">
+<span id="_CPPv3N18RWConfigMsgPayload7RWModelE"></span><span id="_CPPv2N18RWConfigMsgPayload7RWModelE"></span><span id="RWConfigMsgPayload::RWModel__RWModels"></span><span class="target" id="struct_r_w_config_msg_payload_1a34e84ebe8594b81ff74f92d1085fba6e"></span><a class="reference internal" href="../../simulation/dynamics/reactionWheels/reactionWheelSupport.html#_CPPv48RWModels" title="RWModels"><span class="n"><span class="pre">RWModels</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RWModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../simulation/dynamics/reactionWheels/reactionWheelSupport.html#_CPPv4N8RWModels14BalancedWheelsE" title="BalancedWheels"><span class="n"><span class="pre">BalancedWheels</span></span></a><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload7RWModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], Type of imbalance model to use </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload6aOmegaE">
+<span id="_CPPv3N18RWConfigMsgPayload6aOmegaE"></span><span id="_CPPv2N18RWConfigMsgPayload6aOmegaE"></span><span id="RWConfigMsgPayload::aOmega__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a2aadc51256378d4f9f0cd2554327e4b6"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aOmega</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload6aOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload6bOmegaE">
+<span id="_CPPv3N18RWConfigMsgPayload6bOmegaE"></span><span id="_CPPv2N18RWConfigMsgPayload6bOmegaE"></span><span id="RWConfigMsgPayload::bOmega__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a2d4744852b2596fe05eba07750f8117b"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bOmega</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload6bOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload6cOmegaE">
+<span id="_CPPv3N18RWConfigMsgPayload6cOmegaE"></span><span id="_CPPv2N18RWConfigMsgPayload6cOmegaE"></span><span id="RWConfigMsgPayload::cOmega__double"></span><span class="target" id="struct_r_w_config_msg_payload_1a82728b22f986936ccca166e156357b35"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cOmega</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload6cOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload10IRWPntWc_BE">
+<span id="_CPPv3N18RWConfigMsgPayload10IRWPntWc_BE"></span><span id="_CPPv2N18RWConfigMsgPayload10IRWPntWc_BE"></span><span id="RWConfigMsgPayload::IRWPntWc_B__Eigen::Matrix3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a412c439f0e2dbfb43c681ec0f6dd5031"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IRWPntWc_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload10IRWPntWc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>RW inertia about point Wc in B frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload15IPrimeRWPntWc_BE">
+<span id="_CPPv3N18RWConfigMsgPayload15IPrimeRWPntWc_BE"></span><span id="_CPPv2N18RWConfigMsgPayload15IPrimeRWPntWc_BE"></span><span id="RWConfigMsgPayload::IPrimeRWPntWc_B__Eigen::Matrix3d"></span><span class="target" id="struct_r_w_config_msg_payload_1abf7035620a92def5276f69e12e3eeb12"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPrimeRWPntWc_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload15IPrimeRWPntWc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>RW inertia B-frame derivative. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload6rWcB_BE">
+<span id="_CPPv3N18RWConfigMsgPayload6rWcB_BE"></span><span id="_CPPv2N18RWConfigMsgPayload6rWcB_BE"></span><span id="RWConfigMsgPayload::rWcB_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a17b1cad78368f01f5a5151b859438590"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload6rWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>position of Wc relative to B in B-frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload11rTildeWcB_BE">
+<span id="_CPPv3N18RWConfigMsgPayload11rTildeWcB_BE"></span><span id="_CPPv2N18RWConfigMsgPayload11rTildeWcB_BE"></span><span id="RWConfigMsgPayload::rTildeWcB_B__Eigen::Matrix3d"></span><span class="target" id="struct_r_w_config_msg_payload_1ada9a11f87ac46d19c5d580c34b090cb2"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTildeWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload11rTildeWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>tilde matrix of r_WcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload11rPrimeWcB_BE">
+<span id="_CPPv3N18RWConfigMsgPayload11rPrimeWcB_BE"></span><span id="_CPPv2N18RWConfigMsgPayload11rPrimeWcB_BE"></span><span id="RWConfigMsgPayload::rPrimeWcB_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a6b1f00cd97e067aaccd7fa2f392a4e1c"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload11rPrimeWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>B-frame derivative of r_WcB_B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload7w2Hat_BE">
+<span id="_CPPv3N18RWConfigMsgPayload7w2Hat_BE"></span><span id="_CPPv2N18RWConfigMsgPayload7w2Hat_BE"></span><span id="RWConfigMsgPayload::w2Hat_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a62b1048e8d33dcaf14b473ae4052d41c"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w2Hat_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload7w2Hat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>unit vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload7w3Hat_BE">
+<span id="_CPPv3N18RWConfigMsgPayload7w3Hat_BE"></span><span id="_CPPv2N18RWConfigMsgPayload7w3Hat_BE"></span><span id="RWConfigMsgPayload::w3Hat_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_msg_payload_1a9546c7a0f30be10c8d0a775766e3a638"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w3Hat_B</span></span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload7w3Hat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>unit vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18RWConfigMsgPayload5labelE">
+<span id="_CPPv3N18RWConfigMsgPayload5labelE"></span><span id="_CPPv2N18RWConfigMsgPayload5labelE"></span><span id="RWConfigMsgPayload::label__cA"></span><span class="target" id="struct_r_w_config_msg_payload_1af405ae0f0b769c810b4c62c5753dc7d7"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">label</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N18RWConfigMsgPayload5labelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], label name of the RW device being simulated </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MJSceneStateMsgPayload.html" class="btn btn-neutral float-left" title="MJSceneStateMsgPayload" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="THROutputMsgPayload.html" class="btn btn-neutral float-right" title="THROutputMsgPayload" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
