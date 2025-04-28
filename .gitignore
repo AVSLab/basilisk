@@ -61,10 +61,13 @@ venv/
 *.egg-info
 build/
 
-dev/MultiSatBskSim/ResultData
-dev/MultiSatBskSim/ResultPlots
-dev/MultiSatBskSim/ResultPlotsMATLAB
+dev/MultiSatBskSim/ResultData*
+# dev/MultiSatBskSim/ResultPlots
+dev/MultiSatBskSim/ResultPlots*
+# dev/MultiSatBskSim/ResultPlotsMATLAB*
 
-dev/MultiSatBskSim/ResultData_OLD
-dev/MultiSatBskSim/ResultPlots_OLD
-dev/MultiSatBskSim/ResultPlotsMATLAB_OLD
+# dev/MultiSatBskSim/ResultData_OLD
+# dev/MultiSatBskSim/ResultPlots_OLD
+# dev/MultiSatBskSim/ResultPlotsMATLAB_OLD
+# dev/MultiSatBskSim/ResultPlotsMATLAB_Feb2025
+# dev/MultiSatBskSim/ResultPlotsMATLAB_Apr2025

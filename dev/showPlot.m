@@ -8,7 +8,7 @@ clc;
 % 
 % set(groot,'DefaultFigureWindowStyle','docked'); % Dock all figures!
 
-set(groot,'defaultAxesFontSize',36); % Font size is monitor-dependent!
+set(groot,'defaultAxesFontSize',48); % Font size is monitor-dependent!
 set(groot, 'defaultLineLineWidth', 1.5);  % Axes line width
 
 % set(0, 'DefaultAxesXLimMode', 'auto');
@@ -61,7 +61,7 @@ end
 % Extract file name:
 [~, export_case_name, ~] = fileparts(dataPath); 
 % export_plots_path = "/home/thomas/Documents/gits/basilisk-fork/dev/MultiSatBskSim/ResultPlotsMATLAB/" + export_case_name + "/";
-export_plots_path = "/home/thomas/Documents/gits/basilisk-fork/dev/MultiSatBskSim/ResultPlotsMATLAB_Feb2025/" + export_case_name + "/";
+export_plots_path = "/home/thomas/Documents/gits/basilisk-fork/dev/MultiSatBskSim/ResultPlotsMATLAB_Apr2025/" + export_case_name + "/";
 
 
 %%
@@ -103,8 +103,8 @@ rel_pos = squeeze(dr_index(i,:,:)); % MATLAB `squeeze()` to reduce a dimension!
 fig(1) = figure('Name','rel_pos'); % apply_custom_style();
 subplot(3,1,1); plot(t, rel_pos(:,1)); hold on;
 title(title_text_base, "Relative Position from Target S/C (Hill-frame)");
-xlabel('Time $t \ [min]$'); 
-ylabel('$x \ [m]$');
+xlabel('Time $t$ [min]'); 
+ylabel('$x$ [m]');
 if ~controllerOn && i~=1
     plot(t,r_t(:,1)); %legend('Basilisk Simulation','CW-Analytical');
 elseif controllerOn && i~=1
@@ -115,8 +115,8 @@ elseif controllerOn && i~=1
 end
 
 subplot(3,1,2); plot(t, rel_pos(:,2)); hold on; 
-xlabel('Time $t \ [min]$'); 
-ylabel('$y \ [m]$');
+xlabel('Time $t$ [min]'); 
+ylabel('$y$ [m]');
 if ~controllerOn && i~=1
     plot(t,r_t(:,2)); legend('Basilisk Simulation','CW-Analytical','Location','northeast');
 elseif controllerOn && i~=1
@@ -127,8 +127,8 @@ elseif controllerOn && i~=1
 end
 
 subplot(3,1,3); plot(t, rel_pos(:,3)); hold on; 
-xlabel('Time $t \ [min]$'); 
-ylabel('$z \ [m]$');
+xlabel('Time $t$ [min]'); 
+ylabel('$z$ [m]');
 if ~controllerOn && i~=1
     plot(t,r_t(:,3));
 elseif controllerOn && i~=1
@@ -144,14 +144,14 @@ omega_BH = squeeze(dataOmegaBR(i,:,:)); % MATLAB `squeeze()` to reduce a dimensi
 
 fig(2) = figure('Name','sigma_BH_omega_BH'); % apply_custom_style();
 subplot(2,1,1); plot(t_zoom, sigma_BH(1:idx_t_zoom,:));
-xlabel('Time $t \ [min]$'); 
-ylabel('$\sigma_{B/H} \ [rad]$');
+xlabel('Time $t$ [min]'); 
+ylabel('$\sigma_{B/H}$ [rad]');
 legend('$\sigma_{1}$', '$\sigma_{2}$', '$\sigma_{3}$');
 title(title_text_base, "MRP Pointing Error - Body w.r.t. Hill-frame");
 
 subplot(2,1,2); plot(t_zoom, omega_BH(1:idx_t_zoom,:));
-xlabel('Time $t \ [min]$'); 
-ylabel('$\omega_{B/H} \ [rad/s]$');
+xlabel('Time $t$ [min]'); 
+ylabel('$\omega_{B/H}$ [rad/s]');
 legend('$\omega_{x}$', '$\omega_{y}$', '$\omega_{z}$');
 title(title_text_base, "Angular Velocity - Body w.r.t. Hill-frame");
 
@@ -161,8 +161,8 @@ if controllerOn
     
     fig(3) = figure('Name','F_cmd'); % apply_custom_style();
     plot(t,F_cmd); 
-    xlabel('Time $t \ [min]$'); 
-    ylabel('Commanded Force $F_{cmd} \ [N]$');
+    xlabel('Time $t$ [min]'); 
+    ylabel('Commanded Force $F_{\mathrm{cmd}}$ [N]');
     title(title_text_base, "Commanded Control Force");
     legend('$F_x$','$F_y$','$F_z$');
        
@@ -175,12 +175,12 @@ if controllerOn
     
     fig(4) = figure('Name','F_thrusters'); % apply_custom_style();
     plot(t,F_thrusters); 
-    xlabel('Time $t \ [min]$'); 
-    ylabel('Actuated Force $F_{thrusters} \ [N]$');
+    xlabel('Time $t$ [min]'); 
+    ylabel('Actuated Force $F_{\mathrm{thrusters}}$ [N]');
     title(title_text_base, "Thrusters Actuated Force");
     legend('$+x$','$-x$','$+y$','$-y$','$+z$','$-z$'); % Currently hard-coded for 6 thrusters.
     
-    P_tot_txt = "Total Impulse: $P_{tot} = $ " + num2str(P_tot) + " $Ns$";
+    P_tot_txt = "Total Impulse: $P_{\mathrm{tot}} = $ " + num2str(P_tot) + " Ns";
     text(t(end)/2,max(max(F_thrusters))/2,P_tot_txt,'HorizontalAlignment','center','FontSize',30);
 
 % 5) Combined - Cmd v.s. Applied (summing +/- components per x,y,z axis) Forces
@@ -190,40 +190,40 @@ if controllerOn
                   sum(F_thrusters(:,5:6),2) ];
     
     P_tot_3_axis = sum(F_applied) * dt;
-    P_tot_txt_x = "$P_{tot,x} = $ " + num2str(round(P_tot_3_axis(1),2)) + " $Ns$";
-    P_tot_txt_y = "$P_{tot,y} = $ " + num2str(round(P_tot_3_axis(2),2)) + " $Ns$";
-    P_tot_txt_z = "$P_{tot,z} = $ " + num2str(round(P_tot_3_axis(3),2)) + " $Ns$";
+    P_tot_txt_x = "$P_{\mathrm{tot},x} = $ " + num2str(round(P_tot_3_axis(1),2)) + " Ns";
+    P_tot_txt_y = "$P_{\mathrm{tot},y} = $ " + num2str(round(P_tot_3_axis(2),2)) + " Ns";
+    P_tot_txt_z = "$P_{\mathrm{tot},z} = $ " + num2str(round(P_tot_3_axis(3),2)) + " Ns";
 
     fig(5) = figure('Name','F_applied_vs_F_cmd'); % apply_custom_style();
     subplot(3,1,1); plot(t, F_applied(:,1), 'g-', t, F_cmd(:,1), 'r--');
     % For impulse display on legend:
     hold on; plot(NaN,NaN,'ko'); %,'Visible','off'
     title(title_text_base, "Thruster Applied v.s. Commanded Control Force");
-    xlabel('Time $t \ [min]$'); 
-    ylabel('$F_x \ [N]$');
-    legend('$F_{applied, x}$','$F_{cmd, x}$',P_tot_txt_x);
+    xlabel('Time $t$ [min]'); 
+    ylabel('$F_x$ [N]');
+    legend('$F_{\mathrm{applied}, x}$','$F_{\mathrm{cmd}, x}$',P_tot_txt_x);
 
     subplot(3,1,2); plot(t, F_applied(:,2), 'g-', t, F_cmd(:,2), 'r--');
     % For impulse display on legend:
     hold on; plot(NaN,NaN,'ko'); %,'Visible','off'
-    xlabel('Time $t \ [min]$'); 
-    ylabel('$F_y \ [N]$');
-    legend('$F_{applied, y}$','$F_{cmd, y}$',P_tot_txt_y);
+    xlabel('Time $t$ [min]'); 
+    ylabel('$F_y$ [N]');
+    legend('$F_{\mathrm{applied}, y}$','$F_{\mathrm{cmd}, y}$',P_tot_txt_y);
 
     subplot(3,1,3); plot(t, F_applied(:,3), 'g-', t, F_cmd(:,3), 'r--');
     % For impulse display on legend:
     hold on; plot(NaN,NaN,'ko'); %,'Visible','off'
-    xlabel('Time $t \ [min]$'); 
-    ylabel('$F_z \ [N]$');
-    legend('$F_{applied, z}$','$F_{cmd, z}$',P_tot_txt_z);
+    xlabel('Time $t$ [min]'); 
+    ylabel('$F_z$ [N]');
+    legend('$F_{\mathrm{applied}, z}$','$F_{\mathrm{cmd}, z}$',P_tot_txt_z);
 
 % 6) Cmd Torque:
     L_cmd = squeeze(dataUsReq(i,:,:)); % MATLAB `squeeze()` to reduce a dimension!
     
     fig(6) = figure('Name','L_cmd'); % apply_custom_style();
     plot(t_zoom,L_cmd(1:idx_t_zoom,:)); 
-    xlabel('Time $t \ [min]$'); 
-    ylabel('Commanded Torque $L_{cmd} \ [Nm]$');
+    xlabel('Time $t$ [min]'); 
+    ylabel('Commanded Torque $L_{\mathrm{cmd}}$ [Nm]');
     title(title_text_base, "Commanded Control Torque");
     legend('$L_x$','$L_y$','$L_z$');
 
@@ -233,8 +233,8 @@ if controllerOn
     fig(7) = figure('Name','L_RW'); % apply_custom_style();
     plot(t_zoom,L_RW(1:idx_t_zoom,:)); 
     title(title_text_base, "RW Applied Torque");
-    xlabel('Time $t \ [min]$'); 
-    ylabel('Applied Torque $L_{RW} \ [Nm]$');
+    xlabel('Time $t$ [min]'); 
+    ylabel('Applied Torque $L_{\mathrm{RW}}$ [Nm]');
     legend('RW $x$','RW $y$','RW $z$'); % Currently hard-coded for 3 RWs.
 
 % 8) Combined - Cmd v.s. Applied (summing +/- components per x,y,z axis) Forces
@@ -247,17 +247,17 @@ if controllerOn
     fig(8) = figure('Name','L_applied_vs_L_cmd'); % apply_custom_style();
     subplot(3,1,1); plot(t_zoom, L_applied(1:idx_t_zoom,1), 'g-', t_zoom, L_cmd(1:idx_t_zoom,1), 'r--');
     title(title_text_base, "Applied v.s. Commanded Control Torque");
-    xlabel('Time $t \ [min]$'); 
-    ylabel('$L_x \ [Nm]$');
-    legend('$L_{applied, x}$','$L_{cmd, x}$');
+    xlabel('Time $t$ [min]'); 
+    ylabel('$L_x$ [Nm]');
+    legend('$L_{\mathrm{applied}, x}$','$L_{\mathrm{cmd}, x}$');
     subplot(3,1,2); plot(t_zoom, L_applied(1:idx_t_zoom,2), 'g-', t_zoom, L_cmd(1:idx_t_zoom,2), 'r--');
-    xlabel('Time $t \ [min]$'); 
-    ylabel('$L_y \ [Nm]$');
-    legend('$L_{applied, y}$','$L_{cmd, y}$');
+    xlabel('Time $t$ [min]'); 
+    ylabel('$L_y$ [Nm]');
+    legend('$L_{\mathrm{applied}, y}$','$L_{\mathrm{cmd}, y}$');
     subplot(3,1,3); plot(t_zoom, L_applied(1:idx_t_zoom,3), 'g-', t_zoom, L_cmd(1:idx_t_zoom,3), 'r--');
-    xlabel('Time $t \ [min]$'); 
-    ylabel('$L_z \ [Nm]$');
-    legend('$L_{applied, z}$','$L_{cmd, z}$');
+    xlabel('Time $t$ [min]'); 
+    ylabel('$L_z$ [Nm]');
+    legend('$L_{\mathrm{applied}, z}$','$L_{\mathrm{cmd}, z}$');
 
 end
 
@@ -303,7 +303,7 @@ function exportPlotToPath(export_path_base, SCIndex, filename)
     % Save the plots into .eps and .fig:
     % savePlotFile = export_path + "/" + filename + ".eps";
     savePlotFile = export_path + "/" + filename + ".pdf";
-    exportgraphics(gcf, savePlotFile, 'Resolution', 300);
+    exportgraphics(gcf, savePlotFile, 'Resolution', 300,'ContentType','vector');
 
     % Close the figure upon saving:
     % close all;
