@@ -396,12 +396,12 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
 
         (*it)->updateContributions(integTime, backSubContr, *this->sigma_PN, *this->omega_PN_P, g_N);
 
-        totMatrixA += backSubContr.matrixA;
-        totMatrixB += backSubContr.matrixB;
-        totMatrixC += backSubContr.matrixC;
-        totMatrixD += backSubContr.matrixD;
-        totVecTrans += backSubContr.vecTrans;
-        totVecRot += backSubContr.vecRot;
+        totMatrixA += this->dcm_BP * backSubContr.matrixA * this->dcm_BP.transpose();
+        totMatrixB += this->dcm_BP * backSubContr.matrixB * this->dcm_BP.transpose();
+        totMatrixC += this->dcm_BP * backSubContr.matrixC * this->dcm_BP.transpose();
+        totMatrixD += this->dcm_BP * backSubContr.matrixD * this->dcm_BP.transpose();
+        totVecTrans += this->dcm_BP * backSubContr.vecTrans;
+        totVecRot += this->dcm_BP * backSubContr.vecRot;
     }
 
     backSubContr.matrixA = totMatrixA;
@@ -531,11 +531,14 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
     // Compute the effector's inertial angular velocity
     *this->omega_PN_P = (this->dcm_BP).transpose() * this->omega_PN_B;
 
-    // Compute the effector's inertial position vector
-    this->r_PcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_PcB_B;
+    // Compute the effector's inertial position vectors
+    this->r_PcN_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * this->r_PcB_B;
+    *this->r_PN_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * *this->r_PB_B;
 
-    // Compute the effector's inertial velocity vector
+    // Compute the effector's inertial velocity vectors
     this->v_PcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_PcB_B;
+    *this->v_PN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * (*this->rPrime_PB_B +
+            this->omegaTilde_BN_B * *this->r_PB_B);
 }
 
 /*! This method updates the effector state at the dynamics frequency.
