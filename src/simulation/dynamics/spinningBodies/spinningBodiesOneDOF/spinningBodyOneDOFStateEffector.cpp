@@ -289,81 +289,82 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
                           - this->mass * this->omegaTilde_BN_B * this->rTilde_ScB_B * this->rPrime_ScB_B
                           - this->mass * this->rTilde_ScB_B * this->omegaTilde_SB_B * this->rPrime_ScS_B
                           - (this->IPntSc_B - this->mass * this->rTilde_ScB_B * rTilde_ScS_B) * this->sHat_B * this->cTheta;
+}
 
-    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
+void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices & backSubContr) {
 
-        // Access prescribed motion properties
-        Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
-        Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
-        Eigen::Vector3d rPrimePrime_PB_B = (Eigen::Vector3d)*this->prescribedAccelerationProperty;
-        Eigen::MRPd sigma_PB;
-        sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
-        Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
-        Eigen::Vector3d omegaPrime_PB_P = (Eigen::Vector3d)*this->prescribedAngAccelerationProperty;
-        Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
+    // Access prescribed motion properties
+    Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
+    Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
+    Eigen::Vector3d rPrimePrime_PB_B = (Eigen::Vector3d)*this->prescribedAccelerationProperty;
+    Eigen::MRPd sigma_PB;
+    sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
+    Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
+    Eigen::Vector3d omegaPrime_PB_P = (Eigen::Vector3d)*this->prescribedAngAccelerationProperty;
+    Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
 
-        // Collect hub states
-        Eigen::Vector3d omega_bN_b = this->hubOmega->getState();
-        Eigen::Vector3d omega_BN_P = dcm_PB * omega_bN_b;
+    // Collect hub states
+    Eigen::Vector3d omega_bN_b = this->hubOmega->getState();
+    Eigen::Vector3d omega_BN_P = dcm_PB * omega_bN_b;
 
-        // Prescribed motion translation coupling contributions
-        Eigen::Vector3d sHat_P = this->sHat_B;
-        Eigen::Vector3d r_PB_P = dcm_PB * r_PB_B;
-        Eigen::Matrix3d rTilde_PB_P = eigenTilde(r_PB_P);
-        Eigen::Vector3d r_ScS_P = this->r_ScS_B;
-        Eigen::Matrix3d rTilde_ScS_P = eigenTilde(r_ScS_P);
-        backSubContr.matrixB += this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->aTheta.transpose();
+    // Prescribed motion translation coupling contributions
+    Eigen::Vector3d sHat_P = this->sHat_B;
+    Eigen::Vector3d r_PB_P = dcm_PB * r_PB_B;
+    Eigen::Matrix3d rTilde_PB_P = eigenTilde(r_PB_P);
+    Eigen::Vector3d r_ScS_P = this->r_ScS_B;
+    Eigen::Matrix3d rTilde_ScS_P = eigenTilde(r_ScS_P);
+    backSubContr.matrixB += this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->aTheta.transpose();
 
-        Eigen::Matrix3d omegaTilde_PB_P = eigenTilde(omega_PB_P);
-        Eigen::Vector3d rPPrime_ScP_P = this->rPrime_ScB_B;
-        Eigen::Matrix3d omegaPrimeTilde_PB_P = eigenTilde(omegaPrime_PB_P);
-        Eigen::Vector3d r_ScP_P = this->r_ScB_B;
-        Eigen::Vector3d rPrimePrime_PB_P = dcm_PB * rPrimePrime_PB_B;
-        Eigen::Matrix3d omegaTilde_BN_P = eigenTilde(omega_BN_P);
-        Eigen::Vector3d rPrime_PB_P = dcm_PB * rPrime_PB_B;
-        Eigen::Vector3d term1 = - 2.0 * this->mass * omegaTilde_PB_P * rPPrime_ScP_P
-                                - this->mass * omegaPrimeTilde_PB_P * r_ScP_P
-                                - this->mass * omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P
-                                - this->mass * rPrimePrime_PB_P;
-        double term2 = this->aTheta.transpose() * (rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P);
-        double term3 = this->bTheta.transpose() * (omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P);
-        backSubContr.vecTrans += term1 + this->mass * (term2 + term3) * rTilde_ScS_P * sHat_P;
+    Eigen::Matrix3d omegaTilde_PB_P = eigenTilde(omega_PB_P);
+    Eigen::Vector3d rPPrime_ScP_P = this->rPrime_ScB_B;
+    Eigen::Matrix3d omegaPrimeTilde_PB_P = eigenTilde(omegaPrime_PB_P);
+    Eigen::Vector3d r_ScP_P = this->r_ScB_B;
+    Eigen::Vector3d rPrimePrime_PB_P = dcm_PB * rPrimePrime_PB_B;
+    Eigen::Matrix3d omegaTilde_BN_P = eigenTilde(omega_BN_P);
+    Eigen::Vector3d rPrime_PB_P = dcm_PB * rPrime_PB_B;
+    Eigen::Vector3d term1 = - 2.0 * this->mass * omegaTilde_PB_P * rPPrime_ScP_P
+                            - this->mass * omegaPrimeTilde_PB_P * r_ScP_P
+                            - this->mass * omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P
+                            - this->mass * rPrimePrime_PB_P;
+    double term2 = this->aTheta.transpose() * (rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P);
+    double term3 = this->bTheta.transpose() * (omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P);
+    backSubContr.vecTrans += term1 + this->mass * (term2 + term3) * rTilde_ScS_P * sHat_P;
 
-        // Prescribed motion rotation coupling contributions
-        backSubContr.matrixC += - this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->aTheta.transpose();
+    // Prescribed motion rotation coupling contributions
+    backSubContr.matrixC += - this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->aTheta.transpose();
 
-        Eigen::Matrix3d IPntSc_P = this->IPntSc_B;
-        Eigen::Matrix3d rTilde_ScP_P = eigenTilde(r_ScP_P);
-        backSubContr.matrixD += - this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->bTheta.transpose()
-                                - (IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P
-                                - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P * this->aTheta.transpose() * rTilde_PB_P;
+    Eigen::Matrix3d IPntSc_P = this->IPntSc_B;
+    Eigen::Matrix3d rTilde_ScP_P = eigenTilde(r_ScP_P);
+    backSubContr.matrixD += - this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->bTheta.transpose()
+                            - (IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P
+                               - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P * this->aTheta.transpose() * rTilde_PB_P;
 
-        Eigen::Vector3d r_ScB_P = r_ScP_P + r_PB_P;
-        Eigen::Matrix3d rTilde_ScB_P = eigenTilde(r_ScB_P);
-        Eigen::Vector3d omega_SP_P = this->omega_SB_B;
-        Eigen::Matrix3d omegaTilde_SP_P = eigenTilde(omega_SP_P);
-        Eigen::Matrix3d omegaTilde_SN_P = omegaTilde_SN_B;
-        Eigen::Vector3d rPPrime_ScS_P = this->rPrime_ScS_B;
-        Eigen::Vector3d omega_PN_P = omega_PB_P + omega_BN_P;
-        Eigen::Matrix3d omegaTilde_PN_P = eigenTilde(omega_PN_P);
-        backSubContr.vecRot += - IPntSc_P * (omegaTilde_PB_P * omega_SP_P + omegaPrime_PB_P)
-                               - omegaTilde_SN_P * IPntSc_P * omega_PB_P
-                               - this->mass * rTilde_PB_P * omegaTilde_SP_P * rPPrime_ScS_P
-                               - this->mass * rTilde_ScB_P * (2.0 * omegaTilde_PB_P * rPPrime_ScP_P
-                                                              + omegaPrimeTilde_PB_P * r_ScP_P + omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P)
-                               + this->mass * omegaTilde_PB_P * rTilde_ScP_P * rPPrime_ScP_P
-                               - this->mass * omegaTilde_PN_P * rTilde_PB_P * rPPrime_ScP_P
-                               + this->mass * omegaTilde_PB_P * rTilde_PB_P * rPPrime_ScP_P
-                               - this->mass * omegaTilde_PN_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P)
-                               + this->mass * omegaTilde_PB_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P)
-                               - this->mass * this->cTheta * rTilde_PB_P * rTilde_ScS_P * sHat_P
-                               - ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P
-                                   - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P * this->aTheta.transpose())
-                                 * (rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P)
-                               - ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P
-                                   - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P * this->bTheta.transpose())
-                                 * (omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P);
-    }
+    Eigen::Vector3d r_ScB_P = r_ScP_P + r_PB_P;
+    Eigen::Matrix3d rTilde_ScB_P = eigenTilde(r_ScB_P);
+    Eigen::Vector3d omega_SP_P = this->omega_SB_B;
+    Eigen::Matrix3d omegaTilde_SP_P = eigenTilde(omega_SP_P);
+    Eigen::Matrix3d omegaTilde_SN_B = eigenTilde(this->omega_SN_B);
+    Eigen::Matrix3d omegaTilde_SN_P = omegaTilde_SN_B;
+    Eigen::Vector3d rPPrime_ScS_P = this->rPrime_ScS_B;
+    Eigen::Vector3d omega_PN_P = omega_PB_P + omega_BN_P;
+    Eigen::Matrix3d omegaTilde_PN_P = eigenTilde(omega_PN_P);
+    backSubContr.vecRot += - IPntSc_P * (omegaTilde_PB_P * omega_SP_P + omegaPrime_PB_P)
+                           - omegaTilde_SN_P * IPntSc_P * omega_PB_P
+                           - this->mass * rTilde_PB_P * omegaTilde_SP_P * rPPrime_ScS_P
+                           - this->mass * rTilde_ScB_P * (2.0 * omegaTilde_PB_P * rPPrime_ScP_P
+                                                          + omegaPrimeTilde_PB_P * r_ScP_P + omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P)
+                           + this->mass * omegaTilde_PB_P * rTilde_ScP_P * rPPrime_ScP_P
+                           - this->mass * omegaTilde_PN_P * rTilde_PB_P * rPPrime_ScP_P
+                           + this->mass * omegaTilde_PB_P * rTilde_PB_P * rPPrime_ScP_P
+                           - this->mass * omegaTilde_PN_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P)
+                           + this->mass * omegaTilde_PB_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P)
+                           - this->mass * this->cTheta * rTilde_PB_P * rTilde_ScS_P * sHat_P
+                           - ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P
+                               - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P * this->aTheta.transpose())
+                             * (rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P)
+                           - ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P
+                               - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P * this->bTheta.transpose())
+                             * (omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P);
 }
 
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
@@ -407,42 +408,13 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
     // Compute rDot_ScB_B
     this->rDot_ScB_B = this->rPrime_ScB_B + this->omegaTilde_BN_B * this->r_ScB_B;
 
-    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
+    // Find rotational angular momentum contribution
+    rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;
 
-        // Access prescribed motion properties
-        Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
-        Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
-        Eigen::MRPd sigma_PB;
-        sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
-        Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
-        Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
-
-        Eigen::Vector3d omega_SN_b = dcm_PB.transpose() * this->omega_SN_B;  // omega_SN_B
-        Eigen::Vector3d omega_PN_b = dcm_PB.transpose() * this->omega_BN_B;  // omega_PN_B
-        Eigen::Vector3d omega_bn_b = omega_PN_b - dcm_PB.transpose() * omega_PB_P;  // omega_BN_B
-        Eigen::Matrix3d omegaTilde_bn_b = eigenTilde(omega_bn_b);  // omegaTilde_BN_B
-        Eigen::Vector3d r_Scb_b = dcm_PB.transpose() * this->r_ScB_B + r_PB_B;  // r_ScB_B
-        Eigen::Matrix3d rTilde_Scb_b = eigenTilde(r_Scb_b);  // rTilde_ScB_B
-        Eigen::Matrix3d IPntSc_b = dcm_PB.transpose() * this->IPntSc_B * dcm_PB;  // IPntSc_B
-        Eigen::Vector3d rDot_PB_B = rPrime_PB_B + omegaTilde_bn_b * r_PB_B;
-        Eigen::Vector3d rDot_Scb_b = dcm_PB.transpose() * this->rDot_ScB_B + rDot_PB_B;  // rDot_ScB_B
-
-        // Find rotational angular momentum contribution
-        rotAngMomPntCContr_B = IPntSc_b * omega_SN_b + this->mass * rTilde_Scb_b * rDot_Scb_b;
-
-        // Find rotational energy contribution
-        rotEnergyContr = 1.0 / 2.0 * omega_SN_b.dot(IPntSc_b * omega_SN_b)
-                         + 1.0 / 2.0 * this->mass * rDot_Scb_b.dot(rDot_Scb_b)
-                         + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
-    } else {
-        // Find rotational angular momentum contribution
-        rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;
-
-        // Find rotational energy contribution
-        rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B)
-                         + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B)
-                         + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
-    }
+    // Find rotational energy contribution
+    rotEnergyContr = 1.0 / 2.0 * this->omega_SN_B.dot(this->IPntSc_B * this->omega_SN_B)
+                     + 1.0 / 2.0 * this->mass * this->rDot_ScB_B.dot(this->rDot_ScB_B)
+                     + 1.0 / 2.0 * this->k * (this->theta - this->thetaRef) * (this->theta - this->thetaRef);
 }
 
 /*! This method computes the spinning body states relative to the inertial frame */

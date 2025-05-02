@@ -395,6 +395,7 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
         backSubContr.vecRot.setZero();
 
         (*it)->updateContributions(integTime, backSubContr, *this->sigma_PN, *this->omega_PN_P, g_N);
+        (*it)->addPrescribedMotionCouplingContributions(backSubContr);
 
         totMatrixA += this->dcm_BP * backSubContr.matrixA * this->dcm_BP.transpose();
         totMatrixB += this->dcm_BP * backSubContr.matrixB * this->dcm_BP.transpose();
@@ -503,8 +504,22 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
 
         (*it)->updateEnergyMomContributions(integTime, rotAngMomPntCContr_B, rotEnergyContr, *this->omega_PN_P);
 
-        totRotAngMomPntC_B += rotAngMomPntCContr_B;
-        totRotEnergy += rotEnergyContr;
+        // Additional terms for rotational angular momentum
+        Eigen::Vector3d r_EcP_B = this->dcm_BP * (*it)->effProps.rEff_CB_B;
+        Eigen::Matrix3d rTilde_EcP_B = eigenTilde(r_EcP_B);
+        Eigen::Vector3d rDot_PB_B = *this->rPrime_PB_B + this->omegaTilde_BN_B * *this->r_PB_B;
+        Eigen::Matrix3d rTilde_PB_B = eigenTilde(*this->r_PB_B);
+        Eigen::Matrix3d omegaTilde_PN_B = eigenTilde(this->omega_PN_B);
+        Eigen::Vector3d rDot_EcP_B = this->dcm_BP * (*it)->effProps.rEffPrime_CB_B + omegaTilde_PN_B * r_EcP_B;
+        totRotAngMomPntC_B += this->dcm_BP * rotAngMomPntCContr_B
+                                + (*it)->effProps.mEff * rTilde_EcP_B * rDot_PB_B
+                                + (*it)->effProps.mEff * rTilde_PB_B * rDot_EcP_B
+                                + (*it)->effProps.mEff * rTilde_PB_B * rDot_PB_B;
+
+        // Additional terms for rotational energy
+        totRotEnergy += rotEnergyContr
+                        + (*it)->effProps.mEff * rDot_EcP_B.dot(rDot_PB_B )
+                        + 0.5 * (*it)->effProps.mEff * rDot_PB_B.dot(rDot_PB_B);
     }
 
     rotAngMomPntCContr_B = totRotAngMomPntC_B;
