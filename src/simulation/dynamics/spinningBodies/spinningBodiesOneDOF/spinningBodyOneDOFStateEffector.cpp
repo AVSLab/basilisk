@@ -116,8 +116,6 @@ void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
     this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
-    this->inertialAttitudeProperty = statesIn.getPropertyReference(this->propName_inertialAttitude);
-    this->inertialAngVelocityProperty = statesIn.getPropertyReference(this->propName_inertialAngVelocity);
 
     this->prescribedPositionProperty = statesIn.getPropertyReference(this->propName_prescribedPosition);
     this->prescribedVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedVelocity);
@@ -136,8 +134,6 @@ void SpinningBodyOneDOFStateEffector::linkInProperties(DynParamManager& properti
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
     this->inertialPositionProperty = properties.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = properties.getPropertyReference(this->propName_inertialVelocity);
-    this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
-    this->inertialAngVelocityProperty = properties.getPropertyReference(this->propName_inertialAngVelocity);
 
     this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
     this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
