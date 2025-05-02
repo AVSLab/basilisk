@@ -142,7 +142,7 @@ private:
     void Reset(uint64_t CurrentClock) override;
 	void registerStates(DynParamManager& states) override;
 	void linkInStates(DynParamManager& states) override;
-    void linkInProperties(DynParamManager& states) override;
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;
     void writeOutputStateMessages(uint64_t CurrentSimNanos) override;
     void updateEffectorMassProps(double integTime) override;
     void updateContributions(double integTime,
@@ -161,9 +161,6 @@ private:
     void readInputMessages();
 
     // Properties required for prescribed motion branching/attachment
-    StateData* hubPosition;    //!< [m] r_BN_N hub inertial position vector
-    StateData* hubVelocity;    //!< [m/s] v_BN_N hub inertial velocity vector
-    StateData* hubSigma;       //!< hub inertial MRP attitude
     StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
 
     Eigen::MatrixXd* prescribedPositionProperty = nullptr;         //!< [m] r_PB_B prescribed position relative to hub

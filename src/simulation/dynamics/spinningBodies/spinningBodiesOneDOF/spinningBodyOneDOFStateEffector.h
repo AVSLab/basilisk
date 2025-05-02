@@ -63,7 +63,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override;             //!< -- Method for updating information
     void registerStates(DynParamManager& statesIn) override;         //!< -- Method for registering the SB states
     void linkInStates(DynParamManager& states) override;             //!< -- Method for getting access to other states
-    void linkInProperties(DynParamManager& states) override;         //!< -- Method for getting access to other properties
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;         //!< -- Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr, Eigen::Vector3d sigma_BN,
                              Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;   //!< -- Method for back-substitution contributions
@@ -126,9 +126,6 @@ private:
     StateData *thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
 
     // Properties required for prescribed motion branching/attachment
-    StateData* hubPosition;    //!< [m] r_BN_N hub inertial position vector
-    StateData* hubVelocity;    //!< [m/s] v_BN_N hub inertial velocity vector
-    StateData* hubSigma;       //!< hub inertial MRP attitude
     StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
 
     Eigen::MatrixXd* prescribedPositionProperty = nullptr;         //!< [m] r_PB_B prescribed position relative to hub

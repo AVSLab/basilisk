@@ -146,6 +146,7 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
     for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
     {
         (*stateIt)->linkInStates(statesIn);
+        (*stateIt)->linkInPrescribedMotionProperties(statesIn);
     }
 }
 
@@ -192,13 +193,6 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
     this->sigma_PB = states.createProperty(this->nameOfPrescribedAttitudeProperty, stateInit);
     this->omega_PB_P = states.createProperty(this->nameOfPrescribedAngVelocityProperty, stateInit);
     this->omegaPrime_PB_P = states.createProperty(this->nameOfPrescribedAngAccelerationProperty, stateInit);
-
-    // Loop over attached state effectors and link in prescribed motion properties
-    std::vector<StateEffector*>::iterator stateIt;
-    for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
-    {
-        (*stateIt)->linkInProperties(states);
-    }
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
