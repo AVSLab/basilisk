@@ -74,6 +74,7 @@ public:
                                       double& rotEnergyContr, Eigen::Vector3d omega_BN_B) override;         //!< -- Method for computing energy and momentum for SBs
     void prependSpacecraftNameToStates() override;                   //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;
 
 private:
     static uint64_t effectorID;         //!< [] ID number of this panel

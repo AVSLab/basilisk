@@ -68,6 +68,11 @@ void StateEffector::updateContributions(double integTime, BackSubMatrices & back
     return;
 }
 
+void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
+{
+    return;
+}
+
 /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the dynamicObject.
  The analytical devlopement of these contributions can be seen in
  Basilisk/simulation/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf*/

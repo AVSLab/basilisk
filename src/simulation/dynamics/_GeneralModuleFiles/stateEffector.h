@@ -156,7 +156,9 @@ public:
     StateEffector();                       //!< Contructor
     virtual ~StateEffector();              //!< Destructor
     virtual void updateEffectorMassProps(double integTime);  //!< Method for stateEffector to give mass contributions
+
     virtual void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Back-sub contributions
+    virtual void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr);
     virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< Energy and momentum calculations
     virtual void modifyStates(double integTime); //!< Modify state values after integration
@@ -169,7 +171,6 @@ public:
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates();
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP); //!< class method
-
 protected:
     std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
     std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
