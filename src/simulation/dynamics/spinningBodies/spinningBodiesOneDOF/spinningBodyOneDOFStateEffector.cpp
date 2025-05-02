@@ -108,33 +108,19 @@ void SpinningBodyOneDOFStateEffector::prependSpacecraftNameToStates()
 void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // Get access to the hub's states needed for dynamic coupling
-    this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->hubPosition = statesIn.getStateObject("hubPosition");
-    this->hubVelocity = statesIn.getStateObject("hubVelocity");
 
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
     this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
-
-    this->prescribedPositionProperty = statesIn.getPropertyReference(this->propName_prescribedPosition);
-    this->prescribedVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedVelocity);
-    this->prescribedAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAcceleration);
-    this->prescribedAttitudeProperty = statesIn.getPropertyReference(this->propName_prescribedAttitude);
-    this->prescribedAngVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedAngVelocity);
-    this->prescribedAngAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAngAcceleration);
 }
 
-/*! This method is used to link properties
+/*! This method is used to link prescribed motion properties
  @return void
  @param properties The parameter manager to collect from
  */
-void SpinningBodyOneDOFStateEffector::linkInProperties(DynParamManager& properties)
+void SpinningBodyOneDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
 {
-    // Get access to properties needed for dynamic coupling (Hub or prescribed)
-    this->inertialPositionProperty = properties.getPropertyReference(this->propName_inertialPosition);
-    this->inertialVelocityProperty = properties.getPropertyReference(this->propName_inertialVelocity);
-
     this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
     this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
     this->prescribedAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAcceleration);

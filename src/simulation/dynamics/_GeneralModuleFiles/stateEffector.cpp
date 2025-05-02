@@ -106,8 +106,8 @@ void StateEffector::registerProperties(DynParamManager& states)
     return;
 }
 
-/*! This method allows the effector to link its properties */
-void StateEffector::linkInProperties(DynParamManager& properties)
+/*! This method allows the effector to link prescribed motion properties */
+void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
 {
     return;
 }
