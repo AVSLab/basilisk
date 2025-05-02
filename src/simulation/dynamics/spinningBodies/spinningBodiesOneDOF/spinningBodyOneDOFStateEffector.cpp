@@ -119,14 +119,12 @@ void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
     this->inertialAttitudeProperty = statesIn.getPropertyReference(this->propName_inertialAttitude);
     this->inertialAngVelocityProperty = statesIn.getPropertyReference(this->propName_inertialAngVelocity);
 
-    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
-        this->prescribedPositionProperty = statesIn.getPropertyReference(this->propName_prescribedPosition);
-        this->prescribedVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedVelocity);
-        this->prescribedAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAcceleration);
-        this->prescribedAttitudeProperty = statesIn.getPropertyReference(this->propName_prescribedAttitude);
-        this->prescribedAngVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedAngVelocity);
-        this->prescribedAngAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAngAcceleration);
-    }
+    this->prescribedPositionProperty = statesIn.getPropertyReference(this->propName_prescribedPosition);
+    this->prescribedVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedVelocity);
+    this->prescribedAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAcceleration);
+    this->prescribedAttitudeProperty = statesIn.getPropertyReference(this->propName_prescribedAttitude);
+    this->prescribedAngVelocityProperty = statesIn.getPropertyReference(this->propName_prescribedAngVelocity);
+    this->prescribedAngAccelerationProperty = statesIn.getPropertyReference(this->propName_prescribedAngAcceleration);
 }
 
 /*! This method is used to link properties
@@ -141,14 +139,12 @@ void SpinningBodyOneDOFStateEffector::linkInProperties(DynParamManager& properti
     this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
     this->inertialAngVelocityProperty = properties.getPropertyReference(this->propName_inertialAngVelocity);
 
-    if (this->nameOfSpacecraftAttachedTo == "prescribedObject") {
-        this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
-        this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
-        this->prescribedAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAcceleration);
-        this->prescribedAttitudeProperty = properties.getPropertyReference(this->propName_prescribedAttitude);
-        this->prescribedAngVelocityProperty = properties.getPropertyReference(this->propName_prescribedAngVelocity);
-        this->prescribedAngAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAngAcceleration);
-    }
+    this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
+    this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
+    this->prescribedAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAcceleration);
+    this->prescribedAttitudeProperty = properties.getPropertyReference(this->propName_prescribedAttitude);
+    this->prescribedAngVelocityProperty = properties.getPropertyReference(this->propName_prescribedAngVelocity);
+    this->prescribedAngAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAngAcceleration);
 }
 
 /*! This method allows the SB state effector to register its states: theta and thetaDot with the dynamic parameter manager */
