@@ -374,8 +374,8 @@ message VizMessage{
         int32 ID = 1;                       // ID of QuadMap to be used for updates
         string parentBodyName = 2;          // Name of the parent body P (spacecraft or planet) on which the QuadMap is positioned
         repeated double vertices = 3;       // [m] Four vertices (x,y,z) required per quad, order them clockwise about perimeter of quad in parent body frame P
-        repeated int32 color = 6;           // (optional) Send desired RGBA as values between 0 and 255
-        bool isHidden = 4;                  // True to hide QuadMap, false to show (vizDefault)
+        repeated int32 color = 6;           // Send desired RGBA as values between 0 and 255
+        bool isHidden = 4;                  // (optional) True to hide QuadMap, false to show (vizDefault)
         string label = 5;                   // (optional) Send string to display in center of QuadMap region, send "NOLABEL" to delete label
     }
 
