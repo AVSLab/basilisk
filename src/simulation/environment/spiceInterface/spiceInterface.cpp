@@ -24,6 +24,10 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
+// Initialize static members
+std::mutex SpiceInterface::kernel_manipulation_mutex;
+std::map<std::string, int> SpiceInterface::kernel_reference_counter;
+
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
  */
@@ -74,15 +78,34 @@ SpiceInterface::~SpiceInterface()
         delete this->transRefStateOutMsgs.at(c);
     }
     delete [] this->spiceBuffer;
-//    if(this->SPICELoaded)
-//    {
-//        this->clearKeeper();
-//    }
+
+    // Properly unload kernels if they were loaded
+    if(this->SPICELoaded)
+    {
+        // Create vector instead of variable-length array for Windows compatibility
+        std::vector<char> kernelNameVec(this->charBufferSize);
+        char* kernelName = kernelNameVec.data();
+
+        // Unload the SPICE kernels in reverse order of loading
+        strcpy(kernelName, "de430.bsp");
+        unloadSpiceKernel(kernelName, this->SPICEDataPath.c_str());
+
+        strcpy(kernelName, "de-403-masses.tpc");
+        unloadSpiceKernel(kernelName, this->SPICEDataPath.c_str());
+
+        strcpy(kernelName, "pck00010.tpc");
+        unloadSpiceKernel(kernelName, this->SPICEDataPath.c_str());
+
+        strcpy(kernelName, "naif0012.tls");
+        unloadSpiceKernel(kernelName, this->SPICEDataPath.c_str());
+    }
+
     return;
 }
 
 void SpiceInterface::clearKeeper()
 {
+    std::lock_guard<std::mutex> lock(kernel_manipulation_mutex);
     kclear_c();
 }
 
@@ -101,18 +124,32 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     //!- Load the SPICE kernels if they haven't already been loaded
     if(!this->SPICELoaded)
     {
-        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
+        // Create vector instead of variable-length array for Windows compatibility
+        std::vector<char> kernelNameVec(this->charBufferSize);
+        char* kernelName = kernelNameVec.data();
+
+        // Load the required SPICE kernels - they will only be loaded once per kernel
+        // across all threads due to our reference counting mechanism
+        strcpy(kernelName, "naif0012.tls");
+        if(loadSpiceKernel(kernelName, this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", kernelName);
         }
-        if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
+
+        strcpy(kernelName, "pck00010.tpc");
+        if(loadSpiceKernel(kernelName, this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", kernelName);
         }
-        if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
+
+        strcpy(kernelName, "de-403-masses.tpc");
+        if(loadSpiceKernel(kernelName, this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", kernelName);
         }
-        if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
+
+        strcpy(kernelName, "de430.bsp");
+        if(loadSpiceKernel(kernelName, this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", kernelName);
         }
+
         this->SPICELoaded = true;
     }
 
@@ -436,25 +473,44 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
  */
 int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
 {
-    char *fileName = new char[this->charBufferSize];
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    // Create vectors instead of raw pointers for Windows compatibility
+    std::vector<char> fileNameVec(this->charBufferSize);
+    char* fileName = fileNameVec.data();
 
-    //! - The required calls come from the SPICE documentation.
-    //! - The most critical call is furnsh_c
-    strcpy(name, "REPORT");
-    erract_c("SET", this->charBufferSize, name);
+    std::vector<char> nameVec(this->charBufferSize);
+    char* name = nameVec.data();
+
+    // Create the full filepath
     strcpy(fileName, dataPath);
     strcat(fileName, kernelName);
-    furnsh_c(fileName);
+    std::string filepath(fileName);
 
-    //! - Check to see if we had trouble loading a kernel and alert user if so
-    strcpy(name, "DEFAULT");
-    erract_c("SET", this->charBufferSize, name);
-    delete[] fileName;
-    delete[] name;
-    if(failed_c()) {
-        return 1;
+    // Acquire the mutex to protect kernel operations
+    std::lock_guard<std::mutex> lock(kernel_manipulation_mutex);
+
+    // Initialize the reference counter for this kernel if it doesn't exist
+    kernel_reference_counter.try_emplace(filepath, 0);
+
+    // Only load the kernel if it hasn't been loaded yet
+    if (kernel_reference_counter.at(filepath) <= 0) {
+        // The required calls come from the SPICE documentation.
+        // The most critical call is furnsh_c
+        strcpy(name, "REPORT");
+        erract_c("SET", this->charBufferSize, name);
+        furnsh_c(fileName);
+
+        // Check to see if we had trouble loading a kernel
+        strcpy(name, "DEFAULT");
+        erract_c("SET", this->charBufferSize, name);
+
+        if(failed_c()) {
+            return 1;
+        }
     }
+
+    // Increment the reference counter for this kernel
+    kernel_reference_counter[filepath]++;
+
     return 0;
 }
 
@@ -468,27 +524,47 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
  */
 int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
 {
-    char *fileName = new char[this->charBufferSize];
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    // Create vectors instead of raw pointers for Windows compatibility
+    std::vector<char> fileNameVec(this->charBufferSize);
+    char* fileName = fileNameVec.data();
 
-    //! - The required calls come from the SPICE documentation.
-    //! - The most critical call is furnsh_c
-    strcpy(name, "REPORT");
-    erract_c("SET", this->charBufferSize, name);
+    std::vector<char> nameVec(this->charBufferSize);
+    char* name = nameVec.data();
+
+    // Create the full filepath
     strcpy(fileName, dataPath);
     strcat(fileName, kernelName);
-    unload_c(fileName);
-    delete[] fileName;
-    delete[] name;
-    if(failed_c()) {
-        return 1;
+    std::string filepath(fileName);
+
+    // Acquire the mutex to protect kernel operations
+    std::lock_guard<std::mutex> lock(kernel_manipulation_mutex);
+
+    // Initialize the reference counter for this kernel if it doesn't exist
+    kernel_reference_counter.try_emplace(filepath, 0);
+
+    // Decrement the reference counter
+    kernel_reference_counter[filepath]--;
+
+    // Only unload if no more references to this kernel
+    if (kernel_reference_counter.at(filepath) <= 0) {
+        // The required calls come from the SPICE documentation.
+        strcpy(name, "REPORT");
+        erract_c("SET", this->charBufferSize, name);
+        unload_c(fileName);
+
+        strcpy(name, "DEFAULT");
+        erract_c("SET", this->charBufferSize, name);
+
+        if(failed_c()) {
+            return 1;
+        }
     }
+
     return 0;
 }
 
 std::string SpiceInterface::getCurrentTimeString()
 {
-	char *spiceOutputBuffer;
 	int64_t allowedOutputLength;
 
 	allowedOutputLength = (int64_t)this->timeOutPicture.size() - 5;
@@ -499,10 +575,12 @@ std::string SpiceInterface::getCurrentTimeString()
 		return("");
 	}
 
-	spiceOutputBuffer = new char[allowedOutputLength];
+	// Use vector instead of raw pointer for Windows compatibility
+	std::vector<char> spiceOutputBufferVec(allowedOutputLength);
+	char* spiceOutputBuffer = spiceOutputBufferVec.data();
+
 	timout_c(this->J2000Current, this->timeOutPicture.c_str(), (SpiceInt) allowedOutputLength,
 		spiceOutputBuffer);
 	std::string returnTimeString = spiceOutputBuffer;
-	delete[] spiceOutputBuffer;
 	return(returnTimeString);
 }
