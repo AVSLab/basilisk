@@ -186,6 +186,7 @@ message VizMessage{
         int64 ppMaxBlurSize = 15;                    // (Optional) Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh. It also affects the performance (the larger the kernel is, the longer the GPU time is required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra Large. Value of 0 to leave this option off.
         int64 renderMode = 16;                       // (Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
         repeated double depthMapClippingPlanes = 17; // (Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
+        int32 showHUDElementsInImage = 18;           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 
     }
 
@@ -216,7 +217,7 @@ message VizMessage{
         string spacecraftName = 1;          // Body to attach camera to (default is the first spacecraft in messages)
 //        bool viewPanel = 2;               // False (default) -> panel is not visible on screen
         int32 setMode = 3;                  // 0 -> body targeting, 1 -> pointing vector
-//        bool spacecraftVisible = 4;       // False (default) -> parent spacecraft will not be visible in camera view
+        int32 showHUDElementsInImage = 4;   // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         double fieldOfView = 5;             // angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
         string bodyTarget = 6;              // Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
         int32 setView = 7;                  // 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
