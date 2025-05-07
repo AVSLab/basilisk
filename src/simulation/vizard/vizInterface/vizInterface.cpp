@@ -719,6 +719,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             StdCameraSettings *scp = &(this->settings.stdCameraList[idx]);
             sc->set_spacecraftname(scp->spacecraftName);
             sc->set_setmode(scp->setMode);
+            sc->set_showhudelementsinimage(scp->showHUDElementsInImage);
             if (scp->fieldOfView < 0)
                 sc->set_fieldofview(-1.0);
             else {
@@ -1086,6 +1087,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     camera->add_depthmapclippingplanes(this->cameraConfigBuffers[camCounter].depthMapClippingPlanes[j]);
                 }
             }
+            camera->set_showhudelementsinimage(this->cameraConfigBuffers[camCounter].showHUDElementsInImage);
         }
     }
 

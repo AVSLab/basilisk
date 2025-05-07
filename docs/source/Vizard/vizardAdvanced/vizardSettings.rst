@@ -565,6 +565,11 @@ the arguments for the ``createStandardCamera`` method.
       -
       - No, default is 1
       - 0 -> body targeting, 1 -> pointing vector
+    * - ``showHUDElementsInImage``
+      - int
+      -
+      - No
+      - Shows HUD elements within image frame. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - ``setView``
       - int
       -
@@ -725,6 +730,11 @@ The following table illustrates the possible variables for the
       - No
       - Set the bounds of rendered depth map by setting the near and far clipping planes when
         in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
+    * - ``showHUDElementsInImage``
+      - int
+      -
+      - No
+      - Shows HUD elements within image frame. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 
 
 If the ``renderMode`` is set to 1 the camera outputs a depth map.

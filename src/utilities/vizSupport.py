@@ -1173,6 +1173,9 @@ def createStandardCamera(viz, **kwargs):
     setMode: int
         0 -> body targeting, 1 -> pointing vector (default).
         Optional
+    showHUDElementsInImage: int
+        Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        Optional
     setView: int
         0 -> nadir (default), 1 -> orbit normal, 2 -> along track. This is a setting for body targeting mode.
         Optional
@@ -1198,7 +1201,7 @@ def createStandardCamera(viz, **kwargs):
     cam = vizInterface.StdCameraSettings()
 
     unitTestSupport.checkMethodKeyword(
-        ['spacecraftName', 'setMode', 'setView', 'fieldOfView',
+        ['spacecraftName', 'setMode', 'showHUDElementsInImage', 'setView', 'fieldOfView',
          'bodyTarget', 'pointingVector_B', 'position_B', 'displayName'],
         kwargs)
 
@@ -1220,6 +1223,13 @@ def createStandardCamera(viz, **kwargs):
             print('ERROR: vizSupport: setMode must be a 0 (body targeting) or 1 (pointing vector)')
             exit(1)
         cam.setMode = setMode
+
+    if 'showHUDElementsInImage' in kwargs:
+        showHUDElementsInImage = kwargs['showHUDElementsInImage']
+        if not isinstance(showHUDElementsInImage, int):
+            print('ERROR: vizSupport: showHUDElementsInImage must be an integer')
+            exit(1)
+        cam.showHUDElementsInImage = showHUDElementsInImage
 
     if 'setView' in kwargs:
         setView = kwargs['setView']
@@ -1350,6 +1360,8 @@ def createCameraConfigMsg(viz, **kwargs):
     depthMapClippingPlanes: 2-element double-list
         [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
         Optional
+    showHUDElementsInImage: int
+        Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
@@ -1358,7 +1370,8 @@ def createCameraConfigMsg(viz, **kwargs):
     unitTestSupport.checkMethodKeyword(
         ['cameraID', 'parentName', 'fieldOfView', 'resolution', 'renderRate', 'cameraPos_B',
          'sigma_CB', 'skyBox', 'postProcessingOn', 'ppFocusDistance', 'ppAperture', 'ppFocalLength',
-         'ppMaxBlurSize', 'updateCameraParameters', 'renderMode', 'depthMapClippingPlanes'],
+         'ppMaxBlurSize', 'updateCameraParameters', 'renderMode', 'depthMapClippingPlanes',
+         'showHUDElementsInImage'],
         kwargs)
 
     cameraConfigMsgPayload = messaging.CameraConfigMsgPayload()
@@ -1527,6 +1540,13 @@ def createCameraConfigMsg(viz, **kwargs):
         cameraConfigMsgPayload.depthMapClippingPlanes = val
     else:
         cameraConfigMsgPayload.depthMapClippingPlanes = [-1.0, -1.0]
+
+    if 'showHUDElementsInImage' in kwargs:
+        val = kwargs['showHUDElementsInImage']
+        if not isinstance(val, int):
+            print('ERROR: vizSupport: showHUDElementsInImage must be an integer')
+            exit(1)
+        cameraConfigMsgPayload.showHUDElementsInImage = val
 
     cameraConfigMsg = messaging.CameraConfigMsg().write(cameraConfigMsgPayload)
     # need to add code to retain camera config msg in memory.  Below
