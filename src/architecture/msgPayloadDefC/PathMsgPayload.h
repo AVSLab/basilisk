@@ -17,23 +17,19 @@
 
  */
 
-#ifndef SIM_FSW_MACROS_H
-#define SIM_FSW_MACROS_H
+#ifndef  PATH_MESSAGE_H
+#define  PATH_MESSAGE_H
 
-#define MAX_CIRCLE_NUM 10
-#define MAX_LIMB_PNTS 2000
-#define MAX_EFF_CNT 36
-#define MAX_NUM_CSS_SENSORS 32
-#define MAX_ST_VEH_COUNT 4
-#define MAX_MPC_N_HORIZON 600
+#include "architecture/utilities/macroDefinitions.h"
 
-#define NANO2SEC        1e-9
-#define SEC2NANO        1e9
-#define RECAST6X6       (double (*)[6])
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
-#define SEC2HOUR        1./3600.
+/*! @brief Message containing a path of a spacecraft as predicted*/
 
 
+typedef struct {
+    double messageTime;                     //!< [-] currentsimnanos when path prediction was written to message
+    double predictorTimestep;               //!< [-] timestep of the predicted path
+    int predictionHorizon;               //!< [-] prediction horizon N steps
+    double path[12*MAX_MPC_N_HORIZON];               //!< [-] array of sc states
+}PathMsgPayload;
 
 #endif
