@@ -29,6 +29,7 @@
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
@@ -43,7 +44,7 @@ public:
     bool ReadMessages();
     void WriteMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
-    
+
 private:
     void computeAccess();
 
@@ -51,22 +52,33 @@ public:
     double rEquator;            //!< [m] equatorial planet radius
     double rPolar;              //!< [m] polar planet radius
     double maximumRange;        //!< [m] Maximum slant range to compute access for; defaults to -1, which represents no maximum range.
-    Eigen::Vector3d aHat_B;     //!< [] (optional) unit direction vector vector of the senor/communication boresight axis
+    Eigen::Vector3d aHat_B;     //!< [] (optional) unit direction vector of the sensor/communication boresight axis
     double theta;               //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
+    Eigen::Vector3d sunVector_N;//!< [] (optional) unit direction vector pointing to the Sun
+    double theta_solar;         //!< [r (optional) illumination half-cone angle]
+    double shadow_factor_limit; //!< [] Maximum shadow factor for inspection
+
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
+    Eigen::Vector3d r_HN_N;  // Sun position vector in inertial frame
+    ReadFunctor<EclipseMsgPayload> eclipseInMsg;   //!< sun ephemeris input message name
 
     ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;            //!< planet state input message
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;           //!< vector of ground location access messages
+    std::vector<Message<AccessMsgPayload>*> illuminationOutMsgs;           //!< vector of ground location access messages
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
     Eigen::Vector3d r_LB_B;      //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
-    
+
     BSKLogger bskLogger;         //!< -- BSK Logging
 
 private:
     std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
+    std::vector<AccessMsgPayload> illuminationMsgBuffer;            //!< buffer of illumination output data
     std::vector<SCStatesMsgPayload> scStatesBuffer;             //!< buffer of other spacecraft states
     SCStatesMsgPayload primaryScStatesBuffer;                   //!< buffer of primary spacecraft states
     SpicePlanetStateMsgPayload planetState;                         //!< buffer of planet data
+    SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
+    EclipseMsgPayload eclipseInMsgState;               //!< copy of eclipse input msg
 
     Eigen::Matrix3d dcm_PN; //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P
     Eigen::Vector3d r_PN_N; //!< [m] Planet to inertial frame origin vector.

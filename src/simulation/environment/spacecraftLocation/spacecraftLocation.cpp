@@ -35,6 +35,8 @@ SpacecraftLocation::SpacecraftLocation()
     this->r_LB_B.fill(0.0);
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
+    this->theta_solar = -1.0;
+    this->shadow_factor_limit = -1.0;
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -50,6 +52,7 @@ SpacecraftLocation::~SpacecraftLocation()
 {
     for (long unsigned int c=0; c<this->accessOutMsgs.size(); c++) {
         delete this->accessOutMsgs.at(c);
+        delete this->illuminationOutMsgs.at(c);
     }
     return;
 }
@@ -80,6 +83,15 @@ void SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
         }
         this->aHat_B.normalize();
     }
+
+    if (!this->sunInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
+    }
+
+    if (!this->eclipseInMsg.isLinked()) {
+        bskLogger.bskLog(BSK_ERROR, "No ECLIPSE.");
+    }
+
 }
 
 
@@ -93,10 +105,15 @@ void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpSc
     Message<AccessMsgPayload> *msg;
     msg = new Message<AccessMsgPayload>;
     this->accessOutMsgs.push_back(msg);
+    Message<AccessMsgPayload> *ilmsg;
+    ilmsg = new Message<AccessMsgPayload>;
+    this->illuminationOutMsgs.push_back(ilmsg);
 
     /* expand the buffer vector */
     AccessMsgPayload accMsg;
     this->accessMsgBuffer.push_back(accMsg);
+    AccessMsgPayload illMsg;
+    this->illuminationMsgBuffer.push_back(illMsg);
 }
 
 
@@ -135,7 +152,31 @@ bool SpacecraftLocation::ReadMessages()
         this->planetState = this->planetInMsg();
     }
 
-    return(planetRead && scRead);
+    bool sunRead = true;
+    if (this->sunInMsg.isLinked())
+    {
+        sunRead = this->sunInMsg.isWritten();
+        //this->sunVector_N = cArray2EigenVector3d(this->sunVectorInMsg().sunVector);
+        this->sunInMsgState = this->sunInMsg();
+    } else {
+        sunRead = false;
+//        this->sunInMsgState.setZero();
+    }
+
+    bool eclipseRead = true;
+    if (this->eclipseInMsg.isLinked())
+    {
+        eclipseRead = this->eclipseInMsg.isWritten();
+        //this->sunVector_N = cArray2EigenVector3d(this->sunVectorInMsg().sunVector);
+        this->eclipseInMsgState = this->eclipseInMsg();
+    } else {
+        eclipseRead = false;
+//        this->sunInMsgState.setZero();
+    }
+
+    return (planetRead && scRead && sunRead && eclipseRead);
+//    return(planetRead && scRead);
+
 }
 
 /*! write module messages
@@ -145,6 +186,7 @@ void SpacecraftLocation::WriteMessages(uint64_t CurrentClock)
     //! - write access message for each spacecraft
     for (long unsigned int c=0; c< this->accessMsgBuffer.size(); c++) {
         this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
+        this->illuminationOutMsgs.at(c)->write(&this->illuminationMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
 
@@ -157,6 +199,9 @@ void SpacecraftLocation::computeAccess()
     // get planet position and orientation relative to inertial frame
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
     this->r_PN_N = cArray2EigenVector3d(this->planetState.PositionVector);
+
+    // get sun position in inertial frame from sunInMsg
+    Eigen::Vector3d r_HN_N(this->sunInMsgState.PositionVector); // r_sun
 
     // compute primary spacecraft relative to planet
     Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->primaryScStatesBuffer.sigma_BN);
@@ -192,6 +237,7 @@ void SpacecraftLocation::computeAccess()
 
         // determine access output message
         this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
+        this->illuminationMsgBuffer.at(c) = this->illuminationOutMsgs.at(c)->zeroMsgPayload;
         if (rClose.norm() > this->rEquator) {
             r_SL_P[2] = r_SL_P[2] / this->zScale;
             double range = r_SL_P.norm();
@@ -216,6 +262,89 @@ void SpacecraftLocation::computeAccess()
                 }
             }
         }
+
+        // aHat vector in inertial frame
+        Eigen::Vector3d aHat_N = dcm_NB * this->aHat_B;
+
+        Eigen::Vector3d r_SL_N = r_SN_N - this->r_BN_N;
+
+        // calculating the sun-incidence-angle and the deputy-view-angle
+        double sunIncidenceAngle = safeAcos(aHat_N.dot(r_HN_N) / (aHat_N.norm() * r_HN_N.norm()));
+        double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
+
+
+        this->illuminationMsgBuffer.at(c).hasAccess = 1;
+        if (this->theta_solar > 0.0) {
+            // check if the sun is within the solar cone
+            if (sunIncidenceAngle > this->theta_solar) {
+                this->accessMsgBuffer.at(c).hasAccess = 0;
+                this->illuminationMsgBuffer.at(c).hasAccess = 0;
+            }
+        }
+
+        if (this->shadow_factor_limit > -1.0) {
+            // check if the shadow factor is within the limit
+            // std::cout << "shadow factor a: " << this->eclipseInMsgState.shadowFactor << std::endl;
+            if (eclipseInMsgState.shadowFactor <= this->shadow_factor_limit) {
+                this->accessMsgBuffer.at(c).hasAccess = 0;
+                this->illuminationMsgBuffer.at(c).hasAccess = 0;
+            }
+        }
+
+        //storing the two angles in the output butter
+        this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
+        this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
+
+        // Compute scalar triple product
+        Eigen::Vector3d r_HN_N_normalized = r_HN_N/r_HN_N.norm();
+        Eigen::Vector3d r_SL_N_normalized = r_SL_N/r_SL_N.norm();
+        double scalarTripleProduct = (r_HN_N_normalized.cross(r_SL_N_normalized)).dot(aHat_N);
+
+        // Check coplanarity & glare condition
+        bool isCoplanar = fabs(scalarTripleProduct) < 1e-3;  // Tolerance for numerical precision // TODO: we should think about slightly off-coplanar... it still has some glare
+        double epsilon = 10.0 * M_PI / 180.0; // [rad] if the two angles are within epsilon degrees then it will be glared
+//        bool glare = isCoplanar && (fabs(sunIncidenceAngle - scViewAngle) * 180.0 / M_PI <= 10.0);
+
+//        // GLARE AS A BOOLEAN
+//        // Glare occurs if angles are within epsilon and vectors are coplanar
+//        bool glare = isCoplanar && (std::abs(sunIncidenceAngle - scViewAngle) < 10.0 * M_PI / 180.0);
+
+        // GLARE AS A DOUBLe
+        // Initialize glare variable as 0 (default: no glare)
+        double glare = 0.0;
+
+        // Check if either angle exceeds 90 degrees (π/2 radians)
+        if (sunIncidenceAngle > M_PI_2 || scViewAngle > M_PI_2)
+        {
+            glare = -1.0;  // Invalid case
+        }
+        // Check glare condition: angles within epsilon & coplanar
+        else if (isCoplanar && fabs(sunIncidenceAngle - scViewAngle) <= epsilon)
+        {
+            glare = 1.0;  // Glare detected
+        }
+
+//        ////GLARE AS A FLOAT with linear transition between 'glare' and 'no glare'////
+//        // Compute cosine similarity (normalized dot product) for glare intensity
+//        double sunAlignment = fabs(aHat_N.dot(this->sunVector_N) / (aHat_N.norm() * this->sunVector_N.norm())); // Range [0,1]
+//        double deputyAlignment = fabs(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm())); // Range [0,1]
+//
+//        // Compute glare as a continuous value between 0 and 1
+//        double glare = 0.0;  // Default: no glare
+//
+//        // If either angle is greater than 90° (π/2), set glare to -1
+//        if (sunIncidenceAngle > M_PI_2 || scViewAngle > M_PI_2)
+//        {
+//            glare = -1.0;
+//        }
+//        // If coplanar and within epsilon, compute glare intensity
+//        else if (isCoplanar && fabs(sunIncidenceAngle - scViewAngle) <= epsilon)
+//        {
+//            glare = 1.0 - fabs(sunAlignment - deputyAlignment);  // Higher similarity → Higher glare
+//        }
+//
+//        // Store results in output message
+        this->accessMsgBuffer.at(c).glare = glare;  // Store glare result
     }
 }
 
