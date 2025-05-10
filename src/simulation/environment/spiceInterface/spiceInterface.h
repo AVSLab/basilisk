@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <map>
+#include <mutex>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/bskLogging.h"
@@ -40,7 +41,7 @@ class SpiceInterface: public SysModel {
 public:
     SpiceInterface();
     ~SpiceInterface();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
@@ -72,7 +73,7 @@ public:
     std::string UTCCalInit;     //!< -- UTC time string for init time
 
     std::vector<std::string>planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
-    
+
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
     double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
     double J2000Current;        //!< s Current J2000 elapsed time
@@ -90,6 +91,8 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
 
+    static std::mutex kernel_manipulation_mutex; //!< -- Mutex to protect SPICE kernel loading/unloading operations
+    static std::map<std::string, int> kernel_reference_counter; //!< -- Reference counter for SPICE kernels
 };
 
 
