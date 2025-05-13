@@ -110,7 +110,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, 
     if (RWSpeedMsg_C_isLinked(&configData->rwSpeedInMsg)) {
         /* make sure the clock didn't just initialize, or the module was recently reset */
         if (configData->priorTime != 0) {
-            double dt = (callTime - configData->priorTime) * NANO2SEC; /*!< [s]   control update period */
+            double dt = diffNanoToSec(callTime, configData->priorTime); /*!< [s]   control update period */
             double              OmegaDot[MAX_EFF_CNT];     /*!< [r/s^2] RW angular acceleration */
             for (int i=0; i<configData->rwConfigParams.numRW; i++) {
                 if (rwAvailability.wheelAvailability[i] == AVAILABLE && configData->resetFlag == BOOL_FALSE) {

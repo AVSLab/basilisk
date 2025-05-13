@@ -91,7 +91,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
         dt = 0.0;
         v3Copy(attRefInMsgBuffer.sigma_RN, configData->sigma_RN);
     } else {
-        dt = (callTime - configData->priorTime) * NANO2SEC;
+        dt = diffNanoToSec(callTime, configData->priorTime);
     }
 
     /*! - Generate inertial 3D Spinning Reference */
