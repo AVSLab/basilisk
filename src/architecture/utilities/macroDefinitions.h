@@ -59,6 +59,23 @@ static inline  double nanoToSec(uint64_t nanos) {
 }
 
 /**
+ * Takes two times in nanoseconds, takes their difference and converts to seconds (double),
+ * with basic precision check.
+ * Returns NAN if conversion would lose precision.
+ */
+static inline  double diffNanoToSec(uint64_t time1Nano, uint64_t time2Nano) {
+    double signedTimeDifference;
+
+    if (time1Nano >= time2Nano) {
+        signedTimeDifference = nanoToSec(time1Nano - time2Nano);
+    } else {
+        signedTimeDifference = -nanoToSec(time2Nano - time1Nano);
+    }
+
+    return signedTimeDifference;
+}
+
+/**
  * Converts seconds (double) to nanoseconds (uint64_t).
  * Returns NAN on error (e.g. negative input or overflow)
  */
