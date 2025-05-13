@@ -138,7 +138,7 @@ void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configDat
         /*! update integral term */
         double DeltaHsInt_M[3];
         v3Add(configData->priorHs_M, hs_M, DeltaHsInt_M);
-        double dt = (callTime - configData->priorTime) * NANO2SEC;
+        double dt = diffNanoToSec(callTime, configData->priorTime);
         v3Scale(0.5*dt, DeltaHsInt_M, DeltaHsInt_M);
         v3Add(configData->hsInt_M, DeltaHsInt_M, configData->hsInt_M);
         v3Copy(hs_M, configData->priorHs_M);

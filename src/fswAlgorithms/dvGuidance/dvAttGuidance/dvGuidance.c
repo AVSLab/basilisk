@@ -86,8 +86,8 @@ void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
     v3Cross(dcm_BubN[0], dcm_BubN[1], dcm_BubN[2]);
     v3Normalize(dcm_BubN[2], dcm_BubN[2]);
 
-    /*! - evaluate the time since the burn start time */
-    burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*NANO2SEC;
+    /*! - evaluate the time since the burn start time, negative burn time is allowed */
+    burnTime = diffNanoToSec(callTime, localBurnData.burnStartTime);
 
     /*! - evaluate the DCM from inertial to the current Burn frame.
      The current frame differs from the base burn frame via a constant 3-axis rotation */

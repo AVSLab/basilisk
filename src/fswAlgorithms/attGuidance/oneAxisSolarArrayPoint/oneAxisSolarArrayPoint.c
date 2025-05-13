@@ -218,7 +218,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     }
     // if second update call, derivatives are computed with first order finite differences
     else if (configData->updateCallCount == 1) {
-        T1Seconds = (configData->T1NanoSeconds - callTime) * NANO2SEC;
+        T1Seconds = diffNanoToSec(configData->T1NanoSeconds, callTime);
         for (int j = 0; j < 3; j++) {
             sigmaDot_RN[j] = (sigma_RN_1[j] - sigma_RN[j]) / T1Seconds;
         }
@@ -231,8 +231,8 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     }
     // if third update call or higher, derivatives are computed with second order finite differences
     else {
-        T1Seconds = (configData->T1NanoSeconds - callTime) * NANO2SEC;
-        T2Seconds = (configData->T2NanoSeconds - callTime) * NANO2SEC;
+        T1Seconds = diffNanoToSec(configData->T1NanoSeconds, callTime);
+        T2Seconds = diffNanoToSec(configData->T2NanoSeconds, callTime);
         for (int j = 0; j < 3; j++) {
             sigmaDot_RN[j] = ((sigma_RN_1[j]*T2Seconds*T2Seconds - sigma_RN_2[j]*T1Seconds*T1Seconds) / (T2Seconds - T1Seconds) - sigma_RN[j] * (T2Seconds + T1Seconds)) / T1Seconds / T2Seconds;
             sigmaDDot_RN[j] = 2 * ((sigma_RN_1[j]*T2Seconds - sigma_RN_2[j]*T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) / T1Seconds / T2Seconds;
