@@ -108,7 +108,7 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t ca
 		configData->prevCallTime = callTime; // initialize
 	}
     // calculate elapsed time from last module updated time
-    double elapsed_time = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
+    double elapsed_time = diffNanoToSec(callTime, configData->prevCallTime);
     configData->tCurrent = configData->tCurrent + elapsed_time;
 	configData->prevCallTime = callTime;
 

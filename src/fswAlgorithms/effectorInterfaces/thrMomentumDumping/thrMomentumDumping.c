@@ -126,7 +126,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
     if (configData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
 
         /* - compute control update time */
-        dt = (callTime - configData->priorTime)*NANO2SEC;
+        dt = diffNanoToSec(callTime, configData->priorTime);
         if (dt < 0.0) {dt = 0.0;}             /* ensure no negative numbers are used */
 
         /*! - Read the requester thruster impulse input message */
