@@ -1607,17 +1607,21 @@ The argument None is used to specify the Vizard default shape to be used.
 The following table provides the keywords for the built-in spacecraft shape models.
 
 .. list-table:: Built-In Spacecraft Models
-    :widths: 25 75
+    :widths: 10 30 60
     :header-rows: 1
 
     * - Key Name
       - Description
+      - Dimensions
     * - ``bskSat``
       - Default hexagonal spacecraft model with 3 solar panels.
+      - Vertically oriented hexagonal prism with each hexagonal Side = 1.15458 m, Height = 2 m (z). Panels are 1.1547 x 2 x 0.05 m. Origin is at center of hexagonal prism.
     * - ``3USat``
       - 3U cube-sat model
+      - Length = 0.1 m (x), Width = 0.1 m (y), Height = 0.3 m (z). Origin at center of box.
     * - ``6USat``
       - 6U cube-sat model
+      - Length = 0.2 m (x), Width = 0.1 m (y), Height = 0.3 m (z). Origin at center of box.
 
 If you want to customize the log on the built-in spacecraft models, this can be done using
 ``logoTexture`` spacecraft structure string::
