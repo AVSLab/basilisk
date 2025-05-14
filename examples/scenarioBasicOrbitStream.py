@@ -1,7 +1,7 @@
 #
 #  ISC License
 #
-#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 #
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
@@ -69,8 +69,8 @@ This way a 10s simulation time step will take 0.2 seconds with the 50x speed up 
 # Purpose:  Integrated test of the spacecraft() and gravity modules.  Illustrates
 #           a 3-DOV spacecraft on a range of orbit types with live Vizard data streaming
 #           and 2-way communication with Vizard.
-# Author:   Hanspeter Schaub
-# Creation Date:  Sept. 29, 2019
+# Author:   Jack Fox
+# Creation Date:  May 12, 2025
 #
 
 import os
@@ -260,7 +260,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
                                                   , broadcastStream=broadcastStream
                                                   )
         # Set key listeners
-        viz.settings.keyboardLiveInput = "bxpz"
+        viz.settings.keyboardLiveInput = "bxpqz"
 
         # To set 2-way port:
         viz.reqComProtocol = "tcp"
@@ -278,7 +278,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
         infopanel.displayString = """This is an information panel. Vizard is reporting 'b', 'p', 'x' and 'z' \
 keystrokes back to BSK, which you can hook up to specific sim states. In this case, \
 press 'b' to show a burn panel. If you initiate a burn, press 'x' to stop the burn. \
-Press 'p' to pause the simulation, or 'z' to stop the simulation."""
+Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the simulation and cleanly quit Vizard."""
         infopanel.durationOfDisplay = 0  # stay open
         infopanel.dialogFormat = "CAUTION"
 
@@ -340,8 +340,11 @@ Press 'p' to pause the simulation, or 'z' to stop the simulation."""
             scSim.ConfigureStopTime(incrementalStopTime)
             scSim.ExecuteSimulation()
 
+        if viz.liveSettings.terminateVizard:
+            exit(0)
+
         # Retrieve copy of user input message from Vizard
-        if liveStream and vizSupport.vizFound:
+        if liveStream and vizSupport.vizFound and not viz.liveSettings.terminateVizard:
             userInputs = viz.userInputMsg.read()
             keyInputs = userInputs.keyboardInput
             eventInputs = userInputs.vizEventReplies
@@ -355,6 +358,9 @@ Press 'p' to pause the simulation, or 'z' to stop the simulation."""
                     if not continueBurn:
                         print("burn panel")
                         viz.vizEventDialogs.append(burnpanel)
+                if 'q' in keyInputs:
+                    print("key - q")
+                    viz.liveSettings.terminateVizard = True
                 if 'x' in keyInputs:
                     print("key - x")
                     priorKeyPressTime = now
