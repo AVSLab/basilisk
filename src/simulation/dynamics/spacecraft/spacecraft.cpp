@@ -470,7 +470,7 @@ void Spacecraft::preIntegration(double integrateToThisTime) {
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     this->hub.matchGravitytoVelocityState(oldV_CN_N); // Set gravity velocity to base velocity for DV estimation
-    this->timeBefore = integrateToThisTime - this->timeStep;
+    this->timeBefore = this->timePrevious;
 }
 
 /*! Perform post-integration steps
