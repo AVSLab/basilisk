@@ -158,14 +158,16 @@ def run(show_plots):
     # and to discount Jupiter's velocity upon
     # entering Jupiter's Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative
     # positions and velocities even when the planets are not moving.
+    rEarth = 149598023. * 1000
+    rJupiter = 778298361. * 1000
     earthStateMsg = messaging.SpicePlanetStateMsgPayload()
-    earthStateMsg.PositionVector = [0.0, -149598023 * 1000, 0.0]
+    earthStateMsg.PositionVector = [0.0, -rEarth, 0.0]
     earthStateMsg.VelocityVector = [0.0, 0.0, 0.0]
     earthMsg = messaging.SpicePlanetStateMsg().write(earthStateMsg)
     gravFactory.gravBodies['earth'].planetBodyInMsg.subscribeTo(earthMsg)
 
     jupiterStateMsg = messaging.SpicePlanetStateMsgPayload()
-    jupiterStateMsg.PositionVector = [0.0, 778298361 * 1000, 0.0]
+    jupiterStateMsg.PositionVector = [0.0, rJupiter, 0.0]
     jupiterStateMsg.VelocityVector = [0.0, 0.0, 0.0]
     jupiterMsg = messaging.SpicePlanetStateMsg().write(jupiterStateMsg)
     gravFactory.gravBodies['jupiter barycenter'].planetBodyInMsg.subscribeTo(jupiterMsg)
@@ -194,8 +196,6 @@ def run(show_plots):
     vel_N_Earth = [0.0 * 1000, 0, 0]
 
     # Hohmann transfer calculations
-    rEarth = 149598023. * 1000
-    rJupiter = 778298361. * 1000
     at = (rEarth + rJupiter) * .5
     vPt = np.sqrt(2 * sun.mu / rEarth - sun.mu / at)
     vAt = np.sqrt(2 * sun.mu / rJupiter - sun.mu / at)
