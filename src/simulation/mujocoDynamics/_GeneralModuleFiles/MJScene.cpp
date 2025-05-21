@@ -110,8 +110,7 @@ void MJScene::initializeDynamics()
 
 void MJScene::UpdateState(uint64_t CurrentSimNanos)
 {
-    double t = CurrentSimNanos * NANO2SEC;
-    this->integrateState(t);
+    this->integrateState(CurrentSimNanos);
     this->writeOutputStateMessages(CurrentSimNanos);
     for (auto&& body : this->spec.getBodies()) {
         body.writeStateDependentOutputMessages(CurrentSimNanos);
@@ -206,11 +205,13 @@ void MJScene::equationsOfMotion(double t, double timeStep)
     }
 }
 
-void MJScene::preIntegration(double callTime) { this->timeStep = callTime - this->timeBefore; }
+void MJScene::preIntegration(uint64_t callTimeNanos) { this->timeStep = diffNanoToSec(callTimeNanos, this->timeBeforeNanos); }
 
-void MJScene::postIntegration(double callTime)
+void MJScene::postIntegration(uint64_t callTimeNanos)
 {
-    this->timeBefore = callTime;
+    this->timeBefore = callTimeNanos * NANO2SEC;
+    this->timeBeforeNanos = callTimeNanos;
+    double callTime = callTimeNanos * NANO2SEC;
 
     // Copy data from Basilisk state objects to MuJoCo structs
     updateMujocoArraysFromStates();

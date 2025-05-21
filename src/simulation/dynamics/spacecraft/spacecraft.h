@@ -88,8 +88,8 @@ public:
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< This method computes the equations of motion for the whole system
     void addStateEffector(StateEffector *newSateEffector);  //!< Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< Attaches a dynamicEffector
-    void preIntegration(double callTime) final;       //!< method to perform pre-integration steps
-    void postIntegration(double callTime) final;      //!< method to perform post-integration steps
+    void preIntegration(uint64_t callTimeNanos) final;       //!< method to perform pre-integration steps
+    void postIntegration(uint64_t callTimeNanos) final;      //!< method to perform post-integration steps
 
 private:
 

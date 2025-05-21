@@ -375,9 +375,9 @@ public:
     /**
      * @brief Prepares the system before actual integration.
      *
-     * @param callTime The current simulation time.
+     * @param callTimeNanos The current simulation time.
      */
-    void preIntegration(double callTime) override;
+    void preIntegration(uint64_t callTimeNanos) override;
 
     /**
      * @brief Finalizes the system after integration.
@@ -389,9 +389,9 @@ public:
      * that are computed during the dynamics task depending
      * on the final state.
      *
-     * @param callTime The current simulation time.
+     * @param callTimeNanos The current simulation time.
      */
-    void postIntegration(double callTime) override;
+    void postIntegration(uint64_t callTimeNanos) override;
 
     /**
      * @brief Marks the model as needing recompilation.

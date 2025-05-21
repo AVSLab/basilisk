@@ -343,6 +343,9 @@ void SpacecraftSystem::Reset(uint64_t CurrentSimNanos)
 
     // - Call method for initializing the dynamics of spacecraft
     this->initializeDynamics();
+
+    this->timeBefore = CurrentSimNanos * NANO2SEC;
+    this->timeBeforeNanos = CurrentSimNanos;
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
@@ -371,8 +374,6 @@ void SpacecraftSystem::writeOutputMessages(uint64_t clockTime)
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
 void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
 {
-    // - Convert current time to seconds
-    double newTime = CurrentSimNanos*NANO2SEC;
 
     // - Get access to the spice bodies
     this->primaryCentralSpacecraft.gravField.UpdateState(CurrentSimNanos);
@@ -392,7 +393,7 @@ void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // - Integrate the state forward in time
-    this->integrateState(newTime);
+    this->integrateState(CurrentSimNanos);
 
     // - Update the inertial position of each spacecraft
     Eigen::Vector3d rLocal_BN_N = this->primaryCentralSpacecraft.hubR_N->getState();
@@ -1210,12 +1211,12 @@ void SpacecraftSystem::computeEnergyMomentumSystem(double time)
 }
 
 /*! Prepare for integration process, not currently implemented in SpacecraftSystem
- @param integrateToThisTime Time to integrate to
+ @param integrateToThisTimeNanos Time to integrate to
  */
-void SpacecraftSystem::preIntegration(double integrateToThisTime) {
+void SpacecraftSystem::preIntegration(uint64_t integrateToThisTimeNanos) {
 
     // - Find the time step
-    this->timeStep = integrateToThisTime - this->timeBefore;
+    this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos);
 
     this->findPriorStateInformation(this->primaryCentralSpacecraft);
 
@@ -1226,18 +1227,16 @@ void SpacecraftSystem::preIntegration(double integrateToThisTime) {
         this->findPriorStateInformation((*(*spacecraftUnConnectedIt)));
     }
 
-    // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
-    this->timeBefore = integrateToThisTime - this->timeStep;
-
 }
 
 /*! Perform post-integration steps, not currently implemented in SpacecraftSystem
- @param integrateToThisTime Time to integrate to
+ @param integrateToThisTimeNanos Time to integrate to
  */
-void SpacecraftSystem::postIntegration(double integrateToThisTime) {
+void SpacecraftSystem::postIntegration(uint64_t integrateToThisTimeNanos) {
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
-
-    this->timeBefore = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
+    this->timeBeforeNanos = integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
+    this->timeBefore = integrateToThisTimeNanos*NANO2SEC;     // - copy the current time into previous time for next integrate state call
+    double integrateToThisTime = integrateToThisTimeNanos*NANO2SEC; // - convert to seconds
 
     // - Calculate the states of the attached spacecraft from the primary spacecraft
     this->determineAttachedSCStates();
