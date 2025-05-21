@@ -40,7 +40,7 @@ Spacecraft::Spacecraft()
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
-    this->timePrevious = 0.0;
+    this->timeBefore = 0.0;
     this->simTimePrevious = 0;
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
@@ -337,7 +337,7 @@ void Spacecraft::updateSCMassProps(double time)
 void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos = this->simTimePrevious + secToNano(integTimeSeconds-this->timePrevious);
+    uint64_t integTimeNanos = this->simTimePrevious + secToNano(integTimeSeconds-this->timeBefore);
     (*this->sysTime) << (double) integTimeNanos, integTimeSeconds;
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
@@ -453,7 +453,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
  @param integrateToThisTime Time to integrate to
  */
 void Spacecraft::preIntegration(double integrateToThisTime) {
-    this->timeStep = integrateToThisTime - this->timePrevious;
+    this->timeStep = integrateToThisTime - this->timeBefore;
 
     // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
@@ -470,14 +470,13 @@ void Spacecraft::preIntegration(double integrateToThisTime) {
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     this->hub.matchGravitytoVelocityState(oldV_CN_N); // Set gravity velocity to base velocity for DV estimation
-    this->timeBefore = this->timePrevious;
 }
 
 /*! Perform post-integration steps
  @param integrateToThisTime Time to integrate to
  */
 void Spacecraft::postIntegration(double integrateToThisTime) {
-    this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
+    this->timeBefore = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSCMassProps(integrateToThisTime);
