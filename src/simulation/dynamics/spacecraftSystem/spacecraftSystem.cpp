@@ -221,7 +221,7 @@ SpacecraftSystem::SpacecraftSystem()
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
-    this->timePrevious = 0.0;
+    this->timeBefore = 0.0;
     this->simTimePrevious = 0;
     this->numOutMsgBuffers = 2;
 
@@ -625,7 +625,7 @@ void SpacecraftSystem::initializeSCPosVelocity(SpacecraftUnit &spacecraft)
 void SpacecraftSystem::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos = this->simTimePrevious + (uint64_t) ((integTimeSeconds-this->timePrevious)/NANO2SEC);
+    uint64_t integTimeNanos = this->simTimePrevious + (uint64_t) ((integTimeSeconds-this->timeBefore)/NANO2SEC);
     (*this->sysTime) << (double)integTimeNanos, integTimeSeconds;
 
     this->equationsOfMotionSystem(integTimeSeconds, timeStep);
@@ -1215,7 +1215,7 @@ void SpacecraftSystem::computeEnergyMomentumSystem(double time)
 void SpacecraftSystem::preIntegration(double integrateToThisTime) {
 
     // - Find the time step
-    this->timeStep = integrateToThisTime - this->timePrevious;
+    this->timeStep = integrateToThisTime - this->timeBefore;
 
     this->findPriorStateInformation(this->primaryCentralSpacecraft);
 
@@ -1237,7 +1237,7 @@ void SpacecraftSystem::preIntegration(double integrateToThisTime) {
 void SpacecraftSystem::postIntegration(double integrateToThisTime) {
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
 
-    this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
+    this->timeBefore = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
     // - Calculate the states of the attached spacecraft from the primary spacecraft
     this->determineAttachedSCStates();
