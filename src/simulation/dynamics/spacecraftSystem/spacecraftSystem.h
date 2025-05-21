@@ -173,7 +173,6 @@ private:
 class SpacecraftSystem : public DynamicObject{
 public:
 
-    uint64_t simTimePrevious;            //!< Previous simulation time
     uint64_t numOutMsgBuffers;           //!< Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< Name of the system time property
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation

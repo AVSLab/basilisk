@@ -40,8 +40,6 @@ Spacecraft::Spacecraft()
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
-    this->timeBefore = 0.0;
-    this->simTimePrevious = 0;
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
     this->dvAccum_CN_N.setZero();
@@ -186,7 +184,6 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(CurrentSimNanos);
     }
-    this->simTimePrevious = CurrentSimNanos;
 }
 
 /*! This method allows the spacecraft to have access to the current state of the hub for MRP switching, writing
@@ -337,7 +334,8 @@ void Spacecraft::updateSCMassProps(double time)
 void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos = this->simTimePrevious + secToNano(integTimeSeconds-this->timeBefore);
+    uint64_t integTimeNanos = secToNano(integTimeSeconds);
+
     (*this->sysTime) << (double) integTimeNanos, integTimeSeconds;
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
