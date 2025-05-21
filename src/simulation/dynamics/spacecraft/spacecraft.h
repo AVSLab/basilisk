@@ -53,7 +53,6 @@ public:
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
     double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
-    double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     BackSubMatrices backSubContributions;//!< class variable
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
