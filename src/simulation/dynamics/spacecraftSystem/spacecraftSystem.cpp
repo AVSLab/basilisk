@@ -221,8 +221,6 @@ SpacecraftSystem::SpacecraftSystem()
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
-    this->timeBefore = 0.0;
-    this->simTimePrevious = 0;
     this->numOutMsgBuffers = 2;
 
     // - Set integrator as RK4 by default
@@ -418,7 +416,6 @@ void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
 
     // - Write the state of the vehicle into messages
     this->writeOutputMessages(CurrentSimNanos);
-    this->simTimePrevious = CurrentSimNanos;
 
     return;
 }
@@ -626,7 +623,7 @@ void SpacecraftSystem::initializeSCPosVelocity(SpacecraftUnit &spacecraft)
 void SpacecraftSystem::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos = this->simTimePrevious + (uint64_t) ((integTimeSeconds-this->timeBefore)/NANO2SEC);
+    uint64_t integTimeNanos = secToNano(integTimeSeconds);
     (*this->sysTime) << (double)integTimeNanos, integTimeSeconds;
 
     this->equationsOfMotionSystem(integTimeSeconds, timeStep);
