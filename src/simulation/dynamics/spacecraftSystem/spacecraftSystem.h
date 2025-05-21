@@ -204,8 +204,8 @@ public:
     void attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< Attaches a spacecraft to the primary spacecraft chain
     void addSpacecraftUndocked(SpacecraftUnit *newSpacecraft);  //!< Attaches a spacecraft to the primary spacecraft chain
     void determineAttachedSCStates();  //!< class method
-    void preIntegration(double callTime) final;  //!< pre-integration steps
-    void postIntegration(double callTime) final;  //!< post-integration steps
+    void preIntegration(uint64_t callTime) final;  //!< pre-integration steps
+    void postIntegration(uint64_t callTime) final;  //!< post-integration steps
 
 private:
     Eigen::MatrixXd *sysTime;            //!< [s] System time
