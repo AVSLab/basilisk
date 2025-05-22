@@ -112,7 +112,7 @@ void Encoder::encode(uint64_t CurrentSimNanos)
     clicksPerRadian = this->clicksPerRotation / (2 * M_PI);
 
     // set the time step
-    timeStep = (CurrentSimNanos - this->prevTime) * NANO2SEC;
+    timeStep = diffNanoToSec(CurrentSimNanos, this->prevTime);
 
     // at the beginning of the simulation, the encoder simply outputs the true RW speeds
     if (timeStep == 0.0)

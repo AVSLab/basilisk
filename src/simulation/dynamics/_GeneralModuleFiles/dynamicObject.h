@@ -51,10 +51,10 @@ class DynamicObject : public SysModel {
     virtual void equationsOfMotion(double t, double timeStep) = 0;
 
     /** Performs pre-integration steps */
-    virtual void preIntegration(double callTime) = 0;
+    virtual void preIntegration(uint64_t callTimeNanos) = 0;
 
     /** Performs post-integration steps */
-    virtual void postIntegration(double callTime) = 0;
+    virtual void postIntegration(uint64_t callTimeNanos) = 0;
 
     /** Initializes the dynamics and variables */
     virtual void initializeDynamics(){};
@@ -67,7 +67,7 @@ class DynamicObject : public SysModel {
      *
      * This is only done if the DynamicObject integration is not sync'd to another DynamicObject
      */
-    void integrateState(double t);
+    void integrateState(uint64_t t);
 
     /** Sets a new integrator in use */
     void setIntegrator(StateVecIntegrator* newIntegrator);
@@ -78,8 +78,9 @@ class DynamicObject : public SysModel {
   public:
     /** flag indicating that another spacecraft object is controlling the integration */
     bool isDynamicsSynced = false;
-    double timeStep;   /**< [s] integration time step */
-    double timeBefore; /**< [s] prior time value */
+    double timeStep = 0.0;   /**< [s] integration time step */
+    double timeBefore = 0.0; /**< [s] prior time value */
+    uint64_t timeBeforeNanos = 0; /**< [ns] prior time value */
 };
 
 #endif /* DYNAMICOBJECT_H */

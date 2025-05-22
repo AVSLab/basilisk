@@ -209,7 +209,7 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
         hingedRigidBodyRefOut.thetaDot = 0;
     }
     else {
-        dt = (double) (callTime - configData->priorT) * NANO2SEC;
+        dt = diffNanoToSec(callTime, configData->priorT);
         hingedRigidBodyRefOut.thetaDot = (hingedRigidBodyRefOut.theta - configData->priorThetaR) / dt;
     }
     // update stored variables

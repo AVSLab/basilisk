@@ -113,7 +113,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t ca
 	}
 
     /*! - compute control time period Delta_t */
-	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
+    controlPeriod = diffNanoToSec(callTime, configData->prevCallTime); /*!< [s] control period */
 	configData->prevCallTime = callTime;
 
 	/*! - Read the input thruster force message */
