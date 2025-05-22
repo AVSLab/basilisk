@@ -175,7 +175,6 @@ public:
 
     uint64_t numOutMsgBuffers;           //!< Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< Name of the system time property
-    double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     SpacecraftUnit primaryCentralSpacecraft;   //!< Primary spacecraft in which other spacecraft can attach/detach to/from
     std::vector<SpacecraftUnit*> spacecraftDockedToPrimary; //!< vector of spacecraft currently docked with primary spacecraft
     std::vector<SpacecraftUnit*> unDockedSpacecraft; //!< vector of spacecraft currently detached from all other spacecraft

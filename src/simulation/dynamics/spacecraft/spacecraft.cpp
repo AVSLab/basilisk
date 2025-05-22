@@ -39,7 +39,6 @@ Spacecraft::Spacecraft()
     this->propName_centerOfMassDotSC = "centerOfMassDotSC";
 
     // - Set values to either zero or default values
-    this->currTimeStep = 0.0;
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
     this->dvAccum_CN_N.setZero();
