@@ -36,6 +36,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
+from Basilisk.utilities import deprecated
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False, 'NoGravity'),
@@ -60,16 +61,16 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -271,6 +272,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
