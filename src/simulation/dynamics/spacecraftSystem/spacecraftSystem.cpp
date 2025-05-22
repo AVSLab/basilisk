@@ -220,7 +220,6 @@ SpacecraftSystem::SpacecraftSystem()
     this->sysTimePropertyName = "systemTime";
 
     // - Set values to either zero or default values
-    this->currTimeStep = 0.0;
     this->numOutMsgBuffers = 2;
 
     // - Set integrator as RK4 by default
