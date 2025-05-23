@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <map>
+#include <mutex>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/bskLogging.h"
@@ -40,19 +41,19 @@ class SpiceInterface: public SysModel {
 public:
     SpiceInterface();
     ~SpiceInterface();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
-    int loadSpiceKernel(char *kernelName, const char *dataPath);
-    int unloadSpiceKernel(char *kernelName, const char *dataPath);
-	std::string getCurrentTimeString();         //!< class method
+    int loadSpiceKernel(const char *kernelName, const char *dataPath);    //!< Load a SPICE kernel with thread-safe reference counting
+    int unloadSpiceKernel(const char *kernelName, const char *dataPath);  //!< Unload a SPICE kernel with thread-safe reference counting
+    std::string getCurrentTimeString();         //!< class method
     void Reset(uint64_t CurrentSimNanos);
     void initTimeData();
     void computeGPSData();
     void pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData);
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();                         //!< class method
-    void addPlanetNames(std::vector<std::string> planetNames);
-    void addSpacecraftNames(std::vector<std::string> spacecraftNames);
+    void addPlanetNames(std::vector<std::string> planetNames);    //!< Adds a list of planet names to track in SPICE
+    void addSpacecraftNames(std::vector<std::string> spacecraftNames);    //!< Adds a list of spacecraft names to track in SPICE
 
 public:
     Message<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
@@ -65,14 +66,14 @@ public:
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use
     std::string zeroBase;                //!< -- Base zero point to use for states
-	std::string timeOutPicture;          //!< -- Optional parameter used to extract time strings
+    std::string timeOutPicture;          //!< -- Optional parameter used to extract time strings
     bool SPICELoaded;                    //!< -- Boolean indicating to reload spice
     int charBufferSize;         //!< -- avert your eyes we're getting SPICE
     uint8_t *spiceBuffer;       //!< -- General buffer to pass down to spice
     std::string UTCCalInit;     //!< -- UTC time string for init time
 
     std::vector<std::string>planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
-    
+
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
     double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
     double J2000Current;        //!< s Current J2000 elapsed time
@@ -90,7 +91,9 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
 
+    static std::mutex kernelManipulationMutex; //!< -- Mutex to protect SPICE kernel loading/unloading operations
+    static std::unordered_map<std::string, int> kernelReferenceCounter; //!< -- Reference counter for SPICE kernels
+    static const std::vector<std::string> REQUIRED_KERNELS; //!< -- List of required SPICE kernels
 };
-
 
 #endif
