@@ -39,6 +39,7 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
+from Basilisk.utilities import deprecated
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -68,8 +69,10 @@ def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     [testResults, testMessage] = hingedRigidBodyMotorTorque(show_plots, useScPlus)
     assert testResults < 1, testMessage
 
+
 def hingedRigidBodyGravity(show_plots):
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -300,6 +303,7 @@ def hingedRigidBodyNoGravity(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -531,6 +535,7 @@ def hingedRigidBodyNoGravityDamping(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -720,6 +725,7 @@ def hingedRigidBodyThetaSS(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -912,6 +918,7 @@ def hingedRigidBodyFrequencyAmp(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -1194,6 +1201,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -1434,6 +1442,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -1877,10 +1886,10 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    # test_hingedRigidBodyGravity(True)
-    # test_hingedRigidBodyNoGravity(True)
-    # test_hingedRigidBodyNoGravityDamping(True)
-    # test_hingedRigidBodyThetaSS(True)
-    # test_hingedRigidBodyFrequencyAmp(True)
-    # test_hingedRigidBodyMotorTorque(True, True)
-    hingedRigidBodyLagrangVsBasilisk(True)
+    hingedRigidBodyGravity(False)
+    # hingedRigidBodyNoGravity(True)
+    # hingedRigidBodyNoGravityDamping(True)
+    # hingedRigidBodyThetaSS(True)
+    # hingedRigidBodyFrequencyAmp(True)
+    # hingedRigidBodyMotorTorque(True, True)
+    # hingedRigidBodyLagrangVsBasilisk(True)
