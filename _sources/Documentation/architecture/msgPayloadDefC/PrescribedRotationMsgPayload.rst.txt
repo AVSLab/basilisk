@@ -1,0 +1,8 @@
+.. _PrescribedRotationMsgPayload:
+
+PrescribedRotationMsgPayload
+====================================
+
+.. autodoxygenfile:: PrescribedRotationMsgPayload.h
+   :project: msgPayloadDefC
+

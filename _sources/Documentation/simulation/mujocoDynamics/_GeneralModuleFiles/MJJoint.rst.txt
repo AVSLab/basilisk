@@ -1,0 +1,8 @@
+.. _MJJoint:
+
+Module: MJJoint
+===============
+
+.. autodoxygenfile:: MJJoint.h
+   :project: _GeneralModuleFiles5
+

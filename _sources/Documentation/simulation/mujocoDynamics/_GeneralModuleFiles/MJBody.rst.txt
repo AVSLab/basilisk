@@ -1,0 +1,8 @@
+.. _MJBody:
+
+Module: MJBody
+==============
+
+.. autodoxygenfile:: MJBody.h
+   :project: _GeneralModuleFiles5
+
