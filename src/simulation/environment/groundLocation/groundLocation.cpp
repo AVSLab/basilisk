@@ -65,10 +65,6 @@ void GroundLocation::Reset(uint64_t CurrentSimNanos)
     if (this->planetRadius < 0) {
         bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set.");
     }
-//
-//    if (!this->sunInMsg.isLinked()) {
-//        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
-//    }
 }
 
 /*! Specifies the ground location from planet-centered latitude, longitude, altitude position.
@@ -147,17 +143,6 @@ bool GroundLocation::ReadMessages()
         this->planetState = this->planetInMsg();
     }
 
-//    bool sunRead = true;
-//    if (this->sunVectorInMsg.isLinked())
-//    {
-//        sunRead = this->sunVectorInMsg.isWritten();
-//        this->sunInMsgState = this->sunInMsg();
-//    } else {
-//        sunRead = false;
-//        this->sunVector_N.setZero();
-//    }
-
-//    return (planetRead && scRead && sunRead);
     return(planetRead && scRead);
 }
 
@@ -194,9 +179,6 @@ void GroundLocation::computeAccess()
 {
     // Update the groundLocation's inertial position
     this->updateInertialPositions();
-//
-//    // get sun position in inertial frame from sunInMsg
-//    Eigen::Vector3d r_HN_N(this->sunInMsgState.PositionVector); // r_sun
 
     // Iterate over spacecraft position messages and compute the access for each one
     std::vector<AccessMsgPayload>::iterator accessMsgIt;
@@ -233,41 +215,6 @@ void GroundLocation::computeAccess()
             accessMsgIt->hasAccess = 0;
         }
     }
-    //
-
-//    // calculating the sun-incidence-angle and the deputy-view-angle
-//    double sunIncidenceAngle = safeAcos(r_LP_N.dot(r_HN_N) / (r_LP_N.norm() * r_HN_N.norm()));
-//    double scViewAngle = viewAngle //safeAcos(r_LP_N.dot(r_BL_N) / (r_LP_N.norm() * r_BL_N.norm()));
-//
-//    //storing the two angles in the output butter
-//    this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
-//    this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
-//
-//    // Compute scalar triple product
-//    r_HN_N_normalized = r_HN_N/r_HN_N.norm()
-//    r_BL_N_normalized = r_BL_N/r_BL_N.norm()
-//    double scalarTripleProduct = (r_HN_N_normalized.cross(r_BL_N_normalized)).dot(r_LP_N);
-//
-//    // Check coplanarity & glare condition
-//    bool isCoplanar = fabs(scalarTripleProduct) < 1e-3;  // Tolerance for numerical precision // TODO: we should think about slightly off-coplanar... it still has some glare
-//    double epsilon = 10.0 * M_PI / 180.0; // [rad] if the two angles are within epsilon degrees then it will be glared
-//    bool glare = isCoplanar && (fabs(sunIncidenceAngle - scViewAngle) * 180.0 / M_PI <= 10.0);
-//
-//    // GLARE AS A boolean (Float)
-//    // Initialize glare variable as 0 (default: no glare)
-//    double glare = 0.0;
-//
-//    // Check if either angle exceeds 90 degrees (π/2 radians)
-//    if (sunIncidenceAngle > M_PI_2 || scViewAngle > M_PI_2)
-//    {
-//        glare = -1.0;  // Invalid case
-//    }
-//    // Check glare condition: angles within epsilon & coplanar
-//    else if (isCoplanar && fabs(sunIncidenceAngle - scViewAngle) <= epsilon)
-//    {
-//        glare = 1.0;  // Glare detected
-//    }
-
 }
 
 /*!

@@ -48,7 +48,7 @@ public:
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void specifyLocation(double lat, double longitude, double alt);
     void specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc);
-    
+
 private:
     void updateInertialPositions();
     void computeAccess();
@@ -64,9 +64,6 @@ public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of sc state input messages
     Eigen::Vector3d r_LP_P_Init; //!< [m] Initial position of the location in planet-centric coordinates; can also be set using setGroundLocation.
     BSKLogger bskLogger;         //!< -- BSK Logging
-//
-//    ReadFunctor<SunVectorMsgPayload> sunVectorInMsg;  // Input message for the Sun vector
-//    Eigen::Vector3d r_HN_N;  // Sun position vector in inertial frame
 
 private:
     std::vector<AccessMsgPayload> accessMsgBuffer;                  //!< buffer of access output data
