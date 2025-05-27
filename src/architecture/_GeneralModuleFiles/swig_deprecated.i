@@ -141,6 +141,8 @@ def _inject_deprecated_property(instance, old_attr, new_attr, removal_date, type
         # Conduct type conversions if new variable type is changed
         if typeConversion and typeConversion == "scalarTo3D":
             setattr(self, new_attr, [value, value, value])
+        elif typeConversion and typeConversion == "useDefaultDouble":
+            setattr(self, new_attr, -1.0)
         else:
             setattr(self, new_attr, value)
 
