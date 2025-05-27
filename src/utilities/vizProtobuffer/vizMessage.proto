@@ -331,6 +331,8 @@ message VizMessage{
 	    string truePathRotatingFrame = 55;                  // string must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
         string truePathFixedFrame = 56;                     // string of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
         int32 showQuadMapLabels = 57;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        double spacecraftOrbitLineWidth = 58;               // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale spacecraft orbit line width
+        double celestialBodyOrbitLineWidth = 59;            // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
     }
 
     message MultiShape{ //ONLY NEEDED IF MSM DESIRED

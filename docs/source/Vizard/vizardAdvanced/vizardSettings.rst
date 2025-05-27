@@ -212,6 +212,12 @@ default setting for that behavior.
       - double
       - Control the display size of celestial bodies in the Solar System View,
         values greater than 0, use negative value to use viz default.
+    * - ``spacecraftOrbitLineWidth``
+      - double
+      - Values greater than 0 to scale spacecraft orbit line width, value of 0 (protobuffer default) to use viz default.
+    * - ``celestialBodyOrbitLineWidth``
+      - double
+      - Values greater than 0 to scale celestial body orbit line width, value of 0 (protobuffer default) to use viz default.
     * - **Lighting Settings**
       -
       -
