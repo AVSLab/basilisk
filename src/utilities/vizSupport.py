@@ -1635,6 +1635,7 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
 
     # set up the Vizard interface module
     vizMessenger = vizInterface.VizInterface()
+    vizMessenger.settings = vizInterface.VizSettings()
     vizMessenger.ModelTag = "vizMessenger"
     scSim.AddModelToTask(simTaskName, vizMessenger)
 
