@@ -123,5 +123,13 @@ mod.MultiSphereVector = _DeprecatedWrapper(
     removalDate="2026/03/07"
 )
 
+mod.VizSettings = _DeprecatedWrapper(
+    mod.VizSettings,
+    targetName="VizSettings",
+    deprecatedFields={"customGUIScale": "customGUIReferenceHeight"},
+    typeConversion="useDefaultDouble",
+    removalDate="2026/05/27"
+)
+
 protectAllClasses(sys.modules[__name__])
 %}
