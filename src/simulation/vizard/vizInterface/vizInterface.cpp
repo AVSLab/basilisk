@@ -662,6 +662,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_truepathrotatingframe(this->settings.truePathRotatingFrame);
         vizSettings->set_truepathfixedframe(this->settings.truePathFixedFrame);
         vizSettings->set_showquadmaplabels(this->settings.showQuadMapLabels);
+        vizSettings->set_spacecraftorbitlinewidth(this->settings.spacecraftOrbitLineWidth);
+        vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
