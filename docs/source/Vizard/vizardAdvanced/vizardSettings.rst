@@ -251,9 +251,9 @@ default setting for that behavior.
     * - **GUI Settings**
       -
       -
-    * - ``customGUIScale``
+    * - ``customGUIReferenceHeight``
       - pos. double
-      - GUI scaling factor, use negative value to use viz default.
+      - [pixels] GUI height in pixels, must be > 300. Use 0 or -1 for viz default.
     * - ``show24hrClock``
       - (-1,0,1)
       - Flag to make mission date/time use a 24h clock instead of a 12h clock with AM/PM (1). Value of -1 or 0 (protobuffer default) to use viz default.
