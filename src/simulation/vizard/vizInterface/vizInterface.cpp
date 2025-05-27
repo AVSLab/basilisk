@@ -590,9 +590,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define the GUI scaling factor
-        vizSettings->set_customguiscale(this->settings.customGUIScale);
-        if (abs(this->settings.customGUIScale)>3.0) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of %d was received.", this->settings.customGUIScale);
+        vizSettings->set_customguireferenceheight(this->settings.customGUIReferenceHeight);
+        if (this->settings.customGUIReferenceHeight<300.0 && abs(this->settings.customGUIReferenceHeight)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIReferenceHeight flag must be either -1 or > 300.  A value of %d was received.", this->settings.customGUIReferenceHeight);
         }
 
         // define default spacecraft sprite behavior
