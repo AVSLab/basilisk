@@ -63,6 +63,14 @@ VizInterface::~VizInterface()
         delete this->opnavImageOutMsgs.at(c);
     }
 
+    if (this->outputStream != nullptr) {
+        if (this->outputStream->is_open()) {
+            this->outputStream->close();
+        }
+        delete this->outputStream;
+        this->outputStream = nullptr;
+    }
+
     return;
 }
 
