@@ -443,6 +443,8 @@ VizSettings
     std::string truePathRotatingFrame = "";               //!< String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
     std::string truePathFixedFrame = "";                  //!< String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
     int32_t showQuadMapLabels = 0;                        //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double spacecraftOrbitLineWidth = 0;                  //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale spacecraft orbit line width
+    double celestialBodyOrbitLineWidth = 0;               //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
 }VizSettings;
 
 
