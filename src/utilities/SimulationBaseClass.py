@@ -43,58 +43,93 @@ taskColor = '\u001b[33m'
 moduleColor = '\u001b[36m'
 endColor = '\u001b[0m'
 
+def methodizeCondition(conditionList):
+    """Methodize a condition list to a function"""
+    if conditionList is None or len(conditionList) == 0:
+        return lambda _: False
+
+    funcString = "def EVENT_check_condition(self):\n"
+    funcString += "    if("
+    for condValue in conditionList:
+        funcString += " " + condValue + " and"
+    funcString = funcString[:-3] + "):\n"
+    funcString += "        return True\n"
+    funcString += "    return False"
+
+    local_namespace = {}
+    exec(funcString, globals(), local_namespace)
+    return local_namespace["EVENT_check_condition"]
+
+
+def methodizeAction(actionList):
+    """Methodize an action list to a function"""
+    if actionList is None or len(actionList) == 0:
+        return lambda _: None
+
+    funcString = "def EVENT_operate_action(self):\n"
+    for actionValue in actionList:
+        funcString += "    " + actionValue + "\n"
+    funcString += "    return None"
+
+    local_namespace = {}
+    exec(funcString, globals(), local_namespace)
+    return local_namespace["EVENT_operate_action"]
+
+
 class EventHandlerClass:
     """Event Handler Class"""
-    def __init__(self, eventName, eventRate=int(1E9), eventActive=False,
-                 conditionList=[], actionList=[], terminal=False):
+
+    def __init__(
+        self,
+        eventName,
+        eventRate=int(1e9),
+        eventActive=False,
+        conditionFunction=None,
+        actionFunction=None,
+        conditionList=None,
+        actionList=None,
+        terminal=False,
+    ):
         self.eventName = eventName
         self.eventActive = eventActive
         self.eventRate = eventRate
-        self.conditionList = conditionList
-        self.actionList = actionList
         self.occurCounter = 0
         self.prevTime = -1
-        self.checkCall = None
-        self.operateCall = None
         self.terminal = terminal
 
-    def methodizeEvent(self):
-        if self.checkCall is not None:
-            return
+        self.conditionFunction = conditionFunction or (lambda _: False)
+        self.actionFunction = actionFunction or (lambda _: None)
 
-        funcString = 'def EVENT_check_' + self.eventName + '(self):\n'
-        funcString += '    if('
-        for condValue in self.conditionList:
-            funcString += ' ' + condValue + ' and'
-        funcString = funcString[:-3] + '):\n'
-        funcString += '        return 1\n'
-        funcString += '    return 0'
+        if conditionList is not None:
+            if conditionFunction is not None:
+                raise ValueError(
+                    "Only specify a conditionFunction or a conditionList, not both"
+                )
+            else:
+                self.conditionFunction = methodizeCondition(conditionList)
 
-        local_namespace = {}
-        exec(funcString, globals(), local_namespace)
-        self.checkCall = local_namespace['EVENT_check_' + self.eventName]
+        if actionList is not None:
+            if actionFunction is not None:
+                raise ValueError(
+                    "Only specify an actionFunction or am actionList, not both."
+                )
+            else:
+                self.actionFunction = methodizeAction(actionList)
 
-        funcString = 'def EVENT_operate_' + self.eventName + '(self):\n'
-        for actionValue in self.actionList:
-            funcString += '    ' + actionValue + '\n'
-        funcString += '    return 0'
 
-        local_namespace = {}
-        exec(funcString, globals(), local_namespace)
-        self.operateCall = local_namespace['EVENT_operate_' + self.eventName]
 
     def checkEvent(self, parentSim):
         nextTime = int(-1)
-        if self.eventActive == False:
+        if not self.eventActive:
             return(nextTime)
         nextTime = self.prevTime + self.eventRate - (self.prevTime%self.eventRate)
         if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
             nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
-            eventCount = self.checkCall(parentSim)
+            eventOccurred = self.conditionFunction(parentSim)
             self.prevTime = parentSim.TotalSim.CurrentNanos
-            if eventCount > 0:
+            if eventOccurred:
                 self.eventActive = False
-                self.operateCall(parentSim)
+                self.actionFunction(parentSim)
                 self.occurCounter += 1
                 if self.terminal:
                     parentSim.terminate = True
@@ -431,22 +466,55 @@ class SimBaseClass:
                                                      newStruct})
         self.indexParsed = True
 
-    def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
-                       conditionList=[], actionList=[], terminal=False):
+    def createNewEvent(
+        self,
+        eventName,
+        eventRate=int(1e9),
+        eventActive=False,
+        conditionList=None,
+        actionList=None,
+        terminal=False,
+        conditionFunction=None,
+        actionFunction=None,
+    ):
         """
         Create an event sequence that contains a series of tasks to be executed.
+
+        Args:
+            eventName (str): Name of the event
+            eventRate (int): Rate at which the event is checked in nanoseconds
+            eventActive (bool): Whether the event is active or not
+            conditionList (list): List of conditions to check for the event,
+                expressed as strings of code to execute within the class.
+            actionList (list): List of actions to perform when the event occurs,
+                expressed as strings of code to execute within the class.
+            terminal (bool): Whether this event should terminate the simulation when it occurs
+            conditionFunction (function): Function to check if the event should occur. The
+                function should take the simulation object as an argument and return a boolean.
+                This is the preferred manner to set conditions as it enables the use of arbitrary
+                packages and objects in events and allows for event code to be parsed by IDE tools.
+            actionFunction (function): Function to execute when the event occurs. The
+                function should take the simulation object as an argument.
+                This is the preferred manner to set conditions as it enables the use of arbitrary
+                packages and objects in events and allows for event code to be parsed by IDE tools.
         """
         if (eventName in list(self.eventMap.keys())):
+            warnings.warn(f"Skipping event creation since {eventName} already exists.")
             return
-        newEvent = EventHandlerClass(eventName, eventRate, eventActive,
-                                     conditionList, actionList, terminal)
-        self.eventMap.update({eventName: newEvent})
+        newEvent = EventHandlerClass(
+            eventName,
+            eventRate,
+            eventActive,
+            conditionFunction=conditionFunction,
+            actionFunction=actionFunction,
+            conditionList=conditionList,
+            actionList=actionList,
+            terminal=terminal,
+        )
+        self.eventMap[eventName] = newEvent
 
     def initializeEventChecks(self):
-        self.eventList = []
-        for key, value in self.eventMap.items():
-            value.methodizeEvent()
-            self.eventList.append(value)
+        self.eventList = list(self.eventMap.values())
         self.nextEventTime = 0
 
     def checkEvents(self):
