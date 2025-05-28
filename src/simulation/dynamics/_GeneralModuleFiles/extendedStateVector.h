@@ -62,8 +62,12 @@ using ExtendedStateId = std::pair<size_t, std::string>;
 /// @cond DOXYGEN_IGNORE
 namespace std // Inject hash for ExtendedStateId into std::
 {
+    /** Hash implementation for ``std::pair<size_t, std::string>``,
+     * allows using it as the key in maps.
+     */
     template<> struct hash<ExtendedStateId>
     {
+        /** Produce hash from ``std::pair<size_t, std::string>`` */
         std::size_t operator()(const ExtendedStateId& input) const noexcept
         {
             std::size_t h = 0;
@@ -96,6 +100,19 @@ class ExtendedStateVector
      * in the given dynamic objects
      */
     static ExtendedStateVector fromStateDerivs(const std::vector<DynamicObject*>& dynPtrs);
+
+    /**
+     * Extracts the diffusion at the specified noise index for the states
+     * present in ``stateIdToNoiseIndexMap``.
+     */
+    static ExtendedStateVector
+    fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs, const StateIdToIndexMap& stateIdToNoiseIndexMap);
+
+    /**
+     * Calls and returns the result of ``fromStateDiffusions`` for each map in ``stateIdToNoiseIndexMaps``.
+     */
+    static std::vector<ExtendedStateVector>
+    fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs, const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps);
 
     /**
      * This method will call the given std::function for every
@@ -144,6 +161,18 @@ class ExtendedStateVector
 
     /** Calls StateData::setDerivative for every entry in this */
     void setDerivatives(std::vector<DynamicObject*>& dynPtrs) const;
+
+    /** Calls StateData::setDiffusion for every entry in this
+     *
+     * Note that this extendedStateVector may contain the diffusion
+     * corresponding to different noise sources for each state. Thus,
+     * the input ``stateIdToNoiseIndexMap`` is necessary to set for
+     * which noise source this diffusion is given.
+    */
+    void setDiffusions(
+      std::vector<DynamicObject*>& dynPtrs,
+      const StateIdToIndexMap& stateIdToNoiseIndexMap
+    ) const;
 
   private:
     static ExtendedStateVector fromStateData(const std::vector<DynamicObject*>& dynPtrs,
