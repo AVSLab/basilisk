@@ -179,4 +179,7 @@ class ExtendedStateVector
                                              std::function<Eigen::MatrixXd(const StateData&)>);
 };
 
+// ostream<< overload, useful for easily printing the ExtendedStateVector
+std::ostream& operator<<(std::ostream& os, const ExtendedStateVector& myMap);
+
 #endif /* extendedStateVector_h */
