@@ -31,7 +31,17 @@ void MJQPosStateData::configure(mjModel* mujocoModel)
     this->stateDeriv.resize(mujocoModel->nv, 1);
 }
 
-void MJQPosStateData::propagateState(double dt)
+void MJQPosStateData::propagateState(double dt, std::vector<double> pseudoStep)
 {
     mj_integratePos(this->mujocoModel, this->state.data(), this->stateDeriv.data(), dt);
+
+    if (pseudoStep.size() < getNumNoiseSources())
+    {
+        throw std::invalid_argument("pseudoStep does not have sufficient elements to match the number of noise sources.");
+    }
+
+    for (size_t i = 0; i < getNumNoiseSources(); i++)
+    {
+        mj_integratePos(this->mujocoModel, this->state.data(), this->stateDiffusion.at(i).data(), pseudoStep.at(i));
+    }
 }

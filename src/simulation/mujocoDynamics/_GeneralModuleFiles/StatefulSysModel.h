@@ -64,6 +64,39 @@ public:
         );
     }
 
+    /** Used when more than one state have dynamics perturbed
+     * by the same noise process.
+     *
+     * For example, consider the following SDE:
+     *
+     *   dx_0 = f_0(t,x)dt + g_00(t,x)dW_0 + g_01(t,x)dW_1
+     *   dx_1 = f_1(t,x)dt + g_11(t,x)dW_1
+     *
+     * In this case, state 'x_0' is affected by 2 sources of noise
+     * and 'x_1' by 1 source of noise. However, the source 'W_1' is
+     * shared between 'x_0' and 'x_1'.
+     *
+     * This function is called like:
+     *
+     * \code
+     *     dynParamManager.registerSharedNoiseSource({
+     *         {myStateX0, 1},
+     *         {myStateX1, 0}
+     *     });
+     * \endcode
+     *
+     * which means that the 2nd noise source of the ``StateData`` 'myStateX0'
+     * and the first noise source of the ``StateData`` 'myStateX1' actually
+     * correspond to the same noise process.
+     *
+     * NOTE: Some stochastic integrators do not support sharing noise sources.
+     * In this case, this method should raise ``std::logic_error``.
+     */
+    inline void registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> in)
+    {
+        manager.registerSharedNoiseSource(std::move(in));
+    }
+
 protected:
     DynParamManager& manager; ///< wrapped manager
     std::string stateNamePrefix; ///< prefix added to all registered state names

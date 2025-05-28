@@ -290,6 +290,12 @@ public:
      * task typically compute and apply forces and torques on the system
      * that depend on the simulation time or the state of the multi-body.
      *
+     * Models in this task should contribute to computing ``f`` in:
+     *
+     *     dx = f(t,x) dt
+     *
+     * where ``x`` represents the state of this dynamic object.
+     *
      * @warning `SysModel` added to the dynamics task should be memoryless.
      * That is, any output message computed should depend strictly on
      * input messages and the current time/states. It should save values
@@ -302,6 +308,23 @@ public:
      * @param priority The priority of the model in the task list.
      */
     void AddModelToDynamicsTask(SysModel* model, int32_t priority = -1);
+
+    /** @brief Adds a model to the diffusion dynamics task.
+     *
+     * This task and function are only relevant when the dynamics of
+     * the system are stochastic.
+     *
+     * Similar to ``AddModelToDynamicsTask``, except that models in this
+     * task contribute to computing ``g`` in:
+     *
+     *     dx = f(t,x)dt + g(t,x)dW
+     *
+     * where ``x`` is the state of the system, ``f`` represents the
+     * drift term of the dynamics (classic time derivative), and
+     * ``g`` is the diffusion term of the dynamics (which evaluates
+     * the impact of the random 'noise' ``W`` on the dynamics).
+     */
+    void AddModelToDiffusionDynamicsTask(SysModel* model, int32_t priority = -1);
 
     /**
      * @brief Adds forward kinematics to the dynamics task.
@@ -333,6 +356,17 @@ public:
      * @param priority The priority of the forward kinematics in the task list.
      */
     void AddFwdKinematicsToDynamicsTask(int32_t priority);
+
+    /**
+     * @brief Adds forward kinematics to the diffusion dynamics task.
+     *
+     * See ``AddModelToDiffusionDynamicsTask`` and ``AddFwdKinematicsToDynamicsTask``.
+     *
+     * By default, the diffusion dynamics task has no forward kinematics
+     * model, so one must be added if the diffusion term depends on the
+     * forward kinematics of the multibody.
+     */
+    void AddFwdKinematicsToDiffusionDynamicsTask(int32_t priority);
 
     /**
      * @brief Calls `SelfInit` on all system models in the dynamics task.
@@ -367,10 +401,29 @@ public:
      * joints... These information is translated, through MuJoCo, into
      * first derivatives of the joint states and the mass of bodies.
      *
+     * Computes ``f`` in:
+     *
+     *     dx = f(t,x) dt
+     *
+     * where ``x`` represents the current state of the dynamics.
+     *
      * @param t The current simulation time in seconds.
      * @param timeStep The integration time step.
      */
     void equationsOfMotion(double t, double timeStep) override;
+
+    /**
+     * @brief Computes the diffusion of the dynamics of the system.
+     *
+     * Only relevant for systems with stochastic dynamics.
+     *
+     * Computes ``g`` in:
+     *
+     *     dx = f(t,x) dt + g(t,x)dW
+     *
+     * where ``x`` represents the current state of the dynamics.
+     */
+    void equationsOfMotionDiffusion(double t, double timeStep) override;
 
     /**
      * @brief Prepares the system before actual integration.
@@ -558,6 +611,7 @@ protected:
     bool forwardKinematicsStale = true; ///< Flag indicating stale forward kinematics.
 
     SysModelTask dynamicsTask; ///< Task managing models involved in the dynamics of this scene.
+    SysModelTask dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
     std::vector<std::unique_ptr<SysModel>> ownedSysModel; ///< System models that should be cleared on this scene destruction.
 
     MJQPosStateData* qposState; ///< Position state data.

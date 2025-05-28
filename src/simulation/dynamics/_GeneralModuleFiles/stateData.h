@@ -30,6 +30,7 @@ class StateData
 public:
     Eigen::MatrixXd state;       //!< [-] State value storage
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
+    std::vector<Eigen::MatrixXd> stateDiffusion; //!< [-] State diffusion value storage
     const std::string stateName; //!< [-] Name of the state
     BSKLogger bskLogger;         //!< -- BSK Logging
 
@@ -46,17 +47,59 @@ public:
     /** Destructor */
     virtual ~StateData() = default;
 
+    /** Sets the number of noise sources for this state.
+     *
+     * This is used for stochastic dynamics, where the
+     * evolutions of the state are driven by a set of independent
+     * noise sources:
+     *
+     *  dx = f(t,x)dt + g_0(t,x)dW_0 + g_1(t,x)dW_1 + ... + g_{n-1}(t,x)dW_{n-1}
+     *
+     * where dW_i are independent Wiener processes. The number of
+     * noise sources is equal to the number of diffusion matrices
+     * that are used to drive the stochastic dynamics (n above).
+     *
+     * @param numSources The number of noise sources
+     */
+    void setNumNoiseSources(size_t numSources);
+
+    size_t getNumNoiseSources() const;
+
     /** Updates the value of the state */
     void setState(const Eigen::MatrixXd& newState);
 
     /** Updates the derivative of the value of the state */
     void setDerivative(const Eigen::MatrixXd& newDeriv);
 
+    /** Updates the diffusion of the value of the state.
+     *
+     * This is used for stochastic dynamics, where the
+     * evolutions of the state are driven by a set of independent
+     * noise sources:
+     *
+     *  dx = f(t,x)dt + g_0(t,x)dW_0 + g_1(t,x)dW_1 + ... + g_{n-1}(t,x)dW_{n-1}
+     *
+     * where dW_i are independent Wiener processes. The diffusion
+     * matrices are used to drive the stochastic dynamics (g_i above).
+     *
+     * @param newDiffusion The new diffusion matrix
+     * @param index The index of the diffusion matrix to update.
+     * This must be less than the number of noise sources.
+    */
+    void setDiffusion(const Eigen::MatrixXd& newDiffusion, size_t index);
+
     /** Retrieves a copy of the current state */
     Eigen::MatrixXd getState() const { return state; }
 
     /** Retrieves a copy of the current state derivative */
     Eigen::MatrixXd getStateDeriv() const { return stateDeriv; }
+
+    /** Retrieves a copy of the current state diffusion
+     *
+     * @param index The index of the diffusion matrix to retrieve.
+     * This must be less than the number of noise sources.
+    */
+    Eigen::MatrixXd getStateDiffusion(size_t index) const { return stateDiffusion.at(index); }
 
     /** Returns the name of the state */
     std::string getName() const { return stateName; }
@@ -80,7 +123,7 @@ public:
     void addState(const StateData& other);
 
     /** Propagates the state in time with the stored derivative */
-    virtual void propagateState(double dt);
+    virtual void propagateState(double dt, std::vector<double> pseudoStep = {});
 };
 
 #endif /* STATE_DATA_H */
