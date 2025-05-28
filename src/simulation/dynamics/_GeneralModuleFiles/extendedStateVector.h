@@ -59,17 +59,22 @@ makes performing state-wise operations easier.
  */
 using ExtendedStateId = std::pair<size_t, std::string>;
 
-/** ExtendedStateIdHash is required to make ExtendedStateId hashable (usable as a key in a map) */
-struct ExtendedStateIdHash {
-    /** Generates a hash value (integer) from an ExtendedStateId object */
-    std::size_t operator()(const ExtendedStateId& p) const
+/// @cond DOXYGEN_IGNORE
+namespace std // Inject hash for ExtendedStateId into std::
+{
+    template<> struct hash<ExtendedStateId>
     {
-        auto seed = std::hash<size_t>{}(p.first);
-        // Algorithm from boost::hash_combine
-        seed ^= std::hash<std::string>{}(p.second) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-        return seed;
-    }
-};
+        std::size_t operator()(const ExtendedStateId& input) const noexcept
+        {
+            std::size_t h = 0;
+            hash_combine(h, input.first, input.second);
+            return h;
+        }
+    };
+}
+/// @endcond
+
+using StateIdToIndexMap = std::unordered_map<ExtendedStateId, size_t>;
 
 /**
  * Conceptually similar to StateVector, this class allows us to handle
@@ -78,7 +83,7 @@ struct ExtendedStateIdHash {
  * It also supports several utility functions.
  */
 class ExtendedStateVector
-    : public std::unordered_map<ExtendedStateId, Eigen::MatrixXd, ExtendedStateIdHash> {
+    : public std::unordered_map<ExtendedStateId, Eigen::MatrixXd> {
   public:
     /**
      * Builds a ExtendedStateVector from all states in the given
