@@ -66,11 +66,16 @@ public:
      * @brief Propagates the state over a time step.
      *
      * This method integrates the position state using the state derivative
-     * over the given time step.
+     * over the given time step::
      *
-     * @param dt The time step for propagation.
+     *   x += f(t,x)*h + g_0(t,x)*pseudoStep[0] + g_1(t,x)*pseudoStep[1] ...
+     *
+     * @param h The time step for propagation.
+     * @param pseudoStep For states driven by stochastic dynamics, this
+     * represents the random pseudotimestep. The length of this input must
+     * match the number of noise sources of this state (``getNumNoiseSources()``)
      */
-    void propagateState(double dt) override;
+    void propagateState(double h, std::vector<double> pseudoStep = {}) override;
 
 protected:
     mjModel* mujocoModel; ///< Pointer to the MuJoCo model associated with the state.
