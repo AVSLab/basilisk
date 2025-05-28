@@ -19,6 +19,10 @@
 
 
 %module MJPIDControllers
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "JointPIDController.h"
 %}
@@ -30,8 +34,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "exception.i"
 
-%include "sys_model.i"
-%include "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.h"
+%import "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.i"
 %include "simulation/mujocoDynamics/_GeneralModuleFiles/PIDController.h"
 
 // JointPIDController

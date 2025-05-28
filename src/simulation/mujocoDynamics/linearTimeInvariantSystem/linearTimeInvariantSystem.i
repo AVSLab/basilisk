@@ -40,7 +40,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "exception.i"
 
 /* Basilisk system-model base and helpers */
-%import "simulation/mujocoDynamics/_GeneralModuleFiles/pyStatefulSysModel.i"
+%import "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.i"
 
 /* ============================
    Base class: LinearTimeInvariantSystem
