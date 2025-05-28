@@ -67,7 +67,9 @@ template <size_t numberStages> struct SRKCoefficients {
      *
      * c0 is the row sum of the A(0) matrix:
      *
-     *     c0 = sum_j ​a(0)_ij
+     * \f[
+     *     c_0 = \sum_j a^{(0)}_{ij}
+     * \f]
      */
     StageSizedArray   c0     = {};
 
@@ -75,7 +77,9 @@ template <size_t numberStages> struct SRKCoefficients {
      *
      * c1 is the row sum of the A(1) matrix:
      *
-     *     c1 = sum_j ​a(1)_ij
+     * \f[
+     *     c_1 = \sum_j a^{(1)}_{ij}
+     * \f]
      */
     StageSizedArray   c1     = {};
 };
@@ -102,8 +106,8 @@ public:
     /** Sets the seed to the RNG */
     inline void setSeed(size_t seed) {rng.seed(seed);}
 
-    /** Generates tha random values necessary for one step
-     * of the integrator.abs_y_is_huge
+    /** Generates the random values necessary for one step
+     * of the integrator.
      *
      * @param m number of noise sources
      * @param h time step, in seconds
@@ -285,7 +289,9 @@ protected:
 
     /** Utility function, computes:
      *
-     * result = sum_{i=0..length-1} factors[i]*vectors[i]
+     * \f[
+     * \text{result} = \sum_{i=0}^{\text{length}-1} \text{factors}[i] \cdot \text{vectors}[i]
+     * \f]
      */
     ExtendedStateVector scaledSum(const std::array<double, numberStages>& factors, const std::array<ExtendedStateVector, numberStages>& vectors, size_t length);
 
