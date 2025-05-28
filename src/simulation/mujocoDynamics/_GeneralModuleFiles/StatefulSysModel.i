@@ -28,24 +28,45 @@
 %pythoncode %{
 import sys
 from Basilisk.architecture.swig_common_model import *
+from Basilisk.simulation import stateArchitecture
 %}
 
-%include "architecture/utilities/bskException.swg"
 %include "architecture/utilities/bskLogging.h"
 %import "architecture/_GeneralModuleFiles/py_sys_model.i"
+%import "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+
+%feature("director") StatefulSysModel;
+%rename("_StatefulSysModelBase") StatefulSysModel;
+%include "StatefulSysModel.h"
 
 // We don't need to construct the DynParamRegisterer on the Python side
 %ignore DynParamRegisterer::DynParamRegisterer;
 
-%feature("director") StatefulSysModel;
-%rename("_StatefulSysModel") StatefulSysModel;
-%include "StatefulSysModel.h"
+// Current limitation of SWIG for complex templated types like
+// std::pair<const StateData*, size_t>, we need to declare these manually
+%traits_swigtype(StateData);
+%fragment(SWIG_Traits_frag(StateData));
 
 %template(registerState) DynParamRegisterer::registerState<StateData, true>;
+
+%extend DynParamRegisterer {
+   // SWIG doesnt like const StateData& so we have to use const StateData* and convert
+   void registerSharedNoiseSource(std::vector<std::pair<const StateData*, size_t>> list) {
+      // Convert from pointer pairs to reference pairs
+      std::vector<std::pair<const StateData&, size_t>> refList;
+      refList.reserve(list.size());
+      for (const auto& p : list) {
+         refList.emplace_back(*p.first, p.second);
+      }
+      $self->registerSharedNoiseSource(refList);
+   }
+}
+
+%ignore DynParamRegisterer::registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>>);
 
 %pythoncode %{
 from Basilisk.architecture.sysModel import SysModelMixin
 
-class StatefulSysModel(SysModelMixin, _StatefulSysModel):
+class StatefulSysModel(SysModelMixin, _StatefulSysModelBase):
     """Python wrapper for the C++ StatefulSysModel."""
 %}
