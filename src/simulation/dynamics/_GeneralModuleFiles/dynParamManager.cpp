@@ -61,10 +61,17 @@ void StateVector::scaleStates(double scaleFactor)
     }
 }
 
-void StateVector::propagateStates(double dt)
+void StateVector::propagateStates(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps)
 {
     for (const auto& [key, value] : stateMap) {
-        value->propagateState(dt);
+        if (pseudoTimeSteps.count(key) > 0)
+        {
+            value->propagateState(dt, pseudoTimeSteps.at(key));
+        }
+        else
+        {
+            value->propagateState(dt);
+        }
     }
 }
 
@@ -92,7 +99,10 @@ void DynParamManager::updateStateVector(const StateVector& newState)
     this->stateContainer.setStates(newState);
 }
 
-void DynParamManager::propagateStateVector(double dt) { this->stateContainer.propagateStates(dt); }
+void DynParamManager::propagateStateVector(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps)
+{
+    this->stateContainer.propagateStates(dt, pseudoTimeSteps);
+}
 
 Eigen::MatrixXd* DynParamManager::createProperty(std::string propName,
                                                  const Eigen::MatrixXd& propValue)
@@ -139,5 +149,42 @@ void DynParamManager::setPropertyValue(const std::string propName, const Eigen::
     }
     else {
         it->second = propValue;
+    }
+}
+
+void
+DynParamManager::registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> sharedNoises)
+{
+    std::vector<std::pair<std::string, size_t>> noiseIds;
+
+    for (auto&& [stateData, noiseIndex] : sharedNoises)
+    {
+        if (
+            this->stateContainer.stateMap.count(stateData.getName()) == 0
+            || this->stateContainer.stateMap.at(stateData.getName()).get() != &stateData
+        )
+        {
+            throw std::runtime_error("Given StateData '"
+                + stateData.getName() + "' does not belong to this dynParamManager.");
+        }
+
+        if (noiseIndex >= stateData.getNumNoiseSources())
+        {
+            throw std::runtime_error("Cannot share noise index '"
+                + std::to_string(noiseIndex) + "' of StateData '" + stateData.getName()
+                + "' because that StateData only has " + std::to_string(stateData.getNumNoiseSources())
+                + " noise sources.");
+        }
+
+        noiseIds.emplace_back(stateData.getName(), noiseIndex);
+    }
+
+    // Save all noiseId in the sharedNoiseMap with the
+    // same ID (a simple counter to guarantee uniqueness)
+    size_t sharedNoiseId = this->sharedNoiseMapIdCounter;
+    this->sharedNoiseMapIdCounter++;
+    for (auto&& noiseId : noiseIds)
+    {
+        sharedNoiseMap[noiseId] = sharedNoiseId;
     }
 }
