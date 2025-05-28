@@ -66,8 +66,10 @@ ExtendedStateVector ExtendedStateVector::operator+=(const ExtendedStateVector& r
 {
     this->modify([&rhs](const size_t& dynObjIndex,
                         const std::string& stateName,
-                        Eigen::MatrixXd& thisState) {
-        thisState += rhs.at({dynObjIndex, stateName});
+                        Eigen::MatrixXd& thisState)
+    {
+        if (rhs.count({dynObjIndex, stateName}) > 0)
+            thisState += rhs.at({dynObjIndex, stateName});
     });
 
     return *this;
@@ -80,7 +82,8 @@ ExtendedStateVector ExtendedStateVector::operator-(const ExtendedStateVector& rh
     copy.modify([&rhs](const size_t& dynObjIndex,
                        const std::string& stateName,
                        Eigen::MatrixXd& thisState) {
-        thisState -= rhs.at({dynObjIndex, stateName});
+        if (rhs.count({dynObjIndex, stateName}) > 0)
+            thisState -= rhs.at({dynObjIndex, stateName});
     });
 
     return copy;
