@@ -169,3 +169,32 @@ ExtendedStateVector::fromStateData(const std::vector<DynamicObject*>& dynPtrs,
 
     return result;
 }
+
+// ostream<< overload, useful for easily printing the ExtendedStateVector
+std::ostream& operator<<(std::ostream& os, const ExtendedStateVector& myMap) {
+    std::map<std::pair<size_t, std::string>, Eigen::MatrixXd> ordered(myMap.begin(), myMap.end());
+
+    // Aligned column formatting with 6 decimal precision and consistent indentation
+    Eigen::IOFormat alignedFmt(
+        Eigen::StreamPrecision,        // use full stream precision
+        Eigen::DontAlignCols,          // prevents broken alignment with indentation
+        " ",                           // coefficient separator
+        "\n",                          // row separator
+        "  ",                          // row prefix (indent)
+        ""                             // row postfix
+    );
+
+    for (const auto& [key, matrix] : ordered) {
+        const auto& [id, name] = key;
+        os << "(" << id << ", \"" << name << "\"):\n";
+
+        if (matrix.rows() == 1 && matrix.cols() == 1) {
+            os << "  " << matrix(0, 0) << "\n";
+        } else if (matrix.cols() == 1) {
+            os << matrix.transpose().format(alignedFmt) << "\n";
+        } else {
+            os << matrix.format(alignedFmt) << "\n";
+        }
+    }
+    return os;
+}
