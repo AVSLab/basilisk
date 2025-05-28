@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module(directors="1",threads="1") StatefulSysModel
+%module(directors="1",threads="1",package="Basilisk.simulation") StatefulSysModel
 %{
    #include "StatefulSysModel.h"
 %}
@@ -38,7 +38,7 @@ from Basilisk.architecture.swig_common_model import *
 %feature("pythonappend") StatefulSysModel::StatefulSysModel %{
     self.__super_init_called__ = True%}
 %rename("_StatefulSysModel") StatefulSysModel;
-%include "StatefulSysModel.h"
+%include "StatefulSysModel.i"
 
 %template(registerState) DynParamRegisterer::registerState<StateData, true>;
 
