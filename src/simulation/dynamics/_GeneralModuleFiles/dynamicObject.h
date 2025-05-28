@@ -47,8 +47,24 @@ class DynamicObject : public SysModel {
     /** Hooks the dyn-object into Basilisk architecture */
     virtual void UpdateState(uint64_t callTime) = 0;
 
-    /** Computes F = Xdot(X,t) */
+    /** Computes the time derivative of the states:
+     *
+     *     dx = f(t,x) dt
+     *
+     * ``equationsOfMotion`` is f(t,x) is the equation above.
+     */
     virtual void equationsOfMotion(double t, double timeStep) = 0;
+
+    /** Computes the diffusion of the states:
+     *
+     *      dx = f(t,x) dt + g_0(t,x)dW_0 + g_1(t,x)dW_1 + ... + g_{n-1}(t,x)dW_{n-1}
+     *
+     * ``equationsOfMotionDiffusion`` is equivalent to evaluating
+     * g_0(t,x), g_1(t,x), ..., g_{n-1}(t,x) in the equation above.
+     *
+     * Note that not all ``DynamicObjects`` may support this functionality.
+     */
+    virtual void equationsOfMotionDiffusion(double t, double timeStep) {};
 
     /** Performs pre-integration steps */
     virtual void preIntegration(uint64_t callTimeNanos) = 0;
