@@ -29,9 +29,31 @@ ExtendedStateVector ExtendedStateVector::fromStateDerivs(const std::vector<Dynam
     return fromStateData(dynPtrs, [](const StateData& data) { return data.getStateDeriv(); });
 }
 
-ExtendedStateVector ExtendedStateVector::map(
-    std::function<Eigen::MatrixXd(const size_t&, const std::string&, const Eigen::MatrixXd&)>
-        functor) const
+ExtendedStateVector
+ExtendedStateVector::fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs,
+                                         const StateIdToIndexMap& stateIdToNoiseIndexMap)
+{
+    ExtendedStateVector result;
+    for (auto&& [stateId, noiseIndex] : stateIdToNoiseIndexMap)
+    {
+        result.emplace(stateId, dynPtrs.at(stateId.first)->dynManager.getStateObject(stateId.second)->getStateDiffusion(noiseIndex));
+    }
+    return result;
+}
+
+std::vector<ExtendedStateVector>
+ExtendedStateVector::fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs,
+                                         const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps)
+{
+    std::vector<ExtendedStateVector> result;
+    for (auto&& stateIdToNoiseIndexMap : stateIdToNoiseIndexMaps)
+        result.push_back( fromStateDiffusions(dynPtrs, stateIdToNoiseIndexMap) );
+    return result;
+}
+
+ExtendedStateVector
+ExtendedStateVector::map(
+  std::function<Eigen::MatrixXd(const size_t&, const std::string&, const Eigen::MatrixXd&)> functor) const
 {
     ExtendedStateVector result;
     result.reserve(this->size());
@@ -112,6 +134,23 @@ void ExtendedStateVector::setDerivatives(std::vector<DynamicObject*>& dynPtrs) c
         dynPtrs.at(dynObjIndex)
             ->dynManager.stateContainer.stateMap.at(stateName)
             ->setDerivative(thisDerivative);
+    });
+}
+
+void ExtendedStateVector::setDiffusions(
+    std::vector<DynamicObject*>& dynPtrs,
+    const StateIdToIndexMap& stateIdToNoiseIndexMap
+) const
+{
+    this->apply([&dynPtrs, &stateIdToNoiseIndexMap](const size_t& dynObjIndex,
+                           const std::string& stateName,
+                           const Eigen::MatrixXd& thisDerivative) {
+        dynPtrs.at(dynObjIndex)
+            ->dynManager.stateContainer.stateMap.at(stateName)
+            ->setDiffusion(
+                thisDerivative,
+                stateIdToNoiseIndexMap.at({dynObjIndex, stateName})
+            );
     });
 }
 
