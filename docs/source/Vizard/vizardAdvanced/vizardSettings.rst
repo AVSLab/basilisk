@@ -293,6 +293,9 @@ with every message being sent.  The following live settings can be set directly 
       - If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft
         object. Setting the string to ``AUTO`` or leaving this field empty will select the camera target
         spacecraft as the chief.
+    * - ``terminateVizard``
+      - bool
+      - If true, Vizard application will immediately shut down and exit
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

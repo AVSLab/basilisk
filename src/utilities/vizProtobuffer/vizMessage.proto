@@ -268,6 +268,7 @@ message VizMessage{
         // ALL FIELDS CHECKED EVERY MESSAGE, ONLY NEEDED IF THESE SETTINGS ARE DESIRED
         repeated PointLine targetLines = 1; // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
         string relativeOrbitChief = 2;      // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
+        bool terminateVizard = 3;           // If true, Vizard application will immediately shut down and exit
     }
 
     message VizSettingsPb{
