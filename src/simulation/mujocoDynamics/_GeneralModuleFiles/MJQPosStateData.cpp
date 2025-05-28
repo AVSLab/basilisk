@@ -31,7 +31,21 @@ void MJQPosStateData::configure(mjModel* mujocoModel)
     this->stateDeriv.resize(mujocoModel->nv, 1);
 }
 
-void MJQPosStateData::propagateState(double dt)
+void MJQPosStateData::propagateState(double dt, std::vector<double> pseudoStep)
 {
     mj_integratePos(this->mujocoModel, this->state.data(), this->stateDeriv.data(), dt);
+
+    if (getNumNoiseSources() > 0 && pseudoStep.size() == 0)
+    {
+        auto errorMsg = "State " + this->getName() + " has stochastic dynamics, but "
+            + "the integrator tried to propagate it without pseudoSteps. Are you sure "
+            + "you are using a stochastic integrator?";
+        bskLogger.bskLog(BSK_ERROR, errorMsg.c_str());
+        throw std::invalid_argument(errorMsg);
+    }
+
+    for (size_t i = 0; i < getNumNoiseSources(); i++)
+    {
+        mj_integratePos(this->mujocoModel, this->state.data(), this->stateDiffusion.at(i).data(), pseudoStep.at(i));
+    }
 }
