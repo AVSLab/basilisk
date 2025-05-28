@@ -70,7 +70,7 @@ public:
      *
      * @param dt The time step for propagation.
      */
-    void propagateState(double dt) override;
+    void propagateState(double dt, std::vector<double> pseudoStep = {}) override;
 
 protected:
     mjModel* mujocoModel; ///< Pointer to the MuJoCo model associated with the state.
