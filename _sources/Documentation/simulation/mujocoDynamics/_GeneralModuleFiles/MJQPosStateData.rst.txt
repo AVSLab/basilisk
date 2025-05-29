@@ -1,0 +1,8 @@
+.. _MJQPosStateData:
+
+Module: MJQPosStateData
+=======================
+
+.. autodoxygenfile:: MJQPosStateData.h
+   :project: _GeneralModuleFiles5
+

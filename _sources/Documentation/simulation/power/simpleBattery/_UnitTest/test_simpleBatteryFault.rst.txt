@@ -1,0 +1,13 @@
+.. _test_simpleBatteryFault:
+
+test_simpleBatteryFault
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_simpleBatteryFault
+   :members:
+   :show-inheritance:
+

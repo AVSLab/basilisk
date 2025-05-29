@@ -1,0 +1,8 @@
+.. _interpolator:
+
+Module: interpolator
+====================
+
+.. autodoxygenfile:: interpolator.h
+   :project: _GeneralModuleFiles3
+

@@ -1,0 +1,8 @@
+.. _LambertProblemMsgPayload:
+
+LambertProblemMsgPayload
+================================
+
+.. autodoxygenfile:: LambertProblemMsgPayload.h
+   :project: msgPayloadDefC
+
