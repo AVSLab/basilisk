@@ -330,7 +330,9 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
                            - omegaTilde_SN_P * IPntSc_P * omega_PB_P
                            - this->mass * rTilde_PB_P * omegaTilde_SP_P * rPPrime_ScS_P
                            - this->mass * rTilde_ScB_P * (2.0 * omegaTilde_PB_P * rPPrime_ScP_P
-                                                          + omegaPrimeTilde_PB_P * r_ScP_P + omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P)
+                                                          + omegaPrimeTilde_PB_P * r_ScP_P
+                                                          + omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P
+                                                          + rPrimePrime_PB_P)
                            + this->mass * omegaTilde_PB_P * rTilde_ScP_P * rPPrime_ScP_P
                            - this->mass * omegaTilde_PN_P * rTilde_PB_P * rPPrime_ScP_P
                            + this->mass * omegaTilde_PB_P * rTilde_PB_P * rPPrime_ScP_P

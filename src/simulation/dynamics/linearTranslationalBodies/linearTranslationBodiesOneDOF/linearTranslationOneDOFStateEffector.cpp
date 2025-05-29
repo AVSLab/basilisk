@@ -293,7 +293,9 @@ void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
         backSubContr.vecRot += - IPntFc_b * omegaPrime_PB_B
                                - omegaTilde_BN_b * IPntFc_b * omega_PB_B
                                - this->mass * rTilde_Fcb_b * (2.0 * omegaTilde_PB_B * rPPrime_FcP_B
-                                                              + omegaPrimeTilde_PB_B * r_FcB_b + omegaTilde_PB_B * omegaTilde_PB_B * r_FcB_b)
+                                                              + omegaPrimeTilde_PB_B * r_FcB_b
+                                                              + omegaTilde_PB_B * omegaTilde_PB_B * r_FcB_b
+                                                              + rPrimePrime_PB_B)
                                + this->mass * omegaTilde_PB_B * rTilde_FcB_b * rPPrime_FcP_B
                                - this->mass * omegaTilde_BN_b * rTilde_PB_B * rPPrime_FcP_B
                                + this->mass * omegaTilde_PB_B * rTilde_PB_B * rPPrime_FcP_B
