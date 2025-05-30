@@ -191,7 +191,7 @@ void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, in
         /*! - see if data is newer than last data time stamp */
         if(inputAccData.accPkts[i].measTime > configData->previousTime)
         {
-            dt = (inputAccData.accPkts[i].measTime - configData->previousTime)*NANO2SEC;
+            dt = diffNanoToSec(inputAccData.accPkts[i].measTime, configData->previousTime);
             v3Scale(dt, inputAccData.accPkts[i].accel_B, frameDV_B);
             v3Add(configData->vehAccumDV_B, frameDV_B, configData->vehAccumDV_B);
             configData->previousTime = inputAccData.accPkts[i].measTime;

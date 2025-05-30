@@ -18,6 +18,7 @@
  */
 
 #include "dynamicObject.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
 {
@@ -58,17 +59,17 @@ void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
     dynPtr->isDynamicsSynced = true;
 }
 
-void DynamicObject::integrateState(double integrateToThisTime)
+void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
 {
     if (this->isDynamicsSynced) return;
 
     for (const auto& dynPtr : this->integrator->dynPtrs) {
-        dynPtr->preIntegration(integrateToThisTime);
+        dynPtr->preIntegration(integrateToThisTimeNanos);
     }
 
     this->integrator->integrate(this->timeBefore, this->timeStep);
 
     for (const auto& dynPtr : this->integrator->dynPtrs) {
-        dynPtr->postIntegration(integrateToThisTime);
+        dynPtr->postIntegration(integrateToThisTimeNanos);
     }
 }

@@ -23,19 +23,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-namespace {
-// Prevents casting to int64_t from uint64_t, which could inccur information
-// loss and might raise warnings in some compilers
-double computeDtInSeconds(uint64_t lhs, uint64_t rhs)
-{
-    if (lhs > rhs) {
-        return ((lhs - rhs) * NANO2SEC);
-    }
-    else {
-        return -((rhs - lhs) * NANO2SEC);
-    }
-}
-} // namespace
 
 GravBodyData::GravBodyData()
     : gravityModel{std::make_shared<PointMassGravityModel>()},
@@ -67,7 +54,7 @@ void GravBodyData::initBody(int64_t moduleID)
 
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos)
 {
-    double dt = computeDtInSeconds(simTimeNanos, this->timeWritten);
+    double dt = diffNanoToSec(simTimeNanos, this->timeWritten);
     Eigen::Matrix3d dcm_PfixN = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix).transpose();
     if (dcm_PfixN
             .isZero()) { // Sanity check for connected messages that do not initialize J20002Pfix
@@ -262,7 +249,7 @@ Eigen::Vector3d
 GravityEffector::getEulerSteppedGravBodyPosition(std::shared_ptr<GravBodyData> bodyData)
 {
     uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
-    double dt = computeDtInSeconds(systemClock, bodyData->timeWritten);
+    double dt = diffNanoToSec(systemClock, bodyData->timeWritten);
     Eigen::Vector3d r_PN_N = cArray2EigenVector3d(bodyData->localPlanet.PositionVector);
     r_PN_N += cArray2EigenVector3d(bodyData->localPlanet.VelocityVector) * dt;
     return r_PN_N;
