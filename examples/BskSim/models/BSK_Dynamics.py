@@ -18,14 +18,19 @@
 
 import numpy as np
 from Basilisk import __path__
-from Basilisk.simulation import ephemerisConverter
-from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
-                                 reactionWheelStateEffector, coarseSunSensor, eclipse)
-from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.simulation import (
+    coarseSunSensor,
+    eclipse,
+    ephemerisConverter,
+    extForceTorque,
+    reactionWheelStateEffector,
+    simpleNav,
+    spacecraft,
+    thrusterDynamicEffector,
+)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
-from Basilisk.utilities import simIncludeRW, simIncludeGravBody
-from Basilisk.utilities import simIncludeThruster
+from Basilisk.utilities import simIncludeGravBody, simIncludeRW, simIncludeThruster
 from Basilisk.utilities import unitTestSupport as sp
 
 bskPath = __path__[0]
@@ -80,14 +85,34 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, 300)
 
-        SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
-            ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
-            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
+        def action_oneTimeRWFault(self):
+            self.DynModels.AddRWFault("friction", 0.05, 1, self.TotalSim.CurrentNanos)
+            self.oneTimeRWFaultFlag = 0
 
+        SimBase.createNewEvent(
+            "addOneTimeRWFault",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.TotalSim.CurrentNanos >= self.oneTimeFaultTime
+                and self.oneTimeRWFaultFlag == 1
+            ),
+            actionFunction=action_oneTimeRWFault,
+        )
 
-        SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
-            ["self.repeatRWFaultFlag==1"],
-            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
+        def action_repeatedRWFault(self):
+            self.DynModels.PeriodicRWFault(
+                1.0 / 3000, "friction", 0.005, 1, self.TotalSim.CurrentNanos
+            )
+            self.setEventActivity("addRepeatedRWFault", True)
+
+        SimBase.createNewEvent(
+            "addRepeatedRWFault",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.repeatRWFaultFlag == 1,
+            actionFunction=action_repeatedRWFault,
+        )
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods

@@ -20,10 +20,16 @@ import itertools
 
 import numpy as np
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (inertial3D, locationPointing, attTrackingError, mrpFeedback,
-                                    rwMotorTorque, spacecraftReconfig)
-from Basilisk.utilities import (macros as mc, fswSetupThrusters)
-from Basilisk.utilities import deprecated
+from Basilisk.fswAlgorithms import (
+    attTrackingError,
+    inertial3D,
+    locationPointing,
+    mrpFeedback,
+    rwMotorTorque,
+    spacecraftReconfig,
+)
+from Basilisk.utilities import deprecated, fswSetupThrusters
+from Basilisk.utilities import macros as mc
 
 
 class BSKFswModels:
@@ -110,51 +116,105 @@ class BSKFswModels:
 
         # The standby event should not be active while the station keeping mode is also active. Standby mode disables
         # attitude control and therefore the attitude cannot be corrected for orbital correction burns.
-        SimBase.createNewEvent("initiateStandby_" + str(spacecraftIndex), self.processTasksTimeStep, True,
-                               ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'standby'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
-                                "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
-                                "self.setAllButCurrentEventActivity('initiateStandby_" + str(spacecraftIndex) +
-                                "', True, useIndex=True)"])
+        SimBase.createNewEvent(
+            "initiateStandby_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].modeRequest == "standby"
+            ),
+            actionFunction=lambda self: (
+                self.fswProc[spacecraftIndex].disableAllTasks(),
+                self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
+                self.setAllButCurrentEventActivity(
+                    f"initiateStandby_{spacecraftIndex}", True, useIndex=True
+                ),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateInertialPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
-                               ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'inertialPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
-                                "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
-                                "self.enableTask('inertialPointTask" + str(spacecraftIndex) + "')",
-                                "self.enableTask('trackingErrorTask" + str(spacecraftIndex) + "')",
-                                "self.enableTask('mrpFeedbackRWsTask" + str(spacecraftIndex) + "')",
-                                "self.setAllButCurrentEventActivity('initiateInertialPointing_" + str(spacecraftIndex) +
-                                "', True, useIndex=True)"])
+        SimBase.createNewEvent(
+            "initiateInertialPointing_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].modeRequest == "inertialPointing"
+            ),
+            actionFunction=lambda self: (
+                self.fswProc[spacecraftIndex].disableAllTasks(),
+                self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
+                self.enableTask(f"inertialPointTask{spacecraftIndex}"),
+                self.enableTask(f"trackingErrorTask{spacecraftIndex}"),
+                self.enableTask(f"mrpFeedbackRWsTask{spacecraftIndex}"),
+                self.setAllButCurrentEventActivity(
+                    f"initiateInertialPointing_{spacecraftIndex}", True, useIndex=True
+                ),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateSunPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
-                               ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'sunPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
-                                "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
-                                "self.enableTask('sunPointTask" + str(spacecraftIndex) + "')",
-                                "self.enableTask('trackingErrorTask" + str(spacecraftIndex) + "')",
-                                "self.enableTask('mrpFeedbackRWsTask" + str(spacecraftIndex) + "')",
-                                "self.setAllButCurrentEventActivity('initiateSunPointing_" + str(spacecraftIndex) +
-                                "', True, useIndex=True)"])
+        SimBase.createNewEvent(
+            "initiateSunPointing_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].modeRequest == "sunPointing"
+            ),
+            actionFunction=lambda self: (
+                self.fswProc[spacecraftIndex].disableAllTasks(),
+                self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
+                self.enableTask(f"sunPointTask{spacecraftIndex}"),
+                self.enableTask(f"trackingErrorTask{spacecraftIndex}"),
+                self.enableTask(f"mrpFeedbackRWsTask{spacecraftIndex}"),
+                self.setAllButCurrentEventActivity(
+                    f"initiateSunPointing_{spacecraftIndex}", True, useIndex=True
+                ),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateLocationPointing_" + str(spacecraftIndex), self.processTasksTimeStep, True,
-                               ["self.FSWModels[" + str(spacecraftIndex) + "].modeRequest == 'locationPointing'"],
-                               ["self.fswProc[" + str(spacecraftIndex) + "].disableAllTasks()",
-                                "self.FSWModels[" + str(spacecraftIndex) + "].zeroGateWayMsgs()",
-                                "self.enableTask('locPointTask" + str(spacecraftIndex) + "')",
-                                "self.enableTask('trackingErrorTask" + str(spacecraftIndex) + "')",
-                                "self.enableTask('mrpFeedbackRWsTask" + str(spacecraftIndex) + "')",
-                                "self.setAllButCurrentEventActivity('initiateLocationPointing_" + str(spacecraftIndex) +
-                                "', True, useIndex=True)"])
+        SimBase.createNewEvent(
+            "initiateLocationPointing_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].modeRequest == "locationPointing"
+            ),
+            actionFunction=lambda self: (
+                self.fswProc[spacecraftIndex].disableAllTasks(),
+                self.FSWModels[spacecraftIndex].zeroGateWayMsgs(),
+                self.enableTask(f"locPointTask{spacecraftIndex}"),
+                self.enableTask(f"trackingErrorTask{spacecraftIndex}"),
+                self.enableTask(f"mrpFeedbackRWsTask{spacecraftIndex}"),
+                self.setAllButCurrentEventActivity(
+                    f"initiateLocationPointing_{spacecraftIndex}", True, useIndex=True
+                ),
+            ),
+        )
 
-        SimBase.createNewEvent("initiateStationKeeping_" + str(spacecraftIndex), self.processTasksTimeStep, True,
-                               ["self.FSWModels[" + str(spacecraftIndex) + "].stationKeeping == 'ON'"],
-                               ["self.enableTask('spacecraftReconfigTask" + str(spacecraftIndex) + "')",
-                                "self.setEventActivity('stopStationKeeping_" + str(spacecraftIndex) + "', True)"])
-        SimBase.createNewEvent("stopStationKeeping_" + str(spacecraftIndex), self.processTasksTimeStep, True,
-                               ["self.FSWModels[" + str(spacecraftIndex) + "].stationKeeping == 'OFF'"],
-                               ["self.disableTask('spacecraftReconfigTask" + str(spacecraftIndex) + "')",
-                                "self.setEventActivity('initiateStationKeeping_" + str(spacecraftIndex) + "', True)"])
+        SimBase.createNewEvent(
+            "initiateStationKeeping_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].stationKeeping == "ON"
+            ),
+            actionFunction=lambda self: (
+                self.enableTask(f"spacecraftReconfigTask{spacecraftIndex}"),
+                self.setEventActivity(f"stopStationKeeping_{spacecraftIndex}", True),
+            ),
+        )
+        SimBase.createNewEvent(
+            "stopStationKeeping_" + str(spacecraftIndex),
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.FSWModels[spacecraftIndex].stationKeeping == "OFF"
+            ),
+            actionFunction=lambda self: (
+                self.disableTask(f"spacecraftReconfigTask{spacecraftIndex}"),
+                self.setEventActivity(
+                    f"initiateStationKeeping_{spacecraftIndex}", True
+                ),
+            ),
+        )
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods

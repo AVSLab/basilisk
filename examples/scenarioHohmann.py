@@ -86,16 +86,37 @@ Plots below illustrate
 import os
 
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d as plt3
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, hillPoint, mrpRotation, rwMotorTorque
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, ephemerisConverter
-from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros, orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.fswAlgorithms import (
+    attTrackingError,
+    hillPoint,
+    mrpFeedback,
+    mrpRotation,
+    rwMotorTorque,
+    velocityPoint,
+)
+from Basilisk.simulation import (
+    ephemerisConverter,
+    reactionWheelStateEffector,
+    simpleNav,
+    spacecraft,
+)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    fswSetupRW,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    unitTestSupport,
+    vizSupport,
+)
+from mpl_toolkits import mplot3d as plt3
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -357,26 +378,44 @@ def run(show_plots, rFirst, rSecond):
     scSim.AddModelToTask(fswTaskName, attRefLog)
 
     # Create tje attitude events (three different reference attitudes are required for the sim)
-    scSim.createNewEvent("firstBurnEvent", simulationTimeStep, True,
-                         ["self.modeRequest == 'firstBurn'"],
-                         ["self.fswProcess.disableAllTasks()",
-                          "self.enableTask('firstBurnTask')",
-                          "self.enableTask('fswTask')",
-                          "self.setAllButCurrentEventActivity('firstBurnEvent', True, useIndex=True)"])
+    scSim.createNewEvent(
+        "firstBurnEvent",
+        simulationTimeStep,
+        True,
+        conditionFunction=lambda self: self.modeRequest == "firstBurn",
+        actionFunction=lambda self: (
+            self.fswProcess.disableAllTasks(),
+            self.enableTask("firstBurnTask"),
+            self.enableTask("fswTask"),
+            self.setAllButCurrentEventActivity("firstBurnEvent", True, useIndex=True),
+        ),
+    )
 
-    scSim.createNewEvent("secondBurnEvent", simulationTimeStep, True,
-                         ["self.modeRequest == 'secondBurn'"],
-                         ["self.fswProcess.disableAllTasks()",
-                          "self.enableTask('secondBurnTask')",
-                          "self.enableTask('fswTask')",
-                          "self.setAllButCurrentEventActivity('secondBurnEvent', True, useIndex=True)"])
+    scSim.createNewEvent(
+        "secondBurnEvent",
+        simulationTimeStep,
+        True,
+        conditionFunction=lambda self: self.modeRequest == "secondBurn",
+        actionFunction=lambda self: (
+            self.fswProcess.disableAllTasks(),
+            self.enableTask("secondBurnTask"),
+            self.enableTask("fswTask"),
+            self.setAllButCurrentEventActivity("secondBurnEvent", True, useIndex=True),
+        ),
+    )
 
-    scSim.createNewEvent("hillPointEvent", simulationTimeStep, True,
-                         ["self.modeRequest == 'hillPoint'"],
-                         ["self.fswProcess.disableAllTasks()",
-                          "self.enableTask('hillPointTask')",
-                          "self.enableTask('fswTask')",
-                          "self.setAllButCurrentEventActivity('hillPointEvent', True, useIndex=True)"])
+    scSim.createNewEvent(
+        "hillPointEvent",
+        simulationTimeStep,
+        True,
+        conditionFunction=lambda self: self.modeRequest == "hillPoint",
+        actionFunction=lambda self: (
+            self.fswProcess.disableAllTasks(),
+            self.enableTask("hillPointTask"),
+            self.enableTask("fswTask"),
+            self.setAllButCurrentEventActivity("hillPointEvent", True, useIndex=True),
+        ),
+    )
 
     # Set the simulation time variable and the period of the first orbit
     simulationTime = 0
