@@ -27,6 +27,7 @@
    #include "svIntegratorRK2.h"
    #include "svIntegratorRKF45.h"
    #include "svIntegratorRKF78.h"
+   #include "svStochIntegratorMayurama.h"
    #include "architecture/_GeneralModuleFiles/sys_model.h"
    #include "../_GeneralModuleFiles/dynamicObject.h"
 %}
@@ -129,6 +130,7 @@ TEMPLATE_HELPER(13)
 %include "svIntegratorRK2.h"
 %include "svIntegratorRKF45.h"
 %include "svIntegratorRKF78.h"
+%include "svStochIntegratorMayurama.h"
 
 // The following methods allow users to create new Runge-Kutta
 // methods simply by providing their coefficients on the Python side
