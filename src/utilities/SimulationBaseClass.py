@@ -98,7 +98,6 @@ class EventHandlerClass:
         self.actionFunction = actionFunction or (lambda _: None)
 
         if conditionList is not None:
-            warnings.warn("conditionFunction is preferred over conditionList.")
             if conditionFunction is not None:
                 raise ValueError(
                     "Only specify a conditionFunction or a conditionList, not both"
@@ -107,7 +106,6 @@ class EventHandlerClass:
                 self.conditionFunction = methodizeCondition(conditionList)
 
         if actionList is not None:
-            warnings.warn("actionFunction is preferred over actionList.")
             if actionFunction is not None:
                 raise ValueError(
                     "Only specify an actionFunction or am actionList, not both."
@@ -483,15 +481,19 @@ class SimBaseClass:
             eventName (str): Name of the event
             eventRate (int): Rate at which the event is checked in nanoseconds
             eventActive (bool): Whether the event is active or not
-            conditionList (list): [deprecated] List of conditions to check for the event,
+            conditionList (list): List of conditions to check for the event,
                 expressed as strings of code to execute within the class.
-            actionList (list): [deprecated] List of actions to perform when the event occurs,
+            actionList (list): List of actions to perform when the event occurs,
                 expressed as strings of code to execute within the class.
             terminal (bool): Whether this event should terminate the simulation when it occurs
             conditionFunction (function): Function to check if the event should occur. The
                 function should take the simulation object as an argument and return a boolean.
+                This is the preferred manner to set conditions as it enables the use of arbitrary
+                packages and objects in events and allows for event code to be parsed by IDE tools.
             actionFunction (function): Function to execute when the event occurs. The
                 function should take the simulation object as an argument.
+                This is the preferred manner to set conditions as it enables the use of arbitrary
+                packages and objects in events and allows for event code to be parsed by IDE tools.
         """
         if (eventName in list(self.eventMap.keys())):
             warnings.warn(f"Skipping event creation since {eventName} already exists.")
