@@ -34,7 +34,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "sys_model.i"
 %include "../_GeneralModuleFiles/fuelSlosh.h"
-%include "../_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "../_GeneralModuleFiles/stateEffector.h"
 
 %include "sphericalPendulum.h"
