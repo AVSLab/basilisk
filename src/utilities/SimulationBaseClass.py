@@ -17,12 +17,9 @@
 
 
 
-import array
-import inspect
 
 # Import some architectural stuff that we will probably always use
 import os
-import sys
 import warnings
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
