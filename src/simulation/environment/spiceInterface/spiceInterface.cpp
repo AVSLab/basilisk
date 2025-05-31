@@ -497,8 +497,7 @@ int SpiceInterface::unloadSpiceKernel(const char *kernelName, const char *dataPa
     auto it = kernelReferenceCounter.find(filepath);
     if (it == kernelReferenceCounter.end() || it->second <= 0) {
         // Kernel was never loaded or already unloaded
-        bskLogger.bskLog(BSK_ERROR, "Attempting to unload kernel that was never loaded: %s", filepath.c_str());
-        return 1;
+        return 0;
     }
 
     // Decrement the reference counter
