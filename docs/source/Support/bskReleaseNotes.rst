@@ -33,6 +33,10 @@ Version |release|
 - Added a new github workflow job ``canary`` to routinely check the compatibility of latest python dependencies with python 3.13 on the latest mac-os.
 - Fixed a bug in :ref:`spiceInterface` where multiple instances of the module were not properly managing SPICE kernel references, leading to potential conflicts and data corruption.
 - Deprecated :ref:`SpacecraftSystem`.  It was never completed and we have other ways to connect spacecraft components
+- Support for stochastic dynamics (dynamics driven by Stochastic Differential Equations). Added two stochastic integrators:
+  :ref:`svStochIntegratorW2Ito1` and :ref:`svStochIntegratorW2Ito2`. These are 2-weak-order stochastic integrators.
+- Added :ref:`scenarioStochasticDrag`, which illustrates how to use a state driven by stochastic dynamics to
+  model randomly evolving atmospheric density (and thus drag force).
 
 
 Version 2.7.0 (April 20, 2025)

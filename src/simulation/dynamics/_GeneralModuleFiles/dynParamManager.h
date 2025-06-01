@@ -27,6 +27,33 @@
 #include <stdint.h>
 #include <type_traits>
 #include <vector>
+#include <functional>
+
+/// @cond DOXYGEN_IGNORE
+template <typename T, typename... Rest>
+void hash_combine(std::size_t& seed, const T& v, const Rest&... rest)
+{
+    seed ^= std::hash<T>{}(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    (hash_combine(seed, rest), ...);
+}
+
+namespace std // Inject hash for std::pair<std::string, size_t> into std::
+{
+    /** Hash implementation for ``std::pair<std::string, size_t>``,
+     * allows using it as the key in maps.
+     */
+    template<> struct hash<std::pair<std::string, size_t>>
+    {
+        /** Produce hash from ``std::pair<std::string, size_t>`` */
+        std::size_t operator()(const std::pair<std::string, size_t>& input) const noexcept
+        {
+            std::size_t h = 0;
+            hash_combine(h, input.first, input.second);
+            return h;
+        }
+    };
+}
+/// @endcond
 
 /** StateVector represents an ordered collection of StateData,
  * with each state having a unique name.
@@ -71,7 +98,7 @@ class StateVector {
     void scaleStates(double scaleFactor);
 
     /** Scales the states of this StateVector by the given delta time */
-    void propagateStates(double dt);
+    void propagateStates(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps = {});
 };
 
 /** A class that manages a set of states and properties. */
@@ -141,7 +168,44 @@ class DynParamManager {
     void updateStateVector(const StateVector& newState);
 
     /** Propagates the states managed by this class a given delta time.  */
-    void propagateStateVector(double dt);
+    void propagateStateVector(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps = {});
+
+    /** Used when more than one state have dynamics perturbed
+     * by the same noise process.
+     *
+     * For example, consider the following SDE:
+     *
+     *   dx_0 = f_0(t,x)dt + g_00(t,x)dW_0 + g_01(t,x)dW_1
+     *   dx_1 = f_1(t,x)dt + g_11(t,x)dW_1
+     *
+     * In this case, state 'x_0' is affected by 2 sources of noise
+     * and 'x_1' by 1 source of noise. However, the source 'W_1' is
+     * shared between 'x_0' and 'x_1'.
+     *
+     * This function is called like:
+     *
+     * \code
+     *     dynParamManager.registerSharedNoiseSource({
+     *         {myStateX0, 1},
+     *         {myStateX1, 0}
+     *     });
+     * \endcode
+     *
+     * which means that the 2nd noise source of the ``StateData`` 'myStateX0'
+     * and the first noise source of the ``StateData`` 'myStateX1' actually
+     * correspond to the same noise process.
+     */
+    void registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>>);
+
+    /** When multiple states share a noise source, then this map
+     * maps their (name, noiseIndex) to the same number
+     */
+    std::unordered_map<std::pair<std::string, size_t>, size_t> sharedNoiseMap;
+protected:
+    /** A counter used to ensure that the values in ``sharedNoiseMap``
+     * are unique.
+     */
+    size_t sharedNoiseMapIdCounter = 0;
 };
 
 template <typename StateDataType,

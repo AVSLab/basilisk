@@ -59,17 +59,26 @@ makes performing state-wise operations easier.
  */
 using ExtendedStateId = std::pair<size_t, std::string>;
 
-/** ExtendedStateIdHash is required to make ExtendedStateId hashable (usable as a key in a map) */
-struct ExtendedStateIdHash {
-    /** Generates a hash value (integer) from an ExtendedStateId object */
-    std::size_t operator()(const ExtendedStateId& p) const
+/// @cond DOXYGEN_IGNORE
+namespace std // Inject hash for ExtendedStateId into std::
+{
+    /** Hash implementation for ``std::pair<size_t, std::string>``,
+     * allows using it as the key in maps.
+     */
+    template<> struct hash<ExtendedStateId>
     {
-        auto seed = std::hash<size_t>{}(p.first);
-        // Algorithm from boost::hash_combine
-        seed ^= std::hash<std::string>{}(p.second) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-        return seed;
-    }
-};
+        /** Produce hash from ``std::pair<size_t, std::string>`` */
+        std::size_t operator()(const ExtendedStateId& input) const noexcept
+        {
+            std::size_t h = 0;
+            hash_combine(h, input.first, input.second);
+            return h;
+        }
+    };
+}
+/// @endcond
+
+using StateIdToIndexMap = std::unordered_map<ExtendedStateId, size_t>;
 
 /**
  * Conceptually similar to StateVector, this class allows us to handle
@@ -78,7 +87,7 @@ struct ExtendedStateIdHash {
  * It also supports several utility functions.
  */
 class ExtendedStateVector
-    : public std::unordered_map<ExtendedStateId, Eigen::MatrixXd, ExtendedStateIdHash> {
+    : public std::unordered_map<ExtendedStateId, Eigen::MatrixXd> {
   public:
     /**
      * Builds a ExtendedStateVector from all states in the given
@@ -91,6 +100,19 @@ class ExtendedStateVector
      * in the given dynamic objects
      */
     static ExtendedStateVector fromStateDerivs(const std::vector<DynamicObject*>& dynPtrs);
+
+    /**
+     * Extracts the diffusion at the specified noise index for the states
+     * present in ``stateIdToNoiseIndexMap``.
+     */
+    static ExtendedStateVector
+    fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs, const StateIdToIndexMap& stateIdToNoiseIndexMap);
+
+    /**
+     * Calls and returns the result of ``fromStateDiffusions`` for each map in ``stateIdToNoiseIndexMaps``.
+     */
+    static std::vector<ExtendedStateVector>
+    fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs, const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps);
 
     /**
      * This method will call the given std::function for every
@@ -140,9 +162,24 @@ class ExtendedStateVector
     /** Calls StateData::setDerivative for every entry in this */
     void setDerivatives(std::vector<DynamicObject*>& dynPtrs) const;
 
+    /** Calls StateData::setDiffusion for every entry in this
+     *
+     * Note that this extendedStateVector may contain the diffusion
+     * corresponding to different noise sources for each state. Thus,
+     * the input ``stateIdToNoiseIndexMap`` is necessary to set for
+     * which noise source this diffusion is given.
+    */
+    void setDiffusions(
+      std::vector<DynamicObject*>& dynPtrs,
+      const StateIdToIndexMap& stateIdToNoiseIndexMap
+    ) const;
+
   private:
     static ExtendedStateVector fromStateData(const std::vector<DynamicObject*>& dynPtrs,
                                              std::function<Eigen::MatrixXd(const StateData&)>);
 };
+
+// ostream<< overload, useful for easily printing the ExtendedStateVector
+std::ostream& operator<<(std::ostream& os, const ExtendedStateVector& myMap);
 
 #endif /* extendedStateVector_h */

@@ -244,11 +244,11 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
 
     /** Holds the maximum relative truncation error allowed for specific states of specific dynamic
      * objects*/
-    std::unordered_map<ExtendedStateId, double, ExtendedStateIdHash> dynObjectStateSpecificRelTol;
+    std::unordered_map<ExtendedStateId, double> dynObjectStateSpecificRelTol;
 
     /** Holds the maximum absolute truncation error allowed for specific states of specific dynamic
      * objects*/
-    std::unordered_map<ExtendedStateId, double, ExtendedStateIdHash> dynObjectStateSpecificAbsTol;
+    std::unordered_map<ExtendedStateId, double> dynObjectStateSpecificAbsTol;
 };
 
 template <size_t numberStages>

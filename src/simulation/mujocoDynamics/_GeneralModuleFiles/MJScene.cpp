@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <unordered_set>
 
 MJScene::MJScene(std::string xml, const std::vector<std::string>& files)
     : spec(*this, xml, files)
@@ -59,13 +60,31 @@ void MJScene::AddFwdKinematicsToDynamicsTask(int32_t priority)
     this->AddModelToDynamicsTask(this->ownedSysModel.back().get(), priority);
 }
 
-void MJScene::SelfInit() { this->dynamicsTask.SelfInitTaskList(); }
+void MJScene::AddModelToDiffusionDynamicsTask(SysModel* model, int32_t priority)
+{
+    this->dynamicsDiffusionTask.AddNewObject(model, priority);
+}
+
+void MJScene::AddFwdKinematicsToDiffusionDynamicsTask(int32_t priority)
+{
+    this->ownedSysModel.emplace_back(std::make_unique<MJFwdKinematics>(*this));
+    this->ownedSysModel.back()->ModelTag = "FwdKinematics" + std::to_string(this->ownedSysModel.size()-1);
+    this->AddModelToDiffusionDynamicsTask(this->ownedSysModel.back().get(), priority);
+}
+
+void MJScene::SelfInit()
+{
+    this->dynamicsTask.SelfInitTaskList();
+    this->dynamicsDiffusionTask.SelfInitTaskList();
+}
 
 void MJScene::Reset(uint64_t CurrentSimNanos)
 {
     this->timeBefore = CurrentSimNanos * NANO2SEC;
     this->dynamicsTask.TaskName = "Dynamics:" + this->ModelTag;
     this->dynamicsTask.ResetTaskList(CurrentSimNanos);
+    this->dynamicsDiffusionTask.TaskName = "DiffusionDynamics:" + this->ModelTag;
+    this->dynamicsDiffusionTask.ResetTaskList(CurrentSimNanos);
     this->initializeDynamics();
     this->writeOutputStateMessages(CurrentSimNanos);
 }
@@ -95,16 +114,31 @@ void MJScene::initializeDynamics()
     }
 
     // Register the states of the models in the dynamics task
-    for (auto[_, sysModelPtr] : this->dynamicsTask.TaskModels)
+    std::unordered_set<StatefulSysModel*> alreadyRegisteredModels;
+    auto registerStatesOnSysModel = [this, &alreadyRegisteredModels](SysModel* sysModelPtr)
     {
         if (auto statefulSysModelPtr = dynamic_cast<StatefulSysModel*>(sysModelPtr))
         {
+            // Don't registerStates in a model twice!
+            if (alreadyRegisteredModels.count(statefulSysModelPtr) > 0) return;
+
             statefulSysModelPtr->registerStates(DynParamRegisterer(
                 this->dynManager,
                 sysModelPtr->ModelTag.empty() ? std::string("model") : sysModelPtr->ModelTag
                 + "_" + std::to_string(sysModelPtr->moduleID) + "_"
             ));
+
+            alreadyRegisteredModels.emplace(statefulSysModelPtr);
         }
+    };
+
+    for (auto[_, sysModelPtr] : this->dynamicsTask.TaskModels)
+    {
+        registerStatesOnSysModel(sysModelPtr);
+    }
+    for (auto[_, sysModelPtr] : this->dynamicsDiffusionTask.TaskModels)
+    {
+        registerStatesOnSysModel(sysModelPtr);
     }
 }
 
@@ -206,6 +240,12 @@ void MJScene::equationsOfMotion(double t, double timeStep)
     }
 }
 
+void MJScene::equationsOfMotionDiffusion(double t, double timeStep)
+{
+    auto nanos = static_cast<uint64_t>(t * SEC2NANO);
+    this->dynamicsDiffusionTask.ExecuteTaskList(nanos);
+}
+
 void MJScene::preIntegration(double callTime) { this->timeStep = callTime - this->timeBefore; }
 
 void MJScene::postIntegration(double callTime)
@@ -221,6 +261,7 @@ void MJScene::postIntegration(double callTime)
         // time with the final/integrated state. This also calls
         // MJFwdKinematics::fwdKinematics
         equationsOfMotion(callTime, 0);
+        equationsOfMotionDiffusion(callTime, 0);
     }
     else
     {

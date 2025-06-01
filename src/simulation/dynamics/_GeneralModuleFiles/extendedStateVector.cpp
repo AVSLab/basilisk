@@ -29,9 +29,31 @@ ExtendedStateVector ExtendedStateVector::fromStateDerivs(const std::vector<Dynam
     return fromStateData(dynPtrs, [](const StateData& data) { return data.getStateDeriv(); });
 }
 
-ExtendedStateVector ExtendedStateVector::map(
-    std::function<Eigen::MatrixXd(const size_t&, const std::string&, const Eigen::MatrixXd&)>
-        functor) const
+ExtendedStateVector
+ExtendedStateVector::fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs,
+                                         const StateIdToIndexMap& stateIdToNoiseIndexMap)
+{
+    ExtendedStateVector result;
+    for (auto&& [stateId, noiseIndex] : stateIdToNoiseIndexMap)
+    {
+        result.emplace(stateId, dynPtrs.at(stateId.first)->dynManager.getStateObject(stateId.second)->getStateDiffusion(noiseIndex));
+    }
+    return result;
+}
+
+std::vector<ExtendedStateVector>
+ExtendedStateVector::fromStateDiffusions(const std::vector<DynamicObject*>& dynPtrs,
+                                         const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps)
+{
+    std::vector<ExtendedStateVector> result;
+    for (auto&& stateIdToNoiseIndexMap : stateIdToNoiseIndexMaps)
+        result.push_back( fromStateDiffusions(dynPtrs, stateIdToNoiseIndexMap) );
+    return result;
+}
+
+ExtendedStateVector
+ExtendedStateVector::map(
+  std::function<Eigen::MatrixXd(const size_t&, const std::string&, const Eigen::MatrixXd&)> functor) const
 {
     ExtendedStateVector result;
     result.reserve(this->size());
@@ -115,6 +137,23 @@ void ExtendedStateVector::setDerivatives(std::vector<DynamicObject*>& dynPtrs) c
     });
 }
 
+void ExtendedStateVector::setDiffusions(
+    std::vector<DynamicObject*>& dynPtrs,
+    const StateIdToIndexMap& stateIdToNoiseIndexMap
+) const
+{
+    this->apply([&dynPtrs, &stateIdToNoiseIndexMap](const size_t& dynObjIndex,
+                           const std::string& stateName,
+                           const Eigen::MatrixXd& thisDerivative) {
+        dynPtrs.at(dynObjIndex)
+            ->dynManager.stateContainer.stateMap.at(stateName)
+            ->setDiffusion(
+                thisDerivative,
+                stateIdToNoiseIndexMap.at({dynObjIndex, stateName})
+            );
+    });
+}
+
 ExtendedStateVector
 ExtendedStateVector::fromStateData(const std::vector<DynamicObject*>& dynPtrs,
                                    std::function<Eigen::MatrixXd(const StateData&)> functor)
@@ -129,4 +168,33 @@ ExtendedStateVector::fromStateData(const std::vector<DynamicObject*>& dynPtrs,
     }
 
     return result;
+}
+
+// ostream<< overload, useful for easily printing the ExtendedStateVector
+std::ostream& operator<<(std::ostream& os, const ExtendedStateVector& myMap) {
+    std::map<std::pair<size_t, std::string>, Eigen::MatrixXd> ordered(myMap.begin(), myMap.end());
+
+    // Aligned column formatting with 6 decimal precision and consistent indentation
+    Eigen::IOFormat alignedFmt(
+        Eigen::StreamPrecision,        // use full stream precision
+        Eigen::DontAlignCols,          // prevents broken alignment with indentation
+        " ",                           // coefficient separator
+        "\n",                          // row separator
+        "  ",                          // row prefix (indent)
+        ""                             // row postfix
+    );
+
+    for (const auto& [key, matrix] : ordered) {
+        const auto& [id, name] = key;
+        os << "(" << id << ", \"" << name << "\"):\n";
+
+        if (matrix.rows() == 1 && matrix.cols() == 1) {
+            os << "  " << matrix(0, 0) << "\n";
+        } else if (matrix.cols() == 1) {
+            os << matrix.transpose().format(alignedFmt) << "\n";
+        } else {
+            os << matrix.format(alignedFmt) << "\n";
+        }
+    }
+    return os;
 }
