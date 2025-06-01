@@ -126,7 +126,7 @@ Atmospheric Drag
    :maxdepth: 1
 
    Satellite Drag Deorbit about Earth <scenarioDragDeorbit>
-
+   Satellite Drag with Stochastic (Random) Density <mujoco/scenarioStochasticDrag>
 
 Access to Communication Locations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
