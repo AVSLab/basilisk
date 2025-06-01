@@ -24,6 +24,7 @@ import os
 import importlib
 
 import pytest
+from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import mujoco
@@ -32,8 +33,9 @@ try:
 except:
     couldImportMujoco = False
 
+THIS_FOLDER = os.path.dirname(__file__)
 SCENARIO_FOLDER = os.path.join(
-    os.path.dirname(__file__), "..", "..", "examples", "mujoco"
+    THIS_FOLDER, "..", "..", "examples", "mujoco"
 )
 SCENARIO_FILES = [
     filename[:-3]
@@ -49,8 +51,11 @@ sys.path.append(SCENARIO_FOLDER)
 @pytest.mark.scenarioTest
 def test_scenarios(scenario: str):
     module = importlib.import_module(scenario)
-    module.run()  # Every mujoco scenario should have a run function
+    figures = module.run()  # Every mujoco scenario should have a run function
 
+    if figures is not None:
+        for pltName, plt in figures.items():
+            unitTestSupport.saveScenarioFigure(f"{scenario}_{pltName}", plt, THIS_FOLDER)
 
 if __name__ == "__main__":
     pytest.main([__file__])
