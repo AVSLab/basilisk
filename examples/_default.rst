@@ -127,7 +127,8 @@ Atmospheric Drag
    :maxdepth: 1
 
    Satellite Drag Deorbit about Earth <scenarioDragDeorbit>
-
+   Satellite Drag with Stochastic (Random) Density using Spacecraft <scenarioStochasticDragSpacecraft>
+   Satellite Drag with Stochastic (Random) Density using MuJoCo <mujoco/scenarioStochasticDrag>
 
 Access to Communication Locations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -217,6 +218,7 @@ It's recommended to study the first 6 scenarios in order:
   Branching Panel Deployment with Locking Mechanisms <mujoco/scenarioBranchingPanels>
   Pointing with Reaction Wheels in MuJoCo <mujoco/scenarioAttitudeFeedbackRWMuJoCo>
   Translation-only formation flying under differential drag <mujoco/scenarioFormationFlyingWithDrag>
+  Satellite Drag with Stochastic (Random) Density using MuJoCo <mujoco/scenarioStochasticDrag>
 
 Constrained Spacecraft Dynamics Simulations
 -------------------------------------------
