@@ -29,6 +29,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 import pytest
+from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import mujoco
@@ -37,8 +38,9 @@ try:
 except:
     couldImportMujoco = False
 
+THIS_FOLDER = os.path.dirname(__file__)
 SCENARIO_FOLDER = os.path.join(
-    os.path.dirname(__file__), "..", "..", "examples", "mujoco"
+    THIS_FOLDER, "..", "..", "examples", "mujoco"
 )
 SCENARIO_FILES = [
     filename[:-3]
