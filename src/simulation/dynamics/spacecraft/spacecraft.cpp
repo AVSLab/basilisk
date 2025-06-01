@@ -446,6 +446,11 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     }
 }
 
+void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double timeStep)
+{
+    this->equationsOfMotion(integTimeSeconds, timeStep);
+}
+
 /*! Prepare for integration process
  @param integrateToThisTimeNanos Time to integrate to
  */
