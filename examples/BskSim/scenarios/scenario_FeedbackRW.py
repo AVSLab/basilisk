@@ -92,11 +92,14 @@ remain zero in such a case.
 Finally, the :ref:`inertial3D` mode call in :ref:`scenario_FeedbackRW` needs to be triggered by::
 
      SimBase.createNewEvent("initiateInertial3D", self.processTasksTimeStep, True,
-                   ["self.modeRequest == 'inertial3D'"],
-                   ["self.fswProc.disableAllTasks()",
-                    "self.FSWModels.zeroGateWayMsgs()",
-                    "self.enableTask('inertial3DPointTask')",
-                    "self.enableTask('mrpFeedbackRWsTask')"])
+                   conditionFunction=lambda self: self.modeRequest == "inertial3D",
+                   actionFunction=lambda self: (
+                       self.fswProc.disableAllTasks(),
+                       self.FSWModels.zeroGateWayMsgs(),
+                       self.enableTask("inertial3DPointTask"),
+                       self.enableTask("mrpFeedbackRWsTask"),
+                   )
+     )
 
 which disables any existing tasks, zero's all the stand-alone gateway messages
 and enables the inertial pointing task and RW feedback task.
@@ -136,8 +139,9 @@ import os
 import sys
 
 import numpy as np
+
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport
+from Basilisk.utilities import macros, orbitalMotion, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -146,9 +150,10 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../')
 sys.path.append(path + '/../models')
 sys.path.append(path + '/../plotting')
-from BSK_masters import BSKSim, BSKScenario
-import BSK_Dynamics, BSK_Fsw
+import BSK_Dynamics
+import BSK_Fsw
 import BSK_Plotting as BSK_plt
+from BSK_masters import BSKScenario, BSKSim
 
 
 # Create your own scenario child class

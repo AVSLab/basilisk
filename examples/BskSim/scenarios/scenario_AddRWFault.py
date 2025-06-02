@@ -22,7 +22,7 @@ Overview
 This script demonstrates how to use event handlers to add reaction wheel faults. The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::
 
       python3 scenario_AddRWFault.py
-      
+
 Using event handlers
 --------------------
 
@@ -31,7 +31,7 @@ The event handler class, defined in ``SimulationBaseClass``, allows the user to 
 When creating an event handler, the following syntax is used::
 
     SimBase.createNewEvent("eventName", eventRate, eventActive,
-        conditionList=[], actionList = [])
+        conditionFunction=lambda self: False, actionFunction = lambda self: None)
 
 Within the condition list should be the conditions for executing the event, specified as strings. Likewise, the action list enumerates strings that are executed when the event happens. Because the code parses these strings, rather than having complex conditions or actions in the string literals, it can be convenient to create methods (see the examples below).
 
@@ -42,17 +42,39 @@ Setting up the faults
 
 This script uses two event handlers. The first one defines an event that injects a large, one-time static friction fault::
 
-        SimBase.createNewEvent("addOneTimeRWFault", self.processTasksTimeStep, True,
-            ["self.TotalSim.CurrentNanos>=self.oneTimeFaultTime and self.oneTimeRWFaultFlag==1"],
-            ["self.DynModels.AddRWFault('friction',0.05,1, self.TotalSim.CurrentNanos)", "self.oneTimeRWFaultFlag=0"])
+        def action_oneTimeRWFault(self):
+            self.DynModels.AddRWFault("friction", 0.05, 1, self.TotalSim.CurrentNanos)
+            self.oneTimeRWFaultFlag = 0
+
+        SimBase.createNewEvent(
+            "addOneTimeRWFault",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: (
+                self.TotalSim.CurrentNanos >= self.oneTimeFaultTime
+                and self.oneTimeRWFaultFlag == 1
+            ),
+            actionFunction=action_oneTimeRWFault,
+        )
+
 
 For this event, the conditions are that the time for the fault has passed, and that the corresponding fault flag is active. The fault time is specified in the scenario script. The ``oneTimeRWFaultFlag`` and the ``repeatRWFaultFlag``, also set in the scenario script, ensures that the faults are added only for the fault scenario.
 
 The second event handler defines an event that is always active, and adds a smaller static friction fault with small probability::
 
-        SimBase.createNewEvent("addRepeatedRWFault", self.processTasksTimeStep, True,
-            ["self.repeatRWFaultFlag==1"],
-            ["self.DynModels.PeriodicRWFault(1./3000,'friction',0.005,1, self.TotalSim.CurrentNanos)", "self.setEventActivity('addRepeatedRWFault',True)"])
+        def action_repeatedRWFault(self):
+            self.DynModels.PeriodicRWFault(
+                1.0 / 3000, "friction", 0.005, 1, self.TotalSim.CurrentNanos
+            )
+            self.setEventActivity("addRepeatedRWFault", True)
+
+        SimBase.createNewEvent(
+            "addRepeatedRWFault",
+            self.processTasksTimeStep,
+            True,
+            conditionFunction=lambda self: self.repeatRWFaultFlag == 1,
+            actionFunction=action_repeatedRWFault,
+        )
 
 Note the command ``"self.setEventActivity('addRepeatedRWFault',True)"``, keeping the eventActive flag turned on for this event handler. For both event handlers, the particular methods that change the reaction wheel friction parameters are defined in ``BSK_Dynamics``.
 
@@ -83,7 +105,7 @@ import os
 import sys
 
 import numpy as np
-from Basilisk.utilities import orbitalMotion, macros
+from Basilisk.utilities import macros, orbitalMotion
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -92,9 +114,11 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../')
 sys.path.append(path + '/../models')
 sys.path.append(path + '/../plotting')
-from BSK_masters import BSKSim, BSKScenario
-import BSK_Dynamics, BSK_Fsw
+import BSK_Dynamics
+import BSK_Fsw
 import BSK_Plotting as BSK_plt
+from BSK_masters import BSKScenario, BSKSim
+
 
 # Create your own scenario child class
 class scenario_AddRWFault(BSKSim, BSKScenario):
@@ -112,11 +136,11 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
 
         self.configure_initial_conditions()
         self.log_outputs()
-        
+
         self.oneTimeRWFaultFlag = 1
         self.repeatRWFaultFlag = 1
         self.oneTimeFaultTime = macros.min2nano(10.)
-        
+
         DynModels = self.get_DynModel()
         self.DynModels.RWFaultLog = []
 
@@ -166,7 +190,7 @@ class scenario_AddRWFault(BSKSim, BSKScenario):
 
         sigma_BR = np.delete(attErrRec.sigma_BR, 0, 0)
         omega_BR_B = np.delete(attErrRec.omega_BR_B, 0, 0)
-        
+
         num_RW = 4
         RW_speeds = np.delete(self.rwSpeedRec.wheelSpeeds[:, range(num_RW)], 0, 0)
         RW_friction = []
@@ -197,7 +221,7 @@ def runScenario(scenario):
 
     simulationTime = macros.min2nano(30.)
     scenario.modeRequest = "hillPoint"
-        
+
     # Run the simulation
     scenario.InitializeSimulation()
     scenario.ConfigureStopTime(simulationTime)

@@ -460,11 +460,11 @@ int SpiceInterface::loadSpiceKernel(const char *kernelName, const char *dataPath
     if (kernelReferenceCounter.at(filepath) <= 0) {
         // The required calls come from the SPICE documentation.
         // The most critical call is furnsh_c
-        erract_c("SET", this->charBufferSize, "REPORT");
+        erract_c("SET", this->charBufferSize, (SpiceChar*)"REPORT");
         furnsh_c(filepath.c_str());
 
         // Check to see if we had trouble loading a kernel
-        erract_c("SET", this->charBufferSize, "DEFAULT");
+        erract_c("SET", this->charBufferSize, (SpiceChar*)"DEFAULT");
 
         if(failed_c()) {
             return 1;
@@ -497,8 +497,7 @@ int SpiceInterface::unloadSpiceKernel(const char *kernelName, const char *dataPa
     auto it = kernelReferenceCounter.find(filepath);
     if (it == kernelReferenceCounter.end() || it->second <= 0) {
         // Kernel was never loaded or already unloaded
-        bskLogger.bskLog(BSK_ERROR, "Attempting to unload kernel that was never loaded: %s", filepath.c_str());
-        return 1;
+        return 0;
     }
 
     // Decrement the reference counter
@@ -507,10 +506,10 @@ int SpiceInterface::unloadSpiceKernel(const char *kernelName, const char *dataPa
     // Only unload if no more references to this kernel
     if (it->second <= 0) {
         // The required calls come from the SPICE documentation.
-        erract_c("SET", this->charBufferSize, "REPORT");
+        erract_c("SET", this->charBufferSize, (SpiceChar*)"REPORT");
         unload_c(filepath.c_str());
 
-        erract_c("SET", this->charBufferSize, "DEFAULT");
+        erract_c("SET", this->charBufferSize, (SpiceChar*)"DEFAULT");
 
         if(failed_c()) {
             return 1;

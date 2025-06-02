@@ -39,7 +39,7 @@ from Basilisk.architecture.swig_common_model import *
    StateVector getStateVector() {return self->stateContainer;}
 }
 
-%include "../_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "../../../architecture/utilities/avsEigenSupport.h"
 
 %pythoncode %{

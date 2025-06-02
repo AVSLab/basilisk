@@ -5,6 +5,9 @@
    #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %}
 
+// Suppress assignment operator warning before parsing the class
+%warnfilter(362) StateVector::operator=;
+
 // There are other accesor methods to query these objects that are
 // better than using the class variables directly
 %ignore StateVector::stateMap;
