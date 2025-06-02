@@ -189,6 +189,8 @@ jobs:
         run: |
           venv\Scripts\activate
           python conanfile.py --opNav True --mujoco True --mujocoReplay True
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v
       - name: "Run Python Tests"
         shell: pwsh
         run: |
