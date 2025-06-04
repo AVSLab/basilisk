@@ -19,6 +19,25 @@ Release Notes
     - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
+
+**Version 2.3.0 (July XX, 2025)**
+
+- Support and documentation for the ``showHUDElementsInImage`` flag
+- Support and documentation for the ``terminateVizard`` flag
+- Can terminate scenario by setting the flag, then calling ``viz.UpdateState()`` once
+  to send to Vizard. This last message will not save to the binary. Example is shown
+  in :ref:`scenarioBasicOrbitStream`.
+- Added dimension descriptions for ``bskSat``, ``3USat``, and ``6USat`` satellites
+- Changed name of ``customGUIScale`` to ``customGUIReferenceHeight``
+- Deprecated ``customGUIScale``. Using this setting name has no effect but throws an
+  error and points to ``customGUIReferenceHeight``.
+- Added an explicit creation of the ``vizInterface.VizSettings()`` structure
+  inside ``vizSupport.enableUnityVisualization()``. This was necessary to
+  kickstart the deprecation warnings.
+- Support and documentation for ``spacecraftOrbitLineWidth`` and ``celestialBodyOrbitLineWidth``
+- Added explicit file close in ``VizInterface::~VizInterface()`` destructor call
+
+
 **Version 2.2.3 (April 20, 2025)**
 
 - Added QuadMap sub message to VizMessage.proto, allows user to draw a mesh of quads on celestial body or spacecraft
