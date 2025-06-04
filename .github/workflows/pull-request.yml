@@ -191,6 +191,7 @@ jobs:
           python conanfile.py --opNav True --mujoco True --mujocoReplay True
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 45
       - name: "Run Python Tests"
         shell: pwsh
         run: |
