@@ -19,6 +19,58 @@ Release Notes
     - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
+
+**Version 2.3.0 (July 11, 2025)**
+
+- added ``terminateVizard`` to Vizard Live Settings to allow for clean shut-down
+  of Vizard from live Basilisk simulation
+- Can terminate scenario by setting the flag, then calling ``viz.UpdateState()`` once
+  to send to Vizard. This last message will not save to the binary. Example is shown
+  in :ref:`scenarioBasicOrbitStream`.
+- Added dimension descriptions for ``bskSat``, ``3USat``, and ``6USat`` satellites
+- Changed name of ``customGUIScale`` to ``customGUIReferenceHeight``
+- Deprecated ``customGUIScale``. Using this setting name has no effect but throws an
+  error and points to ``customGUIReferenceHeight``.
+- Added an explicit creation of the ``vizInterface.VizSettings()`` structure
+  inside ``vizSupport.enableUnityVisualization()``. This was necessary to
+  kickstart the deprecation warnings.
+- Support and documentation for ``spacecraftOrbitLineWidth`` and ``celestialBodyOrbitLineWidth``
+- Added explicit file close in ``VizInterface::~VizInterface()`` destructor call
+- changed all GUI Text elements to ``TextMeshPro`` text elements
+- changed GUI Canvas scaling to scale up GUI elements (buttons, text, etc.) as a
+  function of screen height to better support very large displays
+- added Unity Line Renderers to osculating orbit lines and true path trajectory
+  lines to allow better visibility on large displays
+
+    - user can toggle off Line Renderers in the Settings menu
+    - user can increase or decrease the pixel width of the Line Renderer
+      lines in the Settings menu or with the ``SpacecraftOrbitLineWidth`` and
+      ``CelestialBodyOrbitLineWidth`` message settings
+
+- added ``showHUDElementsInImage`` flag to both Instrument Cameras and Standard
+  cameras to allow users to toggle ability to see HUD elements in images
+  (i.e. Coarse Sun Sensor coverage, multi-shapes, etc). Standard camera panel
+  includes toggle to show or hide HUD elements in view
+- changed line elements in HUD elements (camera frustums, boresight lines)
+  from OpenGL to Unity LineRenderers so they can be hidden from secondary
+  cameras if desired (OpenGL lines were always visible)
+- Sprite mode is implemented on Keep Out/In Cones (cones will hide when
+  spacecraft is in sprite-mode)
+- removed obsolete work-around for secondary camera rendering issue that
+  popped user out of maximized screen when loading Vizard Main Scene
+- fixed issue with spacecraft not showing itself as shadowed by planet
+  when outside of the Main Camera’s shadow calculation threshold
+- fixed image jitter in Standard Camera when pointed nadir at another spacecraft
+- refactored error messaging when models fail to load to remove duplicate
+  error messages and automatically pop up console panel to alert user
+- fixed Location label visibility raycasting bug. Location labels not in line of
+  sight will now be hidden (correctly)
+- updated documenation that the light weight location markers cannot use opaque colors.
+  This caused a drastic increase in CPU load.
+- added ability for location marker to be hidden via ``isHidden`` flag
+
+
+
 **Version 2.2.3 (April 20, 2025)**
 
 - Added QuadMap sub message to VizMessage.proto, allows user to draw a mesh of quads on celestial body or spacecraft
