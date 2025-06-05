@@ -96,24 +96,24 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
 
     // always zero the output message buffers before assigning values
     thrForceCmdOutMsgBuffer = THRArrayCmdForceMsg_C_zeroMsgPayload();
-    _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed thrForceCmdOutMsgBuffer");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed thrForceCmdOutMsgBuffer");
 
     /* Check if torque message is linked and read, zero out if not*/
     if (CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueInMsg)) {
         cmdTorqueInMsgBuffer = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueInMsg);
-        _bskLog(configData->bskLogger, BSK_WARNING, "Read cmdTorqueInMsgBuffer");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Read cmdTorqueInMsgBuffer");
     } else{
         cmdTorqueInMsgBuffer = CmdTorqueBodyMsg_C_zeroMsgPayload();
-        _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed cmdTorqueInMsgBuffer");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed cmdTorqueInMsgBuffer");
     }
 
     /* Check if force message is linked and read, zero out if not*/
     if (CmdForceBodyMsg_C_isLinked(&configData->cmdForceInMsg)) {
         cmdForceInMsgBuffer = CmdForceBodyMsg_C_read(&configData->cmdForceInMsg);
-        _bskLog(configData->bskLogger, BSK_WARNING, "Read cmdForceInMsgBuffer");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Read cmdForceInMsgBuffer");
     } else{
         cmdForceInMsgBuffer = CmdForceBodyMsg_C_zeroMsgPayload();
-        _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed cmdForceInMsgBuffer");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed cmdForceInMsgBuffer");
     }
 
     /* Initialize variables */
@@ -127,57 +127,57 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     double forceTorque_B[6];
     double forceSubtracted_B[MAX_EFF_CNT];
     vSetZero(force_B, (size_t) MAX_EFF_CNT);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed force_B");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed force_B");
     vSetZero(forceSubtracted_B, (size_t) MAX_EFF_CNT);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed forceSubtracted_B");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed forceSubtracted_B");
 
     for (uint32_t i = 0; i < 6; i++) {
         for (uint32_t j = 0; j < MAX_EFF_CNT; j++) {
             DG[i][j] = 0.0;
         }
     }
-    _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed DG matrix");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed DG matrix");
 
     /* Create the torque and force vector */
     for (uint32_t i = 0; i < 3; i++) {
         forceTorque_B[i] = cmdTorqueInMsgBuffer.torqueRequestBody[i];
-        _bskLog(configData->bskLogger, BSK_WARNING, "Set forceTorque_B torque component");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Set forceTorque_B torque component");
         forceTorque_B[i+3] = cmdForceInMsgBuffer.forceRequestBody[i];
-        _bskLog(configData->bskLogger, BSK_WARNING, "Set forceTorque_B force component");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Set forceTorque_B force component");
     }
 
     /* - compute thruster locations relative to COM */
     for (uint32_t i = 0; i<configData->numThrusters; i++) {
         v3Subtract(configData->rThruster_B[i], configData->CoM_B, rThrusterRelCOM_B[i]);
-        _bskLog(configData->bskLogger, BSK_WARNING, "Computed rThrusterRelCOM_B");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Computed rThrusterRelCOM_B");
     }
 
     /* Fill DG with thruster directions and moment arms */
     for (uint32_t i = 0; i < configData->numThrusters; i++) {
         /* Compute moment arm and fill in */
         v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt);
-        _bskLog(configData->bskLogger, BSK_WARNING, "Computed rCrossGt for thruster");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Computed rCrossGt for thruster");
         for(uint32_t j = 0; j < 3; j++) {
             DG[j][i] = rCrossGt[j];
-            _bskLog(configData->bskLogger, BSK_WARNING, "Set DG (moment arm)");
+            // _bskLog(configData->bskLogger, BSK_WARNING, "Set DG (moment arm)");
         }
 
         /* Fill in control axes */
         for(uint32_t j = 0; j < 3; j++) {
             DG[j+3][i] = configData->gtThruster_B[i][j];
-            _bskLog(configData->bskLogger, BSK_WARNING, "Set DG (control axis)");
+            // _bskLog(configData->bskLogger, BSK_WARNING, "Set DG (control axis)");
         }
     }
 
     /* Check DG for zero rows */
     vSetZero(zeroVector, configData->numThrusters);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed zeroVector");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed zeroVector");
     numZeroes = 0;
     for(uint32_t j = 0; j < 6; j++) {
         if (vIsEqual(zeroVector, 6, DG[j], 0.0000001)) {
             zeroRows[j] = 1;
             numZeroes += 1;
-            _bskLog(configData->bskLogger, BSK_WARNING, "Found zero row in DG at");
+            // _bskLog(configData->bskLogger, BSK_WARNING, "Found zero row in DG at");
         } else {
             zeroRows[j] = 0;
         }
@@ -186,14 +186,14 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     /* Create the DG w/ zero rows removed */
     double DG_full[6*MAX_EFF_CNT];
     vSetZero(DG_full, (size_t) 6*MAX_EFF_CNT);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed DG_full");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed DG_full");
     uint32_t zeroesPassed;
     zeroesPassed = 0;
     for(uint32_t i = 0; i < 6; i++) {
         if (!zeroRows[i]) {
             for(uint32_t j = 0; j < MAX_EFF_CNT; j++) {
                 DG_full[MXINDEX(MAX_EFF_CNT, i-zeroesPassed, j)] = DG[i][j];
-                _bskLog(configData->bskLogger, BSK_WARNING, "Set DG_full");
+                // _bskLog(configData->bskLogger, BSK_WARNING, "Set DG_full");
             }
         } else {
             zeroesPassed += 1;
@@ -203,30 +203,30 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     /* Compute the minimum norm inverse of DG*/
     double DGT_DGDGT_inv[6*6];
     mMinimumNormInverse(DG_full, (size_t) 6-numZeroes, (size_t) MAX_EFF_CNT, DGT_DGDGT_inv);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Computed minimum norm inverse of DG_full");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Computed minimum norm inverse of DG_full");
 
     /* Compute the force for each thruster */
     mMultV(DGT_DGDGT_inv, (size_t) configData->numThrusters, (size_t) 6-numZeroes, forceTorque_B, force_B);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Computed force_B for each thruster");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Computed force_B for each thruster");
 
     /* Find the minimum force */
     double min_force = force_B[0];
     for(uint32_t i = 1; i < configData->numThrusters; i++) {
         if (force_B[i] < min_force){
             min_force = force_B[i];
-            _bskLog(configData->bskLogger, BSK_WARNING, "Updated min_force to ");
+            // _bskLog(configData->bskLogger, BSK_WARNING, "Updated min_force to ");
         }
     }
 
     /* Subtract the minimum force */
     for(uint32_t i = 0; i < configData->numThrusters; i++) {
         forceSubtracted_B[i] = force_B[i] - min_force;
-        _bskLog(configData->bskLogger, BSK_WARNING, "Subtracted min_force from force_B[]");
+        // _bskLog(configData->bskLogger, BSK_WARNING, "Subtracted min_force from force_B[]");
     }
 
     /* Write to the output messages */
     vCopy(forceSubtracted_B, configData->numThrusters, thrForceCmdOutMsgBuffer.thrForce);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Copied forceSubtracted_B to thrForceCmdOutMsgBuffer.thrForce");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Copied forceSubtracted_B to thrForceCmdOutMsgBuffer.thrForce");
     THRArrayCmdForceMsg_C_write(&thrForceCmdOutMsgBuffer, &configData->thrForceCmdOutMsg, moduleID, callTime);
-    _bskLog(configData->bskLogger, BSK_WARNING, "Wrote thrForceCmdOutMsgBuffer to output message");
+    // _bskLog(configData->bskLogger, BSK_WARNING, "Wrote thrForceCmdOutMsgBuffer to output message");
 }
