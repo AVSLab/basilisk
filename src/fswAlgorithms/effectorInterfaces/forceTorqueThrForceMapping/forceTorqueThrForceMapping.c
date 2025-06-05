@@ -149,23 +149,23 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     /* - compute thruster locations relative to COM */
     for (uint32_t i = 0; i<configData->numThrusters; i++) {
         v3Subtract(configData->rThruster_B[i], configData->CoM_B, rThrusterRelCOM_B[i]);
-        _bskLog(configData->bskLogger, BSK_WARNING, "Computed rThrusterRelCOM_B[%u]", i);
+        _bskLog(configData->bskLogger, BSK_WARNING, "Computed rThrusterRelCOM_B");
     }
 
     /* Fill DG with thruster directions and moment arms */
     for (uint32_t i = 0; i < configData->numThrusters; i++) {
         /* Compute moment arm and fill in */
         v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt);
-        _bskLog(configData->bskLogger, BSK_WARNING, "Computed rCrossGt for thruster %u", i);
+        _bskLog(configData->bskLogger, BSK_WARNING, "Computed rCrossGt for thruster");
         for(uint32_t j = 0; j < 3; j++) {
             DG[j][i] = rCrossGt[j];
-            _bskLog(configData->bskLogger, BSK_WARNING, "Set DG[%u][%u] (moment arm)", j, i);
+            _bskLog(configData->bskLogger, BSK_WARNING, "Set DG (moment arm)");
         }
 
         /* Fill in control axes */
         for(uint32_t j = 0; j < 3; j++) {
             DG[j+3][i] = configData->gtThruster_B[i][j];
-            _bskLog(configData->bskLogger, BSK_WARNING, "Set DG[%u][%u] (control axis)", j+3, i);
+            _bskLog(configData->bskLogger, BSK_WARNING, "Set DG (control axis)");
         }
     }
 
@@ -177,7 +177,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
         if (vIsEqual(zeroVector, 6, DG[j], 0.0000001)) {
             zeroRows[j] = 1;
             numZeroes += 1;
-            _bskLog(configData->bskLogger, BSK_WARNING, "Found zero row in DG at %u", j);
+            _bskLog(configData->bskLogger, BSK_WARNING, "Found zero row in DG at");
         } else {
             zeroRows[j] = 0;
         }
@@ -193,7 +193,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
         if (!zeroRows[i]) {
             for(uint32_t j = 0; j < MAX_EFF_CNT; j++) {
                 DG_full[MXINDEX(MAX_EFF_CNT, i-zeroesPassed, j)] = DG[i][j];
-                _bskLog(configData->bskLogger, BSK_WARNING, "Set DG_full[%u][%u]", i-zeroesPassed, j);
+                _bskLog(configData->bskLogger, BSK_WARNING, "Set DG_full");
             }
         } else {
             zeroesPassed += 1;
@@ -214,14 +214,14 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     for(uint32_t i = 1; i < configData->numThrusters; i++) {
         if (force_B[i] < min_force){
             min_force = force_B[i];
-            _bskLog(configData->bskLogger, BSK_WARNING, "Updated min_force to %f", min_force);
+            _bskLog(configData->bskLogger, BSK_WARNING, "Updated min_force to ");
         }
     }
 
     /* Subtract the minimum force */
     for(uint32_t i = 0; i < configData->numThrusters; i++) {
         forceSubtracted_B[i] = force_B[i] - min_force;
-        _bskLog(configData->bskLogger, BSK_WARNING, "Subtracted min_force from force_B[%u]", i);
+        _bskLog(configData->bskLogger, BSK_WARNING, "Subtracted min_force from force_B[]");
     }
 
     /* Write to the output messages */
