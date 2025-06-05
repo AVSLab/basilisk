@@ -239,8 +239,12 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
 
     fswSetupThrusters.clearSetup()
     for i in range(numThrusters):
+        print("about to create", i, flush=True)
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
+        print("finished creating", i, flush=True)
+    print("about to writeConfigMessage", flush=True)
     thrConfigInMsg = fswSetupThrusters.writeConfigMessage()
+    print("finished writeConfigMessage", flush=True)
 
     vehConfigInMsgData = messaging.VehicleConfigMsgPayload()
     vehConfigInMsgData.CoM_B = CoM_B
@@ -253,9 +257,14 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
     module.thrConfigInMsg.subscribeTo(thrConfigInMsg)
     module.vehConfigInMsg.subscribeTo(vehConfigInMsg)
 
+    print("before InitializeSimulation", flush=True)
     unitTestSim.InitializeSimulation()
+    print("InitializeSimulation", flush=True)
+
+    print("before ExecuteSimulation", flush=True)
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
     unitTestSim.ExecuteSimulation()
+    print("finished ExecuteSimulation", flush=True)
 
     testFailCount, testMessages = unitTestSupport.compareArray(truth, np.array([module.thrForceCmdOutMsg.read().thrForce[0:len(rcsLocation)]]), 1e-3,
                                                                  "CompareForces", testFailCount, testMessages)
@@ -269,8 +278,12 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
     cmdForceInMsg = messaging.CmdForceBodyMsg().write(cmdForceInMsgData)
     module.cmdForceInMsg.subscribeTo(cmdForceInMsg)
 
+    print("before initialize", flush=True)
+
     unitTestSim.InitializeSimulation()
+    print("after initialize", flush=True)
     unitTestSim.ExecuteSimulation()
+    print("after ExecuteSimulation", flush=True)
 
     # Now call Reset() and verify output is zeroed
     module.Reset(0)  # Pass 0 as currentSimNanos
@@ -287,6 +300,10 @@ def forceTorqueThrForceMappingTestFunction(rcsLocation, rcsDirection, requested_
         print("PASSED: " + module.ModelTag)
     else:
         print(testMessages)
+
+    print("before del thrList", flush=True)
+    del( fswSetupThrusters.thrList )
+    print("after del thrList", flush=True)
 
     return [testFailCount, "".join(testMessages)]
 

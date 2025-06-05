@@ -72,11 +72,14 @@ def writeConfigMessage():
 
     i = 0
     for item in thrList:
+        print("before ThrustConfigArray_setitem", i, flush=True)
         messaging.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
+        print("after ThrustConfigArray_setitem", i, flush=True)
         i += 1
 
     thrClass.numThrusters = len(thrList)
     thrConfigInMsg = messaging.THRArrayConfigMsg().write(thrClass)
+    print("after thrConfigInMsg", flush=True)
 
     return thrConfigInMsg
 
