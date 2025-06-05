@@ -235,6 +235,22 @@ SpacecraftLocation::computeAccess()
                 }
             }
         }
+
+        if (this->sunInMsg.isLinked()) {
+            // aHat vector in inertial frame
+            Eigen::Vector3d aHat_N = dcm_NB * this->aHat_B;
+
+            // Vector from spacecraft to Sun
+            Eigen::Vector3d r_SL_N = r_SN_N - this->r_BN_N;
+
+            // Calculate the sun-incidence angle and spacecraft-view angle
+            double sunIncidenceAngle = safeAcos(aHat_N.dot(this->r_HN_N) / (aHat_N.norm() * this->r_HN_N.norm()));
+            double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
+
+            // Store the angles in the output buffer
+            this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
+            this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
+        }
     }
 }
 
