@@ -96,7 +96,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
 
     // always zero the output message buffers before assigning values
     thrForceCmdOutMsgBuffer = THRArrayCmdForceMsg_C_zeroMsgPayload();
-    // _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed thrForceCmdOutMsgBuffer");
+    _bskLog(configData->bskLogger, BSK_WARNING, "Zeroed thrForceCmdOutMsgBuffer");
 
     /* Check if torque message is linked and read, zero out if not*/
     if (CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueInMsg)) {
