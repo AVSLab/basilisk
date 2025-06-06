@@ -27,6 +27,7 @@
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 
@@ -55,10 +56,12 @@ class SpacecraftLocation : public SysModel
     Eigen::Vector3d aHat_B; //!< [] (optional) unit direction vector of the sensor/communication boresight axis
     double theta;           //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
     double theta_solar;     //!< [r] (optional) illumination half-cone angle, treating aHat_B as the surface normal
+    double min_shadow_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
 
     ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
-    ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;        //!< planet state input message
-    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;           //!< [-] sun data input message
+    ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;        //!< (optional) planet state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;           //!< (optional) sun data input message
+    ReadFunctor<EclipseMsgPayload> eclipseInMsg;                //!< (optional) eclipse input message
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;      //!< vector of ground location access messages
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
     Eigen::Vector3d
@@ -72,6 +75,7 @@ class SpacecraftLocation : public SysModel
     SCStatesMsgPayload primaryScStatesBuffer;       //!< buffer of primary spacecraft states
     SpicePlanetStateMsgPayload planetState;         //!< buffer of planet data
     SpicePlanetStateMsgPayload sunData;             //!< buffer of sun data
+    EclipseMsgPayload eclipseInMsgData;             //!< buffer of eclipse data
 
     Eigen::Matrix3d dcm_PN; //!< Rotation matrix from inertial frame N to planet-centered to planet-fixed frame P
     Eigen::Vector3d r_PN_N; //!< [m] Planet to inertial frame origin vector.

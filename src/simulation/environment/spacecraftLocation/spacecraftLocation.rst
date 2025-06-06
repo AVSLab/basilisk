@@ -38,7 +38,10 @@ provides information on what this message is used for.
       - vector of other spacecraft state input messages.  These are set through ``addSpacecraftToModel()``
     * - sunInMsg
       - :ref:`SpicePlanetStateMsgPayload`
-      - (optional) sun state input message. Used for illumination checking if the message is connected and `theta_solar` is set.
+      - (optional) sun state input message. Used for illumination checking if the message is connected and ``theta_solar`` is set.
+    * - eclipseInMsg
+      - :ref:`EclipseMsgPayload`
+      - (optional) eclipse input message. Used for illumination checking if the message is connected and ``min_shadow_factor`` is set.
     * - accessOutMsgs
       - :ref:`AccessMsgPayload`
       - output vector of ground location access messages
@@ -119,6 +122,8 @@ If the ``sunInMsg`` is connected and :math:`\theta_{\text{solar,max}}` is set, t
 
 .. math::
     \arccos \left( \hat{\bf a} \cdot \hat{\bf s} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}
+
+If an eclipse message is connected and ``min_shadow_factor`` is set, the module will also check that the shadow factor is above this threshold.
 
 User Guide
 ----------

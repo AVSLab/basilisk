@@ -23,7 +23,7 @@
 
 //!@brief Eclipse shadow factor message definition.
 typedef struct {
-    double shadowFactor;       //!< Proportion of shadowing due to eclipse 
+    double shadowFactor;       //!< Proportion of illumination due to eclipse. 0 = fully shadowed, 1 = fully illuminated.
 }EclipseMsgPayload;
 
 
