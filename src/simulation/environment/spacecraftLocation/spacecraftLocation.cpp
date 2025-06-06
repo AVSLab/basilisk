@@ -243,7 +243,11 @@ SpacecraftLocation::computeAccess()
             }
         }
 
+        this->accessMsgBuffer.at(c).hasIllumination = 0; // default to no illumination
+
+        // Check illumination if sun message is present
         if (this->sunInMsg.isLinked()) {
+            this->accessMsgBuffer.at(c).hasIllumination = 1;
             // aHat vector in inertial frame
             Eigen::Vector3d aHat_N = dcm_NB * this->aHat_B;
 
@@ -262,6 +266,7 @@ SpacecraftLocation::computeAccess()
             if (this->theta_solar >= 0.0) {
                 if (sunIncidenceAngle > this->theta_solar) {
                     this->accessMsgBuffer.at(c).hasAccess = 0; // outside solar cone
+                    this->accessMsgBuffer.at(c).hasIllumination = 0;
                 }
             }
         }
