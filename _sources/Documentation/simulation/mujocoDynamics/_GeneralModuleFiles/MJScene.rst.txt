@@ -1,0 +1,8 @@
+.. _MJScene:
+
+Module: MJScene
+===============
+
+.. autodoxygenfile:: MJScene.h
+   :project: _GeneralModuleFiles5
+

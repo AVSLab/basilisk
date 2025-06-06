@@ -1,0 +1,8 @@
+.. _MJObject:
+
+Module: MJObject
+================
+
+.. autodoxygenfile:: MJObject.h
+   :project: _GeneralModuleFiles5
+

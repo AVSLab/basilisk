@@ -1,0 +1,8 @@
+.. _gravityModel:
+
+Module: gravityModel
+====================
+
+.. autodoxygenfile:: gravityModel.h
+   :project: _GeneralModuleFiles3
+

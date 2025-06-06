@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_PrescribedMotionStateEffector &mdash; Basilisk 2.7.10
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=319a7919"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_PrescribedMotionStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_PrescribedMotionStateEffector</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        prescribedMotion integrated unit test with prescribedRotation1DOF and prescribedLinearTranslation</span>
+<span class="c1">#   Author:             Leah Kiner</span>
+<span class="c1">#   Creation Date:      Jan 10, 2022</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">prescribedLinearTranslation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">prescribedMotionStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">prescribedRotation1DOF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;xtick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;ytick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="c1"># Vary the simulation parameters for pytest</span>
+<div class="viewcode-block" id="test_PrescribedMotionTestFunction">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/prescribedMotion/_UnitTest/test_PrescribedMotionStateEffector.html#test_PrescribedMotionStateEffector.test_PrescribedMotionTestFunction">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;rotTest&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;thetaInit&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">18</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;theta_Ref&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">36</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;posInit&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;posRef&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1e-8</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_PrescribedMotionTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">rotTest</span><span class="p">,</span> <span class="n">thetaInit</span><span class="p">,</span> <span class="n">theta_Ref</span><span class="p">,</span> <span class="n">posInit</span><span class="p">,</span> <span class="n">posRef</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    The unit test for this module is an integrated test with two flight software profiler modules. This is required</span>
+<span class="sd">    because the dynamics module must be connected to a flight software profiler module to define the states of the</span>
+<span class="sd">    prescribed secondary body that is connected to the rigid spacecraft hub. The integrated test for this module has</span>
+<span class="sd">    two simple scenarios it is testing. The first scenario prescribes a 1 DOF rotation for the prescribed body</span>
+<span class="sd">    using the :ref:`prescribedRotation1DOF` flight software module. The second scenario prescribes</span>
+<span class="sd">    linear translation for the prescribed body using the :ref:`prescribedLinearTranslation` flight software module.</span>
+
+<span class="sd">    This unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of</span>
+<span class="sd">    initial and reference PRV angles and maximum angular accelerations. The final prescribed attitude and angular</span>
+<span class="sd">    velocity magnitude are compared with the reference values. This unit test also ensures that the profiled</span>
+<span class="sd">    translational maneuver is properly computed for a series of initial and reference positions and maximum</span>
+<span class="sd">    accelerations. The final prescribed position and velocity magnitudes are compared with the reference values.</span>
+<span class="sd">    Additionally for each scenario, the conservation quantities of orbital angular momentum, rotational angular</span>
+<span class="sd">    momentum, and orbital energy are checked to validate the module dynamics.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rotTest (bool): (True) Runs the rotational motion test. (False) Runs the translational motion test.</span>
+<span class="sd">        thetaInit (float): [rad] Initial PRV angle of the P frame with respect to the M frame</span>
+<span class="sd">        theta_Ref (float): [rad] Reference PRV angle of the P frame with respect to the M frame</span>
+<span class="sd">        thetaDDotMax (float): [rad/s^2] Maximum angular acceleration for the attitude maneuver</span>
+<span class="sd">        scalarPosInit (float): [m] Initial scalar position of the P frame with respect to the M frame</span>
+<span class="sd">        scalarPosRef (float): [m] Reference scalar position of the P frame with respect to the M frame</span>
+<span class="sd">        scalarAccelMax (float): [m/s^2] Maximum acceleration for the translational maneuver</span>
+<span class="sd">        accuracy (float): absolute accuracy value used in the validation tests</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test ensures that the profiled 1 DOF rotational attitude maneuver is properly computed for a series of</span>
+<span class="sd">    initial and reference PRV angles and maximum angular accelerations. The final prescribed angle ``theta_PM_Pinal``</span>
+<span class="sd">    and angular velocity magnitude ``thetaDot_Final`` are compared with the reference values ``theta_Ref`` and</span>
+<span class="sd">    ``thetaDot_Ref``, respectively. This unit test also ensures that the profiled translational maneuver is properly</span>
+<span class="sd">    computed for a series of initial and reference positions and maximum accelerations. The final prescribed position</span>
+<span class="sd">    magnitude ``r_PM_M_Final`` and velocity magnitude ``rPrime_PM_M_Final`` are compared with the reference values</span>
+<span class="sd">    ``r_PM_M_Ref`` and ``rPrime_PM_M_Ref``, respectively. Additionally for each scenario, the conservation quantities</span>
+<span class="sd">    of orbital angular momentum, rotational angular momentum, and orbital energy are checked to validate the module</span>
+<span class="sd">    dynamics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrescribedMotionTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">rotTest</span><span class="p">,</span> <span class="n">thetaInit</span><span class="p">,</span> <span class="n">theta_Ref</span><span class="p">,</span> <span class="n">posInit</span><span class="p">,</span> <span class="n">posRef</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<div class="viewcode-block" id="PrescribedMotionTestFunction">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/prescribedMotion/_UnitTest/test_PrescribedMotionStateEffector.html#test_PrescribedMotionStateEffector.PrescribedMotionTestFunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">PrescribedMotionTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">rotTest</span><span class="p">,</span> <span class="n">thetaInit</span><span class="p">,</span> <span class="n">theta_Ref</span><span class="p">,</span> <span class="n">posInit</span><span class="p">,</span> <span class="n">posRef</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call this routine directly to run the unit test.&quot;&quot;&quot;</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testIncrement</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s]</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">testIncrement</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Add the spacecraft module to test file</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Define the mass properties of the rigid spacecraft hub</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set the initial inertial hub states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span> <span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span> <span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+
+    <span class="c1"># Add the scObject to the runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Add the prescribedMotion dynamics module to test file</span>
+    <span class="n">platform</span> <span class="o">=</span> <span class="n">prescribedMotionStateEffector</span><span class="o">.</span><span class="n">PrescribedMotionStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define the state effector properties</span>
+    <span class="n">transAxis_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">rotAxis_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">r_PM_M</span> <span class="o">=</span> <span class="n">posInit</span> <span class="o">*</span> <span class="n">transAxis_M</span>
+    <span class="n">prvInit_PM</span> <span class="o">=</span> <span class="n">thetaInit</span> <span class="o">*</span> <span class="n">rotAxis_M</span>
+    <span class="n">sigma_PM</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2MRP</span><span class="p">(</span><span class="n">prvInit_PM</span><span class="p">)</span>
+
+    <span class="n">platform</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">IPntPc_P</span><span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">]]</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">r_MB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">r_PcP_P</span><span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">r_PM_M</span> <span class="o">=</span> <span class="n">r_PM_M</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">rPrime_PM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">rPrimePrime_PM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">omega_PM_P</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">omegaPrime_PM_P</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">sigma_PM</span> <span class="o">=</span> <span class="n">sigma_PM</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">omega_MB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">omegaPrime_MB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">sigma_MB</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;Platform&quot;</span>
+
+    <span class="c1"># Add platform to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+
+    <span class="c1"># Add the test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">platform</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rotTest</span><span class="p">:</span>
+
+        <span class="c1"># ** ** ** ** ** ROTATIONAL 1 DOF INTEGRATED TEST: ** ** ** ** **</span>
+
+        <span class="c1"># Create an instance of the prescribedRotation1DOF module to be tested</span>
+        <span class="n">PrescribedRot1DOF</span> <span class="o">=</span> <span class="n">prescribedRotation1DOF</span><span class="o">.</span><span class="n">PrescribedRotation1DOF</span><span class="p">()</span>
+        <span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;prescribedRotation1DOF&quot;</span>
+
+        <span class="c1"># Add the prescribedRotation1DOF test module to runtime call list</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">PrescribedRot1DOF</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the prescribedRotation1DOF test module configuration data</span>
+        <span class="n">accelMax</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">setRotHat_M</span><span class="p">(</span><span class="n">rotAxis_M</span><span class="p">)</span>
+        <span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">setThetaDDotMax</span><span class="p">(</span><span class="n">accelMax</span><span class="p">)</span>
+        <span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="n">thetaInit</span><span class="p">)</span>
+
+        <span class="c1"># Create the prescribedRotation1DOF input message</span>
+        <span class="n">thetaDot_Ref</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">SpinningBodyMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">()</span>
+        <span class="n">SpinningBodyMessageData</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta_Ref</span>
+        <span class="n">SpinningBodyMessageData</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">=</span> <span class="n">thetaDot_Ref</span>
+        <span class="n">SpinningBodyMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">SpinningBodyMessageData</span><span class="p">)</span>
+        <span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">spinningBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SpinningBodyMessage</span><span class="p">)</span>
+
+        <span class="n">platform</span><span class="o">.</span><span class="n">prescribedRotationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">prescribedRotationOutMsg</span><span class="p">)</span>
+
+        <span class="c1"># Add Earth gravity to the simulation</span>
+        <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+        <span class="c1"># Add energy and momentum variables to log</span>
+        <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotEnergy&quot;</span><span class="p">])</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+        <span class="c1"># Add other states to log</span>
+        <span class="n">scStateData</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">prescribedRotStateData</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">prescribedRotationOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scStateData</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">prescribedRotStateData</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the simulation</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+        <span class="c1"># Set the simulation time</span>
+        <span class="n">simTime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">theta_Ref</span> <span class="o">-</span> <span class="n">thetaInit</span><span class="p">))</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">/</span> <span class="n">accelMax</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">testIncrement</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime</span><span class="p">))</span>
+
+        <span class="c1"># Begin the simulation</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="c1"># Extract the logged data</span>
+        <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span><span class="p">)</span>
+        <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span><span class="p">)</span>
+        <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span><span class="p">)</span>
+        <span class="n">rotEnergy</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotEnergy</span><span class="p">)</span>
+        <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">omega_BN_B</span>
+        <span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">r_BN_N</span>
+        <span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">sigma_BN</span>
+        <span class="n">omega_PM_P</span><span class="o">=</span> <span class="n">prescribedRotStateData</span><span class="o">.</span><span class="n">omega_PM_P</span>
+        <span class="n">omegaPrime_PM_P</span><span class="o">=</span> <span class="n">prescribedRotStateData</span><span class="o">.</span><span class="n">omegaPrime_PM_P</span>
+        <span class="n">sigma_PM</span> <span class="o">=</span> <span class="n">prescribedRotStateData</span><span class="o">.</span><span class="n">sigma_PM</span>
+        <span class="n">timespan</span> <span class="o">=</span> <span class="n">prescribedRotStateData</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+        <span class="n">thetaDot_Final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_PM_P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">sigma_PM_Pinal</span> <span class="o">=</span> <span class="n">sigma_PM</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">theta_PM_Pinal</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sigma_PM_Pinal</span><span class="p">))</span>
+
+        <span class="c1"># Setup the conservation quantities</span>
+        <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]]</span>
+        <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]]</span>
+        <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]</span>
+        <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="c1"># Convert the logged sigma_PM MRPs to a scalar theta_PM array</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">timespan</span><span class="p">)</span>
+        <span class="n">theta_PM</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">theta_PM</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sigma_PM</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]))))</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Plot theta_PM</span>
+        <span class="n">theta_Ref_plotting</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timespan</span><span class="p">))</span> <span class="o">*</span> <span class="n">theta_Ref</span>
+        <span class="n">thetaInit_plotting</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timespan</span><span class="p">))</span> <span class="o">*</span> <span class="n">thetaInit</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">theta_PM</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\Phi$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">theta_Ref_plotting</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\Phi_</span><span class="si">{Ref}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">thetaInit_plotting</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\Phi_</span><span class="si">{0}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\Phi_{\mathcal</span><span class="si">{P}</span><span class="s1">/\mathcal</span><span class="si">{M}</span><span class="s1">}$ Profiled Trajectory&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot omega_PM_P</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_PM_P</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_PM_P</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_PM_P</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{P}</span><span class="s1"> \omega_{\mathcal</span><span class="si">{P}</span><span class="s1">/\mathcal</span><span class="si">{M}</span><span class="s1">}$ Profiled Trajectory&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plotting omegaPrime_PM_P</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omegaPrime_PM_P</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omegaPrime_PM_P</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omegaPrime_PM_P</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{P}</span><span class="s1"> \omega Prime_{\mathcal</span><span class="si">{P}</span><span class="s1">/\mathcal</span><span class="si">{M}</span><span class="s1">}$ Profiled Angular Acceleration&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(deg/$s^2$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot r_BN_N</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{N}</span><span class="s1"> r_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$ Spacecraft Inertial Trajectory&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(m)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot sigma_BN</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\sigma_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$ Spacecraft Inertial MRP Attitude&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot omega_BN_B</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Spacecraft Hub Angular Velocity $</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{B}</span><span class="s1"> \omega_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plotting: Conservation quantities</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                 <span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                 <span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Angular Momentum Relative Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(Nms)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbEnergy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbEnergy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Energy Relative Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy (J)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+                 <span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+                 <span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Angular Momentum Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(Nms)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotEnergy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotEnergy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Total Energy Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy (J)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Begin the test analysis</span>
+        <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove the time column</span>
+        <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove the time column</span>
+        <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove the time column</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialOrbAngMom_N</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;FAILED: Prescribed Motion integrated test failed orbital angular momentum unit test&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialRotAngMom_N</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqual</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;FAILED: Prescribed Motion integrated test failed rotational angular momentum unit test&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialOrbEnergy</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Prescribed Motion integrated test failed orbital energy unit test&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check to ensure the initial angle rate converged to the reference angle rate</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">thetaDot_Final</span><span class="p">,</span> <span class="n">thetaDot_Ref</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot;thetaDot_Final and thetaDot_Ref do not match&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check to ensure the initial angle converged to the reference angle</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">theta_PM_Pinal</span><span class="p">,</span> <span class="n">theta_Ref</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">PrescribedRot1DOF</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot;theta_PM_Pinal and theta_Ref do not match&quot;</span><span class="p">)</span>
+            <span class="c1"># testMessages.append(&quot;theta_PM_Pinal: &quot; + str(theta_PM_Pinal) + &quot; theta_Ref: &quot; + str(theta_Ref))</span>
+
+        <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot;prescribedMotion and prescribedRot1DOF integrated test&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># ** ** ** ** ** TRANSLATIONAL INTEGRATED TEST ** ** ** ** **</span>
+
+        <span class="c1"># Create an instance of the prescribedLinearTranslation module to be tested</span>
+        <span class="n">PrescribedTrans</span> <span class="o">=</span> <span class="n">prescribedLinearTranslation</span><span class="o">.</span><span class="n">PrescribedLinearTranslation</span><span class="p">()</span>
+        <span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;prescribedLinearTranslation&quot;</span>
+
+        <span class="c1"># Add the prescribedLinearTranslation test module to runtime call list</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">PrescribedTrans</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the prescribedLinearTranslation test module configuration data</span>
+        <span class="n">accelMax</span> <span class="o">=</span> <span class="mf">0.005</span>  <span class="c1"># [m/s^2]</span>
+        <span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">setTransHat_M</span><span class="p">(</span><span class="n">transAxis_M</span><span class="p">)</span>
+        <span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">setTransAccelMax</span><span class="p">(</span><span class="n">accelMax</span><span class="p">)</span>
+        <span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">setTransPosInit</span><span class="p">(</span><span class="n">posInit</span><span class="p">)</span>
+
+        <span class="c1"># Create the prescribedTrans input message</span>
+        <span class="n">velRef</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m/s]</span>
+        <span class="n">linearTranslationRigidBodyMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsgPayload</span><span class="p">()</span>
+        <span class="n">linearTranslationRigidBodyMessageData</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">posRef</span>
+        <span class="n">linearTranslationRigidBodyMessageData</span><span class="o">.</span><span class="n">rhoDot</span> <span class="o">=</span> <span class="n">velRef</span>
+        <span class="n">linearTranslationRigidBodyMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">linearTranslationRigidBodyMessageData</span><span class="p">)</span>
+        <span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">linearTranslationRigidBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">linearTranslationRigidBodyMessage</span><span class="p">)</span>
+
+        <span class="n">platform</span><span class="o">.</span><span class="n">prescribedTranslationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">prescribedTranslationOutMsg</span><span class="p">)</span>
+
+        <span class="c1"># Add Earth gravity to the simulation</span>
+        <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+        <span class="c1"># Add energy and momentum variables to log</span>
+        <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotEnergy&quot;</span><span class="p">])</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+        <span class="c1"># Add other states to log</span>
+        <span class="n">scStateData</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">prescribedTransStateData</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">prescribedTranslationOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scStateData</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">prescribedTransStateData</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the simulation</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+        <span class="c1"># Set the simulation time</span>
+        <span class="n">simTime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">posRef</span> <span class="o">-</span> <span class="n">posInit</span><span class="p">))</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">/</span> <span class="n">accelMax</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">testIncrement</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime</span><span class="p">))</span>
+
+        <span class="c1"># Begin the simulation</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="c1"># Extract the logged data</span>
+        <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span><span class="p">)</span>
+        <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span><span class="p">)</span>
+        <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span><span class="p">)</span>
+        <span class="n">rotEnergy</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotEnergy</span><span class="p">)</span>
+        <span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">r_BN_N</span>
+        <span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">sigma_BN</span>
+        <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">omega_BN_B</span>
+        <span class="n">r_PM_M</span> <span class="o">=</span> <span class="n">prescribedTransStateData</span><span class="o">.</span><span class="n">r_PM_M</span>
+        <span class="n">rPrime_PM_M</span> <span class="o">=</span> <span class="n">prescribedTransStateData</span><span class="o">.</span><span class="n">rPrime_PM_M</span>
+        <span class="n">rPrimePrime_PM_M</span> <span class="o">=</span> <span class="n">prescribedTransStateData</span><span class="o">.</span><span class="n">rPrimePrime_PM_M</span>
+        <span class="n">timespan</span> <span class="o">=</span> <span class="n">prescribedTransStateData</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+        <span class="n">r_PM_M_Final</span> <span class="o">=</span> <span class="n">r_PM_M</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">rPrime_PM_M_Final</span> <span class="o">=</span> <span class="n">rPrime_PM_M</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Setup the conservation quantities</span>
+        <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]]</span>
+        <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]]</span>
+        <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]</span>
+        <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">initialRotEnergy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]</span>
+        <span class="n">finalRotEnergy</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="c1"># Plot r_PM_P</span>
+        <span class="n">r_PM_M_Ref</span> <span class="o">=</span> <span class="n">posRef</span> <span class="o">*</span> <span class="n">transAxis_M</span>
+        <span class="n">r_PM_M_1_Ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timespan</span><span class="p">))</span> <span class="o">*</span> <span class="n">r_PM_M_Ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">r_PM_M_2_Ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timespan</span><span class="p">))</span> <span class="o">*</span> <span class="n">r_PM_M_Ref</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">r_PM_M_3_Ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timespan</span><span class="p">))</span> <span class="o">*</span> <span class="n">r_PM_M_Ref</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_PM_M</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_PM_M</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_PM_M</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_PM_M_1_Ref</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_{1 Ref}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_PM_M_2_Ref</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_{2 Ref}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_PM_M_3_Ref</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_{3 Ref}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{M}</span><span class="s1"> r_{\mathcal</span><span class="si">{P}</span><span class="s1">/\mathcal</span><span class="si">{M}</span><span class="s1">}$ Profiled Trajectory&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(m)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot rPrime_PM_P</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">rPrime_PM_M</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">rPrime_PM_M</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">rPrime_PM_M</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{M}</span><span class="s1"> rPrime_{\mathcal</span><span class="si">{P}</span><span class="s1">/\mathcal</span><span class="si">{M}</span><span class="s1">}$ Profiled Trajectory&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(m/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plotting rPrimePrime_PM_M</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">rPrimePrime_PM_M</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">rPrimePrime_PM_M</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">rPrimePrime_PM_M</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{M}</span><span class="s1"> rPrimePrime_{\mathcal</span><span class="si">{P}</span><span class="s1">/\mathcal</span><span class="si">{M}</span><span class="s1">}$ Profiled Acceleration&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(m/s$^2$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot r_BN_N</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{N}</span><span class="s1"> r_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$ Spacecraft Inertial Trajectory&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(m)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot sigma_BN</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\sigma_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$ Spacecraft Inertial MRP Attitude&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plot omega_BN_B</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Spacecraft Hub Angular Velocity $</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{B}</span><span class="s1"> \omega_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+
+        <span class="c1"># Plotting: Conservation quantities</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                 <span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                 <span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Angular Momentum Relative Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(Nms)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbEnergy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">orbEnergy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Energy Relative Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy (J)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+                 <span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+                 <span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Angular Momentum Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(Nms)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotEnergy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="p">(</span><span class="n">rotEnergy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Total Energy Difference&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy (J)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Begin the test analysis</span>
+        <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove the time column</span>
+        <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove the time column</span>
+        <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove the time column</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialOrbAngMom_N</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;FAILED: Prescribed Motion integrated test failed orbital angular momentum unit test&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialRotAngMom_N</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqual</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;FAILED: Prescribed Motion integrated test failed rotational angular momentum unit test&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialOrbEnergy</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Prescribed Motion integrated test failed orbital energy unit test&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check to ensure the initial velocity converged to the reference velocity</span>
+        <span class="n">rPrime_PM_M_Ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqual</span><span class="p">(</span><span class="n">rPrime_PM_M_Final</span><span class="p">,</span> <span class="n">rPrime_PM_M_Ref</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot;rPrime_PM_M_Final and rPrime_PM_M_Ref do not match&quot;</span><span class="p">)</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rPrime_PM_M_Final: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rPrime_PM_M_Final</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; rPrime_PM_M_Ref: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rPrime_PM_M_Ref</span><span class="p">))</span>
+
+        <span class="c1"># Check to ensure the initial position converged to the reference position</span>
+        <span class="n">r_PM_M_Ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">posRef</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqual</span><span class="p">(</span><span class="n">r_PM_M_Final</span><span class="p">,</span> <span class="n">r_PM_M_Ref</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">PrescribedTrans</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot;r_PM_M_Final and r_PM_M_Ref do not match&quot;</span><span class="p">)</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;r_PM_M_Final: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r_PM_M_Final</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; r_PM_M_Ref: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">r_PM_M_Ref</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="s2">&quot;prescribedMotion and prescribedLinearTranslation integrated test&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unitTestScript can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">PrescribedMotionTestFunction</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>        <span class="c1"># show_plots</span>
+        <span class="kc">False</span><span class="p">,</span>       <span class="c1"># rotTest, (True: prescribedRot1DOF integrated test,</span>
+                     <span class="c1">#           False: prescribedTrans integrated test)</span>
+         <span class="mf">0.0</span><span class="p">,</span>        <span class="c1"># thetaInit [rad]</span>
+         <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">12</span><span class="p">,</span>    <span class="c1"># theta_Ref [rad]</span>
+         <span class="mf">0.0</span><span class="p">,</span>        <span class="c1"># posInit [m]</span>
+         <span class="mf">0.5</span><span class="p">,</span>        <span class="c1"># posRef [m]</span>
+         <span class="mf">1e-8</span>        <span class="c1"># accuracy</span>
+       <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
