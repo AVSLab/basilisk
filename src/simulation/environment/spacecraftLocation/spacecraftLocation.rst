@@ -3,14 +3,16 @@ Executive Summary
 -----------------
 This module determines if one satellite has a line of sight vector to another satellite.  An oblate planet is modeled through the equatorial and the polar radius. If the line of sight vector between two satellites is above this surface, then the output access message is set to true.  The module has a primary spacecraft which determines access to `N` other spacecraft orbiting the same planet.
 
-Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and an center-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if the line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
+Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and a center-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if the line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
 
-Finaly, if the other spacecraft is accessable, the range to the other satellite is stored in the output message.
+Lighting conditions are also considered. If `theta_solar` is set, the module will check that the normal :math:`\hat{\bf a}` is illuminated by the sun with at most that incidence angle.
+
+Finally, if the other spacecraft is accessible, the range to the other satellite is stored in the output message.
 
 
 Module Assumptions and Limitations
 ----------------------------------
-This module assumes all spacecraft are orbiting the same planet.  The planet shape is assumed to be an ellipoid specified through the equatorial and polar radius.  To account for a planet's atmosphere, increase these radii to account for the atmospheric height.
+This module assumes all spacecraft are orbiting the same planet.  The planet shape is assumed to be an ellipsoid specified through the equatorial and polar radius.  To account for a planet's atmosphere, increase these radii to account for the atmospheric height.
 
 Message Connection Descriptions
 -------------------------------
@@ -34,6 +36,9 @@ provides information on what this message is used for.
     * - scStateInMsgs
       - :ref:`SCStatesMsgPayload`
       - vector of other spacecraft state input messages.  These are set through ``addSpacecraftToModel()``
+    * - sunInMsg
+      - :ref:`SpicePlanetStateMsgPayload`
+      - (optional) sun state input message. Used for illumination checking if the message is connected and `theta_solar` is set.
     * - accessOutMsgs
       - :ref:`AccessMsgPayload`
       - output vector of ground location access messages
@@ -108,7 +113,12 @@ If this :math:`\hat{\bf a}` is considered, then the access output message sets t
 
     \text{elevation} = \frac{\pi}{2} - \phi
 
+Determining Solar Illumination
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If the ``sunInMsg`` is connected and :math:`\theta_{\text{solar,max}}` is set, the illumination of the surface is considered, treating :math:`\hat{\bf a}` as the surface normal. Taking :math:`\hat{\bf s}` as the sun vector, the illumination incidence condition is met if
 
+.. math::
+    \arccos \left( \hat{\bf a} \cdot \hat{\bf s} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}
 
 User Guide
 ----------
