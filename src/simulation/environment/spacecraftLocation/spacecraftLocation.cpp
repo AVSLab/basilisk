@@ -35,6 +35,7 @@ SpacecraftLocation::SpacecraftLocation()
     this->r_LB_B.fill(0.0);
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
+    this->theta_solar = -1.0;
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -81,6 +82,12 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
             bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set theta if you specify aHat_B");
         }
         this->aHat_B.normalize();
+    }
+
+    if (this->theta_solar >= 0.0) {
+        if (this->aHat_B.norm() < 0.001){
+            bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set aHat_B if you specify theta_solar");
+        }
     }
 }
 
@@ -250,6 +257,13 @@ SpacecraftLocation::computeAccess()
             // Store the angles in the output buffer
             this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
             this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
+
+            // Check if location is illuminated if threshold is set
+            if (this->theta_solar >= 0.0) {
+                if (sunIncidenceAngle > this->theta_solar) {
+                    this->accessMsgBuffer.at(c).hasAccess = 0; // outside solar cone
+                }
+            }
         }
     }
 }

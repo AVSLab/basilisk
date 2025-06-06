@@ -35,6 +35,7 @@ Version |release|
 - Deprecated :ref:`SpacecraftSystem`.  It was never completed and we have other ways to connect spacecraft components
 - Allow event conditions and effects to be defined by functions. This is preferred over the old string-based method, as it
   enables the use of arbitrary packages and objects in events and allows for event code to be parsed by IDE tools.
+- Add a sun message input and ``theta_solar`` threshold to :ref:`SpacecraftLocation`.
 
 
 Version 2.7.0 (April 20, 2025)
