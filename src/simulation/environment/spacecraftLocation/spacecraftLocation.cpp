@@ -36,6 +36,7 @@ SpacecraftLocation::SpacecraftLocation()
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
     this->theta_solar = -1.0;
+    this->min_shadow_factor = -1.0;
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -85,7 +86,7 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
     }
 
     if (this->theta_solar >= 0.0) {
-        if (this->aHat_B.norm() < 0.001){
+        if (this->aHat_B.norm() < 0.001) {
             bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set aHat_B if you specify theta_solar");
         }
     }
@@ -152,11 +153,20 @@ SpacecraftLocation::ReadMessages()
         sunRead = this->sunInMsg.isWritten();
         this->sunData = this->sunInMsg();
     } else {
-        sunRead = false;
         this->r_HN_N.setZero();
     }
 
-    return (planetRead && scRead && sunRead);
+    //! - Zero eclipse information
+    this->eclipseInMsgData = eclipseInMsg.zeroMsgPayload;
+
+    bool eclipseRead = true;
+    if (this->eclipseInMsg.isLinked()) {
+        eclipseRead = this->eclipseInMsg.isWritten();
+        this->eclipseInMsgData = this->eclipseInMsg();
+    }
+
+
+    return (planetRead && scRead && sunRead && eclipseRead);
 }
 
 /*! write module messages
@@ -268,6 +278,14 @@ SpacecraftLocation::computeAccess()
             if (this->theta_solar >= 0.0) {
                 if (sunIncidenceAngle > this->theta_solar) {
                     this->accessMsgBuffer.at(c).hasAccess = 0; // outside solar cone
+                    this->accessMsgBuffer.at(c).hasIllumination = 0;
+                }
+            }
+
+            // Check if eclipse is valid
+            if (this->eclipseInMsg.isLinked() && this->min_shadow_factor > 0.0) {
+                if (eclipseInMsgData.shadowFactor < this->min_shadow_factor) {
+                    this->accessMsgBuffer.at(c).hasAccess = 0;
                     this->accessMsgBuffer.at(c).hasIllumination = 0;
                 }
             }
