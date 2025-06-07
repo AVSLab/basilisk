@@ -121,10 +121,37 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
     // Get the buffer with the most data
     double maxVal = -1.0;
     int maxIndex = -1;
-    for (uint64_t i = 0; i < this->storageUnitMsgsBuffer.back().storedData.size(); i++) {
-        if (this->storageUnitMsgsBuffer.back().storedData[i] > maxVal) {
-            maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
-            maxIndex = (int) i;
+
+    //! - If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
+    // Both of these variables are negative so the comparison is non-intuitive
+    if (this->packetTransmitted <= this->packetSize) {
+        this->packetTransmitted = 0.0;
+    }
+
+    //! - If transmitted packet data is more than zero, continue downlinking from previous partition
+    if (this->packetTransmitted != 0.0) {
+        // Loop through the storageUnitMsgsBuffer to find the previous partition
+        for (uint64_t i = 0; i <  this->storageUnitMsgsBuffer.back().storedDataName.size(); i++) {
+            if (this->storageUnitMsgsBuffer.back().storedDataName[i] == this->nodeDataName) {
+                maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
+                maxIndex = (int) i;
+            }
+        }
+        // If there is no data in the partition, reset maxVal, maxIndex, and packetTransmitted
+        if (maxVal <= 0.0) {
+            maxIndex = -1;
+            this->packetTransmitted = 0.0;
+            dataUsageSimMsg->baudRate = 0.0;
+        }
+    }
+
+    //! - If there is no previous partition being downlinked, find the partition with the most data to downlink
+    if (this->packetTransmitted == 0.0) {
+        for (uint64_t i = 0; i < this->storageUnitMsgsBuffer.back().storedData.size(); i++) {
+            if (this->storageUnitMsgsBuffer.back().storedData[i] > maxVal) {
+                maxVal = this->storageUnitMsgsBuffer.back().storedData[i];
+                maxIndex = (int) i;
+            }
         }
     }
 
@@ -139,34 +166,38 @@ void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUs
                          sizeof(this->nodeDataName));
                  // strncpy nodeDataName to the name of the output message
                  strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-                 this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
-                 // Check to see if maxVal is less than packet size or if it will downlink more data than is available
-                 // If so, set the output message baudRate to zero
+                 // Check to see if maxVal is less than packet size. If not set the output message baudRate to zero
                  // We do not want to start downlinking until we have enough data for one packet
-                 if ((maxVal < (-1 * (this->packetSize))) ||
-                     ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0)) {
-                     dataUsageSimMsg->baudRate = 0;
-                     this->packetTransmitted = 0;
+                 if (maxVal < (-1 * (this->packetSize))) {
+                    dataUsageSimMsg->baudRate = 0;
+                    this->packetTransmitted = 0;
                  }
+                 else {
+                    // If the downlink exceeds the available data, don't downlink
+                    if ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0) {
+                        dataUsageSimMsg->baudRate = 0;
+                        this->packetTransmitted = 0;
+                    }
+                    else {
+                        // Otherwise, transmit with the nodeBaudRate
+                        this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
+                    }
+                 }
+
+
              } else {
                  strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
-                 this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
-                 // Check to see if maxVal is less than packet size.
-                 // If so, set the output message baudRate to zero
-                 // We do not want to start downlinking until we have enough data for one packet
-                 if ((maxVal < (-1 * (this->packetSize))) ||
-                     ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0)) {
-                     dataUsageSimMsg->baudRate = 0;
-                     this->packetTransmitted = 0;
-                 }
-
-                 // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
-                 // Both of these variables are negative so the comparison is non-intuitive
-                 if (this->packetTransmitted <= this->packetSize) {
-                     this->packetTransmitted = 0.0;
-                 }
+                // If the downlink exceeds the available data, don't downlink
+                if ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0) {
+                    dataUsageSimMsg->baudRate = 0;
+                    this->packetTransmitted = 0;
+                }
+                else {
+                    // Otherwise, transmit with the nodeBaudRate
+                    this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
+                }
              }
 
          } else{
