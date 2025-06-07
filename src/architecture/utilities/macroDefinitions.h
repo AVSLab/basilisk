@@ -50,7 +50,7 @@ static inline  double nanoToSec(uint64_t nanos) {
     if (nanos > MAX_SAFE_UINT64_FOR_DOUBLE) {
         fprintf(stderr,
             "[nano_to_sec] ERROR: Input %" PRIu64
-            " exceeds safe conversion limit (~%llu). Precision may be lost. Returning NAN.\n",
+            " exceeds safe conversion limit (~%" PRIu64 "). Precision may be lost. Returning NAN.\n",
             nanos, MAX_SAFE_UINT64_FOR_DOUBLE);
         return NAN;  // Indicate precision loss
     }
