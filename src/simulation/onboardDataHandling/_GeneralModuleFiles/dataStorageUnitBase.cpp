@@ -170,9 +170,11 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
        if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) <= this->storageCapacity) || (it->baudRate < 0)) {
            //! - if a dataNode exists in storedData vector, integrate and add to current amount
            if (index != -1) {
-               //! Only perform if this operation will not take the sum below zero
-               if ((this->storedData[(size_t) index].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
-                   this->storedData[(size_t) index].dataInstanceSum += round(it->baudRate * this->currentTimestep);
+               //! If this operation takes the sum below zero, set it to zero
+               if ((this->storedData[(size_t)index].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
+                   this->storedData[(size_t)index].dataInstanceSum += round(it->baudRate * this->currentTimestep);
+               } else {
+                   this->storedData[(size_t)index].dataInstanceSum = 0;
                }
                //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
            }

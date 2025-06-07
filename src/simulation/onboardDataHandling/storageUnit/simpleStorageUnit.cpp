@@ -64,9 +64,11 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
             this->storedData.push_back({{'S','T','O','R','E','D',' ','D','A','T','A'}, 0});
         }
         else if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) < this->storageCapacity) || (it->baudRate <= 0)){
-            //! - Only perform the operation if it will not result in less than 0 data
-            if ((this->storedData[0].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0){
+            //! If this operation takes the sum below zero, set it to zero
+            if ((this->storedData[0].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
                 this->storedData[0].dataInstanceSum += round(it->baudRate * this->currentTimestep);
+            } else {
+                this->storedData[0].dataInstanceSum = 0;
             }
         }
         this->netBaud += it->baudRate;
