@@ -44,7 +44,6 @@
 /*! @brief spacecraft dynamic effector */
 class Spacecraft : public DynamicObject{
 public:
-    uint64_t simTimePrevious;            //!< Previous simulation time
     std::string sysTimePropertyName;     //!< Name of the system time property
     ReadFunctor<AttRefMsgPayload> attRefInMsg; //!< (optional) reference attitude input message name
     ReadFunctor<TransRefMsgPayload> transRefInMsg; //!< (optional) reference translation input message name
@@ -52,8 +51,6 @@ public:
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
     double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
-    double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
-    double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     BackSubMatrices backSubContributions;//!< class variable
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
@@ -89,8 +86,8 @@ public:
     void equationsOfMotion(double integTimeSeconds, double timeStep);    //!< This method computes the equations of motion for the whole system
     void addStateEffector(StateEffector *newSateEffector);  //!< Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< Attaches a dynamicEffector
-    void preIntegration(double callTime) final;       //!< method to perform pre-integration steps
-    void postIntegration(double callTime) final;      //!< method to perform post-integration steps
+    void preIntegration(uint64_t callTimeNanos) final;       //!< method to perform pre-integration steps
+    void postIntegration(uint64_t callTimeNanos) final;      //!< method to perform post-integration steps
 
 private:
 

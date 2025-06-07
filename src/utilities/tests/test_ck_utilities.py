@@ -22,7 +22,7 @@ from Basilisk.utilities import SimulationBaseClass, macros, pyswice_ck_utilities
 from Basilisk.topLevelModules import pyswice
 
 
-def test_ck_read_write(show_plots):
+def test_ck_read_write(tmp_path, show_plots):
     simulation = SimulationBaseClass.SimBaseClass()
 
     process = simulation.CreateNewProcess("testProcess")
@@ -60,10 +60,13 @@ def test_ck_read_write(show_plots):
     timeWrite = scObjectLogger.times()
     sigmaWrite = scObjectLogger.sigma_BN
     omegaWrite = scObjectLogger.omega_BN_B
-    pyswice_ck_utilities.ckWrite("test.bc", timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
+    file_name = tmp_path / "test.bc"
+    fileNameStr = str(file_name)
+    print(fileNameStr)
+    pyswice_ck_utilities.ckWrite(fileNameStr, timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
 
     # Read the same CK file to check if the values are identical
-    pyswice_ck_utilities.ckInitialize("test.bc")
+    pyswice_ck_utilities.ckInitialize(fileNameStr)
     sigmaRead = np.empty_like(sigmaWrite)
     omegaRead = np.empty_like(omegaWrite)
     for idx in range(len(timeWrite)):
@@ -73,15 +76,12 @@ def test_ck_read_write(show_plots):
 
         sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
         omegaRead[idx, :] = kernOmega
-    pyswice_ck_utilities.ckClose("test.bc")
+    pyswice_ck_utilities.ckClose(fileNameStr)
 
     # Compare the read and write data
     np.testing.assert_allclose(sigmaRead, sigmaWrite)
     np.testing.assert_allclose(omegaRead, omegaWrite)
 
-    if os.path.exists("test.bc"):
+    if os.path.exists(fileNameStr):
         # Delete the file
-        os.remove("test.bc")
-
-if __name__ == "__main__":
-    test_ck_read_write(True)
+        os.remove(fileNameStr)

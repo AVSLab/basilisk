@@ -36,6 +36,12 @@ Version |release|
 - Allow event conditions and effects to be defined by functions. This is preferred over the old string-based method, as it
   enables the use of arbitrary packages and objects in events and allows for event code to be parsed by IDE tools.
 - Add a sun message input and ``theta_solar`` threshold to :ref:`SpacecraftLocation`.
+- Fixed an issue where DynamicObject classes computed time steps by differencing double values rather
+  than ``uint64_t`` values in nanoseconds.  This could cause micro drifts in the integration process.  See
+  `Issue 993 <https://github.com/AVSLab/basilisk/issues/993>`_ for more info on this issue.  Now the time step is computed
+  using ``uint64_t`` time values and then converted to a double.
+- Enhance how ``uint64_t`` values are converted to doubles.  BSK now warns if the time value is large enough such
+  that the conversion method has a loss of precision in this process.
 
 
 Version 2.7.0 (April 20, 2025)

@@ -84,7 +84,7 @@ void Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, u
     /*! compute integral term */
     double dt;
     if (callTime != 0) {
-        dt = (callTime - configData->priorTime) * NANO2SEC;
+        dt = diffNanoToSec(callTime, configData->priorTime);
         configData->intError += (thetaError + configData->priorThetaError) * dt / 2;
     }
 

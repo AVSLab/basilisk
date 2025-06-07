@@ -158,14 +158,16 @@ def run(show_plots):
     # and to discount Jupiter's velocity upon
     # entering Jupiter's Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative
     # positions and velocities even when the planets are not moving.
+    rEarth = 149598023. * 1000
+    rJupiter = 778298361. * 1000
     earthStateMsg = messaging.SpicePlanetStateMsgPayload()
-    earthStateMsg.PositionVector = [0.0, -149598023 * 1000, 0.0]
+    earthStateMsg.PositionVector = [0.0, -rEarth, 0.0]
     earthStateMsg.VelocityVector = [0.0, 0.0, 0.0]
     earthMsg = messaging.SpicePlanetStateMsg().write(earthStateMsg)
     gravFactory.gravBodies['earth'].planetBodyInMsg.subscribeTo(earthMsg)
 
     jupiterStateMsg = messaging.SpicePlanetStateMsgPayload()
-    jupiterStateMsg.PositionVector = [0.0, 778298361 * 1000, 0.0]
+    jupiterStateMsg.PositionVector = [0.0, rJupiter, 0.0]
     jupiterStateMsg.VelocityVector = [0.0, 0.0, 0.0]
     jupiterMsg = messaging.SpicePlanetStateMsg().write(jupiterStateMsg)
     gravFactory.gravBodies['jupiter barycenter'].planetBodyInMsg.subscribeTo(jupiterMsg)
@@ -194,8 +196,6 @@ def run(show_plots):
     vel_N_Earth = [0.0 * 1000, 0, 0]
 
     # Hohmann transfer calculations
-    rEarth = 149598023. * 1000
-    rJupiter = 778298361. * 1000
     at = (rEarth + rJupiter) * .5
     vPt = np.sqrt(2 * sun.mu / rEarth - sun.mu / at)
     vAt = np.sqrt(2 * sun.mu / rJupiter - sun.mu / at)
@@ -241,6 +241,11 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
+    # write planet state messages again to avoid long time difference errors in the gravity effector
+    earthMsg.write(earthStateMsg, scSim.TotalSim.CurrentNanos)
+    jupiterMsg.write(jupiterStateMsg, scSim.TotalSim.CurrentNanos)
+    sunMsg.write(sunStateMsg, scSim.TotalSim.CurrentNanos)
+
     posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
     velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
@@ -256,8 +261,14 @@ def run(show_plots):
     velRef.setState(vN)
 
     # run simulation for 2nd chunk
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000))
+    stopTime = simulationTime + macros.sec2nano(110000)
+    scSim.ConfigureStopTime(stopTime)
     scSim.ExecuteSimulation()
+
+    # write planet state messages again to avoid long time difference errors in the gravity effector
+    earthMsg.write(earthStateMsg, scSim.TotalSim.CurrentNanos)
+    jupiterMsg.write(jupiterStateMsg, scSim.TotalSim.CurrentNanos)
+    sunMsg.write(sunStateMsg, scSim.TotalSim.CurrentNanos)
 
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
@@ -294,8 +305,18 @@ def run(show_plots):
     posRef.setState(rN)
     velRef.setState(vN)
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - oneWeek*1)
-    scSim.ExecuteSimulation()
+    # to avoid the planet message becoming too stale and the resulting loss in time accuracy
+    # we break up the integration into chunks of less than 100 days
+    steps = 20
+    for i in range(steps):
+        stopTime = simulationTime + macros.sec2nano(110000) + T2*(i+1)/steps - oneWeek*1
+        scSim.ConfigureStopTime(stopTime)
+        scSim.ExecuteSimulation()
+
+        # write planet state messages again to avoid long time difference errors in the gravity effector
+        earthMsg.write(earthStateMsg, scSim.TotalSim.CurrentNanos)
+        jupiterMsg.write(jupiterStateMsg, scSim.TotalSim.CurrentNanos)
+        sunMsg.write(sunStateMsg, scSim.TotalSim.CurrentNanos)
 
     hohmann_PosData = dataLog.r_BN_N
     hohmann_VelData = dataLog.v_BN_N
@@ -314,8 +335,14 @@ def run(show_plots):
     simulationTimeStep = macros.sec2nano(500.)
     dynProcess.updateTaskPeriod(simTaskName, simulationTimeStep)
     dataLog.updateTimeInterval(macros.sec2nano(20*60))
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - oneWeek*0.5)
+    stopTime = simulationTime + macros.sec2nano(110000) + T2 - oneWeek*0.5
+    scSim.ConfigureStopTime(stopTime)
     scSim.ExecuteSimulation()
+
+    # write planet state messages again to avoid long time difference errors in the gravity effector
+    earthMsg.write(earthStateMsg, scSim.TotalSim.CurrentNanos)
+    jupiterMsg.write(jupiterStateMsg, scSim.TotalSim.CurrentNanos)
+    sunMsg.write(sunStateMsg, scSim.TotalSim.CurrentNanos)
 
     timeSwitch_posData = dataLog.r_BN_N
     endTimeStepSwitchTime = len(timeSwitch_posData)
@@ -354,9 +381,15 @@ def run(show_plots):
     # Setup data logging before the simulation is initialized
 
     # scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 + oneWeek*6)
-
+    stopTime = simulationTime + macros.sec2nano(110000) + T2 + oneWeek*6
+    scSim.ConfigureStopTime(stopTime)
     scSim.ExecuteSimulation()
+
+    # write planet state messages again to avoid long time difference errors in the gravity effector
+    earthMsg.write(earthStateMsg, scSim.TotalSim.CurrentNanos)
+    jupiterMsg.write(jupiterStateMsg, scSim.TotalSim.CurrentNanos)
+    sunMsg.write(sunStateMsg, scSim.TotalSim.CurrentNanos)
+
     #   retrieve the logged data
     dataPos = dataLog.r_BN_N
     dataVel = dataLog.v_BN_N
