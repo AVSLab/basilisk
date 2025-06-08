@@ -16,12 +16,14 @@
 
 import numpy as np
 import os
+import pytest
 
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import SimulationBaseClass, macros, pyswice_ck_utilities, simIncludeGravBody, RigidBodyKinematics as rbk
 from Basilisk.topLevelModules import pyswice
 
 
+@pytest.mark.timeout(30)  # seconds
 def test_ck_read_write(tmp_path, show_plots):
     simulation = SimulationBaseClass.SimBaseClass()
 
@@ -62,20 +64,24 @@ def test_ck_read_write(tmp_path, show_plots):
     omegaWrite = scObjectLogger.omega_BN_B
     file_name = tmp_path / "test.bc"
     fileNameStr = str(file_name)
-    print(fileNameStr)
+    print(fileNameStr, flush=True)
+    print("DEBUG: Before ckWrite", flush=True)
     pyswice_ck_utilities.ckWrite(fileNameStr, timeWrite, sigmaWrite, omegaWrite, timeInit, spacecraft_id=-202)
 
     # Read the same CK file to check if the values are identical
+    print("DEBUG: Before ckInitialize", flush=True)
     pyswice_ck_utilities.ckInitialize(fileNameStr)
     sigmaRead = np.empty_like(sigmaWrite)
     omegaRead = np.empty_like(omegaWrite)
     for idx in range(len(timeWrite)):
+        print(f"DEBUG: Entering loop iteration {idx}", flush=True)  # Add this to see if it hangs within the loop
         # Change the time string to account for increasing time
         timeString = timeInit[:19] + f"{int(timeWrite[idx] * macros.NANO2SEC):02}" + timeInit[21:]
         _, kernQuat, kernOmega = pyswice_ck_utilities.ckRead(timeString, spacecraft_id=-202)
 
         sigmaRead[idx, :] = - rbk.EP2MRP(kernQuat)  # Convert from JPL-style quaternion notation
         omegaRead[idx, :] = kernOmega
+    print("DEBUG: Before ckClose", flush=True)
     pyswice_ck_utilities.ckClose(fileNameStr)
 
     # Compare the read and write data
@@ -84,4 +90,5 @@ def test_ck_read_write(tmp_path, show_plots):
 
     if os.path.exists(fileNameStr):
         # Delete the file
+        print("DEBUG: Before os.remove", flush=True)
         os.remove(fileNameStr)
