@@ -43,7 +43,7 @@ Version |release|
 - Enhance how ``uint64_t`` values are converted to doubles.  BSK now warns if the time value is large enough such
   that the conversion method has a loss of precision in this process.
 - Support including an eclipse message in :ref:`SpacecraftLocation` to more accurately determine illumination.
-
+- Fixed a bug in :ref:`spiceInterface` where required kernels were being unloaded before they were no longer needed.
 
 Version 2.7.0 (April 20, 2025)
 ------------------------------
