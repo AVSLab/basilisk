@@ -39,9 +39,6 @@ Spacecraft::Spacecraft()
     this->propName_centerOfMassDotSC = "centerOfMassDotSC";
 
     // - Set values to either zero or default values
-    this->currTimeStep = 0.0;
-    this->timePrevious = 0.0;
-    this->simTimePrevious = 0;
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
     this->dvAccum_CN_N.setZero();
@@ -75,6 +72,9 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(CurrentSimNanos);
     }
+
+    this->timeBefore = CurrentSimNanos * NANO2SEC;
+    this->timeBeforeNanos = CurrentSimNanos;
 }
 
 
@@ -161,14 +161,11 @@ void Spacecraft::readOptionalRefMsg()
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
 void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
 {
-    // - Convert current time to seconds
-    double newTime = CurrentSimNanos*NANO2SEC;
-
     // - Get access to the spice bodies
     this->gravField.UpdateState(CurrentSimNanos);
 
     // - Integrate the state forward in time
-    this->integrateState(newTime);
+    this->integrateState(CurrentSimNanos);
 
     // If set, read in and prescribe attitude reference motion
     readOptionalRefMsg();
@@ -186,7 +183,6 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(CurrentSimNanos);
     }
-    this->simTimePrevious = CurrentSimNanos;
 }
 
 /*! This method allows the spacecraft to have access to the current state of the hub for MRP switching, writing
@@ -337,7 +333,8 @@ void Spacecraft::updateSCMassProps(double time)
 void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos = this->simTimePrevious + (uint64_t) ((integTimeSeconds-this->timePrevious)/NANO2SEC);
+    uint64_t integTimeNanos = secToNano(integTimeSeconds);
+
     (*this->sysTime) << (double) integTimeNanos, integTimeSeconds;
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
@@ -450,10 +447,10 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 }
 
 /*! Prepare for integration process
- @param integrateToThisTime Time to integrate to
+ @param integrateToThisTimeNanos Time to integrate to
  */
-void Spacecraft::preIntegration(double integrateToThisTime) {
-    this->timeStep = integrateToThisTime - this->timePrevious;
+void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos) {
+    this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos); // - Find the time step in seconds
 
     // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
@@ -470,14 +467,15 @@ void Spacecraft::preIntegration(double integrateToThisTime) {
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     this->hub.matchGravitytoVelocityState(oldV_CN_N); // Set gravity velocity to base velocity for DV estimation
-    this->timeBefore = integrateToThisTime - this->timeStep;
 }
 
 /*! Perform post-integration steps
- @param integrateToThisTime Time to integrate to
+ @param integrateToThisTimeNanos Time to integrate to
  */
-void Spacecraft::postIntegration(double integrateToThisTime) {
-    this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
+void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos) {
+    this->timeBeforeNanos = integrateToThisTimeNanos;     // - copy the current time into previous time for next integrate state call
+    this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
+    double integrateToThisTime = integrateToThisTimeNanos*NANO2SEC; // - convert to seconds
 
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSCMassProps(integrateToThisTime);

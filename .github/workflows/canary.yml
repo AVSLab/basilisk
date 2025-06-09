@@ -74,7 +74,7 @@ jobs:
         run: |
           source .venv/bin/activate
           cd src
-          pytest -n auto -m "not ciSkip" -rs --error-for-skips
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
         if: ${{ always() }}
       - name: "Run C/C++ Tests"
         working-directory: ./dist3

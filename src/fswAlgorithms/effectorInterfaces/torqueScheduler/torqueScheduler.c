@@ -73,7 +73,7 @@ void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime
     ArrayEffectorLockMsgPayload effectorLockOut = ArrayEffectorLockMsg_C_zeroMsgPayload();
 
     /*! compute current time from Reset call */
-    double t = ((callTime - configData->t0) * NANO2SEC);
+    double t = diffNanoToSec(callTime, configData->t0);
 
     /*! populate output torque msg */
     motorTorqueOut.motorTorque[0] = motorTorque1In.motorTorque[0];

@@ -116,7 +116,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTi
 	}
 
     /*! - compute control time period Delta_t */
-	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
+	controlPeriod = diffNanoToSec(callTime, configData->prevCallTime);
 	configData->prevCallTime = callTime;
 
     /*! - read the input thruster force message */

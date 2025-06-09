@@ -173,11 +173,8 @@ private:
 class SpacecraftSystem : public DynamicObject{
 public:
 
-    uint64_t simTimePrevious;            //!< Previous simulation time
     uint64_t numOutMsgBuffers;           //!< Number of output message buffers for I/O
     std::string sysTimePropertyName;     //!< Name of the system time property
-    double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
-    double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     SpacecraftUnit primaryCentralSpacecraft;   //!< Primary spacecraft in which other spacecraft can attach/detach to/from
     std::vector<SpacecraftUnit*> spacecraftDockedToPrimary; //!< vector of spacecraft currently docked with primary spacecraft
     std::vector<SpacecraftUnit*> unDockedSpacecraft; //!< vector of spacecraft currently detached from all other spacecraft
@@ -205,8 +202,8 @@ public:
     void attachSpacecraftToPrimary(SpacecraftUnit *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< Attaches a spacecraft to the primary spacecraft chain
     void addSpacecraftUndocked(SpacecraftUnit *newSpacecraft);  //!< Attaches a spacecraft to the primary spacecraft chain
     void determineAttachedSCStates();  //!< class method
-    void preIntegration(double callTime) final;  //!< pre-integration steps
-    void postIntegration(double callTime) final;  //!< post-integration steps
+    void preIntegration(uint64_t callTime) final;  //!< pre-integration steps
+    void postIntegration(uint64_t callTime) final;  //!< post-integration steps
 
 private:
     Eigen::MatrixXd *sysTime;            //!< [s] System time

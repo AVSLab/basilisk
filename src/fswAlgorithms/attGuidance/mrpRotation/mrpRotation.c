@@ -147,7 +147,7 @@ void computeTimeStep(mrpRotationConfig *configData, uint64_t callTime)
     {
         configData->dt = 0.0;
     } else {
-        configData->dt = (callTime - configData->priorTime)*NANO2SEC;
+        configData->dt = diffNanoToSec(callTime, configData->priorTime);
     }
 }
 

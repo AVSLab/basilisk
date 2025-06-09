@@ -110,8 +110,7 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 	}
 
     //! - Save off the output message information for analysis
-    this->outputData.finalTimeDelta = (double) (simTimeNano - realTimeNano - sleepAmountNano);
-    this->outputData.finalTimeDelta *= NANO2SEC;
+    this->outputData.finalTimeDelta = diffNanoToSec(simTimeNano, realTimeNano + sleepAmountNano);
 
     //! - Write the composite information into the output synch message.
     this->clockOutMsg.write(&this->outputData, this->moduleID, currentSimNanos);

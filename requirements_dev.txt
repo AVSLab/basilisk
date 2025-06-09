@@ -8,6 +8,7 @@ setuptools-scm>=8.0,<=8.2.1
 pytest==8.3.5
 pytest-html==4.1.1
 pytest-xdist==3.6.1
+pytest-timeout==2.4.0
 
 pre-commit>=3.5.0,<=4.2.0
 clang-format==20.1.0
