@@ -93,6 +93,7 @@ private:
 
     static std::mutex kernelManipulationMutex; //!< -- Mutex to protect SPICE kernel loading/unloading operations
     static std::unordered_map<std::string, int> kernelReferenceCounter; //!< -- Reference counter for SPICE kernels
+    static int requiredKernelsRefCount;  // Global counter for REQUIRED_KERNELS
     static const std::vector<std::string> REQUIRED_KERNELS; //!< -- List of required SPICE kernels
 };
 
