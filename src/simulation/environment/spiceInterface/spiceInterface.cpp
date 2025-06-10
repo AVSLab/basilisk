@@ -27,6 +27,7 @@
 // Initialize static members
 std::mutex SpiceInterface::kernelManipulationMutex;
 std::unordered_map<std::string, int> SpiceInterface::kernelReferenceCounter;
+int SpiceInterface::requiredKernelsRefCount = 0;  // Global counter for REQUIRED_KERNELS
 
 // Static constant member initialization
 const std::vector<std::string> SpiceInterface::REQUIRED_KERNELS = {
@@ -272,6 +273,18 @@ methods.
  */
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
+    // Ensure required kernels are loaded if we have a data path
+    if (!this->SPICELoaded && !this->SPICEDataPath.empty()) {
+        bool allLoaded = true;
+        for (const auto& kernelName : REQUIRED_KERNELS) {
+            if(loadSpiceKernel(kernelName.c_str(), this->SPICEDataPath.c_str())) {
+                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", kernelName.c_str());
+                allLoaded = false;
+            }
+        }
+        this->SPICELoaded = allLoaded;
+    }
+
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
 
@@ -456,6 +469,15 @@ int SpiceInterface::loadSpiceKernel(const char *kernelName, const char *dataPath
     // Initialize the reference counter for this kernel if it doesn't exist
     kernelReferenceCounter.try_emplace(filepath, 0);
 
+    // Check if this is a required kernel by exact filename match
+    bool isRequiredKernel = false;
+    for (const auto& reqKernel : REQUIRED_KERNELS) {
+        if (kernelName == reqKernel) {
+            isRequiredKernel = true;
+            break;
+        }
+    }
+
     // Only load the kernel if it hasn't been loaded yet
     if (kernelReferenceCounter.at(filepath) <= 0) {
         // The required calls come from the SPICE documentation.
@@ -473,6 +495,11 @@ int SpiceInterface::loadSpiceKernel(const char *kernelName, const char *dataPath
 
     // Increment the reference counter for this kernel
     kernelReferenceCounter[filepath]++;
+
+    // If this is a required kernel, increment the global counter
+    if (isRequiredKernel) {
+        requiredKernelsRefCount++;
+    }
 
     return 0;
 }
@@ -493,18 +520,33 @@ int SpiceInterface::unloadSpiceKernel(const char *kernelName, const char *dataPa
     // Acquire the mutex to protect kernel operations
     std::lock_guard<std::mutex> lock(kernelManipulationMutex);
 
+    // Check if this is a required kernel by exact filename match
+    bool isRequiredKernel = false;
+    for (const auto& reqKernel : REQUIRED_KERNELS) {
+        if (kernelName == reqKernel) {
+            isRequiredKernel = true;
+            break;
+        }
+    }
+
     // Check if the kernel exists in our reference counter
     auto it = kernelReferenceCounter.find(filepath);
     if (it == kernelReferenceCounter.end() || it->second <= 0) {
-        // Kernel was never loaded or already unloaded
+        // Kernel was never loaded or already unloaded - silently succeed
         return 0;
     }
 
     // Decrement the reference counter
     it->second--;
 
+    // If this is a required kernel, decrement the global counter
+    if (isRequiredKernel) {
+        requiredKernelsRefCount--;
+    }
+
     // Only unload if no more references to this kernel
-    if (it->second <= 0) {
+    // For required kernels, also check the global counter
+    if (it->second <= 0 && (!isRequiredKernel || requiredKernelsRefCount <= 0)) {
         // The required calls come from the SPICE documentation.
         erract_c("SET", this->charBufferSize, (SpiceChar*)"REPORT");
         unload_c(filepath.c_str());
