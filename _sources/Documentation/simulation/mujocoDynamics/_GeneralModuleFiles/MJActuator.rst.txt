@@ -1,0 +1,8 @@
+.. _MJActuator:
+
+Module: MJActuator
+==================
+
+.. autodoxygenfile:: MJActuator.h
+   :project: _GeneralModuleFiles5
+

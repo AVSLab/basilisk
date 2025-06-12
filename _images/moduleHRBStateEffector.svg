@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="599 260.5 650 87.18181" width="650" height="87.18181">
+  <defs>
+    <font-face font-family="Courier" font-size="12" units-per-em="1000" underline-position="-178.22266" underline-thickness="57.61719" slope="0" x-height="456.54297" cap-height="586.91406" ascent="753.90625" descent="-246.09375" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Courier"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-3 -3 7 6" markerWidth="7" markerHeight="6" color="black">
+      <g>
+        <path d="M 3 0 L -1.8 -1.8 L 0 0 L 0 0 L -1.8 1.8 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica" font-size="12" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Helvetica"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.19\n2022-08-15 11:46:00 +0000</metadata>
+  <g id="Canvas_1" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none" stroke="none">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_11">
+        <text transform="translate(1006.0922 288.05067)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">HingedRigidBodyMsgPayload</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <path d="M 818.4825 261 L 989.2413 261 C 992.0027 261 994.2413 263.23858 994.2413 266 L 994.2413 342.1818 C 994.2413 344.94324 992.0027 347.1818 989.2413 347.1818 L 818.4825 347.1818 C 815.7211 347.1818 813.4825 344.94324 813.4825 342.1818 L 813.4825 266 C 813.4825 263.23858 815.7211 261 818.4825 261 Z" fill="#ffc0ff"/>
+        <path d="M 818.4825 261 L 989.2413 261 C 992.0027 261 994.2413 263.23858 994.2413 266 L 994.2413 342.1818 C 994.2413 344.94324 992.0027 347.1818 989.2413 347.1818 L 818.4825 347.1818 C 815.7211 347.1818 813.4825 344.94324 813.4825 342.1818 L 813.4825 266 C 813.4825 263.23858 815.7211 261 818.4825 261 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(818.4825 296.9229)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="3.251364" y="11">HingedRigidBodyStateEffector</tspan>
+        </text>
+      </g>
+      <g id="Line_9">
+        <line x1="672.60816" y1="288.18737" x2="805.6942" y2="288.18737" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Line_8">
+        <line x1="994.8063" y1="286.54824" x2="1127.8923" y2="286.54824" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_7">
+        <text transform="translate(1006.0922 271.04582)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">hingedRigidBodyOutMsg</tspan>
+        </text>
+      </g>
+      <g id="Graphic_6">
+        <text transform="translate(604 287.68923)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="8.028259" y="11">ArrayMotorTorqueMsgPayload</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <text transform="translate(642.01165 273.1851)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="57.20412" y="11">motorTorqueInMsg</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <text transform="translate(1005.5272 328.18994)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="0" y="11">SCStatesMsgPayload</tspan>
+        </text>
+      </g>
+      <g id="Line_3">
+        <line x1="994.2413" y1="326.6875" x2="1127.3273" y2="326.6875" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_2">
+        <text transform="translate(1005.5272 311.1851)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="0" y="11">hingedRigidBodyConfigLogOutMsg</tspan>
+        </text>
+      </g>
+      <g id="Line_16">
+        <line x1="672.60816" y1="325.69807" x2="805.6942" y2="325.69807" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_15">
+        <text transform="translate(604 325.1999)" fill="black">
+          <tspan font-family="Courier" font-size="12" font-weight="400" fill="black" x="15.229431" y="11">HingedRigidBodyMsgPayload</tspan>
+        </text>
+      </g>
+      <g id="Graphic_14">
+        <text transform="translate(642.01165 310.6958)" fill="black">
+          <tspan font-family="Helvetica" font-size="12" font-weight="400" fill="black" x="25.170914" y="11">hingedRigidBodyRefMsg</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

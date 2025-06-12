@@ -1,0 +1,833 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: linearTranslationOneDOFStateEffector &mdash; Basilisk 2.7.14
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=cdeb63be"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="linearTranslationBodiesOneDOF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">linearTranslationalBodies</a></li>
+          <li class="breadcrumb-item"><a href="index.html">linearTranslationBodiesOneDOF</a></li>
+      <li class="breadcrumb-item active">Module: linearTranslationOneDOFStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesOneDOF/linearTranslationOneDOFStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-lineartranslationonedofstateeffector">
+<span id="lineartranslationonedofstateeffector"></span><h1>Module: linearTranslationOneDOFStateEffector<a class="headerlink" href="#module-lineartranslationonedofstateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The linear translation body class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the linear translation body module and the rigid body hub that it is attached to. In this case, a 1-DoF linear translation body has an inertia tensor and is attached to the hub by a single degree of freedom axis. The spinning axis is fixed in the body frame and the effector is rigid, which means that its center of mass location does not move in the F frame. An optional motor force can be applied on the spinning axis, and the user can also lock the axis through a command.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>translatingBodyOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#lineartranslationrigidbodymsgpayload"><span class="std std-ref">LinearTranslationRigidBodyMsgPayload</span></a></p></td>
+<td><p>Output message containing the linear translation body state displacement and displacement rate</p></td>
+</tr>
+<tr class="row-odd"><td><p>motorForceInMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.html#arraymotorforcemsgpayload"><span class="std std-ref">ArrayMotorForceMsgPayload</span></a></p></td>
+<td><p>(Optional) Input message of the motor force value</p></td>
+</tr>
+<tr class="row-even"><td><p>motorLockInMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.html#arrayeffectorlockmsgpayload"><span class="std std-ref">ArrayEffectorLockMsgPayload</span></a></p></td>
+<td><p>(Optional) Input message for locking the axis</p></td>
+</tr>
+<tr class="row-odd"><td><p>translatingBodyRefInMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#lineartranslationrigidbodymsgpayload"><span class="std std-ref">LinearTranslationRigidBodyMsgPayload</span></a></p></td>
+<td><p>(Optional) Input message for prescribing the displacement and displacement rate</p></td>
+</tr>
+<tr class="row-even"><td><p>translatingBodyConfigLogOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Output message containing the translating body inertial position and attitude states</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>A 1 DoF translating body has 2 states: <code class="docutils literal notranslate"><span class="pre">rho</span></code> and <code class="docutils literal notranslate"><span class="pre">rhoDot</span></code>. The displacemet and displacement rate can change due to the interaction with the hub, but also because of applied forces (control, spring and damper). The displacement remains fixed and the displacement rate is set to zero when the axis is locked.</p>
+<section id="mathematical-modeling">
+<h3>Mathematical Modeling<a class="headerlink" href="#mathematical-modeling" title="Link to this heading"></a></h3>
+<p>See the following tech report for a detailed description of this model.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>P. Johnson and J. Vaz Carneiro, “<a class="reference external" href="http://hanspeterschaub.info/Papers/singleAxisTranslatingEffector.pdf">Single Axis Translating Effector</a>,”
+Technical Note, University of Colorado, Autonomous Vehicle Systems (AVS) Lab, Boulder, CO, March 9, 2024.</p>
+</div>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section is to outline the steps needed to setup a Translating Body State Effector in Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the linearTranslatingBodyOneDOFStateEffector class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">linearTranslatingBodyOneDOFStateEffector</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instantiation of a Translating body:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">translatingBody</span> <span class="o">=</span> <span class="n">linearTranslatingBodyOneDOFStateEffector</span><span class="o">.</span><span class="n">linearTranslatingBodyOneDOFStateEffector</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define all physical parameters for a Translating Body. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">translatingBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">setFHat_B</span><span class="p">([[</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_FcF_F</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_F0B_B</span><span class="p">([[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]])</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">setIPntFc_F</span><span class="p">([[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                             <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                             <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]])</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">setDCM_FB</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define initial conditions of the effector.  Default values are zero states:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoInit</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoDotInit</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define spring and damper coefficients.  Default values are zero:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">translatingBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define a unique name for each state.  If you have multiple translating bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">translatingBody</span><span class="o">.</span><span class="n">nameOfThetaState</span> <span class="o">=</span> <span class="s2">&quot;translatingBodyRho&quot;</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">nameOfThetaDotState</span> <span class="o">=</span> <span class="s2">&quot;translatingBodyRhoDot&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Connect a command force message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cmdArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorForceMsgPayload</span><span class="p">()</span>
+<span class="n">cmdArray</span><span class="o">.</span><span class="n">motorForce</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmdForce</span><span class="p">]</span>  <span class="c1"># [Nm]</span>
+<span class="n">cmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorForceMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmdArray</span><span class="p">)</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">motorForceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Connect an axis-locking message (0 means the axis is free to move and 1 locks the axis):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lockArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayEffectorLockMsgPayload</span><span class="p">()</span>
+<span class="n">lockArray</span><span class="o">.</span><span class="n">effectorLockFlag</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">lockMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayEffectorLockMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lockArray</span><span class="p">)</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">motorLockInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lockMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Connect a displacement and displacement rate reference message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">translationRef</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsgPayload</span><span class="p">()</span>
+<span class="n">translationRef</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">translationRef</span><span class="o">.</span><span class="n">rhoDot</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">translationRefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">translationRef</span><span class="p">)</span>
+<span class="n">translatingBody</span><span class="o">.</span><span class="n">translatingBodyRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">translationRefMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>The linear states of the body are created using an output message <code class="docutils literal notranslate"><span class="pre">translatingBodyOutMsg</span></code>.</p></li>
+<li><p>The translating body config log state output message is <code class="docutils literal notranslate"><span class="pre">translatingBodyConfigLogOutMsg</span></code>.</p></li>
+<li><p>Add the effector to your spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">translatingBody</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../../spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> documentation on how to set up a spacecraft object.</p>
+</li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">translatingBody</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv436linearTranslationOneDOFStateEffector">
+<span id="_CPPv336linearTranslationOneDOFStateEffector"></span><span id="_CPPv236linearTranslationOneDOFStateEffector"></span><span id="linearTranslationOneDOFStateEffector"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linearTranslationOneDOFStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv436linearTranslationOneDOFStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;linearTranslationOneDOFStateEffector.h&gt;</em></div>
+<p>linear spring mass damper state effector class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector36linearTranslationOneDOFStateEffectorEv">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector36linearTranslationOneDOFStateEffectorEv"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector36linearTranslationOneDOFStateEffectorEv"></span><span id="linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a1646688df4fb4c4c377a6643df2abc3b"></span><span class="sig-name descname"><span class="n"><span class="pre">linearTranslationOneDOFStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector36linearTranslationOneDOFStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffectorD0Ev">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffectorD0Ev"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffectorD0Ev"></span><span id="linearTranslationOneDOFStateEffector::~linearTranslationOneDOFStateEffector"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a87dfea6a77310afb090b48a420e775b8"></span><span class="sig-name descname"><span class="n"><span class="pre">~linearTranslationOneDOFStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector7setMassEd">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector7setMassEd"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector7setMassEd"></span><span id="linearTranslationOneDOFStateEffector::setMass__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a31d92e240acbce88cce633a34788f88d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMass</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mass</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector7setMassEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">mass</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector4setKEd">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector4setKEd"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector4setKEd"></span><span id="linearTranslationOneDOFStateEffector::setK__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1af9c79ffe68606fe62fc04d51d1f4e9e7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setK</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector4setKEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">k</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector4setCEd">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector4setCEd"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector4setCEd"></span><span id="linearTranslationOneDOFStateEffector::setC__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a5e3d8186313c9e57a88c523f4a01b3bc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setC</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector4setCEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">c</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10setRhoInitEd">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10setRhoInitEd"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10setRhoInitEd"></span><span id="linearTranslationOneDOFStateEffector::setRhoInit__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aa498ed4a4fa9266c4ee39229e0e97877"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRhoInit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rhoInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10setRhoInitEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">rhoInit</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector13setRhoDotInitEd">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector13setRhoDotInitEd"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector13setRhoDotInitEd"></span><span id="linearTranslationOneDOFStateEffector::setRhoDotInit__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a5322d0640194fccd277b32e768c2178b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRhoDotInit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rhoDotInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector13setRhoDotInitEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">rhoDotInit</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector9setFHat_BEN5Eigen8Vector3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector9setFHat_BEN5Eigen8Vector3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector9setFHat_BEN5Eigen8Vector3dE"></span><span id="linearTranslationOneDOFStateEffector::setFHat_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a37781a75d313b64048fceb1e0bc1240a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setFHat_B</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fHat_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector9setFHat_BEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">fHat_B</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10setR_FcF_FEN5Eigen8Vector3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10setR_FcF_FEN5Eigen8Vector3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10setR_FcF_FEN5Eigen8Vector3dE"></span><span id="linearTranslationOneDOFStateEffector::setR_FcF_F__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aeb94ccde32a4ed00e56819f25271fe21"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_FcF_F</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_FcF_F</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10setR_FcF_FEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_FcF_F</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10setR_F0B_BEN5Eigen8Vector3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10setR_F0B_BEN5Eigen8Vector3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10setR_F0B_BEN5Eigen8Vector3dE"></span><span id="linearTranslationOneDOFStateEffector::setR_F0B_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ace44ce4f9e9388e31b489d6f115a2784"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_F0B_B</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_F0B_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10setR_F0B_BEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_F0B_B</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector11setIPntFc_FEN5Eigen8Matrix3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector11setIPntFc_FEN5Eigen8Matrix3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector11setIPntFc_FEN5Eigen8Matrix3dE"></span><span id="linearTranslationOneDOFStateEffector::setIPntFc_F__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ac151a29fb85ceaa71daf8a3ba3f9be2a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setIPntFc_F</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">IPntFc_F</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector11setIPntFc_FEN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">IPntFc_F</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector9setDCM_FBEN5Eigen8Matrix3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector9setDCM_FBEN5Eigen8Matrix3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector9setDCM_FBEN5Eigen8Matrix3dE"></span><span id="linearTranslationOneDOFStateEffector::setDCM_FB__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ad61a5cde7cb8abadc70a9f2d23afb4ce"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDCM_FB</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dcm_FB</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector9setDCM_FBEN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">dcm_FB</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector7getMassEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector7getMassEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector7getMassEv"></span><span id="linearTranslationOneDOFStateEffector::getMassC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a7420302287d7c2b35341eb4b2db942be"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMass</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector7getMassEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">mass</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector4getKEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector4getKEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector4getKEv"></span><span id="linearTranslationOneDOFStateEffector::getKC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a10d3e8b08f006ea75500e44e7899ce8d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getK</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector4getKEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">k</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector4getCEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector4getCEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector4getCEv"></span><span id="linearTranslationOneDOFStateEffector::getCC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a135f01c1fc5fe6c277dc5e89fff6905a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector4getCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">c</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector10getRhoInitEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector10getRhoInitEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector10getRhoInitEv"></span><span id="linearTranslationOneDOFStateEffector::getRhoInitC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a2f52982721e4e0d7cfd0a411a90a50f6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRhoInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector10getRhoInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">rhoInit</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector13getRhoDotInitEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector13getRhoDotInitEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector13getRhoDotInitEv"></span><span id="linearTranslationOneDOFStateEffector::getRhoDotInitC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1afdd199ed89b3c9c91b5298e08ef79718"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRhoDotInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector13getRhoDotInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">rhoDotInit</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector9getFHat_BEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector9getFHat_BEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector9getFHat_BEv"></span><span id="linearTranslationOneDOFStateEffector::getFHat_BC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1af53aa0d8e4b4220b63a262a0f15f601f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getFHat_B</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector9getFHat_BEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">fHat_B</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector10getR_FcF_FEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector10getR_FcF_FEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector10getR_FcF_FEv"></span><span id="linearTranslationOneDOFStateEffector::getR_FcF_FC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ad52c8c5a49b61d1e507bc8f5be100909"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_FcF_F</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector10getR_FcF_FEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_FcF_F</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector10getR_F0B_BEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector10getR_F0B_BEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector10getR_F0B_BEv"></span><span id="linearTranslationOneDOFStateEffector::getR_F0B_BC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a159f7f5dbfecf3573811455e7e9e5884"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_F0B_B</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector10getR_F0B_BEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_F0B_B</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector11getIPntFc_FEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector11getIPntFc_FEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector11getIPntFc_FEv"></span><span id="linearTranslationOneDOFStateEffector::getIPntFc_FC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ac5ddf203282e0156556644e3d42dae8c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getIPntFc_F</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector11getIPntFc_FEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">IPntFc_F</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36linearTranslationOneDOFStateEffector9getDCM_FBEv">
+<span id="_CPPv3NK36linearTranslationOneDOFStateEffector9getDCM_FBEv"></span><span id="_CPPv2NK36linearTranslationOneDOFStateEffector9getDCM_FBEv"></span><span id="linearTranslationOneDOFStateEffector::getDCM_FBC"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aed10dc787c24b236d097c8138167b10b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDCM_FB</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36linearTranslationOneDOFStateEffector9getDCM_FBEv" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">dcm_FB</span></code> property </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector21translatingBodyOutMsgE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector21translatingBodyOutMsgE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector21translatingBodyOutMsgE"></span><span id="linearTranslationOneDOFStateEffector::translatingBodyOutMsg__Message:LinearTranslationRigidBodyMsgPayload:"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1acf872f0d30a4197b7040f2a504f56d16"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#_CPPv436LinearTranslationRigidBodyMsgPayload" title="LinearTranslationRigidBodyMsgPayload"><span class="n"><span class="pre">LinearTranslationRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">translatingBodyOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector21translatingBodyOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>state output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector30translatingBodyConfigLogOutMsgE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector30translatingBodyConfigLogOutMsgE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector30translatingBodyConfigLogOutMsgE"></span><span id="linearTranslationOneDOFStateEffector::translatingBodyConfigLogOutMsg__Message:SCStatesMsgPayload:"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a78592639a95123bd68c04564dd36973f"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">translatingBodyConfigLogOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector30translatingBodyConfigLogOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>translating body state config log message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector15motorForceInMsgE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector15motorForceInMsgE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector15motorForceInMsgE"></span><span id="linearTranslationOneDOFStateEffector::motorForceInMsg__ReadFunctor:ArrayMotorForceMsgPayload:"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a5ca46d3f966a4d653ce862bbf4467fce"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.html#_CPPv425ArrayMotorForceMsgPayload" title="ArrayMotorForceMsgPayload"><span class="n"><span class="pre">ArrayMotorForceMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorForceInMsg</span></span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector15motorForceInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) motor force input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector23translatingBodyRefInMsgE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector23translatingBodyRefInMsgE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector23translatingBodyRefInMsgE"></span><span id="linearTranslationOneDOFStateEffector::translatingBodyRefInMsg__ReadFunctor:LinearTranslationRigidBodyMsgPayload:"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a8a3398acefc0ecc8a197d0ad21aadc91"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#_CPPv436LinearTranslationRigidBodyMsgPayload" title="LinearTranslationRigidBodyMsgPayload"><span class="n"><span class="pre">LinearTranslationRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">translatingBodyRefInMsg</span></span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector23translatingBodyRefInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) reference state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector14motorLockInMsgE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector14motorLockInMsgE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector14motorLockInMsgE"></span><span id="linearTranslationOneDOFStateEffector::motorLockInMsg__ReadFunctor:ArrayEffectorLockMsgPayload:"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a0fad043fc8f30d4b2589778771db26a0"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.html#_CPPv427ArrayEffectorLockMsgPayload" title="ArrayEffectorLockMsgPayload"><span class="n"><span class="pre">ArrayEffectorLockMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorLockInMsg</span></span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector14motorLockInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) lock flag input message </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector5ResetE8uint64_t">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector5ResetE8uint64_t"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector5ResetE8uint64_t"></span><span id="linearTranslationOneDOFStateEffector::Reset__uint64_t"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a6dca33fedf0991d7842f5355a0c74168"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector14registerStatesER15DynParamManager"></span><span id="linearTranslationOneDOFStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aed9346af736e2a2a2695962c7733934e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector12linkInStatesER15DynParamManager"></span><span id="linearTranslationOneDOFStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a7165f54da1691870544dfdcf9e518ec4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="linearTranslationOneDOFStateEffector::writeOutputStateMessages__uint64_t"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aea87d564d06f52102366e5078b7a66e5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector23updateEffectorMassPropsEd">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector23updateEffectorMassPropsEd"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector23updateEffectorMassPropsEd"></span><span id="linearTranslationOneDOFStateEffector::updateEffectorMassProps__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aba199ebbf672ddfcecf885a1bb8039bd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="linearTranslationOneDOFStateEffector::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a8780c04459a4259daaff165cd54ef7d4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="linearTranslationOneDOFStateEffector::updateEnergyMomContributions__double.Eigen::Vector3dR.doubleR.Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a194c081a405b9b5c4c9f7cf0bf01aabb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyMomContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotAngMomPntCContr_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotEnergyContr</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="linearTranslationOneDOFStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a2a194247b48dea6652ff3fc0a002bf89"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector11UpdateStateE8uint64_t"></span><span id="linearTranslationOneDOFStateEffector::UpdateState__uint64_t"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aa5364970f92d7d156dd382fc7bd87e7f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector36computeTranslatingBodyInertialStatesEv">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector36computeTranslatingBodyInertialStatesEv"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector36computeTranslatingBodyInertialStatesEv"></span><span id="linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aa916fca63b8b99d519df6b00a0058ba3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTranslatingBodyInertialStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector36computeTranslatingBodyInertialStatesEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector27computeBackSubContributionsER15BackSubMatricesRKN5Eigen8Vector3dE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector27computeBackSubContributionsER15BackSubMatricesRKN5Eigen8Vector3dE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector27computeBackSubContributionsER15BackSubMatricesRKN5Eigen8Vector3dE"></span><span id="linearTranslationOneDOFStateEffector::computeBackSubContributions__BackSubMatricesR.Eigen::Vector3dCR"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a3eb00d21a7a879290c06844ba4981432"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBackSubContributions</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">F_g</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector27computeBackSubContributionsER15BackSubMatricesRKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector17readInputMessagesEv">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector17readInputMessagesEv"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector17readInputMessagesEv"></span><span id="linearTranslationOneDOFStateEffector::readInputMessages"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aebcf92a1397e9404d333236c6b43f3ec"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector4massE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector4massE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector4massE"></span><span id="linearTranslationOneDOFStateEffector::mass__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ac007f19f27b0af4c63eeb766d6ad60b3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mass</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector4massE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] mass of effector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector1kE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector1kE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector1kE"></span><span id="linearTranslationOneDOFStateEffector::k__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1af0fe883738658fb84da78f97269effb7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector1kE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N/m] linear spring constant </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector1cE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector1cE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector1cE"></span><span id="linearTranslationOneDOFStateEffector::c__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a3190acb4e9300dbbfd5678cbcd7c5ff6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector1cE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-s/m] linear damping term </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector7rhoInitE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector7rhoInitE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector7rhoInitE"></span><span id="linearTranslationOneDOFStateEffector::rhoInit__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a162012d2209964f6e95c8e000289bb0e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector7rhoInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] initial displacement offset </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10rhoDotInitE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10rhoDotInitE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10rhoDotInitE"></span><span id="linearTranslationOneDOFStateEffector::rhoDotInit__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a36f1ea7893b2cbf4d24a0a074732cb0a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoDotInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10rhoDotInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Initial displacement rate offset </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector6fHat_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector6fHat_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector6fHat_BE"></span><span id="linearTranslationOneDOFStateEffector::fHat_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a0835176705be63497d62b5e7854a854f"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fHat_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector6fHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>unit vector axis of translation in B frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector7r_FcF_FE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector7r_FcF_FE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector7r_FcF_FE"></span><span id="linearTranslationOneDOFStateEffector::r_FcF_F__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a563a5a879e543159ee569a03ec5a9ecb"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_FcF_F</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector7r_FcF_FE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from location F to FC in F frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector7r_F0B_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector7r_F0B_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector7r_F0B_BE"></span><span id="linearTranslationOneDOFStateEffector::r_F0B_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ad771196b38eae9b5daf382358c78c2cf"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_F0B_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector7r_F0B_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from body frame B origin to point to F0 origin of F frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector8IPntFc_FE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector8IPntFc_FE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector8IPntFc_FE"></span><span id="linearTranslationOneDOFStateEffector::IPntFc_F__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a4c6f4a413e137d8792d5583b61dd7e41"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPntFc_F</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector8IPntFc_FE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] Inertia of pc about point Fc in F frame component </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector6dcm_FBE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector6dcm_FBE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector6dcm_FBE"></span><span id="linearTranslationOneDOFStateEffector::dcm_FB__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a80c5e18600ca48e8514d63beef3588e7"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_FB</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector6dcm_FBE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from the F frame to the body frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector14nameOfRhoStateE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector14nameOfRhoStateE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector14nameOfRhoStateE"></span><span id="linearTranslationOneDOFStateEffector::nameOfRhoState__ss"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aeac2f6c0a8bc5788705d2252c7173a80"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfRhoState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector14nameOfRhoStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for the rho state data container. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector17nameOfRhoDotStateE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector17nameOfRhoDotStateE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector17nameOfRhoDotStateE"></span><span id="linearTranslationOneDOFStateEffector::nameOfRhoDotState__ss"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ac670c1314a464d78f3b8244aa455c13d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfRhoDotState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector17nameOfRhoDotStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for the rhoDot state data container. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector12isAxisLockedE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector12isAxisLockedE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector12isAxisLockedE"></span><span id="linearTranslationOneDOFStateEffector::isAxisLocked__b"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a47fea05f86a632269801fb0111fa63de"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isAxisLocked</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector12isAxisLockedE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag for locking the translation axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector3rhoE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector3rhoE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector3rhoE"></span><span id="linearTranslationOneDOFStateEffector::rho__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1afe503bdea1293751645916f8f2ea71ff"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rho</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector3rhoE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] displacement from equilibrium </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector6rhoDotE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector6rhoDotE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector6rhoDotE"></span><span id="linearTranslationOneDOFStateEffector::rhoDot__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ad92cdf1c0ca21407d98825958ae1c837"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoDot</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector6rhoDotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] time derivative of displacement from equilibrium </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector6rhoRefE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector6rhoRefE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector6rhoRefE"></span><span id="linearTranslationOneDOFStateEffector::rhoRef__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aae6e67f0224d59b569d13261276b765f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoRef</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector6rhoRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] translating body reference position </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector9rhoDotRefE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector9rhoDotRefE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector9rhoDotRefE"></span><span id="linearTranslationOneDOFStateEffector::rhoDotRef__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a5ce73cee152e98882ffd857480d47aff"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoDotRef</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector9rhoDotRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] translating body reference velocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10motorForceE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10motorForceE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10motorForceE"></span><span id="linearTranslationOneDOFStateEffector::motorForce__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a9df17fc6f1e35a99a3144e33077b9adf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorForce</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10motorForceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] optional motor force </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector7r_FcB_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector7r_FcB_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector7r_FcB_BE"></span><span id="linearTranslationOneDOFStateEffector::r_FcB_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a6bb33ab7b9142cb1e240509b18e806ff"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_FcB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector7r_FcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector from B to center of mass location of effector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector8r_FcF0_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector8r_FcF0_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector8r_FcF0_BE"></span><span id="linearTranslationOneDOFStateEffector::r_FcF0_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1accc96be8eaee4d9c2a2ce56598ef7dbb"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_FcF0_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector8r_FcF0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from point p0 origin of F frame to center of mass location of effector in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector12rTilde_FcF_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector12rTilde_FcF_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector12rTilde_FcF_BE"></span><span id="linearTranslationOneDOFStateEffector::rTilde_FcF_B__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1abc1526d241bd6c5de75b18b875bf7f42"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTilde_FcF_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector12rTilde_FcF_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] tilde matrix of r_FcF_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector12rPrime_FcF_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector12rPrime_FcF_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector12rPrime_FcF_BE"></span><span id="linearTranslationOneDOFStateEffector::rPrime_FcF_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aeacc56a0df53e1e340ea2ec1788f2823"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_FcF_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector12rPrime_FcF_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Body time derivative of r_FcF_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcF_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcF_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcF_BE"></span><span id="linearTranslationOneDOFStateEffector::rPrimeTilde_FcF_B__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a42199a4919cd7da2cd1d2db05c48399f"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeTilde_FcF_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcF_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Tilde matrix of rPrime_FcF_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector12rTilde_FcB_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector12rTilde_FcB_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector12rTilde_FcB_BE"></span><span id="linearTranslationOneDOFStateEffector::rTilde_FcB_B__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a61c907d98ef356b0f2199318acda5652"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTilde_FcB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector12rTilde_FcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] tilde matrix of r_FcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector12rPrime_FcB_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector12rPrime_FcB_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector12rPrime_FcB_BE"></span><span id="linearTranslationOneDOFStateEffector::rPrime_FcB_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a0682a3191020a8a0c314f33c2dc1fda4"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_FcB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector12rPrime_FcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Body time derivative of r_FcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcB_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcB_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcB_BE"></span><span id="linearTranslationOneDOFStateEffector::rPrimeTilde_FcB_B__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a3af2aa312523f9c1e40055af2caf2fcb"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeTilde_FcB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector17rPrimeTilde_FcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Tilde matrix of rPrime_FcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector8IPntFc_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector8IPntFc_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector8IPntFc_BE"></span><span id="linearTranslationOneDOFStateEffector::IPntFc_B__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a38d8f5ca82e1995bb8a385ae717a4538"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPntFc_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector8IPntFc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] Inertia of Fc about point B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector6dcm_BNE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector6dcm_BNE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector6dcm_BNE"></span><span id="linearTranslationOneDOFStateEffector::dcm_BN__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a222ef0e509bc43bee4dd90fcc67b19a6"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BN</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector6dcm_BNE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from the B frame to the N frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10omega_BN_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10omega_BN_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10omega_BN_BE"></span><span id="linearTranslationOneDOFStateEffector::omega_BN_B__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a80de31a6c6ee6778674c0e875888687f"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_BN_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10omega_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] angular velocity of the B frame wrt the N frame in B frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector15omegaTilde_BN_BE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector15omegaTilde_BN_BE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector15omegaTilde_BN_BE"></span><span id="linearTranslationOneDOFStateEffector::omegaTilde_BN_B__Eigen::Matrix3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a27715797d2e3ba841cf4373debc97766"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTilde_BN_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector15omegaTilde_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] tilde matrix of omega_BN_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector4aRhoE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector4aRhoE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector4aRhoE"></span><span id="linearTranslationOneDOFStateEffector::aRho__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aae80408337caa2a2c51f6553c9e2a4fe"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aRho</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector4aRhoE" title="Link to this definition"></a><br /></dt>
+<dd><p>Term needed for back-sub method. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector4bRhoE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector4bRhoE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector4bRhoE"></span><span id="linearTranslationOneDOFStateEffector::bRho__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a645c9630fc90ba6ca65fa0e705e5c9e7"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bRho</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector4bRhoE" title="Link to this definition"></a><br /></dt>
+<dd><p>Term needed for back-sub method. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector4cRhoE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector4cRhoE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector4cRhoE"></span><span id="linearTranslationOneDOFStateEffector::cRho__double"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1aee4de5991c19d5e7dd8b35f0902c73d8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cRho</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector4cRhoE" title="Link to this definition"></a><br /></dt>
+<dd><p>Term needed for back-sub method. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector8rhoStateE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector8rhoStateE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector8rhoStateE"></span><span id="linearTranslationOneDOFStateEffector::rhoState__StateDataP"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a67f56e0162b3ec8c8b28e25099921e06"></span><a class="reference internal" href="../../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">rhoState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector8rhoStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>state data for displacement from equilibrium </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector11rhoDotStateE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector11rhoDotStateE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector11rhoDotStateE"></span><span id="linearTranslationOneDOFStateEffector::rhoDotState__StateDataP"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ae82bb5cc245e6bd68495b2d8c077fced"></span><a class="reference internal" href="../../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">rhoDotState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector11rhoDotStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>state data for time derivative of rho; </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector3g_NE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector3g_NE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector3g_NE"></span><span id="linearTranslationOneDOFStateEffector::g_N__Eigen::MatrixXdP"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a08af48ad1356661b1d1b45101bce5be7"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">g_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector3g_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] gravitational acceleration in N frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector24inertialPositionPropertyE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector24inertialPositionPropertyE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector24inertialPositionPropertyE"></span><span id="linearTranslationOneDOFStateEffector::inertialPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a1a2a4967e1d57cfbb5a72099daca9e86"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] r_N inertial position relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector24inertialVelocityPropertyE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector24inertialVelocityPropertyE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector24inertialVelocityPropertyE"></span><span id="linearTranslationOneDOFStateEffector::inertialVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a392cec38158941e97ed4bd386fb0553f"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector24inertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] v_N inertial velocity relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector7r_FcN_NE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector7r_FcN_NE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector7r_FcN_NE"></span><span id="linearTranslationOneDOFStateEffector::r_FcN_N__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a17f9abee6c3ba0c369fc9dfa62532987"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_FcN_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector7r_FcN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector of translating body’s center of mass Fc relative to the inertial frame origin N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector7v_FcN_NE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector7v_FcN_NE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector7v_FcN_NE"></span><span id="linearTranslationOneDOFStateEffector::v_FcN_N__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a68f3c5850753153ff83061f78bb3667c"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_FcN_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector7v_FcN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] inertial velocity vector of Fc relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector8sigma_FNE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector8sigma_FNE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector8sigma_FNE"></span><span id="linearTranslationOneDOFStateEffector::sigma_FN__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1ad4e00f4082c659154a0492fffed76058"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_FN</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector8sigma_FNE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame F relative to inertial frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10omega_FN_FE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10omega_FN_FE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10omega_FN_FE"></span><span id="linearTranslationOneDOFStateEffector::omega_FN_F__Eigen::Vector3d"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1af97c8c8c6bdb2b9b44ec903f150cbd6b"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_FN_F</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10omega_FN_FE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] inertial translating body frame angular velocity vector </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36linearTranslationOneDOFStateEffector10effectorIDE">
+<span id="_CPPv3N36linearTranslationOneDOFStateEffector10effectorIDE"></span><span id="_CPPv2N36linearTranslationOneDOFStateEffector10effectorIDE"></span><span id="linearTranslationOneDOFStateEffector::effectorID__uint64_t"></span><span class="target" id="classlinear_translation_one_d_o_f_state_effector_1a209f05955580f0e2fed58ca9cf2cc314"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N36linearTranslationOneDOFStateEffector10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>ID number of this panel. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="linearTranslationBodiesOneDOF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
