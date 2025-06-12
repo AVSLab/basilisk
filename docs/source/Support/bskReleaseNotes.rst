@@ -44,6 +44,9 @@ Version |release|
   that the conversion method has a loss of precision in this process.
 - Support including an eclipse message in :ref:`SpacecraftLocation` to more accurately determine illumination.
 - Fixed a bug in :ref:`spiceInterface` where required kernels were being unloaded before they were no longer needed.
+- Fixed an issue where the :ref:`spaceToGroundTransmitter` would check for the amount of data remaining in a different partition than the one being downlinked.
+- Fixed an issue where a high baud rate prevented the :ref:`spaceToGroundTransmitter` from downlinking data from the :ref:`simpleStorageUnit` or :ref:`partitionedStorageUnit`.
+
 
 Version 2.7.0 (April 20, 2025)
 ------------------------------
