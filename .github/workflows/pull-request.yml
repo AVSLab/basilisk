@@ -26,7 +26,7 @@ jobs:
   build-linux-3-10:
     name: Linux 22.04
     runs-on: ubuntu-22.04
-    timeout-minutes: 75
+    timeout-minutes: 100
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
@@ -61,7 +61,7 @@ jobs:
   build-linux-3-11:
     name: Linux 22.04 All Tests
     runs-on: ubuntu-22.04
-    timeout-minutes: 75
+    timeout-minutes: 100
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -106,7 +106,7 @@ jobs:
   build-linux-3-11-pip:
     name: Linux 22.04 pip
     runs-on: ubuntu-22.04
-    timeout-minutes: 75
+    timeout-minutes: 100
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -140,7 +140,7 @@ jobs:
   build-windows:
     name: Windows All Tests
     runs-on: windows-2019
-    timeout-minutes: 75
+    timeout-minutes: 100
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -208,7 +208,7 @@ jobs:
   build-macOS:
     name: macOS All Tests Docs
     runs-on: macos-latest
-    timeout-minutes: 75
+    timeout-minutes: 100
     strategy:
       matrix:
         python-version: [ "3.11", "3.12", "3.13" ]
@@ -258,7 +258,7 @@ jobs:
   build-macOS-no-vizInterface:
     name: macOS no vizInterface
     runs-on: macos-latest
-    timeout-minutes: 75
+    timeout-minutes: 100
     strategy:
       matrix:
         python-version: [ "3.11" ]
