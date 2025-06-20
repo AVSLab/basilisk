@@ -19,6 +19,20 @@
 
 #include "MJUtils.h"
 
+using namespace std::string_literals;
+
 namespace MJBasilisk::detail
 {
+void
+logMujocoError(const char* err)
+{
+    logAndThrow<std::runtime_error>("MuJoCo internal error: "s + err);
+}
+
+void
+logMujocoWarning(const char* err)
+{
+    BSKLogger{}.bskLog(BSK_WARNING, ("MuJoCo internal warning: "s + err).c_str());
+}
+
 } // namespace MJBasilisk::detail

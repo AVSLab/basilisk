@@ -64,6 +64,18 @@ template <typename T = std::invalid_argument>
     throw T(error);
 }
 
+/** Calls ``logAndThrow<std::runtime_error>`` with the given input
+ *
+ * Meant to be used as an error callback for MuJoCo's ``mju_user_error``.
+*/
+void logMujocoError(const char* err);
+
+/** Calls ``BSKLogger::bskLog`` with the given input
+ *
+ * Meant to be used as an error callback for MuJoCo's ``mju_user_warning``.
+*/
+void logMujocoWarning(const char* err);
+
 } // namespace MJBasilisk::detail
 
 #endif
