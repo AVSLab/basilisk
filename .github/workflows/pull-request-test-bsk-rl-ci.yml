@@ -1,0 +1,109 @@
+name: "[TEMP] Debug BSK-RL CI SPICE"
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-ubuntu-latest-wheels:
+    name: Build ubuntu-latest wheels
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: "Install swig and cmake"
+        run: sudo apt-get update && sudo apt-get install build-essential swig cmake -y
+      - name: "Install python packages"
+        run: sudo apt-get install python3-setuptools python3-tk python3-venv
+      - name: "Create virtual Environment"
+        run: python3 -m venv .venv
+      - name: "Build basilisk"
+        run: |
+          source .venv/bin/activate
+          pip wheel . -v --wheel-dir /tmp/wheelhouse
+      - uses: actions/upload-artifact@v4
+        with:
+          name: basilisk-wheels_ubuntu-22.04_python${{ matrix.python-version }}
+          path: /tmp/wheelhouse/**/*asilisk*.whl
+
+  test-bsk-rl-docs:
+    name: Test BSK-RL Docs
+    needs: build-ubuntu-latest-wheels
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        test-index: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+      fail-fast: false
+    steps:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Pull Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: basilisk-wheels_ubuntu-22.04_python${{ matrix.python-version }}
+    - name: Install Basilisk from wheels
+      shell: bash
+      run: |
+        pip install *asilisk*.whl
+        bskLargeData
+    - name: Clone BSK-RL
+      uses: actions/checkout@v4
+      with:
+        repository: AVSLab/bsk_rl
+        path: bsk_rl
+    - name: Install BSK-RL
+      run: |
+        cd bsk_rl
+        pip install -e '.[all,rllib,docs]' && finish_install
+    - uses: pandoc/actions/setup@main
+    - name: Sphinx build
+      run: |
+        cd bsk_rl/docs
+        make html
+
+  test-bsk-rl-tests:
+    name: Test BSK-RL Pytest
+    needs: build-ubuntu-latest-wheels
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        test-index: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+      fail-fast: false
+    steps:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Pull Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: basilisk-wheels_ubuntu-22.04_python${{ matrix.python-version }}
+    - name: Install Basilisk from wheels
+      shell: bash
+      run: |
+        pip install *asilisk*.whl
+        bskLargeData
+    - name: Clone BSK-RL
+      uses: actions/checkout@v4
+      with:
+        repository: AVSLab/bsk_rl
+        path: bsk_rl
+    - name: Install BSK-RL
+      run: |
+        cd bsk_rl
+        pip install -e '.[all,rllib,docs]' && finish_install
+    - name: Pytest
+      run: |
+        cd bsk_rl
+        pytest -v -s -ra --tb=long -o log_cli=true -o log_level=DEBUG
