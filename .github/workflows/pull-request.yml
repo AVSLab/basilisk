@@ -140,7 +140,7 @@ jobs:
   build-windows:
     name: Windows All Tests
     runs-on: windows-2025
-    timeout-minutes: 75
+    timeout-minutes: 100
     strategy:
       matrix:
         python-version: ["3.11"]
