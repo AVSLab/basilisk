@@ -23,6 +23,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include <shared_mutex>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/bskLogging.h"
@@ -54,6 +55,8 @@ public:
     void clearKeeper();                         //!< class method
     void addPlanetNames(std::vector<std::string> planetNames);    //!< Adds a list of planet names to track in SPICE
     void addSpacecraftNames(std::vector<std::string> spacecraftNames);    //!< Adds a list of spacecraft names to track in SPICE
+    bool areKernelsLoaded();                    //!< Check if required kernels are properly loaded
+    void ensureKernelsLoaded();                 //!< Ensure kernels are loaded, reload if necessary
 
 public:
     Message<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
@@ -91,7 +94,7 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
 
-    static std::mutex kernelManipulationMutex; //!< -- Mutex to protect SPICE kernel loading/unloading operations
+    static std::recursive_mutex spiceGlobalMutex; //!< -- Recursive mutex to protect ALL SPICE operations and kernel manipulation
     static std::unordered_map<std::string, int> kernelReferenceCounter; //!< -- Reference counter for SPICE kernels
     static int requiredKernelsRefCount;  // Global counter for REQUIRED_KERNELS
     static const std::vector<std::string> REQUIRED_KERNELS; //!< -- List of required SPICE kernels
