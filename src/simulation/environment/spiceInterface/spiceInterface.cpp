@@ -19,26 +19,15 @@
 #include "simulation/environment/spiceInterface/spiceInterface.h"
 #include <sstream>
 #include "SpiceUsr.h"
-#include <string>
+#include <string.h>
 #include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-// Initialize static members
-std::mutex SpiceInterface::kernelManipulationMutex;
-std::unordered_map<std::string, int> SpiceInterface::kernelReferenceCounter;
-
-// Static constant member initialization
-const std::vector<std::string> SpiceInterface::REQUIRED_KERNELS = {
-    "naif0012.tls",
-    "pck00010.tpc",
-    "de-403-masses.tpc",
-    "de430.bsp"
-};
-
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
  */
+
 SpiceInterface::SpiceInterface()
 {
     SPICEDataPath = "";
@@ -58,17 +47,18 @@ SpiceInterface::SpiceInterface()
 
     referenceBase = "j2000";
     zeroBase = "SSB";
-    timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
+	timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
 
     //! - set default epoch time information
     char string[255];
     snprintf(string, 255, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY, EPOCH_HOUR, EPOCH_MIN, EPOCH_SEC);
     this->UTCCalInit = string;
+
+    return;
 }
 
 /*! The only needed activity in the destructor is to delete the spice I/O buffer
- *  and unload any loaded SPICE kernels.
- */
+ that was allocated in the constructor*/
 SpiceInterface::~SpiceInterface()
 {
     for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++) {
@@ -84,30 +74,22 @@ SpiceInterface::~SpiceInterface()
         delete this->transRefStateOutMsgs.at(c);
     }
     delete [] this->spiceBuffer;
-
-    // Properly unload kernels if they were loaded
-    if(this->SPICELoaded)
-    {
-        // Unload the SPICE kernels in reverse order of loading
-        for (const auto& kernelName : REQUIRED_KERNELS) {
-            unloadSpiceKernel(kernelName.c_str(), this->SPICEDataPath.c_str());
-        }
-    }
-
+//    if(this->SPICELoaded)
+//    {
+//        this->clearKeeper();
+//    }
     return;
 }
 
-/*! This method clears the SPICE kernel pool using the SPICE kclear_c function.
- *  It is protected by a mutex to ensure thread safety.
- */
 void SpiceInterface::clearKeeper()
 {
-    std::lock_guard<std::mutex> lock(kernelManipulationMutex);
     kclear_c();
 }
 
+
 /*! Reset the module to origina configuration values.
-*/
+
+ */
 void SpiceInterface::Reset(uint64_t CurrenSimNanos)
 {
     //! - Bail if the SPICEDataPath is not present
@@ -119,12 +101,17 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     //!- Load the SPICE kernels if they haven't already been loaded
     if(!this->SPICELoaded)
     {
-        // Load the required SPICE kernels - they will only be loaded once per kernel
-        // across all threads due to our reference counting mechanism
-        for (const auto& kernelName : REQUIRED_KERNELS) {
-            if(loadSpiceKernel(kernelName.c_str(), this->SPICEDataPath.c_str())) {
-                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", kernelName.c_str());
-            }
+        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
+        }
+        if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
+        }
+        if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
+        }
+        if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
+            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
         }
         this->SPICELoaded = true;
     }
@@ -165,9 +152,11 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     this->UpdateState(CurrenSimNanos);
 }
 
+
 /*! This method is used to initialize the zero-time that will be used to
  calculate all system time values in the Update method.  It also creates the
  output message for time data
+
  */
 void SpiceInterface::initTimeData()
 {
@@ -197,9 +186,10 @@ void SpiceInterface::initTimeData()
 
 }
 
-/*! This method computes the GPS time data for the current elapsed time.
-It uses the total elapsed times at both the GPS epoch time and the current time to
+/*! This method computes the GPS time data for the current elapsed time.  It uses
+ the total elapsed times at both the GPS epoch time and the current time to
  compute the GPS time (week, seconds, rollovers)
+
  */
 void SpiceInterface::computeGPSData()
 {
@@ -221,7 +211,7 @@ void SpiceInterface::computeGPSData()
  It packages up the internal variables into the output structure definitions
  and puts them out on the messaging system
 
-@param CurrentClock The current simulation time (used for time stamping)
+ @param CurrentClock The current simulation time (used for time stamping)
  */
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
@@ -265,8 +255,8 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 }
 
 /*! This method is the interface point between the upper level simulation and
-the SPICE interface at runtime. It calls all of the necessary lower level
-methods.
+ the SPICE interface at runtime.  It calls all of the necessary lower level
+ methods.
 
  @param CurrentSimNanos The current clock time for the simulation
  */
@@ -288,7 +278,7 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! take a vector of planet name strings and create the vector of
-planet state output messages and the vector of planet state message payloads */
+    planet state output messages and the vector of planet state message payloads */
 void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     std::vector<std::string>::iterator it;
 
@@ -320,8 +310,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
 }
 
 /*! take a vector of spacecraft name strings and create the vectors of
-spacecraft state output messages and the vector of spacecraft state
-message payloads */
+    spacecraft state output messages and the vector of spacecraft state message payloads */
 void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames) {
     std::vector<std::string>::iterator it;
     SpiceChar *name = new SpiceChar[this->charBufferSize];
@@ -378,7 +367,7 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
 
 
 /*! This method gets the state of each spice item that has been added to the module
-and saves the information off into the array.
+ and saves the information off into the array.
 
  */
 void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData)
@@ -445,35 +434,27 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
  @param kernelName The name of the kernel we are loading
  @param dataPath The path to the data area on the filesystem
  */
-int SpiceInterface::loadSpiceKernel(const char *kernelName, const char *dataPath)
+int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
 {
-    // Create the full filepath using string_view for internal handling
-    std::string filepath = std::string{dataPath} + std::string{kernelName};
+    char *fileName = new char[this->charBufferSize];
+    SpiceChar *name = new SpiceChar[this->charBufferSize];
 
-    // Acquire the mutex to protect kernel operations
-    std::lock_guard<std::mutex> lock(kernelManipulationMutex);
+    //! - The required calls come from the SPICE documentation.
+    //! - The most critical call is furnsh_c
+    strcpy(name, "REPORT");
+    erract_c("SET", this->charBufferSize, name);
+    strcpy(fileName, dataPath);
+    strcat(fileName, kernelName);
+    furnsh_c(fileName);
 
-    // Initialize the reference counter for this kernel if it doesn't exist
-    kernelReferenceCounter.try_emplace(filepath, 0);
-
-    // Only load the kernel if it hasn't been loaded yet
-    if (kernelReferenceCounter.at(filepath) <= 0) {
-        // The required calls come from the SPICE documentation.
-        // The most critical call is furnsh_c
-        erract_c("SET", this->charBufferSize, (SpiceChar*)"REPORT");
-        furnsh_c(filepath.c_str());
-
-        // Check to see if we had trouble loading a kernel
-        erract_c("SET", this->charBufferSize, (SpiceChar*)"DEFAULT");
-
-        if(failed_c()) {
-            return 1;
-        }
+    //! - Check to see if we had trouble loading a kernel and alert user if so
+    strcpy(name, "DEFAULT");
+    erract_c("SET", this->charBufferSize, name);
+    delete[] fileName;
+    delete[] name;
+    if(failed_c()) {
+        return 1;
     }
-
-    // Increment the reference counter for this kernel
-    kernelReferenceCounter[filepath]++;
-
     return 0;
 }
 
@@ -485,48 +466,43 @@ int SpiceInterface::loadSpiceKernel(const char *kernelName, const char *dataPath
  @param kernelName The name of the kernel we are unloading
  @param dataPath The path to the data area on the filesystem
  */
-int SpiceInterface::unloadSpiceKernel(const char *kernelName, const char *dataPath)
+int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
 {
-    // Create the full filepath using string_view for internal handling
-    std::string filepath = std::string{dataPath} + std::string{kernelName};
+    char *fileName = new char[this->charBufferSize];
+    SpiceChar *name = new SpiceChar[this->charBufferSize];
 
-    // Acquire the mutex to protect kernel operations
-    std::lock_guard<std::mutex> lock(kernelManipulationMutex);
-
-    // Check if the kernel exists in our reference counter
-    auto it = kernelReferenceCounter.find(filepath);
-    if (it == kernelReferenceCounter.end() || it->second <= 0) {
-        // Kernel was never loaded or already unloaded
-        return 0;
+    //! - The required calls come from the SPICE documentation.
+    //! - The most critical call is furnsh_c
+    strcpy(name, "REPORT");
+    erract_c("SET", this->charBufferSize, name);
+    strcpy(fileName, dataPath);
+    strcat(fileName, kernelName);
+    unload_c(fileName);
+    delete[] fileName;
+    delete[] name;
+    if(failed_c()) {
+        return 1;
     }
-
-    // Decrement the reference counter
-    it->second--;
-
-    // Only unload if no more references to this kernel
-    if (it->second <= 0) {
-        // The required calls come from the SPICE documentation.
-        erract_c("SET", this->charBufferSize, (SpiceChar*)"REPORT");
-        unload_c(filepath.c_str());
-
-        erract_c("SET", this->charBufferSize, (SpiceChar*)"DEFAULT");
-
-        if(failed_c()) {
-            return 1;
-        }
-
-        // Remove the kernel from our reference counter
-        kernelReferenceCounter.erase(it);
-    }
-
     return 0;
 }
 
 std::string SpiceInterface::getCurrentTimeString()
 {
-    constexpr size_t allowedOutputLength = 255;  // Reasonable fixed size for time string
-    char spiceOutputBuffer[allowedOutputLength];
+	char *spiceOutputBuffer;
+	int64_t allowedOutputLength;
 
-    timout_c(this->J2000Current, this->timeOutPicture.c_str(), (SpiceInt) allowedOutputLength, spiceOutputBuffer);
-    return std::string(spiceOutputBuffer);
+	allowedOutputLength = (int64_t)this->timeOutPicture.size() - 5;
+
+	if (allowedOutputLength < 0)
+	{
+        bskLogger.bskLog(BSK_ERROR, "The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
+		return("");
+	}
+
+	spiceOutputBuffer = new char[allowedOutputLength];
+	timout_c(this->J2000Current, this->timeOutPicture.c_str(), (SpiceInt) allowedOutputLength,
+		spiceOutputBuffer);
+	std::string returnTimeString = spiceOutputBuffer;
+	delete[] spiceOutputBuffer;
+	return(returnTimeString);
 }
