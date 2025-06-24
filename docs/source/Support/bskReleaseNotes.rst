@@ -31,7 +31,6 @@ Version |release|
 - Demo video was added to :ref:`scenarioQuadMaps` documentation
 - Pinned python dependencies to avoid issues with new package versions.
 - Added a new github workflow job ``canary`` to routinely check the compatibility of latest python dependencies with python 3.13 on the latest mac-os.
-- Fixed a bug in :ref:`spiceInterface` where multiple instances of the module were not properly managing SPICE kernel references, leading to potential conflicts and data corruption.
 - Deprecated :ref:`SpacecraftSystem`.  It was never completed and we have other ways to connect spacecraft components
 - Allow event conditions and effects to be defined by functions. This is preferred over the old string-based method, as it
   enables the use of arbitrary packages and objects in events and allows for event code to be parsed by IDE tools.
@@ -43,7 +42,6 @@ Version |release|
 - Enhance how ``uint64_t`` values are converted to doubles.  BSK now warns if the time value is large enough such
   that the conversion method has a loss of precision in this process.
 - Support including an eclipse message in :ref:`SpacecraftLocation` to more accurately determine illumination.
-- Fixed a bug in :ref:`spiceInterface` where required kernels were being unloaded before they were no longer needed.
 - Fixed an issue where the :ref:`spaceToGroundTransmitter` would check for the amount of data remaining in a different partition than the one being downlinked.
 - Fixed an issue where a high baud rate prevented the :ref:`spaceToGroundTransmitter` from downlinking data from the :ref:`simpleStorageUnit` or :ref:`partitionedStorageUnit`.
 
