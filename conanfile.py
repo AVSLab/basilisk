@@ -57,9 +57,6 @@ bskModuleOptionsFlag = {
     "allOptPkg": [[True, False], False]  # TODO: Remove, used only for managePipEnvironment.
 }
 
-# this statement is needed to enable Windows to print ANSI codes in the Terminal
-# see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
-os.system("")
 
 def is_running_virtual_env():
     return sys.prefix != sys.base_prefix
@@ -229,9 +226,6 @@ class BasiliskConan(ConanFile):
             self.options['opencv'].with_quirc = False  # QR code lib
             self.options['opencv'].with_webp = False  # raster graphics file format for web
 
-        if is_msvc(self):
-            self.options["*"].shared = True
-
         # Other dependency options
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
             self.options['zeromq'].encryption = False # Basilisk does not use data streaming encryption.
@@ -284,7 +278,7 @@ class BasiliskConan(ConanFile):
                 generatorString = "Xcode"
                 tc.generator = generatorString
             elif self.settings.os == "Windows":
-                generatorString = "Visual Studio 16 2019"
+                generatorString = "Visual Studio 17 2022"
                 tc.generator = generatorString
                 self.options["*"].shared = True
             else:

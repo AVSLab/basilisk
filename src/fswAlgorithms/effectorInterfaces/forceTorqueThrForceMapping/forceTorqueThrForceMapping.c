@@ -183,7 +183,7 @@ void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configD
     }
 
     /* Compute the minimum norm inverse of DG*/
-    double DGT_DGDGT_inv[6*6];
+    double DGT_DGDGT_inv[6*MAX_EFF_CNT];
     mMinimumNormInverse(DG_full, (size_t) 6-numZeroes, (size_t) MAX_EFF_CNT, DGT_DGDGT_inv);
 
     /* Compute the force for each thruster */
