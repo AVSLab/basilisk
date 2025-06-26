@@ -291,7 +291,7 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
     Eigen::Matrix3d rTilde_PB_P = eigenTilde(r_PB_P);
     Eigen::Vector3d r_ScS_P = this->r_ScS_B;
     Eigen::Matrix3d rTilde_ScS_P = eigenTilde(r_ScS_P);
-    backSubContr.matrixB += this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->aTheta.transpose();
+    backSubContr.matrixB += this->mass * rTilde_ScS_P * sHat_P * this->aTheta.transpose() * rTilde_PB_P;
 
     Eigen::Matrix3d omegaTilde_PB_P = eigenTilde(omega_PB_P);
     Eigen::Vector3d rPPrime_ScP_P = this->rPrime_ScB_B;

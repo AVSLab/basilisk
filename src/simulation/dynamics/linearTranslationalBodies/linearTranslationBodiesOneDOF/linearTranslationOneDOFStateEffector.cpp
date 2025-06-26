@@ -265,7 +265,7 @@ void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
 
         // Prescribed motion translation coupling contributions
         Eigen::Matrix3d rTilde_PB_B = eigenTilde(r_PB_B);
-        backSubContr.matrixB += - this->mass * rTilde_PB_B * fHat_b * this->aRho.transpose();
+        backSubContr.matrixB += - this->mass * fHat_b * this->aRho.transpose() * rTilde_PB_B;
 
         Eigen::Vector3d omega_PB_B = dcm_PB.transpose() * omega_PB_P;
         Eigen::Matrix3d omegaTilde_PB_B = eigenTilde(omega_PB_B);
