@@ -77,6 +77,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);             //!< -- Method for updating information
     void registerStates(DynParamManager& statesIn);         //!< -- Method for registering the SB states
     void linkInStates(DynParamManager& states);             //!< -- Method for getting access to other states
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;         //!< -- Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
@@ -93,6 +94,7 @@ public:
                                       Eigen::Vector3d omega_BN_B);       //!< -- Method for computing energy and momentum for SBs
     void prependSpacecraftNameToStates();                   //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;
 
 private:
     static uint64_t effectorID;     //!< [] ID number of this panel
@@ -169,10 +171,23 @@ private:
     double theta2Dot = 0.0;             //!< [rad/s] second axis angle rate
     Eigen::MatrixXd* inertialPositionProperty = nullptr;    //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;    //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialAttitudeProperty = nullptr;  //!< sigma_BN inertial attitude relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialAngVelocityProperty = nullptr;  //!< [rad/s] omega_N inertial angular velocity relative to system spice zeroBase/refBase
     StateData *theta1State = nullptr;    //!< -- state manager of theta1 for spinning body
     StateData *theta1DotState = nullptr; //!< -- state manager of theta1Dot for spinning body
     StateData* theta2State = nullptr;    //!< -- state manager of theta2 for spinning body
     StateData* theta2DotState = nullptr; //!< -- state manager of theta2Dot for spinning body
+
+
+    // Properties required for prescribed motion branching/attachment
+    StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
+
+    Eigen::MatrixXd* prescribedPositionProperty = nullptr;         //!< [m] r_PB_B prescribed position relative to hub
+    Eigen::MatrixXd* prescribedVelocityProperty = nullptr;         //!< [m/s] rPrime_PB_B prescribed velocity relative to hub
+    Eigen::MatrixXd* prescribedAccelerationProperty = nullptr;     //!< [m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub
+    Eigen::MatrixXd* prescribedAttitudeProperty = nullptr;         //!< sigma_PB prescribed MRP attitude relative to hub
+    Eigen::MatrixXd* prescribedAngVelocityProperty = nullptr;      //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
+    Eigen::MatrixXd* prescribedAngAccelerationProperty = nullptr;  //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
 };
 
 #endif /* SPINNING_BODY_TWO_DOF_STATE_EFFECTOR_H */
