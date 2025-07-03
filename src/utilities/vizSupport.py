@@ -17,14 +17,15 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import numpy as np
 import os
+
+import numpy as np
 from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import deprecated
 from Basilisk.utilities import quadMapSupport as qms
+from Basilisk.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 
@@ -226,7 +227,7 @@ def addLocation(viz, **kwargs):
     vizElement = vizInterface.LocationPbMsg()
 
     unitTestSupport.checkMethodKeyword(
-        ['stationName', 'parentBodyName', 'r_GP_P', 'lla_GP', 'gHat_P', 'fieldOfView', 'color', 'range'],
+        ['stationName', 'parentBodyName', 'r_GP_P', 'lla_GP', 'gHat_P', 'fieldOfView', 'color', 'range', 'markerScale'],
         kwargs)
 
     if 'stationName' in kwargs:
@@ -324,6 +325,16 @@ def addLocation(viz, **kwargs):
             print('ERROR: range must be a float')
             exit(1)
         vizElement.range = rangeParam
+
+    if 'markerScale' in kwargs:
+        markerScale = kwargs['markerScale']
+        if not isinstance(markerScale, float):
+            print('ERROR: markerScale must be a float')
+            exit(1)
+        if markerScale < 0.0:
+            print('ERROR: markerScale must be a positive float')
+            exit(1)
+        vizElement.markerScale = markerScale
 
     locationList.append(vizElement)
     del viz.locations[:]  # clear settings list to replace it with updated list
