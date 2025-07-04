@@ -252,6 +252,7 @@ void Spacecraft::initializeDynamics()
     // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
     // - Pulling the state from the hub at this time gives us r_CN_N
     Eigen::Vector3d rInit_BN_N = this->hubR_N->getState();
+//    std::cout << "rInit_BN_N = " << rInit_BN_N << std::endl;
     Eigen::MRPd sigma_BN;
     sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
@@ -260,6 +261,8 @@ void Spacecraft::initializeDynamics()
     // - Subtract off cDot_B to get v_BN_N
     Eigen::Vector3d vInit_BN_N = this->hubV_N->getState();
     vInit_BN_N -= dcm_NB*(*this->cDot_B);
+//    std::cout << "c_B = " << *this->c_B << std::endl;
+//    std::cout << "rInit_BN_N after = " << rInit_BN_N << std::endl;
     // - Finally set the translational states r_BN_N and v_BN_N with the corrections
     this->hubR_N->setState(rInit_BN_N);
     this->hubV_N->setState(vInit_BN_N);
@@ -301,6 +304,7 @@ void Spacecraft::updateSCMassProps(double time)
     (*this->m_SC)(0,0) += this->hub.effProps.mEff;
     (*this->ISCPntB_B) += this->hub.effProps.IEffPntB_B;
     (*this->c_B) += this->hub.effProps.mEff*this->hub.effProps.rEff_CB_B;
+//    std::cout << "rEff_CB_B = " << this->hub.effProps.rEff_CB_B << std::endl;
 
     // - Loop through state effectors to get mass props
     std::vector<StateEffector*>::iterator it;
@@ -364,6 +368,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 
     this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
+//    std::cout << "r_BN_N = " << this->hubR_N->getState() << std::endl;
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)

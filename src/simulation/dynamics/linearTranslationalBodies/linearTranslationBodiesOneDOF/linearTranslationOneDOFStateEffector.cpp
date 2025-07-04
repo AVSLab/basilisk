@@ -19,6 +19,7 @@
 
 #include "linearTranslationOneDOFStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include<iostream>
 
 linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector()
 {
@@ -82,6 +83,8 @@ void linearTranslationOneDOFStateEffector::setC(double c) {
 
 void linearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
+    this->r_BN_N = statesIn.getStateObject(this->stateNameOfPosition);
+    this->v_BN_N = statesIn.getStateObject(this->stateNameOfVelocity);
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
     this->g_N = statesIn.getPropertyReference("g_N");
@@ -214,6 +217,7 @@ void linearTranslationOneDOFStateEffector::updateContributions(double integTime,
     Eigen::Vector3d g_B = dcm_BN * gLocal_N;
     Eigen::Vector3d F_g = this->mass * g_B;
 
+    this->computeTranslatingBodyInertialStates();
     computeBackSubContributions(backSubContr, F_g, integTime);
 }
 
@@ -304,9 +308,17 @@ void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
     *this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
     *this->omega_FN_F = this->dcm_FB.transpose() * this->omega_BN_B;
 
-    *this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
+    Eigen::Vector3d r_B1N_N = this->r_BN_N->getState();
+    Eigen::Vector3d v_B1N_N = this->v_BN_N->getState();
+    *this->r_FcN_N = r_B1N_N + this->dcm_BN.transpose() * this->r_FcB_B;
     Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
-    *this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
+    *this->v_FcN_N = v_B1N_N + this->dcm_BN.transpose() * rDot_FcB_B;
+//    *this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
+//    Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
+//    *this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
+//    std::cout << "r_B1N_N = " << (*this->inertialPositionProperty).transpose() << std::endl;
+//    std::cout << "r_B1N_N = " << r_B1N_N.transpose() << std::endl;
+//    std::cout << "r_FcN_N = " << (*this->r_FcN_N).transpose() << std::endl;
 }
 
 void linearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)

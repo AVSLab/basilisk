@@ -114,10 +114,8 @@ def run(show_plots, env):
 
     # Define mass properties of the rigid hub of both spacecraft
     scObject1.hub.mHub = 750.0
-    scObject1.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
     scObject1.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
     scObject2.hub.mHub = 750.0
-    scObject2.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
     scObject2.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Define the spacecraft's properties
@@ -146,8 +144,9 @@ def run(show_plots, env):
 
     # With initial attitudes at zero (B1, B2, and N frames all initially aligned)
     dir = r_B2N_N_0/np.linalg.norm(r_B2N_N_0)
-    l = 0.1
-    COMoffset = 0.1 # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
+    dir = np.array([1, 0, 0])
+    l = 1.0
+    COMoffset = 1.0 # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
     r_P1B1_B1 = np.dot(dir,COMoffset)
     r_P2B2_B2 = np.dot(-dir,COMoffset)
     r_P2P1_B1Init = np.dot(dir,l)
@@ -160,7 +159,7 @@ def run(show_plots, env):
     r_B1C_N = r_B1N_N_0 - r_CN_N
     r_B2C_N = r_B2N_N_0 - r_CN_N
     # compute relative velocity due to spin and COM offset
-    target_spin = [0.01,0.01,0.01]
+    target_spin = [0.01, 0.01, 0.01]
     omega_CN_N = np.array(target_spin)
     omega_B1N_B1_0 = omega_CN_N
     omega_B2N_B2_0 = omega_CN_N
@@ -169,41 +168,25 @@ def run(show_plots, env):
     rDot_B1N_N_0 = rDot_B1N_N + dv_B1C_N
     rDot_B2N_N_0 = rDot_B2N_N + dv_B2C_N
 
-    # Set the initial values for all spacecraft states
-    scObject1.hub.r_CN_NInit = r_B1N_N_0
-    scObject1.hub.v_CN_NInit = rDot_B1N_N_0
-    scObject1.hub.omega_BN_BInit = omega_B1N_B1_0
-    scObject2.hub.r_CN_NInit = r_B2N_N_0
-    scObject2.hub.v_CN_NInit = rDot_B2N_N_0
-    scObject2.hub.omega_BN_BInit = omega_B2N_B2_0
-    print(r_B1N_N_0)
-    print(rDot_B1N_N_0)
-    print(r_B2N_N_0)
-    print(rDot_B2N_N_0)
-
     # Create a linear translating effector
     translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
-    mass = 1.0
-    rhoInit = 0.0
+    mass = 10
+    rhoInit = 1.0
     rhoDotInit = 0.0
     fHat_B = r_P2P1_B1Init/np.linalg.norm(r_P2P1_B1Init)#[[3.0 / 5.0], [4.0 / 5.0], [0.0]]
-    r_FcF_F = [[0.0], [0.0], [0.0]]#[[-1.0], [1.0], [0.0]]
-    r_F0B_B = [[0.0], [0.0], [0.0]]#r_P1B1_B1#[[-5.0], [4.0], [3.0]]
+    r_F0B_B = [0.0, 0.0, 0.0]#r_P1B1_B1#[[-5.0], [4.0], [3.0]]
+    r_FF0_B = np.dot(fHat_B, rhoInit)
+    r_FcF_F = [0.0, 0.0, 0.0]#[[-1.0], [1.0], [0.0]]
     IPntFc_F = [[1.0, 0.0, 0.0],
                 [0.0, 1.0, 0.0],
                 [0.0, 0.0, 1.0]]
     dcm_FB = [[1.0, 0.0, 0.0],
               [0.0, 1.0, 0.0],
               [0.0, 0.0, 1.0]]
-    k = 100.0
-    c = 10.0
-
-    # test1 = r_B1N_N_0 + r_P1B1_B1 + r_P2P1_B1Init - r_P2B2_B2 - r_B2N_N_0
-    # print(test1)
-    # test2 = r_B1N_N_0 + r_F0B_B + rhoInit*fHat_B - r_P2B2_B2 - r_B2N_N_0
-    # print(test2)
+    k = 1000.0
+    c = 1000.0
 
     # set parameters above
     translatingBody.setMass(mass)
@@ -220,7 +203,13 @@ def run(show_plots, env):
     lockArray = messaging.ArrayEffectorLockMsgPayload()
     lockArray.effectorLockFlag = [1]
     lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
-    translatingBody.motorLockInMsg.subscribeTo(lockMsg)
+    # translatingBody.motorLockInMsg.subscribeTo(lockMsg)
+
+    translationRef = messaging.LinearTranslationRigidBodyMsgPayload()
+    translationRef.rho = 1.5
+    translationRef.rhoDot = 0.0
+    translationRefMsg = messaging.LinearTranslationRigidBodyMsg().write(translationRef)
+    translatingBody.translatingBodyRefInMsg.subscribeTo(translationRefMsg)
 
     translatingBody.ModelTag = "translatingBody"
 
@@ -232,10 +221,10 @@ def run(show_plots, env):
     # Create the constraint effector module
     constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
     # Set up the constraint effector physical parameters
-    constraintEffector.setR_P1B1_B1(r_P1B1_B1)
+    constraintEffector.setR_P1B1_B1([0,0,0])
     constraintEffector.setR_P2B2_B2(r_P2B2_B2)
     constraintEffector.setR_P2P1_B1Init(r_P2P1_B1Init)#[[0.0], [0.0], [0.0]])#
-    constraintEffector.setAlpha(1E3)
+    constraintEffector.setAlpha(1E2)
     constraintEffector.setBeta(1E3)
     constraintEffector.ModelTag = "constraintEffector"
 
@@ -244,11 +233,30 @@ def run(show_plots, env):
     # scObject1.addDynamicEffector(constraintEffector)
     scObject2.addDynamicEffector(constraintEffector)
 
+    # adjust COM based on attached components
+    r_C1B1_B1_0 = mass * (r_F0B_B + r_FF0_B + np.array(dcm_FB).T@r_FcF_F)/(scObject1.hub.mHub + mass)
+    # scObject1.hub.r_BcB_B = r_C1B1_B1_0
+    print(r_F0B_B)
+    print(r_FF0_B)
+    print(r_FcF_F)
+    print(r_C1B1_B1_0)
+    print(np.dot(fHat_B, rhoInit))
+    print(r_B1N_N_0)
+    print(r_B1N_N_0 + r_C1B1_B1_0)
+
+    # Set the initial values for all spacecraft states
+    scObject1.hub.r_CN_NInit = r_B1N_N_0 + r_C1B1_B1_0
+    scObject1.hub.v_CN_NInit = rDot_B1N_N_0
+    scObject1.hub.omega_BN_BInit = omega_B1N_B1_0
+    scObject2.hub.r_CN_NInit = r_B2N_N_0
+    scObject2.hub.v_CN_NInit = rDot_B2N_N_0
+    scObject2.hub.omega_BN_BInit = omega_B2N_B2_0
+
     # Add the modules to runtime call list
     scSim.AddModelToTask(simTaskName, scObject1)#, ModelPriority=30)
-    scSim.AddModelToTask(simTaskName, scObject2)#, ModelPriority=30)
+    scSim.AddModelToTask(simTaskName, scObject2)#, ModelPriority=40)
     scSim.AddModelToTask(simTaskName, translatingBody)#, ModelPriority=10)
-    scSim.AddModelToTask(simTaskName, constraintEffector)#, ModelPriority=50)
+    scSim.AddModelToTask(simTaskName, constraintEffector)#, ModelPriority=20)
 
     # Record the spacecraft states
     datLog1 = scObject1.scStateOutMsg.recorder()
@@ -257,11 +265,13 @@ def run(show_plots, env):
     scSim.AddModelToTask(simTaskName, datLog2)
 
     # Initialize the simulation
+    scSim.SetProgressBar(True)
     scSim.InitializeSimulation()
     scSim.ShowExecutionOrder()
+    # exit()
 
     # Setup and run the simulation
-    stopTime = macros.min2nano(1)
+    stopTime = macros.min2nano(2.5)
     scSim.ConfigureStopTime(stopTime)
     scSim.ExecuteSimulation()
 
@@ -280,6 +290,7 @@ def run(show_plots, env):
     r_B2N_B1 = np.empty(r_B2N_N_hist.shape)
     r_P2B2_B1 = np.empty(r_B1N_N_hist.shape)
     sigma_B2B1 = np.empty(sigma_B1N_hist.shape)
+    r_P2P1_B1 = np.empty(r_B1N_N_hist.shape)
     for i in range(r_B1N_N_hist.shape[0]):
         dcm_B1N = RigidBodyKinematics.MRP2C(sigma_B1N_hist[i,:])
         r_B1N_B1[i,:] = dcm_B1N@r_B1N_N_hist[i,:]
@@ -287,7 +298,8 @@ def run(show_plots, env):
         dcm_NB2 = np.transpose(RigidBodyKinematics.MRP2C(sigma_B2N_hist[i,:]))
         r_P2B2_B1[i,:] = dcm_B1N@dcm_NB2@r_P2B2_B2
         sigma_B2B1[i,:] = RigidBodyKinematics.subMRP(sigma_B2N_hist[i,:],sigma_B1N_hist[i,:])
-    psi_B1 = r_B1N_B1 + r_P1B1_B1 + r_P2P1_B1Init - (r_B2N_B1 + r_P2B2_B1)
+        r_P2P1_B1[i,:] = np.dot(fHat_B,rho[i])
+    psi_B1 = r_B1N_B1 + r_P1B1_B1 + r_P2P1_B1 - (r_B2N_B1 + r_P2B2_B1)
 
     #
     # Plotting Results
@@ -318,6 +330,24 @@ def run(show_plots, env):
     plt.title('Attitude Constraint Violation Components')
     pltName = fileName + "attitudeConstraint"
     figureList[pltName] = plt.figure(2)
+
+    plt.figure()
+    plt.clf()
+    for i in range(3):
+        plt.plot(constraintTimeData,r_B1N_N_hist[:,i])
+    plt.legend([r'$x_(B1N)$',r'$y_(B1N)$',r'$z_(B1N)$'])
+    plt.xlabel('time (seconds)')
+    # plt.ylabel(r'relative attitude angle: $\phi$ (deg)')
+    plt.title('SC1 Position')
+
+    plt.figure()
+    plt.clf()
+    for i in range(3):
+        plt.plot(constraintTimeData,r_B2N_N_hist[:,i])
+    plt.legend([r'$x_(B2N)$',r'$y_(B2N)$',r'$z_(B2N)$'])
+    plt.xlabel('time (seconds)')
+    # plt.ylabel(r'relative attitude angle: $\phi$ (deg)')
+    plt.title('SC1 Position')
 
     plt.figure()
     plt.clf()

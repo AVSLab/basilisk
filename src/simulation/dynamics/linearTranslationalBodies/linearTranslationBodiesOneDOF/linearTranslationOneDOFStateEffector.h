@@ -134,6 +134,8 @@ private:
     StateData* rhoState = nullptr;		    //!< state data for displacement from equilibrium
     StateData* rhoDotState = nullptr;	    //!< state data for time derivative of rho;
     Eigen::MatrixXd* g_N = nullptr;         //!< [m/s^2] gravitational acceleration in N frame components
+    StateData *r_BN_N;
+    StateData *v_BN_N;
     Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     static uint64_t effectorID;    //!< ID number of this panel

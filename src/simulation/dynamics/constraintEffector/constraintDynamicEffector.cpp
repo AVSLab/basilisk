@@ -264,6 +264,7 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
     this->inertialAngVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialAngVelocity[effectorCounter]));
     this->inertialPositionProperty.push_back(properties.getPropertyReference(this->propName_inertialPosition[effectorCounter]));
     this->inertialVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialVelocity[effectorCounter]));
+//    std::cout << "names" << this->propName_inertialPosition[effectorCounter] << " - " << this->propName_inertialAttitude[effectorCounter] << std::endl;
 
     if (this->scInitCounter == 0) {
         this->parent1.parentType = "effector";
@@ -301,8 +302,8 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 Eigen::Vector3d omega_B2N_B2;
                 Eigen::MRPd sigma_B2N;
 
-                // std::cout << "this->parent1.parentType = " << this->parent1.parentType << std::endl;
-                // std::cout << "this->parent2.parentType = " << this->parent2.parentType << std::endl;
+//               std::cout << "this->parent1.parentType = " << this->parent1.parentType << std::endl;
+//               std::cout << "this->parent2.parentType = " << this->parent2.parentType << std::endl;
                 if (this->parent1.parentType == "hub") {
                     // - Collect states from parent spacecraft hub
                     r_B1N_N = this->hubPosition[parent1.idx]->getState();
@@ -335,10 +336,10 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 Eigen::Vector3d r_P2B2_N = dcm_B2N.transpose() * this->r_P2B2_B2;
                 Eigen::Vector3d r_P2P1_N = r_P2B2_N + r_B2N_N - r_P1B1_N - r_B1N_N;
 
-                // std::cout << "r_P1B1_N = " << r_P1B1_N.transpose() << std::endl;
-                // std::cout << "r_P2B2_N = " << r_P2B2_N.transpose() << std::endl;
-                // std::cout << "r_B2N_N = " << r_B2N_N.transpose() << std::endl;
-                // std::cout << "r_B1N_N = " << r_B1N_N.transpose() << std::endl;
+//               std::cout << "r_P1B1_N = " << r_P1B1_N.transpose() << std::endl;
+//               std::cout << "r_P2B2_N = " << r_P2B2_N.transpose() << std::endl;
+//                std::cout << "r_B2N_N = " << r_B2N_N.transpose() << std::endl;
+//                std::cout << "r_B1N_N = " << r_B1N_N.transpose() << std::endl;
 
                 // computing length constraint rate of change psiPrime in the N frame
                 Eigen::Vector3d rDot_P1B1_B1 = omega_B1N_B1.cross(this->r_P1B1_B1);
@@ -352,9 +353,10 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 this->psi_N = r_P2P1_N - dcm_B1N.transpose() * this->r_P2P1_B1Init;
                 this->psiPrime_N = rDot_P2P1_N - omega_B1N_N.cross(r_P2P1_N);
 
-                // std::cout << "psi_N = " << this->psi_N.transpose() << std::endl;
-                // std::cout << "r_P2P1_N = " << r_P2P1_N.transpose() << std::endl;
-                //std::cout << "r_P2P1_B1Init = " << this->r_P2P1_B1Init.transpose() << std::endl;
+//               std::cout << "psi_N = " << this->psi_N.transpose() << std::endl;
+//               std::cout << "psiPrime_N" << this->psiPrime_N.transpose() << std::endl;
+//               std::cout << "r_P2P1_N = " << r_P2P1_N.transpose() << std::endl;
+//               std::cout << "r_P2P1_B1Init = " << this->r_P2P1_B1Init.transpose() << std::endl;
 
                 // calculate the attitude constraint violations
                 this->sigma_B2B1 = eigenC2MRP(dcm_B2N * dcm_B1N.transpose()); // calculate the difference in attitude
@@ -365,7 +367,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
                 this->forceExternal_N = this->Fc_N;
 
-                //std::cout << "Fc_N = " << this->Fc_N.transpose() << std::endl;
+//               std::cout << "Fc_N = " << this->Fc_N.transpose() << std::endl;
 
                 // calculate the torque on each spacecraft from the direction constraint
                 Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
@@ -373,8 +375,8 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 Eigen::Vector3d Fc_B2 = (dcm_B2N * this->Fc_N);
                 Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
 
-                //std::cout << "Fc_B1 = " << Fc_B1.transpose() << std::endl;
-                //std::cout << "Fc_B2 = " << Fc_B2.transpose() << std::endl;
+//               std::cout << "Fc_B1 = " << Fc_B1.transpose() << std::endl;
+//               std::cout << "Fc_B2 = " << Fc_B2.transpose() << std::endl;
 
                 // calculate the constraint torque imparted on each spacecraft from the attitude constraint
                 Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
