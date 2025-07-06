@@ -4,7 +4,7 @@ requires = [
     "setuptools>=70.1.0,<=78.1.0",   # Required for "bdist_wheel" to work correctly.
     "setuptools-scm>=8.0,<=8.2.1",  # Automatically include all Git-controlled files in sdist
     "packaging>=22,<=24.2",        # Due to incompatibility: https://github.com/pypa/setuptools/issues/4483
-
+    "six>=1.17.0",
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.15.1",
     "cmake>=3.26,<4.0",
