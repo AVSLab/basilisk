@@ -7,9 +7,6 @@ class SimConfig:
         self.save_data = True
         self.rlevel = 'hig'
         self.targetPath = os.path.join(os.getcwd(), 'data', 'dataset1c', 'rlevel_hig')
-        self.inc_time = 1
-        self.start_time = np.random.randint(0, 7102)
-        self.end_time = self.start_time + 1000
 
         # Controller gains - can be overridden or passed in
         self.controller_K = (1/6)**2 / 5  # default proportional gain K
