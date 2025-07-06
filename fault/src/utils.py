@@ -12,7 +12,7 @@ def setup_filter_data(filterObject):
     filterObject.switchMag = 1.2
 
     # Initial state: [sigma_BN (3), omega_BN_B (3)]
-    filterObject.stateInit = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    filterObject.stateInit = [0.1, 0.2, -0.3, 0.001, -0.01, 0.03]
 
     # Initial covariance matrix (6x6, flattened)
     filterObject.covarInit = [
