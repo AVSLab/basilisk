@@ -202,25 +202,27 @@ class FID:
             "snTransLog": snTransLog
         }, fswRwParamMsg
 
+    @staticmethod
+    def log_determinant(A):
+        # Simple log det using slogdet for numerical stability
+        sign, ld = np.linalg.slogdet(A)
+        if sign <= 0:
+            return np.inf
+        return ld
 
     @staticmethod
-    def run_fault_trials(N_vals, moving_window, sim_config=None):
-        trial_configs = []
-
+    def run_fault_trials(N_vals, n_trials):
+        ny = 10
+        results = {}  # store results per sweep window and trial
+        
         for N in N_vals:
-            n_trials = 10
-
+            moving_window = N
+            results[N] = []
+            
             for trial in range(n_trials):
                 np.random.seed(trial)
-
-                sim_config = SimConfig(moving_window=moving_window)
-                sim_config.N_trials = 1
-                sim_config.save_data = False
-                sim_config.rlevel = 'hig'
-                sim_config.inc_time = 1
-                sim_config.start_time = np.random.randint(0, 7102)
-                sim_config.end_time = sim_config.start_time + 1000
-
+                
+                # Initialize fault ID configuration for this trial
                 fid_config = {
                     'action_flag': True,
                     'moving_window': moving_window,
@@ -228,16 +230,132 @@ class FID:
                     'crit': 0.95,
                     'alpha': 0.05
                 }
+                
+                # Chi-square critical values for gating
+                m = fid_config['moving_window']
+                df = ny
+                chi_crit_up = chi2.ppf(1 - fid_config['alpha'] / 2, df * m) / m
+                chi_crit_lo = chi2.ppf(fid_config['alpha'] / 2, df * m) / m
+                
+                n_Hypo = fid_config['N_hypo']
+                Hypothesis = np.ones(n_Hypo) * (1.0 / n_Hypo)
+                
+                # Histories
+                inno_H_pri_hist = []
+                S_H_pri_hist = []
+                H_hist = [Hypothesis.copy()]
+                
+                # Simulation steps (assumed defined in sim_config)
+                num_steps = 10
+                
+                for k in range(num_steps):
+                    # -- SIMULATION STEP: replace with actual sim step --
+                    # Generate dummy innovations and covariances for demo:
+                    inno_H_pri = np.random.randn(ny, n_Hypo) * 0.01
+                    S_H_pri = np.array([np.eye(ny) for _ in range(n_Hypo)])
+                    
+                    inno_H_pri_hist.append(inno_H_pri)
+                    S_H_pri_hist.append(S_H_pri)
+                    
+                    if k >= moving_window - 1:
+                        for m in range(n_Hypo):
+                            # Stack innovations over the moving window
+                            inno_used = np.vstack([
+                                inno_H_pri_hist[-i - 1][:, m].reshape(-1, 1)
+                                for i in reversed(range(moving_window))
+                            ])
+                            # Build block diagonal covariance matrix
+                            tmp = [S_H_pri_hist[-i - 1][m] for i in reversed(range(moving_window))]
+                            rows = []
+                            for i in range(moving_window):
+                                row_blocks = []
+                                for j in range(moving_window):
+                                    if i == j:
+                                        row_blocks.append(tmp[i])
+                                    else:
+                                        row_blocks.append(np.zeros_like(tmp[0]))
+                                rows.append(np.hstack(row_blocks))
+                            S_used = np.vstack(rows)
+                            
+                            try:
+                                chi = float(inno_used.T @ np.linalg.inv(S_used) @ inno_used) / moving_window
+                            except np.linalg.LinAlgError:
+                                chi = np.inf
+                            
+                            chi_sr = np.sum(inno_used**2) / moving_window  # simplified whitening
+                            
+                            if chi_crit_lo <= chi_sr <= chi_crit_up:
+                                logdet = np.linalg.slogdet(S_used)[1]
+                                logP = -0.5 * logdet - 0.5 * chi_sr * moving_window + np.log(Hypothesis[m])
+                                Hypothesis[m] = logP
+                            else:
+                                Hypothesis[m] = -np.inf
+                        
+                        maxlogP = np.max(Hypothesis)
+                        if maxlogP == -np.inf:
+                            Hypothesis[:] = 1.0 / n_Hypo
+                        else:
+                            indices = np.where(Hypothesis != -np.inf)[0]
+                            logP_valid = Hypothesis[indices]
+                            P_prime = np.exp(logP_valid - maxlogP)
+                            P_prime /= np.sum(P_prime)
+                            Hypothesis[:] = 0
+                            Hypothesis[indices] = P_prime
+                        
+                        H_hist.append(Hypothesis.copy())
+                
+                # Save trial results
+                results[N].append({
+                    'HypothesisHistory': H_hist,
+                    'FinalHypothesis': Hypothesis.copy()
+                })
+        
+        return results
 
-                true_mode = np.random.randint(-1, 4)
+    def fail_rate_and_delay_from_results(results, sweep_window, n_trials):
+        fail_rate = []
+        avg_delay = []
 
-                trial_configs.append((sim_config, fid_config, true_mode))
+        for N in results:
+            failures = 0
+            delays = []
 
-        return trial_configs
-    
+            for trial_result in results[N]:
+                H_hist = trial_result['HypothesisHistory']  # list of hypothesis arrays over time
 
-    def active_fault_ID(scSim, simTaskName, numRW, sNavObject, attError, sim_config, mrpControl, 
-                        rwMotorTorqueObj, logs, attEstimator, attEstimatorLog, sweep_window):
+                # Determine failure: no hypothesis crossed threshold, or false ID
+                crit = 0.95  # or from config
+
+                # Find earliest step where any hypothesis crosses crit
+                detected_time = None
+                detected_hypo = None
+                for k, H in enumerate(H_hist):
+                    max_H = np.max(H)
+                    if max_H > crit:
+                        detected_time = k
+                        detected_hypo = np.argmax(H)
+                        break
+
+                # Fail conditions
+                if detected_time is None:
+                    # No detection within window -> failure
+                    failures += 1
+                    delays.append(sweep_window)  # max delay
+                else:
+                    delays.append(detected_time)
+
+            fail_percent = 100 * failures / n_trials
+            mean_delay = np.mean(delays) if delays else 0
+
+            fail_rate.append(fail_percent)
+            avg_delay.append(mean_delay)
+
+        return fail_rate, avg_delay
+
+
+
+    def active_fault_ID(scSim, simTaskName, numRW, sNavObject, sim_config, 
+                        mrpControl, attEstimator, sweep_window):
         
 
         # Initial printing statements
@@ -289,87 +407,18 @@ class FID:
             sigma_BR = att_msg.sigma_BN
             sigma_BR = np.array(sigma_BR)
             omega_BN_B = np.array(omega_BN_B)
-            torque_msg = mrpControl.cmdTorqueOutMsg.read()
-            u_apply = np.array(torque_msg.torqueRequestBody)        
+            u_apply = -mrpControl.K * sigma_BR - mrpControl.P * omega_BN_B       
             u_apply = np.array(u_apply)
             u_hist.append(u_apply)
 
-            exit()
-            # Store filtering data
-            mu_H_pos_hist.append(mu_H_pos.copy())
-            cov_H_pos_hist.append(cov_H_pos.copy())
-            inno_H_pri_hist.append(inno_H_pri.copy())
-            S_H_pri_hist.append(S_H_pri.copy())
+            N_vals = [sweep_window]
+            n_trials = 10
+            results = FID.run_fault_trials(N_vals, n_trials)
 
-            if k >= sweep_window:
-                for m in range(n_Hypo):
-                    # Stack innovations over moving window
-                    inno_used = np.vstack([
-                        inno_H_pri_hist[-i - 1][:, m].reshape(-1, 1)
-                        for i in reversed(range(fid_config['moving_window']))
-                    ])
-
-                    # Stack block-diagonal innovation covariance matrices
-                    tmp = [
-                        S_H_pri_hist[-i - 1][:, :, m]
-                        for i in reversed(range(fid_config['moving_window']))
-                    ]
-
-                    S_used = np.block([
-                        [tmp[i] if i == j else np.zeros_like(tmp[0])
-                        for j in range(fid_config['moving_window'])]
-                        for i in range(fid_config['moving_window'])
-                    ])
-
-                    try:
-                        chi = float(inno_used.T @ np.linalg.inv(S_used) @ inno_used) / fid_config['moving_window']
-                    except np.linalg.LinAlgError:
-                        chi = np.inf
-
-                    inno_whiten = inno_used.reshape(ny, fid_config['moving_window'])
-
-                    for jj in range(fid_config['moving_window']):
-                        inno_jj = inno_whiten[:, jj]
-                        S_jj = S_used[ny * jj : ny * (jj + 1), ny * jj : ny * (jj + 1)]
-                        try:
-                            L = np.linalg.cholesky(S_jj)
-                            inno_whiten_jj = np.linalg.solve(L, inno_jj)
-                            inno_whiten[:, jj] = inno_whiten_jj
-                        except np.linalg.LinAlgError:
-                            inno_whiten[:, jj] = np.full_like(inno_jj, np.inf)
-
-                    chi_sr = np.sum(inno_whiten**2) / fid_config['moving_window']
-
-                    inno_used_whiten = inno_whiten.reshape(ny * fid_config['moving_window'], 1)
-                    S_used_whiten = np.eye(ny * fid_config['moving_window'])
-
-                    if chi_crit_lo <= chi_sr <= chi_crit_up:
-                        logdet = log_determinant(S_used)
-                        logP = -0.5 * logdet - 0.5 * chi_sr * fid_config['moving_window'] + np.log(Hypothesis[m])
-                        Hypothesis[m] = logP
-                    else:
-                        Hypothesis[m] = -np.inf
-
-                maxlogP = np.max(Hypothesis)
-                if maxlogP == -np.inf:
-                    Hypothesis = np.ones(n_Hypo) * (1.0 / n_Hypo)
-                else:
-                    indices_not_minusInf = np.where(Hypothesis != -np.inf)[0]
-                    logP_not_minusInf = Hypothesis[indices_not_minusInf]
-                    P_prime = np.exp(logP_not_minusInf - maxlogP)
-                    sum_P_prime = np.sum(P_prime)
-                    P_subset = P_prime / sum_P_prime
-                    Hypothesis[indices_not_minusInf] = P_subset
-                    Hypothesis[Hypothesis == -np.inf] = 0.0
-
-                H_hist.append(Hypothesis.copy())
-
-
-
-
-        N_vals = [sweep_window]
-        FID.run_fault_trials(N_vals, sim_config)
-        
+            fail_rate, avg_delay = FID.fail_rate_and_delay_from_results(results, sweep_window, n_trials)
+            print("Fail rates:", fail_rate)
+            print("Average delays:", avg_delay)
+            
         return True
 
 
@@ -405,7 +454,7 @@ class FID:
         ukfSetup = UKFSetup(simulationTimeStep, fswRwParamMsg, rwStateEffector)
         attEstimator, attEstimatorLog = ukfSetup.create_and_setup_filter(scSim, simTaskName)
 
-        result = FID.active_fault_ID(scSim, simTaskName, numRW, sNavObject, attError, sim_config, mrpControl, 
-                                     rwMotorTorqueObj,logs, attEstimator, attEstimatorLog, sweep_window=sweep_window
+        result = FID.active_fault_ID(scSim, simTaskName, numRW, sNavObject, sim_config, 
+                                     mrpControl, attEstimator, sweep_window=sweep_window
                                 )
         return result
