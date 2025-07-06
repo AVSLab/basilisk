@@ -1,5 +1,3 @@
-# src/utils/filter_setup.py
-
 import numpy as np
 
 def setup_filter_data(filterObject):
