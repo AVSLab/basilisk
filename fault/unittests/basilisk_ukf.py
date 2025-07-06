@@ -1,16 +1,13 @@
 # Copyright (c) 2025, Laboratory for Atmospheric and Space Physics, University of Colorado at Boulder"
 
-r"""
-This scenario is adapted from scenarioAttitudeFeedback.py to compare the runtime of two filters:
-1. (baseline) InertialUKF, and 2. (new) inertialAttitudeUKF.
-See _Documents within for more details of each filter.
+"""
+This scenario is adapted from scenarioAttitudeFeedback.py to benchmark the InertialUKF
 
 Runtime results are reported below:
 
 Filter               |  Runtime (s)
 -----------------------------------
 InertialUKF          |        1.157
-inertialAttitudeUKF  |        1.134
 """
 
 import os
@@ -28,7 +25,6 @@ from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
 from Basilisk.fswAlgorithms import inertialUKF
-# from Basilisk.fswAlgorithms import inertialAttitudeUkf
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -338,31 +334,10 @@ def run(showPlots, useJitterSimple, useRWVoltageIO, filterType, simTime=20.0):
 
         att_estimatorLog = attEstimator.logger(["covar", "state"], simulationTimeStep)
         scSim.AddModelToTask(simTaskName, att_estimatorLog)
-    elif(filterType == 'AttUKF'):
-        print("inertialAttitudeUKF not yet included")
-        # starOnly = inertialAttitudeUkf.AttitudeFilterMethod_StarOnly
-        # attEstimator = inertialAttitudeUkf.InertialAttitudeUkf(starOnly)
-        # scSim.AddModelToTask(simTaskName, attEstimator)
-        # setup_filter_data(attEstimator)
-        #
-        # ST1Data = inertialAttitudeUkf.StarTrackerMessage()
-        # ST1Data.measurementNoise = [[0.00017 * 0.00017, 0.0, 0.0],
-        #                  [0.0, 0.00017 * 0.00017, 0.0],
-        #                  [0.0, 0.0, 0.00017 * 0.00017]]
-        # ST1Data.starTrackerMsg.subscribeTo(st1InMsg)
-        # attEstimator.addStarTrackerInput(ST1Data)
-        #
-        # gyroInMsg = messaging.AccDataMsg()
-        # attEstimator.accelDataMsg.subscribeTo(gyroInMsg)
-        # attEstimator.vehicleConfigMsg.subscribeTo(vcMsg)
-        # attEstimator.rwArrayConfigMsg.subscribeTo(fswRwParamMsg)
-        # attEstimator.rwSpeedMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-        #
-        # att_estimatorLog = attEstimator.inertialFilterOutputMsg.recorder()
-        # scSim.AddModelToTask(simTaskName, att_estimatorLog)
+
     else:
         # assert error message: non-implemented filter
-        raise NotImplementedError("non-implemented filter")
+        raise NotImplementedError("Filter not implemented")
 
     #
     #   true attitude log
