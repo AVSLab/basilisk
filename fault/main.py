@@ -1,5 +1,5 @@
 import argparse
-from src import fid
+from src.fault import FID
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -7,4 +7,4 @@ if __name__ == "__main__":
     parser.add_argument('--showPlots', action='store_true', help="Display plots")
     args = parser.parse_args()
 
-    fid.run_fid(sweep_window=args.sweep, showPlots=args.showPlots)
+    FID.run_fid(sweep_window=args.sweep, showPlots=args.showPlots)
