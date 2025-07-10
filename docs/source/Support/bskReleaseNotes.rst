@@ -51,6 +51,8 @@ Version |release|
     If you still want to use Visual Studio 16, then be sure to set the generator
     using ``python conanfile.py --generator "Visual Studio 16 2019``
 
+- Improve reading speed of recorded messages by about 75%.
+
 
 Version 2.7.0 (April 20, 2025)
 ------------------------------
