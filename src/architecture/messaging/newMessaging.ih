@@ -141,13 +141,30 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                 if content is not None:
                     outer_content[attr_name] = content
 
+        # Cache if we can use the fast attr lookup, assuming that attr types are static
+        simple_attribute_map = {}
+
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data = self.__record_vector()
             data_record = []
             for rec in data.iterator():
-                content = self.explore_and_find_subattr(rec.__getattribute__(name), name)
+                # Allow us to skip explore_and_find_subattr when we dont have a complex attr
+                if name not in self.simple_attribute_map:
+                    simple_content = rec.__getattribute__(name)
+                    content = self.explore_and_find_subattr(simple_content, name)
+                    if content == simple_content:
+                        self.simple_attribute_map[name] = True
+                    else:
+                        self.simple_attribute_map[name] = False
+                else:
+                    if self.simple_attribute_map[name]:
+                        content = rec.__getattribute__(name)
+                    else:
+                        content = self.explore_and_find_subattr(
+                            rec.__getattribute__(name), name
+                        )
 
                 # One-element list of BSK objects or raw dicts
                 if isinstance(content, dict) and len(content) == 1 and "." not in str(list(content.keys())[0]):
