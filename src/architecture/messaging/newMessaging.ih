@@ -149,7 +149,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         def __getattr__(self, name):
             data = self.__record_vector()
             data_record = []
-            for rec in data.iterator():
+            for rec in data.get_all():
                 # Allow us to skip explore_and_find_subattr when we dont have a complex attr
                 if name not in self.simple_attribute_map:
                     simple_content = rec.__getattribute__(name)
@@ -183,12 +183,16 @@ typedef struct messageType;
 
 %template(messageType ## PayloadVector) std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>;
 %extend std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>{
+    std::vector<messageType ## Payload> get_all() {
+        return *self;
+    }
+
     %pythoncode %{
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data_record = []
-            for rec in self.iterator():
+            for rec in self.get_all():
                 data_record.append(rec.__getattribute__(name))
             return np.array(data_record)
     %}
