@@ -73,26 +73,38 @@ Release Notes
 
 **Version 2.2.3 (April 20, 2025)**
 
-- Added QuadMap sub message to VizMessage.proto, allows user to draw a mesh of quads on celestial body or spacecraft
-- Added logging of QuadMap sub message in VizMessage panel
-- Added support for turning all QuadMap object labels on or off from Labels panel
-- Fixed bug with effectors not hiding when parent spacecraft is in sprite mode in planet local or solar system view
+- Added QuadMap sub message to ``VizMessage.proto``, allows user to draw a mesh
+  of quads on celestial body or spacecraft
+- Added logging of ``QuadMap`` sub message in ``VizMessage`` panel
+- Added support for turning all ``QuadMap`` object labels on or off from Labels panel
+- Fixed bug with effectors not hiding when parent spacecraft is in sprite mode in
+  planet local or solar system view
 
 **Version 2.2.2 (March 7, 2025)**
 
 - Migrated to Unity 6
-- TargetLines can target LocationMarkers
+- ``TargetLines`` can target ``LocationMarkers``
 - Improved support for scenarios with Locations in the thousands
-- Added support for scaling of Location markers, size can be increased or decreased from Vizard default dynamically per Location
-- MSM Heads Up Display - added support for other primitive shapes (cube, cylinder, capsule, as well as original sphere) which required adding sub-message fields for Shape, Dimensions, and Rotation of each MSM
-- Added effectors visibility at planet scale and solar system scale (effectors correctly scaled and offset relative to parent spacecraft)
-- Added support for “CAPSULE” primitive shape when importing CustomModel
-- Bug fix: if a normal map texture is imported when generating a custom material, the normal map is enabled in the shader
+- Added support for scaling of Location markers, size can be increased or
+  decreased from Vizard default dynamically per Location
+- MSM Heads Up Display - added support for other primitive shapes
+  (cube, cylinder, capsule, as well as original sphere) which required adding
+  sub-message fields for Shape, Dimensions, and Rotation of each MSM
+- Added effectors visibility at planet scale and solar system scale
+  (effectors correctly scaled and offset relative to parent spacecraft)
+- Added support for “CAPSULE” primitive shape when importing ``CustomModel``
+- Bug fix: if a normal map texture is imported when generating a custom material,
+  the normal map is enabled in the shader
 - Bug fix: if imported model has multiple meshes, apply custom material to all meshes in model
 - Added input field to AdjustModel panel to control normal map height
-- Bug fix: when using buffered playback, chief spacecraft Hill or Velocity matrices are now automatically recalculated after buffer rollover
-- Bug fix: if camera target is a spacecraft on start-up and the settings flag SpacecraftCSon is set to 1, the spacecraft coordinate system will be shown and the cameraTarget CS on toggle will be on under the View Menu.
-- Added support for relative paths for importing custom models and textures (their paths should be relative to the location of the playback .bin file or the directory the scenario is being executed from, if showing a live simulation)
+- Bug fix: when using buffered playback, chief spacecraft Hill or Velocity matrices
+  are now automatically recalculated after buffer rollover
+- Bug fix: if camera target is a spacecraft on start-up and the settings flag
+  ``SpacecraftCSon`` is set to 1, the spacecraft coordinate system will be shown and the
+  ``cameraTarget`` CS on toggle will be on under the View Menu.
+- Added support for relative paths for importing custom models and textures
+  (their paths should be relative to the location of the playback .bin file or
+  the directory the scenario is being executed from, if showing a live simulation)
 
 **Version 2.2.1 (January 13, 2025)**
 
