@@ -39,7 +39,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                 if type(source) == messageType:
                     self.__subscribe_to(source)
                     return
-                
+
                 try:
                     from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
                     if type(source) == messageType ## _C:
@@ -47,7 +47,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                         return
                 except ImportError:
                     pass
-    
+
                 raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
                                 + str(type(source)))
 
@@ -55,12 +55,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             def isSubscribedTo(self, source):
                 if type(source) == messageType:
                     return self.__is_subscribed_to(source)
-                
+
                 try:
                     from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
                 except ImportError:
                     return 0
-                
+
                 if type(source) == messageType ## _C:
                     return self.__is_subscribed_to_C(source)
                 else:
@@ -98,46 +98,76 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         def timesWritten(self):
             return np.array(self.__timeWritten_vector())
 
-        def explore_and_find_subattr(self, attr, attr_name, content):
-            if "method" in str(type(attr)):
+        def explore_and_find_subattr(self, attr, attr_name, outer_content=None):
+            if isinstance(attr, (int, float, str, bool)):
+                # Short circuit the most common attribute types
+                content = attr
+            elif "method" in str(type(attr)):
                 # The attribute is a method, nothing to do here
-                pass
+                content = None
             elif isinstance(attr, list):
                 # The attribute is a list of yet to be determined types
                 if len(attr) > 0:
                     if "Basilisk" in str(type(attr[0])):
+                        content = outer_content if outer_content else dict()
                         # The attribute is a list of swigged BSK objects
                         for el, k in zip(attr, range(len(attr))):
                             self.explore_and_find_subattr(el, attr_name + "[" + str(k) + "]", content)
                     else:
-                        # The attribute is a list of common types 
-                        content[attr_name] = attr
+                        # The attribute is a list of common types
+                        content = attr
             elif "Basilisk" in str(type(attr)):
                 # The attribute is a swigged BSK object
                 # Check to see if the object is a vector and pull out the data
                 if "Vector" in str(type(attr)) or "vector" in str(type(attr)):
-                    content[attr_name] = []
+                    content = []
                     for data in attr:
-                        content[attr_name].append(data)
+                        content.append(data)
                 else:
-                    for subattr_name in  dir(attr):
+                    content = outer_content if outer_content else dict()
+                    for subattr_name in dir(attr):
                         if not subattr_name.startswith("__") and subattr_name != "this":
                             self.explore_and_find_subattr(getattr(attr, subattr_name),
                                                           attr_name + "." + subattr_name,
                                                           content)
             else:
                 # The attribute has a common type
-                content[attr_name] = attr
+                content = attr
+
+            if outer_content is None:
+                return content
+            else:
+                # Dont report methods
+                if content is not None:
+                    outer_content[attr_name] = content
+
+        # Cache if we can use the fast attr lookup, assuming that attr types are static
+        simple_attribute_map = {}
 
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data = self.__record_vector()
             data_record = []
-            for rec in data.iterator():
-                content = {}
-                self.explore_and_find_subattr(rec.__getattribute__(name), name, content)
-                if len(content) == 1 and "." not in str(list(content.keys())[0]):
+            for rec in data.get_all():
+                # Allow us to skip explore_and_find_subattr when we dont have a complex attr
+                if name not in self.simple_attribute_map:
+                    simple_content = rec.__getattribute__(name)
+                    content = self.explore_and_find_subattr(simple_content, name)
+                    if content == simple_content:
+                        self.simple_attribute_map[name] = True
+                    else:
+                        self.simple_attribute_map[name] = False
+                else:
+                    if self.simple_attribute_map[name]:
+                        content = rec.__getattribute__(name)
+                    else:
+                        content = self.explore_and_find_subattr(
+                            rec.__getattribute__(name), name
+                        )
+
+                # One-element list of BSK objects or raw dicts
+                if isinstance(content, dict) and len(content) == 1 and "." not in str(list(content.keys())[0]):
                     data_record.append(next(iter(content.values())))
                 else:
                     data_record.append(content)
@@ -153,12 +183,16 @@ typedef struct messageType;
 
 %template(messageType ## PayloadVector) std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>;
 %extend std::vector<messageType ## Payload, std::allocator<messageType ## Payload>>{
+    std::vector<messageType ## Payload> get_all() {
+        return *self;
+    }
+
     %pythoncode %{
         # This __getattr__ is written in message.i.
         # It lets us return message struct attribute record as lists for plotting, etc.
         def __getattr__(self, name):
             data_record = []
-            for rec in self.iterator():
+            for rec in self.get_all():
                 data_record.append(rec.__getattribute__(name))
             return np.array(data_record)
     %}
