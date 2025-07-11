@@ -359,9 +359,10 @@ message VizMessage{
         repeated double r_GP_P = 3;  // [m] Position of G relative to parent body frame P
         repeated double gHat_P = 4;  // location Normal relative to parent body frame.
         double fieldOfView = 5;      // [deg] angle is measured edge-to-edge, -1 -> use default, values between 0.0001 and 179.9999 valid
-        repeated int32 color = 6;    // Send desired RGBA as values between 0 and 255, default is white
+        repeated int32 color = 6;    // Send desired RGBA as values between 0 and 255, default is white. (Note: alpha is not supported on the lightweight LocationMarkers, which are used by default when number of Locations are >100)
         double range = 7;            // [m] Value of 0 (protobuffer default) to use viz default
         double markerScale = 8;      // (optional) Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase
+        bool isHidden = 9;           // (optional) True to hide Location, false to show (vizDefault)
     }
 
     message Ellipsoid{ //ONLY NEEDED IF ELLIPSOID DESIRED

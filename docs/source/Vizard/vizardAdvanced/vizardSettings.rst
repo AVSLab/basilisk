@@ -1045,6 +1045,11 @@ The following table lists all required and optional arguments that can be provid
       -
       - No
       - Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
+    * - ``isHidden``
+      - bool
+      -
+      - No
+      - True to hide Location, false to show (vizDefault)
 
 
 Adding Generic Sensor Visualization

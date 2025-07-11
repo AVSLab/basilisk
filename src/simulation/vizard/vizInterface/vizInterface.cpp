@@ -816,6 +816,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             glp->add_color((*glIt)->color[i]);
         }
         glp->set_markerscale((*glIt)->markerScale);
+        glp->set_ishidden((*glIt)->isHidden);
     }
 
     // Write QuadMap messages

@@ -219,6 +219,9 @@ def addLocation(viz, **kwargs):
     markerScale: double
         Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.
         Optional
+    isHidden: bool
+        True to hide Location, false to show (vizDefault)
+        Optional
     """
     if not vizFound:
         print('vizFound is false. Skipping this method.')
@@ -227,7 +230,7 @@ def addLocation(viz, **kwargs):
     vizElement = vizInterface.LocationPbMsg()
 
     unitTestSupport.checkMethodKeyword(
-        ['stationName', 'parentBodyName', 'r_GP_P', 'lla_GP', 'gHat_P', 'fieldOfView', 'color', 'range', 'markerScale'],
+        ['stationName', 'isHidden', 'parentBodyName', 'r_GP_P', 'lla_GP', 'gHat_P', 'fieldOfView', 'color', 'range', 'markerScale'],
         kwargs)
 
     if 'stationName' in kwargs:
@@ -335,6 +338,13 @@ def addLocation(viz, **kwargs):
             print('ERROR: markerScale must be a positive float')
             exit(1)
         vizElement.markerScale = markerScale
+
+    if 'isHidden' in kwargs:
+        isHidden = kwargs['isHidden']
+        if not isinstance(isHidden, bool):
+            print('ERROR: markerScale must be a bool')
+            exit(1)
+        vizElement.isHidden = isHidden
 
     locationList.append(vizElement)
     del viz.locations[:]  # clear settings list to replace it with updated list

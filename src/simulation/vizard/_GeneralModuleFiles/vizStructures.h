@@ -174,9 +174,10 @@ LocationPbMsg
     double r_GP_P[3];                   //!< [m] Position of location G relative to planet frame P
     double gHat_P[3];                   //!< ground location Normal relative to parent body frame.
     double fieldOfView = -1;            //!< [rad] Edge-to-Edge, -1 -> use default, values between 0.0001deg and 179.9999deg valid
-    int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default
+    int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default. (Note: alpha is not supported on the lightweight LocationMarkers, which are used by default when number of Locations are >100)
     double range = 0;                   //!< [m] range of the ground location, use 0 (protobuffer default) to use viz default
     double markerScale = 0;             //!< (Optional) Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
+    bool isHidden = false;              //!< (Optional) True to hide Location, false to show (vizDefault)
 }LocationPbMsg;
 
 
