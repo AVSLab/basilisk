@@ -44,7 +44,7 @@ jobs:
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install requirements_dev.txt"
-        run: source .venv/bin/activate && pip3 install -r requirements_dev.txt
+        run: source .venv/bin/activate && pip3 install -r requirements_dev.txt pytest-timeout
       - name: "Build basilisk"
         run: source .venv/bin/activate && python3 conanfile.py
       - name: "Run Python Tests"
@@ -84,7 +84,7 @@ jobs:
       - name: "Create virtual Environment"
         run: python3 -m venv .venv
       - name: "Install requirements_dev.txt"
-        run: source .venv/bin/activate && pip3 install -r requirements_dev.txt pytest-error-for-skips
+        run: source .venv/bin/activate && pip3 install -r requirements_dev.txt pytest-error-for-skips pytest-timeout
       - name: "Update 'default' conan profile to allow installing system packages"
         run: |
           source .venv/bin/activate
@@ -177,7 +177,7 @@ jobs:
         shell: pwsh
         run: |
             venv\Scripts\activate
-            pip install -r requirements_dev.txt pytest-error-for-skips
+            pip install -r requirements_dev.txt pytest-error-for-skips pytest-timeout
       - name: "Add basilisk and swig path to env path"
         shell: pwsh
         run: |
@@ -230,7 +230,7 @@ jobs:
       - name: "Install requirements_dev.txt"
         run: |
           source .venv/bin/activate
-          pip3 install -r requirements_dev.txt pytest-error-for-skips
+          pip3 install -r requirements_dev.txt pytest-error-for-skips pytest-timeout
 
       - name: "Build basilisk with all options"
         run: |
