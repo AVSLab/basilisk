@@ -6,15 +6,28 @@ function(generate_messages searchDir generateCCode)
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/"
     "../${searchDir}/*Payload.h" "${EXTERNAL_MODULES_PATH}/${searchDir}/*Payload.h")
 
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/autoSource/xmlWrap)
+
   foreach(msgFile ${message_files})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
+
+    set(SWIG_XML_OUTPUT "${CMAKE_BINARY_DIR}/autoSource/xmlWrap/${TARGET_NAME}.xml")
+    add_custom_command(
+      OUTPUT ${SWIG_XML_OUTPUT}
+      COMMAND ${SWIG_EXECUTABLE} -c++ -xml -module dummy -o ${SWIG_XML_OUTPUT} ${msgFile}
+      DEPENDS ${msgFile}
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/"
+      COMMENT "Generating SWIG XML from ${msgFile}"
+      VERBATIM
+    )
+
     get_filename_component(TARGET_DIR ${msgFile} DIRECTORY)
     set(COMP_OUT_NAME "${CMAKE_BINARY_DIR}/autoSource/${TARGET_NAME}.i")
     add_custom_command(
       OUTPUT ${COMP_OUT_NAME}
       COMMAND ${Python3_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
-              ${generateCCode}
-      DEPENDS ${msgFile}
+              ${generateCCode} ${SWIG_XML_OUTPUT}
+      DEPENDS ${msgFile} ${SWIG_XML_OUTPUT}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/)
     set_property(SOURCE ${COMP_OUT_NAME} PROPERTY CPLUSPLUS ON)
 
