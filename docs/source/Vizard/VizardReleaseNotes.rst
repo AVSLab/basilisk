@@ -19,28 +19,92 @@ Release Notes
     - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
+
+**Version 2.3.0 (July 11, 2025)**
+
+- added ``terminateVizard`` to Vizard Live Settings to allow for clean shut-down
+  of Vizard from live Basilisk simulation
+- Can terminate scenario by setting the flag, then calling ``viz.UpdateState()`` once
+  to send to Vizard. This last message will not save to the binary. Example is shown
+  in :ref:`scenarioBasicOrbitStream`.
+- Added dimension descriptions for ``bskSat``, ``3USat``, and ``6USat`` satellites
+- Changed name of ``customGUIScale`` to ``customGUIReferenceHeight``
+- Deprecated ``customGUIScale``. Using this setting name has no effect but throws an
+  error and points to ``customGUIReferenceHeight``.
+- Added an explicit creation of the ``vizInterface.VizSettings()`` structure
+  inside ``vizSupport.enableUnityVisualization()``. This was necessary to
+  kickstart the deprecation warnings.
+- Support and documentation for ``spacecraftOrbitLineWidth`` and ``celestialBodyOrbitLineWidth``
+- Added explicit file close in ``VizInterface::~VizInterface()`` destructor call
+- changed all GUI Text elements to ``TextMeshPro`` text elements
+- changed GUI Canvas scaling to scale up GUI elements (buttons, text, etc.) as a
+  function of screen height to better support very large displays
+- added Unity Line Renderers to osculating orbit lines and true path trajectory
+  lines to allow better visibility on large displays
+
+    - user can toggle off Line Renderers in the Settings menu
+    - user can increase or decrease the pixel width of the Line Renderer
+      lines in the Settings menu or with the ``SpacecraftOrbitLineWidth`` and
+      ``CelestialBodyOrbitLineWidth`` message settings
+
+- added ``showHUDElementsInImage`` flag to both Instrument Cameras and Standard
+  cameras to allow users to toggle ability to see HUD elements in images
+  (i.e. Coarse Sun Sensor coverage, multi-shapes, etc). Standard camera panel
+  includes toggle to show or hide HUD elements in view
+- changed line elements in HUD elements (camera frustums, boresight lines)
+  from OpenGL to Unity LineRenderers so they can be hidden from secondary
+  cameras if desired (OpenGL lines were always visible)
+- Sprite mode is implemented on Keep Out/In Cones (cones will hide when
+  spacecraft is in sprite-mode)
+- removed obsolete work-around for secondary camera rendering issue that
+  popped user out of maximized screen when loading Vizard Main Scene
+- fixed issue with spacecraft not showing itself as shadowed by planet
+  when outside of the Main Camera’s shadow calculation threshold
+- fixed image jitter in Standard Camera when pointed nadir at another spacecraft
+- refactored error messaging when models fail to load to remove duplicate
+  error messages and automatically pop up console panel to alert user
+- fixed Location label visibility raycasting bug. Location labels not in line of
+  sight will now be hidden (correctly)
+- updated documenation that the light weight location markers cannot use opaque colors.
+  This caused a drastic increase in CPU load.
+- added ability for location marker to be hidden via ``isHidden`` flag
+
+
+
 **Version 2.2.3 (April 20, 2025)**
 
-- Added QuadMap sub message to VizMessage.proto, allows user to draw a mesh of quads on celestial body or spacecraft
-- Added logging of QuadMap sub message in VizMessage panel
-- Added support for turning all QuadMap object labels on or off from Labels panel
-- Fixed bug with effectors not hiding when parent spacecraft is in sprite mode in planet local or solar system view
+- Added QuadMap sub message to ``VizMessage.proto``, allows user to draw a mesh
+  of quads on celestial body or spacecraft
+- Added logging of ``QuadMap`` sub message in ``VizMessage`` panel
+- Added support for turning all ``QuadMap`` object labels on or off from Labels panel
+- Fixed bug with effectors not hiding when parent spacecraft is in sprite mode in
+  planet local or solar system view
 
 **Version 2.2.2 (March 7, 2025)**
 
 - Migrated to Unity 6
-- TargetLines can target LocationMarkers
+- ``TargetLines`` can target ``LocationMarkers``
 - Improved support for scenarios with Locations in the thousands
-- Added support for scaling of Location markers, size can be increased or decreased from Vizard default dynamically per Location
-- MSM Heads Up Display - added support for other primitive shapes (cube, cylinder, capsule, as well as original sphere) which required adding sub-message fields for Shape, Dimensions, and Rotation of each MSM
-- Added effectors visibility at planet scale and solar system scale (effectors correctly scaled and offset relative to parent spacecraft)
-- Added support for “CAPSULE” primitive shape when importing CustomModel
-- Bug fix: if a normal map texture is imported when generating a custom material, the normal map is enabled in the shader
+- Added support for scaling of Location markers, size can be increased or
+  decreased from Vizard default dynamically per Location
+- MSM Heads Up Display - added support for other primitive shapes
+  (cube, cylinder, capsule, as well as original sphere) which required adding
+  sub-message fields for Shape, Dimensions, and Rotation of each MSM
+- Added effectors visibility at planet scale and solar system scale
+  (effectors correctly scaled and offset relative to parent spacecraft)
+- Added support for “CAPSULE” primitive shape when importing ``CustomModel``
+- Bug fix: if a normal map texture is imported when generating a custom material,
+  the normal map is enabled in the shader
 - Bug fix: if imported model has multiple meshes, apply custom material to all meshes in model
 - Added input field to AdjustModel panel to control normal map height
-- Bug fix: when using buffered playback, chief spacecraft Hill or Velocity matrices are now automatically recalculated after buffer rollover
-- Bug fix: if camera target is a spacecraft on start-up and the settings flag SpacecraftCSon is set to 1, the spacecraft coordinate system will be shown and the cameraTarget CS on toggle will be on under the View Menu.
-- Added support for relative paths for importing custom models and textures (their paths should be relative to the location of the playback .bin file or the directory the scenario is being executed from, if showing a live simulation)
+- Bug fix: when using buffered playback, chief spacecraft Hill or Velocity matrices
+  are now automatically recalculated after buffer rollover
+- Bug fix: if camera target is a spacecraft on start-up and the settings flag
+  ``SpacecraftCSon`` is set to 1, the spacecraft coordinate system will be shown and the
+  ``cameraTarget`` CS on toggle will be on under the View Menu.
+- Added support for relative paths for importing custom models and textures
+  (their paths should be relative to the location of the playback .bin file or
+  the directory the scenario is being executed from, if showing a live simulation)
 
 **Version 2.2.1 (January 13, 2025)**
 

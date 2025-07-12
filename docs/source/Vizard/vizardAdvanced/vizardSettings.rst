@@ -212,6 +212,12 @@ default setting for that behavior.
       - double
       - Control the display size of celestial bodies in the Solar System View,
         values greater than 0, use negative value to use viz default.
+    * - ``spacecraftOrbitLineWidth``
+      - double
+      - Values greater than 0 to scale spacecraft orbit line width, value of 0 (protobuffer default) to use viz default.
+    * - ``celestialBodyOrbitLineWidth``
+      - double
+      - Values greater than 0 to scale celestial body orbit line width, value of 0 (protobuffer default) to use viz default.
     * - **Lighting Settings**
       -
       -
@@ -251,9 +257,9 @@ default setting for that behavior.
     * - **GUI Settings**
       -
       -
-    * - ``customGUIScale``
+    * - ``customGUIReferenceHeight``
       - pos. double
-      - GUI scaling factor, use negative value to use viz default.
+      - [pixels] GUI height in pixels, must be > 300. Use 0 or -1 for viz default.
     * - ``show24hrClock``
       - (-1,0,1)
       - Flag to make mission date/time use a 24h clock instead of a 12h clock with AM/PM (1). Value of -1 or 0 (protobuffer default) to use viz default.
@@ -293,6 +299,9 @@ with every message being sent.  The following live settings can be set directly 
       - If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft
         object. Setting the string to ``AUTO`` or leaving this field empty will select the camera target
         spacecraft as the chief.
+    * - ``terminateVizard``
+      - bool
+      - If true, Vizard application will immediately shut down and exit
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -565,6 +574,11 @@ the arguments for the ``createStandardCamera`` method.
       -
       - No, default is 1
       - 0 -> body targeting, 1 -> pointing vector
+    * - ``showHUDElementsInImage``
+      - int
+      -
+      - No
+      - Shows HUD elements within image frame. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - ``setView``
       - int
       -
@@ -725,6 +739,11 @@ The following table illustrates the possible variables for the
       - No
       - Set the bounds of rendered depth map by setting the near and far clipping planes when
         in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
+    * - ``showHUDElementsInImage``
+      - int
+      -
+      - No
+      - Shows HUD elements within image frame. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 
 
 If the ``renderMode`` is set to 1 the camera outputs a depth map.
@@ -1026,6 +1045,11 @@ The following table lists all required and optional arguments that can be provid
       -
       - No
       - Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
+    * - ``isHidden``
+      - bool
+      -
+      - No
+      - True to hide Location, false to show (vizDefault)
 
 
 Adding Generic Sensor Visualization
@@ -1594,17 +1618,21 @@ The argument None is used to specify the Vizard default shape to be used.
 The following table provides the keywords for the built-in spacecraft shape models.
 
 .. list-table:: Built-In Spacecraft Models
-    :widths: 25 75
+    :widths: 10 30 60
     :header-rows: 1
 
     * - Key Name
       - Description
+      - Dimensions
     * - ``bskSat``
       - Default hexagonal spacecraft model with 3 solar panels.
+      - Vertically oriented hexagonal prism with each hexagonal Side = 1.15458 m, Height = 2 m (z). Panels are 1.1547 x 2 x 0.05 m. Origin is at center of hexagonal prism.
     * - ``3USat``
       - 3U cube-sat model
+      - Length = 0.1 m (x), Width = 0.1 m (y), Height = 0.3 m (z). Origin at center of box.
     * - ``6USat``
       - 6U cube-sat model
+      - Length = 0.2 m (x), Width = 0.1 m (y), Height = 0.3 m (z). Origin at center of box.
 
 If you want to customize the log on the built-in spacecraft models, this can be done using
 ``logoTexture`` spacecraft structure string::

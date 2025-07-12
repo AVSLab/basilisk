@@ -53,6 +53,7 @@ Version |release|
     using ``python conanfile.py --generator "Visual Studio 16 2019``
 
 - Improve reading speed of recorded messages by about 75%.
+- Added support for Vizard 2.3.0
 
 
 Version 2.7.0 (April 20, 2025)

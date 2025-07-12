@@ -590,9 +590,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define the GUI scaling factor
-        vizSettings->set_customguiscale(this->settings.customGUIScale);
-        if (abs(this->settings.customGUIScale)>3.0) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIScale flag must be either -1 or [0.5, 3]  A value of %d was received.", this->settings.customGUIScale);
+        vizSettings->set_customguireferenceheight(this->settings.customGUIReferenceHeight);
+        if (this->settings.customGUIReferenceHeight<300.0 && abs(this->settings.customGUIReferenceHeight)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIReferenceHeight flag must be either -1 or > 300.  A value of %d was received.", this->settings.customGUIReferenceHeight);
         }
 
         // define default spacecraft sprite behavior
@@ -662,6 +662,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_truepathrotatingframe(this->settings.truePathRotatingFrame);
         vizSettings->set_truepathfixedframe(this->settings.truePathFixedFrame);
         vizSettings->set_showquadmaplabels(this->settings.showQuadMapLabels);
+        vizSettings->set_spacecraftorbitlinewidth(this->settings.spacecraftOrbitLineWidth);
+        vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -719,6 +721,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             StdCameraSettings *scp = &(this->settings.stdCameraList[idx]);
             sc->set_spacecraftname(scp->spacecraftName);
             sc->set_setmode(scp->setMode);
+            sc->set_showhudelementsinimage(scp->showHUDElementsInImage);
             if (scp->fieldOfView < 0)
                 sc->set_fieldofview(-1.0);
             else {
@@ -756,6 +759,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
     }
     liveVizSettings->set_relativeorbitchief(this->liveSettings.relativeOrbitChief);
+    liveVizSettings->set_terminatevizard(this->liveSettings.terminateVizard);
     message->set_allocated_livesettings(liveVizSettings);
 
 
@@ -812,6 +816,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             glp->add_color((*glIt)->color[i]);
         }
         glp->set_markerscale((*glIt)->markerScale);
+        glp->set_ishidden((*glIt)->isHidden);
     }
 
     // Write QuadMap messages
@@ -1086,6 +1091,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     camera->add_depthmapclippingplanes(this->cameraConfigBuffers[camCounter].depthMapClippingPlanes[j]);
                 }
             }
+            camera->set_showhudelementsinimage(this->cameraConfigBuffers[camCounter].showHUDElementsInImage);
         }
     }
 
@@ -1145,7 +1151,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             byteCount = (uint32_t) message->ByteSizeLong();
             google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
             unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
-            if (this->saveFile) {
+            // Save message to file if saveFile flag is true, and if Vizard is not being terminated
+            if (this->saveFile && !this->liveSettings.terminateVizard) {
                 this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), (int) varIntBytes);
             }
             serialized_message = malloc(byteCount);
@@ -1199,47 +1206,54 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_close(&request_buffer);
 
             // Receive status message from Vizard after SIM_UPDATE
-            zmq_msg_t receiveOK;
-            zmq_msg_init(&receiveOK);
-            int receive_status = zmq_msg_recv(&receiveOK, this->requester_socket, 0);
-            if (receive_status) {
-                // Make sure "OK" was received from Vizard
-                void* msgData = zmq_msg_data(&receiveOK);
-                size_t msgSize = zmq_msg_size(&receiveOK);
-                std::string receiveOKStr (static_cast<char*>(msgData), msgSize);
-                std::string errStatusStr = "OK";
-                if (receiveOKStr.compare(errStatusStr) != 0) {
-                    bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [0]: Error processing SIM_UPDATE.");
-                    return;
-                }
+            if (this->liveSettings.terminateVizard) {
+                this->broadcastStream = false;
+                this->liveStream = false;
+                this->noDisplay = false;
             }
             else {
-                bskLogger.bskLog(BSK_ERROR, "Vizard: Did not return a status (OK) message during SIM_UPDATE.");
-            }
-            zmq_msg_close(&receiveOK);
-
-            // Only handle user input if in liveStream mode (and not in noDisplay mode)
-            if (this->liveStream) {
-                this->receiveUserInput(CurrentSimNanos);
-            }
-
-            for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
-                /*! - If the camera is requesting periodic images, request them */
-                if (CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
-                    this->cameraConfigBuffers[camCounter].isOn == 1)
-                {
-                    this->requestImage(camCounter, CurrentSimNanos);
+                zmq_msg_t receiveOK;
+                zmq_msg_init(&receiveOK);
+                int receive_status = zmq_msg_recv(&receiveOK, this->requester_socket, 0);
+                if (receive_status) {
+                    // Make sure "OK" was received from Vizard
+                    void* msgData = zmq_msg_data(&receiveOK);
+                    size_t msgSize = zmq_msg_size(&receiveOK);
+                    std::string receiveOKStr (static_cast<char*>(msgData), msgSize);
+                    std::string errStatusStr = "OK";
+                    if (receiveOKStr.compare(errStatusStr) != 0) {
+                        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [0]: Error processing SIM_UPDATE.");
+                        return;
+                    }
                 }
-            }
-            if (returnCamImgStatus) {
-                /*! -- Ping the Viz back to continue the lock-step */
-                void* keep_alive = malloc(4 * sizeof(char));
-                memcpy(keep_alive, "PING", 4);
-                zmq_msg_t request_life;
-                zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
-                zmq_msg_send(&request_life, this->requester_socket, 0);
-                zmq_msg_close(&request_life);
-                return;
+                else {
+                    bskLogger.bskLog(BSK_ERROR, "Vizard: Did not return a status (OK) message during SIM_UPDATE.");
+                }
+                zmq_msg_close(&receiveOK);
+
+                // Only handle user input if in liveStream mode (and not in noDisplay mode)
+                if (this->liveStream) {
+                    this->receiveUserInput(CurrentSimNanos);
+                }
+
+                for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
+                    /*! - If the camera is requesting periodic images, request them */
+                    if (CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                        this->cameraConfigBuffers[camCounter].isOn == 1)
+                    {
+                        this->requestImage(camCounter, CurrentSimNanos);
+                    }
+                }
+                if (returnCamImgStatus) {
+                    /*! -- Ping the Viz back to continue the lock-step */
+                    void* keep_alive = malloc(4 * sizeof(char));
+                    memcpy(keep_alive, "PING", 4);
+                    zmq_msg_t request_life;
+                    zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
+                    zmq_msg_send(&request_life, this->requester_socket, 0);
+                    zmq_msg_close(&request_life);
+                    return;
+                }
             }
 
         }

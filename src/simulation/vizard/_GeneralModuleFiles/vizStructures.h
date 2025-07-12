@@ -94,6 +94,7 @@ StdCameraSettings
 {
     std::string spacecraftName; //!< name of spacecraft onto which to place a camera
     int setMode=1;              //!< 0 -> body targeting, 1 -> pointing vector (default)
+    int showHUDElementsInImage=0; //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     double fieldOfView=-1;      //!< [rad], edge-to-edge field of view setting, -1 -> use default, values between 0.0001 and 179.9999 deg valid
     std::string bodyTarget;     //!< Name of body camera should point to (default to first celestial body in messages). This is a setting for body targeting mode.
     int setView=0;              //!< 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track (default to nadir). This is a setting for body targeting mode.
@@ -173,9 +174,10 @@ LocationPbMsg
     double r_GP_P[3];                   //!< [m] Position of location G relative to planet frame P
     double gHat_P[3];                   //!< ground location Normal relative to parent body frame.
     double fieldOfView = -1;            //!< [rad] Edge-to-Edge, -1 -> use default, values between 0.0001deg and 179.9999deg valid
-    int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default
+    int color[4] = {-1};                //!< Send desired RGBA as values between 0 and 255, -1 -> use default. (Note: alpha is not supported on the lightweight LocationMarkers, which are used by default when number of Locations are >100)
     double range = 0;                   //!< [m] range of the ground location, use 0 (protobuffer default) to use viz default
     double markerScale = 0;             //!< (Optional) Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
+    bool isHidden = false;              //!< (Optional) True to hide Location, false to show (vizDefault)
 }LocationPbMsg;
 
 
@@ -403,7 +405,7 @@ VizSettings
     int32_t showCelestialBodyLabels = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showSpacecraftLabels = 0;              //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCameraLabels = 0;                  //!< Value of 0 to use viz default, -1 for false, 1 for true
-    double customGUIScale = -1.0;                  //!< GUI scaling parameter, Value of -1 to use viz default, values in [0.5, 3]
+    double customGUIReferenceHeight = -1.0;        //!< [px] GUI scaling parameter, Value of 0 or -1 to use viz default, minimum value 300
     std::string defaultSpacecraftSprite = "";      //!< Set sprite for ALL spacecraft through shape name and optional int RGB color values [0,255] Possible settings: "CIRCLE","SQUARE", "STAR", "TRIANGLE" or "bskSat" for a 2D spacecraft sprite of the bskSat shape
     int32_t showSpacecraftAsSprites = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCelestialBodiesAsSprites = 0;      //!< Value of 0 to use viz default, -1 for false, 1 for true
@@ -442,6 +444,8 @@ VizSettings
     std::string truePathRotatingFrame = "";               //!< String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories
     std::string truePathFixedFrame = "";                  //!< String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against
     int32_t showQuadMapLabels = 0;                        //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    double spacecraftOrbitLineWidth = 0;                  //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale spacecraft orbit line width
+    double celestialBodyOrbitLineWidth = 0;               //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
 }VizSettings;
 
 
@@ -454,6 +458,7 @@ LiveVizSettings
 {
     std::vector<PointLine> targetLineList;       //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, thus the line properties can change with time.
     std::string relativeOrbitChief = "";         //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
+    bool terminateVizard=false;                  //!< If true, Vizard application will immediately shut down and exit
 }LiveVizSettings;
 
 
