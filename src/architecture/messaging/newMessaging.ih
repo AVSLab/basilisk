@@ -26,6 +26,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <vector>
 %}
 
+%{
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+%}
+
+%init %{
+import_array();  // Required to initialize NumPy C API
+%}
+
 %define INSTANTIATE_TEMPLATES(messageType, messageTypePayload, folder)
 %{
 #include "folder/messageTypePayload.h"
@@ -197,4 +206,155 @@ typedef struct messageType;
             return np.array(data_record)
     %}
 };
+%enddef
+
+%define RECORDER_PROPERTY(payloadType, fieldName, fieldType)
+/*
+ * Exposes a general field (e.g. string, user-defined type) as a Python property.
+ * Creates a Python list and converts it to a NumPy array on the Python side.
+ * Slower than the numeric variants, but supports arbitrary types via SWIG typemaps.
+ */
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _list
+{
+    size_t N = $1->record().size();
+    $result = PyList_New(N);
+    for (size_t recordIndex = 0; recordIndex < N; ++recordIndex)
+    {
+        PyObject * resultItem;
+        auto& _swigResultHolder = $1->record().at(recordIndex). ## fieldName;
+        {
+        auto& result = _swigResultHolder;
+        $typemap(out, fieldType, result=resultItem);
+        }
+        PyList_SET_ITEM($result, recordIndex, resultItem);  // steals ref
+    }
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _list() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return np.array(self._ ## fieldName ## _list())
+    %}
+};
+
+%enddef
+
+%define RECORDER_PROPERTY_NUMERIC_0(payloadType, fieldName, fieldType, npyTypeNum)
+/*
+ * Exposes a scalar numeric field (e.g. double, int) as a NumPy array with shape [N].
+ */
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
+{
+    size_t N = $1->record().size();
+    if (N == 0) {
+        npy_intp dims[1] = {0};
+        $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
+    } else {
+        npy_intp dims[1] = {static_cast<npy_intp>(N)};
+        $result = PyArray_SimpleNew(1, dims, npyTypeNum);
+        for (size_t recordIndex = 0; recordIndex < N; ++recordIndex ) {
+            void* ptr = PyArray_GETPTR1((PyArrayObject*)$result, recordIndex);
+            *reinterpret_cast<fieldType*>(ptr) = $1->record().at(recordIndex). ## fieldName;
+        }
+    }
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _array() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return self._ ## fieldName ## _array()
+    %}
+};
+
+%enddef
+
+%define RECORDER_PROPERTY_NUMERIC_1(payloadType, fieldName, fieldType, npyTypeNum, dim1)
+/*
+ * Exposes a fixed-size 1D numeric array field (e.g. float[3]) as a NumPy array with shape [N, dim1].
+ * Uses contiguous memcpy per record for efficiency.
+ */
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
+{
+    size_t N = $1->record().size();
+    if (N == 0) {
+        npy_intp dims[1] = {0};
+        $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
+    } else {
+        npy_intp dims[2] = {static_cast<npy_intp>(N), (npy_intp) dim1};
+        $result = PyArray_SimpleNew(2, dims, npyTypeNum);
+
+        fieldType* dest = static_cast<fieldType*>(PyArray_DATA((PyArrayObject*)$result));
+        size_t recordStride = dim1;
+
+        for (size_t recordIndex = 0; recordIndex < N; ++recordIndex) {
+            const fieldType* src = &($1->record().at(recordIndex).fieldName[0]);
+            std::memcpy(dest + recordIndex * recordStride, src, recordStride * sizeof(fieldType));
+        }
+    }
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _array() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return self._ ## fieldName ## _array()
+    %}
+};
+
+%enddef
+
+%define RECORDER_PROPERTY_NUMERIC_2(payloadType, fieldName, fieldType, npyTypeNum, dim1, dim2)
+/*
+ * Exposes a fixed-size 2D numeric array field (e.g. float[3][3]) as a NumPy array with shape [N, dim1, dim2].
+ */
+%typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
+{
+    size_t N = $1->record().size();
+    if (N == 0) {
+        npy_intp dims[1] = {0};
+        $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
+    } else {
+        npy_intp dims[3] = {static_cast<npy_intp>(N), (npy_intp) dim1, (npy_intp) dim2};
+        $result = PyArray_SimpleNew(3, dims, npyTypeNum);
+
+        fieldType* dest = static_cast<fieldType*>(PyArray_DATA((PyArrayObject*)$result));
+        size_t recordStride = dim1 * dim2;
+
+        for (size_t recordIndex = 0; recordIndex < N; ++recordIndex) {
+            const fieldType* src = &($1->record().at(recordIndex).fieldName[0][0]);
+            std::memcpy(dest + recordIndex * recordStride, src, recordStride * sizeof(fieldType));
+        }
+    }
+    if (PyErr_Occurred()) SWIG_fail;
+}
+
+%extend Recorder<payloadType> {
+    Recorder<payloadType>* _ ## fieldName ## _array() {
+        return $self;
+    }
+
+    %pythoncode %{
+    @property
+    def fieldName(self):
+        return self._ ## fieldName ## _array()
+    %}
+};
+
 %enddef
