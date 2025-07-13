@@ -296,6 +296,11 @@ class BasiliskConan(ConanFile):
         if self.options.get_safe("pathToExternalModules"):
             tc.cache_variables["EXTERNAL_MODULES_PATH"] = Path(str(self.options.pathToExternalModules)).resolve().as_posix()
         tc.cache_variables["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+
+        # get the header directory for numpy
+        import numpy
+        tc.cache_variables["NUMPY_INCLUDE_DIR"] = numpy.get_include()
+
         # Set the build rpath, since we don't install the targets, so that the
         # shared libraries can find each other using relative paths.
         tc.cache_variables["CMAKE_BUILD_RPATH_USE_ORIGIN"] = True
