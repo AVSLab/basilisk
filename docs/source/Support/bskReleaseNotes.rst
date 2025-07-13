@@ -66,6 +66,12 @@ Version |release|
 - The ``BSKLogger`` now raises a ``BasiliskError`` (``Basilisk.architecture.bskLogging.BasiliskError``)
   if something is logged at ``BSK_ERROR`` level. Certain errors are reduced to ``BSK_WARNING`` to reflect
   the new behavior.
+- Improve reading speed of recorded messages by 1-4 orders of magnitude.
+
+  .. warning::
+
+    This is a breaking change, see list of known issues for details. Please report any issues
+    (at buildtime or runtime) with recorders for custom payloads.
 
 
 Version 2.7.0 (April 20, 2025)
