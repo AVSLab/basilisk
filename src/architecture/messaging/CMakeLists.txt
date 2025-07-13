@@ -1,5 +1,11 @@
 cmake_policy(SET CMP0078 NEW)
 
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
+  OUTPUT_VARIABLE NUMPY_INCLUDE_DIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 function(generate_messages searchDir generateCCode)
   file(
     GLOB_RECURSE message_files
@@ -35,19 +41,20 @@ function(generate_messages searchDir generateCCode)
       set_property(
         SOURCE ${COMP_OUT_NAME}
         PROPERTY SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/../" "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
-                 "-I${EXTERNAL_MODULES_PATH}/" "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${Python3_INCLUDE_DIRS}")
+                 "-I${EXTERNAL_MODULES_PATH}/" "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${Python3_INCLUDE_DIRS}" "-I${NUMPY_INCLUDE_DIR}")
       include_directories("${EXTERNAL_MODULES_PATH}/")
     else()
       set_property(
         SOURCE ${COMP_OUT_NAME}
         PROPERTY SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/../" "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
-                 "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${Python3_INCLUDE_DIRS}")
+                 "-I${CMAKE_BINARY_DIR}/autoSource/" "-I${Python3_INCLUDE_DIRS}" "-I${NUMPY_INCLUDE_DIR}")
     endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
     include_directories(${Python3_INCLUDE_DIRS})
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../")
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../")
+    include_directories(${NUMPY_INCLUDE_DIR})
 
     swig_add_library(
       ${TARGET_NAME}
