@@ -249,10 +249,11 @@ class MultiSat_test_scenario(BSKSim, BSKScenario):
                 # clockSync.accelFactor = 50.0
                 self.AddModelToTask(self.DynModels[0].taskName, clockSync) # Check if this task name is valid later...
 
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+            # viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
+            viz = vizSupport.enableUnityVisualization(self, self.DynModels[self.numberSpacecraft - 1].taskName, DynModelsList
                                                       , saveFile=self.initConfigName
                                                     #   , saveFile=__file__
-                                                      , liveStream=runRealtime
+                                                    #   , liveStream=runRealtime
                                                       , rwEffectorList=rwStateEffectorList
                                                       , thrEffectorList=thDynamicEffectorList
                                                     #   , genericStorageList=gsList
@@ -607,7 +608,8 @@ def run(showPlots, relativeNavigation = False,
         simulationTimeHours = 1.0,
         turnOnController = 1, # Turn ON: 1, Turn OFF: 0 (base cases validation)
         simRate = 0.1,
-        dataSamplingTimeSec = 1.0 # Define simulation rate (for dynamics, FSW & environment models) & data sampling rate.
+        dataSamplingTimeSec = 1.0, # Define simulation rate (for dynamics, FSW & environment models) & data sampling rate.
+        runRealtime = False
         ):
     """
     The scenarios can be run with the followings setups parameters:
@@ -649,7 +651,7 @@ def run(showPlots, relativeNavigation = False,
     print(f"Simulation Rate (seconds): {simRate}")
     print(f"Data Sampling Time (seconds): {dataSamplingTimeSec}")
     
-    TheScenario = MultiSat_test_scenario(initConfigPath, simRate, dataSamplingTimeSec, relativeNavigation, runRealtime=False)
+    TheScenario = MultiSat_test_scenario(initConfigPath, simRate, dataSamplingTimeSec, relativeNavigation, runRealtime=runRealtime)
     runScenario(TheScenario, relativeNavigation, simulationTimeHours, turnOnController)
     
     data_dicts = []
@@ -672,5 +674,6 @@ if __name__ == "__main__":
         simulationTimeHours = 0.3,
         turnOnController = 1,
         simRate = 0.1,
-        dataSamplingTimeSec = 0.1
+        dataSamplingTimeSec = 0.1,
+        # runRealtime = True
         )
