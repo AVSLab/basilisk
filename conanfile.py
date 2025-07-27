@@ -38,6 +38,7 @@ bskModuleOptionsBool = {
     "mujoco": [[True, False], False],
     "buildProject": [[True, False], True],
     "pyPkgCanary": [[True, False], False],
+    "recorderPropertyRollback": [[True, False], False],
 
     # XXX: Set managePipEnvironment to True to keep the old behaviour of
     # managing the `pip` environment directly (upgrading, installing Python
@@ -296,6 +297,7 @@ class BasiliskConan(ConanFile):
         if self.options.get_safe("pathToExternalModules"):
             tc.cache_variables["EXTERNAL_MODULES_PATH"] = Path(str(self.options.pathToExternalModules)).resolve().as_posix()
         tc.cache_variables["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+        tc.cache_variables["RECORDER_PROPERTY_ROLLBACK"] = "1" if self.options.get_safe("recorderPropertyRollback") else "0"
 
         # get the header directory for numpy
         import numpy

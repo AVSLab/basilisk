@@ -26,7 +26,7 @@ function(generate_messages searchDir generateCCode)
     add_custom_command(
       OUTPUT ${COMP_OUT_NAME}
       COMMAND ${Python3_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
-              ${generateCCode} ${SWIG_XML_OUTPUT}
+              ${generateCCode} ${SWIG_XML_OUTPUT} ${RECORDER_PROPERTY_ROLLBACK}
       DEPENDS ${msgFile} ${SWIG_XML_OUTPUT}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/)
     set_property(SOURCE ${COMP_OUT_NAME} PROPERTY CPLUSPLUS ON)

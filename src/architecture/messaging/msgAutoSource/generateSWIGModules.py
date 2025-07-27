@@ -257,7 +257,7 @@ def parseSwigDecl(decl: str):
 
     return pointerPart, referencePart, arrayParts
 
-def parseSwigXml(xmlPath: str, targetStructName: str, cpp: bool):
+def parseSwigXml(xmlPath: str, targetStructName: str, cpp: bool, recorderPropertyRollback: bool):
     """
     Parses a SWIG-generated XML file and emits RECORDER_PROPERTY macros
     for all struct/class member fields.
@@ -267,6 +267,9 @@ def parseSwigXml(xmlPath: str, targetStructName: str, cpp: bool):
         targetStructName (str): Name of the payload (e.g. `MTBMsgPayload`).
         cpp (bool): whether this is a C++ payload (we need to be extra
             careful with the type since it might be templated.)
+        recorderPropertyRollback (bool): If true, non-numeric properties
+            are not given a special RECORDER_PROPERTY macro, thus recovering
+            the legacy output format for these fields.
 
     Returns:
         str: macro declarations to be pasted into `msgInterfacePy.i.in`
@@ -307,7 +310,7 @@ def parseSwigXml(xmlPath: str, targetStructName: str, cpp: bool):
                 macroName = f"RECORDER_PROPERTY_NUMERIC_{len(typeArrayParts)}"
                 dimensions = "".join(f", {dim}" for dim in typeArrayParts)
                 result += f"{macroName}({targetStructName}, {fieldName}, {typeWithPointerRef}, {npyType} {dimensions});\n"
-            else:
+            elif not recorderPropertyRollback:
                 fullType = f"{typeWithPointerRef}{''.join(f'[{i}]' for i in typeArrayParts)}"
                 result += f"RECORDER_PROPERTY({targetStructName}, {fieldName}, ({fullType}));\n"
 
@@ -339,6 +342,7 @@ if __name__ == "__main__":
     baseDir = sys.argv[4]
     generateCInfo = sys.argv[5] == 'True'
     xmlWrapPath = sys.argv[6]
+    recorderPropertyRollback = bool(int(sys.argv[7]))
 
     with open('msgInterfacePy.i.in', 'r') as f:
         swigTemplateData = f.read()
@@ -346,7 +350,7 @@ if __name__ == "__main__":
     with open('cMsgCInterfacePy.i.in', 'r') as f:
         swigCTemplateData = f.read()
 
-    extraContent = parseSwigXml(xmlWrapPath, payloadTypeName, not generateCInfo)
+    extraContent = parseSwigXml(xmlWrapPath, payloadTypeName, not generateCInfo, recorderPropertyRollback)
 
     with open(moduleOutputPath, 'w') as moduleFileOut:
         moduleFileOut.write(swigTemplateData.format(type=structType, baseDir=baseDir, extraContent=extraContent))
