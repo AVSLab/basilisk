@@ -44,6 +44,19 @@ import_array();  // Required to initialize NumPy C API
 %}
 %include "folder/messageTypePayload.h"
 
+%feature("shadow") messageTypePayload()
+{
+def __init__(self, **fields):
+    """Constructs a new payload, zero'd by default.
+
+    Keyword arguments can be passed to initialize the fields of
+    this payload.
+    """
+    _ ## messageTypePayload.messageTypePayload ## _swiginit(self, _ ## messageTypePayload.new_ ## messageTypePayload())
+    for field, value in fields.items():
+        setattr(self, field, value)
+}
+
 %extend messageTypePayload {
 %pythoncode %{
     @classmethod
