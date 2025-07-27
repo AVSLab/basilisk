@@ -38,6 +38,10 @@ MJScene::MJScene(std::string xml, const std::vector<std::string>& files)
 {
     this->AddFwdKinematicsToDynamicsTask(MJScene::FWD_KINEMATICS_PRIORITY);
     this->integrator = new svIntegratorRK4(this);
+
+    // Replace default MuJoCo error/warning handling with our own
+    mju_user_error = MJBasilisk::detail::logMujocoError;
+    mju_user_warning = MJBasilisk::detail::logMujocoWarning;
 }
 
 MJScene MJScene::fromFile(const std::string& fileName)
