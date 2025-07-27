@@ -17,6 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %pythoncode %{
     import numpy as np
+    from Basilisk.utilities import deprecated
 %};
 %{
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -166,6 +167,12 @@ import_array();  // Required to initialize NumPy C API
                     if content == simple_content:
                         self.simple_attribute_map[name] = True
                     else:
+                        deprecated.deprecationWarn(
+                            self.__getattr__.__module__ + "." + self.__getattr__.__qualname__,
+                            "2026/07/27",
+                            "Compiled Basilisk with '--recorderPropertyRollback True' and using "
+                            "deprecated output format for non-numeric payload recorder attribute. Don't use "
+                            "'--recorderPropertyRollback' and update the code to handle the new output format.")
                         self.simple_attribute_map[name] = False
                 else:
                     if self.simple_attribute_map[name]:
