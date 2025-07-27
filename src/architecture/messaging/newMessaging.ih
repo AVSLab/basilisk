@@ -18,6 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %pythoncode %{
     import numpy as np
     import inspect
+    import pprint
     from Basilisk.utilities import deprecated
 %};
 %{
@@ -66,6 +67,35 @@ import_array();  // Required to initialize NumPy C API
         return selfType.__qualname__ + "(" + ', '.join(fields) + ")"
 %}
 }
+
+%pythoncode %{
+def _pprint_ ## messageTypePayload(pprinter, object, stream, indent, allowance, context, level):
+    """Formatter function to support pretty-printing (with ``pprint``)."""
+    selfType = type(object)
+    cls_name = selfType.__qualname__
+    indent += len(cls_name) + 1
+    fields = [
+        (name, getattr(object, name))
+        for name in selfType.__fields__()
+    ]
+    stream.write(cls_name + '(')
+    if fields:
+        delimnl = ',\n' + ' ' * indent
+        last_index = len(fields) - 1
+        for i, (key, ent) in enumerate(fields):
+            last = i == last_index
+            stream.write(key)
+            stream.write('=')
+            pprinter._format(ent, stream, indent + len(key) + 1,
+                        allowance if last else 1,
+                        context, level)
+            if not last:
+                stream.write(delimnl)
+
+    stream.write(')')
+
+pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messageTypePayload
+%}
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {
