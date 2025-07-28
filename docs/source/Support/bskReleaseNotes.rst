@@ -55,6 +55,7 @@ Version |release|
 - Improve reading speed of recorded messages by about 75%.
 - Added support for Vizard 2.3.0
 - Redirected MuJoCo errors and warnings to :ref:`bskLogging` instead of printing to file.
+- Support calling ``unsubscribe`` on input messages.
 
 
 Version 2.7.0 (April 20, 2025)

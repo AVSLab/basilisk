@@ -136,6 +136,12 @@ public:
         this->initialized = true;
     };
 
+    //! Unsubscribe to the connected message, noop if no message was connected
+    void unsubscribe(){
+        this->payloadPointer = nullptr;
+        this->headerPointer = nullptr;
+        this->initialized = false;
+    }
 
     //! Check if self has been subscribed to a C message
     uint8_t isSubscribedToC(void *source){

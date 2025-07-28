@@ -30,6 +30,8 @@ void @MSG_AUTOSOURCE_TYPE@_C_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, @MSG
 
 void @MSG_AUTOSOURCE_TYPE@_addr_subscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber, uint64_t sourceAddr);
 
+void @MSG_AUTOSOURCE_TYPE@_unsubscribe(@MSG_AUTOSOURCE_TYPE@_C *subscriber);
+
 int8_t @MSG_AUTOSOURCE_TYPE@_C_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscriber, @MSG_AUTOSOURCE_TYPE@_C *source);
 int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedTo(@MSG_AUTOSOURCE_TYPE@_C *subscriber, void* source);
 int8_t @MSG_AUTOSOURCE_TYPE@_cpp_isSubscribedToAddr(@MSG_AUTOSOURCE_TYPE@_C *subscriber, uint64_t sourceAddr);

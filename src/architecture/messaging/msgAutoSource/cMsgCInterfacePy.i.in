@@ -25,7 +25,9 @@ typedef struct {type};
         else:
             raise Exception('tried to subscribe {type} to another message type')
 
-
+    def unsubscribe(self):
+        """Unsubscribe to the connected message, noop if no message was connected"""
+        {type}_unsubscribe(self)
 
     def isSubscribedTo(self, source):
         """check if self is subscribed to another message source"""
