@@ -17,10 +17,12 @@ if __name__ == "__main__":
     sweep_values = args.sweep
     all_fail_rates = []
     all_avg_delays = []
+    u_hist = []
     for sweep in args.sweep:
-        fail_rate, avg_delay = FID.run_fid(sweep_window=sweep)
+        fail_rate, avg_delay, u = FID.run_fid(sweep_window=sweep)
         all_fail_rates.append(fail_rate)
         all_avg_delays.append(avg_delay)
+        u_hist = u
 
     # Plotting
     plot_fid_metrics(sweep_values=sweep_values,
