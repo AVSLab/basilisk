@@ -1,104 +1,63 @@
 import unittest
+from unittest.mock import MagicMock, patch, call
 
-import numpy as np
 from src.ukf import UKFSetup
 
-class DummyMsg:
-    def subscribeTo(self, msg):
-        self.subscribed_msg = msg
+class TestUKFSetupWithMocks(unittest.TestCase):
 
-class DummyEstimator:
-    def __init__(self):
-        self.gyrBuffInMsg = DummyMsg()
-        self.rwParamsInMsg = DummyMsg()
-        self.rwSpeedsInMsg = DummyMsg()
-        self.alpha = None
-        self.beta = None
-        self.kappa = None
-        self.switchMag = None
-        self.stateInit = None
-        self.covarInit = None
-        self.qNoise = None
-
-    def logger(self, args, timestep):
-        self.logger_args = args
-        self.logger_timestep = timestep
-        return self._logger
-
-    _logger = object()
-
-class DummyScSim:
-    def __init__(self):
-        self.models_added = []
-
-    def AddModelToTask(self, taskName, model):
-        self.models_added.append((taskName, model))
-
-class DummyRwStateEffector:
-    def __init__(self):
-        self.rwSpeedOutMsg = object()
-
-class DummyFswRwParamMsg:
-    pass
-
-class UKFSetupTest(UKFSetup):
-    # Override to return dummy estimator instead of real inertialUKF
-    def create_and_setup_filter(self, scSim, simTaskName):
-        attEstimator = DummyEstimator()
-        scSim.AddModelToTask(simTaskName, attEstimator)
-
-        attEstimator.alpha = self.filterData.alpha
-        attEstimator.beta = self.filterData.beta
-        attEstimator.kappa = self.filterData.kappa
-        attEstimator.switchMag = self.filterData.switchMag
-
-        attEstimator.stateInit = self.filterData.stateInit
-        attEstimator.covarInit = self.filterData.covarInit
-        attEstimator.qNoise = self.filterData.qNoise
-
-        gyroInMsg = object()
-        attEstimator.gyrBuffInMsg.subscribeTo(gyroInMsg)
-
-        attEstimator.rwParamsInMsg.subscribeTo(self.fswRwParamMsg)
-        attEstimator.rwSpeedsInMsg.subscribeTo(self.rwStateEffector.rwSpeedOutMsg)
-
-        attEstimatorLog = attEstimator.logger(["covar", "state"], self.simulationTimeStep)
-        scSim.AddModelToTask(simTaskName, attEstimatorLog)
-
-        return attEstimator, attEstimatorLog
-
-class TestUKFSetupIntegration(unittest.TestCase):
     def setUp(self):
-        self.simTimeStep = 0.1
-        self.rwStateEffector = DummyRwStateEffector()
-        self.fswRwParamMsg = DummyFswRwParamMsg()
-        self.scSim = DummyScSim()
+        self.simulationTimeStep = 0.1
+        self.fswRwParamMsg = MagicMock(name="FswRwParamMsg")
+        self.rwStateEffector = MagicMock(name="RwStateEffector")
+        self.rwStateEffector.rwSpeedOutMsg = MagicMock(name="RwSpeedOutMsg")
+
+        self.scSim = MagicMock(name="SimInterface")
         self.simTaskName = "fswTask"
 
-        self.ukfSetup = UKFSetupTest(self.simTimeStep, self.fswRwParamMsg, self.rwStateEffector)
+        self.ukf_setup = UKFSetup(self.simulationTimeStep, self.fswRwParamMsg, self.rwStateEffector)
 
-    def test_create_and_setup_filter(self):
-        attEstimator, attEstimatorLog = self.ukfSetup.create_and_setup_filter(self.scSim, self.simTaskName)
+    @patch('src.ukf.inertialUKF.inertialUKF', autospec=True)
+    def test_create_setup_and_update_filter(self, MockInertialUKF):
+        # Arrange: mock the filter instance and its methods/attributes
+        mock_estimator = MagicMock(name="InertialUKFInstance")
+        MockInertialUKF.return_value = mock_estimator
 
-        # Check if models were added to the task
-        models = [model for task, model in self.scSim.models_added if task == self.simTaskName]
+        # mock logger returned by .logger()
+        mock_logger = MagicMock(name="LoggerInstance")
+        mock_estimator.logger.return_value = mock_logger
 
-        self.assertIn(attEstimator, models)
-        self.assertIn(attEstimatorLog, models)
+        # Mock messages for subscribing
+        mock_estimator.gyrBuffInMsg = MagicMock(name="GyrBuffInMsg")
+        mock_estimator.rwParamsInMsg = MagicMock(name="RwParamsInMsg")
+        mock_estimator.rwSpeedsInMsg = MagicMock(name="RwSpeedsInMsg")
 
-        # Check if subscriptions are done
-        self.assertTrue(hasattr(attEstimator.gyrBuffInMsg, 'subscribed_msg'))
-        self.assertIs(attEstimator.rwParamsInMsg.subscribed_msg, self.fswRwParamMsg)
-        self.assertIs(attEstimator.rwSpeedsInMsg.subscribed_msg, self.rwStateEffector.rwSpeedOutMsg)
+        # Act: create and setup filter
+        attEstimator, attEstimatorLog = self.ukf_setup.create_and_setup_filter(self.scSim, self.simTaskName)
 
-        # Check that filter parameters are set (not None)
-        self.assertIsNotNone(attEstimator.alpha)
-        self.assertIsNotNone(attEstimator.beta)
-        self.assertIsNotNone(attEstimator.kappa)
-        self.assertIsNotNone(attEstimator.switchMag)
-        self.assertIsNotNone(attEstimator.stateInit)
-        self.assertIsNotNone(attEstimator.covarInit)
-        self.assertIsNotNone(attEstimator.qNoise)
+        # Assert: creation calls
+        MockInertialUKF.assert_called_once()
+        mock_estimator.logger.assert_called_once_with(["covar", "state"], self.simulationTimeStep)
+
+        # Assert: messages subscribe called properly
+        mock_estimator.gyrBuffInMsg.subscribeTo.assert_called_once()
+        mock_estimator.rwParamsInMsg.subscribeTo.assert_called_once_with(self.fswRwParamMsg)
+        mock_estimator.rwSpeedsInMsg.subscribeTo.assert_called_once_with(self.rwStateEffector.rwSpeedOutMsg)
+
+        # Assert: filter and logger are added to sim task
+        calls = self.scSim.AddModelToTask.call_args_list
+        # We expect calls adding both estimator and logger
+        self.assertIn(call(self.simTaskName, mock_estimator), calls)
+        self.assertIn(call(self.simTaskName, mock_logger), calls)
+
+        # Assert returned objects
+        self.assertIs(attEstimator, mock_estimator)
+        self.assertIs(attEstimatorLog, mock_logger)
+
+        # Simulate filter update call (assuming you have such method)
+        if hasattr(attEstimator, 'update'):
+            gyro_data = MagicMock(name="GyroMeasurement")
+            attEstimator.update(gyro_data)
+            attEstimator.update.assert_called_once_with(gyro_data)
 
 if __name__ == "__main__":
     unittest.main()
