@@ -222,9 +222,8 @@ class FID:
         return ld
 
     @staticmethod
-    def run_fault_trials(N_vals, n_trials):
-        ny = 10
-        results = {}  # Store results per sweep window and trial
+    def run_fault_trials(N_vals, n_trials, ukf_objects, ukf_logs, ukf_sims, simTimeSec, simTaskName, ny, nx):
+        results = {}
 
         for N in N_vals:
             moving_window = N
@@ -233,11 +232,10 @@ class FID:
             for trial in range(n_trials):
                 np.random.seed(trial)
 
-                # Initialize fault ID configuration
                 fid_config = {
                     'action_flag': True,
                     'moving_window': moving_window,
-                    'N_hypo': 4,
+                    'N_hypo': len(ukf_objects),
                     'crit': 0.95,
                     'alpha': 0.05
                 }
@@ -248,10 +246,12 @@ class FID:
                 chi_crit_lo = chi2.ppf(fid_config['alpha'] / 2, df * m) / m
 
                 n_Hypo = fid_config['N_hypo']
-                Hypothesis = np.ones(n_Hypo) * (1.0 / n_Hypo)
+                Hypothesis = np.ones(n_Hypo) / n_Hypo
                 logP_H = np.log(Hypothesis)
 
-                # Histories
+                mu_H_pos = np.zeros((nx, n_Hypo))
+                cov_H_pos = np.zeros((nx, nx, n_Hypo))
+
                 inno_H_pri_hist = []
                 S_H_pri_hist = []
                 H_hist = [Hypothesis.copy()]
@@ -259,9 +259,29 @@ class FID:
                 num_steps = 10
 
                 for k in range(num_steps):
-                    # Dummy measurements
-                    inno_H_pri = np.random.randn(ny, n_Hypo) * 0.01
-                    S_H_pri = np.array([np.eye(ny) for _ in range(n_Hypo)])
+                    Y = np.random.randn(ny)  # Simulated measurement
+
+                    inno_H_pri = np.zeros((ny, n_Hypo))
+                    S_H_pri = np.zeros((n_Hypo, ny, ny))
+
+                    for m_id in range(n_Hypo):
+                        ukf = ukf_objects[m_id]
+                        ukf_log = ukf_logs[m_id]
+                        scSim = ukf_sims[m_id]
+
+                        scSim.ConfigureStopTime(simTimeSec)
+                        scSim.ExecuteSimulation()
+
+                        mu_pos = ukf_log.state[:, -1]
+                        cov_pos = ukf_log.covar[:, :, -1]
+
+                        mu_H_pos[:, m_id] = mu_pos
+                        cov_H_pos[:, :, m_id] = cov_pos
+
+                        y_pri = mu_pos[4:4+ny]  # CHANGE if measurement model is different
+
+                        inno_H_pri[:, m_id] = Y - y_pri
+                        S_H_pri[m_id] = cov_pos[4:4+ny, 4:4+ny]  # Measurement cov block
 
                     inno_H_pri_hist.append(inno_H_pri)
                     S_H_pri_hist.append(S_H_pri)
@@ -269,15 +289,13 @@ class FID:
                     if k >= moving_window - 1:
                         logP_H_new = np.full(n_Hypo, -np.inf)
 
-                        for m in range(n_Hypo):
-                            # Stack innovations
+                        for m_id in range(n_Hypo):
                             inno_used = np.vstack([
-                                inno_H_pri_hist[-i - 1][:, m].reshape(-1, 1)
+                                inno_H_pri_hist[-i - 1][:, m_id].reshape(-1, 1)
                                 for i in reversed(range(moving_window))
                             ])
 
-                            # Build covariance block
-                            tmp = [S_H_pri_hist[-i - 1][m] for i in reversed(range(moving_window))]
+                            tmp = [S_H_pri_hist[-i - 1][m_id] for i in reversed(range(moving_window))]
                             S_used = np.block([
                                 [tmp[i] if i == j else np.zeros_like(tmp[0])
                                 for j in range(moving_window)]
@@ -293,12 +311,11 @@ class FID:
 
                             if chi_crit_lo <= chi_sr <= chi_crit_up:
                                 logdet = np.linalg.slogdet(S_used)[1]
-                                logP_H_new[m] = -0.5 * logdet - 0.5 * chi_sr * moving_window + logP_H[m]
+                                logP_H_new[m_id] = -0.5 * logdet - 0.5 * chi_sr * moving_window + logP_H[m_id]
 
-                        # Normalize beliefs from log domain
                         maxlogP = np.max(logP_H_new)
                         if maxlogP == -np.inf:
-                            Hypothesis = np.ones(n_Hypo) * (1.0 / n_Hypo)
+                            Hypothesis = np.ones(n_Hypo) / n_Hypo
                             logP_H = np.log(Hypothesis)
                         else:
                             logP_shifted = logP_H_new - maxlogP
@@ -314,6 +331,7 @@ class FID:
                 })
 
         return results
+
 
     def fail_rate_and_delay_from_results(results, sweep_window, n_trials):
         failures = 0
