@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdexcept>
 #include "architecture/utilities/bskLogging.h"
 
 logLevel_t LogLevel = BSK_DEBUG;
@@ -96,15 +97,22 @@ int BSKLogger::getLogLevel()
 */
 void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
 {
+    const char* targetLevelStr = this->logLevelMap[targetLevel];
+    char formatMessage[MAX_LOGGING_LENGTH];
+    va_list args;
+    va_start (args, info);
+    vsnprintf(formatMessage, sizeof(formatMessage), info, args);
+    va_end(args);
+
+    // Raise an error that swig can pipe to python
+    if(targetLevel == BSK_ERROR)
+    {
+        throw std::runtime_error(formatMessage);
+    }
+    // Otherwise, print the message accordingly
     if(targetLevel >= this->_logLevel)
     {
-        const char* targetLevelStr = this->logLevelMap[targetLevel];
-        char formatMessage[MAX_LOGGING_LENGTH];
-        va_list args;
-        va_start (args, info);
-        vsnprintf(formatMessage, sizeof(formatMessage), info, args);
         printf("%s: %s\n", targetLevelStr, formatMessage);
-	va_end(args);
     }
 }
 
