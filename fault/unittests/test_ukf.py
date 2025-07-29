@@ -725,10 +725,11 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     st_1_data.timeTag = 0
     st_1_msg = messaging.STAttMsg().write(st_1_data)
     # setup measurement model in the filter
+    st_cov = 1e-4
     starTracker1 = inertialUKF.STMessage()
-    starTracker1.noise = [1e-4, 0.0, 0.0,
-                          0.0, 1e-4, 0.0,
-                          0.0, 0.0, 1e-4]
+    starTracker1.noise = [st_cov, 0.0, 0.0,
+                          0.0, st_cov, 0.0,
+                          0.0, 0.0, st_cov]
     star_tracker_list = [starTracker1]
     inertialAttFilter.STDatasStruct.STMessages = star_tracker_list
     inertialAttFilter.STDatasStruct.numST = len(star_tracker_list)
@@ -749,10 +750,10 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
         # simulate true star tracker measurement
         if(snAttLog.sigma_BN.shape[0] > 0):
             true_att = snAttLog.sigma_BN[-1,:]
-            print(true_att)
+            true_att_with_noise = true_att + np.random.normal(0, np.sqrt(st_cov), 3)
             st_1_data.valid = True
             st_1_data.timeTag = int(timeSpan[i+1]*1E9)
-            st_1_data.MRP_BdyInrtl = true_att
+            st_1_data.MRP_BdyInrtl = true_att_with_noise
         st_1_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
 
         scSim.ConfigureStopTime(macros.sec2nano((timeSpan[i+1])))
