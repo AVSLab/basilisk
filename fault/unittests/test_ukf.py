@@ -289,6 +289,7 @@ from Basilisk.simulation import reactionWheelStateEffector, motorVoltageInterfac
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.fswAlgorithms import inertialUKF
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -305,6 +306,68 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+
+def plot_filter_result_sigma(timeData, state, state_est, cov_est):
+    fig, axs = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+    
+    for idx, ax in enumerate(axs):
+        color = unitTestSupport.getLineColor(idx, 3)
+        
+        # True state
+        ax.plot(timeData, state[:, idx],
+                color=color,
+                label=rf'$x_{{{idx+1}}}$')
+        
+        # Estimated state
+        ax.plot(timeData, state_est[:, idx],
+                color=color,
+                linestyle='--',
+                label=rf'$\hat{{x}}_{{{idx+1}}}$')
+        
+        # ±5 std‐dev band
+        std5  = 5 * np.sqrt(cov_est[:, idx])
+        upper = state_est[:, idx] + std5
+        lower = state_est[:, idx] - std5
+        ax.fill_between(timeData, lower, upper,
+                        color=color,
+                        alpha=0.3,
+                        label=r'$\pm5\sigma$')
+        
+        ax.set_ylabel(rf'$x_{{{idx+1}}}$')      # y-label per subplot
+        ax.legend(loc='upper right', fontsize='small')
+    # Common x‑label on the bottom subplot
+    axs[-1].set_xlabel('Time [min]')
+
+def plot_filter_result_omega(timeData, state, state_est, cov_est):
+    fig, axs = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+    
+    for idx, ax in enumerate(axs):
+        color = unitTestSupport.getLineColor(idx, 3)
+        
+        # True state
+        ax.plot(timeData, state[:, idx],
+                color=color,
+                label=rf'$x_{{{idx+3}}}$')
+        
+        # Estimated state
+        ax.plot(timeData, state_est[:, idx],
+                color=color,
+                linestyle='--',
+                label=rf'$\hat{{x}}_{{{idx+3}}}$')
+        
+        # ±5 std‐dev band
+        std5  = 5 * np.sqrt(cov_est[:, idx])
+        upper = state_est[:, idx] + std5
+        lower = state_est[:, idx] - std5
+        ax.fill_between(timeData, lower, upper,
+                        color=color,
+                        alpha=0.3,
+                        label=r'$\pm5\sigma$')
+        
+        ax.set_ylabel(rf'$x_{{{idx+3}}}$')      # y-label per subplot
+        ax.legend(loc='upper right', fontsize='small')
+    # Common x‑label on the bottom subplot
+    axs[-1].set_xlabel('Time [min]')
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """Plot the RW command torques."""
@@ -367,6 +430,27 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Voltage (V)')
 
+
+def setup_inertialattfilter(filterObject):
+    filterObject.alpha = 0.02
+    filterObject.beta = 2.0
+    filterObject.kappa = 0.0
+    filterObject.switchMag = 1.2
+    filterObject.stateInit = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    filterObject.covarInit = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                              0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+                              0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
+                              0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
+                              0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+    sigmaMrpSquare = (1E-3) ** 2
+    sigmaRateSquare = (5E-4) ** 2
+    qNoise = np.identity(6)
+    qNoise[0:3, 0:3] = qNoise[0:3, 0:3]*sigmaMrpSquare
+    qNoise[3:6, 3:6] = qNoise[3:6, 3:6]*sigmaRateSquare
+    filterObject.qNoise = qNoise.reshape(36).tolist()
+
+
 def run(show_plots, useJitterSimple, useRWVoltageIO):
     """
     The scenarios can be run with the followings setups parameters:
@@ -386,7 +470,8 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simTimeSec = 10
+    simulationTime = macros.sec2nano(simTimeSec)
 
     #
     #  create the simulation process
@@ -394,7 +479,8 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simTimeStepSec = 0.1
+    simulationTimeStep = macros.sec2nano(simTimeStepSec)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -602,10 +688,6 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
                                               , saveFile=fileName
                                               , rwEffectorList=rwStateEffector
                                               )
-    
-    # Add the true attitude state log
-    snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(simTaskName, snAttLog)
 
     # link messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -625,16 +707,56 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     else:
         rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
 
+    # Add the true attitude state log
+    snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, snAttLog)
+    # Create the UKF
+    inertialAttFilter = inertialUKF.inertialUKF()
+    scSim.AddModelToTask(simTaskName, inertialAttFilter)
+    setup_inertialattfilter(inertialAttFilter)
+    inertialAttFilter.massPropsInMsg.subscribeTo(vcMsg)
+    inertialAttFilter.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    inertialAttFilter.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    # unwritten message
+    gyroInMsg = messaging.AccDataMsg()
+    inertialAttFilter.gyrBuffInMsg.subscribeTo(gyroInMsg)
+    # true inertial attitude measurement from star traker
+    st_1_data = messaging.STAttMsgPayload()
+    st_1_data.timeTag = 0
+    st_1_msg = messaging.STAttMsg().write(st_1_data)
+    # setup measurement model in the filter
+    starTracker1 = inertialUKF.STMessage()
+    starTracker1.noise = [1e-4, 0.0, 0.0,
+                          0.0, 1e-4, 0.0,
+                          0.0, 0.0, 1e-4]
+    star_tracker_list = [starTracker1]
+    inertialAttFilter.STDatasStruct.STMessages = star_tracker_list
+    inertialAttFilter.STDatasStruct.numST = len(star_tracker_list)
+    inertialAttFilter.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st_1_msg)
+    inertialAttFilterLog = inertialAttFilter.filtDataOutMsg.recorder(samplingTime)
+    scSim.AddModelToTask(simTaskName, inertialAttFilterLog)
+
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
+    timeSpan = np.arange(0, simTimeSec + simTimeStepSec, simTimeStepSec)
 
     #
     #   configure a simulation stop time and execute the simulation run
     #
-    scSim.ConfigureStopTime(simulationTime)
-    scSim.ExecuteSimulation()
+    for i in range(len(timeSpan)-1):
+        # simulate true star tracker measurement
+        if(snAttLog.sigma_BN.shape[0] > 0):
+            true_att = snAttLog.sigma_BN[-1,:]
+            print(true_att)
+            st_1_data.valid = True
+            st_1_data.timeTag = int(timeSpan[i+1]*1E9)
+            st_1_data.MRP_BdyInrtl = true_att
+        st_1_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
+
+        scSim.ConfigureStopTime(macros.sec2nano((timeSpan[i+1])))
+        scSim.ExecuteSimulation()
 
     #
     #   retrieve the logged data
@@ -642,9 +764,14 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     dataUsReq = rwMotorLog.motorTorque
     dataSigmaBN = snAttLog.sigma_BN
     dataSigmaBR = attErrorLog.sigma_BR
+    dataOmegaBN = snAttLog.omega_BN_B
     dataOmegaBR = attErrorLog.omega_BR_B
     dataPos = snTransLog.r_BN_N
     dataOmegaRW = mrpLog.wheelSpeeds
+    dataFilterState = inertialAttFilterLog.state
+    dataFilterCov = inertialAttFilterLog.covar
+    dataFilterSigmaBN = dataFilterState[:, 0:3]
+    dataFilterOmegaBN = dataFilterState[:, 3:]
 
     dataRW = []
     for i in range(numRW):
@@ -659,34 +786,41 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     timeData = rwMotorLog.times() * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
-    plot_attitude_error(timeData, dataSigmaBR)
-    figureList = {}
-    pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-    figureList[pltName] = plt.figure(1)
+    # plot_attitude_error(timeData, dataSigmaBR)
+    # figureList = {}
+    # pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    # figureList[pltName] = plt.figure(1)
 
-    plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
-    pltName = fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-    figureList[pltName] = plt.figure(2)
+    # plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
+    # pltName = fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    # figureList[pltName] = plt.figure(2)
 
-    plot_rate_error(timeData, dataOmegaBR)
-    plot_rw_speeds(timeData, dataOmegaRW, numRW)
-    pltName = fileName + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-    figureList[pltName] = plt.figure(4)
+    # plot_rate_error(timeData, dataOmegaBR)
+    # plot_rw_speeds(timeData, dataOmegaRW, numRW)
+    # pltName = fileName + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    # figureList[pltName] = plt.figure(4)
 
-    if useRWVoltageIO:
-        plot_rw_voltages(timeData, dataVolt, numRW)
-        pltName = fileName + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-        figureList[pltName] = plt.figure(5)
+    # if useRWVoltageIO:
+    #     plot_rw_voltages(timeData, dataVolt, numRW)
+    #     pltName = fileName + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    #     figureList[pltName] = plt.figure(5)
+
+    # implement UKF and compare the filter estimates with dataSigmaBN
+    np.testing.assert_equal(dataSigmaBN.shape, dataFilterSigmaBN.shape)
+    # _M, _ = dataFilterCov.shape
+    _tmp = dataFilterCov.reshape(-1, 6, 6)
+    dataFilterSigmaDiagCov = np.diagonal(_tmp, 
+                                         axis1=1, axis2=2)[:, :3]
+    dataFilterOmegaDiagCov = np.diagonal(_tmp, 
+                                         axis1=1, axis2=2)[:, 3:]
+    plot_filter_result_sigma(timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov)
+    plot_filter_result_omega(timeData, dataOmegaBN, dataFilterOmegaBN, dataFilterOmegaDiagCov)
 
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
-    # Debugging
-    # NOTE: implement UKF and compare the filter estimates with dataSigmaBN
-    print(dataSigmaBN)
 
     return figureList
 
