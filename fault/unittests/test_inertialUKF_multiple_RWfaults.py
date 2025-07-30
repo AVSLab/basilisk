@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import warnings
-
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque, inertialUKF)
@@ -116,7 +116,7 @@ def run_inertialUkf_mode(mode_id, rw_scales, save_dir="logs"):
     # Logging setup
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, 100)
     attLog = sNavObject.attOutMsg.recorder(samplingTime)
-    filtLog = ukf.filtDataOutMsg.recorder(samplingTime)
+    filtLog = ukf.logger(["covar", "state"], samplingTime)
     scSim.AddModelToTask(simTaskName, attLog)
     scSim.AddModelToTask(simTaskName, filtLog)
 
