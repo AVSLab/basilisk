@@ -310,7 +310,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
 
 def plot_filter_result_sigma(timeData, state, state_est, cov_est):
     timeData = timeData[1:]
-    fig, axs = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+    fig, axs = plt.subplots(3, 1, figsize=(8, 8), sharex=True)
     
     for idx, ax in enumerate(axs):
         color = unitTestSupport.getLineColor(idx, 3)
@@ -344,7 +344,7 @@ def plot_filter_result_sigma(timeData, state, state_est, cov_est):
 
 def plot_filter_result_omega(timeData, state, state_est, cov_est):
     timeData = timeData[1:]
-    fig, axs = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+    fig, axs = plt.subplots(3, 1, figsize=(8, 8), sharex=True)
     
     for idx, ax in enumerate(axs):
         color = unitTestSupport.getLineColor(idx, 3)
@@ -784,7 +784,11 @@ def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
     #   configure a simulation stop time and execute the simulation run
     #
     for i in range(len(timeSpan)-1):
-        # simulate true star tracker measurement
+        # simulate
+        scSim.ConfigureStopTime(macros.sec2nano((timeSpan[i+1])))
+        scSim.ExecuteSimulation()
+
+        # obtain true star tracker measurement
         if(snAttLog.sigma_BN.shape[0] > 0):
             true_att = snAttLog.sigma_BN[-1,:]
             true_att_with_noise = true_att + np.random.normal(0, np.sqrt(st_cov), 3)
@@ -792,9 +796,6 @@ def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
             st_1_data.timeTag = int(timeSpan[i+1]*1E9)
             st_1_data.MRP_BdyInrtl = true_att_with_noise
         st_1_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
-
-        scSim.ConfigureStopTime(macros.sec2nano((timeSpan[i+1])))
-        scSim.ExecuteSimulation()
 
     #
     #   retrieve the logged data
