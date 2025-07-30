@@ -463,7 +463,11 @@ def setup_inertialattfilter(filterObject):
 @pytest.mark.parametrize("rw_fault", [False, True])
 def test_inertialUKF_with_RWfault(useJitterSimple, useRWVoltageIO, rw_fault, show_plots=False):
     """
-    The scenarios can be run with the followings setups parameters:
+    Test 
+        (1) if the inertialUKF is setup properly to estimate attitude states (MRP, angularrate) 
+            when complex dynamics (jitter and RWVolrage) are involved
+        (2) if the inertialUKF can use a different reaction wheel configuration so that 
+            the estimated states (using fault dynamics) deviate from the true state (nominal dynamics).
 
     Args:
         useJitterSimple (bool): Specify if the RW simple jitter model should be included

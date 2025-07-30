@@ -1,3 +1,7 @@
+"""
+Test if the inertialUKF is setup properly to estimate attitude states (MRP, angularrate)
+"""
+
 import os
 import pytest
 import matplotlib.pyplot as plt
