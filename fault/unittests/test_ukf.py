@@ -276,6 +276,7 @@ the balanced RW case.  But there is a distinct numerical difference.
 #
 
 import os
+import pytest
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -308,26 +309,27 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
 def plot_filter_result_sigma(timeData, state, state_est, cov_est):
+    timeData = timeData[1:]
     fig, axs = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
     
     for idx, ax in enumerate(axs):
         color = unitTestSupport.getLineColor(idx, 3)
         
         # True state
-        ax.plot(timeData, state[:, idx],
+        ax.plot(timeData, state[1:, idx],
                 color=color,
                 label=rf'$x_{{{idx+1}}}$')
         
         # Estimated state
-        ax.plot(timeData, state_est[:, idx],
+        ax.plot(timeData, state_est[1:, idx],
                 color=color,
                 linestyle='--',
                 label=rf'$\hat{{x}}_{{{idx+1}}}$')
         
         # ±5 std‐dev band
-        std5  = 5 * np.sqrt(cov_est[:, idx])
-        upper = state_est[:, idx] + std5
-        lower = state_est[:, idx] - std5
+        std5  = 5 * np.sqrt(cov_est[1:, idx])
+        upper = state_est[1:, idx] + std5
+        lower = state_est[1:, idx] - std5
         ax.fill_between(timeData, lower, upper,
                         color=color,
                         alpha=0.3,
@@ -335,30 +337,33 @@ def plot_filter_result_sigma(timeData, state, state_est, cov_est):
         
         ax.set_ylabel(rf'$x_{{{idx+1}}}$')      # y-label per subplot
         ax.legend(loc='upper right', fontsize='small')
+        # margin = 0.0
+        # ax.set_ylim([state[:, idx].min()-margin, state[:, idx].max()+margin])
     # Common x‑label on the bottom subplot
     axs[-1].set_xlabel('Time [min]')
 
 def plot_filter_result_omega(timeData, state, state_est, cov_est):
+    timeData = timeData[1:]
     fig, axs = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
     
     for idx, ax in enumerate(axs):
         color = unitTestSupport.getLineColor(idx, 3)
         
         # True state
-        ax.plot(timeData, state[:, idx],
+        ax.plot(timeData, state[1:, idx],
                 color=color,
                 label=rf'$x_{{{idx+3}}}$')
         
         # Estimated state
-        ax.plot(timeData, state_est[:, idx],
+        ax.plot(timeData, state_est[1:, idx],
                 color=color,
                 linestyle='--',
                 label=rf'$\hat{{x}}_{{{idx+3}}}$')
         
         # ±5 std‐dev band
-        std5  = 5 * np.sqrt(cov_est[:, idx])
-        upper = state_est[:, idx] + std5
-        lower = state_est[:, idx] - std5
+        std5  = 5 * np.sqrt(cov_est[1:, idx])
+        upper = state_est[1:, idx] + std5
+        lower = state_est[1:, idx] - std5
         ax.fill_between(timeData, lower, upper,
                         color=color,
                         alpha=0.3,
@@ -366,6 +371,7 @@ def plot_filter_result_omega(timeData, state, state_est, cov_est):
         
         ax.set_ylabel(rf'$x_{{{idx+3}}}$')      # y-label per subplot
         ax.legend(loc='upper right', fontsize='small')
+        # ax.set_ylim([state[:, idx].min(), state[:, idx].max()])
     # Common x‑label on the bottom subplot
     axs[-1].set_xlabel('Time [min]')
 
@@ -451,7 +457,11 @@ def setup_inertialattfilter(filterObject):
     filterObject.qNoise = qNoise.reshape(36).tolist()
 
 
-def run(show_plots, useJitterSimple, useRWVoltageIO):
+@pytest.mark.parametrize("show_plots", [True])
+@pytest.mark.parametrize("useJitterSimple", [False])
+@pytest.mark.parametrize("useRWVoltageIO", [False])
+@pytest.mark.parametrize("rw_fault", [False, True])
+def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -459,7 +469,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
         show_plots (bool): Determines if the script should display plots
         useJitterSimple (bool): Specify if the RW simple jitter model should be included
         useRWVoltageIO (bool): Specify if the RW voltage interface should be simulated.
-
+        rw_fault (bool): Specify if the UKF is using dynamics of RW with reduced torque
     """
 
     # Create simulation variable names
@@ -470,7 +480,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simTimeSec = 10
+    simTimeSec = 60
     simulationTime = macros.sec2nano(simTimeSec)
 
     #
@@ -648,6 +658,13 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
+    vehicleConfigOut_fault = messaging.VehicleConfigMsgPayload()
+    I_fault = [8., 0., 0.,
+         0., 9., 0.,
+         0., 0., 7.]
+    vehicleConfigOut_fault.ISCPntB_B = I_fault  # use the same inertia in the FSW algorithm as in the simulation
+    vcMsg_fault = messaging.VehicleConfigMsg().write(vehicleConfigOut_fault)
+
     # Two options are shown to setup the FSW RW configuration message.
     # First case: The FSW RW configuration message
     # uses the same RW states in the FSW algorithm as in the simulation.  In the following code
@@ -655,16 +672,32 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # method of the second method below is that it is easy to vary the FSW parameters slightly from the
     # simulation parameters.  In this script the second method is used, while the fist method is included
     # to show both options.
-    fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.items():
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
-    fswRwParamMsg1 = fswSetupRW.writeConfigMessage()
+    # fswSetupRW.clearSetup()
+    # for key, rw in rwFactory.rwList.items():
+    #     fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, uMax=0.001)
+    # fswRwParamMsg1 = fswSetupRW.writeConfigMessage()
+    rwFactory_fault = simIncludeRW.rwFactory()
+    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
+    rwFactory_fault.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
+                           , RWModel=varRWModel, 
+                           Omega_max = 3000.0*macros.RPM # This line is equal to setting friction.
+                           )
+    rwFactory_fault.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
+                           , RWModel=varRWModel
+                           )
+    rwFactory_fault.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
+                           , rWB_B=[0.5, 0.5, 0.5]  # meters
+                           , RWModel=varRWModel,
+                           )
+    if(rw_fault):
+        inertialAttFilterRwParamMsg = rwFactory_fault.getConfigMessage()
+    else:
+        inertialAttFilterRwParamMsg = rwFactory.getConfigMessage()
 
     # Second case: If the exact same RW configuration states are to be used by the simulation and fsw, then the
     # following helper function is convenient to extract the fsw RW configuration message from the
     # rwFactory setup earlier.
-    fswRwParamMsg2 = rwFactory.getConfigMessage()
-    fswRwParamMsg = fswRwParamMsg2
+    fswRwParamMsg = rwFactory.getConfigMessage()
 
     #
     #   set initial Spacecraft States
@@ -710,15 +743,18 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # Add the true attitude state log
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, snAttLog)
+
     # Create the UKF
     inertialAttFilter = inertialUKF.inertialUKF()
     scSim.AddModelToTask(simTaskName, inertialAttFilter)
     setup_inertialattfilter(inertialAttFilter)
     inertialAttFilter.massPropsInMsg.subscribeTo(vcMsg)
     inertialAttFilter.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    inertialAttFilter.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+    inertialAttFilter.rwParamsInMsg.subscribeTo(inertialAttFilterRwParamMsg)
     # unwritten message
+    gyroBufferData = messaging.AccDataMsgPayload()
     gyroInMsg = messaging.AccDataMsg()
+    gyroInMsg.write(gyroBufferData, 0)
     inertialAttFilter.gyrBuffInMsg.subscribeTo(gyroInMsg)
     # true inertial attitude measurement from star traker
     st_1_data = messaging.STAttMsgPayload()
@@ -734,7 +770,8 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     inertialAttFilter.STDatasStruct.STMessages = star_tracker_list
     inertialAttFilter.STDatasStruct.numST = len(star_tracker_list)
     inertialAttFilter.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st_1_msg)
-    inertialAttFilterLog = inertialAttFilter.filtDataOutMsg.recorder(samplingTime)
+    # inertialAttFilterLog = inertialAttFilter.filtDataOutMsg.recorder(samplingTime) # Recording message of type 24InertialFilterMsgPayload that is not properly initialized or written
+    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state"], samplingTime)
     scSim.AddModelToTask(simTaskName, inertialAttFilterLog)
 
     #
@@ -792,8 +829,8 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
     # figureList[pltName] = plt.figure(1)
 
-    # plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
-    # pltName = fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
+    pltName = fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
     # figureList[pltName] = plt.figure(2)
 
     # plot_rate_error(timeData, dataOmegaBR)
@@ -823,7 +860,9 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return figureList
+    # for label, rw in rwFactory.rwList.items():
+    #     print(f"--- {label} ---")
+    #     print(f" u_max:   {rw.u_max}")
 
 
 #
@@ -831,8 +870,16 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(
+    test_ukf(
         True,  # show_plots
-        False, # useJitterSimple
-        False  # useRWVoltageIO
+        True, # useJitterSimple
+        True,  # useRWVoltageIO
+        False, # is the UKF using dynamics of reaction wheel with reduced torque
+    )
+
+    test_ukf(
+        True,  # show_plots
+        True, # useJitterSimple
+        True,  # useRWVoltageIO
+        True, # is the UKF using dynamics of reaction wheel with reduced torque
     )
