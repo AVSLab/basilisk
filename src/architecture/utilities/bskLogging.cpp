@@ -107,7 +107,7 @@ void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
     // Raise an error that swig can pipe to python
     if(targetLevel == BSK_ERROR)
     {
-        throw std::runtime_error(formatMessage);
+        throw BasiliskError(formatMessage);
     }
     // Otherwise, print the message accordingly
     if(targetLevel >= this->_logLevel)

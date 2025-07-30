@@ -1,9 +1,13 @@
 %include "exception.i"
 
+%{
+#include "architecture/utilities/bskLogging.h"
+%}
+
 %define %bsk_exception_body(CATCH...)
     try {
         $action
-    } catch (const std::runtime_error& e) {
+    } catch (const BasiliskError& e) {
         SWIG_exception(SWIG_RuntimeError, e.what());
     }
     CATCH
