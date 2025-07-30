@@ -100,6 +100,8 @@ class SphericalHarmonicsGravityModel : public GravityModel {
     /** The normalized "S" spherical harmonics coefficients */
     std::vector<std::vector<double>> sBar;
 
+    mutable BSKLogger bskLogger; //!< BSK Logging
+
   private:
     /**
      * The following parameters are used internally to compute the gravity.
