@@ -277,9 +277,10 @@ the balanced RW case.  But there is a distinct numerical difference.
 
 import os
 import pytest
-
 import matplotlib.pyplot as plt
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -457,16 +458,14 @@ def setup_inertialattfilter(filterObject):
     filterObject.qNoise = qNoise.reshape(36).tolist()
 
 
-@pytest.mark.parametrize("show_plots", [True])
 @pytest.mark.parametrize("useJitterSimple", [False])
 @pytest.mark.parametrize("useRWVoltageIO", [False])
 @pytest.mark.parametrize("rw_fault", [False, True])
-def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
+def test_inertialUKF_with_RWfault(useJitterSimple, useRWVoltageIO, rw_fault, show_plots=False):
     """
     The scenarios can be run with the followings setups parameters:
 
     Args:
-        show_plots (bool): Determines if the script should display plots
         useJitterSimple (bool): Specify if the RW simple jitter model should be included
         useRWVoltageIO (bool): Specify if the RW voltage interface should be simulated.
         rw_fault (bool): Specify if the UKF is using dynamics of RW with reduced torque
@@ -480,7 +479,7 @@ def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simTimeSec = 60
+    simTimeSec = 300
     simulationTime = macros.sec2nano(simTimeSec)
 
     #
@@ -657,13 +656,12 @@ def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-
-    vehicleConfigOut_fault = messaging.VehicleConfigMsgPayload()
-    I_fault = [8., 0., 0.,
-         0., 9., 0.,
-         0., 0., 7.]
-    vehicleConfigOut_fault.ISCPntB_B = I_fault  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg_fault = messaging.VehicleConfigMsg().write(vehicleConfigOut_fault)
+    # vehicleConfigOut_fault = messaging.VehicleConfigMsgPayload()
+    # I_fault = [8., 0., 0.,
+    #      0., 9., 0.,
+    #      0., 0., 7.]
+    # vehicleConfigOut_fault.ISCPntB_B = I_fault  # use the same inertia in the FSW algorithm as in the simulation
+    # vcMsg_fault = messaging.VehicleConfigMsg().write(vehicleConfigOut_fault)
 
     # Two options are shown to setup the FSW RW configuration message.
     # First case: The FSW RW configuration message
@@ -717,10 +715,10 @@ def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , saveFile=fileName
-                                              , rwEffectorList=rwStateEffector
-                                              )
+    # viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+    #                                           , saveFile=fileName
+    #                                           , rwEffectorList=rwStateEffector
+    #                                           )
 
     # link messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -852,6 +850,12 @@ def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
                                          axis1=1, axis2=2)[:, :3]
     dataFilterOmegaDiagCov = np.diagonal(_tmp, 
                                          axis1=1, axis2=2)[:, 3:]
+    if(rw_fault == False):
+        # assert the filter estimated states are within 6 standard deviations
+        np.testing.assert_array_less(np.abs(dataSigmaBN-dataFilterSigmaBN)[-10:, :], 
+                                    6*np.sqrt(dataFilterSigmaDiagCov)[-10:, :])
+        np.testing.assert_array_less(np.abs(dataOmegaBN-dataFilterOmegaBN)[-10:, :], 
+                                    6*np.sqrt(dataFilterOmegaDiagCov)[-10:, :])
     plot_filter_result_sigma(timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov)
     plot_filter_result_omega(timeData, dataOmegaBN, dataFilterOmegaBN, dataFilterOmegaDiagCov)
 
@@ -871,16 +875,16 @@ def test_ukf(show_plots, useJitterSimple, useRWVoltageIO, rw_fault):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_ukf(
-        True,  # show_plots
+    test_inertialUKF_with_RWfault(
         True, # useJitterSimple
         True,  # useRWVoltageIO
         False, # is the UKF using dynamics of reaction wheel with reduced torque
+        show_plots=True,
     )
 
-    test_ukf(
-        True,  # show_plots
+    test_inertialUKF_with_RWfault(
         True, # useJitterSimple
         True,  # useRWVoltageIO
         True, # is the UKF using dynamics of reaction wheel with reduced torque
+        show_plots=True,
     )
