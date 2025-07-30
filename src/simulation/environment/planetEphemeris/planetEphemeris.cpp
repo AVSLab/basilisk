@@ -78,30 +78,26 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
     if (computeAttitudeFlag) {
         /*! - check that the right number of planet local sideral time angles are provided */
         if (this->lst0.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_WARNING, "Only %lu planet initial principal rotation angles provided, but %lu planet names are present.",
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet initial principal rotation angles provided, but %lu planet names are present.",
                       this->lst0.size(), this->planetNames.size());
-            this->computeAttitudeFlag = 0;
         }
 
         /*! - check that the right number of planet polar axis right ascension angles are provided */
         if (this->rightAscension.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_WARNING, "Only %lu planet right ascension angles provided, but %lu planet names are present.",
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet right ascension angles provided, but %lu planet names are present.",
                       this->rightAscension.size(), this->planetNames.size());
-            this->computeAttitudeFlag = 0;
         }
 
         /*! - check that the right number of planet polar axis declination angles are provided */
         if (this->declination.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_WARNING, "Only %lu planet declination angles provided, but %lu planet names are present.",
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet declination angles provided, but %lu planet names are present.",
                       this->declination.size(), this->planetNames.size());
-            this->computeAttitudeFlag = 0;
         }
 
         /*! - check that the right number of planet polar rotation rates are provided */
         if (this->rotRate.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_WARNING, "Only %lu planet rotation rates provided, but %lu planet names are present.",
+            bskLogger.bskLog(BSK_ERROR, "Only %lu planet rotation rates provided, but %lu planet names are present.",
                       this->rotRate.size(), this->planetNames.size());
-            this->computeAttitudeFlag = 0;
         }
     }
 

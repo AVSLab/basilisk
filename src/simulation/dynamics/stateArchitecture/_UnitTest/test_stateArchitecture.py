@@ -18,8 +18,8 @@
 import numpy
 import pytest
 from Basilisk.architecture import sim_model
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import stateArchitecture
-
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -135,12 +135,14 @@ def stateProperties(show_plots):
         testFailCount += 1
         testMessages.append("Set and property reference matching failed.")
 
-    wrongGravList = [[0.0], [9.81], [-0.1]]
-    newManager.setPropertyValue(gravName+"Scott", newGravList)
-    propRef = newManager.getPropertyReference(gravName+"Scott")
-    if propRef != None:
+    try:
+        wrongGravList = [[0.0], [9.81], [-0.1]]
+        newManager.setPropertyValue(gravName+"Scott", wrongGravList)
+        propRef = newManager.getPropertyReference(gravName+"Scott")
         testFailCount += 1
         testMessages.append("Set and property reference matching failed.")
+    except BasiliskError:
+        pass
 
     massList = [[1500.0]]
     massName = "mass"
@@ -189,10 +191,16 @@ def stateArchitectureTest(show_plots):
         testFailCount += 1
         testMessages.append("Failed to return proper state name for velocity")
 
+
     if(newManager.registerState(stateDim[0], stateDim[1], positionName).getName() != positionName):
         testFailCount += 1
         testMessages.append("Failed to return proper state name in overload of call")
-    newManager.registerState(stateDim[0], stateDim[1]+2, positionName)
+
+    try:
+        newManager.registerState(stateDim[0], stateDim[1]+2, positionName)
+        testFailCount += 1
+    except BasiliskError:
+        pass
 
     positionStateLookup = newManager.getStateObject("Array1_flex")
 
@@ -214,7 +222,7 @@ def stateArchitectureTest(show_plots):
         testFailCount += 1
         testMessages.append("Velocity state update via state-manager failed")
 
-    dt = 1.0;
+    dt = 1.0
     posState.setDerivative(vecStart)
     newManager.propagateStateVector(dt)
     numpyOutput += numpy.array(vecStart)*dt

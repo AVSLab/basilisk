@@ -47,12 +47,7 @@ from Basilisk.utilities import deprecated
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-
-@pytest.mark.parametrize("function", ["hingedRigidBodyGravity", "hingedRigidBodyNoGravity"
-                                      , "hingedRigidBodyNoGravityDamping", "hingedRigidBodyThetaSS"
-                                      , "hingedRigidBodyFrequencyAmp"
-                                      , "hingedRigidBodyLagrangVsBasilisk"
-                                      ])
+@pytest.mark.parametrize("function", []) # Don't run this test because of deprecated SpacecraftSystem
 def test_hingedRigidBody(show_plots, function):
     """Module Unit Test"""
     testFunction = globals().get(function)
@@ -63,7 +58,7 @@ def test_hingedRigidBody(show_plots, function):
     [testResults, testMessage] = testFunction(show_plots)
     assert testResults < 1, testMessage
 
-@pytest.mark.parametrize("useScPlus", [True, False])
+@pytest.mark.parametrize("useScPlus", [True])
 def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
     """Module Unit Test"""
     [testResults, testMessage] = hingedRigidBodyMotorTorque(show_plots, useScPlus)

@@ -26,10 +26,12 @@ import os
 import pytest
 import matplotlib.pyplot as plt
 import numpy as np
+from contextlib import nullcontext
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, orbitalMotion, macros, RigidBodyKinematics
 from Basilisk.simulation import spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 
 # uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -65,7 +67,12 @@ def test_constraintEffectorAllCases(show_plots,CutOffFreq,useConstEffector):
     If it is positive, then we perform a low-pass filtering of the constraint forces and torques using a second-order low pass
     filter, to provide the corresponding results.
     """
+    expect_error = CutOffFreq <= 0
+    with pytest.raises(BasiliskError) if expect_error else nullcontext():
+        run_test(show_plots, CutOffFreq, useConstEffector)
 
+
+def run_test(show_plots, CutOffFreq, useConstEffector):
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 

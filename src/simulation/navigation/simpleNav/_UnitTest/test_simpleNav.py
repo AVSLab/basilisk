@@ -20,10 +20,12 @@
 
 import math
 import os
+import pytest
 
 import matplotlib.pyplot as plt
 import numpy
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import simpleNav
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
@@ -259,29 +261,30 @@ def unitSimpleNav(show_plots):
         plt.show()
     plt.close('all')
 
-    # Corner case usage
-    pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
-    # stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
-    stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
-    sNavObject.walkBounds = stateBoundsBad
-    sNavObject.PMatrix = pMatrixBad
+    with pytest.raises(BasiliskError):
+        # Corner case usage
+        pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
+        # stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+        stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+        sNavObject.walkBounds = stateBoundsBad
+        sNavObject.PMatrix = pMatrixBad
 
-    # sNavObject.inputStateName = "random_name"
-    # sNavObject.inputSunName = "weirdly_not_the_sun"
-    unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(1E8))
-    unitTestSim.ExecuteSimulation()
+        # sNavObject.inputStateName = "random_name"
+        # sNavObject.inputSunName = "weirdly_not_the_sun"
+        unitTestSim.InitializeSimulation()
+        unitTestSim.ConfigureStopTime(int(1E8))
+        unitTestSim.ExecuteSimulation()
 
     # print out success message if no error were found
     if testFailCount == 0:

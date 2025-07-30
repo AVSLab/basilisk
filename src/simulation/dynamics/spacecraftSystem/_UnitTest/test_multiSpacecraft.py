@@ -46,9 +46,7 @@ def addTimeColumn(time, data):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("function", ["SCConnected"
-                                      , "SCConnectedAndUnconnected"
-                                      ])
+@pytest.mark.parametrize("function", []) # Don't run this test because of deprecated SpacecraftSystem
 def test_spacecraftSystemAllTest(show_plots, function):
     """Module Unit Test"""
     func = globals().get(function)
