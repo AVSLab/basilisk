@@ -18,6 +18,10 @@
 */
 
 %module mtbFeedforward
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "mtbFeedforward.h"
 %}
@@ -41,4 +45,3 @@ struct MTBArrayConfigMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

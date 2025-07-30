@@ -18,6 +18,10 @@
  */
 %module svIntegrators
 
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
+
 %{
    #include <vector>
    #include "../_GeneralModuleFiles/stateVecIntegrator.h"
@@ -67,7 +71,7 @@ _rk_adaptive_base_classes = {}
       std::vector<std::vector<double>> aMatrix,
       std::vector<double> bArray,
       std::vector<double> cArray
-   ) 
+   )
    {
       RKCoefficients<numberStages> coefficients;
       for (size_t i = 0; i < numberStages; i++)
@@ -89,7 +93,7 @@ _rk_adaptive_base_classes = {}
       std::vector<double> bStarArray,
       std::vector<double> cArray,
       double largestOrder
-   ) 
+   )
    {
       RKAdaptiveCoefficients<numberStages> coefficients;
       for (size_t i = 0; i < numberStages; i++)
@@ -142,7 +146,7 @@ def _validate_coefficients(a_coefficients, **array_coefficients):
         assert a_coefficients.ndim == 2
     except:
         raise ValueError("a_coefficients must be a square matrix or a non-ragged sequence of sequences")
-    
+
     if a_coefficients.shape[0] != a_coefficients.shape[1]:
         raise ValueError("a_coefficients must be a square matrix")
 
@@ -170,11 +174,11 @@ def svIntegratorRungeKutta(
     left side.
 
     Args:
-        a_coefficients (Sequence[Sequence[float]] | np.ndarray): 
+        a_coefficients (Sequence[Sequence[float]] | np.ndarray):
             "a" matrix in the Butcher table.
-        b_coefficients (Sequence[float] | np.ndarray): 
+        b_coefficients (Sequence[float] | np.ndarray):
             "b" array in the Butcher table
-        c_coefficients (Sequence[float] | np.ndarray): 
+        c_coefficients (Sequence[float] | np.ndarray):
             "c" array in the Butcher table
 
     Returns:
@@ -208,20 +212,20 @@ def svIntegratorAdaptiveRungeKutta(
         largest_order (float): The order of the higher-order RK method
             used in this adaptive RK method. For example, for RKF45,
             largest_order should be 5.
-        a_coefficients (Sequence[Sequence[float]] | np.ndarray): 
+        a_coefficients (Sequence[Sequence[float]] | np.ndarray):
             "a" matrix in the Butcher table.
-        b_coefficients (Sequence[float] | np.ndarray): 
+        b_coefficients (Sequence[float] | np.ndarray):
             "b" array in the Butcher table
-        b_star_coefficients (Sequence[float] | np.ndarray): 
+        b_star_coefficients (Sequence[float] | np.ndarray):
             "b" array for the lower order method in the Butcher table
-        c_coefficients (Sequence[float] | np.ndarray): 
+        c_coefficients (Sequence[float] | np.ndarray):
             "c" array in the Butcher table
 
     Returns:
         StateVecIntegrator: A Runge-Kutta integrator object
     """
     _validate_coefficients(
-      a_coefficients, b_coefficients=b_coefficients, 
+      a_coefficients, b_coefficients=b_coefficients,
       b_star_coefficients=b_star_coefficients, c_coefficients=c_coefficients)
     stages = len(b_coefficients)
 

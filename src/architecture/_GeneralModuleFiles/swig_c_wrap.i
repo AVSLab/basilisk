@@ -18,6 +18,10 @@
  */
 
 %module swig_c_wrap
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "architecture/_GeneralModuleFiles/sys_model.h"
     #include <architecture/utilities/bskLogging.h>
@@ -83,7 +87,7 @@ class CWrapper : public SysModel {
     in overload resolution than methods using the explicit type.
 
     This means that:
-    
+
     Reset_hillPoint(hillPointConfig*, uint64_t, int64_t) { ... }
 
     will always be chosen before:
@@ -103,7 +107,7 @@ class CWrapper : public SysModel {
         if (len(args)) > 0:
             args[0].thisown = False
     %}
-    
+
     %include "moduleName.h"
 
     %template(moduleName) CWrapper<configName,Update_ ## functionSuffix,SelfInit_ ## functionSuffix,Reset_ ## functionSuffix>;

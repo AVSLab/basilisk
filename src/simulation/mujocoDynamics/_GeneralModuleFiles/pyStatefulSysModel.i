@@ -27,6 +27,7 @@ import traceback
 from Basilisk.architecture.swig_common_model import *
 %}
 
+%include "architecture/utilities/bskException.swg"
 %include "architecture/utilities/bskLogging.h"
 %import "architecture/_GeneralModuleFiles/py_sys_model.i"
 

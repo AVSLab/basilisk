@@ -17,6 +17,10 @@
 
  */
 %module solarFlux
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "solarFlux.h"
 %}

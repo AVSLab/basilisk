@@ -18,6 +18,10 @@
  */
 
 %module simpleInstrument
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
 #include "simpleInstrument.h"
 %}

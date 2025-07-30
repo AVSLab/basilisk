@@ -1,5 +1,9 @@
 
 %module dynParamManager
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
    #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"

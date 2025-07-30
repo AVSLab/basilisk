@@ -43,6 +43,10 @@ void printDefaultLogLevel();
 #include <map>
 #include <string>
 
+#ifdef SWIG
+%include "std_except.i"
+#endif
+
 void setDefaultLogLevel(logLevel_t logLevel);
 logLevel_t getDefaultLogLevel();
 

@@ -17,6 +17,10 @@
 
  */
 %module relativeODuKF
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "relativeODuKF.h"
    #include "architecture/utilities/ukfUtilities.h"
@@ -38,4 +42,3 @@ struct OpNavFilterMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

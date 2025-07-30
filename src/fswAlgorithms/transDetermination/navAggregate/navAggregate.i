@@ -17,6 +17,10 @@
 
  */
 %module navAggregate
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "navAggregate.h"
 %}
@@ -37,4 +41,3 @@ struct NavTransMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

@@ -19,6 +19,10 @@
 
 %module swig_conly_data
 
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
+
 %include "stdint.i"
 
 %define ARRAYASLIST(type, fromfunc, asfunc)

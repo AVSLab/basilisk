@@ -23,15 +23,13 @@
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-%include "exception.i"
+%include "architecture/utilities/bskException.swg"
 
-%exception {
-  try {
-    $action
-  } catch (const std::exception& e) {
+%default_bsk_exception(
+  catch (const std::exception& e) {
     SWIG_exception(SWIG_RuntimeError, e.what());
   }
-}
+);
 
 %pythonbegin %{
 from Basilisk.architecture import messaging

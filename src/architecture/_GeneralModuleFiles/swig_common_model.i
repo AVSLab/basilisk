@@ -19,6 +19,10 @@
 
 %module swig_common_model
 
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
+
 %include "std_vector.i"
 %include "std_string.i"
 %include "std_set.i"

@@ -18,6 +18,10 @@
  */
 
 %module fuelTank
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "fuelTank.h"
 %}
