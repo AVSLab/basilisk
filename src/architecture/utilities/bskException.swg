@@ -2,13 +2,23 @@
 
 %{
 #include "architecture/utilities/bskLogging.h"
+
+PyObject* get_PyExc_BasiliskError() {
+    PyObject* bskLogging = PyImport_ImportModule("Basilisk.architecture.bskLogging");
+
+    PyObject* PyExc_BasiliskError = PyObject_GetAttrString(bskLogging, "BasiliskError");
+    Py_DECREF(bskLogging);
+
+    return PyExc_BasiliskError;
+}
 %}
 
 %define %bsk_exception_body(CATCH...)
     try {
         $action
     } catch (const BasiliskError& e) {
-        SWIG_exception(SWIG_RuntimeError, e.what());
+        PyErr_SetString(get_PyExc_BasiliskError(), const_cast<char*>(e.what()));
+        SWIG_fail;
     }
     CATCH
 %enddef
