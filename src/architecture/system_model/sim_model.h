@@ -69,6 +69,7 @@ public:
     bool selfInitNow{};              //!< Flag requesting self init
     bool crossInitNow{};             //!< Flag requesting cross-init
     bool resetNow{};                 //!< Flag requesting that the thread execute reset
+    std::exception_ptr threadException = nullptr;  //!< Exception pointer for thread errors
     //!
 private:
     bool threadRunning{};            //!< Flag that will allow for easy concurrent locking
