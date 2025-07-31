@@ -1,5 +1,5 @@
 import argparse
-from src.multipleinertialUkf import multipleinertialUkf
+from src.run import multipleinertialUkf
 
 
 if __name__ == "__main__":

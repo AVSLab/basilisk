@@ -1,5 +1,6 @@
 import numpy as np
 from Basilisk.fswAlgorithms import inertialUKF
+from Basilisk.utilities import (macros, simIncludeRW)
 from scipy.stats import chi2
 
 def compute_chisquare(dataFilterCov_S, dataFilterInno, threshold=1e12):
@@ -66,3 +67,49 @@ def configure_inertialattfilter(filterObject, config, measurement_message):
     filterObject.STDatasStruct.numST = len(star_tracker_list)
     # connect filter star tracker to the true inertial attitude measurement
     filterObject.STDatasStruct.STMessages[0].stInMsg.subscribeTo(measurement_message)
+
+
+def create_filter(simTaskName, scSim, mode, vcMsg, rwStateEffector, gyroInMsg, st_cov, attitude_measurement_msg, samplingTime, varRWModel):
+    filter_instance = inertialUKF.inertialUKF()
+    scSim.AddModelToTask(simTaskName, filter_instance)
+
+    rwFactory = simIncludeRW.rwFactory()
+    # Define RW configs based on mode
+    rw_configs = [
+        {"Omega_max": None, "rWB_B": None},  # Nominal
+        {"Omega_max": 3000.0 * macros.RPM, "rWB_B": None},  # Fault 1
+        {"Omega_max": None, "rWB_B": [0.5, 0.5, 0.5]},       # Fault 2
+        {"Omega_max": 3000.0 * macros.RPM, "rWB_B": [0.5, 0.5, 0.5]}  # Fault 3
+    ]
+
+    config = rw_configs[mode]
+    Omega_max = config.get("Omega_max", None)
+    rWB_B = config.get("rWB_B", None)
+
+    for i, gsHat in enumerate([[1, 0, 0], [0, 1, 0], [0, 0, 1]]):
+        rw_kwargs = {
+            "RWModel": varRWModel,
+            "Omega": 100. * (i + 1),  # 100, 200, 300 RPM
+            "maxMomentum": 50.
+        }
+        if i == mode and Omega_max is not None:
+            rw_kwargs["Omega_max"] = Omega_max
+        if rWB_B is not None:
+            rw_kwargs["rWB_B"] = rWB_B
+
+        rwFactory.create('Honeywell_HR16', gsHat, **rw_kwargs)
+
+    rwParamMsg = rwFactory.getConfigMessage()
+    config_dict = {
+        "vcMsg": vcMsg,
+        "rwStateEffector": rwStateEffector,
+        "inertialAttFilterRwParamMsg": rwParamMsg,
+        "gyroInMsg": gyroInMsg,
+        "st_cov": st_cov,
+    }
+
+    configure_inertialattfilter(filter_instance, config_dict, attitude_measurement_msg)
+    filter_logger = filter_instance.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
+    scSim.AddModelToTask(simTaskName, filter_logger)
+
+    return filter_logger

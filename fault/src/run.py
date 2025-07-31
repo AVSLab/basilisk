@@ -1,5 +1,4 @@
 import os
-import pytest
 import matplotlib.pyplot as plt
 import numpy as np
 import warnings
@@ -10,16 +9,18 @@ from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.utilities import (macros,simIncludeRW, unitTestSupport)
 from Basilisk.fswAlgorithms import inertialUKF
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+from .spacecraft import setup_spacecraft_sim
+from .navigation import setup_navigation_and_control
 from .ukf import compute_chisquare, configure_inertialattfilter
+from .messages import setup_messages
+from .log import setup_logging
+
 
 from .plots import (
     plot_attitude_error,
@@ -39,149 +40,20 @@ def multipleinertialUkf(show_plots=False):
         show_plots (bool): Determines if the script should display plots
     """
 
-    # --- Create Simulation ---
-    simTaskName = "simTask"
-    simProcessName = "simProcess"
-    # create a sim module as an empty container
-    scSim = SimulationBaseClass.SimBaseClass()
-    # set the simulation time variable used later on
-    simTimeSec = 600
-    simulationTime = macros.sec2nano(simTimeSec)
-    # create the simulation process
-    dynProcess = scSim.CreateNewProcess(simProcessName)
-    # create the dynamics task and specify the integration update time
-    simTimeStepSec = 0.1
-    simulationTimeStep = macros.sec2nano(simTimeStepSec)
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    # Setup spacecraft and simulation module
+    (scSim, scObject,simTaskName, simTimeSec, simTimeStepSec, simulationTime, simulationTimeStep,
+        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim()
 
-    # --- Setup Gravity ---
-    # clear prior gravitational body and SPICE setup definitions
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-    # setup Earth Gravity Body
-    earth = gravFactory.createEarth()
-    earth.isCentralBody = True  # ensure this is the central gravitational body
-    mu = earth.mu
+    # Setup navigation module
+    sNavObject, inertial3DObj, attError, mrpControl = setup_navigation_and_control(scSim, simTaskName)
 
-    # --- Create Spacecraft ---
-    scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "bsk-Sat"
-    # define the spacecraft inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
-    scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
-    # define the spacecraft initial state
-    oe = orbitalMotion.ClassicElements()
-    oe.a = 10000000.0  # meters
-    oe.e = 0.01
-    oe.i = 33.3 * macros.D2R
-    oe.Omega = 48.2 * macros.D2R
-    oe.omega = 347.8 * macros.D2R
-    oe.f = 85.3 * macros.D2R
-    rN, vN = orbitalMotion.elem2rv(mu, oe)
-    scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_CN_B
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
-    # add spacecraft object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, 1)
-    # attach gravity model to spacecraft
-    gravFactory.addBodiesTo(scObject)
-
-    # --- Setup Reaction Wheels ---
-    # make a fresh RW factory instance, this is critical to run multiple times
-    rwFactory = simIncludeRW.rwFactory()
-    varRWModel = messaging.BalancedWheels
-    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
-                           , RWModel=varRWModel
-                           )
-    RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
-                           , RWModel=varRWModel
-                           )
-    RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
-                           , rWB_B=[0.5, 0.5, 0.5]  # meters
-                           , RWModel=varRWModel
-                           )
-    # In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride
-    # any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the
-    # maximum wheel speed.
-    numRW = rwFactory.getNumOfDevices()
-
-    # --- Connect Reaction Wheels to Spacecraft via rwStateEffector ---
-    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "RW_cluster"
-    rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
-    # add RW object array to the simulation process.  This is required for the UpdateState() method
-    # to be called which logs the RW states
-    scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
-
-    # --- Setup Navigation --- 
-    # NOTE add the simple Navigation sensor module.  
-    # This sets the SC attitude, rate, position velocity navigation message
-    sNavObject = simpleNav.SimpleNav()
-    sNavObject.ModelTag = "SimpleNavigation"
-    scSim.AddModelToTask(simTaskName, sNavObject)
-    # setup inertial3D guidance module
-    inertial3DObj = inertial3D.inertial3D()
-    inertial3DObj.ModelTag = "inertial3D"
-    scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
-    # setup the attitude tracking error evaluation module
-    attError = attTrackingError.attTrackingError()
-    attError.ModelTag = "attErrorInertial3D"
-    scSim.AddModelToTask(simTaskName, attError)
-    # setup the MRP Feedback control module
-    mrpControl = mrpFeedback.mrpFeedback()
-    mrpControl.ModelTag = "mrpFeedback"
-    scSim.AddModelToTask(simTaskName, mrpControl)
-    mrpControl.K = 3.5
-    mrpControl.Ki = -1  # make value negative to turn off integral feedback
-    mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
-
-    # --- Connect messages ---
-    # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
-    vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
-    # create the FSW reaction wheel configuration message
+    # Connect messages
+    vcMsg, inertialAttFilterRwParamMsg, attitude_measurement_msg, st_cov, rwMotorTorqueObj, st_1_data \
+        = setup_messages(scSim, simTaskName, I, rwFactory, scObject, sNavObject, attError, inertial3DObj, mrpControl, rwStateEffector)
     fswRwParamMsg = rwFactory.getConfigMessage()
-    # create the inertialUKF reaction wheel configuration message
-    inertialAttFilterRwParamMsg = rwFactory.getConfigMessage()
-    # connect navigation to spacecraft
-    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    # connect att control error
-    attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)
-    # connect mrp control law
-    mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
-    mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
     mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    mrpControl.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    # create and connect RW motor torqe
-    rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
-    rwMotorTorqueObj.ModelTag = "rwMotorTorque"
-    scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
-    #   make the RW control all three body axes
-    controlAxes_B = [
-        1, 0, 0, 
-        0, 1, 0, 
-        0, 0, 1
-    ]
-    rwMotorTorqueObj.controlAxes_B = controlAxes_B
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
-    # connect rwStateEffector to rwMotorTorque
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
 
-    # --- Create the holder for the true inertial attitude measurement ---
-    st_1_data = messaging.STAttMsgPayload()
-    st_1_data.timeTag = 0
-    attitude_measurement_msg = messaging.STAttMsg().write(st_1_data)
-    st_cov = 1e-4
 
     # --- Create multiple inertialUKF (state = MRP, angular_rate) ---
     # create an empty gyro measurement
@@ -296,27 +168,10 @@ def multipleinertialUkf(show_plots=False):
         "fault3": inertialAttFilter3Log,
     }
     
-    # --- Setup Data Logging ---
-    rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
-    attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
-    snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(simTaskName, rwMotorLog)
-    scSim.AddModelToTask(simTaskName, attErrorLog)
-    scSim.AddModelToTask(simTaskName, snTransLog)
-    # add the true attitude state log
-    snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(simTaskName, snAttLog)
-    # To log the RW information, the following code is used:
-    mrpLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
-    scSim.AddModelToTask(simTaskName, mrpLog)
-    # A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
-    # here to be plotted later on.  However, RW specific messages are also being created which
-    # contain a wealth of information.  The vector of messages is ordered as they were added.  This
-    # allows us to log RW specific information such as the actual RW motor torque being applied.
-    rwLogs = []
-    for item in range(numRW):
-        rwLogs.append(rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
-        scSim.AddModelToTask(simTaskName, rwLogs[item])
+    # Setup logs
+    rwMotorLog, attErrorLog, snTransLog, snAttLog, mrpLog, rwLogs \
+          = setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, attError, sNavObject, rwStateEffector, numRW)
+
 
     # --- Setup 3D Visualiztion
     # viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
