@@ -32,6 +32,8 @@ typedef struct {
     double covar[AKF_N_STATES*AKF_N_STATES];    //!< [-] Current covariance of the filter
     double state[AKF_N_STATES];                 //!< [-] Current estimated state of the filter
     int numObs;                                 //!< [-] Valid observation count for this frame
+    double cov_S[3 * 3];   //!< [-] Time-updated covariance
+    double innovation[3]; //!< Innovation = obs - predicted_measurement
 }InertialFilterMsgPayload;
 
 

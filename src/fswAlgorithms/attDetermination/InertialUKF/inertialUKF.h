@@ -89,6 +89,8 @@ typedef struct {
     double xBar[AKF_N_STATES];            //!< [-] Current mean state estimate
 
 	double obs[3];          //!< [-] Observation vector for frame
+    double innovation[3];
+    double cov_S[3*3];
 	double yMeas[3*(2*AKF_N_STATES+1)];        //!< [-] Measurement model data
 
 	double SP[(2*AKF_N_STATES+1)*AKF_N_STATES];          //!< [-]    sigma point matrix
