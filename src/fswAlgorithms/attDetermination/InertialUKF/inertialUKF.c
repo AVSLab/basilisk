@@ -318,7 +318,11 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     inertialDataOutBuffer.timeTag = configData->timeTag;
     memmove(inertialDataOutBuffer.covar, configData->covar,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
+    memmove(inertialDataOutBuffer.cov_S, configData->cov_S,
+            3*3*sizeof(double));
     memmove(inertialDataOutBuffer.state, configData->state, AKF_N_STATES*sizeof(double));
+    memmove(inertialDataOutBuffer.innovation, configData->innovation,
+        sizeof(double) * 3);
     InertialFilterMsg_C_write(&inertialDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
     configData->rwSpeedPrev = configData->rwSpeeds;
     return;
@@ -693,6 +697,8 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, configData->numObs, configData->numObs, sy);
     mTranspose(sy, configData->numObs, configData->numObs, syT);
+    mMultM(sy, configData->numObs, configData->numObs, 
+           syT, configData->numObs, configData->numObs, configData->cov_S); /* lower times upper */
 
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
@@ -727,6 +733,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
           multiply by the Kalman Gain to get the state update.  Add the state update
           to the state to get the updated state value (equation 27).*/
     vSubtract(configData->obs, configData->numObs, yBar, tempYVec);
+    vCopy(tempYVec, configData->numObs, configData->innovation);
     mMultM(kMat, configData->numStates, configData->numObs, tempYVec,
         configData->numObs, 1, xHat);
     vAdd(configData->state, configData->numStates, xHat, configData->state);
