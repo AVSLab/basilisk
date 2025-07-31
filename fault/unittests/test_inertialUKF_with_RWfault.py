@@ -281,6 +281,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
+from scipy.stats import chi2
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -327,14 +328,14 @@ def plot_filter_result_sigma(timeData, state, state_est, cov_est):
                 linestyle='--',
                 label=rf'$\hat{{x}}_{{{idx+1}}}$')
         
-        # ±5 std‐dev band
-        std5  = 5 * np.sqrt(cov_est[1:, idx])
+        # ±6 std‐dev band
+        std5  = 6 * np.sqrt(cov_est[1:, idx])
         upper = state_est[1:, idx] + std5
         lower = state_est[1:, idx] - std5
         ax.fill_between(timeData, lower, upper,
                         color=color,
                         alpha=0.3,
-                        label=r'$\pm5\sigma$')
+                        label=r'$\pm6\sigma$')
         
         ax.set_ylabel(rf'$x_{{{idx+1}}}$')      # y-label per subplot
         ax.legend(loc='upper right', fontsize='small')
@@ -361,20 +362,32 @@ def plot_filter_result_omega(timeData, state, state_est, cov_est):
                 linestyle='--',
                 label=rf'$\hat{{x}}_{{{idx+3}}}$')
         
-        # ±5 std‐dev band
-        std5  = 5 * np.sqrt(cov_est[1:, idx])
+        # ±6 std‐dev band
+        std5  = 6 * np.sqrt(cov_est[1:, idx])
         upper = state_est[1:, idx] + std5
         lower = state_est[1:, idx] - std5
         ax.fill_between(timeData, lower, upper,
                         color=color,
                         alpha=0.3,
-                        label=r'$\pm5\sigma$')
+                        label=r'$\pm6\sigma$')
         
         ax.set_ylabel(rf'$x_{{{idx+3}}}$')      # y-label per subplot
         ax.legend(loc='upper right', fontsize='small')
         # ax.set_ylim([state[:, idx].min(), state[:, idx].max()])
     # Common x‑label on the bottom subplot
     axs[-1].set_xlabel('Time [min]')
+
+def plot_filter_chisquare(dataChiSquare):
+    p = 0.05      # confidence level
+    dof = 3       # degrees of freedom
+    chi_ub = chi2.ppf(1-0.5*p, dof)
+    chi_lb = chi2.ppf(0.5*p, dof)
+    plt.figure()
+    plt.scatter(np.arange(len(dataChiSquare)), dataChiSquare, color="black", s=10, label=r"$\chi^2$")
+    plt.axhline(y=chi_ub, color='r', linestyle='--', label=r"$\chi^2$ upper threshold")
+    plt.axhline(y=chi_lb, color='b', linestyle='--', label=r"$\chi^2$ lower threshold")
+    plt.legend(loc='upper right')
+
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """Plot the RW command torques."""
@@ -425,7 +438,6 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
 
-
 def plot_rw_voltages(timeData, dataVolt, numRW):
     """Plot the RW voltage inputs."""
     plt.figure(5)
@@ -450,7 +462,7 @@ def setup_inertialattfilter(filterObject):
                               0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
                               0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
                               0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
-    sigmaMrpSquare = (1E-3) ** 2
+    sigmaMrpSquare = (1E-4) ** 2
     sigmaRateSquare = (5E-4) ** 2
     qNoise = np.identity(6)
     qNoise[0:3, 0:3] = qNoise[0:3, 0:3]*sigmaMrpSquare
@@ -483,7 +495,7 @@ def test_inertialUKF_with_RWfault(useJitterSimple, useRWVoltageIO, rw_fault, sho
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simTimeSec = 300
+    simTimeSec = 600
     simulationTime = macros.sec2nano(simTimeSec)
 
     #
@@ -773,7 +785,7 @@ def test_inertialUKF_with_RWfault(useJitterSimple, useRWVoltageIO, rw_fault, sho
     inertialAttFilter.STDatasStruct.numST = len(star_tracker_list)
     inertialAttFilter.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st_1_msg)
     # inertialAttFilterLog = inertialAttFilter.filtDataOutMsg.recorder(samplingTime) # Recording message of type 24InertialFilterMsgPayload that is not properly initialized or written
-    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state"], samplingTime)
+    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
     scSim.AddModelToTask(simTaskName, inertialAttFilterLog)
 
     #
@@ -811,6 +823,8 @@ def test_inertialUKF_with_RWfault(useJitterSimple, useRWVoltageIO, rw_fault, sho
     dataOmegaRW = mrpLog.wheelSpeeds
     dataFilterState = inertialAttFilterLog.state
     dataFilterCov = inertialAttFilterLog.covar
+    dataFilterCov_S = inertialAttFilterLog.cov_S # This is the cov_S in matlab code
+    dataFilterInno = inertialAttFilterLog.innovation # This is the innovation in matlab code
     dataFilterSigmaBN = dataFilterState[:, 0:3]
     dataFilterOmegaBN = dataFilterState[:, 3:]
 
@@ -863,15 +877,26 @@ def test_inertialUKF_with_RWfault(useJitterSimple, useRWVoltageIO, rw_fault, sho
     plot_filter_result_sigma(timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov)
     plot_filter_result_omega(timeData, dataOmegaBN, dataFilterOmegaBN, dataFilterOmegaDiagCov)
 
+    # --- Statistic data needed for Hypothesis Identification ---
+    threshold = 1e12  # condition number threshold; adjust as needed
+    dataChiSquare = []
+    for i in range(dataFilterInno.shape[0]):
+        cov_i = dataFilterCov_S[i, :].reshape(3, 3)
+        cond = np.linalg.cond(cov_i)
+        if cond < threshold:
+            mahalanobis = dataFilterInno[i, :].T @ np.linalg.inv(cov_i) @ dataFilterInno[i, :]
+            # print(mahalanobis)
+            dataChiSquare.append(mahalanobis)
+        # else:
+        #     print(f"[warning] Skipped index {i} due to singular matrix (cond={cond:.2e})")
+    dataChiSquare = np.array(dataChiSquare)
+    plot_filter_chisquare(dataChiSquare)
+
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
-    # for label, rw in rwFactory.rwList.items():
-    #     print(f"--- {label} ---")
-    #     print(f" u_max:   {rw.u_max}")
 
 
 #
