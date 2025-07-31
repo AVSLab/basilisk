@@ -29,7 +29,7 @@ By default, Basilisk will not build MuJoCo-related capabilities. To enable these
 
     (venv) $ python conanfile.py --mujoco True --mujocoReplay True
 
-Only the ``--mujoco True`` option is required. ``--mujocoReplay True`` will additionally build an
+Note that you will need SWIG version ``>=4.2.1``. Only the ``--mujoco True`` option is required. ``--mujocoReplay True`` will additionally build an
 independent tool that can be used to visualize the results of :ref:`MJScene<MJScene>` simulations. When
 using ``--mujocoReplay True``, you'll be able to call:
 
