@@ -447,8 +447,9 @@ def test_multipleinertialUkf(show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter3, config3, attitude_measurement_msg)
-    inertialAttFilter3Log = inertialAttFilter3.logger(["covar", "state"], samplingTime)
-    scSim.AddModelToTask(simTaskName, inertialAttFilter3Log)
+    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
+    scSim.AddModelToTask(simTaskName, inertialAttFilterLog)
+
 
     # collect filter log
     inertialAttFilterLog_dict = {
