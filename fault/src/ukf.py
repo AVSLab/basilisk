@@ -1,7 +1,6 @@
 import numpy as np
 from Basilisk.fswAlgorithms import inertialUKF
 from Basilisk.utilities import (macros, simIncludeRW)
-from scipy.stats import chi2
 
 def compute_chisquare(dataFilterCov_S, dataFilterInno, threshold=1e12):
     """

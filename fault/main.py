@@ -1,22 +1,21 @@
 import argparse
-from src.run import multipleinertialUkf
+from src.run import run
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
-    multipleinertialUkf(
-        show_plots=True,  # show_plots
+    parser.add_argument(
+        '--sweep', 
+        type=int, 
+        nargs='*', 
+        default=[1, 5, 10, 15, 20, 25, 30, 35, 40]
     )
 
-# if __name__ == "__main__":
+    run(show_plots=True)
 
 #     
-#     parser.add_argument(
-#         '--sweep', 
-#         type=int, 
-#         nargs='*', 
-#         default=[1, 5, 10, 15, 20, 25, 30, 35, 40]
-#     )
+
 #     parser.add_argument('--showPlots', action='store_true', help="Display plots")
 #     args = parser.parse_args()
 

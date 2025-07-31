@@ -7,9 +7,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
-                                    inertial3D, rwMotorTorque)
-from Basilisk.utilities import (macros,simIncludeRW, unitTestSupport)
+from Basilisk.utilities import macros, simIncludeRW, unitTestSupport
 from Basilisk.fswAlgorithms import inertialUKF
 
 bskPath = __path__[0]
@@ -34,7 +32,7 @@ from .plots import (
 )
 
 
-def multipleinertialUkf(show_plots=False):
+def run(show_plots=False):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
@@ -53,6 +51,8 @@ def multipleinertialUkf(show_plots=False):
     fswRwParamMsg = rwFactory.getConfigMessage()
     mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
+
+
 
 
     # --- Create multiple inertialUKF (state = MRP, angular_rate) ---
