@@ -3,13 +3,14 @@ from src.multipleinertialUkf import multipleinertialUkf
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
     multipleinertialUkf(
         show_plots=True,  # show_plots
     )
 
 # if __name__ == "__main__":
 
-#     parser = argparse.ArgumentParser()
+#     
 #     parser.add_argument(
 #         '--sweep', 
 #         type=int, 
