@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
+from scipy.stats import chi2
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -152,6 +153,41 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
+
+def plot_filter_chisquare(dataChiSquare):
+    p = 0.05      # confidence level
+    dof = 3       # degrees of freedom
+    chi_ub = chi2.ppf(1-0.5*p, dof)
+    chi_lb = chi2.ppf(0.5*p, dof)
+    plt.figure()
+    plt.scatter(np.arange(len(dataChiSquare)), dataChiSquare, color="black", s=10, label=r"$\chi^2$")
+    plt.axhline(y=chi_ub, color='r', linestyle='--', label=r"$\chi^2$ upper threshold")
+    plt.axhline(y=chi_lb, color='b', linestyle='--', label=r"$\chi^2$ lower threshold")
+    plt.legend(loc='upper right')
+
+
+def compute_chisquare(dataFilterCov_S, dataFilterInno, threshold=1e12):
+    """
+    Computes the Mahalanobis distance (chi-square) for a sequence of innovation and covariance matrices,
+    and plots the resulting values if the covariance is well-conditioned.
+
+    Parameters:
+    - dataFilterCov_S: np.ndarray of shape (N, 9), flattened 3x3 covariance matrices
+    - dataFilterInno: np.ndarray of shape (N, 3), innovation vectors
+    - threshold: float, condition number threshold for filtering singular matrices
+
+    Returns:
+    - dataChiSquare: np.ndarray of Mahalanobis distances
+    """
+    dataChiSquare = []
+    for i in range(dataFilterInno.shape[0]):
+        cov_i = dataFilterCov_S[i, :].reshape(3, 3)
+        cond = np.linalg.cond(cov_i)
+        if cond < threshold:
+            mahalanobis = dataFilterInno[i, :].T @ np.linalg.inv(cov_i) @ dataFilterInno[i, :]
+            dataChiSquare.append(mahalanobis)
+    dataChiSquare = np.array(dataChiSquare)
+    return dataChiSquare
 
 def setup_inertialattfilter(filterObject):
     filterObject.alpha = 0.02
@@ -366,7 +402,7 @@ def test_multipleinertialUkf(show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter, config, attitude_measurement_msg)
-    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state"], samplingTime)
+    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
     scSim.AddModelToTask(simTaskName, inertialAttFilterLog)
 
     # 1: fault1 filter
@@ -551,8 +587,11 @@ def test_multipleinertialUkf(show_plots=False):
                                         6*np.sqrt(dataFilterSigmaDiagCov)[-10:, :])
             np.testing.assert_array_less(np.abs(dataOmegaBN-dataFilterOmegaBN)[-10:, :], 
                                         6*np.sqrt(dataFilterOmegaDiagCov)[-10:, :])
-        plot_filter_result_sigma(key, timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov)
-        plot_filter_result_omega(key, timeData, dataOmegaBN, dataFilterOmegaBN, dataFilterOmegaDiagCov)
+            
+        dataChiSquare = compute_chisquare(dataFilterCov_S, dataFilterInno)
+        plot_filter_chisquare(dataChiSquare)
+        # plot_filter_result_sigma(key, timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov)
+        # plot_filter_result_omega(key, timeData, dataOmegaBN, dataFilterOmegaBN, dataFilterOmegaDiagCov)
 
     if show_plots:
         plt.show()
