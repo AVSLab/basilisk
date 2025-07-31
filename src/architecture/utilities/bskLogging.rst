@@ -15,7 +15,8 @@ This support class ``bskLogger`` enables C++ ``bskLog()`` and ANSI-C ``_bskLog()
         +-----------------------+---------------------------------+---------------------------------------------------+
         | BSK_WARNING           | Warnings about unexpected behavior, but not outright errors.                        |
         +-----------------------+---------------------------------+---------------------------------------------------+
-        | BSK_ERROR             | Erroneous behavior that needs to be fixed.                                          |
+        | BSK_ERROR             | Erroneous behavior that needs to be fixed. Errors raised at this level will raise a |
+        |                       | ``BasiliskError`` exception and stop the simulation immediately.                    |
         +-----------------------+---------------------------------+---------------------------------------------------+
         | BSK_SILENT            | This level is used to silence all `bskLog` statements.  This should never be used   |
         |                       | with the `bskLog` method within the C++ or C code.                                  |

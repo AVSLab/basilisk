@@ -63,6 +63,9 @@ Version |release|
 - Updated ``canary`` workflow to run on all pull requests to the develop branch, providing feedback on compatibility with latest dependencies.
 - Added links to published paper in :ref:`oneAxisSolarArrayPoint` documentation.
 - Converted RW data structures in ``reactionWheelStateEffector`` to shared pointers instead of raw pointers.
+- The ``BSKLogger`` now raises a ``BasiliskError`` (``Basilisk.architecture.bskLogging.BasiliskError``)
+  if something is logged at ``BSK_ERROR`` level. Certain errors are reduced to ``BSK_WARNING`` to reflect
+  the new behavior.
 
 
 Version 2.7.0 (April 20, 2025)
