@@ -393,7 +393,7 @@ def test_multipleinertialUkf(show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter1, config1, attitude_measurement_msg)
-    inertialAttFilter1Log = inertialAttFilter1.logger(["covar", "state"], samplingTime)
+    inertialAttFilter1Log = inertialAttFilter1.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
     scSim.AddModelToTask(simTaskName, inertialAttFilter1Log)
 
     # 2: fault2 filter
@@ -420,7 +420,7 @@ def test_multipleinertialUkf(show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter2, config2, attitude_measurement_msg)
-    inertialAttFilter2Log = inertialAttFilter2.logger(["covar", "state"], samplingTime)
+    inertialAttFilter2Log = inertialAttFilter2.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
     scSim.AddModelToTask(simTaskName, inertialAttFilter2Log)
 
     # 3: fault3 filter
@@ -447,8 +447,8 @@ def test_multipleinertialUkf(show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter3, config3, attitude_measurement_msg)
-    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
-    scSim.AddModelToTask(simTaskName, inertialAttFilterLog)
+    inertialAttFilter3Log = inertialAttFilter3.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
+    scSim.AddModelToTask(simTaskName, inertialAttFilter3Log)
 
 
     # collect filter log
@@ -534,6 +534,8 @@ def test_multipleinertialUkf(show_plots=False):
     for key, filterlog in inertialAttFilterLog_dict.items():
         dataFilterState = filterlog.state
         dataFilterCov = filterlog.covar
+        dataFilterCov_S = filterlog.cov_S
+        dataFilterInno = filterlog.innovation
         dataFilterSigmaBN = dataFilterState[:, 0:3]
         dataFilterOmegaBN = dataFilterState[:, 3:]
         # assert equalt shape of the true and filter estimated states
