@@ -1,7 +1,6 @@
 import numpy as np
 from .ukf import compute_chisquare
 from .plots import plot_filter_chisquare
-from Basilisk.architecture import messaging
 
 def setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, attError, sNavObject, rwStateEffector, numRW):
     # Setup Data Logging
