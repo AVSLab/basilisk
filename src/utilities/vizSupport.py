@@ -1583,8 +1583,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     Keyword Args
     ------------
     saveFile: str
-        can be a single file name, or a full path + file name. In both cases a local results are stored
-        in a local sub-folder.
+        can be a single python file name, or a full path + file name. In both cases a local results are stored
+        in a local sub-folder called ``_VizFiles``.
+        If a data file name is provided directly (i.e. it ends with ``.bin``), then the
+        associated file path and name are used explicitly.
         Default: empty string resulting in the data not being saved to a file
     rwEffectorList: single or list of ``ReactionWheelStateEffector``
         The list must have the same length ``scList``.  Each entry is the :ref:`ReactionWheelStateEffector` instance
