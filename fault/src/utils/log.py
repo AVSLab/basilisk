@@ -1,5 +1,15 @@
 import numpy as np
-from ..ukf import compute_chisquare
+
+import sys
+import os
+
+src_path = os.path.abspath(os.path.join(os.getcwd(), 'src'))
+
+# Add src_path to sys.path if not already there
+if src_path not in sys.path:
+    sys.path.insert(0, src_path)
+
+from ukf import compute_chisquare
 from .plots import plot_filter_chisquare
 
 def setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, attError, sNavObject, rwStateEffector, numRW):
