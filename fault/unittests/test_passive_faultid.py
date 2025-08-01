@@ -1,4 +1,4 @@
-import unittest
+import pytest
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -26,7 +26,7 @@ from passive import passive_fault_id
 
 import matplotlib.pyplot as plt
 
-
+@pytest.mark.parametrize("sweep_window", [10])
 def test_fault_identification_with_seed(sweep_window, show_plots=False):
 
     # Set seed for reproducibility
@@ -186,7 +186,7 @@ def test_fault_identification_with_seed(sweep_window, show_plots=False):
             st_1_data.MRP_BdyInrtl = true_att_with_noise
         attitude_measurement_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
 
-    process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
+    # process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
 
     # Perform passive fault ID
     H_hist, hypotheses = passive_fault_id(inertialAttFilterLog_dict, moving_window=sweep_window)
@@ -203,7 +203,6 @@ def test_fault_identification_with_seed(sweep_window, show_plots=False):
     plt.title("Passive Fault Identification Belief Evolution")
     plt.legend()
     plt.grid(True)
-    plt.show()
 
     if show_plots:
         plt.show()
