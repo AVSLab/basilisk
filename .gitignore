@@ -60,3 +60,6 @@ venv/
 # Python packaging
 *.egg-info
 build/
+
+# Matlab
+*.mat

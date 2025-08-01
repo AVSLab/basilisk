@@ -20,7 +20,7 @@ from .utils.messages import setup_messages
 from .utils.log import setup_logging, process_filter
 from .passive import passive_fault_id
 
-def run(sweep_window, show_plots=False):
+def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
@@ -175,10 +175,11 @@ def run(sweep_window, show_plots=False):
             st_1_data.MRP_BdyInrtl = true_att_with_noise
         attitude_measurement_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
 
-    process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
+    # process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
 
     # Perform passive fault ID
-    H_hist, hypotheses = passive_fault_id(inertialAttFilterLog_dict, moving_window=sweep_window)
+    H_hist, hypotheses, k_end, fail, id_mode = passive_fault_id(inertialAttFilterLog_dict, moving_window, terminate=terminate, true_mode = true_mode)
+
     H_hist = np.array(H_hist)  # convert to numpy array (timesteps x hypotheses)
     print("Hypothesis history over time:")
     for t, h in enumerate(H_hist):
