@@ -6,13 +6,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--sweep', 
+        '--moving', 
         type=int, 
         nargs='*', 
-        default=[10]
+        default=[15]
     )
     args = parser.parse_args()
 
-    for sweep_window in args.sweep:
-        print(f"Running FID with sweep window = {sweep_window}")
-        run(sweep_window, show_plots=True)
+    for moving_window in args.moving:
+        print(f"Running FID with moving window = {moving_window}")
+        run(moving_window, terminate=True, show_plots=True)

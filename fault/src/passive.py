@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.linalg import cholesky, lu
 
-def passive_fault_id(inertialAttFilterLog_dict, moving_window=10, alpha=0.05, crit=0.8, true_mode=0, k_stop=None):
+def passive_fault_id(inertialAttFilterLog_dict, moving_window, alpha=0.05, crit=0.95, terminate=True):
     """
     Perform passive fault identification offline on a collection of filter logs.
 
@@ -12,8 +12,7 @@ def passive_fault_id(inertialAttFilterLog_dict, moving_window=10, alpha=0.05, cr
         moving_window: size of sliding window for hypothesis updates
         alpha: significance level for chi-square thresholds
         crit: critical threshold for belief to identify fault
-        true_mode: integer representing the true fault mode (-1 for unknown fault)
-        k_stop: last timestep for fault identification
+        terminate: boolean indicating whether to terminate early on identification
 
     Returns:
         H_hist: list of hypothesis belief vectors over time
@@ -36,11 +35,10 @@ def passive_fault_id(inertialAttFilterLog_dict, moving_window=10, alpha=0.05, cr
     chi_crit_lo = (np.percentile(np.random.chisquare(df * moving_window, 100000), 100 * (alpha / 2))) / moving_window
 
     num_steps = inertialAttFilterLog_dict[hypotheses[0]].innovation.shape[0]
+    k_stop = int(25 + moving_window * 2.0)
     k_end = None
     fail = None
     id_mode = None
-
-    running_fid_flag = true_mode is not None and k_stop is not None
 
     for k in range(num_steps):
         for h in hypotheses:
@@ -89,12 +87,18 @@ def passive_fault_id(inertialAttFilterLog_dict, moving_window=10, alpha=0.05, cr
 
         H_hist.append(Hypothesis.copy())
 
-        if running_fid_flag:
-            terminate_flag, k_end, fail, id_mode = event_termination(true_mode, k, k_stop, Hypothesis, crit)
+        if terminate:
+            terminate_flag, k_end, fail, id_mode = check_termination(k, Hypothesis, crit)
             if terminate_flag:
                 break
 
-    return H_hist, hypotheses # , k_end, fail, id_mode
+        if not terminate and k == k_stop:
+            k_end = k
+            fail = 1
+            id_mode = None
+            break
+
+    return H_hist, hypotheses, k_end, fail, id_mode
 
 def log_determinant(S):
     P, L, U = lu(S)
@@ -105,40 +109,18 @@ def log_determinant(S):
         logDet += np.log(-1)
     return logDet
 
-def event_termination(true_mode, k, k_stop, Hypothesis, crit):
+def check_termination(k, Hypothesis, crit):
     terminate_flag = False
     k_end = None
     fail = None
     id_mode = None
 
-    if k == k_stop:
-        if true_mode == -1:
-            if np.max(Hypothesis) < crit:
-                terminate_flag = True
-                k_end = k
-                fail = 0
-                id_mode = -1
-                return terminate_flag, k_end, fail, id_mode
-        else:
-            if np.max(Hypothesis) < crit:
-                terminate_flag = True
-                k_end = k
-                fail = 1
-                return terminate_flag, k_end, fail, id_mode
-
     for i, val in enumerate(Hypothesis):
-        if i != true_mode and val > crit:
+        if val > crit:
             terminate_flag = True
             k_end = k
-            fail = 1
+            fail = 0
             id_mode = i
             return terminate_flag, k_end, fail, id_mode
-
-    if true_mode >= 0 and Hypothesis[true_mode] > crit:
-        terminate_flag = True
-        k_end = k
-        fail = 0
-        id_mode = true_mode
-        return terminate_flag, k_end, fail, id_mode
 
     return terminate_flag, k_end, fail, id_mode
