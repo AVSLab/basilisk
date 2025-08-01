@@ -1,5 +1,5 @@
 import numpy as np
-from .ukf import compute_chisquare
+from ..ukf import compute_chisquare
 from .plots import plot_filter_chisquare
 
 def setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, attError, sNavObject, rwStateEffector, numRW):

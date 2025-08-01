@@ -13,11 +13,12 @@ from Basilisk.fswAlgorithms import inertialUKF
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from .spacecraft import setup_spacecraft_sim
-from .navigation import setup_navigation_and_control
+from .utils.spacecraft import setup_spacecraft_sim
+from .utils.navigation import setup_navigation_and_control
 from .ukf import configure_inertialattfilter
-from .messages import setup_messages
-from .log import setup_logging, process_filter
+from .utils.messages import setup_messages
+from .utils.log import setup_logging, process_filter
+from .passive import passive_fault_id
 
 def run(sweep_window, show_plots=False):
     """
@@ -175,6 +176,23 @@ def run(sweep_window, show_plots=False):
         attitude_measurement_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
 
     process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
+
+    # Perform passive fault ID
+    H_hist, hypotheses = passive_fault_id(inertialAttFilterLog_dict, moving_window=sweep_window)
+    H_hist = np.array(H_hist)  # convert to numpy array (timesteps x hypotheses)
+    print("Hypothesis history over time:")
+    for t, h in enumerate(H_hist):
+        print(f"Time step {t}: {h}")
+
+    plt.figure()
+    for idx, h in enumerate(hypotheses):
+        plt.plot(H_hist[:, idx], label=h)
+    plt.xlabel("Time step")
+    plt.ylabel("Belief")
+    plt.title("Passive Fault Identification Belief Evolution")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
     if show_plots:
         plt.show()
