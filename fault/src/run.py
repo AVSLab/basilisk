@@ -15,24 +15,11 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from .spacecraft import setup_spacecraft_sim
 from .navigation import setup_navigation_and_control
-from .ukf import compute_chisquare, configure_inertialattfilter
+from .ukf import configure_inertialattfilter
 from .messages import setup_messages
-from .log import setup_logging
+from .log import setup_logging, process_filter
 
-
-from .plots import (
-    plot_attitude_error,
-    plot_filter_result_sigma,
-    plot_filter_result_omega,
-    plot_rw_cmd_torque,
-    plot_rw_motor_torque,
-    plot_rate_error,
-    plot_rw_speeds,
-    plot_filter_chisquare
-)
-
-
-def run(show_plots=False):
+def run(sweep_window, show_plots=False):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
@@ -51,9 +38,6 @@ def run(show_plots=False):
     fswRwParamMsg = rwFactory.getConfigMessage()
     mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-
-
-
 
     # --- Create multiple inertialUKF (state = MRP, angular_rate) ---
     # create an empty gyro measurement
@@ -167,17 +151,10 @@ def run(show_plots=False):
         "fault2": inertialAttFilter2Log,
         "fault3": inertialAttFilter3Log,
     }
-    
+
     # Setup logs
-    rwMotorLog, attErrorLog, snTransLog, snAttLog, mrpLog, rwLogs \
-          = setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, attError, sNavObject, rwStateEffector, numRW)
-
-
-    # --- Setup 3D Visualiztion
-    # viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-    #                                           , saveFile=fileName
-    #                                           , rwEffectorList=rwStateEffector
-    #                                           )
+    snAttLog, rwLogs = setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, 
+                                     attError, sNavObject, rwStateEffector, numRW)
 
     # --- Initialize Simulation ---
     scSim.InitializeSimulation()
@@ -197,57 +174,7 @@ def run(show_plots=False):
             st_1_data.MRP_BdyInrtl = true_att_with_noise
         attitude_measurement_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
 
-    # --- Retrieve Logged Data ---
-    dataUsReq = rwMotorLog.motorTorque
-    dataSigmaBN = snAttLog.sigma_BN
-    dataSigmaBR = attErrorLog.sigma_BR
-    dataOmegaBN = snAttLog.omega_BN_B
-    dataOmegaBR = attErrorLog.omega_BR_B
-    dataPos = snTransLog.r_BN_N
-    dataOmegaRW = mrpLog.wheelSpeeds
-    dataRW = []
-    for i in range(numRW):
-        dataRW.append(rwLogs[i].u_current)
-
-    # --- Plot Results ---
-    np.set_printoptions(precision=16)
-    timeData = rwMotorLog.times() * macros.NANO2MIN
-    plt.close("all")  # clears out plots from earlier test runs
-
-    # plot_attitude_error(timeData, dataSigmaBR)
-
-    # plot_rate_error(timeData, dataOmegaBR)
-
-    # plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
-
-    # plot_rw_speeds(timeData, dataOmegaRW, numRW)
-
-    # show all filter results
-    for key, filterlog in inertialAttFilterLog_dict.items():
-        dataFilterState = filterlog.state
-        dataFilterCov = filterlog.covar
-        dataFilterCov_S = filterlog.cov_S
-        dataFilterInno = filterlog.innovation
-        dataFilterSigmaBN = dataFilterState[:, 0:3]
-        dataFilterOmegaBN = dataFilterState[:, 3:]
-        # assert equalt shape of the true and filter estimated states
-        np.testing.assert_equal(dataSigmaBN.shape, dataFilterSigmaBN.shape)
-        _tmp = dataFilterCov.reshape(-1, 6, 6)
-        dataFilterSigmaDiagCov = np.diagonal(_tmp, 
-                                            axis1=1, axis2=2)[:, :3]
-        dataFilterOmegaDiagCov = np.diagonal(_tmp, 
-                                            axis1=1, axis2=2)[:, 3:]
-        if(key == "nominal"): # assuming the true hypothesis is the nominal dynamics
-            # assert the filter estimated states are within 6 standard deviations
-            np.testing.assert_array_less(np.abs(dataSigmaBN-dataFilterSigmaBN)[-10:, :], 
-                                        6*np.sqrt(dataFilterSigmaDiagCov)[-10:, :])
-            np.testing.assert_array_less(np.abs(dataOmegaBN-dataFilterOmegaBN)[-10:, :], 
-                                        6*np.sqrt(dataFilterOmegaDiagCov)[-10:, :])
-            
-        dataChiSquare = compute_chisquare(dataFilterCov_S, dataFilterInno)
-        plot_filter_chisquare(dataChiSquare)
-        # plot_filter_result_sigma(key, timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov)
-        # plot_filter_result_omega(key, timeData, dataOmegaBN, dataFilterOmegaBN, dataFilterOmegaDiagCov)
+    process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
 
     if show_plots:
         plt.show()
