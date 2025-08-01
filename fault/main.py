@@ -15,4 +15,4 @@ if __name__ == "__main__":
 
     for moving_window in args.moving:
         print(f"Running FID with moving window = {moving_window}")
-        run(moving_window, terminate=True, show_plots=True)
+        run(moving_window, terminate=False, true_mode = 1, show_plots=True)

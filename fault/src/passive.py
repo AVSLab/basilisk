@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.linalg import cholesky, lu
 
-def passive_fault_id(inertialAttFilterLog_dict, moving_window, alpha=0.05, crit=0.95, terminate=True):
+def passive_fault_id(inertialAttFilterLog_dict, moving_window, alpha=0.05, crit=0.95, terminate=True, true_mode = 0):
     """
     Perform passive fault identification offline on a collection of filter logs.
 
@@ -89,7 +89,14 @@ def passive_fault_id(inertialAttFilterLog_dict, moving_window, alpha=0.05, crit=
 
         if terminate:
             terminate_flag, k_end, fail, id_mode = check_termination(k, Hypothesis, crit)
+            
+            # Incorporate true_mode check
             if terminate_flag:
+                # Check if the identified mode matches the true mode
+                if id_mode == true_mode:
+                    fail = 0  # success
+                else:
+                    fail = 1  # failure (wrong mode identified)
                 break
 
         if not terminate and k == k_stop:
