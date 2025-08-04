@@ -44,7 +44,7 @@ import pytest
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
-PROCESSES = 2
+PROCESSES = 1
 
 retainedMessageName = "spacecraftStateMsg"
 retainedRate = macros.sec2nano(10)
