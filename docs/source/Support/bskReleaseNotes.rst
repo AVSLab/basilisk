@@ -55,6 +55,7 @@ Version |release|
 
 - Improve reading speed of recorded messages by about 75%.
 - Added support for Vizard 2.3.0
+- Adds support for updating noise parameters in :ref:`simpleNav` during simulation
 - Redirected MuJoCo errors and warnings to :ref:`bskLogging` instead of printing to file.
 - Update :ref:`vizSupport`  for the ``saveFile`` argument to take an explicit
   file path and file name and not auto-generate the ``_VizFiles`` sub-folder.  This provides the
