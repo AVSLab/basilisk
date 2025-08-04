@@ -12,6 +12,7 @@ Version |release|
 -----------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
   Developers and users alike should continue to use ``python conanfile.py`` installation.
+- The ``Reset()`` function in :ref:`forceTorqueThrForceMapping` was not working properly. This has been addressed in the current release.
 
 
 Version 2.7.0

@@ -56,6 +56,7 @@ Version |release|
 - Added support for Vizard 2.3.0
 - Redirected MuJoCo errors and warnings to :ref:`bskLogging` instead of printing to file.
 - Support calling ``unsubscribe`` on input messages.
+- Fixed an issue where the :ref:`forceTorqueThrForceMapping` module's Reset() function did not zero all thruster settings correctly.
 
 
 Version 2.7.0 (April 20, 2025)
