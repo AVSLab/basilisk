@@ -24,10 +24,6 @@ import sys
 
 import pytest
 
-def pytest_configure(config):
-    config.addinivalue_line(
-        "markers", "ciLinuxOnlySkip: skip test on Linux CI builds"
-    )
 
 def pytest_runtest_setup(item):
     if "ciLinuxOnlySkip" in item.keywords:
