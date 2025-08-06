@@ -18,7 +18,7 @@ import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 import pytest
 
-@pytest.mark.linuxOnlySkip
+@pytest.mark.ciLinuxOnlySkip
 def test_subMRP(show_plots):
     mrp_1 = np.array([1.5, 0.5, 0.5])
     mrp_2 = np.array([-0.5, 0.25, 0.15])

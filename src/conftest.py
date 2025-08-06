@@ -24,10 +24,15 @@ import sys
 
 import pytest
 
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "ciLinuxOnlySkip: skip test on Linux CI builds"
+    )
+
 def pytest_runtest_setup(item):
-    if "linuxOnlySkip" in item.keywords:
+    if "ciLinuxOnlySkip" in item.keywords:
         if sys.platform.startswith("linux") and os.getenv("CI") == "true":
-            pytest.skip("Skipped on Linux CI")
+            pytest.skip("Skipped on Linux CI environment")
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
