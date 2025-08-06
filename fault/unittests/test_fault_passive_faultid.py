@@ -1,3 +1,17 @@
+"""
+Unit Test: Passive Fault Identification with Multi-UKF Estimators
+
+This test evaluates a passive fault identification framework using a bank of UKFs,
+each representing a different fault mode (including nominal). A fault is injected 
+according to `true_mode`, and the likelihood of each hypothesis is tracked over time.
+
+Note:
+- We do not expect the true hypothesis to be immediately or consistently identified 
+  as most likely. This is due to UKF limitations and overlapping early dynamics.
+- This is expected and will be addressed in future work through improved UKF modeling 
+  or active fault identification techniques.
+"""
+
 import pytest
 import numpy as np
 import warnings
