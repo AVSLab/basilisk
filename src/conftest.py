@@ -24,6 +24,11 @@ import sys
 
 import pytest
 
+def pytest_runtest_setup(item):
+    if "linuxOnlySkip" in item.keywords:
+        if sys.platform.startswith("linux") and os.getenv("CI") == "true":
+            pytest.skip("Skipped on Linux CI")
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 print(path)

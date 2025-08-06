@@ -49,7 +49,7 @@ import scenarioIntegrators
 #   of the multiple test runs for this test.
 # @pytest.mark.parametrize("integratorCase", ["rk4", "rkf45", "euler", "rk2"])
 @pytest.mark.scenarioTest
-@pytest.mark.ciSkip
+@pytest.mark.linuxOnlySkip
 def test_scenarioIntegrators(show_plots):
     """This function is called by the py.test environment."""
 

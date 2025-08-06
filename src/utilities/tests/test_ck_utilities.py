@@ -24,7 +24,7 @@ from Basilisk.topLevelModules import pyswice
 
 
 @pytest.mark.timeout(30)  # seconds
-@pytest.mark.ciSkip
+@pytest.mark.linuxOnlySkip
 def test_ck_read_write(tmp_path, show_plots):
     simulation = SimulationBaseClass.SimBaseClass()
 

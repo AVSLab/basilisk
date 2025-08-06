@@ -131,7 +131,7 @@ def myDataCallback(monteCarloData, retentionPolicy):
 
 
 @pytest.mark.slowtest
-@pytest.mark.ciSkip
+@pytest.mark.linuxOnlySkip
 def test_MonteCarloSimulation(show_plots):
     # Test a montecarlo simulation
     dirName = os.path.abspath(os.path.dirname(__file__)) + "/tmp_montecarlo_test"
