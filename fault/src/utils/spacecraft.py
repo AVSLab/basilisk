@@ -5,7 +5,7 @@ from Basilisk.utilities import (macros,simIncludeRW, unitTestSupport)
 from Basilisk.architecture import messaging
 from Basilisk.simulation import reactionWheelStateEffector
 
-def setup_spacecraft_sim(simTimeSec=600, simTimeStepSec=0.1):
+def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
     # --- Create Simulation ---
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -50,32 +50,52 @@ def setup_spacecraft_sim(simTimeSec=600, simTimeStepSec=0.1):
     scSim.AddModelToTask(simTaskName, scObject, 1)
     gravFactory.addBodiesTo(scObject)
 
-        # --- Setup Reaction Wheels ---
+    # --- Setup Reaction Wheels ---
     # make a fresh RW factory instance, this is critical to run multiple times
     rwFactory = simIncludeRW.rwFactory()
     varRWModel = messaging.BalancedWheels
-    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
-                           , RWModel=varRWModel
-                           )
-    RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
-                           , RWModel=varRWModel
-                           )
-    RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
-                           , rWB_B=[0.5, 0.5, 0.5]  # meters
-                           , RWModel=varRWModel
-                           )
-    # In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride
-    # any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the
-    # maximum wheel speed.
+
+    # Define baseline RW parameters
+    baseline_omega_max = 6000.0 * macros.RPM
+    degraded_omega_max = 3000.0 * macros.RPM
+
+    # Create RWs with fault injected in the one matching true_mode
+    for i, gsHat in enumerate([[1, 0, 0], [0, 1, 0], [0, 0, 1]]):
+        # Assign Omega_max depending on true_mode
+        omega_max = degraded_omega_max if (true_mode == i + 1) else baseline_omega_max
+        # Assign initial Omega (RPM)
+        omega_init = 100. + 100. * i
+
+        # Optional position vector for RW3
+        rWB_B = [0.5, 0.5, 0.5] if i == 2 else None
+
+        # Create the RW with appropriate parameters
+        if rWB_B is not None:
+            rwFactory.create(
+                'Honeywell_HR16',
+                gsHat,
+                maxMomentum=50.,
+                Omega=omega_init,
+                Omega_max=omega_max,
+                RWModel=varRWModel,
+                rWB_B=rWB_B
+            )
+        else:
+            rwFactory.create(
+                'Honeywell_HR16',
+                gsHat,
+                maxMomentum=50.,
+                Omega=omega_init,
+                Omega_max=omega_max,
+                RWModel=varRWModel,
+            )
+
     numRW = rwFactory.getNumOfDevices()
 
     # --- Connect Reaction Wheels to Spacecraft via rwStateEffector ---
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwStateEffector.ModelTag = "RW_cluster"
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
-    # add RW object array to the simulation process.  This is required for the UpdateState() method
-    # to be called which logs the RW states
     scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
     return (

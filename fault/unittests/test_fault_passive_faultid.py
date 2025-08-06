@@ -26,8 +26,8 @@ from passive import passive_fault_id
 
 import matplotlib.pyplot as plt
 
-@pytest.mark.parametrize("moving_window", [15])
-def test_fault_identification_with_seed(moving_window, show_plots=False):
+@pytest.mark.parametrize("moving_window, true_mode", [(15, 1)])
+def test_fault_identification_with_seed(moving_window, true_mode = 1, show_plots=False):
 
     # Set seed for reproducibility
     np.random.seed(42)  
@@ -39,7 +39,7 @@ def test_fault_identification_with_seed(moving_window, show_plots=False):
 
     # Setup spacecraft and simulation module
     (scSim, scObject,simTaskName, simTimeSec, simTimeStepSec, simulationTime, simulationTimeStep,
-        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim()
+        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim(true_mode=true_mode)
 
     # Setup navigation module
     sNavObject, inertial3DObj, attError, mrpControl = setup_navigation_and_control(scSim, simTaskName)
@@ -189,7 +189,7 @@ def test_fault_identification_with_seed(moving_window, show_plots=False):
     # process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
 
     # Perform passive fault ID
-    H_hist, hypotheses, k_end, fail, id_mode = passive_fault_id(inertialAttFilterLog_dict, moving_window, terminate=True, true_mode = 0)
+    H_hist, hypotheses, k_end, fail, id_mode = passive_fault_id(inertialAttFilterLog_dict, moving_window, terminate=True, true_mode = true_mode)
     H_hist = np.array(H_hist)  # convert to numpy array (timesteps x hypotheses)
     print("Hypothesis history over time:")
     for t, h in enumerate(H_hist):
@@ -212,7 +212,9 @@ def test_fault_identification_with_seed(moving_window, show_plots=False):
 
 if __name__ == "__main__":
     sweep_window = 10
+    true_mode = 1
     test_fault_identification_with_seed(
         sweep_window,
+        true_mode,
         show_plots=True,  # show_plots
     )
