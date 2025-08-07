@@ -28,7 +28,7 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
 
     # Setup spacecraft and simulation module
     (scSim, scObject,simTaskName, simTimeSec, simTimeStepSec, simulationTime, simulationTimeStep,
-        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim()
+        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim(true_mode=true_mode)
 
     # Setup navigation module
     sNavObject, inertial3DObj, attError, mrpControl = setup_navigation_and_control(scSim, simTaskName)
@@ -181,25 +181,29 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     H_hist, hypotheses, k_end, fail, id_mode = passive_fault_id(inertialAttFilterLog_dict, moving_window, terminate=terminate, true_mode = true_mode)
 
     H_hist = np.array(H_hist)  # convert to numpy array (timesteps x hypotheses)
-    print("Hypothesis history over time:")
-    for t, h in enumerate(H_hist):
-        print(f"Time step {t}: {h}")
-
-    plt.figure()
-    for idx, h in enumerate(hypotheses):
-        plt.plot(H_hist[:, idx], label=h)
-    plt.xlabel("Time step")
-    plt.ylabel("Belief")
-    plt.title("Passive Fault Identification Belief Evolution")
-    plt.legend()
-    plt.grid(True)
-    plt.show()
 
     if show_plots:
+        print("Hypothesis history over time:")
+        for t, h in enumerate(H_hist):
+            print(f"Time step {t}: {h}")
+
+        plt.figure()
+        for idx, h in enumerate(hypotheses):
+            plt.plot(H_hist[:, idx], label=h)
+        plt.xlabel("Time step")
+        plt.ylabel("Belief")
+        plt.title("Passive Fault Identification Belief Evolution")
+        plt.legend()
+        plt.grid(True)
         plt.show()
 
-    # close the plots being saved off to avoid over-writing old and new figures
-    plt.close("all")
+        if show_plots:
+            plt.show()
+
+        # close the plots being saved off to avoid over-writing old and new figures
+        plt.close("all")
+
+    print(f"Returning: true_mode={true_mode}, id_mode={id_mode}, equal={id_mode == true_mode}")
 
     return {
         "true_mode": true_mode,

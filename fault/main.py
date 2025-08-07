@@ -1,6 +1,7 @@
 import argparse
 import random
 from src.run import run
+from src.utils.plots import plot_failure_rate
 
 if __name__ == "__main__":
 
@@ -33,13 +34,33 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.monte_carlo:
+        windows = []
+        failure_rates = []
+
         for moving_window in args.moving:
             print(f"\n[Monte Carlo] Running {args.n_trials} FID trials for window = {moving_window}")
+            num_failures = 0
+
             for trial in range(args.n_trials):
                 sampled_true_mode = random.choice([0, 1, 2, 3, -1])
                 print(f"  Trial {trial+1}/{args.n_trials} | True Mode: {sampled_true_mode}")
-                run(moving_window, terminate=False, true_mode=sampled_true_mode, show_plots=True)
+                result = run(moving_window, true_mode=sampled_true_mode, show_plots=False)
+
+                if result["correct"]:
+                    print(" → Success")
+                else:
+                    print(" → Failure")
+                    num_failures += 1
+
+            windows.append(moving_window)
+            failure_rate = 100 * num_failures / args.n_trials
+            print(f"  -> Failure Rate @ window {moving_window}: {failure_rate:.2f}%")
+            failure_rates.append(failure_rate)
+
+        # Plot after all trials
+        plot_failure_rate(windows, failure_rates)
+
     else:
         for moving_window in args.moving:
             print(f"\n[Single Run] Running FID with window = {moving_window} and true mode = {args.true_mode}")
-            run(moving_window, terminate=False, true_mode=args.true_mode, show_plots=True)
+            result = run(moving_window, true_mode=args.true_mode, show_plots=True)
