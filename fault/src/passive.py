@@ -102,7 +102,7 @@ def passive_fault_id(inertialAttFilterLog_dict, moving_window, alpha=0.05, crit=
         if not terminate and k == k_stop:
             k_end = k
             fail = 1
-            id_mode = None
+            id_mode = -1
             break
 
     return H_hist, hypotheses, k_end, fail, id_mode
@@ -120,7 +120,7 @@ def check_termination(k, Hypothesis, crit):
     terminate_flag = False
     k_end = None
     fail = None
-    id_mode = None
+    id_mode = -1
 
     for i, val in enumerate(Hypothesis):
         if val > crit:

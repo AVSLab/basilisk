@@ -55,14 +55,9 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
     rwFactory = simIncludeRW.rwFactory()
     varRWModel = messaging.BalancedWheels
 
-    # Define baseline RW parameters
-    baseline_omega_max = 6000.0
-    degraded_omega_max = 200.0
-
-    # Create RWs with fault injected in the one matching true_mode
+    # Create RWs
+    rw_List = []
     for i, gsHat in enumerate([[1, 0, 0], [0, 1, 0], [0, 0, 1]]):
-        # Assign Omega_max depending on true_mode
-        omega_max = degraded_omega_max if (true_mode == i + 1) else baseline_omega_max
         # Assign initial Omega (RPM)
         omega_init = 100. + 100. * i
 
@@ -76,7 +71,6 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
                 gsHat,
                 maxMomentum=50.,
                 Omega=omega_init,
-                Omega_max=omega_max,
                 RWModel=varRWModel,
                 rWB_B=rWB_B
             )
@@ -86,10 +80,23 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
                 gsHat,
                 maxMomentum=50.,
                 Omega=omega_init,
-                Omega_max=omega_max,
                 RWModel=varRWModel,
             )
-        rw.Omega_max = 6000. * macros.RPM
+        rw_List.append(rw)
+    # Inject fault in the one matching true_mode
+    if(true_mode == 1):
+        rw_List[0].Js *= 0.5
+
+    if(true_mode == 2):
+        rw_List[1].Js *= 0.5
+
+    if(true_mode == 3):
+        rw_List[2].Js *= 0.5
+        
+    if(true_mode == -1):
+        rw_List[0].Js *= 0.5
+        rw_List[1].Js *= 0.5
+        rw_List[2].Js *= 0.5
 
     numRW = rwFactory.getNumOfDevices()
 
