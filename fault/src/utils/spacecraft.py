@@ -56,8 +56,8 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
     varRWModel = messaging.BalancedWheels
 
     # Define baseline RW parameters
-    baseline_omega_max = 6000.0 * macros.RPM
-    degraded_omega_max = 3000.0 * macros.RPM
+    baseline_omega_max = 6000.0
+    degraded_omega_max = 200.0
 
     # Create RWs with fault injected in the one matching true_mode
     for i, gsHat in enumerate([[1, 0, 0], [0, 1, 0], [0, 0, 1]]):
@@ -71,7 +71,7 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
 
         # Create the RW with appropriate parameters
         if rWB_B is not None:
-            rwFactory.create(
+            rw = rwFactory.create(
                 'Honeywell_HR16',
                 gsHat,
                 maxMomentum=50.,
@@ -81,7 +81,7 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
                 rWB_B=rWB_B
             )
         else:
-            rwFactory.create(
+            rw = rwFactory.create(
                 'Honeywell_HR16',
                 gsHat,
                 maxMomentum=50.,
@@ -89,6 +89,7 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
                 Omega_max=omega_max,
                 RWModel=varRWModel,
             )
+        rw.Omega_max = 6000. * macros.RPM
 
     numRW = rwFactory.getNumOfDevices()
 

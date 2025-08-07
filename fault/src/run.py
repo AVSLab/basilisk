@@ -68,9 +68,9 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     scSim.AddModelToTask(simTaskName, inertialAttFilter1)
     rwFactory_fault1 = simIncludeRW.rwFactory()
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    rwFactory_fault1.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
+    rw1 = rwFactory_fault1.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
-                           Omega_max = 3000.0*macros.RPM # the default Honeywell_HR16 has 6000.0*macros.RPM
+                           Omega_max = 200. # the default Honeywell_HR16 has 6000.0*macros.RPM
                            )
     rwFactory_fault1.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
                            , RWModel=varRWModel
@@ -79,6 +79,8 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel,
                            )
+    rw1.Omega_max = 6000. * macros.RPM
+    
     config1 = {
         "vcMsg": vcMsg,
         "rwStateEffector": rwStateEffector, 
@@ -95,17 +97,18 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     scSim.AddModelToTask(simTaskName, inertialAttFilter2)
     rwFactory_fault2 = simIncludeRW.rwFactory()
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    rwFactory_fault2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
+    _rw = rwFactory_fault2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
                            )
-    rwFactory_fault2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
+    rw2 = rwFactory_fault2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
                            , RWModel=varRWModel,
-                           Omega_max = 3000.0*macros.RPM # the default Honeywell_HR16 has 6000.0*macros.RPM
+                           Omega_max = 200. # the default Honeywell_HR16 has 6000.0*macros.RPM
                            )
     rwFactory_fault2.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel,
                            )
+    rw2.Omega_max = 6000. * macros.RPM
     config2 = {
         "vcMsg": vcMsg,
         "rwStateEffector": rwStateEffector, 
@@ -128,11 +131,12 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     rwFactory_fault3.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
                            , RWModel=varRWModel,
                            )
-    rwFactory_fault3.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
+    rw3 = rwFactory_fault3.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel,
-                           Omega_max = 3000.0*macros.RPM # the default Honeywell_HR16 has 6000.0*macros.RPM
+                           Omega_max = 200. # the default Honeywell_HR16 has 6000.0*macros.RPM
                            )
+    rw3.Omega_max = 6000. * macros.RPM
     config3 = {
         "vcMsg": vcMsg,
         "rwStateEffector": rwStateEffector, 
