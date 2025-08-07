@@ -8,7 +8,7 @@ def setup_messages(scSim, simTaskName, I, rwFactory, scObject, sNavObject, attEr
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
     
     # create the inertialUKF reaction wheel configuration message
-    inertialAttFilterRwParamMsg = rwFactory.getConfigMessage()
+    # inertialAttFilterRwParamMsg = rwFactory.getConfigMessage()
     
     # connect navigation to spacecraft
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -46,4 +46,4 @@ def setup_messages(scSim, simTaskName, I, rwFactory, scObject, sNavObject, attEr
     st_cov = 1e-4
     
     # Return the important messages and objects
-    return vcMsg, inertialAttFilterRwParamMsg, attitude_measurement_msg, st_cov, rwMotorTorqueObj, st_1_data
+    return vcMsg, attitude_measurement_msg, st_cov, rwMotorTorqueObj, st_1_data

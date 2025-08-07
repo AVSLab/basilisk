@@ -103,3 +103,21 @@ def plot_filter_chisquare(dataChiSquare):
     plt.axhline(y=chi_ub, color='r', linestyle='--', label=r"$\chi^2$ upper threshold")
     plt.axhline(y=chi_lb, color='b', linestyle='--', label=r"$\chi^2$ lower threshold")
     plt.legend(loc='upper right')
+
+
+def plot_failure_rate(windows, failure_rates):
+    """
+    Plot failure rate (%) against moving window size.
+
+    Parameters:
+    - windows: List of moving window sizes (x-axis).
+    - failure_rates: Corresponding failure rates in percentage (y-axis).
+    """
+    plt.figure()
+    plt.plot(windows, failure_rates, marker='o')
+    plt.xlabel("Moving Window Size")
+    plt.ylabel("Failure Rate (%)")
+    plt.title("Failure Rate vs. Moving Window Size")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()

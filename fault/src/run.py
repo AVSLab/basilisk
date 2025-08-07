@@ -28,13 +28,13 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
 
     # Setup spacecraft and simulation module
     (scSim, scObject,simTaskName, simTimeSec, simTimeStepSec, simulationTime, simulationTimeStep,
-        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim()
+        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim(true_mode=true_mode)
 
     # Setup navigation module
     sNavObject, inertial3DObj, attError, mrpControl = setup_navigation_and_control(scSim, simTaskName)
 
     # Connect messages
-    vcMsg, inertialAttFilterRwParamMsg, attitude_measurement_msg, st_cov, rwMotorTorqueObj, st_1_data \
+    vcMsg, attitude_measurement_msg, st_cov, rwMotorTorqueObj, st_1_data \
         = setup_messages(scSim, simTaskName, I, rwFactory, scObject, sNavObject, attError, inertial3DObj, mrpControl, rwStateEffector)
     fswRwParamMsg = rwFactory.getConfigMessage()
     mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
@@ -50,27 +50,38 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
 
     # 0: nominal filter
-    inertialAttFilter = inertialUKF.inertialUKF()
-    scSim.AddModelToTask(simTaskName, inertialAttFilter)
-    config = {
+    inertialAttFilter0 = inertialUKF.inertialUKF()
+    scSim.AddModelToTask(simTaskName, inertialAttFilter0)
+    rwFactory_0 = simIncludeRW.rwFactory()
+    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
+    rwFactory_0.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
+                           , RWModel=varRWModel, 
+                           )
+    rwFactory_0.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
+                           , RWModel=varRWModel
+                           )
+    rwFactory_0.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
+                           , rWB_B=[0.5, 0.5, 0.5]  # meters
+                           , RWModel=varRWModel,
+                           )
+    config0 = {
         "vcMsg": vcMsg,
         "rwStateEffector": rwStateEffector, 
-        "inertialAttFilterRwParamMsg": inertialAttFilterRwParamMsg, 
+        "inertialAttFilterRwParamMsg": rwFactory_0.getConfigMessage(), 
         "gyroInMsg": gyroInMsg,
         "st_cov": st_cov,
     }
-    configure_inertialattfilter(inertialAttFilter, config, attitude_measurement_msg)
-    inertialAttFilterLog = inertialAttFilter.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
-    scSim.AddModelToTask(simTaskName, inertialAttFilterLog)
+    configure_inertialattfilter(inertialAttFilter0, config0, attitude_measurement_msg)
+    inertialAttFilter0Log = inertialAttFilter0.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
+    scSim.AddModelToTask(simTaskName, inertialAttFilter0Log)
 
     # 1: fault1 filter
     inertialAttFilter1 = inertialUKF.inertialUKF()
     scSim.AddModelToTask(simTaskName, inertialAttFilter1)
     rwFactory_fault1 = simIncludeRW.rwFactory()
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    rwFactory_fault1.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
+    rw1 = rwFactory_fault1.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
-                           Omega_max = 3000.0*macros.RPM # the default Honeywell_HR16 has 6000.0*macros.RPM
                            )
     rwFactory_fault1.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
                            , RWModel=varRWModel
@@ -79,6 +90,7 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel,
                            )
+    rw1.Js *= 0.5
     config1 = {
         "vcMsg": vcMsg,
         "rwStateEffector": rwStateEffector, 
@@ -98,14 +110,14 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     rwFactory_fault2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
                            )
-    rwFactory_fault2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
+    rw2 = rwFactory_fault2.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
                            , RWModel=varRWModel,
-                           Omega_max = 3000.0*macros.RPM # the default Honeywell_HR16 has 6000.0*macros.RPM
                            )
     rwFactory_fault2.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel,
                            )
+    rw2.Js *= 0.5
     config2 = {
         "vcMsg": vcMsg,
         "rwStateEffector": rwStateEffector, 
@@ -128,11 +140,11 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     rwFactory_fault3.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
                            , RWModel=varRWModel,
                            )
-    rwFactory_fault3.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
+    rw3 = rwFactory_fault3.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel,
-                           Omega_max = 3000.0*macros.RPM # the default Honeywell_HR16 has 6000.0*macros.RPM
                            )
+    rw3.Js *= 0.5
     config3 = {
         "vcMsg": vcMsg,
         "rwStateEffector": rwStateEffector, 
@@ -147,7 +159,7 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
 
     # collect filter log
     inertialAttFilterLog_dict = {
-        "nominal": inertialAttFilterLog, 
+        "nominal": inertialAttFilter0Log, 
         "fault1": inertialAttFilter1Log,
         "fault2": inertialAttFilter2Log,
         "fault3": inertialAttFilter3Log,
@@ -181,22 +193,33 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     H_hist, hypotheses, k_end, fail, id_mode = passive_fault_id(inertialAttFilterLog_dict, moving_window, terminate=terminate, true_mode = true_mode)
 
     H_hist = np.array(H_hist)  # convert to numpy array (timesteps x hypotheses)
-    print("Hypothesis history over time:")
-    for t, h in enumerate(H_hist):
-        print(f"Time step {t}: {h}")
-
-    plt.figure()
-    for idx, h in enumerate(hypotheses):
-        plt.plot(H_hist[:, idx], label=h)
-    plt.xlabel("Time step")
-    plt.ylabel("Belief")
-    plt.title("Passive Fault Identification Belief Evolution")
-    plt.legend()
-    plt.grid(True)
-    plt.show()
 
     if show_plots:
+        print("Hypothesis history over time:")
+        for t, h in enumerate(H_hist):
+            print(f"Time step {t}: {h}")
+
+        plt.figure()
+        for idx, h in enumerate(hypotheses):
+            plt.plot(H_hist[:, idx], label=h)
+        plt.xlabel("Time step")
+        plt.ylabel("Belief")
+        plt.title("Passive Fault Identification Belief Evolution")
+        plt.legend()
+        plt.grid(True)
         plt.show()
 
-    # close the plots being saved off to avoid over-writing old and new figures
-    plt.close("all")
+        if show_plots:
+            plt.show()
+
+        # close the plots being saved off to avoid over-writing old and new figures
+        plt.close("all")
+
+    print(f"Returning: true_mode={true_mode}, id_mode={id_mode}, equal={id_mode == true_mode}")
+
+    return {
+        "true_mode": true_mode,
+        "identified_mode": id_mode,
+        "correct": id_mode == true_mode,
+        "id_time": k_end
+    }
