@@ -200,3 +200,10 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
+
+    return {
+        "true_mode": true_mode,
+        "identified_mode": id_mode,
+        "correct": id_mode == true_mode,
+        "id_time": k_end
+    }
