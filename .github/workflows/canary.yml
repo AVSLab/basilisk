@@ -7,12 +7,6 @@ on:
   pull_request:
     branches:
       - develop
-    paths:
-      - '.github/workflows/canary.yml'
-      - '.github/workflows/requirements.txt'
-      - '.github/workflows/requirements_dev.txt'
-      - '.github/workflows/requirements_doc.txt'
-      - 'conanfile.py'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
