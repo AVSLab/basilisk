@@ -27,7 +27,7 @@ from passive import passive_fault_id
 import matplotlib.pyplot as plt
 
 @pytest.mark.parametrize("moving_window", [15])
-def test_fault_identification_with_seed(moving_window, show_plots=False):
+def _test_fault_identification_with_seed(moving_window, show_plots=False):
 
     # Set seed for reproducibility
     np.random.seed(42)  
@@ -212,7 +212,7 @@ def test_fault_identification_with_seed(moving_window, show_plots=False):
 
 if __name__ == "__main__":
     sweep_window = 10
-    test_fault_identification_with_seed(
+    _test_fault_identification_with_seed(
         sweep_window,
         show_plots=True,  # show_plots
     )

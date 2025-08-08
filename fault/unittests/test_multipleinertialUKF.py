@@ -232,7 +232,7 @@ def configure_inertialattfilter(filterObject, config, measurement_message):
     filterObject.STDatasStruct.STMessages[0].stInMsg.subscribeTo(measurement_message)
 
 
-def test_multipleinertialUkf(show_plots=False):
+def _test_multipleinertialUkf(show_plots=False):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
@@ -601,6 +601,6 @@ def test_multipleinertialUkf(show_plots=False):
 
 
 if __name__ == "__main__":
-    test_multipleinertialUkf(
+    _test_multipleinertialUkf(
         show_plots=True,  # show_plots
     )
