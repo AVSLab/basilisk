@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.linalg import cholesky, lu
+# from scipy.linalg import cholesky, lu
 
 def passive_fault_id(inertialAttFilterLog_dict, moving_window, alpha=0.05, crit=0.95, terminate=True, true_mode = 0):
     """
@@ -12,122 +12,118 @@ def passive_fault_id(inertialAttFilterLog_dict, moving_window, alpha=0.05, crit=
         moving_window: size of sliding window for hypothesis updates
         alpha: significance level for chi-square thresholds
         crit: critical threshold for belief to identify fault
-        terminate: boolean indicating whether to terminate early on identification
+        terminate (obsolete): boolean indicating whether to terminate early on identification
 
     Returns:
+        timeData: time points corresponding to hypothesis belief
         H_hist: list of hypothesis belief vectors over time
         hypotheses: list of hypothesis keys corresponding to beliefs
         k_end: timestep where identification terminated (None if not terminated)
-        fail: 1 if identification failed, 0 if succeeded
         id_mode: identified mode
     """
     hypotheses = list(inertialAttFilterLog_dict.keys())
     n_hypo = len(hypotheses)
     ny = inertialAttFilterLog_dict[hypotheses[0]].innovation.shape[1]
+    timeData = inertialAttFilterLog_dict[hypotheses[0]].times()/(1E+9)
 
     Hypothesis = np.ones(n_hypo) / n_hypo
-    inno_hist = {h: [] for h in hypotheses}
-    S_hist = {h: [] for h in hypotheses}
-    H_hist = [Hypothesis.copy()]
+    H_hist = []
 
     df = ny
     chi_crit_up = (np.percentile(np.random.chisquare(df * moving_window, 100000), 100 * (1 - alpha / 2))) / moving_window
     chi_crit_lo = (np.percentile(np.random.chisquare(df * moving_window, 100000), 100 * (alpha / 2))) / moving_window
+    k_stop = int(25 + moving_window * 2)
 
-    num_steps = inertialAttFilterLog_dict[hypotheses[0]].innovation.shape[0]
-    k_stop = int(25 + moving_window * 2.0)
-    k_end = None
-    fail = None
-    id_mode = None
-
-    for k in range(num_steps):
-        for h in hypotheses:
-            inno_hist[h].append(inertialAttFilterLog_dict[h].innovation[k])
-            S_hist[h].append(inertialAttFilterLog_dict[h].cov_S[k])
-            if len(inno_hist[h]) > moving_window:
-                inno_hist[h].pop(0)
-                S_hist[h].pop(0)
-
-        if k < moving_window - 1:
-            H_hist.append(Hypothesis.copy())
-            continue
-
-        logL = np.full(n_hypo, -np.inf)
-        for idx, h in enumerate(hypotheses):
-            inno_window = np.vstack(inno_hist[h])
-            S_window = np.array(S_hist[h])
-
-            S_big = np.zeros((ny * moving_window, ny * moving_window))
-            for j in range(moving_window):
-                S_big[j*ny:(j+1)*ny, j*ny:(j+1)*ny] = S_window[j].reshape(ny, ny)
-
-            inno_flat = inno_window.flatten()
-
+    # pre-compute chi_square and det(cov_S) for all UKFs
+    chi_square_hist = np.zeros((k_stop, n_hypo))
+    det_covS_hist = np.zeros((k_stop, n_hypo))
+    for idx, h in enumerate(hypotheses):
+        inno_hist = inertialAttFilterLog_dict[h].innovation[:k_stop, :]
+        S_hist = inertialAttFilterLog_dict[h].cov_S[:k_stop, :]
+        for i in range(inno_hist.shape[0]):
+            inno_i = inno_hist[i, :].reshape(ny, 1)
+            cov_S_i = S_hist[i, :].reshape(ny, ny)
             try:
-                L = cholesky(S_big, lower=True)
-                whitened = np.linalg.solve(L, inno_flat)
-                chi_sr = np.sum(whitened**2) / moving_window
+                invS = np.linalg.inv(cov_S_i)
+                chi_square_i = (inno_i.T @ invS @ inno_i).item()
+                chi_square_hist[i, idx] = chi_square_i
+                det_covS_hist[i, idx] = np.linalg.det(cov_S_i)
             except np.linalg.LinAlgError:
-                chi_sr = np.inf
+                chi_square_hist[i, idx] = np.nan
+                det_covS_hist[i, idx] = np.nan
 
-            if chi_crit_lo <= chi_sr <= chi_crit_up:
-                log_det_S = log_determinant(S_big)
-                epsilon = 1e-15
-                logL[idx] = -0.5 * log_det_S - 0.5 * chi_sr * moving_window + np.log(Hypothesis[idx] + epsilon)
-            else:
-                logL[idx] = -np.inf
-
-        max_logL = np.max(logL)
-        if max_logL == -np.inf:
-            Hypothesis = np.ones(n_hypo) / n_hypo
-        else:
-            logL -= max_logL
-            prob = np.exp(logL)
-            Hypothesis = prob / np.sum(prob)
-
-        H_hist.append(Hypothesis.copy())
-
-        if terminate:
-            terminate_flag, k_end, fail, id_mode = check_termination(k, Hypothesis, crit)
-            
-            # Incorporate true_mode check
-            if terminate_flag:
-                # Check if the identified mode matches the true mode
-                if id_mode == true_mode:
-                    fail = 0  # success
+    # time loop for hypothesis belief update
+    for k in range(k_stop):
+        begin_idx = k-moving_window+1
+        if(begin_idx >= 0):
+            # get the data in moving window
+            data_chi_square = chi_square_hist[begin_idx:k+1, :]
+            data_det_covS = det_covS_hist[begin_idx:k+1, :]
+    
+            # compute logits for each hypothesis
+            logits = np.zeros(n_hypo)
+            for idx in range(n_hypo):
+                chi_square = data_chi_square[:, idx]
+                chi_square_avg = np.mean(chi_square)
+                if(chi_square_avg > chi_crit_up or chi_square_avg < chi_crit_lo or np.isnan(chi_square_avg)):
+                    logits[idx] = -np.inf # rejection
                 else:
-                    fail = 1  # failure (wrong mode identified)
-                break
+                    det_covS = data_det_covS[:, idx]
+                    sum_log_det_covS = np.sum(np.log(det_covS))
+                    sum_chi_square = np.sum(chi_square)
+                    if(Hypothesis[idx] > 0): 
+                        logL = -0.5*sum_log_det_covS -0.5*sum_chi_square + np.log(Hypothesis[idx])
+                    else:
+                        logL = -np.inf
+                    logits[idx] = logL
 
-        if not terminate and k == k_stop:
-            k_end = k
-            fail = 1
-            id_mode = -1
-            break
+            # use masked softmax to convert logits into probability
+            Hypothesis = softmax_with_inf_mask(logits)
+            H_hist.append(Hypothesis.copy())
+        else:
+            H_hist.append(Hypothesis.copy())
 
-    return H_hist, hypotheses, k_end, fail, id_mode
-
-def log_determinant(S):
-    P, L, U = lu(S)
-    diagU = np.diag(U)
-    signU = np.prod(np.sign(diagU))
-    logDet = np.sum(np.log(np.abs(diagU)))
-    if signU < 0:
-        logDet += np.log(-1)
-    return logDet
-
-def check_termination(k, Hypothesis, crit):
-    terminate_flag = False
-    k_end = None
-    fail = None
+        # identify fault hypo if a belief is greater than crit
+        for idx, val in enumerate(Hypothesis):
+            if val > crit:
+                id_mode = idx
+                k_end = k
+                timeData = timeData[:len(H_hist)]
+                return timeData, H_hist, hypotheses, k_end, id_mode
+            
+    # return unknown fault        
     id_mode = -1
+    k_end = k_stop
+    timeData = timeData[:len(H_hist)]
+    return timeData, H_hist, hypotheses, k_end, id_mode
 
-    for i, val in enumerate(Hypothesis):
-        if val > crit:
-            terminate_flag = True
-            k_end = k
-            fail = 0
-            id_mode = i
-            return terminate_flag, k_end, fail, id_mode
 
-    return terminate_flag, k_end, fail, id_mode
+def softmax_with_inf_mask(logits: np.ndarray) -> np.ndarray:
+    """
+    Compute a softmax over `logits`, but:
+      - any ±inf entries get probability 0
+      - if all logits are non-finite (e.g. all -inf), return uniform probabilities
+    """
+    logits = np.asarray(logits, dtype=float)
+    n = logits.size
+    # Mask finite entries
+    valid = np.isfinite(logits)
+    probs = np.zeros_like(logits, dtype=float)
+
+    # If no finite logits (e.g. all -inf), return uniform
+    if not np.any(valid):
+        return np.full(n, 1.0/n)
+
+    # Only exponentiate the finite ones
+    finite = logits[valid]
+    shifted = finite - np.max(finite)
+    exps = np.exp(shifted)
+    denom = exps.sum()
+
+    if denom == 0:
+        # extremely small values → fallback to uniform over valids
+        probs[valid] = 1.0 / valid.sum()
+    else:
+        probs[valid] = exps / denom
+
+    return probs
