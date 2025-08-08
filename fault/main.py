@@ -21,7 +21,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--n_trials',
         type=int,
-        default=100,
+        default=200,
         help="Number of Monte Carlo trials per sweep window (if --monte_carlo is set)"
     )
     parser.add_argument(
@@ -45,13 +45,14 @@ if __name__ == "__main__":
                 np.random.seed(trial)
                 random.seed(trial)
                 sampled_true_mode = random.choice([0, 1, 2, 3, -1])
-                print(f"  Trial {trial+1}/{args.n_trials} | True Mode: {sampled_true_mode}")
+                # print(f"  Trial {trial+1}/{args.n_trials} | True Mode: {sampled_true_mode}")
                 result = run(moving_window, true_mode=sampled_true_mode, show_plots=False)
 
                 if result["correct"]:
-                    print(" → Success")
+                    # print(" → Success")
+                    num_failures += 0
                 else:
-                    print(" → Failure")
+                    # print(" → Failure")
                     num_failures += 1
 
             windows.append(moving_window)
@@ -65,4 +66,5 @@ if __name__ == "__main__":
     else:
         for moving_window in args.moving:
             print(f"\n[Single Run] Running FID with window = {moving_window} and true mode = {args.true_mode}")
-            result = run(moving_window, true_mode=args.true_mode, show_plots=False)
+            result = run(moving_window, true_mode=args.true_mode, show_plots=True)
+            print(result)
