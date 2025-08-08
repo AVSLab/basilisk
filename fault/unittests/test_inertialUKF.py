@@ -24,6 +24,30 @@ from Basilisk.fswAlgorithms import inertialUKF
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+# NOTE: move this to util
+def dict_lists_to_arrays(d: dict) -> dict:
+    """
+    Convert all list or tuple values in a dictionary into numpy arrays.
+
+    Parameters
+    ----------
+    d : dict
+        Input dictionary whose values are potentially lists/tuples.
+
+    Returns
+    -------
+    dict
+        New dictionary where any list/tuple values have been replaced
+        by np.ndarray of the same contents.
+    """
+    converted = {}
+    for key, val in d.items():
+        if isinstance(val, (list, tuple)):
+            # numpy.array() will handle nested lists as multi-dimensional arrays
+            converted[key] = np.array(val)
+        else:
+            converted[key] = val
+    return converted
 
 def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
@@ -33,65 +57,69 @@ def plot_attitude_error(timeData, dataSigmaBR):
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
+    plt.xlabel('Time [sec]')
     plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
-def plot_filter_result_sigma(timeData, state, state_est, cov_est):
-    timeData = timeData[1:]
+def plot_filter_result_sigma(timeData, state, state_est, cov_est, state_meas):
     fig, axs = plt.subplots(3, 1, figsize=(8, 8), sharex=True)
     
     for idx, ax in enumerate(axs):
         color = unitTestSupport.getLineColor(idx, 3)
         
         # True state
-        ax.plot(timeData, state[1:, idx],
+        ax.plot(timeData, state[:, idx],
                 color=color,
                 label=rf'$x_{{{idx+1}}}$')
         
         # Estimated state
-        ax.plot(timeData, state_est[1:, idx],
+        ax.plot(timeData, state_est[:, idx],
                 color=color,
                 linestyle='--',
                 label=rf'$\hat{{x}}_{{{idx+1}}}$')
         
         # ±6 std‐dev band
-        std5  = 6 * np.sqrt(cov_est[1:, idx])
-        upper = state_est[1:, idx] + std5
-        lower = state_est[1:, idx] - std5
+        std5  = 6 * np.sqrt(cov_est[:, idx])
+        upper = state_est[:, idx] + std5
+        lower = state_est[:, idx] - std5
         ax.fill_between(timeData, lower, upper,
                         color=color,
                         alpha=0.3,
                         label=r'$\pm6\sigma$')
         
+        # measurement
+        ax.scatter(state_meas["timeNano"]/(1E+9), state_meas["sigma_BN"][:, idx],
+                   5, color="black",
+                   label=rf'$y_{{{idx+1}}}$')
+        
         ax.set_ylabel(rf'$x_{{{idx+1}}}$')      # y-label per subplot
+        ymin = np.min(state_est[:, idx])
+        ymax = np.max(state_est[:, idx])
+        ax.set_ylim([ymin, ymax])
         ax.legend(loc='upper right', fontsize='small')
-        # margin = 0.0
-        # ax.set_ylim([state[:, idx].min()-margin, state[:, idx].max()+margin])
     # Common x‑label on the bottom subplot
-    axs[-1].set_xlabel('Time [min]')
+    axs[-1].set_xlabel('Time [sec]')
 
 def plot_filter_result_omega(timeData, state, state_est, cov_est):
-    timeData = timeData[1:]
     fig, axs = plt.subplots(3, 1, figsize=(8, 8), sharex=True)
     
     for idx, ax in enumerate(axs):
         color = unitTestSupport.getLineColor(idx, 3)
         
         # True state
-        ax.plot(timeData, state[1:, idx],
+        ax.plot(timeData, state[:, idx],
                 color=color,
                 label=rf'$x_{{{idx+3}}}$')
         
         # Estimated state
-        ax.plot(timeData, state_est[1:, idx],
+        ax.plot(timeData, state_est[:, idx],
                 color=color,
                 linestyle='--',
                 label=rf'$\hat{{x}}_{{{idx+3}}}$')
         
         # ±5 std‐dev band
-        std5  = 6 * np.sqrt(cov_est[1:, idx])
-        upper = state_est[1:, idx] + std5
-        lower = state_est[1:, idx] - std5
+        std5  = 6 * np.sqrt(cov_est[:, idx])
+        upper = state_est[:, idx] + std5
+        lower = state_est[:, idx] - std5
         ax.fill_between(timeData, lower, upper,
                         color=color,
                         alpha=0.3,
@@ -99,9 +127,11 @@ def plot_filter_result_omega(timeData, state, state_est, cov_est):
         
         ax.set_ylabel(rf'$x_{{{idx+3}}}$')      # y-label per subplot
         ax.legend(loc='upper right', fontsize='small')
-        # ax.set_ylim([state[:, idx].min(), state[:, idx].max()])
+        ymin = np.min(state_est[:, idx])
+        ymax = np.max(state_est[:, idx])
+        ax.set_ylim([ymin, ymax])
     # Common x‑label on the bottom subplot
-    axs[-1].set_xlabel('Time [min]')
+    axs[-1].set_xlabel('Time [sec]')
 
 def plot_filter_chisquare(dataChiSquare):
     p = 0.05      # confidence level
@@ -123,7 +153,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
+    plt.xlabel('Time [sec]')
     plt.ylabel('RW Motor Torque (Nm)')
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
@@ -138,7 +168,7 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
+    plt.xlabel('Time [sec]')
     plt.ylabel('RW Motor Torque (Nm)')
 
 def plot_rate_error(timeData, dataOmegaBR):
@@ -149,7 +179,7 @@ def plot_rate_error(timeData, dataOmegaBR):
                  color=unitTestSupport.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
+    plt.xlabel('Time [sec]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
@@ -160,7 +190,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
+    plt.xlabel('Time [sec]')
     plt.ylabel('RW Speed (RPM) ')
 
 def setup_inertialattfilter(filterObject):
@@ -182,20 +212,18 @@ def setup_inertialattfilter(filterObject):
     qNoise[3:6, 3:6] = qNoise[3:6, 3:6]*sigmaRateSquare
     filterObject.qNoise = qNoise.reshape(36).tolist()
 
-
 def test_inertialUkf(show_plots=False):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
     """
-
     # --- Create Simulation ---
     simTaskName = "simTask"
     simProcessName = "simProcess"
     # create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
     # set the simulation time variable used later on
-    simTimeSec = 600
+    simTimeSec = 300
     simulationTime = macros.sec2nano(simTimeSec)
     # create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
@@ -255,21 +283,15 @@ def test_inertialUkf(show_plots=False):
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel
                            )
-    # In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride
-    # any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the
-    # maximum wheel speed.
     numRW = rwFactory.getNumOfDevices()
 
     # --- Connect Reaction Wheels to Spacecraft via rwStateEffector ---
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwStateEffector.ModelTag = "RW_cluster"
     rwFactory.addToSpacecraft(scObject.ModelTag, rwStateEffector, scObject)
-    # add RW object array to the simulation process.  This is required for the UpdateState() method
-    # to be called which logs the RW states
     scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
     # --- Setup Navigation --- 
-    # NOTE add the simple Navigation sensor module.  
     # This sets the SC attitude, rate, position velocity navigation message
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
@@ -328,9 +350,16 @@ def test_inertialUkf(show_plots=False):
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
 
     # --- Create the inertialUKF (state = MRP, angular_rate) ---
+    # setup the filter task update rate: filterTimeStep
+    filterTaskName = "filterTask"
+    filterTimeStep = macros.sec2nano(1.0)
+    dynProcess.addTask(scSim.CreateNewTask(filterTaskName, filterTimeStep))
+    samplingTime = filterTimeStep
+
     inertialAttFilter = inertialUKF.inertialUKF()
-    scSim.AddModelToTask(simTaskName, inertialAttFilter)
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter)
     setup_inertialattfilter(inertialAttFilter)
+
     # connect message to spacecraft and RW configurations
     inertialAttFilter.massPropsInMsg.subscribeTo(vcMsg)
     inertialAttFilter.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
@@ -357,8 +386,6 @@ def test_inertialUkf(show_plots=False):
     inertialAttFilter.STDatasStruct.STMessages[0].stInMsg.subscribeTo(st_1_msg)
     
     # --- Setup Data Logging ---
-    numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
@@ -391,15 +418,20 @@ def test_inertialUkf(show_plots=False):
                                                 )
 
     # --- Initialize Simulation ---
+    Measuremensts = {
+        "timeNano": [0],
+        "sigma_BN": [np.full(3, np.nan)],
+    }
     scSim.InitializeSimulation()
-    timeSpan = np.arange(0, simTimeSec + simTimeStepSec, simTimeStepSec)
+    timeSpan = np.arange(0, simulationTime + filterTimeStep, filterTimeStep)/(1E+9) # in seconds
 
     # --- Run Simulation ---
     for i in range(len(timeSpan)-1):
         # propagate to next time
         scSim.ConfigureStopTime(macros.sec2nano((timeSpan[i+1])))
         scSim.ExecuteSimulation()
-        # obtain true star tracker measurement
+        
+        # obtain true star tracker measurement every filterTimeStep
         if(snAttLog.sigma_BN.shape[0] > 0):
             true_att = snAttLog.sigma_BN[-1,:]
             true_att_with_noise = true_att + np.random.normal(0, np.sqrt(st_cov), 3)
@@ -407,6 +439,8 @@ def test_inertialUkf(show_plots=False):
             st_1_data.timeTag = int(timeSpan[i+1]*1E9)
             st_1_data.MRP_BdyInrtl = true_att_with_noise
         st_1_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
+        Measuremensts["timeNano"].append(macros.sec2nano((timeSpan[i+1])))
+        Measuremensts["sigma_BN"].append(true_att_with_noise)
 
     # --- Retrieve Logged Data ---
     dataUsReq = rwMotorLog.motorTorque
@@ -425,10 +459,11 @@ def test_inertialUkf(show_plots=False):
     dataRW = []
     for i in range(numRW):
         dataRW.append(rwLogs[i].u_current)
+    Measuremensts = dict_lists_to_arrays(Measuremensts)
 
     # --- Plot Results ---
     np.set_printoptions(precision=16)
-    timeData = rwMotorLog.times() * macros.NANO2MIN
+    timeData = snAttLog.times() * macros.NANO2SEC
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeData, dataSigmaBR)
@@ -451,7 +486,7 @@ def test_inertialUkf(show_plots=False):
                                  6*np.sqrt(dataFilterSigmaDiagCov)[-10:, :])
     np.testing.assert_array_less(np.abs(dataOmegaBN-dataFilterOmegaBN)[-10:, :], 
                                  6*np.sqrt(dataFilterOmegaDiagCov)[-10:, :])
-    plot_filter_result_sigma(timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov)
+    plot_filter_result_sigma(timeData, dataSigmaBN, dataFilterSigmaBN, dataFilterSigmaDiagCov, Measuremensts)
     plot_filter_result_omega(timeData, dataOmegaBN, dataFilterOmegaBN, dataFilterOmegaDiagCov)
 
     # --- Statistic data needed for Hypothesis Identification ---
