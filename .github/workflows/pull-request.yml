@@ -50,7 +50,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v
+          cd src && pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v --max-worker-restart=1
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -96,7 +96,7 @@ jobs:
       - name: "Run Python Tests"
         run: |
           source .venv/bin/activate
-          cd src && pytest -n auto -m "not ciSkip and not ciLinuxOnlySkip"  -rs --error-for-skips --dist=loadscope -v
+          cd src && pytest -n auto -m "not ciSkip and not ciLinuxOnlySkip"  -rs --error-for-skips --dist=loadscope -v --max-worker-restart=1
 
       - name: "Run C/C++ Tests"
         working-directory: ./dist3
@@ -134,7 +134,7 @@ jobs:
         run: |
           source .venv/bin/activate
           pip install pytest pytest-xdist
-          cd src && pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v
+          cd src && pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v --max-worker-restart=1
 
 
   build-windows:
