@@ -37,7 +37,7 @@ def setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, attError, 
         scSim.AddModelToTask(simTaskName, log)
 
     # Return all logs for external access
-    return snAttLog, rwLogs
+    return snAttLog, rwLogs, attErrorLog
 
 def process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW):
     """
