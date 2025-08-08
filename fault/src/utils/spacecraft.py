@@ -5,7 +5,7 @@ from Basilisk.utilities import (macros,simIncludeRW, unitTestSupport)
 from Basilisk.architecture import messaging
 from Basilisk.simulation import reactionWheelStateEffector
 
-def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
+def setup_spacecraft_sim(true_mode=0, simTimeSec=150, simTimeStepSec=0.2):
     # --- Create Simulation ---
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -108,10 +108,9 @@ def setup_spacecraft_sim(true_mode=0, simTimeSec=600, simTimeStepSec=0.1):
 
     return (
         scSim,
+        dynProcess,
         scObject,
         simTaskName,
-        simTimeSec,
-        simTimeStepSec,
         simulationTime,
         simulationTimeStep,
         varRWModel,
