@@ -20,15 +20,30 @@ from .utils.messages import setup_messages
 from .utils.log import setup_logging, process_filter
 from .passive import passive_fault_id
 
+# TODO move this to util?
+def plot_attitude_error(attErrorLog):
+    """Plot the attitude errors."""
+    timeData = attErrorLog.times()/(1E+9)
+    dataSigmaBR = attErrorLog.sigma_BR
+    plt.figure()
+    for idx in range(3):
+        plt.plot(timeData, dataSigmaBR[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label=r'$\sigma_' + str(idx) + '$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [sec]')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+
+
 def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
     """
 
-    # Setup spacecraft and simulation module
-    (scSim, scObject,simTaskName, simTimeSec, simTimeStepSec, simulationTime, simulationTimeStep,
-        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim(true_mode=true_mode)
+    # Setup spacecraft and simulation module: simlution update time step (default 0.2 seconds)
+    (scSim, dynProcess, scObject, simTaskName, simulationTime, simulationTimeStep,
+        varRWModel, rwFactory, rwStateEffector, numRW, I) = setup_spacecraft_sim(true_mode=true_mode, simTimeStepSec=0.2)
 
     # Setup navigation module
     sNavObject, inertial3DObj, attError, mrpControl = setup_navigation_and_control(scSim, simTaskName)
@@ -41,19 +56,22 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
 
     # --- Create multiple inertialUKF (state = MRP, angular_rate) ---
-    # create an empty gyro measurement
+    # filterTimeStep: filter update time step (default 1.0 seconds)
+    filterTaskName = "filterTask"
+    filterTimeStep = macros.sec2nano(1.0)
+    dynProcess.addTask(scSim.CreateNewTask(filterTaskName, filterTimeStep))
+    samplingTime = filterTimeStep
+
+    # create an empty gyro measurement (required message for inertialUKF)
     gyroBufferData = messaging.AccDataMsgPayload()
     gyroInMsg = messaging.AccDataMsg()
     gyroInMsg.write(gyroBufferData, 0)
 
-    numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
-
+    # create {nominal, fault1, fault2, fault3} UKFs by reducing the inertia of each RW
     # 0: nominal filter
     inertialAttFilter0 = inertialUKF.inertialUKF()
-    scSim.AddModelToTask(simTaskName, inertialAttFilter0)
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter0)
     rwFactory_0 = simIncludeRW.rwFactory()
-    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     rwFactory_0.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
                            )
@@ -72,14 +90,13 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter0, config0, attitude_measurement_msg)
-    inertialAttFilter0Log = inertialAttFilter0.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
-    scSim.AddModelToTask(simTaskName, inertialAttFilter0Log)
+    inertialAttFilter0Log = inertialAttFilter0.logger(["covar", "state", "cov_S", "innovation"])
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter0Log)
 
     # 1: fault1 filter
     inertialAttFilter1 = inertialUKF.inertialUKF()
-    scSim.AddModelToTask(simTaskName, inertialAttFilter1)
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter1)
     rwFactory_fault1 = simIncludeRW.rwFactory()
-    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     rw1 = rwFactory_fault1.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
                            )
@@ -99,14 +116,13 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter1, config1, attitude_measurement_msg)
-    inertialAttFilter1Log = inertialAttFilter1.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
-    scSim.AddModelToTask(simTaskName, inertialAttFilter1Log)
+    inertialAttFilter1Log = inertialAttFilter1.logger(["covar", "state", "cov_S", "innovation"])
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter1Log)
 
     # 2: fault2 filter
     inertialAttFilter2 = inertialUKF.inertialUKF()
-    scSim.AddModelToTask(simTaskName, inertialAttFilter2)
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter2)
     rwFactory_fault2 = simIncludeRW.rwFactory()
-    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     rwFactory_fault2.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
                            )
@@ -126,14 +142,13 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter2, config2, attitude_measurement_msg)
-    inertialAttFilter2Log = inertialAttFilter2.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
-    scSim.AddModelToTask(simTaskName, inertialAttFilter2Log)
+    inertialAttFilter2Log = inertialAttFilter2.logger(["covar", "state", "cov_S", "innovation"])
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter2Log)
 
     # 3: fault3 filter
     inertialAttFilter3 = inertialUKF.inertialUKF()
-    scSim.AddModelToTask(simTaskName, inertialAttFilter3)
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter3)
     rwFactory_fault3 = simIncludeRW.rwFactory()
-    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     rwFactory_fault3.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
                            , RWModel=varRWModel, 
                            )
@@ -153,8 +168,8 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
         "st_cov": st_cov,
     }
     configure_inertialattfilter(inertialAttFilter3, config3, attitude_measurement_msg)
-    inertialAttFilter3Log = inertialAttFilter3.logger(["covar", "state", "cov_S", "innovation"], samplingTime)
-    scSim.AddModelToTask(simTaskName, inertialAttFilter3Log)
+    inertialAttFilter3Log = inertialAttFilter3.logger(["covar", "state", "cov_S", "innovation"])
+    scSim.AddModelToTask(filterTaskName, inertialAttFilter3Log)
 
 
     # collect filter log
@@ -166,19 +181,20 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
     }
 
     # Setup logs
-    snAttLog, rwLogs = setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, 
+    snAttLog, rwLogs, attErrorLog = setup_logging(scSim, simTaskName, samplingTime, rwMotorTorqueObj, 
                                      attError, sNavObject, rwStateEffector, numRW)
 
     # --- Initialize Simulation ---
     scSim.InitializeSimulation()
-    timeSpan = np.arange(0, simTimeSec + simTimeStepSec, simTimeStepSec)
+    timeSpan = np.arange(0, simulationTime + filterTimeStep, filterTimeStep)/(1E+9) # in seconds
 
     # --- Run Simulation ---
     for i in range(len(timeSpan)-1):
         # propagate to next time
         scSim.ConfigureStopTime(macros.sec2nano((timeSpan[i+1])))
         scSim.ExecuteSimulation()
-        # obtain true star tracker measurement
+
+        # obtain true star tracker measurement every filterTimeStep
         if(snAttLog.sigma_BN.shape[0] > 0):
             true_att = snAttLog.sigma_BN[-1,:]
             true_att_with_noise = true_att + np.random.normal(0, np.sqrt(st_cov), 3)
@@ -187,35 +203,34 @@ def run(moving_window, terminate = True, true_mode = 0, show_plots=False):
             st_1_data.MRP_BdyInrtl = true_att_with_noise
         attitude_measurement_msg.write(st_1_data, int(timeSpan[i+1]*1E9))
 
-    # process_filter(snAttLog, rwLogs, inertialAttFilterLog_dict, numRW)
-
     # Perform passive fault ID
-    H_hist, hypotheses, k_end, fail, id_mode = passive_fault_id(inertialAttFilterLog_dict, moving_window, terminate=terminate, true_mode = true_mode)
+    T_hist, H_hist, hypotheses, k_end, id_mode = passive_fault_id(inertialAttFilterLog_dict, moving_window, terminate=terminate, true_mode = true_mode)
 
     H_hist = np.array(H_hist)  # convert to numpy array (timesteps x hypotheses)
 
     if show_plots:
         print("Hypothesis history over time:")
-        for t, h in enumerate(H_hist):
-            print(f"Time step {t}: {h}")
+        for idx, h in enumerate(H_hist):
+            print(f"time {T_hist[idx]} sec: {h}")
 
         plt.figure()
         for idx, h in enumerate(hypotheses):
-            plt.plot(H_hist[:, idx], label=h)
-        plt.xlabel("Time step")
+            plt.plot(T_hist, H_hist[:, idx], label=h)
+        plt.ylim([0, 1])
+        plt.xlabel("time sec")
         plt.ylabel("Belief")
         plt.title("Passive Fault Identification Belief Evolution")
-        plt.legend()
+        plt.legend(loc="upper left")
         plt.grid(True)
+
+        # plot attitude error to ensure the simulation & control is setup correctly
+        plot_attitude_error(attErrorLog)
+
         plt.show()
-
-        if show_plots:
-            plt.show()
-
         # close the plots being saved off to avoid over-writing old and new figures
         plt.close("all")
 
-    print(f"Returning: true_mode={true_mode}, id_mode={id_mode}, equal={id_mode == true_mode}")
+    # print(f"Returning: true_mode={true_mode}, id_mode={id_mode}, equal={id_mode == true_mode}")
 
     return {
         "true_mode": true_mode,
