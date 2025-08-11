@@ -2036,7 +2036,6 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
             vizFileNamePath = filePath + '/_VizFiles/' + fileName + '_UnityViz.bin'
         vizMessenger.saveFile = True
         vizMessenger.protoFilename = vizFileNamePath
-        print("Saving Viz file to " + vizFileNamePath)
 
     if 'liveStream' in kwargs:
         val = kwargs['liveStream']

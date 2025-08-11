@@ -226,6 +226,15 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     this->FrameNumber=-1;
     if (this->saveFile) {
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
+
+        /* check if file could be opened */
+        if (!this->outputStream->is_open()) {
+            this->saveFile = false; // turn off save file flag
+            bskLogger.bskLog(BSK_ERROR, "VizInterface: Unable to open file %s for writing.", this->protoFilename.c_str());
+            return;
+        } else {
+            bskLogger.bskLog(BSK_INFORMATION, "VizInterface: Writing data to %s", this->protoFilename.c_str());
+        }
     }
 
     this->settings.dataFresh = true;        // reset flag to transmit Vizard settings
