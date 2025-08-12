@@ -55,6 +55,9 @@ Version |release|
 - Improve reading speed of recorded messages by about 75%.
 - Added support for Vizard 2.3.0
 - Redirected MuJoCo errors and warnings to :ref:`bskLogging` instead of printing to file.
+- Update :ref:`vizSupport`  for the ``saveFile`` argument to take an explicit
+  file path and file name and not auto-generate the ``_VizFiles`` sub-folder.  This provides the
+  user more direct control where and how the simulation data is saved.
 - Support calling ``unsubscribe`` on input messages.
 - Fixed an issue where the :ref:`forceTorqueThrForceMapping` module's Reset() function did not zero all thruster settings correctly.
 - Updated ``canary`` workflow to run on all pull requests to the develop branch, providing feedback on compatibility with latest dependencies.

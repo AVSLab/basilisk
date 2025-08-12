@@ -1583,8 +1583,10 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     Keyword Args
     ------------
     saveFile: str
-        can be a single file name, or a full path + file name. In both cases a local results are stored
-        in a local sub-folder.
+        can be a single python file name, or a full path + file name. In both cases a local results are stored
+        in a local sub-folder called ``_VizFiles``.
+        If a data file name is provided directly (i.e. it ends with ``.bin``), then the
+        associated file path and name are used explicitly.
         Default: empty string resulting in the data not being saved to a file
     rwEffectorList: single or list of ``ReactionWheelStateEffector``
         The list must have the same length ``scList``.  Each entry is the :ref:`ReactionWheelStateEffector` instance
@@ -2012,21 +2014,28 @@ def enableUnityVisualization(scSim, simTaskName, scList, **kwargs):
     vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
     vizMessenger.spiceInMsgs = messaging.SpicePlanetStateMsgInMsgsVector(spiceMsgList)
 
-    # note that the following logic can receive a single file name, or a full path + file name.
+    # note that the following logic can receive a single python file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
+    # If a "*.bin" file is provided, then the provided path and name are used to store the data.
     vizMessenger.saveFile = False
     if 'saveFile' in kwargs:
         fileNamePath = kwargs['saveFile']
-        fileName = os.path.splitext(os.path.basename(fileNamePath))[0]
-        filePath = os.path.dirname(fileNamePath)
-        if filePath == "":
-            filePath = "."
-        if not os.path.isdir(filePath + '/_VizFiles'):
-            os.mkdir(filePath + '/_VizFiles')
-        vizFileNamePath = filePath + '/_VizFiles/' + fileName + '_UnityViz.bin'
+        if os.path.splitext(os.path.basename(fileNamePath))[1].lower()==".bin":
+            # here the provide file path, file name and file extension are used explicitly
+            vizFileNamePath = fileNamePath
+        else:
+            # here the file path and name string are split into file path and a file name
+            # next, the `_VizFiles` folder is created, if needed, and the binary data file
+            # has the name of the provided file name with `_UnityViz.bin` appended
+            fileName = os.path.splitext(os.path.basename(fileNamePath))[0]
+            filePath = os.path.dirname(fileNamePath)
+            if filePath == "":
+                filePath = "."
+            if not os.path.isdir(filePath + '/_VizFiles'):
+                os.mkdir(filePath + '/_VizFiles')
+            vizFileNamePath = filePath + '/_VizFiles/' + fileName + '_UnityViz.bin'
         vizMessenger.saveFile = True
         vizMessenger.protoFilename = vizFileNamePath
-        print("Saving Viz file to " + vizFileNamePath)
 
     if 'liveStream' in kwargs:
         val = kwargs['liveStream']
