@@ -66,8 +66,8 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
     this->numRW = 0;
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload * RWIt;
+    std::vector<std::shared_ptr<RWConfigPayload>>::iterator RWItp;
+    std::shared_ptr<RWConfigPayload> RWIt;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
 
@@ -106,8 +106,8 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPrimePntB_B.setZero();
 
     int thetaCount = 0;
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+    std::vector<std::shared_ptr<RWConfigPayload>>::iterator RWItp;
+    std::shared_ptr<RWConfigPayload>RWIt;
 	for(RWItp=ReactionWheelData.begin(); RWItp!=ReactionWheelData.end(); RWItp++)
 	{
         RWIt = *RWItp;
@@ -200,8 +200,8 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 
 	omegaLoc_BN_B = omega_BN_B;
 
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload * RWIt;
+    std::vector<std::shared_ptr<RWConfigPayload>>::iterator RWItp;
+    std::shared_ptr<RWConfigPayload> RWIt;
 	for(RWItp=ReactionWheelData.begin(); RWItp!=ReactionWheelData.end(); RWItp++)
 	{
         RWIt = *RWItp;
@@ -291,8 +291,8 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
 	Eigen::Vector3d rDDotBNLoc_B;                  /*! second time derivative of rBN in B frame */
 	int RWi = 0;
     int thetaCount = 0;
-	std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+	std::vector<std::shared_ptr<RWConfigPayload>>::iterator RWItp;
+    std::shared_ptr<RWConfigPayload>RWIt;
 
 	//! Grab necessarry values from manager
 	omegaDotBNLoc_B = omegaDot_BN_B;
@@ -355,8 +355,8 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
-    std::vector<RWConfigMsgPayload *>::iterator RWItp;
-    RWConfigMsgPayload *RWIt;
+    std::vector<std::shared_ptr<RWConfigPayload>>::iterator RWItp;
+    std::shared_ptr<RWConfigPayload>RWIt;
     for(RWItp=ReactionWheelData.begin(); RWItp!=ReactionWheelData.end(); RWItp++)
     {
         RWIt = *RWItp;
@@ -378,7 +378,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 
 /*! add a RW data object to the reactionWheelStateEffector
  */
-void ReactionWheelStateEffector::addReactionWheel(RWConfigMsgPayload *NewRW)
+void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW)
 {
     /* store the RW information */
     this->ReactionWheelData.push_back(NewRW);
@@ -404,8 +404,8 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
         this->NewRWCmds.push_back(RWCmdInitializer);
     }
 
-    std::vector<RWConfigMsgPayload *>::iterator itp;
-    RWConfigMsgPayload *it;
+    std::vector<std::shared_ptr<RWConfigPayload>>::iterator itp;
+    std::shared_ptr<RWConfigPayload>it;
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++)
     {
         it = *itp;
@@ -431,10 +431,10 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-    RWConfigMsgPayload test;
+    RWConfigPayload test;
 	RWConfigLogMsgPayload tmpRW;
-	std::vector<RWConfigMsgPayload *>::iterator itp;
-    RWConfigMsgPayload *it;
+	std::vector<std::shared_ptr<RWConfigPayload>>::iterator itp;
+    std::shared_ptr<RWConfigPayload>it;
     int c = 0;
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++)
 	{
@@ -475,8 +475,8 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
-    std::vector<RWConfigMsgPayload *>::iterator itp;
-    RWConfigMsgPayload *it;
+    std::vector<std::shared_ptr<RWConfigPayload>>::iterator itp;
+    std::shared_ptr<RWConfigPayload>it;
     for (itp = ReactionWheelData.begin(); itp != ReactionWheelData.end(); itp++)
     {
         it = *itp;

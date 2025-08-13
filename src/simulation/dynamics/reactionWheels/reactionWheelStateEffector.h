@@ -31,7 +31,7 @@
 
 #include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
 #include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
-#include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
+#include "simulation/dynamics/_GeneralModuleFiles/RWConfigPayload.h"
 #include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 
@@ -57,14 +57,14 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void Reset(uint64_t CurrentSimNanos);
-    void addReactionWheel(RWConfigMsgPayload *NewRW);
+    void addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW);
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
 
 public:
-	std::vector<RWConfigMsgPayload *> ReactionWheelData;          //!< -- RW information
+	std::vector<std::shared_ptr<RWConfigPayload>> ReactionWheelData;          //!< -- RW information
 
 	ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< -- RW motor torque array cmd input message
 	Message<RWSpeedMsgPayload> rwSpeedOutMsg;                   //!< -- RW speed array output message
