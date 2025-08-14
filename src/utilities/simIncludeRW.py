@@ -26,6 +26,7 @@ from collections import OrderedDict
 import numpy
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
+from Basilisk.simulation import reactionWheelStateEffector
 
 
 class rwFactory(object):
@@ -89,7 +90,7 @@ class rwFactory(object):
         """
 
         # create the blank RW object
-        RW = messaging.RWConfigMsgPayload()
+        RW = reactionWheelStateEffector.RWConfigPayload()
 
         # process optional input arguments
         if 'RWModel' in kwargs:
