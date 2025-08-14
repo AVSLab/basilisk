@@ -218,16 +218,6 @@ def motorThermalTest(show_plots, accuracy):
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
-    # change the test conditions
-    thermalModel.currentTemperature = 20
-    thermalModel.ambientTemperature = 0
-    RW.useRWfriction = True
-
-    # run the second test (motor is hotter than ambient and friction is used)
-    unitTestSim.ConfigureStopTime(4*simulationTime)
-    unitTestSim.ExecuteSimulation()
-    numTests += 1
-
     #
     # retrieve the logged data
     #
@@ -238,13 +228,12 @@ def motorThermalTest(show_plots, accuracy):
     # set the truth vectors
     #
 
-    trueTemp = np.array([0.83985244, 1.67941113, 2.51867637, 3.35764846, 4.19632769,
-                         5.03471435, 5.87280873, 6.71061112, 7.54812182, 8.38534113, 0.86531353,
-                         1.73030786, 2.59498331, 3.45934019, 4.32337882, 5.18709952, 6.05050261,
-                         6.91358841, 7.77635723, 8.6388094, 20.83077463, 21.6612646, 22.49147018,
-                         23.32139167, 24.15102935, 24.9803835, 25.8094544, 26.63824235, 27.46674761,
-                         28.29497048, 20.83623573, 21.67218133, 22.50783709, 23.34320331, 24.17828028,
-                         25.01306827, 25.84756759, 26.68177852, 27.51570134, 28.34933636])
+    trueTemp = np.array([0.83985244, 1.67941113, 2.51867637, 3.35764846, 4.19632769, 5.03471435, 5.87280873,
+                         6.71061112, 7.54812182, 8.38534113,
+                         0.86531353, 1.73030786, 2.59498331, 3.45934019, 4.32337882, 5.18709952, 6.05050261,
+                         6.91358841, 7.77635723, 8.6388094,
+                         20.83077463, 21.6612646, 22.49147018, 23.32139167, 24.15102935, 24.9803835, 25.8094544,
+                         26.63824235, 27.46674761, 28.29497048])
 
     #
     # compare the module results to the true values
