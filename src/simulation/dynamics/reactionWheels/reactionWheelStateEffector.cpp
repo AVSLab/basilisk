@@ -65,7 +65,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
 
-    for (int i = 0; i < ReactionWheelData.size(); ++i)
+    for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         const auto& rw = *ReactionWheelData[i];
         if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
@@ -99,7 +99,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPrimePntB_B.setZero();
 
     int thetaCount = 0;
-    for (int i = 0; i < ReactionWheelData.size(); ++i)
+    for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
 		rw.Omega = this->OmegasState->getState()(i, 0);
@@ -287,7 +287,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
 	rDDotBNLoc_B = dcm_BN*rDDotBNLoc_N;
 
 	//! - Compute Derivatives
-    for (int i = 0; i < ReactionWheelData.size(); ++i)
+    for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
         if(rw.RWModel == JitterFullyCoupled || rw.RWModel == JitterSimple) {
@@ -407,7 +407,7 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-    for (int i = 0; i < ReactionWheelData.size(); ++i)
+    for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
         if (numRWJitter > 0) {
@@ -443,7 +443,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
-    for (int i = 0; i < ReactionWheelData.size(); ++i)
+    for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
         if (numRWJitter > 0) {
@@ -490,7 +490,7 @@ void ReactionWheelStateEffector::ReadInputs()
  */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
-    for (int i = 0; i < NewRWCmds.size(); ++i)
+    for (std::size_t i = 0; i < NewRWCmds.size(); ++i)
 	{
         auto& cmd = NewRWCmds[i];
 		// Torque saturation
