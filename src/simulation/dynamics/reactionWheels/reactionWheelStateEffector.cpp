@@ -33,8 +33,6 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 
     this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
     this->nameOfReactionWheelThetasState = "reactionWheelThetas";
-
-    return;
 }
 
 
@@ -57,8 +55,6 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
 {
 	//! - Get access to the hub states
     this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
-
-	return;
 }
 
 void ReactionWheelStateEffector::registerStates(DynParamManager& states)
@@ -92,8 +88,6 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
     }
-
-    return;
 }
 
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
@@ -170,8 +164,6 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
         this->effProps.rEff_CB_B /= this->effProps.mEff;
         this->effProps.rEffPrime_CB_B /= this->effProps.mEff;
     }
-
-	return;
 }
 
 void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
@@ -276,7 +268,6 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 			backSubContr.vecRot += RWIt->mass*RWIt->d*OmegaSquared*RWIt->rWcB_B.cross(RWIt->w2Hat_B) - RWIt->IPrimeRWPntWc_B*RWIt->Omega*RWIt->gsHat_B - omegaLoc_BN_B.cross(RWIt->IRWPntWc_B*RWIt->Omega*RWIt->gsHat_B+RWIt->mass*RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)) - (RWIt->IRWPntWc_B*RWIt->gsHat_B+RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->cOmega;
 		}
 	}
-	return;
 }
 
 void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
@@ -372,8 +363,6 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 			rotAngMomPntCContr_B += RWIt->IRWPntWc_B*omega_WN_B + RWIt->mass*r_WcB_B.cross(rDot_WcB_B);
 		}
     }
-
-    return;
 }
 
 /*! add a RW data object to the reactionWheelStateEffector
@@ -464,8 +453,6 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         this->rwOutMsgs[c]->write(&tmpRW, this->moduleID, CurrentClock);
         c++;
 	}
-
-    return;
 }
 
 /*! This method is here to write the output message structure into the specified
