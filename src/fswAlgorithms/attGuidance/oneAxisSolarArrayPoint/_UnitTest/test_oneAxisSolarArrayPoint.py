@@ -56,7 +56,7 @@ def computeGamma(alpha, delta):
             gamma = 0
     else:
         if delta < alpha - np.pi/2:
-            gamma = - np.pi/2 + alpha - delta 
+            gamma = - np.pi/2 + alpha - delta
         elif delta > 3/2*np.pi - alpha:
             gamma = alpha + delta - 3/2*np.pi
         else:
@@ -87,7 +87,7 @@ def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisIn
 
     **Test Parameters**
 
-    This test generates an array ``ang`` of linearly-spaced points between 0 and :math:`\pi`. Values of 
+    This test generates an array ``ang`` of linearly-spaced points between 0 and :math:`\pi`. Values of
     :math:`\alpha` and :math:`\delta` are drawn from all possible combinations of such lineaarly spaced values.
     In the test, values of :math:`\alpha` and :math:`\delta` are used to set the angular distance between the vectors
     :math:`{}^\mathcal{N}\hat{r}_{S/B}` and :math:`{}^\mathcal{N}\hat{h}_\text{ref}`, and :math:`{}^\mathcal{B}\hat{h}_1`
@@ -107,10 +107,10 @@ def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisIn
     angle between the Sun direction :math:`{}^\mathcal{N}\hat{r}_{S/B}` and the reference inertial heading
     :math:`{}^\mathcal{N}\hat{h}_\text{ref}`, whereas :math:`\delta` is the angle between the body-frame heading
     :math:`{}^\mathcal{B}\hat{h}_1` and the solar array axis drive :math:`{}^\mathcal{B}\hat{a}_1`.
-    The angle :math:`\gamma` is computed from the output reference attitude and compared with the results of a 
+    The angle :math:`\gamma` is computed from the output reference attitude and compared with the results of a
     python function that computes the correct output based on the geometry of the problem. For a description of how
-    such correct result is obtained, see R. Calaon, C. Allard and H. Schaub, "Attitude Reference Generation for Spacecraft
-    with Rotating Solar Arrays and Pointing Constraints", in preparation for Journal of Spacecraft and Rockets.
+    such correct result is obtained, see `R. Calaon, C. Allard and H. Schaub, "Attitude Reference Generation for Spacecraft
+    with Rotating Solar Arrays and Pointing Constraints" <https://link.springer.com/article/10.1007/s42064-024-0245-1>`__.
 
     **General Documentation Comments**
 
@@ -135,10 +135,10 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
 
     a = np.cross(rHat_SB_N, [4, 5, 6])
     a = a / np.linalg.norm(a)
-    
+
     d = np.cross(a1Hat_B, [6, 5, 4])
     d = d / np.linalg.norm(d)
-    
+
     DCM1 = rbk.PRV2C(a * alpha)
     DCM2 = rbk.PRV2C(d * delta)
 
@@ -175,7 +175,7 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
     sigma_BN = np.array([0, 0, 0])
     BN = rbk.MRP2C(sigma_BN)
     rS_B = np.matmul(BN, rHat_SB_N)
-    NavAttMessageData = messaging.NavAttMsgPayload()     
+    NavAttMessageData = messaging.NavAttMsgPayload()
     NavAttMessageData.sigma_BN = sigma_BN
     NavAttMessageData.vehSunPntBdy = rS_B
     NavAttMsg = messaging.NavAttMsg().write(NavAttMessageData)
@@ -237,13 +237,13 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
     if alignmentPriority == 0:
         if not unitTestSupport.isDoubleEqual(gamma_sim, gamma_true, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for " 
+            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for "
                 "bodyAxisInput = {}, inertialAxisInput = {} and priorityFlag = {}".format(
                     bodyAxisInput, inertialAxisInput, alignmentPriority))
     else:
         if not unitTestSupport.isDoubleEqual(gamma_sim, 0, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for " 
+            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for "
                 "bodyAxisInput = {}, inertialAxisInput = {} and priorityFlag = {}".format(
                     bodyAxisInput, inertialAxisInput, alignmentPriority))
 
