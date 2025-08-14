@@ -61,6 +61,7 @@ Version |release|
 - Support calling ``unsubscribe`` on input messages.
 - Fixed an issue where the :ref:`forceTorqueThrForceMapping` module's Reset() function did not zero all thruster settings correctly.
 - Updated ``canary`` workflow to run on all pull requests to the develop branch, providing feedback on compatibility with latest dependencies.
+- Added links to published paper in :ref:`oneAxisSolarArrayPoint` documentation.
 
 
 Version 2.7.0 (April 20, 2025)
