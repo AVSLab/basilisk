@@ -17,10 +17,8 @@
 
  */
 %module reactionWheelStateEffector
-
-
 %{
-   #include "reactionWheelStateEffector.h"
+    #include "reactionWheelStateEffector.h"
 %}
 
 %pythoncode %{
@@ -30,11 +28,18 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
+// Instantiate templates used by example
+%include "std_vector.i"
+namespace std {
+        %template(RWConfigVector) vector<std::shared_ptr<RWConfigPayload>>;
+}
+
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
+%import "simulation/dynamics/_GeneralModuleFiles/RWConfigPayload.i"
 %include "reactionWheelStateEffector.h"
 %include "architecture/utilities/macroDefinitions.h"
 
@@ -42,16 +47,14 @@ from Basilisk.architecture.swig_common_model import *
 struct RWSpeedMsg_C;
 %include "architecture/msgPayloadDefC/RWCmdMsgPayload.h"
 struct RWCmdMsg_C;
-%include "architecture/msgPayloadDefCpp/RWConfigMsgPayload.h"
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 %include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
 struct ArrayMotorTorqueMsg_C;
 
-%include "std_vector.i"
-namespace std {
-    %template(RWConfigPointerVector) vector<RWConfigMsgPayload *, allocator<RWConfigMsgPayload *> >;
-}
+%pythoncode %{
+from Basilisk.simulation.RWConfigPayload import RWConfigPayload as RWConfigPayload
+%}
 
 %pythoncode %{
 import sys
