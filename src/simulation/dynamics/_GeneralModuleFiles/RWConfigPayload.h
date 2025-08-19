@@ -24,10 +24,10 @@
 #include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
 
-/*! @brief Structure used to define the individual RW configuration data message*/
+/*! @brief Structure used to define the individual RW configuration data */
 typedef struct
 //@cond DOXYGEN_IGNORE
-RWConfigMsgPayload
+RWConfigPayload
 //@endcond
 {
     Eigen::Vector3d rWB_B;      //!< [m], position vector of the RW relative to the spacecraft body frame
@@ -69,7 +69,7 @@ RWConfigMsgPayload
     Eigen::Vector3d w2Hat_B;            //!< unit vector
     Eigen::Vector3d w3Hat_B;            //!< unit vector
     char label[10];             //!< [-], label name of the RW device being simulated
-}RWConfigMsgPayload;
+}RWConfigPayload;
 
 
 

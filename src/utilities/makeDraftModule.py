@@ -697,7 +697,7 @@ def fillCppInfo(module):
     outMsgList = list()
     outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
     outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
-    outMsgList.append({'type': 'RWConfigMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
+    outMsgList.append({'type': 'DataStorageStatusMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
     module.outMsgList = outMsgList
 
     # provide list of module variables
