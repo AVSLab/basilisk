@@ -11,6 +11,10 @@ The basic swig interface file looks like this:
     :linenos:
 
     %module someModule
+
+    %include "architecture/utilities/bskException.swg"
+    %default_bsk_exception();
+
     %{
        #include "someModule.h"
     %}
