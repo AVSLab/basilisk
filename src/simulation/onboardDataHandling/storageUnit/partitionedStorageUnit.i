@@ -18,6 +18,10 @@
  */
 
 %module partitionedStorageUnit
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "partitionedStorageUnit.h"
 %}
@@ -37,7 +41,7 @@ from Basilisk.architecture.swig_common_model import *
 
 //When using scientific notation in Python (1E9), it is interpreted as float
 // giving a type error when assigning storageCapacity or adding data through
-// setDataBuffer. This maps that float and vector of floats to int64_t and 
+// setDataBuffer. This maps that float and vector of floats to int64_t and
 // long long int in C++ in this module.
 %typemap(in) int64_t {
     $1 = static_cast<int64_t>(PyFloat_AsDouble($input));

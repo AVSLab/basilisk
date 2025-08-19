@@ -26,31 +26,34 @@ void activateNewThread(void *threadData)
     auto *theThread = static_cast<SimThreadExecution*> (threadData);
 
     //std::cout << "Starting thread yes" << std::endl;
-    theThread->postInit();
+    try {
+        theThread->postInit();
 
-    while(theThread->threadValid())
-    {
-        theThread->lockThread();
-        if(theThread->selfInitNow){
-            theThread->selfInitProcesses();
-            theThread->selfInitNow = false;
+        while(theThread->threadValid())
+        {
+            theThread->lockThread();
+            if(theThread->selfInitNow){
+                theThread->selfInitProcesses();
+                theThread->selfInitNow = false;
+            }
+            else if(theThread->crossInitNow){
+                theThread->crossInitProcesses();
+                theThread->crossInitNow = false;
+            }
+            else if(theThread->resetNow){
+                theThread->resetProcesses();
+                theThread->resetNow = false;
+            }
+            else{
+                theThread->StepUntilStop();
+            }
+            theThread->unlockParent();
         }
-        else if(theThread->crossInitNow){
-            theThread->crossInitProcesses();
-            theThread->crossInitNow = false;
-        }
-        else if(theThread->resetNow){
-            theThread->resetProcesses();
-            theThread->resetNow = false;
-        }
-        else{
-            theThread->StepUntilStop();
-        }
-        //std::cout << "Stepping thread"<<std::endl;
-        theThread->unlockParent();
-
+    } catch (...) {
+        // Capture any exception and store it in the thread execution object
+        theThread->threadException = std::current_exception();
+        theThread->unlockParent(); // Make sure to unlock so main thread doesn't hang
     }
-    //std::cout << "Killing thread" << std::endl;
 
 }
 
@@ -214,6 +217,7 @@ void SimThreadExecution::resetProcesses() {
     this->currentThreadNanos = 0;
     this->CurrentNanos = 0;
     this->NextTaskTime = 0;
+    this->threadException = nullptr; // Clear any stored exception
     for(auto const& process : this->processList)
     {
         process->resetProcess(this->currentThreadNanos);
@@ -270,6 +274,12 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     {
         if(simThread->procCount() > 0) {
             simThread->lockParent();
+
+            // Check if any thread had an exception and re-throw it
+            if(simThread->threadException) {
+                std::rethrow_exception(simThread->threadException);
+            }
+
             this->NextTaskTime = simThread->NextTaskTime < this->NextTaskTime ?
                                  simThread->NextTaskTime : this->NextTaskTime;
             this->CurrentNanos = simThread->CurrentNanos < this->CurrentNanos ?
@@ -312,6 +322,11 @@ void SimModel::selfInitSimulation()
     }
     for(auto const& simThread : this->threadList) {
         simThread->lockParent();
+
+        // Check if any thread had an exception and re-throw it
+        if(simThread->threadException) {
+            std::rethrow_exception(simThread->threadException);
+        }
     }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
@@ -335,6 +350,10 @@ void SimModel::resetInitSimulation() const
     {
         simThread->lockParent();
 
+        // Check if any thread had an exception and re-throw it
+        if(simThread->threadException) {
+            std::rethrow_exception(simThread->threadException);
+        }
     }
 }
 

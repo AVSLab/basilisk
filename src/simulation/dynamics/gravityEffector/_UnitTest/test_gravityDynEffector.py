@@ -39,6 +39,7 @@ from Basilisk.simulation import stateArchitecture
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.architecture import messaging
 from Basilisk.simulation.gravityEffector import loadGravFromFileToList
+from Basilisk.architecture.bskLogging import BasiliskError
 
 #script to check spherical harmonics calcs out to 20th degree
 #Uses coefficient from Vallado tables D-1
@@ -255,7 +256,7 @@ def sphericalHarmonics(show_plots):
         spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 100, True)
         testFailCount += 1
         testMessages.append("Gravity ceiling not enforced correctly")
-    except RuntimeError:
+    except BasiliskError:
         pass # Great! We threw an error
 
     if testFailCount == 0:

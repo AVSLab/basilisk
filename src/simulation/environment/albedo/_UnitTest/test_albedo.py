@@ -28,6 +28,7 @@ import numpy as np
 import pytest
 from Basilisk import __path__
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import albedo
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -214,7 +215,7 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
 def test_albedo_invalid_file(tmp_path):
     """Verify that Albedo model returns gracefully when file cannot be loaded.
-    
+
     Regression test for BSK-428 where model would segfault when invalid file
     was specified.
 
@@ -241,10 +242,9 @@ def test_albedo_invalid_file(tmp_path):
     scInMsg = messaging.SCStatesMsg().write(scStateMsg)
     albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
 
-    albModule.addPlanetandAlbedoDataModel(planetInMsg, str(tmp_path), "does_not_exit.file")
-    
-    # this call would previously segfault
-    albModule.Reset(0)
+    with pytest.raises(BasiliskError):
+        albModule.addPlanetandAlbedoDataModel(planetInMsg, str(tmp_path), "does_not_exist.file")
+        albModule.Reset(0)
 
     # the fact that we got here without segfaulting means the test
     # passed

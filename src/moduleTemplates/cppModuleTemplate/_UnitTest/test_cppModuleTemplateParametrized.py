@@ -146,7 +146,8 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # Initialize the test module configuration data
     module.setDummy(1)                              # update module parameter with required values
-    module.setDumVector([1., -2., 3.])
+    with pytest.raises(bskLogging.BasiliskError):
+        module.setDumVector([1., -2., 3.])
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.

@@ -19,6 +19,10 @@
 
 
 %module stateArchitecture
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "../_GeneralModuleFiles/dynParamManager.h"
    #include "../../../architecture/utilities/avsEigenSupport.h"

@@ -17,6 +17,10 @@
 
  */
 %module prescribedRotation1DOF
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "prescribedRotation1DOF.h"
 %}

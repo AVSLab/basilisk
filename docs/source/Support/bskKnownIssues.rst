@@ -15,6 +15,8 @@ Version |release|
 - The ``Reset()`` function in :ref:`forceTorqueThrForceMapping` was not working properly. This has been addressed in the current release.
 - The reaction wheel configuration message was moved from C++ messages to the dynamics folder and renamed to :ref:`RWConfigPayload`.
   The reaction wheel factory was changed accordingly. Users that created the message on their own should now call ``reactionWheelStateEffector.RWConfigPayload`` instead of ``messaging``.
+- Simulations that previously logged to ``BSK_ERROR`` and expected to keep running successfully
+  will now raise a ``BasiliskError`` exception and stop the simulation immediately.
 
 
 Version 2.7.0

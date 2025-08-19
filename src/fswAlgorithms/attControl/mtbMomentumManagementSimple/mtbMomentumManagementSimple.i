@@ -18,6 +18,10 @@
 */
 
 %module mtbMomentumManagementSimple
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include "mtbMomentumManagementSimple.h"
 %}
@@ -40,4 +44,3 @@ struct CmdTorqueBodyMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

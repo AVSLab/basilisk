@@ -18,6 +18,10 @@
  */
 %module swig_deprecated
 
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
+
 /** Used to deprecate a function in C++ that is exposed to Python through SWIG.
 
 'function' is the SWIG identifier of the function. If it is a standalone function,

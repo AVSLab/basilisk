@@ -18,6 +18,10 @@
  */
 
 %module(package="Basilisk.simulation") THRSimConfig
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
 #include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 #include <memory>

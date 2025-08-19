@@ -18,7 +18,6 @@
  */
 
 #include "sphericalHarmonicsGravityModel.h"
-#include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
 namespace {
@@ -97,8 +96,7 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
     if (degree > this->maxDeg) {
         auto errorMsg =
             "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
-        if (bskLogger) bskLogger->bskLog(BSK_ERROR, errorMsg);
-        throw std::invalid_argument(errorMsg);
+        bskLogger.bskLog(BSK_ERROR, errorMsg);
     }
 
     double x = position_planetFixed[0];

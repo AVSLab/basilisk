@@ -17,6 +17,10 @@
 
  */
 %module pixelLineBiasUKF
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "pixelLineBiasUKF.h"
    #include "architecture/utilities/ukfUtilities.h"
@@ -42,4 +46,3 @@ struct OpNavCirclesMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

@@ -300,7 +300,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
 
             // Check for numerical instability due to excessive wheel acceleration
             if (std::abs(OmegasDot(i,0)) > this->maxWheelAcceleration) {
-                bskLogger.bskLog(BSK_ERROR, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(i,0)));
+                bskLogger.bskLog(BSK_WARNING, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(i,0)));
 
                 // Safety mechanism: limit the wheel acceleration to prevent numerical instability
                 OmegasDot(i,0) = std::copysign(this->maxWheelAcceleration, OmegasDot(i,0));
@@ -314,7 +314,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
 
             // Check for numerical instability in fully coupled model as well
             if (std::abs(OmegasDot(i,0)) > this->maxWheelAcceleration) {
-                bskLogger.bskLog(BSK_ERROR, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(i,0)));
+                bskLogger.bskLog(BSK_WARNING, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(i,0)));
 
                 // Safety mechanism: limit the wheel acceleration to prevent numerical instability
                 OmegasDot(i,0) = std::copysign(this->maxWheelAcceleration, OmegasDot(i,0));

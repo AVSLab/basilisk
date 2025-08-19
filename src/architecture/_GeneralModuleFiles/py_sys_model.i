@@ -1,5 +1,9 @@
 
 %module(directors="1",threads="1",package="Basilisk.architecture") sysModel
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "sys_model.h"
 %}

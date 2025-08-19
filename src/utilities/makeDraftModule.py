@@ -423,6 +423,10 @@ class moduleGenerator:
         self.log(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
         swigFile = licenseC
         swigFile += f'%module {name}\n'
+        swigFile += '\n'
+        swigFile += '%include "architecture/utilities/bskException.swg"\n'
+        swigFile += '%default_bsk_exception();\n'
+        swigFile += '\n'
         swigFile += '%{\n'
         swigFile += f'    #include "{name}.h"\n'
         swigFile += '%}\n'
@@ -630,6 +634,10 @@ class moduleGenerator:
         self.log(f"{statusColor}Creating Swig Interface File {swigFileName}:{endColor}", end=" ")
         swigFile = licenseC
         swigFile += f'%module {name}\n'
+        swigFile += '\n'
+        swigFile += '%include "architecture/utilities/bskException.swg"\n'
+        swigFile += '%default_bsk_exception();\n'
+        swigFile += '\n'
         swigFile += '%{\n'
         swigFile += f'    #include "{name}.h"\n'
         swigFile += '%}\n'

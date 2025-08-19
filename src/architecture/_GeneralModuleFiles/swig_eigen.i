@@ -17,6 +17,10 @@
 
  */
 %module swig_eigen
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
     #include <Eigen/Dense>
     #include "architecture/utilities/avsEigenMRP.h"

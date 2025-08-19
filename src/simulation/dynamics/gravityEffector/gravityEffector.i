@@ -18,6 +18,10 @@
  */
 
 %module(package="Basilisk.simulation") gravityEffector
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 %}

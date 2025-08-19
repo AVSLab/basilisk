@@ -19,10 +19,12 @@
 import copy
 import itertools
 import math
+from contextlib import nullcontext
 
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.fswAlgorithms import lambertValidator
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -70,7 +72,9 @@ def test_lambertValidator(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, acc
 
     The content of the DvBurnCmdMsg output message (DV vector and burn start time) is compared with the true values.
     """
-    lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy)
+    expect_error = p2_tm > p3_tf
+    with pytest.raises(BasiliskError) if expect_error else nullcontext():
+        lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy)
 
 
 def getInitialStates(r1_BN_N, v1_BN_N, dv_N, errStates, errDV):

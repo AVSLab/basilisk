@@ -18,6 +18,10 @@
  */
 
 %module swigEigenCheck
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 #pragma SWIG nowarn=509
 %{
     #include <vector>
@@ -95,9 +99,9 @@ struct SwigEigenTestClass
     ADD_QUALIFIER_FUNCTIONS(VectorXd, vectorXd)
     ADD_QUALIFIER_FUNCTIONS(MatrixX3d, matrixX3d)
     ADD_QUALIFIER_FUNCTIONS(MatrixXi, matrixXi)
-    ADD_QUALIFIER_FUNCTIONS(MatrixXd, matrixXd)    
-    ADD_QUALIFIER_FUNCTIONS(MRPd, mrpd)  
-    ADD_QUALIFIER_FUNCTIONS(Quaterniond, quaterniond)  
+    ADD_QUALIFIER_FUNCTIONS(MatrixXd, matrixXd)
+    ADD_QUALIFIER_FUNCTIONS(MRPd, mrpd)
+    ADD_QUALIFIER_FUNCTIONS(Quaterniond, quaterniond)
 };
 
 }

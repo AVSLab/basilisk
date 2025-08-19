@@ -42,9 +42,25 @@ void printDefaultLogLevel();
 #ifdef __cplusplus
 #include <map>
 #include <string>
+#include <stdexcept>
+
+#ifdef SWIG
+%include "std_except.i"
+#endif
 
 void setDefaultLogLevel(logLevel_t logLevel);
 logLevel_t getDefaultLogLevel();
+
+/*! Custom Basilisk runtime error class */
+class BasiliskError : public std::runtime_error {
+public:
+    explicit BasiliskError(const std::string& message)
+        : std::runtime_error(message) {}
+
+    explicit BasiliskError(const char* message)
+        : std::runtime_error(message) {}
+};
+
 
 /*! BSK logging class */
 class BSKLogger
@@ -93,4 +109,3 @@ EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
 /// \endcond
 
 #endif
-

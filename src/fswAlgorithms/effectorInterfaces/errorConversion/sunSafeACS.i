@@ -17,6 +17,10 @@
 
  */
 %module sunSafeACS
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "sunSafeACS.h"
 %}
@@ -37,4 +41,3 @@ struct ThrustGroupData;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

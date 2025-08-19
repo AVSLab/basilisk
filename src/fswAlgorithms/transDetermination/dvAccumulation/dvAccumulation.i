@@ -17,6 +17,10 @@
 
  */
 %module dvAccumulation
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "dvAccumulation.h"
 %}
@@ -35,4 +39,3 @@ struct AccPktDataMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
