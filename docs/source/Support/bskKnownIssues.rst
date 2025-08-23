@@ -17,7 +17,13 @@ Version |release|
   The reaction wheel factory was changed accordingly. Users that created the message on their own should now call ``reactionWheelStateEffector.RWConfigPayload`` instead of ``messaging``.
 - Simulations that previously logged to ``BSK_ERROR`` and expected to keep running successfully
   will now raise a ``BasiliskError`` exception and stop the simulation immediately.
-
+- The output format when querying non-numeric types in message recorders has changed. The output used to
+  be a numpy array of dictionaries with flattened data. Now, it's a numpy array of the objects as if they
+  were queried from the payload directly. Users relying on the legacy output format might experience
+  code failures at runtime. The recommended approach is to adapt to the new format. If this is impossible
+  at the time, Basilisk can be compiled with ``python conanfile.py --recorderPropertyRollback True`` to
+  recover the legacy format (although a deprecation message will be raised). This build flag and the legacy
+  output format are slated for complete removal in 2026/07.
 
 Version 2.7.0
 -------------

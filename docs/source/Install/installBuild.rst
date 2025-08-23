@@ -104,6 +104,12 @@ The script accepts the following options to customize this process.
       - Boolean
       - False
       - :beta:`Mujoco Support` Includes the `MuJoCo <https://mujoco.org>`_ visualization dependencies
+    * - ``recorderPropertyRollback``
+      - Boolean
+      - False
+      - Version 2.8 changed the output format when querying non-numeric types in message recorders.
+        By using this flag, the previuos behavior is recovered. Note that this build flag will disappear
+        in the near future.
 
 Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
 clean distribution folder, and that is built right away, you could use::

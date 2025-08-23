@@ -91,7 +91,7 @@ jobs:
           python3 -m conans.conan profile detect --exist-ok
           echo -e "\n[conf]\ntools.system.package_manager:mode=install\ntools.system.package_manager:sudo=True\n" >> $(python3 -m conans.conan profile path default)
       - name: "Build basilisk"
-        run: source .venv/bin/activate && python3 conanfile.py --opNav True --mujoco True --mujocoReplay True
+        run: source .venv/bin/activate && python3 conanfile.py --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
 
       - name: "Run Python Tests"
         run: |
@@ -188,7 +188,7 @@ jobs:
         shell: pwsh
         run: |
           venv\Scripts\activate
-          python conanfile.py --opNav True --mujoco True --mujocoReplay True
+          python conanfile.py --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
       - name: "Run Python Tests"
         shell: pwsh
         run: |
@@ -235,7 +235,7 @@ jobs:
       - name: "Build basilisk with all options"
         run: |
           source .venv/bin/activate
-          python3 conanfile.py --opNav True --allOptPkg --mujoco True --mujocoReplay True
+          python3 conanfile.py --opNav True --allOptPkg --mujoco True --mujocoReplay True --recorderPropertyRollback True
 
       - name: "Run Python Tests"
         run: |
