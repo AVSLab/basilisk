@@ -324,8 +324,6 @@ class BSKFswModels:
 
     def SetCSSWlsEst(self, SimBase):
         """Set the FSW CSS configuration information """
-        cssConfig = messaging.CSSConfigMsgPayload()
-        totalCSSList = []
         nHat_B_vec = [
             [0.0, 0.707107, 0.707107],
             [0.707107, 0., 0.707107],
@@ -336,14 +334,16 @@ class BSKFswModels:
             [0., 0.258819, -0.965926],
             [0.707107, -0.353553, -0.612372]
         ]
-        for CSSHat in nHat_B_vec:
-            CSSConfigElement = messaging.CSSUnitConfigMsgPayload()
-            CSSConfigElement.CBias = 1.0
-            CSSConfigElement.nHat_B = CSSHat
-            totalCSSList.append(CSSConfigElement)
-        cssConfig.cssVals = totalCSSList
-
-        cssConfig.nCSS = len(nHat_B_vec)
+        cssConfig = messaging.CSSConfigMsgPayload(
+            nCSS = len(nHat_B_vec),
+            cssVals = [
+                messaging.CSSUnitConfigMsgPayload(
+                    CBias=1.0,
+                    nHat_B=CSSHat,
+                )
+                for CSSHat in nHat_B_vec
+            ]
+        )
         self.cssConfigMsg = messaging.CSSConfigMsg().write(cssConfig)
 
         self.cssWlsEst.cssDataInMsg.subscribeTo(SimBase.DynModels.CSSConstellationObject.constellationOutMsg)

@@ -364,8 +364,7 @@ class SRPPanel(sysModel.SysModel):
         cosAngle = np.dot(-normalVector_N, self.sunlightDirection_N)
         forceMagnitude = self.srpFactor * cosAngle**2
 
-        payload = messaging.SingleActuatorMsgPayload()
-        payload.input = forceMagnitude
+        payload = messaging.SingleActuatorMsgPayload(input=forceMagnitude)
         self.forceOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
 

@@ -185,8 +185,8 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
         simulationTimeStep = macros.sec2nano(simTimeStep)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
     # Create sun message
-    sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
-    sunPositionMsg.PositionVector = [-om.AU * 1000., 0.0, 0.0]
+    sunPositionMsg = messaging.SpicePlanetStateMsgPayload(PositionVector=[-om.AU * 1000., 0.0, 0.0])
+
     sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
 
     # Create planet message (earth)
@@ -197,18 +197,22 @@ def run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 
     planet1.isCentralBody = True  # ensure this is the central gravitational body
     req1 = planet1.radEquator
 
-    planetPositionMsg1 = messaging.SpicePlanetStateMsgPayload()
-    planetPositionMsg1.PositionVector = [0., 0., 0.]
-    planetPositionMsg1.PlanetName = planetCase1
-    planetPositionMsg1.J20002Pfix = np.identity(3)
+    planetPositionMsg1 = messaging.SpicePlanetStateMsgPayload(
+        PositionVector=[0., 0., 0.],
+        PlanetName=planetCase1,
+        J20002Pfix=np.identity(3),
+    )
+
     pl1Msg = messaging.SpicePlanetStateMsg().write(planetPositionMsg1)
     if multiplePlanet:
         # Create planet message (moon)
         planetCase2 = 'moon'
-        planetPositionMsg2 = messaging.SpicePlanetStateMsgPayload()
-        planetPositionMsg2.PositionVector = [0., 384400. * 1000, 0.]
-        planetPositionMsg2.PlanetName = planetCase2
-        planetPositionMsg2.J20002Pfix = np.identity(3)
+        planetPositionMsg2 = messaging.SpicePlanetStateMsgPayload(
+            PositionVector=[0., 384400. * 1000, 0.],
+            PlanetName=planetCase2,
+            J20002Pfix=np.identity(3),
+        )
+
         pl2Msg = messaging.SpicePlanetStateMsg().write(planetPositionMsg2)
 
     #

@@ -160,10 +160,8 @@ def run(showPlots: bool = False, visualize: bool = False):
 
     # Set a thruster force of 275 N trying to slowdown our descent
     thrust = 275 # N
-    thrustMsgPayload = messaging.SingleActuatorMsgPayload()
-    thrustMsgPayload.input = thrust
     thrustMsg = messaging.SingleActuatorMsg()
-    thrustMsg.write(thrustMsgPayload)
+    thrustMsg.write(messaging.SingleActuatorMsgPayload(input=thrust))
 
     scene.getSingleActuator("thrust").actuatorInMsg.subscribeTo(thrustMsg)
 
@@ -187,9 +185,7 @@ def run(showPlots: bool = False, visualize: bool = False):
     scSim.ExecuteSimulation()
 
     # Near surface, turn off thrusters and let gravity land us
-    thrustMsgPayload = messaging.SingleActuatorMsgPayload()
-    thrustMsgPayload.input = 0  # N
-    thrustMsg.write(thrustMsgPayload)
+    thrustMsg.write(messaging.SingleActuatorMsgPayload(input=0)) # N
 
     # Run until simulation completion
     scSim.ConfigureStopTime(macros.sec2nano(tf))
@@ -259,8 +255,7 @@ class ConstantGravity(sysModel.SysModel):
         dcm_BN = rbk.MRP2C(frame.sigma_BN)
         force_B = np.dot(dcm_BN, self.force_N)
 
-        payload = messaging.ForceAtSiteMsgPayload()
-        payload.force_S = force_B
+        payload = messaging.ForceAtSiteMsgPayload(force_S=force_B)
         self.forceOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
 

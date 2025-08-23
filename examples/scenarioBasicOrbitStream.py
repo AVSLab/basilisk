@@ -216,8 +216,8 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     thrModelTag = "ACSThrusterDynamics"
     thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
 
-    thrMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrMsgData.OnTimeRequest = [0, 0, 0]
+    thrMsgData = messaging.THRArrayOnTimeCmdMsgPayload(OnTimeRequest=[0, 0, 0])
+
     thrMsg = messaging.THRArrayOnTimeCmdMsg()
     thrMsg.write(thrMsgData)
     thrusterSet.cmdsInMsg.subscribeTo(thrMsg)

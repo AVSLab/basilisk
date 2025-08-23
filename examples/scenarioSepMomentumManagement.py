@@ -338,11 +338,12 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     # Write THR Config Msg
     r_TF_F = [0, 0, 0]  # Thruster application point in F frame coordinates
     tHat_F = [0, 0, 1]  # Thrust unit direction vector in F frame coordinates
-    THRConfig = messaging.THRConfigMsgPayload()
-    THRConfig.rThrust_B = r_TF_F
-    THRConfig.tHatThrust_B = tHat_F
-    THRConfig.maxThrust = 0.27
-    THRConfig.swirlTorque = 0
+    THRConfig = messaging.THRConfigMsgPayload(
+        rThrust_B=r_TF_F,
+        tHatThrust_B=tHat_F,
+        maxThrust=0.27,
+        swirlTorque=0,
+    )
     if swirlTorque:
         THRConfig.swirlTorque = 1.0e-3 * THRConfig.maxThrust
     thrConfigFMsg = messaging.THRConfigMsg().write(THRConfig)
@@ -490,14 +491,14 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
 
     # create the FSW vehicle configuration message for CoM
-    vehicleConfigData = messaging.VehicleConfigMsgPayload()
-    vehicleConfigData.CoM_B = r_CB_B_0    # use the same initial CoM guess as the cmEstimator module
+    # use the same initial CoM guess as the cmEstimator module
+    vehicleConfigData = messaging.VehicleConfigMsgPayload(CoM_B=r_CB_B_0)
     vcMsg_CoM = messaging.VehicleConfigMsg_C()
     vcMsg_CoM.write(vehicleConfigData)
 
     # create the FSW vehicle configuration message for inertias
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I       # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg_I = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Set up platform reference module
@@ -585,8 +586,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     scSim.AddModelToTask(fswTask, rwMotorTorqueObj, 20)
 
     # Configure thruster on-time message
-    thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    thrOnTimeMsgData.OnTimeRequest = [3600*24*7]
+    thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload(OnTimeRequest=[3600*24*7])
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM

@@ -143,12 +143,10 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, MSMmodule)
 
     # define electric potentials
-    voltLeaderInMsgData = messaging.VoltMsgPayload()
-    voltLeaderInMsgData.voltage = -500  # [V] servicer potential
+    voltLeaderInMsgData = messaging.VoltMsgPayload(voltage=-500) # [V] servicer potential
     voltLeaderInMsg = messaging.VoltMsg().write(voltLeaderInMsgData)
 
-    voltFollowerInMsgData = messaging.VoltMsgPayload()
-    voltFollowerInMsgData.voltage = 500  # [V] debris potential
+    voltFollowerInMsgData = messaging.VoltMsgPayload(voltage=500) # [V] debris potential
     voltFollowerInMsg = messaging.VoltMsg().write(voltFollowerInMsgData)
 
     # Import multi-sphere model of GOESR bus and read them into an array of strings
@@ -174,8 +172,8 @@ def run(show_plots):
     rListLeader = radii  # radius of each sphere in the leader spacecraft
     spPosListFollower_H = spherelocation  # The location of each sphere for the follower spacecraft
     rListFollower = radii  # radius of each sphere in the follower spacecraft
-            
-            
+
+
 #    If you would like to simulate each spacecraft by a single sphere, uncomment this section (line186 - line189) of
     #    code and comment out the previous section lines (162-181)
 #     create a list of sphere body-fixed locations and associated radii using one sphere for each spacecraft
@@ -242,7 +240,7 @@ def run(show_plots):
     samplingTime = simulationTime // (numDataPoints - 1)
     dataRecL = scObjectLeader.scStateOutMsg.recorder()
     dataRecF = scObjectFollower.scStateOutMsg.recorder()
-    
+
     # Add recorders to the Task
     scSim.AddModelToTask(dynTaskName, dataRecL)
     scSim.AddModelToTask(dynTaskName, dataRecF)
@@ -276,7 +274,7 @@ def run(show_plots):
 
     attDataL_N = dataRecL.sigma_BN
     attDataF_N = dataRecF.sigma_BN
-    
+
     # Calculate relative position vector and magnitude in the inertial frame
     relPosData_N = posDataL_N[:, 0:3] - posDataF_N[:, 0:3]
     relPosMagn = np.linalg.norm(relPosData_N, axis=1)
@@ -317,7 +315,7 @@ def run(show_plots):
     plt.close("all")
 
     return figureList
-    
+
 
 def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attDataF_N, P, spPosListLeader_H, rListLeader,
                LeaderSpCharges, spPosListFollower_H, rListFollower, FollowerSpCharges, relXPosData_H, relYPosData_H,

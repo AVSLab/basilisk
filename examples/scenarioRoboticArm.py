@@ -174,9 +174,10 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
     spinningBodyEffector.spinningBodyRefInMsgs[0].subscribeTo(profiler.spinningBodyOutMsg)
 
-    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    hingedRigidBodyMessageData.theta = -30 * macros.D2R  # [rad]
-    hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
+    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
+        theta=-30 * macros.D2R,  # [rad]
+        thetaDot=0.0,  # [rad/s]
+    )
     hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
 
@@ -203,9 +204,10 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
     spinningBodyEffector.spinningBodyRefInMsgs[1].subscribeTo(profiler.spinningBodyOutMsg)
 
-    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    hingedRigidBodyMessageData.theta = 45 * macros.D2R  # [rad]
-    hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
+    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
+        theta=45 * macros.D2R,  # [rad]
+        thetaDot=0.0,  # [rad/s]
+    )
     hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
 
@@ -232,9 +234,10 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
     spinningBodyEffector.spinningBodyRefInMsgs[2].subscribeTo(profiler.spinningBodyOutMsg)
 
-    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    hingedRigidBodyMessageData.theta = 90 * macros.D2R  # [rad]
-    hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
+    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
+        theta=90 * macros.D2R,  # [rad]
+        thetaDot=0.0,  # [rad/s]
+    )
     hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
 
@@ -261,9 +264,10 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
     spinningBodyEffector.spinningBodyRefInMsgs[3].subscribeTo(profiler.spinningBodyOutMsg)
 
-    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
-    hingedRigidBodyMessageData.theta = -20 * macros.D2R  # [rad]
-    hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
+    hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
+        theta=-20 * macros.D2R, # [rad]
+        thetaDot=0.0, # [rad/s]
+    )
     hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
 

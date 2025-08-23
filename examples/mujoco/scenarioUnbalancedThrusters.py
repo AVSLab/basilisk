@@ -124,10 +124,8 @@ def run(showPlots: bool = False, visualize: bool = False):
         # to define the force and torque vectors.
         # In this case, the gear is set to "0 0 -1 0 0 0", which
         # means that the force is applied along the negative z-axis.
-        thrustMsgPayload = messaging.SingleActuatorMsgPayload()
-        thrustMsgPayload.input = thrust
         thrustMsg = messaging.SingleActuatorMsg()
-        thrustMsg.write(thrustMsgPayload)
+        thrustMsg.write(messaging.SingleActuatorMsgPayload(input=thrust))
 
         actuatorName = f"tank_{i}_thrust"
 
@@ -141,10 +139,8 @@ def run(showPlots: bool = False, visualize: bool = False):
         # its time derivative. In this case, the mass of the tanks
         # is decreasing linearly with time, with the last tank
         # decreasing at twice the rate of the others.
-        mDotMsgPayload = messaging.SCMassPropsMsgPayload()
-        mDotMsgPayload.massSC = mDot if i < 4 else mDot * 2
         mDotMsg = messaging.SCMassPropsMsg()
-        mDotMsg.write(mDotMsgPayload)
+        mDotMsg.write(messaging.SCMassPropsMsgPayload(massSC=mDot if i < 4 else mDot * 2))
 
         bodyName = f"tank_{i}"
         body = scene.getBody(bodyName)
