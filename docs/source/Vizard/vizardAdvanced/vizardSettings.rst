@@ -1581,8 +1581,7 @@ then lists of lists are required::
 
 Next, each light can be connected to the optional device status message of type :ref:`DeviceCmdMsgPayload`::
 
-        lightCmdMsgData = messaging.DeviceCmdMsgPayload()
-        lightCmdMsgData.deviceCmd = 1
+        lightCmdMsgData = messaging.DeviceCmdMsgPayload(deviceCmd = 1)
         lightCmdMsg = messaging.DeviceCmdMsg().write(lightCmdMsgData)
 
         cmdInMsg = messaging.DeviceCmdMsgReader()
@@ -1693,8 +1692,7 @@ a color message of type :ref:`ColorMsgPayload`, you use the argument ``trueOrbit
 and provide it the color message.  This could be the output of a BSK module, or a stand alone message.
 Here is sample code using a stand-alone message::
 
-    colorMsgContent = messaging.ColorMsgPayload()
-    colorMsgContent.colorRGBA = vizSupport.toRGBA255("Yellow")
+    colorMsgContent = messaging.ColorMsgPayload(colorRGBA = vizSupport.toRGBA255("Yellow"))
     colorMsg = messaging.ColorMsg().write(colorMsgContent)
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject

@@ -29,6 +29,10 @@ Essentially this is a python instance of the message structure definition found 
 
     msgData.variable = .....
 
+You may also initalize fields on construction::
+
+    msgData = messaging.someMsgPayload(variable=...)
+
 Next, a message object is created and the message data is written to it.  The message object is created using::
 
     msg = messaging.someMsg()
