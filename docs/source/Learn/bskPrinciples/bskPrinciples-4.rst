@@ -75,4 +75,28 @@ this method on both C and C++ wrapped message objects::
 
     msgCopy = msg.read()
 
+Message payloads can be printed to visualize their content::
 
+    payload = messaging.AlbedoMsgPayload(
+        AfluxAtInstrument=1.0,
+        AfluxAtInstrumentMax=2.0,
+        albedoAtInstrumentMax=3.0
+    )
+
+    print(payload)
+
+displays::
+
+    AlbedoMsgPayload(AfluxAtInstrument=1.0, AfluxAtInstrumentMax=2.0, albedoAtInstrument=0.0, albedoAtInstrumentMax=3.0)
+
+For large payloads, `pretty-printing <https://docs.python.org/3/library/pprint.html>`_ will perform automatic line breaks::
+
+    from pprint import pprint
+    pprint(payload)
+
+displays::
+
+    AlbedoMsgPayload(AfluxAtInstrument=1.0,
+                     AfluxAtInstrumentMax=2.0,
+                     albedoAtInstrument=0.0,
+                     albedoAtInstrumentMax=3.0)
