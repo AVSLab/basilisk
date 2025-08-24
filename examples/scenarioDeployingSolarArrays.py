@@ -453,10 +453,11 @@ def run(show_plots):
         array1MaxRotAccelList2.append(thetaDDotMax)
 
     # Update the array 1 stand-alone element translational state messages
-    array1ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
-    array1ElementTranslationMessageData.r_PM_M = r_PM1_M1Init2  # [m]
-    array1ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array1ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+    array1ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload(
+        r_PM_M=r_PM1_M1Init2,   # [m]
+        rPrime_PM_M=np.array([0.0, 0.0, 0.0]),  # [m/s]
+        rPrimePrime_PM_M=np.array([0.0, 0.0, 0.0]),  # [m/s^2]
+    )
     array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array1ElementTranslationMessageData)
 
     array1ElementRefMsgList2 = list()
@@ -469,9 +470,10 @@ def run(show_plots):
         array1RotProfilerList[i].setThetaInit(array1ThetaInit2)  # [rad]
         array1RotProfilerList[i].setThetaDDotMax(array1MaxRotAccelList2[i])  # [rad/s^2]
 
-        array1ElementMessageData = messaging.HingedRigidBodyMsgPayload()
-        array1ElementMessageData.theta = (36 * i * macros.D2R) + array1ThetaInit2  # [rad]
-        array1ElementMessageData.thetaDot = 0.0  # [rad/s]
+        array1ElementMessageData = messaging.HingedRigidBodyMsgPayload(
+            theta=(36 * i * macros.D2R) + array1ThetaInit2,  # [rad]
+            thetaDot=0.0,  # [rad/s]
+        )
         array1ElementRefMsgList2.append(messaging.HingedRigidBodyMsg().write(array1ElementMessageData))
 
         array1RotProfilerList[i].spinningBodyInMsg.subscribeTo(array1ElementRefMsgList2[i])
@@ -493,9 +495,10 @@ def run(show_plots):
     for i in range(num_elements):
         array2RotProfilerList[i].setThetaDDotMax(array2MaxRotAccelList2[i])  # [rad/s^2]
 
-        array2ElementMessageData = messaging.HingedRigidBodyMsgPayload()
-        array2ElementMessageData.theta = array2ThetaInit2  # [rad]
-        array2ElementMessageData.thetaDot = 0.0  # [rad/s]
+        array2ElementMessageData = messaging.HingedRigidBodyMsgPayload(
+            theta=array2ThetaInit2,  # [rad]
+            thetaDot=0.0,   # [rad/s]
+        )
         array2ElementRefMsgList2.append(messaging.HingedRigidBodyMsg().write(array2ElementMessageData))
 
         array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(array2ElementRefMsgList2[i])
@@ -514,10 +517,11 @@ def run(show_plots):
         array2MaxRotAccelList3.append(thetaDDotMax)
 
     # Update the array 2 stand-alone element translational state messages
-    array2ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
-    array2ElementTranslationMessageData.r_PM_M = r_PM2_M2Init2  # [m]
-    array2ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array2ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
+    array2ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload(
+        r_PM_M=r_PM2_M2Init2,   # [m]
+        rPrime_PM_M=np.array([0.0, 0.0, 0.0]),   # [m/s]
+        rPrimePrime_PM_M=np.array([0.0, 0.0, 0.0]),   # [m/s^2]
+    )
     array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array2ElementTranslationMessageData)
 
     array2ElementRefMsgList3 = list()
@@ -530,9 +534,10 @@ def run(show_plots):
         array2RotProfilerList[i].setThetaInit(array2ThetaInit2)  # [rad]
         array2RotProfilerList[i].setThetaDDotMax(array2MaxRotAccelList3[i])  # [rad/s^2]
 
-        array2ElementMessageData = messaging.HingedRigidBodyMsgPayload()
-        array2ElementMessageData.theta = (36 * i * macros.D2R) + array2ThetaInit2  # [rad]
-        array2ElementMessageData.thetaDot = 0.0  # [rad/s]
+        array2ElementMessageData = messaging.HingedRigidBodyMsgPayload(
+            theta=(36 * i * macros.D2R) + array2ThetaInit2,   # [rad]
+            thetaDot=0.0,   # [rad/s]
+        )
         array2ElementRefMsgList3.append(messaging.HingedRigidBodyMsg().write(array2ElementMessageData))
 
         array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(array2ElementRefMsgList3[i])

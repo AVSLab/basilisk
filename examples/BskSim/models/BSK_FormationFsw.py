@@ -238,8 +238,11 @@ class BSKFswModels():
 
     def SetVehicleConfiguration(self):
         # use the same inertia in the FSW algorithm as in the simulation
-        vcData = messaging.VehicleConfigMsgPayload()
-        vcData.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+        vcData = messaging.VehicleConfigMsgPayload(ISCPntB_B=[
+            900.0, 0.0,   0.0,
+            0.0,   800.0, 0.0,
+            0.0,   0.0,   600.0
+        ])
         self.vcMsg = messaging.VehicleConfigMsg().write(vcData)
 
     def SetMRPFeedbackControl(self):

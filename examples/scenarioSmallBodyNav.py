@@ -629,8 +629,7 @@ def run(show_plots):
     trackingError.attRefInMsg.subscribeTo(sunPoint.attRefOutMsg)
 
     # Specify the vehicle configuration message to tell things what the vehicle inertia is
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcConfigMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     #   Attitude controller configuration

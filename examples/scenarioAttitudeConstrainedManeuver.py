@@ -23,8 +23,8 @@ Overview
 This script sets up a 6-DOF spacecraft which is orbiting the Earth, in the presence of the Sun.
 The spacecraft is modelled according to the specifics of the Bevo-2 satellite, that has a sensitive
 star tracker aligned with the x body axis and two sun sensors aligned with the y and z body axes.
-In contrast with :ref:`scenarioAttitudeConstraintViolation` the goal of this scenario is to illustrate 
-how to set up a Basilisk simulation using the :ref:`constrainedAttitudeManeuver` module to perform a 
+In contrast with :ref:`scenarioAttitudeConstraintViolation` the goal of this scenario is to illustrate
+how to set up a Basilisk simulation using the :ref:`constrainedAttitudeManeuver` module to perform a
 slew maneuver while ensuring constraint compliance.
 
 The script is found in the folder ``basilisk/examples`` and executed by using::
@@ -32,15 +32,15 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
       python3 scenarioAttitudeConstrainedManeuver.py
 
 This simulation is set up identically to :ref:`scenarioAttitudeConstraintViolation`. The reader is referred
-to this scenario for a detailed description of the setup. The only difference in this scenario is that the 
+to this scenario for a detailed description of the setup. The only difference in this scenario is that the
 constraint-naive :ref:`inertial3D` module for attitude pointing is replaced with the :ref:`constrainedAttitudeManeuver`
 module.
 
 Illustration of Simulation Results
 ----------------------------------
 
-Each run of the script produces 6 figures. Figures 1-4 report, respectively, attitude error, RW motor torque, rate 
-tracking error, and RW speed. These plots are only relevant to the spacecraft / RW dynamics. Figures 5 and 6 
+Each run of the script produces 6 figures. Figures 1-4 report, respectively, attitude error, RW motor torque, rate
+tracking error, and RW speed. These plots are only relevant to the spacecraft / RW dynamics. Figures 5 and 6
 show the angle between the boresight vector of the star tracker and the Sun (fig. 5), and of the sun sensor(s) and
 the Sun (fig. 6). Each plot features a dashed line that represents an angular threshold for that specific instrument.
 
@@ -53,8 +53,8 @@ using :ref:`constrainedAttitudeManeuver`, the constraints are not violated.
 
     show_plots = True, use2SunSensors = False, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 0
 
-This case features the violation of the keep in constraint of the sun sensor only when :ref:`inertial3D` is used. 
-Just for this case, only the sun sensor along the y body axis is considered. Now, the keep in constraint is not violated 
+This case features the violation of the keep in constraint of the sun sensor only when :ref:`inertial3D` is used.
+Just for this case, only the sun sensor along the y body axis is considered. Now, the keep in constraint is not violated
 as the boresight angle never exceeds the 70 def field of view of the instrument.
 
 .. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5020700.svg
@@ -67,7 +67,7 @@ as the boresight angle never exceeds the 70 def field of view of the instrument.
 
     show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 1
 
-In this case, using :ref:`inertial3D`, both the sun sensor boresights exceed the respective thresholds. 
+In this case, using :ref:`inertial3D`, both the sun sensor boresights exceed the respective thresholds.
 In this scenario, however, they do not.
 
 .. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5120701.svg
@@ -80,7 +80,7 @@ In this scenario, however, they do not.
 
     show_plots = True, use2SunSensors = True, starTrackerFov = 20, sunSensorFov = 70, attitudeSetCase = 2
 
-In this case, :ref:`inertial3D` violates the keep out constraint of the star tracker, alongside with the keep in 
+In this case, :ref:`inertial3D` violates the keep out constraint of the star tracker, alongside with the keep in
 constraints for both the sun sensors. The following simulation shows how all the constraints are respected.
 
 .. image:: /_images/Scenarios/scenarioAttitudeConstrainedManeuver5120702.svg
@@ -127,10 +127,10 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     simulationTime = macros.min2nano(3.5)
     simulationTimeStep = macros.sec2nano(0.01)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-    
+
     #
     # setup the simulation tasks/objects
-    # 
+    #
 
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
@@ -179,7 +179,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
     sigma_BN_start = [ [0.522, -0.065,  0.539],     # to violate one keepIn only
                        [0.314, -0.251,  0.228],     # to violate two keepIn and not keepOut
-                       [-0.378, 0.119, -0.176],     # to violate keepOut and both keepIn 
+                       [-0.378, 0.119, -0.176],     # to violate keepOut and both keepIn
                        [-0.412, 0.044, -0.264] ]    # to violate keepOut only
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
@@ -187,7 +187,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     scObject.hub.sigma_BNInit = sigma_BN_start[attitudeSetCase]  # MRP set to customize initial inertial attitude
     scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]             # rad/s - omega_CN_B
-    
+
     # define the simulation inertia
     I = [0.02 / 3,  0.,         0.,
          0.,        0.1256 / 3, 0.,
@@ -246,7 +246,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
     sigma_BN_target = [ [0.342,  0.223, -0.432],     # to violate one keepIn only
                         [0.326, -0.206, -0.823],     # to violate two keepIn and not keepOut
-                        [0.350,  0.220, -0.440],     # to violate keepOut and both keepIn 
+                        [0.350,  0.220, -0.440],     # to violate keepOut and both keepIn
                         [0.350,  0.220, -0.440] ]    # to violate keepOut only
 
     # setup readManeuver guidance module
@@ -285,7 +285,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # Make the RW control all three body axes
     controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
-    
+
     # Boresight vector modules.
     stBACObject = boreAngCalc.BoreAngCalc()
     stBACObject.ModelTag = "starTrackerBoresight"
@@ -296,7 +296,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     ssyBACObject.ModelTag = "SunSensorBoresight"
     ssyBACObject.boreVec_B = [0., 1., 0.]  # boresight in body frame
     scSim.AddModelToTask(simTaskName, ssyBACObject)
-    
+
     if use2SunSensors:
         CAM.appendKeepInDirection([0,0,1], sunSensorFov*macros.D2R)
         sszBACObject = boreAngCalc.BoreAngCalc()
@@ -342,8 +342,8 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Setup the FSW RW configuration message.
@@ -365,7 +365,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
-    
+
     # Boresight modules
     stBACObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     stBACObject.celBodyInMsg.subscribeTo(spiceObject.planetStateOutMsgs[1])
@@ -411,7 +411,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     dataSSyMissAngle = ssyBACOLog.missAngle
     if use2SunSensors:
         dataSSzMissAngle = sszBACOLog.missAngle
-    
+
     dataRW = []
     for i in range(numRW):
         dataRW.append(rwLogs[i].u_current)
@@ -419,8 +419,8 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     np.set_printoptions(precision=16)
 
 
-    # Displays the plots relative to the S/C attitude, maneuver, RW speeds and torques and boresight angles    
-    
+    # Displays the plots relative to the S/C attitude, maneuver, RW speeds and torques and boresight angles
+
     timeData = rwMotorLog.times() * macros.NANO2MIN
 
     plot_attitude_error(timeData, dataSigmaBR)
@@ -433,7 +433,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     figureList[pltName] = plt.figure(2)
 
     plot_rate_error(timeData, dataOmegaBR)
-    pltName = fileName + "3" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)     
+    pltName = fileName + "3" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
     figureList[pltName] = plt.figure(3)
 
     plot_rw_speeds(timeData, dataOmegaRW, numRW)
@@ -443,7 +443,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     plot_st_miss_angle(timeData, dataSTMissAngle, starTrackerFov)
     pltName = fileName + "5" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
     figureList[pltName] = plt.figure(5)
-        
+
     dataSS = [dataSSyMissAngle]
     if use2SunSensors:
         dataSS.append(dataSSzMissAngle)
@@ -451,7 +451,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     pltName = fileName + "6" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
     figureList[pltName] = plt.figure(6)
 
-    if show_plots:  
+    if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures

@@ -278,8 +278,8 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #
 
     # create the FSW vehicle configuration message
-    configData = messaging.VehicleConfigMsgPayload()
-    configData.ISCPntB_B = I
+    configData = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
+
     configDataMsg = messaging.VehicleConfigMsg().write(configData)
 
     #

@@ -288,8 +288,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     mrpControl.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
-    configData = messaging.VehicleConfigMsgPayload()
-    configData.ISCPntB_B = I
+    configData = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     configDataMsg = messaging.VehicleConfigMsg().write(configData)
     mrpControl.vehConfigInMsg.subscribeTo(configDataMsg) # The MRP feedback algorithm requires the vehicle configuration structure.
     mrpControl.K = 3.5

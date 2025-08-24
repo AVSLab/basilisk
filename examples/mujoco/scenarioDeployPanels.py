@@ -441,8 +441,7 @@ class PIDController(StatefulSysModel.StatefulSysModel):
         self.integralErrorState.setDerivative([[stateError]])
 
         # Write the control output to the output message
-        payload = messaging.SingleActuatorMsgPayload()
-        payload.input = control_output
+        payload = messaging.SingleActuatorMsgPayload(input=control_output)
         self.outputOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
 

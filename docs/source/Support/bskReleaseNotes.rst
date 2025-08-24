@@ -73,6 +73,10 @@ Version |release|
 
     This is a breaking change, see list of known issues for details. Please report any issues
     (at buildtime or runtime) with recorders for custom payloads.
+- Support initialization of fields in the constructor of message payloads (in Python).
+- Improve string representation of message payloads (in Python).
+- Add support for pretty-printing message payloads (in Python).
+- Updated documentation and all scenarios to use new payload constructor format.
 
 
 Version 2.7.0 (April 20, 2025)

@@ -314,8 +314,8 @@ def setUpControl(scSim, extFTObject, attError, scGeometry):
     mrpControl.P = 2 * np.max(IHubPntB_B) / decayTime
     mrpControl.K = (mrpControl.P / xi) ** 2 / np.max(IHubPntB_B)
 
-    configData = messaging.VehicleConfigMsgPayload()
-    configData.IHubPntB_B = list(IHubPntB_B.flatten())
+    configData = messaging.VehicleConfigMsgPayload(IHubPntB_B=list(IHubPntB_B.flatten()))
+
     configDataMsg = messaging.VehicleConfigMsg()
     configDataMsg.write(configData)
 

@@ -84,8 +84,8 @@ def run(case):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging.CModuleTemplateMsgPayload()  # Create a structure for the input message
-    inputMessageData.dataVector = [1.0, 1.0, 0.7]  # Set up a list as a 3-vector
+    # Set up a list as a 3-vector
+    inputMessageData = messaging.CModuleTemplateMsgPayload(dataVector=[1.0, 1.0, 0.7])
     dataMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
 
     # Construct algorithm and associated C++ container

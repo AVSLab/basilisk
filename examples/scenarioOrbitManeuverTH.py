@@ -228,8 +228,8 @@ def run(show_plots):
     thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
 
     # Configure thruster on-time message
-    ThrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload()
-    ThrOnTimeMsgData.OnTimeRequest = [0, 0]
+    ThrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload(OnTimeRequest=[0, 0])
+
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrOnTimeMsgData)
 
     #
@@ -285,8 +285,8 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, snTransLog)
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # connect messages

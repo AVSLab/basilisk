@@ -242,13 +242,11 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #
     # create simulation messages
     #
-    sunPositionMsgData = messaging.SpicePlanetStateMsgPayload()
-    sunPositionMsgData.PositionVector = [0.0, om.AU*1000.0, 0.0]
+    sunPositionMsgData = messaging.SpicePlanetStateMsgPayload(PositionVector=[0.0, om.AU*1000.0, 0.0])
     sunPositionMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsgData)
 
     if useEclipse:
-        eclipseMsgData = messaging.EclipseMsgPayload()
-        eclipseMsgData.shadowFactor = 0.5
+        eclipseMsgData = messaging.EclipseMsgPayload(shadowFactor=0.5)
         eclipseMsg = messaging.EclipseMsg().write(eclipseMsgData)
 
     def setupCSS(CSS):

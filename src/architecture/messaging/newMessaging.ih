@@ -17,6 +17,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %pythoncode %{
     import numpy as np
+    import inspect
+    import pprint
     from Basilisk.utilities import deprecated
 %};
 %{
@@ -41,6 +43,72 @@ import_array();  // Required to initialize NumPy C API
 #include "folder/messageTypePayload.h"
 %}
 %include "folder/messageTypePayload.h"
+
+%feature("shadow") messageTypePayload()
+{
+def __init__(self, **fields):
+    """Constructs a new payload, zero'd by default.
+
+    Keyword arguments can be passed to initialize the fields of
+    this payload.
+    """
+    _ ## messageTypePayload.messageTypePayload ## _swiginit(self, _ ## messageTypePayload.new_ ## messageTypePayload())
+    for field, value in fields.items():
+        setattr(self, field, value)
+}
+
+%extend messageTypePayload {
+%pythoncode %{
+    @classmethod
+    def __fields__(cls):
+        """Returns a list with all the payload's fields."""
+        return tuple(
+            name
+            for name, _ in inspect.getmembers(
+                cls,
+                lambda v: isinstance(v, property) and v is not cls.thisown
+            )
+        )
+
+    def __repr__(self):
+        """Formats the content of the payload"""
+        selfType = type(self)
+        fields = [
+            f"{name}={getattr(self, name)!r}"
+            for name in selfType.__fields__()
+        ]
+        return selfType.__qualname__ + "(" + ', '.join(fields) + ")"
+%}
+}
+
+%pythoncode %{
+def _pprint_ ## messageTypePayload(pprinter, object, stream, indent, allowance, context, level):
+    """Formatter function to support pretty-printing (with ``pprint``)."""
+    selfType = type(object)
+    cls_name = selfType.__qualname__
+    indent += len(cls_name) + 1
+    fields = [
+        (name, getattr(object, name))
+        for name in selfType.__fields__()
+    ]
+    stream.write(cls_name + '(')
+    if fields:
+        delimnl = ',\n' + ' ' * indent
+        last_index = len(fields) - 1
+        for i, (key, ent) in enumerate(fields):
+            last = i == last_index
+            stream.write(key)
+            stream.write('=')
+            pprinter._format(ent, stream, indent + len(key) + 1,
+                        allowance if last else 1,
+                        context, level)
+            if not last:
+                stream.write(delimnl)
+
+    stream.write(')')
+
+pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messageTypePayload
+%}
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {

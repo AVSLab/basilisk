@@ -136,12 +136,10 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, scObjectDebris)
 
     # Create VehicleConfig messages including the S/C mass (for etSphericalControl)
-    servicerConfigOutData = messaging.VehicleConfigMsgPayload()
-    servicerConfigOutData.massSC = scObjectServicer.hub.mHub
+    servicerConfigOutData = messaging.VehicleConfigMsgPayload(massSC=scObjectServicer.hub.mHub)
     servicerVehicleConfigMsg = messaging.VehicleConfigMsg().write(servicerConfigOutData)
 
-    debrisConfigOutData = messaging.VehicleConfigMsgPayload()
-    debrisConfigOutData.massSC = scObjectDebris.hub.mHub
+    debrisConfigOutData = messaging.VehicleConfigMsgPayload(massSC=scObjectDebris.hub.mHub)
     debrisVehicleConfigMsg = messaging.VehicleConfigMsg().write(debrisConfigOutData)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -162,12 +160,12 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, MSMmodule)
 
     # define electric potentials
-    voltServicerInMsgData = messaging.VoltMsgPayload()
-    voltServicerInMsgData.voltage = 25000.  # [V] servicer potential
+    voltServicerInMsgData = messaging.VoltMsgPayload(voltage=25000.)
+  # [V] servicer potential
     voltServicerInMsg = messaging.VoltMsg().write(voltServicerInMsgData)
 
-    voltDebrisInMsgData = messaging.VoltMsgPayload()
-    voltDebrisInMsgData.voltage = -25000.  # [V] debris potential
+    voltDebrisInMsgData = messaging.VoltMsgPayload(voltage=-25000.)
+  # [V] debris potential
     voltDebrisInMsg = messaging.VoltMsg().write(voltDebrisInMsgData)
 
     # create a list of sphere body-fixed locations and associated radii

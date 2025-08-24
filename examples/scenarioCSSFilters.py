@@ -469,17 +469,16 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
     #   add the FSW CSS information
     #
-    cssConstVehicle = messaging.CSSConfigMsgPayload()
-
-    totalCSSList = []
-    for CSSHat in CSSOrientationList:
-        newCSS = messaging.CSSUnitConfigMsgPayload()
-        newCSS.nHat_B = CSSHat
-        newCSS.CBias = 1.0
-        totalCSSList.append(newCSS)
-    cssConstVehicle.nCSS = len(CSSOrientationList)
-    cssConstVehicle.cssVals = totalCSSList
-
+    cssConstVehicle = messaging.CSSConfigMsgPayload(
+        nCSS = len(CSSOrientationList),
+        cssVals = [
+            messaging.CSSUnitConfigMsgPayload(
+                nHat_B=CSSHat,
+                CBias=1.0,
+            )
+            for CSSHat in CSSOrientationList
+        ]
+    )
     cssConstMsg = messaging.CSSConfigMsg().write(cssConstVehicle)
 
     #

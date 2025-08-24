@@ -133,7 +133,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque [Nm]')
     plt.grid(True)
-    
+
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(2)
@@ -161,7 +161,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
     plt.grid(True)
-    
+
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW spin rates."""
     plt.figure(4)
@@ -173,7 +173,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed [RPM] ')
     plt.grid(True)
-    
+
 def plot_magnetic_field(timeData, dataMagField):
     """Plot the magnetic field."""
     plt.figure(5)
@@ -197,7 +197,7 @@ def plot_data_tam(timeData, dataTam):
     plt.xlabel('Time [min]')
     plt.ylabel('Magnetic Field [nT]')
     plt.grid(True)
-    
+
 def plot_data_tam_comm(timeData, dataTamComm):
     """Plot the magnetic field."""
     plt.figure(7)
@@ -209,7 +209,7 @@ def plot_data_tam_comm(timeData, dataTamComm):
     plt.xlabel('Time [min]')
     plt.ylabel('Magnetic Field [nT]')
     plt.grid(True)
-    
+
 def plot_data_mtb_momentum_management(timeData, dataMtbMomentumManegement, numMTB):
     """Plot the magnetic field."""
     plt.figure(8)
@@ -221,7 +221,7 @@ def plot_data_mtb_momentum_management(timeData, dataMtbMomentumManegement, numMT
     plt.xlabel('Time [min]')
     plt.ylabel('Torque Rod Dipoles [A-m2]')
     plt.grid(True)
-    
+
 
 def plot_data_rw_motor_torque_desired(dataUsReq, tauRequested_W, numRW):
     """Plot the RW desired motor torques."""
@@ -234,7 +234,7 @@ def plot_data_rw_motor_torque_desired(dataUsReq, tauRequested_W, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
     plt.grid(True)
-    
+
 def run(show_plots):
     """
     The scenarios can be run with the followings setups parameters:
@@ -317,11 +317,11 @@ def run(show_plots):
     RW3 = rwFactory.create('BCT_RWP015', Gs[:, 2], Omega_max=5000.  # RPM
                            , RWModel=varRWModel, useRWfriction=False,
                            )
-    
+
     RW4 = rwFactory.create('BCT_RWP015', Gs[:, 3], Omega_max=5000.  # RPM
                            , RWModel=varRWModel, useRWfriction=False,
                            )
-    
+
     # In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride
     # any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the
     # maximum wheel speed.
@@ -352,14 +352,14 @@ def run(show_plots):
     magModule.epochInMsg.subscribeTo(epochMsg)
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
     scSim.AddModelToTask(simTaskName, magModule)
-    
+
     # add magnetic torque bar effector
     mtbEff = MtbEffector.MtbEffector()
     mtbEff.ModelTag = "MtbEff"
     scObject.addDynamicEffector(mtbEff)
     scSim.AddModelToTask(simTaskName, mtbEff)
-    
-    
+
+
     #
     #   setup the FSW algorithm tasks
     #
@@ -379,13 +379,13 @@ def run(show_plots):
     mrpControl = mrpFeedback.mrpFeedback()
     mrpControl.ModelTag = "mrpFeedback"
     scSim.AddModelToTask(simTaskName, mrpControl)
-    
+
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.K = 0.0001
     mrpControl.P = 0.002
     mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
 
-    
+
     # create the minimal TAM module
     TAM = magnetometer.Magnetometer()
     TAM.ModelTag = "TAM_sensor"
@@ -393,28 +393,28 @@ def run(show_plots):
     TAM.scaleFactor = 1.0
     TAM.senNoiseStd = [0.0,  0.0, 0.0]
     scSim.AddModelToTask(simTaskName, TAM)
-    
+
     # setup tamComm module
     tamCommObj = tamComm.tamComm()
     tamCommObj.dcm_BS = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
     tamCommObj.ModelTag = "tamComm"
     scSim.AddModelToTask(simTaskName, tamCommObj)
-    
+
     # setup mtbMomentumManagement module
     mtbMomentumManagementSimpleObj = mtbMomentumManagementSimple.mtbMomentumManagementSimple()
     mtbMomentumManagementSimpleObj.Kp = 0.003
-    mtbMomentumManagementSimpleObj.ModelTag = "mtbMomentumManagementSimple"          
+    mtbMomentumManagementSimpleObj.ModelTag = "mtbMomentumManagementSimple"
     scSim.AddModelToTask(simTaskName, mtbMomentumManagementSimpleObj)
-    
+
     # setup torque2Dipole module
     torque2DipoleObj = torque2Dipole.torque2Dipole()
     torque2DipoleObj.ModelTag = "torque2Dipole"
     scSim.AddModelToTask(simTaskName, torque2DipoleObj)
-    
+
     # mtbConfigData message
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
     mtbConfigParams.numMTB = 4
-    
+
     # row major toque bar alignments
     mtbConfigParams.GtMatrix_B =[
         1., 0., 0., 0.70710678,
@@ -423,10 +423,10 @@ def run(show_plots):
     maxDipole = 0.1
     mtbConfigParams.maxMtbDipoles = [maxDipole]*mtbConfigParams.numMTB
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
-    
+
     # setup dipoleMapping module
     dipoleMappingObj = dipoleMapping.dipoleMapping()
-    
+
     # row major toque bar alignment inverse
     dipoleMappingObj.steeringMatrix = [0.75, -0.25, 0.,
                                           -0.25, 0.75, 0.,
@@ -434,12 +434,12 @@ def run(show_plots):
                                            0.35355339, 0.35355339, 0.]
     dipoleMappingObj.ModelTag = "dipoelMapping"
     scSim.AddModelToTask(simTaskName, dipoleMappingObj)
-    
+
     # setup mtbFeedforward module
     mtbFeedforwardObj = mtbFeedforward.mtbFeedforward()
     mtbFeedforwardObj.ModelTag = "mtbFeedforward"
     scSim.AddModelToTask(simTaskName, mtbFeedforwardObj)
-    
+
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
     rwMotorTorqueObj.ModelTag = "rwMotorTorque"
@@ -450,46 +450,33 @@ def run(show_plots):
         1, 0, 0, 0, 1, 0, 0, 0, 1
     ]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
-    
+
     # setup rwNullSpace module
     rwNullSpaceObj = rwNullSpace.rwNullSpace()
     rwNullSpaceObj.OmegaGain = 0.0000003
     rwNullSpaceObj.ModelTag = "rwNullSpace"
     scSim.AddModelToTask(simTaskName, rwNullSpaceObj)
-    
+
     # setup RWConstellationMsgPayload
-    rwConstellationConfig = messaging.RWConstellationMsgPayload()
-    rwConstellationConfig.numRW = numRW
-    rwConfigElementList = list()
-    rwConfigElementMsg1 = messaging.RWConfigElementMsgPayload()
-    rwConfigElementMsg1.gsHat_B = Gs[:, 0]
-    rwConfigElementMsg1.Js = RW1.Js
-    rwConfigElementMsg1.uMax = RW1.u_max
-    rwConfigElementList.append(rwConfigElementMsg1)
-    rwConfigElementMsg2 = messaging.RWConfigElementMsgPayload()
-    rwConfigElementMsg2.gsHat_B = Gs[:, 1]
-    rwConfigElementMsg2.Js = RW2.Js
-    rwConfigElementMsg2.uMax = RW2.u_max
-    rwConfigElementList.append(rwConfigElementMsg2)
-    rwConfigElementMsg3 = messaging.RWConfigElementMsgPayload()
-    rwConfigElementMsg3.gsHat_B = Gs[:, 2]
-    rwConfigElementMsg3.Js = RW3.Js
-    rwConfigElementMsg3.uMax = RW3.u_max
-    rwConfigElementList.append(rwConfigElementMsg3)
-    rwConfigElementMsg4 = messaging.RWConfigElementMsgPayload()
-    rwConfigElementMsg4.gsHat_B = Gs[:, 3]
-    rwConfigElementMsg4.Js = RW4.Js
-    rwConfigElementMsg4.uMax = RW4.u_max
-    rwConfigElementList.append(rwConfigElementMsg4)
-    rwConstellationConfig.reactionWheels = rwConfigElementList
+    rwConstellationConfig = messaging.RWConstellationMsgPayload(
+        numRW=numRW,
+        reactionWheels = [
+            messaging.RWConfigElementMsgPayload(
+                gsHat_B=Gs[:, i],
+                Js=RW.Js,
+                uMax=RW.u_max,
+            )
+            for i, RW in enumerate((RW1, RW2, RW3, RW4))
+        ]
+    )
     rwConstellationConfigInMsg = messaging.RWConstellationMsg().write(rwConstellationConfig)
-    
+
     # setup RWSpeedMsgPayload for the rwNullSpace
     desiredOmega = [1000 * macros.rpm2radsec]*numRW
-    rwNullSpaceWheelSpeedBias = messaging.RWSpeedMsgPayload()
-    rwNullSpaceWheelSpeedBias.wheelSpeeds = desiredOmega
+    rwNullSpaceWheelSpeedBias = messaging.RWSpeedMsgPayload(wheelSpeeds=desiredOmega)
+
     rwNullSpaceWheelSpeedBiasInMsg = messaging.RWSpeedMsg().write(rwNullSpaceWheelSpeedBias)
-    
+
     #
     #   Setup data logging before the simulation is initialized
     #
@@ -501,18 +488,18 @@ def run(show_plots):
     tamLog = TAM.tamDataOutMsg.recorder(samplingTime)
     tamCommLog = tamCommObj.tamOutMsg.recorder(samplingTime)
     mtbDipoleCmdsLog = dipoleMappingObj.dipoleRequestMtbOutMsg.recorder(samplingTime)
-    
+
     scSim.AddModelToTask(simTaskName, rwMotorLog)
     scSim.AddModelToTask(simTaskName, attErrorLog)
     scSim.AddModelToTask(simTaskName, magLog)
     scSim.AddModelToTask(simTaskName, tamLog)
     scSim.AddModelToTask(simTaskName, tamCommLog)
     scSim.AddModelToTask(simTaskName, mtbDipoleCmdsLog)
-    
+
     # To log the RW information, the following code is used:
     mrpLog = rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, mrpLog)
-    
+
     # A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
     # here to be plotted later on.  However, RW specific messages are also being created which
     # contain a wealth of information.  The vector of messages is ordered as they were added.  This
@@ -521,14 +508,14 @@ def run(show_plots):
     for item in range(numRW):
         rwLogs.append(rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
         scSim.AddModelToTask(simTaskName, rwLogs[item])
-        
+
     #
     # create simulation messages
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # Setup the FSW RW configuration to be the same as the simulated RW configuration
@@ -569,36 +556,36 @@ def run(show_plots):
     TAM.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     TAM.magInMsg.subscribeTo(magModule.envOutMsgs[0])
     tamCommObj.tamInMsg.subscribeTo(TAM.tamDataOutMsg)
-    
+
     mtbMomentumManagementSimpleObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
     mtbMomentumManagementSimpleObj.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
-    
+
     torque2DipoleObj.tauRequestInMsg.subscribeTo(mtbMomentumManagementSimpleObj.tauMtbRequestOutMsg)
     torque2DipoleObj.tamSensorBodyInMsg.subscribeTo(tamCommObj.tamOutMsg)
-    
+
     dipoleMappingObj.dipoleRequestBodyInMsg.subscribeTo(torque2DipoleObj.dipoleRequestOutMsg)
     dipoleMappingObj.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
-    
+
     mtbFeedforwardObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
     mtbFeedforwardObj.dipoleRequestMtbInMsg.subscribeTo(dipoleMappingObj.dipoleRequestMtbOutMsg)
     mtbFeedforwardObj.tamSensorBodyInMsg.subscribeTo(tamCommObj.tamOutMsg)
     mtbFeedforwardObj.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
-    
+
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
     rwMotorTorqueObj.vehControlInMsg.subscribeTo(mtbFeedforwardObj.vehControlOutMsg)
-    
+
     rwNullSpaceObj.rwMotorTorqueInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     rwNullSpaceObj.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
     rwNullSpaceObj.rwConfigInMsg.subscribeTo(rwConstellationConfigInMsg)
     rwNullSpaceObj.rwDesiredSpeedsInMsg.subscribeTo(rwNullSpaceWheelSpeedBiasInMsg)
-    
+
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwNullSpaceObj.rwMotorTorqueOutMsg)
-    
+
     mtbEff.mtbCmdInMsg.subscribeTo(dipoleMappingObj.dipoleRequestMtbOutMsg)
     mtbEff.mtbParamsInMsg.subscribeTo(mtbParamsInMsg)
     mtbEff.magInMsg.subscribeTo(magModule.envOutMsgs[0])
-    
-    
+
+
     # initialize configure and execute sim
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
@@ -616,7 +603,7 @@ def run(show_plots):
     dataTam = tamLog.tam_S
     dataTamComm = tamCommLog.tam_B
     dataMtbDipoleCmds = mtbDipoleCmdsLog.mtbDipoleCmds
-    
+
     np.set_printoptions(precision=16)
 
     #   plot the results
@@ -640,15 +627,15 @@ def run(show_plots):
     plot_magnetic_field(timeData, dataMagField)
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(5)
-    
+
     plot_data_tam(timeData, dataTam)
     pltName = fileName + "5"
     figureList[pltName] = plt.figure(6)
-    
+
     plot_data_tam_comm(timeData, dataTamComm)
     pltName = fileName + "6"
     figureList[pltName] = plt.figure(7)
-    
+
     plot_data_mtb_momentum_management(timeData, dataMtbDipoleCmds, mtbConfigParams.numMTB)
     pltName = fileName + "7"
     figureList[pltName] = plt.figure(8)

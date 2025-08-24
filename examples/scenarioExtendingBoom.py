@@ -175,9 +175,10 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, profiler2)
     translatingBodyEffector.translatingBodyRefInMsgs[1].subscribeTo(profiler2.linearTranslationRigidBodyOutMsg)
 
-    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload()
-    translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
-    translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
+    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload(
+        rho=scGeometry.heightArm,   # [m]
+        rhoDot=0,   # [m/s]
+    )
     translatingRigidBodyMsg2 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
     profiler2.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg2)
 
@@ -206,9 +207,10 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, profiler3)
     translatingBodyEffector.translatingBodyRefInMsgs[2].subscribeTo(profiler3.linearTranslationRigidBodyOutMsg)
 
-    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload()
-    translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
-    translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
+    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload(
+        rho=scGeometry.heightArm,  # [m]
+        rhoDot=0,  # [m/s]
+    )
     translatingRigidBodyMsg3 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
     profiler3.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg3)
 
@@ -237,9 +239,10 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, profiler4)
     translatingBodyEffector.translatingBodyRefInMsgs[3].subscribeTo(profiler4.linearTranslationRigidBodyOutMsg)
 
-    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload()
-    translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
-    translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
+    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload(
+        rho=scGeometry.heightArm,   # [m]
+        rhoDot=0,   # [m/s]
+    )
     translatingRigidBodyMsg4 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
     profiler4.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg4)
 

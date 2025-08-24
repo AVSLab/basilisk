@@ -201,8 +201,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
 
         swMsgList = []
         for c, val in enumerate(sw_msg.values()):
-            swMsgData = messaging.SwDataMsgPayload()
-            swMsgData.dataValue = val
+            swMsgData = messaging.SwDataMsgPayload(dataValue=val)
             swMsgList.append(messaging.SwDataMsg().write(swMsgData))
             atmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
     else:

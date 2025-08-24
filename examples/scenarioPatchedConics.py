@@ -160,21 +160,24 @@ def run(show_plots):
     # positions and velocities even when the planets are not moving.
     rEarth = 149598023. * 1000
     rJupiter = 778298361. * 1000
-    earthStateMsg = messaging.SpicePlanetStateMsgPayload()
-    earthStateMsg.PositionVector = [0.0, -rEarth, 0.0]
-    earthStateMsg.VelocityVector = [0.0, 0.0, 0.0]
+    earthStateMsg = messaging.SpicePlanetStateMsgPayload(
+        PositionVector=[0.0, -rEarth, 0.0],
+        VelocityVector=[0.0, 0.0, 0.0],
+    )
     earthMsg = messaging.SpicePlanetStateMsg().write(earthStateMsg)
     gravFactory.gravBodies['earth'].planetBodyInMsg.subscribeTo(earthMsg)
 
-    jupiterStateMsg = messaging.SpicePlanetStateMsgPayload()
-    jupiterStateMsg.PositionVector = [0.0, rJupiter, 0.0]
-    jupiterStateMsg.VelocityVector = [0.0, 0.0, 0.0]
+    jupiterStateMsg = messaging.SpicePlanetStateMsgPayload(
+        PositionVector=[0.0, rJupiter, 0.0],
+        VelocityVector=[0.0, 0.0, 0.0],
+    )
     jupiterMsg = messaging.SpicePlanetStateMsg().write(jupiterStateMsg)
     gravFactory.gravBodies['jupiter barycenter'].planetBodyInMsg.subscribeTo(jupiterMsg)
 
-    sunStateMsg = messaging.SpicePlanetStateMsgPayload()
-    sunStateMsg.PositionVector = [0.0, 0.0, 0.0]
-    sunStateMsg.VelocityVector = [0.0, 0.0, 0.0]
+    sunStateMsg = messaging.SpicePlanetStateMsgPayload(
+        PositionVector=[0.0, 0.0, 0.0],
+        VelocityVector=[0.0, 0.0, 0.0],
+    )
     sunMsg = messaging.SpicePlanetStateMsg().write(sunStateMsg)
     gravFactory.gravBodies['sun'].planetBodyInMsg.subscribeTo(sunMsg)
 
