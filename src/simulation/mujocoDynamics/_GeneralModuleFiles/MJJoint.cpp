@@ -115,6 +115,12 @@ void MJScalarJoint::setVelocity(double value)
     body.getSpec().getScene().markKinematicsAsStale();
 }
 
+MJSingleJointEquality
+MJScalarJoint::getConstrainedEquality()
+{
+    return this->constrainedEquality;
+}
+
 void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
 {
     checkInitialized();
