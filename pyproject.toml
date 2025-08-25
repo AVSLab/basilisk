@@ -3,11 +3,11 @@ build-backend = "setuptools.build_meta"
 requires = [
     "setuptools>=70.1.0,<=78.1.0",   # Required for "bdist_wheel" to work correctly.
     "setuptools-scm>=8.0,<=8.2.1",  # Automatically include all Git-controlled files in sdist
-    "packaging>=22,<=24.2",        # Due to incompatibility: https://github.com/pypa/setuptools/issues/4483
+    "packaging",
 
     # needed to find the numpy include headers,
     # pin to lowest runtime allowed version to take advantage of backwards compatibility
-    "numpy<=2.2.4,>=1.24.4",
+    "numpy<=2.3.0,>=1.24.4",
 
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.15.1",
@@ -55,3 +55,25 @@ Basilisk = [
 [tool.setuptools.dynamic]
 version = {file = "docs/source/bskVersion.txt"}
 dependencies = {file = "requirements.txt"}
+
+[tool.cibuildwheel]
+build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+skip  = ["*-win32", "cp38-macosx_arm64"]
+build-verbosity = 1
+
+[tool.cibuildwheel.environment]
+CMAKE_BUILD_TYPE = "Release"
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "11.0"
+CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"
+
+[tool.cibuildwheel.linux]
+archs = ["native"]
+repair-wheel-command = [
+  "auditwheel repair --strip -w {dest_dir} {wheel}"
+]
+manylinux-x86_64-image  = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+musllinux-x86_64-image  = "musllinux_1_2"
+musllinux-aarch64-image = "musllinux_1_2"
