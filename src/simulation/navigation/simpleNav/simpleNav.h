@@ -46,8 +46,8 @@ public:
     void writeOutputMessages(uint64_t Clock);
 
 public:
-    Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
+    Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with, can be changed during simulation
+    Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states, can be changed during simulation
     Eigen::VectorXd navErrors;        //!< -- Current navigation errors applied to truth
     Message<NavAttMsgPayload> attOutMsg;        //!< attitude navigation output msg
     Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg
@@ -68,6 +68,7 @@ private:
     Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state
     GaussMarkov errorModel;            //!< -- Gauss-markov error states
     uint64_t prevTime;                 //!< -- Previous simulation time observed
+    int64_t numStates = 18;            //!< -- Number of states
 };
 
 

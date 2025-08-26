@@ -141,8 +141,16 @@ def unitSimpleNav(show_plots):
     unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))
     unitTestSim.ExecuteSimulation()
 
+    # Increase the noise in covariance matrix and error bounds
+    pMatrix = 3 * numpy.array(pMatrix)
+    errorBounds = 3 * numpy.array(errorBounds)
+    sNavObject.walkBounds = errorBounds
+    sNavObject.PMatrix = pMatrix
+    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9 * 2))
+    unitTestSim.ExecuteSimulation()
 
     # pull simulation data
+    time = dataTransLog.times()
     posNav = dataTransLog.r_BN_N
     velNav = dataTransLog.v_BN_N
     attNav = dataAttLog.sigma_BN
@@ -161,8 +169,15 @@ def unitSimpleNav(show_plots):
     rateDiffCount = 0
     dvDiffCount = 0
     sunDiffCount = 0
-    i=0
-    while i< posNav.shape[0]:
+    t_switch = int(60 * 144.0 * 1E9)
+    for i in range(posNav.shape[0]):
+        # Determine if posBound should be scaled
+        currentPosBound = posBound if time[i] < t_switch else [3 * b for b in posBound]
+        currentVelBound = velBound if time[i] < t_switch else [3 * b for b in velBound]
+        currentAttBound = attBound if time[i] < t_switch else [3 * b for b in attBound]
+        currentRateBound = rateBound if time[i] < t_switch else [3 * b for b in rateBound]
+        currentDvBound = dvBound if time[i] < t_switch else [3 * b for b in dvBound]
+        currentSunBound = sunBound if time[i] < t_switch else [3 * b for b in sunBound]
         posVecDiff = posNav[i,0:] - vehPosition
         velVecDiff = velNav[i,0:]
         attVecDiff = attNav[i,0:]
@@ -171,20 +186,19 @@ def unitSimpleNav(show_plots):
         sunVecDiff = math.acos(numpy.dot(sunNav[i, 0:], sunHatPred))
         j=0
         while j<3:
-            if(abs(posVecDiff[j]) > posBound[j]):
+            if(abs(posVecDiff[j]) > currentPosBound[j]):
                 posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j]):
+            if(abs(velVecDiff[j]) > currentVelBound[j]):
                 velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j]):
+            if(abs(attVecDiff[j]) > currentAttBound[j]):
                 attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j]):
+            if(abs(rateVecDiff[j]) > currentRateBound[j]):
                 rateDiffCount += 1
-            if(abs(dvVecDiff[j]) > dvBound[j]):
+            if(abs(dvVecDiff[j]) > currentDvBound[j]):
                 dvDiffCount += 1
             j+=1
-        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]):
+        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*currentSunBound[0]):
             sunDiffCount += 1
-        i+= 1
 
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
@@ -201,8 +215,14 @@ def unitSimpleNav(show_plots):
     rateDiffCount = 0
     dvDiffCount = 0
     sunDiffCount = 0
-    i=0
-    while i< posNav.shape[0]:
+    for i in range(posNav.shape[0]):
+        # Determine if posBound should be scaled
+        currentPosBound = posBound if time[i] < t_switch else [3 * b for b in posBound]
+        currentVelBound = velBound if time[i] < t_switch else [3 * b for b in velBound]
+        currentAttBound = attBound if time[i] < t_switch else [3 * b for b in attBound]
+        currentRateBound = rateBound if time[i] < t_switch else [3 * b for b in rateBound]
+        currentDvBound = dvBound if time[i] < t_switch else [3 * b for b in dvBound]
+        currentSunBound = sunBound if time[i] < t_switch else [3 * b for b in sunBound]
         posVecDiff = posNav[i,0:] - vehPosition
         velVecDiff = velNav[i,0:]
         attVecDiff = attNav[i,0:]
@@ -211,20 +231,19 @@ def unitSimpleNav(show_plots):
         sunVecDiff = math.acos(numpy.dot(sunNav[i, 0:], sunHatPred))
         j=0
         while j<3:
-            if(abs(posVecDiff[j]) > posBound[j]*sigmaThreshold):
+            if(abs(posVecDiff[j]) > currentPosBound[j]*sigmaThreshold):
                 posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j]*sigmaThreshold):
+            if(abs(velVecDiff[j]) > currentVelBound[j]*sigmaThreshold):
                 velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j]*sigmaThreshold):
+            if(abs(attVecDiff[j]) > currentAttBound[j]*sigmaThreshold):
                 attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j]*sigmaThreshold):
+            if(abs(rateVecDiff[j]) > currentRateBound[j]*sigmaThreshold):
                 rateDiffCount += 1
-            if(abs(dvVecDiff[j]) > dvBound[j]*sigmaThreshold):
+            if(abs(dvVecDiff[j]) > currentDvBound[j]*sigmaThreshold):
                 dvDiffCount += 1
             j+=1
-        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]*sigmaThreshold):
+        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*currentSunBound[0]*sigmaThreshold):
             sunDiffCount += 1
-        i+= 1
 
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
