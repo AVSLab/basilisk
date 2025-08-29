@@ -28,6 +28,25 @@ void MJEquality::setActive(bool active)
     data->eq_active[this->getId()] = active;
 }
 
+void
+MJEquality::setSolref(double val1, double val2)
+{
+    auto model = this->spec.getMujocoModel();
+    model->eq_solref[this->getId() * mjNREF + 0] = val1;
+    model->eq_solref[this->getId() * mjNREF + 1] = val2;
+}
+
+void
+MJEquality::setSolimp(double d0, double dwidth, double width, double midpoint, double power)
+{
+    auto model = this->spec.getMujocoModel();
+    model->eq_solimp[this->getId() * mjNIMP + 0] = d0;
+    model->eq_solimp[this->getId() * mjNIMP + 1] = dwidth;
+    model->eq_solimp[this->getId() * mjNIMP + 2] = width;
+    model->eq_solimp[this->getId() * mjNIMP + 3] = midpoint;
+    model->eq_solimp[this->getId() * mjNIMP + 4] = power;
+}
+
 void MJSingleJointEquality::setJointOffsetConstraint(double val)
 {
     auto model = this->spec.getMujocoModel();

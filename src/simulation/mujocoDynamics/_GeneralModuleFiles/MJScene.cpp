@@ -343,6 +343,18 @@ MJForceTorqueActuator& MJScene::getForceTorqueActuator(const std::string& name)
     return this->spec.getActuator<MJForceTorqueActuator>(name);
 }
 
+MJSingleActuator& MJScene::addJointSingleActuator(const std::string& name,
+                                             const std::string& joint)
+{
+    return this->spec.addJointSingleActuator(name, joint);
+}
+
+MJSingleActuator&
+MJScene::addJointSingleActuator(const std::string& name, const MJJoint& joint)
+{
+    return this->addJointSingleActuator(name, joint.getName());
+}
+
 MJSingleActuator& MJScene::addSingleActuator(const std::string& name,
                                              const std::string& site,
                                              const Eigen::Vector6d& gear)

@@ -183,6 +183,18 @@ public:
     template <typename T> T& getActuator(const std::string& name);
 
     /**
+     * @brief Adds a single-input actuator acting on a joint (`MJSingleActuator`).
+     *
+     * This actuator will impart a force and/or torque at the given joint.
+     *
+     * @param name The name of the actuator.
+     * @param joint The joint to attach the actuator.
+     * @return Reference to the created `MJSingleActuator`.
+     */
+    MJSingleActuator& addJointSingleActuator(const std::string& name,
+                                        const std::string& joint);
+
+    /**
      * @brief Adds a single-input actuator (`MJSingleActuator`).
      *
      * This actuator will impart a force and/or torque at the given site.

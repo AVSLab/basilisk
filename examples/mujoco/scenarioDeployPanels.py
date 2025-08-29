@@ -51,7 +51,8 @@ generated using a trapezoidal/triangular velocity profile. These profiles are
 then used as inputs to the PID controller, which computes the torque required to achieve
 the desired motion. Note that the controller class extends ``StatefulSysModel``,
 instead of ``SysModel``, since we need to register the integral error as a
-continuous state.
+continuous state. The scenario ``mujoco/scenarioBranchingPanels.py`` uses a similar
+PID controller, except that it uses a faster C++ model.
 
 The simulation is run for 80 minutes and the state of the system is recorded.
 The desired and achieved joint angles, as well as the torque applied to each

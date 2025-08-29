@@ -95,7 +95,7 @@ void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
 
     ScalarJointStateMsgPayload stateDotOutMsgPayload;
     auto stateDot = body.getSpec().getScene().getQvelState()->getState();
-    stateDotOutMsgPayload.state = state(this->qvelAdr.value());
+    stateDotOutMsgPayload.state = stateDot(this->qvelAdr.value());
     this->stateDotOutMsg.write(&stateDotOutMsgPayload, body.getSpec().getScene().moduleID, 0);
 }
 
@@ -113,6 +113,12 @@ void MJScalarJoint::setVelocity(double value)
 
     body.getSpec().getScene().getQvelState()->state(this->qvelAdr.value()) = value;
     body.getSpec().getScene().markKinematicsAsStale();
+}
+
+MJSingleJointEquality
+MJScalarJoint::getConstrainedEquality()
+{
+    return this->constrainedEquality;
 }
 
 void MJFreeJoint::setPosition(const Eigen::Vector3d& position)

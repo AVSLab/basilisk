@@ -214,6 +214,27 @@ bool MJSpec::hasActuator(const std::string& name)
            }) != std::end(actuators);
 }
 
+MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name,
+                                            const std::string& joint)
+{
+    if (this->hasActuator(name)) {
+        MJBasilisk::detail::logAndThrow("Tried to add actuator with name '" + name +
+                                        "' but one already exists with that name.");
+    }
+
+    auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
+    newMjsActuator->trntype = mjTRN_JOINT;
+    mjs_setString(newMjsActuator->name, name.c_str());
+    mjs_setString(newMjsActuator->target, joint.c_str());
+    newMjsActuator->dyntype = mjDYN_NONE;
+    newMjsActuator->gaintype = mjGAIN_FIXED;
+    newMjsActuator->biastype = mjBIAS_NONE;
+    newMjsActuator->gainprm[0] = 1;
+    auto& actuator = this->actuators.emplace_back(
+        std::make_unique<MJSingleActuator>(name, std::vector{MJActuatorObject{newMjsActuator}}));
+    return *static_cast<MJSingleActuator*>(actuator.get());
+}
+
 MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
                                             const std::string& site,
                                             const Eigen::Vector6d& gear)

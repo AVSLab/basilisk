@@ -147,6 +147,18 @@ public:
     void setVelocity(double value);
 
     /**
+     * @brief Returns the equality constraint object associated with this scalar joint.
+     *
+     * The returned MJSingleJointEquality can be used to enforce a specific state
+     * for the joint within the MuJoCo simulation. This is typically used when the
+     * joint is constrained to follow a particular position or velocity, as specified
+     * by an input message or control logic.
+     *
+     * @return The MJSingleJointEquality object for this joint.
+     */
+    MJSingleJointEquality getConstrainedEquality();
+
+    /**
      * @brief Configures the scalar joint within the given MuJoCo model.
      *
      * @param model Pointer to the MuJoCo model.

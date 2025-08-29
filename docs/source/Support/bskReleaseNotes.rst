@@ -78,6 +78,17 @@ Version |release|
 - Improve string representation of message payloads (in Python).
 - Add support for pretty-printing message payloads (in Python).
 - Updated documentation and all scenarios to use new payload constructor format.
+- Add :ref:`scenarioBranchingPanels`, which showcases a branching solar array configuration, staged deployment,
+  and joint locking when panels are stowed or fully deployed.
+- Bugfix: joint velocity not being reported correctly in ``MJScalarJoint``.
+- Add ``addJointSingleActuator`` to ``MJScene``. This can be used to add actuators acting on joints
+  to a MuJoCo-based simulation (e.g. motors that produce torque).
+- Add method to scalar joints class to get to the equality constraint object that can be used to constrain
+  the joint to a specific value (``MJScalarJoint::getConstrainedEquality``).
+- Add methods ``setSolref`` and ``setSolimp`` to ``MJEquality`` to enable control of the solver parameters
+  that control how the equalities are enforced in MuJoCo.
+- Add PID controller models for ``MJScene``. Currently implemented ``JointPIDController``, which can read the state
+  of a joint and output a torque to act on said joint to achieve a desired angle and angular velocity.
 
 
 Version 2.7.0 (April 20, 2025)

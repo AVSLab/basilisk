@@ -65,6 +65,55 @@ public:
      */
     void setActive(bool active);
 
+    /**
+     * @brief Set the solref parameters for this equality constraint.
+     *
+     * The solref attribute controls the reference acceleration that the solver
+     * tries to enforce. It can be specified in two formats:
+     *
+     * - Positive values: (timeconst, dampratio)
+     *   - @p timeconst : Time constant τ (seconds), must be ≥ 2x timestep.
+     *   - @p dampratio : Damping ratio ζ, where 1.0 = critical damping.
+     *
+     * - Negative values: (-stiffness, -damping)
+     *   - @p stiffness : Direct stiffness constant (N/m).
+     *   - @p damping   : Direct damping constant (Ns/m).
+     *
+     * See more in the MuJoCo documentation about "Solver parameters".
+     *
+     * Example usage:
+     * @code
+     * eq.setSolref(0.05, 1.0);   // time-constant / damping ratio form
+     * eq.setSolref(-1000, -5.0); // stiffness / damping form
+     * @endcode
+     *
+     * @param val1 Either time constant (τ) or -stiffness depending on sign.
+     * @param val2 Either damping ratio (ζ) or -damping depending on sign.
+     */
+    void setSolref(double val1, double val2);
+
+    /**
+     * @brief Set the solimp parameters for this equality constraint.
+     *
+     * The solimp attribute defines how the impedance d(r) varies with constraint
+     * violation r, allowing smooth, position-dependent stiffness/damping.
+     *
+     * See more in the MuJoCo documentation about "Solver parameters".
+     *
+     * Example usage:
+     * @code
+     * eq.setSolimp(0.9, 0.95, 0.001, 0.5, 2.0);
+     * @endcode
+     *
+     * @param d0       Impedance at zero violation (0 < d0 < 1).
+     * @param dwidth   Impedance at max violation width (0 < dwidth < 1).
+     * @param width    Transition distance (positive scalar).
+     * @param midpoint Inflection point in [0, 1], relative to width.
+     * @param power    Power ≥ 1, controls curve steepness.
+     */
+    void setSolimp(double d0, double dwidth, double width,
+                   double midpoint, double power);
+
 protected:
     MJSpec& spec; ///< Reference to the object where this equality is defined.
 };
