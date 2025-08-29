@@ -19,6 +19,7 @@
 
 #include "hubEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include <iostream>
 
 /*! This is the constructor, setting variables to default values */
 HubEffector::HubEffector()
@@ -95,6 +96,8 @@ void HubEffector::registerStates(DynParamManager& states)
     this->omegaState->setState(this->omega_BN_BInit);
     this->gravVelocityState->setState(this->v_CN_NInit);
     this->gravVelocityBcState->setState(this->v_CN_NInit);
+//    std::cout << "r_CN_NInit = " << this->r_CN_NInit << std::endl;
+//    std::cout << "posState = " << this->posState->getState() << std::endl;
 
     return;
 }
@@ -106,6 +109,8 @@ void HubEffector::updateEffectorMassProps(double integTime)
     this->effProps.mEff = this->mHub;
 
     // - Provide information about multi-spacecraft origin if needed
+//    std::cout << "r_BP_P = " << this->r_BP_P << std::endl;
+//    std::cout << "r_BcB_B = " << this->r_BcB_B << std::endl;
     this->r_BcP_P = this->r_BP_P + this->dcm_BP.transpose()*(this->r_BcB_B);
     this->IHubPntBc_P = this->dcm_BP.transpose()*this->IHubPntBc_B*this->dcm_BP;
 
@@ -115,6 +120,7 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
     // - Give position of center of mass of hub with respect to point B to mass props
     this->effProps.rEff_CB_B = this->r_BcP_P;
+//    std::cout << "r_BcP_P = " << this->r_BcP_P << std::endl;
 
     // - Zero body derivatives for position and inertia;
     this->effProps.rEffPrime_CB_B.setZero();
@@ -185,7 +191,7 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_P*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
-    
+
     return;
 }
 

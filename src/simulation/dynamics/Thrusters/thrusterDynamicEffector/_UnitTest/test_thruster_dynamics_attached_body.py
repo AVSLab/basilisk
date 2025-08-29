@@ -46,9 +46,9 @@ def thrusterEffectorAllTests(show_plots):
 # provide a unique test method name, starting with test_
 def test_unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     r"""
-    This unit test checks the functionality of attaching a dynamic thruster to a body other than the hub. Although the
-    attached body is fixed with respect to the hub, the point where the thruster is attached now has an additional
-    offset and a different orientation.
+    This unit test checks the functionality of attaching a dynamic thruster to a body other than the hub using the
+    messaging system. Although the attached body is fixed with respect to the hub, the point where the thruster is
+    attached now has an additional offset and a different orientation.
 
     The unit test sets up the thruster as normal, but then converts the direction and location to take into account the
     attached body for testing purposes. The thruster is set to fire for the first half of the simulation, and then turn

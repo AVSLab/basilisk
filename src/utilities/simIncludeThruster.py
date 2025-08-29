@@ -236,6 +236,37 @@ class thrusterFactory(object):
 
         return
 
+    def addToSpacecraftSubcomponent(self, modelTag, thEffector, baseEffector, segment=0):
+        """
+            This function is for adding a thruster cluster to intermediate bodies
+
+            Parameters
+            ----------
+            modelTag:  string
+                module model tag string
+            thEffector: thrusterEffector
+                thruster effector handle
+            baseEffector: intermediate body to be attached to, see table for compatibility guide
+            segment: if subcomponent is multi-body, designate which integer segment
+            default segment to base segment
+        """
+
+        thEffector.ModelTag = modelTag
+
+        for key, th in list(self.thrusterList.items()):
+            thEffector.addThruster(th)
+
+        # Check the type of thruster effector
+        thrusterType = str(type(thEffector))
+        if 'ThrusterDynamicEffector' in thrusterType:
+            baseEffector.addDynamicEffector(thEffector, segment)
+        elif 'ThrusterStateEffector' in thrusterType:
+            baseEffector.addStateEffector(thEffector, segment)
+        else:
+            print("This isn't a thruster effector. You did something wrong.")
+
+        return
+
     def getNumOfDevices(self):
         """
             Returns the number of RW devices setup.

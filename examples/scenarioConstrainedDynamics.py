@@ -68,7 +68,7 @@ import os
 # Basilisk imports
 from Basilisk.architecture import messaging
 from Basilisk.utilities import (SimulationBaseClass, orbitalMotion, macros, RigidBodyKinematics)
-from Basilisk.simulation import (spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators)
+from Basilisk.simulation import (spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators, linearTranslationNDOFStateEffector, prescribedLinearTranslation)
 import matplotlib.pyplot as plt
 
 # Utility imports
@@ -119,6 +119,9 @@ def run(show_plots, env):
     scObject2.hub.mHub = 750.0
     scObject2.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
     scObject2.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+
+    # Define the spacecraft's properties
+    scGeometry = geometryClass()
 
     # Add Earth gravity to the simulation if requested
     if env == 'Gravity':
@@ -174,6 +177,58 @@ def run(show_plots, env):
     scObject2.hub.v_CN_NInit = rDot_B2N_N_0
     scObject2.hub.omega_BN_BInit = omega_B2N_B2_0
 
+    # Set up translating body
+    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector.ModelTag = "translatingBodyEffector"
+    scObject1.addStateEffector(translatingBodyEffector)
+    scSim.AddModelToTask(simTaskName, translatingBodyEffector)
+
+    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1.setMass(100)
+    translatingBody1.setIPntFc_F([[translatingBody1.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],
+                               [0.0, translatingBody1.getMass() / 12 * (scGeometry.diameterArm / 2) ** 2, 0.0],
+                               [0.0, 0.0, translatingBody1.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2)]])
+    translatingBody1.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    translatingBody1.setR_FcF_F([[0.0], [scGeometry.heightArm / 2], [0.0]])
+    translatingBody1.setR_F0P_P([[0], [scGeometry.lengthHub / 2], [0]])
+    translatingBody1.setFHat_P([[0], [1], [0]])
+    translatingBody1.setRhoInit(0.0)
+    translatingBody1.setRhoDotInit(0.0)
+    translatingBody1.setC(400.0)
+    translatingBody1.setK(100.0)
+    translatingBodyEffector.addTranslatingBody(translatingBody1)
+
+    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2.setMass(100)
+    translatingBody2.setIPntFc_F([[translatingBody2.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],
+                                  [0.0, translatingBody2.getMass() / 12 * (scGeometry.diameterArm / 2) ** 2, 0.0],
+                                  [0.0, 0.0, translatingBody2.getMass() / 12 * (
+                                              3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2)]])
+    translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    translatingBody2.setR_FcF_F([[0.0], [scGeometry.heightArm / 2], [0.0]])
+    translatingBody2.setR_F0P_P([[0], [0], [0]])
+    translatingBody2.setFHat_P([[0], [1], [0]])
+    translatingBody2.setRhoInit(0.0)
+    translatingBody2.setRhoDotInit(0.0)
+    translatingBody2.setC(400.0)
+    translatingBody2.setK(100.0)
+    translatingBodyEffector.addTranslatingBody(translatingBody2)
+
+    profiler2 = prescribedLinearTranslation.PrescribedLinearTranslation()
+    profiler2.ModelTag = "profiler"
+    profiler2.setTransAccelMax(0.0005)
+    profiler2.setTransPosInit(translatingBody2.getRhoInit())
+    profiler2.setSmoothingDuration(10)
+    scSim.AddModelToTask(simTaskName, profiler2)
+    translatingBodyEffector.translatingBodyRefInMsgs[1].subscribeTo(profiler2.linearTranslationRigidBodyOutMsg)
+
+    translatingRigidBodyMsgData = messaging.LinearTranslationRigidBodyMsgPayload()
+    translatingRigidBodyMsgData.rho = scGeometry.heightArm  # [m]
+    translatingRigidBodyMsgData.rhoDot = 0  # [m/s]
+    translatingRigidBodyMsg2 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
+    translatingRigidBodyMsg2.this.disown()
+    profiler2.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg2)
+
     # Create the constraint effector module
     constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
     # Set up the constraint effector physical parameters
@@ -185,7 +240,7 @@ def run(show_plots, env):
     constraintEffector.ModelTag = "constraintEffector"
 
     # Add the constraint to both spacecraft
-    scObject1.addDynamicEffector(constraintEffector)
+    translatingBody2.addDynamicEffector(constraintEffector)
     scObject2.addDynamicEffector(constraintEffector)
 
     # Add the modules to runtime call list
@@ -264,6 +319,15 @@ def run(show_plots, env):
     plt.close("all") # close the plots being saved off to avoid over-writing old and new figures
 
     return figureList
+
+class geometryClass:
+    massHub = 400
+    lengthHub = 3
+    widthHub = 3
+    heightHub = 6
+    massArm = 50
+    heightArm = 3
+    diameterArm = 0.6
 
 if __name__ == "__main__":
     run(
