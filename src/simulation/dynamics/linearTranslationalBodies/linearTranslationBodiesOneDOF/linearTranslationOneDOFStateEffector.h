@@ -159,6 +159,7 @@ private:
     void computeTranslatingBodyInertialStates();
     void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g);
     void readInputMessages();
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;
 
     // Properties required for prescribed motion branching/attachment
     StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
