@@ -8,6 +8,12 @@ Basilisk Known Issues
 
     The use of ``cMsgCInterfacePy`` is depreciated.  Use ``messaging`` instead.
 
+
+Version |release|
+-----------------
+- text here
+
+
 Version 2.8.0
 -------------
 - pip-based installation in editable mode using ``pip install -e .`` is not currently supported.
