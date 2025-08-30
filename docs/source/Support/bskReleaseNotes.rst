@@ -24,6 +24,10 @@ Basilisk Release Notes
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
 
+Version |release|
+-----------------
+- text here
+
 Version 2.78.0 (August 30, 2025)
 --------------------------------
 - Marked the use of python 3.8 as deprecated
