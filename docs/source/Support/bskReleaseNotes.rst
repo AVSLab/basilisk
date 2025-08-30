@@ -32,6 +32,7 @@ Version |release|
 - Pinned python dependencies to avoid issues with new package versions.
 - Updated :ref:`vscmgStateEffector` documentation.
 - Added a new :ref:`vscmgGimbalRateServo` module that computes the VSCMG wheel motor torque and gimbal motor torque.
+- Added a new :ref:`vscmgVelocitySteering` module that computes the desired VSCMG wheel accelerations and gimbal rates.
 - Added a new github workflow job ``canary`` to routinely check the compatibility of latest python dependencies with python 3.13 on the latest mac-os.
 - Deprecated :ref:`SpacecraftSystem`.  It was never completed and we have other ways to connect spacecraft components
 - Allow event conditions and effects to be defined by functions. This is preferred over the old string-based method, as it
