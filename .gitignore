@@ -60,3 +60,5 @@ venv/
 # Python packaging
 *.egg-info
 build/
+!.github/actions/build/
+!.github/actions/build/**
