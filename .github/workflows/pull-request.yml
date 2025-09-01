@@ -13,81 +13,42 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-      - id: file_changes
-        uses: tj-actions/changed-files@v44
-      - uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: --files ${{ steps.file_changes.outputs.all_changed_files}}
+      - uses: ./.github/actions/pre-commit
 
-  # Perform a Basilisk build with all supported python versions using the
-  # conanfile install based approach. For the latest python release, enable
-  # additional conan args.
-  build-linux-conan:
+  build-linux:
     runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    needs: pre-commit
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-        include:
-          - python: 3.13
-            extra_apt: libgtk2.0
-            conan_args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
-            error_for_skips: true
-    name: Linux (Conanfile, ${{ matrix.python }})
+        python: ["3.13"]
+    name: Linux (${{ matrix.python }})
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
-          build-mode: conan
-          extra-apt: ${{ matrix.extra_apt || '' }}
-          conan-args: ${{ matrix.conan_args || '' }}
+          conan-args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
       - name: Pytest
         working-directory: src
         run: |
-          if [ "${{ matrix.error_for_skips || 'false' }}" = "true" ]; then
-            pip install pytest-error-for-skips
-            pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
-          else
-            pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v
-          fi
+          pip install pytest-error-for-skips
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
       - name: CTest
         if: ${{ always() }}
         working-directory: dist3
         run: ctest
 
-  # Perform a Basilisk build with all newer supported python versions using the
-  # pip install based approach.
-  build-linux-pip:
-    runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
-      matrix:
-        python: ["3.11", "3.12", "3.13"]
-    name: Linux (pip, ${{ matrix.python }})
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/build
-        with:
-          python-version: ${{ matrix.python }}
-          build-mode: pip
-      - name: Pytest
-        working-directory: src
-        run: pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v
-
-  # Perform a Basilisk build with Python 3.11 using the conanfile install based
-  # approach.
   build-windows:
     runs-on: windows-2025
-    timeout-minutes: 100
+    timeout-minutes: 90
+    needs: pre-commit
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.11"]
-    name: Windows (Conanfile, ${{ matrix.python }})
+        python: ["3.13"]
+    name: Windows (${{ matrix.python }})
     env:
       MPLBACKEND: agg
     steps:
@@ -95,7 +56,6 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
-          build-mode: conan
           conan-args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
       - name: Pytest
         shell: pwsh
@@ -112,42 +72,48 @@ jobs:
           ctest
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) { exit 1 }
 
-  # Perform a Basilisk build with modern python versions using the conanfile
-  # install based approach. For Python 3.11 we perform a no viz build.
   build-macos:
     runs-on: macos-latest
-    timeout-minutes: 75
+    timeout-minutes: 90
+    needs: pre-commit
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.11", "3.12", "3.13"]
+        job_suffix: [""]
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        pytest_flags:
+          ['-n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v']
+        conan_args:
+          [
+            "--opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True",
+          ]
         include:
-          - python: 3.11
-            conan_args: "--vizInterface False"
-          - python: 3.12
-            conan_args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
-            error_for_skips: true
-          - python: 3.13
-            conan_args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
-            error_for_skips: true
+          # An extra Basilisk build to test building without visualization enabled
+          - python: "3.13"
+            pytest_flags: -n auto -m "not ciSkip" -rs --dist=loadscope -v
+            conan_args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True --vizInterface False
+            job_suffix: "--vizInterface False"
+          # Python 3.8 cannot run all tests.
+          # TODO: Once Python 3.8 support is dropped, delete this include and exclude and remove 3.8 from the python
+          # test matrix.
+          - python: "3.8"
+            pytest_flags: -n auto -m "not ciSkip" -rs --dist=loadscope -v -p no:pytest_forbid_skips
+        exclude:
+          - python: "3.8"
+            pytest_flags: '-n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v'
 
-    name: macOS (Conanfile, ${{ matrix.python }})
+    name: macOS (${{ matrix.python }}) ${{ matrix.job_suffix }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
-          build-mode: conan
-          conan-args: ${{ matrix.conan_args }}
+          conan-args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
       - name: Pytest
         working-directory: src
         run: |
-          if [ "${{ matrix.error_for_skips || 'false' }}" = "true" ]; then
-            pip install pytest-error-for-skips
-            pytest -n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v
-          else
-            pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v
-          fi
+          pip install pytest-error-for-skips
+          pytest ${{ matrix.pytest_flags }}
       - name: CTest
         if: ${{ always() }}
         working-directory: dist3
@@ -162,8 +128,6 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.13
-          build-mode: conan
           conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True --recorderPropertyRollback True
-          install-doc-reqs: true
       - name: Build docs
         uses: ./.github/actions/docs

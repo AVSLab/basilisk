@@ -48,11 +48,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # The 'Build wheel' step will perform the actual build. However, we want
+      # all pre build setup to still be performed
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python-version }}
-          build-mode: pip
           extra-apt: "cmake"
+          skip-build: true
 
       - name: Build wheel
         run: |
@@ -73,7 +75,6 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.13
-          build-mode: conan
           conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True --recorderPropertyRollback True
       - name: Build docs
         uses: ./.github/actions/docs

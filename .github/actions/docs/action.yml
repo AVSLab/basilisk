@@ -3,6 +3,10 @@ description: Build Sphinx docs
 
 inputs:
   html-dir: { required: false, default: "docs/build/html" }
+  is-canary:
+    description: If a canary build is being performed.
+    required: false
+    default: false
 
 runs:
   using: composite
@@ -11,7 +15,11 @@ runs:
       shell: bash
       run: |
         brew install doxygen
-        pip install -r requirements_doc.txt
+        if [[ "${{ inputs.is-canary }}" == 'true' ]]; then
+          pip install -r .github/workflows/requirements_doc.txt
+        else
+          pip install -r requirements_doc.txt
+        fi
     - name: Generate doc artifacts
       shell: bash
       env:
