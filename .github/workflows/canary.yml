@@ -1,8 +1,6 @@
 name: "Canary Build"
 
 on:
-  schedule:
-    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
   workflow_dispatch:
   pull_request:
     branches:
@@ -19,7 +17,7 @@ jobs:
     timeout-minutes: 75
     strategy:
       matrix:
-        python-version: [ "3.13" ]
+        python-version: ["3.13"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
