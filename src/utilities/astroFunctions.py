@@ -20,7 +20,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import linalg as la
-from Basilisk.utilities import deprecated
 from Basilisk.architecture import astroConstants
 
 # Reference solar flux at Earth [W/m^2]
@@ -681,61 +680,6 @@ def Tisserand_ESU():
     TisserandPlot(astroConstants.SMA_SATURN, v_inf_S_vec[3], 'cyan')
 
     plt.show()
-
-
-# ------------------------------------------------------------------------------------------------------------------- #
-#                                                DEPRECATED CONSTANTS
-#
-
-def __getattr__(name):
-    """ Special `__getattr__` to handle deprecation warning """
-    AU = 1.49597870691e8        # [km]
-    astroConstants = {
-        # Useful conversions
-        'R2D': 180.0 / np.pi,          # [deg]
-        'D2R': np.pi / 180.0,         # [rad]
-        'AU': AU,
-        'SEC2DAY': 1.0 / (3600*24),
-        'DAY2SEC': 1.0 * 3600 * 24,
-        'PI': np.pi,
-
-        # Gravitational parameters  [km^3 / s^2]
-        'mu_S': 1.32712440018e11,
-        'mu_E': 3.986004415e5,
-        'mu_M': 4.28283100e4,
-        'mu_V': 3.24858599e5,
-        'mu_J': 1.26686534e8,
-        'mu_Saturn': 3.79395000e7,
-        'mu_U': 5.79396566e6,
-        'mu_N': 6.83509920e6,
-        'mu_Moon': 4902.799,
-
-        # Planets' Radius   [km]
-        'S_radius': 695508,
-        'J_radius': 71492,
-        'V_radius': 6051.8,
-        'E_radius': 6378.1363,
-        'M_radius': 3396.19,
-        'Saturn_radius': 60268,
-        'U_radius': 25559,
-        'N_radius': 24764,
-        'Moon_radius': 1738.1,
-
-        # Planetary Heliocentric orbits     [km]
-        'a_E': 1.0 * AU,
-        'a_M': 1.52367934 * AU,
-        'a_Mercury': 0.387 * AU,
-        'a_V': 0.723 * AU,
-        'a_J': 5.203 * AU,
-        'a_Saturn': 9.537 * AU,
-        'a_U': 19.191 * AU,
-        'a_N': 30.069 * AU,
-        'a_P': 39.482 * AU,
-    }
-    if name in astroConstants:
-        deprecated.deprecationWarn(
-            name, '2025/08/31', 'Astro constants should be used from Basilisk.architecture.astroConstants')
-        return astroConstants[name]
 
 
 def main():
