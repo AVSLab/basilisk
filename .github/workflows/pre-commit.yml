@@ -1,0 +1,10 @@
+name: Pre-commit
+on:
+  workflow_dispatch:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pre-commit
