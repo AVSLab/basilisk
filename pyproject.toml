@@ -17,7 +17,7 @@ requires = [
 ]
 
 [project]
-name        = 'Basilisk'
+name        = 'bsk'
 dynamic     = ["version", "dependencies"]
 requires-python = ">=3.8, <3.14"
 
