@@ -1,0 +1,87 @@
+name: Merge to develop
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: merge-develop
+  cancel-in-progress: false
+
+jobs:
+  bump_version:
+    name: Bump version (skip if already bumped)
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'AVSlabBot' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+          token: ${{ secrets.BOT_ACCESS_TOKEN }}
+
+      - name: Bump version
+        run: ./.github/workflows/version-bumper.sh ./docs/source/bskVersion.txt
+
+      - name: Commit and push
+        run: |
+          git config user.name "AVSlabBot"
+          git config user.email "cuavslab@gmail.com"
+          git commit -a -m "[AUTO] Bump version number" || echo "No changes"
+          git push || true
+
+  build-ubuntu-latest-wheels:
+    name: Build ubuntu-latest wheels
+    needs: bump_version
+    # Allow for manual runs to generate new wheels
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # The 'Build wheel' step will perform the actual build. However, we want
+      # all pre build setup to still be performed
+      - uses: ./.github/actions/build
+        with:
+          python-version: ${{ matrix.python-version }}
+          extra-apt: "cmake"
+          skip-build: true
+
+      - name: Build wheel
+        run: |
+          python -m pip wheel . -v --wheel-dir /tmp/wheelhouse
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: basilisk-wheels_ubuntu-22.04_python${{ matrix['python-version'] }}
+          path: /tmp/wheelhouse/**/*asilisk*.whl
+
+  build_documentation:
+    name: macOS Docs Deployment
+    needs: bump_version
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Basilisk
+        uses: ./.github/actions/build
+        with:
+          python-version: 3.13
+          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True --recorderPropertyRollback True
+      - name: Build docs
+        uses: ./.github/actions/docs
+      - name: Deploy
+        if: ${{ success() }} # deploy only if prior steps ok
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/build/html
+          force_orphan: true

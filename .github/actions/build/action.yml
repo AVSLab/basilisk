@@ -1,0 +1,112 @@
+name: build
+description: >
+  Sets up a cross-platform build environment for Basilisk and performs
+  either a Conan-based build or a pip-based build.
+inputs:
+  python-version:
+    description: Python version
+    required: true
+  conan-args:
+    required: false
+    default: ""
+  is-canary:
+    description: If a canary build is being performed.
+    required: false
+    default: false
+  skip-build:
+    description: Used to do all build related setup, while skipping the actual build
+    required: false
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: "pip"
+        cache-dependency-path: |
+          requirements_dev.txt
+          requirements_doc.txt
+          requirements.txt
+
+    - name: Install Linux System Deps.
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential python3-setuptools python3-tk libgtk2.0
+
+    - name: SWIG Install (Linux)
+      if: runner.os == 'Linux'
+      uses: mmomtchev/setup-swig@v4
+      with:
+        version: v4.2.1
+
+    - name: SWIG Install (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      env:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_UPGRADE: 1
+        HOMEBREW_NO_ANALYTICS: 1
+      run: brew install swig || true
+
+    - name: SWIG Install (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $swigDir = "C:\Program Files\SWIG"
+        if (!(Test-Path $swigDir)) {New-Item -ItemType Directory -Path $swigDir | Out-Null}
+        $swigZip = "$swigDir\swigwin-4.2.1.zip"
+        $swigUrl = "https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.2.1/swigwin-4.2.1.zip/download"
+        Start-Process -NoNewWindow -Wait -FilePath "curl.exe" -ArgumentList "-L -o `"$swigZip`" `"$swigUrl`""
+        if (!(Test-Path $swigZip) -or ((Get-Item $swigZip).Length -lt 500KB)) { Write-Host "Download failed or file is corrupted." }
+        Expand-Archive -Path $swigZip -DestinationPath $swigDir -Force
+
+    - name: "Add Basilisk and SWIG paths"
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
+        $newPath = “C:\Program Files\SWIG\swigwin-4.2.1;$oldpath;${{ env.GITHUB_WORKSPACE }}\dist3\Basilisk”
+        echo "PATH=$newPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+    - name: Install requirements
+      shell: bash
+      run: |
+        if [[ "${{ inputs.is-canary }}" == 'true' ]]; then
+          pip install -r .github/workflows/requirements.txt -r .github/workflows/requirements_dev.txt
+        else
+          pip install -r requirements.txt -r requirements_dev.txt
+        fi
+
+    - name: Cache Conan
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.HOME }}/.conan2
+        key: >-
+          conan-${{ runner.os }}-py${{ inputs.python-version }}-
+          ${{ hashFiles('conan.lock','conanfile.*','**/conanfile.*','CMakeLists.txt','**/*.cmake') }}
+        restore-keys: |
+          conan-${{ runner.os }}-py${{ inputs.python-version }}-
+
+    - name: Configure Conan profile
+      shell: bash
+      run: |
+        python -m conans.conan profile detect --exist-ok
+        prof_path="$(python -m conans.conan profile path default)"
+        grep -q '^\[conf\]' "$prof_path" || printf "\n[conf]\n" >> "$prof_path"
+        grep -q '^tools.system.package_manager:mode=install$' "$prof_path" || \
+           printf "tools.system.package_manager:mode=install\n" >> "$prof_path"
+        grep -q '^tools.system.package_manager:sudo=True$' "$prof_path" || \
+          printf "tools.system.package_manager:sudo=True\n" >> "$prof_path"
+
+    - name: Build Basilisk
+      shell: bash
+      if: ${{ inputs.skip-build == 'false' }}
+      env:
+        CONAN_ARGS: ${{ inputs.conan-args }}
+      run: |
+        pip install --no-build-isolation -e . -v
+        bskLargeData

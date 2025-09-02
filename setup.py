@@ -91,9 +91,10 @@ class BuildConanExtCommand(Command, SubCommand):
     def run(self) -> None:
         for ext in self.conan_extensions:
             if self.editable_mode:
-                # TODO: Add support for installing in editable mode. For now, we
-                # assume that it has already been built (e.g. by `conanfile.py`)
-                pass
+                # TODO: Add support for installing in editable mode.
+                built = any(Path(ext.build_dir).glob("Basilisk*"))
+                if not built:
+                    run([sys.executable, ext.conanfile] + ext.args, check=True)
             else:
                 # Call the underlying Conanfile with the desired arguments.
                 run([sys.executable, ext.conanfile] + ext.args, check=True)
