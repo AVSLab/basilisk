@@ -56,10 +56,20 @@ Basilisk = [
 version = {file = "docs/source/bskVersion.txt"}
 dependencies = {file = "requirements.txt"}
 
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "pytest-error-for-skips"
+]
+
 [tool.cibuildwheel]
 build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
 skip  = ["*-win32", "cp38-macosx_arm64"]
 build-verbosity = 1
+test-extras = ["test"]
+test-command = [
+  "cd {package}/src && pytest -v . -m \"not scenarioTest\""
+]
 
 [tool.cibuildwheel.environment]
 CMAKE_BUILD_TYPE = "Release"
