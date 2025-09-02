@@ -58,8 +58,9 @@ dependencies = {file = "requirements.txt"}
 
 [project.optional-dependencies]
 test = [
+  "psutil",
+  "pytest-error-for-skips",
   "pytest",
-  "pytest-error-for-skips"
 ]
 
 [tool.cibuildwheel]
