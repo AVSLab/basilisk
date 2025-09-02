@@ -22,7 +22,9 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
       # Workaround for macos-13 (Intel). Ensures the conan build uses the right
       # SSL cert.
       - name: Set CA bundle (macos-13 only)
@@ -53,3 +55,88 @@ jobs:
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
+
+  make_sdist:
+    name: Make SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: Build SDist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
+
+  publish:
+    name: Publish to PyPI
+    needs: [build-wheels, make_sdist]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          merge-multiple: true
+          path: dist
+
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist
+
+      - name: Verify versions match tag
+        shell: bash
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${GITHUB_REF##*/}"
+          VER="${TAG#v}"
+          echo "Tag: $TAG  Version: $VER"
+          shopt -s nullglob
+          [[ -e dist/*"$VER"*.whl ]] || { echo "No wheel with $VER"; exit 1; }
+          [[ -e dist/*"$VER"*.tar.gz ]] || { echo "No sdist with $VER"; exit 1; }
+          echo "OK — artifacts match $VER"
+
+      - name: Show release info
+        shell: bash
+        run: |
+          echo "Release Info:"
+          TAG="${GITHUB_REF##*/}"
+          VER="${TAG#v}"
+          echo "Release tag: $TAG"
+          echo "Release ver: $VER"
+          echo
+          echo "Artifacts in dist/:"
+          ls -lh dist || true
+
+      - name: Publish to TestPyPI (test tags)
+        if: startsWith(github.ref, 'refs/tags/test')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: dist
+          skip-existing: true
+
+      - name: Publish to PyPI (real releases)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist

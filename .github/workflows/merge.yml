@@ -26,6 +26,7 @@ jobs:
           token: ${{ secrets.BOT_ACCESS_TOKEN }}
 
       - name: Bump version
+        id: bump
         run: ./.github/workflows/version-bumper.sh ./docs/source/bskVersion.txt
 
       - name: Commit and push
@@ -34,6 +35,13 @@ jobs:
           git config user.email "cuavslab@gmail.com"
           git commit -a -m "[AUTO] Bump version number" || echo "No changes"
           git push || true
+
+      - name: Create tag
+        if: ${{ steps.bump.outputs.updated_version != '' }}
+        run: |
+          git tag -a "v${{ steps.bump.outputs.updated_version }}" \
+            -m "Release v${{ steps.bump.outputs.updated_version }}"
+          git push --tags
 
   build_documentation:
     name: macOS Docs Deployment

@@ -18,3 +18,11 @@ while IFS= read -r version || [[ -n "$version" ]]; do
 done < $1
 
 echo "$updated_version" > $1
+
+# Expose the update versions to GitHub Actions
+if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
+  {
+    echo "version=$version"
+    echo "updated_version=$updated_version"
+  } >> "$GITHUB_OUTPUT"
+fi
