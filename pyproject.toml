@@ -69,7 +69,7 @@ skip  = ["*-win32", "cp38-macosx_arm64"]
 build-verbosity = 1
 test-extras = ["test"]
 test-command = [
-  "cd {package}/src && pytest -v . -m \"not scenarioTest\""
+  "bskLargeData && cd {package}/src && pytest -v . -m \"not scenarioTest\""
 ]
 
 [tool.cibuildwheel.environment]
