@@ -1,0 +1,13 @@
+.. _scenarioSimpleDocking:
+
+scenarioSimpleDocking
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioSimpleDocking
+   :members:
+   :show-inheritance:
+

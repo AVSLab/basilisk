@@ -1,0 +1,13 @@
+.. _bskExamples:
+
+bskExamples
+===========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: bskExamples
+   :members:
+   :show-inheritance:
+

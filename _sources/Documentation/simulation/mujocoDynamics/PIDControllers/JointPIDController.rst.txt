@@ -1,0 +1,8 @@
+.. _JointPIDController:
+
+Module: JointPIDController
+==========================
+
+.. autodoxygenfile:: JointPIDController.h
+   :project: PIDControllers
+
