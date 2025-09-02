@@ -108,7 +108,7 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
-          conan-args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
+          conan-args: ${{ matrix.conan_args }}
       - name: Pytest
         working-directory: src
         run: |
