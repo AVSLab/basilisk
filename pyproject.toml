@@ -71,6 +71,10 @@ build-verbosity = 1
 test-extras = ["test"]
 test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip and not scenarioTest and not viz\""
 
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
+
 [tool.cibuildwheel.environment]
 CMAKE_BUILD_TYPE = "Release"
 
