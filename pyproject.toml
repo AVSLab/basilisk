@@ -58,6 +58,7 @@ dependencies = {file = "requirements.txt"}
 
 [project.optional-dependencies]
 test = [
+  "numpy<2",
   "psutil",
   "pytest-error-for-skips",
   "pytest",
