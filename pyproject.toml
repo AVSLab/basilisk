@@ -69,9 +69,7 @@ build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
 skip  = ["*-win32", "cp38-macosx_arm64"]
 build-verbosity = 1
 test-extras = ["test"]
-test-command = [
-  "bskLargeData && cd {package}/src && pytest -v . -m \"not scenarioTest\""
-]
+test-command = "bskLargeData && pytest -v {project}/src/tests -m 'not scenarioTest'"
 
 [tool.cibuildwheel.environment]
 CMAKE_BUILD_TYPE = "Release"
