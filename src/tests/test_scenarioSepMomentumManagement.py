@@ -51,6 +51,7 @@ import scenarioSepMomentumManagement
 # of the multiple test runs for this test.
 
 
+@pytest.mark.viz
 @pytest.mark.parametrize("withFunction", [False, True])
 # provide a unique test method name, starting with test_
 def test_sepMomentumManagement(withFunction):
