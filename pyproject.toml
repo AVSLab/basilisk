@@ -4,10 +4,7 @@ requires = [
     "setuptools>=70.1.0,<=78.1.0",   # Required for "bdist_wheel" to work correctly.
     "setuptools-scm>=8.0,<=8.2.1",  # Automatically include all Git-controlled files in sdist
     "packaging",
-
-    # needed to find the numpy include headers,
-    # pin to lowest runtime allowed version to take advantage of backwards compatibility
-    "numpy<=2.3.0,>=1.24.4",
+    "numpy>=1.24.4,<2.4.0",
 
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.15.1",
@@ -73,7 +70,7 @@ test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip an
 
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
-repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
+repair-wheel-command = "delvewheel repair --add-binary=dist3/Basilisk/*.dll;Basilisk -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.environment]
 CMAKE_BUILD_TYPE = "Release"
