@@ -70,7 +70,7 @@ test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip an
 
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
-repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} --add-path %CIBW_PROJECT_DIR%\\build\\bin;%CIBW_PROJECT_DIR%\\dist3\\Basilisk {wheel}"
+repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} --add-binary %CIBW_PROJECT_DIR%\\dist3\\Basilisk\\*.dll;Basilisk {wheel}"
 
 [tool.cibuildwheel.environment]
 CMAKE_BUILD_TYPE = "Release"
