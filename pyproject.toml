@@ -68,16 +68,12 @@ build-verbosity = 1
 test-extras = ["test"]
 test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip and not scenarioTest and not viz\""
 
-[tool.cibuildwheel.windows]
-before-build = "pip install delvewheel"
-repair-wheel-command = "set PATH=%CIBW_PROJECT_DIR%\\dist3\\Basilisk;%CIBW_PROJECT_DIR%\\build\\bin;%PATH% && python -m delvewheel repair -v -w {dest_dir} --add-path %CIBW_PROJECT_DIR%\\dist3\\Basilisk;%CIBW_PROJECT_DIR%\\build\\bin {wheel}"
-
 [tool.cibuildwheel.environment]
 CMAKE_BUILD_TYPE = "Release"
 
-[tool.cibuildwheel.macos.environment]
-MACOSX_DEPLOYMENT_TARGET = "11.0"
-CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
+repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
@@ -86,3 +82,8 @@ repair-wheel-command = [
 ]
 manylinux-x86_64-image  = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
+
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "11.0"
+CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"

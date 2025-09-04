@@ -146,4 +146,13 @@ setup(
 
     # XXX: Override build_ext with ConanExtension builder.
     cmdclass={'build_ext': BuildConanExtCommand},
+
+    include_package_data=True,
+        package_data={
+        "Basilisk": [
+            "**/*.dll",
+            "**/*.pdb",
+            "**/*.lib",
+        ]
+    },
 )
