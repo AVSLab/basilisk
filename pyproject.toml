@@ -70,18 +70,7 @@ test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip an
 
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
-repair-wheel-command = """
-cmd /d /c ^
-  echo === PROBE begin === && ^
-  echo CWD: && cd && ^
-  echo --- DLLs under project --- && dir /s /b {project}\\*.dll 2^>nul && ^
-  echo --- DLLs under common build dirs --- && ^
-    dir /s /b {project}\\build\\*.dll 2^>nul && ^
-    dir /s /b {project}\\out\\*.dll 2^>nul && ^
-    dir /s /b {project}\\dist3\\*.dll 2^>nul && ^
-  echo === Running delvewheel === && ^
-  python -m delvewheel repair -v -w {dest_dir} --add-path {project}\\build\\bin;{project}\\dist3\\Basilisk {wheel}
-"""
+repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} --add-path %CIBW_PROJECT_DIR%\\build\\bin;%CIBW_PROJECT_DIR%\\dist3\\Basilisk {wheel}"
 
 [tool.cibuildwheel.environment]
 CMAKE_BUILD_TYPE = "Release"
