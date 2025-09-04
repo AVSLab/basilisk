@@ -72,8 +72,8 @@ test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip an
 CMAKE_BUILD_TYPE = "Release"
 
 [tool.cibuildwheel.windows]
-before-build = "pip install delvewheel"
-repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} {wheel}"
+before-build = "pip install delvewheel pefile"
+repair-wheel-command = "pwsh -NoLogo -NoProfile -File debug_repair.ps1 -Wheel {wheel} -DestDir {dest_dir}"
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
