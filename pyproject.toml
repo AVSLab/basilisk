@@ -73,7 +73,7 @@ CMAKE_BUILD_TYPE = "Release"
 
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
-repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} --add-path \"$env:CIBW_PROJECT_DIR\\dist3;$env:CIBW_PROJECT_DIR\\dist3\\Basilisk;$env:CIBW_PROJECT_DIR\\dist3\\Release;$env:CIBW_PROJECT_DIR\\dist3\\bin\" {wheel}"
+repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
