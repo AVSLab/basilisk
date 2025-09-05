@@ -73,10 +73,7 @@ CMAKE_BUILD_TYPE = "Release"
 
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
-# Add build output directories to the search path so delvewheel can
-# locate DLLs produced by CMake/Conan that aren't adjacent to the .pyd
-# at repair time.
-repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} --add-path {project}\\dist3;{project}\\dist3\\Basilisk;{project}\\dist3\\Release;{project}\\dist3\\bin {wheel}"
+repair-wheel-command = "python -m delvewheel repair -v -w {dest_dir} --add-path \"$env:CIBW_PROJECT_DIR\\dist3;$env:CIBW_PROJECT_DIR\\dist3\\Basilisk;$env:CIBW_PROJECT_DIR\\dist3\\Release;$env:CIBW_PROJECT_DIR\\dist3\\bin\" {wheel}"
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
