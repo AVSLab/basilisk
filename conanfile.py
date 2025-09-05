@@ -253,9 +253,13 @@ class BasiliskConan(ConanFile):
 
     def generate(self):
         if self.settings.os == "Windows":
+            # Ensure dependent DLLs are copied into the Basilisk package
+            # directory inside the build folder so they can be discovered by
+            # packaging tools (delvewheel) and included in wheels.
+            basilisk_dst = os.path.join(self.build_folder, "Basilisk")
             for dep in self.dependencies.values():
-                for libdir in dep.cpp_info.bindirs:
-                    copy(self, "*.dll", libdir, "../Basilisk")
+                for bindir in dep.cpp_info.bindirs:
+                    copy(self, "*.dll", bindir, basilisk_dst)
 
         if self.options.get_safe("pathToExternalModules"):
             print(statusColor + "Including External Folder: " + endColor + str(self.options.pathToExternalModules))
