@@ -381,6 +381,36 @@ class BasiliskConan(ConanFile):
             print(
                 f"{statusColor}The Basilisk build is successful and the scripts are ready to run{endColor}"
             )
+
+            # On Windows, copy project-built DLLs next to the Python extension modules
+            # so they are bundled in the wheel and resolvable at runtime without PATH tweaks.
+            if self.settings.os == "Windows":
+                basilisk_dst_root = os.path.join(self.build_folder, "Basilisk")
+                common_srcs = [
+                    os.path.join(self.build_folder, "bin"),
+                    os.path.join(self.build_folder, "Release"),
+                    os.path.join(self.build_folder, "Debug"),
+                ]
+                for src in common_srcs:
+                    if os.path.isdir(src):
+                        try:
+                            copy(self, "*.dll", src, basilisk_dst_root)
+                        except Exception as e:
+                            self.output.warning(f"Failed to copy DLLs from {src}: {e}")
+                # As a fallback, scan the build tree for any remaining DLLs.
+                for root, _dirs, files in os.walk(self.build_folder):
+                    # Skip the destination to avoid self-copy
+                    if (
+                        os.path.commonpath([root, basilisk_dst_root])
+                        == basilisk_dst_root
+                    ):
+                        continue
+                    if any(f.lower().endswith(".dll") for f in files):
+                        try:
+                            copy(self, "*.dll", root, basilisk_dst_root)
+                        except Exception as e:
+                            self.output.warning(f"Failed to copy DLLs from {root}: {e}")
+
         else:
             print(f"{statusColor}Finished configuring the Basilisk project.{endColor}")
             if self.settings.os != "Linux":
