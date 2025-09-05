@@ -1,4 +1,5 @@
 import argparse
+from glob import glob
 import os
 import platform
 import json
@@ -410,6 +411,15 @@ class BasiliskConan(ConanFile):
                             copy(self, "*.dll", root, basilisk_dst_root)
                         except Exception as e:
                             self.output.warning(f"Failed to copy DLLs from {root}: {e}")
+
+                # Rename DLLs to lowercase
+                for path in glob(os.path.join(basilisk_dst_root, "*.dll")):
+                    base = os.path.basename(path)
+                    lower = base.lower()
+                    if base != lower:
+                        tmp = os.path.join(basilisk_dst_root, f".{lower}.tmp")
+                        os.replace(path, tmp)
+                        os.replace(tmp, os.path.join(basilisk_dst_root, lower))
 
         else:
             print(f"{statusColor}Finished configuring the Basilisk project.{endColor}")
