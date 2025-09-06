@@ -57,8 +57,8 @@ dependencies = {file = "requirements.txt"}
 
 [project.optional-dependencies]
 test = [
-  "numpy<2; python_version<'3.9'",
-  "numpy>=2; python_version>='3.9'",
+  "numpy>=1.24.4,<2.4.0;  python_version < '3.13'",
+  "numpy>=2.0,<2.4.0;     python_version >= '3.13'",
   "psutil",
   "pytest-error-for-skips",
   "pytest",
