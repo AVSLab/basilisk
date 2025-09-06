@@ -1,0 +1,13 @@
+prune examples
+prune docs
+prune src/tests
+prune **/_UnitTest
+prune **/_Documentation
+
+global-exclude *.pdf *.png *.jpg *.jpeg *.gif *.JPG *.svg *.psd
+global-exclude *.ipynb *.bib *.tex
+global-exclude *.mex* *.o *.a *.so *.dylib *.dll
+global-exclude build/** CMakeFiles/** .git/** .github/** .venv/**
+
+# This file is used by SWIG
+include src/fswAlgorithms/effectorInterfaces/thrForceMapping/_UnitTest/Support/Results_thrForceMapping.py
