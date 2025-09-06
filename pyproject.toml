@@ -4,7 +4,9 @@ requires = [
     "setuptools>=70.1.0,<=78.1.0",   # Required for "bdist_wheel" to work correctly.
     "setuptools-scm>=8.0,<=8.2.1",  # Automatically include all Git-controlled files in sdist
     "packaging",
-    "numpy>=1.24.4,<2.4.0",
+    "numpy<2; python_version<'3.9'",
+    "numpy>=2,<3; python_version>='3.9'",
+
 
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.15.1",
@@ -55,14 +57,15 @@ dependencies = {file = "requirements.txt"}
 
 [project.optional-dependencies]
 test = [
-  "numpy",
+  "numpy<2; python_version<'3.9'",
+  "numpy>=2; python_version>='3.9'",
   "psutil",
   "pytest-error-for-skips",
   "pytest",
 ]
 
 [tool.cibuildwheel]
-build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
 skip  = ["*-win32", "cp38-macosx_arm64", "*-musllinux_*"]
 build-verbosity = 1
 test-extras = ["test"]
