@@ -206,7 +206,6 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
 
     # Link all necessary libraries
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
-    target_link_libraries(${LIB_NAME} PRIVATE ${PYTHON3_MODULE})
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
     if(${PARENT_DIR_NAME} STREQUAL "mujocoDynamics")
       target_link_libraries(${LIB_NAME} PUBLIC dynamicsLib)
@@ -361,6 +360,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     foreach(LIB ${LIB_DEP_LIST})
       target_link_libraries(${TARGET_NAME} PRIVATE ${LIB})
     endforeach()
+
+    target_link_libraries(${TARGET_NAME} PRIVATE ${PYTHON3_MODULE})
+    if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
+      target_compile_definitions(${TARGET_NAME} PRIVATE "Py_LIMITED_API=${PY_LIMITED_API}")
+    endif()
 
     if(${MODULE_DIR} STREQUAL "ExternalModules")
       set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${MODULE_DIR})
@@ -707,7 +711,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
 
-if(WIN32 AND (Python3_VERSION VERSION_GREATER_EQUAL 3.8))
+if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n"
