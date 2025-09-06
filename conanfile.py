@@ -355,7 +355,7 @@ class BasiliskConan(ConanFile):
                             copy(self, "*.dll", src, basilisk_dst_root)
                         except Exception as e:
                             self.output.warning(f"Failed to copy DLLs from {src}: {e}")
-                            
+
                 # As a fallback, scan the build tree for any remaining DLLs.
                 for root, _dirs, files in os.walk(self.build_folder):
                     # Skip the destination to avoid self-copy
