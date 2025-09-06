@@ -362,6 +362,9 @@ class BasiliskConan(ConanFile):
         # tc.cache_variables["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.13"
         tc.parallel = True
 
+        if self.options.get_safe("pyLimitedAPI"):
+            tc.cache_variables["PY_LIMITED_API"] = str(self.options.pyLimitedAPI)
+
         # Generate!
         tc.generate()
 
