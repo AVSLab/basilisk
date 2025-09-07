@@ -105,6 +105,9 @@ class BuildConanExtCommand(Command, SubCommand):
                 self.distribution.packages.append(pkg)
                 self.distribution.package_dir[pkg] = os.path.relpath(pkg_dir, start=HERE)
 
+                pd = self.distribution.package_data.setdefault(pkg, [])
+                pd += ["*.dll", "**/*.dll", "*.pyd", "**/*.pyd"]
+
         if self.editable_mode and len(self.distribution.packages) == 0:
             raise Exception("Tried to install in editable mode, but packages have not been prepared yet! " \
                             "Please install via `python conanfile.py` instead!")
@@ -146,4 +149,6 @@ setup(
 
     # XXX: Override build_ext with ConanExtension builder.
     cmdclass={'build_ext': BuildConanExtCommand},
+    zip_safe=False,
+    include_package_data=True,
 )
