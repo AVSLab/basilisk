@@ -7,6 +7,7 @@ import subprocess
 import sys
 from datetime import datetime
 from typing import Optional, Callable
+from glob import glob
 
 import importlib.metadata
 from packaging.requirements import Requirement
@@ -253,6 +254,14 @@ class BasiliskConan(ConanFile):
 
     def generate(self):
         if self.settings.os == "Windows":
+            # Ensure dependent DLLs are copied into the Basilisk package
+            # directory inside the build folder so they can be discovered by
+            # packaging tools (delvewheel) and included in wheels.
+            basilisk_dst = os.path.join(self.build_folder, "Basilisk")
+            for dep in self.dependencies.values():
+                for bindir in dep.cpp_info.bindirs:
+                    copy(self, "*.dll", bindir, basilisk_dst)
+        if self.settings.os == "Windows":
             for dep in self.dependencies.values():
                 for libdir in dep.cpp_info.bindirs:
                     copy(self, "*.dll", libdir, "../Basilisk")
@@ -309,6 +318,8 @@ class BasiliskConan(ConanFile):
         # Set the minimum buildable MacOS version.
         # tc.cache_variables["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.13"
         tc.parallel = True
+        if self.options.get_safe("pyLimitedAPI"):
+            tc.cache_variables["PY_LIMITED_API"] = str(self.options.pyLimitedAPI)
 
         # Generate!
         tc.generate()
@@ -329,6 +340,41 @@ class BasiliskConan(ConanFile):
             cmake.build()
             print("Total Build Time: " + str(datetime.now() - start))
             print(f"{statusColor}The Basilisk build is successful and the scripts are ready to run{endColor}")
+            # On Windows, copy project-built DLLs next to the Python extension modules
+            # so they are bundled in the wheel and resolvable at runtime without PATH tweaks.
+            if self.settings.os == "Windows":
+                basilisk_dst_root = os.path.join(self.build_folder, "Basilisk")
+                common_srcs = [
+                    os.path.join(self.build_folder, "bin"),
+                    os.path.join(self.build_folder, "Release"),
+                    os.path.join(self.build_folder, "Debug"),
+                ]
+                for src in common_srcs:
+                    if os.path.isdir(src):
+                        try:
+                            copy(self, "*.dll", src, basilisk_dst_root)
+                        except Exception as e:
+                            self.output.warning(f"Failed to copy DLLs from {src}: {e}")
+                            
+                # As a fallback, scan the build tree for any remaining DLLs.
+                for root, _dirs, files in os.walk(self.build_folder):
+                    # Skip the destination to avoid self-copy
+                    if os.path.commonpath([root, basilisk_dst_root]) == basilisk_dst_root:
+                        continue
+                    if any(f.lower().endswith(".dll") for f in files):
+                        try:
+                            copy(self, "*.dll", root, basilisk_dst_root)
+                        except Exception as e:
+                            self.output.warning(f"Failed to copy DLLs from {root}: {e}")
+
+                # Rename DLLs to lowercase
+                for path in glob(os.path.join(basilisk_dst_root, "*.dll")):
+                    base = os.path.basename(path)
+                    lower = base.lower()
+                    if base != lower:
+                        tmp = os.path.join(basilisk_dst_root, f".{lower}.tmp")
+                        os.replace(path, tmp)
+                        os.replace(tmp, os.path.join(basilisk_dst_root, lower))
         else:
             print(f"{statusColor}Finished configuring the Basilisk project.{endColor}")
             if self.settings.os != "Linux":

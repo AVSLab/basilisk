@@ -78,6 +78,10 @@ CMAKE_BUILD_TYPE = "Release"
 MACOSX_DEPLOYMENT_TARGET = "11.0"
 CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"
 
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
+repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analyze-existing -w {dest_dir} {wheel}"
+
 [tool.cibuildwheel.linux]
 archs = ["native"]
 repair-wheel-command = [
@@ -85,5 +89,3 @@ repair-wheel-command = [
 ]
 manylinux-x86_64-image  = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
-musllinux-x86_64-image  = "musllinux_1_2"
-musllinux-aarch64-image = "musllinux_1_2"

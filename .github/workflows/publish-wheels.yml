@@ -49,6 +49,7 @@ jobs:
         uses: pypa/cibuildwheel@v3.1.4
         env:
           CONAN_ARGS: "--opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True"
+          CIBW_TEST_REQUIRES_WINDOWS: "numpy>=2.1"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
@@ -134,6 +135,7 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
           packages-dir: dist
           skip-existing: true
+          verbose: true
 
       - name: Publish to PyPI (real releases)
         if: startsWith(github.ref, 'refs/tags/v')
