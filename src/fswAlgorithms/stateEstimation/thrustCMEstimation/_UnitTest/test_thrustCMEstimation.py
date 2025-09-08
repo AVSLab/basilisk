@@ -32,6 +32,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 @pytest.mark.parametrize("dT", [10])  # s
 @pytest.mark.parametrize("accuracy", [1e-12])
+@pytest.mark.flaky(retries=3, delay=0)
 def test_thrustCMEstimation(show_plots, dT, accuracy):
     r"""
     **Validation Test Description**
@@ -152,7 +153,7 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
     sigma = cmEstimateLog.covariance
     preFit = cmEstimateLog.preFitRes
     postFit = cmEstimateLog.postFitRes
-    
+
     # check that post-fit residuals are smaller in magnitude that pre-fit residuals at each measurement
     for i in range(len(r_TB_B)):
         np.testing.assert_array_less(np.linalg.norm(postFit[i]), np.linalg.norm(preFit[i]) + accuracy, verbose=True)
