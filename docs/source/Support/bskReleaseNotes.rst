@@ -30,6 +30,8 @@ Version |release|
   Users should be astrodynamics constants from ``Basilisk.architecture.astroConstants``.
 - Made statistical unit tests more robust
 - Refactored the CI build system scripts
+- Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
+  Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
 
 
 Version 2.78.0 (August 30, 2025)
