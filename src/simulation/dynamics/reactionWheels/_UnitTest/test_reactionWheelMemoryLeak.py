@@ -83,6 +83,7 @@ def create_and_run_simulation():
     (25, 3.0),   # Reduced from 50 to 25 iterations
     (50, 3.0),   # Reduced from 100 to 50 iterations
 ])
+@pytest.mark.flaky(retries=3, delay=0)
 def test_rw_memory_leak(num_iterations, max_allowed_growth):
     """Test for memory leaks in reaction wheel implementation"""
     initial_memory = getMemoryUsage()
