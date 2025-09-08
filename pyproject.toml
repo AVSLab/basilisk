@@ -63,3 +63,27 @@ test = [
   "pytest-error-for-skips",
   "pytest",
 ]
+
+[tool.cibuildwheel]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+skip  = ["*-win32", "cp38-macosx_arm64", "*-musllinux_*"]
+build-verbosity = 1
+test-extras = ["test"]
+test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip and not scenarioTest\""
+
+[tool.cibuildwheel.environment]
+CMAKE_BUILD_TYPE = "Release"
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "11.0"
+CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"
+
+[tool.cibuildwheel.linux]
+archs = ["native"]
+repair-wheel-command = [
+  "auditwheel repair --strip -w {dest_dir} {wheel}"
+]
+manylinux-x86_64-image  = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+musllinux-x86_64-image  = "musllinux_1_2"
+musllinux-aarch64-image = "musllinux_1_2"

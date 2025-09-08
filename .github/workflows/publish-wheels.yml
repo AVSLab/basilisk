@@ -1,0 +1,55 @@
+name: Publish Wheels
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+      - "test*"
+
+jobs:
+  build-wheels:
+    name: Build Basilisk Wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-13 # x86_64
+          - macos-latest # ARM64
+          - ubuntu-latest # x86_64
+          - ubuntu-22.04-arm # ARM64
+          - windows-latest # x86_64
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      # Workaround for macos-13 (Intel). Ensures the conan build uses the right
+      # SSL cert.
+      - name: Set CA bundle (macos-13 only)
+        if: ${{ matrix.os == 'macos-13' }}
+        shell: bash
+        run: |
+          python -m pip install -U certifi
+          CA="$(python -c 'import certifi; print(certifi.where())')"
+          {
+          echo "REQUESTS_CA_BUNDLE=$CA"   # Python requests / Conan
+          echo "PIP_CERT=$CA"             # pip
+          echo "SSL_CERT_FILE=$CA"        # OpenSSL consumers
+          echo "CURL_CA_BUNDLE=$CA"       # curl / CMake file(DOWNLOAD)
+          echo "CMAKE_TLS_CAINFO=$CA"     # CMake
+          } >> "$GITHUB_ENV"
+          echo "Using CA: $CA"
+
+      - name: Setup system dependencies
+        uses: ./.github/actions/setup
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.1.4
+        env:
+          CONAN_ARGS: "--opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
