@@ -28,6 +28,7 @@ Version |release|
 -----------------
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
   Users should be astrodynamics constants from ``Basilisk.architecture.astroConstants``.
+- Made statistical unit tests more robust
 - Refactored the CI build system scripts
 
 
