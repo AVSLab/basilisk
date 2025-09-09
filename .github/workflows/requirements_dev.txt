@@ -8,6 +8,8 @@ setuptools-scm
 pytest
 pytest-html
 pytest-xdist
+pytest-timeout
+pytest-rerunfailures
 
 pre-commit
 clang-format
