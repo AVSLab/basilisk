@@ -49,6 +49,15 @@ Version |release|
 - Made individual structures for each degree of freedom in :ref:`spinningBodyNDOFStateEffector` and
   :ref:`linearTranslationNDOFStateEffector`.
 - Capitalized all structures in :ref:`linearTranslationOneDOFStateEffector` and :ref:`linearTranslationNDOFStateEffector`.
+- The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
+  list of locations and only incremental changes have to be sent using the ``vizSupport.changeLocation()``
+  method. This drastically reduces the Vizard data size.
+- The support file :ref:`vizSupport` is updated to only have ``enableUnityVisualization()`` check
+  if :ref:`vizInterface` has been built or not.  Example scripts check if ``vizSupport.vizFound`` is true
+  to execute ``vizInterface`` related code.
+- In :ref:`vizSupport`, in the method ``setInstrumentGuiSetting()``, corrected the spelling of
+  ``showTransceiverFrustrum`` to be ``showTransceiverFrustum``.  The prior argument name has
+  been deprecated.
 
 
 Version 2.8.0 (August 30, 2025)
