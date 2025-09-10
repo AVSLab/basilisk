@@ -673,6 +673,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showquadmaplabels(this->settings.showQuadMapLabels);
         vizSettings->set_spacecraftorbitlinewidth(this->settings.spacecraftOrbitLineWidth);
         vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
+        vizSettings->set_linesandframeslinewidth(this->settings.linesAndFramesLineWidth);
+        vizSettings->set_uselinerenderersfortargetlinesandframes(this->settings.useLineRenderersForTargetLinesAndFrames);
+
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {

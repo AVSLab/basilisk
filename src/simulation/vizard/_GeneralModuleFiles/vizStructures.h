@@ -446,6 +446,9 @@ VizSettings
     int32_t showQuadMapLabels = 0;                        //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     double spacecraftOrbitLineWidth = 0;                  //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale spacecraft orbit line width
     double celestialBodyOrbitLineWidth = 0;               //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
+    double linesAndFramesLineWidth = 0;                   //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
+    int useLineRenderersForTargetLinesAndFrames = 0;    //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+
 }VizSettings;
 
 
