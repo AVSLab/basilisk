@@ -64,6 +64,14 @@ void SpacecraftCharging::setEBeamCurrent(const double I_eBeam) {
     this->I_eBeam = I_eBeam;
 }
 
+/*! Setter for the electron beam energy.
+ @param I_eBeam [keV] Electron beam energy
+ */
+void SpacecraftCharging::setEBeamEnergy(const double E_eBeam) {
+    assert(E_eBeam > 0.0);
+    this->E_eBeam = std::abs(E_eBeam);
+}
+
 /*! Setter for the spacecraft capacitance.
  @param capacitance [farad] Spacecraft capacitance
  */
@@ -77,6 +85,13 @@ void SpacecraftCharging::setScCapacitance(const double capacitance) {
 */
 double SpacecraftCharging::getEBeamCurrent() const {
     return this->I_eBeam;
+}
+
+/*! Getter for the electron beam energy.
+ @return double
+*/
+double SpacecraftCharging::getEBeamEnergy() const {
+    return this->E_eBeam;
 }
 
 /*! Getter for the spacecraft capacitance.

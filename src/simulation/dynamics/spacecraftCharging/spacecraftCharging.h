@@ -39,11 +39,14 @@ public:
     void postIntegration(uint64_t callTimeNanos) final;
 
     void setEBeamCurrent(const double I_eBeam);  //!< Setter for the electron beam current
+    void setEBeamEnergy(const double E_eBeam);  //!< Setter for the electron beam energy
     void setScCapacitance(const double capacitance);  //!< Setter for the spacecraft capacitance
     double getEBeamCurrent() const;  //!< Getter for the electron beam current
+    double getEBeamEnergy() const;  //!< Getter for the electron beam energy
     double getScCapacitance() const;  //!< Getter for the spacecraft capacitance
 
 private:
+    double E_eBeam;  //!< [keV] Electron beam energy
     double I_eBeam;  //!< [Amps] Electron beam current
     double scCapacitance;  //!< [farads] Spacecraft capacitance
 };
