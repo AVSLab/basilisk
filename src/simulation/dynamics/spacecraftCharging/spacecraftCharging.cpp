@@ -57,12 +57,26 @@ void SpacecraftCharging::preIntegration(uint64_t integrateToThisTimeNanos) {
 void SpacecraftCharging::postIntegration(uint64_t integrateToThisTimeNanos) {
 }
 
+/*! Setter for the electron beam current.
+ @param I_eBeam [Amps] Electron beam current
+ */
+void SpacecraftCharging::setEBeamCurrent(const double I_eBeam) {
+    this->I_eBeam = I_eBeam;
+}
+
 /*! Setter for the spacecraft capacitance.
  @param capacitance [farad] Spacecraft capacitance
  */
 void SpacecraftCharging::setScCapacitance(const double capacitance) {
     assert(capacitance > 0.0);
     this->scCapacitance = std::abs(capacitance);
+}
+
+/*! Getter for the electron beam current.
+ @return double
+*/
+double SpacecraftCharging::getEBeamCurrent() const {
+    return this->I_eBeam;
 }
 
 /*! Getter for the spacecraft capacitance.
