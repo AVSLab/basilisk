@@ -38,7 +38,11 @@ public:
     void preIntegration(uint64_t callTimeNanos) final;
     void postIntegration(uint64_t callTimeNanos) final;
 
+    void setScCapacitance(const double capacitance);  //!< Setter for the spacecraft capacitance
+    double getScCapacitance() const;  //!< Getter for the spacecraft capacitance
+
 private:
+    double scCapacitance;  //!< Spacecraft capacitance
 };
 
 

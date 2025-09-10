@@ -56,3 +56,18 @@ void SpacecraftCharging::preIntegration(uint64_t integrateToThisTimeNanos) {
  */
 void SpacecraftCharging::postIntegration(uint64_t integrateToThisTimeNanos) {
 }
+
+/*! Setter for the spacecraft capacitance.
+ @param capacitance [farad] Spacecraft capacitance
+ */
+void SpacecraftCharging::setScCapacitance(const double capacitance) {
+    assert(capacitance > 0.0);
+    this->scCapacitance = std::abs(capacitance);
+}
+
+/*! Getter for the spacecraft capacitance.
+ @return double
+*/
+double SpacecraftCharging::getScCapacitance() const {
+    return this->scCapacitance;
+}
