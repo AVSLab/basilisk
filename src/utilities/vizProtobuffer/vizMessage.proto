@@ -187,7 +187,6 @@ message VizMessage{
         int64 renderMode = 16;                       // (Optional) Value of 0 to render visual image (default), value of 1 to render depth buffer to image
         repeated double depthMapClippingPlanes = 17; // (Optional) [m] Set the bounds of rendered depth map by setting the near and far clipping planes when in renderMode=1 (depthMap mode). Default values of 0.1 and 100.
         int32 showHUDElementsInImage = 18;           // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-
     }
 
 
@@ -333,6 +332,8 @@ message VizMessage{
         int32 showQuadMapLabels = 57;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         double spacecraftOrbitLineWidth = 58;               // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale spacecraft orbit line width
         double celestialBodyOrbitLineWidth = 59;            // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
+        double linesAndFramesLineWidth = 60;                // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
+        int32 useLineRenderersForTargetLinesAndFrames = 61; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
 
     message MultiShape{ //ONLY NEEDED IF MSM DESIRED
@@ -352,8 +353,7 @@ message VizMessage{
         repeated double rotation = 11;    // [MRP] Desired orientation of the Multi Shape in the spacecraft body frame
     }
 
-    message Location{ //ONLY NEEDED IF LOCATION DESIRED
-        // ALL FIELDS CHECKED EVERY MESSAGE
+    message Location{ //ONLY SEND TO CREATE NEW LOCATION OR WHEN UPDATES REQUIRED
         string stationName = 1;      // location text label
         string parentBodyName = 2;   // name of the parent body P (spacecraft or planet) on which the location G is positioned
         repeated double r_GP_P = 3;  // [m] Position of G relative to parent body frame P
