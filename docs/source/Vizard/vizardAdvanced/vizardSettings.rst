@@ -239,6 +239,12 @@ default setting for that behavior.
       - double
       - Values greater than 0 to scale celestial body orbit line width, value of 0 (protobuffer default) to use
         viz default.
+    * - ``linesAndFramesLineWidth``
+      - double
+      - Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
+    * - ``useLineRenderersForTargetLinesAndFrames``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - **Lighting Settings**
       -
       -
