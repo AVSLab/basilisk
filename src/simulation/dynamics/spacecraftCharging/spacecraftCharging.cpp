@@ -60,6 +60,13 @@ void SpacecraftCharging::UpdateState(uint64_t CurrentSimNanos) {
 
 /*! Method to write module output messages. */
 void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
+    this->scPotential = this->scPotentialState->getState()(0, 0);
+
+    // Write out the spinning body output messages
+    VoltMsgPayload voltageMsgBuffer;
+    voltageMsgBuffer = this->scPotentialOutMsg.zeroMsgPayload;
+    voltageMsgBuffer.voltage = this->scPotential;
+    this->scPotentialOutMsg.write(&voltageMsgBuffer, this->moduleID, clockTime);
 }
 
 /*! Method for charging equations of motion */

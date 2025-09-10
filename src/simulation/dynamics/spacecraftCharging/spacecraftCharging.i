@@ -35,6 +35,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 %include "spacecraftCharging.h"
 
+%include "architecture/msgPayloadDefC/VoltMsgPayload.h"
+struct VoltMsg_C;
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

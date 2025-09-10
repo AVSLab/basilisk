@@ -26,6 +26,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 
 /*! @brief spacecraft charging module */
 class SpacecraftCharging : public DynamicObject{
@@ -47,6 +48,8 @@ public:
     double getEBeamCurrent() const;  //!< Getter for the electron beam current
     double getEBeamEnergy() const;  //!< Getter for the electron beam energy
     double getScCapacitance() const;  //!< Getter for the spacecraft capacitance
+
+    Message<VoltMsgPayload> scPotentialOutMsg;     //!< Spacecraft potential (voltage) output message
 
 private:
     double E_eBeam;  //!< [keV] Electron beam energy
