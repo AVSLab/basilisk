@@ -114,6 +114,17 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     return;
 }
 
+void HingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    if (segment != 1) {
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent hinged rigid body linkage because this is 1DOF.");
+    }
+
+    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
+
+    this->dynEffectors.push_back(newDynamicEffector);
+}
+
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
