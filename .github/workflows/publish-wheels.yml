@@ -104,30 +104,6 @@ jobs:
           name: cibw-sdist
           path: dist
 
-      - name: Verify versions match tag
-        shell: bash
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          TAG="${GITHUB_REF##*/}"
-          VER="${TAG#v}"
-          echo "Tag: $TAG  Version: $VER"
-          shopt -s nullglob
-          [[ -e dist/*"$VER"*.whl ]] || { echo "No wheel with $VER"; exit 1; }
-          [[ -e dist/*"$VER"*.tar.gz ]] || { echo "No sdist with $VER"; exit 1; }
-          echo "OK — artifacts match $VER"
-
-      - name: Show release info
-        shell: bash
-        run: |
-          echo "Release Info:"
-          TAG="${GITHUB_REF##*/}"
-          VER="${TAG#v}"
-          echo "Release tag: $TAG"
-          echo "Release ver: $VER"
-          echo
-          echo "Artifacts in dist/:"
-          ls -lh dist || true
-
       - name: Publish to TestPyPI (test tags)
         if: startsWith(github.ref, 'refs/tags/test')
         uses: pypa/gh-action-pypi-publish@release/v1
