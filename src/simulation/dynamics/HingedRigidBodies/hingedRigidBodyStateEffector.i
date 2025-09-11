@@ -22,6 +22,7 @@
 
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
+%feature("python:kwargs") HingedRigidBodyStateEffector::addDynamicEffector;
 
 %{
    #include "hingedRigidBodyStateEffector.h"
