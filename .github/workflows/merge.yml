@@ -26,6 +26,7 @@ jobs:
           token: ${{ secrets.BOT_ACCESS_TOKEN }}
 
       - name: Bump version
+        id: bump
         run: ./.github/workflows/version-bumper.sh ./docs/source/bskVersion.txt
 
       - name: Commit and push
@@ -35,35 +36,12 @@ jobs:
           git commit -a -m "[AUTO] Bump version number" || echo "No changes"
           git push || true
 
-  build-ubuntu-latest-wheels:
-    name: Build ubuntu-latest wheels
-    needs: bump_version
-    # Allow for manual runs to generate new wheels
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # The 'Build wheel' step will perform the actual build. However, we want
-      # all pre build setup to still be performed
-      - uses: ./.github/actions/build
-        with:
-          python-version: ${{ matrix.python-version }}
-          extra-apt: "cmake"
-          skip-build: true
-
-      - name: Build wheel
+      - name: Create tag
+        if: ${{ steps.bump.outputs.updated_version != '' }}
         run: |
-          python -m pip wheel . -v --wheel-dir /tmp/wheelhouse
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: basilisk-wheels_ubuntu-22.04_python${{ matrix['python-version'] }}
-          path: /tmp/wheelhouse/**/*asilisk*.whl
+          git tag -a "v${{ steps.bump.outputs.updated_version }}" \
+            -m "Release v${{ steps.bump.outputs.updated_version }}"
+          git push --tags
 
   build_documentation:
     name: macOS Docs Deployment

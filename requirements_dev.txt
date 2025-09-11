@@ -1,7 +1,7 @@
 wheel>=0.45.1,<=0.46.1
 cmake>=3.26,<4.0
 conan>=2.0.5,<=2.15.1
-packaging>=22,<=24.2
+packaging>=24,<26
 setuptools>=70.1.0,<=78.1.0
 setuptools-scm>=8.0,<=8.2.1
 

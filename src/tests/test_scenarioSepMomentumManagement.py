@@ -52,6 +52,7 @@ import scenarioSepMomentumManagement
 
 
 @pytest.mark.parametrize("withFunction", [False, True])
+@pytest.mark.scenarioTest
 # provide a unique test method name, starting with test_
 def test_sepMomentumManagement(withFunction):
     """This function is called by the pytest environment."""

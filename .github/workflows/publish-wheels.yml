@@ -1,0 +1,144 @@
+name: Publish Wheels
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+      - "test*"
+
+jobs:
+  build-wheels:
+    name: Build Basilisk Wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-13 # x86_64
+          - macos-latest # ARM64
+          - ubuntu-latest # x86_64
+          - ubuntu-22.04-arm # ARM64
+          - windows-latest # x86_64
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+      # Workaround for macos-13 (Intel). Ensures the conan build uses the right
+      # SSL cert.
+      - name: Set CA bundle (macos-13 only)
+        if: ${{ matrix.os == 'macos-13' }}
+        shell: bash
+        run: |
+          python -m pip install -U certifi
+          CA="$(python -c 'import certifi; print(certifi.where())')"
+          {
+          echo "REQUESTS_CA_BUNDLE=$CA"   # Python requests / Conan
+          echo "PIP_CERT=$CA"             # pip
+          echo "SSL_CERT_FILE=$CA"        # OpenSSL consumers
+          echo "CURL_CA_BUNDLE=$CA"       # curl / CMake file(DOWNLOAD)
+          echo "CMAKE_TLS_CAINFO=$CA"     # CMake
+          } >> "$GITHUB_ENV"
+          echo "Using CA: $CA"
+
+      - name: Setup system dependencies
+        uses: ./.github/actions/setup
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.1.4
+        env:
+          CONAN_ARGS: "--opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True"
+          CIBW_TEST_REQUIRES_WINDOWS: "numpy>=2.1"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+
+  make_sdist:
+    name: Make SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: Build SDist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
+
+  publish:
+    name: Publish to PyPI
+    needs: [build-wheels, make_sdist]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          merge-multiple: true
+          path: dist
+
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist
+
+      - name: Verify versions match tag
+        shell: bash
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${GITHUB_REF##*/}"
+          VER="${TAG#v}"
+          echo "Tag: $TAG  Version: $VER"
+          shopt -s nullglob
+          [[ -e dist/*"$VER"*.whl ]] || { echo "No wheel with $VER"; exit 1; }
+          [[ -e dist/*"$VER"*.tar.gz ]] || { echo "No sdist with $VER"; exit 1; }
+          echo "OK — artifacts match $VER"
+
+      - name: Show release info
+        shell: bash
+        run: |
+          echo "Release Info:"
+          TAG="${GITHUB_REF##*/}"
+          VER="${TAG#v}"
+          echo "Release tag: $TAG"
+          echo "Release ver: $VER"
+          echo
+          echo "Artifacts in dist/:"
+          ls -lh dist || true
+
+      - name: Publish to TestPyPI (test tags)
+        if: startsWith(github.ref, 'refs/tags/test')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: dist
+          skip-existing: true
+          verbose: true
+
+      - name: Publish to PyPI (real releases)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist

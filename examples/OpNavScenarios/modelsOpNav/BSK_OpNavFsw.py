@@ -30,6 +30,7 @@ the ``modeRequest`` definitions which enable all the tasks necessary to perform 
 
 
 import math
+from pathlib import Path
 
 import numpy as np
 from Basilisk import __path__
@@ -62,6 +63,15 @@ try:
     centerRadiusCNNIncluded = True
 except ImportError:
     centerRadiusCNNIncluded = False
+
+
+def get_repo_root(start: Path = Path(__file__).resolve()) -> Path:
+    for parent in [start] + list(start.parents):
+        if (parent / ".git").exists():
+            return parent
+        if (parent / "pyproject.toml").exists() or (parent / "setup.cfg").exists():
+            return parent
+    raise RuntimeError("Repo root not found")
 
 
 class BSKFswModels():
@@ -521,7 +531,14 @@ class BSKFswModels():
         self.opNavCNN.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
         self.opNavCNN.opnavCirclesOutMsg = self.opnavCirclesMsg
         self.opNavCNN.pixelNoise = [5,5,5]
-        self.opNavCNN.pathToNetwork = bskPath + "/../../src/fswAlgorithms/imageProcessing/centerRadiusCNN/CAD.onnx"
+        self.opNavCNN.pathToNetwork = str(
+            get_repo_root()
+            / "src"
+            / "fswAlgorithms"
+            / "imageProcessing"
+            / "centerRadiusCNN"
+            / "CAD.onnx"
+        )
 
     def SetImageProcessing(self, SimBase):
         self.imageProcessing.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)

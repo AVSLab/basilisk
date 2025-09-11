@@ -3,11 +3,12 @@ build-backend = "setuptools.build_meta"
 requires = [
     "setuptools>=70.1.0,<=78.1.0",   # Required for "bdist_wheel" to work correctly.
     "setuptools-scm>=8.0,<=8.2.1",  # Automatically include all Git-controlled files in sdist
-    "packaging>=22,<=24.2",        # Due to incompatibility: https://github.com/pypa/setuptools/issues/4483
+    "packaging>=24.0,<26",
 
     # needed to find the numpy include headers,
     # pin to lowest runtime allowed version to take advantage of backwards compatibility
-    "numpy<=2.2.4,>=1.24.4",
+    "numpy>=1.24.4,<2.4.0;  python_version < '3.13'",
+    "numpy>=2.0,<2.4.0;     python_version >= '3.13'",
 
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.15.1",
@@ -16,7 +17,7 @@ requires = [
 ]
 
 [project]
-name        = 'Basilisk'
+name        = 'bsk'
 dynamic     = ["version", "dependencies"]
 requires-python = ">=3.8, <3.14"
 
@@ -55,3 +56,36 @@ Basilisk = [
 [tool.setuptools.dynamic]
 version = {file = "docs/source/bskVersion.txt"}
 dependencies = {file = "requirements.txt"}
+
+[project.optional-dependencies]
+test = [
+  "psutil",
+  "pytest-error-for-skips",
+  "pytest",
+]
+
+[tool.cibuildwheel]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+skip  = ["*-win32", "cp38-macosx_arm64", "*-musllinux_*"]
+build-verbosity = 1
+test-extras = ["test"]
+test-command = "bskLargeData && pytest -v {project}/src/tests -m \"not ciSkip and not scenarioTest\""
+
+[tool.cibuildwheel.environment]
+CMAKE_BUILD_TYPE = "Release"
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "11.0"
+CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"
+
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
+repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analyze-existing -w {dest_dir} {wheel}"
+
+[tool.cibuildwheel.linux]
+archs = ["native"]
+repair-wheel-command = [
+  "auditwheel repair --strip -w {dest_dir} {wheel}"
+]
+manylinux-x86_64-image  = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
