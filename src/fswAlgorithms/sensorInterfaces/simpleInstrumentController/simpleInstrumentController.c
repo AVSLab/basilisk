@@ -96,7 +96,29 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     omega_BR_norm = v3Norm(attGuidInMsgBuffer.omega_BR_B);
 
     // If the controller is active
-    if (configData->controllerStatus) {
+    int time_control = 0;
+    if (configData->timeTolerance > 0) {
+        if ((callTime < configData->imagingTime + configData->timeTolerance) && (callTime > configData->imagingTime - configData->timeTolerance))
+        {
+            time_control = 1;
+        }
+    }
+    // float callTime_seconds = callTime*1e-9;
+    // float imagingTime_seconds = configData->imagingTime*1e-9;
+    // float time_tolerance_seconds = configData->timeTolerance*1e-9;
+    // printf("callTime: %f\n", callTime_seconds);
+    // printf("imagingTime: %f\n", imagingTime_seconds);
+    // // printf("callTime: %llu\n", (unsigned long long)callTime);
+    // printf("time_control: %d\n", time_control);
+    // printf("Time tolerance: %f\n", time_tolerance_seconds);
+    // if (time_control) {
+    //     printf("Within time window\n");
+    // } else {
+    //     printf("Outside time window\n");
+    // }
+    // printf("Controller status: %d\n", (unsigned int)configData->controllerStatus);
+
+    if (configData->controllerStatus && time_control) {
         // If the target has not been imaged
         if (!configData->imaged) {
             /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate

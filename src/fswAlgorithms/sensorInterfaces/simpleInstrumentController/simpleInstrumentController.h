@@ -37,6 +37,8 @@ typedef struct {
     double rateErrTolerance; //!< Rate error tolerance in rad/s
     unsigned int imaged;    //!< Indicator for whether or not the image has already been captured
     unsigned int controllerStatus;  //!< dictates whether or not the controller should be running
+    uint64_t timeTolerance; //!< Time tolerance for imaging in seconds
+    uint64_t imagingTime; //!< Imaging time in seconds
 
     /* declare module IO interfaces */
     AccessMsg_C locationAccessInMsg;                   //!< Ground location access input message
