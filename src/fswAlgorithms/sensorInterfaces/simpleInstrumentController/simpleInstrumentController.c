@@ -33,7 +33,8 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *configData, int64_t moduleID)
+void
+SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID)
 {
     configData->imaged = 0;
     configData->controllerStatus = 1;
@@ -50,7 +51,8 @@ void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *confi
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->locationAccessInMsg)) {
@@ -72,16 +74,17 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double sigma_BR_norm; //!< Norm of sigma_BR
     double omega_BR_norm; //!< Norm of omega_BR
 
     /* Local copies of the msg buffers*/
-    AccessMsgPayload accessInMsgBuffer;  //!< local copy of input message buffer
-    AttGuidMsgPayload attGuidInMsgBuffer;  //!< local copy of output message buffer
+    AccessMsgPayload accessInMsgBuffer;             //!< local copy of input message buffer
+    AttGuidMsgPayload attGuidInMsgBuffer;           //!< local copy of output message buffer
     DeviceStatusMsgPayload deviceStatusInMsgBuffer; //!< local copy of input message buffer
-    DeviceCmdMsgPayload deviceCmdOutMsgBuffer;  //!< local copy of output message buffer
+    DeviceCmdMsgPayload deviceCmdOutMsgBuffer;      //!< local copy of output message buffer
 
     // zero output buffer
     deviceCmdOutMsgBuffer = DeviceCmdMsg_C_zeroMsgPayload();
@@ -100,61 +103,80 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     sigma_BR_norm = v3Norm(attGuidInMsgBuffer.sigma_BR);
     omega_BR_norm = v3Norm(attGuidInMsgBuffer.omega_BR_B);
 
-    // If the controller is active
+    // If non-zero time tolerances are provided, require callTime to fall inside
+    // [imagingTime - timeToleranceLower, imagingTime + timeToleranceUpper].
+    int timeControl = 1;
+    if (configData->timeToleranceLower > 0) {
+        if (callTime < configData->imagingTime && configData->imagingTime - callTime > configData->timeToleranceLower) {
+            timeControl = 0;
+        }
+    }
+    if (configData->timeToleranceUpper > 0) {
+        if (callTime > configData->imagingTime && callTime - configData->imagingTime > configData->timeToleranceUpper) {
+            timeControl = 0;
+        }
+    }
     if (configData->controllerStatus) {
         // If the target has not been imaged
         if (!configData->imaged) {
             unsigned int constraintsMet =
-                (sigma_BR_norm <= configData->attErrTolerance)
-                && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance))
-                && (accessInMsgBuffer.hasAccess);
+              (sigma_BR_norm <= configData->attErrTolerance) &&
+              (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) &&
+              (accessInMsgBuffer.hasAccess);
 
             if (constraintsMet) {
                 // Default: immediate imaging
                 if (!configData->useDurationImaging) {
-                    deviceCmdOutMsgBuffer.deviceCmd = 1;
-                    configData->imaged = 1;
+                    if (timeControl) {
+                        deviceCmdOutMsgBuffer.deviceCmd = 1;
+                        configData->imaged = 1;
+                    }
                 }
                 // Duration-based imaging
                 else {
                     if (!configData->constraintsActive) {
                         configData->constraintsActive = 1;
-                        configData->constraintStartTime = (double) callTime;  // current sim time
+                        configData->constraintStartTime = (double)callTime; // current sim time
                     }
 
                     if (configData->acquisitionTime < 0.0) {
                         // Negative acquisitionTime is invalid; cap to zero
                         configData->acquisitionTime = 0.0;
-                        _bskLog(configData->bskLogger, BSK_WARNING,
-                            "simpleInstrumentController: acquisitionTime is negative and has been set to zero.");
+                        _bskLog(configData->bskLogger,
+                                BSK_WARNING,
+                                "simpleInstrumentController: acquisitionTime is negative and has been set to zero.");
                     }
 
                     if (configData->allowedTime < 0.0) {
                         // Negative allowedTime is invalid; cap to zero
                         configData->allowedTime = 0.0;
-                        _bskLog(configData->bskLogger, BSK_WARNING,
-                            "simpleInstrumentController: allowedTime is negative and has been set to zero.");
+                        _bskLog(configData->bskLogger,
+                                BSK_WARNING,
+                                "simpleInstrumentController: allowedTime is negative and has been set to zero.");
                     }
 
                     double elapsedTime = callTime - configData->constraintStartTime;
 
                     // Determine the effective time to image: cannot exceed allowedTime
                     double effectiveImageTime = (configData->acquisitionTime > configData->allowedTime)
-                                                ? configData->allowedTime
-                                                : configData->acquisitionTime;
+                                                  ? configData->allowedTime
+                                                  : configData->acquisitionTime;
 
                     if (elapsedTime >= effectiveImageTime) {
                         // If full effective duration passed, set imaged
                         if (configData->acquisitionTime <= configData->allowedTime) {
-                            configData->imaged = 1;  // Success
-                            deviceCmdOutMsgBuffer.deviceCmd = 1;
+                            if (timeControl) {
+                                configData->imaged = 1; // Success
+                                deviceCmdOutMsgBuffer.deviceCmd = 1;
+                                configData->constraintsActive = 0; // Reset timer
+                            }
                         } else {
                             // Failed because required time > allowed duration
                             configData->imaged = 0;
                             deviceCmdOutMsgBuffer.deviceCmd = 0;
                             configData->controllerStatus = 0; // Disable further attempts
+                            configData->constraintsActive = 0; // Reset timer
                         }
-                        configData->constraintsActive = 0;  // Reset timer
                     }
                 }
             } else {
