@@ -1,0 +1,38 @@
+/*
+ ISC License
+
+ Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+ */
+
+#ifndef MJ_SYS_MASS_MATRIX_MESSAGE_H
+#define MJ_SYS_MASS_MATRIX_MESSAGE_H
+
+#include <vector>
+
+/*! @brief Structure used by the messaging system to communicate details about the spacecraft system including its mass matrix.*/
+typedef struct
+//@cond DOXYGEN_IGNORE
+MJSysMassMatrixMsgPayload
+//@endcond
+{
+    int nSC;                //!< [-] number of spacecraft in the system
+    std::vector<int> scStartIdx;    //!< [-] list of the first joint index for each spacecraft
+    std::vector<int> jointTypes;    //!< [-] list of the joint types (0:free,1:ball,2:slide,3:hinge) in the system
+    std::vector<double> massMatrix; //!< [-] mass matrix of the system in row-major order
+
+} MJSysMassMatrixMsgPayload;
+
+#endif
