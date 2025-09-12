@@ -42,6 +42,8 @@ typedef struct {
     double acquisitionTime; //!< (optional) Duration that constraints must be satisfied [nanoseconds]
     double allowedTime;     //!< (optional) Maximum allowed time for imaging [nanoseconds]
     unsigned int constraintsActive; //!< flag to track state
+    uint64_t timeTolerance; //!< Time tolerance for imaging in seconds
+    uint64_t imagingTime; //!< Imaging time in seconds
 
     /* declare module IO interfaces */
     AccessMsg_C locationAccessInMsg;                   //!< Ground location access input message
