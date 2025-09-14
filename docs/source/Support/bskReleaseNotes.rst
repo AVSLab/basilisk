@@ -29,6 +29,7 @@ Version |release|
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
   Users should be astrodynamics constants from ``Basilisk.architecture.astroConstants``.
 - Made statistical unit tests more robust
+- Added fault modeling capability to :ref:`magnetometer` module.
 - Refactored the CI build system scripts
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.

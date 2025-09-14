@@ -33,6 +33,13 @@
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 
+typedef enum {
+    NOMINAL = 0,
+    MAG_FAULT_STUCK_CURRENT = 1,
+    MAG_FAULT_STUCK_VALUE = 2,
+    MAG_FAULT_SPIKING = 3,
+} MagFaultState_t;
+
 /*! @class Magnetometer
  * @brief Magnetometer sensor model that simulates magnetic field measurements with configurable noise
  *
@@ -77,6 +84,12 @@ public:
     /*! Gets current propagation matrix */
     Eigen::Matrix3d getAMatrix() const;
 
+    /*! Sets fault state for a specific axis */
+    void setFaultState(int axis, MagFaultState_t state);
+
+    /*! Gets fault state for a specific axis */
+    MagFaultState_t getFaultState(int axis) const;
+
 public:
     ReadFunctor<SCStatesMsgPayload> stateInMsg;        //!< [-] input message for spacecraft states
     ReadFunctor<MagneticFieldMsgPayload> magInMsg;          //!< [-] input message for magnetic field data in inertial frame N
@@ -92,7 +105,12 @@ public:
     Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states
     double              maxOutput;              //!< [T] Maximum output for saturation application
     double              minOutput;              //!< [T] Minimum output for saturation application
+    Eigen::Vector3d     stuckValue;             //!< [T] Value for mag sensor to get stuck at
+    Eigen::Vector3d     spikeProbability;       //!< [-] Probability of spiking at each time step (between 0 and 1)
+    Eigen::Vector3d     spikeAmount;            //!< [-] Spike multiplier
+
     BSKLogger bskLogger;                          //!< -- BSK Logging
+    MagFaultState_t faultStateAxis[3];          //!< [-] Fault state variable for each axis
 
 private:
     MagneticFieldMsgPayload magData;             //!< [-] Magnetic field in inertial N frame
@@ -101,6 +119,8 @@ private:
     GaussMarkov noiseModel;                      //!< [-] Gauss Markov noise generation model
     Saturate saturateUtility;                    //!< [-] Saturation utility
     Eigen::Matrix3d AMatrix;      //!< [-] Error propagation matrix
+    Eigen::Vector3d pastValue;                   //!< [-] Measurement from last update (used only for faults)
+    std::minstd_rand spikeProbabilityGenerator;  //! [-] Number generator for calculating probability of spike if faulty
 };
 
 

@@ -53,6 +53,12 @@ Magnetometer::Magnetometer()
     this->saturateUtility = Saturate(this->numStates);
     this->dcm_SB.setIdentity(3, 3);
     this->AMatrix.setIdentity();
+    this->faultStateAxis[0] = NOMINAL;
+    this->faultStateAxis[1] = NOMINAL;
+    this->faultStateAxis[2] = NOMINAL;
+    this->stuckValue.fill(0.0);
+    this->spikeProbability.fill(0.1);
+    this->spikeAmount.fill(2.0);
     return;
 }
 
@@ -164,6 +170,28 @@ void Magnetometer::applySensorErrors()
     this->tamSensed_S = this->tamSensed_S + this->senBias;
     //! - Multiplying the sensed value with a scale factor
     this->tamSensed_S *= this->scaleFactor;
+
+    // apply fault conditions
+    for (int i = 0; i < 3; i++) {
+        if (this->faultStateAxis[i] == NOMINAL) {
+            // leave as is
+        }
+        else if (this->faultStateAxis[i] == MAG_FAULT_STUCK_VALUE) {
+            this->tamSensed_S[i] = this->stuckValue[i];
+        }
+        else if (this->faultStateAxis[i] == MAG_FAULT_STUCK_CURRENT) {
+            this->tamSensed_S[i] = this->pastValue[i];
+        }
+        else if (this->faultStateAxis[i] == MAG_FAULT_SPIKING) {
+            std::uniform_real_distribution<double> spikeProbabilityDistribution(0.0, 1.0);
+            double n = spikeProbabilityDistribution(this->spikeProbabilityGenerator);
+            if (n <= this->spikeProbability[i]) {
+                this->tamSensed_S[i] *= this->spikeAmount[i];
+            }
+        }
+    }
+
+    this->pastValue = this->tamSensed_S; // store current value for next time step
 }
 
 /*! This method applies saturation using the given bounds. */
@@ -212,4 +240,17 @@ void Magnetometer::setAMatrix(const Eigen::Matrix3d& matrix)
 Eigen::Matrix3d Magnetometer::getAMatrix() const
 {
     return this->AMatrix;
+}
+
+void Magnetometer::setFaultState(int axis, MagFaultState_t state) {
+    if (axis >= 0 && axis < 3) {
+        this->faultStateAxis[axis] = state;
+    }
+}
+
+MagFaultState_t Magnetometer::getFaultState(int axis) const {
+    if (axis >= 0 && axis < 3) {
+        return this->faultStateAxis[axis];
+    }
+    return NOMINAL;  // safe default
 }
