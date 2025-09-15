@@ -30,6 +30,7 @@ Version |release|
   Users should be astrodynamics constants from ``Basilisk.architecture.astroConstants``.
 - Made statistical unit tests more robust
 - Added fault modeling capability to :ref:`magnetometer` module.
+- Added new module :ref:`MJSystemCoM` to extract the system center of mass position and velocity from a MuJoCo simulation.
 - Refactored the CI build system scripts
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
