@@ -84,6 +84,14 @@ bskPath = __path__[0]
 path = os.path.dirname(os.path.abspath(__file__))
 
 def run(show_plots):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots.  This script has no plots to show.
+
+    """
+
     taskName = "unitTask"               # arbitrary name (don't change)
     processname = "TestProcess"         # arbitrary name (don't change)
 
