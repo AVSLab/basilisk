@@ -213,6 +213,7 @@ def MJSystemCoMTest(show_plots, model, moving, displaced):
 
     # create the Mujoco scene
     scene = mujoco.MJScene.fromFile(xml_path)
+    scene.extraEoMCall = True
     unitTestSim.AddModelToTask(unitTaskName, scene)
 
     # setup module to be tested
@@ -242,16 +243,10 @@ def MJSystemCoMTest(show_plots, model, moving, displaced):
     r_CN_N_module_c = comStatesOutMsgCRec.r_CN_N[-1,:]
     v_CN_N_module_c = comStatesOutMsgCRec.v_CN_N[-1,:]
 
-    print("module pos:", r_CN_N_module)
-    print("module vel:", v_CN_N_module)
-
     # compute the truth data
     r_CN_N_truth0, v_CN_N_truth0 = _expected_com(model, r0, v0)
     r_CN_N_truth = r_CN_N_truth0 + v_CN_N_truth0 * 0.2
     v_CN_N_truth = v_CN_N_truth0
-
-    print("truth pos:", r_CN_N_truth)
-    print("truth vel:", v_CN_N_truth)
 
     # Compare
     acc = 1e-12
