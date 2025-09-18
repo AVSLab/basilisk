@@ -61,10 +61,6 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
     r_CN_N.setZero();
     v_CN_N.setZero();
 
-    // extract the CoM values
-
-    mj_forward(model, data);
-
     // calculate CoM position
     for (int i = 1; i < model->nbody; i++) {
         const double mi = model->body_mass[i];
