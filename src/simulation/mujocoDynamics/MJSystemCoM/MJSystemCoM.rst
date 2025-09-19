@@ -31,7 +31,11 @@ This section is to outline the steps needed to setup the ``MJSystemCoM`` module 
 
     from Basilisk.simulation import MJSystemCoM
 
-#. Create an instance of the MJSystemCoM::
+#. Enable extra EOM call when building the Mujoco scene::
+
+    scene.extraEoMCall = True
+
+#. Create an instance of MJSystemCoM::
 
     module = MJSystemCoM.MJSystemCoM()
 
