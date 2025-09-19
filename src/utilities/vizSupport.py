@@ -27,6 +27,7 @@ from Basilisk.utilities import quadMapSupport as qms
 from Basilisk.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
+from typing import Optional, Sequence
 
 try:
     from Basilisk.simulation import vizInterface
@@ -208,14 +209,14 @@ def fixedframe2lla(r_GP_P, radEquator, radRatio):
     return lla_GP
 
 
-locationList = []
+locationList = {}
 
 
 @requires_viz
 def addLocation(
     viz,
-    stationName,
-    parentBodyName,
+    stationName: str,
+    parentBodyName: str,
     r_GP_P=None,
     lla_GP=None,
     gHat_P=None,
@@ -303,7 +304,103 @@ def addLocation(
         vizElement.fieldOfView = fieldOfView
 
     # Pass to Vizard
-    locationList.append(vizElement)
+    locationList[vizElement.stationName] = vizElement
+    viz.locations.append(vizElement)
+
+    return
+
+
+@requires_viz
+def changeLocation(
+        viz,
+        stationName: str,
+        parentBodyName: Optional[str] = None,
+        r_GP_P: Optional[Sequence[float]] = None,
+        lla_GP: Optional[Sequence[float]] = None,
+        gHat_P: Optional[Sequence[float]] = None,
+        fieldOfView: Optional[Sequence[float]] = None,
+        color: Optional[Sequence[float]] = None,
+        range: Optional[float] = None,
+        markerScale: Optional[float] = None,
+        isHidden: Optional[bool] = None,
+):
+    """
+    This method changes the information of a Location instance.
+
+    :param viz: copy of the vizInterface module
+    :return: void
+
+    Keyword Args
+    ------------
+    stationName: str
+        Location text label
+        Required
+    parentBodyName: str
+        Name of the parent body P (spacecraft or planet) on which the location G is positioned.
+    r_GP_P: 3-element double-list
+        Position of G relative to parent body frame P.
+        Required, if lla_GP not provided
+    lla_GP: 3-element double-list
+        Position of G relative to parent body in lat/lon/alt coordinates.
+        Required, if r_GP_P not provided
+    gHat_P: 3-element double-list
+        Location normal relative to parent body frame.
+    fieldOfView: double
+        [rad] FOV angle measured edge-to-edge.
+    color: int-list
+        Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.
+    range: double
+        [m] Range of the ground Location.
+    markerScale: double
+        Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.
+    isHidden: bool
+        True to hide Location, false to show (vizDefault)
+    """
+
+    vizElement = locationList[stationName]
+
+    # Set location
+    if r_GP_P is not None:
+        try:
+            vizElement.r_GP_P = r_GP_P
+        except TypeError:
+            vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
+    if lla_GP is not None:
+        # find gravity body
+        gravBody = next(
+            (s for s in viz.gravBodyInformation if s.bodyName == parentBodyName), None
+        )
+        if gravBody is None:
+            raise ValueError(f"Cannot use LLA to set location for {parentBodyName}")
+
+        # convert lat/lon/altitude to fixed frame
+        r_GP_P = lla2fixedframe(lla_GP, gravBody.radEquator, gravBody.radiusRatio)
+        vizElement.r_GP_P = r_GP_P
+
+    if parentBodyName is not None:
+        vizElement.parentBodyName = parentBodyName
+    if gHat_P is not None:
+        vizElement.gHat_P = gHat_P
+
+    if color is not None:
+        vizElement.color = toRGBA255(color)
+    if range is not None:
+        vizElement.range = range
+    if markerScale is not None:
+        if markerScale < 0.0:
+            raise ValueError("markerScale must be a positive float")
+        vizElement.markerScale = markerScale
+    if isHidden is not None:
+        vizElement.isHidden = isHidden
+    if fieldOfView is not None:
+        if fieldOfView > np.pi or fieldOfView < 0.0:
+            raise ValueError(
+                f"fieldOfView must be a value between 0 and Pi, not {fieldOfView}"
+            )
+        vizElement.fieldOfView = fieldOfView
+
+    # add this location structure to the vector of locations to be transmitted to Vizard
+    locationList[stationName] = vizElement
     viz.locations.append(vizElement)
 
 
