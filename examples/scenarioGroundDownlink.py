@@ -225,7 +225,7 @@ def run(show_plots):
                                                   # , saveFile=__file__
                                                   )
         vizSupport.addLocation(viz, stationName="Boulder Station"
-                               , parentBodyName=planet.planetName
+                               , parentBodyName=planet.displayName
                                , r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init)
                                , fieldOfView=np.radians(160.)
                                , color='pink'
