@@ -243,9 +243,13 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.hour2nano(24))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.hour2nano(12))        # seconds to stop simulation
+    scenarioSim.ExecuteSimulation()
 
-    # Begin the simulation time run set above
+    scenarioSim.ConfigureStopTime(macros.hour2nano(24))
+    if vizSupport.vizFound:
+        vizSupport.changeLocation(viz, stationName="Boulder Station"
+                                  , color="blue")
     scenarioSim.ExecuteSimulation()
 
     # Grabbed logged data for plotting
