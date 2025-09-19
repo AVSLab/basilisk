@@ -59,7 +59,7 @@ public:
 public:
     std::vector<VizSpacecraftData> scData;         //!< vector of spacecraft data containers
     std::vector <ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs; //!< vector of input messages of planet Spice data
-    std::vector<LocationPbMsg *> locations;        //!< vector of ground or spacecraft locations
+    std::vector<LocationPbMsg> locations;        //!< vector of ground or spacecraft locations
     std::vector<QuadMap *> quadMaps;               //!< vector of QuadMap regions
     std::vector<GravBodyInfo> gravBodyInformation; //!< vector of gravitational body info
     std::vector<Message<CameraImageMsgPayload>*> opnavImageOutMsgs;    //!< vector of vizard instrument camera output messages

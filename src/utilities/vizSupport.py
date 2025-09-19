@@ -304,8 +304,7 @@ def addLocation(
 
     # Pass to Vizard
     locationList.append(vizElement)
-    del viz.locations[:]  # clear settings list to replace it with updated list
-    viz.locations = vizInterface.LocationConfig(locationList)
+    viz.locations.append(vizElement)
 
 
 quadMapList = []
