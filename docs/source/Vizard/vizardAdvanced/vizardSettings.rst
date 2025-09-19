@@ -1018,6 +1018,7 @@ field of view of this location.  Vizard can illustrate this ground location usin
 
 If you used the gravity factor to generate the planet states, you can pull the planet name
 by using ``earth.displayName`` as shown in :ref:`scenarioAttLocPoint`.
+Note, the ``stationName`` variable must be unique.
 
 The following table lists all required and optional arguments that can be provided to ``addLocation``:
 
@@ -1080,6 +1081,9 @@ The following table lists all required and optional arguments that can be provid
       -
       - No
       - True to hide Location, false to show (vizDefault)
+
+To change the location information on the fly use the ``changeLocation()`` method also defined in ``vizSupport.py``.
+This method accepts the same arguments as ``addLocation()`` shown in the table above.
 
 
 Adding Generic Sensor Visualization
