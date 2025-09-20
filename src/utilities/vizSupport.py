@@ -209,7 +209,7 @@ def fixedframe2lla(r_GP_P, radEquator, radRatio):
     return lla_GP
 
 
-locationList = {}
+locationDict = {}
 
 
 @requires_viz
@@ -304,7 +304,7 @@ def addLocation(
         vizElement.fieldOfView = fieldOfView
 
     # Pass to Vizard
-    locationList[vizElement.stationName] = vizElement
+    locationDict[vizElement.stationName] = vizElement
     viz.locations.append(vizElement)
 
     return
@@ -357,7 +357,7 @@ def changeLocation(
         True to hide Location, false to show (vizDefault)
     """
 
-    vizElement = locationList[stationName]
+    vizElement = locationDict[stationName]
 
     # Set location
     if r_GP_P is not None:
@@ -400,7 +400,7 @@ def changeLocation(
         vizElement.fieldOfView = fieldOfView
 
     # add this location structure to the vector of locations to be transmitted to Vizard
-    locationList[stationName] = vizElement
+    locationDict[stationName] = vizElement
     viz.locations.append(vizElement)
 
 
