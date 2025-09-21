@@ -411,20 +411,20 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # Vizard Visualization Option
     # ---------------------------
-
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-             # saveFile=__file__
-             )
-    vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'r',
-                       normalVector_B=[1, 0, 0], incidenceAngle=starTrackerFov*macros.D2R, isKeepIn=False,
-                       coneHeight=10.0, coneName='sunKeepOut')
-    vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'g',
-                       normalVector_B=[0, 1, 0], incidenceAngle=sunSensorFov*macros.D2R, isKeepIn=True,
-                       coneHeight=10.0, coneName='sunKeepIn')
-    if use2SunSensors:
-        vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'b',
-                       normalVector_B=[0, 0, 1], incidenceAngle=sunSensorFov*macros.D2R, isKeepIn=True,
-                       coneHeight=10.0, coneName='sunKeepIn')
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
+                 # saveFile=__file__
+                 )
+        vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'r',
+                           normalVector_B=[1, 0, 0], incidenceAngle=starTrackerFov*macros.D2R, isKeepIn=False,
+                           coneHeight=10.0, coneName='sunKeepOut')
+        vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'g',
+                           normalVector_B=[0, 1, 0], incidenceAngle=sunSensorFov*macros.D2R, isKeepIn=True,
+                           coneHeight=10.0, coneName='sunKeepIn')
+        if use2SunSensors:
+            vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'b',
+                           normalVector_B=[0, 0, 1], incidenceAngle=sunSensorFov*macros.D2R, isKeepIn=True,
+                           coneHeight=10.0, coneName='sunKeepIn')
 
     # initialize Simulation:  This function runs the self_init()
     # cross_init() and reset() routines on each module.

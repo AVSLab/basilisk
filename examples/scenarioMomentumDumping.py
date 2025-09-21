@@ -333,16 +333,17 @@ def run(show_plots):
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, dynTask, scObject
-                                              # , saveFile=fileName
-                                              , rwEffectorList=rwStateEffector
-                                              , thrEffectorList=thrusterSet
-                                              )
-    vizSupport.setActuatorGuiSetting(viz, viewRWPanel=True,
-                                     viewRWHUD=True,
-                                     viewThrusterPanel=True,
-                                     viewThrusterHUD=True
-                                     )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, dynTask, scObject
+                                                  # , saveFile=fileName
+                                                  , rwEffectorList=rwStateEffector
+                                                  , thrEffectorList=thrusterSet
+                                                  )
+        vizSupport.setActuatorGuiSetting(viz, viewRWPanel=True,
+                                         viewRWHUD=True,
+                                         viewThrusterPanel=True,
+                                         viewThrusterHUD=True
+                                         )
 
     # link messages
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)

@@ -44,14 +44,6 @@ bskPath = __path__[0]
 firstSpacecraftName = ""
 
 
-def requires_viz(func):
-    def wrapper(*args, **kwargs):
-        if not vizFound:
-            print("vizFound is false. Skipping this method.")
-            return
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 def assert_option(value, low, high, default=None):
@@ -212,7 +204,6 @@ def fixedframe2lla(r_GP_P, radEquator, radRatio):
 locationDict = {}
 
 
-@requires_viz
 def addLocation(
     viz,
     stationName: str,
@@ -310,7 +301,6 @@ def addLocation(
     return
 
 
-@requires_viz
 def changeLocation(
         viz,
         stationName: str,
@@ -407,7 +397,6 @@ def changeLocation(
 quadMapList = []
 
 
-@requires_viz
 def addQuadMap(viz, ID, parentBodyName, vertices, color, isHidden=None, label=None):
     """
     This method creates a QuadMap element for displaying shaded regions in Vizard.
@@ -454,7 +443,6 @@ def addQuadMap(viz, ID, parentBodyName, vertices, color, isHidden=None, label=No
 pointLineList = []
 
 
-@requires_viz
 def createPointLine(viz, toBodyName, lineColor, fromBodyName=None):
     """
     This method creates a PointLine between two bodies.
@@ -492,7 +480,6 @@ def createPointLine(viz, toBodyName, lineColor, fromBodyName=None):
 targetLineList = []
 
 
-@requires_viz
 def createTargetLine(viz, toBodyName, lineColor, fromBodyName=None):
     """
     This method creates a TargetLine between two bodies.
@@ -535,7 +522,6 @@ def updateTargetLineList(viz):
 customModelList = []
 
 
-@requires_viz
 def createCustomModel(
     viz,
     modelPath,
@@ -616,7 +602,6 @@ def createCustomModel(
 actuatorGuiSettingList = []
 
 
-@requires_viz
 def setActuatorGuiSetting(
     viz,
     spacecraftName=None,
@@ -692,7 +677,6 @@ def setActuatorGuiSetting(
 instrumentGuiSettingList = []
 
 
-@requires_viz
 def setInstrumentGuiSetting(
     viz,
     spacecraftName=None,
@@ -781,7 +765,6 @@ def setInstrumentGuiSetting(
 coneInOutList = []
 
 
-@requires_viz
 def createConeInOut(
     viz,
     toBodyName,
@@ -850,7 +833,6 @@ def createConeInOut(
 stdCameraList = []
 
 
-@requires_viz
 def createStandardCamera(
     viz,
     spacecraftName=None,
@@ -925,7 +907,6 @@ def createStandardCamera(
     return cam
 
 
-@requires_viz
 def createCameraConfigMsg(
     viz,
     cameraID,
@@ -1072,7 +1053,6 @@ def ensure_correct_len_list(input, length, depth=1):
     return input
 
 
-@requires_viz
 def enableUnityVisualization(
     scSim,
     simTaskName,
@@ -1141,7 +1121,7 @@ def enableUnityVisualization(
     genericStorageList:
         list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.
     transceiverList:
-        list of lists of :ref:`Transceiver` objects.  The outer list length must match ``scList``.
+        list of lists of ``Transceiver`` objects.  The outer list length must match ``scList``.
     spriteList:
         list of sprite information for each spacecraft.  The outer list length must match ``scList``.
     modelDictionaryKeyList:
@@ -1173,6 +1153,9 @@ def enableUnityVisualization(
         copy of the vizInterface instance
 
     """
+    if not vizFound:
+        print("BSK is built without vizInterface support.")
+        return
 
     # clear the list of point line elements
     del pointLineList[:]

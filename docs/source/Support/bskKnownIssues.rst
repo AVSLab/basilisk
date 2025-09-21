@@ -15,10 +15,13 @@ Version |release|
   was not being computed properly. Fixed now.
 - The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
   list of locations and only incremental changes have to be sent using the ``vizSupport.changeLocation()``
-  method.  If the script was directly manipulating the ``vizSupport.py`` list that functionality no longer works.
+  method.  If the script was directly manipulating the :ref:`vizSupport` list that functionality no longer works.
   If only ``addLocation()`` was being used and the location information was not live updated, no changes in the
   simulation script are required.  To do live updates to location it is recommended to use
   ``vizSupport.changeLocation()``.
+- The support file :ref:`vizSupport` is updated to only have ``enableUnityVisualization()`` check
+  if :ref:`vizInterface` has been built or not.  It is recommended that user scripts safe-guard
+  their simulation usage of :ref:`vizSupport` function by checking that ``vizSupport.vizFound`` is true.
 
 
 Version 2.8.0
