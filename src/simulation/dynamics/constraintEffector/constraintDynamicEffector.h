@@ -150,7 +150,7 @@ private:
     // Constraint violations
     Eigen::Vector3d psi_N = Eigen::Vector3d::Zero(); //!< [m] direction constraint violation in inertial frame
     Eigen::Vector3d psiPrime_N = Eigen::Vector3d::Zero(); //!< [m/s] direction rate constraint violation in inertial frame
-    Eigen::MRPd sigma_B2B1 = Eigen::MRPd::Identity(); //!< attitude constraint violation
+    Eigen::MRPd phi = Eigen::MRPd::Identity(); //!< attitude constraint violation
     Eigen::Vector3d omega_B2B1_B2 = Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity constraint violation in spacecraft 2 body frame
 
     // Force and torque quantities stored to be assigned on the alternating call of computeForceTorque

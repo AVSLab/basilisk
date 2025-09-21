@@ -222,7 +222,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
             this->psiPrime_N = rDot_P2P1_N - omega_B1N_N.cross(r_P2P1_N);
 
             // calculate the attitude constraint violations
-            this->sigma_B2B1 = eigenC2MRP(dcm_B2N * dcm_B1N.transpose()); // calculate the difference in attitude
+            this->phi = eigenC2MRP(dcm_B2N * dcm_B1N.transpose() * this->dcm_B2B1Init.transpose()); // calculate the difference in attitude
             Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
             this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
 
@@ -238,7 +238,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
 
             // calculate the constraint torque imparted on each spacecraft from the attitude constraint
             Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
-            Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(sigma_B2B1) - this->c_a * 0.25 * sigma_B2B1.Bmat() * omega_B2B1_B2;
+            Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(this->phi) - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
             Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
             this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
 
