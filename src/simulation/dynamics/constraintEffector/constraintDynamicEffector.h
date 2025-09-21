@@ -102,7 +102,7 @@ private:
     // Constraint length and direction
     Eigen::Vector3d r_P1B1_B1 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 1 hub to its connection point P1
     Eigen::Vector3d r_P2B2_B2 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 2 hub to its connection point P2
-    Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] precribed position vector from spacecraft 1 connection point to spacecraft 2 connection point
+    Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] prescribed position vector from spacecraft 1 connection point to spacecraft 2 connection point
 
     // Constraint attitude
     Eigen::Matrix3d dcm_B2B1Init = Eigen::Matrix3d::Identity(); //!< attitude constraint violation
