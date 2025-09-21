@@ -308,8 +308,7 @@ def parseSwigXml(xmlPath: str, targetStructName: str, cpp: bool, recorderPropert
             if typeWithPointerRef in C_TYPE_TO_NPY_ENUM and len(typeArrayParts) < 3:
                 npyType = C_TYPE_TO_NPY_ENUM[typeWithPointerRef]
                 macroName = f"RECORDER_PROPERTY_NUMERIC_{len(typeArrayParts)}"
-                dimensions = "".join(f", {dim}" for dim in typeArrayParts)
-                result += f"{macroName}({targetStructName}, {fieldName}, {typeWithPointerRef}, {npyType} {dimensions});\n"
+                result += f"{macroName}({targetStructName}, {fieldName}, {typeWithPointerRef}, {npyType});\n"
             elif not recorderPropertyRollback:
                 fullType = f"{typeWithPointerRef}{''.join(f'[{i}]' for i in typeArrayParts)}"
                 result += f"RECORDER_PROPERTY({targetStructName}, {fieldName}, ({fullType}));\n"
