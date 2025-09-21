@@ -75,6 +75,10 @@ void ConstraintDynamicEffector::setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2) {
     this->r_P2B2_B2 = r_P2B2_B2;
 }
 
+void ConstraintDynamicEffector::setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init) {
+    this->dcm_B2B1Init = sigma_B2B1Init.toRotationMatrix().transpose();
+}
+
 void ConstraintDynamicEffector::setAlpha(double alpha) {
     if (alpha > 0.0)
         this->alpha = alpha;

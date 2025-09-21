@@ -53,6 +53,8 @@ public:
     void setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1);
     /** setter for `r_P2B2_B2` connection point position on spacecraft 2 */
     void setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2);
+    /** setter for `sigma_B2B1_Init` initial spacecraft relative attitude */
+    void setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init);
     /** setter for `alpha` gain tuning parameter */
     void setAlpha(double alpha);
     /** setter for `beta` gain tuning parameter */
@@ -101,6 +103,9 @@ private:
     Eigen::Vector3d r_P1B1_B1 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 1 hub to its connection point P1
     Eigen::Vector3d r_P2B2_B2 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 2 hub to its connection point P2
     Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] precribed position vector from spacecraft 1 connection point to spacecraft 2 connection point
+
+    // Constraint attitude
+    Eigen::Matrix3d dcm_B2B1Init = Eigen::Matrix3d::Identity(); //!< attitude constraint violation
 
     // Gains for PD controller
     double alpha = 0.0; //!< Baumgarte stabilization gain tuning variable
