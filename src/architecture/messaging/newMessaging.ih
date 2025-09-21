@@ -333,9 +333,11 @@ typedef struct messageType;
     } else {
         npy_intp dims[1] = {static_cast<npy_intp>(N)};
         $result = PyArray_SimpleNew(1, dims, npyTypeNum);
-        for (size_t recordIndex = 0; recordIndex < N; ++recordIndex ) {
-            void* ptr = PyArray_GETPTR1((PyArrayObject*)$result, recordIndex);
-            *reinterpret_cast<fieldType*>(ptr) = $1->record().at(recordIndex). ## fieldName;
+        if (!$result) SWIG_fail;
+
+        for (size_t i = 0; i < N; ++i ) {
+            void* ptr = PyArray_GETPTR1((PyArrayObject*)$result, i);
+            *reinterpret_cast<fieldType*>(ptr) = $1->record().at(i). ## fieldName;
         }
     }
     if (PyErr_Occurred()) SWIG_fail;
@@ -355,11 +357,7 @@ typedef struct messageType;
 
 %enddef
 
-%define RECORDER_PROPERTY_NUMERIC_1(payloadType, fieldName, fieldType, npyTypeNum, dim1)
-/*
- * Exposes a fixed-size 1D numeric array field (e.g. float[3]) as a NumPy array with shape [N, dim1].
- * Uses contiguous memcpy per record for efficiency.
- */
+%define RECORDER_PROPERTY_NUMERIC_1(payloadType, fieldName, fieldType, npyTypeNum)
 %typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
 {
     size_t N = $1->record().size();
@@ -367,15 +365,21 @@ typedef struct messageType;
         npy_intp dims[1] = {0};
         $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
     } else {
-        npy_intp dims[2] = {static_cast<npy_intp>(N), (npy_intp) dim1};
+        /* Derive dimensions from compiled type */
+        auto &first = $1->record().at(0).fieldName;
+        const size_t d1 = sizeof(first) / sizeof(first[0]);
+        const size_t elemsPerRecord = d1;
+        const size_t bytesPerRecord = elemsPerRecord * sizeof(fieldType);
+
+        npy_intp dims[2] = {static_cast<npy_intp>(N), (npy_intp) d1};
         $result = PyArray_SimpleNew(2, dims, npyTypeNum);
+        if (!$result) SWIG_fail;
 
         fieldType* dest = static_cast<fieldType*>(PyArray_DATA((PyArrayObject*)$result));
-        size_t recordStride = dim1;
 
-        for (size_t recordIndex = 0; recordIndex < N; ++recordIndex) {
-            const fieldType* src = &($1->record().at(recordIndex).fieldName[0]);
-            std::memcpy(dest + recordIndex * recordStride, src, recordStride * sizeof(fieldType));
+        for (size_t i = 0; i < N; ++i) {
+            const fieldType* src = &($1->record().at(i).fieldName[0]);
+            std::memcpy(dest + i * elemsPerRecord, src, bytesPerRecord);
         }
     }
     if (PyErr_Occurred()) SWIG_fail;
@@ -395,10 +399,7 @@ typedef struct messageType;
 
 %enddef
 
-%define RECORDER_PROPERTY_NUMERIC_2(payloadType, fieldName, fieldType, npyTypeNum, dim1, dim2)
-/*
- * Exposes a fixed-size 2D numeric array field (e.g. float[3][3]) as a NumPy array with shape [N, dim1, dim2].
- */
+%define RECORDER_PROPERTY_NUMERIC_2(payloadType, fieldName, fieldType, npyTypeNum)
 %typemap(out) Recorder<payloadType>* Recorder<payloadType>::_ ## fieldName ## _array
 {
     size_t N = $1->record().size();
@@ -406,18 +407,26 @@ typedef struct messageType;
         npy_intp dims[1] = {0};
         $result = PyArray_SimpleNew(1, dims, NPY_FLOAT64);
     } else {
-        npy_intp dims[3] = {static_cast<npy_intp>(N), (npy_intp) dim1, (npy_intp) dim2};
+        /* Derive dimensions from compiled type */
+        auto &first = $1->record().at(0).fieldName;
+        const size_t d1 = sizeof(first) / sizeof(first[0]);
+        const size_t d2 = sizeof(first[0]) / sizeof(first[0][0]);
+        const size_t elemsPerRecord = d1 * d2;
+        const size_t bytesPerRecord = elemsPerRecord * sizeof(fieldType);
+
+        npy_intp dims[3] = {static_cast<npy_intp>(N), (npy_intp) d1, (npy_intp) d2};
         $result = PyArray_SimpleNew(3, dims, npyTypeNum);
+        if (!$result) SWIG_fail;
 
         fieldType* dest = static_cast<fieldType*>(PyArray_DATA((PyArrayObject*)$result));
-        size_t recordStride = dim1 * dim2;
 
-        for (size_t recordIndex = 0; recordIndex < N; ++recordIndex) {
-            const fieldType* src = &($1->record().at(recordIndex).fieldName[0][0]);
-            std::memcpy(dest + recordIndex * recordStride, src, recordStride * sizeof(fieldType));
+        for (size_t i = 0; i < N; ++i) {
+            const fieldType* src = &($1->record().at(i).fieldName[0][0]);
+            std::memcpy(dest + i * elemsPerRecord, src, bytesPerRecord);
         }
+
+        if (PyErr_Occurred()) SWIG_fail;
     }
-    if (PyErr_Occurred()) SWIG_fail;
 }
 
 %extend Recorder<payloadType> {
