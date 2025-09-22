@@ -21,17 +21,26 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 def test_subMRP(show_plots):
     mrp_1 = np.array([1.5, 0.5, 0.5])
     mrp_2 = np.array([-0.5, 0.25, 0.15])
-    ans = [-0.005376344086021518,0.04301075268817203,-0.4408602150537635]
-    np.testing.assert_allclose(rbk.subMRP(mrp_1, mrp_2), ans, atol=1e-10, err_msg="subtraction failed")
+    ans = [-0.005376344086021518, 0.04301075268817203, -0.4408602150537635]
+    np.testing.assert_allclose(
+        rbk.subMRP(mrp_1, mrp_2), ans, atol=1e-10, err_msg="subtraction failed"
+    )
 
     # should get the same answer if one MRP is switched to shadoe set
     mrp_2 = rbk.MRPswitch(mrp_2, 0.0)
-    np.testing.assert_allclose(rbk.subMRP(mrp_1, mrp_2), ans, atol=1e-10, err_msg="subtraction after q2 MRP switch failed")
+    np.testing.assert_allclose(
+        rbk.subMRP(mrp_1, mrp_2),
+        ans,
+        atol=1e-10,
+        err_msg="subtraction after q2 MRP switch failed",
+    )
 
     mrp_1 = np.array([0.0, 0.0, 1.0])
     mrp_2 = np.array([0.0, 0.0, -1.0])
     ans = [0.0, 0.0, 0.0]
-    np.testing.assert_allclose(rbk.subMRP(mrp_1, mrp_2), ans, atol=1e-10, err_msg="180 deg case failed")
+    np.testing.assert_allclose(
+        rbk.subMRP(mrp_1, mrp_2), ans, atol=1e-10, err_msg="180 deg case failed"
+    )
 
 
 if __name__ == "__main__":

@@ -80,7 +80,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk import __path__
 from Basilisk.fswAlgorithms import hillStateConverter, hillToAttRef, hillPoint
-from Basilisk.simulation import spacecraft, facetDragDynamicEffector, simpleNav, exponentialAtmosphere
+from Basilisk.simulation import (
+    spacecraft,
+    facetDragDynamicEffector,
+    simpleNav,
+    exponentialAtmosphere,
+)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -95,34 +100,122 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 #   Declare some linearized drag HCW dynamics
-drag_state_dynamics = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,1.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [4.134628279603025589e-06,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675993545e-10,2.347943292785702706e-03,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-2.347943292785702706e-03,-1.435758240535198709e-09,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]]
-drag_ctrl_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,4.1681080996120926e-05],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]
-                     ]
-drag_sens_effects = [[0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-7.178791202675151888e-10,0.000000000000000000e+00,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,-1.435758240535030378e-09,0.000000000000000000e+00],
-                     [0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00,0.000000000000000000e+00]]
-drag_R_inv = [[1e-8,0,0],
-              [0,1e-8,0],
-              [0,0,1e-8]]
+drag_state_dynamics = [
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        1.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        1.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+    [
+        4.134628279603025589e-06,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        -7.178791202675993545e-10,
+        2.347943292785702706e-03,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        -2.347943292785702706e-03,
+        -1.435758240535198709e-09,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+]
+drag_ctrl_effects = [
+    [0.000000000000000000e00, 0.000000000000000000e00, 0.000000000000000000e00],
+    [0.000000000000000000e00, 0.000000000000000000e00, 0.000000000000000000e00],
+    [0.000000000000000000e00, 0.000000000000000000e00, 0.000000000000000000e00],
+    [0.000000000000000000e00, 0.000000000000000000e00, 0.000000000000000000e00],
+    [0.000000000000000000e00, 0.000000000000000000e00, 4.1681080996120926e-05],
+    [0.000000000000000000e00, 0.000000000000000000e00, 0.000000000000000000e00],
+]
+drag_sens_effects = [
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        -7.178791202675151888e-10,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        -1.435758240535030378e-09,
+        0.000000000000000000e00,
+    ],
+    [
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+        0.000000000000000000e00,
+    ],
+]
+drag_R_inv = [[1e-8, 0, 0], [0, 1e-8, 0], [0, 0, 1e-8]]
 #   Static LQR gain
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = os.path.join(path, "dataForExamples", "static_lqr_controlGain.npz")
-lqr_gain_set = np.load(dataFileName)['arr_0.npy']
+lqr_gain_set = np.load(dataFileName)["arr_0.npy"]
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def setup_spacecraft_plant(rN, vN, modelName):
     """
@@ -139,30 +232,30 @@ def setup_spacecraft_plant(rN, vN, modelName):
     scObject.ModelTag = modelName
     scObject.hub.mHub = 6.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    I = [10., 0., 0.,
-         0., 9., 0.,
-         0., 0., 8.]
+    I = [10.0, 0.0, 0.0, 0.0, 9.0, 0.0, 0.0, 0.0, 8.0]
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.r_CN_NInit = rN
     scObject.hub.v_CN_NInit = vN
 
     scNav = simpleNav.SimpleNav()
-    scNav.ModelTag = modelName+'_navigator'
+    scNav.ModelTag = modelName + "_navigator"
     scNav.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
-    dragArea = 0.3*0.2
+    dragArea = 0.3 * 0.2
     dragCoeff = 2.2
-    normalVector = -rbk.euler3(np.radians(45.)).dot(np.array([0,-1,0]))
-    panelLocation = [0,0,0]
+    normalVector = -rbk.euler3(np.radians(45.0)).dot(np.array([0, -1, 0]))
+    panelLocation = [0, 0, 0]
     dragEffector = facetDragDynamicEffector.FacetDragDynamicEffector()
-    dragEffector.ModelTag = modelName+'_dragEffector'
+    dragEffector.ModelTag = modelName + "_dragEffector"
     dragEffector.addFacet(dragArea, dragCoeff, normalVector, panelLocation)
     scObject.addDynamicEffector(dragEffector)
 
     return scObject, dragEffector, scNav
 
 
-def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', useJ2=False):
+def drag_simulator(
+    altOffset, trueAnomOffset, densMultiplier, ctrlType="lqr", useJ2=False
+):
     """
     Basilisk simulation of a two-spacecraft rendezvous using relative-attitude driven differential drag. Includes
     both static gain and desensitized time-varying gain options and the option to use simulated attitude control or
@@ -174,7 +267,9 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     """
 
     startTime = time.time()
-    print(f"Starting process execution for altOffset = {altOffset}, trueAnomOffset={trueAnomOffset}, densMultiplier={densMultiplier} with {ctrlType} controls...")
+    print(
+        f"Starting process execution for altOffset = {altOffset}, trueAnomOffset={trueAnomOffset}, densMultiplier={densMultiplier} with {ctrlType} controls..."
+    )
 
     scSim = SimulationBaseClass.SimBaseClass()
 
@@ -195,7 +290,9 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     earth.isCentralBody = True
     mu = earth.mu
     if useJ2:
-        earth.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 2)
+        earth.useSphericalHarmonicsGravityModel(
+            bskPath + "/supportData/LocalGravData/GGM03S.txt", 2
+        )
 
     # timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
     # spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
@@ -203,37 +300,37 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
 
     #   Density
     atmosphere = exponentialAtmosphere.ExponentialAtmosphere()
-    atmosphere.ModelTag = 'atmosphere'
+    atmosphere.ModelTag = "atmosphere"
     # atmosphere.planetPosInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
-    atmosphere.planetRadius = astroConstants.REQ_EARTH*1e3 + 300e3 #   m
+    atmosphere.planetRadius = astroConstants.REQ_EARTH * 1e3 + 300e3  #   m
     atmosphere.envMinReach = -300e3
     atmosphere.envMaxReach = +300e3
-    atmosphere.scaleHeight = 8.0e3    # m
-    atmosphere.baseDensity =  2.022E-14 * 1000 *  densMultiplier #    kg/m^3
+    atmosphere.scaleHeight = 8.0e3  # m
+    atmosphere.baseDensity = 2.022e-14 * 1000 * densMultiplier  #    kg/m^3
 
     ##   Set up chief, deputy orbits:
     chief_oe = orbitalMotion.ClassicElements()
-    chief_oe.a = astroConstants.REQ_EARTH * 1e3 + 300e3 # meters
-    chief_oe.e = 0.
-    chief_oe.i = np.radians(45.)
+    chief_oe.a = astroConstants.REQ_EARTH * 1e3 + 300e3  # meters
+    chief_oe.e = 0.0
+    chief_oe.i = np.radians(45.0)
 
     chief_oe.Omega = np.radians(20.0)
-    chief_oe.omega = np.radians(30.)
-    chief_oe.f = np.radians(20.)
+    chief_oe.omega = np.radians(30.0)
+    chief_oe.f = np.radians(20.0)
     chief_rN, chief_vN = orbitalMotion.elem2rv(mu, chief_oe)
 
     dep_oe = orbitalMotion.ClassicElements()
     dep_oe.a = orbitalMotion.REQ_EARTH * 1e3 + 300e3 + (altOffset)  # meters
-    dep_oe.e = 0.
-    dep_oe.i = np.radians(45.)
+    dep_oe.e = 0.0
+    dep_oe.i = np.radians(45.0)
     dep_oe.Omega = np.radians(20.0)
-    dep_oe.omega = np.radians(30.)
-    dep_oe.f = np.radians(20. - trueAnomOffset)
+    dep_oe.omega = np.radians(30.0)
+    dep_oe.f = np.radians(20.0 - trueAnomOffset)
     dep_rN, dep_vN = orbitalMotion.elem2rv(mu, dep_oe)
 
     #   Initialize s/c dynamics, drag, navigation solutions
-    chiefSc, chiefDrag, chiefNav = setup_spacecraft_plant(chief_rN, chief_vN, 'wiggum')
-    depSc, depDrag, depNav = setup_spacecraft_plant(dep_rN,dep_vN, 'lou')
+    chiefSc, chiefDrag, chiefNav = setup_spacecraft_plant(chief_rN, chief_vN, "wiggum")
+    depSc, depDrag, depNav = setup_spacecraft_plant(dep_rN, dep_vN, "lou")
 
     #   Connect s/c to environment (gravity, density)
     gravFactory.addBodiesTo(chiefSc)
@@ -245,7 +342,7 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     chiefDrag.atmoDensInMsg.subscribeTo(atmosphere.envOutMsgs[-1])
 
     #   Add all dynamics stuff to dynamics task
-    scSim.AddModelToTask(dynTaskName, atmosphere,920)
+    scSim.AddModelToTask(dynTaskName, atmosphere, 920)
     # scSim.AddModelToTask(dynTaskName, ephemConverter, 921)
     scSim.AddModelToTask(dynTaskName, chiefDrag, 890)
     scSim.AddModelToTask(dynTaskName, depDrag, 891)
@@ -259,16 +356,18 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     #   Chief S/C
     #   hillPoint - set such that the chief attitude follows its hill frame.
     chiefAttRef = hillPoint.hillPoint()
-    chiefAttRef.ModelTag = 'chief_att_ref'
+    chiefAttRef.ModelTag = "chief_att_ref"
     chiefAttRef.transNavInMsg.subscribeTo(chiefNav.transOutMsg)
     # chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn't need this because the planet is the origin
-    chiefSc.attRefInMsg.subscribeTo(chiefAttRef.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
+    chiefSc.attRefInMsg.subscribeTo(
+        chiefAttRef.attRefOutMsg
+    )  #  Force the chief spacecraft to follow the hill direction
 
     depHillRef = hillPoint.hillPoint()
-    depHillRef.ModelTag = 'dep_hill_ref'
+    depHillRef.ModelTag = "dep_hill_ref"
     depHillRef.transNavInMsg.subscribeTo(depNav.transOutMsg)
     # chiefAttRefData.celBodyInMsg.subscribeTo(ephemConverter.ephemOutMsgs[-1]) #   We shouldn't need this because the planet is the origin
-    #chiefSc.attRefInMsg.subscribeTo(chiefAttRefData.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
+    # chiefSc.attRefInMsg.subscribeTo(chiefAttRefData.attRefOutMsg) #  Force the chief spacecraft to follow the hill direction
 
     # hillStateConverter
     hillStateNavObj = hillStateConverter.hillStateConverter()
@@ -278,7 +377,7 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
 
     # hillToAtt guidance law w/ static gain
     depAttRef = hillToAttRef.hillToAttRef()
-    depAttRef.ModelTag = 'dep_att_ref'
+    depAttRef.ModelTag = "dep_att_ref"
     depAttRef.gainMatrix = hillToAttRef.MultiArray(lqr_gain_set)
     #   Configure parameters common to relative attitude guidance modules
     depAttRef.hillStateInMsg.subscribeTo(hillStateNavObj.hillStateOutMsg)
@@ -289,14 +388,13 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     #   Set the deputy spacecraft to directly follow the attRefMessage
     depSc.attRefInMsg.subscribeTo(depAttRef.attRefOutMsg)
 
-
     scSim.AddModelToTask(dynTaskName, chiefAttRef, 710)
-    scSim.AddModelToTask(dynTaskName, hillStateNavObj,790)
-    scSim.AddModelToTask(dynTaskName, depHillRef,789)
+    scSim.AddModelToTask(dynTaskName, hillStateNavObj, 790)
+    scSim.AddModelToTask(dynTaskName, depHillRef, 789)
     scSim.AddModelToTask(dynTaskName, depAttRef, 700)
     # ----- log ----- #
-    orbit_period = 2*np.pi/np.sqrt(mu/chief_oe.a**3)
-    simulationTime = 40*orbit_period#106920.14366466808
+    orbit_period = 2 * np.pi / np.sqrt(mu / chief_oe.a**3)
+    simulationTime = 40 * orbit_period  # 106920.14366466808
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 21384
     samplingTime = simulationTime // (numDataPoints - 1)
@@ -322,22 +420,25 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     scSim.AddModelToTask(dynTaskName, chiefDragForceLog, 705)
     scSim.AddModelToTask(dynTaskName, depDragForceLog, 706)
 
-    for ind,rec in enumerate(atmoRecs):
-        scSim.AddModelToTask(dynTaskName, rec, 707+ind)
+    for ind, rec in enumerate(atmoRecs):
+        scSim.AddModelToTask(dynTaskName, rec, 707 + ind)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [chiefSc, depSc],
-                                              # saveFile=fileName,
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        dynTaskName,
+        [chiefSc, depSc],
+        # saveFile=fileName,
+    )
 
     # ----- execute sim ----- #
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     setupTimeStamp = time.time()
-    setupTime = setupTimeStamp-startTime
+    setupTime = setupTimeStamp - startTime
     print(f"Sim setup complete in {setupTime} seconds, executing...")
-    #scSim.ShowExecutionFigure(True)
+    # scSim.ShowExecutionFigure(True)
     scSim.ExecuteSimulation()
 
     execTimeStamp = time.time()
@@ -345,22 +446,22 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     print(f"Sim complete in {execTime} seconds, pulling data...")
     # ----- pull ----- #
     results_dict = {}
-    results_dict['chiefDrag_B'] = chiefDragForceLog.forceExternal_B
-    results_dict['depDrag_B'] = depDragForceLog.forceExternal_B
-    results_dict['dynTimeData'] = chiefStateRec.times()
-    results_dict['fswTimeData'] = depAttRec.times()
-    results_dict['wiggum.r_BN_N'] = chiefStateRec.r_BN_N
-    results_dict['wiggum.v_BN_N'] = chiefStateRec.v_BN_N
-    results_dict['lou.r_BN_N'] = depStateRec.r_BN_N
-    results_dict['lou.v_BN_N'] = depStateRec.v_BN_N
-    results_dict['relState.r_DC_H'] = hillStateRec.r_DC_H
-    results_dict['relState.v_DC_H'] = hillStateRec.v_DC_H
-    results_dict['wiggum.sigma_BN'] = chiefStateRec.sigma_BN
-    results_dict['lou.sigma_BN'] = depStateRec.sigma_BN
-    results_dict['depDensity'] = atmoRecs[0].neutralDensity
-    results_dict['chiefDensity'] = atmoRecs[1].neutralDensity
-    results_dict['mu'] = mu
-    results_dict['dens_mult'] = densMultiplier
+    results_dict["chiefDrag_B"] = chiefDragForceLog.forceExternal_B
+    results_dict["depDrag_B"] = depDragForceLog.forceExternal_B
+    results_dict["dynTimeData"] = chiefStateRec.times()
+    results_dict["fswTimeData"] = depAttRec.times()
+    results_dict["wiggum.r_BN_N"] = chiefStateRec.r_BN_N
+    results_dict["wiggum.v_BN_N"] = chiefStateRec.v_BN_N
+    results_dict["lou.r_BN_N"] = depStateRec.r_BN_N
+    results_dict["lou.v_BN_N"] = depStateRec.v_BN_N
+    results_dict["relState.r_DC_H"] = hillStateRec.r_DC_H
+    results_dict["relState.v_DC_H"] = hillStateRec.v_DC_H
+    results_dict["wiggum.sigma_BN"] = chiefStateRec.sigma_BN
+    results_dict["lou.sigma_BN"] = depStateRec.sigma_BN
+    results_dict["depDensity"] = atmoRecs[0].neutralDensity
+    results_dict["chiefDensity"] = atmoRecs[1].neutralDensity
+    results_dict["mu"] = mu
+    results_dict["dens_mult"] = densMultiplier
     pullTimeStamp = time.time()
     pullTime = pullTimeStamp - execTimeStamp
     overallTime = pullTimeStamp - startTime
@@ -368,130 +469,133 @@ def drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', us
     return results_dict
 
 
-def run(show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType='lqr', useJ2=False):
-    results = drag_simulator(altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, useJ2=useJ2)
+def run(
+    show_plots, altOffset, trueAnomOffset, densMultiplier, ctrlType="lqr", useJ2=False
+):
+    results = drag_simulator(
+        altOffset, trueAnomOffset, densMultiplier, ctrlType=ctrlType, useJ2=useJ2
+    )
 
-    timeData = results['dynTimeData']
-    fswTimeData = results['fswTimeData']
-    pos = results['wiggum.r_BN_N']
-    vel = results['wiggum.v_BN_N']
-    chiefAtt = results['wiggum.sigma_BN']
-    pos2 = results['lou.r_BN_N']
-    vel2= results['lou.v_BN_N']
-    depAtt = results['lou.sigma_BN']
-    hillPos = results['relState.r_DC_H']
-    hillVel = results['relState.v_DC_H']
-    depDensity = results['depDensity']
-    chiefDensity = results['chiefDensity']
-    depDrag = results['depDrag_B']
-    chiefDrag = results['chiefDrag_B']
+    timeData = results["dynTimeData"]
+    fswTimeData = results["fswTimeData"]
+    pos = results["wiggum.r_BN_N"]
+    vel = results["wiggum.v_BN_N"]
+    chiefAtt = results["wiggum.sigma_BN"]
+    pos2 = results["lou.r_BN_N"]
+    vel2 = results["lou.v_BN_N"]
+    depAtt = results["lou.sigma_BN"]
+    hillPos = results["relState.r_DC_H"]
+    hillVel = results["relState.v_DC_H"]
+    depDensity = results["depDensity"]
+    chiefDensity = results["chiefDensity"]
+    depDrag = results["depDrag_B"]
+    chiefDrag = results["chiefDrag_B"]
     densData = results
     numDataPoints = len(timeData)
-    mu = results['mu']
-    rel_mrp_hist = np.empty([numDataPoints,3])
+    mu = results["mu"]
+    rel_mrp_hist = np.empty([numDataPoints, 3])
 
-    for ind in range(0,numDataPoints):
-        rel_mrp_hist[ind,:] = rbk.subMRP(depAtt[ind,:], chiefAtt[ind,:])
+    for ind in range(0, numDataPoints):
+        rel_mrp_hist[ind, :] = rbk.subMRP(depAtt[ind, :], chiefAtt[ind, :])
 
     figureList = {}
 
     #   Plots for general consumption
     plt.figure()
-    plt.plot(timeData[1:], hillPos[1:,0],label="r_1")
+    plt.plot(timeData[1:], hillPos[1:, 0], label="r_1")
     plt.grid()
-    plt.xlabel('Time')
-    plt.ylabel('Hill X Position (m)')
+    plt.xlabel("Time")
+    plt.ylabel("Hill X Position (m)")
     pltName = fileName + "_hillX"
     figureList[pltName] = plt.figure(1)
     plt.figure()
-    plt.plot(timeData[1:], hillPos[1:,1],label="r_2")
+    plt.plot(timeData[1:], hillPos[1:, 1], label="r_2")
     plt.grid()
-    plt.xlabel('Time')
-    plt.ylabel('Hill Y Position (m)')
+    plt.xlabel("Time")
+    plt.ylabel("Hill Y Position (m)")
     pltName = fileName + "_hillY"
     figureList[pltName] = plt.figure(2)
 
-
     plt.figure()
-    plt.plot(timeData[1:], hillVel[1:,0],label="v_1")
+    plt.plot(timeData[1:], hillVel[1:, 0], label="v_1")
     plt.grid()
-    plt.xlabel('Time')
-    plt.ylabel('Hill X Velocity (m/s)')
+    plt.xlabel("Time")
+    plt.ylabel("Hill X Velocity (m/s)")
     pltName = fileName + "_hilldX"
     figureList[pltName] = plt.figure(3)
     plt.figure()
-    plt.plot(timeData[1:], hillVel[1:,1],label="v_2")
-    plt.ylabel('Hill Y Velocity (m/s)')
+    plt.plot(timeData[1:], hillVel[1:, 1], label="v_2")
+    plt.ylabel("Hill Y Velocity (m/s)")
     pltName = fileName + "_hilldy"
     figureList[pltName] = plt.figure(4)
 
     plt.figure()
-    plt.semilogy(timeData[1:], chiefDensity[1:],label=r'Chief $\rho$')
-    plt.semilogy(timeData[1:], depDensity[1:],label=r'Deputy $\rho$')
+    plt.semilogy(timeData[1:], chiefDensity[1:], label=r"Chief $\rho$")
+    plt.semilogy(timeData[1:], depDensity[1:], label=r"Deputy $\rho$")
     plt.grid()
     plt.legend()
-    plt.xlabel('Time')
-    plt.ylabel('Density (kg/m3)')
+    plt.xlabel("Time")
+    plt.ylabel("Density (kg/m3)")
     pltName = fileName + "_densities"
     figureList[pltName] = plt.figure(5)
 
     plt.figure()
-    plt.plot(hillPos[1:,0],hillPos[1:,1])
+    plt.plot(hillPos[1:, 0], hillPos[1:, 1])
     plt.grid()
-    plt.xlabel('Hill X (m)')
-    plt.ylabel('Hill Y (m)')
+    plt.xlabel("Hill X (m)")
+    plt.ylabel("Hill Y (m)")
     pltName = fileName + "_hillTraj"
     figureList[pltName] = plt.figure(6)
 
     plt.figure()
     plt.plot(timeData, rel_mrp_hist)
     plt.grid()
-    plt.xlabel('Time')
-    plt.ylabel('Relative MRP Value')
+    plt.xlabel("Time")
+    plt.ylabel("Relative MRP Value")
     pltName = fileName + "_relativeAtt"
     figureList[pltName] = plt.figure(7)
 
     #   Debug plots
     plt.figure()
-    plt.plot(timeData[1:], depDrag[1:,0]-chiefDrag[1:,0],label="delta a_1")
-    plt.plot(timeData[1:], depDrag[1:,1]-chiefDrag[1:,1],label="delta a_2")
-    plt.plot(timeData[1:], depDrag[1:,2]-chiefDrag[1:,2],label="delta a_3")
+    plt.plot(timeData[1:], depDrag[1:, 0] - chiefDrag[1:, 0], label="delta a_1")
+    plt.plot(timeData[1:], depDrag[1:, 1] - chiefDrag[1:, 1], label="delta a_2")
+    plt.plot(timeData[1:], depDrag[1:, 2] - chiefDrag[1:, 2], label="delta a_3")
     plt.grid()
     plt.legend()
-    plt.xlabel('Time')
-    plt.ylabel('Relative acceleration due to drag, body frame (m/s)')
+    plt.xlabel("Time")
+    plt.ylabel("Relative acceleration due to drag, body frame (m/s)")
 
     plt.figure()
-    plt.plot(timeData[1:], chiefDrag[1:,0],label="chief a_1")
-    plt.plot(timeData[1:], chiefDrag[1:,1],label="chief a_2")
-    plt.plot(timeData[1:], chiefDrag[1:,2],label="chief a_3")
+    plt.plot(timeData[1:], chiefDrag[1:, 0], label="chief a_1")
+    plt.plot(timeData[1:], chiefDrag[1:, 1], label="chief a_2")
+    plt.plot(timeData[1:], chiefDrag[1:, 2], label="chief a_3")
     plt.grid()
     plt.legend()
-    plt.xlabel('Time')
-    plt.ylabel('Relative acceleration due to drag, body frame (m/s)')
+    plt.xlabel("Time")
+    plt.ylabel("Relative acceleration due to drag, body frame (m/s)")
 
     plt.figure()
-    plt.plot(timeData[1:], depDrag[1:,0],label="dep a_1")
-    plt.plot(timeData[1:], depDrag[1:,1],label="dep a_2")
-    plt.plot(timeData[1:], depDrag[1:,2],label="dep a_3")
+    plt.plot(timeData[1:], depDrag[1:, 0], label="dep a_1")
+    plt.plot(timeData[1:], depDrag[1:, 1], label="dep a_2")
+    plt.plot(timeData[1:], depDrag[1:, 2], label="dep a_3")
     plt.grid()
     plt.legend()
-    plt.xlabel('Time')
-    plt.ylabel('Relative acceleration due to drag, body frame (m/s)')
+    plt.xlabel("Time")
+    plt.ylabel("Relative acceleration due to drag, body frame (m/s)")
 
-
-    if(show_plots):
+    if show_plots:
         plt.show()
     plt.close("all")
 
     return figureList
 
+
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        0.0, #   altitude offset (m)
-        0.1, #  True anomaly offset (deg)
-        1, #    Density multiplier (nondimensional)
-        ctrlType='lqr',
-        useJ2=False
+        0.0,  #   altitude offset (m)
+        0.1,  #  True anomaly offset (deg)
+        1,  #    Density multiplier (nondimensional)
+        ctrlType="lqr",
+        useJ2=False,
     )

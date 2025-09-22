@@ -40,8 +40,8 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../docs/source/codeSamples')
-files = fnmatch.filter(os.listdir(path + '/../../docs/source/codeSamples'), "*.py")
+sys.path.append(path + "/../../docs/source/codeSamples")
+files = fnmatch.filter(os.listdir(path + "/../../docs/source/codeSamples"), "*.py")
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -54,10 +54,9 @@ files = fnmatch.filter(os.listdir(path + '/../../docs/source/codeSamples'), "*.p
 @pytest.mark.parametrize("bskScript", files)
 @pytest.mark.scenarioTest
 def test_scenarioBskPrinciples(show_plots, bskScript):
-
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
     # import the bskSim script to be tested
     scene_plt = importlib.import_module(os.path.splitext(bskScript)[0])
 
@@ -65,7 +64,7 @@ def test_scenarioBskPrinciples(show_plots, bskScript):
         figureList = scene_plt.run()
 
         # save the figures to the RST scenario images folder
-        if(figureList and figureList != {}):
+        if figureList and figureList != {}:
             for pltName, plt in list(figureList.items()):
                 unitTestSupport.saveScenarioFigure(pltName, plt, path)
     except OSError as err:
@@ -80,6 +79,6 @@ def test_scenarioBskPrinciples(show_plots, bskScript):
 
 if __name__ == "__main__":
     test_scenarioBskPrinciples(
-        False,        # show_plots
-        'bsk-4'
+        False,  # show_plots
+        "bsk-4",
     )

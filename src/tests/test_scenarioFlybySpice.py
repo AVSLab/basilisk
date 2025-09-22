@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 #
@@ -36,7 +33,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioFlybySpice
 
 
@@ -49,20 +46,15 @@ import scenarioFlybySpice
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("planetCase", [
-    ('venus'),
-    ('earth'),
-    ('mars')
-])
+@pytest.mark.parametrize("planetCase", [("venus"), ("earth"), ("mars")])
 @pytest.mark.scenarioTest
-
 def test_scenarioFlybySpice(planetCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
         scenarioFlybySpice.run(planetCase)
@@ -83,7 +75,8 @@ def test_scenarioFlybySpice(planetCase):
 
     assert testFailCount < 1, testMessages
 
+
 if __name__ == "__main__":
     test_scenarioFlybySpice(
-        'mars'        # planetCase (venus, earth, mars)
+        "mars"  # planetCase (venus, earth, mars)
     )

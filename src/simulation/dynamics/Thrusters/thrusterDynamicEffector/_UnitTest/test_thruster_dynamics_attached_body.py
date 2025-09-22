@@ -23,9 +23,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    unitTestSupport,
+    macros,
+    RigidBodyKinematics as rbk,
+)
 from Basilisk.simulation import spacecraft, thrusterDynamicEffector
 from Basilisk.architecture import messaging
 from Basilisk.architecture import sysModel
@@ -40,9 +45,17 @@ def thrusterEffectorAllTests(show_plots):
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("long_angle, lat_angle, location, rate", [
-    (30., 15., [[1.125], [0.5], [2.0]], macros.sec2nano(0.01)),  # 1 thruster, thrust on
-])
+@pytest.mark.parametrize(
+    "long_angle, lat_angle, location, rate",
+    [
+        (
+            30.0,
+            15.0,
+            [[1.125], [0.5], [2.0]],
+            macros.sec2nano(0.01),
+        ),  # 1 thruster, thrust on
+    ],
+)
 # provide a unique test method name, starting with test_
 def test_unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     r"""
@@ -58,7 +71,9 @@ def test_unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     everything matches accordingly.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(show_plots, long_angle, lat_angle, location, rate)
+    [testResults, testMessage] = unitThrusters(
+        show_plots, long_angle, lat_angle, location, rate
+    )
     assert testResults < 1, testMessage
 
 
@@ -95,8 +110,16 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
@@ -115,8 +138,11 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     lat_angle_rad = lat_angle_deg * math.pi / 180.0
     thruster = thrusterDynamicEffector.THRSimConfig()
     thruster.thrLoc_B = location  # Parametrized location for thruster
-    thruster.thrDir_B = [[math.cos(long_angle_rad) * math.cos(lat_angle_rad)],
-                         [math.sin(long_angle_rad) * math.cos(lat_angle_rad)], [math.sin(lat_angle_rad)]]
+    thruster.thrDir_B = [
+        [math.cos(long_angle_rad) * math.cos(lat_angle_rad)],
+        [math.sin(long_angle_rad) * math.cos(lat_angle_rad)],
+        [math.sin(lat_angle_rad)],
+    ]
     thruster.MaxThrust = 10.0
     thruster.steadyIsp = 226.7
     thruster.MinOnTime = 0.006
@@ -137,8 +163,12 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     thrusterSet.addThruster(thruster, pyModule.bodyOutMsg)
 
     # Define the location and direction with respect to the platform
-    loc = np.array([thruster.thrLoc_B[0][0], thruster.thrLoc_B[1][0], thruster.thrLoc_B[2][0]])
-    dir = np.array([thruster.thrDir_B[0][0], thruster.thrDir_B[1][0], thruster.thrDir_B[2][0]])
+    loc = np.array(
+        [thruster.thrLoc_B[0][0], thruster.thrLoc_B[1][0], thruster.thrLoc_B[2][0]]
+    )
+    dir = np.array(
+        [thruster.thrDir_B[0][0], thruster.thrDir_B[1][0], thruster.thrDir_B[2][0]]
+    )
 
     # Update the direction and location of the thruster to the hub
     dir = dcm_BF.dot(dir)
@@ -180,8 +210,12 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     TotalSim.ExecuteSimulation()
 
     # Gather the Force, Torque and Mass Rate results
-    thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
-    thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+    thrForce = unitTestSupport.addTimeColumn(
+        thrusterSetLog.times(), thrusterSetLog.forceExternal_B
+    )
+    thrTorque = unitTestSupport.addTimeColumn(
+        thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B
+    )
 
     # Generate the truth data (force, torque and mass rate)
     expectedThrustData = np.zeros([3, np.shape(thrForce)[0]])
@@ -200,17 +234,19 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     # Modify expected values for comparison and define errorTolerance
     TruthForce = np.transpose(expectedThrustData)
     TruthTorque = np.transpose(expectedTorqueData)
-    ErrTolerance = 1E-3
+    ErrTolerance = 1e-3
 
     # Compare Force values
     thrForce = np.delete(thrForce, 0, axis=1)  # remove time column
-    testFailCount, testMessages = unitTestSupport.compareArray(TruthForce, thrForce, ErrTolerance, "Force",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        TruthForce, thrForce, ErrTolerance, "Force", testFailCount, testMessages
+    )
 
     # Compare Torque values
     thrTorque = np.delete(thrTorque, 0, axis=1)  # remove time column
-    testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        TruthTorque, thrTorque, ErrTolerance, "Torque", testFailCount, testMessages
+    )
 
     if testFailCount == 0:
         print("PASSED")
@@ -219,7 +255,7 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 class attachedBodyModule(sysModel.SysModel):
@@ -269,4 +305,4 @@ class attachedBodyModule(sysModel.SysModel):
 
 
 if __name__ == "__main__":
-    unitThrusters(False, 30., 15., [[1.125], [0.5], [2.0]], macros.sec2nano(0.01))
+    unitThrusters(False, 30.0, 15.0, [[1.125], [0.5], [2.0]], macros.sec2nano(0.01))

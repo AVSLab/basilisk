@@ -22,6 +22,7 @@ Overview
 This script is called by OpNavScenarios/OpNavMC/MonteCarlo.py in order to make MC data.
 
 """
+
 # Get current file path
 import inspect
 import os
@@ -35,25 +36,26 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/../..')
+sys.path.append(path + "/../..")
 from BSK_OpNav import BSKSim
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../../plottingOpNav')
+sys.path.append(path + "/../../plottingOpNav")
 
 
 # Create your own scenario child class
 class scenario_OpNav(BSKSim):
     """Main Simulation Class"""
+
     def __init__(self):
         super(scenario_OpNav, self).__init__(BSKSim)
         self.fswRate = 0.5
         self.dynRate = 0.5
         self.set_DynModel(BSK_OpNavDynamics)
         self.set_FswModel(BSK_OpNavFsw)
-        self.name = 'scenario_opnav'
+        self.name = "scenario_opnav"
         self.configure_initial_conditions()
 
         self.msgRecList = {}
@@ -64,33 +66,43 @@ class scenario_OpNav(BSKSim):
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
-        oe.a = 18000 * 1E3  # meters
+        oe.a = 18000 * 1e3  # meters
         oe.e = 0.6
         oe.i = 10 * macros.D2R
-        oe.Omega = 25. * macros.D2R
-        oe.omega = 190. * macros.D2R
-        oe.f = 80. * macros.D2R  # 90 good
-        mu = self.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
+        oe.Omega = 25.0 * macros.D2R
+        oe.omega = 190.0 * macros.D2R
+        oe.f = 80.0 * macros.D2R  # 90 good
+        mu = self.get_DynModel().gravFactory.gravBodies["mars barycenter"].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         bias = [0, 0, -2]
-        rError= np.array([10000.,10000., -10000])
-        vError= np.array([100, -10, 10])
-        MRP= [0,0,0]
-        self.get_FswModel().relativeOD.stateInit = (rN + rError).tolist() + (vN + vError).tolist()
+        rError = np.array([10000.0, 10000.0, -10000])
+        vError = np.array([100, -10, 10])
+        MRP = [0, 0, 0]
+        self.get_FswModel().relativeOD.stateInit = (rN + rError).tolist() + (
+            vN + vError
+        ).tolist()
 
         self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
-        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.sigma_BNInit = [
+            [MRP[0]],
+            [MRP[1]],
+            [MRP[2]],
+        ]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # rad/s - omega_BN_B
 
         qNoiseIn = np.identity(6)
-        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
-        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
+        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1e-3 * 1e-3
+        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1e-4 * 1e-4
         self.get_FswModel().relativeOD.qNoise = qNoiseIn.reshape(36).tolist()
         self.get_FswModel().imageProcessing.noiseSF = 1
-        self.get_FswModel().relativeOD.noiseSF = 5#7.5
+        self.get_FswModel().relativeOD.noiseSF = 5  # 7.5
 
     def log_outputs(self):
         # Dynamics process outputs: log messages below if desired.
@@ -100,20 +112,31 @@ class scenario_OpNav(BSKSim):
         # FSW process outputs
         samplingTime = self.get_FswModel().processTasksTimeStep
 
-        self.msgRecList[self.retainedMessageNameSc] = DynModel.scObject.scStateOutMsg.recorder(samplingTime)
-        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameSc])
+        self.msgRecList[self.retainedMessageNameSc] = (
+            DynModel.scObject.scStateOutMsg.recorder(samplingTime)
+        )
+        self.AddModelToTask(
+            DynModel.taskName, self.msgRecList[self.retainedMessageNameSc]
+        )
 
-        self.msgRecList[self.retainedMessageNameFilt] = FswModel.relativeOD.filtDataOutMsg.recorder(samplingTime)
-        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameFilt])
+        self.msgRecList[self.retainedMessageNameFilt] = (
+            FswModel.relativeOD.filtDataOutMsg.recorder(samplingTime)
+        )
+        self.AddModelToTask(
+            DynModel.taskName, self.msgRecList[self.retainedMessageNameFilt]
+        )
 
-        self.msgRecList[self.retainedMessageNameOpNav] = FswModel.opnavMsg.recorder(samplingTime)
-        self.AddModelToTask(DynModel.taskName, self.msgRecList[self.retainedMessageNameOpNav])
+        self.msgRecList[self.retainedMessageNameOpNav] = FswModel.opnavMsg.recorder(
+            samplingTime
+        )
+        self.AddModelToTask(
+            DynModel.taskName, self.msgRecList[self.retainedMessageNameOpNav]
+        )
 
         return
 
 
 def run(TheScenario):
-
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
@@ -121,32 +144,35 @@ def run(TheScenario):
     TheScenario.get_DynModel().vizInterface.liveStream = True
 
     vizard = subprocess.Popen(
-        [TheScenario.vizPath, "--args", "-directComm", "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
+        [TheScenario.vizPath, "--args", "-directComm", "tcp://localhost:5556"],
+        stdout=subprocess.DEVNULL,
+    )
     print("Vizard spawned with PID = " + str(vizard.pid))
 
     # Configure FSW mode
-    TheScenario.modeRequest = 'prepOpNav'
+    TheScenario.modeRequest = "prepOpNav"
     # Initialize simulation
     TheScenario.InitializeSimulation()
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(3.)
+    simulationTime = macros.min2nano(3.0)
     TheScenario.ConfigureStopTime(simulationTime)
     TheScenario.ExecuteSimulation()
-    TheScenario.modeRequest = 'OpNavAttOD'
+    TheScenario.modeRequest = "OpNavAttOD"
     # TheBSKSim.get_DynModel().SetLocalConfigData(TheBSKSim, 60, True)
-    simulationTime = macros.min2nano(100.)
+    simulationTime = macros.min2nano(100.0)
     TheScenario.ConfigureStopTime(simulationTime)
     TheScenario.ExecuteSimulation()
 
     vizard.kill()
 
     spice = TheScenario.get_DynModel().spiceObject
-    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de430.bsp')
-    spice.unloadSpiceKernel(spice.SPICEDataPath, 'naif0012.tls')
-    spice.unloadSpiceKernel(spice.SPICEDataPath, 'de-403-masses.tpc')
-    spice.unloadSpiceKernel(spice.SPICEDataPath, 'pck00010.tpc')
+    spice.unloadSpiceKernel(spice.SPICEDataPath, "de430.bsp")
+    spice.unloadSpiceKernel(spice.SPICEDataPath, "naif0012.tls")
+    spice.unloadSpiceKernel(spice.SPICEDataPath, "de-403-masses.tpc")
+    spice.unloadSpiceKernel(spice.SPICEDataPath, "pck00010.tpc")
 
     return
+
 
 if __name__ == "__main__":
     # Instantiate base simulation

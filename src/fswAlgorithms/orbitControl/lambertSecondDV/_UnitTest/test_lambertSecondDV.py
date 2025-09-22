@@ -27,19 +27,19 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # parameters
-DVs = np.array([[1., 3., 4.], [500., -100., 200.]])
-time_maneuver = [1.e3, 2.e3]
+DVs = np.array([[1.0, 3.0, 4.0], [500.0, -100.0, 200.0]])
+time_maneuver = [1.0e3, 2.0e3]
 validFlag = [1]
 
 paramArray = [DVs, time_maneuver, validFlag]
 # create list with all combinations of parameters
 paramList = list(itertools.product(*paramArray))
 # add a case where lambert valid flag is false (0) to make sure module returns zeroed DV
-paramList.append((DVs[0], 1.e3, 0))
+paramList.append((DVs[0], 1.0e3, 0))
+
 
 @pytest.mark.parametrize("accuracy", [1e-4])
 @pytest.mark.parametrize("p1_dv, p2_tm, p3_valid", paramList)
-
 def test_lambertSecondDV(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
     r"""
     **Validation Test Description**
@@ -80,7 +80,7 @@ def lambertSecondDVTestFunction(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
 
     # set up orbit using classical orbit elements
     oe1 = orbitalMotion.ClassicElements()
-    r = 10000. * 1000  # meters
+    r = 10000.0 * 1000  # meters
     if ecc < 1.0:
         # elliptic case
         oe1.a = r
@@ -88,10 +88,10 @@ def lambertSecondDVTestFunction(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
         # parabolic and hyperbolic case
         oe1.a = -r
     oe1.e = ecc
-    oe1.i = 10. * macros.D2R
-    oe1.Omega = 20. * macros.D2R
-    oe1.omega = 30. * macros.D2R
-    oe1.f = 40. * macros.D2R
+    oe1.i = 10.0 * macros.D2R
+    oe1.Omega = 20.0 * macros.D2R
+    oe1.omega = 30.0 * macros.D2R
+    oe1.f = 40.0 * macros.D2R
     # spacecraft state at maneuver time, just before maneuver
     r1_BN_N, v1_BN_N = orbitalMotion.elem2rv_parab(muBody, oe1)
 
@@ -107,12 +107,16 @@ def lambertSecondDVTestFunction(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
     lambertSolutionInMsgData = messaging.LambertSolutionMsgPayload()
     lambertSolutionInMsgData.v2_N = v1_BN_N
     lambertSolutionInMsgData.valid = validLambert
-    lambertSolutionInMsg = messaging.LambertSolutionMsg().write(lambertSolutionInMsgData)
+    lambertSolutionInMsg = messaging.LambertSolutionMsg().write(
+        lambertSolutionInMsgData
+    )
 
     desiredVelocityInMsgData = messaging.DesiredVelocityMsgPayload()
     desiredVelocityInMsgData.vDesired_N = v2_BN_N
     desiredVelocityInMsgData.maneuverTime = tm
-    desiredVelocityInMsg = messaging.DesiredVelocityMsg().write(desiredVelocityInMsgData)
+    desiredVelocityInMsg = messaging.DesiredVelocityMsg().write(
+        desiredVelocityInMsgData
+    )
 
     # subscribe input messages to module
     module.lambertSolutionInMsg.subscribeTo(lambertSolutionInMsg)
@@ -133,29 +137,31 @@ def lambertSecondDVTestFunction(show_plots, p1_dv, p2_tm, p3_valid, accuracy):
         dvTrue = dv_N
         burnStartTimeTrue = macros.sec2nano(tm)
     else:
-        dvTrue = np.array([0., 0., 0.])
+        dvTrue = np.array([0.0, 0.0, 0.0])
         burnStartTimeTrue = 0
 
     # make sure module output data is correct
-    paramsString = ' for DV={}, maneuver time={}, valid flag={}, accuracy={}'.format(
-        str(p1_dv),
-        str(p2_tm),
-        str(p3_valid),
-        str(accuracy))
+    paramsString = " for DV={}, maneuver time={}, valid flag={}, accuracy={}".format(
+        str(p1_dv), str(p2_tm), str(p3_valid), str(accuracy)
+    )
 
-    np.testing.assert_allclose(dv,
-                               dvTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: dv_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        dv,
+        dvTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: dv_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(burnStartTime,
-                               burnStartTimeTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: burnStartTime,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        burnStartTime,
+        burnStartTimeTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: burnStartTime," + paramsString),
+        verbose=True,
+    )
 
 
 if __name__ == "__main__":

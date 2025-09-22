@@ -22,20 +22,10 @@ from Basilisk.architecture import messaging
 #
 vscmgList = []
 
+
 def create(
-        gsHat0_B,
-        gtHat0_B,
-        ggHat_B,
-        IG1,
-        IG2,
-        IG3,
-        IW1,
-        IW2,
-        IW3,
-        Omega0,
-        gamma0,
-        gammaDot0
-    ):
+    gsHat0_B, gtHat0_B, ggHat_B, IG1, IG2, IG3, IW1, IW2, IW3, Omega0, gamma0, gammaDot0
+):
     """
     Create a FSW VSCMG object
 
@@ -53,19 +43,19 @@ def create(
     if norm > 1e-10:
         gsHat0_B = gsHat0_B / norm
     else:
-        print('Error: VSCMG gsHat0 input must be non-zero 3x1 vector')
+        print("Error: VSCMG gsHat0 input must be non-zero 3x1 vector")
         exit(1)
     norm = np.linalg.norm(gtHat0_B)
     if norm > 1e-10:
         gtHat0_B = gtHat0_B / norm
     else:
-        print('Error: VSCMG gtHat0 input must be non-zero 3x1 vector')
+        print("Error: VSCMG gtHat0 input must be non-zero 3x1 vector")
         exit(1)
     norm = np.linalg.norm(ggHat_B)
     if norm > 1e-10:
         ggHat_B = ggHat_B / norm
     else:
-        print('Error: VSCMG ggHat input must be non-zero 3x1 vector')
+        print("Error: VSCMG ggHat input must be non-zero 3x1 vector")
         exit(1)
 
     VSCMG.gsHat0_B = np.squeeze(np.array(gsHat0_B)).tolist()
@@ -83,6 +73,7 @@ def create(
     vscmgList.append(VSCMG)
 
     return
+
 
 def writeConfigMessage():
     """
@@ -117,7 +108,6 @@ def writeConfigMessage():
         gamma0List.append(vscmg.gamma0)
         gammaDot0List.append(vscmg.gammaDot0)
 
-
     vscmgConfigParams = messaging.VSCMGArrayConfigMsgPayload()
     vscmgConfigParams.Gs0Matrix_B = Gs0Matrix_B
     vscmgConfigParams.Gt0Matrix_B = Gt0Matrix_B
@@ -134,12 +124,14 @@ def writeConfigMessage():
 
     return vscmgConfigMsg
 
+
 def clearSetup():
     global vscmgList
 
     vscmgList = []
 
     return
+
 
 def getNumOfDevices():
     return len(vscmgList)

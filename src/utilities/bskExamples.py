@@ -21,12 +21,13 @@ import requests
 import bskLargeData
 
 # define the print color codes
-statusColor = '\033[92m'
-endColor = '\033[0m'
+statusColor = "\033[92m"
+endColor = "\033[0m"
 
 # this statement is needed to enable Windows to print ANSI codes in the Terminal
 # see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
 os.system("")
+
 
 # Function to download a single file
 def download_file(file_url, dest_folder):
@@ -41,6 +42,7 @@ def download_file(file_url, dest_folder):
             for chunk in response.iter_content(chunk_size=8192):
                 file.write(chunk)
     print(f"Downloaded: {local_filename}")
+
 
 # Function to process a folder or file via GitHub API
 def process_github_folder(api_url, dest_folder):
@@ -62,6 +64,7 @@ def process_github_folder(api_url, dest_folder):
             subfolder_dest = os.path.join(dest_folder, item["name"])
             process_github_folder(subfolder_api_url, subfolder_dest)
 
+
 def main():
     """
     Script to download all GitHub Basilisk examples into the local folder called ``examples``.
@@ -78,6 +81,7 @@ def main():
     destination_folder = "./examples"
 
     process_github_folder(github_api_url, destination_folder)
+
 
 # Main execution
 if __name__ == "__main__":

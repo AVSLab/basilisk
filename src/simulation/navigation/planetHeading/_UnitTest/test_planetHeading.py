@@ -40,18 +40,18 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
 
     This test checks that ``headingOut`` stores the pulled log of the module ``bodyHeadingOutMsg``.
 
-"""
+    """
     sim = SimulationBaseClass.SimBaseClass()
     proc = sim.CreateNewProcess("proc")
     task = sim.CreateNewTask("task", int(1e9))
     proc.addTask(task)
 
     earthPositionMessage = messaging.SpicePlanetStateMsgPayload()
-    earthPositionMessage.PositionVector = [0., 0., 0.]
+    earthPositionMessage.PositionVector = [0.0, 0.0, 0.0]
     plMsg = messaging.SpicePlanetStateMsg().write(earthPositionMessage)
 
     scPositionMessage = messaging.SCStatesMsgPayload()
-    scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
+    scPositionMessage.r_BN_N = [0.0, 0.0, om.AU * 1000]
     scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
     ph = planetHeading.PlanetHeading()
@@ -68,7 +68,7 @@ def test_planetHeading(show_plots=False, relTol=1e-8):
     sim.TotalSim.SingleStepProcesses()
     headingOut = dataLog.rHat_XB_B[-1]
 
-    assert headingOut == pytest.approx([0., 0., -1.], rel=relTol)
+    assert headingOut == pytest.approx([0.0, 0.0, -1.0], rel=relTol)
 
 
 if __name__ == "__main__":

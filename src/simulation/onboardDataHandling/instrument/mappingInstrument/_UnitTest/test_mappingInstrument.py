@@ -54,7 +54,7 @@ def mappingInstrumentTestFunction():
     module = mappingInstrument.MappingInstrument()
     module.ModelTag = "mappingInstrumentTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
-    module.nodeBaudRate = 1.
+    module.nodeBaudRate = 1.0
 
     # Configure blank module input messages
     accessInMsgData1 = messaging.AccessMsgPayload()
@@ -66,8 +66,8 @@ def mappingInstrumentTestFunction():
     accessInMsg2 = messaging.AccessMsg().write(accessInMsgData2)
 
     # subscribe input messages to module
-    module.addMappingPoint(accessInMsg1, '1')
-    module.addMappingPoint(accessInMsg2, 'data2')
+    module.addMappingPoint(accessInMsg1, "1")
+    module.addMappingPoint(accessInMsg2, "data2")
 
     # setup output message recorder objects
     dataLogs = []
@@ -89,16 +89,16 @@ def mappingInstrumentTestFunction():
     dataAmt = np.array(dataAmt)
     dataNames = np.array(dataNames)
 
-    if not np.array_equal(dataAmt[0,:], np.array([1., 1., 1.])):
+    if not np.array_equal(dataAmt[0, :], np.array([1.0, 1.0, 1.0])):
         testFailCount += 1
 
-    if not np.array_equal(dataAmt[1,:], np.array([0., 0., 0.])):
+    if not np.array_equal(dataAmt[1, :], np.array([0.0, 0.0, 0.0])):
         testFailCount += 1
 
-    if not np.array_equal(dataNames[0,:], np.array(['1', '1', '1'])):
+    if not np.array_equal(dataNames[0, :], np.array(["1", "1", "1"])):
         testFailCount += 1
 
-    if not np.array_equal(dataNames[1,:], np.array(['data2', 'data2', 'data2'])):
+    if not np.array_equal(dataNames[1, :], np.array(["data2", "data2", "data2"])):
         testFailCount += 1
 
     if testFailCount == 0:

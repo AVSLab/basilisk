@@ -98,8 +98,14 @@ from Basilisk.simulation import spacecraft
 
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+)
 from Basilisk.architecture import messaging
 
 
@@ -123,7 +129,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Set up the simulation tasks/objects
@@ -137,7 +143,7 @@ def run(show_plots):
     # Set up Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     planet.radiusRatio = 0.9966
 
@@ -147,7 +153,7 @@ def run(show_plots):
     # Setup spice library for Earth ephemeris
     timeInitString = "2000 November 26, 09:30:00.0 TDB"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
-    spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = "Earth"
 
     scSim.AddModelToTask(simTaskName, spiceObject)
 
@@ -156,15 +162,15 @@ def run(show_plots):
     #
     # Set up the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rMEO = 11260. * 1000      # meters
+    rMEO = 11260.0 * 1000  # meters
 
     # Elliptic MEO case
     oe.a = rMEO
     oe.e = 0.25
-    oe.i = 28. * macros.D2R
+    oe.i = 28.0 * macros.D2R
     oe.Omega = 10.5 * macros.D2R
     oe.omega = 20.5 * macros.D2R
-    oe.f = 10. * macros.D2R
+    oe.f = 10.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
@@ -175,25 +181,28 @@ def run(show_plots):
 
     # Set up data logging before the simulation is initialized
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     # create a logging task object of the spacecraft output message at the desired down sampling ratio
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
 
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                                  # saveFile=__file__
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # saveFile=__file__
+        )
 
         # Del viz.quadMaps[:] at the start of the sim
         viz.quadMaps.clear()
 
         # Create Standard Camera
-        cam = vizSupport.createStandardCamera(viz,
-                                              setMode=0,
-                                              bodyTarget="earth",
-                                              fieldOfView=np.deg2rad(10)
-                                              )
+        cam = vizSupport.createStandardCamera(
+            viz, setMode=0, bodyTarget="earth", fieldOfView=np.deg2rad(10)
+        )
 
         # In more complex scenarios with pointing modules, a CameraConfigMsg can be used
         # for more precise camera-pointing. See scenarioVizPoint.py for this camera setup demo.
@@ -208,37 +217,47 @@ def run(show_plots):
         # viz.addCamMsgToModule(messaging.CameraConfigMsg().write(cam))
 
         # Create initial QuadMaps
-        vizSupport.addQuadMap(viz,
-                              ID=1,
-                              parentBodyName="earth",
-                              vertices=vizSupport.qms.computeRectMesh(planet,
-                                                                      [66.5, 90],
-                                                                      [-180, 180],
-                                                                      8),
-                              color=[0, 0, 255, 100],
-                              label="Arctic Region"
-                              )
+        vizSupport.addQuadMap(
+            viz,
+            ID=1,
+            parentBodyName="earth",
+            vertices=vizSupport.qms.computeRectMesh(planet, [66.5, 90], [-180, 180], 8),
+            color=[0, 0, 255, 100],
+            label="Arctic Region",
+        )
 
-        vizSupport.addQuadMap(viz,
-                              ID=2,
-                              parentBodyName="earth",
-                              vertices=vizSupport.qms.computeRectMesh(planet,
-                                                                      [37, 41],
-                                                                      [-102.0467, -109.0467],
-                                                                      5),
-                              color=[0, 255, 0, 100],
-                              label="Colorado"
-                              )
+        vizSupport.addQuadMap(
+            viz,
+            ID=2,
+            parentBodyName="earth",
+            vertices=vizSupport.qms.computeRectMesh(
+                planet, [37, 41], [-102.0467, -109.0467], 5
+            ),
+            color=[0, 255, 0, 100],
+            label="Colorado",
+        )
 
-        vizSupport.addQuadMap(viz,
-                              ID=3,
-                              parentBodyName="bsk-Sat",
-                              vertices=[-2.551, 0.341, 1.01,
-                                        -2.804, 0.341, 1.01,
-                                        -2.804, 0.111, 1.01,
-                                        -2.551, 0.111, 1.01],
-                              color=[255, 128, 0, 100],
-                              label="Solar Cell")
+        vizSupport.addQuadMap(
+            viz,
+            ID=3,
+            parentBodyName="bsk-Sat",
+            vertices=[
+                -2.551,
+                0.341,
+                1.01,
+                -2.804,
+                0.341,
+                1.01,
+                -2.804,
+                0.111,
+                1.01,
+                -2.551,
+                0.111,
+                1.01,
+            ],
+            color=[255, 128, 0, 100],
+            label="Solar Cell",
+        )
 
         viz.settings.mainCameraTarget = "earth"
 
@@ -262,45 +281,60 @@ def run(show_plots):
             if len(FOVBox) == 12:
                 # Subdivide region to wrap onto ellipsoid
                 if fieldOfViewSubdivs > 1:
-                    FOVBox = vizSupport.qms.subdivideFOVBox(planet, FOVBox, fieldOfViewSubdivs)
-                vizSupport.addQuadMap(viz,
-                                      ID=camQM_ID,
-                                      parentBodyName="earth",
-                                      vertices=FOVBox,
-                                      color=[255, 0, 0, 60]
-                                      )
+                    FOVBox = vizSupport.qms.subdivideFOVBox(
+                        planet, FOVBox, fieldOfViewSubdivs
+                    )
+                vizSupport.addQuadMap(
+                    viz,
+                    ID=camQM_ID,
+                    parentBodyName="earth",
+                    vertices=FOVBox,
+                    color=[255, 0, 0, 60],
+                )
                 camQM_ID += 1
 
-            if incrementalStopTime == simulationTime/2:
-                vizSupport.addQuadMap(viz,
-                                      ID=1,
-                                      parentBodyName="earth",
-                                      vertices=vizSupport.qms.computeRectMesh(planet,
-                                                                              [66.5, 90],
-                                                                              [-180, 180],
-                                                                              8),
-                                      color=[0, 0, 255, 100],
-                                      isHidden=True
-                                      )
-                vizSupport.addQuadMap(viz,
-                                      ID=2,
-                                      parentBodyName="earth",
-                                      vertices=vizSupport.qms.computeRectMesh(planet,
-                                                                              [37, 41],
-                                                                              [-102.0467, -109.0467],
-                                                                              5),
-                                      color=[255, 255, 0, 100],
-                                      label="CO (new color!)"
-                                      )
-                vizSupport.addQuadMap(viz,
-                                      ID=3,
-                                      parentBodyName="bsk-Sat",
-                                      vertices=[-2.551, 0.341, 1.01,
-                                                -2.804, 0.341, 1.01,
-                                                -2.804, 0.111, 1.01,
-                                                -2.551, 0.111, 1.01],
-                                      color=[255, 128, 0, 100],
-                                      label="NOLABEL")
+            if incrementalStopTime == simulationTime / 2:
+                vizSupport.addQuadMap(
+                    viz,
+                    ID=1,
+                    parentBodyName="earth",
+                    vertices=vizSupport.qms.computeRectMesh(
+                        planet, [66.5, 90], [-180, 180], 8
+                    ),
+                    color=[0, 0, 255, 100],
+                    isHidden=True,
+                )
+                vizSupport.addQuadMap(
+                    viz,
+                    ID=2,
+                    parentBodyName="earth",
+                    vertices=vizSupport.qms.computeRectMesh(
+                        planet, [37, 41], [-102.0467, -109.0467], 5
+                    ),
+                    color=[255, 255, 0, 100],
+                    label="CO (new color!)",
+                )
+                vizSupport.addQuadMap(
+                    viz,
+                    ID=3,
+                    parentBodyName="bsk-Sat",
+                    vertices=[
+                        -2.551,
+                        0.341,
+                        1.01,
+                        -2.804,
+                        0.341,
+                        1.01,
+                        -2.804,
+                        0.111,
+                        1.01,
+                        -2.551,
+                        0.111,
+                        1.01,
+                    ],
+                    color=[255, 128, 0, 100],
+                    label="NOLABEL",
+                )
 
         incrementalStopTime += imgTimeStep
         scSim.ConfigureStopTime(incrementalStopTime)
@@ -312,7 +346,7 @@ def run(show_plots):
     # Unload Spice kernel
     gravFactory.unloadSpiceKernels()
 
-    return {} # no figures to return
+    return {}  # no figures to return
 
 
 if __name__ == "__main__":

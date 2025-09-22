@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -42,38 +41,264 @@ from matplotlib import pyplot as plt
 
 path = os.path.dirname(os.path.abspath(__file__))
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize(
     "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide",
     [
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "plain", 0, 5.),
-        (False, 0.5, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "eclipse", -1, 5.),
-        (False, 1.0, 3 * np.pi / 8., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "fieldOfView", -2, 5.),
-        (False, 1.0, np.pi / 2., 0.15, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "kellyFactor", 1, 5.),
-        (False, 1.0, np.pi / 2., 0.0, 2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "scaleFactor", 2, 5.),
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.225, 0.0, 1.0, -0.375, 0.375, 3e-2, "deviation", -5, 1.),
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            10.0,
+            1e-10,
+            "plain",
+            0,
+            5.0,
+        ),
+        (
+            False,
+            0.5,
+            np.pi / 2.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            10.0,
+            1e-10,
+            "eclipse",
+            -1,
+            5.0,
+        ),
+        (
+            False,
+            1.0,
+            3 * np.pi / 8.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            10.0,
+            1e-10,
+            "fieldOfView",
+            -2,
+            5.0,
+        ),
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.15,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            10.0,
+            1e-10,
+            "kellyFactor",
+            1,
+            5.0,
+        ),
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            2.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            10.0,
+            1e-10,
+            "scaleFactor",
+            2,
+            5.0,
+        ),
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            1.0,
+            0.0,
+            0.225,
+            0.0,
+            1.0,
+            -0.375,
+            0.375,
+            3e-2,
+            "deviation",
+            -5,
+            1.0,
+        ),
         # low tolerance for std deviation comparison
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 10., 1e-10, "albedo", -4, 5.),
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.25, 0.75, 1e-10, "saturation", 5, 2.),
-        (False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 10.0, 1e-10, "sunDistance", 4, 3.),
-        (False, 1.0, np.pi / 2., 0.0, 2.0, 0.0, 0.125, 0.0, 1.0, -0.75, 0.75, 0.5, "combined", -6, 1.),
-        (True, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "constellation", 0, 1.)
-    ])
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0,
+            0.0,
+            10.0,
+            1e-10,
+            "albedo",
+            -4,
+            5.0,
+        ),
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.25,
+            0.75,
+            1e-10,
+            "saturation",
+            5,
+            2.0,
+        ),
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            2.0,
+            0.0,
+            10.0,
+            1e-10,
+            "sunDistance",
+            4,
+            3.0,
+        ),
+        (
+            False,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            2.0,
+            0.0,
+            0.125,
+            0.0,
+            1.0,
+            -0.75,
+            0.75,
+            0.5,
+            "combined",
+            -6,
+            1.0,
+        ),
+        (
+            True,
+            1.0,
+            np.pi / 2.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            10.0,
+            1e-10,
+            "constellation",
+            0,
+            1.0,
+        ),
+    ],
+)
 # provide a unique test method name, starting with test_
-def test_coarseSunSensor(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd,
-                         albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide):
-    '''This function is called by the py.test environment.'''
+def test_coarseSunSensor(
+    show_plots,
+    useConstellation,
+    visibilityFactor,
+    fov,
+    kelly,
+    scaleFactor,
+    bias,
+    noiseStd,
+    albedoValue,
+    sunDistInput,
+    minIn,
+    maxIn,
+    errTol,
+    name,
+    zLevel,
+    lineWide,
+):
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias,
-                                     noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide)
+    [testResults, testMessage] = run(
+        show_plots,
+        useConstellation,
+        visibilityFactor,
+        fov,
+        kelly,
+        scaleFactor,
+        bias,
+        noiseStd,
+        albedoValue,
+        sunDistInput,
+        minIn,
+        maxIn,
+        errTol,
+        name,
+        zLevel,
+        lineWide,
+    )
     assert testResults < 1, testMessage
 
     __tracebackhide__ = True
 
 
-def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue,
-        sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide):
+def run(
+    show_plots,
+    useConstellation,
+    visibilityFactor,
+    fov,
+    kelly,
+    scaleFactor,
+    bias,
+    noiseStd,
+    albedoValue,
+    sunDistInput,
+    minIn,
+    maxIn,
+    errTol,
+    name,
+    zLevel,
+    lineWide,
+):
     #
     #   Sim Setup
     #
@@ -94,18 +319,22 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #   Creates inputs from sun, spacecraft, and eclipse so that those modules don't have to be included
     # Create dummy sun message
     sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
-    sunPositionMsg.PositionVector = [om.AU * 1000. * sunDistInput, 0.0, 0.0]
+    sunPositionMsg.PositionVector = [om.AU * 1000.0 * sunDistInput, 0.0, 0.0]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
 
     # Create dummy spacecraft message
     satelliteStateMsg = messaging.SCStatesMsgPayload()
     satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
-    angles = np.linspace(0., 2 * np.pi, 360)
+    angles = np.linspace(0.0, 2 * np.pi, 360)
     sigmas = np.zeros(len(angles))
-    truthVector = np.cos(angles)  # set truth vector initially, modify below based on inputs
+    truthVector = np.cos(
+        angles
+    )  # set truth vector initially, modify below based on inputs
     for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
-        sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
-    satelliteStateMsg.sigma_BN = [0., 0., sigmas[0]]
+        sigmas[i] = np.tan(
+            angles[i] / 4.0
+        )  # This is iterated through in the execution for loop
+    satelliteStateMsg.sigma_BN = [0.0, 0.0, sigmas[0]]
     scMsg = messaging.SCStatesMsg().write(satelliteStateMsg)
 
     # Calculate sun distance factor
@@ -114,7 +343,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     r_Sun_Sc[1] = sunPositionMsg.PositionVector[1] - satelliteStateMsg.r_BN_N[1]
     r_Sun_Sc[2] = sunPositionMsg.PositionVector[2] - satelliteStateMsg.r_BN_N[2]
     sunDist = np.linalg.norm(r_Sun_Sc)
-    sunDistanceFactor = ((om.AU * 1000.0) ** 2) / (sunDist ** 2)
+    sunDistanceFactor = ((om.AU * 1000.0) ** 2) / (sunDist**2)
 
     # create dummy eclipse message
     eclipseMsg = messaging.EclipseMsgPayload()
@@ -130,7 +359,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         CSS.albedoValue = albedoValue
         CSS.minOutput = minIn
         CSS.maxOutput = maxIn
-        CSS.nHat_B = np.array([1., 0., 0.])
+        CSS.nHat_B = np.array([1.0, 0.0, 0.0])
         CSS.sunInMsg.subscribeTo(sunMsg)
         CSS.stateInMsg.subscribeTo(scMsg)
         CSS.sunEclipseInMsg.subscribeTo(ecMsg)
@@ -173,33 +402,41 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         setupCSS(cssP24)
 
         # all sensors on a 45 degree, four sided pyramid mount
-        cssP11.nHat_B = [1. / np.sqrt(2.), 0., -1. / np.sqrt(2.)]
-        cssP12.nHat_B = [1. / np.sqrt(2.), 1. / np.sqrt(2.), 0.]
-        cssP13.nHat_B = [1. / np.sqrt(2.), 0., 1. / np.sqrt(2)]
-        cssP14.nHat_B = [1. / np.sqrt(2.), -1. / np.sqrt(2.), 0.]
+        cssP11.nHat_B = [1.0 / np.sqrt(2.0), 0.0, -1.0 / np.sqrt(2.0)]
+        cssP12.nHat_B = [1.0 / np.sqrt(2.0), 1.0 / np.sqrt(2.0), 0.0]
+        cssP13.nHat_B = [1.0 / np.sqrt(2.0), 0.0, 1.0 / np.sqrt(2)]
+        cssP14.nHat_B = [1.0 / np.sqrt(2.0), -1.0 / np.sqrt(2.0), 0.0]
 
         # all except cssP24 given non-zero platform frame. B4 is not changed so that the default is tested.
-        cssP21.setBodyToPlatformDCM(np.pi / 2., np.pi / 2., np.pi / 2.)
-        cssP22.setBodyToPlatformDCM(np.pi / 2., np.pi / 2., np.pi / 2.)
-        cssP23.setBodyToPlatformDCM(np.pi / 2., np.pi / 2., np.pi / 2.)
+        cssP21.setBodyToPlatformDCM(np.pi / 2.0, np.pi / 2.0, np.pi / 2.0)
+        cssP22.setBodyToPlatformDCM(np.pi / 2.0, np.pi / 2.0, np.pi / 2.0)
+        cssP23.setBodyToPlatformDCM(np.pi / 2.0, np.pi / 2.0, np.pi / 2.0)
         # cssP24 is not changed so that the default is tested to be identity
 
-        cssP21.phi = np.pi / 4.
-        cssP21.theta = 0.
-        cssP22.phi = np.pi / 4.
-        cssP22.theta = np.pi / 2.
-        cssP23.phi = np.pi / 4.
+        cssP21.phi = np.pi / 4.0
+        cssP21.theta = 0.0
+        cssP22.phi = np.pi / 4.0
+        cssP22.theta = np.pi / 2.0
+        cssP23.phi = np.pi / 4.0
         cssP23.theta = np.pi
-        cssP24.phi = np.pi / 6.  # remember, the cssP24 frame is the B frame. This angle is cancelled by a perturbation.
-        cssP24.theta = -np.pi / 8.  # This angle is also provided with a perturbation to test to perturbation functionality.
+        cssP24.phi = (
+            np.pi / 6.0
+        )  # remember, the cssP24 frame is the B frame. This angle is cancelled by a perturbation.
+        cssP24.theta = (
+            -np.pi / 8.0
+        )  # This angle is also provided with a perturbation to test to perturbation functionality.
 
-        cssP21.setUnitDirectionVectorWithPerturbation(0., 0.)
-        cssP22.setUnitDirectionVectorWithPerturbation(0., 0.)
-        cssP23.setUnitDirectionVectorWithPerturbation(0., 0.)
-        cssP24.setUnitDirectionVectorWithPerturbation(-np.pi / 8., -np.pi / 6.)
+        cssP21.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        cssP22.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        cssP23.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        cssP24.setUnitDirectionVectorWithPerturbation(-np.pi / 8.0, -np.pi / 6.0)
 
-        constellationP1List = [cssP11, cssP12, cssP13,
-                               cssP14]  # P1 is second platform, numbers following P2 are sensor numbers
+        constellationP1List = [
+            cssP11,
+            cssP12,
+            cssP13,
+            cssP14,
+        ]  # P1 is second platform, numbers following P2 are sensor numbers
 
         constellationP1 = coarseSunSensor.CSSConstellation()
         constellationP1.ModelTag = "constellationP1"
@@ -207,7 +444,12 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             constellationP1.appendCSS(item)
         unitTestSim.AddModelToTask(testTaskName, constellationP1)
 
-        constellationP2List = [cssP21, cssP22, cssP23, cssP24]  # P2 is second platform, numbers following P2 are sensor numbers
+        constellationP2List = [
+            cssP21,
+            cssP22,
+            cssP23,
+            cssP24,
+        ]  # P2 is second platform, numbers following P2 are sensor numbers
         constellationP2 = coarseSunSensor.CSSConstellation()
         constellationP2.ModelTag = "constellationP2"
         for item in constellationP2List:
@@ -229,8 +471,11 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     for i in range(len(truthVector)):
         if kelly > 0.0000000000001:  # only if kelly isn't actually zero
             truthVector[i] = truthVector[i] * (
-                    1.0 - np.e ** (-truthVector[i] ** 2.0 / kelly))  # apply kelly factor, note: no albedo
-        truthVector[i] = truthVector[i] * visibilityFactor * sunDistanceFactor  # account for eclipse effects
+                1.0 - np.e ** (-(truthVector[i] ** 2.0) / kelly)
+            )  # apply kelly factor, note: no albedo
+        truthVector[i] = (
+            truthVector[i] * visibilityFactor * sunDistanceFactor
+        )  # account for eclipse effects
         truthVector[i] += albedoValue  # apply albedo
         truthVector[i] += bias  # apply bias
     for i in range(len(angles)):
@@ -262,61 +507,84 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         constellationP1data = dataLogP1.CosValue
         constellationP2data = dataLogP2.CosValue
 
-        if name == 'plain':
-            plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        if name == "plain":
+            plt.figure(figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
         plt.subplot(2, 1, 1)
         for i in range(4):
             sensorlabel = "cssP1" + str(i + 1)
-            plt.plot(dataLogP1.times() * macros.NANO2MIN, constellationP1data[:, i], label=sensorlabel,
-                     linewidth=4 - i)
-        plt.xlabel('Time [min]')
-        plt.ylabel('P1 Output Values [-]')
-        plt.legend(loc='upper center')
+            plt.plot(
+                dataLogP1.times() * macros.NANO2MIN,
+                constellationP1data[:, i],
+                label=sensorlabel,
+                linewidth=4 - i,
+            )
+        plt.xlabel("Time [min]")
+        plt.ylabel("P1 Output Values [-]")
+        plt.legend(loc="upper center")
 
         plt.subplot(2, 1, 2)
         # plt.figure(2,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         for i in range(4):
             sensorlabel = "cssP2" + str(i + 1)
-            plt.plot(dataLogP2.times() * macros.NANO2MIN, constellationP2data[:, i], label=sensorlabel,
-                     linewidth=4 - i)
-        plt.xlabel('Time [min]')
-        plt.ylabel('P2 Output Values [-]')
-        plt.legend(loc='upper center')
-        unitTestSupport.writeFigureLaTeX('constellationPlots',
-                                         'Plot of first and second constellation outputs for comparision.\
+            plt.plot(
+                dataLogP2.times() * macros.NANO2MIN,
+                constellationP2data[:, i],
+                label=sensorlabel,
+                linewidth=4 - i,
+            )
+        plt.xlabel("Time [min]")
+        plt.ylabel("P2 Output Values [-]")
+        plt.legend(loc="upper center")
+        unitTestSupport.writeFigureLaTeX(
+            "constellationPlots",
+            "Plot of first and second constellation outputs for comparision.\
                                           Note that the constellation starts pointing directly at the sun\
-                                           and linearly rotates in time until it returns to a direct view.',
-                                         plt, 'height=0.7\\textwidth, keepaspectratio', path)
+                                           and linearly rotates in time until it returns to a direct view.",
+            plt,
+            "height=0.7\\textwidth, keepaspectratio",
+            path,
+        )
     #
     #   Single CSS plotting
     #
     else:
         justTheNoise = cssOutput - truthVector  # subtract curve from noisy curve
         outputStd = np.std(justTheNoise)
-        if name == 'plain':
-            plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-        plt.plot(dataLogSingle.times() * macros.NANO2MIN, cssOutput, label=name, zorder=zLevel, linewidth=lineWide)
+        if name == "plain":
+            plt.figure(figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+        plt.plot(
+            dataLogSingle.times() * macros.NANO2MIN,
+            cssOutput,
+            label=name,
+            zorder=zLevel,
+            linewidth=lineWide,
+        )
         plt.legend()
-        plt.xlabel('Time [min]')
-        plt.ylabel('Output Value [-]')
+        plt.xlabel("Time [min]")
+        plt.ylabel("Output Value [-]")
         if name == "combined":
-            unitTestSupport.writeFigureLaTeX('combinedPlot',
-                                             'Plot of all cases of individual coarse sun sensor in comparison to\
+            unitTestSupport.writeFigureLaTeX(
+                "combinedPlot",
+                "Plot of all cases of individual coarse sun sensor in comparison to\
                                               each other. Note that the incidence angle starts at direct and linearly\
-                                               rotates in time until it returns to a direct view.',
-                                             plt, 'height=0.7\\textwidth, keepaspectratio', path)
+                                               rotates in time until it returns to a direct view.",
+                plt,
+                "height=0.7\\textwidth, keepaspectratio",
+                path,
+            )
 
     if name == "constellation" and show_plots:  # Don't show plots until last run.
         plt.show()
-        plt.close('all')
+        plt.close("all")
 
     #
     #   Compare output and truth vectors
     #
     if useConstellation:  # compare constellation P1 to constellation P2
         for i in range(0, np.shape(constellationP2data)[0]):
-            if not unitTestSupport.isArrayEqualRelative(constellationP2data[i][:], constellationP1data[i][0:], 4,
-                                                        errTol):
+            if not unitTestSupport.isArrayEqualRelative(
+                constellationP2data[i][:], constellationP1data[i][0:], 4, errTol
+            ):
                 testFailCount += 1
     elif noiseStd == 0.0:  # if a test without noise
         for i in range(0, np.shape(cssOutput)[0]):
@@ -324,28 +592,32 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
                 if not unitTestSupport.isArrayZero([cssOutput[i]], 1, errTol):
                     testFailCount += 1
             else:
-                if not unitTestSupport.isDoubleEqualRelative(cssOutput[i], truthVector[i], errTol):
+                if not unitTestSupport.isDoubleEqualRelative(
+                    cssOutput[i], truthVector[i], errTol
+                ):
                     testFailCount += 1
     else:  # if "combined" or "deviation"
         # Calculate standard deviation of just the noise component
         justTheNoise = cssOutput - truthVector  # subtract curve from noisy curve
         outputStd = np.std(justTheNoise)
-        if not unitTestSupport.isDoubleEqualRelative(noiseStd * scaleFactor, outputStd, errTol):
+        if not unitTestSupport.isDoubleEqualRelative(
+            noiseStd * scaleFactor, outputStd, errTol
+        ):
             print(outputStd)
             print(noiseStd * scaleFactor)
             testFailCount += 1
             print("HPS: 2")
 
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         passFailMsg = ""  # "Passed: " + name + "."
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         passFailMsg = "Failed: " + name + "."
         testMessages.append(passFailMsg)
         testMessages.append(" | ")
-        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "FAILED" + "}"
 
     # Write some snippets for AutoTex
     snippetName = name + "PassedText"
@@ -361,59 +633,88 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     # "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide"
     useConstellationSnippetName = name + "UseConstellation"
     useConstellationSnippetContent = str(useConstellation)
-    unitTestSupport.writeTeXSnippet(useConstellationSnippetName, useConstellationSnippetContent, path)
+    unitTestSupport.writeTeXSnippet(
+        useConstellationSnippetName, useConstellationSnippetContent, path
+    )
 
     visibilityFactorSnippetName = name + "VisibilityFactor"
-    visibilityFactorSnippetContent = '{:1.2f}'.format(visibilityFactor)
-    unitTestSupport.writeTeXSnippet(visibilityFactorSnippetName, visibilityFactorSnippetContent, path)
+    visibilityFactorSnippetContent = "{:1.2f}".format(visibilityFactor)
+    unitTestSupport.writeTeXSnippet(
+        visibilityFactorSnippetName, visibilityFactorSnippetContent, path
+    )
 
     fovSnippetName = name + "Fov"
-    fovSnippetContent = '{:1.4f}'.format(fov)
+    fovSnippetContent = "{:1.4f}".format(fov)
     unitTestSupport.writeTeXSnippet(fovSnippetName, fovSnippetContent, path)
 
     kellySnippetName = name + "Kelly"
-    kellySnippetContent = '{:1.2f}'.format(kelly)
+    kellySnippetContent = "{:1.2f}".format(kelly)
     unitTestSupport.writeTeXSnippet(kellySnippetName, kellySnippetContent, path)
 
     scaleFactorSnippetName = name + "ScaleFactor"
-    scaleFactorSnippetContent = '{:1.2f}'.format(scaleFactor)
-    unitTestSupport.writeTeXSnippet(scaleFactorSnippetName, scaleFactorSnippetContent, path)
+    scaleFactorSnippetContent = "{:1.2f}".format(scaleFactor)
+    unitTestSupport.writeTeXSnippet(
+        scaleFactorSnippetName, scaleFactorSnippetContent, path
+    )
 
     biasSnippetName = name + "Bias"
-    biasSnippetContent = '{:1.2f}'.format(bias)
+    biasSnippetContent = "{:1.2f}".format(bias)
     unitTestSupport.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
 
     noiseStdSnippetName = name + "NoiseStd"
-    noiseStdSnippetContent = '{:1.3f}'.format(noiseStd)
+    noiseStdSnippetContent = "{:1.3f}".format(noiseStd)
     unitTestSupport.writeTeXSnippet(noiseStdSnippetName, noiseStdSnippetContent, path)
 
     albedoValueSnippetName = name + "AlbedoValue"
-    albedoValueSnippetContent = '{:1.1f}'.format(albedoValue)
-    unitTestSupport.writeTeXSnippet(albedoValueSnippetName, albedoValueSnippetContent, path)
+    albedoValueSnippetContent = "{:1.1f}".format(albedoValue)
+    unitTestSupport.writeTeXSnippet(
+        albedoValueSnippetName, albedoValueSnippetContent, path
+    )
 
     locationSnippetName = name + "Location"
-    locationSnippetContent = '{:1.1f}'.format(sunDistInput)
+    locationSnippetContent = "{:1.1f}".format(sunDistInput)
     unitTestSupport.writeTeXSnippet(locationSnippetName, locationSnippetContent, path)
 
     saturationMaxSnippetName = name + "MaxSaturation"
-    saturationMaxSnippetContent = '{:2.2f}'.format(maxIn)
-    unitTestSupport.writeTeXSnippet(saturationMaxSnippetName, saturationMaxSnippetContent, path)
+    saturationMaxSnippetContent = "{:2.2f}".format(maxIn)
+    unitTestSupport.writeTeXSnippet(
+        saturationMaxSnippetName, saturationMaxSnippetContent, path
+    )
 
     saturationMinSnippetName = name + "MinSaturation"
-    saturationMinSnippetContent = '{:2.2f}'.format(minIn)
-    unitTestSupport.writeTeXSnippet(saturationMinSnippetName, saturationMinSnippetContent, path)
+    saturationMinSnippetContent = "{:2.2f}".format(minIn)
+    unitTestSupport.writeTeXSnippet(
+        saturationMinSnippetName, saturationMinSnippetContent, path
+    )
 
     errTolSnippetName = name + "ErrTol"
-    errTolSnippetContent = '{:1.1e}'.format(errTol)
+    errTolSnippetContent = "{:1.1e}".format(errTol)
     unitTestSupport.writeTeXSnippet(errTolSnippetName, errTolSnippetContent, path)
 
     if testFailCount == 0:
         print("PASSED")
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 if __name__ == "__main__":
     # run(True, False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.125, 0.0, 1.0, -10., 10., 1e-2, "deviation", -5, 1.)
     # run(True, False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "plain", 0, 5.)
-    run(True, True, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, "constellation", 0, 1.)
+    run(
+        True,
+        True,
+        1.0,
+        np.pi / 2.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        10.0,
+        1e-10,
+        "constellation",
+        0,
+        1.0,
+    )
     # run(True, False, 0.5, 3 * np.pi / 8., 0.15, 2.0, 0.5, 0.125, 0.5, 2.0, -10., 10., 1e-2, "combined", -6, 1.0)

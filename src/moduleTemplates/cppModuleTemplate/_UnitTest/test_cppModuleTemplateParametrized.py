@@ -32,22 +32,21 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
-
-
-
-
-
 
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.moduleTemplates import cppModuleTemplate                # import the module that is to be tested
+from Basilisk.moduleTemplates import (
+    cppModuleTemplate,
+)  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.architecture import messaging                      # import the message definitions
+from Basilisk.architecture import messaging  # import the message definitions
 from Basilisk.architecture import bskLogging
 
 
@@ -61,11 +60,7 @@ from Basilisk.architecture import bskLogging
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
 # The first parametrize arguments are shown last in the pytest argument list
 @pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parametrize("param1, param2", [
-     (1, 1)
-    ,(1, 3)
-    ,(2, 2)
-])
+@pytest.mark.parametrize("param1, param2", [(1, 1), (1, 3), (2, 2)])
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, param1, param2, accuracy):
@@ -117,42 +112,45 @@ def test_module(show_plots, param1, param2, accuracy):
     contained within this HTML ``pytest`` report.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = cppModuleTestFunction(show_plots, param1, param2, accuracy)
+    [testResults, testMessage] = cppModuleTestFunction(
+        show_plots, param1, param2, accuracy
+    )
     assert testResults < 1, testMessage
 
 
 def cppModuleTestFunction(show_plots, param1, param2, accuracy):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
     # Construct algorithm and associated C++ container
-    module = cppModuleTemplate.CppModuleTemplate()   # update with current values
-    module.ModelTag = "cppModuleTemplate"            # update python name of test module
+    module = cppModuleTemplate.CppModuleTemplate()  # update with current values
+    module.ModelTag = "cppModuleTemplate"  # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize the test module configuration data
-    module.setDummy(1)                              # update module parameter with required values
+    module.setDummy(1)  # update module parameter with required values
     with pytest.raises(bskLogging.BasiliskError):
-        module.setDumVector([1., -2., 3.])
+        module.setDumVector([1.0, -2.0, 3.0])
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = messaging.CModuleTemplateMsgPayload() # Create a structure for the input message
-    inputMessageData.dataVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
+    inputMessageData = (
+        messaging.CModuleTemplateMsgPayload()
+    )  # Create a structure for the input message
+    inputMessageData.dataVector = [param1, param2, 0.7]  # Set up a list as a 3-vector
     inputMsg = messaging.CModuleTemplateMsg().write(inputMessageData)
     module.dataInMsg.subscribeTo(inputMsg)
 
@@ -160,7 +158,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
     dataLog = module.dataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    variableName = "dummy"                              # name the module variable to be logged
+    variableName = "dummy"  # name the module variable to be logged
     moduleLog = module.logger(variableName)
     unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
@@ -171,96 +169,120 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
     # reset the module to test this functionality
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)  # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-
 
     # This pulls the BSK module internal varialbe log from the simulation run.
     # Note, this should only be done for debugging as it is a slow process
-    variableState = unitTestSupport.addTimeColumn(moduleLog.times(), getattr(moduleLog, variableName))
+    variableState = unitTestSupport.addTimeColumn(
+        moduleLog.times(), getattr(moduleLog, variableName)
+    )
 
     # set the filtered output truth states
     trueVector = []
     if param1 == 1:
         if param2 == 1:
             trueVector = [
-                       [2.0, 1.0, 0.7],
-                       [3.0, 1.0, 0.7],
-                       [4.0, 1.0, 0.7],
-                       [2.0, 1.0, 0.7],
-                       [3.0, 1.0, 0.7]
-                       ]
+                [2.0, 1.0, 0.7],
+                [3.0, 1.0, 0.7],
+                [4.0, 1.0, 0.7],
+                [2.0, 1.0, 0.7],
+                [3.0, 1.0, 0.7],
+            ]
         else:
             if param2 == 3:
                 trueVector = [
-                       [2.0, 3.0, 0.7],
-                       [3.0, 3.0, 0.7],
-                       [4.0, 3.0, 0.7],
-                       [2.0, 3.0, 0.7],
-                       [3.0, 3.0, 0.7]
-                       ]
+                    [2.0, 3.0, 0.7],
+                    [3.0, 3.0, 0.7],
+                    [4.0, 3.0, 0.7],
+                    [2.0, 3.0, 0.7],
+                    [3.0, 3.0, 0.7],
+                ]
             else:
                 testFailCount += 1
-                testMessages.append("FAILED: " + module.ModelTag
-                                    + " Module failed with unsupported input parameters")
+                testMessages.append(
+                    "FAILED: "
+                    + module.ModelTag
+                    + " Module failed with unsupported input parameters"
+                )
     else:
         if param1 == 2:
             trueVector = [
-                       [3.0, 2.0, 0.7],
-                       [4.0, 2.0, 0.7],
-                       [5.0, 2.0, 0.7],
-                       [3.0, 2.0, 0.7],
-                       [4.0, 2.0, 0.7]
-                       ]
+                [3.0, 2.0, 0.7],
+                [4.0, 2.0, 0.7],
+                [5.0, 2.0, 0.7],
+                [3.0, 2.0, 0.7],
+                [4.0, 2.0, 0.7],
+            ]
         else:
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed with unsupported input parameters")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed with unsupported input parameters"
+            )
 
     # compare the module results to the truth values
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.dataVector,
-                                                               accuracy, "Output Vector",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        dataLog.dataVector,
+        accuracy,
+        "Output Vector",
+        testFailCount,
+        testMessages,
+    )
     variableState = np.transpose(variableState)[1]
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(dummyTrue, variableState,
-                                                                     accuracy, "dummy parameter",
-                                                                     testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+        dummyTrue,
+        variableState,
+        accuracy,
+        "dummy parameter",
+        testFailCount,
+        testMessages,
+    )
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))  # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     # plot a sample variable.
-    plt.close("all")    # close all prior figures so we start with a clean slate
+    plt.close("all")  # close all prior figures so we start with a clean slate
     plt.figure(1)
-    plt.plot(dataLog.times()*macros.NANO2SEC, variableState,
-             label='Case param1 = ' + str(param1) + ' and param2 = ' + str(param2))
-    plt.legend(loc='upper left')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Variable Description [unit]')
-    plt.suptitle('Title of Sample Plot')
+    plt.plot(
+        dataLog.times() * macros.NANO2SEC,
+        variableState,
+        label="Case param1 = " + str(param1) + " and param2 = " + str(param2),
+    )
+    plt.legend(loc="upper left")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Variable Description [unit]")
+    plt.suptitle("Title of Sample Plot")
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.dataVector[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$s_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Msg Output Vector States')
+        plt.plot(
+            dataLog.times() * macros.NANO2MIN,
+            dataLog.dataVector[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$s_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Msg Output Vector States")
 
     if show_plots:
         plt.show()
@@ -271,7 +293,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -279,9 +301,9 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 False,
-                 1,           # param1 value
-                 1,           # param2 value
-                 1e-12        # accuracy
-               )
+    test_module(  # update "module" in function name
+        False,
+        1,  # param1 value
+        1,  # param2 value
+        1e-12,  # accuracy
+    )

@@ -44,6 +44,7 @@ from Basilisk.utilities import macros as mc
 
 class BSKFswModels:
     """Defines the bskSim FSW class"""
+
     def __init__(self, SimBase, fswRate):
         # define empty class variables
         self.vcMsg = None
@@ -70,7 +71,7 @@ class BSKFswModels:
         self.sunSafePoint.ModelTag = "sunSafePoint"
 
         self.velocityPoint = velocityPoint.velocityPoint()
-        self.velocityPoint.ModelTag  = "velocityPoint"
+        self.velocityPoint.ModelTag = "velocityPoint"
 
         self.cssWlsEst = cssWlsEst.cssWlsEst()
         self.cssWlsEst.ModelTag = "cssWlsEst"
@@ -102,8 +103,12 @@ class BSKFswModels:
         self.lambertValidatorObject = lambertValidator.LambertValidator()
         self.lambertValidatorObject.ModelTag = "LambertValidator"
 
-        self.lambertSurfaceRelativeVelocityObject = lambertSurfaceRelativeVelocity.LambertSurfaceRelativeVelocity()
-        self.lambertSurfaceRelativeVelocityObject.ModelTag = "LambertSurfaceRelativeVelocity"
+        self.lambertSurfaceRelativeVelocityObject = (
+            lambertSurfaceRelativeVelocity.LambertSurfaceRelativeVelocity()
+        )
+        self.lambertSurfaceRelativeVelocityObject.ModelTag = (
+            "LambertSurfaceRelativeVelocity"
+        )
 
         self.lambertSecondDvObject = lambertSecondDV.LambertSecondDV()
         self.lambertSecondDvObject.ModelTag = "LambertSecondDV"
@@ -115,15 +120,35 @@ class BSKFswModels:
         self.InitAllFSWObjects(SimBase)
 
         # Create tasks
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("sunSafePointTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpSteeringRWsTask", self.processTasksTimeStep), 10)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("lambertGuidanceFirstDV", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("lambertGuidanceSecondDV", self.processTasksTimeStep), 20)
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("sunSafePointTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("mrpSteeringRWsTask", self.processTasksTimeStep), 10
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("lambertGuidanceFirstDV", self.processTasksTimeStep),
+            20,
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("lambertGuidanceSecondDV", self.processTasksTimeStep),
+            20,
+        )
 
         # Assign initialized modules to tasks
         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3D, 10)
@@ -147,12 +172,25 @@ class BSKFswModels:
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWs, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorque, 8)
 
-        SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertPlannerObject, None, 10)
-        SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertSolverObject, None, 9)
-        SimBase.AddModelToTask("lambertGuidanceFirstDV", self.lambertValidatorObject, None, 8)
+        SimBase.AddModelToTask(
+            "lambertGuidanceFirstDV", self.lambertPlannerObject, None, 10
+        )
+        SimBase.AddModelToTask(
+            "lambertGuidanceFirstDV", self.lambertSolverObject, None, 9
+        )
+        SimBase.AddModelToTask(
+            "lambertGuidanceFirstDV", self.lambertValidatorObject, None, 8
+        )
 
-        SimBase.AddModelToTask("lambertGuidanceSecondDV", self.lambertSurfaceRelativeVelocityObject, None, 10)
-        SimBase.AddModelToTask("lambertGuidanceSecondDV", self.lambertSecondDvObject, None, 9)
+        SimBase.AddModelToTask(
+            "lambertGuidanceSecondDV",
+            self.lambertSurfaceRelativeVelocityObject,
+            None,
+            10,
+        )
+        SimBase.AddModelToTask(
+            "lambertGuidanceSecondDV", self.lambertSecondDvObject, None, 9
+        )
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
@@ -298,80 +336,108 @@ class BSKFswModels:
 
     def SetHillPointGuidance(self, SimBase):
         """Define the Hill pointing guidance module"""
-        self.hillPoint.transNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
-        self.hillPoint.celBodyInMsg.subscribeTo(SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0])  # earth
+        self.hillPoint.transNavInMsg.subscribeTo(
+            SimBase.DynModels.simpleNavObject.transOutMsg
+        )
+        self.hillPoint.celBodyInMsg.subscribeTo(
+            SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0]
+        )  # earth
         messaging.AttRefMsg_C_addAuthor(self.hillPoint.attRefOutMsg, self.attRefMsg)
 
     def SetSunSafePointGuidance(self, SimBase):
         """Define the sun safe pointing guidance module"""
-        self.sunSafePoint.imuInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.attOutMsg)
+        self.sunSafePoint.imuInMsg.subscribeTo(
+            SimBase.DynModels.simpleNavObject.attOutMsg
+        )
         self.sunSafePoint.sunDirectionInMsg.subscribeTo(self.cssWlsEst.navStateOutMsg)
         self.sunSafePoint.sHatBdyCmd = [0.0, 0.0, 1.0]
-        messaging.AttGuidMsg_C_addAuthor(self.sunSafePoint.attGuidanceOutMsg, self.attGuidMsg)
+        messaging.AttGuidMsg_C_addAuthor(
+            self.sunSafePoint.attGuidanceOutMsg, self.attGuidMsg
+        )
 
     def SetVelocityPointGuidance(self, SimBase):
         """Define the velocity pointing guidance module"""
-        self.velocityPoint.transNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
-        self.velocityPoint.celBodyInMsg.subscribeTo(SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0])
-        self.velocityPoint.mu = SimBase.DynModels.gravFactory.gravBodies['earth'].mu
+        self.velocityPoint.transNavInMsg.subscribeTo(
+            SimBase.DynModels.simpleNavObject.transOutMsg
+        )
+        self.velocityPoint.celBodyInMsg.subscribeTo(
+            SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0]
+        )
+        self.velocityPoint.mu = SimBase.DynModels.gravFactory.gravBodies["earth"].mu
         messaging.AttRefMsg_C_addAuthor(self.velocityPoint.attRefOutMsg, self.attRefMsg)
 
     def SetAttitudeTrackingError(self, SimBase):
         """Define the attitude tracking error module"""
-        self.trackingError.attNavInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.attOutMsg)
+        self.trackingError.attNavInMsg.subscribeTo(
+            SimBase.DynModels.simpleNavObject.attOutMsg
+        )
         self.trackingError.attRefInMsg.subscribeTo(self.attRefMsg)
-        messaging.AttGuidMsg_C_addAuthor(self.trackingError.attGuidOutMsg, self.attGuidMsg)
+        messaging.AttGuidMsg_C_addAuthor(
+            self.trackingError.attGuidOutMsg, self.attGuidMsg
+        )
 
     def SetCSSWlsEst(self, SimBase):
-        """Set the FSW CSS configuration information """
+        """Set the FSW CSS configuration information"""
         nHat_B_vec = [
             [0.0, 0.707107, 0.707107],
-            [0.707107, 0., 0.707107],
+            [0.707107, 0.0, 0.707107],
             [0.0, -0.707107, 0.707107],
-            [-0.707107, 0., 0.707107],
+            [-0.707107, 0.0, 0.707107],
             [0.0, -0.965926, -0.258819],
             [-0.707107, -0.353553, -0.612372],
-            [0., 0.258819, -0.965926],
-            [0.707107, -0.353553, -0.612372]
+            [0.0, 0.258819, -0.965926],
+            [0.707107, -0.353553, -0.612372],
         ]
         cssConfig = messaging.CSSConfigMsgPayload(
-            nCSS = len(nHat_B_vec),
-            cssVals = [
+            nCSS=len(nHat_B_vec),
+            cssVals=[
                 messaging.CSSUnitConfigMsgPayload(
                     CBias=1.0,
                     nHat_B=CSSHat,
                 )
                 for CSSHat in nHat_B_vec
-            ]
+            ],
         )
         self.cssConfigMsg = messaging.CSSConfigMsg().write(cssConfig)
 
-        self.cssWlsEst.cssDataInMsg.subscribeTo(SimBase.DynModels.CSSConstellationObject.constellationOutMsg)
+        self.cssWlsEst.cssDataInMsg.subscribeTo(
+            SimBase.DynModels.CSSConstellationObject.constellationOutMsg
+        )
         self.cssWlsEst.cssConfigInMsg.subscribeTo(self.cssConfigMsg)
 
     def SetMRPFeedbackControl(self, SimBase):
         """Set the MRP feedback module configuration"""
         self.mrpFeedbackControl.guidInMsg.subscribeTo(self.attGuidMsg)
         self.mrpFeedbackControl.vehConfigInMsg.subscribeTo(self.vcMsg)
-        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackControl.cmdTorqueOutMsg, self.cmdTorqueDirectMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(
+            self.mrpFeedbackControl.cmdTorqueOutMsg, self.cmdTorqueDirectMsg
+        )
 
         self.mrpFeedbackControl.K = 3.5
-        self.mrpFeedbackControl.Ki = -1.0  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackControl.Ki = (
+            -1.0
+        )  # Note: make value negative to turn off integral feedback
         self.mrpFeedbackControl.P = 30.0
-        self.mrpFeedbackControl.integralLimit = 2. / self.mrpFeedbackControl.Ki * 0.1
+        self.mrpFeedbackControl.integralLimit = 2.0 / self.mrpFeedbackControl.Ki * 0.1
 
     def SetMRPFeedbackRWA(self, SimBase):
         """Set the MRP feedback information if RWs are considered"""
         self.mrpFeedbackRWs.K = 3.5
-        self.mrpFeedbackRWs.Ki = -1  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackRWs.Ki = (
+            -1
+        )  # Note: make value negative to turn off integral feedback
         self.mrpFeedbackRWs.P = 30.0
-        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
+        self.mrpFeedbackRWs.integralLimit = 2.0 / self.mrpFeedbackRWs.Ki * 0.1
 
         self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(self.vcMsg)
-        self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
+        self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(
+            SimBase.DynModels.rwStateEffector.rwSpeedOutMsg
+        )
         self.mrpFeedbackRWs.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
         self.mrpFeedbackRWs.guidInMsg.subscribeTo(self.attGuidMsg)
-        messaging.CmdTorqueBodyMsg_C_addAuthor(self.mrpFeedbackRWs.cmdTorqueOutMsg, self.cmdTorqueMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(
+            self.mrpFeedbackRWs.cmdTorqueOutMsg, self.cmdTorqueMsg
+        )
 
     def SetMRPSteering(self):
         """Set the MRP Steering module"""
@@ -386,14 +452,18 @@ class BSKFswModels:
         self.rateServo.guidInMsg.subscribeTo(self.attGuidMsg)
         self.rateServo.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.rateServo.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
-        self.rateServo.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
+        self.rateServo.rwSpeedsInMsg.subscribeTo(
+            SimBase.DynModels.rwStateEffector.rwSpeedOutMsg
+        )
         self.rateServo.rateSteeringInMsg.subscribeTo(self.mrpSteering.rateCmdOutMsg)
-        messaging.CmdTorqueBodyMsg_C_addAuthor(self.rateServo.cmdTorqueOutMsg, self.cmdTorqueMsg)
+        messaging.CmdTorqueBodyMsg_C_addAuthor(
+            self.rateServo.cmdTorqueOutMsg, self.cmdTorqueMsg
+        )
 
         self.rateServo.Ki = 5.0
         self.rateServo.P = 150.0
-        self.rateServo.integralLimit = 2. / self.rateServo.Ki * 0.1
-        self.rateServo.knownTorquePntB_B = [0., 0., 0.]
+        self.rateServo.integralLimit = 2.0 / self.rateServo.Ki * 0.1
+        self.rateServo.knownTorquePntB_B = [0.0, 0.0, 0.0]
 
     def SetVehicleConfiguration(self):
         """Set the spacecraft configuration information"""
@@ -411,54 +481,72 @@ class BSKFswModels:
 
         fswSetupRW.clearSetup()
         for elAngle, azAngle in zip(rwElAngle, rwAzimuthAngle):
-            gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))
-            fswSetupRW.create(gsHat,  # spin axis
-                              wheelJs,  # kg*m^2
-                              0.2)  # Nm        uMax
+            gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(
+                np.array([1, 0, 0])
+            )
+            fswSetupRW.create(
+                gsHat,  # spin axis
+                wheelJs,  # kg*m^2
+                0.2,
+            )  # Nm        uMax
 
         self.fswRwConfigMsg = fswSetupRW.writeConfigMessage()
 
     def SetRWMotorTorque(self):
         """Set the RW motor torque information"""
-        controlAxes_B = [
-            1.0, 0.0, 0.0
-            , 0.0, 1.0, 0.0
-            , 0.0, 0.0, 1.0
-        ]
+        controlAxes_B = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
         self.rwMotorTorque.controlAxes_B = controlAxes_B
         self.rwMotorTorque.vehControlInMsg.subscribeTo(self.cmdTorqueMsg)
-        messaging.ArrayMotorTorqueMsg_C_addAuthor(self.rwMotorTorque.rwMotorTorqueOutMsg, self.cmdRwMotorMsg)
+        messaging.ArrayMotorTorqueMsg_C_addAuthor(
+            self.rwMotorTorque.rwMotorTorqueOutMsg, self.cmdRwMotorMsg
+        )
         self.rwMotorTorque.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
     def SetLambertPlannerObject(self, SimBase):
         """Set the lambert planner object."""
-        self.lambertPlannerObject.navTransInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
+        self.lambertPlannerObject.navTransInMsg.subscribeTo(
+            SimBase.DynModels.simpleNavObject.transOutMsg
+        )
 
     def SetLambertSolverObject(self):
         """Set the lambert solver object."""
-        self.lambertSolverObject.lambertProblemInMsg.subscribeTo(self.lambertPlannerObject.lambertProblemOutMsg)
+        self.lambertSolverObject.lambertProblemInMsg.subscribeTo(
+            self.lambertPlannerObject.lambertProblemOutMsg
+        )
 
     def SetLambertValidatorObject(self, SimBase):
         """Set the lambert validator object."""
-        self.lambertValidatorObject.navTransInMsg.subscribeTo(SimBase.DynModels.simpleNavObject.transOutMsg)
-        self.lambertValidatorObject.lambertProblemInMsg.subscribeTo(self.lambertPlannerObject.lambertProblemOutMsg)
+        self.lambertValidatorObject.navTransInMsg.subscribeTo(
+            SimBase.DynModels.simpleNavObject.transOutMsg
+        )
+        self.lambertValidatorObject.lambertProblemInMsg.subscribeTo(
+            self.lambertPlannerObject.lambertProblemOutMsg
+        )
         self.lambertValidatorObject.lambertPerformanceInMsg.subscribeTo(
-            self.lambertSolverObject.lambertPerformanceOutMsg)
-        self.lambertValidatorObject.lambertSolutionInMsg.subscribeTo(self.lambertSolverObject.lambertSolutionOutMsg)
+            self.lambertSolverObject.lambertPerformanceOutMsg
+        )
+        self.lambertValidatorObject.lambertSolutionInMsg.subscribeTo(
+            self.lambertSolverObject.lambertSolutionOutMsg
+        )
         self.lambertValidatorObject.dvBurnCmdOutMsg = self.dvBurnCmdMsg
 
     def SetLambertSurfaceRelativeVelocityObject(self, SimBase):
         """Set the lambert surface relative velocity object."""
         self.lambertSurfaceRelativeVelocityObject.lambertProblemInMsg.subscribeTo(
-            self.lambertPlannerObject.lambertProblemOutMsg)
+            self.lambertPlannerObject.lambertProblemOutMsg
+        )
         self.lambertSurfaceRelativeVelocityObject.ephemerisInMsg.subscribeTo(
-            SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0])
+            SimBase.DynModels.EarthEphemObject.ephemOutMsgs[0]
+        )
 
     def SetLambertSecondDvObject(self):
         """Set the lambert second DV object."""
-        self.lambertSecondDvObject.lambertSolutionInMsg.subscribeTo(self.lambertSolverObject.lambertSolutionOutMsg)
+        self.lambertSecondDvObject.lambertSolutionInMsg.subscribeTo(
+            self.lambertSolverObject.lambertSolutionOutMsg
+        )
         self.lambertSecondDvObject.desiredVelocityInMsg.subscribeTo(
-            self.lambertSurfaceRelativeVelocityObject.desiredVelocityOutMsg)
+            self.lambertSurfaceRelativeVelocityObject.desiredVelocityOutMsg
+        )
         self.lambertSecondDvObject.dvBurnCmdOutMsg = self.dvBurnCmdMsg
 
     # Global call to initialize every module
@@ -501,8 +589,12 @@ class BSKFswModels:
         self.zeroGateWayMsgs()
 
         # connect gateway FSW effector command msgs with the dynamics
-        SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsg.subscribeTo(self.cmdTorqueDirectMsg)
-        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.cmdRwMotorMsg)
+        SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsg.subscribeTo(
+            self.cmdTorqueDirectMsg
+        )
+        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(
+            self.cmdRwMotorMsg
+        )
 
     def zeroGateWayMsgs(self):
         """Zero all the FSW gateway message payloads"""

@@ -37,24 +37,29 @@ from Basilisk.utilities import macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
+
 
 @pytest.mark.parametrize("coastOptionBangDuration", [0.0, 2.0])  # [s]
 @pytest.mark.parametrize("smoothingDuration", [0.0, 2.0])  # [s]
 @pytest.mark.parametrize("thetaInit", [0.0, macros.D2R * -5.0])  # [rad]
 @pytest.mark.parametrize("thetaRef1", [0.0, macros.D2R * -10.0])  # [rad]
 @pytest.mark.parametrize("thetaRef2", [macros.D2R * 5.0])  # [rad]
-@pytest.mark.parametrize("thetaDDotMax", [macros.D2R * 0.05, macros.D2R * 0.1])  # [rad/s^2]
+@pytest.mark.parametrize(
+    "thetaDDotMax", [macros.D2R * 0.05, macros.D2R * 0.1]
+)  # [rad/s^2]
 @pytest.mark.parametrize("accuracy", [1e-8])
-def test_prescribedRotation1DOF(show_plots,
-                                coastOptionBangDuration,
-                                smoothingDuration,
-                                thetaInit,
-                                thetaRef1,
-                                thetaRef2,
-                                thetaDDotMax,
-                                accuracy):
+def test_prescribedRotation1DOF(
+    show_plots,
+    coastOptionBangDuration,
+    smoothingDuration,
+    thetaInit,
+    thetaRef1,
+    thetaRef2,
+    thetaDDotMax,
+    accuracy,
+):
     r"""
     **Validation Test Description**
 
@@ -120,7 +125,9 @@ def test_prescribedRotation1DOF(show_plots,
     hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
     hingedRigidBodyMessageData.theta = thetaRef1  # [rad]
     hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
-    hingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    hingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(
+        hingedRigidBodyMessageData
+    )
     prescribedRot1DOF.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage)
 
     # Log module data for module unit test validation
@@ -139,7 +146,9 @@ def test_prescribedRotation1DOF(show_plots,
     hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload()
     hingedRigidBodyMessageData.theta = thetaRef2  # [rad]
     hingedRigidBodyMessageData.thetaDot = 0.0  # [rad/s]
-    hingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    hingedRigidBodyMessage = messaging.HingedRigidBodyMsg().write(
+        hingedRigidBodyMessageData
+    )
     prescribedRot1DOF.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage)
 
     # Execute the second spinning body rotation
@@ -149,7 +158,9 @@ def test_prescribedRotation1DOF(show_plots,
     # Extract logged data
     timespan = macros.NANO2SEC * scalarAngleDataLog.times()  # [s]
     omega_PM_P = macros.R2D * prescribedRotStatesDataLog.omega_PM_P  # [deg/s]
-    omegaPrime_PM_P = macros.R2D * prescribedRotStatesDataLog.omegaPrime_PM_P  # [deg/s^2]
+    omegaPrime_PM_P = (
+        macros.R2D * prescribedRotStatesDataLog.omegaPrime_PM_P
+    )  # [deg/s^2]
     sigma_PM = prescribedRotStatesDataLog.sigma_PM
     theta = macros.R2D * scalarAngleDataLog.theta  # [deg]
     thetaDot = macros.R2D * scalarAngleDataLog.thetaDot  # [deg/s]
@@ -161,36 +172,41 @@ def test_prescribedRotation1DOF(show_plots,
     thetaFinal2 = theta[-1]
     thetaFinalList = [thetaFinal1, thetaFinal2]  # [deg]
     thetaRefList = [macros.R2D * thetaRef1, macros.R2D * thetaRef2]  # [deg]
-    np.testing.assert_allclose(thetaRefList,
-                               thetaFinalList,
-                               atol=accuracy,
-                               verbose=True)
+    np.testing.assert_allclose(
+        thetaRefList, thetaFinalList, atol=accuracy, verbose=True
+    )
 
     # Unit test validation 2: Numerically check that the profiled accelerations, angle rates, and angles are correct
-    if (smoothingDuration > 0.0):
+    if smoothingDuration > 0.0:
         thetaDDotNumerical = []
         thetaDotNumerical = []
         for i in range(len(timespan) - 1):
             # First order forward difference
-            thetaDDotNumerical.append((thetaDot[i+1] - thetaDot[i]) / testTimeStepSec)
-            thetaDotNumerical.append((theta[i+1] - theta[i]) / testTimeStepSec)
+            thetaDDotNumerical.append((thetaDot[i + 1] - thetaDot[i]) / testTimeStepSec)
+            thetaDotNumerical.append((theta[i + 1] - theta[i]) / testTimeStepSec)
 
-        np.testing.assert_allclose(thetaDDot[0:-1],
-                                   thetaDDotNumerical,
-                                   atol=1e-2,
-                                   verbose=True)
-        np.testing.assert_allclose(thetaDot[0:-1],
-                                   thetaDotNumerical,
-                                   atol=1e-2,
-                                   verbose=True)
+        np.testing.assert_allclose(
+            thetaDDot[0:-1], thetaDDotNumerical, atol=1e-2, verbose=True
+        )
+        np.testing.assert_allclose(
+            thetaDot[0:-1], thetaDotNumerical, atol=1e-2, verbose=True
+        )
         if show_plots:
             # Plot the difference between the numerical and profiled results
             plt.figure()
             plt.clf()
-            plt.plot(timespan[0:-1], thetaDDotNumerical - thetaDDot[0:-1], label=r'$\ddot{\theta}$')
-            plt.plot(timespan[0:-1], thetaDotNumerical - thetaDot[0:-1], label=r"$\dot{\theta}$")
-            plt.title(r'Profiled vs Numerical Difference', fontsize=14)
-            plt.legend(loc='upper right', prop={'size': 12})
+            plt.plot(
+                timespan[0:-1],
+                thetaDDotNumerical - thetaDDot[0:-1],
+                label=r"$\ddot{\theta}$",
+            )
+            plt.plot(
+                timespan[0:-1],
+                thetaDotNumerical - thetaDot[0:-1],
+                label=r"$\dot{\theta}$",
+            )
+            plt.title(r"Profiled vs Numerical Difference", fontsize=14)
+            plt.legend(loc="upper right", prop={"size": 12})
             plt.grid(True)
 
     if show_plots:
@@ -202,77 +218,90 @@ def test_prescribedRotation1DOF(show_plots,
         plt.figure()
         plt.clf()
         plt.plot(timespan, theta, label=r"$\theta$")
-        plt.plot(timespan, thetaInitPlotting, '--', label=r'$\theta_{0}$')
-        plt.plot(timespan, thetaRef1Plotting, '--', label=r'$\theta_{Ref_1}$')
-        plt.plot(timespan, thetaRef2Plotting, '--', label=r'$\theta_{Ref_2}$')
-        plt.title(r'Profiled Angle $\theta_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
-        plt.ylabel('(deg)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 12})
+        plt.plot(timespan, thetaInitPlotting, "--", label=r"$\theta_{0}$")
+        plt.plot(timespan, thetaRef1Plotting, "--", label=r"$\theta_{Ref_1}$")
+        plt.plot(timespan, thetaRef2Plotting, "--", label=r"$\theta_{Ref_2}$")
+        plt.title(r"Profiled Angle $\theta_{\mathcal{P}/\mathcal{M}}$", fontsize=14)
+        plt.ylabel("(deg)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 12})
         plt.grid(True)
 
         # 1B. Plot thetaDot
         plt.figure()
         plt.clf()
         plt.plot(timespan, thetaDot, label=r"$\dot{\theta}$")
-        plt.title(r'Profiled Angle Rate $\dot{\theta}_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
-        plt.ylabel('(deg/s)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 12})
+        plt.title(
+            r"Profiled Angle Rate $\dot{\theta}_{\mathcal{P}/\mathcal{M}}$", fontsize=14
+        )
+        plt.ylabel("(deg/s)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 12})
         plt.grid(True)
 
         # 1C. Plot thetaDDot
         plt.figure()
         plt.clf()
         plt.plot(timespan, thetaDDot, label=r"$\ddot{\theta}$")
-        plt.title(r'Profiled Angular Acceleration $\ddot{\theta}_{\mathcal{P}/\mathcal{M}}$ ', fontsize=14)
-        plt.ylabel('(deg/s$^2$)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 12})
+        plt.title(
+            r"Profiled Angular Acceleration $\ddot{\theta}_{\mathcal{P}/\mathcal{M}}$ ",
+            fontsize=14,
+        )
+        plt.ylabel("(deg/s$^2$)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 12})
         plt.grid(True)
 
         # 2. Plot the spinning body prescribed rotational states
         # 2A. Plot PRV angle from sigma_PM
         phi_PM = []
         for i in range(len(timespan)):
-            phi_PM.append(macros.R2D * 4 * np.arctan(np.linalg.norm(sigma_PM[i, :])))  # [deg]
+            phi_PM.append(
+                macros.R2D * 4 * np.arctan(np.linalg.norm(sigma_PM[i, :]))
+            )  # [deg]
 
         plt.figure()
         plt.clf()
         plt.plot(timespan, phi_PM, label=r"$\Phi$")
-        plt.title(r'Profiled PRV Angle $\Phi_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
-        plt.ylabel('(deg)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='center right', prop={'size': 14})
+        plt.title(r"Profiled PRV Angle $\Phi_{\mathcal{P}/\mathcal{M}}$", fontsize=14)
+        plt.ylabel("(deg)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="center right", prop={"size": 14})
         plt.grid(True)
 
         # 2B. Plot omega_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, omega_PM_P[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan, omega_PM_P[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan, omega_PM_P[:, 2], label=r'$\omega_{3}$')
-        plt.title(r'Profiled Angular Velocity ${}^\mathcal{P} \omega_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
-        plt.ylabel('(deg/s)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 14})
+        plt.plot(timespan, omega_PM_P[:, 0], label=r"$\omega_{1}$")
+        plt.plot(timespan, omega_PM_P[:, 1], label=r"$\omega_{2}$")
+        plt.plot(timespan, omega_PM_P[:, 2], label=r"$\omega_{3}$")
+        plt.title(
+            r"Profiled Angular Velocity ${}^\mathcal{P} \omega_{\mathcal{P}/\mathcal{M}}$",
+            fontsize=14,
+        )
+        plt.ylabel("(deg/s)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 14})
         plt.grid(True)
 
         # 2C. Plot omegaPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, omegaPrime_PM_P[:, 0], label=r'1')
-        plt.plot(timespan, omegaPrime_PM_P[:, 1], label=r'2')
-        plt.plot(timespan, omegaPrime_PM_P[:, 2], label=r'3')
-        plt.title(r'Profiled Angular Acceleration ${}^\mathcal{P} \omega$Prime$_{\mathcal{P}/\mathcal{M}}$',
-                  fontsize=14)
-        plt.ylabel('(deg/s$^2$)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 14})
+        plt.plot(timespan, omegaPrime_PM_P[:, 0], label=r"1")
+        plt.plot(timespan, omegaPrime_PM_P[:, 1], label=r"2")
+        plt.plot(timespan, omegaPrime_PM_P[:, 2], label=r"3")
+        plt.title(
+            r"Profiled Angular Acceleration ${}^\mathcal{P} \omega$Prime$_{\mathcal{P}/\mathcal{M}}$",
+            fontsize=14,
+        )
+        plt.ylabel("(deg/s$^2$)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 14})
         plt.grid(True)
 
         plt.show()
     plt.close("all")
+
 
 if __name__ == "__main__":
     test_prescribedRotation1DOF(
@@ -283,5 +312,5 @@ if __name__ == "__main__":
         macros.D2R * -10.0,  # [rad] thetaRef1
         macros.D2R * 5.0,  # [rad] thetaRef2
         macros.D2R * 0.1,  # [rad/s^2] thetaDDotMax
-        1e-8  # accuracy
+        1e-8,  # accuracy
     )

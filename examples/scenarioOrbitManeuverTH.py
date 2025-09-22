@@ -82,28 +82,36 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import velocityPoint
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import svIntegrators
 from Basilisk.simulation import thrusterStateEffector
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -143,9 +151,7 @@ def run(show_plots):
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
@@ -167,8 +173,8 @@ def run(show_plots):
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000  # meters
-    rGEO = math.pow(mu / math.pow((2. * np.pi) / (24. * 3600.), 2), 1. / 3.)
+    rLEO = 7000.0 * 1000  # meters
+    rGEO = math.pow(mu / math.pow((2.0 * np.pi) / (24.0 * 3600.0), 2), 1.0 / 3.0)
     oe.a = rLEO
     oe.e = 0.0001
     oe.i = 0.0 * macros.D2R
@@ -183,7 +189,7 @@ def run(show_plots):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(0.25 * P)
 
     # setup extForceTorque module
@@ -216,12 +222,26 @@ def run(show_plots):
     direction = [[0, 0, 1]]
     # create the thruster devices by specifying the thruster type and its location and direction
     for pos_B, dir_B in zip(location, direction):
-        thFactory.create('Blank_Thruster', pos_B, dir_B, cutoffFrequency=.1, MaxThrust=3000.0,
-                         areaNozzle=0.046759, steadyIsp=318.0)
+        thFactory.create(
+            "Blank_Thruster",
+            pos_B,
+            dir_B,
+            cutoffFrequency=0.1,
+            MaxThrust=3000.0,
+            areaNozzle=0.046759,
+            steadyIsp=318.0,
+        )
 
     for pos_B, dir_B in zip(location, direction):
-        thFactory.create('Blank_Thruster', pos_B, dir_B, cutoffFrequency=.1, MaxThrust=420.0,
-                         areaNozzle=0.046759, steadyIsp=318.0)
+        thFactory.create(
+            "Blank_Thruster",
+            pos_B,
+            dir_B,
+            cutoffFrequency=0.1,
+            MaxThrust=420.0,
+            areaNozzle=0.046759,
+            steadyIsp=318.0,
+        )
 
     # create thruster object container and tie to spacecraft object
     thrModelTag = "GTOThrusterDynamics"
@@ -247,7 +267,7 @@ def run(show_plots):
     attError = attTrackingError.attTrackingError()
     attError.ModelTag = "attErrorVelocityPoint"
     scSim.AddModelToTask(simTaskName, attError)
-    attError.sigma_R0R = [np.tan(np.pi/8), 0,  0]
+    attError.sigma_R0R = [np.tan(np.pi / 8), 0, 0]
     attError.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
@@ -259,7 +279,7 @@ def run(show_plots):
     mrpControl.K = 3.5
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -268,7 +288,9 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
@@ -297,14 +319,16 @@ def run(show_plots):
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
     thrusterSet.cmdsInMsg.subscribeTo(thrOnTimeMsg)
 
-
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName,  scObject
-                                                  # , saveFile=fileName
-                                                  , thrEffectorList=thrusterSet
-                                                  , thrColors=vizSupport.toRGBA255("red")
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # , saveFile=fileName
+            thrEffectorList=thrusterSet,
+            thrColors=vizSupport.toRGBA255("red"),
+        )
         vizSupport.setActuatorGuiSetting(viz, showThrusterLabels=True)
 
     #
@@ -334,7 +358,7 @@ def run(show_plots):
     # Hohmann Transfer to GEO
     v0 = np.linalg.norm(vVt)
     r0 = np.linalg.norm(rVt)
-    at = (r0 + rGEO) * .5
+    at = (r0 + rGEO) * 0.5
     v0p = np.sqrt(mu / at * rGEO / r0)
     dv0 = v0p - v0
 
@@ -360,8 +384,8 @@ def run(show_plots):
     oe1 = orbitalMotion.rv2elem(mu, rVt, vVt)
     n1 = np.sqrt(mu / oe1.a / oe1.a / oe1.a)
     T3Full = (np.pi) / n1
-    E1 = 2*np.arctan(np.sqrt((1-oe1.e)/(1+oe1.e))*np.tan(oe1.f/2))
-    T3P = np.sqrt((oe1.a * oe1.a * oe1.a)/mu)*(E1-oe1.e*np.sin(E1))
+    E1 = 2 * np.arctan(np.sqrt((1 - oe1.e) / (1 + oe1.e)) * np.tan(oe1.f / 2))
+    T3P = np.sqrt((oe1.a * oe1.a * oe1.a) / mu) * (E1 - oe1.e * np.sin(E1))
     T3 = macros.sec2nano(T3Full - T3P)
 
     # Run the simulation for until apogee is reached
@@ -391,7 +415,7 @@ def run(show_plots):
 
     # Run the simulation for second burn and quarter orbit after
     T5 = macros.sec2nano(0.25 * (np.pi) / n2)
-    scSim.ConfigureStopTime(simulationTime + T2 + T3 + T4 +T5)
+    scSim.ConfigureStopTime(simulationTime + T2 + T3 + T4 + T5)
     scSim.ExecuteSimulation()
 
     #
@@ -410,14 +434,17 @@ def run(show_plots):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(3):
-        plt.plot(dataRec.times() * macros.NANO2HOUR, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [h]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            dataRec.times() * macros.NANO2HOUR,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [h]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
@@ -426,27 +453,39 @@ def run(show_plots):
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     rData = []
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem_parab(mu, posData[idx], velData[idx])
-        rData.append(oeData.rmag / 1000.)
-    plt.plot(dataRec.times() * macros.NANO2HOUR, rData, color='#aa0000',
-                 )
-    plt.xlabel('Time [h]')
-    plt.ylabel('Radius [km]')
+        rData.append(oeData.rmag / 1000.0)
+    plt.plot(
+        dataRec.times() * macros.NANO2HOUR,
+        rData,
+        color="#aa0000",
+    )
+    plt.xlabel("Time [h]")
+    plt.ylabel("Radius [km]")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
-    plt.plot(thrCmdRec0.times()*macros.NANO2MIN/60, thrCmdRec0.thrustForce, color='#aa0000', label='Thruster 1')
-    plt.plot(thrCmdRec1.times()*macros.NANO2MIN/60, thrCmdRec1.thrustForce, label='Thruster 2')
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [h]')
-    plt.ylabel('Force implemented[N]')
+    ax.ticklabel_format(useOffset=False, style="plain")
+    plt.plot(
+        thrCmdRec0.times() * macros.NANO2MIN / 60,
+        thrCmdRec0.thrustForce,
+        color="#aa0000",
+        label="Thruster 1",
+    )
+    plt.plot(
+        thrCmdRec1.times() * macros.NANO2MIN / 60,
+        thrCmdRec1.thrustForce,
+        label="Thruster 2",
+    )
+    plt.legend(loc="upper right")
+    plt.xlabel("Time [h]")
+    plt.ylabel("Force implemented[N]")
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
@@ -457,6 +496,7 @@ def run(show_plots):
     plt.close("all")
 
     return figureList
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a

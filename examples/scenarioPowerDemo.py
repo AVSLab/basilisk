@@ -80,7 +80,7 @@ from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
@@ -96,9 +96,11 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import astroConstants
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))
+
 
 def run(show_plots):
     """
@@ -108,14 +110,14 @@ def run(show_plots):
         show_plots (bool): Determines if the script should display plots
 
     """
-    taskName = "unitTask"               # arbitrary name (don't change)
-    processname = "TestProcess"         # arbitrary name (don't change)
+    taskName = "unitTask"  # arbitrary name (don't change)
+    processname = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     scenarioSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(1.0)     # update process rate update time
+    testProcessRate = macros.sec2nano(1.0)  # update process rate update time
     testProc = scenarioSim.CreateNewProcess(processname)
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
@@ -128,14 +130,14 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     planet = gravFactory.createEarth()
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     sun = gravFactory.createSun()
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
 
     # setup Spice interface for some solar system bodies
-    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
+    timeInitString = "2021 MAY 04 07:47:48.965 (UTC)"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
     scenarioSim.AddModelToTask(taskName, spiceObject, -1)
 
@@ -145,17 +147,17 @@ def run(show_plots):
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
-    oe.a = astroConstants.REQ_EARTH*1e3 + 400e3
+    oe.a = astroConstants.REQ_EARTH * 1e3 + 400e3
     oe.e = 0.0
-    oe.i = 0.0*macros.D2R
+    oe.i = 0.0 * macros.D2R
 
-    oe.Omega = 0.0*macros.D2R
-    oe.omega = 0.0*macros.D2R
-    oe.f     = 75.0*macros.D2R
+    oe.Omega = 0.0 * macros.D2R
+    oe.omega = 0.0 * macros.D2R
+    oe.f = 75.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu / oe.a / oe.a / oe.a)
+    P = 2.0 * np.pi / n
 
     scObject.hub.r_CN_NInit = rN
     scObject.hub.v_CN_NInit = vN
@@ -177,13 +179,15 @@ def run(show_plots):
     solarPanel.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     solarPanel.sunEclipseInMsg.subscribeTo(eclipseObject.eclipseOutMsgs[0])
     solarPanel.sunInMsg.subscribeTo(sunMsg)
-    solarPanel.setPanelParameters([1,0,0], 0.2*0.3, 0.20) # Set the panel normal vector in the body frame, the area,
+    solarPanel.setPanelParameters(
+        [1, 0, 0], 0.2 * 0.3, 0.20
+    )  # Set the panel normal vector in the body frame, the area,
     scenarioSim.AddModelToTask(taskName, solarPanel)
 
     #   Create a simple power sink
     powerSink = simplePowerSink.SimplePowerSink()
     powerSink.ModelTag = "powerSink2"
-    powerSink.nodePowerOut = -3.  # Watts
+    powerSink.nodePowerOut = -3.0  # Watts
     scenarioSim.AddModelToTask(taskName, powerSink)
 
     # Create a simpleBattery and attach the sources/sinks to it
@@ -210,7 +214,7 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.sec2nano(P))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.sec2nano(P))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     scenarioSim.ExecuteSimulation()
@@ -229,12 +233,12 @@ def run(show_plots):
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    plt.plot(tvec, storageData/3600., label='Stored Power (W-Hr)')
-    plt.plot(tvec, netData, label='Net Power (W)')
-    plt.plot(tvec, supplyData, label='Panel Power (W)')
-    plt.plot(tvec, sinkData, label='Power Draw (W)')
-    plt.xlabel('Time (Hr)')
-    plt.ylabel('Power (W)')
+    plt.plot(tvec, storageData / 3600.0, label="Stored Power (W-Hr)")
+    plt.plot(tvec, netData, label="Net Power (W)")
+    plt.plot(tvec, supplyData, label="Panel Power (W)")
+    plt.plot(tvec, sinkData, label="Power Draw (W)")
+    plt.xlabel("Time (Hr)")
+    plt.ylabel("Power (W)")
     plt.grid(True)
     plt.legend()
 
@@ -246,6 +250,7 @@ def run(show_plots):
     plt.close("all")
 
     return figureList
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a

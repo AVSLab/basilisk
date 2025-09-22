@@ -87,22 +87,40 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
-                                    inertial3D, rwMotorTorque,
-                                    tamComm, mtbMomentumManagementSimple,
-                                    torque2Dipole, dipoleMapping,
-                                    mtbFeedforward, rwNullSpace)
-from Basilisk.simulation import (reactionWheelStateEffector,
-                                 simpleNav,
-                                 magneticFieldWMM, magnetometer, MtbEffector,
-                                 spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.fswAlgorithms import (
+    mrpFeedback,
+    attTrackingError,
+    inertial3D,
+    rwMotorTorque,
+    tamComm,
+    mtbMomentumManagementSimple,
+    torque2Dipole,
+    dipoleMapping,
+    mtbFeedforward,
+    rwNullSpace,
+)
+from Basilisk.simulation import (
+    reactionWheelStateEffector,
+    simpleNav,
+    magneticFieldWMM,
+    magnetometer,
+    MtbEffector,
+    spacecraft,
+)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    unitTestSupport,
+    vizSupport,
+)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -113,113 +131,151 @@ def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeData,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
     plt.grid(True)
+
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """Plot the RW command torques."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque [Nm]')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\hat u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque [Nm]")
     plt.grid(True)
+
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(2)
     for idx in range(numRW):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-        plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque [Nm]')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\hat u_{s," + str(idx) + "}$",
+        )
+        plt.plot(
+            timeData,
+            dataRW[idx],
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label="$u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque [Nm]")
     plt.grid(True)
+
 
 def plot_rate_error(timeData, dataOmegaBR):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeData,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
     plt.grid(True)
+
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW spin rates."""
     plt.figure(4)
     for idx in range(numRW):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\Omega_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed [RPM] ')
+        plt.plot(
+            timeData,
+            dataOmegaRW[:, idx] / macros.RPM,
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\Omega_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Speed [RPM] ")
     plt.grid(True)
+
 
 def plot_magnetic_field(timeData, dataMagField):
     """Plot the magnetic field."""
     plt.figure(5)
     for idx in range(3):
-        plt.plot(timeData, dataMagField[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$B\_N_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Magnetic Field [nT]')
+        plt.plot(
+            timeData,
+            dataMagField[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$B\_N_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Magnetic Field [nT]")
     plt.grid(True)
+
 
 def plot_data_tam(timeData, dataTam):
     """Plot the magnetic field."""
     plt.figure(6)
     for idx in range(3):
-        plt.plot(timeData, dataTam[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$TAM\_S_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Magnetic Field [nT]')
+        plt.plot(
+            timeData,
+            dataTam[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$TAM\_S_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Magnetic Field [nT]")
     plt.grid(True)
+
 
 def plot_data_tam_comm(timeData, dataTamComm):
     """Plot the magnetic field."""
     plt.figure(7)
     for idx in range(3):
-        plt.plot(timeData, dataTamComm[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$TAM\_B_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Magnetic Field [nT]')
+        plt.plot(
+            timeData,
+            dataTamComm[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$TAM\_B_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Magnetic Field [nT]")
     plt.grid(True)
+
 
 def plot_data_mtb_momentum_management(timeData, dataMtbMomentumManegement, numMTB):
     """Plot the magnetic field."""
     plt.figure(8)
     for idx in range(numMTB):
-        plt.plot(timeData, dataMtbMomentumManegement[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numMTB),
-                 label=r'$MTB\_T_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Torque Rod Dipoles [A-m2]')
+        plt.plot(
+            timeData,
+            dataMtbMomentumManegement[:, idx],
+            color=unitTestSupport.getLineColor(idx, numMTB),
+            label=r"$MTB\_T_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Torque Rod Dipoles [A-m2]")
     plt.grid(True)
 
 
@@ -227,13 +283,16 @@ def plot_data_rw_motor_torque_desired(dataUsReq, tauRequested_W, numRW):
     """Plot the RW desired motor torques."""
     plt.figure(9)
     for idx in range(numRW):
-        plt.plot(tauRequested_W[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+        plt.plot(
+            tauRequested_W[idx],
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label="$u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
     plt.grid(True)
+
 
 def run(show_plots):
     """
@@ -252,7 +311,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(120.)
+    simulationTime = macros.min2nano(120.0)
 
     #
     #  create the simulation process
@@ -271,11 +330,13 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [0.02 / 3, 0., 0.,
-         0., 0.1256 / 3, 0.,
-         0., 0., 0.1256 / 3]
+    I = [0.02 / 3, 0.0, 0.0, 0.0, 0.1256 / 3, 0.0, 0.0, 0.0, 0.1256 / 3]
     scObject.hub.mHub = 10.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -301,26 +362,45 @@ def run(show_plots):
     # store the RW dynamical model type
     varRWModel = messaging.BalancedWheels
 
-    beta = 52. * np.pi / 180.
-    Gs = np.array([
-            [0.,            0.,             np.cos(beta), -np.cos(beta)],
-            [np.cos(beta),  np.sin(beta),  -np.sin(beta), -np.sin(beta)],
-            [np.sin(beta), -np.cos(beta),   0.,             0.]])
+    beta = 52.0 * np.pi / 180.0
+    Gs = np.array(
+        [
+            [0.0, 0.0, np.cos(beta), -np.cos(beta)],
+            [np.cos(beta), np.sin(beta), -np.sin(beta), -np.sin(beta)],
+            [np.sin(beta), -np.cos(beta), 0.0, 0.0],
+        ]
+    )
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('BCT_RWP015', Gs[:, 0], Omega_max=5000.  # RPM
-                           , RWModel=varRWModel, useRWfriction=False,
-                           )
-    RW2 = rwFactory.create('BCT_RWP015', Gs[:, 1], Omega_max=5000.  # RPM
-                           , RWModel=varRWModel, useRWfriction=False,
-                           )
-    RW3 = rwFactory.create('BCT_RWP015', Gs[:, 2], Omega_max=5000.  # RPM
-                           , RWModel=varRWModel, useRWfriction=False,
-                           )
+    RW1 = rwFactory.create(
+        "BCT_RWP015",
+        Gs[:, 0],
+        Omega_max=5000.0,  # RPM
+        RWModel=varRWModel,
+        useRWfriction=False,
+    )
+    RW2 = rwFactory.create(
+        "BCT_RWP015",
+        Gs[:, 1],
+        Omega_max=5000.0,  # RPM
+        RWModel=varRWModel,
+        useRWfriction=False,
+    )
+    RW3 = rwFactory.create(
+        "BCT_RWP015",
+        Gs[:, 2],
+        Omega_max=5000.0,  # RPM
+        RWModel=varRWModel,
+        useRWfriction=False,
+    )
 
-    RW4 = rwFactory.create('BCT_RWP015', Gs[:, 3], Omega_max=5000.  # RPM
-                           , RWModel=varRWModel, useRWfriction=False,
-                           )
+    RW4 = rwFactory.create(
+        "BCT_RWP015",
+        Gs[:, 3],
+        Omega_max=5000.0,  # RPM
+        RWModel=varRWModel,
+        useRWfriction=False,
+    )
 
     # In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride
     # any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the
@@ -337,7 +417,6 @@ def run(show_plots):
     # to be called which logs the RW states
     scSim.AddModelToTask(simTaskName, rwStateEffector, 2)
 
-
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
@@ -347,10 +426,14 @@ def run(show_plots):
     # create magnetic field module
     magModule = magneticFieldWMM.MagneticFieldWMM()
     magModule.ModelTag = "WMM"
-    magModule.dataPath = bskPath + '/supportData/MagneticField/'
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+    magModule.dataPath = bskPath + "/supportData/MagneticField/"
+    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+        "2019 June 27, 10:23:0.0 (UTC)"
+    )
     magModule.epochInMsg.subscribeTo(epochMsg)
-    magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
+    magModule.addSpacecraftToModel(
+        scObject.scStateOutMsg
+    )  # this command can be repeated if multiple
     scSim.AddModelToTask(simTaskName, magModule)
 
     # add magnetic torque bar effector
@@ -358,7 +441,6 @@ def run(show_plots):
     mtbEff.ModelTag = "MtbEff"
     scObject.addDynamicEffector(mtbEff)
     scSim.AddModelToTask(simTaskName, mtbEff)
-
 
     #
     #   setup the FSW algorithm tasks
@@ -368,7 +450,7 @@ def run(show_plots):
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.sigma_R0N = [0.0, 0.0, 0.0]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
@@ -383,25 +465,26 @@ def run(show_plots):
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.K = 0.0001
     mrpControl.P = 0.002
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
-
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # create the minimal TAM module
     TAM = magnetometer.Magnetometer()
     TAM.ModelTag = "TAM_sensor"
     # specify the optional TAM variables
     TAM.scaleFactor = 1.0
-    TAM.senNoiseStd = [0.0,  0.0, 0.0]
+    TAM.senNoiseStd = [0.0, 0.0, 0.0]
     scSim.AddModelToTask(simTaskName, TAM)
 
     # setup tamComm module
     tamCommObj = tamComm.tamComm()
-    tamCommObj.dcm_BS = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+    tamCommObj.dcm_BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
     tamCommObj.ModelTag = "tamComm"
     scSim.AddModelToTask(simTaskName, tamCommObj)
 
     # setup mtbMomentumManagement module
-    mtbMomentumManagementSimpleObj = mtbMomentumManagementSimple.mtbMomentumManagementSimple()
+    mtbMomentumManagementSimpleObj = (
+        mtbMomentumManagementSimple.mtbMomentumManagementSimple()
+    )
     mtbMomentumManagementSimpleObj.Kp = 0.003
     mtbMomentumManagementSimpleObj.ModelTag = "mtbMomentumManagementSimple"
     scSim.AddModelToTask(simTaskName, mtbMomentumManagementSimpleObj)
@@ -416,22 +499,42 @@ def run(show_plots):
     mtbConfigParams.numMTB = 4
 
     # row major toque bar alignments
-    mtbConfigParams.GtMatrix_B =[
-        1., 0., 0., 0.70710678,
-        0., 1., 0., 0.70710678,
-        0., 0., 1., 0.]
+    mtbConfigParams.GtMatrix_B = [
+        1.0,
+        0.0,
+        0.0,
+        0.70710678,
+        0.0,
+        1.0,
+        0.0,
+        0.70710678,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+    ]
     maxDipole = 0.1
-    mtbConfigParams.maxMtbDipoles = [maxDipole]*mtbConfigParams.numMTB
+    mtbConfigParams.maxMtbDipoles = [maxDipole] * mtbConfigParams.numMTB
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
 
     # setup dipoleMapping module
     dipoleMappingObj = dipoleMapping.dipoleMapping()
 
     # row major toque bar alignment inverse
-    dipoleMappingObj.steeringMatrix = [0.75, -0.25, 0.,
-                                          -0.25, 0.75, 0.,
-                                           0., 0., 1.,
-                                           0.35355339, 0.35355339, 0.]
+    dipoleMappingObj.steeringMatrix = [
+        0.75,
+        -0.25,
+        0.0,
+        -0.25,
+        0.75,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.35355339,
+        0.35355339,
+        0.0,
+    ]
     dipoleMappingObj.ModelTag = "dipoelMapping"
     scSim.AddModelToTask(simTaskName, dipoleMappingObj)
 
@@ -446,9 +549,7 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
-    controlAxes_B = [
-        1, 0, 0, 0, 1, 0, 0, 0, 1
-    ]
+    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     # setup rwNullSpace module
@@ -460,28 +561,34 @@ def run(show_plots):
     # setup RWConstellationMsgPayload
     rwConstellationConfig = messaging.RWConstellationMsgPayload(
         numRW=numRW,
-        reactionWheels = [
+        reactionWheels=[
             messaging.RWConfigElementMsgPayload(
                 gsHat_B=Gs[:, i],
                 Js=RW.Js,
                 uMax=RW.u_max,
             )
             for i, RW in enumerate((RW1, RW2, RW3, RW4))
-        ]
+        ],
     )
-    rwConstellationConfigInMsg = messaging.RWConstellationMsg().write(rwConstellationConfig)
+    rwConstellationConfigInMsg = messaging.RWConstellationMsg().write(
+        rwConstellationConfig
+    )
 
     # setup RWSpeedMsgPayload for the rwNullSpace
-    desiredOmega = [1000 * macros.rpm2radsec]*numRW
+    desiredOmega = [1000 * macros.rpm2radsec] * numRW
     rwNullSpaceWheelSpeedBias = messaging.RWSpeedMsgPayload(wheelSpeeds=desiredOmega)
 
-    rwNullSpaceWheelSpeedBiasInMsg = messaging.RWSpeedMsg().write(rwNullSpaceWheelSpeedBias)
+    rwNullSpaceWheelSpeedBiasInMsg = messaging.RWSpeedMsg().write(
+        rwNullSpaceWheelSpeedBias
+    )
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     magLog = magModule.envOutMsgs[0].recorder(samplingTime)
@@ -526,12 +633,12 @@ def run(show_plots):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 6778.14 * 1000.  # meters
+    oe.a = 6778.14 * 1000.0  # meters
     oe.e = 0.00
-    oe.i = 45. * macros.D2R
-    oe.Omega = 60. * macros.D2R
-    oe.omega = 0. * macros.D2R
-    oe.f = 0. * macros.D2R
+    oe.i = 45.0 * macros.D2R
+    oe.Omega = 60.0 * macros.D2R
+    oe.omega = 0.0 * macros.D2R
+    oe.f = 0.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
@@ -539,10 +646,13 @@ def run(show_plots):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              , rwEffectorList=rwStateEffector
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+        rwEffectorList=rwStateEffector,
+    )
 
     # link messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -558,16 +668,24 @@ def run(show_plots):
     tamCommObj.tamInMsg.subscribeTo(TAM.tamDataOutMsg)
 
     mtbMomentumManagementSimpleObj.rwParamsInMsg.subscribeTo(fswRwParamMsg)
-    mtbMomentumManagementSimpleObj.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
+    mtbMomentumManagementSimpleObj.rwSpeedsInMsg.subscribeTo(
+        rwStateEffector.rwSpeedOutMsg
+    )
 
-    torque2DipoleObj.tauRequestInMsg.subscribeTo(mtbMomentumManagementSimpleObj.tauMtbRequestOutMsg)
+    torque2DipoleObj.tauRequestInMsg.subscribeTo(
+        mtbMomentumManagementSimpleObj.tauMtbRequestOutMsg
+    )
     torque2DipoleObj.tamSensorBodyInMsg.subscribeTo(tamCommObj.tamOutMsg)
 
-    dipoleMappingObj.dipoleRequestBodyInMsg.subscribeTo(torque2DipoleObj.dipoleRequestOutMsg)
+    dipoleMappingObj.dipoleRequestBodyInMsg.subscribeTo(
+        torque2DipoleObj.dipoleRequestOutMsg
+    )
     dipoleMappingObj.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
 
     mtbFeedforwardObj.vehControlInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
-    mtbFeedforwardObj.dipoleRequestMtbInMsg.subscribeTo(dipoleMappingObj.dipoleRequestMtbOutMsg)
+    mtbFeedforwardObj.dipoleRequestMtbInMsg.subscribeTo(
+        dipoleMappingObj.dipoleRequestMtbOutMsg
+    )
     mtbFeedforwardObj.tamSensorBodyInMsg.subscribeTo(tamCommObj.tamOutMsg)
     mtbFeedforwardObj.mtbArrayConfigParamsInMsg.subscribeTo(mtbParamsInMsg)
 
@@ -584,7 +702,6 @@ def run(show_plots):
     mtbEff.mtbCmdInMsg.subscribeTo(dipoleMappingObj.dipoleRequestMtbOutMsg)
     mtbEff.mtbParamsInMsg.subscribeTo(mtbParamsInMsg)
     mtbEff.magInMsg.subscribeTo(magModule.envOutMsgs[0])
-
 
     # initialize configure and execute sim
     scSim.InitializeSimulation()
@@ -636,7 +753,9 @@ def run(show_plots):
     pltName = fileName + "6"
     figureList[pltName] = plt.figure(7)
 
-    plot_data_mtb_momentum_management(timeData, dataMtbDipoleCmds, mtbConfigParams.numMTB)
+    plot_data_mtb_momentum_management(
+        timeData, dataMtbDipoleCmds, mtbConfigParams.numMTB
+    )
     pltName = fileName + "7"
     figureList[pltName] = plt.figure(8)
 

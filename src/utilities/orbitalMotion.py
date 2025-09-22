@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 # import required modules:
@@ -56,7 +53,7 @@ maxIteration = 200
 tolerance = 1e-15
 
 AU = 149597870.693  # astronomical unit in units of kilometers #
-D2R = (np.pi / 180.)
+D2R = np.pi / 180.0
 
 # Gravitational Constants mu = G*m, where m is the planet of the attracting planet.  All units are km^3/s^2.
 # Values are obtained from SPICE kernels in http://naif.jpl.nasa.gov/pub/naif/generic_kernels/
@@ -75,7 +72,7 @@ MU_PLUTO = 983.055
 # planet information for major solar system bodies. Units are in km.
 # data taken from http://nssdc.gsfc.nasa.gov/planetary/planets.html
 # Sun #
-REQ_SUN = 695000.  # km #
+REQ_SUN = 695000.0  # km #
 
 # Mercury #
 REQ_MERCURY = 2439.7  # km #
@@ -126,35 +123,35 @@ REQ_PHOBOS = 11.2  # km #
 REQ_DEIMOS = 6.1  # km #
 
 # Jupiter #
-REQ_JUPITER = 71492.
-J2_JUPITER = 14736.e-6
+REQ_JUPITER = 71492.0
+J2_JUPITER = 14736.0e-6
 SMA_JUPITER = 5.20336301 * AU
 I_JUPITER = 1.30530 * D2R
 E_JUPITER = 0.04839266
 
 # Saturn #
-REQ_SATURN = 60268.
-J2_SATURN = 16298.e-6
+REQ_SATURN = 60268.0
+J2_SATURN = 16298.0e-6
 SMA_SATURN = 9.53707032 * AU
 I_SATURN = 2.48446 * D2R
 E_SATURN = 0.05415060
 
 # Uranus #
-REQ_URANUS = 25559.
+REQ_URANUS = 25559.0
 J2_URANUS = 3343.43e-6
 SMA_URANUS = 19.19126393 * AU
 I_URANUS = 0.76986 * D2R
 E_URANUS = 0.04716771
 
 # Neptune #
-REQ_NEPTUNE = 24746.
-J2_NEPTUNE = 3411.e-6
+REQ_NEPTUNE = 24746.0
+J2_NEPTUNE = 3411.0e-6
 SMA_NEPTUNE = 30.06896348 * AU
 I_NEPTUNE = 1.76917 * D2R
 E_NEPTUNE = 0.00858587
 
 # Pluto #
-REQ_PLUTO = 1137.
+REQ_PLUTO = 1137.0
 SMA_PLUTO = 39.48168677 * AU
 I_PLUTO = 17.14175 * D2R
 E_PLUTO = 0.24880766
@@ -171,9 +168,16 @@ def E2f(Ecc, e):
     :return: f, true anomaly (rad)
     """
     if e >= 0.0 and e < 1.0:
-        f = 2.0 * math.atan2(math.sqrt(1.0 + e) * math.sin(Ecc / 2.0), math.sqrt(1.0 - e) * math.cos(Ecc / 2.0))
+        f = 2.0 * math.atan2(
+            math.sqrt(1.0 + e) * math.sin(Ecc / 2.0),
+            math.sqrt(1.0 - e) * math.cos(Ecc / 2.0),
+        )
         return f
-    raise ValueError('Error: E2f() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: E2f() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
 
 
 def E2M(Ecc, e):
@@ -189,7 +193,11 @@ def E2M(Ecc, e):
     if e >= 0.0 and e < 1.0:
         M = Ecc - e * math.sin(Ecc)
         return M
-    raise ValueError('Error: E2M() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: E2M() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
 
 
 def f2E(f, e):
@@ -203,9 +211,16 @@ def f2E(f, e):
     :return: Ecc, eccentric anomaly (rad)
     """
     if e >= 0.0 and e < 1.0:
-        Ecc = 2.0 * math.atan2(math.sqrt(1.0 - e) * math.sin(f / 2.0), math.sqrt(1.0 + e) * math.cos(f / 2.0))
+        Ecc = 2.0 * math.atan2(
+            math.sqrt(1.0 - e) * math.sin(f / 2.0),
+            math.sqrt(1.0 + e) * math.cos(f / 2.0),
+        )
         return Ecc
-    raise ValueError('Error: f2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: f2E() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
 
 
 def f2H(f, e):
@@ -220,7 +235,11 @@ def f2H(f, e):
     if e > 1.0:
         H = 2.0 * math.atanh(math.sqrt((e - 1.0) / (e + 1.0)) * math.tan(f / 2.0))
         return H
-    raise ValueError('Error: f2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: f2H() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
 
 
 def H2f(H, e):
@@ -235,7 +254,11 @@ def H2f(H, e):
     if e > 1.0:
         f = 2.0 * math.atan(math.sqrt((e + 1.0) / (e - 1.0)) * math.tanh(H / 2.0))
         return f
-    raise ValueError('Error: H2f() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: H2f() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
 
 
 def H2N(H, e):
@@ -250,7 +273,11 @@ def H2N(H, e):
     if e > 1.0:
         N = e * math.sinh(H) - H
         return N
-    raise ValueError('Error: H2N() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: H2N() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
 
 
 def M2E(M, e):
@@ -273,10 +300,14 @@ def M2E(M, e):
             E1 -= dE
             count += 1
             if count > maxIteration:
-                print('Iteration error in M2E({},{})'.format(str(M), str(e)))
+                print("Iteration error in M2E({},{})".format(str(M), str(e)))
                 dE = 0.0
         return E1
-    raise ValueError('Error: M2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: M2E() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
 
 
 def N2H(N, e):
@@ -298,10 +329,15 @@ def N2H(N, e):
             H1 -= dH
             count += 1
             if count > maxIteration:
-                print('Iteration error in M2E({},{})'.format(str(N), str(e)))
-                dH = 0.
+                print("Iteration error in M2E({},{})".format(str(N), str(e)))
+                dH = 0.0
         return H1
-    raise ValueError('Error: N2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
+    raise ValueError(
+        "Error: N2H() received e = {}, the value of e should be 0 <= e < 1".format(
+            str(e)
+        )
+    )
+
 
 def elem2rv_parab(mu, elements):
     """
@@ -370,27 +406,46 @@ def elem2rv_parab(mu, elements):
             vVec = v * ir
 
     else:
-        if e == 1.0 and a < 0.0:    # parabolic case #
-            rp = -a                  # radius at periapses #
-            p = 2.0 * rp             # semi-latus rectum #
-        else:                       # elliptic and hyperbolic cases #
-            p = a * (1.0 - e * e)   # semi-latus rectum #
+        if e == 1.0 and a < 0.0:  # parabolic case #
+            rp = -a  # radius at periapses #
+            p = 2.0 * rp  # semi-latus rectum #
+        else:  # elliptic and hyperbolic cases #
+            p = a * (1.0 - e * e)  # semi-latus rectum #
 
         r = p / (1.0 + e * math.cos(f))  # orbit radius #
-        theta = AP + f                   # true latitude angle #
-        h = math.sqrt(mu * p)            # orbit ang. momentum mag.
+        theta = AP + f  # true latitude angle #
+        h = math.sqrt(mu * p)  # orbit ang. momentum mag.
 
-        rVec[0] = r * (math.cos(AN) * math.cos(theta) - math.sin(AN) * math.sin(theta) * math.cos(i))
-        rVec[1] = r * (math.sin(AN) * math.cos(theta) + math.cos(AN) * math.sin(theta) * math.cos(i))
+        rVec[0] = r * (
+            math.cos(AN) * math.cos(theta)
+            - math.sin(AN) * math.sin(theta) * math.cos(i)
+        )
+        rVec[1] = r * (
+            math.sin(AN) * math.cos(theta)
+            + math.cos(AN) * math.sin(theta) * math.cos(i)
+        )
         rVec[2] = r * (math.sin(theta) * math.sin(i))
 
-        vVec[0] = -mu / h * (math.cos(AN) * (math.sin(theta) + e * math.sin(AP)) + math.sin(AN) * (math.cos(
-            theta) + e * math.cos(AP)) * math.cos(i))
-        vVec[1] = -mu / h * (math.sin(AN) * (math.sin(theta) + e * math.sin(AP)) - math.cos(AN) * (math.cos(
-            theta) + e * math.cos(AP)) * math.cos(i))
+        vVec[0] = (
+            -mu
+            / h
+            * (
+                math.cos(AN) * (math.sin(theta) + e * math.sin(AP))
+                + math.sin(AN) * (math.cos(theta) + e * math.cos(AP)) * math.cos(i)
+            )
+        )
+        vVec[1] = (
+            -mu
+            / h
+            * (
+                math.sin(AN) * (math.sin(theta) + e * math.sin(AP))
+                - math.cos(AN) * (math.cos(theta) + e * math.cos(AP)) * math.cos(i)
+            )
+        )
         vVec[2] = -mu / h * (-(math.cos(theta) + e * math.cos(AP)) * math.sin(i))
 
     return rVec, vVec
+
 
 def elem2rv(mu, elements):
     """
@@ -418,38 +473,62 @@ def elem2rv(mu, elements):
     vVec = np.zeros(3)
 
     if 1.0 + elements.e * math.cos(elements.f) < tolerance:
-        print('WARNING: Radius is near infinite in elem2rv conversion.')
+        print("WARNING: Radius is near infinite in elem2rv conversion.")
 
     # Calculate the semilatus rectum and the radius #
     p = elements.a * (1.0 - elements.e * elements.e)
     r = p / (1.0 + elements.e * math.cos(elements.f))
     theta = elements.omega + elements.f
     rVec[0] = r * (
-        math.cos(theta) * math.cos(elements.Omega) - math.cos(elements.i) * math.sin(theta) * math.sin(
-            elements.Omega))
+        math.cos(theta) * math.cos(elements.Omega)
+        - math.cos(elements.i) * math.sin(theta) * math.sin(elements.Omega)
+    )
     rVec[1] = r * (
-        math.cos(theta) * math.sin(elements.Omega) + math.cos(elements.i) * math.sin(theta) * math.cos(
-            elements.Omega))
+        math.cos(theta) * math.sin(elements.Omega)
+        + math.cos(elements.i) * math.sin(theta) * math.cos(elements.Omega)
+    )
     rVec[2] = r * (math.sin(theta) * math.sin(elements.i))
 
     if math.fabs(p) < tolerance:
         if math.fabs(1.0 - elements.e) < tolerance:
             # Rectilinear orbit #
-            raise ValueError('elem2rv does not support rectilinear orbits')
+            raise ValueError("elem2rv does not support rectilinear orbits")
         # Parabola #
         rp = -elements.a
         p = 2.0 * rp
 
     h = math.sqrt(mu * p)
-    vVec[0] = -mu / h * (math.cos(elements.Omega) * (elements.e * math.sin(elements.omega) + math.sin(theta)) +
-                         math.cos(elements.i) * (
-                             elements.e * math.cos(elements.omega) + math.cos(theta)) * math.sin(elements.Omega))
-    vVec[1] = -mu / h * (math.sin(elements.Omega) * (elements.e * math.sin(elements.omega) + math.sin(theta)) -
-                         math.cos(elements.i) * (elements.e * math.cos(elements.omega) + math.cos(theta)) *
-                         math.cos(elements.Omega))
-    vVec[2] = mu / h * (elements.e * math.cos(elements.omega) + math.cos(theta)) * math.sin(elements.i)
+    vVec[0] = (
+        -mu
+        / h
+        * (
+            math.cos(elements.Omega)
+            * (elements.e * math.sin(elements.omega) + math.sin(theta))
+            + math.cos(elements.i)
+            * (elements.e * math.cos(elements.omega) + math.cos(theta))
+            * math.sin(elements.Omega)
+        )
+    )
+    vVec[1] = (
+        -mu
+        / h
+        * (
+            math.sin(elements.Omega)
+            * (elements.e * math.sin(elements.omega) + math.sin(theta))
+            - math.cos(elements.i)
+            * (elements.e * math.cos(elements.omega) + math.cos(theta))
+            * math.cos(elements.Omega)
+        )
+    )
+    vVec[2] = (
+        mu
+        / h
+        * (elements.e * math.cos(elements.omega) + math.cos(theta))
+        * math.sin(elements.i)
+    )
 
     return rVec, vVec
+
 
 def rv2elem_parab(mu, rVec, vVec):
     """
@@ -536,7 +615,7 @@ def rv2elem_parab(mu, rVec, vVec):
         elements.rApoap = elements.a * (1.0 + elements.e)
     else:
         #  parabolic case #
-        elements.alpha = 0.
+        elements.alpha = 0.0
         p = h * h / mu
         rp = p / 2.0
         elements.a = -rp  # a is not defined for parabola, so - rp is returned instead #
@@ -570,7 +649,7 @@ def rv2elem_parab(mu, rVec, vVec):
         elements.Omega = math.atan2(ih[0], -ih[1])
         elements.omega = math.atan2(ie[2], ip[2])
     else:
-        elements.Omega = 0.
+        elements.Omega = 0.0
         elements.omega = math.atan2(ie[1], ie[0])
 
     if h < eps:  # rectilinear motion case #
@@ -590,6 +669,7 @@ def rv2elem_parab(mu, rVec, vVec):
         elements.f = math.atan2(np.dot(dum, ih), np.dot(ie, ir))
 
     return elements
+
 
 def rv2elem(mu, rVec, vVec):
     """
@@ -624,7 +704,7 @@ def rv2elem(mu, rVec, vVec):
 
     elements = ClassicElements()
 
-    if (np.isnan(np.sum(rVec)) or np.isnan(np.sum(vVec))):
+    if np.isnan(np.sum(rVec)) or np.isnan(np.sum(vVec)):
         print("ERROR: received NAN rVec or vVec values.")
         elements.a = np.nan
         elements.alpha = np.nan
@@ -635,7 +715,6 @@ def rv2elem(mu, rVec, vVec):
         elements.f = np.nan
         elements.rmag = np.nan
         return
-
 
     # Calculate the specific angular momentum and its magnitude #
     hVec = np.cross(rVec, vVec)
@@ -664,7 +743,7 @@ def rv2elem(mu, rVec, vVec):
         elements.a = 1.0 / elements.alpha
         elements.rApoap = p / (1.0 - elements.e)
     else:
-        rp = p / 2.
+        rp = p / 2.0
         elements.a = -rp
         elements.rApoap = -1.0
 
@@ -676,10 +755,14 @@ def rv2elem(mu, rVec, vVec):
         elements.Omega = math.acos(nVec[0] / n)
         if nVec[1] < 0.0:
             elements.Omega = 2.0 * np.pi - elements.Omega
-        elements.omega = math.acos(np.clip(np.dot(nVec, eVec) / n / elements.e, a_min=-1.0, a_max=1.0))
+        elements.omega = math.acos(
+            np.clip(np.dot(nVec, eVec) / n / elements.e, a_min=-1.0, a_max=1.0)
+        )
         if eVec[2] < 0.0:
             elements.omega = 2.0 * np.pi - elements.omega
-        elements.f = math.acos(np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0))
+        elements.f = math.acos(
+            np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0)
+        )
         if np.dot(rVec, vVec) < 0.0:
             elements.f = 2.0 * np.pi - elements.f
     elif elements.e >= 1e-11 and elements.i < 1e-11:
@@ -690,7 +773,9 @@ def rv2elem(mu, rVec, vVec):
         elements.omega = math.acos(eVec[0] / elements.e)
         if eVec[1] < 0.0:
             elements.omega = 2.0 * np.pi - elements.omega
-        elements.f = math.acos(np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0))
+        elements.f = math.acos(
+            np.clip(np.dot(eVec, rVec) / elements.e / r, a_min=-1.0, a_max=1.0)
+        )
         if np.dot(rVec, vVec) < 0.0:
             elements.f = 2.0 * np.pi - elements.f
     elif elements.e < 1e-11 and elements.i >= 1e-11:
@@ -700,7 +785,9 @@ def rv2elem(mu, rVec, vVec):
             elements.Omega = 2.0 * np.pi - elements.Omega
         elements.omega = 0.0
         # Argument of latitude, u = omega + f #
-        elements.f = math.acos(np.clip(np.dot(nVec, rVec) / n / r, a_min=-1.0, a_max=1.0))
+        elements.f = math.acos(
+            np.clip(np.dot(nVec, rVec) / n / r, a_min=-1.0, a_max=1.0)
+        )
         if rVec[2] < 0.0:
             elements.f = 2.0 * np.pi - elements.f
     elif elements.e < 1e-11 and elements.i < 1e-11:
@@ -735,18 +822,25 @@ def atmosphericDensity(alt):
     :return:  density at the given altitude in kg/m^3
     """
     # Smooth exponential drop-off after 1000 km #
-    if alt > 1000.:
-        logdensity = (-7E-05) * alt - 14.464
-        density = math.pow(10., logdensity)
+    if alt > 1000.0:
+        logdensity = (-7e-05) * alt - 14.464
+        density = math.pow(10.0, logdensity)
         return density
 
     # Calculating the density based on a scaled 6th order polynomial fit to the log of density #
     val = (alt - 526.8000) / 292.8563
-    logdensity = 0.34047 * math.pow(val, 6) - 0.5889 * math.pow(val, 5) - 0.5269 * math.pow(val, 4) \
-                 + 1.0036 * math.pow(val, 3) + 0.60713 * math.pow(val, 2) - 2.3024 * val - 12.575
+    logdensity = (
+        0.34047 * math.pow(val, 6)
+        - 0.5889 * math.pow(val, 5)
+        - 0.5269 * math.pow(val, 4)
+        + 1.0036 * math.pow(val, 3)
+        + 0.60713 * math.pow(val, 2)
+        - 2.3024 * val
+        - 12.575
+    )
 
     # Calculating density by raising 10 to the log of density #
-    density = math.pow(10., logdensity)
+    density = math.pow(10.0, logdensity)
 
     return density
 
@@ -761,14 +855,85 @@ def debyeLength(alt):
     :param alt: altitude in km
     :return: debye length given in m
     """
-    X = [200.0, 250.0, 300.0, 350.0, 400., 450., 500., 550., 600., 650., 700., 750., 800., 850.,
-         900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450.,
-         1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000.]
+    X = [
+        200.0,
+        250.0,
+        300.0,
+        350.0,
+        400.0,
+        450.0,
+        500.0,
+        550.0,
+        600.0,
+        650.0,
+        700.0,
+        750.0,
+        800.0,
+        850.0,
+        900.0,
+        950.0,
+        1000.0,
+        1050.0,
+        1100.0,
+        1150.0,
+        1200.0,
+        1250.0,
+        1300.0,
+        1350.0,
+        1400.0,
+        1450.0,
+        1500.0,
+        1550.0,
+        1600.0,
+        1650.0,
+        1700.0,
+        1750.0,
+        1800.0,
+        1850.0,
+        1900.0,
+        1950.0,
+        2000.0,
+    ]
 
-    Y = [5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03, 4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03,
-         7.30E-03, 8.31E-03, 8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
-         1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02, 2.76E-02, 2.76E-02,
-         2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02]
+    Y = [
+        5.64e-03,
+        3.92e-03,
+        3.24e-03,
+        3.59e-03,
+        4.04e-03,
+        4.28e-03,
+        4.54e-03,
+        5.30e-03,
+        6.55e-03,
+        7.30e-03,
+        8.31e-03,
+        8.38e-03,
+        8.45e-03,
+        9.84e-03,
+        1.22e-02,
+        1.37e-02,
+        1.59e-02,
+        1.75e-02,
+        1.95e-02,
+        2.09e-02,
+        2.25e-02,
+        2.25e-02,
+        2.25e-02,
+        2.47e-02,
+        2.76e-02,
+        2.76e-02,
+        2.76e-02,
+        2.76e-02,
+        2.76e-02,
+        2.76e-02,
+        2.76e-02,
+        3.21e-02,
+        3.96e-02,
+        3.96e-02,
+        3.96e-02,
+        3.96e-02,
+        3.96e-02,
+    ]
 
     # Flat debyeLength length for altitudes above 2000 km #
     if alt > 2000.0 and alt <= 30000.0:
@@ -777,8 +942,10 @@ def debyeLength(alt):
         debyedist = 0.1 * alt - 2999.7
         return debyedist
     elif alt < 200.0 or alt > 35000.0:
-        raise ValueError("ERROR: debyeLength() received alt = {}, the value of alt should be in the range "
-                         "of [200 35000].".format(str(alt)))
+        raise ValueError(
+            "ERROR: debyeLength() received alt = {}, the value of alt should be in the range "
+            "of [200 35000].".format(str(alt))
+        )
     # Interpolation of data #
     i = 0
     for i in range(0, N_DEBYE_PARAMETERS - 1):
@@ -792,18 +959,18 @@ def debyeLength(alt):
 
 def atmosphericDrag(Cd, A, m, rvec, vvec):
     """
-     This program computes the atmospheric drag acceleration
-     vector acting on a spacecraft.
-     Note the acceleration vector output is inertial, and is
-     only valid for altitudes up to 1000 km.
-     Afterwards the drag force is zero. Only valid for Earth.
+    This program computes the atmospheric drag acceleration
+    vector acting on a spacecraft.
+    Note the acceleration vector output is inertial, and is
+    only valid for altitudes up to 1000 km.
+    Afterwards the drag force is zero. Only valid for Earth.
 
-     :param Cd:  drag coefficient of the spacecraft
-     :param A: cross-sectional area of the spacecraft in m^2
-     :param m: mass of the spacecraft in kg
-     :param rvec: Inertial position vector of the spacecraft in km  [x;y;z]
-     :param vvec: Inertial velocity vector of the spacecraft in km/s [vx;vy;vz]
-     :return: The inertial acceleration vector due to atmospheric drag in km/sec^2
+    :param Cd:  drag coefficient of the spacecraft
+    :param A: cross-sectional area of the spacecraft in m^2
+    :param m: mass of the spacecraft in kg
+    :param rvec: Inertial position vector of the spacecraft in km  [x;y;z]
+    :param vvec: Inertial velocity vector of the spacecraft in km/s [vx;vy;vz]
+    :return: The inertial acceleration vector due to atmospheric drag in km/sec^2
     """
     # find the altitude and velocity #
     r = la.norm(rvec)
@@ -812,10 +979,13 @@ def atmosphericDrag(Cd, A, m, rvec, vvec):
     advec = np.zeros(3)
 
     # Checking if user supplied a orbital position is insede the earth #
-    if alt <= 0.:
-        print("ERROR: atmosphericDrag() received rvec = [{} {} {}].". \
-            format(str(rvec[1]), str(rvec[2]), str(rvec[3])))
-        print('The value of rvec should produce a positive altitude for the Earth.')
+    if alt <= 0.0:
+        print(
+            "ERROR: atmosphericDrag() received rvec = [{} {} {}].".format(
+                str(rvec[1]), str(rvec[2]), str(rvec[3])
+            )
+        )
+        print("The value of rvec should produce a positive altitude for the Earth.")
         advec.fill(np.nan)
         return
 
@@ -823,7 +993,7 @@ def atmosphericDrag(Cd, A, m, rvec, vvec):
     density = atmosphericDensity(alt)
 
     # compute the magnitude of the drag acceleration #
-    ad = ((-0.5) * density * (Cd * A / m) * (math.pow(v * 1000., 2))) / 1000.
+    ad = ((-0.5) * density * (Cd * A / m) * (math.pow(v * 1000.0, 2))) / 1000.0
 
     # computing the vector for drag acceleration #
     advec = (ad / v) * vvec
@@ -865,7 +1035,7 @@ def jPerturb(rvec, num, planet):
     J5 = J5_EARTH
     J6 = J6_EARTH
 
-    if planet == 'CELESTIAL_MERCURY':
+    if planet == "CELESTIAL_MERCURY":
         mu = MU_MERCURY
         req = REQ_MERCURY
         J2 = J2_MERCURY
@@ -873,7 +1043,7 @@ def jPerturb(rvec, num, planet):
         J4 = 0.0
         J5 = 0.0
         J6 = 0.0
-    elif planet == 'CELESTIAL_VENUS':
+    elif planet == "CELESTIAL_VENUS":
         mu = MU_VENUS
         req = REQ_VENUS
         J2 = J2_VENUS
@@ -881,7 +1051,7 @@ def jPerturb(rvec, num, planet):
         J4 = 0.0
         J5 = 0.0
         J6 = 0.0
-    elif planet == 'CELESTIAL_MOON':
+    elif planet == "CELESTIAL_MOON":
         mu = MU_MOON
         req = REQ_MOON
         J2 = J2_MOON
@@ -889,7 +1059,7 @@ def jPerturb(rvec, num, planet):
         J4 = 0.0
         J5 = 0.0
         J6 = 0.0
-    elif planet == 'CELESTIAL_MARS':
+    elif planet == "CELESTIAL_MARS":
         mu = MU_MARS
         req = REQ_MARS
         J2 = J2_MARS
@@ -897,7 +1067,7 @@ def jPerturb(rvec, num, planet):
         J4 = 0.0
         J5 = 0.0
         J6 = 0.0
-    elif planet == 'CELESTIAL_JUPITER':
+    elif planet == "CELESTIAL_JUPITER":
         mu = MU_JUPITER
         req = REQ_JUPITER
         J2 = J2_JUPITER
@@ -905,7 +1075,7 @@ def jPerturb(rvec, num, planet):
         J4 = 0.0
         J5 = 0.0
         J6 = 0.0
-    elif planet == 'CELESTIAL_URANUS':
+    elif planet == "CELESTIAL_URANUS":
         mu = MU_URANUS
         req = REQ_URANUS
         J2 = J2_URANUS
@@ -913,7 +1083,7 @@ def jPerturb(rvec, num, planet):
         J4 = 0.0
         J5 = 0.0
         J6 = 0.0
-    elif planet == 'CELESTIAL_NEPTUNE':
+    elif planet == "CELESTIAL_NEPTUNE":
         mu = MU_NEPTUNE
         req = REQ_NEPTUNE
         J2 = J2_NEPTUNE
@@ -921,9 +1091,9 @@ def jPerturb(rvec, num, planet):
         J4 = 0.0
         J5 = 0.0
         J6 = 0.0
-    elif planet == 'CELESTIAL_PLUTO':
+    elif planet == "CELESTIAL_PLUTO":
         return
-    elif planet == 'CELESTIAL_SUN':
+    elif planet == "CELESTIAL_SUN":
         return
 
     # Calculate the J perturbations #
@@ -934,44 +1104,114 @@ def jPerturb(rvec, num, planet):
 
     # Error Checking #
     if num < 2 or num > 6:
-        raise ValueError("ERROR: jPerturb() received num = {}.The value of num should be 2 <= num <= 6.".format(str(num)))
+        raise ValueError(
+            "ERROR: jPerturb() received num = {}.The value of num should be 2 <= num <= 6.".format(
+                str(num)
+            )
+        )
 
     # Calculating the total acceleration based on user input #
     if num >= 2:
-        ajtot = np.array([(1.0 - 5.0 * math.pow(z / r, 2.0)) * (x / r),
-                          (1.0 - 5.0 * math.pow(z / r, 2.0)) * (y / r),
-                          (3.0 - 5.0 * math.pow(z / r, 2.0)) * (z / r)])
-        ajtot = (-3.0 / 2.0 * J2 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 2.0)) * ajtot
+        ajtot = np.array(
+            [
+                (1.0 - 5.0 * math.pow(z / r, 2.0)) * (x / r),
+                (1.0 - 5.0 * math.pow(z / r, 2.0)) * (y / r),
+                (3.0 - 5.0 * math.pow(z / r, 2.0)) * (z / r),
+            ]
+        )
+        ajtot = (
+            -3.0 / 2.0 * J2 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 2.0)
+        ) * ajtot
     if num >= 3:
-        temp = np.array([5.0 * (7.0 * math.pow(z / r, 3.0) - 3.0 * (z / r)) * (x / r),
-                         5.0 * (7.0 * math.pow(z / r, 3.0) - 3.0 * (z / r)) * (y / r),
-                         -3.0 * (10.0 * math.pow(z / r, 2.0) - (35.0 / 3.0) * math.pow(z / r, 4.0) - 1.0)])
-        temp2 = (1.0 / 2.0 * J3 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 3.0)) * temp
+        temp = np.array(
+            [
+                5.0 * (7.0 * math.pow(z / r, 3.0) - 3.0 * (z / r)) * (x / r),
+                5.0 * (7.0 * math.pow(z / r, 3.0) - 3.0 * (z / r)) * (y / r),
+                -3.0
+                * (
+                    10.0 * math.pow(z / r, 2.0)
+                    - (35.0 / 3.0) * math.pow(z / r, 4.0)
+                    - 1.0
+                ),
+            ]
+        )
+        temp2 = (
+            1.0 / 2.0 * J3 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 3.0)
+        ) * temp
         ajtot = ajtot + temp2
     if num >= 4:
-        temp = np.array([(3.0 - 42.0 * math.pow(z / r, 2.0) + 63.0 * math.pow(z / r, 4.0)) * (x / r),
-                         (3.0 - 42.0 * math.pow(z / r, 2.0) + 63.0 * math.pow(z / r, 4.0)) * (y / r),
-                         (15.0 - 70.0 * math.pow(z / r, 2) + 63.0 * math.pow(z / r, 4.0)) * (z / r)])
-        temp2 = (5.0 / 8.0 * J4 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 4.0)) * temp
+        temp = np.array(
+            [
+                (3.0 - 42.0 * math.pow(z / r, 2.0) + 63.0 * math.pow(z / r, 4.0))
+                * (x / r),
+                (3.0 - 42.0 * math.pow(z / r, 2.0) + 63.0 * math.pow(z / r, 4.0))
+                * (y / r),
+                (15.0 - 70.0 * math.pow(z / r, 2) + 63.0 * math.pow(z / r, 4.0))
+                * (z / r),
+            ]
+        )
+        temp2 = (
+            5.0 / 8.0 * J4 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 4.0)
+        ) * temp
         ajtot = ajtot + temp2
     if num >= 5:
-        temp = np.array([3.0 * (35.0 * (z / r) - 210.0 * math.pow(z / r, 3.0) + 231.0 * math.pow(z / r, 5.0)) * (x / r),
-                         3.0 * (35.0 * (z / r) - 210.0 * math.pow(z / r, 3.0) + 231.0 * math.pow(z / r, 5.0)) * (y / r),
-                         -(15.0 - 315.0 * math.pow(z / r, 2.0) + 945.0 * math.pow(z / r, 4.0) - 693.0 * math.pow(z / r,
-                                                                                                                 6.0))])
-        temp2 = (1.0 / 8.0 * J5 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 5.0)) * temp
+        temp = np.array(
+            [
+                3.0
+                * (
+                    35.0 * (z / r)
+                    - 210.0 * math.pow(z / r, 3.0)
+                    + 231.0 * math.pow(z / r, 5.0)
+                )
+                * (x / r),
+                3.0
+                * (
+                    35.0 * (z / r)
+                    - 210.0 * math.pow(z / r, 3.0)
+                    + 231.0 * math.pow(z / r, 5.0)
+                )
+                * (y / r),
+                -(
+                    15.0
+                    - 315.0 * math.pow(z / r, 2.0)
+                    + 945.0 * math.pow(z / r, 4.0)
+                    - 693.0 * math.pow(z / r, 6.0)
+                ),
+            ]
+        )
+        temp2 = (
+            1.0 / 8.0 * J5 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 5.0)
+        ) * temp
         ajtot = ajtot + temp2
     if num >= 6:
-        temp = np.array([(35.0 - 945.0 * math.pow(z / r, 2) + 3465.0 * math.pow(z / r, 4.0) - 3003.0 * math.pow(z / r,
-                                                                                                                6.0)) * (
-                             x / r),
-                         (35.0 - 945.0 * math.pow(z / r, 2.0) + 3465.0 * math.pow(z / r, 4.0) - 3003.0 * math.pow(z / r,
-                                                                                                                  6.0)) * (
-                             y / r),
-                         -(3003.0 * math.pow(z / r, 6.0) - 4851.0 * math.pow(z / r, 4.0) + 2205.0 * math.pow(z / r,
-                                                                                                             2.0) - 245.0) * (
-                             z / r)])
-        temp2 = (-1.0 / 16.0 * J6 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 6.0)) * temp
+        temp = np.array(
+            [
+                (
+                    35.0
+                    - 945.0 * math.pow(z / r, 2)
+                    + 3465.0 * math.pow(z / r, 4.0)
+                    - 3003.0 * math.pow(z / r, 6.0)
+                )
+                * (x / r),
+                (
+                    35.0
+                    - 945.0 * math.pow(z / r, 2.0)
+                    + 3465.0 * math.pow(z / r, 4.0)
+                    - 3003.0 * math.pow(z / r, 6.0)
+                )
+                * (y / r),
+                -(
+                    3003.0 * math.pow(z / r, 6.0)
+                    - 4851.0 * math.pow(z / r, 4.0)
+                    + 2205.0 * math.pow(z / r, 2.0)
+                    - 245.0
+                )
+                * (z / r),
+            ]
+        )
+        temp2 = (
+            -1.0 / 16.0 * J6 * (mu / math.pow(r, 2.0)) * math.pow(req / r, 6.0)
+        ) * temp
         ajtot = ajtot + temp2
 
     return ajtot
@@ -1001,7 +1241,7 @@ def solarRad(A, m, sunvec):
     flux = 1372.5398
 
     # Speed of light #
-    c = 299792458.
+    c = 299792458.0
 
     # Radiation pressure coefficient #
     Cr = 1.3
@@ -1010,7 +1250,7 @@ def solarRad(A, m, sunvec):
     sundist = la.norm(sunvec)
 
     # Computing the acceleration vector #
-    arvec = ((-Cr * A * flux) / (m * c * math.pow(sundist, 3)) / 1000.) * sunvec
+    arvec = ((-Cr * A * flux) / (m * c * math.pow(sundist, 3)) / 1000.0) * sunvec
 
     return arvec
 
@@ -1019,7 +1259,7 @@ def v3Normalize(v):
     result = np.zeros(3)
     norm = la.norm(v)
     if norm > DB0_EPS:
-        result = (1. / norm) * v
+        result = (1.0 / norm) * v
     return result
 
 
@@ -1037,67 +1277,176 @@ def clMeanOscMap(req, J2, oe, oep, sign):
     :param sign: sgn=1:mean to osc, sgn=-1:osc to mean
 
     """
-    a       = oe.a
-    e       = oe.e
-    i       = oe.i
-    Omega   = oe.Omega
-    omega   = oe.omega
-    f       = oe.f
-    E       = f2E(f, e)
-    M       = E2M(E, e)
-    gamma2  = sign*J2/2*((req/oe.a)**2)
-    eta     = math.sqrt(1-oe.e*oe.e)
-    gamma2p = gamma2/(eta**4)
-    a_r     = (1+oe.e*math.cos(oe.f))/(eta**2)
+    a = oe.a
+    e = oe.e
+    i = oe.i
+    Omega = oe.Omega
+    omega = oe.omega
+    f = oe.f
+    E = f2E(f, e)
+    M = E2M(E, e)
+    gamma2 = sign * J2 / 2 * ((req / oe.a) ** 2)
+    eta = math.sqrt(1 - oe.e * oe.e)
+    gamma2p = gamma2 / (eta**4)
+    a_r = (1 + oe.e * math.cos(oe.f)) / (eta**2)
     # calculate oep.a
-    ap = oe.a + oe.a*gamma2*((3*(math.cos(oe.i))**2-1)*(a_r**3-1/(eta**3)) \
-       +3*(1-(math.cos(oe.i))**2)*(a_r**3)*math.cos(2*oe.omega+2*oe.f))  # (F.7)
+    ap = oe.a + oe.a * gamma2 * (
+        (3 * (math.cos(oe.i)) ** 2 - 1) * (a_r**3 - 1 / (eta**3))
+        + 3 * (1 - (math.cos(oe.i)) ** 2) * (a_r**3) * math.cos(2 * oe.omega + 2 * oe.f)
+    )  # (F.7)
 
-    de1 = gamma2p/8*e*(eta**2)*(1-11*((math.cos(i))**2)-40*((math.cos(i)) **4) \
-        /(1-5*((math.cos(i))**2)))*math.cos(2*omega)  # (F.8)
+    de1 = (
+        gamma2p
+        / 8
+        * e
+        * (eta**2)
+        * (
+            1
+            - 11 * ((math.cos(i)) ** 2)
+            - 40 * ((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2))
+        )
+        * math.cos(2 * omega)
+    )  # (F.8)
 
-    de = de1 + (eta ** 2) / 2 * (gamma2 *((3 * ((math.cos(i)) ** 2) - 1) / (eta ** 6) \
-       *(e * eta + e / (1 + eta) + 3 * math.cos(f) + 3 * e * ((math.cos(f)) ** 2) + (e ** 2) \
-       *((math.cos(f)) ** 3)) + 3 * (1 - ((math.cos(i)) ** 2)) / (eta ** 6) \
-       *(e + 3 * math.cos(f) + 3 * e * ((math.cos(f)) ** 2) + (e ** 2) * ((math.cos(f)) ** 3)) * math.cos(2 * omega + 2 * f)) \
-       - gamma2p * (1 - ((math.cos(i)) ** 2)) *(3 * math.cos(2 * omega + f) + math.cos(2 * omega + 3 * f)))  # (F.9)
+    de = de1 + (eta**2) / 2 * (
+        gamma2
+        * (
+            (3 * ((math.cos(i)) ** 2) - 1)
+            / (eta**6)
+            * (
+                e * eta
+                + e / (1 + eta)
+                + 3 * math.cos(f)
+                + 3 * e * ((math.cos(f)) ** 2)
+                + (e**2) * ((math.cos(f)) ** 3)
+            )
+            + 3
+            * (1 - ((math.cos(i)) ** 2))
+            / (eta**6)
+            * (
+                e
+                + 3 * math.cos(f)
+                + 3 * e * ((math.cos(f)) ** 2)
+                + (e**2) * ((math.cos(f)) ** 3)
+            )
+            * math.cos(2 * omega + 2 * f)
+        )
+        - gamma2p
+        * (1 - ((math.cos(i)) ** 2))
+        * (3 * math.cos(2 * omega + f) + math.cos(2 * omega + 3 * f))
+    )  # (F.9)
 
-    di = -e*de1/(eta**2)/math.tan(i) + gamma2p/2*math.cos(i)*math.sqrt(1-((math.cos(i))**2)) \
-       *(3*math.cos(2*omega+2*f) + 3*e*math.cos(2*omega+f)+e*math.cos(2*omega+3*f))  # (F.10)
+    di = -e * de1 / (eta**2) / math.tan(i) + gamma2p / 2 * math.cos(i) * math.sqrt(
+        1 - ((math.cos(i)) ** 2)
+    ) * (
+        3 * math.cos(2 * omega + 2 * f)
+        + 3 * e * math.cos(2 * omega + f)
+        + e * math.cos(2 * omega + 3 * f)
+    )  # (F.10)
 
-    MpopOp = M + omega + Omega + gamma2p / 8 * (eta ** 3) * (1 - 11 * ((math.cos(i)) ** 2) \
-           - 40 *((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2))) * math.sin(2 * omega) \
-           - gamma2p / 16 * (2 + (e ** 2) - 11 * (2 + 3 * (e ** 2)) * ((math.cos(i)) ** 2) - 40 * (2 + 5 * (e ** 2)) \
-           *((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2)) - 400 * (e ** 2) * ((math.cos(i)) ** 6) \
-           /((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \
-           + gamma2p / 4 * (-6 *(1 - 5 * ((math.cos(i)) ** 2)) * (f - M + e * math.sin(f)) + (3 - 5 * ((math.cos(i)) ** 2)) \
-           *(3 * math.sin(2 * omega + 2 * f) + 3 * e * math.sin(2 * omega + f) + e * math.sin(2 * omega + 3 * f))) \
-           - gamma2p / 8 * (e ** 2) * math.cos(i) * (11 + 80 *((math.cos(i)) ** 2) / (1 - 5 * ((math.cos(i)) ** 2)) \
-           + 200 * ((math.cos(i)) ** 4) / ((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \
-           - gamma2p / 2 * math.cos(i) * (6 *(f - M + e * math.sin(f)) - 3 * math.sin(2 * omega + 2 * f) \
-           - 3 * e * math.sin(2 * omega + f) - e * math.sin(2 * omega + 3 * f))  # (F.11)
+    MpopOp = (
+        M
+        + omega
+        + Omega
+        + gamma2p
+        / 8
+        * (eta**3)
+        * (
+            1
+            - 11 * ((math.cos(i)) ** 2)
+            - 40 * ((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2))
+        )
+        * math.sin(2 * omega)
+        - gamma2p
+        / 16
+        * (
+            2
+            + (e**2)
+            - 11 * (2 + 3 * (e**2)) * ((math.cos(i)) ** 2)
+            - 40
+            * (2 + 5 * (e**2))
+            * ((math.cos(i)) ** 4)
+            / (1 - 5 * ((math.cos(i)) ** 2))
+            - 400
+            * (e**2)
+            * ((math.cos(i)) ** 6)
+            / ((1 - 5 * ((math.cos(i)) ** 2)) ** 2)
+        )
+        * math.sin(2 * omega)
+        + gamma2p
+        / 4
+        * (
+            -6 * (1 - 5 * ((math.cos(i)) ** 2)) * (f - M + e * math.sin(f))
+            + (3 - 5 * ((math.cos(i)) ** 2))
+            * (
+                3 * math.sin(2 * omega + 2 * f)
+                + 3 * e * math.sin(2 * omega + f)
+                + e * math.sin(2 * omega + 3 * f)
+            )
+        )
+        - gamma2p
+        / 8
+        * (e**2)
+        * math.cos(i)
+        * (
+            11
+            + 80 * ((math.cos(i)) ** 2) / (1 - 5 * ((math.cos(i)) ** 2))
+            + 200 * ((math.cos(i)) ** 4) / ((1 - 5 * ((math.cos(i)) ** 2)) ** 2)
+        )
+        * math.sin(2 * omega)
+        - gamma2p
+        / 2
+        * math.cos(i)
+        * (
+            6 * (f - M + e * math.sin(f))
+            - 3 * math.sin(2 * omega + 2 * f)
+            - 3 * e * math.sin(2 * omega + f)
+            - e * math.sin(2 * omega + 3 * f)
+        )
+    )  # (F.11)
 
-    edM = gamma2p / 8 * e * (eta ** 3) * (1 - 11 * ((math.cos(i)) ** 2) - 40 * ((math.cos(i)) ** 4) \
-        /(1 - 5 * ((math.cos(i)) ** 2))) * math.sin(2 * omega) - gamma2p / 4 * (eta ** 3) * (2 * (3 * ((math.cos(i)) ** 2) - 1) \
-        * ((a_r * eta) ** 2 + a_r + 1) * math.sin(f) + 3 *(1 - ((math.cos(i)) ** 2)) *((-(a_r * eta) ** 2 - a_r + 1) \
-        * math.sin(2 * omega + f) + ((a_r * eta) ** 2 + a_r + 1 / 3) * math.sin(2 * omega + 3 * f)))  # (F.12)
+    edM = gamma2p / 8 * e * (eta**3) * (
+        1
+        - 11 * ((math.cos(i)) ** 2)
+        - 40 * ((math.cos(i)) ** 4) / (1 - 5 * ((math.cos(i)) ** 2))
+    ) * math.sin(2 * omega) - gamma2p / 4 * (eta**3) * (
+        2 * (3 * ((math.cos(i)) ** 2) - 1) * ((a_r * eta) ** 2 + a_r + 1) * math.sin(f)
+        + 3
+        * (1 - ((math.cos(i)) ** 2))
+        * (
+            (-((a_r * eta) ** 2) - a_r + 1) * math.sin(2 * omega + f)
+            + ((a_r * eta) ** 2 + a_r + 1 / 3) * math.sin(2 * omega + 3 * f)
+        )
+    )  # (F.12)
 
-    dOmega = -gamma2p / 8 * (e ** 2) * math.cos(i) * (11 + 80 * ((math.cos(i)) ** 2) /(1 - 5 * ((math.cos(i)) ** 2)) \
-           + 200 * ((math.cos(i)) ** 4) /((1 - 5 * ((math.cos(i)) ** 2)) ** 2)) * math.sin(2 * omega) \
-           - gamma2p / 2 * math.cos(i) * (6 *(f - M + e * math.sin(f)) - 3 * math.sin(2 * omega + 2 * f) \
-           - 3 * e * math.sin(2 * omega + f) - e* math.sin(2 * omega + 3 * f))  # (F.13)
+    dOmega = -gamma2p / 8 * (e**2) * math.cos(i) * (
+        11
+        + 80 * ((math.cos(i)) ** 2) / (1 - 5 * ((math.cos(i)) ** 2))
+        + 200 * ((math.cos(i)) ** 4) / ((1 - 5 * ((math.cos(i)) ** 2)) ** 2)
+    ) * math.sin(2 * omega) - gamma2p / 2 * math.cos(i) * (
+        6 * (f - M + e * math.sin(f))
+        - 3 * math.sin(2 * omega + 2 * f)
+        - 3 * e * math.sin(2 * omega + f)
+        - e * math.sin(2 * omega + 3 * f)
+    )  # (F.13)
 
-    d1 = (e+de)*math.sin(M) + edM*math.cos(M)  # (F.14)
-    d2 = (e+de)*math.cos(M) - edM*math.sin(M)  # (F.15)
+    d1 = (e + de) * math.sin(M) + edM * math.cos(M)  # (F.14)
+    d2 = (e + de) * math.cos(M) - edM * math.sin(M)  # (F.15)
 
     Mp = math.atan2(d1, d2)  # (F.16)
-    ep = math.sqrt(d1**2+d2**2)  # (F.17)
+    ep = math.sqrt(d1**2 + d2**2)  # (F.17)
 
-    d3 = (math.sin(i/2)+math.cos(i/2)*di/2)*math.sin(Omega) + math.sin(i/2)*dOmega*math.cos(Omega)  # (F.18)
-    d4 = (math.sin(i/2)+math.cos(i/2)*di/2)*math.cos(Omega) - math.sin(i/2)*dOmega*math.sin(Omega)  # (F.19)
+    d3 = (math.sin(i / 2) + math.cos(i / 2) * di / 2) * math.sin(Omega) + math.sin(
+        i / 2
+    ) * dOmega * math.cos(Omega)  # (F.18)
+    d4 = (math.sin(i / 2) + math.cos(i / 2) * di / 2) * math.cos(Omega) - math.sin(
+        i / 2
+    ) * dOmega * math.sin(Omega)  # (F.19)
 
     Omegap = math.atan2(d3, d4)  # (F.20)
-    ip = 2*math.asin(np.clip(math.sqrt(d3**2+d4**2), a_min=-1.0, a_max=1.0))  # (F.21)
+    ip = 2 * math.asin(
+        np.clip(math.sqrt(d3**2 + d4**2), a_min=-1.0, a_max=1.0)
+    )  # (F.21)
     omegap = MpopOp - Mp - Omegap  # (F.22)
 
     Ep = M2E(Mp, ep)
@@ -1121,15 +1470,15 @@ def clElem2eqElem(elements_cl, elements_eq):
     :param elements_cl: classical elements
     :return: elements_eq, equinoctial elements
     """
-    elements_eq.a  = elements_cl.a
+    elements_eq.a = elements_cl.a
     elements_eq.P1 = elements_cl.e * math.sin(elements_cl.Omega + elements_cl.omega)
     elements_eq.P2 = elements_cl.e * math.cos(elements_cl.Omega + elements_cl.omega)
     elements_eq.Q1 = math.tan(elements_cl.i / 2) * math.sin(elements_cl.Omega)
     elements_eq.Q2 = math.tan(elements_cl.i / 2) * math.cos(elements_cl.Omega)
-    E              = f2E(elements_cl.f, elements_cl.e)
-    M              = E2M(E, elements_cl.e)
-    elements_eq.l  = elements_cl.Omega + elements_cl.omega + M
-    elements_eq.L  = elements_cl.Omega + elements_cl.omega + elements_cl.f
+    E = f2E(elements_cl.f, elements_cl.e)
+    M = E2M(E, elements_cl.e)
+    elements_eq.l = elements_cl.Omega + elements_cl.omega + M
+    elements_eq.L = elements_cl.Omega + elements_cl.omega + elements_cl.f
     return
 
 
@@ -1140,7 +1489,7 @@ def hillFrame(rc_N, vc_N):
     :param vc_N: inertial velocity vector
     :return: HN: DCM that maps from the inertial frame N to the Hill (i.e. orbit) frame H
     """
-    ir = rc_N/la.norm(rc_N)
+    ir = rc_N / la.norm(rc_N)
     h = np.cross(rc_N, vc_N)
     ih = h / la.norm(h)
     itheta = np.cross(ih, ir)
@@ -1160,7 +1509,7 @@ def rv2hill(rc_N, vc_N, rd_N, vd_N):
     """
 
     HN = hillFrame(rc_N, vc_N)
-    fDot = la.norm(np.cross(rc_N, vc_N))/(la.norm(rc_N)**2)
+    fDot = la.norm(np.cross(rc_N, vc_N)) / (la.norm(rc_N) ** 2)
     omega_HN_H = np.array([0, 0, fDot])
     rho_H = np.matmul(HN, rd_N - rc_N)
     rhoPrime_H = np.matmul(HN, vd_N - vc_N) - np.cross(omega_HN_H, rho_H)

@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,7 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 
 
 #
@@ -35,11 +33,10 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
 
-
-#Import all of the modules that we are going to call in this simulation
+# Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import radiationPressure
@@ -48,14 +45,18 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 
+
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
-@pytest.mark.parametrize("modelType, eclipseOn", [
-      ("cannonball",False)
-    , ("lookup", False)
-    , ("lookup", True)
-    , ("cannonballLookup", False)
-])
+@pytest.mark.parametrize(
+    "modelType, eclipseOn",
+    [
+        ("cannonball", False),
+        ("lookup", False),
+        ("lookup", True),
+        ("cannonballLookup", False),
+    ],
+)
 def test_unitRadiationPressure(show_plots, modelType, eclipseOn):
     """Module Unit Test"""
     [testResults, testMessage] = unitRadiationPressure(show_plots, modelType, eclipseOn)
@@ -88,7 +89,6 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     scObject.ModelTag = "spacecraft"
     unitTestSim.AddModelToTask(testTaskName, scObject)
 
-
     srpDynEffector = radiationPressure.RadiationPressure()
     srpDynEffector.ModelTag = "RadiationPressure"
     srpDynEffector2 = radiationPressure.RadiationPressure()
@@ -117,11 +117,15 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addTorqueLookupBEntry(handler.torqueBLookup[i, :])
             srpDynEffector.addSHatLookupBEntry(handler.sHatBLookup[i, :])
         srpDynEffector2.setUseCannonballModel()
-        srpDynEffector2.area = 182018.072141393 #set to give a force of 1N at 1AU to make spherical table generation easy
+        srpDynEffector2.area = 182018.072141393  # set to give a force of 1N at 1AU to make spherical table generation easy
         srpDynEffector2.coefficientReflection = 1.2
-        r_N = [np.sin(np.pi/4.)*np.cos(np.pi/4.)*10.*om.AU*1000., np.sin(np.pi/4.)*np.sin(np.pi/4.)*10.*om.AU*1000., np.cos(np.pi/4.)*10.*om.AU*1000.]  # [m]
-        sun_r_N = [0., 0., 0.]  # [m]
-        sigma_BN = [0., 0., 0.]
+        r_N = [
+            np.sin(np.pi / 4.0) * np.cos(np.pi / 4.0) * 10.0 * om.AU * 1000.0,
+            np.sin(np.pi / 4.0) * np.sin(np.pi / 4.0) * 10.0 * om.AU * 1000.0,
+            np.cos(np.pi / 4.0) * 10.0 * om.AU * 1000.0,
+        ]  # [m]
+        sun_r_N = [0.0, 0.0, 0.0]  # [m]
+        sigma_BN = [0.0, 0.0, 0.0]
 
     if eclipseOn:
         sunEclipseMsgData = messaging.EclipseMsgPayload()
@@ -135,7 +139,6 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
 
     scObject.hub.r_CN_NInit = r_N
     scObject.hub.sigma_BNInit = sigma_BN
-
 
     sunSpiceMsg = messaging.SpicePlanetStateMsgPayload()
     sunSpiceMsg.PositionVector = sun_r_N
@@ -159,117 +162,187 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     srpDynEffector2.computeForceTorque(unitTestSim.TotalSim.CurrentNanos, testTaskRate)
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    srpDataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_B)
-    srpDataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_N)
-    srpTorqueData = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].torqueExternalPntB_B)
+    srpDataForce_B = unitTestSupport.addTimeColumn(
+        srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_B
+    )
+    srpDataForce_N = unitTestSupport.addTimeColumn(
+        srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_N
+    )
+    srpTorqueData = unitTestSupport.addTimeColumn(
+        srpDynEffectorLog[0].times(), srpDynEffectorLog[0].torqueExternalPntB_B
+    )
 
-    srp2DataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_B)
-    srp2DataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_N)
-    srp2TorqueData = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].torqueExternalPntB_B)
+    srp2DataForce_B = unitTestSupport.addTimeColumn(
+        srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_B
+    )
+    srp2DataForce_N = unitTestSupport.addTimeColumn(
+        srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_N
+    )
+    srp2TorqueData = unitTestSupport.addTimeColumn(
+        srpDynEffectorLog[1].times(), srpDynEffectorLog[1].torqueExternalPntB_B
+    )
 
-    errTol = 1E-12
+    errTol = 1e-12
     if modelType == "cannonball":
         truthForceExternal_B = [0, 0, 0]
-        truthForceExternal_N = [-2.44694525395e-06, -1.94212316004e-05, -8.42121070088e-06]
+        truthForceExternal_N = [
+            -2.44694525395e-06,
+            -1.94212316004e-05,
+            -8.42121070088e-06,
+        ]
         truthTorqueExternalPntB_B = [0, 0, 0]
-        testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
-                                                                    srpDataForce_B[1,1:],
-                                                                    errTol,
-                                                                    "Force_B",
-                                                                    testFailCount,
-                                                                    testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_N,
-                                                                srpDataForce_N[1, 1:],
-                                                                errTol,
-                                                                "Force_N",
-                                                                testFailCount,
-                                                                testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
-                                                                srpTorqueData[1, 1:],
-                                                                errTol,
-                                                                "Torque",
-                                                                testFailCount,
-                                                                testMessages)
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            truthForceExternal_B,
+            srpDataForce_B[1, 1:],
+            errTol,
+            "Force_B",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            truthForceExternal_N,
+            srpDataForce_N[1, 1:],
+            errTol,
+            "Force_N",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            truthTorqueExternalPntB_B,
+            srpTorqueData[1, 1:],
+            errTol,
+            "Torque",
+            testFailCount,
+            testMessages,
+        )
     if modelType == "lookup":
-        errTolTorque = errTol/100
-        truthForceExternal_B = [0.26720220706099184E-04, - 0.13596079145805012E-04, 0.93948649829282319E-05]
+        errTolTorque = errTol / 100
+        truthForceExternal_B = [
+            0.26720220706099184e-04,
+            -0.13596079145805012e-04,
+            0.93948649829282319e-05,
+        ]
         truthForceExternal_N = [0, 0, 0]
-        truthTorqueExternalPntB_B = [-0.80492463017846114E-12, 0.50888380426172319E-12, 0.10249431804585393E-11]
+        truthTorqueExternalPntB_B = [
+            -0.80492463017846114e-12,
+            0.50888380426172319e-12,
+            0.10249431804585393e-11,
+        ]
         if eclipseOn:
-            truthForceExternal_B = sunEclipseMsgData.shadowFactor*np.array(truthForceExternal_B)
-            truthTorqueExternalPntB_B = sunEclipseMsgData.shadowFactor * np.array(truthTorqueExternalPntB_B)
-        testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
-                                                                    srpDataForce_B[1, 1:],
-                                                                    errTol,
-                                                                    "Force_B",
-                                                                    testFailCount,
-                                                                    testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_N,
-                                                                    srpDataForce_N[1, 1:],
-                                                                    errTol,
-                                                                    "Force_N",
-                                                                    testFailCount,
-                                                                    testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
-                                                                    srpTorqueData[1, 1:],
-                                                                    errTolTorque,
-                                                                    "Torque",
-                                                                    testFailCount,
-                                                                    testMessages)
+            truthForceExternal_B = sunEclipseMsgData.shadowFactor * np.array(
+                truthForceExternal_B
+            )
+            truthTorqueExternalPntB_B = sunEclipseMsgData.shadowFactor * np.array(
+                truthTorqueExternalPntB_B
+            )
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            truthForceExternal_B,
+            srpDataForce_B[1, 1:],
+            errTol,
+            "Force_B",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            truthForceExternal_N,
+            srpDataForce_N[1, 1:],
+            errTol,
+            "Force_N",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            truthTorqueExternalPntB_B,
+            srpTorqueData[1, 1:],
+            errTolTorque,
+            "Torque",
+            testFailCount,
+            testMessages,
+        )
     if modelType == "cannonballLookup":
-        errTolTorque = errTol/100
-        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_N[1, 1:],
-                                                                    srpDataForce_B[1, 1:],
-                                                                    errTol,
-                                                                    "Force_B",
-                                                                    testFailCount,
-                                                                    testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_B[1, 1:],
-                                                                    srpDataForce_N[1, 1:],
-                                                                    errTol,
-                                                                    "Force_N",
-                                                                    testFailCount,
-                                                                    testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(srp2TorqueData[1, 1:],
-                                                                    srpTorqueData[1, 1:],
-                                                                    errTolTorque,
-                                                                    "Torque",
-                                                                    testFailCount,
-                                                                    testMessages)
-
+        errTolTorque = errTol / 100
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            srp2DataForce_N[1, 1:],
+            srpDataForce_B[1, 1:],
+            errTol,
+            "Force_B",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            srp2DataForce_B[1, 1:],
+            srpDataForce_N[1, 1:],
+            errTol,
+            "Force_N",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            srp2TorqueData[1, 1:],
+            srpTorqueData[1, 1:],
+            errTolTorque,
+            "Torque",
+            testFailCount,
+            testMessages,
+        )
 
     if eclipseOn:
-        modelType = modelType + 'WithEclipse'   #Do this so that the AutoTeX messages are clearly distinguishable.
+        modelType = (
+            modelType + "WithEclipse"
+        )  # Do this so that the AutoTeX messages are clearly distinguishable.
 
     if testFailCount == 0:
         print("PASSED: " + modelType)
         passFailText = "PASSED"
-        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
-        snippetName = modelType + 'FailMsg'
+        colorText = (
+            "ForestGreen"  # color to write auto-documented "PASSED" message in in LATEX
+        )
+        snippetName = modelType + "FailMsg"
         snippetContent = ""
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+        unitTestSupport.writeTeXSnippet(
+            snippetName, snippetContent, path
+        )  # write formatted LATEX string to file to be used by auto-documentation.
     else:
-        passFailText = 'FAILED'
-        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
-        snippetName = modelType + 'FailMsg'
+        passFailText = "FAILED"
+        colorText = "Red"  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = modelType + "FailMsg"
         snippetContent = passFailText
         for message in testMessages:
             snippetContent += ". " + message
         snippetContent += "."
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
-    snippetName = modelType + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
-    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+        unitTestSupport.writeTeXSnippet(
+            snippetName, snippetContent, path
+        )  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = (
+        modelType + "PassFail"
+    )  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = (
+        r"\textcolor{" + colorText + "}{" + passFailText + "}"
+    )  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(
+        snippetName, snippetContent, path
+    )  # write formatted LATEX string to file to be used by auto-documentation.
 
     # write test accuracy to LATEX file for AutoTex
-    snippetName = modelType + 'Accuracy'
-    snippetContent = '{:1.1e}'.format(errTol)#write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
-    if modelType == 'lookupWithEclipse' or modelType == 'lookup' or modelType == 'cannonballLookup':
-        snippetName = modelType + 'TorqueAccuracy'
-        snippetContent = '{:1.1e}'.format(errTolTorque)  # write formatted LATEX string to file to be used by auto-documentation.
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
-                                        path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = modelType + "Accuracy"
+    snippetContent = "{:1.1e}".format(
+        errTol
+    )  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(
+        snippetName, snippetContent, path
+    )  # write formatted LATEX string to file to be used by auto-documentation.
+    if (
+        modelType == "lookupWithEclipse"
+        or modelType == "lookup"
+        or modelType == "cannonballLookup"
+    ):
+        snippetName = modelType + "TorqueAccuracy"
+        snippetContent = "{:1.1e}".format(
+            errTolTorque
+        )  # write formatted LATEX string to file to be used by auto-documentation.
+        unitTestSupport.writeTeXSnippet(
+            snippetName, snippetContent, path
+        )  # write formatted LATEX string to file to be used by auto-documentation.
 
     if testFailCount:
         print(testMessages)
@@ -278,7 +351,8 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 if __name__ == "__main__":
     unitRadiationPressure(False, "cannonball", False)

@@ -34,10 +34,14 @@ import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.simulation import spacecraft, linearTranslationNDOFStateEffector, gravityEffector
+from Basilisk.simulation import (
+    spacecraft,
+    linearTranslationNDOFStateEffector,
+    gravityEffector,
+)
 from Basilisk.architecture import messaging
 
 
@@ -47,9 +51,15 @@ from Basilisk.architecture import messaging
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("function", ["translatingBodyNoInput"
-    , "translatingBodyLockAxis"
-    , "translatingBodyCommandedForce"])
+
+@pytest.mark.parametrize(
+    "function",
+    [
+        "translatingBodyNoInput",
+        "translatingBodyLockAxis",
+        "translatingBodyCommandedForce",
+    ],
+)
 def test_translatingBody(show_plots, function):
     r"""
     **Validation Test Description**
@@ -78,6 +88,7 @@ def test_translatingBody(show_plots, function):
 
     testFunction(show_plots)
 
+
 def translatingBodyNoInput(show_plots):
     r"""
     This test does not use any input messages or lock flags, so the links are free to move.
@@ -97,22 +108,36 @@ def translatingBodyNoInput(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = (
+        linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    )
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
     translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                 [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                 [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody1.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody1.setDCM_FP([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
-    translatingBody1.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                [np.random.uniform(-1.0, 1.0)],
-                                [np.random.uniform(-1.0, 1.0)]])
-    translatingBody1.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                [np.random.uniform(-1.0, 1.0)],
-                                [np.random.uniform(-1.0, 1.0)]])
+    translatingBody1.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody1.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody1.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody1.setRhoInit(np.random.uniform(-5.0, 10.0))
     translatingBody1.setRhoDotInit(0.05)
@@ -121,16 +146,28 @@ def translatingBodyNoInput(show_plots):
 
     translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody2.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody2.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody2.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody2.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody2.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody2.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody2.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody2.setRhoDotInit(0.05)
@@ -139,16 +176,28 @@ def translatingBodyNoInput(show_plots):
 
     translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody3.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody3.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody3.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody3.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody3.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody3.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody3.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody3.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody3.setRhoDotInit(0.05)
@@ -157,16 +206,28 @@ def translatingBodyNoInput(show_plots):
 
     translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody4.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody4.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody4.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody4.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody4.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody4.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody4.setFHat_P([[0.0], [0.0], [1.0]])
     translatingBody4.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody4.setRhoDotInit(0.05)
@@ -182,8 +243,16 @@ def translatingBodyNoInput(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
@@ -194,7 +263,7 @@ def translatingBodyNoInput(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -206,7 +275,9 @@ def translatingBodyNoInput(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Add states to log
@@ -253,55 +324,65 @@ def translatingBodyNoInput(show_plots):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (rotEnergy - initialRotEnergy) / initialRotEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(rho1Data.times() * 1e-9, rho1, label=r'$\rho_1$')
-    plt.plot(rho2Data.times() * 1e-9, rho2, label=r'$\rho_2$')
-    plt.plot(rho3Data.times() * 1e-9, rho3, label=r'$\rho_3$')
-    plt.plot(rho4Data.times() * 1e-9, rho4, label=r'$\rho_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Displacement')
+    plt.plot(rho1Data.times() * 1e-9, rho1, label=r"$\rho_1$")
+    plt.plot(rho2Data.times() * 1e-9, rho2, label=r"$\rho_2$")
+    plt.plot(rho3Data.times() * 1e-9, rho3, label=r"$\rho_3$")
+    plt.plot(rho4Data.times() * 1e-9, rho4, label=r"$\rho_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Displacement")
 
     plt.figure()
     plt.clf()
-    plt.plot(rho1Data.times() * 1e-9, rho1Dot, label=r'$\dot{\rho}_1$')
-    plt.plot(rho2Data.times() * 1e-9, rho2Dot, label=r'$\dot{\rho}_2$')
-    plt.plot(rho3Data.times() * 1e-9, rho3Dot, label=r'$\dot{\rho}_3$')
-    plt.plot(rho4Data.times() * 1e-9, rho4Dot, label=r'$\dot{\rho}_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Displacement Rate')
+    plt.plot(rho1Data.times() * 1e-9, rho1Dot, label=r"$\dot{\rho}_1$")
+    plt.plot(rho2Data.times() * 1e-9, rho2Dot, label=r"$\dot{\rho}_2$")
+    plt.plot(rho3Data.times() * 1e-9, rho3Dot, label=r"$\dot{\rho}_3$")
+    plt.plot(rho4Data.times() * 1e-9, rho4Dot, label=r"$\dot{\rho}_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Displacement Rate")
 
     if show_plots:
         plt.show()
@@ -310,14 +391,31 @@ def translatingBodyNoInput(show_plots):
     # Testing setup
     accuracy = 1e-12
 
-    np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
-    np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy,
-                               err_msg="Rotational energy is not constant.")
+    np.testing.assert_allclose(
+        finalOrbEnergy,
+        initialOrbEnergy,
+        rtol=accuracy,
+        err_msg="Orbital energy is not constant.",
+    )
+    np.testing.assert_allclose(
+        finalRotEnergy,
+        initialRotEnergy,
+        rtol=accuracy,
+        err_msg="Rotational energy is not constant.",
+    )
     for i in range(3):
-        np.testing.assert_allclose(finalOrbAngMom, initialOrbAngMom_N, rtol=accuracy,
-                                   err_msg="Orbital angular momentum is not constant.")
-        np.testing.assert_allclose(finalRotAngMom, initialRotAngMom_N, rtol=accuracy,
-                                   err_msg="Rotational angular momentum is not constant.")
+        np.testing.assert_allclose(
+            finalOrbAngMom,
+            initialOrbAngMom_N,
+            rtol=accuracy,
+            err_msg="Orbital angular momentum is not constant.",
+        )
+        np.testing.assert_allclose(
+            finalRotAngMom,
+            initialRotAngMom_N,
+            rtol=accuracy,
+            err_msg="Rotational angular momentum is not constant.",
+        )
 
 
 def translatingBodyLockAxis(show_plots):
@@ -339,22 +437,36 @@ def translatingBodyLockAxis(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = (
+        linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    )
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
     translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody1.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody1.setDCM_FP([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
-    translatingBody1.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody1.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody1.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody1.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody1.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody1.setRhoInit(np.random.uniform(-5.0, 10.0))
     translatingBody1.setRhoDotInit(0.05)
@@ -363,16 +475,28 @@ def translatingBodyLockAxis(show_plots):
 
     translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody2.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody2.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody2.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody2.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody2.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody2.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody2.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody2.setRhoDotInit(0.05)
@@ -381,16 +505,28 @@ def translatingBodyLockAxis(show_plots):
 
     translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody3.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody3.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody3.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody3.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody3.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody3.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody3.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody3.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody3.setRhoDotInit(0.05)
@@ -399,16 +535,28 @@ def translatingBodyLockAxis(show_plots):
 
     translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody4.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody4.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody4.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody4.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody4.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody4.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody4.setFHat_P([[0.0], [0.0], [1.0]])
     translatingBody4.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody4.setRhoDotInit(0.05)
@@ -424,8 +572,16 @@ def translatingBodyLockAxis(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
@@ -436,7 +592,7 @@ def translatingBodyLockAxis(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -454,7 +610,9 @@ def translatingBodyLockAxis(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Add states to log
@@ -501,55 +659,65 @@ def translatingBodyLockAxis(show_plots):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (rotEnergy - initialRotEnergy) / initialRotEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(rho1Data.times() * 1e-9, rho1, label=r'$\rho_1$')
-    plt.plot(rho2Data.times() * 1e-9, rho2, label=r'$\rho_2$')
-    plt.plot(rho3Data.times() * 1e-9, rho3, label=r'$\rho_3$')
-    plt.plot(rho4Data.times() * 1e-9, rho4, label=r'$\rho_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Displacement')
+    plt.plot(rho1Data.times() * 1e-9, rho1, label=r"$\rho_1$")
+    plt.plot(rho2Data.times() * 1e-9, rho2, label=r"$\rho_2$")
+    plt.plot(rho3Data.times() * 1e-9, rho3, label=r"$\rho_3$")
+    plt.plot(rho4Data.times() * 1e-9, rho4, label=r"$\rho_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Displacement")
 
     plt.figure()
     plt.clf()
-    plt.plot(rho1Data.times() * 1e-9, rho1Dot, label=r'$\dot{\rho}_1$')
-    plt.plot(rho2Data.times() * 1e-9, rho2Dot, label=r'$\dot{\rho}_2$')
-    plt.plot(rho3Data.times() * 1e-9, rho3Dot, label=r'$\dot{\rho}_3$')
-    plt.plot(rho4Data.times() * 1e-9, rho4Dot, label=r'$\dot{\rho}_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Displacement Rate')
+    plt.plot(rho1Data.times() * 1e-9, rho1Dot, label=r"$\dot{\rho}_1$")
+    plt.plot(rho2Data.times() * 1e-9, rho2Dot, label=r"$\dot{\rho}_2$")
+    plt.plot(rho3Data.times() * 1e-9, rho3Dot, label=r"$\dot{\rho}_3$")
+    plt.plot(rho4Data.times() * 1e-9, rho4Dot, label=r"$\dot{\rho}_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Displacement Rate")
 
     if show_plots:
         plt.show()
@@ -558,15 +726,31 @@ def translatingBodyLockAxis(show_plots):
     # Testing setup
     accuracy = 1e-12
 
-    np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy,
-                               err_msg="Orbital energy is not constant.")
-    np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy,
-                               err_msg="Rotational energy is not constant.")
+    np.testing.assert_allclose(
+        finalOrbEnergy,
+        initialOrbEnergy,
+        rtol=accuracy,
+        err_msg="Orbital energy is not constant.",
+    )
+    np.testing.assert_allclose(
+        finalRotEnergy,
+        initialRotEnergy,
+        rtol=accuracy,
+        err_msg="Rotational energy is not constant.",
+    )
     for i in range(3):
-        np.testing.assert_allclose(finalOrbAngMom, initialOrbAngMom_N, rtol=accuracy,
-                                   err_msg="Orbital angular momentum is not constant.")
-        np.testing.assert_allclose(finalRotAngMom, initialRotAngMom_N, rtol=accuracy,
-                                   err_msg="Rotational angular momentum is not constant.")
+        np.testing.assert_allclose(
+            finalOrbAngMom,
+            initialOrbAngMom_N,
+            rtol=accuracy,
+            err_msg="Orbital angular momentum is not constant.",
+        )
+        np.testing.assert_allclose(
+            finalRotAngMom,
+            initialRotAngMom_N,
+            rtol=accuracy,
+            err_msg="Rotational angular momentum is not constant.",
+        )
 
 
 def translatingBodyCommandedForce(show_plots):
@@ -588,22 +772,36 @@ def translatingBodyCommandedForce(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = (
+        linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    )
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
     translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody1.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody1.setDCM_FP([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
-    translatingBody1.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody1.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody1.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody1.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody1.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody1.setRhoInit(np.random.uniform(-5.0, 10.0))
     translatingBody1.setRhoDotInit(0.05)
@@ -612,16 +810,28 @@ def translatingBodyCommandedForce(show_plots):
 
     translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody2.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody2.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody2.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody2.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody2.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody2.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody2.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody2.setRhoDotInit(0.05)
@@ -630,16 +840,28 @@ def translatingBodyCommandedForce(show_plots):
 
     translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody3.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody3.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody3.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody3.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody3.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody3.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody3.setFHat_P([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
     translatingBody3.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody3.setRhoDotInit(0.05)
@@ -648,16 +870,28 @@ def translatingBodyCommandedForce(show_plots):
 
     translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody4.setIPntFc_F(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     translatingBody4.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    translatingBody4.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
-    translatingBody4.setR_F0P_P([[np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)],
-                                 [np.random.uniform(-1.0, 1.0)]])
+    translatingBody4.setR_FcF_F(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    translatingBody4.setR_F0P_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     translatingBody4.setFHat_P([[0.0], [0.0], [1.0]])
     translatingBody4.setRhoInit(np.random.uniform(-5.0, 5.0))
     translatingBody4.setRhoDotInit(0.05)
@@ -673,8 +907,16 @@ def translatingBodyCommandedForce(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
@@ -685,7 +927,7 @@ def translatingBodyCommandedForce(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -703,7 +945,9 @@ def translatingBodyCommandedForce(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Add states to log
@@ -749,48 +993,58 @@ def translatingBodyCommandedForce(show_plots):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
-    plt.plot(rho1Data.times() * 1e-9, rho1, label=r'$\rho_1$')
-    plt.plot(rho2Data.times() * 1e-9, rho2, label=r'$\rho_2$')
-    plt.plot(rho3Data.times() * 1e-9, rho3, label=r'$\rho_3$')
-    plt.plot(rho4Data.times() * 1e-9, rho4, label=r'$\rho_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Displacement')
+    plt.plot(rho1Data.times() * 1e-9, rho1, label=r"$\rho_1$")
+    plt.plot(rho2Data.times() * 1e-9, rho2, label=r"$\rho_2$")
+    plt.plot(rho3Data.times() * 1e-9, rho3, label=r"$\rho_3$")
+    plt.plot(rho4Data.times() * 1e-9, rho4, label=r"$\rho_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Displacement")
 
     plt.figure()
     plt.clf()
-    plt.plot(rho1Data.times() * 1e-9, rho1Dot, label=r'$\dot{\rho}_1$')
-    plt.plot(rho2Data.times() * 1e-9, rho2Dot, label=r'$\dot{\rho}_2$')
-    plt.plot(rho3Data.times() * 1e-9, rho3Dot, label=r'$\dot{\rho}_3$')
-    plt.plot(rho4Data.times() * 1e-9, rho4Dot, label=r'$\dot{\rho}_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Displacement Rate')
+    plt.plot(rho1Data.times() * 1e-9, rho1Dot, label=r"$\dot{\rho}_1$")
+    plt.plot(rho2Data.times() * 1e-9, rho2Dot, label=r"$\dot{\rho}_2$")
+    plt.plot(rho3Data.times() * 1e-9, rho3Dot, label=r"$\dot{\rho}_3$")
+    plt.plot(rho4Data.times() * 1e-9, rho4Dot, label=r"$\dot{\rho}_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Displacement Rate")
 
     if show_plots:
         plt.show()
@@ -799,13 +1053,25 @@ def translatingBodyCommandedForce(show_plots):
     # Testing setup
     accuracy = 1e-12
 
-    np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy,
-                               err_msg="Orbital energy is not constant.")
+    np.testing.assert_allclose(
+        finalOrbEnergy,
+        initialOrbEnergy,
+        rtol=accuracy,
+        err_msg="Orbital energy is not constant.",
+    )
     for i in range(3):
-        np.testing.assert_allclose(finalOrbAngMom, initialOrbAngMom_N, rtol=accuracy,
-                                   err_msg="Orbital angular momentum is not constant.")
-        np.testing.assert_allclose(finalRotAngMom, initialRotAngMom_N, rtol=accuracy,
-                                   err_msg="Rotational angular momentum is not constant.")
+        np.testing.assert_allclose(
+            finalOrbAngMom,
+            initialOrbAngMom_N,
+            rtol=accuracy,
+            err_msg="Orbital angular momentum is not constant.",
+        )
+        np.testing.assert_allclose(
+            finalRotAngMom,
+            initialRotAngMom_N,
+            rtol=accuracy,
+            err_msg="Rotational angular momentum is not constant.",
+        )
 
 
 if __name__ == "__main__":

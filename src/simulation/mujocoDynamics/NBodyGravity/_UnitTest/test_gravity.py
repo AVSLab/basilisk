@@ -66,7 +66,7 @@ def test_pointMass(showPlots):
     """
 
     # Orbital parameters for the body
-    mu = 0.3986004415e15 # m**3/s**2
+    mu = 0.3986004415e15  # m**3/s**2
 
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000.0 * 1000  # meters
@@ -80,7 +80,7 @@ def test_pointMass(showPlots):
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)
 
-    period = 2 * np.pi * np.sqrt(oe.a**3 / mu) # s
+    period = 2 * np.pi * np.sqrt(oe.a**3 / mu)  # s
     tf = 2 * period
 
     # Because we use an adaptive integrator we can set the
@@ -128,7 +128,7 @@ def test_pointMass(showPlots):
 
     # Add random attitude and attitude rate, which should have no impact
     body.setAttitude(rbk.euler1232MRP([np.pi / 2, np.pi / 6, np.pi / 4]))
-    body.setAttitudeRate([0.3, 0.1, 0.2]) # rad/s
+    body.setAttitudeRate([0.3, 0.1, 0.2])  # rad/s
 
     # Run sim
     scSim.ConfigureStopTime(macros.sec2nano(tf))
@@ -211,7 +211,7 @@ def test_dumbbell(showPlots, initialAngularRate):
     """
 
     # Initial orbital parameters of the body: circular equatorial LEO orbit
-    mu = 0.3986004415e15 # m**3/s**2
+    mu = 0.3986004415e15  # m**3/s**2
 
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000.0 * 1000  # meters
@@ -225,7 +225,7 @@ def test_dumbbell(showPlots, initialAngularRate):
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)
 
-    period = 2 * np.pi * np.sqrt(oe.a**3 / mu) # s
+    period = 2 * np.pi * np.sqrt(oe.a**3 / mu)  # s
 
     # Integrate for an orbit, record 50 points through orbit
     tf = period * 1
@@ -285,7 +285,9 @@ def test_dumbbell(showPlots, initialAngularRate):
     mainBody.setPosition(rN)
     mainBody.setVelocity(vN)
     mainBody.setAttitude(rbk.euler1232MRP([0, 0, 0]))
-    mainBody.setAttitudeRate([0, 0, 2 * np.pi / period if initialAngularRate else 0]) # rad/s
+    mainBody.setAttitudeRate(
+        [0, 0, 2 * np.pi / period if initialAngularRate else 0]
+    )  # rad/s
 
     # Run sim
     scSim.ExecuteSimulation()
@@ -452,8 +454,8 @@ def test_gps(showPlots: bool, useSphericalHarmonics: bool, useThirdBodies: bool)
 
     # initial date, simulation time, and time step
     utcCalInit = "2022 NOV 14 00:01:10"
-    tf = 1 * 3600 # s
-    dt = 1 # s
+    tf = 1 * 3600  # s
+    dt = 1  # s
 
     # load trajectory from SPICE
     spiceSatelliteState = loadSatelliteTrajectory(utcCalInit, tf, dt)
@@ -533,8 +535,8 @@ def test_gps(showPlots: bool, useSphericalHarmonics: bool, useThirdBodies: bool)
     scSim.ConfigureStopTime(macros.sec2nano(tf))
 
     # Initialize the body to the same position and velocity as the SPICE result
-    body.setPosition(spiceSatelliteState[0, :3] * 1000) # m
-    body.setVelocity(spiceSatelliteState[0, 3:] * 1000) # m
+    body.setPosition(spiceSatelliteState[0, :3] * 1000)  # m
+    body.setVelocity(spiceSatelliteState[0, 3:] * 1000)  # m
 
     # Run sim
     scSim.ExecuteSimulation()
@@ -606,11 +608,11 @@ def test_mujocoVsSpacecraft(
     # Initial time, final time, and time step
     # We run for 24hr only if we want to plot results
     utcCalInit = "2022 NOV 14 00:01:10"
-    dt = 1 # s
-    tf = 24 * 3600 if showPlots else 10 # s
+    dt = 1  # s
+    tf = 24 * 3600 if showPlots else 10  # s
 
     # initial state of the body
-    mu = 0.3986004415e15 # m**3/s**2
+    mu = 0.3986004415e15  # m**3/s**2
 
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000.0 * 1000  # meters
@@ -643,7 +645,7 @@ def test_mujocoVsSpacecraft(
             tic = time.time()
             result = fn()
             toc = time.time()
-            print(f"{fn.__name__} took {toc-tic} seconds")
+            print(f"{fn.__name__} took {toc - tic} seconds")
             return result
 
         return wrap
@@ -682,11 +684,15 @@ def test_mujocoVsSpacecraft(
         )
 
         # initialize spacecraft parameters
-        scObject.hub.mHub = 100 # kg
-        scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m
-        scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]] # kg*m**2
-        scObject.hub.r_CN_NInit = rN # m
-        scObject.hub.v_CN_NInit = vN # m/s
+        scObject.hub.mHub = 100  # kg
+        scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m
+        scObject.hub.IHubPntBc_B = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]  # kg*m**2
+        scObject.hub.r_CN_NInit = rN  # m
+        scObject.hub.v_CN_NInit = vN  # m/s
 
         # Create recorder
         scStateRecorder = scObject.scStateOutMsg.recorder()
@@ -757,7 +763,6 @@ def test_mujocoVsSpacecraft(
     bodyStateRecorder = mujocoSim()
 
     if showPlots:
-
         t = bodyStateRecorder.times() * macros.NANO2SEC
         diff = np.linalg.norm(scStateRecorder.r_BN_N - bodyStateRecorder.r_BN_N, axis=1)
 

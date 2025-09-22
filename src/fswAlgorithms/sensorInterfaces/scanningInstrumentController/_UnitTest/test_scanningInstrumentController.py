@@ -29,40 +29,52 @@ from Basilisk.architecture import bskLogging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
-#Test cases:
-#1: attitude compliant, rate disabled, device status written, controller status of 1
-#2: attitude noncompliant, rate disabled, device status written, controller status of 1
-#3: attitude compliant, rate disabled, device status not written, no controller status
-#4: attitude compliant, rate disabled, device status of 1, controller status of 0
-#5: attitude compliant, rate disabled, device status of 0, controller status of 1
-#6: attitude compliant, rate disabled, device status not written, controller status of 1
-#7: attitude compliant, rate disabled, rate noncompliant, device status not written, no
+# Test cases:
+# 1: attitude compliant, rate disabled, device status written, controller status of 1
+# 2: attitude noncompliant, rate disabled, device status written, controller status of 1
+# 3: attitude compliant, rate disabled, device status not written, no controller status
+# 4: attitude compliant, rate disabled, device status of 1, controller status of 0
+# 5: attitude compliant, rate disabled, device status of 0, controller status of 1
+# 6: attitude compliant, rate disabled, device status not written, controller status of 1
+# 7: attitude compliant, rate disabled, rate noncompliant, device status not written, no
 # controller status
-#8: attitude compliant, rate enabled, rate noncompliant, device status not written, no
+# 8: attitude compliant, rate enabled, rate noncompliant, device status not written, no
 # controller status
-#9: attitude compliant, rate enabled, rate compliant, device status not written, no
+# 9: attitude compliant, rate enabled, rate compliant, device status not written, no
 # controller status
-#10: attitude noncompliant, rate enabled, rate compliant
-tests = [(0.1, 0.01, 0, 0, 0, 1, 1, [1, 1, 1]),
-         (0.1, 0.2, 0, 0, 0, 1, 1, [0, 0, 0]),
-         (0.1, 0.01, 0, 0, 0, None, None, [0, 0, 0]),
-         (0.1, 0.01, 0, 0, 0, 1, 0, [1, 1, 1]),
-         (0.1, 0.01, 0, 0, 0, 0, 1, [0, 0, 0]),
-         (0.1, 0.01, 0, 0, 0, None, 1, [1, 1, 1]),
-         (0.1, 0.01, 0, 0.01, 0.1, None, 1, [1, 1, 1]),
-         (0.1, 0.01, 1, 0.01, 0.1, None, 1, [0, 0, 0]),
-         (0.1, 0.01, 1, 0.01, 0.001, 1, None, [1, 1, 1]),
-         (0.1, 0.2, 1, 0.01, 0.001, 1, None, [0, 0, 0])
-        ]
+# 10: attitude noncompliant, rate enabled, rate compliant
+tests = [
+    (0.1, 0.01, 0, 0, 0, 1, 1, [1, 1, 1]),
+    (0.1, 0.2, 0, 0, 0, 1, 1, [0, 0, 0]),
+    (0.1, 0.01, 0, 0, 0, None, None, [0, 0, 0]),
+    (0.1, 0.01, 0, 0, 0, 1, 0, [1, 1, 1]),
+    (0.1, 0.01, 0, 0, 0, 0, 1, [0, 0, 0]),
+    (0.1, 0.01, 0, 0, 0, None, 1, [1, 1, 1]),
+    (0.1, 0.01, 0, 0.01, 0.1, None, 1, [1, 1, 1]),
+    (0.1, 0.01, 1, 0.01, 0.1, None, 1, [0, 0, 0]),
+    (0.1, 0.01, 1, 0.01, 0.001, 1, None, [1, 1, 1]),
+    (0.1, 0.2, 1, 0.01, 0.001, 1, None, [0, 0, 0]),
+]
 
-@pytest.mark.parametrize('att_limit, att_mag, use_rate_limit,rate_limit,omega_mag' +
-                         ',deviceStatus,controlStatus,expected_result', tests)
-def test_scanningInstrumentController(att_limit, att_mag, use_rate_limit, rate_limit,
-                                    omega_mag, deviceStatus, controlStatus,
-                                    expected_result):
+
+@pytest.mark.parametrize(
+    "att_limit, att_mag, use_rate_limit,rate_limit,omega_mag"
+    + ",deviceStatus,controlStatus,expected_result",
+    tests,
+)
+def test_scanningInstrumentController(
+    att_limit,
+    att_mag,
+    use_rate_limit,
+    rate_limit,
+    omega_mag,
+    deviceStatus,
+    controlStatus,
+    expected_result,
+):
     r"""
     **Validation Test Description**
 
@@ -87,16 +99,30 @@ def test_scanningInstrumentController(att_limit, att_mag, use_rate_limit, rate_l
     result.
     """
 
-    module_results = scanningInstrumentControllerTestFunction(att_limit,
-                                        att_mag, use_rate_limit, rate_limit, omega_mag,
-                                        deviceStatus, controlStatus, expected_result)
+    module_results = scanningInstrumentControllerTestFunction(
+        att_limit,
+        att_mag,
+        use_rate_limit,
+        rate_limit,
+        omega_mag,
+        deviceStatus,
+        controlStatus,
+        expected_result,
+    )
 
     np.testing.assert_array_equal(module_results, expected_result)
 
 
-def scanningInstrumentControllerTestFunction(att_limit = 0.1, att_mag = 0.1,
-                        use_rate_limit=1, rate_limit=0.01, omega_mag=0.001,
-                        deviceStatus=None, controlStatus=None, expected_result=None):
+def scanningInstrumentControllerTestFunction(
+    att_limit=0.1,
+    att_mag=0.1,
+    use_rate_limit=1,
+    rate_limit=0.01,
+    omega_mag=0.001,
+    deviceStatus=None,
+    controlStatus=None,
+    expected_result=None,
+):
     """Test method"""
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -112,14 +138,14 @@ def scanningInstrumentControllerTestFunction(att_limit = 0.1, att_mag = 0.1,
     module.ModelTag = "scanningInstrumentControllerTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    #Initializing the test module configuration data
-    module.useRateTolerance = use_rate_limit              # rate limit enabled
-    module.rateErrTolerance = rate_limit                  # rate limit
-    module.attErrTolerance = att_limit                    # attitude error tolerance
+    # Initializing the test module configuration data
+    module.useRateTolerance = use_rate_limit  # rate limit enabled
+    module.rateErrTolerance = rate_limit  # rate limit
+    module.attErrTolerance = att_limit  # attitude error tolerance
 
     # Configure blank module input messages
     accessInMsgData = messaging.AccessMsgPayload()
-    accessInMsgData.hasAccess = 1                 # set access to true
+    accessInMsgData.hasAccess = 1  # set access to true
     accessInMsg = messaging.AccessMsg().write(accessInMsgData)
 
     attGuidInMsgData = messaging.AttGuidMsgPayload()

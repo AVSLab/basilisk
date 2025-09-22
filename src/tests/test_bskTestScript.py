@@ -38,7 +38,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/BskSim/scenarios')
+sys.path.append(path + "/../../examples/BskSim/scenarios")
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -48,24 +48,26 @@ sys.path.append(path + '/../../examples/BskSim/scenarios')
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("bskSimCase", [
-                                        'scenario_BasicOrbit'
-                                        , 'scenario_AttEclipse'
-                                        , 'scenario_AttGuidance'
-                                        , 'scenario_AttGuidHyperbolic'
-                                        , 'scenario_AttSteering'
-                                        , 'scenario_FeedbackRW'
-                                        , 'scenario_AttModes'
-                                        , 'scenario_BasicOrbitFormation'
-                                        , 'scenario_RelativePointingFormation'
-                                        , 'scenario_AddRWFault'
-                                        , 'scenario_LambertGuidance'
-                                        ])
+@pytest.mark.parametrize(
+    "bskSimCase",
+    [
+        "scenario_BasicOrbit",
+        "scenario_AttEclipse",
+        "scenario_AttGuidance",
+        "scenario_AttGuidHyperbolic",
+        "scenario_AttSteering",
+        "scenario_FeedbackRW",
+        "scenario_AttModes",
+        "scenario_BasicOrbitFormation",
+        "scenario_RelativePointingFormation",
+        "scenario_AddRWFault",
+        "scenario_LambertGuidance",
+    ],
+)
 @pytest.mark.scenarioTest
 def test_scenarioBskScenarios(show_plots, bskSimCase):
-
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
     # import the bskSim script to be tested
     scene_plt = importlib.import_module(bskSimCase)
 
@@ -74,7 +76,7 @@ def test_scenarioBskScenarios(show_plots, bskSimCase):
 
         # save the figures to the Doxygen scenario images folder
 
-        if(figureList != {}):
+        if figureList != {}:
             for pltName, plt in list(figureList.items()):
                 unitTestSupport.saveScenarioFigure(pltName, plt, path)
 

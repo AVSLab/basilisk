@@ -103,15 +103,21 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk import __path__
-from Basilisk.fswAlgorithms import (lambertPlanner, lambertSolver, lambertValidator)
+from Basilisk.fswAlgorithms import lambertPlanner, lambertSolver, lambertValidator
 from Basilisk.simulation import simpleNav
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+    vizSupport,
+)
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import vizInterface
+
     vizFound = True
 except ImportError:
     vizFound = False
@@ -149,8 +155,8 @@ def run(show_plots):
     fswProcess = scSim.CreateNewProcess(fswProcessName)
 
     # create the dynamics task and specify the simulation time step information
-    simStep = 10.
-    fswStep = 30.
+    simStep = 10.0
+    fswStep = 30.0
     simTimeStep = macros.sec2nano(simStep)
     fswTimeStep = macros.sec2nano(fswStep)
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
@@ -169,53 +175,85 @@ def run(show_plots):
     scObject.ModelTag = "bskSat"
 
     oeSC = orbitalMotion.ClassicElements()
-    oeSC.a = 10000. * 1e3
+    oeSC.a = 10000.0 * 1e3
     oeSC.e = 0.001
-    oeSC.i = 5. * macros.D2R
-    oeSC.Omega = 10. * macros.D2R
-    oeSC.omega = 10. * macros.D2R
-    oeSC.f = 10. * macros.D2R
+    oeSC.i = 5.0 * macros.D2R
+    oeSC.Omega = 10.0 * macros.D2R
+    oeSC.omega = 10.0 * macros.D2R
+    oeSC.f = 10.0 * macros.D2R
     # spacecraft state at initial time
     r_BO_N, v_BO_N = orbitalMotion.elem2rv(mu, oeSC)
 
     # Set the truth ICs for the spacecraft position and velocity
     scObject.hub.r_CN_NInit = r_BO_N  # m   - r_BN_N
     scObject.hub.v_CN_NInit = v_BO_N  # m/s - v_BN_N
-    scObject.hub.mHub = 330.  # kg
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.hub.mHub = 330.0  # kg
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     # orbit transfer parameters
-    tau = 2*np.pi*np.sqrt(oeSC.a**3/mu)
-    tm = round(tau/4./simStep)*simStep  # maneuver time
-    tf = round(tau/2./simStep)*simStep  # final time
-    r_TN_N = np.array([-(rEarth + 200 * 1e3), 0., 0.])  # targeted position
+    tau = 2 * np.pi * np.sqrt(oeSC.a**3 / mu)
+    tm = round(tau / 4.0 / simStep) * simStep  # maneuver time
+    tf = round(tau / 2.0 / simStep) * simStep  # final time
+    r_TN_N = np.array([-(rEarth + 200 * 1e3), 0.0, 0.0])  # targeted position
 
     # Lambert solution validation parameters
-    maxDistanceTarget = 500.
+    maxDistanceTarget = 500.0
     minOrbitRadius = rEarth
 
     # Set up simpleNav for s/c "measurements"
     simpleNavMeas = simpleNav.SimpleNav()
-    simpleNavMeas.ModelTag = 'SimpleNav'
+    simpleNavMeas.ModelTag = "SimpleNav"
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    pos_sigma_sc = 1.
+    pos_sigma_sc = 1.0
     vel_sigma_sc = 0.01
     att_sigma_sc = 0.0
     rate_sigma_sc = 0.0
     sun_sigma_sc = 0.0
     dv_sigma_sc = 0.0
-    p_matrix_sc = np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
-                           vel_sigma_sc, vel_sigma_sc, vel_sigma_sc,
-                           att_sigma_sc, att_sigma_sc, att_sigma_sc,
-                           rate_sigma_sc, rate_sigma_sc, rate_sigma_sc,
-                           sun_sigma_sc, sun_sigma_sc, sun_sigma_sc,
-                           dv_sigma_sc, dv_sigma_sc, dv_sigma_sc])
-    walk_bounds_sc = [[10.], [10.], [10.],
-                      [1], [1], [1],
-                      [0.], [0.], [0.],
-                      [0.], [0.], [0.],
-                      [0.], [0.], [0.],
-                      [0.], [0.], [0.]]
+    p_matrix_sc = np.diag(
+        [
+            pos_sigma_sc,
+            pos_sigma_sc,
+            pos_sigma_sc,
+            vel_sigma_sc,
+            vel_sigma_sc,
+            vel_sigma_sc,
+            att_sigma_sc,
+            att_sigma_sc,
+            att_sigma_sc,
+            rate_sigma_sc,
+            rate_sigma_sc,
+            rate_sigma_sc,
+            sun_sigma_sc,
+            sun_sigma_sc,
+            sun_sigma_sc,
+            dv_sigma_sc,
+            dv_sigma_sc,
+            dv_sigma_sc,
+        ]
+    )
+    walk_bounds_sc = [
+        [10.0],
+        [10.0],
+        [10.0],
+        [1],
+        [1],
+        [1],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+    ]
     simpleNavMeas.PMatrix = p_matrix_sc
     simpleNavMeas.walkBounds = walk_bounds_sc
 
@@ -241,10 +279,20 @@ def run(show_plots):
     lamValidator.setManeuverTime(tm)
     lamValidator.setMaxDistanceTarget(maxDistanceTarget)
     lamValidator.setMinOrbitRadius(minOrbitRadius)
-    lamValidator.setUncertaintyStates(np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
-                                              vel_sigma_sc, vel_sigma_sc, vel_sigma_sc]))
+    lamValidator.setUncertaintyStates(
+        np.diag(
+            [
+                pos_sigma_sc,
+                pos_sigma_sc,
+                pos_sigma_sc,
+                vel_sigma_sc,
+                vel_sigma_sc,
+                vel_sigma_sc,
+            ]
+        )
+    )
     lamValidator.setUncertaintyDV(0.1)
-    lamValidator.setDvConvergenceTolerance(1.)
+    lamValidator.setDvConvergenceTolerance(1.0)
     lamValidator.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
     lamValidator.lambertProblemInMsg.subscribeTo(lamPlanner.lambertProblemOutMsg)
     lamValidator.lambertPerformanceInMsg.subscribeTo(lamSolver.lambertPerformanceOutMsg)
@@ -281,9 +329,12 @@ def run(show_plots):
     # be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by
     # Vizard and played back after running the BSK simulation.
     if vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, scObject,
-                                                  # saveFile=fileName
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            dynTaskName,
+            scObject,
+            # saveFile=fileName
+        )
         viz.settings.showSpacecraftLabels = 1
 
     # initialize Simulation
@@ -346,15 +397,21 @@ def run(show_plots):
 
     # FSW stops after maneuver
     # to plot for entire time span and automatically adjust axes, data is extended for plotting
-    plot_rm(np.append(timeFSW, time[-1]), np.append(r1_N, [np.nan * np.ones(3)], axis=0))
+    plot_rm(
+        np.append(timeFSW, time[-1]), np.append(r1_N, [np.nan * np.ones(3)], axis=0)
+    )
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
-    plot_vm(np.append(timeFSW, time[-1]), np.append(v1_N, [np.nan * np.ones(3)], axis=0))
+    plot_vm(
+        np.append(timeFSW, time[-1]), np.append(v1_N, [np.nan * np.ones(3)], axis=0)
+    )
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(4)
 
-    plot_dV(np.append(timeFSW, time[-1]), np.append(dv_N, [np.nan * np.ones(3)], axis=0))
+    plot_dV(
+        np.append(timeFSW, time[-1]), np.append(dv_N, [np.nan * np.ones(3)], axis=0)
+    )
     pltName = fileName + "5"
     figureList[pltName] = plt.figure(5)
 
@@ -370,7 +427,9 @@ def run(show_plots):
     pltName = fileName + "8"
     figureList[pltName] = plt.figure(8)
 
-    plot_failedDvConvergence(np.append(timeFSW, time[-1]), np.append(failedDvSolutionConvergence, [np.nan]))
+    plot_failedDvConvergence(
+        np.append(timeFSW, time[-1]), np.append(failedDvSolutionConvergence, [np.nan])
+    )
     pltName = fileName + "9"
     figureList[pltName] = plt.figure(9)
 
@@ -386,53 +445,53 @@ def run(show_plots):
 # Plotting functions
 def plot_position(time, r_BN_N_truth, r_BN_N_meas, r_TN_N):
     """Plot the position result."""
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, r_BN_N_meas[:, 0], 'k*', label='measurement', markersize=2)
-    ax[1].plot(time, r_BN_N_meas[:, 1], 'k*', markersize=2)
-    ax[2].plot(time, r_BN_N_meas[:, 2], 'k*', markersize=2)
+    ax[0].plot(time, r_BN_N_meas[:, 0], "k*", label="measurement", markersize=2)
+    ax[1].plot(time, r_BN_N_meas[:, 1], "k*", markersize=2)
+    ax[2].plot(time, r_BN_N_meas[:, 2], "k*", markersize=2)
 
-    ax[0].plot(time, r_BN_N_truth[:, 0], label='truth')
+    ax[0].plot(time, r_BN_N_truth[:, 0], label="truth")
     ax[1].plot(time, r_BN_N_truth[:, 1])
     ax[2].plot(time, r_BN_N_truth[:, 2])
 
-    ax[0].plot(time[-1], r_TN_N[0], 'rx', label='target')
-    ax[1].plot(time[-1], r_TN_N[1], 'rx')
-    ax[2].plot(time[-1], r_TN_N[2], 'rx')
+    ax[0].plot(time[-1], r_TN_N[0], "rx", label="target")
+    ax[1].plot(time[-1], r_TN_N[1], "rx")
+    ax[2].plot(time[-1], r_TN_N[2], "rx")
 
-    plt.xlabel('Time [sec]')
-    plt.title('Spacecraft Position')
+    plt.xlabel("Time [sec]")
+    plt.title("Spacecraft Position")
 
-    ax[0].set_ylabel('${}^Nr_{BN_1}$ [m]')
-    ax[1].set_ylabel('${}^Nr_{BN_2}$ [m]')
-    ax[2].set_ylabel('${}^Nr_{BN_3}$ [m]')
+    ax[0].set_ylabel("${}^Nr_{BN_1}$ [m]")
+    ax[1].set_ylabel("${}^Nr_{BN_2}$ [m]")
+    ax[2].set_ylabel("${}^Nr_{BN_3}$ [m]")
 
-    ax[0].legend(loc='upper right')
+    ax[0].legend(loc="upper right")
 
 
 def plot_velocity(time, v_BN_N_truth, v_BN_N_meas):
     """Plot the velocity result."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, v_BN_N_meas[:, 0], 'k*', label='measurement', markersize=2)
-    ax[1].plot(time, v_BN_N_meas[:, 1], 'k*', markersize=2)
-    ax[2].plot(time, v_BN_N_meas[:, 2], 'k*', markersize=2)
+    ax[0].plot(time, v_BN_N_meas[:, 0], "k*", label="measurement", markersize=2)
+    ax[1].plot(time, v_BN_N_meas[:, 1], "k*", markersize=2)
+    ax[2].plot(time, v_BN_N_meas[:, 2], "k*", markersize=2)
 
-    ax[0].plot(time, v_BN_N_truth[:, 0], label='truth')
+    ax[0].plot(time, v_BN_N_truth[:, 0], label="truth")
     ax[1].plot(time, v_BN_N_truth[:, 1])
     ax[2].plot(time, v_BN_N_truth[:, 2])
 
-    plt.xlabel('Time [sec]')
-    plt.title('Spacecraft Velocity')
+    plt.xlabel("Time [sec]")
+    plt.title("Spacecraft Velocity")
 
-    ax[0].set_ylabel('${}^Nv_{BN_1}$ [m/s]')
-    ax[1].set_ylabel('${}^Nv_{BN_2}$ [m/s]')
-    ax[2].set_ylabel('${}^Nv_{BN_3}$ [m/s]')
+    ax[0].set_ylabel("${}^Nv_{BN_1}$ [m/s]")
+    ax[1].set_ylabel("${}^Nv_{BN_2}$ [m/s]")
+    ax[2].set_ylabel("${}^Nv_{BN_3}$ [m/s]")
 
     ax[0].legend()
 
@@ -440,20 +499,20 @@ def plot_velocity(time, v_BN_N_truth, v_BN_N_meas):
 def plot_rm(time, rm_BN_N):
     """Plot the expected position at maneuver time."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, rm_BN_N[:, 0], 'k*', label='measurement', markersize=2)
-    ax[1].plot(time, rm_BN_N[:, 1], 'k*', markersize=2)
-    ax[2].plot(time, rm_BN_N[:, 2], 'k*', markersize=2)
+    ax[0].plot(time, rm_BN_N[:, 0], "k*", label="measurement", markersize=2)
+    ax[1].plot(time, rm_BN_N[:, 1], "k*", markersize=2)
+    ax[2].plot(time, rm_BN_N[:, 2], "k*", markersize=2)
 
-    plt.xlabel('Time [sec]')
-    plt.title('Planner: Expected Spacecraft Position at Maneuver Time')
+    plt.xlabel("Time [sec]")
+    plt.title("Planner: Expected Spacecraft Position at Maneuver Time")
 
-    ax[0].set_ylabel('${}^Nr_{BN,m_1}$ [m]')
-    ax[1].set_ylabel('${}^Nr_{BN,m_2}$ [m]')
-    ax[2].set_ylabel('${}^Nr_{BN,m_3}$ [m]')
+    ax[0].set_ylabel("${}^Nr_{BN,m_1}$ [m]")
+    ax[1].set_ylabel("${}^Nr_{BN,m_2}$ [m]")
+    ax[2].set_ylabel("${}^Nr_{BN,m_3}$ [m]")
 
     ax[0].set_xlim([time[0], time[-1]])
     ax[1].set_xlim([time[0], time[-1]])
@@ -463,20 +522,20 @@ def plot_rm(time, rm_BN_N):
 def plot_vm(time, vm_BN_N):
     """Plot the expected velocity at maneuver time."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, vm_BN_N[:, 0], 'k*', label='measurement', markersize=2)
-    ax[1].plot(time, vm_BN_N[:, 1], 'k*', markersize=2)
-    ax[2].plot(time, vm_BN_N[:, 2], 'k*', markersize=2)
+    ax[0].plot(time, vm_BN_N[:, 0], "k*", label="measurement", markersize=2)
+    ax[1].plot(time, vm_BN_N[:, 1], "k*", markersize=2)
+    ax[2].plot(time, vm_BN_N[:, 2], "k*", markersize=2)
 
-    plt.xlabel('Time [sec]')
-    plt.title('Planner: Expected Spacecraft Velocity at Maneuver Time')
+    plt.xlabel("Time [sec]")
+    plt.title("Planner: Expected Spacecraft Velocity at Maneuver Time")
 
-    ax[0].set_ylabel('${}^Nv_{BN,m_1}$ [m/s]')
-    ax[1].set_ylabel('${}^Nv_{BN,m_2}$ [m/s]')
-    ax[2].set_ylabel('${}^Nv_{BN,m_3}$ [m/s]')
+    ax[0].set_ylabel("${}^Nv_{BN,m_1}$ [m/s]")
+    ax[1].set_ylabel("${}^Nv_{BN,m_2}$ [m/s]")
+    ax[2].set_ylabel("${}^Nv_{BN,m_3}$ [m/s]")
 
     ax[0].set_xlim([time[0], time[-1]])
     ax[1].set_xlim([time[0], time[-1]])
@@ -486,20 +545,20 @@ def plot_vm(time, vm_BN_N):
 def plot_dV(time, dv_N):
     """Plot the required Delta-V for the maneuver."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, dv_N[:, 0], 'k*', markersize=2)
-    ax[1].plot(time, dv_N[:, 1], 'k*', markersize=2)
-    ax[2].plot(time, dv_N[:, 2], 'k*', markersize=2)
+    ax[0].plot(time, dv_N[:, 0], "k*", markersize=2)
+    ax[1].plot(time, dv_N[:, 1], "k*", markersize=2)
+    ax[2].plot(time, dv_N[:, 2], "k*", markersize=2)
 
-    plt.xlabel('Time [sec]')
-    plt.title('Delta-V')
+    plt.xlabel("Time [sec]")
+    plt.title("Delta-V")
 
-    ax[0].set_ylabel('${}^N\\Delta v_{1}$ [m/s]')
-    ax[1].set_ylabel('${}^N\\Delta v_{2}$ [m/s]')
-    ax[2].set_ylabel('${}^N\\Delta v_{3}$ [m/s]')
+    ax[0].set_ylabel("${}^N\\Delta v_{1}$ [m/s]")
+    ax[1].set_ylabel("${}^N\\Delta v_{2}$ [m/s]")
+    ax[2].set_ylabel("${}^N\\Delta v_{3}$ [m/s]")
 
     ax[0].set_xlim([time[0], time[-1]])
     ax[1].set_xlim([time[0], time[-1]])
@@ -514,9 +573,9 @@ def plot_x(time, x):
 
     plt.plot(time, x)
 
-    plt.xlabel('Time [sec]')
-    plt.ylabel('x [-]')
-    plt.title('Lambert Solver Performance: x Solution')
+    plt.xlabel("Time [sec]")
+    plt.ylabel("x [-]")
+    plt.title("Lambert Solver Performance: x Solution")
 
     plt.xlim([time[0], time[-1]])
 
@@ -529,9 +588,9 @@ def plot_numIter(time, numIter):
 
     plt.plot(time, numIter)
 
-    plt.xlabel('Time [sec]')
-    plt.ylabel('number of iterations [-]')
-    plt.title('Lambert Solver Performance: Number of Iterations')
+    plt.xlabel("Time [sec]")
+    plt.ylabel("number of iterations [-]")
+    plt.title("Lambert Solver Performance: Number of Iterations")
 
     plt.xlim([time[0], time[-1]])
 
@@ -544,9 +603,9 @@ def plot_errX(time, errX):
 
     plt.plot(time, errX)
 
-    plt.xlabel('Time [sec]')
-    plt.ylabel('x error')
-    plt.title('Lambert Solver Performance: Error in x')
+    plt.xlabel("Time [sec]")
+    plt.ylabel("x error")
+    plt.title("Lambert Solver Performance: Error in x")
 
     plt.xlim([time[0], time[-1]])
 
@@ -559,9 +618,9 @@ def plot_failedDvConvergence(time, failedDvSolutionConvergence):
 
     plt.plot(time, failedDvSolutionConvergence)
 
-    plt.xlabel('Time [sec]')
-    plt.ylabel('Failed Dv Convergence Flag')
-    plt.title('Lambert Validator: Failed Delta-V convergence (true if 1)')
+    plt.xlabel("Time [sec]")
+    plt.ylabel("Failed Dv Convergence Flag")
+    plt.title("Lambert Validator: Failed Delta-V convergence (true if 1)")
 
     plt.xlim([time[0], time[-1]])
 

@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,7 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 
 
 #
@@ -34,7 +32,7 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
@@ -53,24 +51,55 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeGravBody
 
 
-test_drag = [([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]),
-             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.3, 0, 0]), np.array([0, 0.3, 0])]),
-             ([1.0, 2.0], np.array([2.0, 4.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])]),
-             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 1, 0])], [np.array([0.1, 0, 0]), np.array([0, 0, 0.1])]),
-             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([1, 0, 0]), np.array([0, 0, 1])], [np.array([0.1, 0, 0]), np.array([0, 0, 0.1])]),
-             ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]),
+test_drag = [
+    (
+        [1.0, 1.0],
+        np.array([2.0, 2.0]),
+        [np.array([1, 0, 0]), np.array([0, 1, 0])],
+        [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])],
+    ),
+    (
+        [1.0, 1.0],
+        np.array([2.0, 2.0]),
+        [np.array([1, 0, 0]), np.array([0, 1, 0])],
+        [np.array([0.3, 0, 0]), np.array([0, 0.3, 0])],
+    ),
+    (
+        [1.0, 2.0],
+        np.array([2.0, 4.0]),
+        [np.array([1, 0, 0]), np.array([0, 1, 0])],
+        [np.array([0.1, 0, 0]), np.array([0, 0.1, 0])],
+    ),
+    (
+        [1.0, 1.0],
+        np.array([2.0, 2.0]),
+        [np.array([1, 0, 0]), np.array([0, 1, 0])],
+        [np.array([0.1, 0, 0]), np.array([0, 0, 0.1])],
+    ),
+    (
+        [1.0, 1.0],
+        np.array([2.0, 2.0]),
+        [np.array([1, 0, 0]), np.array([0, 0, 1])],
+        [np.array([0.1, 0, 0]), np.array([0, 0, 0.1])],
+    ),
+    (
+        [1.0, 1.0],
+        np.array([2.0, 2.0]),
+        [np.array([0, 0, -1]), np.array([0, -1, 0])],
+        [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])],
+    ),
 ]
+
 
 @pytest.mark.parametrize("scAreas, scCoeff, B_normals, B_locations", test_drag)
 def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
-
     ##   Simulation initialization
     simTaskName = "simTask"
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
-    simulationTimeStep = macros.sec2nano(5.)
+    simulationTimeStep = macros.sec2nano(5.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # initialize spacecraft object and set properties
@@ -89,7 +118,7 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
     scObject.addDynamicEffector(newDrag)
 
     try:
-        for i in range(0,len(scAreas)):
+        for i in range(0, len(scAreas)):
             newDrag.addFacet(scAreas[i], scCoeff[i], B_normals[i], B_locations[i])
     except:
         pytest.fail("ERROR: FacetDrag unit test failed while setting facet parameters.")
@@ -98,16 +127,18 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
 
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     #
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
 
-    r_eq = 6371*1000.0
+    r_eq = 6371 * 1000.0
     refBaseDens = 1.217
     refScaleHeight = 8500.0
 
@@ -116,15 +147,15 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
     newAtmo.scaleHeight = refScaleHeight
     newAtmo.planetRadius = r_eq
 
-    rN = np.array([r_eq+200.0e3,0,0])
-    vN = np.array([0,7.788e3,0])
-    sig_BN = np.array([0,0,0])
+    rN = np.array([r_eq + 200.0e3, 0, 0])
+    vN = np.array([0, 7.788e3, 0])
+    sig_BN = np.array([0, 0, 0])
     #   initialize Spacecraft States with the initialization variables
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
     scObject.hub.sigma_BNInit = sig_BN
 
-    simulationTime = macros.sec2nano(5.)
+    simulationTime = macros.sec2nano(5.0)
     #
     #   Setup data logging before the simulation is initialized
     #
@@ -154,8 +185,12 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    dragDataForce_B = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
-    dragTorqueData = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
+    dragDataForce_B = unitTestSupport.addTimeColumn(
+        newDragLog.times(), newDragLog.forceExternal_B
+    )
+    dragTorqueData = unitTestSupport.addTimeColumn(
+        newDragLog.times(), newDragLog.torqueExternalPntB_B
+    )
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN
@@ -170,39 +205,68 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
         if projArea > 0:
             drag_force = -0.5 * dens * projArea * coeff * vMag**2.0 * v_hat_B
         else:
-            drag_force = np.zeros([3,])
+            drag_force = np.zeros(
+                [
+                    3,
+                ]
+            )
         return drag_force
-
 
     #   Compare to expected values
 
-    test_val_force = np.zeros([3,])
-    test_val_torque = np.zeros([3,])
+    test_val_force = np.zeros(
+        [
+            3,
+        ]
+    )
+    test_val_torque = np.zeros(
+        [
+            3,
+        ]
+    )
     for i in range(len(scAreas)):
-        val_force_i = checkFacetDragForce(densData[i], scAreas[i], scCoeff[i], B_normals[i], attData[1], velData[1])
+        val_force_i = checkFacetDragForce(
+            densData[i], scAreas[i], scCoeff[i], B_normals[i], attData[1], velData[1]
+        )
         test_val_force += val_force_i
         test_val_torque += np.cross(B_locations[i], val_force_i)
 
     assert len(densData) > 0, "FAILED:  ExpAtmo failed to pull any logged data"
-    np.testing.assert_allclose(dragDataForce_B[1,1:4], test_val_force, atol = 1e-06)
-    np.testing.assert_allclose(dragTorqueData[1,1:4], test_val_torque, atol = 1e-06)
+    np.testing.assert_allclose(dragDataForce_B[1, 1:4], test_val_force, atol=1e-06)
+    np.testing.assert_allclose(dragTorqueData[1, 1:4], test_val_torque, atol=1e-06)
 
 
-test_shadow = [([1.0, 1.0], np.array([2.0, 2.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]),
-               ([1.0, 1.0], np.array([2.0, 4.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])]),
-               ([1.0, 1.0], np.array([2.0, 2.0]), [np.array([0, 0, -1]), np.array([0, -1, 0])], [np.array([0, 0, 0.4]), np.array([0, 0.4, 0])]),
+test_shadow = [
+    (
+        [1.0, 1.0],
+        np.array([2.0, 2.0]),
+        [np.array([0, 0, -1]), np.array([0, -1, 0])],
+        [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])],
+    ),
+    (
+        [1.0, 1.0],
+        np.array([2.0, 4.0]),
+        [np.array([0, 0, -1]), np.array([0, -1, 0])],
+        [np.array([0, 0, 0.1]), np.array([0, 0.1, 0])],
+    ),
+    (
+        [1.0, 1.0],
+        np.array([2.0, 2.0]),
+        [np.array([0, 0, -1]), np.array([0, -1, 0])],
+        [np.array([0, 0, 0.4]), np.array([0, 0.4, 0])],
+    ),
 ]
+
 
 @pytest.mark.parametrize("scAreas, scCoeff, B_normals, B_locations", test_shadow)
 def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
-
     ##   Simulation initialization
     simTaskName = "simTask"
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # initialize spacecraft object and set properties
@@ -224,8 +288,10 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
     scObject.addDynamicEffector(newDrag)
 
     try:
-        for ind in range(0,len(scAreas)):
-            newDrag.addFacet(scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind])
+        for ind in range(0, len(scAreas)):
+            newDrag.addFacet(
+                scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind]
+            )
     except:
         pytest.fail("ERROR: FacetDrag unit test failed while setting facet parameters.")
 
@@ -233,16 +299,18 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
 
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     #
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
 
-    r_eq = 6371*1000.0
+    r_eq = 6371 * 1000.0
     refBaseDens = 1.217
     refScaleHeight = 8500.0
 
@@ -251,16 +319,16 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
     newAtmo.scaleHeight = refScaleHeight
     newAtmo.planetRadius = r_eq
 
-    rN = np.array([r_eq+200.0e3,0,0])
-    vN = np.array([0,7.788e3,0])
-    sig_BN = np.array([0,0,0])
+    rN = np.array([r_eq + 200.0e3, 0, 0])
+    vN = np.array([0, 7.788e3, 0])
+    sig_BN = np.array([0, 0, 0])
 
     #   initialize Spacecraft States with the initialization variables
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
     scObject.hub.sigma_BNInit = sig_BN
 
-    simulationTime = macros.sec2nano(10.)
+    simulationTime = macros.sec2nano(10.0)
     #
     #   Setup data logging before the simulation is initialized
     #
@@ -290,8 +358,12 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    dragDataForce_B = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
-    dragTorqueData = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
+    dragDataForce_B = unitTestSupport.addTimeColumn(
+        newDragLog.times(), newDragLog.forceExternal_B
+    )
+    dragTorqueData = unitTestSupport.addTimeColumn(
+        newDragLog.times(), newDragLog.torqueExternalPntB_B
+    )
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN
@@ -299,11 +371,12 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
     np.set_printoptions(precision=16)
 
     assert len(densData) > 0, "FAILED:  ExpAtmo failed to pull any logged data"
-    for ind in range(1,len(densData)):
-        np.testing.assert_allclose(dragDataForce_B[ind,1:4], [0, 0, 0], atol = 1e-11)
-        np.testing.assert_allclose(dragTorqueData[ind,1:4], [0, 0, 0], atol = 1e-11)
+    for ind in range(1, len(densData)):
+        np.testing.assert_allclose(dragDataForce_B[ind, 1:4], [0, 0, 0], atol=1e-11)
+        np.testing.assert_allclose(dragTorqueData[ind, 1:4], [0, 0, 0], atol=1e-11)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     scAreas = [1.0, 1.0]
     scCoeff = np.array([2.0, 2.0])
     B_normals = [np.array([0, 0, -1]), np.array([0, -1, 0])]

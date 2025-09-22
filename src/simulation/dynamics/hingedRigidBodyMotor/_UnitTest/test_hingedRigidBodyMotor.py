@@ -26,13 +26,15 @@ from Basilisk.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parametrize("K", [5,10])
-@pytest.mark.parametrize("P", [1,2])
-@pytest.mark.parametrize("sensedTheta, sensedThetaDot, refTheta, refThetaDot", [
-    (1,.1,1.2,.2),
-    (1,.1,.8,-.1)
-])
-def test_hingedRigidBodyMotor(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy):
+@pytest.mark.parametrize("K", [5, 10])
+@pytest.mark.parametrize("P", [1, 2])
+@pytest.mark.parametrize(
+    "sensedTheta, sensedThetaDot, refTheta, refThetaDot",
+    [(1, 0.1, 1.2, 0.2), (1, 0.1, 0.8, -0.1)],
+)
+def test_hingedRigidBodyMotor(
+    show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy
+):
     r"""
     **Validation Test Description**
 
@@ -54,11 +56,15 @@ def test_hingedRigidBodyMotor(show_plots, K, P, sensedTheta, sensedThetaDot, ref
     K and P are varied (note both must be set to positive values). The sensed hinged rigid body state is held constant while the reference is also varied to check positive and negative deltas.
 
     """
-    [testResults, testMessage] = hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy)
+    [testResults, testMessage] = hingedRigidBodyMotorTestFunction(
+        show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy
+    )
     assert testResults < 1, testMessage
 
 
-def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy):
+def hingedRigidBodyMotorTestFunction(
+    show_plots, K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, accuracy
+):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -79,12 +85,16 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
     hingedBodyStateSensedInMsgData = messaging.HingedRigidBodyMsgPayload()
     hingedBodyStateSensedInMsgData.theta = sensedTheta
     hingedBodyStateSensedInMsgData.thetaDot = sensedThetaDot
-    hingedBodyStateSensedInMsg = messaging.HingedRigidBodyMsg().write(hingedBodyStateSensedInMsgData)
+    hingedBodyStateSensedInMsg = messaging.HingedRigidBodyMsg().write(
+        hingedBodyStateSensedInMsgData
+    )
 
     hingedBodyStateReferenceInMsgData = messaging.HingedRigidBodyMsgPayload()
     hingedBodyStateReferenceInMsgData.theta = refTheta
     hingedBodyStateReferenceInMsgData.thetaDot = refThetaDot
-    hingedBodyStateReferenceInMsg = messaging.HingedRigidBodyMsg().write(hingedBodyStateReferenceInMsgData)
+    hingedBodyStateReferenceInMsg = messaging.HingedRigidBodyMsg().write(
+        hingedBodyStateReferenceInMsgData
+    )
 
     # subscribe input messages to module
     module.hingedBodyStateSensedInMsg.subscribeTo(hingedBodyStateSensedInMsg)
@@ -102,10 +112,12 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
     unitTestSim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
-    trueTorque = -K*(sensedTheta-refTheta)-P*(sensedThetaDot-refThetaDot)
-    torqueEqualTest = unitTestSupport.isDoubleEqualRelative(trueTorque, dataLog.motorTorque[-1][0], accuracy)
+    trueTorque = -K * (sensedTheta - refTheta) - P * (sensedThetaDot - refThetaDot)
+    torqueEqualTest = unitTestSupport.isDoubleEqualRelative(
+        trueTorque, dataLog.motorTorque[-1][0], accuracy
+    )
     if not torqueEqualTest:
-        testFailCount += 1;
+        testFailCount += 1
         testMessages.append("Failed motor torque.")
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -116,4 +128,6 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
 
 
 if __name__ == "__main__":
-    test_hingedRigidBodyMotor(False, 5, 1, 1, .1, 1.2, .2, 1e-12) # first test case above
+    test_hingedRigidBodyMotor(
+        False, 5, 1, 1, 0.1, 1.2, 0.2, 1e-12
+    )  # first test case above

@@ -28,7 +28,7 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
@@ -44,6 +44,7 @@ except ImportError:
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
+
 try:
     from Basilisk.simulation import camera
 except ImportError:
@@ -57,50 +58,69 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
+
 @pytest.mark.skipif(importErr, reason=reasonErr)
-@pytest.mark.parametrize("gauss, darkCurrent, saltPepper, cosmic, blurSize", [
-    (0, 0, 0, 0, 0)
-    , (2, 2, 2, 1, 3)
-])
+@pytest.mark.parametrize(
+    "gauss, darkCurrent, saltPepper, cosmic, blurSize",
+    [(0, 0, 0, 0, 0), (2, 2, 2, 1, 3)],
+)
 def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
     """
-        **Validation Test Description**
+    **Validation Test Description**
 
-        This module tests the proper functioning of the camera module. This is done by first ensuring that the reading
-        and writing of the camera parameters are properly executed. The test then corrupts a test image accordingly.
+    This module tests the proper functioning of the camera module. This is done by first ensuring that the reading
+    and writing of the camera parameters are properly executed. The test then corrupts a test image accordingly.
 
-        **Description of Variables Being Tested**
+    **Description of Variables Being Tested**
 
-        The camera parameters tested are the camera position MRP and the isOn value for the camera. These ensure that
-        the position is properly written and read. The image is also corrupted with the parameterized test information.
-        This is directly tested by differencing the initial and processed image to see a change.
-        and also ensures that the variables are properly read and that all the openCV functions
-        are executing properly.
+    The camera parameters tested are the camera position MRP and the isOn value for the camera. These ensure that
+    the position is properly written and read. The image is also corrupted with the parameterized test information.
+    This is directly tested by differencing the initial and processed image to see a change.
+    and also ensures that the variables are properly read and that all the openCV functions
+    are executing properly.
 
-        - ``camera_MRP``
-        - ``isON``
-        - ``imageNorm Values``
+    - ``camera_MRP``
+    - ``isON``
+    - ``imageNorm Values``
 
-        The comparative value for the test on the image is 1E-2 which depends on the corruptions but is allowed to me small
-        as the relative difference of the images is taken (whereas pixel values can get large).
+    The comparative value for the test on the image is 1E-2 which depends on the corruptions but is allowed to me small
+    as the relative difference of the images is taken (whereas pixel values can get large).
 
-        The two parameterized test are set with and without corruptions.
+    The two parameterized test are set with and without corruptions.
 
-        **General Documentation Comments**
+    **General Documentation Comments**
 
-        The script could benefit from more profound image processing testing. Currently the bulk of the image processing
-        is only tested by the result image.
-        """
+    The script could benefit from more profound image processing testing. Currently the bulk of the image processing
+    is only tested by the result image.
+    """
     # each test method requires a single assert method to be called
     image = "mars.jpg"
-    [testResults, testMessage] = cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize)
+    [testResults, testMessage] = cameraTest(
+        show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize
+    )
 
     # Clean up
-    imagePath = path + '/' + image
-    savedImage1 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
-                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.000000.png'
-    savedImage2 = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
-                  + str(saltPepper) + str(cosmic) + str(blurSize) + '0.500000.png'
+    imagePath = path + "/" + image
+    savedImage1 = (
+        "/".join(imagePath.split("/")[:-1])
+        + "/"
+        + str(gauss)
+        + str(darkCurrent)
+        + str(saltPepper)
+        + str(cosmic)
+        + str(blurSize)
+        + "0.000000.png"
+    )
+    savedImage2 = (
+        "/".join(imagePath.split("/")[:-1])
+        + "/"
+        + str(gauss)
+        + str(darkCurrent)
+        + str(saltPepper)
+        + str(cosmic)
+        + str(blurSize)
+        + "0.500000.png"
+    )
     try:
         os.remove(savedImage1)
         os.remove(savedImage2)
@@ -116,11 +136,17 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
         exit()
 
     # Truth values from python
-    imagePath = path + '/' + image
+    imagePath = path + "/" + image
     input_image = Image.open(imagePath)
     input_image.load()
     #################################################
-    corrupted = (gauss > 0) or (darkCurrent > 0) or (saltPepper > 0) or (cosmic > 0) or (blurSize > 0)
+    corrupted = (
+        (gauss > 0)
+        or (darkCurrent > 0)
+        or (saltPepper > 0)
+        or (cosmic > 0)
+        or (blurSize > 0)
+    )
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -146,13 +172,20 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
     module.filename = imagePath
     module.saveImages = True
     # make each image saved have a unique name for this test case
-    module.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/' + str(gauss) + str(darkCurrent) \
-                           + str(saltPepper) + str(cosmic) + str(blurSize)
+    module.saveDir = (
+        "/".join(imagePath.split("/")[:-1])
+        + "/"
+        + str(gauss)
+        + str(darkCurrent)
+        + str(saltPepper)
+        + str(cosmic)
+        + str(blurSize)
+    )
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.CameraImageMsgPayload()
-    inputMessageData.timeTag = int(1E9)
+    inputMessageData.timeTag = int(1e9)
     inputMessageData.cameraID = 1
     inCamMsg = messaging.CameraImageMsg().write(inputMessageData)
     module.imageInMsg.subscribeTo(inCamMsg)
@@ -185,33 +218,34 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     # Truth values from python
     if corrupted:
-        corruptedPath = module.saveDir + '0.000000.png'
+        corruptedPath = module.saveDir + "0.000000.png"
     else:
-        corruptedPath = module.saveDir + '0.500000.png'
+        corruptedPath = module.saveDir + "0.500000.png"
     output_image = Image.open(corruptedPath)
 
     isOnValues = dataLog.isOn
     pos = dataLog.sigma_CB
 
     #  Error check for corruption
-    err = np.linalg.norm(np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)) / np.linalg.norm(
-        np.linalg.norm(input_image, axis=2))
+    err = np.linalg.norm(
+        np.linalg.norm(input_image, axis=2) - np.linalg.norm(output_image, axis=2)
+    ) / np.linalg.norm(np.linalg.norm(input_image, axis=2))
 
-    if (err < 1E-2 and corrupted):
+    if err < 1e-2 and corrupted:
         testFailCount += 1
         testMessages.append("Image not corrupted and show be: " + image)
 
-    if (err > 1E-2 and not corrupted):
+    if err > 1e-2 and not corrupted:
         testFailCount += 1
         testMessages.append("Image corrupted and show not be: " + image)
 
     #   print out success message if no error were found
     for i in range(3):
-        if np.abs(pos[-1, i] - module.sigma_CB[i]) > 1E-10:
+        if np.abs(pos[-1, i] - module.sigma_CB[i]) > 1e-10:
             testFailCount += 1
             testMessages.append("Test failed position " + image)
 
-    if np.abs(isOnValues[-1] - module.cameraIsOn) > 1E-10:
+    if np.abs(isOnValues[-1] - module.cameraIsOn) > 1e-10:
         testFailCount += 1
         testMessages.append("Test failed isOn " + image)
 
@@ -222,7 +256,7 @@ def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSi
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #

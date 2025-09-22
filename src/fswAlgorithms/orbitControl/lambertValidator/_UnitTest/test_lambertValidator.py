@@ -31,9 +31,9 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # parameters
-DVs = np.array([[1., 3., 4.], [500., -100., 200.]])
-time_maneuver = [1.e3, 2.e3]
-time_final = [2.1e3, 4.e3]
+DVs = np.array([[1.0, 3.0, 4.0], [500.0, -100.0, 200.0]])
+time_maneuver = [1.0e3, 2.0e3]
+time_final = [2.1e3, 4.0e3]
 iterations = [3]
 errorsX = [1e-9]
 
@@ -41,14 +41,14 @@ paramArray = [DVs, time_maneuver, time_final, iterations, errorsX]
 # create list with all combinations of parameters
 paramList = list(itertools.product(*paramArray))
 # add cases to check Lambert solver iterations and error limits, plus final time occurring before maneuver time
-paramList.append((DVs[0], 1.e3, 2.e3, 7, 1.e-9))
-paramList.append((DVs[0], 1.e3, 2.e3, 3, 1.e-5))
-paramList.append((DVs[0], 2.e3, 1.e3, 3, 1.e-9))
-paramList.append((DVs[0], 2.e3, 2.e3, 3, 1.e-9))
+paramList.append((DVs[0], 1.0e3, 2.0e3, 7, 1.0e-9))
+paramList.append((DVs[0], 1.0e3, 2.0e3, 3, 1.0e-5))
+paramList.append((DVs[0], 2.0e3, 1.0e3, 3, 1.0e-9))
+paramList.append((DVs[0], 2.0e3, 2.0e3, 3, 1.0e-9))
+
 
 @pytest.mark.parametrize("accuracy", [1e-4])
 @pytest.mark.parametrize("p1_dv, p2_tm, p3_tf, p4_iter, p5_errX", paramList)
-
 def test_lambertValidator(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy):
     r"""
     **Validation Test Description**
@@ -74,7 +74,9 @@ def test_lambertValidator(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, acc
     """
     expect_error = p2_tm > p3_tf
     with pytest.raises(BasiliskError) if expect_error else nullcontext():
-        lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy)
+        lambertValidatorTestFunction(
+            show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy
+        )
 
 
 def getInitialStates(r1_BN_N, v1_BN_N, dv_N, errStates, errDV):
@@ -99,12 +101,12 @@ def getInitialStates(r1_BN_N, v1_BN_N, dv_N, errStates, errDV):
     for ii in range(N):
         for jj in range(2):
             if jj == 0:
-                multiplier = 1.
+                multiplier = 1.0
             else:
-                multiplier = -1.
+                multiplier = -1.0
 
             # add state uncertainty
-            X1_H = X1nom_H + multiplier*Psqrt[:, ii]
+            X1_H = X1nom_H + multiplier * Psqrt[:, ii]
             X1minDV_H = copy.deepcopy(X1_H)
             X1maxDV_H = copy.deepcopy(X1_H)
 
@@ -112,8 +114,10 @@ def getInitialStates(r1_BN_N, v1_BN_N, dv_N, errStates, errDV):
             X1minDV_H[3:6] += dv_H - errDV * dvHat_H
             X1maxDV_H[3:6] += dv_H + errDV * dvHat_H
 
-            initialStates[:, jj*N + ii] = dcm_HN_states.transpose().dot(X1minDV_H)
-            initialStates[:, 2*N + jj*N + ii] = dcm_HN_states.transpose().dot(X1maxDV_H)
+            initialStates[:, jj * N + ii] = dcm_HN_states.transpose().dot(X1minDV_H)
+            initialStates[:, 2 * N + jj * N + ii] = dcm_HN_states.transpose().dot(
+                X1maxDV_H
+            )
 
     X1_H = copy.deepcopy(X1nom_H)
     X1minDV_H = copy.deepcopy(X1_H)
@@ -124,13 +128,16 @@ def getInitialStates(r1_BN_N, v1_BN_N, dv_N, errStates, errDV):
     X1minDV_H[3:6] += dv_H - errDV * dvHat_H
     X1maxDV_H[3:6] += dv_H + errDV * dvHat_H
 
-    initialStates[:, 4*N] = dcm_HN_states.transpose().dot(X1_H)
-    initialStates[:, 4*N + 1] = dcm_HN_states.transpose().dot(X1minDV_H)
-    initialStates[:, 4*N + 2] = dcm_HN_states.transpose().dot(X1maxDV_H)
+    initialStates[:, 4 * N] = dcm_HN_states.transpose().dot(X1_H)
+    initialStates[:, 4 * N + 1] = dcm_HN_states.transpose().dot(X1minDV_H)
+    initialStates[:, 4 * N + 2] = dcm_HN_states.transpose().dot(X1maxDV_H)
 
     return initialStates
 
-def countViolations(initialStates, muBody, tm, tf, r_TN_N, maxDistanceTarget, minOrbitRadius):
+
+def countViolations(
+    initialStates, muBody, tm, tf, r_TN_N, maxDistanceTarget, minOrbitRadius
+):
     violationsDistanceTarget = 0
     violationsOrbitRadius = 0
 
@@ -149,22 +156,22 @@ def countViolations(initialStates, muBody, tm, tf, r_TN_N, maxDistanceTarget, mi
             # elliptic case
             M2 = orbitalMotion.E2M(orbitalMotion.f2E(oem.f, eccf), eccf)
             n = np.sqrt(muBody / (oem.a) ** 3)
-            M3 = M2 + n*(tf-tm)
+            M3 = M2 + n * (tf - tm)
             oef.f = orbitalMotion.E2f(orbitalMotion.M2E(M3, eccf), eccf)
         elif eccf == 1.0:
             # parabolic case
             D2 = np.tan(oem.f / 2)
-            M2 = D2 + 1/3*D2**3
+            M2 = D2 + 1 / 3 * D2**3
             n = np.sqrt(muBody / (2 * (-oem.a) ** 3))
-            M3 = M2 + n*(tf-tm)
-            A = 3./2.*M3
-            B = (A + np.sqrt(A**2 + 1))**(1./3.)
-            oef.f = 2. * np.arctan(B - 1. / B)
+            M3 = M2 + n * (tf - tm)
+            A = 3.0 / 2.0 * M3
+            B = (A + np.sqrt(A**2 + 1)) ** (1.0 / 3.0)
+            oef.f = 2.0 * np.arctan(B - 1.0 / B)
         else:
             # hyperbolic case
             N2 = orbitalMotion.H2N(orbitalMotion.f2H(oem.f, eccf), eccf)
             n = np.sqrt(muBody / (-oem.a) ** 3)
-            N3 = N2 + n*(tf-tm)
+            N3 = N2 + n * (tf - tm)
             oef.f = orbitalMotion.H2f(orbitalMotion.N2H(N3, eccf), eccf)
 
         # spacecraft state at final time
@@ -174,10 +181,10 @@ def countViolations(initialStates, muBody, tm, tf, r_TN_N, maxDistanceTarget, mi
         rf_BT_N = rf_BN_N - r_TN_N
 
         # find the smallest orbit radius along transfer arc
-        f1 = math.remainder(oem.f, 2*np.pi)
-        f2 = math.remainder(oef.f, 2*np.pi)
-        if f1*f2 < 0.:
-            f_rmin = 0.
+        f1 = math.remainder(oem.f, 2 * np.pi)
+        f2 = math.remainder(oef.f, 2 * np.pi)
+        if f1 * f2 < 0.0:
+            f_rmin = 0.0
         else:
             f_rmin = min([abs(f1), abs(f2)])
         oe_rmin = copy.deepcopy(oem)
@@ -193,7 +200,9 @@ def countViolations(initialStates, muBody, tm, tf, r_TN_N, maxDistanceTarget, mi
     return violationsDistanceTarget, violationsOrbitRadius
 
 
-def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy):
+def lambertValidatorTestFunction(
+    show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_errX, accuracy
+):
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -204,21 +213,23 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
 
     solverMethod = messaging.IZZO
     muBody = 3.986004418e14
-    t0 = 0.
+    t0 = 0.0
     tm = p2_tm
     tf = p3_tf
     numIter = p4_iter
     errX = p5_errX
     ecc = 0.1
     dv_N = p1_dv
-    errStates = np.diag([5., 5., 5., 0.01, 0.01, 0.001])  # 6x6 state uncertainty matrix
+    errStates = np.diag(
+        [5.0, 5.0, 5.0, 0.01, 0.01, 0.001]
+    )  # 6x6 state uncertainty matrix
     errDV = 0.1  # [m/s] Delta-V magnitude uncertainty
-    maxDistanceTarget = 3000.
-    minOrbitRadius = 6378 * 1000.
+    maxDistanceTarget = 3000.0
+    minOrbitRadius = 6378 * 1000.0
 
     # set up orbit using classical orbit elements
     oe0 = orbitalMotion.ClassicElements()
-    r = 10000. * 1000  # meters
+    r = 10000.0 * 1000  # meters
     if ecc < 1.0:
         # elliptic case
         oe0.a = r
@@ -226,10 +237,10 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         # parabolic and hyperbolic case
         oe0.a = -r
     oe0.e = ecc
-    oe0.i = 10. * macros.D2R
-    oe0.Omega = 20. * macros.D2R
-    oe0.omega = 30. * macros.D2R
-    oe0.f = 40. * macros.D2R
+    oe0.i = 10.0 * macros.D2R
+    oe0.Omega = 20.0 * macros.D2R
+    oe0.omega = 30.0 * macros.D2R
+    oe0.f = 40.0 * macros.D2R
     # spacecraft state at initial time
     r0_BN_N, v0_BN_N = orbitalMotion.elem2rv_parab(muBody, oe0)
     oe0 = orbitalMotion.rv2elem_parab(muBody, r0_BN_N, v0_BN_N)
@@ -240,22 +251,22 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         # elliptic case
         M0 = orbitalMotion.E2M(orbitalMotion.f2E(oe0.f, ecc), ecc)
         n = np.sqrt(muBody / (oe0.a) ** 3)
-        M1 = M0 + n*(tm-t0)
+        M1 = M0 + n * (tm - t0)
         oe1.f = orbitalMotion.E2f(orbitalMotion.M2E(M1, ecc), ecc)
     elif ecc == 1.0:
         # parabolic case
         D0 = np.tan(oe0.f / 2)
-        M0 = D0 + 1/3*D0**3
+        M0 = D0 + 1 / 3 * D0**3
         n = np.sqrt(muBody / (2 * (-oe0.a) ** 3))
-        M1 = M0 + n*(tm-t0)
-        A = 3./2.*M1
-        B = (A + np.sqrt(A**2 + 1))**(1./3.)
-        oe1.f = 2. * np.arctan(B - 1. / B)
+        M1 = M0 + n * (tm - t0)
+        A = 3.0 / 2.0 * M1
+        B = (A + np.sqrt(A**2 + 1)) ** (1.0 / 3.0)
+        oe1.f = 2.0 * np.arctan(B - 1.0 / B)
     else:
         # hyperbolic case
         N0 = orbitalMotion.H2N(orbitalMotion.f2H(oe0.f, ecc), ecc)
         n = np.sqrt(muBody / (-oe0.a) ** 3)
-        N1 = N0 + n*(tm-t0)
+        N1 = N0 + n * (tm - t0)
         oe1.f = orbitalMotion.H2f(orbitalMotion.N2H(N1, ecc), ecc)
 
     # spacecraft state at maneuver time, just before maneuver
@@ -273,22 +284,22 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         # elliptic case
         M2 = orbitalMotion.E2M(orbitalMotion.f2E(oe2.f, ecc3), ecc3)
         n = np.sqrt(muBody / (oe2.a) ** 3)
-        M3 = M2 + n*(tf-tm)
+        M3 = M2 + n * (tf - tm)
         oe3.f = orbitalMotion.E2f(orbitalMotion.M2E(M3, ecc3), ecc3)
     elif ecc3 == 1.0:
         # parabolic case
         D2 = np.tan(oe2.f / 2)
-        M2 = D2 + 1/3*D2**3
+        M2 = D2 + 1 / 3 * D2**3
         n = np.sqrt(muBody / (2 * (-oe2.a) ** 3))
-        M3 = M2 + n*(tf-tm)
-        A = 3./2.*M3
-        B = (A + np.sqrt(A**2 + 1))**(1./3.)
-        oe3.f = 2. * np.arctan(B - 1. / B)
+        M3 = M2 + n * (tf - tm)
+        A = 3.0 / 2.0 * M3
+        B = (A + np.sqrt(A**2 + 1)) ** (1.0 / 3.0)
+        oe3.f = 2.0 * np.arctan(B - 1.0 / B)
     else:
         # hyperbolic case
         N2 = orbitalMotion.H2N(orbitalMotion.f2H(oe2.f, ecc3), ecc3)
         n = np.sqrt(muBody / (-oe2.a) ** 3)
-        N3 = N2 + n*(tf-tm)
+        N3 = N2 + n * (tf - tm)
         oe3.f = orbitalMotion.H2f(orbitalMotion.N2H(N3, ecc3), ecc3)
 
     # spacecraft state at final time
@@ -303,7 +314,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     module.setMinOrbitRadius(minOrbitRadius)
     module.setUncertaintyStates(errStates)
     module.setUncertaintyDV(errDV)
-    module.setDvConvergenceTolerance(np.linalg.norm(dv_N)/1000.)
+    module.setDvConvergenceTolerance(np.linalg.norm(dv_N) / 1000.0)
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Configure input messages
@@ -317,7 +328,7 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     lambertProblemInMsgData.solverMethod = solverMethod
     lambertProblemInMsgData.r1_N = r1_BN_N
     lambertProblemInMsgData.r2_N = r3_BN_N
-    lambertProblemInMsgData.transferTime = tf-tm
+    lambertProblemInMsgData.transferTime = tf - tm
     lambertProblemInMsgData.mu = muBody
     lambertProblemInMsgData.numRevolutions = 0
     lambertProblemInMsg = messaging.LambertProblemMsg().write(lambertProblemInMsgData)
@@ -326,19 +337,23 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     lambertSolutionInMsgData.v1_N = v1_BN_N + dv_N
     lambertSolutionInMsgData.v2_N = v3_BN_N
     lambertSolutionInMsgData.valid = 1
-    lambertSolutionInMsgData.v1Sol2_N = np.array([0., 0., 0.])
-    lambertSolutionInMsgData.v2Sol2_N = np.array([0., 0., 0.])
+    lambertSolutionInMsgData.v1Sol2_N = np.array([0.0, 0.0, 0.0])
+    lambertSolutionInMsgData.v2Sol2_N = np.array([0.0, 0.0, 0.0])
     lambertSolutionInMsgData.validSol2 = 0
-    lambertSolutionInMsg = messaging.LambertSolutionMsg().write(lambertSolutionInMsgData)
+    lambertSolutionInMsg = messaging.LambertSolutionMsg().write(
+        lambertSolutionInMsgData
+    )
 
     lambertPerformanceInMsgData = messaging.LambertPerformanceMsgPayload()
-    lambertPerformanceInMsgData.x = 0.
+    lambertPerformanceInMsgData.x = 0.0
     lambertPerformanceInMsgData.numIter = numIter
     lambertPerformanceInMsgData.errX = errX
-    lambertPerformanceInMsgData.xSol2 = 0.
+    lambertPerformanceInMsgData.xSol2 = 0.0
     lambertPerformanceInMsgData.numIterSol2 = 0
-    lambertPerformanceInMsgData.errXSol2 = 0.
-    lambertPerformanceInMsg = messaging.LambertPerformanceMsg().write(lambertPerformanceInMsgData)
+    lambertPerformanceInMsgData.errXSol2 = 0.0
+    lambertPerformanceInMsg = messaging.LambertPerformanceMsg().write(
+        lambertPerformanceInMsgData
+    )
 
     # subscribe input messages to module
     module.navTransInMsg.subscribeTo(navTransInMsg)
@@ -370,32 +385,39 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
         lambertSolutionInMsgData.v1_N = v1_BN_N + dv_N * scaler[i]
         lambertSolutionInMsgData.v2_N = v3_BN_N
         lambertSolutionInMsgData.valid = 1
-        lambertSolutionInMsgData.v1Sol2_N = np.array([0., 0., 0.])
-        lambertSolutionInMsgData.v2Sol2_N = np.array([0., 0., 0.])
+        lambertSolutionInMsgData.v1Sol2_N = np.array([0.0, 0.0, 0.0])
+        lambertSolutionInMsgData.v2Sol2_N = np.array([0.0, 0.0, 0.0])
         lambertSolutionInMsgData.validSol2 = 0
-        lambertSolutionInMsg.write(lambertSolutionInMsgData, unitTestSim.TotalSim.CurrentNanos)
+        lambertSolutionInMsg.write(
+            lambertSolutionInMsgData, unitTestSim.TotalSim.CurrentNanos
+        )
 
         unitTestSim.ConfigureStopTime(i * testProcessRate)
         unitTestSim.ExecuteSimulation()
 
-        initialStates = getInitialStates(r1_BN_N, v1_BN_N, dv_N * scaler[i], errStates, errDV)
-        violationsDistanceTarget, violationsOrbitRadius = countViolations(initialStates, muBody, tm, tf, r3_BN_N,
-                                                                                  maxDistanceTarget, minOrbitRadius)
+        initialStates = getInitialStates(
+            r1_BN_N, v1_BN_N, dv_N * scaler[i], errStates, errDV
+        )
+        violationsDistanceTarget, violationsOrbitRadius = countViolations(
+            initialStates, muBody, tm, tf, r3_BN_N, maxDistanceTarget, minOrbitRadius
+        )
 
         # true values
-        if violationsDistanceTarget == 0 and \
-                violationsOrbitRadius == 0 and \
-                failedDvSolutionConvergenceTrue[i] == 0 and \
-                numIter < 6 and \
-                errX < 1.e-8:
+        if (
+            violationsDistanceTarget == 0
+            and violationsOrbitRadius == 0
+            and failedDvSolutionConvergenceTrue[i] == 0
+            and numIter < 6
+            and errX < 1.0e-8
+        ):
             dvTrue[i, :] = dv_N * scaler[i]
             burnStartTimeTrue[i] = macros.sec2nano(tm)
         else:
-            dvTrue[i, :] = np.array([0., 0., 0.])
-            burnStartTimeTrue[i] = macros.sec2nano(0.)
+            dvTrue[i, :] = np.array([0.0, 0.0, 0.0])
+            burnStartTimeTrue[i] = macros.sec2nano(0.0)
         if numIter >= 6:
             failedNumIterationsLambertTrue[i] = 1
-        if errX >= 1.e-8:
+        if errX >= 1.0e-8:
             failedXToleranceLambertTrue[i] = 1
         if violationsDistanceTarget != 0:
             failedDistanceTargetConstraintTrue[i] = 1
@@ -409,75 +431,93 @@ def lambertValidatorTestFunction(show_plots, p1_dv, p2_tm, p3_tf, p4_iter, p5_er
     failedNumIterationsLambert = lambertValidatorOutMsgRec.failedNumIterationsLambert
     failedXToleranceLambert = lambertValidatorOutMsgRec.failedXToleranceLambert
     failedDvSolutionConvergence = lambertValidatorOutMsgRec.failedDvSolutionConvergence
-    failedDistanceTargetConstraint = lambertValidatorOutMsgRec.failedDistanceTargetConstraint
+    failedDistanceTargetConstraint = (
+        lambertValidatorOutMsgRec.failedDistanceTargetConstraint
+    )
     failedOrbitRadiusConstraint = lambertValidatorOutMsgRec.failedOrbitRadiusConstraint
-    dvTheory = lambertValidatorOutMsgRec.dv_N  # Delta-V that would be returned if all tests were passed
+    dvTheory = (
+        lambertValidatorOutMsgRec.dv_N
+    )  # Delta-V that would be returned if all tests were passed
 
     # make sure module output data is correct
-    paramsString = ' for DV={}, maneuver time={}, final time={}, iterations={}, errorsX={}, accuracy={}'.format(
-        str(p1_dv),
-        str(p2_tm),
-        str(p3_tf),
-        str(p4_iter),
-        str(p5_errX),
-        str(accuracy))
+    paramsString = " for DV={}, maneuver time={}, final time={}, iterations={}, errorsX={}, accuracy={}".format(
+        str(p1_dv), str(p2_tm), str(p3_tf), str(p4_iter), str(p5_errX), str(accuracy)
+    )
 
-    np.testing.assert_allclose(dv,
-                               dvTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: dv_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        dv,
+        dvTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: dv_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(burnStartTime,
-                               burnStartTimeTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: burnStartTime,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        burnStartTime,
+        burnStartTimeTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: burnStartTime," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(failedNumIterationsLambert,
-                               failedNumIterationsLambertTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: failedNumIterationsLambert,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        failedNumIterationsLambert,
+        failedNumIterationsLambertTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: failedNumIterationsLambert," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(failedXToleranceLambert,
-                               failedXToleranceLambertTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: failedXToleranceLambert,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        failedXToleranceLambert,
+        failedXToleranceLambertTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: failedXToleranceLambert," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(failedDvSolutionConvergence,
-                               failedDvSolutionConvergenceTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: failedDvSolutionConvergence,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        failedDvSolutionConvergence,
+        failedDvSolutionConvergenceTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: failedDvSolutionConvergence," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(failedDistanceTargetConstraint,
-                               failedDistanceTargetConstraintTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: failedDistanceTargetConstraint,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        failedDistanceTargetConstraint,
+        failedDistanceTargetConstraintTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: failedDistanceTargetConstraint," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(failedOrbitRadiusConstraint,
-                               failedOrbitRadiusConstraintTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: failedOrbitRadiusConstraint,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        failedOrbitRadiusConstraint,
+        failedOrbitRadiusConstraintTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: failedOrbitRadiusConstraint," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(dvTheory,
-                               dvTheoryTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: dvTheory,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        dvTheory,
+        dvTheoryTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: dvTheory," + paramsString),
+        verbose=True,
+    )
 
 
 if __name__ == "__main__":
-    test_lambertValidator(False, DVs[1], time_maneuver[0], time_final[1], iterations[0], errorsX[0], 1e-4)
+    test_lambertValidator(
+        False, DVs[1], time_maneuver[0], time_final[1], iterations[0], errorsX[0], 1e-4
+    )

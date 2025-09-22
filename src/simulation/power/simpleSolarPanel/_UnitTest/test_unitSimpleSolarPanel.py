@@ -32,12 +32,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.utilities import macros
@@ -46,9 +48,18 @@ from Basilisk.architecture import astroConstants
 from Basilisk.utilities import astroFunctions
 
 
-@pytest.mark.parametrize("orbitDistance", [1000.*astroConstants.AU, 1000.*1.52*astroConstants.AU])
-@pytest.mark.parametrize("eclipseValue", [0,1])
-@pytest.mark.parametrize("scAttitude", [[0,0,0], rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0])), rbk.C2MRP(rbk.euler3212C([0,np.radians(90.),0]))])
+@pytest.mark.parametrize(
+    "orbitDistance", [1000.0 * astroConstants.AU, 1000.0 * 1.52 * astroConstants.AU]
+)
+@pytest.mark.parametrize("eclipseValue", [0, 1])
+@pytest.mark.parametrize(
+    "scAttitude",
+    [
+        [0, 0, 0],
+        rbk.C2MRP(rbk.euler3212C([0, np.radians(60.0), 0])),
+        rbk.C2MRP(rbk.euler3212C([0, np.radians(90.0), 0])),
+    ],
+)
 def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
     """
     **Validation Test Description**
@@ -73,12 +84,14 @@ def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
     a 1m^2 solar panel that operates at perfect efficiency.
     """
 
-    panelResults, panelMessage = run(show_plots, orbitDistance, eclipseValue, scAttitude)
+    panelResults, panelMessage = run(
+        show_plots, orbitDistance, eclipseValue, scAttitude
+    )
 
     assert panelResults < 1, [panelMessage]
 
-def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
+def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     #   Test initialization
     testFailCount = 0
     testMessages = []
@@ -87,9 +100,13 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     #   Specify test-against parameter
     referencePower = astroFunctions.solarFluxEarth  # W/m^2 at Earth
-    sunDistanceMult = pow(astroConstants.AU*1000., 2.)/pow(orbitDistance, 2.)
-    scAttMult = np.cos(abs(np.arccos(0.5 * (np.trace(rbk.MRP2C(scAttitude))-1.))))  # extract cos(prv) to determine the attitude angle vs the sun
-    referenceMultiplier = 1.0 * eclipseValue * sunDistanceMult * scAttMult  # Nominally set to 1.0; modified by other vals
+    sunDistanceMult = pow(astroConstants.AU * 1000.0, 2.0) / pow(orbitDistance, 2.0)
+    scAttMult = np.cos(
+        abs(np.arccos(0.5 * (np.trace(rbk.MRP2C(scAttitude)) - 1.0)))
+    )  # extract cos(prv) to determine the attitude angle vs the sun
+    referenceMultiplier = (
+        1.0 * eclipseValue * sunDistanceMult * scAttMult
+    )  # Nominally set to 1.0; modified by other vals
 
     #   Simulation set-up
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -101,7 +118,6 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
     eclipseMessage = messaging.EclipseMsgPayload()
     eclipseMessage.shadowFactor = eclipseValue  # Set it to be totally in shadow
     eclipseMsg = messaging.EclipseMsg().write(eclipseMessage)
-
 
     sunMessage = messaging.SpicePlanetStateMsgPayload()
     sunMessage.PlanetName = "Sun"
@@ -135,15 +151,24 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     tol = 1e-7
 
-    if not unitTestSupport.isDoubleEqual(powerData[1], referencePower*referenceMultiplier, tol):
+    if not unitTestSupport.isDoubleEqual(
+        powerData[1], referencePower * referenceMultiplier, tol
+    ):
         testFailCount += 1
-        testMessages.append('Error: simpleSolarPanel did not compute power correctly.')
+        testMessages.append("Error: simpleSolarPanel did not compute power correctly.")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 if __name__ == "__main__":
-    print(test_simpleSolarPanel(False, 1000.*astroConstants.AU, 1, rbk.C2MRP(rbk.euler3212C([0,np.radians(60.),0]))))
-    print(test_simpleSolarPanel(False, 1000.*astroConstants.AU, 1, [0,0,0]))
-    print(test_simpleSolarPanel(False, 1.52*1000.*astroConstants.AU, 1, [0, 0, 0]))
-    print(test_simpleSolarPanel(False, 1000.*astroConstants.AU, 0, [0,0,0]))
+    print(
+        test_simpleSolarPanel(
+            False,
+            1000.0 * astroConstants.AU,
+            1,
+            rbk.C2MRP(rbk.euler3212C([0, np.radians(60.0), 0])),
+        )
+    )
+    print(test_simpleSolarPanel(False, 1000.0 * astroConstants.AU, 1, [0, 0, 0]))
+    print(test_simpleSolarPanel(False, 1.52 * 1000.0 * astroConstants.AU, 1, [0, 0, 0]))
+    print(test_simpleSolarPanel(False, 1000.0 * astroConstants.AU, 0, [0, 0, 0]))

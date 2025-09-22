@@ -91,8 +91,15 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from Basilisk.simulation import spacecraft, gravityEffector
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+)
 from Basilisk.utilities import vizSupport
+
 
 def run(show_plots):
     """
@@ -112,7 +119,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
 
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
@@ -149,21 +156,33 @@ def run(show_plots):
     #
 
     oe = orbitalMotion.ClassicElements()
-    sunmu = 132600000000000000000                                               # [m^3/s^3]
-    r_J_2_S = 778298361. * 1000                                                 # [m] Distance from Jupiter to Sun
-    r_E_2_S = 149598023. * 1000                                                 # [m] Distance from Earth to Sun
-    r_SC_J_park = 800000. * 1000                                                 # [m] Desired circular parking orbit radius
+    sunmu = 132600000000000000000  # [m^3/s^3]
+    r_J_2_S = 778298361.0 * 1000  # [m] Distance from Jupiter to Sun
+    r_E_2_S = 149598023.0 * 1000  # [m] Distance from Earth to Sun
+    r_SC_J_park = 800000.0 * 1000  # [m] Desired circular parking orbit radius
 
-    V_J_C_S = np.sqrt(sunmu/r_J_2_S)                                            # [m/s] (1) "J"upiter "C"ircular speed relative to the "S"un
-    V_SC_C_J = np.sqrt(jupiter.mu/r_SC_J_park)                                   # [m/s] (2) "S"pace"C"raft "C"ircular parking speed relative to "J"upiter.
-    V_SC_A_S = np.sqrt( sunmu*r_E_2_S / ((r_J_2_S + r_E_2_S)*r_J_2_S) )         # [m/s] (3) "S"pace"C"raft speed at "A"poapsis of Hohmann transfer ellipse relative to the "S"un
-    V_SC_A_J = V_SC_A_S - V_J_C_S                                               # [m/s] (4) "S"pace"C"raft speed at "A"poapsis of Hohmann transfer ellipse relative to "J"upiter
+    V_J_C_S = np.sqrt(
+        sunmu / r_J_2_S
+    )  # [m/s] (1) "J"upiter "C"ircular speed relative to the "S"un
+    V_SC_C_J = np.sqrt(
+        jupiter.mu / r_SC_J_park
+    )  # [m/s] (2) "S"pace"C"raft "C"ircular parking speed relative to "J"upiter.
+    V_SC_A_S = np.sqrt(
+        sunmu * r_E_2_S / ((r_J_2_S + r_E_2_S) * r_J_2_S)
+    )  # [m/s] (3) "S"pace"C"raft speed at "A"poapsis of Hohmann transfer ellipse relative to the "S"un
+    V_SC_A_J = (
+        V_SC_A_S - V_J_C_S
+    )  # [m/s] (4) "S"pace"C"raft speed at "A"poapsis of Hohmann transfer ellipse relative to "J"upiter
 
-    a_H = - ( jupiter.mu / ( V_SC_A_J*V_SC_A_J) )                               # [m] Semimajor axis (-) of arrival hyperbola.
+    a_H = -(
+        jupiter.mu / (V_SC_A_J * V_SC_A_J)
+    )  # [m] Semimajor axis (-) of arrival hyperbola.
 
-    V_SC_P_H = np.sqrt( (V_SC_A_J*V_SC_A_J) + (2*jupiter.mu / r_SC_J_park) )     # [m/s] (5) "S"pace"C"raft speed at "P"eriapsis of "H"ohmann transfer ellipse (Before delta V performed)
+    V_SC_P_H = np.sqrt(
+        (V_SC_A_J * V_SC_A_J) + (2 * jupiter.mu / r_SC_J_park)
+    )  # [m/s] (5) "S"pace"C"raft speed at "P"eriapsis of "H"ohmann transfer ellipse (Before delta V performed)
     Delta_V_Parking_Orbit = V_SC_C_J - V_SC_P_H
-    e_H = 1 + ((r_SC_J_park*V_SC_A_J*V_SC_A_J) / jupiter.mu)
+    e_H = 1 + ((r_SC_J_park * V_SC_A_J * V_SC_A_J) / jupiter.mu)
     oe.a = a_H
     oe.e = e_H
     oe.i = 0.0 * macros.D2R
@@ -173,8 +192,11 @@ def run(show_plots):
 
     # Determine required simulation time (time of flight) from SC initial position on hyperbola to periapsis. (Time until delta V must be performed)
     # Method: Use hyperbolic time equation to find TOF: (t-tp)
-    zeta = 2*np.arctan( np.tan(oe.f / 2) * np.sqrt( (oe.e - 1) / (oe.e + 1) ) )
-    t_tp = np.abs( np.sqrt(-oe.a * oe.a * oe.a / jupiter.mu) * ( oe.e * np.tan(zeta) - np.log( np.tan((zeta/2) + (np.pi/4)) ) ) )
+    zeta = 2 * np.arctan(np.tan(oe.f / 2) * np.sqrt((oe.e - 1) / (oe.e + 1)))
+    t_tp = np.abs(
+        np.sqrt(-oe.a * oe.a * oe.a / jupiter.mu)
+        * (oe.e * np.tan(zeta) - np.log(np.tan((zeta / 2) + (np.pi / 4))))
+    )
 
     # Setting initial position and velocity vectors using orbital elements
     r_N, v_N = orbitalMotion.elem2rv(jupiter.mu, oe)
@@ -184,15 +206,17 @@ def run(show_plots):
     e_park = 0
 
     # Initialize Spacecraft States with the initialization variables
-    scObject.hub.r_CN_NInit = r_N                   # [m]   = r_BN_N
-    scObject.hub.v_CN_NInit = v_N                   # [m/s] = v_BN_N
+    scObject.hub.r_CN_NInit = r_N  # [m]   = r_BN_N
+    scObject.hub.v_CN_NInit = v_N  # [m/s] = v_BN_N
 
     # Set the simulation time
     simulationTime = macros.sec2nano(t_tp)  # Simulation Stops At Periapsis
 
     # Setup data logging before the simulation is initialized
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
 
@@ -205,9 +229,12 @@ def run(show_plots):
     # Vizard and played back after running the BSK simulation.
     # To enable this, uncomment this line:
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # saveFile=__file__
+    )
 
     # Initialize and execute simulation for the first section (stops at periapsis of hyperbola before delta V)
     scSim.InitializeSimulation()
@@ -222,7 +249,7 @@ def run(show_plots):
 
     # Apply delta V and set new velocity state
     vHat = vN / np.linalg.norm(vN)
-    vN = vN + Delta_V_Parking_Orbit*vHat
+    vN = vN + Delta_V_Parking_Orbit * vHat
     velRef.setState(vN)
 
     # Run the simulation for 2nd chunk
@@ -253,45 +280,66 @@ def plotOrbits(timeAxis, posData, jupiter, a_park, e_park):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
 
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2SEC, posData[:,idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            timeAxis * macros.NANO2SEC,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
     # Figure 2: Plot arrival to Jupiter
-    plt.figure(2,figsize=(5,5))
+    plt.figure(2, figsize=(5, 5))
     plt.axis([-16, 16, -16, 16])
     # Draw the planet
     fig = plt.gcf()
     ax = fig.gca()
-    ax.set_aspect('equal')
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    planetColor = '#008800'
+    ax.set_aspect("equal")
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
+    ax.get_xaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
+    planetColor = "#008800"
     planetRadius = 1.0
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
 
     # Draw the actual orbit from pulled data (DataRec)
-    plt.plot(posData[:,0] / jupiter.radEquator, posData[:,1] / jupiter.radEquator, color='orangered', label='Simulated Flight')
-    plt.xlabel('Jupiter Velocity Direction [DU]')
-    plt.ylabel('Anti-Sunward Direction [DU]')
+    plt.plot(
+        posData[:, 0] / jupiter.radEquator,
+        posData[:, 1] / jupiter.radEquator,
+        color="orangered",
+        label="Simulated Flight",
+    )
+    plt.xlabel("Jupiter Velocity Direction [DU]")
+    plt.ylabel("Anti-Sunward Direction [DU]")
 
     # Draw desired parking orbit
-    fData = np.linspace(0, 2*np.pi, 100)
+    fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for indx in range(0, len(fData)):
-        rData.append( ( a_park/jupiter.radEquator * (1 - e_park * e_park) ) / (1 + e_park * np.cos(fData[indx])) )
-    plt.plot(rData * np.cos(fData), rData * np.sin(fData), '--', color='#555555', label='Desired Circ. Parking Orbit')
-    plt.legend(loc='upper right')
+        rData.append(
+            (a_park / jupiter.radEquator * (1 - e_park * e_park))
+            / (1 + e_park * np.cos(fData[indx]))
+        )
+    plt.plot(
+        rData * np.cos(fData),
+        rData * np.sin(fData),
+        "--",
+        color="#555555",
+        label="Desired Circ. Parking Orbit",
+    )
+    plt.legend(loc="upper right")
     plt.grid()
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)

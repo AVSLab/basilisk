@@ -6,20 +6,29 @@ import numpy as np
 from Basilisk.utilities import RigidBodyKinematics
 
 
-def plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_H, rListLeader,
-               LeaderSpCharges, spPosListFollower_H, rListFollower, FollowerSpCharges):
-
+def plotSpheres(
+    posDataL_N,
+    posDataF_N,
+    attDataL_N,
+    attDataF_N,
+    spPosListLeader_H,
+    rListLeader,
+    LeaderSpCharges,
+    spPosListFollower_H,
+    rListFollower,
+    FollowerSpCharges,
+):
     figureList = {}
     plt.figure(3)
-    ax = plt.axes(projection='3d')
-# get S/C position
-    r_LN_N = np.array([0., 0., 0.])
+    ax = plt.axes(projection="3d")
+    # get S/C position
+    r_LN_N = np.array([0.0, 0.0, 0.0])
     r_FL_N = posDataF_N[0, 0:3] - posDataL_N[0, 0:3]
     # get sphere locations
     dcm_NL = RigidBodyKinematics.MRP2C(attDataL_N[0, 0:3]).transpose()
     dcm_NF = RigidBodyKinematics.MRP2C(attDataF_N[0, 0:3]).transpose()
     spPosL_H = np.dot(dcm_NL, np.array(spPosListLeader_H).transpose()).transpose()
-    spPosF_H = np.dot(dcm_NF,   np.array(spPosListFollower_H).transpose()).transpose()
+    spPosF_H = np.dot(dcm_NF, np.array(spPosListFollower_H).transpose()).transpose()
     radiiL = copy.deepcopy(rListLeader)
     radiiF = copy.deepcopy(rListFollower)
     # Define to plot spheres
@@ -61,11 +70,16 @@ def plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_
             color = cmap(normcl)
             norm = mpl.colors.Normalize(vmin=min_q, vmax=max_q)
         else:
-            cmap = plt.get_cmap('Greys')
-            color = (.5, .5, .5)
+            cmap = plt.get_cmap("Greys")
+            color = (0.5, 0.5, 0.5)
             norm = mpl.colors.Normalize(vmin=min_q, vmax=max_q)
 
-        ax.plot_surface(r_SpN_N[0] + radiiL[ii] * x, r_SpN_N[1] + radiiL[ii] * y, r_SpN_N[2] + radiiL[ii] * z, color=color)
+        ax.plot_surface(
+            r_SpN_N[0] + radiiL[ii] * x,
+            r_SpN_N[1] + radiiL[ii] * y,
+            r_SpN_N[2] + radiiL[ii] * z,
+            color=color,
+        )
 
     for ii in range(0, len(radiiF)):
         r_SpN_N = r_LN_N + r_FL_N + spPosF_H[ii, 0:3]
@@ -85,27 +99,36 @@ def plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_
             color = cmap(normcf)
             norm = mpl.colors.Normalize(vmin=min_q, vmax=max_q)
         else:
-            cmap = plt.get_cmap('Greys')
-            color = (.5, .5, .5)
+            cmap = plt.get_cmap("Greys")
+            color = (0.5, 0.5, 0.5)
             norm = mpl.colors.Normalize(vmin=min_q, vmax=max_q)
 
-        ax.plot_surface(r_SpN_N[0] + radiiF[ii] * x, r_SpN_N[1] + radiiF[ii] * y, r_SpN_N[2] + radiiF[ii] * z, color=color)
+        ax.plot_surface(
+            r_SpN_N[0] + radiiF[ii] * x,
+            r_SpN_N[1] + radiiF[ii] * y,
+            r_SpN_N[2] + radiiF[ii] * z,
+            color=color,
+        )
 
-    limits = np.array([getattr(ax, f'get_{axis}lim')() for axis in 'xyz'])
+    limits = np.array([getattr(ax, f"get_{axis}lim")() for axis in "xyz"])
     ax.set_box_aspect(np.ptp(limits, axis=1))
-    ax.set_xlabel('Radial')
-    ax.set_ylabel('Along Track')
-    ax.set_zlabel('Direction of Angular Momentum')
-    plt.title('MSM Representation')
+    ax.set_xlabel("Radial")
+    ax.set_ylabel("Along Track")
+    ax.set_zlabel("Direction of Angular Momentum")
+    plt.title("MSM Representation")
 
-    figureList['Charged_Spheres'] = plt.figure(3)
+    figureList["Charged_Spheres"] = plt.figure(3)
 
     # Add color map based on the spacecraft charges
     fig2, ax = plt.subplots(figsize=(6, 1))
-    fig2.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
-                  cax=ax, orientation='horizontal', label='Sphere Charge (C)')
+    fig2.colorbar(
+        mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
+        cax=ax,
+        orientation="horizontal",
+        label="Sphere Charge (C)",
+    )
 
-    figureList['Colorbar'] = plt.figure(4)
+    figureList["Colorbar"] = plt.figure(4)
 
     return figureList
 

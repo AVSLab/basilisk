@@ -132,27 +132,27 @@ from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
 # Get current file path
 import sys, os, inspect
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + "/..")
 from BSK_masters import BSKSim, BSKScenario
 import BSK_FormationDynamics, BSK_FormationFsw
 
 # Import plotting files for your scenario
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../plotting")
 import BSK_Plotting as BSK_plt
 
-sys.path.append(path + '/../../scenarios')
-
+sys.path.append(path + "/../../scenarios")
 
 
 # Create your own scenario child class
 class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_BasicOrbitFormation, self).__init__()
-        self.name = 'scenario_BasicOrbitFormation'
+        self.name = "scenario_BasicOrbitFormation"
 
         # declare empty class variables
         self.sNavTransRec = None
@@ -170,14 +170,19 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         if vizSupport.vizFound:
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels.taskName
-                                                      , [self.get_DynModel().scObject, self.get_DynModel().scObject2]
-                                                      , rwEffectorList=[self.DynModels.rwStateEffector, self.DynModels.rwStateEffector2]
-                                                      # , saveFile=__file__
-                                                      )
+            viz = vizSupport.enableUnityVisualization(
+                self,
+                self.DynModels.taskName,
+                [self.get_DynModel().scObject, self.get_DynModel().scObject2],
+                rwEffectorList=[
+                    self.DynModels.rwStateEffector,
+                    self.DynModels.rwStateEffector2,
+                ],
+                # , saveFile=__file__
+            )
 
     def configure_initial_conditions(self):
-        self.mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
+        self.mu = self.get_DynModel().gravFactory.gravBodies["earth"].mu
 
         # Configure Dynamics initial conditions
         self.oe = orbitalMotion.ClassicElements()
@@ -191,8 +196,16 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
         orbitalMotion.rv2elem(self.mu, rN, vN)
         self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.sigma_BNInit = [
+            [0.1],
+            [0.2],
+            [-0.3],
+        ]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [
+            [0.001],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
         # Configure Dynamics initial conditions
         self.oe2 = orbitalMotion.ClassicElements()
@@ -206,8 +219,16 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
         orbitalMotion.rv2elem(self.mu, rN2, vN2)
         self.get_DynModel().scObject2.hub.r_CN_NInit = rN2  # m   - r_CN_N
         self.get_DynModel().scObject2.hub.v_CN_NInit = vN2  # m/s - v_CN_N
-        self.get_DynModel().scObject2.hub.sigma_BNInit = [[-0.3], [0.0], [0.5]]  # sigma_BN_B
-        self.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject2.hub.sigma_BNInit = [
+            [-0.3],
+            [0.0],
+            [0.5],
+        ]  # sigma_BN_B
+        self.get_DynModel().scObject2.hub.omega_BN_BInit = [
+            [0.003],
+            [-0.02],
+            [0.01],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         samplingTime = self.get_DynModel().processTasksTimeStep
@@ -215,7 +236,9 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
         FswModel = self.get_FswModel()
 
         self.sNavTransRec = DynModels.simpleNavObject.transOutMsg.recorder(samplingTime)
-        self.sNavTrans2Rec = DynModels.simpleNavObject2.transOutMsg.recorder(samplingTime)
+        self.sNavTrans2Rec = DynModels.simpleNavObject2.transOutMsg.recorder(
+            samplingTime
+        )
         self.attErrRec = FswModel.attGuidMsg.recorder(samplingTime)
         self.attErr2Rec = FswModel.attGuid2Msg.recorder(samplingTime)
         self.scStateRec = DynModels.scObject.scStateOutMsg.recorder(samplingTime)
@@ -258,20 +281,26 @@ class scenario_BasicOrbitFormation(BSKSim, BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitude_error_chief", "rate_error_chief", "attitude_error_deputy",
-                           "rate_error_deputy", "orbits"]
+            figureNames = [
+                "attitude_error_chief",
+                "rate_error_chief",
+                "attitude_error_deputy",
+                "rate_error_deputy",
+                "orbits",
+            ]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
+
 
 def runScenario(scenario):
     scenario.InitializeSimulation()
 
     # Configure FSW mode
-    scenario.modeRequest = 'inertial3D'
+    scenario.modeRequest = "inertial3D"
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
 

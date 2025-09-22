@@ -39,14 +39,13 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 
 import scenarioPatchedConics
 
+
 @pytest.mark.scenarioTest
 @pytest.mark.slowtest
-
-
 
 # provide a unique test method name, starting with test_
 def test_scenarioPatchedConics(show_plots):
@@ -66,15 +65,13 @@ def test_scenarioPatchedConics(show_plots):
         testMessages.append("scenarioPatchedConics test are failed.")
 
     # setup truth data for unit test
-    truePos = [
-        [19497456649.927856, 1947075805.9933228, 0.0]
-    ]
-
+    truePos = [[19497456649.927856, 1947075805.9933228, 0.0]]
 
     # compare the results to the truth values
-    accuracy = 1000000.0 # meters
+    accuracy = 1000000.0  # meters
     testFailCount, testMessages = unitTestSupport.compareArray(
-        truePos, dataPos, accuracy, "r_BN_N Vector",testFailCount, testMessages)
+        truePos, dataPos, accuracy, "r_BN_N Vector", testFailCount, testMessages
+    )
 
     #   print out success message if no error were found
     if testFailCount == 0:

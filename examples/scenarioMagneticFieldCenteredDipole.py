@@ -151,6 +151,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -159,14 +160,21 @@ bskPath = __path__[0]
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import magneticFieldCenteredDipole
+
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+)
 from Basilisk.utilities import simSetPlanetEnvironment
 
-#attempt to import vizard
+# attempt to import vizard
 from Basilisk.utilities import vizSupport
+
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
@@ -181,7 +189,6 @@ def run(show_plots, orbitCase, planetCase):
 
     """
 
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -195,7 +202,7 @@ def run(show_plots, orbitCase, planetCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -211,33 +218,36 @@ def run(show_plots, orbitCase, planetCase):
 
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    if planetCase == 'Jupiter':
+    if planetCase == "Jupiter":
         planet = gravFactory.createJupiter()
-        planet.isCentralBody = True           # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
     else:  # Earth
         planet = gravFactory.createEarth()
-        planet.isCentralBody = True          # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     req = planet.radEquator
 
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
 
-
     # create the magnetic field
-    magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
+    magModule = (
+        magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+    )  # default is Earth centered dipole module
     magModule.ModelTag = "CenteredDipole"
-    magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
+    magModule.addSpacecraftToModel(
+        scObject.scStateOutMsg
+    )  # this command can be repeated if multiple
 
-    if planetCase == 'Jupiter':
+    if planetCase == "Jupiter":
         # The following command is a support function that sets up the centered dipole parameters.
         # These parameters can also be setup manually
-        simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'jupiter')
+        simSetPlanetEnvironment.centeredDipoleMagField(magModule, "jupiter")
     else:
-        simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'earth')
+        simSetPlanetEnvironment.centeredDipoleMagField(magModule, "earth")
     scSim.AddModelToTask(simTaskName, magModule)
 
-    if planetCase == 'Earth' and orbitCase == 'elliptical':
+    if planetCase == "Earth" and orbitCase == "elliptical":
         # Note that more then one magnetic field can be attached to a planet.
         # In the elliptic Earth orbit scenario
         # a second magnetic field module `magModule2` is created with a
@@ -249,11 +259,11 @@ def run(show_plots, orbitCase, planetCase):
         magModule2.addSpacecraftToModel(scObject.scStateOutMsg)
         # set the 2nd magnetic field through custom dipole settings
         magModule2.g10 = -30926.00 / 1e9 * 0.5  # Tesla
-        magModule2.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
-        magModule2.h11 =   5817.00 / 1e9 * 0.5  # Tesla
+        magModule2.g11 = -2318.00 / 1e9 * 0.5  # Tesla
+        magModule2.h11 = 5817.00 / 1e9 * 0.5  # Tesla
         magModule2.planetRadius = 6371.2 * 1000  # meters
         # set the reach variables such that the fields
-        magModule2.envMaxReach = req*1.3
+        magModule2.envMaxReach = req * 1.3
         magModule.envMinReach = magModule2.envMaxReach
         scSim.AddModelToTask(simTaskName, magModule2)
 
@@ -262,12 +272,12 @@ def run(show_plots, orbitCase, planetCase):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rPeriapses = req*1.1     # meters
-    if orbitCase == 'circular':
+    rPeriapses = req * 1.1  # meters
+    if orbitCase == "circular":
         oe.a = rPeriapses
         oe.e = 0.0000
-    elif orbitCase == 'elliptical':
-        rApoapses = req*3.5
+    elif orbitCase == "elliptical":
+        rApoapses = req * 3.5
         oe.a = (rPeriapses + rApoapses) / 2.0
         oe.e = 1.0 - rPeriapses / oe.a
     else:
@@ -278,7 +288,9 @@ def run(show_plots, orbitCase, planetCase):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
     # with circular or equatorial orbit, some angles are arbitrary
 
     #
@@ -289,26 +301,31 @@ def run(show_plots, orbitCase, planetCase):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
-    simulationTime = macros.sec2nano(1. * P)
+    P = 2.0 * np.pi / n
+    simulationTime = macros.sec2nano(1.0 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     magLog = magModule.envOutMsgs[0].recorder(samplingTime)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, magLog)
     scSim.AddModelToTask(simTaskName, dataLog)
-    if planetCase == 'Earth' and orbitCase == 'elliptical':
+    if planetCase == "Earth" and orbitCase == "elliptical":
         mag2Log = magModule2.envOutMsgs[0].recorder(samplingTime)
         scSim.AddModelToTask(simTaskName, mag2Log)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     scSim.InitializeSimulation()
 
@@ -323,7 +340,7 @@ def run(show_plots, orbitCase, planetCase):
     #
     magData = magLog.magField_N
     posData = dataLog.r_BN_N
-    if planetCase == 'Earth' and orbitCase == 'elliptical':
+    if planetCase == "Earth" and orbitCase == "elliptical":
         magData2 = mag2Log.magField_N
 
     np.set_printoptions(precision=16)
@@ -337,16 +354,21 @@ def run(show_plots, orbitCase, planetCase):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
     timeAxis = dataLog.times() * macros.NANO2SEC
     for idx in range(3):
-        plt.plot(timeAxis / P, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            timeAxis / P,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
     pltName = fileName + "1" + orbitCase + planetCase
     figureList[pltName] = plt.figure(1)
@@ -354,23 +376,31 @@ def run(show_plots, orbitCase, planetCase):
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
     for idx in range(3):
-        plt.plot(timeAxis / P, magData[:, idx] *1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$B\_N_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Magnetic Field [nT]')
-    if planetCase == 'Earth' and orbitCase == 'elliptical':
+        plt.plot(
+            timeAxis / P,
+            magData[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$B\_N_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Magnetic Field [nT]")
+    if planetCase == "Earth" and orbitCase == "elliptical":
         for idx in range(3):
-            plt.plot(timeAxis / P, magData2[:, idx] * 1e9, '--',
-                     color=unitTestSupport.getLineColor(idx, 3),
-                     label=r'$B\_N_{' + str(idx) + '}$')
+            plt.plot(
+                timeAxis / P,
+                magData2[:, idx] * 1e9,
+                "--",
+                color=unitTestSupport.getLineColor(idx, 3),
+                label=r"$B\_N_{" + str(idx) + "}$",
+            )
     pltName = fileName + "2" + orbitCase + planetCase
     figureList[pltName] = plt.figure(2)
-
 
     if show_plots:
         plt.show()
@@ -381,14 +411,13 @@ def run(show_plots, orbitCase, planetCase):
     return figureList
 
 
-
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
     run(
-        True,          # show_plots
-        'circular',  # orbit Case (circular, elliptical)
-        'Earth'      # planetCase (Earth, Jupiter)
+        True,  # show_plots
+        "circular",  # orbit Case (circular, elliptical)
+        "Earth",  # planetCase (Earth, Jupiter)
     )

@@ -74,7 +74,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.simulation import dataFileToViz
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+    vizSupport,
+)
 from Basilisk.utilities import unitTestSupport
 
 try:
@@ -85,7 +90,6 @@ except ImportError:
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
 
 
 def run(show_plots, attType):
@@ -99,13 +103,17 @@ def run(show_plots, attType):
 
     path = os.path.dirname(os.path.abspath(__file__))
     if attType == 0:
-        dataFileName = os.path.join(path, "dataForExamples", "scHoldTraj_rotating_MRP.csv")
+        dataFileName = os.path.join(
+            path, "dataForExamples", "scHoldTraj_rotating_MRP.csv"
+        )
     elif attType == 1:
-        dataFileName = os.path.join(path, "dataForExamples", "scHoldTraj_rotating_EP.csv")
+        dataFileName = os.path.join(
+            path, "dataForExamples", "scHoldTraj_rotating_EP.csv"
+        )
     else:
         print("unknown attType variable")
         exit()
-    file1 = open(dataFileName, 'r')
+    file1 = open(dataFileName, "r")
     Lines = file1.readlines()
     delimiter = ","
     t0 = float(Lines[1].split(delimiter)[0])
@@ -160,7 +168,9 @@ def run(show_plots, attType):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = []
     for scCounter in range(2):
         dataLog.append(dataModule.scStateOutMsgs[scCounter].recorder(samplingTime))
@@ -169,32 +179,39 @@ def run(show_plots, attType):
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scList
-                                                  # , saveFile=fileName
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scList,
+            # , saveFile=fileName
+        )
 
         viz.settings.trueTrajectoryLinesOn = 2  # relative to chief spacecraft
         viz.settings.showSpacecraftLabels = 1
         viz.settings.spacecraftShadowBrightness = 0.2
         # load CAD for target spacecraft
-        vizSupport.createCustomModel(viz,
-                                     # Specifying relative model path is useful for sharing scenarios and resources:
-                                     modelPath=os.path.join("..", "dataForExamples", "Aura_27.obj"),
-                                     # Specifying absolute model path is preferable for live-streaming:
-                                     # modelPath=os.path.join(path, "dataForExamples", "Aura_27.obj"),
-                                     shader=1,
-                                     simBodiesToModify=[scList[1].ModelTag],
-                                     rotation=[180. * macros.D2R, 0.0 * macros.D2R, -90. * macros.D2R],
-                                     scale=[1, 1, 1])
+        vizSupport.createCustomModel(
+            viz,
+            # Specifying relative model path is useful for sharing scenarios and resources:
+            modelPath=os.path.join("..", "dataForExamples", "Aura_27.obj"),
+            # Specifying absolute model path is preferable for live-streaming:
+            # modelPath=os.path.join(path, "dataForExamples", "Aura_27.obj"),
+            shader=1,
+            simBodiesToModify=[scList[1].ModelTag],
+            rotation=[180.0 * macros.D2R, 0.0 * macros.D2R, -90.0 * macros.D2R],
+            scale=[1, 1, 1],
+        )
         # load CAD for servicer spacecraft
-        vizSupport.createCustomModel(viz,
-                                     # Specifying relative model path is useful for sharing scenarios and resources:
-                                     modelPath=os.path.join("..", "dataForExamples", "Loral-1300Com-main.obj"),
-                                     # Specifying absolute model path is preferable for live-streaming:
-                                     # modelPath=os.path.join(path, "dataForExamples", "Loral-1300Com-main.obj"),
-                                     simBodiesToModify=[scList[0].ModelTag],
-                                     rotation=[0. * macros.D2R, -90.0 * macros.D2R, 0. * macros.D2R],
-                                     scale=[0.09, 0.09, 0.09])
+        vizSupport.createCustomModel(
+            viz,
+            # Specifying relative model path is useful for sharing scenarios and resources:
+            modelPath=os.path.join("..", "dataForExamples", "Loral-1300Com-main.obj"),
+            # Specifying absolute model path is preferable for live-streaming:
+            # modelPath=os.path.join(path, "dataForExamples", "Loral-1300Com-main.obj"),
+            simBodiesToModify=[scList[0].ModelTag],
+            rotation=[0.0 * macros.D2R, -90.0 * macros.D2R, 0.0 * macros.D2R],
+            scale=[0.09, 0.09, 0.09],
+        )
 
         # over-ride the default to not read the SC states from scObjects, but set them directly
         # to read from the dataFileToFiz output message
@@ -231,15 +248,25 @@ def run(show_plots, attType):
     for idx in sigmaB1N:
         sNorm = np.linalg.norm(idx)
         s1Data.append(sNorm)
-    plt.plot(timeData, s1Data, color=unitTestSupport.getLineColor(1, 3), label=r'$|\sigma_{B1/N}|$')
+    plt.plot(
+        timeData,
+        s1Data,
+        color=unitTestSupport.getLineColor(1, 3),
+        label=r"$|\sigma_{B1/N}|$",
+    )
     s2Data = []
     for idx in sigmaB2N:
         sNorm = np.linalg.norm(idx)
         s2Data.append(sNorm)
-    plt.plot(timeData, s2Data, color=unitTestSupport.getLineColor(2, 3), label=r'$|\sigma_{B2/N}|$')
-    plt.xlabel('Time [h]')
-    plt.ylabel(r'MRP Norm')
-    plt.legend(loc='lower right')
+    plt.plot(
+        timeData,
+        s2Data,
+        color=unitTestSupport.getLineColor(2, 3),
+        label=r"$|\sigma_{B2/N}|$",
+    )
+    plt.xlabel("Time [h]")
+    plt.ylabel(r"MRP Norm")
+    plt.legend(loc="lower right")
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
@@ -249,13 +276,16 @@ def run(show_plots, attType):
         rhoData.append(r2 - r1)
     rhoData = np.array(rhoData)
     for idx in range(3):
-        plt.plot(timeData, rhoData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\rho_{' + str(idx+1) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [h]')
-    plt.ylabel(r'$\rho_{S/T}$ (Inertial) [m]')
-    plt.legend(loc='lower right')
+        plt.plot(
+            timeData,
+            rhoData[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\rho_{" + str(idx + 1) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [h]")
+    plt.ylabel(r"$\rho_{S/T}$ (Inertial) [m]")
+    plt.legend(loc="lower right")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
@@ -275,5 +305,5 @@ def run(show_plots, attType):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        0       # attitude coordinate type, 0 - MRP, 1 - quaternions
+        0,  # attitude coordinate type, 0 - MRP, 1 - quaternions
     )

@@ -67,7 +67,6 @@ This resulting feedback control error is shown below.
    :align: center
 """
 
-
 import itertools
 import math
 import os
@@ -122,9 +121,7 @@ def run(show_plots, useRefAttitude):
     scObject.ModelTag = "scObject"
     scObject2.ModelTag = "scObject2"
 
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 500.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
@@ -150,7 +147,7 @@ def run(show_plots, useRefAttitude):
     location = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
     direction = [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]  # get thrust in +z direction
     for pos_B, dir_B in zip(location, direction):
-        thFactory2.create('MOOG_Monarc_22_6', pos_B, dir_B, useMinPulseTime=False)
+        thFactory2.create("MOOG_Monarc_22_6", pos_B, dir_B, useMinPulseTime=False)
     thFactory2.addToSpacecraft(scObject2.ModelTag, thrusterEffector2, scObject2)
 
     # extObj
@@ -205,9 +202,16 @@ def run(show_plots, useRefAttitude):
     spacecraftReconfigModule.thrustConfigInMsg.subscribeTo(fswThrConfMsg)
     spacecraftReconfigModule.vehicleConfigInMsg.subscribeTo(vcMsg)
     thrusterEffector2.cmdsInMsg.subscribeTo(spacecraftReconfigModule.onTimeOutMsg)
-    spacecraftReconfigModule.mu = astroConstants.MU_EARTH*1e9  # [m^3/s^2]
+    spacecraftReconfigModule.mu = astroConstants.MU_EARTH * 1e9  # [m^3/s^2]
     spacecraftReconfigModule.attControlTime = 400  # [s]
-    spacecraftReconfigModule.targetClassicOED = [0.0000, 0.0001, 0.0002, -0.0001, -0.0002, -0.0003]
+    spacecraftReconfigModule.targetClassicOED = [
+        0.0000,
+        0.0001,
+        0.0002,
+        -0.0001,
+        -0.0002,
+        -0.0003,
+    ]
     scSim.AddModelToTask(fswTaskName, spacecraftReconfigModule, 10)
 
     # att_Error
@@ -227,11 +231,11 @@ def run(show_plots, useRefAttitude):
     mrpControl.K = 10
     mrpControl.Ki = 0.0002
     mrpControl.P = 50.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # ----- Setup spacecraft initial states ----- #
     oe = orbitalMotion.ClassicElements()
-    oe.a = 11000*1e3  # meters
+    oe.a = 11000 * 1e3  # meters
     oe.e = 0.4
     oe.i = 60.0 * macros.D2R
     oe.Omega = 90 * macros.D2R
@@ -247,7 +251,7 @@ def run(show_plots, useRefAttitude):
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     oe2 = oe
-    oe2.a = (1 + 0.0003)*oe2.a
+    oe2.a = (1 + 0.0003) * oe2.a
     oe2.e = oe2.e - 0.0002
     oe2.i = oe2.i + 0.0001
     oe2.Omega = oe2.Omega + 0.0004
@@ -262,11 +266,13 @@ def run(show_plots, useRefAttitude):
     scObject2.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     # ----- log ----- #
-    orbit_period = 2*math.pi/math.sqrt(mu/oe.a**3)
-    simulationTime = orbit_period*1.1
+    orbit_period = 2 * math.pi / math.sqrt(mu / oe.a**3)
+    simulationTime = orbit_period * 1.1
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, dynTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, dynTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLog2 = scObject2.scStateOutMsg.recorder(samplingTime)
     attRefLog = spacecraftReconfigModule.attRefOutMsg.recorder(samplingTime)
@@ -280,9 +286,12 @@ def run(show_plots, useRefAttitude):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObject, scObject2]
-                                              # , saveFile=fileName
-                                             )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        dynTaskName,
+        [scObject, scObject2],
+        # , saveFile=fileName
+    )
 
     # ----- execute sim ----- #
     scSim.InitializeSimulation()
@@ -295,7 +304,7 @@ def run(show_plots, useRefAttitude):
     pos2 = dataLog2.r_BN_N
     vel2 = dataLog2.v_BN_N
     attErr = attErrLog.sigma_BR
-    timeData = dataLog.times()*macros.NANO2SEC/orbit_period
+    timeData = dataLog.times() * macros.NANO2SEC / orbit_period
 
     # ----- plot ----- #
     # classic orbital element difference (figure1)
@@ -304,19 +313,21 @@ def run(show_plots, useRefAttitude):
     for i in range(0, len(pos[:, 0])):
         oe_tmp = orbitalMotion.rv2elem(mu, pos[i], vel[i])
         oe2_tmp = orbitalMotion.rv2elem(mu, pos2[i], vel2[i])
-        oed[i, 0] = (oe2_tmp.a - oe_tmp.a)/oe_tmp.a
+        oed[i, 0] = (oe2_tmp.a - oe_tmp.a) / oe_tmp.a
         oed[i, 1] = oe2_tmp.e - oe_tmp.e
         oed[i, 2] = oe2_tmp.i - oe_tmp.i
         oed[i, 3] = oe2_tmp.Omega - oe_tmp.Omega
         oed[i, 4] = oe2_tmp.omega - oe_tmp.omega
         E_tmp = orbitalMotion.f2E(oe_tmp.f, oe_tmp.e)
         E2_tmp = orbitalMotion.f2E(oe2_tmp.f, oe2_tmp.e)
-        oed[i, 5] = orbitalMotion.E2M(E2_tmp, oe2_tmp.e) - orbitalMotion.E2M(E_tmp, oe_tmp.e)
+        oed[i, 5] = orbitalMotion.E2M(E2_tmp, oe2_tmp.e) - orbitalMotion.E2M(
+            E_tmp, oe_tmp.e
+        )
         for j in range(3, 6):
-            if(oed[i, j] > math.pi):
-                oed[i, j] = oed[i, j] - 2*math.pi
-            if(oed[i, j] < -math.pi):
-                oed[i, j] = oed[i, j] + 2*math.pi
+            if oed[i, j] > math.pi:
+                oed[i, j] = oed[i, j] - 2 * math.pi
+            if oed[i, j] < -math.pi:
+                oed[i, j] = oed[i, j] + 2 * math.pi
     plt.plot(timeData, oed[:, 0], label="da")
     plt.plot(timeData, oed[:, 1], label="de")
     plt.plot(timeData, oed[:, 2], label="di")
@@ -338,14 +349,15 @@ def run(show_plots, useRefAttitude):
     plt.ylabel("MRP Error")
     pltName = fileName + "2" + str(int(useRefAttitude))
     figureList[pltName] = plt.figure(2)
-    if(show_plots):
+    if show_plots:
         plt.show()
     plt.close("all")
 
     return pos, vel, pos2, vel2, attErr, numDataPoints, figureList
 
+
 if __name__ == "__main__":
     run(
-        show_plots = True,  # show_plots
-        useRefAttitude = False  # useRefAttitude
+        show_plots=True,  # show_plots
+        useRefAttitude=False,  # useRefAttitude
     )

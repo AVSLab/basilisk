@@ -142,19 +142,33 @@ import matplotlib.transforms as mtransforms
 import numpy as np
 from Basilisk import __path__
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque)
-from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, spacecraft, boreAngCalc)
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.fswAlgorithms import (
+    mrpFeedback,
+    attTrackingError,
+    inertial3D,
+    rwMotorTorque,
+)
+from Basilisk.simulation import (
+    reactionWheelStateEffector,
+    simpleNav,
+    spacecraft,
+    boreAngCalc,
+)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    unitTestSupport,
+    vizSupport,
+)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-
 def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase):
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -189,8 +203,8 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # Next a series of gravitational bodies are included
-    gravBodies = gravFactory.createBodies('earth', 'sun')
-    planet = gravBodies['earth']
+    gravBodies = gravFactory.createBodies("earth", "sun")
+    planet = gravBodies["earth"]
     planet.isCentralBody = True
 
     mu = planet.mu
@@ -199,14 +213,14 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # Next, the default SPICE support module is created and configured.
     timeInitString = "2021 JANUARY 15 00:28:30.0"
-    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
+    spiceTimeStringFormat = "%Y %B %d %H:%M:%S.%f"
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
     # The following is a support macro that creates a `spiceObject` instance
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
 
     # Earth is gravity center
-    spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = "Earth"
 
     # The SPICE object is added to the simulation task list.
     scSim.AddModelToTask(simTaskName, spiceObject, 2)
@@ -216,7 +230,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 7000. * 1000      # meters
+    oe.a = 7000.0 * 1000  # meters
     oe.e = 0.0001
     oe.i = 33.3 * macros.D2R
     oe.Omega = 148.2 * macros.D2R
@@ -225,24 +239,30 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     oe = orbitalMotion.rv2elem(mu, rN, vN)
 
-	# sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
-    sigma_BN_start = [ [0.522, -0.065,  0.539],     # to violate one keepIn only
-                       [0.314, -0.251,  0.228],     # to violate two keepIn and not keepOut
-                       [-0.378, 0.119, -0.176],     # to violate keepOut and both keepIn
-                       [-0.412, 0.044, -0.264] ]    # to violate keepOut only
+    # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
+    sigma_BN_start = [
+        [0.522, -0.065, 0.539],  # to violate one keepIn only
+        [0.314, -0.251, 0.228],  # to violate two keepIn and not keepOut
+        [-0.378, 0.119, -0.176],  # to violate keepOut and both keepIn
+        [-0.412, 0.044, -0.264],
+    ]  # to violate keepOut only
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
-    scObject.hub.sigma_BNInit = sigma_BN_start[attitudeSetCase]   # change this MRP set to customize initial inertial attitude
-    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]              # rad/s - omega_CN_B
+    scObject.hub.sigma_BNInit = sigma_BN_start[
+        attitudeSetCase
+    ]  # change this MRP set to customize initial inertial attitude
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
     # define the simulation inertia
-    I = [0.02 / 3,  0.,         0.,
-         0.,        0.1256 / 3, 0.,
-         0.,        0.,         0.1256 / 3]
+    I = [0.02 / 3, 0.0, 0.0, 0.0, 0.1256 / 3, 0.0, 0.0, 0.0, 0.1256 / 3]
     scObject.hub.mHub = 4.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     #
@@ -257,21 +277,33 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     maxMomentum = 0.01
     maxSpeed = 6000 * macros.RPM
-    RW1 = rwFactory.create('custom', [1, 0, 0], Omega=0.  # RPM
-                           , Omega_max=maxSpeed
-                           , maxMomentum=maxMomentum
-                           , u_max=0.001
-                           , RWModel=varRWModel)
-    RW2 = rwFactory.create('custom', [0, 1, 0], Omega=0.  # RPM
-                           , Omega_max=maxSpeed
-                           , maxMomentum=maxMomentum
-                           , u_max=0.001
-                           , RWModel=varRWModel)
-    RW3 = rwFactory.create('custom', [0, 0, 1], Omega=0.  # RPM
-                           , Omega_max=maxSpeed
-                           , maxMomentum=maxMomentum
-                           , u_max=0.001
-                           , RWModel=varRWModel)
+    RW1 = rwFactory.create(
+        "custom",
+        [1, 0, 0],
+        Omega=0.0,  # RPM
+        Omega_max=maxSpeed,
+        maxMomentum=maxMomentum,
+        u_max=0.001,
+        RWModel=varRWModel,
+    )
+    RW2 = rwFactory.create(
+        "custom",
+        [0, 1, 0],
+        Omega=0.0,  # RPM
+        Omega_max=maxSpeed,
+        maxMomentum=maxMomentum,
+        u_max=0.001,
+        RWModel=varRWModel,
+    )
+    RW3 = rwFactory.create(
+        "custom",
+        [0, 0, 1],
+        Omega=0.0,  # RPM
+        Omega_max=maxSpeed,
+        maxMomentum=maxMomentum,
+        u_max=0.001,
+        RWModel=varRWModel,
+    )
 
     numRW = rwFactory.getNumOfDevices()
 
@@ -292,17 +324,21 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     #   setup the FSW algorithm tasks
     #
 
-  	# sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
-    sigma_BN_target = [ [0.342,  0.223, -0.432],     # to violate one keepIn only
-                        [0.326, -0.206, -0.823],     # to violate two keepIn and not keepOut
-                        [0.350,  0.220, -0.440],     # to violate keepOut and both keepIn
-                        [0.350,  0.220, -0.440] ]    # to violate keepOut only
+    # sets of initial attitudes that yield the desired constraint violations (attitudeSetCase)
+    sigma_BN_target = [
+        [0.342, 0.223, -0.432],  # to violate one keepIn only
+        [0.326, -0.206, -0.823],  # to violate two keepIn and not keepOut
+        [0.350, 0.220, -0.440],  # to violate keepOut and both keepIn
+        [0.350, 0.220, -0.440],
+    ]  # to violate keepOut only
 
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = sigma_BN_target[attitudeSetCase]     # change this MRP set to customize final inertial attitude
+    inertial3DObj.sigma_R0N = sigma_BN_target[
+        attitudeSetCase
+    ]  # change this MRP set to customize final inertial attitude
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
@@ -316,9 +352,9 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     decayTime = 10.0
     xi = 1.0
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
-    mrpControl.P = 3*np.max(I)/decayTime
-    mrpControl.K = (mrpControl.P/xi)*(mrpControl.P/xi)/np.max(I)
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.P = 3 * np.max(I) / decayTime
+    mrpControl.K = (mrpControl.P / xi) * (mrpControl.P / xi) / np.max(I)
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
@@ -332,25 +368,27 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # Boresight vector modules.
     stBACObject = boreAngCalc.BoreAngCalc()
     stBACObject.ModelTag = "starTrackerBoresight"
-    stBACObject.boreVec_B = [1., 0., 0.]  # boresight in body frame
+    stBACObject.boreVec_B = [1.0, 0.0, 0.0]  # boresight in body frame
     scSim.AddModelToTask(simTaskName, stBACObject)
 
     ssyBACObject = boreAngCalc.BoreAngCalc()
     ssyBACObject.ModelTag = "SunSensorBoresight"
-    ssyBACObject.boreVec_B = [0., 1., 0.]  # boresight in body frame
+    ssyBACObject.boreVec_B = [0.0, 1.0, 0.0]  # boresight in body frame
     scSim.AddModelToTask(simTaskName, ssyBACObject)
 
     if use2SunSensors:
         sszBACObject = boreAngCalc.BoreAngCalc()
         sszBACObject.ModelTag = "SunSensorBoresight"
-        sszBACObject.boreVec_B = [0., 0., 1.]  # boresight in body frame
+        sszBACObject.boreVec_B = [0.0, 0.0, 1.0]  # boresight in body frame
         scSim.AddModelToTask(simTaskName, sszBACObject)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
     rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
@@ -391,7 +429,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
-    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)    # for inertial3D
+    attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg)  # for inertial3D
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
     mrpControl.rwParamsInMsg.subscribeTo(fswRwParamMsg)
@@ -412,19 +450,43 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     # Vizard Visualization Option
     # ---------------------------
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-             # saveFile=__file__
-             )
-    vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'r',
-                       normalVector_B=[1, 0, 0], incidenceAngle=starTrackerFov*macros.D2R, isKeepIn=False,
-                       coneHeight=10.0, coneName='sunKeepOut')
-    vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'g',
-                       normalVector_B=[0, 1, 0], incidenceAngle=sunSensorFov*macros.D2R, isKeepIn=True,
-                       coneHeight=10.0, coneName='sunKeepIn')
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # saveFile=__file__
+    )
+    vizSupport.createConeInOut(
+        viz,
+        toBodyName="sun_planet_data",
+        coneColor="r",
+        normalVector_B=[1, 0, 0],
+        incidenceAngle=starTrackerFov * macros.D2R,
+        isKeepIn=False,
+        coneHeight=10.0,
+        coneName="sunKeepOut",
+    )
+    vizSupport.createConeInOut(
+        viz,
+        toBodyName="sun_planet_data",
+        coneColor="g",
+        normalVector_B=[0, 1, 0],
+        incidenceAngle=sunSensorFov * macros.D2R,
+        isKeepIn=True,
+        coneHeight=10.0,
+        coneName="sunKeepIn",
+    )
     if use2SunSensors:
-        vizSupport.createConeInOut(viz, toBodyName='sun_planet_data', coneColor = 'b',
-                       normalVector_B=[0, 0, 1], incidenceAngle=sunSensorFov*macros.D2R, isKeepIn=True,
-                       coneHeight=10.0, coneName='sunKeepIn')
+        vizSupport.createConeInOut(
+            viz,
+            toBodyName="sun_planet_data",
+            coneColor="b",
+            normalVector_B=[0, 0, 1],
+            incidenceAngle=sunSensorFov * macros.D2R,
+            isKeepIn=True,
+            coneHeight=10.0,
+            coneName="sunKeepIn",
+        )
 
     # initialize Simulation:  This function runs the self_init()
     # cross_init() and reset() routines on each module.
@@ -456,37 +518,78 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     np.set_printoptions(precision=16)
 
-
     # Displays the plots relative to the S/C attitude, maneuver, RW speeds and torques and boresight angles
 
     timeData = rwMotorLog.times() * macros.NANO2MIN
 
     plot_attitude_error(timeData, dataSigmaBR)
     figureList = {}
-    pltName = fileName + "1" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
+    pltName = (
+        fileName
+        + "1"
+        + str(int(use2SunSensors))
+        + str(starTrackerFov)
+        + str(sunSensorFov)
+        + str(attitudeSetCase)
+    )
     figureList[pltName] = plt.figure(1)
 
     plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
-    pltName = fileName + "2" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
+    pltName = (
+        fileName
+        + "2"
+        + str(int(use2SunSensors))
+        + str(starTrackerFov)
+        + str(sunSensorFov)
+        + str(attitudeSetCase)
+    )
     figureList[pltName] = plt.figure(2)
 
     plot_rate_error(timeData, dataOmegaBR)
-    pltName = fileName + "3" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
+    pltName = (
+        fileName
+        + "3"
+        + str(int(use2SunSensors))
+        + str(starTrackerFov)
+        + str(sunSensorFov)
+        + str(attitudeSetCase)
+    )
     figureList[pltName] = plt.figure(3)
 
     plot_rw_speeds(timeData, dataOmegaRW, numRW)
-    pltName = fileName + "4" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
+    pltName = (
+        fileName
+        + "4"
+        + str(int(use2SunSensors))
+        + str(starTrackerFov)
+        + str(sunSensorFov)
+        + str(attitudeSetCase)
+    )
     figureList[pltName] = plt.figure(4)
 
     plot_st_miss_angle(timeData, dataSTMissAngle, starTrackerFov)
-    pltName = fileName + "5" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
+    pltName = (
+        fileName
+        + "5"
+        + str(int(use2SunSensors))
+        + str(starTrackerFov)
+        + str(sunSensorFov)
+        + str(attitudeSetCase)
+    )
     figureList[pltName] = plt.figure(5)
 
     dataSS = [dataSSyMissAngle]
     if use2SunSensors:
         dataSS.append(dataSSzMissAngle)
     plot_ss_miss_angle(timeData, dataSS, sunSensorFov)
-    pltName = fileName + "6" + str(int(use2SunSensors)) + str(starTrackerFov) + str(sunSensorFov) + str(attitudeSetCase)
+    pltName = (
+        fileName
+        + "6"
+        + str(int(use2SunSensors))
+        + str(starTrackerFov)
+        + str(sunSensorFov)
+        + str(attitudeSetCase)
+    )
     figureList[pltName] = plt.figure(6)
 
     if show_plots:
@@ -503,112 +606,155 @@ def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeData,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
+
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """Plot the RW command torques."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\hat u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
+
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-        plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\hat u_{s," + str(idx) + "}$",
+        )
+        plt.plot(
+            timeData,
+            dataRW[idx],
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label="$u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
+
 
 def plot_rate_error(timeData, dataOmegaBR):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (rad/s) ')
+        plt.plot(
+            timeData,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error (rad/s) ")
+
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW spin rates."""
     plt.figure(4)
     for idx in range(numRW):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\Omega_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
+        plt.plot(
+            timeData,
+            dataOmegaRW[:, idx] / macros.RPM,
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\Omega_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Speed (RPM) ")
+
 
 def plot_st_miss_angle(timeData, dataMissAngle, Fov):
     """Plot the miss angle between star tacker boresight and Sun."""
     fig, ax = plt.subplots()
     trans = mtransforms.blended_transform_factory(ax.transData, ax.transAxes)
-    dataFov = np.ones(len(timeData))*Fov
-    plt.plot(timeData, dataFov, '--',
-                 color = 'r', label = r'f.o.v.')
-    data = dataMissAngle*macros.R2D
+    dataFov = np.ones(len(timeData)) * Fov
+    plt.plot(timeData, dataFov, "--", color="r", label=r"f.o.v.")
+    data = dataMissAngle * macros.R2D
     for idx in range(1):
-        plt.plot(timeData, data,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\alpha $')
-    plt.fill_between(timeData, 0, 1, where=dataFov >= data, facecolor='red',
-                  alpha = 0.4, interpolate=True, transform = trans)
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('StarTracker/Sun angle \u03B1 (deg)')
+        plt.plot(
+            timeData,
+            data,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\alpha $",
+        )
+    plt.fill_between(
+        timeData,
+        0,
+        1,
+        where=dataFov >= data,
+        facecolor="red",
+        alpha=0.4,
+        interpolate=True,
+        transform=trans,
+    )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("StarTracker/Sun angle \u03b1 (deg)")
+
 
 def plot_ss_miss_angle(timeData, dataMissAngle, Fov):
     """Plot the miss angle between sun sensor(s) boresight and Sun."""
     fig, ax = plt.subplots()
     trans = mtransforms.blended_transform_factory(ax.transData, ax.transAxes)
-    dataFov = np.ones(len(timeData))*Fov
-    plt.plot(timeData, dataFov, '--',
-                 color = 'r', label = r'f.o.v.')
+    dataFov = np.ones(len(timeData)) * Fov
+    plt.plot(timeData, dataFov, "--", color="r", label=r"f.o.v.")
     data = []
     for d in dataMissAngle:
-        data.append(d*macros.R2D)
+        data.append(d * macros.R2D)
     for idx in range(len(data)):
-        plt.plot(timeData, data[idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\beta_{' + str(idx+1) + '}$')
-    dataMinAngle = 180*np.ones(len(timeData))
+        plt.plot(
+            timeData,
+            data[idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\beta_{" + str(idx + 1) + "}$",
+        )
+    dataMinAngle = 180 * np.ones(len(timeData))
     for i in range(len(timeData)):
         for j in range(len(data)):
             if data[j][i] < dataMinAngle[i]:
                 dataMinAngle[i] = data[j][i]
-    plt.fill_between(timeData, 0, 1, where = dataFov < dataMinAngle, facecolor='red',
-                  alpha = 0.4, interpolate=True, transform = trans)
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('SunSensor/Sun angle \u03B2 (deg)')
-
+    plt.fill_between(
+        timeData,
+        0,
+        1,
+        where=dataFov < dataMinAngle,
+        facecolor="red",
+        alpha=0.4,
+        interpolate=True,
+        transform=trans,
+    )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("SunSensor/Sun angle \u03b2 (deg)")
 
 
 if __name__ == "__main__":
     run(
-        True,           # show_plots
-        True,           # use2SunSensors
-        20,             # starTrackerFov
-        70,             # sunSensorFov
-        2               # attitudeSetCase
+        True,  # show_plots
+        True,  # use2SunSensors
+        20,  # starTrackerFov
+        70,  # sunSensorFov
+        2,  # attitudeSetCase
     )

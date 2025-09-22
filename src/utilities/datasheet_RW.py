@@ -19,6 +19,7 @@
 
 from Basilisk.utilities import macros as mc
 
+
 def Honeywell_HR16(maxMomentum_level):
     """
     Honeywell HR16 (100Nm, 75Nm, 50Nm)
@@ -42,31 +43,31 @@ def Honeywell_HR16(maxMomentum_level):
     maxMomentum_medium = 75
     maxMomentum_small = 50
 
-
     # mass = RW rotor mass [kg]. Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
     # U_s = static RW imbalance [kg*m]
     # U_d = dynamic RW imbalance [kg*m^2]
-    if maxMomentum_level == 'large':
+    if maxMomentum_level == "large":
         mass = 12.0
-        U_s = 4.8E-6
-        U_d = 15.4E-7
-    elif maxMomentum_level == 'medium':
+        U_s = 4.8e-6
+        U_d = 15.4e-7
+    elif maxMomentum_level == "medium":
         mass = 10.4
-        U_s = 3.8E-6
-        U_d = 11.5E-7
-    elif maxMomentum_level == 'small':
+        U_s = 3.8e-6
+        U_d = 11.5e-7
+    elif maxMomentum_level == "small":
         mass = 9.0
-        U_s = 2.8E-6
-        U_d = 7.7E-7
+        U_s = 2.8e-6
+        U_d = 7.7e-7
     else:
-        raise ValueError('Honeywell_HR16(maxMomentum_level) only has arg options maxMomentum = [large, medium, small]')
+        raise ValueError(
+            "Honeywell_HR16(maxMomentum_level) only has arg options maxMomentum = [large, medium, small]"
+        )
 
-    maxMomentum = globals().get('maxMomentum_' + maxMomentum_level)
+    maxMomentum = globals().get("maxMomentum_" + maxMomentum_level)
     if maxMomentum is None:
         raise ValueError(f"maxMomentum_{maxMomentum_level} not found")
 
     return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d, maxMomentum)
-
 
 
 def Honeywell_HR14(maxMomentum):
@@ -97,21 +98,22 @@ def Honeywell_HR14(maxMomentum):
     small = 25
     if maxMomentum == large:
         mass = 10.6
-        U_s = 4.8E-6
-        U_d = 13.7E-7
+        U_s = 4.8e-6
+        U_d = 13.7e-7
     elif maxMomentum == medium:
         mass = 8.5
-        U_s = 3.5E-6
-        U_d = 9.1E-7
+        U_s = 3.5e-6
+        U_d = 9.1e-7
     elif maxMomentum == small:
         mass = 7.5
-        U_s = 2.2E-6
-        U_d = 4.6E-7
+        U_s = 2.2e-6
+        U_d = 4.6e-7
     else:
-        raise ValueError('Honeywell_HR14(maxMomentum) only has arg options maxMomentum = [large, medium, small]')
+        raise ValueError(
+            "Honeywell_HR14(maxMomentum) only has arg options maxMomentum = [large, medium, small]"
+        )
 
     return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d)
-
 
 
 def Honeywell_HR12(maxMomentum):
@@ -142,17 +144,19 @@ def Honeywell_HR12(maxMomentum):
     small = 12
     if maxMomentum == large:
         mass = 9.5
-        U_s = 4.4E-6
-        U_d = 9.1E-7
+        U_s = 4.4e-6
+        U_d = 9.1e-7
     elif maxMomentum == medium:
         mass = 7.0
-        U_s = 2.4E-6
-        U_d = 4.6E-7
+        U_s = 2.4e-6
+        U_d = 4.6e-7
     elif maxMomentum == small:
         mass = 6.0
-        U_s = 1.5E-6
-        U_d = 2.2E-7
+        U_s = 1.5e-6
+        U_d = 2.2e-7
     else:
-        raise ValueError('Honeywell_HR12(maxMomentum) only has arg options maxMomentum = [large, medium, small]')
+        raise ValueError(
+            "Honeywell_HR12(maxMomentum) only has arg options maxMomentum = [large, medium, small]"
+        )
 
     return (Omega_max, u_max, u_min, u_f, mass, U_s, U_d)

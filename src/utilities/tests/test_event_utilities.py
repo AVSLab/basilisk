@@ -25,12 +25,12 @@ from Basilisk.utilities.SimulationBaseClass import (
 
 def test_methodize_condition():
     simBase = MagicMock()
-    simBase.condition=True
+    simBase.condition = True
     simBase.value = 1.0
     condition_fn = methodizeCondition(["self.condition", "self.value==1"])
     assert condition_fn(simBase) is True
 
-    simBase.condition=False
+    simBase.condition = False
     assert condition_fn(simBase) is False
 
 
@@ -44,6 +44,7 @@ def test_methodize_action():
     assert simBase.value == 1.0
     simBase.action.assert_called_once()
 
+
 def test_event_handler():
     simBase = MagicMock()
     simBase.TotalSim.CurrentNanos = 1e10
@@ -56,12 +57,12 @@ def test_event_handler():
     )
 
     # Check not triggered
-    simBase.condition=False
+    simBase.condition = False
     handler.checkEvent(simBase)
     simBase.action.assert_not_called()
 
     # Check triggered
-    simBase.condition=True
+    simBase.condition = True
     handler.checkEvent(simBase)
     simBase.action.assert_called_once()
 

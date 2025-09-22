@@ -36,7 +36,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioBasicOrbitStream
 
 
@@ -49,24 +49,30 @@ import scenarioBasicOrbitStream
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("orbitCase, useSphericalHarmonics, planetCase", [
-    ('LEO', False, 'Earth'),
-    ('GTO', False, 'Earth'),
-    ('GEO', False, 'Earth'),
-    ('LEO', True, 'Earth'),
-    ('LEO', False, 'Mars')
-])
+@pytest.mark.parametrize(
+    "orbitCase, useSphericalHarmonics, planetCase",
+    [
+        ("LEO", False, "Earth"),
+        ("GTO", False, "Earth"),
+        ("GEO", False, "Earth"),
+        ("LEO", True, "Earth"),
+        ("LEO", False, "Mars"),
+    ],
+)
 @pytest.mark.scenarioTest
-
-def test_scenarioBasicOrbitStream(show_plots, orbitCase, useSphericalHarmonics, planetCase):
-    '''This function is called by the py.test environment.'''
+def test_scenarioBasicOrbitStream(
+    show_plots, orbitCase, useSphericalHarmonics, planetCase
+):
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
-    scenarioBasicOrbitStream.run(show_plots, False, False, 10., orbitCase, useSphericalHarmonics, planetCase)
+    scenarioBasicOrbitStream.run(
+        show_plots, False, False, 10.0, orbitCase, useSphericalHarmonics, planetCase
+    )
 
     #   print out success message if no error were found
     if testFailCount == 0:

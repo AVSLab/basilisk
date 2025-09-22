@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 #
@@ -37,7 +34,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioBskLog
 
 
@@ -50,20 +47,22 @@ import scenarioBskLog
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("case", [
-    # (0),
-    (1),
-    (2)
-])
+@pytest.mark.parametrize(
+    "case",
+    [
+        # (0),
+        (1),
+        (2),
+    ],
+)
 @pytest.mark.scenarioTest
-
 def test_scenarioBskLog(show_plots, case):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     level = scenarioBskLog.run(case)
 
@@ -80,7 +79,12 @@ def test_scenarioBskLog(show_plots, case):
 
     if level != trueLevel:
         testFailCount += 1
-        testMessages.append("bskLog test returned an incorrect value " + str(level) + ". Truth is " + str(trueLevel))
+        testMessages.append(
+            "bskLog test returned an incorrect value "
+            + str(level)
+            + ". Truth is "
+            + str(trueLevel)
+        )
 
     #   print out success message if no error were found
     if testFailCount == 0:

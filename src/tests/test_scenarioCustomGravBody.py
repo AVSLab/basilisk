@@ -15,7 +15,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
 import inspect
 import os
 import sys
@@ -28,19 +27,19 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioCustomGravBody as testScenario
 
-@pytest.mark.scenarioTest
 
+@pytest.mark.scenarioTest
 def test_simplePowerDemo(show_plots):
     """This function is called by the py.test environment."""
 
     # suppress printing out BSK_INFORMATION states
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     # each test method requires a single assert method to be called
     try:

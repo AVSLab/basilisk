@@ -80,23 +80,31 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
+
 # import FSW Algorithm related support
 # from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import inertial3D
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 from Basilisk.architecture import sysModel
@@ -127,7 +135,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -135,7 +143,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName, 10)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -146,11 +154,13 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
@@ -179,7 +189,7 @@ def run(show_plots):
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.sigma_R0N = [0.0, 0.0, 0.0]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
@@ -197,7 +207,9 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     mrpLog = pyMRPPD.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, attErrorLog)
@@ -213,9 +225,12 @@ def run(show_plots):
     extFTObject.cmdTorqueInMsg.subscribeTo(pyMRPPD.cmdTorqueOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -243,35 +258,44 @@ def run(show_plots):
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
 
     if show_plots:
         plt.show()
@@ -305,6 +329,7 @@ class PythonMRPPD(sysModel.SysModel):
     can complete any other computations you need (``Numpy``, ``matplotlib``, vision processing
     AI, whatever).
     """
+
     def __init__(self):
         super(PythonMRPPD, self).__init__()
 
@@ -345,7 +370,10 @@ class PythonMRPPD(sysModel.SysModel):
         torqueOutMsgBuffer = messaging.CmdTorqueBodyMsgPayload()
 
         # compute control solution
-        lrCmd = np.array(guidMsgBuffer.sigma_BR) * self.K + np.array(guidMsgBuffer.omega_BR_B) * self.P
+        lrCmd = (
+            np.array(guidMsgBuffer.sigma_BR) * self.K
+            + np.array(guidMsgBuffer.omega_BR_B) * self.P
+        )
         torqueOutMsgBuffer.torqueRequestBody = (-lrCmd).tolist()
 
         self.cmdTorqueOutMsg.write(torqueOutMsgBuffer, CurrentSimNanos, self.moduleID)
@@ -355,12 +383,22 @@ class PythonMRPPD(sysModel.SysModel):
         # accessed from sysModel
         if False:
             """Sample Python module method"""
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {CurrentSimNanos * 1.0E-9} s")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
+            self.bskLogger.bskLog(
+                sysModel.BSK_INFORMATION, f"Time: {CurrentSimNanos * 1.0e-9} s"
+            )
+            self.bskLogger.bskLog(
+                sysModel.BSK_INFORMATION,
+                f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}",
+            )
+            self.bskLogger.bskLog(
+                sysModel.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}"
+            )
+            self.bskLogger.bskLog(
+                sysModel.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}"
+            )
 
         return
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a

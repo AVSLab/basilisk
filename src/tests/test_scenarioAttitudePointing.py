@@ -37,7 +37,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioAttitudePointing
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -50,7 +50,6 @@ import scenarioAttitudePointing
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useLargeTumble", [False, True])
 @pytest.mark.scenarioTest
-
 def test_bskAttitudePointing(show_plots, useLargeTumble):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called

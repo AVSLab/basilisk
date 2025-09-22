@@ -105,7 +105,9 @@ fileNamePath = os.path.abspath(__file__)
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros, orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -147,10 +149,14 @@ def run(show_plots, missionType, saveVizardFile):
 
     """
 
-    missionOptions = ['dscovr', 'marsOrbit'];
+    missionOptions = ["dscovr", "marsOrbit"]
     if missionType not in missionOptions:
-        print("ERROR: scenarioVizPoint received the wrong mission type " + missionType
-              + ". Options include " + str(missionOptions))
+        print(
+            "ERROR: scenarioVizPoint received the wrong mission type "
+            + missionType
+            + ". Options include "
+            + str(missionOptions)
+        )
         exit(1)
 
     # Create simulation variable names
@@ -161,7 +167,7 @@ def run(show_plots, missionType, saveVizardFile):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -169,27 +175,31 @@ def run(show_plots, missionType, saveVizardFile):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    if missionType ==  'dscovr':
+    if missionType == "dscovr":
         # setup Grav Bodies and Spice messages
         gravFactory = simIncludeGravBody.gravBodyFactory()
-        bodies = gravFactory.createBodies('earth', 'sun')
-        bodies['earth'].isCentralBody = True  # ensure this is the central gravitational body
-        spiceObject = gravFactory.createSpiceInterface(time='2018 OCT 23 04:35:25.000 (UTC)', epochInMsg=True)
+        bodies = gravFactory.createBodies("earth", "sun")
+        bodies[
+            "earth"
+        ].isCentralBody = True  # ensure this is the central gravitational body
+        spiceObject = gravFactory.createSpiceInterface(
+            time="2018 OCT 23 04:35:25.000 (UTC)", epochInMsg=True
+        )
 
-        spiceObject.zeroBase = 'earth'
+        spiceObject.zeroBase = "earth"
         scSim.AddModelToTask(simTaskName, spiceObject)
         # Setup Camera.
         cameraConfig = messaging.CameraConfigMsgPayload(
             cameraID=1,
             renderRate=0,
             sigma_CB=[-0.333333, 0.333333, -0.333333],
-            cameraPos_B=[5000. * 1E-3, 0., 0.], # m
-            fieldOfView=0.62*macros.D2R, # rad
-            resolution=[2048, 2048], # pixels
+            cameraPos_B=[5000.0 * 1e-3, 0.0, 0.0],  # m
+            fieldOfView=0.62 * macros.D2R,  # rad
+            resolution=[2048, 2048],  # pixels
         )
     else:
         simulationTime = macros.min2nano(6.25)
@@ -202,9 +212,9 @@ def run(show_plots, missionType, saveVizardFile):
             cameraID=1,
             renderRate=0,
             sigma_CB=[-0.333333, 0.333333, -0.333333],
-            cameraPos_B=[5000. * 1E-3, 0., 0.], # m
-            fieldOfView=50.*macros.D2R, # rad
-            resolution=[512, 512], # pixels
+            cameraPos_B=[5000.0 * 1e-3, 0.0, 0.0],  # m
+            fieldOfView=50.0 * macros.D2R,  # rad
+            resolution=[512, 512],  # pixels
         )
     camMsg = messaging.CameraConfigMsg().write(cameraConfig)
 
@@ -215,11 +225,13 @@ def run(show_plots, missionType, saveVizardFile):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
@@ -231,7 +243,7 @@ def run(show_plots, missionType, saveVizardFile):
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
-#    extFTObject.extTorquePntB_B = [[0.25], [-0.25], [0.1]]
+    #    extFTObject.extTorquePntB_B = [[0.25], [-0.25], [0.1]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
@@ -246,30 +258,36 @@ def run(show_plots, missionType, saveVizardFile):
     #   setup the FSW algorithm tasks
     #
 
-    if missionType == 'dscovr':
+    if missionType == "dscovr":
         # Set up pointing frame and camera position given the initial conditions on Oct 23rd 2018 4:35 UTC
         # and the DDSCOVR data
-        earthVec = np.array([129559501208.24178, 68180766143.44236,29544768114.76163])
-        normal = np.array([0.,0.,1.])
+        earthVec = np.array([129559501208.24178, 68180766143.44236, 29544768114.76163])
+        normal = np.array([0.0, 0.0, 1.0])
         sunVec = np.array([-32509693.54023, 1002377617.77831, 423017670.86700])
-        dscovrEarthDistance = 1405708000.
+        dscovrEarthDistance = 1405708000.0
         SEVangle = 7.28
 
-        r_sc = dscovrEarthDistance * (sunVec-earthVec)/np.linalg.norm(sunVec-earthVec)
+        r_sc = (
+            dscovrEarthDistance
+            * (sunVec - earthVec)
+            / np.linalg.norm(sunVec - earthVec)
+        )
         v_sc = np.zeros(3)
 
-        b1_n = -(sunVec-earthVec)/np.linalg.norm(sunVec-earthVec)
-        b3_n = (normal - np.dot(normal, b1_n)*b1_n)/np.linalg.norm(normal - np.dot(normal, b1_n)*b1_n)
-        assert np.abs(np.dot(b1_n, b3_n)) < 1E-10, 'Wrong dcm'
-        b2_n = np.cross(b3_n, b1_n)/np.linalg.norm( np.cross(b3_n, b1_n))
-        NB = np.zeros([3,3])
+        b1_n = -(sunVec - earthVec) / np.linalg.norm(sunVec - earthVec)
+        b3_n = (normal - np.dot(normal, b1_n) * b1_n) / np.linalg.norm(
+            normal - np.dot(normal, b1_n) * b1_n
+        )
+        assert np.abs(np.dot(b1_n, b3_n)) < 1e-10, "Wrong dcm"
+        b2_n = np.cross(b3_n, b1_n) / np.linalg.norm(np.cross(b3_n, b1_n))
+        NB = np.zeros([3, 3])
         NB[:, 0] = b1_n
         NB[:, 1] = b2_n
         NB[:, 2] = b3_n
 
         earthPoint = rbk.C2MRP(NB.T)
     else:
-        earthPoint = np.array([0.,0.,0.1])
+        earthPoint = np.array([0.0, 0.0, 0.1])
 
     # create the FSW vehicle configuration message
     # use the same inertia in the FSW algorithm as in the simulation
@@ -280,7 +298,9 @@ def run(show_plots, missionType, saveVizardFile):
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = earthPoint.tolist()  # set the desired inertial orientation
+    inertial3DObj.sigma_R0N = (
+        earthPoint.tolist()
+    )  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
@@ -299,13 +319,15 @@ def run(show_plots, missionType, saveVizardFile):
     mrpControl.K = 3.5
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     cmdRec = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrRec = attError.attGuidOutMsg.recorder(samplingTime)
     dataLog = sNavObject.transOutMsg.recorder(samplingTime)
@@ -318,14 +340,14 @@ def run(show_plots, missionType, saveVizardFile):
     #
     # setup the orbit using classical orbit elements
     # for orbit around Earth
-    if missionType == 'marsOrbit':
+    if missionType == "marsOrbit":
         oe = orbitalMotion.ClassicElements()
-        oe.a = 16000000 # meters
+        oe.a = 16000000  # meters
         oe.e = 0.1
-        oe.i = 10. * macros.D2R
-        oe.Omega = 25. * macros.D2R
-        oe.omega = 10. * macros.D2R
-        oe.f = 160. * macros.D2R
+        oe.i = 10.0 * macros.D2R
+        oe.Omega = 25.0 * macros.D2R
+        oe.omega = 10.0 * macros.D2R
+        oe.f = 160.0 * macros.D2R
         rN, vN = orbitalMotion.elem2rv(mu, oe)
     else:
         rN = r_sc
@@ -339,8 +361,9 @@ def run(show_plots, missionType, saveVizardFile):
     #   initialize Simulation
     #
     if saveVizardFile:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                                  saveFile=fileNamePath)
+        viz = vizSupport.enableUnityVisualization(
+            scSim, simTaskName, scObject, saveFile=fileNamePath
+        )
         viz.addCamMsgToModule(camMsg)
         viz.settings.viewCameraConeHUD = 1
     scSim.InitializeSimulation()
@@ -360,7 +383,6 @@ def run(show_plots, missionType, saveVizardFile):
     dataPos = dataLog.r_BN_N
     np.set_printoptions(precision=16)
 
-
     #
     #   plot the results
     #
@@ -368,35 +390,44 @@ def run(show_plots, missionType, saveVizardFile):
     timeAxis = cmdRec.times() * macros.NANO2MIN
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeAxis, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeAxis,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeAxis, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeAxis,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeAxis, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeAxis,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
@@ -415,7 +446,7 @@ def run(show_plots, missionType, saveVizardFile):
 #
 if __name__ == "__main__":
     run(
-        True,               # show_plots
-        'marsOrbit',           # missionType: dscovr or marsOrbit
-        True                # saveVizardFile: flag to save the Vizard data file
+        True,  # show_plots
+        "marsOrbit",  # missionType: dscovr or marsOrbit
+        True,  # saveVizardFile: flag to save the Vizard data file
     )

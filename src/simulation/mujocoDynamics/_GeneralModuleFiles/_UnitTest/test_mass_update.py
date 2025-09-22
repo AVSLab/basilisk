@@ -63,8 +63,8 @@ def test_continuouslyChangingMass(showPlots: bool = False):
     variable mass returns the same as the analytical solution of the velocity.
     """
 
-    dt = 1 # s
-    tf = 25 # s
+    dt = 1  # s
+    tf = 25  # s
 
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess("test")
@@ -74,14 +74,14 @@ def test_continuouslyChangingMass(showPlots: bool = False):
     scSim.AddModelToTask("test", scene)
 
     actPayload = messaging.SingleActuatorMsgPayload()
-    actPayload.input = 100 # N
+    actPayload.input = 100  # N
     actMsg = messaging.SingleActuatorMsg()
     actMsg.write(actPayload)
 
     scene.getSingleActuator("ball").actuatorInMsg.subscribeTo(actMsg)
 
     mDotPayload = messaging.SCMassPropsMsgPayload()
-    mDotPayload.massSC = -100 # kg/s
+    mDotPayload.massSC = -100  # kg/s
     mDotMsg = messaging.SCMassPropsMsg()
     mDotMsg.write(mDotPayload)
 

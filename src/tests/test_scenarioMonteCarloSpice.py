@@ -33,17 +33,20 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/')
+sys.path.append(path + "/../../examples/")
 import scenarioMonteCarloSpice
 
-@pytest.mark.skipif(sys.version_info < (3, 9)  and platform.system() == 'Darwin',
-                    reason="Test has issues with Controller class and older python.")
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 9) and platform.system() == "Darwin",
+    reason="Test has issues with Controller class and older python.",
+)
 @pytest.mark.scenarioTest
 def test_MonteCarloSimulationSpice(show_plots):
     """This function is called by the py.test environment."""
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     # each test method requires a single assert method to be called
     try:

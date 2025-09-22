@@ -1,4 +1,3 @@
-
 #
 #  ISC License
 #
@@ -99,9 +98,11 @@ Hill frame are shown below.
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
@@ -112,15 +113,20 @@ from Basilisk.fswAlgorithms import eulerRotation
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import RigidBodyKinematics
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -130,6 +136,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # Plotting functions
 
+
 def plot_attitude_error(timeLineSet, dataSigmaBR):
     """Plot the attitude result."""
     plt.figure(1)
@@ -137,35 +144,46 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     ax = fig.gca()
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
-    ax.set_yscale('log')
+    plt.plot(
+        timeLineSet,
+        sNorm,
+        color=unitTestSupport.getLineColor(1, 3),
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
+    ax.set_yscale("log")
+
 
 def plot_control_torque(timeLineSet, dataLr):
     """Plot the control torque response."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeLineSet,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
+
 
 def plot_rate_error(timeLineSet, dataOmegaBR):
     """Plot the body angular velocity tracking error."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeLineSet,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
     return
+
 
 def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
     """Plot the spacecraft orientation."""
@@ -179,23 +197,33 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
         ih = hv / np.linalg.norm(hv)
         itheta = np.cross(ih, ir)
         dcmBN = RigidBodyKinematics.MRP2C(vectorMRPData[idx])
-        data[idx] = [np.dot(ir, dcmBN[0]), np.dot(itheta, dcmBN[1]), np.dot(ih, dcmBN[2])]
+        data[idx] = [
+            np.dot(ir, dcmBN[0]),
+            np.dot(itheta, dcmBN[1]),
+            np.dot(ih, dcmBN[2]),
+        ]
     plt.figure(4)
-    labelStrings = (r'$\hat\imath_r\cdot \hat b_1$'
-                    , r'${\hat\imath}_{\theta}\cdot \hat b_2$'
-                    , r'$\hat\imath_h\cdot \hat b_3$')
+    labelStrings = (
+        r"$\hat\imath_r\cdot \hat b_1$",
+        r"${\hat\imath}_{\theta}\cdot \hat b_2$",
+        r"$\hat\imath_h\cdot \hat b_3$",
+    )
     for idx in range(3):
-        plt.plot(timeLineSet, data[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=labelStrings[idx])
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Orientation Illustration')
+        plt.plot(
+            timeLineSet,
+            data[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=labelStrings[idx],
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Orientation Illustration")
 
 
 # Run function
 
-def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
+
+def run(show_plots, useAltBodyFrame, angle_rate_command, time_command):
     """
     The scenarios can be run with the followings setups parameters:
 
@@ -213,7 +241,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # Set the simulation time variable used later on
-    simulationTime = macros.min2nano(time_command[0]) # convert mins to nano-seconds
+    simulationTime = macros.min2nano(time_command[0])  # convert mins to nano-seconds
 
     # Create the simulation process
     dynProcess = scSim.CreateNewProcess(simProcessName)
@@ -229,11 +257,13 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     # Initialize spacecraft object and its properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]  # Inertia of the spacecraft
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]  # Inertia of the spacecraft
     scObject.hub.mHub = 750.0  # kg - Mass of the spacecraft
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scSim.AddModelToTask(simTaskName, scObject)
 
@@ -254,19 +284,23 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     sNavObject = simpleNav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
-    sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg) # scStateInMsg Input message name for spacecraft state
+    sNavObject.scStateInMsg.subscribeTo(
+        scObject.scStateOutMsg
+    )  # scStateInMsg Input message name for spacecraft state
 
     #
-    #Create the FSW modules
+    # Create the FSW modules
     #
 
-    #Setup HillPoint Guidance Module
+    # Setup HillPoint Guidance Module
     attGuidance = hillPoint.hillPoint()
     attGuidance.ModelTag = "hillPoint"
-    attGuidance.transNavInMsg.subscribeTo(sNavObject.transOutMsg) # Incoming spacecraft tranlational message
+    attGuidance.transNavInMsg.subscribeTo(
+        sNavObject.transOutMsg
+    )  # Incoming spacecraft tranlational message
     scSim.AddModelToTask(simTaskName, attGuidance)
 
-    #Setup Euler rotation of the Hill reference frame
+    # Setup Euler rotation of the Hill reference frame
     attGuidanceEuler = eulerRotation.eulerRotation()
     attGuidanceEuler.ModelTag = "eulerRotation"
     attGuidanceEuler.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
@@ -275,8 +309,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
         attGuidanceEuler.angleSet = [0, np.pi, 0]
     attGuidanceEuler.angleRates = angle_rate_command[0]
 
-
-    #Setup the attitude tracking error evaluation module
+    # Setup the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
     attError.ModelTag = "attErrorrotatingHill"
     scSim.AddModelToTask(simTaskName, attError)
@@ -290,11 +323,13 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     configData = messaging.VehicleConfigMsgPayload(ISCPntB_B=I)
     configDataMsg = messaging.VehicleConfigMsg().write(configData)
-    mrpControl.vehConfigInMsg.subscribeTo(configDataMsg) # The MRP feedback algorithm requires the vehicle configuration structure.
+    mrpControl.vehConfigInMsg.subscribeTo(
+        configDataMsg
+    )  # The MRP feedback algorithm requires the vehicle configuration structure.
     mrpControl.K = 3.5
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # Connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -304,7 +339,9 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     #
 
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
@@ -314,7 +351,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     scSim.AddModelToTask(simTaskName, snAttLog)
     scSim.AddModelToTask(simTaskName, snTransLog)
 
-    #Inititialize spacecraft state
+    # Inititialize spacecraft state
     oe = orbitalMotion.ClassicElements()
     oe.a = 10000000.0  # meters
     oe.e = 0.1
@@ -323,23 +360,43 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    scObject.hub.r_CN_NInit = rN  # m   - r_CN_N Initial position with respect to the inertial planet frame
-    scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N Initial velocity with respect to the inertial planet frame
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B Initial attitude with respect to the inertial planet frame
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B Initial attitude rate with respect to the inertial planet frame
+    scObject.hub.r_CN_NInit = (
+        rN  # m   - r_CN_N Initial position with respect to the inertial planet frame
+    )
+    scObject.hub.v_CN_NInit = (
+        vN  # m/s - v_CN_N Initial velocity with respect to the inertial planet frame
+    )
+    scObject.hub.sigma_BNInit = [
+        [0.1],
+        [0.2],
+        [-0.3],
+    ]  # sigma_BN_B Initial attitude with respect to the inertial planet frame
+    scObject.hub.omega_BN_BInit = [
+        [0.001],
+        [-0.01],
+        [0.03],
+    ]  # rad/s - omega_BN_B Initial attitude rate with respect to the inertial planet frame
 
     #
     # Interface the scenario with the BSK Viz
     #
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  # , saveFile=fileName
-                                                 )
-        vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
-                                         cameraID=1, fieldOfView=20 * macros.D2R,
-                                         resolution=[1024, 1024], renderRate=0.,
-                                         cameraPos_B=[1., 0., .0], sigma_CB=[0., np.tan(np.pi/2/4), 0.]
-                                         )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # , saveFile=fileName
+        )
+        vizSupport.createCameraConfigMsg(
+            viz,
+            parentName=scObject.ModelTag,
+            cameraID=1,
+            fieldOfView=20 * macros.D2R,
+            resolution=[1024, 1024],
+            renderRate=0.0,
+            cameraPos_B=[1.0, 0.0, 0.0],
+            sigma_CB=[0.0, np.tan(np.pi / 2 / 4), 0.0],
+        )
         viz.settings.viewCameraConeHUD = 1
 
     #
@@ -347,7 +404,6 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     #
 
     scSim.InitializeSimulation()
-
 
     #
     # Execute the simulation for the first angle rate and simulation time
@@ -360,7 +416,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
     # Update of the angle rate and simulation time
     #
 
-    for i,j in zip(time_command[1:],angle_rate_command[1:]):
+    for i, j in zip(time_command[1:], angle_rate_command[1:]):
         attGuidanceEuler.angleRates = j
         simulationTime += macros.min2nano(i)
         scSim.ConfigureStopTime(simulationTime)
@@ -419,6 +475,8 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         True,  # useAltBodyFrame
-        np.array([[0.0,0,0.0],[0.0,0.002,0.0],[0.0,-0.002,0.0],[0.0,0,0.0]]), # angle_rate_command
-        np.array([10,10,10,10]) # time_command
+        np.array(
+            [[0.0, 0, 0.0], [0.0, 0.002, 0.0], [0.0, -0.002, 0.0], [0.0, 0, 0.0]]
+        ),  # angle_rate_command
+        np.array([10, 10, 10, 10]),  # time_command
     )

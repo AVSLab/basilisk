@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 #
@@ -37,7 +34,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioTAMcomparison
 
 
@@ -50,24 +47,30 @@ import scenarioTAMcomparison
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("orbitCase, useBias1, useBias2, useBounds1, useBounds2", [
-    ('circular', False, False, True, True),
-    ('elliptical', True, True, False, False),
-    ('elliptical', False, False, False, False),
-    ('circular', False, False, True, False)
-])
+@pytest.mark.parametrize(
+    "orbitCase, useBias1, useBias2, useBounds1, useBounds2",
+    [
+        ("circular", False, False, True, True),
+        ("elliptical", True, True, False, False),
+        ("elliptical", False, False, False, False),
+        ("circular", False, False, True, False),
+    ],
+)
 @pytest.mark.scenarioTest
-
-def test_scenarioTAMcomparison(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
+def test_scenarioTAMcomparison(
+    show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2
+):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioTAMcomparison.run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2)
+        figureList = scenarioTAMcomparison.run(
+            show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
@@ -88,12 +91,13 @@ def test_scenarioTAMcomparison(show_plots, orbitCase, useBias1, useBias2, useBou
 
     assert testFailCount < 1, testMessages
 
+
 if __name__ == "__main__":
     test_scenarioTAMcomparison(
-        False,          # show_plots
-        'circular',        # orbit case
-        False,       # useBias1
-        False,       # useBias2
-        False,      # useBounds1
-        False       # useBounds2
+        False,  # show_plots
+        "circular",  # orbit case
+        False,  # useBias1
+        False,  # useBias2
+        False,  # useBounds1
+        False,  # useBounds2
     )

@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -23,7 +22,7 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
@@ -33,14 +32,18 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
 
-params_storage_limits = [(1200, 1200, 2400, 2400),
-                     (600, 1200, 3600, 3600),
-                     (600, 600, 10000, 6000),
-                     (-100, 0, 10000, 0),
-                     (-100, -100, 10000, 0),]
+params_storage_limits = [
+    (1200, 1200, 2400, 2400),
+    (600, 1200, 3600, 3600),
+    (600, 600, 10000, 6000),
+    (-100, 0, 10000, 0),
+    (-100, -100, 10000, 0),
+]
 
-@pytest.mark.parametrize("baudRate_1, baudRate_2, storageCapacity, expectedStorage",
-                          params_storage_limits)
+
+@pytest.mark.parametrize(
+    "baudRate_1, baudRate_2, storageCapacity, expectedStorage", params_storage_limits
+)
 def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage):
     """
     Tests:
@@ -53,27 +56,27 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     :return:
     """
 
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_storage_unit = partitionedStorageUnit.PartitionedStorageUnit()
-    test_storage_unit.storageCapacity = storageCapacity # bit capacity.
+    test_storage_unit.storageCapacity = storageCapacity  # bit capacity.
 
     dataMsg1 = messaging.DataNodeUsageMsgPayload()
-    dataMsg1.baudRate = baudRate_1 # baud
+    dataMsg1.baudRate = baudRate_1  # baud
     dataMsg1.dataName = "node_1_msg"
     dat1Msg = messaging.DataNodeUsageMsg().write(dataMsg1)
 
     dataMsg2 = messaging.DataNodeUsageMsgPayload()
-    dataMsg2.baudRate = baudRate_2 # baud
+    dataMsg2.baudRate = baudRate_2  # baud
     dataMsg2.dataName = "node_2_msg"
     dat2Msg = messaging.DataNodeUsageMsg().write(dataMsg2)
 
@@ -96,42 +99,56 @@ def test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage
     netBaudLog = dataLog.currentNetBaud
 
     #   Check 1 - is net baud rate correct?
-    for ind in range(0,len(netBaudLog)):
+    for ind in range(0, len(netBaudLog)):
         currentBaud = netBaudLog[ind]
-        np.testing.assert_allclose(currentBaud, baudRate_1 + baudRate_2, atol=1e-1,
-            err_msg=("FAILED: PartitionedStorageUnit did not correctly log baud rate."))
+        np.testing.assert_allclose(
+            currentBaud,
+            baudRate_1 + baudRate_2,
+            atol=1e-1,
+            err_msg=("FAILED: PartitionedStorageUnit did not correctly log baud rate."),
+        )
 
     #   Check 2 - is used storage space correct?
-    np.testing.assert_allclose(storedDataLog[-1], expectedStorage, atol=1e-4,
-        err_msg=("FAILED: PartitionedStorageUnit did not track integrated data."))
+    np.testing.assert_allclose(
+        storedDataLog[-1],
+        expectedStorage,
+        atol=1e-4,
+        err_msg=("FAILED: PartitionedStorageUnit did not track integrated data."),
+    )
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
-    for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
-            capacityLog[ind]), (
-                "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
+    for ind in range(0, len(storedDataLog)):
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(
+            storedDataLog[ind], capacityLog[ind]
+        ), "FAILED: PartitionedStorageUnit's stored data exceeded its capacity."
 
-        assert storedDataLog[ind] >= 0., (
-            "FAILED: PartitionedStorageUnit's stored data was negative.")
+        assert storedDataLog[ind] >= 0.0, (
+            "FAILED: PartitionedStorageUnit's stored data was negative."
+        )
 
 
-params_set_data = [(1200, 1200, ['test'], [1200], 2400, 2400),
-                   (600, 600, ['test'], [0], 10000, 6000),
-                   (600, 600, ['test'], [4000], 10000, 10000),
-                   (0, 0, ['test'], [1000], 2000, 1000),
-                   (0, 0, ['test'], [-1000], 2000, 0),
-                   (1000, 0, ['node_1_msg'], [-2000], 6000, 3000),
-                   (0, 0, ['test'], [3000], 2000, 0),
-                   (600, 0, ['node_1_msg'], [3000], 10000, 6000),
-                   (300, 600, ['node_1_msg'], [3000], 10000, 7500),
-                   (600, 600, ['node_1_msg', 'node_2_msg'], [1000, 1000], 10000, 8000),
-                   (600, 300, ['test', 'node_2_msg'], [1000, 1000], 10000, 6500)]
+params_set_data = [
+    (1200, 1200, ["test"], [1200], 2400, 2400),
+    (600, 600, ["test"], [0], 10000, 6000),
+    (600, 600, ["test"], [4000], 10000, 10000),
+    (0, 0, ["test"], [1000], 2000, 1000),
+    (0, 0, ["test"], [-1000], 2000, 0),
+    (1000, 0, ["node_1_msg"], [-2000], 6000, 3000),
+    (0, 0, ["test"], [3000], 2000, 0),
+    (600, 0, ["node_1_msg"], [3000], 10000, 6000),
+    (300, 600, ["node_1_msg"], [3000], 10000, 7500),
+    (600, 600, ["node_1_msg", "node_2_msg"], [1000, 1000], 10000, 8000),
+    (600, 300, ["test", "node_2_msg"], [1000, 1000], 10000, 6500),
+]
+
 
 @pytest.mark.parametrize(
     "baudRate_1, baudRate_2, partitionName, add_data, storageCapacity, expectedStorage",
-    params_set_data)
-def test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
-                         add_data, storageCapacity, expectedStorage):
+    params_set_data,
+)
+def test_set_data_buffer(
+    baudRate_1, baudRate_2, partitionName, add_data, storageCapacity, expectedStorage
+):
     """
     Tests:
 
@@ -143,27 +160,27 @@ def test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
     :return:
     """
 
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_storage_unit = partitionedStorageUnit.PartitionedStorageUnit()
-    test_storage_unit.storageCapacity = storageCapacity # bit capacity.
+    test_storage_unit.storageCapacity = storageCapacity  # bit capacity.
 
     dataMsg1 = messaging.DataNodeUsageMsgPayload()
-    dataMsg1.baudRate = baudRate_1 # baud
+    dataMsg1.baudRate = baudRate_1  # baud
     dataMsg1.dataName = "node_1_msg"
     dat1Msg = messaging.DataNodeUsageMsg().write(dataMsg1)
 
     dataMsg2 = messaging.DataNodeUsageMsgPayload()
-    dataMsg2.baudRate = baudRate_2 # baud
+    dataMsg2.baudRate = baudRate_2  # baud
     dataMsg2.dataName = "node_2_msg"
     dat2Msg = messaging.DataNodeUsageMsg().write(dataMsg2)
 
@@ -194,39 +211,51 @@ def test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
     netBaudLog = dataLog.currentNetBaud
 
     #   Check 1 - is net baud rate correct?
-    for ind in range(0,len(netBaudLog)):
+    for ind in range(0, len(netBaudLog)):
         currentBaud = netBaudLog[ind]
-        np.testing.assert_allclose(currentBaud, baudRate_1 + baudRate_2, atol=1e-4,
-            err_msg=("FAILED: PartitionedStorageUnit did not correctly log baud rate."))
+        np.testing.assert_allclose(
+            currentBaud,
+            baudRate_1 + baudRate_2,
+            atol=1e-4,
+            err_msg=("FAILED: PartitionedStorageUnit did not correctly log baud rate."),
+        )
 
     #   Check 2 - is used storage space correct?
-    np.testing.assert_allclose(storedDataLog[-1], expectedStorage, atol=1e-4,
-        err_msg=("FAILED: PartitionedStorageUnit did not track integrated data."))
+    np.testing.assert_allclose(
+        storedDataLog[-1],
+        expectedStorage,
+        atol=1e-4,
+        err_msg=("FAILED: PartitionedStorageUnit did not track integrated data."),
+    )
 
     #   Check 3 - is the amount of data more than zero and less than the capacity?
-    for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
-            capacityLog[ind]), (
-                "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
+    for ind in range(0, len(storedDataLog)):
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(
+            storedDataLog[ind], capacityLog[ind]
+        ), "FAILED: PartitionedStorageUnit's stored data exceeded its capacity."
 
-        assert storedDataLog[ind] >= 0., (
-            "FAILED: PartitionedStorageUnit's stored data was negative.")
+        assert storedDataLog[ind] >= 0.0, (
+            "FAILED: PartitionedStorageUnit's stored data was negative."
+        )
 
 
-params_set_data = [(600, 600, ['test'], [0], 1E4),
-    (0, 0, ['test'], [1000], 2000),
-    (1000, 0, ['node_1_msg'], [-2000], 6000),
-    (600, 0, ['node_1_msg'], [3000], 1e4),
-    (600, 600, ['node_1_msg'], [3000], 10000),
-    (600, 600, ['node_1_msg', 'node_2_msg'], [1e3, 1e3], 10000),
-    (600, 300, ['test', 'node_1_msg', 'node_2_msg'], [1500, 1e3, 1000], 10000)]
+params_set_data = [
+    (600, 600, ["test"], [0], 1e4),
+    (0, 0, ["test"], [1000], 2000),
+    (1000, 0, ["node_1_msg"], [-2000], 6000),
+    (600, 0, ["node_1_msg"], [3000], 1e4),
+    (600, 600, ["node_1_msg"], [3000], 10000),
+    (600, 600, ["node_1_msg", "node_2_msg"], [1e3, 1e3], 10000),
+    (600, 300, ["test", "node_1_msg", "node_2_msg"], [1500, 1e3, 1000], 10000),
+]
+
 
 @pytest.mark.parametrize(
-    "baudRate_1, baudRate_2, partitionName, add_data, storageCapacity",
-    params_set_data)
-def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
-                                   add_data, storageCapacity):
-
+    "baudRate_1, baudRate_2, partitionName, add_data, storageCapacity", params_set_data
+)
+def test_set_data_buffer_partition(
+    baudRate_1, baudRate_2, partitionName, add_data, storageCapacity
+):
     """
     Tests:
 
@@ -236,27 +265,27 @@ def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
     :return:
     """
 
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_storage_unit = partitionedStorageUnit.PartitionedStorageUnit()
-    test_storage_unit.storageCapacity = storageCapacity # bit capacity.
+    test_storage_unit.storageCapacity = storageCapacity  # bit capacity.
 
     dataMsg1 = messaging.DataNodeUsageMsgPayload()
-    dataMsg1.baudRate = baudRate_1 # baud
+    dataMsg1.baudRate = baudRate_1  # baud
     dataMsg1.dataName = "node_1_msg"
     dat1Msg = messaging.DataNodeUsageMsg().write(dataMsg1)
 
     dataMsg2 = messaging.DataNodeUsageMsgPayload()
-    dataMsg2.baudRate = baudRate_2 # baud
+    dataMsg2.baudRate = baudRate_2  # baud
     dataMsg2.dataName = "node_2_msg"
     dat2Msg = messaging.DataNodeUsageMsg().write(dataMsg2)
 
@@ -288,7 +317,8 @@ def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
     # Check 1 - are the partition names in the data name vector?
     for partName in partitionName:
         assert partName in list(dataNameVec[-1]), (
-            "FAILED: PartitionedStorageUnit did not add the new partition.")
+            "FAILED: PartitionedStorageUnit did not add the new partition."
+        )
 
         partIndex = list(dataNameVec[-1]).index(partName)
         dataIndex = list(partitionName).index(partName)
@@ -300,19 +330,29 @@ def test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
             baudRate = baudRate_2
 
         # Check 2 - if partition exists, does it added data to the correct partition?
-        np.testing.assert_allclose(dataVec[-1][partIndex],
-            add_data[dataIndex] + baudRate*sim_time,
-            err_msg = (
-            "FAILED: PartitionedStorageUnit did not use the correct partition."))
+        np.testing.assert_allclose(
+            dataVec[-1][partIndex],
+            add_data[dataIndex] + baudRate * sim_time,
+            err_msg=(
+                "FAILED: PartitionedStorageUnit did not use the correct partition."
+            ),
+        )
 
 
-params_storage_limits = [(-1200, 0, 2400, 4800, 2400),
-                         (-120, 0, 2400, 4800, 4200),
-                         (-1200, -1200, 2400, 4800, 0),]
+params_storage_limits = [
+    (-1200, 0, 2400, 4800, 2400),
+    (-120, 0, 2400, 4800, 4200),
+    (-1200, -1200, 2400, 4800, 0),
+]
 
-@pytest.mark.parametrize("baudRate_1, baudRate_2, initialData, storageCapacity, expectedStorage",
-                          params_storage_limits)
-def test_data_removal(baudRate_1, baudRate_2, initialData, storageCapacity, expectedStorage):
+
+@pytest.mark.parametrize(
+    "baudRate_1, baudRate_2, initialData, storageCapacity, expectedStorage",
+    params_storage_limits,
+)
+def test_data_removal(
+    baudRate_1, baudRate_2, initialData, storageCapacity, expectedStorage
+):
     """
     Tests:
 
@@ -321,27 +361,27 @@ def test_data_removal(baudRate_1, baudRate_2, initialData, storageCapacity, expe
     :return:
     """
 
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     test_storage_unit = partitionedStorageUnit.PartitionedStorageUnit()
-    test_storage_unit.storageCapacity = storageCapacity # bit capacity.
+    test_storage_unit.storageCapacity = storageCapacity  # bit capacity.
 
     dataMsg1 = messaging.DataNodeUsageMsgPayload()
-    dataMsg1.baudRate = baudRate_1 # baud
+    dataMsg1.baudRate = baudRate_1  # baud
     dataMsg1.dataName = "node_1_msg"
     dat1Msg = messaging.DataNodeUsageMsg().write(dataMsg1)
 
     dataMsg2 = messaging.DataNodeUsageMsgPayload()
-    dataMsg2.baudRate = baudRate_2 # baud
+    dataMsg2.baudRate = baudRate_2  # baud
     dataMsg2.dataName = "node_2_msg"
     dat2Msg = messaging.DataNodeUsageMsg().write(dataMsg2)
 
@@ -354,7 +394,7 @@ def test_data_removal(baudRate_1, baudRate_2, initialData, storageCapacity, expe
     dataLog = test_storage_unit.storageUnitDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    test_storage_unit.setDataBuffer(["node_1_msg", "node_2_msg"], [initialData]*2)
+    test_storage_unit.setDataBuffer(["node_1_msg", "node_2_msg"], [initialData] * 2)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(5.0))
@@ -365,17 +405,22 @@ def test_data_removal(baudRate_1, baudRate_2, initialData, storageCapacity, expe
     capacityLog = dataLog.storageCapacity
 
     #   Check 1 - is used storage space correct?
-    np.testing.assert_allclose(storedDataLog[-1], expectedStorage, atol=1e-4,
-        err_msg=("FAILED: PartitionedStorageUnit did not track integrated data."))
+    np.testing.assert_allclose(
+        storedDataLog[-1],
+        expectedStorage,
+        atol=1e-4,
+        err_msg=("FAILED: PartitionedStorageUnit did not track integrated data."),
+    )
 
     #   Check 2 - is the amount of data more than zero and less than the capacity?
-    for ind in range(0,len(storedDataLog)):
-        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(storedDataLog[ind],
-            capacityLog[ind]), (
-                "FAILED: PartitionedStorageUnit's stored data exceeded its capacity.")
+    for ind in range(0, len(storedDataLog)):
+        assert storedDataLog[ind] <= capacityLog[ind] or np.isclose(
+            storedDataLog[ind], capacityLog[ind]
+        ), "FAILED: PartitionedStorageUnit's stored data exceeded its capacity."
 
-        assert storedDataLog[ind] >= 0., (
-            "FAILED: PartitionedStorageUnit's stored data was negative.")
+        assert storedDataLog[ind] >= 0.0, (
+            "FAILED: PartitionedStorageUnit's stored data was negative."
+        )
 
 
 if __name__ == "__main__":
@@ -386,14 +431,23 @@ if __name__ == "__main__":
     test_storage_limits(baudRate_1, baudRate_2, storageCapacity, expectedStorage)
     add_data = [1200, 200]
     partitionName = ["test", "node_1_msg"]
-    test_set_data_buffer(baudRate_1, baudRate_2, partitionName,
-                         add_data, storageCapacity, expectedStorage)
+    test_set_data_buffer(
+        baudRate_1,
+        baudRate_2,
+        partitionName,
+        add_data,
+        storageCapacity,
+        expectedStorage,
+    )
     storageCapacity = 20000
-    test_set_data_buffer_partition(baudRate_1, baudRate_2, partitionName,
-                         add_data, storageCapacity)
+    test_set_data_buffer_partition(
+        baudRate_1, baudRate_2, partitionName, add_data, storageCapacity
+    )
     baudRate_1 = -240
     baudRate_2 = -240
     initialData = 1200
     storageCapacity = 2400
     expectedStorage = 0
-    test_data_removal(baudRate_1, baudRate_2, initialData, storageCapacity, expectedStorage)
+    test_data_removal(
+        baudRate_1, baudRate_2, initialData, storageCapacity, expectedStorage
+    )

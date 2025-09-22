@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -36,7 +35,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioAttitudeFeedback
 
 
@@ -48,16 +47,20 @@ import scenarioAttitudeFeedback
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg", [
-    (False, False, False, False)
-    , (True, False, False, False)
-    , (True, True, False, False)
-    , (True, False, True, False)
-    , (False, False, False, True)
-])
+@pytest.mark.parametrize(
+    "useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg",
+    [
+        (False, False, False, False),
+        (True, False, False, False),
+        (True, True, False, False),
+        (True, False, True, False),
+        (False, False, False, True),
+    ],
+)
 @pytest.mark.scenarioTest
-
-def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg):
+def test_bskAttitudeFeedback(
+    show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg
+):
     """This function is called by the py.test environment."""
     # provide a unique test method name, starting with test_
 
@@ -65,7 +68,9 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioAttitudeFeedback.run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg)
+        figureList = scenarioAttitudeFeedback.run(
+            show_plots, useUnmodeledTorque, useIntGain, useKnownTorque, useCMsg
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)

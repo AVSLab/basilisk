@@ -39,7 +39,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioAttitudeFeedback2T_TH
 
 
@@ -47,6 +47,7 @@ import scenarioAttitudeFeedback2T_TH
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.

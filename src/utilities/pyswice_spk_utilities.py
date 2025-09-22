@@ -18,6 +18,7 @@
 
 
 import numpy
+
 # -------------------------------------------------------------
 #
 # ... SPKReader.py
@@ -53,7 +54,9 @@ def spkRead(target, time, ref, observer):
     # Get position and velocity
     state = pyswice.new_doubleArray(6)
     lt = pyswice.new_doubleArray(1)
-    pyswice.spkezr_c(target, pyswice.doubleArray_getitem(et, 0), ref, "NONE", observer, state, lt)
+    pyswice.spkezr_c(
+        target, pyswice.doubleArray_getitem(et, 0), ref, "NONE", observer, state, lt
+    )
 
     # Format state into output array
     stateArray = numpy.zeros(6)

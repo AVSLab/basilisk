@@ -36,16 +36,15 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/')
+sys.path.append(path + "/../../examples/")
 
 import scenarioHelioTransSpice
 
+
 @pytest.mark.scenarioTest
-
 def test_scenarioHelioTransSpice():
-
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
         scenarioHelioTransSpice.run()
@@ -66,6 +65,6 @@ def test_scenarioHelioTransSpice():
 
     assert testFailCount < 1, testMessages
 
+
 if __name__ == "__main__":
-    test_scenarioHelioTransSpice(
-    )
+    test_scenarioHelioTransSpice()

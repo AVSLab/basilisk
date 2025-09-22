@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -35,11 +34,13 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskPath = path.split('src')[0]
+bskPath = path.split("src")[0]
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -49,58 +50,101 @@ bskPath = path.split('src')[0]
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue", [
-      (2020,    0,  80,   0,  6414.5,   -153.0,  54169.0)
-    , (2020,    0,   0, 120, 39624.3,    109.9, -10932.5)
-    , (2020,    0, -80, 240,  5801.8,  15571.1, -51959.6)
-    , (2020,  100,  80,   0,  6114.2,   -191.5,  52011.7)
-    , (2020,  100,   0, 120, 37636.7,    104.9, -10474.8)
-    , (2020,  100, -80, 240,  5613.9,  14614.0, -49483.9)
-    , (2022.5,   0,  80,   0,  6374.2,    -6.9,  54274.1)
-    , (2022.5,   0,   0, 120, 39684.7,   -42.2, -10809.5)
-    , (2022.5,   0, -80, 240,  5877.0, 15575.7, -51734.1)
-    , (2022.5, 100,  80,   0,  6076.7,   -51.7,  52107.6)
-    , (2022.5, 100,   0, 120, 37694.0,   -35.3, -10362.0)
-    , (2022.5, 100, -80, 240, 5683.3,  14617.4, -49273.2)
-])
-@pytest.mark.parametrize("useDefault, useMsg", [
-    (False, False)
-    , (False, True)
-    , (True, True)
-])
+@pytest.mark.parametrize(
+    "decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue",
+    [
+        (2020, 0, 80, 0, 6414.5, -153.0, 54169.0),
+        (2020, 0, 0, 120, 39624.3, 109.9, -10932.5),
+        (2020, 0, -80, 240, 5801.8, 15571.1, -51959.6),
+        (2020, 100, 80, 0, 6114.2, -191.5, 52011.7),
+        (2020, 100, 0, 120, 37636.7, 104.9, -10474.8),
+        (2020, 100, -80, 240, 5613.9, 14614.0, -49483.9),
+        (2022.5, 0, 80, 0, 6374.2, -6.9, 54274.1),
+        (2022.5, 0, 0, 120, 39684.7, -42.2, -10809.5),
+        (2022.5, 0, -80, 240, 5877.0, 15575.7, -51734.1),
+        (2022.5, 100, 80, 0, 6076.7, -51.7, 52107.6),
+        (2022.5, 100, 0, 120, 37694.0, -35.3, -10362.0),
+        (2022.5, 100, -80, 240, 5683.3, 14617.4, -49273.2),
+    ],
+)
+@pytest.mark.parametrize(
+    "useDefault, useMsg", [(False, False), (False, True), (True, True)]
+)
 @pytest.mark.parametrize("useMinReach", [True, False])
 @pytest.mark.parametrize("useMaxReach", [True, False])
 @pytest.mark.parametrize("usePlanetEphemeris", [True, False])
 @pytest.mark.parametrize("accuracy", [0.1])
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue,
-                useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris, accuracy):
+def test_module(
+    show_plots,
+    decimalYear,
+    Height,
+    Lat,
+    Lon,
+    BxTrue,
+    ByTrue,
+    BzTrue,
+    useDefault,
+    useMsg,
+    useMinReach,
+    useMaxReach,
+    usePlanetEphemeris,
+    accuracy,
+):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue,
-                                     useDefault, useMsg, useMinReach, useMaxReach, usePlanetEphemeris, accuracy)
+    [testResults, testMessage] = run(
+        show_plots,
+        decimalYear,
+        Height,
+        Lat,
+        Lon,
+        BxTrue,
+        ByTrue,
+        BzTrue,
+        useDefault,
+        useMsg,
+        useMinReach,
+        useMaxReach,
+        usePlanetEphemeris,
+        accuracy,
+    )
     assert testResults < 1, testMessage
 
 
-def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDefault, useMsg, useMinReach,
-        useMaxReach, usePlanetEphemeris, accuracy):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+def run(
+    show_plots,
+    decimalYear,
+    Height,
+    Lat,
+    Lon,
+    BxTrue,
+    ByTrue,
+    BzTrue,
+    useDefault,
+    useMsg,
+    useMinReach,
+    useMaxReach,
+    usePlanetEphemeris,
+    accuracy,
+):
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
     testModule = magneticFieldWMM.MagneticFieldWMM()
     testModule.ModelTag = "WMM"
-    testModule.dataPath = bskPath + '/supportData/MagneticField/'
+    testModule.dataPath = bskPath + "/supportData/MagneticField/"
 
     if not useDefault:
         testModule.epochDateFractionalYear = decimalYear
@@ -122,11 +166,11 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 
     minReach = -1.0
     if useMinReach:
-        minReach = (orbitalMotion.REQ_EARTH+200.)*1000.0     # meters
+        minReach = (orbitalMotion.REQ_EARTH + 200.0) * 1000.0  # meters
         testModule.envMinReach = minReach
     maxReach = -1.0
     if useMaxReach:
-        maxReach = (orbitalMotion.REQ_EARTH-200.)*1000.0     # meters
+        maxReach = (orbitalMotion.REQ_EARTH - 200.0) * 1000.0  # meters
         testModule.envMaxReach = maxReach
     planetPosition = np.array([0.0, 0.0, 0.0])
     refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))
@@ -151,15 +195,22 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     r0 = (orbitalMotion.REQ_EARTH + Height) * 1000.0  # meters
     phi = Lat * macros.D2R
     long = Lon * macros.D2R
-    r0P = np.array([np.cos(phi)*np.cos(long),np.cos(phi)*np.sin(long),np.sin(phi)])*r0
-    r0N = np.dot(refPlanetDCM.transpose(),r0P)
+    r0P = (
+        np.array([np.cos(phi) * np.cos(long), np.cos(phi) * np.sin(long), np.sin(phi)])
+        * r0
+    )
+    r0N = np.dot(refPlanetDCM.transpose(), r0P)
 
     # create the input messages
-    sc0StateMsgData = messaging.SCStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsgData = (
+        messaging.SCStatesMsgPayload()
+    )  # Create a structure for the input message
     sc0StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc0StateMsg.write(sc0StateMsgData)
 
-    sc1StateMsgData = messaging.SCStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsgData = (
+        messaging.SCStatesMsgPayload()
+    )  # Create a structure for the input message
     sc1StateMsgData.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc1StateMsg.write(sc1StateMsgData)
 
@@ -175,15 +226,15 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     unitTestSim.TotalSim.SingleStepProcesses()
 
     # This pulls the actual data log from the simulation run and converts to nano-Tesla
-    mag0Data = dataLog0.magField_N*1e9
-    mag1Data = dataLog1.magField_N*1e9
+    mag0Data = dataLog0.magField_N * 1e9
+    mag1Data = dataLog1.magField_N * 1e9
 
     def wmmInertial(pos_N, Bx, By, Bz, phi, long, refPlanetDCM, minReach, maxReach):
         radius = np.linalg.norm(pos_N)
         B_M = np.array([Bx, By, Bz])
-        M2 = rbk.euler2(phi + np.pi/2.0)
+        M2 = rbk.euler2(phi + np.pi / 2.0)
         M3 = rbk.euler3(-long)
-        PM = np.dot(M3,M2)
+        PM = np.dot(M3, M2)
         NM = np.dot(refPlanetDCM.transpose(), PM)
         magField_N = [np.dot(NM, B_M).tolist()]
 
@@ -200,29 +251,47 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     #
     # check spacecraft 0 neutral density results
     if len(mag0Data) > 0:
-        trueMagField = wmmInertial(r0N, BxTrue, ByTrue, BzTrue, phi, long, refPlanetDCM, minReach, maxReach)
+        trueMagField = wmmInertial(
+            r0N, BxTrue, ByTrue, BzTrue, phi, long, refPlanetDCM, minReach, maxReach
+        )
         testFailCount, testMessages = unitTestSupport.compareArray(
-            trueMagField, mag0Data, accuracy, "SC0 mag vector",
-            testFailCount, testMessages)
+            trueMagField,
+            mag0Data,
+            accuracy,
+            "SC0 mag vector",
+            testFailCount,
+            testMessages,
+        )
 
     if len(mag1Data) > 0:
         testFailCount, testMessages = unitTestSupport.compareArrayRelative(
-            trueMagField, mag1Data, accuracy, "SC1 mag vector",
-            testFailCount, testMessages)
+            trueMagField,
+            mag1Data,
+            accuracy,
+            "SC1 mag vector",
+            testFailCount,
+            testMessages,
+        )
 
     #   print out success or failure message
-    snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
+    snippentName = (
+        "unitTestPassFail"
+        + str(useDefault)
+        + str(useMinReach)
+        + str(useMaxReach)
+        + str(usePlanetEphemeris)
+    )
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -230,19 +299,19 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 False,         # showplots
-                 2020,        # decimalYear
-                 0,             # Height (km)
-                 80,            # latitude (deg)
-                 0,             # longitude (deg)
-                 6570.4,        # BxTrue (nT)
-                 -146.3,        # ByTrue (nT)
-                 54606.0,       # BzTrue (nT)
-                 True,          # useDefault
-                 False,         # useMsg
-                 False,         # useMinReach
-                 False,         # useMaxReach
-                 False,         # usePlanetEphemeris
-                 0.1            # accuracy
-               )
+    test_module(  # update "module" in function name
+        False,  # showplots
+        2020,  # decimalYear
+        0,  # Height (km)
+        80,  # latitude (deg)
+        0,  # longitude (deg)
+        6570.4,  # BxTrue (nT)
+        -146.3,  # ByTrue (nT)
+        54606.0,  # BzTrue (nT)
+        True,  # useDefault
+        False,  # useMsg
+        False,  # useMinReach
+        False,  # useMaxReach
+        False,  # usePlanetEphemeris
+        0.1,  # accuracy
+    )

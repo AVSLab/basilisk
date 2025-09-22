@@ -93,23 +93,28 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import inertial3D
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.fswAlgorithms import thrFiringSchmitt
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import svIntegrators
 from Basilisk.simulation import thrusterStateEffector
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import fswSetupThrusters
@@ -117,7 +122,10 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -130,72 +138,90 @@ def plot_attitude_error(timeDataFSW, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeDataFSW, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + r'$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeDataFSW,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + r"$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
 
 
 def plot_rate_error(timeDataFSW, dataOmegaBR):
     """Plot the body angular velocity tracking errors."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeDataFSW, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeDataFSW,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
 
 
 def plot_requested_torque(timeDataFSW, dataLr):
     """Plot the commanded attitude control torque."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeDataFSW, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeDataFSW,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Control Torque $L_r$ [Nm]")
 
 
 def plot_thrForce(timeDataFSW, dataMap, numTh):
     """Plot the Thruster force values."""
     plt.figure(4)
     for idx in range(numTh):
-        plt.plot(timeDataFSW, dataMap[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
-                 label=r'$thrForce_{' + str(idx) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Force requested [N]')
+        plt.plot(
+            timeDataFSW,
+            dataMap[:, idx],
+            color=unitTestSupport.getLineColor(idx, numTh),
+            label=r"$thrForce_{" + str(idx) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Force requested [N]")
 
 
 def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
     """Plot the thruster on time requests."""
     plt.figure(5)
     for idx in range(numTh):
-        plt.plot(timeDataFSW, dataSchm[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
-                 label=r'$OnTimeRequest_{' + str(idx) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('OnTimeRequest [sec]')
+        plt.plot(
+            timeDataFSW,
+            dataSchm[:, idx],
+            color=unitTestSupport.getLineColor(idx, numTh),
+            label=r"$OnTimeRequest_{" + str(idx) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("OnTimeRequest [sec]")
 
 
 def plot_trueThrForce(timeDataFSW, dataMap, numTh):
     """Plot the Thruster force values."""
     plt.figure(6)
     for idx in range(numTh):
-        plt.plot(timeDataFSW, dataMap[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
-                 label=r'$thrForce_{' + str(idx) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Force implemented[N]')
+        plt.plot(
+            timeDataFSW,
+            dataMap[:, idx],
+            color=unitTestSupport.getLineColor(idx, numTh),
+            label=r"$thrForce_{" + str(idx) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Force implemented[N]")
 
 
 def run(show_plots, useDVThrusters):
@@ -219,7 +245,7 @@ def run(show_plots, useDVThrusters):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -241,11 +267,13 @@ def run(show_plots, useDVThrusters):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -278,132 +306,44 @@ def run(show_plots, useDVThrusters):
 
     # create arrays for thrusters' locations and directions
     if useDVThrusters:
-
         location = [
-            [
-                0,
-                0.95,
-                -1.1
-            ],
-            [
-                0.8227241335952166,
-                0.4750000000000003,
-                -1.1
-            ],
-            [
-                0.8227241335952168,
-                -0.47499999999999976,
-                -1.1
-            ],
-            [
-                0,
-                -0.95,
-                -1.1
-            ],
-            [
-                -0.8227241335952165,
-                -0.4750000000000004,
-                -1.1
-            ],
-            [
-                -0.822724133595217,
-                0.4749999999999993,
-                -1.1
-            ]
-        ]
-
-        direction = [[0.0, 0.0, 1.0],
-                     [0.0, 0.0, 1.0],
-                     [0.0, 0.0, 1.0],
-                     [0.0, 0.0, 1.0],
-                     [0.0, 0.0, 1.0],
-                     [0.0, 0.0, 1.0]]
-    else:
-
-        location = [
-            [
-                3.874945160902288e-2,
-                -1.206182747348013,
-                0.85245
-            ],
-            [
-                3.874945160902288e-2,
-                -1.206182747348013,
-                -0.85245
-            ],
-            [
-                -3.8749451609022656e-2,
-                -1.206182747348013,
-                0.85245
-            ],
-            [
-                -3.8749451609022656e-2,
-                -1.206182747348013,
-                -0.85245
-            ],
-            [
-                -3.874945160902288e-2,
-                1.206182747348013,
-                0.85245
-            ],
-            [
-                -3.874945160902288e-2,
-                1.206182747348013,
-                -0.85245
-            ],
-            [
-                3.8749451609022656e-2,
-                1.206182747348013,
-                0.85245
-            ],
-            [
-                3.8749451609022656e-2,
-                1.206182747348013,
-                -0.85245
-            ]
+            [0, 0.95, -1.1],
+            [0.8227241335952166, 0.4750000000000003, -1.1],
+            [0.8227241335952168, -0.47499999999999976, -1.1],
+            [0, -0.95, -1.1],
+            [-0.8227241335952165, -0.4750000000000004, -1.1],
+            [-0.822724133595217, 0.4749999999999993, -1.1],
         ]
 
         direction = [
-            [
-                -0.7071067811865476,
-                0.7071067811865475,
-                0.0
-            ],
-            [
-                -0.7071067811865476,
-                0.7071067811865475,
-                0.0
-            ],
-            [
-                0.7071067811865475,
-                0.7071067811865476,
-                0.0
-            ],
-            [
-                0.7071067811865475,
-                0.7071067811865476,
-                0.0
-            ],
-            [
-                0.7071067811865476,
-                -0.7071067811865475,
-                0.0
-            ],
-            [
-                0.7071067811865476,
-                -0.7071067811865475,
-                0.0
-            ],
-            [
-                -0.7071067811865475,
-                -0.7071067811865476,
-                0.0
-            ],
-            [
-                -0.7071067811865475,
-                -0.7071067811865476,
-                0.0
-            ]
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+        ]
+    else:
+        location = [
+            [3.874945160902288e-2, -1.206182747348013, 0.85245],
+            [3.874945160902288e-2, -1.206182747348013, -0.85245],
+            [-3.8749451609022656e-2, -1.206182747348013, 0.85245],
+            [-3.8749451609022656e-2, -1.206182747348013, -0.85245],
+            [-3.874945160902288e-2, 1.206182747348013, 0.85245],
+            [-3.874945160902288e-2, 1.206182747348013, -0.85245],
+            [3.8749451609022656e-2, 1.206182747348013, 0.85245],
+            [3.8749451609022656e-2, 1.206182747348013, -0.85245],
+        ]
+
+        direction = [
+            [-0.7071067811865476, 0.7071067811865475, 0.0],
+            [-0.7071067811865476, 0.7071067811865475, 0.0],
+            [0.7071067811865475, 0.7071067811865476, 0.0],
+            [0.7071067811865475, 0.7071067811865476, 0.0],
+            [0.7071067811865476, -0.7071067811865475, 0.0],
+            [0.7071067811865476, -0.7071067811865475, 0.0],
+            [-0.7071067811865475, -0.7071067811865476, 0.0],
+            [-0.7071067811865475, -0.7071067811865476, 0.0],
         ]
 
     # create the set of thruster in the dynamics task
@@ -420,9 +360,9 @@ def run(show_plots, useDVThrusters):
     # create the thruster devices by specifying the thruster type and its location and direction
     for pos_B, dir_B in zip(location, direction):
         if useDVThrusters:
-            thFactory.create('MOOG_Monarc_22_6', pos_B, dir_B, cutoffFrequency=1.)
+            thFactory.create("MOOG_Monarc_22_6", pos_B, dir_B, cutoffFrequency=1.0)
         else:
-            thFactory.create('MOOG_Monarc_1', pos_B, dir_B, cutoffFrequency=1.)
+            thFactory.create("MOOG_Monarc_1", pos_B, dir_B, cutoffFrequency=1.0)
 
     # get number of thruster devices
     numTh = thFactory.getNumOfDevices()
@@ -438,7 +378,7 @@ def run(show_plots, useDVThrusters):
     # setup inertial3D guidance module
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.sigma_R0N = [0.0, 0.0, 0.0]  # set the desired inertial orientation
     scSim.AddModelToTask(fswTaskName, inertial3DObj)
 
     # setup the attitude tracking error evaluation module
@@ -453,7 +393,7 @@ def run(show_plots, useDVThrusters):
     mrpControl.K = 3.5 * 10.0
     mrpControl.Ki = 0.0002  # make value negative to turn off integral feedback
     mrpControl.P = 30.0 * 10.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # setup the thruster force mapping module
     thrForceMappingObj = thrForceMapping.thrForceMapping()
@@ -461,13 +401,10 @@ def run(show_plots, useDVThrusters):
     scSim.AddModelToTask(fswTaskName, thrForceMappingObj)
 
     if useDVThrusters:
-        controlAxes_B = [1, 0, 0,
-                         0, 1, 0]
+        controlAxes_B = [1, 0, 0, 0, 1, 0]
         thrForceMappingObj.thrForceSign = -1
     else:
-        controlAxes_B = [1, 0, 0,
-                         0, 1, 0,
-                         0, 0, 1]
+        controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
         thrForceMappingObj.thrForceSign = +1
     thrForceMappingObj.controlAxes_B = controlAxes_B
 
@@ -476,8 +413,8 @@ def run(show_plots, useDVThrusters):
     thrFiringSchmittObj.ModelTag = "thrFiringSchmitt"
     scSim.AddModelToTask(fswTaskName, thrFiringSchmittObj)
     thrFiringSchmittObj.thrMinFireTime = 0.002
-    thrFiringSchmittObj.level_on = .75
-    thrFiringSchmittObj.level_off = .25
+    thrFiringSchmittObj.level_on = 0.75
+    thrFiringSchmittObj.level_off = 0.25
     if useDVThrusters:
         thrFiringSchmittObj.baseThrustState = 1
 
@@ -486,7 +423,9 @@ def run(show_plots, useDVThrusters):
     #
 
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, fswTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, fswTimeStep, numDataPoints
+    )
     mrpTorqueLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
@@ -563,11 +502,14 @@ def run(show_plots, useDVThrusters):
     thrusterSet.cmdsInMsg.subscribeTo(thrFiringSchmittObj.onTimeOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName,  scObject
-                                              # , saveFile=fileName
-                                              , thrEffectorList=thrusterSet
-                                              , thrColors=vizSupport.toRGBA255("red")
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        dynTaskName,
+        scObject,
+        # , saveFile=fileName
+        thrEffectorList=thrusterSet,
+        thrColors=vizSupport.toRGBA255("red"),
+    )
     vizSupport.setActuatorGuiSetting(viz, showThrusterLabels=True)
 
     #

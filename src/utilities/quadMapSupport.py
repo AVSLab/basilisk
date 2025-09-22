@@ -1,4 +1,3 @@
-
 #
 #  ISC License
 #
@@ -21,11 +20,13 @@
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import vizSupport
+
 try:
     from Basilisk.simulation import vizInterface
 except ImportError:
     pass
 from Basilisk.architecture import messaging
+
 
 def computeRectMesh(parentBody, latBounds, lonBounds, maxAngWidth):
     """
@@ -55,10 +56,16 @@ def computeRectMesh(parentBody, latBounds, lonBounds, maxAngWidth):
     endLon = lonBounds[1]
 
     # Scale angular width to produce evenly sized sub-regions
-    latList = np.deg2rad(np.linspace(startLat, endLat,
-                                     int(np.ceil(abs(endLat - startLat) / maxAngWidth)) + 1))
-    lonList = np.deg2rad(np.linspace(startLon, endLon,
-                                     int(np.ceil(abs(endLon - startLon) / maxAngWidth)) + 1))
+    latList = np.deg2rad(
+        np.linspace(
+            startLat, endLat, int(np.ceil(abs(endLat - startLat) / maxAngWidth)) + 1
+        )
+    )
+    lonList = np.deg2rad(
+        np.linspace(
+            startLon, endLon, int(np.ceil(abs(endLon - startLon) / maxAngWidth)) + 1
+        )
+    )
 
     # Extract planet radius and flattening
     p_RE = parentBody.radEquator
@@ -68,7 +75,6 @@ def computeRectMesh(parentBody, latBounds, lonBounds, maxAngWidth):
 
     for lat1, lat2 in zip(latList, latList[1:]):
         for lon1, lon2 in zip(lonList, lonList[1:]):
-
             corner1 = vizSupport.lla2fixedframe([lat1, lon1, 0], p_RE, p_RR)
             vertices.extend(corner1)
 
@@ -135,7 +141,9 @@ def computeCamFOVBox(parentBody, spiceObject, scObject, cam):
 
         # Get planet-fixed (P) to camera (C) DCM
         CP_1 = -r_CN_P / np.linalg.norm(r_CN_P)  # Camera pointing toward the planet
-        CP_2 = -np.cross(CP_1, np.array([0, 0, 1])) / np.linalg.norm(np.cross(CP_1, np.array([0, 0, 1])))  # Define "up"
+        CP_2 = -np.cross(CP_1, np.array([0, 0, 1])) / np.linalg.norm(
+            np.cross(CP_1, np.array([0, 0, 1]))
+        )  # Define "up"
         CP_3 = np.cross(CP_1, CP_2)
         CP = np.array([CP_1, CP_2, CP_3])
         PC = np.transpose(CP)
@@ -179,11 +187,15 @@ def computeCamFOVBox(parentBody, spiceObject, scObject, cam):
     for i in range(0, 4):
         di_P = d_P[i]
 
-        A = (di_P[0] / a)**2 + (di_P[1] / a)**2 + (di_P[2] / b)**2
-        B = 2 * (r_CN_P[0] * di_P[0] / (a**2) + r_CN_P[1] * di_P[1] / (a**2) + r_CN_P[2] * di_P[2] / (b**2))
-        C = (r_CN_P[0] / a)**2 + (r_CN_P[1] / a)**2 + (r_CN_P[2] / b)**2 - 1
+        A = (di_P[0] / a) ** 2 + (di_P[1] / a) ** 2 + (di_P[2] / b) ** 2
+        B = 2 * (
+            r_CN_P[0] * di_P[0] / (a**2)
+            + r_CN_P[1] * di_P[1] / (a**2)
+            + r_CN_P[2] * di_P[2] / (b**2)
+        )
+        C = (r_CN_P[0] / a) ** 2 + (r_CN_P[1] / a) ** 2 + (r_CN_P[2] / b) ** 2 - 1
 
-        disc = B**2 - 4*A*C
+        disc = B**2 - 4 * A * C
 
         if disc < 0:
             # print(f"ERROR: No intersection for ray {i}")
@@ -234,7 +246,7 @@ def subdivideFOVBox(parentBody, FOVBox, fieldOfViewSubdivs):
     # Convert 3D points to LLA
     llaList = []
     for i in range(4):
-        r_GP_P = FOVBox[i*3:(i+1)*3]
+        r_GP_P = FOVBox[i * 3 : (i + 1) * 3]
         lla = vizSupport.fixedframe2lla(r_GP_P, p_RE, p_RR)
         llaList.append(lla)  # lla = [lat, lon, alt]
 
@@ -247,7 +259,6 @@ def subdivideFOVBox(parentBody, FOVBox, fieldOfViewSubdivs):
     # Generate the mesh of N x N quadrilaterals
     vertices = []
     for i in range(fieldOfViewSubdivs):
-
         # Create left and right lat/lon strips
         topLeftLon = TL[1] + (TR[1] - TL[1]) * i / fieldOfViewSubdivs
         botLeftLon = BL[1] + (BR[1] - BL[1]) * i / fieldOfViewSubdivs
@@ -266,9 +277,23 @@ def subdivideFOVBox(parentBody, FOVBox, fieldOfViewSubdivs):
         rightLat = np.linspace(botRightLat, topRightLat, fieldOfViewSubdivs + 1)
 
         for j in range(fieldOfViewSubdivs):
-            vertices.extend(vizSupport.lla2fixedframe([leftLat[j], leftLon[j], drawHt], p_RE, p_RR))
-            vertices.extend(vizSupport.lla2fixedframe([rightLat[j], rightLon[j], drawHt], p_RE, p_RR))
-            vertices.extend(vizSupport.lla2fixedframe([rightLat[j+1], rightLon[j+1], drawHt], p_RE, p_RR))
-            vertices.extend(vizSupport.lla2fixedframe([leftLat[j+1], leftLon[j+1], drawHt], p_RE, p_RR))
+            vertices.extend(
+                vizSupport.lla2fixedframe([leftLat[j], leftLon[j], drawHt], p_RE, p_RR)
+            )
+            vertices.extend(
+                vizSupport.lla2fixedframe(
+                    [rightLat[j], rightLon[j], drawHt], p_RE, p_RR
+                )
+            )
+            vertices.extend(
+                vizSupport.lla2fixedframe(
+                    [rightLat[j + 1], rightLon[j + 1], drawHt], p_RE, p_RR
+                )
+            )
+            vertices.extend(
+                vizSupport.lla2fixedframe(
+                    [leftLat[j + 1], leftLon[j + 1], drawHt], p_RE, p_RR
+                )
+            )
 
     return vertices

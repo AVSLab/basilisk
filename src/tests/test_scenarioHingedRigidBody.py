@@ -41,10 +41,11 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioHingedRigidBody
-@pytest.mark.scenarioTest
 
+
+@pytest.mark.scenarioTest
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -62,7 +63,9 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 
     velData, figureList = scenarioHingedRigidBody.run(show_plots)
 
-    spaceCraftMomentum = np.sqrt(velData[-1, 0] ** 2 + velData[-1, 1] ** 2 + velData[-1, 2] ** 2)
+    spaceCraftMomentum = np.sqrt(
+        velData[-1, 0] ** 2 + velData[-1, 1] ** 2 + velData[-1, 2] ** 2
+    )
 
     # setup truth data for unit test
     InstMomentum = 8470.84340921
@@ -70,7 +73,9 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     # compare the results to the truth values
     if abs(spaceCraftMomentum - InstMomentum) > accuracy:
         testFailCount += 1
-        testMessages.append("Failed HingedRigidBody Tutorial test. Post-maneuver momentum incorrect.")
+        testMessages.append(
+            "Failed HingedRigidBody Tutorial test. Post-maneuver momentum incorrect."
+        )
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):

@@ -103,6 +103,7 @@ from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector
 from Basilisk.utilities import macros, orbitalMotion, unitTestSupport
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -128,7 +129,7 @@ def run(show_plots, numberPanels):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.01)
+    simulationTimeStep = macros.sec2nano(0.01)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -145,9 +146,11 @@ def run(show_plots, numberPanels):
     scObject.ModelTag = "scObject"
     scObject.hub.mHub = massSC
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[massSC / 16 * diameter ** 2 + massSC / 12 * height ** 2, 0.0, 0.0],
-                                [0.0, massSC / 16 * diameter ** 2 + massSC / 12 * height ** 2, 0.0],
-                                [0.0, 0.0, massSC / 8 * diameter ** 2]]
+    scObject.hub.IHubPntBc_B = [
+        [massSC / 16 * diameter**2 + massSC / 12 * height**2, 0.0, 0.0],
+        [0.0, massSC / 16 * diameter**2 + massSC / 12 * height**2, 0.0],
+        [0.0, 0.0, massSC / 8 * diameter**2],
+    ]
 
     # Set the spacecraft's initial conditions
     scObject.hub.r_CN_NInit = np.array([0, 0, 0])  # m   - r_CN_N
@@ -169,12 +172,12 @@ def run(show_plots, numberPanels):
         # Define the module's properties from the panels
         spinningBody.mass1 = 0.0
         spinningBody.mass2 = mass
-        spinningBody.IS1PntSc1_S1 = [[0.0, 0.0, 0.0],
-                                     [0.0, 0.0, 0.0],
-                                     [0.0, 0.0, 0.0]]
-        spinningBody.IS2PntSc2_S2 = [[mass / 12 * (3 * radius ** 2 + thickness ** 2), 0.0, 0.0],
-                                     [0.0, mass / 12 * (3 * radius ** 2 + thickness ** 2), 0.0],
-                                     [0.0, 0.0, mass / 2 * radius ** 2]]
+        spinningBody.IS1PntSc1_S1 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+        spinningBody.IS2PntSc2_S2 = [
+            [mass / 12 * (3 * radius**2 + thickness**2), 0.0, 0.0],
+            [0.0, mass / 12 * (3 * radius**2 + thickness**2), 0.0],
+            [0.0, 0.0, mass / 2 * radius**2],
+        ]
         spinningBody.dcm_S10B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
         spinningBody.dcm_S20S1 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
         spinningBody.r_Sc1S1_S1 = [[0.0], [0.0], [0.0]]
@@ -201,18 +204,22 @@ def run(show_plots, numberPanels):
         # Define the module's properties from the panels
         spinningBody.mass1 = mass
         spinningBody.mass2 = mass
-        spinningBody.IS1PntSc1_S1 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
-                                     [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
-                                     [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
-        spinningBody.IS2PntSc2_S2 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
-                                     [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
-                                     [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
+        spinningBody.IS1PntSc1_S1 = [
+            [mass / 12 * (length**2 + thickness**2), 0.0, 0.0],
+            [0.0, mass / 12 * (thickness**2 + width**2), 0.0],
+            [0.0, 0.0, mass / 12 * (length**2 + width**2)],
+        ]
+        spinningBody.IS2PntSc2_S2 = [
+            [mass / 12 * (length**2 + thickness**2), 0.0, 0.0],
+            [0.0, mass / 12 * (thickness**2 + width**2), 0.0],
+            [0.0, 0.0, mass / 12 * (length**2 + width**2)],
+        ]
         spinningBody.dcm_S10B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
         spinningBody.dcm_S20S1 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
         spinningBody.r_Sc1S1_S1 = [[0.0], [length / 2], [0.0]]
         spinningBody.r_Sc2S2_S2 = [[-width / 2], [0.0], [0.0]]
         spinningBody.r_S1B_B = [[0.0], [diameter / 2], [height / 2 - thickness / 2]]
-        spinningBody.r_S2S1_S1 = [[- width / 2], [length / 2], [0.0]]
+        spinningBody.r_S2S1_S1 = [[-width / 2], [length / 2], [0.0]]
         spinningBody.s1Hat_S1 = [[1], [0], [0]]
         spinningBody.s2Hat_S2 = [[0], [1], [0]]
         spinningBody.k1 = 50.0
@@ -255,32 +262,43 @@ def run(show_plots, numberPanels):
         scBodyList.append(["panel2", spinningBody.spinningBodyConfigLogOutMsgs[1]])
 
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
-                                                  # , saveFile=fileName + str(numberPanels)
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scBodyList,
+            # , saveFile=fileName + str(numberPanels)
+        )
 
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[scObject.ModelTag]
-                                     , modelPath="CYLINDER"
-                                     , scale=[diameter, diameter, height / 2]
-                                     , color=vizSupport.toRGBA255("blue"))
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[scObject.ModelTag],
+            modelPath="CYLINDER",
+            scale=[diameter, diameter, height / 2],
+            color=vizSupport.toRGBA255("blue"),
+        )
         if numberPanels == 1:
-            vizSupport.createCustomModel(viz
-                                         , simBodiesToModify=["panel"]
-                                         , modelPath="CYLINDER"
-                                         , scale=[2 * radius, 2 * radius, thickness]
-                                         , color=vizSupport.toRGBA255("green"))
+            vizSupport.createCustomModel(
+                viz,
+                simBodiesToModify=["panel"],
+                modelPath="CYLINDER",
+                scale=[2 * radius, 2 * radius, thickness],
+                color=vizSupport.toRGBA255("green"),
+            )
         elif numberPanels == 2:
-            vizSupport.createCustomModel(viz
-                                         , simBodiesToModify=["panel1"]
-                                         , modelPath="CUBE"
-                                         , scale=[width, length, thickness]
-                                         , color=vizSupport.toRGBA255("green"))
-            vizSupport.createCustomModel(viz
-                                         , simBodiesToModify=["panel2"]
-                                         , modelPath="CUBE"
-                                         , scale=[width, length, thickness]
-                                         , color=vizSupport.toRGBA255("green"))
+            vizSupport.createCustomModel(
+                viz,
+                simBodiesToModify=["panel1"],
+                modelPath="CUBE",
+                scale=[width, length, thickness],
+                color=vizSupport.toRGBA255("green"),
+            )
+            vizSupport.createCustomModel(
+                viz,
+                simBodiesToModify=["panel2"],
+                modelPath="CUBE",
+                scale=[width, length, thickness],
+                color=vizSupport.toRGBA255("green"),
+            )
         viz.settings.orbitLinesOn = -1
 
     # Initialize the simulation
@@ -308,45 +326,63 @@ def run(show_plots, numberPanels):
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     plt.clf()
-    plt.plot(theta1Data.times() * macros.NANO2SEC, macros.R2D * theta1, label=r'$\theta_1$')
-    plt.plot(theta2Data.times() * macros.NANO2SEC, macros.R2D * theta2, label=r'$\theta_2$')
+    plt.plot(
+        theta1Data.times() * macros.NANO2SEC, macros.R2D * theta1, label=r"$\theta_1$"
+    )
+    plt.plot(
+        theta2Data.times() * macros.NANO2SEC, macros.R2D * theta2, label=r"$\theta_2$"
+    )
     plt.legend()
-    plt.xlabel('time [s]')
-    plt.ylabel(r'$\theta$ [deg]')
+    plt.xlabel("time [s]")
+    plt.ylabel(r"$\theta$ [deg]")
     pltName = fileName + "theta" + str(int(numberPanels))
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     plt.clf()
-    plt.plot(theta1Data.times() * macros.NANO2SEC, macros.R2D * theta1Dot, label=r'$\dot{\theta}_1$')
-    plt.plot(theta1Data.times() * macros.NANO2SEC, macros.R2D * theta2Dot, label=r'$\dot{\theta}_2$')
+    plt.plot(
+        theta1Data.times() * macros.NANO2SEC,
+        macros.R2D * theta1Dot,
+        label=r"$\dot{\theta}_1$",
+    )
+    plt.plot(
+        theta1Data.times() * macros.NANO2SEC,
+        macros.R2D * theta2Dot,
+        label=r"$\dot{\theta}_2$",
+    )
     plt.legend()
-    plt.xlabel('time [s]')
-    plt.ylabel(r'$\dot{\theta}$ [deg/s]')
+    plt.xlabel("time [s]")
+    plt.ylabel(r"$\dot{\theta}$ [deg/s]")
     pltName = fileName + "thetaDot" + str(int(numberPanels))
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     plt.clf()
     for idx in range(3):
-        plt.plot(theta1Data.times() * macros.NANO2SEC, v_BN_N[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$v_{BN,' + str(idx) + '}$')
+        plt.plot(
+            theta1Data.times() * macros.NANO2SEC,
+            v_BN_N[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$v_{BN," + str(idx) + "}$",
+        )
     plt.legend()
-    plt.xlabel('time [s]')
-    plt.ylabel(r'Velocity [m/s]')
+    plt.xlabel("time [s]")
+    plt.ylabel(r"Velocity [m/s]")
     pltName = fileName + "velocity" + str(int(numberPanels))
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
     plt.clf()
     for idx in range(3):
-        plt.plot(theta1Data.times() * macros.NANO2SEC, omega_BN_B[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BN,' + str(idx) + '}$')
+        plt.plot(
+            theta1Data.times() * macros.NANO2SEC,
+            omega_BN_B[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BN," + str(idx) + "}$",
+        )
     plt.legend()
-    plt.xlabel('time [s]')
-    plt.ylabel(r'Angular Velocity [rad/s]')
+    plt.xlabel("time [s]")
+    plt.ylabel(r"Angular Velocity [rad/s]")
     pltName = fileName + "angularVelocity" + str(int(numberPanels))
     figureList[pltName] = plt.figure(4)
 

@@ -11,12 +11,14 @@ import gc
 import psutil
 import os
 
+
 def getMemoryUsage():
     """Get memory usage of current process in MB"""
     process = psutil.Process(os.getpid())
     gc.collect()  # Force collection before measurement
     memory_info = process.memory_info()
     return memory_info.rss / 1024 / 1024  # RSS in MB
+
 
 def create_and_run_simulation():
     """Create and run a simulation with RW setup"""
@@ -35,10 +37,12 @@ def create_and_run_simulation():
 
     # Create 3 reaction wheels
     for i in range(3):
-        rwFactory.create('Honeywell_HR16',
-                        [1, 0, 0] if i == 0 else [0, 1, 0] if i == 1 else [0, 0, 1],
-                        Omega=500.,
-                        maxMomentum=50.)
+        rwFactory.create(
+            "Honeywell_HR16",
+            [1, 0, 0] if i == 0 else [0, 1, 0] if i == 1 else [0, 0, 1],
+            Omega=500.0,
+            maxMomentum=50.0,
+        )
 
     # Create RW state effector
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
@@ -67,7 +71,7 @@ def create_and_run_simulation():
 
     # Clear message subscriptions
     for msg in rwStateEffector.rwOutMsgs:
-        if hasattr(msg, 'unsubscribeAll'):
+        if hasattr(msg, "unsubscribeAll"):
             msg.unsubscribeAll()
 
     # Clear references in reverse order
@@ -79,10 +83,14 @@ def create_and_run_simulation():
 
     gc.collect()
 
-@pytest.mark.parametrize("num_iterations,max_allowed_growth", [
-    (25, 3.0),   # Reduced from 50 to 25 iterations
-    (50, 3.0),   # Reduced from 100 to 50 iterations
-])
+
+@pytest.mark.parametrize(
+    "num_iterations,max_allowed_growth",
+    [
+        (25, 3.0),  # Reduced from 50 to 25 iterations
+        (50, 3.0),  # Reduced from 100 to 50 iterations
+    ],
+)
 @pytest.mark.flaky(retries=3, delay=0)
 def test_rw_memory_leak(num_iterations, max_allowed_growth):
     """Test for memory leaks in reaction wheel implementation"""
@@ -99,21 +107,30 @@ def test_rw_memory_leak(num_iterations, max_allowed_growth):
         memory_measurements.append(current_memory)
 
         if (i + 1) % 10 == 0:
-            print(f"Iteration {i+1}/{num_iterations}, Memory: {current_memory:.2f} MB")
+            print(
+                f"Iteration {i + 1}/{num_iterations}, Memory: {current_memory:.2f} MB"
+            )
             print(f"Delta from start: {current_memory - initial_memory:.2f} MB")
 
     # Calculate memory statistics
     memory_growth = memory_measurements[-1] - initial_memory
-    memory_trend = np.polyfit(range(len(memory_measurements)), memory_measurements, 1)[0]
+    memory_trend = np.polyfit(range(len(memory_measurements)), memory_measurements, 1)[
+        0
+    ]
 
     # More detailed failure messages
     if memory_growth >= max_allowed_growth:
-        pytest.fail(f"Memory growth ({memory_growth:.2f} MB) exceeds maximum allowed "
-                   f"({max_allowed_growth:.2f} MB)\nTrend: {memory_trend:.4f} MB/iteration")
+        pytest.fail(
+            f"Memory growth ({memory_growth:.2f} MB) exceeds maximum allowed "
+            f"({max_allowed_growth:.2f} MB)\nTrend: {memory_trend:.4f} MB/iteration"
+        )
 
     if memory_trend >= 0.05:
-        pytest.fail(f"Memory growth trend ({memory_trend:.4f} MB/iteration) indicates "
-                   f"potential leak\nTotal growth: {memory_growth:.2f} MB")
+        pytest.fail(
+            f"Memory growth trend ({memory_trend:.4f} MB/iteration) indicates "
+            f"potential leak\nTotal growth: {memory_growth:.2f} MB"
+        )
+
 
 if __name__ == "__main__":
     test_rw_memory_leak(50, 3.0)

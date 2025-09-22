@@ -88,6 +88,7 @@ import os
 import sys
 
 import numpy as np
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport, unitTestSupport
 
@@ -95,9 +96,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/../')
-sys.path.append(path + '/../models')
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../")
+sys.path.append(path + "/../models")
+sys.path.append(path + "/../plotting")
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics
 import BSK_Fsw
@@ -109,8 +110,8 @@ import BSK_Plotting as BSK_plt
 # Create your own scenario child class
 class scenario_LambertGuidance(BSKSim, BSKScenario):
     def __init__(self):
-        super(scenario_LambertGuidance, self).__init__(fswRate=60., dynRate=10.)
-        self.name = 'scenario_LambertGuidance'
+        super(scenario_LambertGuidance, self).__init__(fswRate=60.0, dynRate=10.0)
+        self.name = "scenario_LambertGuidance"
 
         # declare empty class variables
         self.sNavAttRec = None
@@ -123,24 +124,54 @@ class scenario_LambertGuidance(BSKSim, BSKScenario):
         DynModels = self.get_DynModel()
         FswModels = self.get_FswModel()
         rEarth = 6378 * 1e3
-        self.r_TN_N = np.array([(42164 * 1e3), 0., 0.])  # targeted position
-        pos_sigma_sc = 1.
+        self.r_TN_N = np.array([(42164 * 1e3), 0.0, 0.0])  # targeted position
+        pos_sigma_sc = 1.0
         vel_sigma_sc = 0.1
-        self.tm1 = 2460.
-        self.tm2 = 4980.
-        vRelativeDesired_S = np.array([0., 0., 0.])
-        p_matrix_sc = np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
-                               vel_sigma_sc, vel_sigma_sc, vel_sigma_sc,
-                               0., 0., 0.,
-                               0., 0., 0.,
-                               0., 0., 0.,
-                               0., 0., 0.])
-        walk_bounds_sc = [[10.], [10.], [10.],
-                      [1], [1], [1],
-                      [0.], [0.], [0.],
-                      [0.], [0.], [0.],
-                      [0.], [0.], [0.],
-                      [0.], [0.], [0.]]
+        self.tm1 = 2460.0
+        self.tm2 = 4980.0
+        vRelativeDesired_S = np.array([0.0, 0.0, 0.0])
+        p_matrix_sc = np.diag(
+            [
+                pos_sigma_sc,
+                pos_sigma_sc,
+                pos_sigma_sc,
+                vel_sigma_sc,
+                vel_sigma_sc,
+                vel_sigma_sc,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+            ]
+        )
+        walk_bounds_sc = [
+            [10.0],
+            [10.0],
+            [10.0],
+            [1],
+            [1],
+            [1],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+        ]
 
         DynModels.simpleNavObject.PMatrix = p_matrix_sc
         DynModels.simpleNavObject.walkBounds = walk_bounds_sc
@@ -148,56 +179,81 @@ class scenario_LambertGuidance(BSKSim, BSKScenario):
         FswModels.lambertPlannerObject.setR_TN_N(self.r_TN_N)
         FswModels.lambertPlannerObject.setFinalTime(self.tm2)
         FswModels.lambertPlannerObject.setManeuverTime(self.tm1)
-        FswModels.lambertPlannerObject.setMu(DynModels.gravFactory.gravBodies['earth'].mu)
+        FswModels.lambertPlannerObject.setMu(
+            DynModels.gravFactory.gravBodies["earth"].mu
+        )
         FswModels.lambertPlannerObject.setNumRevolutions(0)
 
         FswModels.lambertValidatorObject.setFinalTime(self.tm2)
         FswModels.lambertValidatorObject.setManeuverTime(self.tm1)
-        FswModels.lambertValidatorObject.setMaxDistanceTarget(500.)
+        FswModels.lambertValidatorObject.setMaxDistanceTarget(500.0)
         FswModels.lambertValidatorObject.setMinOrbitRadius(rEarth)
-        FswModels.lambertValidatorObject.setUncertaintyStates(np.diag([pos_sigma_sc, pos_sigma_sc, pos_sigma_sc,
-                                                                      vel_sigma_sc, vel_sigma_sc, vel_sigma_sc]))
+        FswModels.lambertValidatorObject.setUncertaintyStates(
+            np.diag(
+                [
+                    pos_sigma_sc,
+                    pos_sigma_sc,
+                    pos_sigma_sc,
+                    vel_sigma_sc,
+                    vel_sigma_sc,
+                    vel_sigma_sc,
+                ]
+            )
+        )
         FswModels.lambertValidatorObject.setUncertaintyDV(0.1)
-        FswModels.lambertValidatorObject.setDvConvergenceTolerance(1.)
+        FswModels.lambertValidatorObject.setDvConvergenceTolerance(1.0)
 
-        FswModels.lambertSurfaceRelativeVelocityObject.setVRelativeDesired_S(vRelativeDesired_S)
+        FswModels.lambertSurfaceRelativeVelocityObject.setVRelativeDesired_S(
+            vRelativeDesired_S
+        )
         FswModels.lambertSurfaceRelativeVelocityObject.setTime(self.tm2)
 
         self.configure_initial_conditions()
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=self.DynModels.rwStateEffector
-                                            )
+        vizSupport.enableUnityVisualization(
+            self,
+            self.DynModels.taskName,
+            self.DynModels.scObject,
+            # , saveFile=__file__
+            rwEffectorList=self.DynModels.rwStateEffector,
+        )
 
     def configure_initial_conditions(self):
         DynModels = self.get_DynModel()
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
-        oe.a = 40000. * 1e3  # meters
+        oe.a = 40000.0 * 1e3  # meters
         oe.e = 0.001
-        oe.i = 1. * macros.D2R
-        oe.Omega = 1. * macros.D2R
-        oe.omega = 1. * macros.D2R
-        oe.f = -30. * macros.D2R
-        mu = DynModels.gravFactory.gravBodies['earth'].mu
+        oe.i = 1.0 * macros.D2R
+        oe.Omega = 1.0 * macros.D2R
+        oe.omega = 1.0 * macros.D2R
+        oe.f = -30.0 * macros.D2R
+        mu = DynModels.gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [
+            [0.001],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         DynModels = self.get_DynModel()
         FswModels = self.get_FswModel()
         self.sc_truth_recorder = DynModels.scObject.scStateOutMsg.recorder()
         self.sc_meas_recorder = DynModels.simpleNavObject.transOutMsg.recorder()
-        self.dv1Cmd_recorder = FswModels.lambertValidatorObject.dvBurnCmdOutMsg.recorder()
-        self.dv2Cmd_recorder = FswModels.lambertSecondDvObject.dvBurnCmdOutMsg.recorder()
+        self.dv1Cmd_recorder = (
+            FswModels.lambertValidatorObject.dvBurnCmdOutMsg.recorder()
+        )
+        self.dv2Cmd_recorder = (
+            FswModels.lambertSecondDvObject.dvBurnCmdOutMsg.recorder()
+        )
         self.ephem_recorder = DynModels.EarthEphemObject.ephemOutMsgs[0].recorder()
         self.AddModelToTask(DynModels.taskName, self.sc_truth_recorder)
         self.AddModelToTask(DynModels.taskName, self.sc_meas_recorder)
@@ -218,9 +274,17 @@ class scenario_LambertGuidance(BSKSim, BSKScenario):
         # Plot results
         BSK_plt.clear_all_plots()
         BSK_plt.plot_orbit(r_BN_N_truth)
-        BSK_plt.plot_position(time, np.array(r_BN_N_truth), np.array(r_BN_N_meas), self.tm2 / 60., self.r_TN_N)
+        BSK_plt.plot_position(
+            time,
+            np.array(r_BN_N_truth),
+            np.array(r_BN_N_meas),
+            self.tm2 / 60.0,
+            self.r_TN_N,
+        )
         BSK_plt.plot_velocity(time, np.array(v_BN_N_truth), np.array(v_BN_N_meas))
-        BSK_plt.plot_surface_rel_velocity(time, r_BN_N_truth, v_BN_N_truth, sigma_PN, omega_PN_N)
+        BSK_plt.plot_surface_rel_velocity(
+            time, r_BN_N_truth, v_BN_N_truth, sigma_PN, omega_PN_N
+        )
 
         figureList = {}
         if showPlots:
@@ -234,13 +298,12 @@ class scenario_LambertGuidance(BSKSim, BSKScenario):
 
 
 def runScenario(scenario):
-
     # Initialize simulation
     scenario.InitializeSimulation()
     velRef = scenario.DynModels.scObject.dynManager.getStateObject("hubVelocity")
 
     # Configure FSW mode for first Lambert maneuver
-    scenario.modeRequest = 'lambertFirstDV'
+    scenario.modeRequest = "lambertFirstDV"
 
     # Configure run time and execute simulation
     simulationTime = macros.sec2nano(scenario.tm1)
@@ -256,7 +319,7 @@ def runScenario(scenario):
     # After reading the Delta-V command, the state managers velocity is updated through
     velRef.setState(unitTestSupport.np2EigenVectorXd(vm_N + dv_N))
     # Configure FSW mode for second Lambert maneuver
-    scenario.modeRequest = 'lambertSecondDV'
+    scenario.modeRequest = "lambertSecondDV"
 
     # To start up the simulation again, note that the total simulation time must be provided,
     # not just the next incremental simulation time.
@@ -273,11 +336,11 @@ def runScenario(scenario):
     # After reading the Delta-V command, the state managers velocity is updated through
     velRef.setState(unitTestSupport.np2EigenVectorXd(vm_N + dv_N))
     # disable flight software after maneuver
-    scenario.modeRequest = 'standby'
+    scenario.modeRequest = "standby"
 
     # To start up the simulation again, note that the total simulation time must be provided,
     # not just the next incremental simulation time.
-    simulationTime = macros.sec2nano(6000.)
+    simulationTime = macros.sec2nano(6000.0)
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
 

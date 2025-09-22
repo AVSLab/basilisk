@@ -39,13 +39,14 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + "/..")
 from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../plottingOpNav')
+sys.path.append(path + "/../plottingOpNav")
 import OpNav_Plotting as BSK_plt
+
 
 # Create your own scenario child class
 class scenario_OpNav(BSKScenario):
@@ -53,9 +54,9 @@ class scenario_OpNav(BSKScenario):
 
     def __init__(self, masterSim, showPlots=False):
         super(scenario_OpNav, self).__init__(masterSim, showPlots)
-        self.name = 'scenario_opnav'
+        self.name = "scenario_opnav"
         self.masterSim = masterSim
-        self.filterUse = "bias" #"relOD"
+        self.filterUse = "bias"  # "relOD"
 
         # declare additional class variables
         self.rwMotorRec = None
@@ -65,27 +66,39 @@ class scenario_OpNav(BSKScenario):
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
-        oe.a = 18000*1E3 # meters
-        oe.e = 0.
+        oe.a = 18000 * 1e3  # meters
+        oe.e = 0.0
         oe.i = 20 * macros.D2R
-        oe.Omega = 25. * macros.D2R
-        oe.omega = 190. * macros.D2R
-        oe.f = 100. * macros.D2R  # 90 good
-        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
+        oe.Omega = 25.0 * macros.D2R
+        oe.omega = 190.0 * macros.D2R
+        oe.f = 100.0 * macros.D2R  # 90 good
+        mu = self.masterSim.get_DynModel().gravFactory.gravBodies["mars barycenter"].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         bias = [0, 0, -2]
 
-        MRP= [0,0,0]
-        if self.filterUse =="relOD":
-            self.masterSim.get_FswModel().relativeOD.stateInit = rN.tolist() + vN.tolist()
+        MRP = [0, 0, 0]
+        if self.filterUse == "relOD":
+            self.masterSim.get_FswModel().relativeOD.stateInit = (
+                rN.tolist() + vN.tolist()
+            )
         if self.filterUse == "bias":
-            self.masterSim.get_FswModel().pixelLineFilter.stateInit = rN.tolist() + vN.tolist() + bias
+            self.masterSim.get_FswModel().pixelLineFilter.stateInit = (
+                rN.tolist() + vN.tolist() + bias
+            )
         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = rN
         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = vN
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [
+            [MRP[0]],
+            [MRP[1]],
+            [MRP[2]],
+        ]  # sigma_BN_B
+        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # rad/s - omega_BN_B
         # Search
         self.masterSim.get_FswModel().opNavPoint.omega_RN_B = [0.001, 0.0, -0.001]
 
@@ -98,27 +111,40 @@ class scenario_OpNav(BSKScenario):
         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
 
         self.attGuidRec = FswModel.attGuidMsg.recorder(samplingTime)
-        self.rwMotorRec = FswModel.rwMotorTorque.rwMotorTorqueOutMsg.recorder(samplingTime)
+        self.rwMotorRec = FswModel.rwMotorTorque.rwMotorTorqueOutMsg.recorder(
+            samplingTime
+        )
         self.masterSim.AddModelToTask(DynModel.taskName, self.attGuidRec)
         self.masterSim.AddModelToTask(DynModel.taskName, self.rwMotorRec)
 
         self.rwLogs = []
         for item in range(4):
-            self.rwLogs.append(DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
+            self.rwLogs.append(
+                DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime)
+            )
             self.masterSim.AddModelToTask(DynModel.taskName, self.rwLogs[item])
 
         return
 
     def pull_outputs(self, showPlots):
-
-        sigma_BR = unitTestSupport.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.sigma_BR)
-        omega_BR_B = unitTestSupport.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.omega_BR_B)
+        sigma_BR = unitTestSupport.addTimeColumn(
+            self.attGuidRec.times(), self.attGuidRec.sigma_BR
+        )
+        omega_BR_B = unitTestSupport.addTimeColumn(
+            self.attGuidRec.times(), self.attGuidRec.omega_BR_B
+        )
 
         numRW = 4
-        dataUsReq = unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwMotorRec.motorTorque)
+        dataUsReq = unitTestSupport.addTimeColumn(
+            self.rwMotorRec.times(), self.rwMotorRec.motorTorque
+        )
         dataRW = []
         for i in range(numRW):
-            dataRW.append(unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
+            dataRW.append(
+                unitTestSupport.addTimeColumn(
+                    self.rwMotorRec.times(), self.rwLogs[i].u_current
+                )
+            )
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -141,7 +167,6 @@ class scenario_OpNav(BSKScenario):
 
 
 def run(showPlots, simTime=None):
-
     # Instantiate base simulation
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
     TheBSKSim.set_DynModel(BSK_OpNavDynamics)
@@ -162,24 +187,24 @@ def run(showPlots, simTime=None):
     TheScenario.run_vizard("-noDisplay")
 
     # Configure FSW mode
-    TheScenario.masterSim.modeRequest = 'prepOpNav'
+    TheScenario.masterSim.modeRequest = "prepOpNav"
     # Initialize simulation
     TheBSKSim.InitializeSimulation()
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(5.)
+    simulationTime = macros.min2nano(5.0)
     TheBSKSim.ConfigureStopTime(simulationTime)
-    print('Starting Execution')
+    print("Starting Execution")
     t1 = time.time()
     TheBSKSim.ExecuteSimulation()
-    TheScenario.masterSim.modeRequest = 'pointLimb'
+    TheScenario.masterSim.modeRequest = "pointLimb"
     if simTime != None:
         simulationTime = macros.min2nano(simTime)
     else:
-        simulationTime = macros.min2nano(200.)
+        simulationTime = macros.min2nano(200.0)
     TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
     t2 = time.time()
-    print('Finished Execution in ', t2-t1, ' seconds. Post-processing results')
+    print("Finished Execution in ", t2 - t1, " seconds. Post-processing results")
     # Terminate vizard and show plots
     figureList = TheScenario.end_scenario()
     return figureList

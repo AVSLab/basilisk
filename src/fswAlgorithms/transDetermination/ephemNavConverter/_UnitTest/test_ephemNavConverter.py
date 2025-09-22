@@ -15,13 +15,15 @@ from Basilisk.utilities import astroFunctions
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+
 def test_ephemNavConverter():
-    """ Test ephemNavConverter. """
+    """Test ephemNavConverter."""
     [testResults, testMessage] = ephemNavConverterTestFunction()
     assert testResults < 1, testMessage
 
+
 def ephemNavConverterTestFunction():
-    """ Test the ephemNavConverter module. Setup a simulation """
+    """Test the ephemNavConverter module. Setup a simulation"""
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -34,7 +36,9 @@ def ephemNavConverterTestFunction():
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
+    testProc.addTask(
+        unitTestSim.CreateNewTask(unitTaskName, testProcessRate)
+    )  # Add a new task to the process
 
     # Construct the ephemNavConverter module
     # Set the names for the input messages
@@ -50,7 +54,9 @@ def ephemNavConverterTestFunction():
     inputEphem = messaging.EphemerisMsgPayload()
 
     # Get the Earth's position and velocity
-    position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
+    position, velocity = astroFunctions.Earth_RV(
+        astroFunctions.JulianDate([2018, 10, 16])
+    )
     inputEphem.r_BdyZero_N = position
     inputEphem.v_BdyZero_N = velocity
     inputEphem.timeTag = 1.0  # sec
@@ -79,34 +85,47 @@ def ephemNavConverterTestFunction():
     trueTime = [inputEphem.timeTag, inputEphem.timeTag]
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueR, outputR,
-                                                                 posAcc,
-                                                                 "ephemNavConverter output Position",
-                                                                 2, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueV, outputV,
-                                                                 velAcc,
-                                                                 "ephemNavConverter output Velocity",
-                                                                 2, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(trueTime, outputTime,
-                                                                 velAcc,
-                                                                 "ephemNavConverter output Time",
-                                                                 testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        trueR,
+        outputR,
+        posAcc,
+        "ephemNavConverter output Position",
+        2,
+        testFailCount,
+        testMessages,
+    )
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        trueV,
+        outputV,
+        velAcc,
+        "ephemNavConverter output Velocity",
+        2,
+        testFailCount,
+        testMessages,
+    )
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+        trueTime,
+        outputTime,
+        velAcc,
+        "ephemNavConverter output Time",
+        testFailCount,
+        testMessages,
+    )
 
     #   print out success message if no error were found
     snippentName = "passFail"
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + ephemNav.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + ephemNav.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
+    return [testFailCount, "".join(testMessages)]
 
-    return [testFailCount, ''.join(testMessages)]
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_ephemNavConverter()

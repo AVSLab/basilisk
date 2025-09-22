@@ -28,20 +28,28 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # parameters
-relativeVelocities = np.array([[0., 0., 0.], [100., -300., 200.]])
-time_maneuver = [1.e3, 2.e3]
-trueAnomalies = [0., 70.]
-rotAngles = [0., 230.]
-angularVelocities = np.array([[0., 0., 0.], [1., -3., 2.]])
+relativeVelocities = np.array([[0.0, 0.0, 0.0], [100.0, -300.0, 200.0]])
+time_maneuver = [1.0e3, 2.0e3]
+trueAnomalies = [0.0, 70.0]
+rotAngles = [0.0, 230.0]
+angularVelocities = np.array([[0.0, 0.0, 0.0], [1.0, -3.0, 2.0]])
 
-paramArray = [relativeVelocities, time_maneuver, trueAnomalies, rotAngles, angularVelocities]
+paramArray = [
+    relativeVelocities,
+    time_maneuver,
+    trueAnomalies,
+    rotAngles,
+    angularVelocities,
+]
 # create list with all combinations of parameters
 paramList = list(itertools.product(*paramArray))
 
+
 @pytest.mark.parametrize("accuracy", [1e-4])
 @pytest.mark.parametrize("p1_vr, p2_tm, p3_f, p4_rot, p5_omega", paramList)
-
-def test_lambertSurfaceRelativeVelocity(show_plots, p1_vr, p2_tm, p3_f, p4_rot, p5_omega, accuracy):
+def test_lambertSurfaceRelativeVelocity(
+    show_plots, p1_vr, p2_tm, p3_f, p4_rot, p5_omega, accuracy
+):
     r"""
     **Validation Test Description**
 
@@ -64,10 +72,14 @@ def test_lambertSurfaceRelativeVelocity(show_plots, p1_vr, p2_tm, p3_f, p4_rot, 
     The content of the DesiredVelocityMsg output message (velocity vector and maneuver time) is compared with the true
     values.
     """
-    lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p4_rot, p5_omega, accuracy)
+    lambertSurfaceRelativeVelocityTestFunction(
+        show_plots, p1_vr, p2_tm, p3_f, p4_rot, p5_omega, accuracy
+    )
 
 
-def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p4_rot, p5_omega, accuracy):
+def lambertSurfaceRelativeVelocityTestFunction(
+    show_plots, p1_vr, p2_tm, p3_f, p4_rot, p5_omega, accuracy
+):
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -83,7 +95,7 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
 
     omega_PN_N = p5_omega
     if np.linalg.norm(omega_PN_N) > 1e-6:
-        omegaHat_PN_N = omega_PN_N/np.linalg.norm(omega_PN_N)
+        omegaHat_PN_N = omega_PN_N / np.linalg.norm(omega_PN_N)
     else:
         omegaHat_PN_N = np.array([0.0, 0.0, 1.0])
 
@@ -94,12 +106,12 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
 
     # set up orbit using classical orbit elements
     oe0 = orbitalMotion.ClassicElements()
-    r = 10000. * 1000  # meters
+    r = 10000.0 * 1000  # meters
     oe0.a = r
     oe0.e = ecc
-    oe0.i = 10. * macros.D2R
-    oe0.Omega = 20. * macros.D2R
-    oe0.omega = 30. * macros.D2R
+    oe0.i = 10.0 * macros.D2R
+    oe0.Omega = 20.0 * macros.D2R
+    oe0.omega = 30.0 * macros.D2R
     oe0.f = p3_f * macros.D2R
     # spacecraft state at initial time
     r0_BN_N, v0_BN_N = orbitalMotion.elem2rv_parab(muBody, oe0)
@@ -118,7 +130,9 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
     ephemerisInMsg = messaging.EphemerisMsg().write(ephemerisInMsgData)
 
     lambertProblemInMsgData = messaging.LambertProblemMsgPayload()
-    lambertProblemInMsgData.r2_N = r0_BN_N  # only info of LambertProblemMsg needed by module
+    lambertProblemInMsgData.r2_N = (
+        r0_BN_N  # only info of LambertProblemMsg needed by module
+    )
     lambertProblemInMsg = messaging.LambertProblemMsg().write(lambertProblemInMsgData)
 
     # subscribe input messages to module
@@ -138,41 +152,53 @@ def lambertSurfaceRelativeVelocityTestFunction(show_plots, p1_vr, p2_tm, p3_f, p
 
     # true values
     if np.linalg.norm(omega_PN_N) > 1e-6:
-        s1Hat = np.cross(omega_PN_N, r0_BN_N)/np.linalg.norm(np.cross(omega_PN_N, r0_BN_N))
+        s1Hat = np.cross(omega_PN_N, r0_BN_N) / np.linalg.norm(
+            np.cross(omega_PN_N, r0_BN_N)
+        )
     else:
-        s1Hat = (np.cross(np.array([0.0, 0.0, 1.0]), r0_BN_N)/
-                 np.linalg.norm(np.cross(np.array([0.0, 0.0, 1.0]), r0_BN_N)))
-    s3Hat = r0_BN_N/np.linalg.norm(r0_BN_N)
-    s2Hat = np.cross(s3Hat, s1Hat)/np.linalg.norm(np.cross(s3Hat, s1Hat))
+        s1Hat = np.cross(np.array([0.0, 0.0, 1.0]), r0_BN_N) / np.linalg.norm(
+            np.cross(np.array([0.0, 0.0, 1.0]), r0_BN_N)
+        )
+    s3Hat = r0_BN_N / np.linalg.norm(r0_BN_N)
+    s2Hat = np.cross(s3Hat, s1Hat) / np.linalg.norm(np.cross(s3Hat, s1Hat))
     dcm_SN = np.array([s1Hat, s2Hat, s3Hat])
     vDesiredTrue = np.cross(omega_PN_N, r0_BN_N) + np.dot(dcm_SN.T, vRelativeDesired_S)
     timeTrue = tm
 
     # make sure module output data is correct
-    paramsString = ' for desired relative velocity={}, maneuver time={}, true anomaly={}, rotation angle={}, ' \
-                   'angular velocity={}, accuracy={}'.format(
-        str(p1_vr),
-        str(p2_tm),
-        str(p3_f),
-        str(p4_rot),
-        str(p5_omega),
-        str(accuracy))
+    paramsString = (
+        " for desired relative velocity={}, maneuver time={}, true anomaly={}, rotation angle={}, "
+        "angular velocity={}, accuracy={}".format(
+            str(p1_vr), str(p2_tm), str(p3_f), str(p4_rot), str(p5_omega), str(accuracy)
+        )
+    )
 
-    np.testing.assert_allclose(vDesired,
-                               vDesiredTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: desired velocity,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        vDesired,
+        vDesiredTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: desired velocity," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(time,
-                               timeTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: maneuver time,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        time,
+        timeTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: maneuver time," + paramsString),
+        verbose=True,
+    )
 
 
 if __name__ == "__main__":
-    test_lambertSurfaceRelativeVelocity(False, relativeVelocities[1], time_maneuver[0], trueAnomalies[0], rotAngles[0],
-                                        angularVelocities[0], 1e-4)
+    test_lambertSurfaceRelativeVelocity(
+        False,
+        relativeVelocities[1],
+        time_maneuver[0],
+        trueAnomalies[0],
+        rotAngles[0],
+        angularVelocities[0],
+        1e-4,
+    )

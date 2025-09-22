@@ -30,27 +30,38 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.simulation import boreAngCalc
-from Basilisk.utilities import SimulationBaseClass, macros as mc, RigidBodyKinematics as rbk, unitTestSupport
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros as mc,
+    RigidBodyKinematics as rbk,
+    unitTestSupport,
+)
 
 path = os.path.dirname(os.path.abspath(__file__))
 
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("inertialHeading, eulerLoc",
-                         [([1.0, 0.0, 0.0], [0.0, 0.0, 0.0]),
-                          ([0.0, 1.0, 0.0], [0.0, 0.0, 0.0]),
-                          ([0.0, 0.0, 1.0], [0.0, 0.0, 0.0]),
-                          ([1.0, 0.0, 0.0], [np.pi / 4, 0.0, - np.pi / 4]),
-                          ([0.0, 1.0, 0.0], [np.pi / 4, 0.0, - np.pi / 4]),
-                          ([0.0, 0.0, 1.0], [np.pi / 4, 0.0, - np.pi / 4]),
-                          ([1 / np.sqrt(2), - 1 / np.sqrt(2), 0.0], [np.pi / 4, 0.0, - np.pi / 4]),
-                          ([0.0, 1 / np.sqrt(2), 1 / np.sqrt(2)], [np.pi / 4, 0.0, - np.pi / 4]),
-                          ([1 / np.sqrt(2), 0.0, - 1 / np.sqrt(2)], [np.pi / 4, 0.0, - np.pi / 4])])
+@pytest.mark.parametrize(
+    "inertialHeading, eulerLoc",
+    [
+        ([1.0, 0.0, 0.0], [0.0, 0.0, 0.0]),
+        ([0.0, 1.0, 0.0], [0.0, 0.0, 0.0]),
+        ([0.0, 0.0, 1.0], [0.0, 0.0, 0.0]),
+        ([1.0, 0.0, 0.0], [np.pi / 4, 0.0, -np.pi / 4]),
+        ([0.0, 1.0, 0.0], [np.pi / 4, 0.0, -np.pi / 4]),
+        ([0.0, 0.0, 1.0], [np.pi / 4, 0.0, -np.pi / 4]),
+        ([1 / np.sqrt(2), -1 / np.sqrt(2), 0.0], [np.pi / 4, 0.0, -np.pi / 4]),
+        ([0.0, 1 / np.sqrt(2), 1 / np.sqrt(2)], [np.pi / 4, 0.0, -np.pi / 4]),
+        ([1 / np.sqrt(2), 0.0, -1 / np.sqrt(2)], [np.pi / 4, 0.0, -np.pi / 4]),
+    ],
+)
 def test_bore_ang_calc_inertial_heading(show_plots, inertialHeading, eulerLoc):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = bore_ang_calc_inertial_heading_func(show_plots, inertialHeading, eulerLoc)
+    [testResults, testMessage] = bore_ang_calc_inertial_heading_func(
+        show_plots, inertialHeading, eulerLoc
+    )
     assert testResults < 1, testMessage
 
 
@@ -103,10 +114,12 @@ def bore_ang_calc_inertial_heading_func(show_plots, inertialHeading, eulerLoc):
     simMissAngle = dataLog.missAngle[0]
 
     # Compare the results
-    tol = 1E-10
+    tol = 1e-10
     if not unitTestSupport.isDoubleEqual(missAngle, simMissAngle, tol):
         testFailCount += 1
-        testMessages.append("FAILED: Calculating the miss angle of the boresight failed \n")
+        testMessages.append(
+            "FAILED: Calculating the miss angle of the boresight failed \n"
+        )
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -114,13 +127,15 @@ def bore_ang_calc_inertial_heading_func(show_plots, inertialHeading, eulerLoc):
     else:
         print(testMessages)
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_bore_ang_calc_inertial_heading(False,  # show_plots
-                                        [1.0 / np.sqrt(3), 1.0 / np.sqrt(3), 1.0 / np.sqrt(3)],
-                                        [np.pi, 0.0, 0.0])
+    test_bore_ang_calc_inertial_heading(
+        False,  # show_plots
+        [1.0 / np.sqrt(3), 1.0 / np.sqrt(3), 1.0 / np.sqrt(3)],
+        [np.pi, 0.0, 0.0],
+    )

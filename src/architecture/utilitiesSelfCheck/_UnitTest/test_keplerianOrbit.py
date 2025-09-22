@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 #
@@ -36,6 +33,7 @@ from Basilisk.utilities import orbitalMotion
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+
 
 def test_unitKeplerianOrbit(show_plots=False):
     """Module Unit Test"""
@@ -74,10 +72,10 @@ def unitKeplerianOrbit(show_plots=False):
 
     # constructor without arguments
     orb = keplerianOrbit.KeplerianOrbit()
-    assert orb.a() == 100000000.
-    if not orb.a() == 100000000.:
+    assert orb.a() == 100000000.0
+    if not orb.a() == 100000000.0:
         testFailCount += 1
-        testMessages.append('default constructor failure')
+        testMessages.append("default constructor failure")
 
     # constructor with arguments
     oe = orb.oe()
@@ -85,54 +83,54 @@ def unitKeplerianOrbit(show_plots=False):
     assert orb2.r_BP_P() == orb.r_BP_P()
     if not orb2.r_BP_P() == orb.r_BP_P():
         testFailCount += 1
-        testMessages.append('Argumented constructor failure')
+        testMessages.append("Argumented constructor failure")
 
     # copy constructor
     orb3 = keplerianOrbit.KeplerianOrbit(orb2)
     assert orb2.v_BP_P() == orb3.v_BP_P()
     if not orb2.v_BP_P() == orb3.v_BP_P():
         testFailCount += 1
-        testMessages.append('Copy Constructor Failure')
+        testMessages.append("Copy Constructor Failure")
     try:
         orb4 = copy(orb3)
     except:
         assert False
         testFailCount += 1
-        testMessages.append('python copy not working')
+        testMessages.append("python copy not working")
 
     # changing orbital elements
     orb3.set_f(0.0)
     init_r = orb3.r()
-    orb3.set_f(1.)
+    orb3.set_f(1.0)
     assert init_r != orb3.r()
     if init_r == orb3.r():
         testFailCount += 1
-        testMessages.append('Failure to change element')
+        testMessages.append("Failure to change element")
     orb3.set_f(0.0)
     assert init_r == orb3.r()
     if init_r != orb3.r():
         testFailCount += 1
-        testMessages.append('Failure to change element')
+        testMessages.append("Failure to change element")
 
     # mean motion calc
-    expected_n = np.sqrt(orbitalMotion.MU_EARTH / orb3.a()**3)
+    expected_n = np.sqrt(orbitalMotion.MU_EARTH / orb3.a() ** 3)
     assert orb3.n() == expected_n
     if not orb3.n() == expected_n:
         testFailCount += 1
-        testMessages.append('Bad mean motion calc')
+        testMessages.append("Bad mean motion calc")
 
     # orbital period calc
     assert orb3.P() == 2 * np.pi / expected_n
     if not orb3.P() == 2 * np.pi / expected_n:
         testFailCount += 1
-        testMessages.append('Bad period calc')
+        testMessages.append("Bad period calc")
 
     # orbital energy calc
     expected_E = -orbitalMotion.MU_EARTH / 2.0 / orb3.a()
     assert orb3.Energy() == expected_E
     if not orb3.Energy() == expected_E:
         testFailCount += 1
-        testMessages.append('Bad energy calc')
+        testMessages.append("Bad energy calc")
 
     # rv calc
     expected_r, expected_v = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, orb3.oe())
@@ -140,9 +138,10 @@ def unitKeplerianOrbit(show_plots=False):
     assert dist == 0.0
     if not dist == 0.0:
         testFailCount += 1
-        testMessages.append('RV conversion failure')
+        testMessages.append("RV conversion failure")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 if __name__ == "__main__":
     unitKeplerianOrbit()

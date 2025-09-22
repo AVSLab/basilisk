@@ -47,7 +47,7 @@ def test_RecordingInputMessages():
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.0)))
 
     # create modules
     mod1 = cModuleTemplate.cModuleTemplate()
@@ -109,60 +109,74 @@ def test_RecordingInputMessages():
     # print(dataOutRec.dataVector)
     # print(dataOut2Rec.dataVector)
 
-    testFailCount, testMessages = uts.compareArray([inputData.dataVector]*3
-                                                   , dataInRec.dataVector
-                                                   , 0.01
-                                                   , "recorded input message was not correct."
-                                                   , testFailCount
-                                                   , testMessages)
+    testFailCount, testMessages = uts.compareArray(
+        [inputData.dataVector] * 3,
+        dataInRec.dataVector,
+        0.01,
+        "recorded input message was not correct.",
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = uts.compareArray([[0, 0, 0], [0, 0, 0], [3, 2, 3]]
-                                                   , dataOutRec.dataVector
-                                                   , 0.01
-                                                   , "recorded module output message was not correct."
-                                                   , testFailCount
-                                                   , testMessages)
+    testFailCount, testMessages = uts.compareArray(
+        [[0, 0, 0], [0, 0, 0], [3, 2, 3]],
+        dataOutRec.dataVector,
+        0.01,
+        "recorded module output message was not correct.",
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = uts.compareArray([[2, 2, 3], [3, 2, 3], [4, 2, 3]]
-                                                   , dataOut2Rec.dataVector
-                                                   , 0.01
-                                                   , "recorded redirected module output message was not correct."
-                                                   , testFailCount
-                                                   , testMessages)
+    testFailCount, testMessages = uts.compareArray(
+        [[2, 2, 3], [3, 2, 3], [4, 2, 3]],
+        dataOut2Rec.dataVector,
+        0.01,
+        "recorded redirected module output message was not correct.",
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = uts.compareArray([[4., 2., 3.]]
-                                                   , [mod1.dataOutMsg.read().dataVector]
-                                                   , 0.01
-                                                   , "read of module output message was not correct."
-                                                   , testFailCount
-                                                   , testMessages)
+    testFailCount, testMessages = uts.compareArray(
+        [[4.0, 2.0, 3.0]],
+        [mod1.dataOutMsg.read().dataVector],
+        0.01,
+        "read of module output message was not correct.",
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = uts.compareArray([[4, 2, 3]]
-                                                   , [attGuidMsg.read().dataVector]
-                                                   , 0.01
-                                                   , "read of module redirected output message was not correct."
-                                                   , testFailCount
-                                                   , testMessages)
-    #Check that the input message subscribed with address reflects data right
-    testFailCount, testMessages = uts.compareArray(dataOutRec.dataVector
-                                                   , dataInRecCPP.dataVector
-                                                   , 0.01
-                                                   , "recorded input message from addr was not correct."
-                                                   , testFailCount
-                                                   , testMessages)
+    testFailCount, testMessages = uts.compareArray(
+        [[4, 2, 3]],
+        [attGuidMsg.read().dataVector],
+        0.01,
+        "read of module redirected output message was not correct.",
+        testFailCount,
+        testMessages,
+    )
+    # Check that the input message subscribed with address reflects data right
+    testFailCount, testMessages = uts.compareArray(
+        dataOutRec.dataVector,
+        dataInRecCPP.dataVector,
+        0.01,
+        "recorded input message from addr was not correct.",
+        testFailCount,
+        testMessages,
+    )
     dataRecExpectation = dataInRecCPP.dataVector
     dummyVal = 1
     for i in range(dataRecExpectation.shape[0]):
         dataRecExpectation[i, 0] += dummyVal
         dummyVal += 1
 
-    #Check that the output message using input subscribed with address is right
-    testFailCount, testMessages = uts.compareArray(dataRecExpectation
-                                                   , dataOutRecCPP.dataVector
-                                                   , 0.01
-                                                   , "recorded output message from addr was not correct."
-                                                   , testFailCount
-                                                   , testMessages)
+    # Check that the output message using input subscribed with address is right
+    testFailCount, testMessages = uts.compareArray(
+        dataRecExpectation,
+        dataOutRecCPP.dataVector,
+        0.01,
+        "recorded output message from addr was not correct.",
+        testFailCount,
+        testMessages,
+    )
 
     if testFailCount:
         print(testMessages)

@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -22,7 +21,15 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import RigidBodyKinematics, macros
 
 
-def ckWrite(handle, time, mrp_array, av_array, start_seg, spacecraft_id=-62, reference_frame="J2000"):
+def ckWrite(
+    handle,
+    time,
+    mrp_array,
+    av_array,
+    start_seg,
+    spacecraft_id=-62,
+    reference_frame="J2000",
+):
     """
     Purpose: Creates a CK kernel from a time_array, mrp_array, and an av_array. Assumes that the SCLK is furnshed
 
@@ -66,30 +73,56 @@ def ckWrite(handle, time, mrp_array, av_array, start_seg, spacecraft_id=-62, ref
     # Process data for each timestep
     for i in range(num_data_points):
         # Process the attitude
-        quat = RigidBodyKinematics.MRP2EP(mrp_array[i, -3:])  # Grab the last 3 elements in case the first column is time
-        quat[1:4] = - quat[1:4]  # Convert to JPL-style quaternions
+        quat = RigidBodyKinematics.MRP2EP(
+            mrp_array[i, -3:]
+        )  # Grab the last 3 elements in case the first column is time
+        quat[1:4] = -quat[1:4]  # Convert to JPL-style quaternions
         for j in range(4):
             pyswice.doubleArray_setitem(quat_array, (4 * i) + j, quat[j])
 
         # Process the angular velocity
-        omega = av_array[i, -3:]  # Grab the last 3 elements in case the first column is time
+        omega = av_array[
+            i, -3:
+        ]  # Grab the last 3 elements in case the first column is time
         for j in range(3):
             pyswice.doubleArray_setitem(vel_array, (3 * i) + j, omega[j])
 
         # Process time
-        current_time = ephemeris_time + time[i] * macros.NANO2SEC  # Compute the current time in elapsed seconds from ephemeris
+        current_time = (
+            ephemeris_time + time[i] * macros.NANO2SEC
+        )  # Compute the current time in elapsed seconds from ephemeris
         current_ticks = pyswice.new_doubleArray(1)
-        pyswice.sce2c_c(spacecraft_id, current_time, current_ticks)  # Convert from ephemeris seconds to spacecraft clock ticks
-        pyswice.doubleArray_setitem(time_array, i, pyswice.doubleArray_getitem(current_ticks, 0))
+        pyswice.sce2c_c(
+            spacecraft_id, current_time, current_ticks
+        )  # Convert from ephemeris seconds to spacecraft clock ticks
+        pyswice.doubleArray_setitem(
+            time_array, i, pyswice.doubleArray_getitem(current_ticks, 0)
+        )
 
     # Get time into usable format
-    encoded_start_time = pyswice.doubleArray_getitem(time_array, 0) - 1.0e-3  # Pad the beginning for roundoff
-    encoded_end_time = pyswice.doubleArray_getitem(time_array, num_data_points - 1) + 1.0e-3  # Pad the end for roundoff
+    encoded_start_time = (
+        pyswice.doubleArray_getitem(time_array, 0) - 1.0e-3
+    )  # Pad the beginning for roundoff
+    encoded_end_time = (
+        pyswice.doubleArray_getitem(time_array, num_data_points - 1) + 1.0e-3
+    )  # Pad the end for roundoff
 
     # Save the date into a CK file
-    pyswice.ckw03_c(pyswice.spiceIntArray_getitem(file_handle, 0), encoded_start_time, encoded_end_time, spacecraft_id,
-                    reference_frame, 1, "InertialData", num_data_points, time_array, quat_array, vel_array, 1,
-                    start_ticks)
+    pyswice.ckw03_c(
+        pyswice.spiceIntArray_getitem(file_handle, 0),
+        encoded_start_time,
+        encoded_end_time,
+        spacecraft_id,
+        reference_frame,
+        1,
+        "InertialData",
+        num_data_points,
+        time_array,
+        quat_array,
+        vel_array,
+        1,
+        start_ticks,
+    )
 
     # Close the CK file
     pyswice.ckcls_c(pyswice.spiceIntArray_getitem(file_handle, 0))
@@ -123,8 +156,16 @@ def ckRead(time, spacecraft_id=-62, reference_frame="J2000"):
     av_container = pyswice.new_doubleArray(3)
     tick_container = pyswice.new_doubleArray(1)
     requested_pointing_flag = pyswice.new_spiceBoolArray(1)
-    pyswice.ckgpav_c(spacecraft_id, pyswice.doubleArray_getitem(tick, 0), 0, reference_frame, dcm_container,
-                     av_container, tick_container, requested_pointing_flag)
+    pyswice.ckgpav_c(
+        spacecraft_id,
+        pyswice.doubleArray_getitem(tick, 0),
+        0,
+        reference_frame,
+        dcm_container,
+        av_container,
+        tick_container,
+        requested_pointing_flag,
+    )
 
     # Grab angular velocity
     omega = numpy.zeros(3)
@@ -134,11 +175,13 @@ def ckRead(time, spacecraft_id=-62, reference_frame="J2000"):
     # Grab attitude as a DCM
     dcm = numpy.zeros((3, 3))
     for i in range(9):
-        dcm[i // 3, i % 3] = pyswice.doubleArray_getitem(dcm_container, i)  # Map 9D array into 3x3 matrix
+        dcm[i // 3, i % 3] = pyswice.doubleArray_getitem(
+            dcm_container, i
+        )  # Map 9D array into 3x3 matrix
 
     # Convert attitude to quaternions
     quat = RigidBodyKinematics.C2EP(dcm)
-    quat[1:4] = - quat[1:4]  # Convert to JPL-style quaternions
+    quat[1:4] = -quat[1:4]  # Convert to JPL-style quaternions
 
     return ephemeris_time, quat, omega
 

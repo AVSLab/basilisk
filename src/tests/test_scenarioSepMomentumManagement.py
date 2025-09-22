@@ -38,7 +38,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioSepMomentumManagement
 
 
@@ -67,8 +67,13 @@ def test_sepMomentumManagement(withFunction):
     withCmEstimation = withFunction
 
     try:
-        figureList = scenarioSepMomentumManagement.run(withSwirlTorque, withThrMomManagement,
-                                                       withSaMomManagement, withCmEstimation, False)
+        figureList = scenarioSepMomentumManagement.run(
+            withSwirlTorque,
+            withThrMomManagement,
+            withSaMomManagement,
+            withCmEstimation,
+            False,
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)

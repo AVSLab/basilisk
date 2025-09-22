@@ -15,8 +15,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
-
 #
 # Basilisk Scenario Script and Integrated Test
 #
@@ -37,7 +35,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioRotatingPanel as testScript
 
 
@@ -45,6 +43,7 @@ import scenarioRotatingPanel as testScript
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -67,7 +66,9 @@ def test_scenarioAttitudeGG(show_plots):
 
     except OSError as err:
         testFailCount += 1
-        testMessages.append("Rotating Panel with solar power and CSS sensor example tutorial failed.")
+        testMessages.append(
+            "Rotating Panel with solar power and CSS sensor example tutorial failed."
+        )
 
     #   print out success message if no error were found
     if testFailCount == 0:

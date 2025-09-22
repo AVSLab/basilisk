@@ -18,6 +18,7 @@
 
 from Basilisk.moduleTemplates import cppModuleTemplate
 
+
 def test_messagingInclude(show_plots):
     """test script to ensure any BSK include has access to messaging"""
 
@@ -27,6 +28,7 @@ def test_messagingInclude(show_plots):
         dataLog = module.dataOutMsg.recorder()
     except:
         assert False, "messaging inclusion test failed"
+
 
 if __name__ == "__main__":
     test_messagingInclude(

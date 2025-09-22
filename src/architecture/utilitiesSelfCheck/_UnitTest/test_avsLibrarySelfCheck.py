@@ -29,13 +29,17 @@ from Basilisk.architecture import avsLibrarySelfCheck
 from Basilisk.utilities import unitTestSupport
 
 
-@pytest.mark.parametrize("testName",
-                         ["testRigidBodyKinematics"
-                          , "testOrbitalElements"
-                          , "testOrbitalAnomalies"
-                          , "testLinearAlgebra"
-                          , "testOrbitalHill"
-                          , "testEnvironment"])
+@pytest.mark.parametrize(
+    "testName",
+    [
+        "testRigidBodyKinematics",
+        "testOrbitalElements",
+        "testOrbitalAnomalies",
+        "testLinearAlgebra",
+        "testOrbitalHill",
+        "testEnvironment",
+    ],
+)
 # provide a unique test method name, starting with test_
 def test_unitDynamicsModes(testName):
     """AVS Library Self Check"""
@@ -52,7 +56,9 @@ def unitAVSLibrarySelfCheck(testName):
         errorCount = avsLibrarySelfCheck.testRigidBodyKinematics(1e-10)
         if errorCount:
             testFailCount += errorCount
-            testMessages.append("ERROR: Rigid Body Kinematics Library Failed Self Test.\n")
+            testMessages.append(
+                "ERROR: Rigid Body Kinematics Library Failed Self Test.\n"
+            )
     if testName == "testOrbitalAnomalies":
         errorCount = avsLibrarySelfCheck.testOrbitalAnomalies(1e-10)
         if errorCount:
@@ -72,13 +78,15 @@ def unitAVSLibrarySelfCheck(testName):
     if testFailCount == 0:
         print("PASSED ")
         passFailText = "PASSED"
-        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+        colorText = (
+            "ForestGreen"  # color to write auto-documented "PASSED" message in in LATEX
+        )
         snippetContent = ""
     else:
         print(testFailCount)
         print(testMessages)
-        passFailText = 'FAILED'
-        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        passFailText = "FAILED"
+        colorText = "Red"  # color to write auto-documented "FAILED" message in in LATEX
         snippetContent = ""
         for message in testMessages:
             snippetContent += message
@@ -86,16 +94,20 @@ def unitAVSLibrarySelfCheck(testName):
     fileName = os.path.basename(os.path.splitext(__file__)[0])
     path = os.path.dirname(os.path.abspath(__file__))
 
-    snippetMsgName = fileName + 'Msg-' + testName
-    unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent, path + "/../_Documentation/")
+    snippetMsgName = fileName + "Msg-" + testName
+    unitTestSupport.writeTeXSnippet(
+        snippetMsgName, snippetContent, path + "/../_Documentation/"
+    )
 
-    snippetPassFailName = fileName + 'TestMsg-' + testName
-    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
-    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/")
+    snippetPassFailName = fileName + "TestMsg-" + testName
+    snippetContent = r"\textcolor{" + colorText + "}{" + passFailText + "}"
+    unitTestSupport.writeTeXSnippet(
+        snippetPassFailName, snippetContent, path + "/../_Documentation/"
+    )
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -103,6 +115,4 @@ def unitAVSLibrarySelfCheck(testName):
 # stand-along python script
 #
 if __name__ == "__main__":
-    unitAVSLibrarySelfCheck(
-        "testOrbitalHill"
-    )
+    unitAVSLibrarySelfCheck("testOrbitalHill")

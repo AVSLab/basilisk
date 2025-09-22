@@ -17,13 +17,13 @@
 #
 
 
-
 from Basilisk.architecture import sim_model
 from Basilisk.architecture import sys_model_task
 
 
 class ProcessBaseClass(object):
     """Class for a BSK process"""
+
     def __init__(self, procName, procPriority=-1):
         self.Name = procName
         self.processData = sim_model.SysProcess(procName)

@@ -27,11 +27,16 @@
 import numpy as np
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging  # import the message definitions
-from Basilisk.fswAlgorithms import mtbMomentumManagementSimple  # import the module that is to be tested
+from Basilisk.fswAlgorithms import (
+    mtbMomentumManagementSimple,
+)  # import the module that is to be tested
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -40,7 +45,8 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
-def test_mtbMomentumManagementSimple():     # update "module" in this function name to reflect the module name
+
+def test_mtbMomentumManagementSimple():  # update "module" in this function name to reflect the module name
     r"""
     **Validation Test Description**
 
@@ -58,38 +64,52 @@ def test_mtbMomentumManagementSimple():     # update "module" in this function n
     [testResults, testMessage] = mtbMomentumManagementSimpleTestFunction()
     assert testResults < 1, testMessage
 
+
 def mtbMomentumManagementSimpleTestFunction():
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.01)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
     module = mtbMomentumManagementSimple.mtbMomentumManagementSimple()
     module.Kp = 0.003
-    module.ModelTag = "mtbMomentumManagementSimple"           # update python name of test module
+    module.ModelTag = "mtbMomentumManagementSimple"  # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # wheelConfigData message (column major format)
     rwConfigParams = messaging.RWArrayConfigMsgPayload()
-    beta = 45. * np.pi / 180.
-    rwConfigParams.GsMatrix_B = [0., np.cos(beta), np.sin(beta), 0., np.sin(beta), -np.cos(beta), np.cos(beta), -np.sin(beta), 0., -np.cos(beta), -np.sin(beta), 0.]
+    beta = 45.0 * np.pi / 180.0
+    rwConfigParams.GsMatrix_B = [
+        0.0,
+        np.cos(beta),
+        np.sin(beta),
+        0.0,
+        np.sin(beta),
+        -np.cos(beta),
+        np.cos(beta),
+        -np.sin(beta),
+        0.0,
+        -np.cos(beta),
+        -np.sin(beta),
+        0.0,
+    ]
     rwConfigParams.JsList = [0.002, 0.002, 0.002, 0.002]
     rwConfigParams.numRW = 4
     rwParamsInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
 
     # rwSpeeds message
     rwSpeedsInMsgContainer = messaging.RWSpeedMsgPayload()
-    rwSpeedsInMsgContainer.wheelSpeeds = [100., 200., 300., 400.]
+    rwSpeedsInMsgContainer.wheelSpeeds = [100.0, 200.0, 300.0, 400.0]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -107,74 +127,86 @@ def mtbMomentumManagementSimpleTestFunction():
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
-    accuracy = 1E-8
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))  # seconds to stop simulation
+    accuracy = 1e-8
 
-    '''
+    """
         TEST 1:
             Check that tauMtbRequestOutMsg is non-zero when the wheel speeds
             are non-zero.
-    '''
+    """
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
-    Gs = np.array([
-            [0.,            0.,             np.cos(beta), -np.cos(beta)],
-            [np.cos(beta),  np.sin(beta),  -np.sin(beta), -np.sin(beta)],
-            [np.sin(beta), -np.cos(beta),   0.,             0.]])
+    Gs = np.array(
+        [
+            [0.0, 0.0, np.cos(beta), -np.cos(beta)],
+            [np.cos(beta), np.sin(beta), -np.sin(beta), -np.sin(beta)],
+            [np.sin(beta), -np.cos(beta), 0.0, 0.0],
+        ]
+    )
     wheelSpeeds = np.array(rwSpeedsInMsgContainer.wheelSpeeds[0:4])
     hWheels_W = wheelSpeeds * rwConfigParams.JsList[0]
-    hWheels_B  = Gs @ hWheels_W
-    tauExpected = - module.Kp * hWheels_B
+    hWheels_B = Gs @ hWheels_W
+    tauExpected = -module.Kp * hWheels_B
 
-    testFailCount, testMessages = unitTestSupport.compareVector(tauExpected,
-                                                            resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
-                                                            accuracy,
-                                                            "tauMtbRequestOutMsg",
-                                                            testFailCount, testMessages, ExpectedResult=1)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        tauExpected,
+        resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
+        accuracy,
+        "tauMtbRequestOutMsg",
+        testFailCount,
+        testMessages,
+        ExpectedResult=1,
+    )
 
-    '''
+    """
         TEST 2:
             Check that tauMtbRequestOutMsg is the zero vector when the wheels
             speeds are zero.
-    '''
-    rwSpeedsInMsgContainer.wheelSpeeds = [0., 0., 0., 0.]
+    """
+    rwSpeedsInMsgContainer.wheelSpeeds = [0.0, 0.0, 0.0, 0.0]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
 
-    testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0.],
-                                                            resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
-                                                            accuracy,
-                                                            "tauMtbRequestOutMsg",
-                                                            testFailCount, testMessages, ExpectedResult=1)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        [0.0, 0.0, 0.0],
+        resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
+        accuracy,
+        "tauMtbRequestOutMsg",
+        testFailCount,
+        testMessages,
+        ExpectedResult=1,
+    )
 
-    '''
+    """
         TEST 3:
             Check that tauMtbRequestOutMsg is the zero vector when the wheels
             speeds are non-zero and the feedback gain is zero.
-    '''
-    rwSpeedsInMsgContainer.wheelSpeeds = [100., 200., 300., 400.]
+    """
+    rwSpeedsInMsgContainer.wheelSpeeds = [100.0, 200.0, 300.0, 400.0]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
 
-    module.Kp = 0.
+    module.Kp = 0.0
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
 
-    testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0.],
-                                                            resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
-                                                            accuracy,
-                                                            "tauMtbRequestOutMsg",
-                                                            testFailCount, testMessages, ExpectedResult=1)
-
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        [0.0, 0.0, 0.0],
+        resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
+        accuracy,
+        "tauMtbRequestOutMsg",
+        testFailCount,
+        testMessages,
+        ExpectedResult=1,
+    )
 
     # reset the module to test this functionality
-    module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
-
-
+    module.Reset(0)  # this module reset function needs a time input (in NanoSeconds)
 
     print("Accuracy used: " + str(accuracy))
     if testFailCount == 0:
@@ -182,7 +214,7 @@ def mtbMomentumManagementSimpleTestFunction():
     else:
         print("Failed: mtbMomentumManagementSimple unit test")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #

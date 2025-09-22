@@ -32,6 +32,7 @@ import pytest
 from Basilisk.architecture import bskLogging
 from Basilisk.fswAlgorithms import waypointReference
 from Basilisk.utilities import RigidBodyKinematics as rbk
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -39,6 +40,8 @@ from Basilisk.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 dataFileName = None
+
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("attType", [0, 1, 2])
@@ -47,7 +50,9 @@ dataFileName = None
 @pytest.mark.parametrize("accuracy", [1e-12])
 
 # provide a unique test method name, starting with test_
-def test_waypointReference(show_plots, attType, MRPswitching, useReferenceFrame, accuracy):
+def test_waypointReference(
+    show_plots, attType, MRPswitching, useReferenceFrame, accuracy
+):
     r"""
     **Validation Test Description**
 
@@ -94,20 +99,22 @@ def test_waypointReference(show_plots, attType, MRPswitching, useReferenceFrame,
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accuracy)
+    [testResults, testMessage] = waypointReferenceTestFunction(
+        attType, MRPswitching, useReferenceFrame, accuracy
+    )
     global dataFileName
     if os.path.exists(dataFileName):
         os.remove(dataFileName)
     assert testResults < 1, testMessage
 
-def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accuracy):
 
+def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accuracy):
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -144,13 +151,17 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
             s = 0.8
         else:
             s = 0.1
-        attRealMRP = np.array([s + 0.05*i, 0.2 + 0.05*i, 0.3 + 0.05*i])
+        attRealMRP = np.array([s + 0.05 * i, 0.2 + 0.05 * i, 0.3 + 0.05 * i])
         if np.linalg.norm(attRealMRP) <= 1:
             attReal_RN.append(attRealMRP)
         else:
-            attReal_RN.append(-attRealMRP / (np.linalg.norm(attRealMRP))**2 )
-        omegaReal_RN_N.append(np.array([0.4 + 0.05*i, 0.5 + 0.05*i, 0.6 + 0.05*i]))
-        omegaDotReal_RN_N.append(np.array([0.7 + 0.05*i, 0.8 + 0.05*i, 0.9 + 0.05*i]))
+            attReal_RN.append(-attRealMRP / (np.linalg.norm(attRealMRP)) ** 2)
+        omegaReal_RN_N.append(
+            np.array([0.4 + 0.05 * i, 0.5 + 0.05 * i, 0.6 + 0.05 * i])
+        )
+        omegaDotReal_RN_N.append(
+            np.array([0.7 + 0.05 * i, 0.8 + 0.05 * i, 0.9 + 0.05 * i])
+        )
 
         lineString = str(t[-1]) + delimiter
 
@@ -168,12 +179,22 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
             return
 
         if not useReferenceFrame:
-            lineString += str(omegaReal_RN_N[-1].tolist())[1:-1] + delimiter + str(omegaDotReal_RN_N[-1].tolist())[1:-1] + '\n'
+            lineString += (
+                str(omegaReal_RN_N[-1].tolist())[1:-1]
+                + delimiter
+                + str(omegaDotReal_RN_N[-1].tolist())[1:-1]
+                + "\n"
+            )
         else:
             RN = rbk.MRP2C(attReal_RN[-1])
             omegaReal_RN_R = np.matmul(RN, omegaReal_RN_N[-1])
             omegaDotReal_RN_R = np.matmul(RN, omegaDotReal_RN_N[-1])
-            lineString += str(omegaReal_RN_R.tolist())[1:-1] + delimiter + str(omegaDotReal_RN_R.tolist())[1:-1] + '\n'
+            lineString += (
+                str(omegaReal_RN_R.tolist())[1:-1]
+                + delimiter
+                + str(omegaDotReal_RN_R.tolist())[1:-1]
+                + "\n"
+            )
 
         # write line on file
         fDataFile.write(lineString)
@@ -214,60 +235,135 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
 
     sigma_RN = [[], [], []]
     # checking attitude msg for t < t_min
-    for i in range(len(timeData)-1):
-
+    for i in range(len(timeData) - 1):
         for n in range(3):
             sigma_RN[n].append(dataLog.sigma_RN[i][n])
 
         if timeData[i] < t[0]:
-            if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], attReal_RN[0], accuracy):
+            if not unitTestSupport.isVectorEqual(
+                dataLog.sigma_RN[i], attReal_RN[0], accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
-            if not unitTestSupport.isVectorEqual(dataLog.omega_RN_N[i], np.array([0.0, 0.0, 0.0]), accuracy):
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed attitude check at time t = {}".format(timeData[i])
+                )
+            if not unitTestSupport.isVectorEqual(
+                dataLog.omega_RN_N[i], np.array([0.0, 0.0, 0.0]), accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
-            if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], np.array([0.0, 0.0, 0.0]), accuracy):
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed angular rate check at time t = {}".format(
+                        timeData[i]
+                    )
+                )
+            if not unitTestSupport.isVectorEqual(
+                dataLog.domega_RN_N[i], np.array([0.0, 0.0, 0.0]), accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed angular acceleration check at time t = {}".format(
+                        timeData[i]
+                    )
+                )
 
         # checking attitude msg for t_min <= t <= t_max
         elif timeData[i] >= t[0] and timeData[i] <= t[-1]:
-            while (timeData[i] >= t[j] and timeData[i] <= t[j+1]) == False:
+            while (timeData[i] >= t[j] and timeData[i] <= t[j + 1]) == False:
                 j += 1
             sigma_RN_int = np.array([0.0, 0.0, 0.0])
             omega_RN_N_int = np.array([0.0, 0.0, 0.0])
             omegaDot_RN_N_int = np.array([0.0, 0.0, 0.0])
 
             # interpolating between attitudes for times t = timeData[i]
-            if np.linalg.norm( attReal_RN[j+1] - attReal_RN[j] ) <= 1:
-                sigma_RN_int = attReal_RN[j] + (attReal_RN[j+1] - attReal_RN[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
+            if np.linalg.norm(attReal_RN[j + 1] - attReal_RN[j]) <= 1:
+                sigma_RN_int = attReal_RN[j] + (attReal_RN[j + 1] - attReal_RN[j]) / (
+                    t[j + 1] - t[j]
+                ) * (timeData[i] - t[j])
             else:
-                attReal_RN_SS = -attReal_RN[j+1] / (np.linalg.norm(attReal_RN[j+1]))**2
-                sigma_RN_int = attReal_RN[j] + (attReal_RN_SS - attReal_RN[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
-            omega_RN_N_int = omegaReal_RN_N[j] + (omegaReal_RN_N[j+1] - omegaReal_RN_N[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
-            omegaDot_RN_N_int = omegaDotReal_RN_N[j] + (omegaDotReal_RN_N[j+1] - omegaDotReal_RN_N[j]) / (t[j+1] - t[j]) * (timeData[i] - t[j])
-            if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], sigma_RN_int, accuracy):
+                attReal_RN_SS = (
+                    -attReal_RN[j + 1] / (np.linalg.norm(attReal_RN[j + 1])) ** 2
+                )
+                sigma_RN_int = attReal_RN[j] + (attReal_RN_SS - attReal_RN[j]) / (
+                    t[j + 1] - t[j]
+                ) * (timeData[i] - t[j])
+            omega_RN_N_int = omegaReal_RN_N[j] + (
+                omegaReal_RN_N[j + 1] - omegaReal_RN_N[j]
+            ) / (t[j + 1] - t[j]) * (timeData[i] - t[j])
+            omegaDot_RN_N_int = omegaDotReal_RN_N[j] + (
+                omegaDotReal_RN_N[j + 1] - omegaDotReal_RN_N[j]
+            ) / (t[j + 1] - t[j]) * (timeData[i] - t[j])
+            if not unitTestSupport.isVectorEqual(
+                dataLog.sigma_RN[i], sigma_RN_int, accuracy
+            ):
                 print(timeData[i], dataLog.sigma_RN[i], sigma_RN_int)
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
-            if not unitTestSupport.isVectorEqual(dataLog.omega_RN_N[i], omega_RN_N_int, accuracy):
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed attitude check at time t = {}".format(timeData[i])
+                )
+            if not unitTestSupport.isVectorEqual(
+                dataLog.omega_RN_N[i], omega_RN_N_int, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
-            if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], omegaDot_RN_N_int, accuracy):
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed angular rate check at time t = {}".format(
+                        timeData[i]
+                    )
+                )
+            if not unitTestSupport.isVectorEqual(
+                dataLog.domega_RN_N[i], omegaDot_RN_N_int, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed angular acceleration check at time t = {}".format(
+                        timeData[i]
+                    )
+                )
 
         # checking attitude msg for t < t_max
         else:
-            if not unitTestSupport.isVectorEqual(dataLog.sigma_RN[i], attReal_RN[-1], accuracy):
+            if not unitTestSupport.isVectorEqual(
+                dataLog.sigma_RN[i], attReal_RN[-1], accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed attitude check at time t = {}".format(timeData[i]))
-            if not unitTestSupport.isVectorEqual(dataLog.omega_RN_N[i], [0.0, 0.0, 0.0], accuracy):
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed attitude check at time t = {}".format(timeData[i])
+                )
+            if not unitTestSupport.isVectorEqual(
+                dataLog.omega_RN_N[i], [0.0, 0.0, 0.0], accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular rate check at time t = {}".format(timeData[i]))
-            if not unitTestSupport.isVectorEqual(dataLog.domega_RN_N[i], [0.0, 0.0, 0.0], accuracy):
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed angular rate check at time t = {}".format(
+                        timeData[i]
+                    )
+                )
+            if not unitTestSupport.isVectorEqual(
+                dataLog.domega_RN_N[i], [0.0, 0.0, 0.0], accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: " + testModule.ModelTag + " Module failed angular acceleration check at time t = {}".format(timeData[i]))
+                testMessages.append(
+                    "FAILED: "
+                    + testModule.ModelTag
+                    + " Module failed angular acceleration check at time t = {}".format(
+                        timeData[i]
+                    )
+                )
 
     # print out success or failure message
     if testFailCount == 0:
@@ -276,7 +372,8 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
         print("FAILED: " + testModule.ModelTag)
         print(testMessages)
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a
@@ -284,9 +381,10 @@ def waypointReferenceTestFunction(attType, MRPswitching, useReferenceFrame, accu
 #
 if __name__ == "__main__":
     waypointReferenceTestFunction(
-        2,        # attType (0 -> MRP, 1 -> quaternion [q0, q1, q2, q3], 2 -> quaternion [q1, q2, q3, qs])
-        False,    # MRPswitching
-        False,    # useReferenceFrame
-        1e-12)
+        2,  # attType (0 -> MRP, 1 -> quaternion [q0, q1, q2, q3], 2 -> quaternion [q1, q2, q3, qs])
+        False,  # MRPswitching
+        False,  # useReferenceFrame
+        1e-12,
+    )
     if os.path.exists(dataFileName):
         os.remove(dataFileName)

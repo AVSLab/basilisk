@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -24,12 +23,13 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
-
+splitPath = path.split("simulation")
 
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import hingedRigidBodyStateEffector
@@ -46,6 +46,7 @@ from Basilisk.utilities import deprecated
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
+
 
 @pytest.mark.parametrize("useScPlus", [True])
 def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
@@ -127,7 +128,11 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     # Define mass properties of the rigid part of the spacecraft
     scObjectPrimary.hub.mHub = 750.0
     scObjectPrimary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObjectPrimary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObjectPrimary.hub.IHubPntBc_B = [
+        [900.0, 0.0, 0.0],
+        [0.0, 800.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
 
     # Set the initial values for the states
     scObjectPrimary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
@@ -158,9 +163,11 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     if useScPlus:
         scLog = scObject.logger("totRotAngMomPntC_N")
     else:
-        scLog = pythonVariableLogger.PythonVariableLogger({
-            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
-        })
+        scLog = pythonVariableLogger.PythonVariableLogger(
+            {
+                "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
+            }
+        )
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
     unitTestSim.InitializeSimulation()
@@ -189,7 +196,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     # Get the last sigma and position
     dataPos = [rOut_CN_N[-1]]
 
-    truePos = [[0., 0., 0.]]
+    truePos = [[0.0, 0.0, 0.0]]
 
     initialRotAngMom_N = [[rotAngMom_N[0, 1], rotAngMom_N[0, 2], rotAngMom_N[0, 3]]]
 
@@ -199,46 +206,71 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]) ,
-             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]) ,
-             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) )
-    plt.xlabel('time (s)')
-    plt.ylabel('Ang. Momentum Difference')
+    plt.plot(
+        rotAngMom_N[:, 0] * 1e-9,
+        (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
+        rotAngMom_N[:, 0] * 1e-9,
+        (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
+        rotAngMom_N[:, 0] * 1e-9,
+        (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]),
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Ang. Momentum Difference")
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times() * 1e-9, vOut_CN_N[:, 0],
-             dataLog.times() * 1e-9, vOut_CN_N[:, 1],
-             dataLog.times() * 1e-9, vOut_CN_N[:, 2])
-    plt.xlabel('time (s)')
-    plt.ylabel('m/s')
+    plt.plot(
+        dataLog.times() * 1e-9,
+        vOut_CN_N[:, 0],
+        dataLog.times() * 1e-9,
+        vOut_CN_N[:, 1],
+        dataLog.times() * 1e-9,
+        vOut_CN_N[:, 2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("m/s")
 
     plt.figure()
     plt.clf()
-    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 0],
-             color=unitTestSupport.getLineColor(0, 3),
-             label=r'$\sigma_{1}$')
-    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 1],
-             color=unitTestSupport.getLineColor(1, 3),
-             label=r'$\sigma_{2}$')
-    plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 2],
-             color=unitTestSupport.getLineColor(2, 3),
-             label=r'$\sigma_{3}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('time (s)')
-    plt.ylabel(r'MRP $\sigma_{B/N}$')
+    plt.plot(
+        dataLog.times() * macros.NANO2SEC,
+        sigma_BN[:, 0],
+        color=unitTestSupport.getLineColor(0, 3),
+        label=r"$\sigma_{1}$",
+    )
+    plt.plot(
+        dataLog.times() * macros.NANO2SEC,
+        sigma_BN[:, 1],
+        color=unitTestSupport.getLineColor(1, 3),
+        label=r"$\sigma_{2}$",
+    )
+    plt.plot(
+        dataLog.times() * macros.NANO2SEC,
+        sigma_BN[:, 2],
+        color=unitTestSupport.getLineColor(2, 3),
+        label=r"$\sigma_{3}$",
+    )
+    plt.legend(loc="lower right")
+    plt.xlabel("time (s)")
+    plt.ylabel(r"MRP $\sigma_{B/N}$")
 
     plt.figure()
     plt.clf()
-    plt.plot(dataPanel1.times() * macros.NANO2SEC, theta1*macros.R2D,
-             color=unitTestSupport.getLineColor(0, 3),
-             label=r'$\theta_{1}$')
-    plt.plot(dataPanel2.times() * macros.NANO2SEC, theta2*macros.R2D,
-             color=unitTestSupport.getLineColor(1, 3),
-             label=r'$\theta_{2}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('time (s)')
-    plt.ylabel('Hinge Angles [deg]')
+    plt.plot(
+        dataPanel1.times() * macros.NANO2SEC,
+        theta1 * macros.R2D,
+        color=unitTestSupport.getLineColor(0, 3),
+        label=r"$\theta_{1}$",
+    )
+    plt.plot(
+        dataPanel2.times() * macros.NANO2SEC,
+        theta2 * macros.R2D,
+        color=unitTestSupport.getLineColor(1, 3),
+        label=r"$\theta_{2}$",
+    )
+    plt.legend(loc="lower right")
+    plt.xlabel("time (s)")
+    plt.ylabel("Hinge Angles [deg]")
 
     if show_plots:
         plt.show()
@@ -249,42 +281,62 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataPos[i], truePos[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
+            testMessages.append(
+                "FAILED:  Hinged Rigid Body integrated test failed position test"
+            )
 
     finalRotAngMom = numpy.delete(finalRotAngMom, 0, axis=1)  # remove time column
     for i in range(0, len(initialRotAngMom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy
+        ):
             testFailCount += 1
             testMessages.append(
-                "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
+                "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test"
+            )
 
     # check config log messages
     if not unitTestSupport.isArrayEqual(rB1N, [2.0, 0, 0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test")
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 1 r_BN_N config log test"
+        )
     if not unitTestSupport.isArrayEqual(vB1N, [0.0, 0, 0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test")
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 1 v_BN_N config log test"
+        )
     if not unitTestSupport.isArrayEqual(sB1N, [0.0, 0, 1.0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test")
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 1 sigma_BN config log test"
+        )
     if not unitTestSupport.isArrayEqual(oB1N, [0.0, 0, 0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test")
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 1 omega_BN_B config log test"
+        )
     if not unitTestSupport.isArrayEqual(rB2N, [-2.0, 0, 0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test")
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 2 r_BN_N config log test"
+        )
     if not unitTestSupport.isArrayEqual(vB2N, [0.0, 0, 0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test")
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 2 v_BN_N config log test"
+        )
     if not unitTestSupport.isArrayEqual(sB2N, [0.0, 0, 0.0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test")
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 2 sigma_BN config log test"
+        )
     if not unitTestSupport.isArrayEqual(oB2N, [0.0, 0, 0], 3, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test")
-
+        testMessages.append(
+            "FAILED:  Hinged Rigid Body integrated test failed panel 2 omega_BN_B config log test"
+        )
 
     if testFailCount == 0:
         print("PASSED: " + " Hinged Rigid Body integrated test with motor torques")
@@ -292,7 +344,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def hingedRigidBodyLagrangVsBasilisk(show_plots):
@@ -352,10 +404,10 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     # Define force and torque
     momentArm1_B = numpy.array([0.05, 0.0, 0.0])
     force1_B = numpy.array([0.2, 0.7, 0.0])
-    torque1_B = numpy.cross(momentArm1_B,force1_B)
+    torque1_B = numpy.cross(momentArm1_B, force1_B)
     momentArm2_B = numpy.array([-0.03, 0.0, 0.0])
     force2_B = numpy.array([0.0, 1.0, 0.0])
-    torque2_B = numpy.cross(momentArm2_B,force2_B)
+    torque2_B = numpy.cross(momentArm2_B, force2_B)
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
@@ -368,7 +420,11 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     # Define mass properties of the rigid part of the spacecraft
     scObject.primaryCentralSpacecraft.hub.mHub = 750.0
     scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [
+        [900.0, 0.0, 0.0],
+        [0.0, 800.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
 
     # Set the initial values for the states
     scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
@@ -384,10 +440,16 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
-    })
+    stateLog = pythonVariableLogger.PythonVariableLogger(
+        {
+            "theta1": lambda _: scObject.dynManager.getStateObject(
+                "spacecrafthingedRigidBodyTheta1"
+            ).getState(),
+            "theta2": lambda _: scObject.dynManager.getStateObject(
+                "spacecrafthingedRigidBodyTheta2"
+            ).getState(),
+        }
+    )
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
     unitTestSim.InitializeSimulation()
@@ -426,7 +488,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     rOut_BN_N = dataLog.r_BN_N
     sigmaOut_BN = dataLog.sigma_BN
-    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,2])
+    thetaOut = 4.0 * numpy.arctan(sigmaOut_BN[:, 2])
 
     # Developing the lagrangian result
     # Define initial values
@@ -436,8 +498,12 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     # Define variables for panel1
     spacecraft.panel1.mass = unitTestSim.panel1.mass
     spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
+    spacecraft.panel1.Rhinge = numpy.linalg.norm(
+        numpy.asarray(unitTestSim.panel1.r_HB_B)
+    )
+    spacecraft.panel1.beta = numpy.arctan2(
+        unitTestSim.panel1.r_HB_B[1][0], unitTestSim.panel1.r_HB_B[0][0]
+    )
     spacecraft.panel1.thetaH = 0.0
     spacecraft.panel1.d = unitTestSim.panel1.d
     spacecraft.panel1.k = unitTestSim.panel1.k
@@ -445,27 +511,31 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     # Define variables for panel2
     spacecraft.panel2.mass = unitTestSim.panel2.mass
     spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
+    spacecraft.panel2.Rhinge = numpy.linalg.norm(
+        numpy.asarray(unitTestSim.panel2.r_HB_B)
+    )
+    spacecraft.panel2.beta = numpy.arctan2(
+        unitTestSim.panel2.r_HB_B[1][0], unitTestSim.panel2.r_HB_B[0][0]
+    )
     spacecraft.panel2.thetaH = numpy.pi
     spacecraft.panel2.d = unitTestSim.panel2.d
     spacecraft.panel2.k = unitTestSim.panel2.k
     spacecraft.panel2.c = unitTestSim.panel2.c
 
     # Define initial conditions of the sim
-    time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
+    time = numpy.arange(0.0, stopTime + stepSize, stepSize).flatten()
     x0 = numpy.zeros(10)
     x0[3] = unitTestSim.panel1.thetaInit
     x0[4] = -unitTestSim.panel2.thetaInit
 
-    X = numpy.zeros((len(x0),len(time)))
-    X[:,0] = x0
-    for j in range (1,(len(time))):
-        if time[j-1] < force1OffTime:
+    X = numpy.zeros((len(x0), len(time)))
+    X[:, 0] = x0
+    for j in range(1, (len(time))):
+        if time[j - 1] < force1OffTime:
             spacecraft.xThrust_B = force1_B[0]
             spacecraft.yThrust_B = force1_B[1]
             spacecraft.Torque = torque1_B[2]
-        elif time[j-1] >= force2OnTime and time[j-1] < force2OffTime:
+        elif time[j - 1] >= force2OnTime and time[j - 1] < force2OffTime:
             spacecraft.xThrust_B = force2_B[0]
             spacecraft.yThrust_B = force2_B[1]
             spacecraft.Torque = torque2_B[2]
@@ -473,16 +543,33 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
             spacecraft.xThrust_B = 0.0
             spacecraft.yThrust_B = 0.0
             spacecraft.Torque = 0.0
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+        X[:, j] = rk4(
+            planarFlexFunction, X[:, j - 1], stepSize, time[j - 1], spacecraft
+        )
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[0,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,0]-rOut_BN_N[:,0]),'-r',label = "Basilisk")
-    plt.plot([time[25], time[75], time[125], time[175]], [X[0,25], X[0,75], X[0,125], X[0,175],],'ok',label = "Test Points")
-    plt.xlabel('time (s)')
-    plt.ylabel('x position (m)')
-    plt.legend(loc ='upper left',numpoints = 1)
+    plt.plot(time, X[0, :], "-b", label="Lagrangian")
+    plt.plot(
+        dataLog.times() * 1e-9,
+        (rOut_BN_N[:, 0] - rOut_BN_N[:, 0]),
+        "-r",
+        label="Basilisk",
+    )
+    plt.plot(
+        [time[25], time[75], time[125], time[175]],
+        [
+            X[0, 25],
+            X[0, 75],
+            X[0, 125],
+            X[0, 175],
+        ],
+        "ok",
+        label="Test Points",
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("x position (m)")
+    plt.legend(loc="upper left", numpoints=1)
     PlotName = "XPositionLagrangianVsBasilisk"
     PlotTitle = "X Position Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
@@ -490,12 +577,27 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[1,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[:,1]),'r',label = "Basilisk")
-    plt.plot([time[25], time[75], time[125], time[175]], [X[1,25], X[1,75], X[1,125], X[1,175],],'ok',label = "Test Points")
-    plt.xlabel('time (s)')
-    plt.ylabel('y position (m)')
-    plt.legend(loc ='upper left',numpoints = 1)
+    plt.plot(time, X[1, :], "-b", label="Lagrangian")
+    plt.plot(
+        dataLog.times() * 1e-9,
+        (rOut_BN_N[:, 1] - rOut_BN_N[:, 1]),
+        "r",
+        label="Basilisk",
+    )
+    plt.plot(
+        [time[25], time[75], time[125], time[175]],
+        [
+            X[1, 25],
+            X[1, 75],
+            X[1, 125],
+            X[1, 175],
+        ],
+        "ok",
+        label="Test Points",
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("y position (m)")
+    plt.legend(loc="upper left", numpoints=1)
     PlotName = "YPositionLagrangianVsBasilisk"
     PlotTitle = "Y Position Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
@@ -503,12 +605,22 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[2,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, thetaOut,'-r',label = "Basilisk")
-    plt.plot([time[25], time[75], time[125], time[175]], [X[2,25], X[2,75], X[2,125], X[2,175],],'ok',label = "Test Points")
-    plt.xlabel('time (s)')
-    plt.ylabel('theta (rad)')
-    plt.legend(loc ='upper left',numpoints = 1)
+    plt.plot(time, X[2, :], "-b", label="Lagrangian")
+    plt.plot(dataLog.times() * 1e-9, thetaOut, "-r", label="Basilisk")
+    plt.plot(
+        [time[25], time[75], time[125], time[175]],
+        [
+            X[2, 25],
+            X[2, 75],
+            X[2, 125],
+            X[2, 175],
+        ],
+        "ok",
+        label="Test Points",
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("theta (rad)")
+    plt.legend(loc="upper left", numpoints=1)
     PlotName = "ThetaLagrangianVsBasilisk"
     PlotTitle = "Theta Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
@@ -516,12 +628,22 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[3,:],'-b',label = "Lagrangian")
-    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilisk")
-    plt.plot([time[25], time[75], time[125], time[175]], [X[3,25], X[3,75], X[3,125], X[3,175],],'ok',label = "Test Points")
-    plt.xlabel('time (s)')
-    plt.ylabel('theta 1 (rad)')
-    plt.legend(loc ='upper left',numpoints = 1)
+    plt.plot(time, X[3, :], "-b", label="Lagrangian")
+    plt.plot(theta1Out[:, 0] * 1e-9, theta1Out[:, 1], "-r", label="Basilisk")
+    plt.plot(
+        [time[25], time[75], time[125], time[175]],
+        [
+            X[3, 25],
+            X[3, 75],
+            X[3, 125],
+            X[3, 175],
+        ],
+        "ok",
+        label="Test Points",
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("theta 1 (rad)")
+    plt.legend(loc="upper left", numpoints=1)
     PlotName = "Theta1LagrangianVsBasilisk"
     PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
@@ -529,12 +651,22 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
-    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilisk")
-    plt.plot([time[25], time[75], time[125], time[175]], [-X[4,25], -X[4,75], -X[4,125], -X[4,175],],'ok',label = "Test Points")
-    plt.xlabel('time (s)')
-    plt.ylabel('theta 2 (rad)')
-    plt.legend(loc ='lower left',numpoints = 1)
+    plt.plot(time, -X[4, :], "-b", label="Lagrangian")
+    plt.plot(theta2Out[:, 0] * 1e-9, theta2Out[:, 1], "-r", label="Basilisk")
+    plt.plot(
+        [time[25], time[75], time[125], time[175]],
+        [
+            -X[4, 25],
+            -X[4, 75],
+            -X[4, 125],
+            -X[4, 175],
+        ],
+        "ok",
+        label="Test Points",
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("theta 2 (rad)")
+    plt.legend(loc="lower left", numpoints=1)
     PlotName = "Theta2LagrangianVsBasilisk"
     PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
@@ -548,23 +680,32 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     timeList = [25, 75, 125, 175]
 
     for i in timeList:
-        if abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])) > accuracy:
-            print(abs(X[0,i] - (rOut_BN_N[i,0]-rOut_BN_N[0,0])))
+        if abs(X[0, i] - (rOut_BN_N[i, 0] - rOut_BN_N[0, 0])) > accuracy:
+            print(abs(X[0, i] - (rOut_BN_N[i, 0] - rOut_BN_N[0, 0])))
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed x position comparison ")
-        if abs(X[1,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) > accuracy:
+            testMessages.append(
+                "FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed x position comparison "
+            )
+        if abs(X[1, i] - (rOut_BN_N[i, 1] - rOut_BN_N[0, 1])) > accuracy:
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed y position comparison ")
-        if abs(X[2,i] - thetaOut[i]) > accuracy:
+            testMessages.append(
+                "FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed y position comparison "
+            )
+        if abs(X[2, i] - thetaOut[i]) > accuracy:
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta comparison ")
-        if abs(X[3,i] - theta1Out[i,1]) > accuracy:
+            testMessages.append(
+                "FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta comparison "
+            )
+        if abs(X[3, i] - theta1Out[i, 1]) > accuracy:
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta 1 comparison ")
-        if abs(-X[4,i] - theta2Out[i,1]) > accuracy:
+            testMessages.append(
+                "FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta 1 comparison "
+            )
+        if abs(-X[4, i] - theta2Out[i, 1]) > accuracy:
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta 2 comparison ")
-
+            testMessages.append(
+                "FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed theta 2 comparison "
+            )
 
     if testFailCount == 0:
         print("PASSED: " + " Hinged Rigid Body Transient Integrated test")
@@ -572,7 +713,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def planarFlexFunction(x, t, variables):
@@ -610,59 +751,250 @@ def planarFlexFunction(x, t, variables):
     Torque = variables.Torque
 
     # Convert Tx_B and Ty_B to the inertial frame
-    dcm_BN = numpy.array([[numpy.cos(theta), numpy.sin(theta)],
-                          [-numpy.sin(theta), numpy.cos(theta)]])
-    Thrust_N = numpy.dot(dcm_BN.transpose(),numpy.array([[Tx_B],[Ty_B]]))
-    Tx = Thrust_N[0,0]
-    Ty = Thrust_N[1,0]
+    dcm_BN = numpy.array(
+        [[numpy.cos(theta), numpy.sin(theta)], [-numpy.sin(theta), numpy.cos(theta)]]
+    )
+    Thrust_N = numpy.dot(dcm_BN.transpose(), numpy.array([[Tx_B], [Ty_B]]))
+    Tx = Thrust_N[0, 0]
+    Ty = Thrust_N[1, 0]
 
-    matrixA = numpy.zeros((5,5))
+    matrixA = numpy.zeros((5, 5))
     vectorB = numpy.zeros(5)
     # Populate X Translation Equation
-    matrixA[0,0] = 1.0
-    matrixA[0,1] = 0.0
-    matrixA[0,2] = -1/(mHub + mSP1 + mSP2)*(mSP1*Rhinge1*numpy.sin(beta1 + theta) + mSP2*Rhinge2*numpy.sin(beta2 + theta) + d1*mSP1*numpy.sin(thetaH1 + theta + theta1) + d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    matrixA[0,3] = -1/(mHub + mSP1 + mSP2)*(d1*mSP1*numpy.sin(thetaH1 + theta + theta1))
-    matrixA[0,4] = -1/(mHub + mSP1 + mSP2)*(d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    vectorB[0] = 1/(mHub + mSP1 + mSP2)*(Tx + mSP1*Rhinge1*numpy.cos(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.cos(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*thetaDot**2 + d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*thetaDot**2
-               + 2*d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*theta1Dot**2 + 2*d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*thetaDot*theta2Dot
-               + d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*theta2Dot**2)
+    matrixA[0, 0] = 1.0
+    matrixA[0, 1] = 0.0
+    matrixA[0, 2] = (
+        -1
+        / (mHub + mSP1 + mSP2)
+        * (
+            mSP1 * Rhinge1 * numpy.sin(beta1 + theta)
+            + mSP2 * Rhinge2 * numpy.sin(beta2 + theta)
+            + d1 * mSP1 * numpy.sin(thetaH1 + theta + theta1)
+            + d2 * mSP2 * numpy.sin(thetaH2 + theta + theta2)
+        )
+    )
+    matrixA[0, 3] = (
+        -1 / (mHub + mSP1 + mSP2) * (d1 * mSP1 * numpy.sin(thetaH1 + theta + theta1))
+    )
+    matrixA[0, 4] = (
+        -1 / (mHub + mSP1 + mSP2) * (d2 * mSP2 * numpy.sin(thetaH2 + theta + theta2))
+    )
+    vectorB[0] = (
+        1
+        / (mHub + mSP1 + mSP2)
+        * (
+            Tx
+            + mSP1 * Rhinge1 * numpy.cos(beta1 + theta) * thetaDot**2
+            + mSP2 * Rhinge2 * numpy.cos(beta2 + theta) * thetaDot**2
+            + d1 * mSP1 * numpy.cos(thetaH1 + theta + theta1) * thetaDot**2
+            + d2 * mSP2 * numpy.cos(thetaH2 + theta + theta2) * thetaDot**2
+            + 2 * d1 * mSP1 * numpy.cos(thetaH1 + theta + theta1) * thetaDot * theta1Dot
+            + d1 * mSP1 * numpy.cos(thetaH1 + theta + theta1) * theta1Dot**2
+            + 2 * d2 * mSP2 * numpy.cos(thetaH2 + theta + theta2) * thetaDot * theta2Dot
+            + d2 * mSP2 * numpy.cos(thetaH2 + theta + theta2) * theta2Dot**2
+        )
+    )
     # Populate Y Translation Equation
-    matrixA[1,0] = 0.0
-    matrixA[1,1] = 1.0
-    matrixA[1,2] = 1/(mHub + mSP1 + mSP2)*(mSP1*Rhinge1*numpy.cos(beta1 + theta) + mSP2*Rhinge2*numpy.cos(beta2 + theta) + d1*mSP1*numpy.cos(thetaH1 + theta + theta1) + d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    matrixA[1,3] = 1/(mHub + mSP1 + mSP2)*(d1*mSP1*numpy.cos(thetaH1 + theta + theta1))
-    matrixA[1,4] = 1/(mHub + mSP1 + mSP2)*(d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    vectorB[1] = 1/(mHub + mSP1 + mSP2)*(Ty + mSP1*Rhinge1*numpy.sin(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.sin(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*thetaDot**2 + d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*thetaDot**2
-               + 2*d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*theta1Dot**2 + 2*d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*thetaDot*theta2Dot
-               + d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*theta2Dot**2)
+    matrixA[1, 0] = 0.0
+    matrixA[1, 1] = 1.0
+    matrixA[1, 2] = (
+        1
+        / (mHub + mSP1 + mSP2)
+        * (
+            mSP1 * Rhinge1 * numpy.cos(beta1 + theta)
+            + mSP2 * Rhinge2 * numpy.cos(beta2 + theta)
+            + d1 * mSP1 * numpy.cos(thetaH1 + theta + theta1)
+            + d2 * mSP2 * numpy.cos(thetaH2 + theta + theta2)
+        )
+    )
+    matrixA[1, 3] = (
+        1 / (mHub + mSP1 + mSP2) * (d1 * mSP1 * numpy.cos(thetaH1 + theta + theta1))
+    )
+    matrixA[1, 4] = (
+        1 / (mHub + mSP1 + mSP2) * (d2 * mSP2 * numpy.cos(thetaH2 + theta + theta2))
+    )
+    vectorB[1] = (
+        1
+        / (mHub + mSP1 + mSP2)
+        * (
+            Ty
+            + mSP1 * Rhinge1 * numpy.sin(beta1 + theta) * thetaDot**2
+            + mSP2 * Rhinge2 * numpy.sin(beta2 + theta) * thetaDot**2
+            + d1 * mSP1 * numpy.sin(thetaH1 + theta + theta1) * thetaDot**2
+            + d2 * mSP2 * numpy.sin(thetaH2 + theta + theta2) * thetaDot**2
+            + 2 * d1 * mSP1 * numpy.sin(thetaH1 + theta + theta1) * thetaDot * theta1Dot
+            + d1 * mSP1 * numpy.sin(thetaH1 + theta + theta1) * theta1Dot**2
+            + 2 * d2 * mSP2 * numpy.sin(thetaH2 + theta + theta2) * thetaDot * theta2Dot
+            + d2 * mSP2 * numpy.sin(thetaH2 + theta + theta2) * theta2Dot**2
+        )
+    )
     # Populate theta Equation
-    matrixA[2,0] = -1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(mSP1*Rhinge1*numpy.sin(beta1 + theta)
-                 + mSP2*Rhinge2*numpy.sin(beta2 + theta) + d1*mSP1*numpy.sin(thetaH1 + theta + theta1) + d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    matrixA[2,1] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(mSP1*Rhinge1*numpy.cos(beta1 + theta)
-                 + mSP2*Rhinge2*numpy.cos(beta2 + theta) + d1*mSP1*numpy.cos(thetaH1 + theta + theta1) + d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    matrixA[2,2] = 1.0
-    matrixA[2,3] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(ISP1
-                 + d1**2*mSP1 + d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1))
-    matrixA[2,4] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(ISP2
-                 + d2**2*mSP2 + d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))
-    vectorB[2] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(Torque
-              - 2*d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*thetaDot*theta1Dot - d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*theta1Dot**2
-              - 2*d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*thetaDot*theta2Dot - d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*theta2Dot**2)
+    matrixA[2, 0] = (
+        -1
+        / (
+            IHub
+            + ISP1
+            + ISP2
+            + d1**2 * mSP1
+            + d2**2 * mSP2
+            + mSP1 * Rhinge1**2
+            + mSP2 * Rhinge2**2
+            + 2 * d1 * mSP1 * Rhinge1 * numpy.cos(beta1 - thetaH1 - theta1)
+            + 2 * d2 * mSP2 * Rhinge2 * numpy.cos(beta2 - thetaH2 - theta2)
+        )
+        * (
+            mSP1 * Rhinge1 * numpy.sin(beta1 + theta)
+            + mSP2 * Rhinge2 * numpy.sin(beta2 + theta)
+            + d1 * mSP1 * numpy.sin(thetaH1 + theta + theta1)
+            + d2 * mSP2 * numpy.sin(thetaH2 + theta + theta2)
+        )
+    )
+    matrixA[2, 1] = (
+        1
+        / (
+            IHub
+            + ISP1
+            + ISP2
+            + d1**2 * mSP1
+            + d2**2 * mSP2
+            + mSP1 * Rhinge1**2
+            + mSP2 * Rhinge2**2
+            + 2 * d1 * mSP1 * Rhinge1 * numpy.cos(beta1 - thetaH1 - theta1)
+            + 2 * d2 * mSP2 * Rhinge2 * numpy.cos(beta2 - thetaH2 - theta2)
+        )
+        * (
+            mSP1 * Rhinge1 * numpy.cos(beta1 + theta)
+            + mSP2 * Rhinge2 * numpy.cos(beta2 + theta)
+            + d1 * mSP1 * numpy.cos(thetaH1 + theta + theta1)
+            + d2 * mSP2 * numpy.cos(thetaH2 + theta + theta2)
+        )
+    )
+    matrixA[2, 2] = 1.0
+    matrixA[2, 3] = (
+        1
+        / (
+            IHub
+            + ISP1
+            + ISP2
+            + d1**2 * mSP1
+            + d2**2 * mSP2
+            + mSP1 * Rhinge1**2
+            + mSP2 * Rhinge2**2
+            + 2 * d1 * mSP1 * Rhinge1 * numpy.cos(beta1 - thetaH1 - theta1)
+            + 2 * d2 * mSP2 * Rhinge2 * numpy.cos(beta2 - thetaH2 - theta2)
+        )
+        * (
+            ISP1
+            + d1**2 * mSP1
+            + d1 * mSP1 * Rhinge1 * numpy.cos(beta1 - thetaH1 - theta1)
+        )
+    )
+    matrixA[2, 4] = (
+        1
+        / (
+            IHub
+            + ISP1
+            + ISP2
+            + d1**2 * mSP1
+            + d2**2 * mSP2
+            + mSP1 * Rhinge1**2
+            + mSP2 * Rhinge2**2
+            + 2 * d1 * mSP1 * Rhinge1 * numpy.cos(beta1 - thetaH1 - theta1)
+            + 2 * d2 * mSP2 * Rhinge2 * numpy.cos(beta2 - thetaH2 - theta2)
+        )
+        * (
+            ISP2
+            + d2**2 * mSP2
+            + d2 * mSP2 * Rhinge2 * numpy.cos(beta2 - thetaH2 - theta2)
+        )
+    )
+    vectorB[2] = (
+        1
+        / (
+            IHub
+            + ISP1
+            + ISP2
+            + d1**2 * mSP1
+            + d2**2 * mSP2
+            + mSP1 * Rhinge1**2
+            + mSP2 * Rhinge2**2
+            + 2 * d1 * mSP1 * Rhinge1 * numpy.cos(beta1 - thetaH1 - theta1)
+            + 2 * d2 * mSP2 * Rhinge2 * numpy.cos(beta2 - thetaH2 - theta2)
+        )
+        * (
+            Torque
+            - 2
+            * d1
+            * mSP1
+            * Rhinge1
+            * numpy.sin(beta1 - thetaH1 - theta1)
+            * thetaDot
+            * theta1Dot
+            - d1 * mSP1 * Rhinge1 * numpy.sin(beta1 - thetaH1 - theta1) * theta1Dot**2
+            - 2
+            * d2
+            * mSP2
+            * Rhinge2
+            * numpy.sin(beta2 - thetaH2 - theta2)
+            * thetaDot
+            * theta2Dot
+            - d2 * mSP2 * Rhinge2 * numpy.sin(beta2 - thetaH2 - theta2) * theta2Dot**2
+        )
+    )
     # Populate theta1 Equation
-    matrixA[3,0] = -1/(ISP1 + d1**2*mSP1)*(d1*mSP1*numpy.sin(thetaH1 + theta + theta1))
-    matrixA[3,1] = 1/(ISP1 + d1**2*mSP1)*(d1*mSP1*numpy.cos(thetaH1 + theta + theta1))
-    matrixA[3,2] = 1/(ISP1 + d1**2*mSP1)*(ISP1 + d1**2*mSP1 + d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1))
-    matrixA[3,3] = 1.0
-    matrixA[3,4] = 0.0
-    vectorB[3] = 1/(ISP1 + d1**2*mSP1)*(-k1*theta1 + d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*thetaDot**2 - c1*theta1Dot)
+    matrixA[3, 0] = (
+        -1 / (ISP1 + d1**2 * mSP1) * (d1 * mSP1 * numpy.sin(thetaH1 + theta + theta1))
+    )
+    matrixA[3, 1] = (
+        1 / (ISP1 + d1**2 * mSP1) * (d1 * mSP1 * numpy.cos(thetaH1 + theta + theta1))
+    )
+    matrixA[3, 2] = (
+        1
+        / (ISP1 + d1**2 * mSP1)
+        * (
+            ISP1
+            + d1**2 * mSP1
+            + d1 * mSP1 * Rhinge1 * numpy.cos(beta1 - thetaH1 - theta1)
+        )
+    )
+    matrixA[3, 3] = 1.0
+    matrixA[3, 4] = 0.0
+    vectorB[3] = (
+        1
+        / (ISP1 + d1**2 * mSP1)
+        * (
+            -k1 * theta1
+            + d1 * mSP1 * Rhinge1 * numpy.sin(beta1 - thetaH1 - theta1) * thetaDot**2
+            - c1 * theta1Dot
+        )
+    )
     # Populate theta2 Equation
-    matrixA[4,0] = -1/(ISP2 + d2**2*mSP2)*(d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
-    matrixA[4,1] = 1/(ISP2 + d2**2*mSP2)*(d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
-    matrixA[4,2] = 1/(ISP2 + d2**2*mSP2)*(ISP2 + d2**2*mSP2 + d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))
-    matrixA[4,3] = 0.0
-    matrixA[4,4] = 1.0
-    vectorB[4] = 1/(ISP2 + d2**2*mSP2)*(-k2*theta2 + d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*thetaDot**2 - c2*theta2Dot)
+    matrixA[4, 0] = (
+        -1 / (ISP2 + d2**2 * mSP2) * (d2 * mSP2 * numpy.sin(thetaH2 + theta + theta2))
+    )
+    matrixA[4, 1] = (
+        1 / (ISP2 + d2**2 * mSP2) * (d2 * mSP2 * numpy.cos(thetaH2 + theta + theta2))
+    )
+    matrixA[4, 2] = (
+        1
+        / (ISP2 + d2**2 * mSP2)
+        * (
+            ISP2
+            + d2**2 * mSP2
+            + d2 * mSP2 * Rhinge2 * numpy.cos(beta2 - thetaH2 - theta2)
+        )
+    )
+    matrixA[4, 3] = 0.0
+    matrixA[4, 4] = 1.0
+    vectorB[4] = (
+        1
+        / (ISP2 + d2**2 * mSP2)
+        * (
+            -k2 * theta2
+            + d2 * mSP2 * Rhinge2 * numpy.sin(beta2 - thetaH2 - theta2) * thetaDot**2
+            - c2 * theta2Dot
+        )
+    )
 
     Xdot = numpy.zeros(len(x))
     # Populate Trivial derivatives
@@ -672,18 +1004,18 @@ def planarFlexFunction(x, t, variables):
     Xdot[3] = theta1Dot
     Xdot[4] = theta2Dot
     # Calculate nontrivial derivatives
-    result = numpy.dot(numpy.linalg.inv(matrixA),vectorB)
+    result = numpy.dot(numpy.linalg.inv(matrixA), vectorB)
     Xdot[5:10] = result
 
     return Xdot
 
 
 def rk4(Fn, X, h, t, varargin):
-    k1 = h*Fn(X, t, varargin)
-    k2 = h*Fn(X+k1/2, t+h/2, varargin)
-    k3 = h*Fn(X+k2/2, t+h/2, varargin)
-    k4 = h*Fn(X+k3, t+h, varargin)
-    Z = X + (k1 + 2*k2 + 2*k3 + k4)/6.0
+    k1 = h * Fn(X, t, varargin)
+    k2 = h * Fn(X + k1 / 2, t + h / 2, varargin)
+    k3 = h * Fn(X + k2 / 2, t + h / 2, varargin)
+    k4 = h * Fn(X + k3, t + h, varargin)
+    Z = X + (k1 + 2 * k2 + 2 * k3 + k4) / 6.0
     return Z
 
 
@@ -712,27 +1044,27 @@ class spacecraftClass:
     Torque = 0.0
 
 
-def newtonRapshon(funcAndDervi,guess,tolerance,variables):
+def newtonRapshon(funcAndDervi, guess, tolerance, variables):
     xOld = guess
-    for i in range(1,101):
+    for i in range(1, 101):
         fx, fPrimex = funcAndDervi(xOld, variables)
-        xNew = xOld - fx/fPrimex
+        xNew = xOld - fx / fPrimex
         if abs(xNew - xOld) < tolerance:
             break
         xOld = xNew
     return xNew
 
 
-def boxAndWingsFandFPrime(theta,variables):
+def boxAndWingsFandFPrime(theta, variables):
     # Define variables
     F = variables.F
     mSC = variables.mSC
     k = variables.k
     mSP = variables.mSP
     d = variables.d
-    aSP = F/mSC
-    fX = k*theta + mSP*aSP*d*numpy.cos(theta)
-    fPrimeX = k - mSP*aSP*d*numpy.sin(theta)
+    aSP = F / mSC
+    fX = k * theta + mSP * aSP * d * numpy.cos(theta)
+    fPrimeX = k - mSP * aSP * d * numpy.sin(theta)
     return fX, fPrimeX
 
 
@@ -742,6 +1074,7 @@ class boxAndWingParameters:
     k = 0
     mSP = 0
     d = 0
+
 
 if __name__ == "__main__":
     hingedRigidBodyMotorTorque(True, True)

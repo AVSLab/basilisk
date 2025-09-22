@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -33,13 +32,14 @@ from Basilisk.architecture import BSpline
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("P", [5, 6])
 @pytest.mark.parametrize("XDot_flag", [False, True])
 @pytest.mark.parametrize("XDDot_flag", [False, True])
 @pytest.mark.parametrize("accuracy", [1e-6])
-
 def test_BSpline(show_plots, P, XDot_flag, XDDot_flag, accuracy):
     r"""
     **Validation Test Description**
@@ -100,9 +100,8 @@ def test_BSpline(show_plots, P, XDot_flag, XDDot_flag, accuracy):
 
 
 def BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy):
-
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     X1 = np.array([0, 1, 2, 3, 4, 5, 6])
     X2 = np.array([5, 4, 3, 2, 1, 0, 1])
@@ -125,28 +124,56 @@ def BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy):
             if abs(Output.T[i][0] - Input.T[j][0]) < accuracy:
                 if not abs(Output.X1[i][0] - X1[j]) < accuracy:
                     testFailCount += 1
-                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #1 check at time t = {}".format(P,Input.T[j][0]))
+                    testMessages.append(
+                        "FAILED: BSpline."
+                        + " Function of order {} failed coordinate #1 check at time t = {}".format(
+                            P, Input.T[j][0]
+                        )
+                    )
                 if not abs(Output.X2[i][0] - X2[j]) < accuracy:
                     testFailCount += 1
-                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #2 check at time t = {}".format(P,Input.T[j][0]))
+                    testMessages.append(
+                        "FAILED: BSpline."
+                        + " Function of order {} failed coordinate #2 check at time t = {}".format(
+                            P, Input.T[j][0]
+                        )
+                    )
                 if not abs(Output.X3[i][0] - X3[j]) < accuracy:
                     testFailCount += 1
-                    testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[j][0]))
+                    testMessages.append(
+                        "FAILED: BSpline."
+                        + " Function of order {} failed coordinate #3 check at time t = {}".format(
+                            P, Input.T[j][0]
+                        )
+                    )
     if XDot_flag:
-        if not ((abs(Output.XD1[0][0]-Input.XDot_0[0][0]) < accuracy) and
-                (abs(Output.XD2[0][0]-Input.XDot_0[1][0]) < accuracy) and
-                (abs(Output.XD3[0][0]-Input.XDot_0[2][0]) < accuracy)):
+        if not (
+            (abs(Output.XD1[0][0] - Input.XDot_0[0][0]) < accuracy)
+            and (abs(Output.XD2[0][0] - Input.XDot_0[1][0]) < accuracy)
+            and (abs(Output.XD3[0][0] - Input.XDot_0[2][0]) < accuracy)
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at starting point".format(P))
+            testMessages.append(
+                "FAILED: BSpline."
+                + " Function of order {} failed first derivative at starting point".format(
+                    P
+                )
+            )
     if XDDot_flag:
-        if not ((abs(Output.XDD1[0][0]-Input.XDDot_0[0][0]) < accuracy) and
-                (abs(Output.XDD2[0][0]-Input.XDDot_0[1][0]) < accuracy) and
-                (abs(Output.XDD3[0][0]-Input.XDDot_0[2][0]) < accuracy)):
+        if not (
+            (abs(Output.XDD1[0][0] - Input.XDDot_0[0][0]) < accuracy)
+            and (abs(Output.XDD2[0][0] - Input.XDDot_0[1][0]) < accuracy)
+            and (abs(Output.XDD3[0][0] - Input.XDDot_0[2][0]) < accuracy)
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: BSpline." + " Function of order {} failed second derivative at starting point".format(P))
+            testMessages.append(
+                "FAILED: BSpline."
+                + " Function of order {} failed second derivative at starting point".format(
+                    P
+                )
+            )
 
-
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -155,7 +182,8 @@ def BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy):
 #
 if __name__ == "__main__":
     BSplineTestFunction(
-        5,        # polynomial order
-        True,    # XDot_flag
-        False,    # XDDot_flag
-        1e-6)
+        5,  # polynomial order
+        True,  # XDot_flag
+        False,  # XDDot_flag
+        1e-6,
+    )

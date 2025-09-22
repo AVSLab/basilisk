@@ -138,13 +138,16 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import hillPoint
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpSteering
 from Basilisk.fswAlgorithms import rateServoFullNonlinear
@@ -152,9 +155,11 @@ from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import RigidBodyKinematics as rb
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import fswSetupRW
@@ -162,7 +167,10 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -174,65 +182,83 @@ def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude error."""
     plt.figure(1)
     for idx in range(3):
-        plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
-                     color=unitTestSupport.getLineColor(idx, 3),
-                     label=r'$|\sigma_' + str(idx) + '|$')
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.semilogy(
+            timeData,
+            np.abs(dataSigmaBR[:, idx]),
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$|\sigma_" + str(idx) + "|$",
+        )
+    plt.legend(loc="upper right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
+
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """plot the commanded RW torque."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\hat u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
+
 
 def plot_rw_motor_torque(timeData, dataRW, numRW):
     """Plot the actual RW motor torque."""
     plt.figure(2)
     for idx in range(3):
-        plt.semilogy(timeData, np.abs(dataRW[idx]),
-                     color=unitTestSupport.getLineColor(idx, numRW),
-                     label='$|u_{s,' + str(idx) + '}|$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+        plt.semilogy(
+            timeData,
+            np.abs(dataRW[idx]),
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label="$|u_{s," + str(idx) + "}|$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
+
 
 def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
     """Plot the body angular velocity tracking errors"""
     plt.figure(3)
     for idx in range(3):
-        plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
-                     color=unitTestSupport.getLineColor(idx, 3),
-                     label=r'$|\omega_{BR,' + str(idx) + '}|$')
+        plt.semilogy(
+            timeData,
+            np.abs(dataOmegaBR[:, idx]) / macros.D2R,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$|\omega_{BR," + str(idx) + "}|$",
+        )
     for idx in range(3):
-        plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
-                     '--',
-                     color=unitTestSupport.getLineColor(idx, 3)
-                     )
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (deg/s) ')
+        plt.semilogy(
+            timeData,
+            np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
+            "--",
+            color=unitTestSupport.getLineColor(idx, 3),
+        )
+    plt.legend(loc="upper right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error (deg/s) ")
 
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW speeds."""
     plt.figure(4)
     for idx in range(numRW):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\Omega_{' + str(idx) + '}$')
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
-
-
+        plt.plot(
+            timeData,
+            dataOmegaRW[:, idx] / macros.RPM,
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\Omega_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="upper right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Speed (RPM) ")
 
 
 def run(show_plots, simCase):
@@ -274,7 +300,7 @@ def run(show_plots, simCase):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -282,7 +308,7 @@ def run(show_plots, simCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -293,11 +319,13 @@ def run(show_plots, simCase):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
-    I = [500., 0., 0.,
-         0., 300., 0.,
-         0., 0., 200.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    I = [500.0, 0.0, 0.0, 0.0, 300.0, 0.0, 0.0, 0.0, 200.0]
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -316,21 +344,24 @@ def run(show_plots, simCase):
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     initOmega = [100.0, 200.0, 300.0]
-    RW1 = rwFactory.create('Honeywell_HR16'
-                           , [1, 0, 0]
-                           , maxMomentum=50.
-                           , Omega=initOmega[0]  # RPM
-                           )
-    RW2 = rwFactory.create('Honeywell_HR16'
-                           , [0, 1, 0]
-                           , maxMomentum=50.
-                           , Omega=initOmega[1]  # RPM
-                           )
-    RW3 = rwFactory.create('Honeywell_HR16'
-                           , [0, 0, 1]
-                           , maxMomentum=50.
-                           , Omega=initOmega[2]  # RPM
-                           )
+    RW1 = rwFactory.create(
+        "Honeywell_HR16",
+        [1, 0, 0],
+        maxMomentum=50.0,
+        Omega=initOmega[0],  # RPM
+    )
+    RW2 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 1, 0],
+        maxMomentum=50.0,
+        Omega=initOmega[1],  # RPM
+    )
+    RW3 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 0, 1],
+        maxMomentum=50.0,
+        Omega=initOmega[2],  # RPM
+    )
 
     numRW = rwFactory.getNumOfDevices()
 
@@ -386,7 +417,7 @@ def run(show_plots, simCase):
         else:
             mrpControl.ignoreOuterLoopFeedforward = True
     mrpControl.K3 = 0.75
-    mrpControl.omega_max = 1. * macros.D2R
+    mrpControl.omega_max = 1.0 * macros.D2R
 
     # setup Rate servo module
     servo = rateServoFullNonlinear.rateServoFullNonlinear()
@@ -395,10 +426,10 @@ def run(show_plots, simCase):
     if simCase == 1:
         servo.Ki = -1
     else:
-        servo.Ki = 5.
+        servo.Ki = 5.0
     servo.P = 150.0
-    servo.integralLimit = 2. / servo.Ki * 0.1
-    servo.knownTorquePntB_B = [0., 0., 0.]
+    servo.integralLimit = 2.0 / servo.Ki * 0.1
+    servo.knownTorquePntB_B = [0.0, 0.0, 0.0]
 
     scSim.AddModelToTask(simTaskName, servo)
 
@@ -408,11 +439,7 @@ def run(show_plots, simCase):
     scSim.AddModelToTask(simTaskName, rwMotorTorqueObj)
 
     # Make the RW control all three body axes
-    controlAxes_B = [
-        1, 0, 0,
-        0, 1, 0,
-        0, 0, 1
-    ]
+    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     # create the FSW vehicle configuration message
@@ -446,7 +473,9 @@ def run(show_plots, simCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)
@@ -486,13 +515,20 @@ def run(show_plots, simCase):
         sBN = rb.C2MRP(BH)
         scObject.hub.sigma_BNInit = [[sBN[0]], [sBN[1]], [sBN[2]]]  # sigma_CN_B
         n = np.sqrt(mu / (oe.a * oe.a * oe.a))
-        scObject.hub.omega_BN_BInit = [[n * HN[2, 0]], [n * HN[2, 1]], [n * HN[2, 2]]]  # rad/s - omega_CN_B
+        scObject.hub.omega_BN_BInit = [
+            [n * HN[2, 0]],
+            [n * HN[2, 1]],
+            [n * HN[2, 2]],
+        ]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        , rwEffectorList=rwStateEffector
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+        rwEffectorList=rwStateEffector,
+    )
 
     #
     #   initialize Simulation
@@ -560,5 +596,5 @@ def run(show_plots, simCase):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        0  # simCase
+        0,  # simCase
     )

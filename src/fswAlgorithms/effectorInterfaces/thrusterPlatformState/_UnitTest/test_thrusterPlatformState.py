@@ -23,7 +23,7 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
@@ -37,8 +37,8 @@ from Basilisk.architecture import bskLogging
 from Basilisk.utilities import unitTestSupport
 
 
-@pytest.mark.parametrize("theta1", [0, np.pi/36, np.pi/18])
-@pytest.mark.parametrize("theta2", [0, np.pi/36, np.pi/18])
+@pytest.mark.parametrize("theta1", [0, np.pi / 36, np.pi / 18])
+@pytest.mark.parametrize("theta2", [0, np.pi / 36, np.pi / 18])
 @pytest.mark.parametrize("accuracy", [1e-10])
 # update "module" in this function name to reflect the module name
 def test_platformRotation(show_plots, theta1, theta2, accuracy):
@@ -73,23 +73,22 @@ def test_platformRotation(show_plots, theta1, theta2, accuracy):
 
 
 def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
-
-    sigma_MB = np.array([0., 0., 0.])
+    sigma_MB = np.array([0.0, 0.0, 0.0])
     r_BM_M = np.array([0.0, 0.1, 1.4])
     r_FM_F = np.array([0.0, 0.0, -0.1])
     r_TF_F = np.array([-0.01, 0.03, 0.02])
-    T_F    = np.array([1.0, 1.0, 10.0])
+    T_F = np.array([1.0, 1.0, 10.0])
     swirlFactor = 0.1
 
-    unitTaskName = "unitTask"                # arbitrary name (don't change)
-    unitProcessName = "TestProcess"          # arbitrary name (don't change)
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(1)     # update process rate update time
+    testProcessRate = macros.sec2nano(1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -135,7 +134,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -149,13 +148,23 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
     MB = rbk.MRP2C(sigma_MB)
     FB = np.matmul(FM, MB)
 
-    r_TB_B = np.matmul(FB.transpose(), r_TF_F + r_FM_F - np.matmul(FM, r_BM_M))     # thrust application point
-    tHat_B = np.matmul(FB.transpose(), T_F) / np.linalg.norm(T_F)                   # thrust unit direction vector
+    r_TB_B = np.matmul(
+        FB.transpose(), r_TF_F + r_FM_F - np.matmul(FM, r_BM_M)
+    )  # thrust application point
+    tHat_B = np.matmul(FB.transpose(), T_F) / np.linalg.norm(
+        T_F
+    )  # thrust unit direction vector
 
     np.testing.assert_allclose(rThrust_B, r_TB_B, rtol=0, atol=accuracy, verbose=True)
-    np.testing.assert_allclose(tHatThrust_B, tHat_B, rtol=0, atol=accuracy, verbose=True)
-    np.testing.assert_allclose(tMax, np.linalg.norm(T_F), rtol=0, atol=accuracy, verbose=True)
-    np.testing.assert_allclose(tSwirl, np.linalg.norm(T_F) * swirlFactor, rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(
+        tHatThrust_B, tHat_B, rtol=0, atol=accuracy, verbose=True
+    )
+    np.testing.assert_allclose(
+        tMax, np.linalg.norm(T_F), rtol=0, atol=accuracy, verbose=True
+    )
+    np.testing.assert_allclose(
+        tSwirl, np.linalg.norm(T_F) * swirlFactor, rtol=0, atol=accuracy, verbose=True
+    )
 
     return
 
@@ -172,14 +181,14 @@ def test_reset():
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(1)     # update process rate update time
+    testProcessRate = macros.sec2nano(1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C container
     platform = thrusterPlatformState.thrusterPlatformState()
     platform.ModelTag = "platformState"
-    platform.sigma_MB = [0., 0., 0.]
+    platform.sigma_MB = [0.0, 0.0, 0.0]
     platform.r_BM_M = [0.0, 0.1, 1.4]
     platform.r_FM_F = [0.0, 0.0, -0.1]
     unitTestSim.AddModelToTask(unitTaskName, platform)
@@ -195,12 +204,12 @@ def test_reset():
 
     # Create input hinged rigid body messages with non-zero angles
     hingedBodyMsg1 = messaging.HingedRigidBodyMsgPayload()
-    hingedBodyMsg1.theta = np.pi/36
+    hingedBodyMsg1.theta = np.pi / 36
     hingedBody1InMsg = messaging.HingedRigidBodyMsg().write(hingedBodyMsg1)
     platform.hingedRigidBody1InMsg.subscribeTo(hingedBody1InMsg)
 
     hingedBodyMsg2 = messaging.HingedRigidBodyMsgPayload()
-    hingedBodyMsg2.theta = np.pi/36
+    hingedBodyMsg2.theta = np.pi / 36
     hingedBody2InMsg = messaging.HingedRigidBodyMsg().write(hingedBodyMsg2)
     platform.hingedRigidBody2InMsg.subscribeTo(hingedBody2InMsg)
 
@@ -220,29 +229,41 @@ def test_reset():
 
     # Check that thruster config output is zeroed
     expectedConfig = messaging.THRConfigMsgPayload()  # This creates a zeroed message
-    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedConfig.rThrust_B),
-                                                               np.array(platform.thrusterConfigBOutMsg.read().rThrust_B),
-                                                               1e-12,
-                                                               "Reset() zeroed rThrust_B",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        np.array(expectedConfig.rThrust_B),
+        np.array(platform.thrusterConfigBOutMsg.read().rThrust_B),
+        1e-12,
+        "Reset() zeroed rThrust_B",
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedConfig.tHatThrust_B),
-                                                               np.array(platform.thrusterConfigBOutMsg.read().tHatThrust_B),
-                                                               1e-12,
-                                                               "Reset() zeroed tHatThrust_B",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        np.array(expectedConfig.tHatThrust_B),
+        np.array(platform.thrusterConfigBOutMsg.read().tHatThrust_B),
+        1e-12,
+        "Reset() zeroed tHatThrust_B",
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = unitTestSupport.compareVector(np.array([expectedConfig.maxThrust]),
-                                                               np.array([platform.thrusterConfigBOutMsg.read().maxThrust]),
-                                                               1e-12,
-                                                               "Reset() zeroed maxThrust",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        np.array([expectedConfig.maxThrust]),
+        np.array([platform.thrusterConfigBOutMsg.read().maxThrust]),
+        1e-12,
+        "Reset() zeroed maxThrust",
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = unitTestSupport.compareVector(np.array([expectedConfig.swirlTorque]),
-                                                               np.array([platform.thrusterConfigBOutMsg.read().swirlTorque]),
-                                                               1e-12,
-                                                               "Reset() zeroed swirlTorque",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        np.array([expectedConfig.swirlTorque]),
+        np.array([platform.thrusterConfigBOutMsg.read().swirlTorque]),
+        1e-12,
+        "Reset() zeroed swirlTorque",
+        testFailCount,
+        testMessages,
+    )
 
     # Print success message if no errors were found
     if testFailCount == 0:
@@ -250,7 +271,7 @@ def test_reset():
     else:
         print("Failed: " + platform.ModelTag + " Reset() test")
 
-    assert testFailCount == 0, ''.join(testMessages)
+    assert testFailCount == 0, "".join(testMessages)
 
 
 #
@@ -259,8 +280,8 @@ def test_reset():
 #
 if __name__ == "__main__":
     test_platformRotation(
-                 False,                   # show_plots
-                 0,                       # theta1
-                 np.pi/36,                # theta2
-                 1e-10                    # accuracy
+        False,  # show_plots
+        0,  # theta1
+        np.pi / 36,  # theta2
+        1e-10,  # accuracy
     )

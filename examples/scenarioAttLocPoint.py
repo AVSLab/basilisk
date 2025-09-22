@@ -67,26 +67,34 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import locationPointing
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import groundLocation
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.architecture import astroConstants
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -102,35 +110,44 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     ax = fig.gca()
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
-    ax.set_yscale('log')
+    plt.plot(
+        timeLineSet,
+        sNorm,
+        color=unitTestSupport.getLineColor(1, 3),
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
+    ax.set_yscale("log")
+
 
 def plot_control_torque(timeLineSet, dataLr):
     """Plot the control torque response."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeLineSet,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
 
 
 def plot_rate_error(timeLineSet, dataOmegaBR):
     """Plot the body angular velocity tracking error."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeLineSet,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
     return
 
 
@@ -151,7 +168,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(20.)
+    simulationTime = macros.min2nano(20.0)
 
     #
     #  create the simulation process
@@ -170,11 +187,13 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -196,7 +215,7 @@ def run(show_plots):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = (6378 + 600)*1000.  # meters
+    oe.a = (6378 + 600) * 1000.0  # meters
     oe.e = 0.1
     oe.i = 63.3 * macros.D2R
     oe.Omega = 88.2 * macros.D2R
@@ -228,9 +247,9 @@ def run(show_plots):
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
     groundStation.ModelTag = "BoulderGroundStation"
-    groundStation.planetRadius = astroConstants.REQ_EARTH*1e3  # meters
+    groundStation.planetRadius = astroConstants.REQ_EARTH * 1e3  # meters
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
-    groundStation.minimumElevation = np.radians(10.)
+    groundStation.minimumElevation = np.radians(10.0)
     groundStation.maximumRange = 1e9  # meters
     groundStation.addSpacecraftToModel(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, groundStation)
@@ -260,7 +279,7 @@ def run(show_plots):
     mrpControl.K = 5.5
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -269,7 +288,9 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = locPoint.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
@@ -291,16 +312,21 @@ def run(show_plots):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  # , saveFile=fileName
-                                                  )
-        vizSupport.addLocation(viz, stationName="Boulder Station"
-                               , parentBodyName=earth.displayName
-                               , r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init)
-                               , fieldOfView=np.radians(160.)
-                               , color='pink'
-                               , range=2000.0*1000  # meters
-                               )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # , saveFile=fileName
+        )
+        vizSupport.addLocation(
+            viz,
+            stationName="Boulder Station",
+            parentBodyName=earth.displayName,
+            r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init),
+            fieldOfView=np.radians(160.0),
+            color="pink",
+            range=2000.0 * 1000,  # meters
+        )
         viz.settings.spacecraftSizeMultiplier = 1.5
         viz.settings.showLocationCommLines = 1
         viz.settings.showLocationCones = 1

@@ -35,31 +35,37 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioCSS
 
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useCSSConstellation, usePlatform, useEclipse, useKelly", [
-      (False, False, False, False),
-      (False, True, False, False),
-      (False, False, True, False),
-      (False, False, False, True),
-      (True, False, False, False)
-])
+@pytest.mark.parametrize(
+    "useCSSConstellation, usePlatform, useEclipse, useKelly",
+    [
+        (False, False, False, False),
+        (False, True, False, False),
+        (False, False, True, False),
+        (False, False, False, True),
+        (True, False, False, False),
+    ],
+)
 @pytest.mark.scenarioTest
-
-def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
+def test_bskAttitudeFeedback(
+    show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly
+):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioCSS.run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly)
+        figureList = scenarioCSS.run(
+            show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)

@@ -136,6 +136,7 @@ spacecraft is plotted per simulation.
 """
 
 import copy
+
 # Get current file path
 import inspect
 import math
@@ -144,16 +145,22 @@ import sys
 
 import numpy as np
 from Basilisk.architecture import messaging
+
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport, RigidBodyKinematics as rbk
+from Basilisk.utilities import (
+    orbitalMotion,
+    macros,
+    vizSupport,
+    RigidBodyKinematics as rbk,
+)
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/../')
-sys.path.append(path + '/../modelsMultiSat')
-sys.path.append(path + '/../plottingMultiSat')
+sys.path.append(path + "/../")
+sys.path.append(path + "/../modelsMultiSat")
+sys.path.append(path + "/../plottingMultiSat")
 from BSK_MultiSatMasters import BSKSim, BSKScenario
 import BSK_EnvironmentEarth
 import BSK_MultiSatDynamics
@@ -162,12 +169,19 @@ import BSK_MultiSatFsw
 # Import plotting files for your scenario
 import BSK_MultiSatPlotting as plt
 
+
 # Create your own scenario child class
 class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
     def __init__(self, numberSpacecraft, relativeNavigation):
         super(scenario_StationKeepingFormationFlying, self).__init__(
-            numberSpacecraft, relativeNavigation=relativeNavigation, fswRate=1, dynRate=1, envRate=1, relNavRate=1)
-        self.name = 'scenario_StationKeepingFormationFlying'
+            numberSpacecraft,
+            relativeNavigation=relativeNavigation,
+            fswRate=1,
+            dynRate=1,
+            envRate=1,
+            relNavRate=1,
+        )
+        self.name = "scenario_StationKeepingFormationFlying"
 
         # Connect the environment, dynamics and FSW classes. It is crucial that these are set in the order specified, as
         # some connects made imply that some modules already exist
@@ -207,7 +221,9 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             for i in range(self.numberSpacecraft):
                 DynModelsList.append(self.DynModels[i].scObject)
                 rwStateEffectorList.append(self.DynModels[i].rwStateEffector)
-                thDynamicEffectorList.append([self.DynModels[i].thrusterDynamicEffector])
+                thDynamicEffectorList.append(
+                    [self.DynModels[i].thrusterDynamicEffector]
+                )
 
             gsList = []
             # Initialize the vizPanels list before the loop
@@ -216,7 +232,9 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 batteryPanel = vizSupport.vizInterface.GenericStorage()
                 batteryPanel.label = "Battery"
                 batteryPanel.units = "Ws"
-                batteryPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("red") + vizSupport.toRGBA255("lightgreen"))
+                batteryPanel.color = vizSupport.vizInterface.IntVector(
+                    vizSupport.toRGBA255("red") + vizSupport.toRGBA255("lightgreen")
+                )
                 batteryPanel.thresholds = vizSupport.vizInterface.IntVector([20])
                 batteryInMsg = messaging.PowerStorageStatusMsgReader()
                 batteryInMsg.subscribeTo(self.DynModels[i].powerMonitor.batPowerOutMsg)
@@ -225,9 +243,13 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 tankPanel = vizSupport.vizInterface.GenericStorage()
                 tankPanel.label = "Tank"
                 tankPanel.units = "kg"
-                tankPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+                tankPanel.color = vizSupport.vizInterface.IntVector(
+                    vizSupport.toRGBA255("cyan")
+                )
                 tankInMsg = messaging.FuelTankMsgReader()
-                tankInMsg.subscribeTo(self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg)
+                tankInMsg.subscribeTo(
+                    self.DynModels[i].fuelTankStateEffector.fuelTankOutMsg
+                )
                 tankPanel.fuelTankStateInMsg = tankInMsg
 
                 # Append panels to the class-level list
@@ -235,19 +257,27 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                 self.vizPanels.append(tankPanel)
                 gsList.append([batteryPanel, tankPanel])
 
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-                                                      # , saveFile=__file__
-                                                      , rwEffectorList=rwStateEffectorList
-                                                      , thrEffectorList=thDynamicEffectorList
-                                                      , genericStorageList=gsList
-                                                      )
+            viz = vizSupport.enableUnityVisualization(
+                self,
+                self.DynModels[0].taskName,
+                DynModelsList,
+                # , saveFile=__file__
+                rwEffectorList=rwStateEffectorList,
+                thrEffectorList=thDynamicEffectorList,
+                genericStorageList=gsList,
+            )
             viz.settings.showSpacecraftLabels = True
             viz.settings.orbitLinesOn = 2  # show osculating relative orbit trajectories
             viz.settings.mainCameraTarget = "sat-1"
-            viz.liveSettings.relativeOrbitChief = "sat-0"  # set the chief for relative orbit trajectory
+            viz.liveSettings.relativeOrbitChief = (
+                "sat-0"  # set the chief for relative orbit trajectory
+            )
             for i in range(self.numberSpacecraft):
-                vizSupport.setInstrumentGuiSetting(viz, spacecraftName=self.DynModels[i].scObject.ModelTag,
-                                                   showGenericStoragePanel=True)
+                vizSupport.setInstrumentGuiSetting(
+                    viz,
+                    spacecraftName=self.DynModels[i].scObject.ModelTag,
+                    showGenericStoragePanel=True,
+                )
 
     def configure_initial_conditions(self):
         EnvModel = self.get_EnvModel()
@@ -255,7 +285,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
         # Configure initial conditions for spacecraft 0
         self.oe.append(orbitalMotion.ClassicElements())
-        self.oe[0].a = 1.4*EnvModel.planetRadius  # meters
+        self.oe[0].a = 1.4 * EnvModel.planetRadius  # meters
         self.oe[0].e = 0.2
         self.oe[0].i = 45.0 * macros.D2R
         self.oe[0].Omega = 48.2 * macros.D2R
@@ -266,7 +296,11 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         DynModels[0].scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         DynModels[0].scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         DynModels[0].scObject.hub.sigma_BNInit = [[0.1], [0.6], [-0.8]]  # sigma_BN_B
-        DynModels[0].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        DynModels[0].scObject.hub.omega_BN_BInit = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # rad/s - omega_BN_B
 
         # Configure initial conditions for spacecraft 1
         self.oe.append(copy.deepcopy(self.oe[0]))
@@ -276,7 +310,11 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         DynModels[1].scObject.hub.r_CN_NInit = rN2  # m   - r_CN_N
         DynModels[1].scObject.hub.v_CN_NInit = vN2  # m/s - v_CN_N
         DynModels[1].scObject.hub.sigma_BNInit = [[0.1], [0.6], [-0.8]]  # sigma_BN_B
-        DynModels[1].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        DynModels[1].scObject.hub.omega_BN_BInit = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # rad/s - omega_BN_B
 
         # Configure initial conditions for spacecraft 2
         self.oe.append(copy.deepcopy(self.oe[0]))
@@ -286,7 +324,11 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         DynModels[2].scObject.hub.r_CN_NInit = rN3  # m   - r_CN_N
         DynModels[2].scObject.hub.v_CN_NInit = vN3  # m/s - v_CN_N
         DynModels[2].scObject.hub.sigma_BNInit = [[0.1], [0.6], [-0.8]]  # sigma_BN_B
-        DynModels[2].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        DynModels[2].scObject.hub.omega_BN_BInit = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self, relativeNavigation):
         # Process outputs
@@ -298,58 +340,126 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
 
         # Log the barycentre's position and velocity
         if relativeNavigation:
-            self.chiefTransLog = self.relativeNavigationModule.transOutMsg.recorder(self.samplingTime)
+            self.chiefTransLog = self.relativeNavigationModule.transOutMsg.recorder(
+                self.samplingTime
+            )
             self.AddModelToTask(self.relativeNavigationTaskName, self.chiefTransLog)
 
         # Loop through every spacecraft
         for spacecraft in range(self.numberSpacecraft):
-
             # log the navigation messages
-            self.snTransLog.append(DynModels[spacecraft].simpleNavObject.transOutMsg.recorder(self.samplingTime))
-            self.snAttLog.append(DynModels[spacecraft].simpleNavObject.attOutMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.snTransLog[spacecraft])
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.snAttLog[spacecraft])
+            self.snTransLog.append(
+                DynModels[spacecraft].simpleNavObject.transOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.snAttLog.append(
+                DynModels[spacecraft].simpleNavObject.attOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.snTransLog[spacecraft]
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.snAttLog[spacecraft]
+            )
 
             # log the reference messages
-            self.attRefLog.append(FswModels[spacecraft].attRefMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.attRefLog[spacecraft])
+            self.attRefLog.append(
+                FswModels[spacecraft].attRefMsg.recorder(self.samplingTime)
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.attRefLog[spacecraft]
+            )
 
             # log the attitude error messages
-            self.attErrorLog.append(FswModels[spacecraft].attGuidMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.attErrorLog[spacecraft])
+            self.attErrorLog.append(
+                FswModels[spacecraft].attGuidMsg.recorder(self.samplingTime)
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.attErrorLog[spacecraft]
+            )
 
             # log the RW torque messages
             self.rwMotorLog.append(
-                FswModels[spacecraft].rwMotorTorque.rwMotorTorqueOutMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.rwMotorLog[spacecraft])
+                FswModels[spacecraft].rwMotorTorque.rwMotorTorqueOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.rwMotorLog[spacecraft]
+            )
 
             # log the RW wheel speed information
-            self.rwSpeedLog.append(DynModels[spacecraft].rwStateEffector.rwSpeedOutMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.rwSpeedLog[spacecraft])
+            self.rwSpeedLog.append(
+                DynModels[spacecraft].rwStateEffector.rwSpeedOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.rwSpeedLog[spacecraft]
+            )
 
             # log addition RW information (power, etc)
             for item in range(DynModels[spacecraft].numRW):
-                self.rwLogs[spacecraft].append(DynModels[spacecraft].rwStateEffector.rwOutMsgs[item].recorder(self.samplingTime))
-                self.rwPowerLogs[spacecraft].append(DynModels[spacecraft].rwPowerList[item].nodePowerOutMsg.recorder(self.samplingTime))
-                self.AddModelToTask(DynModels[spacecraft].taskName, self.rwLogs[spacecraft][item])
-                self.AddModelToTask(DynModels[spacecraft].taskName, self.rwPowerLogs[spacecraft][item])
+                self.rwLogs[spacecraft].append(
+                    DynModels[spacecraft]
+                    .rwStateEffector.rwOutMsgs[item]
+                    .recorder(self.samplingTime)
+                )
+                self.rwPowerLogs[spacecraft].append(
+                    DynModels[spacecraft]
+                    .rwPowerList[item]
+                    .nodePowerOutMsg.recorder(self.samplingTime)
+                )
+                self.AddModelToTask(
+                    DynModels[spacecraft].taskName, self.rwLogs[spacecraft][item]
+                )
+                self.AddModelToTask(
+                    DynModels[spacecraft].taskName, self.rwPowerLogs[spacecraft][item]
+                )
 
             # log the remaining power modules
-            self.spLog.append(DynModels[spacecraft].solarPanel.nodePowerOutMsg.recorder(self.samplingTime))
-            self.psLog.append(DynModels[spacecraft].powerSink.nodePowerOutMsg.recorder(self.samplingTime))
-            self.pmLog.append(DynModels[spacecraft].powerMonitor.batPowerOutMsg.recorder(self.samplingTime))
+            self.spLog.append(
+                DynModels[spacecraft].solarPanel.nodePowerOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.psLog.append(
+                DynModels[spacecraft].powerSink.nodePowerOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.pmLog.append(
+                DynModels[spacecraft].powerMonitor.batPowerOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
             self.AddModelToTask(DynModels[spacecraft].taskName, self.spLog[spacecraft])
             self.AddModelToTask(DynModels[spacecraft].taskName, self.psLog[spacecraft])
             self.AddModelToTask(DynModels[spacecraft].taskName, self.pmLog[spacecraft])
 
             # log fuel information
-            self.fuelLog.append(DynModels[spacecraft].fuelTankStateEffector.fuelTankOutMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.fuelLog[spacecraft])
+            self.fuelLog.append(
+                DynModels[spacecraft].fuelTankStateEffector.fuelTankOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.fuelLog[spacecraft]
+            )
 
             # log thruster information
             for item in range(DynModels[spacecraft].numThr):
-                self.thrLogs[spacecraft].append(DynModels[spacecraft].thrusterDynamicEffector.thrusterOutMsgs[item].recorder(self.samplingTime))
-                self.AddModelToTask(DynModels[spacecraft].taskName, self.thrLogs[spacecraft][item])
+                self.thrLogs[spacecraft].append(
+                    DynModels[spacecraft]
+                    .thrusterDynamicEffector.thrusterOutMsgs[item]
+                    .recorder(self.samplingTime)
+                )
+                self.AddModelToTask(
+                    DynModels[spacecraft].taskName, self.thrLogs[spacecraft][item]
+                )
 
     def pull_outputs(self, showPlots, relativeNavigation, spacecraftIndex):
         # Process outputs
@@ -381,7 +491,9 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         dataThrustPercentage = []
         for item in range(DynModels[spacecraftIndex].numThr):
             dataThrust.append(self.thrLogs[spacecraftIndex][item].thrustForce_B)
-            dataThrustPercentage.append(self.thrLogs[spacecraftIndex][item].thrustFactor)
+            dataThrustPercentage.append(
+                self.thrLogs[spacecraftIndex][item].thrustFactor
+            )
 
         # Save power info
         supplyData = self.spLog[spacecraftIndex].netPower
@@ -422,20 +534,42 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         dr = []
         if relativeNavigation:
             for i in range(self.numberSpacecraft):
-                rd = np.array([orbitalMotion.rv2hill(dataChiefPosition[item], dataChiefVelocity[item], r_BN_N[i][item],
-                                                     v_BN_N[i][item])[0] for item in range(simLength)])
+                rd = np.array(
+                    [
+                        orbitalMotion.rv2hill(
+                            dataChiefPosition[item],
+                            dataChiefVelocity[item],
+                            r_BN_N[i][item],
+                            v_BN_N[i][item],
+                        )[0]
+                        for item in range(simLength)
+                    ]
+                )
                 dr.append(rd)
         else:
             for i in range(1, self.numberSpacecraft):
-                rd = np.array([orbitalMotion.rv2hill(dataChiefPosition[item], dataChiefVelocity[item], r_BN_N[i][item],
-                                                     v_BN_N[i][item])[0] for item in range(simLength)])
+                rd = np.array(
+                    [
+                        orbitalMotion.rv2hill(
+                            dataChiefPosition[item],
+                            dataChiefVelocity[item],
+                            r_BN_N[i][item],
+                            v_BN_N[i][item],
+                        )[0]
+                        for item in range(simLength)
+                    ]
+                )
                 dr.append(rd)
 
         # Compute the orbital element differences between the spacecraft and the chief
         oed = np.empty((simLength, 6))
         for i in range(simLength):
-            oe_tmp = orbitalMotion.rv2elem(EnvModel.mu, dataChiefPosition[i], dataChiefVelocity[i])
-            oe2_tmp = orbitalMotion.rv2elem(EnvModel.mu, r_BN_N[spacecraftIndex][i], v_BN_N[spacecraftIndex][i])
+            oe_tmp = orbitalMotion.rv2elem(
+                EnvModel.mu, dataChiefPosition[i], dataChiefVelocity[i]
+            )
+            oe2_tmp = orbitalMotion.rv2elem(
+                EnvModel.mu, r_BN_N[spacecraftIndex][i], v_BN_N[spacecraftIndex][i]
+            )
             oed[i, 0] = (oe2_tmp.a - oe_tmp.a) / oe_tmp.a
             oed[i, 1] = oe2_tmp.e - oe_tmp.e
             oed[i, 2] = oe2_tmp.i - oe_tmp.i
@@ -443,7 +577,9 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
             oed[i, 4] = oe2_tmp.omega - oe_tmp.omega
             E_tmp = orbitalMotion.f2E(oe_tmp.f, oe_tmp.e)
             E2_tmp = orbitalMotion.f2E(oe2_tmp.f, oe2_tmp.e)
-            oed[i, 5] = orbitalMotion.E2M(E2_tmp, oe2_tmp.e) - orbitalMotion.E2M(E_tmp, oe_tmp.e)
+            oed[i, 5] = orbitalMotion.E2M(E2_tmp, oe2_tmp.e) - orbitalMotion.E2M(
+                E_tmp, oe_tmp.e
+            )
             for j in range(3, 6):
                 if oed[i, j] > math.pi:
                     oed[i, j] = oed[i, j] - 2 * math.pi
@@ -451,7 +587,7 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
                     oed[i, j] = oed[i, j] + 2 * math.pi
 
         # Compute the orbit period
-        T = 2*math.pi*math.sqrt(self.oe[spacecraftIndex].a ** 3 / EnvModel.mu)
+        T = 2 * math.pi * math.sqrt(self.oe[spacecraftIndex].a ** 3 / EnvModel.mu)
 
         #
         # Plot results
@@ -464,23 +600,42 @@ class scenario_StationKeepingFormationFlying(BSKSim, BSKScenario):
         plt.plot_rate_error(timeLineSetMin, dataOmegaBR, 4)
         plt.plot_attitude_reference(timeLineSetMin, dataSigmaRN, 5)
         plt.plot_rate_reference(timeLineSetMin, dataOmegaRN_B, 6)
-        plt.plot_rw_motor_torque(timeLineSetMin, dataUsReq, dataRW, DynModels[spacecraftIndex].numRW, 7)
-        plt.plot_rw_speeds(timeLineSetMin, dataOmegaRW, DynModels[spacecraftIndex].numRW, 8)
+        plt.plot_rw_motor_torque(
+            timeLineSetMin, dataUsReq, dataRW, DynModels[spacecraftIndex].numRW, 7
+        )
+        plt.plot_rw_speeds(
+            timeLineSetMin, dataOmegaRW, DynModels[spacecraftIndex].numRW, 8
+        )
         plt.plot_orbits(r_BN_N, self.numberSpacecraft, 9)
         plt.plot_relative_orbits(dr, len(dr), 10)
         plt.plot_orbital_element_differences(timeLineSetSec / T, oed, 11)
         plt.plot_power(timeLineSetMin, netData, supplyData, sinkData, 12)
         plt.plot_fuel(timeLineSetMin, dataFuelMass, 13)
-        plt.plot_thrust_percentage(timeLineSetMin, dataThrustPercentage, DynModels[spacecraftIndex].numThr, 14)
+        plt.plot_thrust_percentage(
+            timeLineSetMin, dataThrustPercentage, DynModels[spacecraftIndex].numThr, 14
+        )
 
         figureList = {}
         if showPlots:
             plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitude", "rate", "attitudeTrackingError", "trackingErrorRate", "attitudeReference",
-                           "rateReference", "rwMotorTorque", "rwSpeeds", "orbits", "relativeOrbits", "oeDifferences",
-                           "power", "fuel", "thrustPercentage"]
+            figureNames = [
+                "attitude",
+                "rate",
+                "attitudeTrackingError",
+                "trackingErrorRate",
+                "attitudeReference",
+                "rateReference",
+                "rwMotorTorque",
+                "rwSpeeds",
+                "orbits",
+                "relativeOrbits",
+                "oeDifferences",
+                "power",
+                "fuel",
+                "thrustPercentage",
+            ]
             figureList = plt.save_all_plots(fileName, figureNames)
 
         # close the plots being saved off to avoid over-writing old and new figures
@@ -503,12 +658,21 @@ def runScenario(scenario, relativeNavigation):
         if relativeNavigation:
             scenario.relativeNavigationModule.addSpacecraftToModel(
                 scenario.DynModels[spacecraft].simpleNavObject.transOutMsg,
-                scenario.DynModels[spacecraft].simpleMassPropsObject.vehicleConfigOutMsg)
-            scenario.FSWModels[spacecraft].spacecraftReconfig.chiefTransInMsg.subscribeTo(
-                scenario.relativeNavigationModule.transOutMsg)
+                scenario.DynModels[
+                    spacecraft
+                ].simpleMassPropsObject.vehicleConfigOutMsg,
+            )
+            scenario.FSWModels[
+                spacecraft
+            ].spacecraftReconfig.chiefTransInMsg.subscribeTo(
+                scenario.relativeNavigationModule.transOutMsg
+            )
         else:
-            scenario.FSWModels[spacecraft].spacecraftReconfig.chiefTransInMsg.subscribeTo(
-                scenario.DynModels[0].simpleNavObject.transOutMsg)
+            scenario.FSWModels[
+                spacecraft
+            ].spacecraftReconfig.chiefTransInMsg.subscribeTo(
+                scenario.DynModels[0].simpleNavObject.transOutMsg
+            )
 
     # Configure the relative navigation module
     if relativeNavigation:
@@ -518,17 +682,38 @@ def runScenario(scenario, relativeNavigation):
     # Set up the station keeping requirements
     if relativeNavigation:
         scenario.FSWModels[0].stationKeeping = "ON"
-        scenario.FSWModels[0].spacecraftReconfig.targetClassicOED = [0.0000, -0.005, -0.001, 0.0000, 0.0000, 0.000]
+        scenario.FSWModels[0].spacecraftReconfig.targetClassicOED = [
+            0.0000,
+            -0.005,
+            -0.001,
+            0.0000,
+            0.0000,
+            0.000,
+        ]
     scenario.FSWModels[1].stationKeeping = "ON"
-    scenario.FSWModels[1].spacecraftReconfig.targetClassicOED = [0.0000, 0.005, 0.0000, 0.0000, 0.0000, -0.003]
+    scenario.FSWModels[1].spacecraftReconfig.targetClassicOED = [
+        0.0000,
+        0.005,
+        0.0000,
+        0.0000,
+        0.0000,
+        -0.003,
+    ]
     scenario.FSWModels[2].stationKeeping = "ON"
-    scenario.FSWModels[2].spacecraftReconfig.targetClassicOED = [0.0000, 0.000, 0.001, 0.0000, 0.0000, 0.003]
+    scenario.FSWModels[2].spacecraftReconfig.targetClassicOED = [
+        0.0000,
+        0.000,
+        0.001,
+        0.0000,
+        0.0000,
+        0.003,
+    ]
 
     # Initialize simulation
     scenario.InitializeSimulation()
 
     # Configure run time and execute simulation
-    simulationTime = macros.hour2nano(2.)
+    simulationTime = macros.hour2nano(2.0)
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
 
@@ -554,7 +739,9 @@ def run(showPlots, numberSpacecraft, relativeNavigation):
     """
 
     # Configure a scenario in the base simulation
-    TheScenario = scenario_StationKeepingFormationFlying(numberSpacecraft, relativeNavigation)
+    TheScenario = scenario_StationKeepingFormationFlying(
+        numberSpacecraft, relativeNavigation
+    )
     runScenario(TheScenario, relativeNavigation)
     figureList = TheScenario.pull_outputs(showPlots, relativeNavigation, 1)
 
@@ -562,7 +749,4 @@ def run(showPlots, numberSpacecraft, relativeNavigation):
 
 
 if __name__ == "__main__":
-    run(showPlots=True,
-        numberSpacecraft=3,
-        relativeNavigation=False
-        )
+    run(showPlots=True, numberSpacecraft=3, relativeNavigation=False)

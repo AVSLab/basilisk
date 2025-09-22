@@ -234,7 +234,7 @@ def run(show_plots, useCentral):
     earth.isCentralBody = useCentral  # ensure this is the central gravitational body
     mu = earth.mu
 
-    timeInitString = '2020 MAY 21 18:28:03 (UTC)'
+    timeInitString = "2020 MAY 21 18:28:03 (UTC)"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
     scSim.AddModelToTask(simTaskName, spiceObject, -1)
 
@@ -331,9 +331,7 @@ def run(show_plots, useCentral):
     # Setup the MRP Feedback control module
     mrpControl = mrpFeedback.mrpFeedback()
     mrpControl.ModelTag = "MRP_Feedback"
-    scSim.AddModelToTask(
-        simTaskName, mrpControl, ModelPriority=96
-    )
+    scSim.AddModelToTask(simTaskName, mrpControl, ModelPriority=96)
     mrpControl.guidInMsg.subscribeTo(locPoint.attGuidOutMsg)
     mrpControl.K = 5.5
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
@@ -389,9 +387,8 @@ def run(show_plots, useCentral):
         viz = vizSupport.enableUnityVisualization(
             scSim,
             simTaskName,
-            scObject
+            scObject,
             # , saveFile=fileName
-            ,
             genericSensorList=genericSensorHUD,
         )
         # the following command sets Viz settings for the first spacecraft in the simulation

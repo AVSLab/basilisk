@@ -28,7 +28,6 @@ the ``modeRequest`` definitions which enable all the tasks necessary to perform 
 
 """
 
-
 import math
 from pathlib import Path
 
@@ -60,6 +59,7 @@ except ImportError:
 
 try:
     from Basilisk.fswAlgorithms import centerRadiusCNN  # FSW for OpNav
+
     centerRadiusCNNIncluded = True
 except ImportError:
     centerRadiusCNNIncluded = False
@@ -74,10 +74,11 @@ def get_repo_root(start: Path = Path(__file__).resolve()) -> Path:
     raise RuntimeError("Repo root not found")
 
 
-class BSKFswModels():
+class BSKFswModels:
     """
     OpNav BSK FSW Models
     """
+
     def __init__(self, SimBase, fswRate):
         # define empty class variables
         self.vcMsg = None
@@ -143,21 +144,51 @@ class BSKFswModels():
         self.InitAllFSWObjects(SimBase)
 
         # Create tasks
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavPointTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("headingPointTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavPointLimbTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavAttODLimbTask", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavPointTaskCheat", self.processTasksTimeStep), 20)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 15)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavODTask", self.processTasksTimeStep), 5)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("imageProcTask", self.processTasksTimeStep), 9)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavODTaskLimb", self.processTasksTimeStep), 15)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavODTaskB", self.processTasksTimeStep), 9)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavAttODTask", self.processTasksTimeStep), 9)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("cnnAttODTask", self.processTasksTimeStep), 9)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("opNavFaultDet", self.processTasksTimeStep), 9)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("attODFaultDet", self.processTasksTimeStep), 9)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("cnnFaultDet", self.processTasksTimeStep), 9)
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavPointTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("headingPointTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavPointLimbTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavAttODLimbTask", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavPointTaskCheat", self.processTasksTimeStep), 20
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 15
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavODTask", self.processTasksTimeStep), 5
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("imageProcTask", self.processTasksTimeStep), 9
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavODTaskLimb", self.processTasksTimeStep), 15
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavODTaskB", self.processTasksTimeStep), 9
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavAttODTask", self.processTasksTimeStep), 9
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("cnnAttODTask", self.processTasksTimeStep), 9
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("opNavFaultDet", self.processTasksTimeStep), 9
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("attODFaultDet", self.processTasksTimeStep), 9
+        )
+        SimBase.fswProc.addTask(
+            SimBase.CreateNewTask("cnnFaultDet", self.processTasksTimeStep), 9
+        )
 
         SimBase.AddModelToTask("opNavPointTask", self.imageProcessing, 15)
         SimBase.AddModelToTask("opNavPointTask", self.pixelLine, 12)
@@ -435,63 +466,109 @@ class BSKFswModels():
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
     def SetHillPointGuidance(self, SimBase):
-        self.hillPoint.transNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.transOutMsg)
-        self.hillPoint.celBodyInMsg.subscribeTo(SimBase.DynModels.ephemObject.ephemOutMsgs[0])
+        self.hillPoint.transNavInMsg.subscribeTo(
+            SimBase.DynModels.SimpleNavObject.transOutMsg
+        )
+        self.hillPoint.celBodyInMsg.subscribeTo(
+            SimBase.DynModels.ephemObject.ephemOutMsgs[0]
+        )
 
     def SetOpNavPointGuidance(self, SimBase):
-        messaging.AttGuidMsg_C_addAuthor(self.opNavPoint.attGuidanceOutMsg, self.attGuidMsg)
-        self.opNavPoint.imuInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        self.opNavPoint.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        messaging.AttGuidMsg_C_addAuthor(
+            self.opNavPoint.attGuidanceOutMsg, self.attGuidMsg
+        )
+        self.opNavPoint.imuInMsg.subscribeTo(
+            SimBase.DynModels.SimpleNavObject.attOutMsg
+        )
+        self.opNavPoint.cameraConfigInMsg.subscribeTo(
+            SimBase.DynModels.cameraMod.cameraConfigOutMsg
+        )
         self.opNavPoint.opnavDataInMsg.subscribeTo(self.opnavMsg)
-        self.opNavPoint.smallAngle = 0.001*np.pi/180.
-        self.opNavPoint.timeOut = 1000  # Max time in sec between images before engaging search
+        self.opNavPoint.smallAngle = 0.001 * np.pi / 180.0
+        self.opNavPoint.timeOut = (
+            1000  # Max time in sec between images before engaging search
+        )
         # self.opNavPointData.opNavAxisSpinRate = 0.1*np.pi/180.
         self.opNavPoint.omega_RN_B = [0.001, 0.0, -0.001]
-        self.opNavPoint.alignAxis_C = [0., 0., 1]
+        self.opNavPoint.alignAxis_C = [0.0, 0.0, 1]
 
     def SetHeadingUKF(self, SimBase):
         self.headingUKF.opnavDataInMsg.subscribeTo(self.opnavMsg)
-        self.headingUKF.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.headingUKF.cameraConfigInMsg.subscribeTo(
+            SimBase.DynModels.cameraMod.cameraConfigOutMsg
+        )
 
         self.headingUKF.alpha = 0.02
         self.headingUKF.beta = 2.0
         self.headingUKF.kappa = 0.0
 
-        self.headingUKF.state = [0.0, 0., 0., 0., 0.]
+        self.headingUKF.state = [0.0, 0.0, 0.0, 0.0, 0.0]
         self.headingUKF.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0]
-        self.headingUKF.covarInit = [0.2, 0.0, 0.0, 0.0, 0.0,
-                                      0.0, 0.2, 0.0, 0.0, 0.0,
-                                      0.0, 0.0, 0.2, 0.0, 0.0,
-                                      0.0, 0.0, 0.0, 0.005, 0.0,
-                                      0.0, 0.0, 0.0, 0.0, 0.005]
+        self.headingUKF.covarInit = [
+            0.2,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.2,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.2,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.005,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.005,
+        ]
 
         qNoiseIn = np.identity(5)
-        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-6 * 1E-6
-        qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5] * 1E-6 * 1E-6
+        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1e-6 * 1e-6
+        qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5] * 1e-6 * 1e-6
         self.headingUKF.qNoise = qNoiseIn.reshape(25).tolist()
         self.headingUKF.qObsVal = 0.001
 
     def SetAttTrackingErrorCam(self, SimBase):
         self.trackingErrorCam.attRefInMsg.subscribeTo(self.hillPoint.attRefOutMsg)
-        self.trackingErrorCam.attNavInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
-        messaging.AttGuidMsg_C_addAuthor(self.trackingErrorCam.attGuidOutMsg, self.attGuidMsg)
+        self.trackingErrorCam.attNavInMsg.subscribeTo(
+            SimBase.DynModels.SimpleNavObject.attOutMsg
+        )
+        messaging.AttGuidMsg_C_addAuthor(
+            self.trackingErrorCam.attGuidOutMsg, self.attGuidMsg
+        )
 
-        M2 =  rbk.euler2(90 * macros.D2R) #rbk.euler2(-90 * macros.D2R) #
-        M3 =  rbk.euler1(90 * macros.D2R) #rbk.euler3(90 * macros.D2R) #
+        M2 = rbk.euler2(90 * macros.D2R)  # rbk.euler2(-90 * macros.D2R) #
+        M3 = rbk.euler1(90 * macros.D2R)  # rbk.euler3(90 * macros.D2R) #
         M_cam = rbk.MRP2C(SimBase.DynModels.cameraMRP_CB)
 
-        MRP = rbk.C2MRP(np.dot(np.dot(M3, M2), M_cam)) # This assures that the s/c does not control to the hill frame, but to a rotated frame such that the camera is pointing to the planet
+        MRP = rbk.C2MRP(
+            np.dot(np.dot(M3, M2), M_cam)
+        )  # This assures that the s/c does not control to the hill frame, but to a rotated frame such that the camera is pointing to the planet
         self.trackingErrorCam.sigma_R0R = MRP
         # self.trackingErrorCamData.sigma_R0R = [1./3+0.1, 1./3-0.1, 0.1-1/3]
 
     def SetMRPFeedbackRWA(self, SimBase):
         self.mrpFeedbackRWs.K = 3.5
-        self.mrpFeedbackRWs.Ki = -1  # Note: make value negative to turn off integral feedback
+        self.mrpFeedbackRWs.Ki = (
+            -1
+        )  # Note: make value negative to turn off integral feedback
         self.mrpFeedbackRWs.P = 30.0
-        self.mrpFeedbackRWs.integralLimit = 2. / self.mrpFeedbackRWs.Ki * 0.1
+        self.mrpFeedbackRWs.integralLimit = 2.0 / self.mrpFeedbackRWs.Ki * 0.1
 
         self.mrpFeedbackRWs.vehConfigInMsg.subscribeTo(self.vcMsg)
-        self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(SimBase.DynModels.rwStateEffector.rwSpeedOutMsg)
+        self.mrpFeedbackRWs.rwSpeedsInMsg.subscribeTo(
+            SimBase.DynModels.rwStateEffector.rwSpeedOutMsg
+        )
         self.mrpFeedbackRWs.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
         self.mrpFeedbackRWs.guidInMsg.subscribeTo(self.attGuidMsg)
 
@@ -509,28 +586,32 @@ class BSKFswModels():
 
         fswSetupRW.clearSetup()
         for elAngle, azAngle in zip(rwElAngle, rwAzimuthAngle):
-            gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))
-            fswSetupRW.create(gsHat,  # spin axis
-                              wheelJs,  # kg*m^2
-                              0.2)  # Nm        uMax
+            gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(
+                np.array([1, 0, 0])
+            )
+            fswSetupRW.create(
+                gsHat,  # spin axis
+                wheelJs,  # kg*m^2
+                0.2,
+            )  # Nm        uMax
 
         self.fswRwConfigMsg = fswSetupRW.writeConfigMessage()
 
     def SetRWMotorTorque(self, SimBase):
-        controlAxes_B = [
-                        1.0, 0.0, 0.0
-                        , 0.0, 1.0, 0.0
-                        , 0.0, 0.0, 1.0
-                        ]
+        controlAxes_B = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
         self.rwMotorTorque.controlAxes_B = controlAxes_B
-        self.rwMotorTorque.vehControlInMsg.subscribeTo(self.mrpFeedbackRWs.cmdTorqueOutMsg)
-        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(self.rwMotorTorque.rwMotorTorqueOutMsg)
+        self.rwMotorTorque.vehControlInMsg.subscribeTo(
+            self.mrpFeedbackRWs.cmdTorqueOutMsg
+        )
+        SimBase.DynModels.rwStateEffector.rwMotorCmdInMsg.subscribeTo(
+            self.rwMotorTorque.rwMotorTorqueOutMsg
+        )
         self.rwMotorTorque.rwParamsInMsg.subscribeTo(self.fswRwConfigMsg)
 
     def SetCNNOpNav(self, SimBase):
         self.opNavCNN.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
         self.opNavCNN.opnavCirclesOutMsg = self.opnavCirclesMsg
-        self.opNavCNN.pixelNoise = [5,5,5]
+        self.opNavCNN.pixelNoise = [5, 5, 5]
         self.opNavCNN.pathToNetwork = str(
             get_repo_root()
             / "src"
@@ -541,7 +622,9 @@ class BSKFswModels():
         )
 
     def SetImageProcessing(self, SimBase):
-        self.imageProcessing.imageInMsg.subscribeTo(SimBase.DynModels.cameraMod.imageOutMsg)
+        self.imageProcessing.imageInMsg.subscribeTo(
+            SimBase.DynModels.cameraMod.imageOutMsg
+        )
         self.imageProcessing.opnavCirclesOutMsg = self.opnavCirclesMsg
 
         self.imageProcessing.saveImages = 0
@@ -553,12 +636,14 @@ class BSKFswModels():
         self.imageProcessing.blurrSize = 9
         self.imageProcessing.noiseSF = 1
         self.imageProcessing.dpValue = 1
-        self.imageProcessing.saveDir = 'Test'
+        self.imageProcessing.saveDir = "Test"
         self.imageProcessing.houghMaxRadius = 0  # int(512 / 1.25)
 
     def SetPixelLineConversion(self, SimBase):
         self.pixelLine.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
-        self.pixelLine.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
+        self.pixelLine.cameraConfigInMsg.subscribeTo(
+            SimBase.DynModels.cameraMod.cameraConfigOutMsg
+        )
         self.pixelLine.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
         self.pixelLine.planetTarget = 2
         messaging.OpNavMsg_C_addAuthor(self.pixelLine.opNavOutMsg, self.opnavMsg)
@@ -574,8 +659,12 @@ class BSKFswModels():
 
     def SetHorizonNav(self, SimBase):
         self.horizonNav.limbInMsg.subscribeTo(self.limbFinding.opnavLimbOutMsg)
-        self.horizonNav.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.horizonNav.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.horizonNav.cameraConfigInMsg.subscribeTo(
+            SimBase.DynModels.cameraMod.cameraConfigOutMsg
+        )
+        self.horizonNav.attInMsg.subscribeTo(
+            SimBase.DynModels.SimpleNavObject.attOutMsg
+        )
         self.horizonNav.planetTarget = 2
         self.horizonNav.noiseSF = 1  # 2 should work though
         messaging.OpNavMsg_C_addAuthor(self.horizonNav.opNavOutMsg, self.opnavMsg)
@@ -589,42 +678,82 @@ class BSKFswModels():
         self.relativeOD.kappa = 0.0
         self.relativeOD.noiseSF = 7.5
 
-        mu = 42828.314 * 1E9  # m^3/s^2
+        mu = 42828.314 * 1e9  # m^3/s^2
         elementsInit = orbitalMotion.ClassicElements()
-        elementsInit.a = 10000 * 1E3  # m
+        elementsInit.a = 10000 * 1e3  # m
         elementsInit.e = 0.2
         elementsInit.i = 10 * macros.D2R
-        elementsInit.Omega = 25. * macros.D2R
-        elementsInit.omega = 10. * macros.D2R
+        elementsInit.Omega = 25.0 * macros.D2R
+        elementsInit.omega = 10.0 * macros.D2R
         elementsInit.f = 40 * macros.D2R
         r, v = orbitalMotion.elem2rv(mu, elementsInit)
 
         self.relativeOD.stateInit = r.tolist() + v.tolist()
-        self.relativeOD.covarInit = [1. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                          0.0, 1. * 1E6, 0.0, 0.0, 0.0, 0.0,
-                                          0.0, 0.0, 1. * 1E6, 0.0, 0.0, 0.0,
-                                          0.0, 0.0, 0.0, 0.02 * 1E6, 0.0, 0.0,
-                                          0.0, 0.0, 0.0, 0.0, 0.02 * 1E6, 0.0,
-                                          0.0, 0.0, 0.0, 0.0, 0.0, 0.02 * 1E6]
+        self.relativeOD.covarInit = [
+            1.0 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.02 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.02 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.02 * 1e6,
+        ]
 
         qNoiseIn = np.identity(6)
-        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
-        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
+        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1e-3 * 1e-3
+        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1e-4 * 1e-4
         self.relativeOD.qNoise = qNoiseIn.reshape(36).tolist()
 
     def SetFaultDetection(self, SimBase):
         self.opNavFault.navMeasPrimaryInMsg.subscribeTo(self.opnavPrimaryMsg)
         self.opNavFault.navMeasSecondaryInMsg.subscribeTo(self.opnavSecondaryMsg)
-        self.opNavFault.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.opNavFault.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.opNavFault.cameraConfigInMsg.subscribeTo(
+            SimBase.DynModels.cameraMod.cameraConfigOutMsg
+        )
+        self.opNavFault.attInMsg.subscribeTo(
+            SimBase.DynModels.SimpleNavObject.attOutMsg
+        )
         messaging.OpNavMsg_C_addAuthor(self.opNavFault.opNavOutMsg, self.opnavMsg)
         self.opNavFault.sigmaFault = 0.3
         self.opNavFault.faultMode = 0
 
     def SetPixelLineFilter(self, SimBase):
         self.pixelLineFilter.circlesInMsg.subscribeTo(self.opnavCirclesMsg)
-        self.pixelLineFilter.cameraConfigInMsg.subscribeTo(SimBase.DynModels.cameraMod.cameraConfigOutMsg)
-        self.pixelLineFilter.attInMsg.subscribeTo(SimBase.DynModels.SimpleNavObject.attOutMsg)
+        self.pixelLineFilter.cameraConfigInMsg.subscribeTo(
+            SimBase.DynModels.cameraMod.cameraConfigOutMsg
+        )
+        self.pixelLineFilter.attInMsg.subscribeTo(
+            SimBase.DynModels.SimpleNavObject.attOutMsg
+        )
 
         self.pixelLineFilter.planetIdInit = 2
         self.pixelLineFilter.alpha = 0.02
@@ -632,32 +761,106 @@ class BSKFswModels():
         self.pixelLineFilter.kappa = 0.0
         self.pixelLineFilter.gamma = 0.9
 
-        mu = 42828.314 * 1E9  # m^3/s^2
+        mu = 42828.314 * 1e9  # m^3/s^2
         elementsInit = orbitalMotion.ClassicElements()
-        elementsInit.a = 10000 * 1E3  # m
+        elementsInit.a = 10000 * 1e3  # m
         elementsInit.e = 0.2
         elementsInit.i = 10 * macros.D2R
-        elementsInit.Omega = 25. * macros.D2R
-        elementsInit.omega = 10. * macros.D2R
+        elementsInit.Omega = 25.0 * macros.D2R
+        elementsInit.omega = 10.0 * macros.D2R
         elementsInit.f = 40 * macros.D2R
         r, v = orbitalMotion.elem2rv(mu, elementsInit)
         bias = [1, 1, 2]
 
         self.pixelLineFilter.stateInit = r.tolist() + v.tolist() + bias
-        self.pixelLineFilter.covarInit = [10. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                              0.0, 10. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                              0.0, 0.0, 10. * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                              0.0, 0.0, 0.0, 0.01 * 1E6, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                              0.0, 0.0, 0.0, 0.0, 0.01 * 1E6, 0.0, 0.0, 0.0, 0.0,
-                                              0.0, 0.0, 0.0, 0.0, 0.0, 0.01 * 1E6, 0.0, 0.0, 0.0,
-                                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0, 0.0,
-                                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0,
-                                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1]
+        self.pixelLineFilter.covarInit = [
+            10.0 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            10.0 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            10.0 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.01 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.01 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.01 * 1e6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1,
+        ]
 
         qNoiseIn = np.identity(9)
-        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
-        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
-        qNoiseIn[6:9, 6:9] = qNoiseIn[6:9, 6:9] * 1E-8 * 1E-8
+        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1e-3 * 1e-3
+        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1e-4 * 1e-4
+        qNoiseIn[6:9, 6:9] = qNoiseIn[6:9, 6:9] * 1e-8 * 1e-8
         self.pixelLineFilter.qNoise = qNoiseIn.reshape(9 * 9).tolist()
 
     # Global call to initialize every module

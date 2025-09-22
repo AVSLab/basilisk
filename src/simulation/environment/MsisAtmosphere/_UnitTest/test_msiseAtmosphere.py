@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -16,7 +15,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
 #
 # Basilisk Scenario Script and Integrated Test
 #
@@ -32,18 +30,22 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.simulation import msisAtmosphere
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
@@ -52,11 +54,11 @@ splitPath = path.split(bskName)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("orbitType", ["LPO", "LTO"])
 @pytest.mark.parametrize("setEpoch", ["Default", "Direct", "Msg"])
-
 
 # provide a unique test method name, starting with test_
 def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, setEpoch):
@@ -71,8 +73,8 @@ def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, setEpoch):
 
 def run(show_plots, orbitCase, setEpoch):
     """Call this routine directly to run the script."""
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -90,7 +92,7 @@ def run(show_plots, orbitCase, setEpoch):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
@@ -99,7 +101,9 @@ def run(show_plots, orbitCase, setEpoch):
     newAtmo.ModelTag = "MsisAtmo"
 
     if setEpoch == "Msg":
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
+        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+            "2019 Jan 01 00:00:00.00 (UTC)"
+        )
         newAtmo.epochInMsg.subscribeTo(epochMsg)
 
         # setting epoch day of year info deliberately to a false value.  The epoch msg info should be used
@@ -122,51 +126,73 @@ def run(show_plots, orbitCase, setEpoch):
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
 
     planet = gravFactory.createEarth()
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
     r_eq = planet.radEquator
     if orbitCase == "LPO":
-        orbAltMin = 100.0*1000.0
+        orbAltMin = 100.0 * 1000.0
         orbAltMax = orbAltMin
     elif orbitCase == "LTO":
-        orbAltMin = 100.*1000.0
+        orbAltMin = 100.0 * 1000.0
         orbAltMax = 100.0 * 1000.0
 
     rMin = r_eq + orbAltMin
     rMax = r_eq + orbAltMax
-    oe.a = (rMin+rMax)/2.0
-    oe.e = 1.0 - rMin/oe.a
-    oe.i = 0.0*macros.D2R
+    oe.a = (rMin + rMax) / 2.0
+    oe.e = 1.0 - rMin / oe.a
+    oe.i = 0.0 * macros.D2R
 
-    oe.Omega = 0.0*macros.D2R
-    oe.omega = 0.0*macros.D2R
-    oe.f     = 0.0*macros.D2R
+    oe.Omega = 0.0 * macros.D2R
+    oe.omega = 0.0 * macros.D2R
+    oe.f = 0.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
-                                                # with circular or equatorial orbit, some angles are
-                                                # arbitrary
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
+    # with circular or equatorial orbit, some angles are
+    # arbitrary
 
     # set the simulation time
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu / oe.a / oe.a / oe.a)
+    P = 2.0 * np.pi / n
 
-    simulationTime = macros.sec2nano(0.002*P)
+    simulationTime = macros.sec2nano(0.002 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     sw_msg_names = [
-        "ap_24_0", "ap_3_0", "ap_3_-3", "ap_3_-6", "ap_3_-9",
-        "ap_3_-12", "ap_3_-15", "ap_3_-18", "ap_3_-21", "ap_3_-24",
-        "ap_3_-27", "ap_3_-30", "ap_3_-33", "ap_3_-36", "ap_3_-39",
-        "ap_3_-42", "ap_3_-45", "ap_3_-48", "ap_3_-51", "ap_3_-54",
-        "ap_3_-57", "f107_1944_0", "f107_24_-24"
+        "ap_24_0",
+        "ap_3_0",
+        "ap_3_-3",
+        "ap_3_-6",
+        "ap_3_-9",
+        "ap_3_-12",
+        "ap_3_-15",
+        "ap_3_-18",
+        "ap_3_-21",
+        "ap_3_-24",
+        "ap_3_-27",
+        "ap_3_-30",
+        "ap_3_-33",
+        "ap_3_-36",
+        "ap_3_-39",
+        "ap_3_-42",
+        "ap_3_-45",
+        "ap_3_-48",
+        "ap_3_-51",
+        "ap_3_-54",
+        "ap_3_-57",
+        "f107_1944_0",
+        "f107_24_-24",
     ]
 
     swMsgList = []
@@ -210,7 +236,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     #   Compare to expected values
 
-    refAtmoData = np.loadtxt(path + '/truthOutputs.txt')
+    refAtmoData = np.loadtxt(path + "/truthOutputs.txt")
 
     accuracy = 1e-8
 
@@ -219,33 +245,41 @@ def run(show_plots, orbitCase, setEpoch):
     #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3,
     #   and must be adjusted by a factor of 1e-3 to match kg/m^3
     print(densData[-1])
-    print(refAtmoData[5]*1000)
-    if np.testing.assert_allclose(densData[-1], refAtmoData[5]*1000., atol=accuracy):
+    print(refAtmoData[5] * 1000)
+    if np.testing.assert_allclose(densData[-1], refAtmoData[5] * 1000.0, atol=accuracy):
         testFailCount += 1
-        testMessages.append("FAILED:  NRLMSISE-00 failed density unit test with a value difference of "+str(densData[0]-refAtmoData[5]*1000))
+        testMessages.append(
+            "FAILED:  NRLMSISE-00 failed density unit test with a value difference of "
+            + str(densData[0] - refAtmoData[5] * 1000)
+        )
 
     print(tempData[-1])
     print(refAtmoData[-1])
     if np.testing.assert_allclose(tempData[-1], refAtmoData[-1], atol=accuracy):
         testFailCount += 1
         testMessages.append(
-        "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "+str(tempData[-1]-refAtmoData[-1]))
+            "FAILED:  NRLMSISE-00 failed temperature unit test with a value difference of "
+            + str(tempData[-1] - refAtmoData[-1])
+        )
 
     snippentName = "unitTestPassFail" + str(orbitCase) + str(setEpoch)
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + newAtmo.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = "\\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + newAtmo.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = "\\textcolor{" + colorText + "}{" + "Failed" + "}"
         print(testMessages)
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
-if __name__ == '__main__':
-    run(True,
-        "LPO",          # orbitCase
-        "Msg")          # setEpoch
+
+if __name__ == "__main__":
+    run(
+        True,
+        "LPO",  # orbitCase
+        "Msg",
+    )  # setEpoch

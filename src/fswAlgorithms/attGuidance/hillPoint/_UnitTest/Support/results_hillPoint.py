@@ -17,20 +17,20 @@
 #
 import numpy as np
 from numpy import linalg as la
+
 np.set_printoptions(precision=12)
-
-
-
 
 
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import astroFunctions as af
 
+
 def normalize(v):
-    norm=np.linalg.norm(v)
-    if norm==0:
-       return v
-    return v/norm
+    norm = np.linalg.norm(v)
+    if norm == 0:
+        return v
+    return v / norm
+
 
 def printResults_HillPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec):
     r = r_BN_N - celBodyPosVec
@@ -39,7 +39,7 @@ def printResults_HillPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec):
     i_r = normalize(r)
     i_h = normalize(h)
     i_theta = np.cross(i_h, i_r)
-    HN = np.array([ i_r, i_theta, i_h ])
+    HN = np.array([i_r, i_theta, i_h])
     sigma_HN = rbk.C2MRP(HN)
 
     hm = la.norm(h)
@@ -51,15 +51,16 @@ def printResults_HillPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec):
     omega_HN_N = dfdt * i_h
     domega_HN_N = ddfdt2 * i_h
 
-    print('sigma_HN = ', sigma_HN)
-    print('omega_HN_N = ', omega_HN_N)
-    print('domega_HN_N = ', domega_HN_N)
+    print("sigma_HN = ", sigma_HN)
+    print("omega_HN_N = ", omega_HN_N)
+    print("domega_HN_N = ", domega_HN_N)
 
     HN = rbk.MRP2C(sigma_HN)
-    M = rbk.Mi(0.5*np.pi, 1)
+    M = rbk.Mi(0.5 * np.pi, 1)
     sigma = rbk.C2MRP(np.dot(M, HN))
     print(sigma)
     return (sigma_HN, omega_HN_N, domega_HN_N)
+
 
 # MAIN
 # Initial Conditions (IC)

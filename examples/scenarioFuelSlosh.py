@@ -167,8 +167,6 @@ rest of the spacecraft.
 
 """
 
-
-
 import inspect
 import os
 
@@ -176,8 +174,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import linearSpringMassDamper
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -277,7 +277,11 @@ def run(show_plots, damping_parameter, timeStep):
     # define hub properties
     scObject.hub.mHub = 1500  # kg
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # kg*m^2
+    scObject.hub.IHubPntBc_B = [
+        [900.0, 0.0, 0.0],
+        [0.0, 800.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]  # kg*m^2
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # rad
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]  # rad/s
 
@@ -309,33 +313,40 @@ def run(show_plots, damping_parameter, timeStep):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(P / 4)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
     scLog = scObject.logger(
         ["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"],
-        simulationTimeStep)
+        simulationTimeStep,
+    )
     scSim.AddModelToTask(simTaskName, scLog)
 
     damperRhoLog = None
     if damping_parameter != 0.0:
+
         def get_rho(CurrentSimNanos, i):
-            stateName = f'linearSpringMassDamperRho{i}'
+            stateName = f"linearSpringMassDamperRho{i}"
             return scObject.dynManager.getStateObject(stateName).getState()[0][0]
 
-        damperRhoLog = pythonVariableLogger.PythonVariableLogger({
+        damperRhoLog = pythonVariableLogger.PythonVariableLogger(
+            {
                 "damperRho1": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 1),
                 "damperRho2": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 2),
                 "damperRho3": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 3),
-            }, simulationTimeStep)
+            },
+            simulationTimeStep,
+        )
 
         scSim.AddModelToTask(simTaskName, damperRhoLog)
 
@@ -360,7 +371,10 @@ def run(show_plots, damping_parameter, timeStep):
     rhojOuts = None
     if damping_parameter != 0.0:
         rhojOuts = [
-            damperRhoLog.damperRho1, damperRhoLog.damperRho2, damperRhoLog.damperRho3]
+            damperRhoLog.damperRho1,
+            damperRhoLog.damperRho2,
+            damperRhoLog.damperRho3,
+        ]
 
     fileName = os.path.basename(os.path.splitext(__file__)[0])
     if damping_parameter == 0.0 and timeStep == 0.75:
@@ -390,13 +404,13 @@ def run(show_plots, damping_parameter, timeStep):
     x = planetRadius * 1e-3 * np.cos(u)
     y = planetRadius * 1e-3 * np.sin(u)
 
-    ax.add_artist(plt.Circle((0, 0), planetRadius / 1000, color='#008800'))
+    ax.add_artist(plt.Circle((0, 0), planetRadius / 1000, color="#008800"))
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000)
     # ax.plot(x,y,color='g')
     plt.xlim([-7000, 7000])
     plt.ylim([-7000, 7000])
-    plt.xlabel('X (km)')
-    plt.ylabel('Y (km)')
+    plt.xlabel("X (km)")
+    plt.ylabel("Y (km)")
 
     figureList = {}
     pltName = fileName + "Orbit" + str(setupNo)
@@ -405,30 +419,30 @@ def run(show_plots, damping_parameter, timeStep):
     plt.figure(2, figsize=(5, 4))
     for i in range(3):
         plt.plot(time, (orbAngMom_N[:, i] - orbAngMom_N[0, i]) / orbAngMom_N[0, i])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Orbital Angular Momentum Variation')
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Orbital Angular Momentum Variation")
     pltName = fileName + "OAM" + str(setupNo)
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3, figsize=(5, 4))
     plt.plot(time, (orbEnergy - orbEnergy[0]) / orbEnergy[0])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Orbital Energy Variation')
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Orbital Energy Variation")
     pltName = fileName + "OE" + str(setupNo)
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4, figsize=(5, 4))
     for i in range(3):
         plt.plot(time, (rotAngMom_N[:, i] - rotAngMom_N[0, i]) / rotAngMom_N[0, i])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Rotational Angular Momentum Variation')
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Rotational Angular Momentum Variation")
     pltName = fileName + "RAM" + str(setupNo)
     figureList[pltName] = plt.figure(4)
 
     plt.figure(5, figsize=(5, 4))
     plt.plot(time, (rotEnergy - rotEnergy[0]) / rotEnergy[0])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Rotational Energy Variation')
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Rotational Energy Variation")
     pltName = fileName + "RE" + str(setupNo)
     figureList[pltName] = plt.figure(5)
 
@@ -437,9 +451,9 @@ def run(show_plots, damping_parameter, timeStep):
         for rhojOut in rhojOuts:
             plt.plot(time, rhojOut)
 
-        plt.legend(['Particle 1', 'Particle 2', 'Particle 3'], loc='lower right')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Displacement (m)')
+        plt.legend(["Particle 1", "Particle 2", "Particle 3"], loc="lower right")
+        plt.xlabel("Time (s)")
+        plt.ylabel("Displacement (m)")
         pltName = fileName + "ParticleMotion"
         figureList[pltName] = plt.figure(6)
 
@@ -449,13 +463,12 @@ def run(show_plots, damping_parameter, timeStep):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-
     return time, rhojOuts, figureList
 
 
 if __name__ == "__main__":
     run(
-        True,               # show_plots
-        0.0,				 # damping_parameter
-        0.75,				 # timeStep
+        True,  # show_plots
+        0.0,  # damping_parameter
+        0.75,  # timeStep
     )

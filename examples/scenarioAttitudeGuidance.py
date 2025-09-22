@@ -133,26 +133,34 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import hillPoint
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import RigidBodyKinematics
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -168,35 +176,46 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     ax = fig.gca()
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
-    ax.set_yscale('log')
+    plt.plot(
+        timeLineSet,
+        sNorm,
+        color=unitTestSupport.getLineColor(1, 3),
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
+    ax.set_yscale("log")
+
 
 def plot_control_torque(timeLineSet, dataLr):
     """Plot the control torque response."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeLineSet,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
+
 
 def plot_rate_error(timeLineSet, dataOmegaBR):
     """Plot the body angular velocity tracking error."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeLineSet,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
     return
+
 
 def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
     """Plot the spacecraft orientation."""
@@ -210,18 +229,27 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
         ih = hv / np.linalg.norm(hv)
         itheta = np.cross(ih, ir)
         dcmBN = RigidBodyKinematics.MRP2C(vectorMRPData[idx])
-        data[idx] = [np.dot(ir, dcmBN[0]), np.dot(itheta, dcmBN[1]), np.dot(ih, dcmBN[2])]
+        data[idx] = [
+            np.dot(ir, dcmBN[0]),
+            np.dot(itheta, dcmBN[1]),
+            np.dot(ih, dcmBN[2]),
+        ]
     plt.figure(4)
-    labelStrings = (r'$\hat\imath_r\cdot \hat b_1$'
-                    , r'${\hat\imath}_{\theta}\cdot \hat b_2$'
-                    , r'$\hat\imath_h\cdot \hat b_3$')
+    labelStrings = (
+        r"$\hat\imath_r\cdot \hat b_1$",
+        r"${\hat\imath}_{\theta}\cdot \hat b_2$",
+        r"$\hat\imath_h\cdot \hat b_3$",
+    )
     for idx in range(3):
-        plt.plot(timeLineSet, data[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=labelStrings[idx])
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Orientation Illustration')
+        plt.plot(
+            timeLineSet,
+            data[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=labelStrings[idx],
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Orientation Illustration")
 
 
 def run(show_plots, useAltBodyFrame):
@@ -242,7 +270,7 @@ def run(show_plots, useAltBodyFrame):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -261,11 +289,13 @@ def run(show_plots, useAltBodyFrame):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -327,7 +357,9 @@ def run(show_plots, useAltBodyFrame):
     # if you want to connect attGuidance.celBodyInMsg, then you need a planet ephemeris message of
     # type EphemerisMsgPayload.  In this simulation the input message is not connected to create an empty planet
     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
-    CelBodyData = messaging.EphemerisMsgPayload() # make zero'd planet ephemeris message
+    CelBodyData = (
+        messaging.EphemerisMsgPayload()
+    )  # make zero'd planet ephemeris message
     celBodyInMsg = messaging.EphemerisMsg().write(CelBodyData)
     attGuidance.celBodyInMsg.subscribeTo(celBodyInMsg)
     scSim.AddModelToTask(simTaskName, attGuidance)
@@ -349,7 +381,7 @@ def run(show_plots, useAltBodyFrame):
     mrpControl.K = 3.5
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -358,7 +390,9 @@ def run(show_plots, useAltBodyFrame):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
@@ -379,9 +413,12 @@ def run(show_plots, useAltBodyFrame):
     mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -443,5 +480,5 @@ def run(show_plots, useAltBodyFrame):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        True  # useAltBodyFrame
+        True,  # useAltBodyFrame
     )

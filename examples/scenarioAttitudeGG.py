@@ -70,26 +70,34 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import hillPoint
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.simulation import GravityGradientEffector
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -114,7 +122,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -133,11 +141,13 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -217,13 +227,15 @@ def run(show_plots):
     mrpControl.K = 3.5
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     ggLog = ggEff.gravityGradientOutMsg.recorder(samplingTime)
@@ -251,10 +263,13 @@ def run(show_plots):
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        , modelDictionaryKeyList="6USat"
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        modelDictionaryKeyList="6USat",
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -287,39 +302,45 @@ def run(show_plots):
     ax = fig.gca()
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
-    ax.set_yscale('log')
+    plt.plot(
+        timeLineSet,
+        sNorm,
+        color=unitTestSupport.getLineColor(1, 3),
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
+    ax.set_yscale("log")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
-
 
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
     vectorData = dataLr
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Control Torque $L_r$ [Nm]')
-    ax.set_yscale('log')
+    plt.plot(
+        timeLineSet,
+        sNorm,
+        color=unitTestSupport.getLineColor(1, 3),
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Control Torque $L_r$ [Nm]")
+    ax.set_yscale("log")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeLineSet, ggData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$r_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'GG Torque [Nm]')
+        plt.plot(
+            timeLineSet,
+            ggData[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$r_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"GG Torque [Nm]")
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 

@@ -38,7 +38,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioOrbitMultiBody
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -46,17 +46,17 @@ import scenarioOrbitMultiBody
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("scCase", ['Hubble', 'NewHorizons'])
+@pytest.mark.parametrize("scCase", ["Hubble", "NewHorizons"])
 @pytest.mark.scenarioTest
-
 def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
         rBSK, rTrue, figureList = scenarioOrbitMultiBody.run(show_plots, scCase)
@@ -71,7 +71,8 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
     # compare the results to the truth values
     accuracy = 300.0  # meters
     testFailCount, testMessages = unitTestSupport.compareVector(
-        rTrue, rBSK, accuracy, "|r_BN_N| error", testFailCount, testMessages)
+        rTrue, rBSK, accuracy, "|r_BN_N| error", testFailCount, testMessages
+    )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -80,6 +81,6 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
         print(testFailCount)
         print(testMessages)
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
+        # each test method requires a single assert method to be called
+        # this check below just makes sure no sub-test failures were found
         assert testFailCount < 1, testMessages

@@ -18,7 +18,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/MultiSatBskSim/scenariosMultiSat')
+sys.path.append(path + "/../../examples/MultiSatBskSim/scenariosMultiSat")
 import scenario_BasicOrbitMultiSat
 
 
@@ -27,9 +27,12 @@ import scenario_BasicOrbitMultiSat
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("numberSpacecraft, environment", [(3, 'Mercury'), (3, 'Earth')])
+@pytest.mark.parametrize(
+    "numberSpacecraft, environment", [(3, "Mercury"), (3, "Earth")]
+)
 @pytest.mark.scenarioTest
 # provide a unique test method name, starting with test_
 def test_scenarioBasicOrbitMultiSat(show_plots, numberSpacecraft, environment):
@@ -40,7 +43,9 @@ def test_scenarioBasicOrbitMultiSat(show_plots, numberSpacecraft, environment):
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenario_BasicOrbitMultiSat.run(show_plots, numberSpacecraft, environment)
+        figureList = scenario_BasicOrbitMultiSat.run(
+            show_plots, numberSpacecraft, environment
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
@@ -66,5 +71,5 @@ if __name__ == "__main__":
     test_scenarioBasicOrbitMultiSat(
         False,  # show_plots
         3,  # numberSpacecraft
-        'Earth'  # environment (Earth, Mercury)
+        "Earth",  # environment (Earth, Mercury)
     )

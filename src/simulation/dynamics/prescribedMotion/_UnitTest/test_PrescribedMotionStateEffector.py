@@ -43,19 +43,22 @@ from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
-matplotlib.rc('xtick', labelsize=16)
-matplotlib.rc('ytick', labelsize=16)
+matplotlib.rc("xtick", labelsize=16)
+matplotlib.rc("ytick", labelsize=16)
+
 
 # Vary the simulation parameters for pytest
 @pytest.mark.parametrize("rotTest", [True, False])
-@pytest.mark.parametrize("thetaInit", [0, np.pi/18])
-@pytest.mark.parametrize("theta_Ref", [np.pi/36])
+@pytest.mark.parametrize("thetaInit", [0, np.pi / 18])
+@pytest.mark.parametrize("theta_Ref", [np.pi / 36])
 @pytest.mark.parametrize("posInit", [0, 0.2])
 @pytest.mark.parametrize("posRef", [0.1])
 @pytest.mark.parametrize("accuracy", [1e-8])
-def test_PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posInit, posRef, accuracy):
+def test_PrescribedMotionTestFunction(
+    show_plots, rotTest, thetaInit, theta_Ref, posInit, posRef, accuracy
+):
     r"""
     **Validation Test Description**
 
@@ -99,12 +102,16 @@ def test_PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref,
     dynamics.
     """
 
-    [testResults, testMessage] = PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posInit, posRef, accuracy)
+    [testResults, testMessage] = PrescribedMotionTestFunction(
+        show_plots, rotTest, thetaInit, theta_Ref, posInit, posRef, accuracy
+    )
 
     assert testResults < 1, testMessage
 
 
-def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posInit, posRef, accuracy):
+def PrescribedMotionTestFunction(
+    show_plots, rotTest, thetaInit, theta_Ref, posInit, posRef, accuracy
+):
     """Call this routine directly to run the unit test."""
     __tracebackhide__ = True
 
@@ -132,8 +139,16 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial inertial hub states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.omega_BN_BInit = np.array([0.0, 0.0, 0.0])
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
 
@@ -151,14 +166,14 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     sigma_PM = rbk.PRV2MRP(prvInit_PM)
 
     platform.mass = 100.0
-    platform.IPntPc_P= [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    platform.IPntPc_P = [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     platform.r_MB_B = [0.0, 0.0, 0.0]
-    platform.r_PcP_P= [0.0, 0.0, 0.0]
+    platform.r_PcP_P = [0.0, 0.0, 0.0]
     platform.r_PM_M = r_PM_M
     platform.rPrime_PM_M = np.array([0.0, 0.0, 0.0])
     platform.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])
-    platform.omega_PM_P= np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_PM_P= np.array([0.0, 0.0, 0.0])
+    platform.omega_PM_P = np.array([0.0, 0.0, 0.0])
+    platform.omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])
     platform.sigma_PM = sigma_PM
     platform.omega_MB_B = [0.0, 0.0, 0.0]
     platform.omegaPrime_MB_B = [0.0, 0.0, 0.0]
@@ -172,7 +187,6 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     unitTestSim.AddModelToTask(unitTaskName, platform)
 
     if rotTest:
-
         # ** ** ** ** ** ROTATIONAL 1 DOF INTEGRATED TEST: ** ** ** ** **
 
         # Create an instance of the prescribedRotation1DOF module to be tested
@@ -193,20 +207,26 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         SpinningBodyMessageData = messaging.HingedRigidBodyMsgPayload()
         SpinningBodyMessageData.theta = theta_Ref
         SpinningBodyMessageData.thetaDot = thetaDot_Ref
-        SpinningBodyMessage = messaging.HingedRigidBodyMsg().write(SpinningBodyMessageData)
+        SpinningBodyMessage = messaging.HingedRigidBodyMsg().write(
+            SpinningBodyMessageData
+        )
         PrescribedRot1DOF.spinningBodyInMsg.subscribeTo(SpinningBodyMessage)
 
-        platform.prescribedRotationInMsg.subscribeTo(PrescribedRot1DOF.prescribedRotationOutMsg)
+        platform.prescribedRotationInMsg.subscribeTo(
+            PrescribedRot1DOF.prescribedRotationOutMsg
+        )
 
         # Add Earth gravity to the simulation
         earthGravBody = gravityEffector.GravBodyData()
         earthGravBody.planetName = "earth_planet_data"
-        earthGravBody.mu = 0.3986004415E+15
+        earthGravBody.mu = 0.3986004415e15
         earthGravBody.isCentralBody = True
         scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
         # Add energy and momentum variables to log
-        scObjectLog = scObject.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+        scObjectLog = scObject.logger(
+            ["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"]
+        )
         unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
         # Add other states to log
@@ -219,22 +239,33 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         unitTestSim.InitializeSimulation()
 
         # Set the simulation time
-        simTime = np.sqrt(((0.5 * np.abs(theta_Ref - thetaInit)) * 8) / accelMax) + 3 * testIncrement
+        simTime = (
+            np.sqrt(((0.5 * np.abs(theta_Ref - thetaInit)) * 8) / accelMax)
+            + 3 * testIncrement
+        )
         unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
 
         # Begin the simulation
         unitTestSim.ExecuteSimulation()
 
         # Extract the logged data
-        orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
-        orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-        rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-        rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+        orbEnergy = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totOrbEnergy
+        )
+        orbAngMom_N = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N
+        )
+        rotAngMom_N = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totRotAngMomPntC_N
+        )
+        rotEnergy = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totRotEnergy
+        )
         omega_BN_B = scStateData.omega_BN_B
         r_BN_N = scStateData.r_BN_N
         sigma_BN = scStateData.sigma_BN
-        omega_PM_P= prescribedRotStateData.omega_PM_P
-        omegaPrime_PM_P= prescribedRotStateData.omegaPrime_PM_P
+        omega_PM_P = prescribedRotStateData.omega_PM_P
+        omegaPrime_PM_P = prescribedRotStateData.omegaPrime_PM_P
         sigma_PM = prescribedRotStateData.sigma_PM
         timespan = prescribedRotStateData.times()
         thetaDot_Final = np.linalg.norm(omega_PM_P[-1, :])
@@ -253,7 +284,9 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         n = len(timespan)
         theta_PM = []
         for i in range(n):
-            theta_PM.append((180 / np.pi) * (4 * np.arctan(np.linalg.norm(sigma_PM[i, :]))))
+            theta_PM.append(
+                (180 / np.pi) * (4 * np.arctan(np.linalg.norm(sigma_PM[i, :])))
+            )
 
         plt.close("all")
 
@@ -262,101 +295,169 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         thetaInit_plotting = np.ones(len(timespan)) * thetaInit
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, theta_PM, label=r'$\Phi$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * theta_Ref_plotting, '--', label=r'$\Phi_{Ref}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * thetaInit_plotting, '--', label=r'$\Phi_{0}$')
-        plt.title(r'$\Phi_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-        plt.ylabel('(deg)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='center right', prop={'size': 16})
+        plt.plot(timespan * macros.NANO2SEC, theta_PM, label=r"$\Phi$")
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * theta_Ref_plotting,
+            "--",
+            label=r"$\Phi_{Ref}$",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * thetaInit_plotting,
+            "--",
+            label=r"$\Phi_{0}$",
+        )
+        plt.title(r"$\Phi_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory", fontsize=14)
+        plt.ylabel("(deg)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="center right", prop={"size": 16})
 
         # Plot omega_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_PM_P[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_PM_P[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_PM_P[:, 2], label=r'$\omega_{3}$')
-        plt.title(r'${}^\mathcal{P} \omega_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-        plt.ylabel('(deg/s)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='upper right', prop={'size': 16})
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_PM_P[:, 0],
+            label=r"$\omega_{1}$",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_PM_P[:, 1],
+            label=r"$\omega_{2}$",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_PM_P[:, 2],
+            label=r"$\omega_{3}$",
+        )
+        plt.title(
+            r"${}^\mathcal{P} \omega_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(deg/s)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="upper right", prop={"size": 16})
 
         # Plotting omegaPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 0], label='1')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 1], label='2')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 2], label='3')
-        plt.title(r'${}^\mathcal{P} \omega Prime_{\mathcal{P}/\mathcal{M}}$ Profiled Angular Acceleration', fontsize=14)
-        plt.ylabel(r'(deg/$s^2$)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='upper right', prop={'size': 16})
+        plt.plot(
+            timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 0], label="1"
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 1], label="2"
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC, (180 / np.pi) * omegaPrime_PM_P[:, 2], label="3"
+        )
+        plt.title(
+            r"${}^\mathcal{P} \omega Prime_{\mathcal{P}/\mathcal{M}}$ Profiled Angular Acceleration",
+            fontsize=14,
+        )
+        plt.ylabel(r"(deg/$s^2$)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="upper right", prop={"size": 16})
 
         # Plot r_BN_N
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 0], label=r'$r_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 1], label=r'$r_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 2], label=r'$r_{3}$')
-        plt.title(r'${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory', fontsize=14)
-        plt.ylabel('(m)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='center left', prop={'size': 16})
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 0], label=r"$r_{1}$")
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 1], label=r"$r_{2}$")
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 2], label=r"$r_{3}$")
+        plt.title(
+            r"${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(m)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="center left", prop={"size": 16})
 
         # Plot sigma_BN
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 0], label=r'$\sigma_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 1], label=r'$\sigma_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 2], label=r'$\sigma_{3}$')
-        plt.title(r'$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude', fontsize=14)
-        plt.ylabel('', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='center left', prop={'size': 16})
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 0], label=r"$\sigma_{1}$")
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 1], label=r"$\sigma_{2}$")
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 2], label=r"$\sigma_{3}$")
+        plt.title(
+            r"$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude",
+            fontsize=14,
+        )
+        plt.ylabel("", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="center left", prop={"size": 16})
 
         # Plot omega_BN_B
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 2], label=r'$\omega_{3}$')
-        plt.title(r'Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.ylabel('(deg/s)', fontsize=16)
-        plt.legend(loc='lower right', prop={'size': 16})
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_BN_B[:, 0],
+            label=r"$\omega_{1}$",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_BN_B[:, 1],
+            label=r"$\omega_{2}$",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_BN_B[:, 2],
+            label=r"$\omega_{3}$",
+        )
+        plt.title(
+            r"Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$",
+            fontsize=14,
+        )
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.ylabel("(deg/s)", fontsize=16)
+        plt.legend(loc="lower right", prop={"size": 16})
 
         # Plotting: Conservation quantities
         plt.figure()
         plt.clf()
-        plt.plot(orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
-                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
-                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
-        plt.title('Orbital Angular Momentum Relative Difference', fontsize=14)
-        plt.ylabel('(Nms)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.plot(
+            orbAngMom_N[:, 0] * macros.NANO2SEC,
+            (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
+            orbAngMom_N[:, 0] * macros.NANO2SEC,
+            (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
+            orbAngMom_N[:, 0] * macros.NANO2SEC,
+            (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3],
+        )
+        plt.title("Orbital Angular Momentum Relative Difference", fontsize=14)
+        plt.ylabel("(Nms)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(orbEnergy[:, 0] * macros.NANO2SEC, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
-        plt.title('Orbital Energy Relative Difference', fontsize=14)
-        plt.ylabel('Energy (J)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.plot(
+            orbEnergy[:, 0] * macros.NANO2SEC,
+            (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1],
+        )
+        plt.title("Orbital Energy Relative Difference", fontsize=14)
+        plt.ylabel("Energy (J)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
-                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
-                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]))
-        plt.title('Rotational Angular Momentum Difference', fontsize=14)
-        plt.ylabel('(Nms)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.plot(
+            rotAngMom_N[:, 0] * macros.NANO2SEC,
+            (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
+            rotAngMom_N[:, 0] * macros.NANO2SEC,
+            (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
+            rotAngMom_N[:, 0] * macros.NANO2SEC,
+            (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]),
+        )
+        plt.title("Rotational Angular Momentum Difference", fontsize=14)
+        plt.ylabel("(Nms)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         plt.figure()
         plt.clf()
         plt.plot(rotEnergy[:, 0] * macros.NANO2SEC, (rotEnergy[:, 1] - rotEnergy[0, 1]))
-        plt.title('Total Energy Difference', fontsize=14)
-        plt.ylabel('Energy (J)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.title("Total Energy Difference", fontsize=14)
+        plt.ylabel("Energy (J)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         if show_plots:
             plt.show()
@@ -368,38 +469,55 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         finalOrbEnergy = np.delete(finalOrbEnergy, 0, axis=1)  # remove the time column
 
         for i in range(0, len(initialOrbAngMom_N)):
-            if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i], initialOrbAngMom_N[i], 3, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(
+                finalOrbAngMom[i], initialOrbAngMom_N[i], 3, accuracy
+            ):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED: Prescribed Motion integrated test failed orbital angular momentum unit test")
+                    "FAILED: Prescribed Motion integrated test failed orbital angular momentum unit test"
+                )
 
         for i in range(0, len(initialRotAngMom_N)):
-            if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
+            if not unitTestSupport.isArrayEqual(
+                finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy
+            ):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED: Prescribed Motion integrated test failed rotational angular momentum unit test")
+                    "FAILED: Prescribed Motion integrated test failed rotational angular momentum unit test"
+                )
 
         for i in range(0, len(initialOrbEnergy)):
-            if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(
+                finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: Prescribed Motion integrated test failed orbital energy unit test")
+                testMessages.append(
+                    "FAILED: Prescribed Motion integrated test failed orbital energy unit test"
+                )
 
         # Check to ensure the initial angle rate converged to the reference angle rate
         if not unitTestSupport.isDoubleEqual(thetaDot_Final, thetaDot_Ref, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "thetaDot_Final and thetaDot_Ref do not match")
+            testMessages.append(
+                "FAILED: "
+                + PrescribedRot1DOF.ModelTag
+                + "thetaDot_Final and thetaDot_Ref do not match"
+            )
 
         # Check to ensure the initial angle converged to the reference angle
         if not unitTestSupport.isDoubleEqual(theta_PM_Pinal, theta_Ref, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedRot1DOF.ModelTag + "theta_PM_Pinal and theta_Ref do not match")
+            testMessages.append(
+                "FAILED: "
+                + PrescribedRot1DOF.ModelTag
+                + "theta_PM_Pinal and theta_Ref do not match"
+            )
             # testMessages.append("theta_PM_Pinal: " + str(theta_PM_Pinal) + " theta_Ref: " + str(theta_Ref))
 
         if testFailCount == 0:
             print("PASSED: " + "prescribedMotion and prescribedRot1DOF integrated test")
 
     else:
-
         # ** ** ** ** ** TRANSLATIONAL INTEGRATED TEST ** ** ** ** **
 
         # Create an instance of the prescribedLinearTranslation module to be tested
@@ -417,23 +535,35 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         # Create the prescribedTrans input message
         velRef = 0.0  # [m/s]
-        linearTranslationRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
+        linearTranslationRigidBodyMessageData = (
+            messaging.LinearTranslationRigidBodyMsgPayload()
+        )
         linearTranslationRigidBodyMessageData.rho = posRef
         linearTranslationRigidBodyMessageData.rhoDot = velRef
-        linearTranslationRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTranslationRigidBodyMessageData)
-        PrescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTranslationRigidBodyMessage)
+        linearTranslationRigidBodyMessage = (
+            messaging.LinearTranslationRigidBodyMsg().write(
+                linearTranslationRigidBodyMessageData
+            )
+        )
+        PrescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(
+            linearTranslationRigidBodyMessage
+        )
 
-        platform.prescribedTranslationInMsg.subscribeTo(PrescribedTrans.prescribedTranslationOutMsg)
+        platform.prescribedTranslationInMsg.subscribeTo(
+            PrescribedTrans.prescribedTranslationOutMsg
+        )
 
         # Add Earth gravity to the simulation
         earthGravBody = gravityEffector.GravBodyData()
         earthGravBody.planetName = "earth_planet_data"
-        earthGravBody.mu = 0.3986004415E+15
+        earthGravBody.mu = 0.3986004415e15
         earthGravBody.isCentralBody = True
         scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
         # Add energy and momentum variables to log
-        scObjectLog = scObject.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+        scObjectLog = scObject.logger(
+            ["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"]
+        )
         unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
         # Add other states to log
@@ -446,17 +576,28 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         unitTestSim.InitializeSimulation()
 
         # Set the simulation time
-        simTime = np.sqrt(((0.5 * np.abs(posRef - posInit)) * 8) / accelMax) + 3 * testIncrement
+        simTime = (
+            np.sqrt(((0.5 * np.abs(posRef - posInit)) * 8) / accelMax)
+            + 3 * testIncrement
+        )
         unitTestSim.ConfigureStopTime(macros.sec2nano(simTime))
 
         # Begin the simulation
         unitTestSim.ExecuteSimulation()
 
         # Extract the logged data
-        orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
-        orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-        rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-        rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+        orbEnergy = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totOrbEnergy
+        )
+        orbAngMom_N = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N
+        )
+        rotAngMom_N = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totRotAngMomPntC_N
+        )
+        rotEnergy = unitTestSupport.addTimeColumn(
+            scObjectLog.times(), scObjectLog.totRotEnergy
+        )
         r_BN_N = scStateData.r_BN_N
         sigma_BN = scStateData.sigma_BN
         omega_BN_B = scStateData.omega_BN_B
@@ -485,104 +626,159 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 0], label=r'$r_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 1], label=r'$r_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 2], label=r'$r_{3}$')
-        plt.plot(timespan * macros.NANO2SEC, r_PM_M_1_Ref, '--', label=r'$r_{1 Ref}$')
-        plt.plot(timespan * macros.NANO2SEC, r_PM_M_2_Ref, '--', label=r'$r_{2 Ref}$')
-        plt.plot(timespan * macros.NANO2SEC, r_PM_M_3_Ref, '--', label=r'$r_{3 Ref}$')
-        plt.title(r'${}^\mathcal{M} r_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-        plt.ylabel('(m)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='center left', prop={'size': 16})
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 0], label=r"$r_{1}$")
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 1], label=r"$r_{2}$")
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M[:, 2], label=r"$r_{3}$")
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M_1_Ref, "--", label=r"$r_{1 Ref}$")
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M_2_Ref, "--", label=r"$r_{2 Ref}$")
+        plt.plot(timespan * macros.NANO2SEC, r_PM_M_3_Ref, "--", label=r"$r_{3 Ref}$")
+        plt.title(
+            r"${}^\mathcal{M} r_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(m)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="center left", prop={"size": 16})
 
         # Plot rPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 0], label='1')
-        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 1], label='2')
-        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} rPrime_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-        plt.ylabel('(m/s)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='upper left', prop={'size': 16})
+        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 0], label="1")
+        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 1], label="2")
+        plt.plot(timespan * macros.NANO2SEC, rPrime_PM_M[:, 2], label="3")
+        plt.title(
+            r"${}^\mathcal{M} rPrime_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(m/s)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="upper left", prop={"size": 16})
 
         # Plotting rPrimePrime_PM_M
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_PM_M[:, 0], label='1')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_PM_M[:, 1], label='2')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * rPrimePrime_PM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} rPrimePrime_{\mathcal{P}/\mathcal{M}}$ Profiled Acceleration', fontsize=14)
-        plt.ylabel(r'(m/s$^2$)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='lower left', prop={'size': 16})
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * rPrimePrime_PM_M[:, 0],
+            label="1",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * rPrimePrime_PM_M[:, 1],
+            label="2",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * rPrimePrime_PM_M[:, 2],
+            label="3",
+        )
+        plt.title(
+            r"${}^\mathcal{M} rPrimePrime_{\mathcal{P}/\mathcal{M}}$ Profiled Acceleration",
+            fontsize=14,
+        )
+        plt.ylabel(r"(m/s$^2$)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="lower left", prop={"size": 16})
 
         # Plot r_BN_N
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 0], label=r'$r_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 1], label=r'$r_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 2], label=r'$r_{3}$')
-        plt.title(r'${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory', fontsize=14)
-        plt.ylabel('(m)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='center left', prop={'size': 16})
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 0], label=r"$r_{1}$")
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 1], label=r"$r_{2}$")
+        plt.plot(timespan * macros.NANO2SEC, r_BN_N[:, 2], label=r"$r_{3}$")
+        plt.title(
+            r"${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(m)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="center left", prop={"size": 16})
 
         # Plot sigma_BN
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 0], label=r'$\sigma_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 1], label=r'$\sigma_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 2], label=r'$\sigma_{3}$')
-        plt.title(r'$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude', fontsize=14)
-        plt.ylabel('', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='lower left', prop={'size': 16})
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 0], label=r"$\sigma_{1}$")
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 1], label=r"$\sigma_{2}$")
+        plt.plot(timespan * macros.NANO2SEC, sigma_BN[:, 2], label=r"$\sigma_{3}$")
+        plt.title(
+            r"$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude",
+            fontsize=14,
+        )
+        plt.ylabel("", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="lower left", prop={"size": 16})
 
         # Plot omega_BN_B
         plt.figure()
         plt.clf()
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 0], label=r'$\omega_{1}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 1], label=r'$\omega_{2}$')
-        plt.plot(timespan * macros.NANO2SEC, (180 / np.pi) * omega_BN_B[:, 2], label=r'$\omega_{3}$')
-        plt.title(r'Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$', fontsize=14)
-        plt.ylabel('(deg/s)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
-        plt.legend(loc='lower left', prop={'size': 16})
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_BN_B[:, 0],
+            label=r"$\omega_{1}$",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_BN_B[:, 1],
+            label=r"$\omega_{2}$",
+        )
+        plt.plot(
+            timespan * macros.NANO2SEC,
+            (180 / np.pi) * omega_BN_B[:, 2],
+            label=r"$\omega_{3}$",
+        )
+        plt.title(
+            r"Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$",
+            fontsize=14,
+        )
+        plt.ylabel("(deg/s)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
+        plt.legend(loc="lower left", prop={"size": 16})
 
         # Plotting: Conservation quantities
         plt.figure()
         plt.clf()
-        plt.plot(orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
-                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
-                 orbAngMom_N[:, 0] * macros.NANO2SEC, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
-        plt.title('Orbital Angular Momentum Relative Difference', fontsize=14)
-        plt.ylabel('(Nms)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.plot(
+            orbAngMom_N[:, 0] * macros.NANO2SEC,
+            (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
+            orbAngMom_N[:, 0] * macros.NANO2SEC,
+            (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
+            orbAngMom_N[:, 0] * macros.NANO2SEC,
+            (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3],
+        )
+        plt.title("Orbital Angular Momentum Relative Difference", fontsize=14)
+        plt.ylabel("(Nms)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(orbEnergy[:, 0] * macros.NANO2SEC, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
-        plt.title('Orbital Energy Relative Difference', fontsize=14)
-        plt.ylabel('Energy (J)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.plot(
+            orbEnergy[:, 0] * macros.NANO2SEC,
+            (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1],
+        )
+        plt.title("Orbital Energy Relative Difference", fontsize=14)
+        plt.ylabel("Energy (J)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         plt.figure()
         plt.clf()
-        plt.plot(rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
-                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
-                 rotAngMom_N[:, 0] * macros.NANO2SEC, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]))
-        plt.title('Rotational Angular Momentum Difference', fontsize=14)
-        plt.ylabel('(Nms)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.plot(
+            rotAngMom_N[:, 0] * macros.NANO2SEC,
+            (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]),
+            rotAngMom_N[:, 0] * macros.NANO2SEC,
+            (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]),
+            rotAngMom_N[:, 0] * macros.NANO2SEC,
+            (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]),
+        )
+        plt.title("Rotational Angular Momentum Difference", fontsize=14)
+        plt.ylabel("(Nms)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         plt.figure()
         plt.clf()
         plt.plot(rotEnergy[:, 0] * macros.NANO2SEC, (rotEnergy[:, 1] - rotEnergy[0, 1]))
-        plt.title('Total Energy Difference', fontsize=14)
-        plt.ylabel('Energy (J)', fontsize=16)
-        plt.xlabel('Time (s)', fontsize=16)
+        plt.title("Total Energy Difference", fontsize=14)
+        plt.ylabel("Energy (J)", fontsize=16)
+        plt.xlabel("Time (s)", fontsize=16)
 
         if show_plots:
             plt.show()
@@ -594,40 +790,71 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
         finalOrbEnergy = np.delete(finalOrbEnergy, 0, axis=1)  # remove the time column
 
         for i in range(0, len(initialOrbAngMom_N)):
-            if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i], initialOrbAngMom_N[i], 3, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(
+                finalOrbAngMom[i], initialOrbAngMom_N[i], 3, accuracy
+            ):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED: Prescribed Motion integrated test failed orbital angular momentum unit test")
+                    "FAILED: Prescribed Motion integrated test failed orbital angular momentum unit test"
+                )
 
         for i in range(0, len(initialRotAngMom_N)):
-            if not unitTestSupport.isArrayEqual(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
+            if not unitTestSupport.isArrayEqual(
+                finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy
+            ):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED: Prescribed Motion integrated test failed rotational angular momentum unit test")
+                    "FAILED: Prescribed Motion integrated test failed rotational angular momentum unit test"
+                )
 
         for i in range(0, len(initialOrbEnergy)):
-            if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(
+                finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: Prescribed Motion integrated test failed orbital energy unit test")
+                testMessages.append(
+                    "FAILED: Prescribed Motion integrated test failed orbital energy unit test"
+                )
 
         # Check to ensure the initial velocity converged to the reference velocity
         rPrime_PM_M_Ref = np.array([0.0, 0.0, 0.0])
-        if not unitTestSupport.isArrayEqual(rPrime_PM_M_Final, rPrime_PM_M_Ref, 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            rPrime_PM_M_Final, rPrime_PM_M_Ref, 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "rPrime_PM_M_Final and rPrime_PM_M_Ref do not match")
-            testMessages.append("rPrime_PM_M_Final: " + str(rPrime_PM_M_Final) + " rPrime_PM_M_Ref: " + str(rPrime_PM_M_Ref))
+            testMessages.append(
+                "FAILED: "
+                + PrescribedTrans.ModelTag
+                + "rPrime_PM_M_Final and rPrime_PM_M_Ref do not match"
+            )
+            testMessages.append(
+                "rPrime_PM_M_Final: "
+                + str(rPrime_PM_M_Final)
+                + " rPrime_PM_M_Ref: "
+                + str(rPrime_PM_M_Ref)
+            )
 
         # Check to ensure the initial position converged to the reference position
         r_PM_M_Ref = np.array([posRef, 0.0, 0.0])
         if not unitTestSupport.isArrayEqual(r_PM_M_Final, r_PM_M_Ref, 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + PrescribedTrans.ModelTag + "r_PM_M_Final and r_PM_M_Ref do not match")
-            testMessages.append("r_PM_M_Final: " + str(r_PM_M_Final) + " r_PM_M_Ref: " + str(r_PM_M_Ref))
+            testMessages.append(
+                "FAILED: "
+                + PrescribedTrans.ModelTag
+                + "r_PM_M_Final and r_PM_M_Ref do not match"
+            )
+            testMessages.append(
+                "r_PM_M_Final: " + str(r_PM_M_Final) + " r_PM_M_Ref: " + str(r_PM_M_Ref)
+            )
 
         if testFailCount == 0:
-            print("PASSED: " + "prescribedMotion and prescribedLinearTranslation integrated test")
+            print(
+                "PASSED: "
+                + "prescribedMotion and prescribedLinearTranslation integrated test"
+            )
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a
@@ -635,12 +862,12 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
 #
 if __name__ == "__main__":
     PrescribedMotionTestFunction(
-        True,        # show_plots
-        False,       # rotTest, (True: prescribedRot1DOF integrated test,
-                     #           False: prescribedTrans integrated test)
-         0.0,        # thetaInit [rad]
-         np.pi / 12,    # theta_Ref [rad]
-         0.0,        # posInit [m]
-         0.5,        # posRef [m]
-         1e-8        # accuracy
-       )
+        True,  # show_plots
+        False,  # rotTest, (True: prescribedRot1DOF integrated test,
+        #           False: prescribedTrans integrated test)
+        0.0,  # thetaInit [rad]
+        np.pi / 12,  # theta_Ref [rad]
+        0.0,  # posInit [m]
+        0.5,  # posRef [m]
+        1e-8,  # accuracy
+    )

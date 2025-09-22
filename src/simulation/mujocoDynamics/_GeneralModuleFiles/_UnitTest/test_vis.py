@@ -45,8 +45,8 @@ def vis(initialSpin=True):
         is given an initial angular velocity. Defaults to True.
     """
 
-    dt = 0.01 # s
-    tf = 13 # s
+    dt = 0.01  # s
+    tf = 13  # s
 
     # Create sim, process, and task
     scSim = SimulationBaseClass.SimBaseClass()
@@ -69,11 +69,11 @@ def vis(initialSpin=True):
 
     # Set attitude rate if needed
     if initialSpin:
-        scene.getBody("cube").setAttitudeRate([0.1, 0.2, 0.3]) # rad/s
+        scene.getBody("cube").setAttitudeRate([0.1, 0.2, 0.3])  # rad/s
 
     # Create a force on the joints of the panels
     elevationControllerMsgPayload = messaging.SingleActuatorMsgPayload()
-    elevationControllerMsgPayload.input = 5 # N*m
+    elevationControllerMsgPayload.input = 5  # N*m
     elevationControllerMsg = messaging.SingleActuatorMsg()
     elevationControllerMsg.write(elevationControllerMsgPayload)
 

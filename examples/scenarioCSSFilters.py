@@ -258,11 +258,10 @@ The post fit residuals, show a fully functional filter, with no issues of observ
 # Creation Date:  November 20, 2017
 #
 
-
-
 import numpy as np
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
@@ -271,7 +270,13 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 from Basilisk.simulation import spacecraft, coarseSunSensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
+from Basilisk.fswAlgorithms import (
+    sunlineUKF,
+    sunlineEKF,
+    okeefeEKF,
+    sunlineSEKF,
+    sunlineSuKF,
+)
 from Basilisk.architecture import messaging
 
 import SunLineKF_test_utilities as Fplot
@@ -284,67 +289,159 @@ def setupUKFData(filterObject):
     filterObject.kappa = 0.0
 
     filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
-    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.02]
+    filterObject.covar = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+    ]
     qNoiseIn = np.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.017*0.017
-    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0017*0.0017
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 0.017 * 0.017
+    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 0.0017 * 0.0017
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.017**2
-    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal) * 5
 
 
 def setupEKFData(filterObject):
     """Setup EKF Filter Data"""
     filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.02]
+    filterObject.covar = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+    ]
 
     filterObject.qProcVal = 0.001**2
     filterObject.qObsVal = 0.017**2
-    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal) * 5
 
-    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    filterObject.eKFSwitch = (
+        5.0  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    )
+
 
 def setupOEKFData(filterObject):
     """Setup OEKF Filter Data"""
-    filterObject.omega = [0., 0., 0.]
+    filterObject.omega = [0.0, 0.0, 0.0]
     filterObject.state = [1.0, 0.1, 0.0]
     filterObject.x = [0.0, 0.0, 0.0]
-    filterObject.covar = [1., 0.0, 0.0,
-                          0.0, 1., 0.0,
-                          0.0, 0.0, 1.]
+    filterObject.covar = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
 
     filterObject.qProcVal = 0.1**2
-    filterObject.qObsVal = 0.017 ** 2
-    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+    filterObject.qObsVal = 0.017**2
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal) * 5
 
-    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    filterObject.eKFSwitch = (
+        5.0  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    )
+
 
 def setupSEKFData(filterObject):
     """Setup SEKF Filter Data"""
-    filterObject.state = [1.0, 0.1, 0., 0., 0.]
+    filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.0]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.01, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.01]
+    filterObject.covar = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.01,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.01,
+    ]
 
     filterObject.qProcVal = 0.001**2
-    filterObject.qObsVal = 0.017 ** 2
-    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+    filterObject.qObsVal = 0.017**2
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal) * 5
 
-    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    filterObject.eKFSwitch = (
+        5.0  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    )
 
 
 def setupSuKFData(filterObject):
@@ -353,21 +450,53 @@ def setupSuKFData(filterObject):
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
-    filterObject.stateInit = [1.0, 0.1, 0., 0., 0., 1.]
-    filterObject.covarInit = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.01, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.01, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
+    filterObject.stateInit = [1.0, 0.1, 0.0, 0.0, 0.0, 1.0]
+    filterObject.covarInit = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.01,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.01,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0001,
+    ]
 
     qNoiseIn = np.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001**2
-    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.0001**2
-    qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.000001**2
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 0.001**2
+    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5] * 0.0001**2
+    qNoiseIn[5, 5] = qNoiseIn[5, 5] * 0.000001**2
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.017**2
-    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal) * 5
 
 
 def run(saveFigures, show_plots, FilterType, simTime):
@@ -414,26 +543,31 @@ def run(saveFigures, show_plots, FilterType, simTime):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     #
     # set initial spacecraft states
     #
-    scObject.hub.r_CN_NInit = [[-om.AU*1000.], [0.0], [0.0]]              # m   - r_CN_N
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.]]               # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[-0.1*macros.D2R], [0.5*macros.D2R], [0.5*macros.D2R]]   # rad/s - omega_BN_B
+    scObject.hub.r_CN_NInit = [[-om.AU * 1000.0], [0.0], [0.0]]  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [
+        [-0.1 * macros.D2R],
+        [0.5 * macros.D2R],
+        [0.5 * macros.D2R],
+    ]  # rad/s - omega_BN_B
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
     dataLog = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, dataLog)
-
 
     # Make a CSS constelation
     cssConstelation = coarseSunSensor.CSSConstellation()
@@ -445,18 +579,20 @@ def run(saveFigures, show_plots, FilterType, simTime):
         [-0.70710678118654746, 0, 0.70710678118654757],
         [-0.70710678118654746, 0.70710678118654757, 0.0],
         [-0.70710678118654746, 0, -0.70710678118654757],
-        [-0.70710678118654746, -0.70710678118654757, 0.0]
+        [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
     counter = 0
+
     def setupCSS(CSS):
-        CSS.minOutput = 0.
+        CSS.minOutput = 0.0
         CSS.senNoiseStd = 0.017
         CSS.sunInMsg.subscribeTo(sunMsg)
         CSS.stateInMsg.subscribeTo(scObject.scStateOutMsg)
         # Store CSS in registry to prevent garbage collection
-        if not hasattr(setupCSS, '_css_registry'):
+        if not hasattr(setupCSS, "_css_registry"):
             setupCSS._css_registry = []
         setupCSS._css_registry.append(CSS)
+
     for CSSHat in CSSOrientationList:
         newCSS = coarseSunSensor.CoarseSunSensor()
         newCSS.ModelTag = "CSS" + str(counter)
@@ -470,14 +606,14 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #   add the FSW CSS information
     #
     cssConstVehicle = messaging.CSSConfigMsgPayload(
-        nCSS = len(CSSOrientationList),
-        cssVals = [
+        nCSS=len(CSSOrientationList),
+        cssVals=[
             messaging.CSSUnitConfigMsgPayload(
                 nHat_B=CSSHat,
                 CBias=1.0,
             )
             for CSSHat in CSSOrientationList
-        ]
+        ],
     )
     cssConstMsg = messaging.CSSConfigMsg().write(cssConstVehicle)
 
@@ -486,7 +622,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
     numStates = 6
     bVecLogger = None
-    if FilterType == 'EKF':
+    if FilterType == "EKF":
         module = sunlineEKF.sunlineEKF()
         module.ModelTag = "SunlineEKF"
         setupEKFData(module)
@@ -494,7 +630,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, module)
 
-    if FilterType == 'OEKF':
+    if FilterType == "OEKF":
         numStates = 3
 
         module = okeefeEKF.okeefeEKF()
@@ -504,7 +640,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, module)
 
-    if FilterType == 'uKF':
+    if FilterType == "uKF":
         module = sunlineUKF.sunlineUKF()
         module.ModelTag = "SunlineUKF"
         setupUKFData(module)
@@ -512,7 +648,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, module)
 
-    if FilterType == 'SEKF':
+    if FilterType == "SEKF":
         numStates = 5
 
         module = sunlineSEKF.sunlineSEKF()
@@ -521,10 +657,10 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, module)
-        bVecLogger = module.logger('bVec_B', simulationTimeStep)
+        bVecLogger = module.logger("bVec_B", simulationTimeStep)
         scSim.AddModelToTask(simTaskName, bVecLogger)
 
-    if FilterType == 'SuKF':
+    if FilterType == "SuKF":
         numStates = 6
         module = sunlineSuKF.sunlineSuKF()
         module.ModelTag = "SunlineSuKF"
@@ -532,7 +668,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, module)
-        bVecLogger = module.logger('bVec_B', simulationTimeStep)
+        bVecLogger = module.logger("bVec_B", simulationTimeStep)
         scSim.AddModelToTask(simTaskName, bVecLogger)
 
     module.cssDataInMsg.subscribeTo(cssConstelation.constellationOutMsg)
@@ -572,65 +708,78 @@ def run(saveFigures, show_plots, FilterType, simTime):
     # Get the filter outputs through the messages
     stateLog = addTimeColumn(timeAxis, filtLog.state[:, range(numStates)])
     postFitLog = addTimeColumn(timeAxis, filtLog.postFitRes[:, :8])
-    covarLog = addTimeColumn(timeAxis, filtLog.covar[:, range(numStates*numStates)])
+    covarLog = addTimeColumn(timeAxis, filtLog.covar[:, range(numStates * numStates)])
     obsLog = addTimeColumn(timeAxis, filtLog.numObs)
 
     # Get bVec_B through the variable logger
     bVecLog = None if bVecLogger is None else addTimeColumn(timeAxis, bVecLogger.bVec_B)
 
-    dcmLog = np.zeros([len(stateLog[:,0]),3,3])
-    omegaExp = np.zeros([len(stateLog[:,0]),3])
-    if FilterType == 'SEKF':
+    dcmLog = np.zeros([len(stateLog[:, 0]), 3, 3])
+    omegaExp = np.zeros([len(stateLog[:, 0]), 3])
+    if FilterType == "SEKF":
         dcm = sunlineSEKF.new_doubleArray(3 * 3)
         for j in range(9):
             sunlineSEKF.doubleArray_setitem(dcm, j, 0)
-        for i in range(len(stateLog[:,0])):
-            sunlineSEKF.sunlineSEKFComputeDCM_BS(stateLog[i,1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm)
+        for i in range(len(stateLog[:, 0])):
+            sunlineSEKF.sunlineSEKFComputeDCM_BS(
+                stateLog[i, 1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm
+            )
             dcmOut = []
             for j in range(9):
                 dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
-            dcmLog[i,:,:] = np.array(dcmOut).reshape([3,3])
-            omegaExp[i,:] = -np.dot(dcmLog[i,:,:], np.array([0, stateLog[i,4], stateLog[i,5]]))
-    if FilterType == 'SuKF':
+            dcmLog[i, :, :] = np.array(dcmOut).reshape([3, 3])
+            omegaExp[i, :] = -np.dot(
+                dcmLog[i, :, :], np.array([0, stateLog[i, 4], stateLog[i, 5]])
+            )
+    if FilterType == "SuKF":
         dcm = sunlineSuKF.new_doubleArray(3 * 3)
         for j in range(9):
             sunlineSuKF.doubleArray_setitem(dcm, j, 0)
-        for i in range(len(stateLog[:,0])):
-            sunlineSuKF.sunlineSuKFComputeDCM_BS(stateLog[i,1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm)
+        for i in range(len(stateLog[:, 0])):
+            sunlineSuKF.sunlineSuKFComputeDCM_BS(
+                stateLog[i, 1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm
+            )
             dcmOut = []
             for j in range(9):
                 dcmOut.append(sunlineSuKF.doubleArray_getitem(dcm, j))
-            dcmLog[i,:,:] = np.array(dcmOut).reshape([3,3])
-            omegaExp[i,:] = np.dot(dcmLog[i,:,:].T,Outomega_BN[i,1:])
-
+            dcmLog[i, :, :] = np.array(dcmOut).reshape([3, 3])
+            omegaExp[i, :] = np.dot(dcmLog[i, :, :].T, Outomega_BN[i, 1:])
 
     sHat_B = np.zeros(np.shape(OutSunPos))
     sHatDot_B = np.zeros(np.shape(OutSunPos))
-    for i in range(len(OutSunPos[:,0])):
-        sHat_N = (OutSunPos[i,1:] - Outr_BN_N[i,1:])/np.linalg.norm(OutSunPos[i,1:] - Outr_BN_N[i,1:])
-        dcm_BN = rbk.MRP2C(OutSigma_BN[i,1:])
-        sHat_B[i,0] = sHatDot_B[i,0]= OutSunPos[i,0]
-        sHat_B[i,1:] = np.dot(dcm_BN, sHat_N)
-        sHatDot_B[i,1:] = - np.cross(Outomega_BN[i,1:], sHat_B[i,1:] )
+    for i in range(len(OutSunPos[:, 0])):
+        sHat_N = (OutSunPos[i, 1:] - Outr_BN_N[i, 1:]) / np.linalg.norm(
+            OutSunPos[i, 1:] - Outr_BN_N[i, 1:]
+        )
+        dcm_BN = rbk.MRP2C(OutSigma_BN[i, 1:])
+        sHat_B[i, 0] = sHatDot_B[i, 0] = OutSunPos[i, 0]
+        sHat_B[i, 1:] = np.dot(dcm_BN, sHat_N)
+        sHatDot_B[i, 1:] = -np.cross(Outomega_BN[i, 1:], sHat_B[i, 1:])
 
     expected = np.zeros(np.shape(stateLog))
-    expected[:,0:4] = sHat_B
+    expected[:, 0:4] = sHat_B
     # The OEKF has fewer states
-    if FilterType != 'OEKF' and FilterType != 'SEKF' and FilterType != 'SuKF':
-        expected[:, 4:] = sHatDot_B[:,1:]
-    if FilterType == 'SEKF' or FilterType == 'SuKF':
+    if FilterType != "OEKF" and FilterType != "SEKF" and FilterType != "SuKF":
+        expected[:, 4:] = sHatDot_B[:, 1:]
+    if FilterType == "SEKF" or FilterType == "SuKF":
         for i in range(len(stateLog[:, 0])):
-            expected[i, 4] = omegaExp[i,1]
-            expected[i, 5] = omegaExp[i,2]
+            expected[i, 4] = omegaExp[i, 1]
+            expected[i, 5] = omegaExp[i, 2]
 
     #   plot the results
     #
     errorVsTruth = np.copy(stateLog)
-    errorVsTruth[:,1:] -= expected[:,1:]
+    errorVsTruth[:, 1:] -= expected[:, 1:]
 
-    Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots, saveFigures)
-    Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots, saveFigures)
-    Fplot.PostFitResiduals(postFitLog, np.sqrt(module.qObsVal), FilterType, show_plots, saveFigures)
+    Fplot.StateErrorCovarPlot(
+        errorVsTruth, covarLog, FilterType, show_plots, saveFigures
+    )
+    Fplot.StatesVsExpected(
+        stateLog, covarLog, expected, FilterType, show_plots, saveFigures
+    )
+    Fplot.PostFitResiduals(
+        postFitLog, np.sqrt(module.qObsVal), FilterType, show_plots, saveFigures
+    )
     Fplot.numMeasurements(obsLog, FilterType, show_plots, saveFigures)
 
     if show_plots:
@@ -639,18 +788,19 @@ def run(saveFigures, show_plots, FilterType, simTime):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,       # save figures to file
-        True,      # show_plots
-        'SuKF',
-         400
-       )
+    run(
+        False,  # save figures to file
+        True,  # show_plots
+        "SuKF",
+        400,
+    )

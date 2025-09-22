@@ -118,8 +118,8 @@ def run(showPlots: bool = False, visualize: bool = False):
     scSim.InitializeSimulation()
 
     # Set the initial position of both CubeSats
-    scene.getBody("hub_1").setPosition([-1, 0, 0]) # m
-    scene.getBody("hub_2").setPosition([0, 0, -2]) # m
+    scene.getBody("hub_1").setPosition([-1, 0, 0])  # m
+    scene.getBody("hub_2").setPosition([0, 0, -2])  # m
 
     # Thrust so that the spacecraft get close to each other
     force = 1.0

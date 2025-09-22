@@ -31,10 +31,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.simulation import spacecraft, linearTranslationOneDOFStateEffector, gravityEffector
+from Basilisk.simulation import (
+    spacecraft,
+    linearTranslationOneDOFStateEffector,
+    gravityEffector,
+)
 from Basilisk.architecture import messaging
 
 
@@ -46,11 +50,15 @@ from Basilisk.architecture import messaging
 
 
 # tests are paramterized by four functions
-@pytest.mark.parametrize("function", ["translatingBodyNoInput"
-    , "translatingBodyLockFlag"
-    , "translatingBodyCommandedForce"
-    , "translatingBodyRhoReference"
-                                      ])
+@pytest.mark.parametrize(
+    "function",
+    [
+        "translatingBodyNoInput",
+        "translatingBodyLockFlag",
+        "translatingBodyCommandedForce",
+        "translatingBodyRhoReference",
+    ],
+)
 def test_translatingBody(show_plots, function):
     r"""
     **Validation Test Description**
@@ -113,13 +121,23 @@ def translatingBodyNoInput(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = (
+        linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    )
 
     # Define properties of translating body
     mass = 20.0
@@ -128,12 +146,8 @@ def translatingBodyNoInput(show_plots):
     fHat_B = [[3.0 / 5.0], [4.0 / 5.0], [0.0]]
     r_FcF_F = [[-1.0], [1.0], [0.0]]
     r_F0B_B = [[-5.0], [4.0], [3.0]]
-    IPntFc_F = [[50.0, 0.0, 0.0],
-                [0.0, 80.0, 0.0],
-                [0.0, 0.0, 60.0]]
-    dcm_FB = [[0.0, -1.0, 0.0],
-              [0.0, 0.0, -1.0],
-              [1.0, 0.0, 0.0]]
+    IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]]
+    dcm_FB = [[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]]
     k = 100.0
     c = 0
 
@@ -161,7 +175,7 @@ def translatingBodyNoInput(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -170,7 +184,9 @@ def translatingBodyNoInput(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Initialize the simulation
@@ -208,47 +224,57 @@ def translatingBodyNoInput(show_plots):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (rotEnergy - initialRotEnergy) / initialRotEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Energy")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rho)
-    plt.xlabel('time (s)')
-    plt.ylabel('rho')
+    plt.xlabel("time (s)")
+    plt.ylabel("rho")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rhoDot)
-    plt.xlabel('time (s)')
-    plt.ylabel('rhoDot')
+    plt.xlabel("time (s)")
+    plt.ylabel("rhoDot")
 
     if show_plots:
         plt.show()
@@ -257,11 +283,31 @@ def translatingBodyNoInput(show_plots):
     # Testing setup
     accuracy = 1e-12
 
-    np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
-    np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy, err_msg="Rotational energy is not constant.")
+    np.testing.assert_allclose(
+        finalOrbEnergy,
+        initialOrbEnergy,
+        rtol=accuracy,
+        err_msg="Orbital energy is not constant.",
+    )
+    np.testing.assert_allclose(
+        finalRotEnergy,
+        initialRotEnergy,
+        rtol=accuracy,
+        err_msg="Rotational energy is not constant.",
+    )
     for i in range(3):
-        np.testing.assert_allclose(finalOrbAngMom, initialOrbAngMom_N, rtol=accuracy, err_msg="Orbital angular momentum is not constant.")
-        np.testing.assert_allclose(finalRotAngMom, initialRotAngMom_N, rtol=accuracy, err_msg="Rotational angular momentum is not constant.")
+        np.testing.assert_allclose(
+            finalOrbAngMom,
+            initialOrbAngMom_N,
+            rtol=accuracy,
+            err_msg="Orbital angular momentum is not constant.",
+        )
+        np.testing.assert_allclose(
+            finalRotAngMom,
+            initialRotAngMom_N,
+            rtol=accuracy,
+            err_msg="Rotational angular momentum is not constant.",
+        )
 
 
 # rho ref and cmd force are zero, lock flag is enabled
@@ -292,13 +338,23 @@ def translatingBodyLockFlag(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = (
+        linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    )
 
     # Define properties of translating body
     mass = 20.0
@@ -307,12 +363,8 @@ def translatingBodyLockFlag(show_plots):
     fHat_B = [[3.0 / 5.0], [4.0 / 5.0], [0.0]]
     r_FcF_F = [[-1.0], [1.0], [0.0]]
     r_F0B_B = [[-5.0], [4.0], [3.0]]
-    IPntFc_F = [[50.0, 0.0, 0.0],
-                [0.0, 80.0, 0.0],
-                [0.0, 0.0, 60.0]]
-    dcm_FB = [[0.0, -1.0, 0.0],
-              [0.0, 0.0, -1.0],
-              [1.0, 0.0, 0.0]]
+    IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]]
+    dcm_FB = [[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]]
     k = 100.0
     c = 0
 
@@ -346,7 +398,7 @@ def translatingBodyLockFlag(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -355,7 +407,9 @@ def translatingBodyLockFlag(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Initialize the simulation
@@ -393,47 +447,57 @@ def translatingBodyLockFlag(show_plots):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (rotEnergy - initialRotEnergy) / initialRotEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Energy")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rho)
-    plt.xlabel('time (s)')
-    plt.ylabel('rho')
+    plt.xlabel("time (s)")
+    plt.ylabel("rho")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rhoDot)
-    plt.xlabel('time (s)')
-    plt.ylabel('rhoDot')
+    plt.xlabel("time (s)")
+    plt.ylabel("rhoDot")
 
     if show_plots:
         plt.show()
@@ -442,11 +506,31 @@ def translatingBodyLockFlag(show_plots):
     # Testing setup
     accuracy = 1e-12
 
-    np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
-    np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy, err_msg="Rotational energy is not constant.")
+    np.testing.assert_allclose(
+        finalOrbEnergy,
+        initialOrbEnergy,
+        rtol=accuracy,
+        err_msg="Orbital energy is not constant.",
+    )
+    np.testing.assert_allclose(
+        finalRotEnergy,
+        initialRotEnergy,
+        rtol=accuracy,
+        err_msg="Rotational energy is not constant.",
+    )
     for i in range(3):
-        np.testing.assert_allclose(finalOrbAngMom, initialOrbAngMom_N, rtol=accuracy, err_msg="Orbital angular momentum is not constant.")
-        np.testing.assert_allclose(finalRotAngMom, initialRotAngMom_N, rtol=accuracy, err_msg="Rotational angular momentum is not constant.")
+        np.testing.assert_allclose(
+            finalOrbAngMom,
+            initialOrbAngMom_N,
+            rtol=accuracy,
+            err_msg="Orbital angular momentum is not constant.",
+        )
+        np.testing.assert_allclose(
+            finalRotAngMom,
+            initialRotAngMom_N,
+            rtol=accuracy,
+            err_msg="Rotational angular momentum is not constant.",
+        )
 
 
 # cmd force is nonzero, rho ref is zero, no lock flag
@@ -477,13 +561,23 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = (
+        linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    )
 
     # Define properties of translating body
     mass = 20.0
@@ -492,12 +586,8 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     fHat_B = [[3.0 / 5.0], [4.0 / 5.0], [0.0]]
     r_FcF_F = [[-1.0], [1.0], [0.0]]
     r_F0B_B = [[-5.0], [4.0], [3.0]]
-    IPntFc_F = [[50.0, 0.0, 0.0],
-                [0.0, 80.0, 0.0],
-                [0.0, 0.0, 60.0]]
-    dcm_FB = [[0.0, -1.0, 0.0],
-              [0.0, 0.0, -1.0],
-              [1.0, 0.0, 0.0]]
+    IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]]
+    dcm_FB = [[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]]
     k = 100.0
     c = 0
 
@@ -531,7 +621,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -540,7 +630,9 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Initialize the simulation
@@ -575,40 +667,50 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rho)
-    plt.xlabel('time (s)')
-    plt.ylabel('rho')
+    plt.xlabel("time (s)")
+    plt.ylabel("rho")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rhoDot)
-    plt.xlabel('time (s)')
-    plt.ylabel('rhoDot')
+    plt.xlabel("time (s)")
+    plt.ylabel("rhoDot")
 
     if show_plots:
         plt.show()
@@ -617,10 +719,25 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     # Testing setup
     accuracy = 1e-12
 
-    np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
+    np.testing.assert_allclose(
+        finalOrbEnergy,
+        initialOrbEnergy,
+        rtol=accuracy,
+        err_msg="Orbital energy is not constant.",
+    )
     for i in range(3):
-        np.testing.assert_allclose(finalOrbAngMom, initialOrbAngMom_N, rtol=accuracy, err_msg="Orbital angular momentum is not constant.")
-        np.testing.assert_allclose(finalRotAngMom, initialRotAngMom_N, rtol=accuracy, err_msg="Rotational angular momentum is not constant.")
+        np.testing.assert_allclose(
+            finalOrbAngMom,
+            initialOrbAngMom_N,
+            rtol=accuracy,
+            err_msg="Orbital angular momentum is not constant.",
+        )
+        np.testing.assert_allclose(
+            finalRotAngMom,
+            initialRotAngMom_N,
+            rtol=accuracy,
+            err_msg="Rotational angular momentum is not constant.",
+        )
 
 
 # rho ref is nonzero, cmd force is zero and lock flag is false
@@ -651,13 +768,23 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = (
+        linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    )
 
     # Define properties of translating body
     mass = 20.0
@@ -666,12 +793,8 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     fHat_B = [[3.0 / 5.0], [4.0 / 5.0], [0.0]]
     r_FcF_F = [[-1.0], [1.0], [0.0]]
     r_F0B_B = [[-5.0], [4.0], [3.0]]
-    IPntFc_F = [[50.0, 0.0, 0.0],
-                [0.0, 80.0, 0.0],
-                [0.0, 0.0, 60.0]]
-    dcm_FB = [[0.0, -1.0, 0.0],
-              [0.0, 0.0, -1.0],
-              [1.0, 0.0, 0.0]]
+    IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]]
+    dcm_FB = [[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]]
     k = 100.0
     c = 30
 
@@ -706,7 +829,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -715,7 +838,9 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Initialize the simulation
@@ -751,40 +876,50 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rho)
-    plt.xlabel('time (s)')
-    plt.ylabel('rho')
+    plt.xlabel("time (s)")
+    plt.ylabel("rho")
 
     plt.figure()
     plt.clf()
     plt.plot(timeSec, rhoDot)
-    plt.xlabel('time (s)')
-    plt.ylabel('rhoDot')
+    plt.xlabel("time (s)")
+    plt.ylabel("rhoDot")
 
     if show_plots:
         plt.show()
@@ -793,11 +928,31 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     # Testing setup
     accuracy = 1e-12
 
-    np.testing.assert_allclose(finalAngle, rhoRef, atol=0.01, err_msg="Angle doesn't settle to reference angle.")
-    np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
+    np.testing.assert_allclose(
+        finalAngle,
+        rhoRef,
+        atol=0.01,
+        err_msg="Angle doesn't settle to reference angle.",
+    )
+    np.testing.assert_allclose(
+        finalOrbEnergy,
+        initialOrbEnergy,
+        rtol=accuracy,
+        err_msg="Orbital energy is not constant.",
+    )
     for i in range(3):
-        np.testing.assert_allclose(finalOrbAngMom, initialOrbAngMom_N, rtol=accuracy, err_msg="Orbital angular momentum is not constant.")
-        np.testing.assert_allclose(finalRotAngMom, initialRotAngMom_N, rtol=accuracy, err_msg="Rotational angular momentum is not constant.")
+        np.testing.assert_allclose(
+            finalOrbAngMom,
+            initialOrbAngMom_N,
+            rtol=accuracy,
+            err_msg="Orbital angular momentum is not constant.",
+        )
+        np.testing.assert_allclose(
+            finalRotAngMom,
+            initialRotAngMom_N,
+            rtol=accuracy,
+            err_msg="Rotational angular momentum is not constant.",
+        )
 
 
 if __name__ == "__main__":

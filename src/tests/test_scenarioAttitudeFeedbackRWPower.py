@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,7 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 
 
 #
@@ -37,7 +35,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioAttitudeFeedbackRWPower
 
 
@@ -45,6 +43,7 @@ import scenarioAttitudeFeedbackRWPower
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -68,7 +67,6 @@ def test_bskAttitudeFeedbackRW(show_plots, useRwPowerGeneration):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-
     try:
         figureList = scenarioAttitudeFeedbackRWPower.run(False, useRwPowerGeneration)
 
@@ -78,7 +76,9 @@ def test_bskAttitudeFeedbackRW(show_plots, useRwPowerGeneration):
 
     except OSError as err:
         testFailCount += 1
-        testMessages.append("scenarioAttitudeFeedbackRWPower tutorial example script failed.")
+        testMessages.append(
+            "scenarioAttitudeFeedbackRWPower tutorial example script failed."
+        )
 
     #   print out success message if no error were found
     if testFailCount == 0:

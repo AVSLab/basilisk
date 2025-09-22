@@ -89,12 +89,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import locationPointing
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
-                                    rwMotorTorque, hillPoint)
-from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, ephemerisConverter
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.fswAlgorithms import (
+    mrpFeedback,
+    attTrackingError,
+    rwMotorTorque,
+    hillPoint,
+)
+from Basilisk.simulation import (
+    reactionWheelStateEffector,
+    simpleNav,
+    spacecraft,
+    ephemerisConverter,
+)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    unitTestSupport,
+    vizSupport,
+)
 
 try:
     from Basilisk.simulation import vizInterface
@@ -104,6 +119,7 @@ except ImportError:
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -113,65 +129,83 @@ def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeData,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
 
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     """Plot the RW command torques."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\hat u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
 
 
 def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     """Plot the RW actual motor torques."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\hat u_{s,' + str(idx) + '}$')
-        plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\hat u_{s," + str(idx) + "}$",
+        )
+        plt.plot(
+            timeData,
+            dataRW[idx],
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label="$u_{s," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
 
 
 def plot_rate_error(timeData, dataOmegaBR):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (rad/s) ')
+        plt.plot(
+            timeData,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error (rad/s) ")
 
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW spin rates."""
     plt.figure(4)
     for idx in range(numRW):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\Omega_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
+        plt.plot(
+            timeData,
+            dataOmegaRW[:, idx] / macros.RPM,
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\Omega_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Speed (RPM) ")
 
 
 def run(show_plots):
@@ -211,18 +245,14 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "servicer"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # create the debris object states
     scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "debris"
-    I2 = [600., 0., 0.,
-          0., 650., 0.,
-          0., 0, 450.]
+    I2 = [600.0, 0.0, 0.0, 0.0, 650.0, 0.0, 0.0, 0, 450.0]
     scObject2.hub.mHub = 350.0  # kg
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
 
@@ -236,9 +266,9 @@ def run(show_plots):
     # setup Earth Gravity Body
     # earth = gravFactory.createEarth()
     # earth.isCentralBody = True  # ensure this is the central gravitational body
-    gravBodies = gravFactory.createBodies('sun', 'earth')
-    gravBodies['earth'].isCentralBody = True
-    mu = gravBodies['earth'].mu
+    gravBodies = gravFactory.createBodies("sun", "earth")
+    gravBodies["earth"].isCentralBody = True
+    mu = gravBodies["earth"].mu
     sunIdx = 0
     earthIdx = 1
 
@@ -249,7 +279,7 @@ def run(show_plots):
     # setup SPICE interface for celestial objects
     timeInitString = "2022 MAY 1 00:28:30.0"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
-    spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = "Earth"
     scSim.AddModelToTask(simTaskName, spiceObject)
 
     #
@@ -262,16 +292,28 @@ def run(show_plots):
     varRWModel = messaging.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
-                           , RWModel=varRWModel
-                           )
-    RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
-                           , RWModel=varRWModel
-                           )
-    RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
-                           , rWB_B=[0.5, 0.5, 0.5]  # meters
-                           , RWModel=varRWModel
-                           )
+    RW1 = rwFactory.create(
+        "Honeywell_HR16",
+        [1, 0, 0],
+        maxMomentum=50.0,
+        Omega=100.0,  # RPM
+        RWModel=varRWModel,
+    )
+    RW2 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 1, 0],
+        maxMomentum=50.0,
+        Omega=200.0,  # RPM
+        RWModel=varRWModel,
+    )
+    RW3 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 0, 1],
+        maxMomentum=50.0,
+        Omega=300.0,  # RPM
+        rWB_B=[0.5, 0.5, 0.5],  # meters
+        RWModel=varRWModel,
+    )
 
     numRW = rwFactory.getNumOfDevices()
 
@@ -298,7 +340,7 @@ def run(show_plots):
     # Create an ephemeris converter to convert messages of type
     # 'SpicePlanetStateMsgPayload' to 'EphemerisMsgPayload'
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.ModelTag = "EphemData"
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
     scSim.AddModelToTask(simTaskName, ephemObject)
@@ -360,7 +402,7 @@ def run(show_plots):
     mrpControl.K = 3.5
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
@@ -371,16 +413,16 @@ def run(show_plots):
     rwMotorTorqueObj.rwParamsInMsg.subscribeTo(fswRwMsg)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(rwMotorTorqueObj.rwMotorTorqueOutMsg)
     # Make the RW control all three body axes
-    controlAxes_B = [
-        1, 0, 0, 0, 1, 0, 0, 0, 1
-    ]
+    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     rwCmdLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     sNavLog = sNavObject.transOutMsg.recorder(samplingTime)
@@ -411,15 +453,15 @@ def run(show_plots):
     scObject2.hub.v_CN_NInit = v2N  # m/s - v_CN_N
     scObject2.hub.sigma_BNInit = [[0.3], [0.1], [0.2]]  # sigma_CN_B
     scObject2.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
-    n = np.sqrt(mu/oe2.a/oe2.a/oe2.a)
-    orbitPeriod = 2*np.pi / n   # in seconds
+    n = np.sqrt(mu / oe2.a / oe2.a / oe2.a)
+    orbitPeriod = 2 * np.pi / n  # in seconds
 
     # setup the servicer (deputy) orbit using Hill frame coordinates
     # oe = copy.deepcopy(oe2)
     # oe.e = 0.000001
     # rN, vN = orbitalMotion.elem2rv(mu, oe)
     rho_H = [-10.0, -40.0, 0.0]
-    rho_Prime_H = [0, -1.5*n*rho_H[0], 0]
+    rho_Prime_H = [0, -1.5 * n * rho_H[0], 0]
     rN, vN = orbitalMotion.hill2rv(r2N, v2N, rho_H, rho_Prime_H)
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
@@ -438,11 +480,14 @@ def run(show_plots):
         servicerLight.markerDiameter = 0.1
         servicerLight.color = vizInterface.IntVector(vizSupport.toRGBA255("white"))
 
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
-                                                  , rwEffectorList=[rwStateEffector, None]
-                                                  , lightList=[[servicerLight], None]
-                                                  # , saveFile=fileName
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            [scObject, scObject2],
+            rwEffectorList=[rwStateEffector, None],
+            lightList=[[servicerLight], None],
+            # , saveFile=fileName
+        )
 
         viz.settings.trueTrajectoryLinesOn = -1
         viz.settings.orbitLinesOn = 2
@@ -485,7 +530,7 @@ def run(show_plots):
         rho_H, rho_Prime_H = orbitalMotion.rv2hill(rc, vc, rd, vd)
         xOff = rho_H[0]
         rho_Prime_H[0] = 0.0
-        rho_Prime_H[1] = -1.5*n*xOff
+        rho_Prime_H[1] = -1.5 * n * xOff
         unusedPos, vd = orbitalMotion.hill2rv(rc, vc, rho_H, rho_Prime_H)
         servicerVel.setState(vd)
 
@@ -495,17 +540,17 @@ def run(show_plots):
         rc = unitTestSupport.EigenVector3d2np(debrisPos.getState())
         vc = unitTestSupport.EigenVector3d2np(debrisVel.getState())
         rho_H, rho_Prime_H = orbitalMotion.rv2hill(rc, vc, rd, vd)
-        alpha = np.arccos((rho_H[0] - xOff)/A0)
+        alpha = np.arccos((rho_H[0] - xOff) / A0)
         if B0 > 0.01:
-            beta = np.arccos(rho_H[2]/B0)
+            beta = np.arccos(rho_H[2] / B0)
         else:
             if B0 == 0.0:
                 beta = 0.0
         # yOff = rho_H[1] + 2*A0*np.sin(alpha)
-        rho_Prime_H[0] = -A0*n*np.sin(alpha)
-        rho_Prime_H[1] = -2*A0*n*np.cos(alpha) - 1.5*n*xOff
+        rho_Prime_H[0] = -A0 * n * np.sin(alpha)
+        rho_Prime_H[1] = -2 * A0 * n * np.cos(alpha) - 1.5 * n * xOff
         if B0 >= 0.0:
-            rho_Prime_H[2] = -B0*n*np.sin(beta)
+            rho_Prime_H[2] = -B0 * n * np.sin(beta)
         unusedPos, vd = orbitalMotion.hill2rv(rc, vc, rho_H, rho_Prime_H)
         servicerVel.setState(vd)
 
@@ -573,5 +618,5 @@ def run(show_plots):
 #
 if __name__ == "__main__":
     run(
-        True      # show_plots
+        True  # show_plots
     )

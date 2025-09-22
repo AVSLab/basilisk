@@ -37,7 +37,7 @@ def run():
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.0)))
 
     # create modules
     mod1 = cModuleTemplate.cModuleTemplate()
@@ -48,7 +48,7 @@ def run():
     # setup message recording
     msgRec = mod1.dataOutMsg.recorder()
     scSim.AddModelToTask("dynamicsTask", msgRec)
-    msgRec2 = mod1.dataOutMsg.recorder(macros.sec2nano(20.))
+    msgRec2 = mod1.dataOutMsg.recorder(macros.sec2nano(20.0))
     scSim.AddModelToTask("dynamicsTask", msgRec2)
 
     #  initialize Simulation:
@@ -63,16 +63,22 @@ def run():
     plt.figure(1)
     figureList = {}
     for idx in range(3):
-        plt.plot(msgRec.times() * macros.NANO2SEC, msgRec.dataVector[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$x_{' + str(idx) + '}$')
-        plt.plot(msgRec2.times() * macros.NANO2SEC, msgRec2.dataVector[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\hat x_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [sec]')
-    plt.ylabel('Module Data [units]')
+        plt.plot(
+            msgRec.times() * macros.NANO2SEC,
+            msgRec.dataVector[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$x_{" + str(idx) + "}$",
+        )
+        plt.plot(
+            msgRec2.times() * macros.NANO2SEC,
+            msgRec2.dataVector[:, idx],
+            "--",
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\hat x_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [sec]")
+    plt.ylabel("Module Data [units]")
     if "pytest" not in sys.modules:
         plt.show()
     figureList["bsk-4"] = plt.figure(1)

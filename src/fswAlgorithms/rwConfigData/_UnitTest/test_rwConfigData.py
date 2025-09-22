@@ -9,7 +9,9 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import rwConfigData
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 def test_rwConfigData():
@@ -17,8 +19,9 @@ def test_rwConfigData():
     [testResults, testMessage] = rwConfigDataTestFunction()
     assert testResults < 1, testMessage
 
+
 def rwConfigDataTestFunction():
-    """ Test the rwConfigData module """
+    """Test the rwConfigData module"""
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -34,7 +37,9 @@ def rwConfigDataTestFunction():
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate)) # Add a new task to the process
+    testProc.addTask(
+        unitTestSim.CreateNewTask(unitTaskName, testProcessRate)
+    )  # Add a new task to the process
 
     # Construct the cssComm module
     module = rwConfigData.rwConfigData()
@@ -51,7 +56,9 @@ def rwConfigDataTestFunction():
     rwConfigElementList = list()
     for rw in range(numRW):
         rwConfigElementMsg = messaging.RWConfigElementMsgPayload()
-        rwConfigElementMsg.gsHat_B = gsHat_initial[rw]  # Spin axis unit vector of the wheel in structure # [1, 0, 0]
+        rwConfigElementMsg.gsHat_B = gsHat_initial[
+            rw
+        ]  # Spin axis unit vector of the wheel in structure # [1, 0, 0]
         rwConfigElementMsg.Js = js_initial[rw]  # Spin axis inertia of wheel [kgm2]
         rwConfigElementMsg.uMax = uMax_initial[rw]  # maximum RW motor torque [Nm]
 
@@ -83,24 +90,43 @@ def rwConfigDataTestFunction():
     # Get the output from this simulation
     JsListLog = dataLog.JsList[:, :numRW]
     uMaxLog = dataLog.uMax[:, :numRW]
-    GsMatrix_B_Log = dataLog.GsMatrix_B[:, :(3*numRW)]
+    GsMatrix_B_Log = dataLog.GsMatrix_B[:, : (3 * numRW)]
 
     accuracy = 1e-6
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND([js_initial]*2, JsListLog, accuracy,
-                                                                 "rwConfigData JsList",
-                                                                 3, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArrayND([uMax_initial]*2, uMaxLog, accuracy,
-                                                                 "rwConfigData uMax",
-                                                                 3, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArrayND([gsHat_initial.flatten()]*2, GsMatrix_B_Log, accuracy,
-                                                                 "rwConfigData GsMatrix_B",
-                                                                 3*numRW, testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        [js_initial] * 2,
+        JsListLog,
+        accuracy,
+        "rwConfigData JsList",
+        3,
+        testFailCount,
+        testMessages,
+    )
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        [uMax_initial] * 2,
+        uMaxLog,
+        accuracy,
+        "rwConfigData uMax",
+        3,
+        testFailCount,
+        testMessages,
+    )
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        [gsHat_initial.flatten()] * 2,
+        GsMatrix_B_Log,
+        accuracy,
+        "rwConfigData GsMatrix_B",
+        3 * numRW,
+        testFailCount,
+        testMessages,
+    )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_rwConfigData()

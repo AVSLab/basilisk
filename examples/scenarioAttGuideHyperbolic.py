@@ -120,17 +120,25 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
 from Basilisk.simulation import extForceTorque, simpleNav, spacecraft
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+)
 from Basilisk.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def plot_track_error_norm(timeLineSet, dataSigmaBR):
     """Plot the attitude tracking error norm value."""
@@ -139,45 +147,55 @@ def plot_track_error_norm(timeLineSet, dataSigmaBR):
     ax = fig.gca()
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
-    ax.set_yscale('log')
+    plt.plot(
+        timeLineSet,
+        sNorm,
+        color=unitTestSupport.getLineColor(1, 3),
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
+    ax.set_yscale("log")
+
 
 def plot_control_torque(timeLineSet, dataLr):
     """Plot the attiude control torque effort."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeLineSet,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
+
 
 def plot_rate_error(timeLineSet, dataOmegaBR):
     """Plot the body angular velocity tracking errors."""
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeLineSet,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
 
 
 def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
     """Plot the spacecraft orbit trajectory."""
     # draw orbit in perifocal frame
     p = oe.a * (1 - oe.e * oe.e)
-    plt.figure(4, figsize=tuple(np.array((1.0, 1.)) * 4.75), dpi=100)
+    plt.figure(4, figsize=tuple(np.array((1.0, 1.0)) * 4.75), dpi=100)
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
-    planetColor = '#008800'
+    planetColor = "#008800"
     # planet = gravFactory.createEarth()
     planetRadius = planet_radius / 1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
@@ -188,21 +206,32 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
         oeData = orbitalMotion.rv2elem(mu, dataPos[idx], dataVel[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000,
-             color='#aa0000', linewidth=3.0, label='Simulated Flight')
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000,
+        color="#aa0000",
+        linewidth=3.0,
+        label="Simulated Flight",
+    )
 
     plt.axis(np.array([-1, 1, -1, 1]) * 1.25 * np.amax(rData) / 1000)
 
     # draw the full osculating orbit from the initial conditions
-    tempAngle = (1. / 2.) * (np.pi - 2 * np.arcsin(1 / oe.e)) * 1.01
+    tempAngle = (1.0 / 2.0) * (np.pi - 2 * np.arcsin(1 / oe.e)) * 1.01
     fData = np.linspace(np.pi - tempAngle, -np.pi + tempAngle, 100)
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555', label='Orbit Track')
-    plt.xlabel('$i_e$ Cord. [km]')
-    plt.ylabel('$i_p$ Cord. [km]')
-    plt.legend(loc='lower left')
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000,
+        "--",
+        color="#555555",
+        label="Orbit Track",
+    )
+    plt.xlabel("$i_e$ Cord. [km]")
+    plt.ylabel("$i_p$ Cord. [km]")
+    plt.legend(loc="lower left")
     plt.grid()
 
 
@@ -224,7 +253,7 @@ def run(show_plots, useAltBodyFrame):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(750.)
+    simulationTime = macros.sec2nano(750.0)
 
     #
     #  create the simulation process
@@ -232,7 +261,7 @@ def run(show_plots, useAltBodyFrame):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(1.)
+    simulationTimeStep = macros.sec2nano(1.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -243,11 +272,13 @@ def run(show_plots, useAltBodyFrame):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -335,7 +366,7 @@ def run(show_plots, useAltBodyFrame):
     mrpControl.K = 3.5
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # connect torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -344,7 +375,9 @@ def run(show_plots, useAltBodyFrame):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
@@ -358,9 +391,12 @@ def run(show_plots, useAltBodyFrame):
     #
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -423,5 +459,5 @@ def run(show_plots, useAltBodyFrame):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        False  # useAltBodyFrame
-        )
+        False,  # useAltBodyFrame
+    )

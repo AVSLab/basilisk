@@ -98,6 +98,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -106,7 +107,10 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -144,7 +148,7 @@ def run(show_plots, maneuverCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -169,7 +173,7 @@ def run(show_plots, maneuverCase):
     # setup spice library for Earth ephemeris
     timeInitString = "2024 September 21, 21:00:00.0 TDB"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
-    spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = "Earth"
 
     # need spice to run before spacecraft module as it provides the spacecraft translational states
     scSim.AddModelToTask(simTaskName, spiceObject)
@@ -179,8 +183,8 @@ def run(show_plots, maneuverCase):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000  # meters
-    rGEO = math.pow(earth.mu / math.pow((2. * np.pi) / (24. * 3600.), 2), 1. / 3.)
+    rLEO = 7000.0 * 1000  # meters
+    rGEO = math.pow(earth.mu / math.pow((2.0 * np.pi) / (24.0 * 3600.0), 2), 1.0 / 3.0)
     oe.a = rLEO
     oe.e = 0.0001
     oe.i = 0.0 * macros.D2R
@@ -193,29 +197,36 @@ def run(show_plots, maneuverCase):
 
     # set the simulation time
     n = np.sqrt(earth.mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(0.25 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
 
     if vizSupport.vizFound:
         # if this scenario is to interface with the BSK Viz, uncomment the following lines
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  , oscOrbitColorList=[vizSupport.toRGBA255("yellow")]
-                                                  , trueOrbitColorList=[vizSupport.toRGBA255("turquoise")]
-                                                  # , saveFile=fileName
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            oscOrbitColorList=[vizSupport.toRGBA255("yellow")],
+            trueOrbitColorList=[vizSupport.toRGBA255("turquoise")],
+            # , saveFile=fileName
+        )
         viz.settings.mainCameraTarget = "earth"
         viz.settings.showCelestialBodyLabels = 1
         viz.settings.showSpacecraftLabels = 1
         viz.settings.truePathRelativeBody = "earth"
-        viz.settings.trueTrajectoryLinesOn = 3  # relative to celestial body inertial frame
+        viz.settings.trueTrajectoryLinesOn = (
+            3  # relative to celestial body inertial frame
+        )
 
     #
     #   initialize Simulation
@@ -249,7 +260,7 @@ def run(show_plots, maneuverCase):
         hHat = hHat / np.linalg.norm(hHat)
         vHat = np.cross(hHat, rHat)
         v0 = np.dot(vHat, vVt)
-        vVt = vVt - (1. - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
+        vVt = vVt - (1.0 - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
 
         # After computing the maneuver specific Delta_v's, the state managers velocity is updated through
         velRef.setState(vVt)
@@ -258,7 +269,7 @@ def run(show_plots, maneuverCase):
         # Hohmann Transfer to GEO
         v0 = np.linalg.norm(vVt)
         r0 = np.linalg.norm(rVt)
-        at = (r0 + rGEO) * .5
+        at = (r0 + rGEO) * 0.5
         v0p = np.sqrt(earth.mu / at * rGEO / r0)
         n1 = np.sqrt(earth.mu / at / at / at)
         T2 = macros.sec2nano((np.pi) / n1)
@@ -285,7 +296,7 @@ def run(show_plots, maneuverCase):
         hHat = hHat / np.linalg.norm(hHat)
         vHat = np.cross(hHat, rHat)
         v0 = np.dot(vHat, vVt)
-        vVt = vVt - (1. - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
+        vVt = vVt - (1.0 - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
         velRef.setState(vVt)
         T3 = macros.sec2nano(P * 0.25)
     else:
@@ -321,14 +332,17 @@ def run(show_plots, maneuverCase):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(3):
-        plt.plot(dataRec.times() * macros.NANO2HOUR, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [h]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            dataRec.times() * macros.NANO2HOUR,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [h]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
     pltName = fileName + "1" + str(int(maneuverCase))
     figureList[pltName] = plt.figure(1)
@@ -338,33 +352,39 @@ def run(show_plots, maneuverCase):
         plt.figure(2)
         fig = plt.gcf()
         ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
+        ax.ticklabel_format(useOffset=False, style="plain")
         iData = []
         for idx in range(0, len(posData)):
             oeData = orbitalMotion.rv2elem(earth.mu, posData[idx], velData[idx])
             iData.append(oeData.i * macros.R2D)
-        plt.plot(dataRec.times() * macros.NANO2HOUR, np.ones(len(posData[:, 0])) * 8.93845, '--', color='#444444'
-                 )
-        plt.plot(dataRec.times() * macros.NANO2HOUR, iData, color='#aa0000'
-                 )
+        plt.plot(
+            dataRec.times() * macros.NANO2HOUR,
+            np.ones(len(posData[:, 0])) * 8.93845,
+            "--",
+            color="#444444",
+        )
+        plt.plot(dataRec.times() * macros.NANO2HOUR, iData, color="#aa0000")
         plt.ylim([-1, 10])
-        plt.xlabel('Time [h]')
-        plt.ylabel('Inclination [deg]')
+        plt.xlabel("Time [h]")
+        plt.ylabel("Inclination [deg]")
 
     else:
         # show SMA
         plt.figure(2)
         fig = plt.gcf()
         ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
+        ax.ticklabel_format(useOffset=False, style="plain")
         rData = []
         for idx in range(0, len(posData)):
             oeData = orbitalMotion.rv2elem_parab(earth.mu, posData[idx], velData[idx])
-            rData.append(oeData.rmag / 1000.)
-        plt.plot(dataRec.times() * macros.NANO2HOUR, rData, color='#aa0000',
-                 )
-        plt.xlabel('Time [h]')
-        plt.ylabel('Radius [km]')
+            rData.append(oeData.rmag / 1000.0)
+        plt.plot(
+            dataRec.times() * macros.NANO2HOUR,
+            rData,
+            color="#aa0000",
+        )
+        plt.xlabel("Time [h]")
+        plt.ylabel("Radius [km]")
     pltName = fileName + "2" + str(int(maneuverCase))
     figureList[pltName] = plt.figure(2)
 
@@ -373,7 +393,6 @@ def run(show_plots, maneuverCase):
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -389,5 +408,5 @@ def run(show_plots, maneuverCase):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        0  # Maneuver Case (0 - Hohmann, 1 - Inclination)
+        0,  # Maneuver Case (0 - Hohmann, 1 - Inclination)
     )

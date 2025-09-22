@@ -28,7 +28,6 @@ The script can be run at full length by calling::
 
 """
 
-
 # Get current file path
 import inspect
 import os
@@ -36,6 +35,7 @@ import sys
 import time
 
 from Basilisk.utilities import RigidBodyKinematics as rbk
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
@@ -43,23 +43,25 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + "/..")
 from BSK_OpNav import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
 import numpy as np
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../plottingOpNav')
+sys.path.append(path + "/../plottingOpNav")
 import OpNav_Plotting as BSK_plt
+
 
 # Create your own scenario child class
 class scenario_OpNav(BSKScenario):
     """Main Simulation Class"""
+
     def __init__(self, masterSim, showPlots=False):
         super(scenario_OpNav, self).__init__(masterSim, showPlots)
-        self.name = 'scenario_opnav'
+        self.name = "scenario_opnav"
         self.masterSim = masterSim
-        self.filterUse ="relOD" #"bias" #
+        self.filterUse = "relOD"  # "bias" #
 
         # declare additional class variables
         self.opNavRec = None
@@ -68,39 +70,51 @@ class scenario_OpNav(BSKScenario):
         self.filtRec = None
 
     def configure_initial_conditions(self):
-        print('%s: configure_initial_conditions' % self.name)
+        print("%s: configure_initial_conditions" % self.name)
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
-        oe.a = 18000 * 1E3  # meters
+        oe.a = 18000 * 1e3  # meters
         oe.e = 0.6
         oe.i = 10 * macros.D2R
-        oe.Omega = 25. * macros.D2R
-        oe.omega = 190. * macros.D2R
-        oe.f = 80. * macros.D2R  # 90 good
-        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['mars barycenter'].mu
+        oe.Omega = 25.0 * macros.D2R
+        oe.omega = 190.0 * macros.D2R
+        oe.f = 80.0 * macros.D2R  # 90 good
+        mu = self.masterSim.get_DynModel().gravFactory.gravBodies["mars barycenter"].mu
 
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         bias = [0, 0, -2]
-        rError= np.array([10000.,10000., -10000])
-        vError= np.array([100, -10, 10])
-        MRP= [0,0,0]
-        if self.filterUse =="relOD":
-            self.masterSim.get_FswModel().relativeOD.stateInit = (rN + rError).tolist() + (vN + vError).tolist()
+        rError = np.array([10000.0, 10000.0, -10000])
+        vError = np.array([100, -10, 10])
+        MRP = [0, 0, 0]
+        if self.filterUse == "relOD":
+            self.masterSim.get_FswModel().relativeOD.stateInit = (
+                rN + rError
+            ).tolist() + (vN + vError).tolist()
         if self.filterUse == "bias":
-            self.masterSim.get_FswModel().relativeOD.stateInit = (rN + rError).tolist() + (vN + vError).tolist() + bias
+            self.masterSim.get_FswModel().relativeOD.stateInit = (
+                (rN + rError).tolist() + (vN + vError).tolist() + bias
+            )
         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[MRP[0]], [MRP[1]], [MRP[2]]]  # sigma_BN_B
-        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [
+            [MRP[0]],
+            [MRP[1]],
+            [MRP[2]],
+        ]  # sigma_BN_B
+        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # rad/s - omega_BN_B
 
         qNoiseIn = np.identity(6)
-        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1E-3 * 1E-3
-        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1E-4 * 1E-4
+        qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 1e-3 * 1e-3
+        qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 1e-4 * 1e-4
         self.masterSim.get_FswModel().relativeOD.qNoise = qNoiseIn.reshape(36).tolist()
         self.masterSim.get_FswModel().imageProcessing.noiseSF = 1
-        self.masterSim.get_FswModel().relativeOD.noiseSF = 5#7.5
+        self.masterSim.get_FswModel().relativeOD.noiseSF = 5  # 7.5
 
     def log_outputs(self):
         # Dynamics process outputs: log messages below if desired.
@@ -116,7 +130,9 @@ class scenario_OpNav(BSKScenario):
             self.opNavRec = FswModel.opnavMsg.recorder(samplingTime)
             self.masterSim.AddModelToTask(DynModel.taskName, self.opNavRec)
         if self.filterUse == "bias":
-            self.filtRec = FswModel.pixelLineFilter.filtDataOutMsg.recorder(samplingTime)
+            self.filtRec = FswModel.pixelLineFilter.filtDataOutMsg.recorder(
+                samplingTime
+            )
             self.masterSim.AddModelToTask(DynModel.taskName, self.filtRec)
 
         self.scRec = DynModel.scObject.scStateOutMsg.recorder(samplingTime)
@@ -130,37 +146,69 @@ class scenario_OpNav(BSKScenario):
         # Dynamics process outputs: pull log messages below if any
 
         ## Spacecraft true states
-        position_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
-        velocity_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.v_BN_N)
+        position_N = unitTestSupport.addTimeColumn(
+            self.scRec.times(), self.scRec.r_BN_N
+        )
+        velocity_N = unitTestSupport.addTimeColumn(
+            self.scRec.times(), self.scRec.v_BN_N
+        )
 
         ## Attitude
-        sigma_BN = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
+        sigma_BN = unitTestSupport.addTimeColumn(
+            self.scRec.times(), self.scRec.sigma_BN
+        )
 
         ## Image processing
-        circleCenters = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesCenters)
-        circleRadii = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
-        validCircle = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.valid)
+        circleCenters = unitTestSupport.addTimeColumn(
+            self.circlesRec.times(), self.circlesRec.circlesCenters
+        )
+        circleRadii = unitTestSupport.addTimeColumn(
+            self.circlesRec.times(), self.circlesRec.circlesRadii
+        )
+        validCircle = unitTestSupport.addTimeColumn(
+            self.circlesRec.times(), self.circlesRec.valid
+        )
         if self.filterUse == "bias":
             NUM_STATES = 9
             ## Navigation results
-            navState = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.state)
-            navCovar = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.covar)
-            navPostFits = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.postFitRes)
+            navState = unitTestSupport.addTimeColumn(
+                self.filtRec.times(), self.filtRec.state
+            )
+            navCovar = unitTestSupport.addTimeColumn(
+                self.filtRec.times(), self.filtRec.covar
+            )
+            navPostFits = unitTestSupport.addTimeColumn(
+                self.filtRec.times(), self.filtRec.postFitRes
+            )
         if self.filterUse == "relOD":
             NUM_STATES = 6
             ## Navigation results
-            navState = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.state)
-            navCovar = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.covar)
-            navPostFits = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.postFitRes)
-            measPos = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
-            r_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
-            measCovar = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
-            covar_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
+            navState = unitTestSupport.addTimeColumn(
+                self.filtRec.times(), self.filtRec.state
+            )
+            navCovar = unitTestSupport.addTimeColumn(
+                self.filtRec.times(), self.filtRec.covar
+            )
+            navPostFits = unitTestSupport.addTimeColumn(
+                self.filtRec.times(), self.filtRec.postFitRes
+            )
+            measPos = unitTestSupport.addTimeColumn(
+                self.opNavRec.times(), self.opNavRec.r_BN_N
+            )
+            r_C = unitTestSupport.addTimeColumn(
+                self.opNavRec.times(), self.opNavRec.r_BN_C
+            )
+            measCovar = unitTestSupport.addTimeColumn(
+                self.opNavRec.times(), self.opNavRec.covar_N
+            )
+            covar_C = unitTestSupport.addTimeColumn(
+                self.opNavRec.times(), self.opNavRec.covar_C
+            )
 
         sigma_CB = self.masterSim.get_DynModel().cameraMRP_CB
         sizeMM = self.masterSim.get_DynModel().cameraSize
         sizeOfCam = self.masterSim.get_DynModel().cameraRez
-        focal = self.masterSim.get_DynModel().cameraFocal #in m
+        focal = self.masterSim.get_DynModel().cameraFocal  # in m
 
         pixelSize = []
         pixelSize.append(sizeMM[0] / sizeOfCam[0])
@@ -169,35 +217,37 @@ class scenario_OpNav(BSKScenario):
         dcm_CB = rbk.MRP2C(sigma_CB)
         # Plot results
         BSK_plt.clear_all_plots()
-        stateError = np.zeros([len(position_N[:,0]), NUM_STATES+1])
-        navCovarLong = np.full([len(position_N[:,0]), 1+NUM_STATES*NUM_STATES], np.nan)
-        navCovarLong[:,0] = np.copy(position_N[:,0])
+        stateError = np.zeros([len(position_N[:, 0]), NUM_STATES + 1])
+        navCovarLong = np.full(
+            [len(position_N[:, 0]), 1 + NUM_STATES * NUM_STATES], np.nan
+        )
+        navCovarLong[:, 0] = np.copy(position_N[:, 0])
         stateError[:, 0:4] = np.copy(position_N)
-        stateError[:,4:7] = np.copy(velocity_N[:,1:])
-        pixCovar = np.ones([len(circleCenters[:,0]), 3*3+1])
-        pixCovar[:,0] = circleCenters[:,0]
-        pixCovar[:,1:]*=np.array([1,0,0,0,1,0,0,0,2])
+        stateError[:, 4:7] = np.copy(velocity_N[:, 1:])
+        pixCovar = np.ones([len(circleCenters[:, 0]), 3 * 3 + 1])
+        pixCovar[:, 0] = circleCenters[:, 0]
+        pixCovar[:, 1:] *= np.array([1, 0, 0, 0, 1, 0, 0, 0, 2])
         if self.filterUse == "relOD":
-            measError = np.full([len(measPos[:,0]), 4], np.nan)
-            measError[:,0] = measPos[:,0]
-            measError_C = np.full([len(measPos[:,0]), 5], np.nan)
-            measError_C[:,0] = measPos[:,0]
-        trueRhat_C = np.full([len(circleCenters[:,0]), 4], np.nan)
-        trueR_C = np.full([len(circleCenters[:,0]), 4], np.nan)
-        trueCircles = np.full([len(circleCenters[:,0]), 4], np.nan)
-        trueCircles[:,0] = circleCenters[:,0]
-        trueRhat_C[:,0] = circleCenters[:,0]
-        trueR_C[:,0] = circleCenters[:,0]
-        truth = np.zeros([len(position_N[:,0]), 7])
-        truth[:,0:4] = np.copy(position_N)
-        truth[:,4:7] = np.copy(velocity_N[:,1:])
+            measError = np.full([len(measPos[:, 0]), 4], np.nan)
+            measError[:, 0] = measPos[:, 0]
+            measError_C = np.full([len(measPos[:, 0]), 5], np.nan)
+            measError_C[:, 0] = measPos[:, 0]
+        trueRhat_C = np.full([len(circleCenters[:, 0]), 4], np.nan)
+        trueR_C = np.full([len(circleCenters[:, 0]), 4], np.nan)
+        trueCircles = np.full([len(circleCenters[:, 0]), 4], np.nan)
+        trueCircles[:, 0] = circleCenters[:, 0]
+        trueRhat_C[:, 0] = circleCenters[:, 0]
+        trueR_C[:, 0] = circleCenters[:, 0]
+        truth = np.zeros([len(position_N[:, 0]), 7])
+        truth[:, 0:4] = np.copy(position_N)
+        truth[:, 4:7] = np.copy(velocity_N[:, 1:])
 
         centerBias = np.copy(circleCenters)
         radBias = np.copy(circleRadii)
 
         switchIdx = 0
 
-        Rmars = 3396.19*1E3
+        Rmars = 3396.19 * 1e3
         for j in range(len(stateError[:, 0])):
             if stateError[j, 0] in navState[:, 0]:
                 stateError[j, 1:4] -= navState[j - switchIdx, 1:4]
@@ -205,34 +255,53 @@ class scenario_OpNav(BSKScenario):
             else:
                 stateError[j, 1:] = np.full(NUM_STATES, np.nan)
                 switchIdx += 1
-        for i in range(len(circleCenters[:,0])):
-            if circleCenters[i,1:].any() > 1E-8 or circleCenters[i,1:].any() < -1E-8:
-                trueR_C[i, 1:] = np.dot(np.dot(dcm_CB, rbk.MRP2C(sigma_BN[i + switchIdx, 1:4])),
-                                            position_N[i + switchIdx, 1:4])
-                trueRhat_C[i,1:] = np.dot(np.dot(dcm_CB, rbk.MRP2C(sigma_BN[i +switchIdx, 1:4])) ,position_N[i +switchIdx, 1:4])/np.linalg.norm(position_N[i +switchIdx, 1:4])
-                trueCircles[i,3] = focal*np.tan(np.arcsin(Rmars/np.linalg.norm(position_N[i,1:4])))/pixelSize[0]
-                trueRhat_C[i,1:] *= focal/trueRhat_C[i,3]
-                trueCircles[i, 1] = trueRhat_C[i, 1] / pixelSize[0] + sizeOfCam[0]/2 - 0.5
-                trueCircles[i, 2] = trueRhat_C[i, 2] / pixelSize[1] + sizeOfCam[1]/2 - 0.5
+        for i in range(len(circleCenters[:, 0])):
+            if circleCenters[i, 1:].any() > 1e-8 or circleCenters[i, 1:].any() < -1e-8:
+                trueR_C[i, 1:] = np.dot(
+                    np.dot(dcm_CB, rbk.MRP2C(sigma_BN[i + switchIdx, 1:4])),
+                    position_N[i + switchIdx, 1:4],
+                )
+                trueRhat_C[i, 1:] = np.dot(
+                    np.dot(dcm_CB, rbk.MRP2C(sigma_BN[i + switchIdx, 1:4])),
+                    position_N[i + switchIdx, 1:4],
+                ) / np.linalg.norm(position_N[i + switchIdx, 1:4])
+                trueCircles[i, 3] = (
+                    focal
+                    * np.tan(np.arcsin(Rmars / np.linalg.norm(position_N[i, 1:4])))
+                    / pixelSize[0]
+                )
+                trueRhat_C[i, 1:] *= focal / trueRhat_C[i, 3]
+                trueCircles[i, 1] = (
+                    trueRhat_C[i, 1] / pixelSize[0] + sizeOfCam[0] / 2 - 0.5
+                )
+                trueCircles[i, 2] = (
+                    trueRhat_C[i, 2] / pixelSize[1] + sizeOfCam[1] / 2 - 0.5
+                )
                 if self.filterUse == "bias":
-                    centerBias[i,1:3] = np.round(navState[i, 7:9])
-                    radBias[i,1] = np.round(navState[i, -1])
+                    centerBias[i, 1:3] = np.round(navState[i, 7:9])
+                    radBias[i, 1] = np.round(navState[i, -1])
                 if self.filterUse == "relOD":
-                    measError[i, 1:4] = position_N[i +switchIdx, 1:4] - measPos[i, 1:4]
-                    measError_C[i, 4] = np.linalg.norm(position_N[i +switchIdx, 1:4]) - np.linalg.norm(r_C[i, 1:4])
-                    measError_C[i, 1:4] = trueRhat_C[i,1:] - r_C[i, 1:4]/np.linalg.norm(r_C[i, 1:4])
+                    measError[i, 1:4] = position_N[i + switchIdx, 1:4] - measPos[i, 1:4]
+                    measError_C[i, 4] = np.linalg.norm(
+                        position_N[i + switchIdx, 1:4]
+                    ) - np.linalg.norm(r_C[i, 1:4])
+                    measError_C[i, 1:4] = trueRhat_C[i, 1:] - r_C[
+                        i, 1:4
+                    ] / np.linalg.norm(r_C[i, 1:4])
             else:
                 if self.filterUse == "relOD":
-                    measCovar[i,1:] = np.full(3*3, np.nan)
+                    measCovar[i, 1:] = np.full(3 * 3, np.nan)
                     covar_C[i, 1:] = np.full(3 * 3, np.nan)
-        navCovarLong[switchIdx:,:] = np.copy(navCovar)
+        navCovarLong[switchIdx:, :] = np.copy(navCovar)
 
         timeData = position_N[:, 0] * macros.NANO2MIN
 
         # BSK_plt.AnimatedCircles(sizeOfCam, circleCenters, circleRadii, validCircle)
-        BSK_plt.plot_TwoOrbits(position_N[switchIdx:,:], measPos)
+        BSK_plt.plot_TwoOrbits(position_N[switchIdx:, :], measPos)
         BSK_plt.diff_vectors(trueR_C, r_C, validCircle, "Circ")
-        BSK_plt.nav_percentages(truth[switchIdx:,:], navState, navCovar, validCircle, "CNN")
+        BSK_plt.nav_percentages(
+            truth[switchIdx:, :], navState, navCovar, validCircle, "CNN"
+        )
 
         BSK_plt.plot_cirlces(circleCenters, circleRadii, validCircle, sizeOfCam)
         # # BSK_plt.plot_rate_error(timeData, sigma_BR)
@@ -241,10 +310,12 @@ class scenario_OpNav(BSKScenario):
         # # BSK_plt.plotStateCovarPlot(measError, measCovar)
         # BSK_plt.pixelAndPos(measError_C, position_N[switchIdx:,:], circleCenters, np.array(sizeOfCam))
         if self.filterUse == "bias":
-            circleCenters[i,1:] += centerBias[i,1:]
-            circleRadii[i,1:] += radBias[i,1:]
+            circleCenters[i, 1:] += centerBias[i, 1:]
+            circleRadii[i, 1:] += radBias[i, 1:]
             BSK_plt.plotPostFitResiduals(navPostFits, pixCovar)
-        BSK_plt.imgProcVsExp(trueCircles, circleCenters, circleRadii, np.array(sizeOfCam))
+        BSK_plt.imgProcVsExp(
+            trueCircles, circleCenters, circleRadii, np.array(sizeOfCam)
+        )
         # BSK_plt.centerXY(circleCenters, np.array(sizeOfCam))
         if self.filterUse == "relOD":
             BSK_plt.plotPostFitResiduals(navPostFits, measCovar)
@@ -260,7 +331,6 @@ class scenario_OpNav(BSKScenario):
 
 
 def run(showPlots, simTime=None):
-
     # Instantiate base simulation
     TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
     TheBSKSim.set_DynModel(BSK_OpNavDynamics)
@@ -280,19 +350,19 @@ def run(showPlots, simTime=None):
     # Modes: "None", "-directComm", "-noDisplay"
     TheScenario.run_vizard("-noDisplay")
     # Configure FSW mode
-    TheScenario.masterSim.modeRequest = 'prepOpNav'
+    TheScenario.masterSim.modeRequest = "prepOpNav"
     # Initialize simulation
     TheBSKSim.InitializeSimulation()
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(5.)
+    simulationTime = macros.min2nano(5.0)
     TheBSKSim.ConfigureStopTime(simulationTime)
-    print('Starting Execution')
+    print("Starting Execution")
     t1 = time.time()
     TheBSKSim.ExecuteSimulation()
     if TheScenario.filterUse == "bias":
-        TheScenario.masterSim.modeRequest = 'OpNavAttODB'
+        TheScenario.masterSim.modeRequest = "OpNavAttODB"
     if TheScenario.filterUse == "relOD":
-        TheScenario.masterSim.modeRequest = 'CNNAttOD'
+        TheScenario.masterSim.modeRequest = "CNNAttOD"
     if simTime != None:
         simulationTime = macros.min2nano(simTime)
     else:
@@ -300,10 +370,11 @@ def run(showPlots, simTime=None):
     TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
     t2 = time.time()
-    print('Finished Execution in ', t2-t1, ' seconds. Post-processing results')
-    #Terminate vizard and show plots
+    print("Finished Execution in ", t2 - t1, " seconds. Post-processing results")
+    # Terminate vizard and show plots
     figureList = TheScenario.end_scenario()
     return figureList
+
 
 if __name__ == "__main__":
     if not BSK_OpNavFsw.centerRadiusCNNIncluded:

@@ -28,7 +28,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import Dynamics and FSW models
-sys.path.append(path + '/models')
+sys.path.append(path + "/models")
 
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
@@ -55,24 +55,30 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fsw_added = False
 
     def get_DynModel(self):
-        assert (self.dynamics_added is True), "It is mandatory to use a dynamics model as an argument"
+        assert self.dynamics_added is True, (
+            "It is mandatory to use a dynamics model as an argument"
+        )
         return self.DynModels
 
     def set_DynModel(self, dynModel):
         self.dynamics_added = True
-        self.DynamicsProcessName = 'DynamicsProcess'  # Create simulation process name
+        self.DynamicsProcessName = "DynamicsProcess"  # Create simulation process name
         self.dynProc = self.CreateNewProcess(self.DynamicsProcessName)  # Create process
-        self.DynModels = dynModel.BSKDynamicModels(self, self.dynRate)  # Create Dynamics and FSW classes
+        self.DynModels = dynModel.BSKDynamicModels(
+            self, self.dynRate
+        )  # Create Dynamics and FSW classes
 
     def get_FswModel(self):
-        assert (self.fsw_added is True), "A flight software model has not been added yet"
+        assert self.fsw_added is True, "A flight software model has not been added yet"
         return self.FSWModels
 
     def set_FswModel(self, fswModel):
         self.fsw_added = True
         self.FSWProcessName = "FSWProcess"  # Create simulation process name
         self.fswProc = self.CreateNewProcess(self.FSWProcessName)  # Create process
-        self.FSWModels = fswModel.BSKFswModels(self, self.fswRate)  # Create Dynamics and FSW classes
+        self.FSWModels = fswModel.BSKFswModels(
+            self, self.fswRate
+        )  # Create Dynamics and FSW classes
 
 
 class BSKScenario(object):
@@ -81,18 +87,18 @@ class BSKScenario(object):
 
     def configure_initial_conditions(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
 
     def log_outputs(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
 
     def pull_outputs(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass

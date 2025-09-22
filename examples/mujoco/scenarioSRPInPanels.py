@@ -107,16 +107,16 @@ XML_PATH = f"{CURRENT_FOLDER}/sat_w_deployable_panels.xml"
 
 JOINT_PROFILES = (
     [
-        [macros.sec2nano(0), np.pi / 2], # nanoseconds, rad
-        [macros.sec2nano(60), 0], # nanoseconds, rad
+        [macros.sec2nano(0), np.pi / 2],  # nanoseconds, rad
+        [macros.sec2nano(60), 0],  # nanoseconds, rad
     ],
     [
-        [macros.sec2nano(0), np.pi], # nanoseconds, rad
-        [macros.sec2nano(60), 0], # nanoseconds, rad
+        [macros.sec2nano(0), np.pi],  # nanoseconds, rad
+        [macros.sec2nano(60), 0],  # nanoseconds, rad
     ],
     [
-        [macros.sec2nano(0), np.pi], # nanoseconds, rad
-        [macros.sec2nano(60), 0], # nanoseconds, rad
+        [macros.sec2nano(0), np.pi],  # nanoseconds, rad
+        [macros.sec2nano(60), 0],  # nanoseconds, rad
     ],
 )
 
@@ -196,7 +196,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
     srpModels = {}
     srpForceRecorders = {}
     for side, i in panelIds:
-
         srpModel = SRPPanel(srpFactor=1)
         srpModel.ModelTag = f"SRP_{side}{i}"
 
@@ -269,7 +268,7 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
     # We can only set the attitude rate of the hub because it's
     # a free-floating body.
     if initialSpin:
-        scene.getBody("hub").setAttitudeRate([0, 0.8, 0]) # rad/s
+        scene.getBody("hub").setAttitudeRate([0, 0.8, 0])  # rad/s
 
     # Run the simulation
     with catchtime() as executeTime:
@@ -297,7 +296,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
         # Plot the SRP force on each panel
         fig, axs = plt.subplots(2, 3)
         for ax, (side, i) in zip(axs.flat, panelIds):
-
             rec = srpForceRecorders[(side, i)]
 
             ax.plot(rec.times() * macros.NANO2SEC, rec.input)

@@ -72,17 +72,22 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import svIntegrators
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -127,7 +132,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.hour2nano(2.)
+    simulationTimeStep = macros.hour2nano(2.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -187,21 +192,26 @@ def run(show_plots, integratorCase, relTol, absTol):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(0.9 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -235,8 +245,8 @@ def run(show_plots, integratorCase, relTol, absTol):
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
-    ax.set_aspect('equal')
-    planetColor = '#008800'
+    ax.set_aspect("equal")
+    planetColor = "#008800"
     planetRadius = 1.0
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
@@ -245,25 +255,31 @@ def run(show_plots, integratorCase, relTol, absTol):
     labelStrings = ("rk4", "rkf45", "rkf78")
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
-        rData.append(oeData.rmag/earth.radEquator)
+        rData.append(oeData.rmag / earth.radEquator)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData), rData * np.sin(fData)
-             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
-             , label=integratorCase
-             , linewidth=3.0
-             )
+    plt.plot(
+        rData * np.cos(fData),
+        rData * np.sin(fData),
+        color=unitTestSupport.getLineColor(
+            labelStrings.index(integratorCase), len(labelStrings)
+        ),
+        label=integratorCase,
+        linewidth=3.0,
+    )
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData)/earth.radEquator, rData * np.sin(fData)/earth.radEquator
-             , '--'
-             , color='#555555'
-             )
-    plt.xlabel('$i_e$ Cord. [DU]')
-    plt.ylabel('$i_p$ Cord. [DU]')
-    plt.legend(loc='lower right')
+    plt.plot(
+        rData * np.cos(fData) / earth.radEquator,
+        rData * np.sin(fData) / earth.radEquator,
+        "--",
+        color="#555555",
+    )
+    plt.xlabel("$i_e$ Cord. [DU]")
+    plt.ylabel("$i_p$ Cord. [DU]")
+    plt.legend(loc="lower right")
     plt.grid()
     figureList = {}
     pltName = fileName
@@ -286,6 +302,7 @@ def run(show_plots, integratorCase, relTol, absTol):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        'rkf78',  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78)
+        "rkf78",  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78)
         1e-5,  # relative tolerance
-        1e-8)  # absolute tolerance
+        1e-8,
+    )  # absolute tolerance

@@ -32,10 +32,12 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeRW
@@ -72,8 +74,8 @@ def test_RWUpdate(show_plots, accuracy):
     [testResults, testMessage] = RWUpdateTest(show_plots, accuracy)
     assert testResults < 1, testMessage
 
-def RWUpdateTest(show_plots, accuracy):
 
+def RWUpdateTest(show_plots, accuracy):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -85,13 +87,13 @@ def RWUpdateTest(show_plots, accuracy):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(1.)
+    simulationTime = macros.sec2nano(1.0)
 
     #
     #  create the simulation process
     #
 
-    testProcessRate = macros.sec2nano(1.)  # update process rate update time
+    testProcessRate = macros.sec2nano(1.0)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -114,24 +116,27 @@ def RWUpdateTest(show_plots, accuracy):
     varRWModel = messaging.BalancedWheels
 
     # create the reaction wheels
-    RW1 = rwFactory.create('Honeywell_HR16'
-                           , [1, 0, 0]  # gsHat_B
-                           , Omega=500.  # RPM
-                           , maxMomentum=50.
-                           , RWModel=varRWModel
-                           )
-    RW2 = rwFactory.create('Honeywell_HR16'
-                           , [0, 1, 0]  # gsHat_B
-                           , Omega=500.  # RPM
-                           , maxMomentum=50.
-                           , RWModel=varRWModel
-                           )
-    RW3 = rwFactory.create('Honeywell_HR16'
-                           , [0, 0, 1]  # gsHat_B
-                           , Omega=500.  # RPM
-                           , maxMomentum=50.
-                           , RWModel=varRWModel
-                           )
+    RW1 = rwFactory.create(
+        "Honeywell_HR16",
+        [1, 0, 0],  # gsHat_B
+        Omega=500.0,  # RPM
+        maxMomentum=50.0,
+        RWModel=varRWModel,
+    )
+    RW2 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 1, 0],  # gsHat_B
+        Omega=500.0,  # RPM
+        maxMomentum=50.0,
+        RWModel=varRWModel,
+    )
+    RW3 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 0, 1],  # gsHat_B
+        Omega=500.0,  # RPM
+        maxMomentum=50.0,
+        RWModel=varRWModel,
+    )
     numRW = rwFactory.getNumOfDevices()
 
     # create RW object container and tie to spacecraft object
@@ -144,7 +149,7 @@ def RWUpdateTest(show_plots, accuracy):
     cmdArray.motorTorque = [0.4, 0.1, -0.5]  # [Nm]
     cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
     rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
-    trueTorque = [[0.4, 0., -0.5]]
+    trueTorque = [[0.4, 0.0, -0.5]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
@@ -184,7 +189,7 @@ def RWUpdateTest(show_plots, accuracy):
     numTests += 1
 
     # expected output
-    trueTorque.append([0.4, 0., -0.5])
+    trueTorque.append([0.4, 0.0, -0.5])
 
     #
     # Second test
@@ -199,7 +204,7 @@ def RWUpdateTest(show_plots, accuracy):
     RW3.u_min = 0.05
 
     # reconfigure a simulation stop time and re-execute the simulation run
-    unitTestSim.ConfigureStopTime(2*simulationTime)
+    unitTestSim.ConfigureStopTime(2 * simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
@@ -219,7 +224,7 @@ def RWUpdateTest(show_plots, accuracy):
     RW3.Omega = 2
 
     # reconfigure a simulation stop time and re-execute the simulation run
-    unitTestSim.ConfigureStopTime(3*simulationTime)
+    unitTestSim.ConfigureStopTime(3 * simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
@@ -234,20 +239,20 @@ def RWUpdateTest(show_plots, accuracy):
     RW1.P_max = -1
     RW2.P_max = -1
     RW3.P_max = -1
-    RW1.Omega = 100*macros.RPM
-    RW2.Omega = -200*macros.RPM
-    RW3.Omega = 50*macros.RPM
-    RW1.Omega_max = 100*macros.RPM
-    RW2.Omega_max = 100*macros.RPM
-    RW3.Omega_max = 100*macros.RPM
+    RW1.Omega = 100 * macros.RPM
+    RW2.Omega = -200 * macros.RPM
+    RW3.Omega = 50 * macros.RPM
+    RW1.Omega_max = 100 * macros.RPM
+    RW2.Omega_max = 100 * macros.RPM
+    RW3.Omega_max = 100 * macros.RPM
 
     # reconfigure a simulation stop time and re-execute the simulation run
-    unitTestSim.ConfigureStopTime(4*simulationTime)
+    unitTestSim.ConfigureStopTime(4 * simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
     # expected output
-    trueTorque.append([0., 0.1, -0.3])
+    trueTorque.append([0.0, 0.1, -0.3])
 
     #
     # retrieve the logged data
@@ -263,27 +268,32 @@ def RWUpdateTest(show_plots, accuracy):
     #
 
     # do the comparison
-    for i in range(numTests+1):
+    for i in range(numTests + 1):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(dataRW[:, i], trueTorque[i], numRW, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            dataRW[:, i], trueTorque[i], numRW, accuracy
+        ):
             testFailCount += 1
             if i == 0:
                 testMessages.append("FAILED: Reaction Wheel Update Test failed setup")
             else:
-                testMessages.append("FAILED: Reaction Wheel Update Test failed test " + str(i) + "\n")
+                testMessages.append(
+                    "FAILED: Reaction Wheel Update Test failed test " + str(i) + "\n"
+                )
 
     if not testFailCount:
         print("PASSED")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # Run this unitTest as a standalone python script
 #
 if __name__ == "__main__":
     test_RWUpdate(
-               False        # show_plots
-               , 1e-8       # accuracy
+        False,  # show_plots
+        1e-8,  # accuracy
     )

@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -32,12 +31,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
@@ -52,31 +53,32 @@ from Basilisk.utilities import simSetPlanetEnvironment
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useDefault", [ True, False])
-@pytest.mark.parametrize("useMinReach", [ True, False])
-@pytest.mark.parametrize("useMaxReach", [ True, False])
-@pytest.mark.parametrize("usePlanetEphemeris", [ True, False])
-
+@pytest.mark.parametrize("useDefault", [True, False])
+@pytest.mark.parametrize("useMinReach", [True, False])
+@pytest.mark.parametrize("useMaxReach", [True, False])
+@pytest.mark.parametrize("usePlanetEphemeris", [True, False])
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris)
+    [testResults, testMessage] = run(
+        show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris
+    )
     assert testResults < 1, testMessage
 
 
 def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -96,14 +98,14 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     minReach = -1.0
     if useMinReach:
-        minReach = 200*1000.0     # meters
+        minReach = 200 * 1000.0  # meters
         testModule.envMinReach = minReach
-        testModule.planetRadius =  6378136.6 #meters
+        testModule.planetRadius = 6378136.6  # meters
     maxReach = -1.0
     if useMaxReach:
-        maxReach = 200*1000.0     # meters
+        maxReach = 200 * 1000.0  # meters
         testModule.envMaxReach = maxReach
-        testModule.planetRadius =  6378136.6
+        testModule.planetRadius = 6378136.6
     planetPosition = [0.0, 0.0, 0.0]
     if usePlanetEphemeris:
         planetStateMsg = messaging.SpicePlanetStateMsgPayload()
@@ -120,7 +122,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     #
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
-    mu = 0.3986004415E+15  # meters^3/s^2
+    mu = 0.3986004415e15  # meters^3/s^2
     oe.a = r0
     oe.e = 0.0
     oe.i = 45.0 * macros.D2R
@@ -132,11 +134,15 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     r1N, v1N = orbitalMotion.elem2rv(mu, oe)
 
     # create the input messages
-    sc0StateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
+    sc0StateMsg = (
+        messaging.SCStatesMsgPayload()
+    )  # Create a structure for the input message
     sc0StateMsg.r_BN_N = np.array(r0N) + np.array(planetPosition)
     sc0InMsg = messaging.SCStatesMsg().write(sc0StateMsg)
 
-    sc1StateMsg = messaging.SCStatesMsgPayload()  # Create a structure for the input message
+    sc1StateMsg = (
+        messaging.SCStatesMsgPayload()
+    )  # Create a structure for the input message
     sc1StateMsg.r_BN_N = np.array(r1N) + np.array(planetPosition)
     sc1InMsg = messaging.SCStatesMsg().write(sc1StateMsg)
 
@@ -157,7 +163,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -167,7 +173,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     dens1Data = dataLog1.neutralDensity
 
     def expAtmoComp(alt, baseDens, scaleHeight, minReach, maxReach):
-        density = baseDens * math.exp(-alt/scaleHeight)
+        density = baseDens * math.exp(-alt / scaleHeight)
         if alt < minReach:
             density = 0.0
         if alt > maxReach and maxReach > 0:
@@ -185,40 +191,66 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
     if trueDensity != 0:
         testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
-            [trueDensity]*3, dens0Data, accuracy, "density sc0",
-            testFailCount, testMessages)
+            [trueDensity] * 3,
+            dens0Data,
+            accuracy,
+            "density sc0",
+            testFailCount,
+            testMessages,
+        )
     else:
         testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-            [trueDensity] * 3, dens0Data, accuracy, "density sc0",
-            testFailCount, testMessages)
+            [trueDensity] * 3,
+            dens0Data,
+            accuracy,
+            "density sc0",
+            testFailCount,
+            testMessages,
+        )
 
     # check spacecraft 1 neutral density results
     alt = r1 - refPlanetRadius
     trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
     if trueDensity != 0:
         testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
-            [trueDensity]*3, dens1Data, accuracy, "density sc1",
-            testFailCount, testMessages)
+            [trueDensity] * 3,
+            dens1Data,
+            accuracy,
+            "density sc1",
+            testFailCount,
+            testMessages,
+        )
     else:
         testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-            [trueDensity] * 3, dens1Data, accuracy, "density sc1",
-            testFailCount, testMessages)
+            [trueDensity] * 3,
+            dens1Data,
+            accuracy,
+            "density sc1",
+            testFailCount,
+            testMessages,
+        )
 
     #   print out success or failure message
-    snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
+    snippentName = (
+        "unitTestPassFail"
+        + str(useDefault)
+        + str(useMinReach)
+        + str(useMaxReach)
+        + str(usePlanetEphemeris)
+    )
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + testModule.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -226,10 +258,10 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 False,         # showplots
-                 False,         # useDefault
-                 False,         # useMinReach
-                 True,         # useMaxReach
-                 False          # usePlanetEphemeris
-               )
+    test_module(  # update "module" in function name
+        False,  # showplots
+        False,  # useDefault
+        False,  # useMinReach
+        True,  # useMaxReach
+        False,  # usePlanetEphemeris
+    )

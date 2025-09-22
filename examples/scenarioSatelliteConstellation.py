@@ -90,13 +90,20 @@ from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-from Basilisk.simulation import (spacecraft, ephemerisConverter)
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.simulation import spacecraft, ephemerisConverter
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+)
 from Basilisk.fswAlgorithms import locationPointing
-from Basilisk.simulation import (simpleNav, planetEphemeris)
+from Basilisk.simulation import simpleNav, planetEphemeris
 
 # always import the Basilisk messaging support
+
 
 def run(show_plots, a, i, T, P, F):
     """
@@ -127,7 +134,7 @@ def run(show_plots, a, i, T, P, F):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(30.)
+    simulationTimeStep = macros.sec2nano(30.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # clear prior gravitational body and SPICE setup definitions
@@ -139,38 +146,49 @@ def run(show_plots, a, i, T, P, F):
     mu = earth.mu
 
     # Create the ephemeris converter module
-    spiceObject = gravFactory.createSpiceInterface(time="2029 June 12 5:30:30.0", epochInMsg=True)
-    spiceObject.zeroBase = 'Earth'
+    spiceObject = gravFactory.createSpiceInterface(
+        time="2029 June 12 5:30:30.0", epochInMsg=True
+    )
+    spiceObject.zeroBase = "Earth"
     scSim.AddModelToTask(simTaskName, spiceObject)
     ephemObject = ephemerisConverter.EphemerisConverter()
     ephemObject.ModelTag = "ephemData"
-    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0]) # Earth
+    ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0])  # Earth
     scSim.AddModelToTask(simTaskName, ephemObject)
 
     # spacecraft inertia
-    I = [900., 0., 0.,
-        0., 800., 0.,
-        0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
 
     # set the simulation time to be two orbit periods
     n = np.sqrt(mu / a / a / a)
-    Pr = 2. * np.pi / n
+    Pr = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(1.5 * Pr)
 
     # create a logging task object of the spacecraft output message at the desired down sampling ratio
     numDataPoints = 500
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
 
-    if (np.mod(T,1) !=0 or np.mod(P,1) !=0 or np.mod(F,1) != 0 or T < 1 or P < 1 or F < 1):
-        raise Exception('number of satellites T, number of planes P, and relative spaceing F must be positive integer numbers')
-    if (np.mod(T,P) !=0):
-        raise Exception('number of satellites T must be an integer multiple of P')
+    if (
+        np.mod(T, 1) != 0
+        or np.mod(P, 1) != 0
+        or np.mod(F, 1) != 0
+        or T < 1
+        or P < 1
+        or F < 1
+    ):
+        raise Exception(
+            "number of satellites T, number of planes P, and relative spaceing F must be positive integer numbers"
+        )
+    if np.mod(T, P) != 0:
+        raise Exception("number of satellites T must be an integer multiple of P")
 
     # pre-compute Walker constellation parameters
-    PU = 360/T # patter unit in degrees
-    S = T/P # number of satellites in each plane
-    delta_RAAN = S*PU # delta RAAN in degrees
-    delta_nu = P*PU # in plane spacing of satellites
+    PU = 360 / T  # patter unit in degrees
+    S = T / P  # number of satellites in each plane
+    delta_RAAN = S * PU  # delta RAAN in degrees
+    delta_nu = P * PU  # in plane spacing of satellites
     oe = orbitalMotion.ClassicElements()
     oe.a = a
     oe.e = 0.01
@@ -184,17 +202,19 @@ def run(show_plots, a, i, T, P, F):
     for i in range(T):
         # initialize spacecraft object
         scList.append(spacecraft.Spacecraft())
-        scList[i].ModelTag = "bsk-Sat-"+str(i)
+        scList[i].ModelTag = "bsk-Sat-" + str(i)
         scSim.AddModelToTask(simTaskName, scList[i])
 
         # attach gravity model to spacecraft
-        scList[i].gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+        scList[i].gravField.gravBodies = spacecraft.GravBodyVector(
+            list(gravFactory.gravBodies.values())
+        )
 
         # setup the orbit using classical orbit elements
-        RAAN = delta_RAAN * np.floor(i/S)
+        RAAN = delta_RAAN * np.floor(i / S)
         oe.Omega = RAAN * macros.D2R
-        oe.omega = F * np.floor(i/S) * macros.D2R
-        oe.f = delta_nu * np.mod(i,S) * macros.D2R
+        oe.omega = F * np.floor(i / S) * macros.D2R
+        oe.f = delta_nu * np.mod(i, S) * macros.D2R
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         scList[i].hub.r_CN_NInit = rN  # [m]
         scList[i].hub.v_CN_NInit = vN  # [m/s]
@@ -205,13 +225,13 @@ def run(show_plots, a, i, T, P, F):
 
         # set up prescribed attitude guidance
         navList.append(simpleNav.SimpleNav())
-        navList[i].ModelTag = "SimpleNav"+str(i)
+        navList[i].ModelTag = "SimpleNav" + str(i)
         scSim.AddModelToTask(simTaskName, navList[i])
         navList[i].scStateInMsg.subscribeTo(scList[i].scStateOutMsg)
 
         # setup nadir pointing guidance module
         guideList.append(locationPointing.locationPointing())
-        guideList[i].ModelTag = "nadirPoint"+str(i)
+        guideList[i].ModelTag = "nadirPoint" + str(i)
         guideList[i].pHat_B = [1, 0, 0]
         guideList[i].scTransInMsg.subscribeTo(navList[i].transOutMsg)
         guideList[i].scAttInMsg.subscribeTo(navList[i].attOutMsg)
@@ -226,13 +246,24 @@ def run(show_plots, a, i, T, P, F):
     # If you wish to transmit the simulation data to the United based Vizard Visualization application,
     # then uncomment the following saveFile line
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scList,
-                                                  # saveFile=__file__
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scList,
+            # saveFile=__file__
+        )
         for i in range(T):
-            vizSupport.createConeInOut(viz, fromBodyName=scList[i].ModelTag, toBodyName='earth', coneColor='teal',
-                           normalVector_B=[1, 0, 0], incidenceAngle=30/macros.D2R, isKeepIn=False,
-                           coneHeight=10.0, coneName='pointingCone')
+            vizSupport.createConeInOut(
+                viz,
+                fromBodyName=scList[i].ModelTag,
+                toBodyName="earth",
+                coneColor="teal",
+                normalVector_B=[1, 0, 0],
+                incidenceAngle=30 / macros.D2R,
+                isKeepIn=False,
+                coneHeight=10.0,
+                coneName="pointingCone",
+            )
 
     # initialize simulation
     scSim.InitializeSimulation()
@@ -248,16 +279,16 @@ def run(show_plots, a, i, T, P, F):
     for n in range(T):
         # calculate latitude and longitude
         [lon, lat] = rv2latlon(dataRec[n])
-        color = unitTestSupport.getLineColor(int(np.floor(n/S)), 3)
+        color = unitTestSupport.getLineColor(int(np.floor(n / S)), 3)
         plt.scatter(lat, lon, s=5, c=[color])
-        plt.scatter(lat[0], lon[0], s=20, c='#00A300')
-        plt.scatter(lat[-1], lon[-1], s=20, c='#A30000')
-    plt.xlim([-180,180])
-    plt.ylim([-90,90])
-    plt.xticks(range(-180,181,30))
-    plt.yticks(range(-90,91,15))
-    plt.xlabel('longitude (degrees)')
-    plt.ylabel('lattitude (degrees)')
+        plt.scatter(lat[0], lon[0], s=20, c="#00A300")
+        plt.scatter(lat[-1], lon[-1], s=20, c="#A30000")
+    plt.xlim([-180, 180])
+    plt.ylim([-90, 90])
+    plt.xticks(range(-180, 181, 30))
+    plt.yticks(range(-90, 91, 15))
+    plt.xlabel("longitude (degrees)")
+    plt.ylabel("lattitude (degrees)")
 
     pltName = fileName
     figureList[pltName] = plt.figure(1)
@@ -270,28 +301,32 @@ def run(show_plots, a, i, T, P, F):
 
     return figureList
 
+
 def rv2latlon(dataRec):
     times = dataRec.times() * macros.NANO2SEC
     rECI = dataRec.r_BN_N
     lat = np.zeros(times.shape)
     lon = np.zeros(times.shape)
     for i in range(len(times)):
-        theta = times[i]*planetEphemeris.OMEGA_EARTH
-        dcm_ECI2ECEF = [[np.cos(theta), np.sin(theta), 0],
-                        [-np.sin(theta), np.cos(theta), 0],
-                        [0, 0, 1]]
-        rECEF = dcm_ECI2ECEF@rECI[i,:]
-        lat[i] = np.arcsin(rECEF[2]/np.linalg.norm(rECEF)) * macros.R2D
-        lon[i] = np.arctan2(rECEF[1],rECEF[0]) * macros.R2D
+        theta = times[i] * planetEphemeris.OMEGA_EARTH
+        dcm_ECI2ECEF = [
+            [np.cos(theta), np.sin(theta), 0],
+            [-np.sin(theta), np.cos(theta), 0],
+            [0, 0, 1],
+        ]
+        rECEF = dcm_ECI2ECEF @ rECI[i, :]
+        lat[i] = np.arcsin(rECEF[2] / np.linalg.norm(rECEF)) * macros.R2D
+        lon[i] = np.arctan2(rECEF[1], rECEF[0]) * macros.R2D
 
     return lat, lon
 
+
 if __name__ == "__main__":
     run(
-        True,       # show_plots
-        29994000,   # semi-major axis [m]
-        56,         # orbit inclination [deg]
-        24,         # total number of satellites (int)
-        3,          # number of orbit planes (int)
-        1           # phasing (int)
+        True,  # show_plots
+        29994000,  # semi-major axis [m]
+        56,  # orbit inclination [deg]
+        24,  # total number of satellites (int)
+        3,  # number of orbit planes (int)
+        1,  # phasing (int)
     )

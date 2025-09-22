@@ -18,8 +18,12 @@
 
 import numpy as np
 from Basilisk import __path__
-from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
-                                 reactionWheelStateEffector)
+from Basilisk.simulation import (
+    spacecraft,
+    extForceTorque,
+    simpleNav,
+    reactionWheelStateEffector,
+)
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
@@ -28,8 +32,7 @@ from Basilisk.utilities import unitTestSupport as sp
 bskPath = __path__[0]
 
 
-
-class BSKDynamicModels():
+class BSKDynamicModels:
     def __init__(self, SimBase, dynRate):
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName
@@ -38,8 +41,12 @@ class BSKDynamicModels():
         self.processTasksTimeStep = mc.sec2nano(dynRate)
 
         # Create task
-        SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep))
-        SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName2, self.processTasksTimeStep))
+        SimBase.dynProc.addTask(
+            SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep)
+        )
+        SimBase.dynProc.addTask(
+            SimBase.CreateNewTask(self.taskName2, self.processTasksTimeStep)
+        )
 
         # Instantiate Dyn modules as objects
         self.scObject = spacecraft.Spacecraft()
@@ -56,7 +63,7 @@ class BSKDynamicModels():
         # Create gravity body
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         planet = self.gravFactory.createEarth()
-        planet.isCentralBody = True          # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
         self.gravFactory.addBodiesTo(self.scObject)
         self.gravFactory.addBodiesTo(self.scObject2)
 
@@ -78,19 +85,23 @@ class BSKDynamicModels():
 
     def SetSpacecraftHub(self):
         self.scObject.ModelTag = "chief"
-        self.I_sc = [900., 0., 0.,
-                     0., 800., 0.,
-                     0., 0., 600.]
+        self.I_sc = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
-        self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+        self.scObject.hub.r_BcB_B = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # m - position vector of body-fixed point B relative to CM
         self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
 
         self.scObject2.ModelTag = "deputy"
-        self.I_sc2 = [900., 0., 0.,
-                      0., 800., 0.,
-                      0., 0., 600.]
+        self.I_sc2 = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
         self.scObject2.hub.mHub = 750.0  # kg - spacecraft mass
-        self.scObject2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+        self.scObject2.hub.r_BcB_B = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # m - position vector of body-fixed point B relative to CM
         self.scObject2.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc2)
 
     def SetSimpleNavObject(self):
@@ -104,31 +115,34 @@ class BSKDynamicModels():
         # Make a fresh RW factory instance, this is critical to run multiple times
 
         # specify RW momentum capacity
-        maxRWMomentum = 50.  # Nms
+        maxRWMomentum = 50.0  # Nms
 
         # Define orthogonal RW pyramid
         # -- Pointing directions
-        rwElAngle = np.array([40.0, 40.0, 40.0, 40.0])*mc.D2R
-        rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0])*mc.D2R
-        rwPosVector = [[0.8, 0.8, 1.79070],
-                       [0.8, -0.8, 1.79070],
-                       [-0.8, -0.8, 1.79070],
-                       [-0.8, 0.8, 1.79070]
-                       ]
+        rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
+        rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
+        rwPosVector = [
+            [0.8, 0.8, 1.79070],
+            [0.8, -0.8, 1.79070],
+            [-0.8, -0.8, 1.79070],
+            [-0.8, 0.8, 1.79070],
+        ]
 
         for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
-            gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
-            self.rwFactory.create('Honeywell_HR16',
-                                  gsHat,
-                                  maxMomentum=maxRWMomentum,
-                                  rWB_B=posVector)
-            self.rwFactory2.create('Honeywell_HR16',
-                                   gsHat,
-                                   maxMomentum=maxRWMomentum,
-                                   rWB_B =posVector)
+            gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(
+                np.array([1, 0, 0])
+            )
+            self.rwFactory.create(
+                "Honeywell_HR16", gsHat, maxMomentum=maxRWMomentum, rWB_B=posVector
+            )
+            self.rwFactory2.create(
+                "Honeywell_HR16", gsHat, maxMomentum=maxRWMomentum, rWB_B=posVector
+            )
 
         self.rwFactory.addToSpacecraft("RW_chief", self.rwStateEffector, self.scObject)
-        self.rwFactory2.addToSpacecraft("RW_deputy", self.rwStateEffector2, self.scObject2)
+        self.rwFactory2.addToSpacecraft(
+            "RW_deputy", self.rwStateEffector2, self.scObject2
+        )
 
     def SetExternalForceTorqueObject(self):
         self.extForceTorqueObject2.ModelTag = "externalDisturbance"

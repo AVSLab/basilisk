@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -25,13 +24,18 @@
 
 import numpy as np
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import velocityPoint  # import the module that is to be tested
+from Basilisk.fswAlgorithms import (
+    velocityPoint,
+)  # import the module that is to be tested
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.architecture import astroConstants
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -47,19 +51,18 @@ def test_velocityPoint(show_plots):
 
 
 def velocityPointTestFunction(show_plots):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     module = velocityPoint.velocityPoint()
@@ -70,7 +73,7 @@ def velocityPointTestFunction(show_plots):
 
     # Initialize the test module configuration data
 
-    module.mu = astroConstants.MU_EARTH*1e9  #  m^3/s^2
+    module.mu = astroConstants.MU_EARTH * 1e9  #  m^3/s^2
 
     a = astroConstants.REQ_EARTH * 2.8 * 1000  # m
     e = 0.0
@@ -89,7 +92,9 @@ def velocityPointTestFunction(show_plots):
     #
     #   Navigation Input Message
     #
-    NavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
+    NavStateOutData = (
+        messaging.NavTransMsgPayload()
+    )  # Create a structure for the input message
     NavStateOutData.r_BN_N = r_BN_N
     NavStateOutData.v_BN_N = v_BN_N
     navInMsg = messaging.NavTransMsg().write(NavStateOutData)
@@ -117,7 +122,7 @@ def velocityPointTestFunction(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -129,48 +134,53 @@ def velocityPointTestFunction(show_plots):
     #
     # set the filtered output truth states
     trueVector = [
-               [0.,              0.,              0.267949192431],
-               [0.,              0.,              0.267949192431],
-               [0.,              0.,              0.267949192431]
-               ]
+        [0.0, 0.0, 0.267949192431],
+        [0.0, 0.0, 0.267949192431],
+        [0.0, 0.0, 0.267949192431],
+    ]
     # compare the module results to the truth values
     accuracy = 1e-12
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.sigma_RN, accuracy,
-                                                               'sigma_RN', testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector, dataLog.sigma_RN, accuracy, "sigma_RN", testFailCount, testMessages
+    )
 
     #
     # check omega_RN_N
     #
     # set the filtered output truth states
-    fDot = np.sqrt(module.mu / (a*a*a))
-    trueVector = [
-               [0.,              0.,              fDot],
-               [0.,              0.,              fDot],
-               [0.,              0.,              fDot]
-               ]
+    fDot = np.sqrt(module.mu / (a * a * a))
+    trueVector = [[0.0, 0.0, fDot], [0.0, 0.0, fDot], [0.0, 0.0, fDot]]
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.omega_RN_N, accuracy,
-                                                               'omega_RN_N', testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        dataLog.omega_RN_N,
+        accuracy,
+        "omega_RN_N",
+        testFailCount,
+        testMessages,
+    )
 
     #
     # check domega_RN_N
     #
     # set the filtered output truth states
-    trueVector = [
-               [0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0]
-               ]
+    trueVector = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
     # compare the module results to the truth values
     accuracy = 1e-12
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.domega_RN_N, accuracy,
-                                                               'domega_RN_N', testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        dataLog.domega_RN_N,
+        accuracy,
+        "domega_RN_N",
+        testFailCount,
+        testMessages,
+    )
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))  # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
 
     if testFailCount:
@@ -180,7 +190,7 @@ def velocityPointTestFunction(show_plots):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #

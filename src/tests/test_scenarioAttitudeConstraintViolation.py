@@ -39,7 +39,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioAttitudeConstraintViolation
 
 
@@ -52,23 +52,32 @@ import scenarioAttitudeConstraintViolation
 # of the multiple test runs for this test.
 
 
-@pytest.mark.parametrize("use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase", [(False, 20, 70, 0),
-                                                                                           (True,  20, 70, 0),
-                                                                                           (True,  20, 70, 1),
-																						   (True,  20, 70, 2),
-																						   (True,  30, 70, 3)])
+@pytest.mark.parametrize(
+    "use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase",
+    [
+        (False, 20, 70, 0),
+        (True, 20, 70, 0),
+        (True, 20, 70, 1),
+        (True, 20, 70, 2),
+        (True, 30, 70, 3),
+    ],
+)
 @pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_
-def test_bskAttitudeConstraintViolation(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase):
-    '''This function is called by the py.test environment.'''
+def test_bskAttitudeConstraintViolation(
+    show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase
+):
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioAttitudeConstraintViolation.run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase)
+        figureList = scenarioAttitudeConstraintViolation.run(
+            show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCase
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)

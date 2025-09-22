@@ -25,6 +25,7 @@ This script is a basic demonstration of a script that can be used to rerun a set
 
 
 """
+
 import inspect
 import os
 import sys
@@ -38,9 +39,11 @@ fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
-sys.path.append(path+"/../BskSim/scenarios/")
+sys.path.append(path + "/../BskSim/scenarios/")
+
 
 def run(time=None):
     """
@@ -57,7 +60,7 @@ def run(time=None):
 
     # Step 1-3: Change to the relevant scenario
     scenarioName = "scenario_AttFeedback"  # This is the actual scenario module name
-    mcName = "scenarioBskSimAttFeedbackMC" # This is the MC script name
+    mcName = "scenarioBskSimAttFeedbackMC"  # This is the MC script name
 
     monteCarlo = Controller()
     monteCarlo.numProcess = 3
@@ -88,7 +91,7 @@ def run(time=None):
 
     # Step 4: Add any additional retention policies desired
     retentionPolicy = RetentionPolicy()
-    retentionPolicy.logRate = int(2E9)
+    retentionPolicy.logRate = int(2e9)
     retentionPolicy.addMessageLog("attGuidMsg", ["sigma_BR"])
     monteCarlo.addRetentionPolicy(retentionPolicy)
 

@@ -38,7 +38,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/')
+sys.path.append(path + "/../../examples/")
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -48,36 +48,38 @@ sys.path.append(path + '/../../examples/')
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("scenarioCase", [
-                                        'scenarioGroundLocationImaging'
-                                        , 'scenarioGroundDownlink'
-                                        , 'scenarioMtbMomentumManagement'
-                                        , 'scenarioMtbMomentumManagementSimple'
-                                        , 'scenarioSmallBodyNav'
-                                        , 'scenarioSmallBodyNavUKF'
-                                        , 'scenarioSmallBodyFeedbackControl'
-                                        , 'scenarioJupiterArrival'
-                                        , 'scenarioSpiceSpacecraft'
-                                        , 'scenarioInertialSpiral'
-                                        , 'scenarioDeployingPanel'
-                                        , 'scenarioAsteroidArrival'
-                                        , 'scenarioTwoChargedSC'
-                                        , 'scenarioRendezVous'
-                                        , 'scenarioSensorThermal'
-                                        , 'scenarioHaloOrbit'
-                                        , 'scenarioDeployingSolarArrays'
-                                        , 'scenarioTempMeasurementAttitude'
-                                        , 'scenarioRoboticArm'
-                                        , 'scenarioOrbitManeuverTH'
-                                        , 'scenarioLambertSolver'
-                                        , 'scenarioQuadMaps'
-                                        , 'scenarioExtendingBoom'
-                                        ])
+@pytest.mark.parametrize(
+    "scenarioCase",
+    [
+        "scenarioGroundLocationImaging",
+        "scenarioGroundDownlink",
+        "scenarioMtbMomentumManagement",
+        "scenarioMtbMomentumManagementSimple",
+        "scenarioSmallBodyNav",
+        "scenarioSmallBodyNavUKF",
+        "scenarioSmallBodyFeedbackControl",
+        "scenarioJupiterArrival",
+        "scenarioSpiceSpacecraft",
+        "scenarioInertialSpiral",
+        "scenarioDeployingPanel",
+        "scenarioAsteroidArrival",
+        "scenarioTwoChargedSC",
+        "scenarioRendezVous",
+        "scenarioSensorThermal",
+        "scenarioHaloOrbit",
+        "scenarioDeployingSolarArrays",
+        "scenarioTempMeasurementAttitude",
+        "scenarioRoboticArm",
+        "scenarioOrbitManeuverTH",
+        "scenarioLambertSolver",
+        "scenarioQuadMaps",
+        "scenarioExtendingBoom",
+    ],
+)
 @pytest.mark.scenarioTest
 def test_scenarioBskScenarios(show_plots, scenarioCase):
-
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
     # import the bskSim script to be tested
     scene_plt = importlib.import_module(scenarioCase)
 

@@ -39,8 +39,8 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/OpNavScenarios/scenariosOpNav')
-sys.path.append(path + '/../../examples/OpNavScenarios/')
+sys.path.append(path + "/../../examples/OpNavScenarios/scenariosOpNav")
+sys.path.append(path + "/../../examples/OpNavScenarios/")
 
 r"""
 Skip the following tests if all necessary modules do not exist
@@ -50,20 +50,23 @@ Requirements:
 """
 
 import BSK_OpNav
+
 SimBase = BSK_OpNav.BSKSim(1, 1)
 if not os.path.exists(SimBase.vizPath):
-    pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_OpNav.py")
+    pytestmark = pytest.mark.skip(
+        reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_OpNav.py"
+    )
 
 testScripts = [
-      'scenario_faultDetOpNav'
-    , 'scenario_OpNavAttOD'
-    , 'scenario_OpNavAttODLimb'
-    , 'scenario_OpNavHeading'
-    , 'scenario_OpNavOD'
-    , 'scenario_OpNavODLimb'
-    , 'scenario_OpNavPoint'
-    , 'scenario_OpNavPointLimb'
-    , 'scenario_CNNAttOD'
+    "scenario_faultDetOpNav",
+    "scenario_OpNavAttOD",
+    "scenario_OpNavAttODLimb",
+    "scenario_OpNavHeading",
+    "scenario_OpNavOD",
+    "scenario_OpNavODLimb",
+    "scenario_OpNavPoint",
+    "scenario_OpNavPointLimb",
+    "scenario_CNNAttOD",
 ]
 
 
@@ -71,7 +74,9 @@ try:
     from Basilisk.simulation import vizInterface, camera
     from Basilisk.fswAlgorithms import houghCircles, limbFinding
 except ImportError:
-    pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use opNav behavior in build")
+    pytestmark = pytest.mark.skip(
+        reason="OpNav Algorithms not built: use opNav behavior in build"
+    )
 
 
 @pytest.mark.slowtest
@@ -80,8 +85,8 @@ except ImportError:
 def test_opnavBskScenarios(show_plots):
     bskLogging.setDefaultLogLevel(bskLogging.BSK_SILENT)
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
     # import the bskSim script to be tested
     for bskSimCase in testScripts:
         scene_plt = importlib.import_module(bskSimCase)
@@ -102,6 +107,7 @@ def test_opnavBskScenarios(show_plots):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
+
 
 if __name__ == "__main__":
     test_opnavBskScenarios(True)

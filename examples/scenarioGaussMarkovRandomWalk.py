@@ -89,6 +89,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 
+
 def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
     # Create simulation variable names
     simTaskName = "simTask"
@@ -112,12 +113,12 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
 
     # Set spacecraft mass and inertia properties
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = [
-        [900.0, 0.0, 0.0],
-        [0.0, 800.0, 0.0],
-        [0.0, 0.0, 600.0]
-    ]
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Setup gravity model
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -150,14 +151,12 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
     imuSensor1.PMatrixGyro = [
         [processNoiseLevel, 0.0, 0.0],
         [0.0, processNoiseLevel, 0.0],
-        [0.0, 0.0, processNoiseLevel]
+        [0.0, 0.0, processNoiseLevel],
     ]
-    imuSensor1.AMatrixGyro = [
-        [-0.1, 0.0, 0.0],
-        [0.0, -0.1, 0.0],
-        [0.0, 0.0, -0.1]
-    ]
-    imuSensor1.setWalkBoundsGyro(np.array([walkBounds, walkBounds, walkBounds], dtype=np.float64))
+    imuSensor1.AMatrixGyro = [[-0.1, 0.0, 0.0], [0.0, -0.1, 0.0], [0.0, 0.0, -0.1]]
+    imuSensor1.setWalkBoundsGyro(
+        np.array([walkBounds, walkBounds, walkBounds], dtype=np.float64)
+    )
     imuSensor1.applySensorErrors = True
     imuSensor1.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
@@ -169,7 +168,7 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
     imuSensor2.PMatrixGyro = [
         [processNoiseLevel, 0.0, 0.0],
         [0.0, processNoiseLevel, 0.0],
-        [0.0, 0.0, processNoiseLevel]
+        [0.0, 0.0, processNoiseLevel],
     ]
     imuSensor2.walkBoundsGyro = [-1.0, -1.0, -1.0]
     imuSensor2.senRotBias = [0.0, 0.0, 0.0]
@@ -189,11 +188,7 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
     scSim.InitializeSimulation()
 
     # Set IMU2's A Matrix to zero to demonstrate different error propagation behavior.
-    imuSensor2.AMatrixGyro = [
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0]
-    ]
+    imuSensor2.AMatrixGyro = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
     simulationTime = macros.min2nano(10)
     scSim.ConfigureStopTime(simulationTime)
@@ -218,7 +213,9 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
 
         # Try to access the gyro data
         try:
-            data1.append(msg1.AngVelPlatform[0])  # Use AngVelPlatform instead of sensedValues
+            data1.append(
+                msg1.AngVelPlatform[0]
+            )  # Use AngVelPlatform instead of sensedValues
             data2.append(msg2.AngVelPlatform[0])
         except Exception as e:
             print(f"\nError accessing gyro data: {str(e)}")
@@ -237,31 +234,32 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
 
     # Create figure dictionary to store plots
     figureList = {}
-    plt.close('all')
+    plt.close("all")
 
     # Create the plot
     plt.figure(1, figsize=(12, 8))
-    plt.plot(timeData, data1, label='IMU 1 (Bounded Random Walk)', alpha=0.7)
-    plt.plot(timeData, data2, label='IMU 2 (Pure Gaussian)', alpha=0.7)
+    plt.plot(timeData, data1, label="IMU 1 (Bounded Random Walk)", alpha=0.7)
+    plt.plot(timeData, data2, label="IMU 2 (Pure Gaussian)", alpha=0.7)
     # Plot bounds for IMU1 only
-    plt.axhline(y=walkBounds, color='r', linestyle='--', alpha=0.3, label='IMU1 Bounds')
-    plt.axhline(y=-walkBounds, color='r', linestyle='--', alpha=0.3)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Angular Velocity (rad/s)')
-    plt.title('IMU Gyro Measurements: Random Walk vs Pure Gaussian')
+    plt.axhline(y=walkBounds, color="r", linestyle="--", alpha=0.3, label="IMU1 Bounds")
+    plt.axhline(y=-walkBounds, color="r", linestyle="--", alpha=0.3)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Angular Velocity (rad/s)")
+    plt.title("IMU Gyro Measurements: Random Walk vs Pure Gaussian")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
 
     # Store the figure in the figure dictionary
-    pltName = 'scenarioGaussMarkovRandomWalk'
+    pltName = "scenarioGaussMarkovRandomWalk"
     figureList[pltName] = plt.figure(1)
 
     if show_plots:
         plt.show()
-    plt.close('all')  # Close plots to free memory
+    plt.close("all")  # Close plots to free memory
 
     return figureList
+
 
 if __name__ == "__main__":
     run(True)

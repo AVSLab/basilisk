@@ -102,17 +102,23 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk import __path__
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # Used to get the location of supporting data.
 from Basilisk.topLevelModules import pyswice
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.architecture import astroConstants
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
@@ -152,7 +158,7 @@ def run(show_plots, scCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(5.)
+    simulationTimeStep = macros.sec2nano(5.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -181,12 +187,16 @@ def run(show_plots, scCase):
     # Next a series of gravitational bodies are included.  Note that it is convenient to include them as a
     # list of SPICE names.  The Earth is included in this scenario with the
     # spherical harmonics turned on.  Note that this is true for both spacecraft simulations.
-    gravBodies = gravFactory.createBodies('earth', 'mars barycenter', 'sun', 'moon', "jupiter barycenter")
-    gravBodies['earth'].isCentralBody = True
+    gravBodies = gravFactory.createBodies(
+        "earth", "mars barycenter", "sun", "moon", "jupiter barycenter"
+    )
+    gravBodies["earth"].isCentralBody = True
     # Other possible ways to access specific gravity bodies include the below
     #   earth = gravBodies['earth']
     #   earth = gravFactory.createEarth()
-    gravBodies['earth'].useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S.txt', 100)
+    gravBodies["earth"].useSphericalHarmonicsGravityModel(
+        bskPath + "/supportData/LocalGravData/GGM03S.txt", 100
+    )
 
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
     gravFactory.addBodiesTo(scObject)
@@ -194,7 +204,7 @@ def run(show_plots, scCase):
     # Next, the default SPICE support module is created and configured.  The first step is to store
     # the date and time of the start of the simulation.
     timeInitString = "2012 MAY 1 00:28:30.0"
-    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
+    spiceTimeStringFormat = "%Y %B %d %H:%M:%S.%f"
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
     # The following is a support macro that creates a `spiceObject` instance, and fills in typical
@@ -212,7 +222,7 @@ def run(show_plots, scCase):
     # or SSB for short.  The spacecraft() state output message is relative to this SBB frame by default.  To change
     # this behavior, the zero based point must be redefined from SBB to another body.
     # In this simulation we use the Earth.
-    spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = "Earth"
 
     # Finally, the SPICE object is added to the simulation task list.
     scSim.AddModelToTask(simTaskName, spiceObject)
@@ -226,23 +236,29 @@ def run(show_plots, scCase):
     #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
     #       all required SPICE libraries must be included when setting up and loading
     #       SPICE kernals in Python.
-    if scCase == 'NewHorizons':
-        scEphemerisFileName = 'nh_pred_od077.bsp'
-        scSpiceName = 'NEW HORIZONS'
+    if scCase == "NewHorizons":
+        scEphemerisFileName = "nh_pred_od077.bsp"
+        scSpiceName = "NEW HORIZONS"
     else:  # default case
-        scEphemerisFileName = 'hst_edited.bsp'
-        scSpiceName = 'HUBBLE SPACE TELESCOPE'
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+        scEphemerisFileName = "hst_edited.bsp"
+        scSpiceName = "HUBBLE SPACE TELESCOPE"
+    pyswice.furnsh_c(
+        spiceObject.SPICEDataPath + scEphemerisFileName
+    )  # Hubble Space Telescope data
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + "de430.bsp")  # solar system bodies
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + "naif0012.tls")  # leap second file
+    pyswice.furnsh_c(
+        spiceObject.SPICEDataPath + "de-403-masses.tpc"
+    )  # solar system masses
+    pyswice.furnsh_c(
+        spiceObject.SPICEDataPath + "pck00010.tpc"
+    )  # generic Planetary Constants Kernel
 
     #
     #   Setup spacecraft initial states
     #
     # The initial spacecraft position and velocity vector is obtained via the SPICE function call:
-    scInitialState = 1000 * spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
+    scInitialState = 1000 * spkRead(scSpiceName, timeInitString, "J2000", "EARTH")
     rN = scInitialState[0:3]  # meters
     vN = scInitialState[3:6]  # m/s
 
@@ -262,20 +278,25 @@ def run(show_plots, scCase):
     #
     #   Setup simulation time
     #
-    simulationTime = macros.sec2nano(2000.)
+    simulationTime = macros.sec2nano(2000.0)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
 
     # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -304,35 +325,38 @@ def run(show_plots, scCase):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
-    ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
-    if scCase == 'NewHorizons':
-        axesScale = astroConstants.AU * 1000.  # convert to AU
-        axesLabel = '[AU]'
+    ax.ticklabel_format(useOffset=False, style="plain")
+    ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter("{x:,.0f}"))
+    if scCase == "NewHorizons":
+        axesScale = astroConstants.AU * 1000.0  # convert to AU
+        axesLabel = "[AU]"
         timeScale = macros.NANO2MIN  # convert to minutes
-        timeLabel = '[min]'
+        timeLabel = "[min]"
     else:
-        axesScale = 1000.  # convert to km
-        axesLabel = '[km]'
+        axesScale = 1000.0  # convert to km
+        axesLabel = "[km]"
         timeScale = macros.NANO2MIN  # convert to minutes
-        timeLabel = '[min]'
+        timeLabel = "[min]"
     for idx in range(3):
-        plt.plot(timeAxis * timeScale, posData[:, idx] / axesScale,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time ' + timeLabel)
-    plt.ylabel('Inertial Position ' + axesLabel)
+        plt.plot(
+            timeAxis * timeScale,
+            posData[:, idx] / axesScale,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time " + timeLabel)
+    plt.ylabel("Inertial Position " + axesLabel)
     figureList = {}
     pltName = fileName + "1" + scCase
     figureList[pltName] = plt.figure(1)
 
     rBSK = posData[-1]  # store the last position to compare to the SPICE position
-    if scCase == 'Hubble':
+    if scCase == "Hubble":
         #
         # draw orbit in perifocal frame
         #
-        oeData = orbitalMotion.rv2elem(gravBodies['earth'].mu, rN, vN)
+        oeData = orbitalMotion.rv2elem(gravBodies["earth"].mu, rN, vN)
         omega0 = oeData.omega
         b = oeData.a * np.sqrt(1 - oeData.e * oeData.e)
         p = oeData.a * (1 - oeData.e * oeData.e)
@@ -342,23 +366,27 @@ def run(show_plots, scCase):
         # draw the planet
         fig = plt.gcf()
         ax = fig.gca()
-        planetColor = '#008800'
-        planetRadius = gravBodies['earth'].radEquator / 1000
+        planetColor = "#008800"
+        planetRadius = gravBodies["earth"].radEquator / 1000
         ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
 
         # draw the actual orbit
         rData = []
         fData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(gravBodies['earth'].mu, posData[idx], velData[idx])
+            oeData = orbitalMotion.rv2elem(
+                gravBodies["earth"].mu, posData[idx], velData[idx]
+            )
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - omega0)
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-                 , color='#aa0000'
-                 , linewidth=0.5
-                 , label='Basilisk'
-                 )
-        plt.legend(loc='lower right')
+        plt.plot(
+            rData * np.cos(fData) / 1000,
+            rData * np.sin(fData) / 1000,
+            color="#aa0000",
+            linewidth=0.5,
+            label="Basilisk",
+        )
+        plt.legend(loc="lower right")
 
         # draw the full SPICE orbit
         rData = []
@@ -370,38 +398,39 @@ def run(show_plots, scCase):
             usec = (simTime - sec) * 1000000
             time = timeInit + timedelta(seconds=sec, microseconds=usec)
             timeString = time.strftime(spiceTimeStringFormat)
-            scState = 1000.0 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+            scState = 1000.0 * spkRead(scSpiceName, timeString, "J2000", "EARTH")
             rN = scState[0:3]  # meters
             vN = scState[3:6]  # m/s
-            oeData = orbitalMotion.rv2elem(gravBodies['earth'].mu, rN, vN)
+            oeData = orbitalMotion.rv2elem(gravBodies["earth"].mu, rN, vN)
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - omega0)
             rTrue = rN  # store the last position to compare to the BSK position
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-                 , '--'
-                 , color='#555555'
-                 , linewidth=1.0
-                 , label='Spice'
-                 )
-        plt.legend(loc='lower right')
-        plt.xlabel('$i_e$ Cord. [km]')
-        plt.ylabel('$i_p$ Cord. [km]')
+        plt.plot(
+            rData * np.cos(fData) / 1000,
+            rData * np.sin(fData) / 1000,
+            "--",
+            color="#555555",
+            linewidth=1.0,
+            label="Spice",
+        )
+        plt.legend(loc="lower right")
+        plt.xlabel("$i_e$ Cord. [km]")
+        plt.ylabel("$i_p$ Cord. [km]")
         plt.grid()
         pltName = fileName + "2" + scCase
         figureList[pltName] = plt.figure(2)
 
     else:
-        scState = 1000.0 * spkRead(scSpiceName,
-                                   spiceObject.getCurrentTimeString(),
-                                   'J2000',
-                                   'EARTH')
+        scState = 1000.0 * spkRead(
+            scSpiceName, spiceObject.getCurrentTimeString(), "J2000", "EARTH"
+        )
         rTrue = scState[0:3]
 
     # plot the differences between BSK and SPICE position data
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     # ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
     posError = []
     for idx in range(len(timeAxis)):
@@ -410,15 +439,18 @@ def run(show_plots, scCase):
         usec = (simTime - sec) * 1000000
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        scState = 1000 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+        scState = 1000 * spkRead(scSpiceName, timeString, "J2000", "EARTH")
         posError.append(posData[idx] - np.array(scState[0:3]))  # meters
     for idx in range(3):
-        plt.plot(dataRec.times() * macros.NANO2MIN, np.array(posError)[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\Delta r_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Inertial Position Differences [m]')
+        plt.plot(
+            dataRec.times() * macros.NANO2MIN,
+            np.array(posError)[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\Delta r_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Inertial Position Differences [m]")
     pltName = fileName + "3" + scCase
     figureList[pltName] = plt.figure(3)
 
@@ -433,10 +465,14 @@ def run(show_plots, scCase):
     #
     gravFactory.unloadSpiceKernels()
     pyswice.unload_c(scEphemerisFileName)
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    pyswice.unload_c(spiceObject.SPICEDataPath + "de430.bsp")  # solar system bodies
+    pyswice.unload_c(spiceObject.SPICEDataPath + "naif0012.tls")  # leap second file
+    pyswice.unload_c(
+        spiceObject.SPICEDataPath + "de-403-masses.tpc"
+    )  # solar system masses
+    pyswice.unload_c(
+        spiceObject.SPICEDataPath + "pck00010.tpc"
+    )  # generic Planetary Constants Kernel
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -450,5 +486,5 @@ def run(show_plots, scCase):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        'Hubble'  # 'Hubble' or 'NewHorizons'
+        "Hubble",  # 'Hubble' or 'NewHorizons'
     )

@@ -19,12 +19,10 @@ import csv
 
 from Basilisk import __path__
 
-def loadGravFromFile(
-        fileName: str,
-        spherHarm: "SphericalHarmonicsGravityModel",
-        maxDeg: int = 2
-    ):
 
+def loadGravFromFile(
+    fileName: str, spherHarm: "SphericalHarmonicsGravityModel", maxDeg: int = 2
+):
     [clmList, slmList, mu, radEquator] = loadGravFromFileToList(fileName, maxDeg=2)
 
     spherHarm.muBody = mu
@@ -33,9 +31,10 @@ def loadGravFromFile(
     spherHarm.sBar = slmList
     spherHarm.maxDeg = maxDeg
 
+
 def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
-    with open(fileName, 'r') as csvfile:
-        gravReader = csv.reader(csvfile, delimiter=',')
+    with open(fileName, "r") as csvfile:
+        gravReader = csv.reader(csvfile, delimiter=",")
         firstRow = next(gravReader)
         clmList = []
         slmList = []
@@ -50,29 +49,36 @@ def loadGravFromFileToList(fileName: str, maxDeg: int = 2):
             refLong = float(firstRow[6])
             refLat = float(firstRow[7])
         except Exception as ex:
-            raise ValueError("File is not in the expected JPL format for "
-                             "spherical Harmonics", ex)
+            raise ValueError(
+                "File is not in the expected JPL format for spherical Harmonics", ex
+            )
 
         if maxDegreeFile < maxDeg or maxOrderFile < maxDeg:
-            raise ValueError(f"Requested using Spherical Harmonics of degree {maxDeg}"
-                             f", but file '{fileName}' has maximum degree/order of"
-                             f"{min(maxDegreeFile, maxOrderFile)}")
+            raise ValueError(
+                f"Requested using Spherical Harmonics of degree {maxDeg}"
+                f", but file '{fileName}' has maximum degree/order of"
+                f"{min(maxDegreeFile, maxOrderFile)}"
+            )
 
         if not coefficientsNormalized:
-            raise ValueError("Coefficients in given file are not normalized. This is "
-                            "not currently supported in Basilisk.")
+            raise ValueError(
+                "Coefficients in given file are not normalized. This is "
+                "not currently supported in Basilisk."
+            )
 
         if refLong != 0 or refLat != 0:
-            raise ValueError("Coefficients in given file use a reference longitude"
-                             " or latitude that is not zero. This is not currently "
-                             "supported in Basilisk.")
+            raise ValueError(
+                "Coefficients in given file use a reference longitude"
+                " or latitude that is not zero. This is not currently "
+                "supported in Basilisk."
+            )
 
         clmRow = []
         slmRow = []
         currDeg = 0
         for gravRow in gravReader:
             while int(gravRow[0]) > currDeg:
-                if (len(clmRow) < currDeg + 1):
+                if len(clmRow) < currDeg + 1:
                     clmRow.extend([0.0] * (currDeg + 1 - len(clmRow)))
                     slmRow.extend([0.0] * (currDeg + 1 - len(slmRow)))
                 clmList.append(clmRow)
@@ -91,17 +97,20 @@ def loadPolyFromFile(fileName: str, poly: "PolyhedralGravityModel"):
     poly.xyzVertex = vertList
     poly.orderFacet = faceList
 
+
 def loadPolyFromFileToList(fileName: str):
     with open(fileName) as polyFile:
-        if fileName.endswith('.tab'):
+        if fileName.endswith(".tab"):
             try:
-                nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
-                fileType = 'gaskell'
+                nVertex, nFacet = [
+                    int(x) for x in next(polyFile).split()
+                ]  # read first line
+                fileType = "gaskell"
             except:
                 polyFile.seek(0)
-                fileType = 'pds3'
+                fileType = "pds3"
 
-            if fileType == 'gaskell':
+            if fileType == "gaskell":
                 vertList = []
                 faceList = []
 
@@ -113,12 +122,20 @@ def loadPolyFromFileToList(fileName: str):
                         arrtemp.append(float(x))
 
                     if contLines < nVertex:
-                        vertList.append([float(arrtemp[1]*1e3),float(arrtemp[2]*1e3),float(arrtemp[3]*1e3)])
+                        vertList.append(
+                            [
+                                float(arrtemp[1] * 1e3),
+                                float(arrtemp[2] * 1e3),
+                                float(arrtemp[3] * 1e3),
+                            ]
+                        )
                     else:
-                        faceList.append([int(arrtemp[1]),int(arrtemp[2]),int(arrtemp[3])])
+                        faceList.append(
+                            [int(arrtemp[1]), int(arrtemp[2]), int(arrtemp[3])]
+                        )
 
                     contLines += 1
-            elif fileType == 'pds3':
+            elif fileType == "pds3":
                 nVertex = 0
                 nFacet = 0
                 vertList = []
@@ -126,13 +143,25 @@ def loadPolyFromFileToList(fileName: str):
                 for line in polyFile:
                     arrtemp = line.split()
                     if arrtemp:
-                        if arrtemp[0] == 'v':
+                        if arrtemp[0] == "v":
                             nVertex += 1
-                            vertList.append([float(arrtemp[1])*1e3, float(arrtemp[2])*1e3, float(arrtemp[3])*1e3])
-                        elif arrtemp[0] == 'f':
+                            vertList.append(
+                                [
+                                    float(arrtemp[1]) * 1e3,
+                                    float(arrtemp[2]) * 1e3,
+                                    float(arrtemp[3]) * 1e3,
+                                ]
+                            )
+                        elif arrtemp[0] == "f":
                             nFacet += 1
-                            faceList.append([int(arrtemp[1])+1, int(arrtemp[2])+1, int(arrtemp[3])+1])
-        elif fileName.endswith('.obj'):
+                            faceList.append(
+                                [
+                                    int(arrtemp[1]) + 1,
+                                    int(arrtemp[2]) + 1,
+                                    int(arrtemp[3]) + 1,
+                                ]
+                            )
+        elif fileName.endswith(".obj"):
             nVertex = 0
             nFacet = 0
             vertList = []
@@ -140,14 +169,24 @@ def loadPolyFromFileToList(fileName: str):
             for line in polyFile:
                 arrtemp = line.split()
                 if arrtemp:
-                    if arrtemp[0] == 'v':
+                    if arrtemp[0] == "v":
                         nVertex += 1
-                        vertList.append([float(arrtemp[1])*1e3, float(arrtemp[2])*1e3, float(arrtemp[3])*1e3])
-                    elif arrtemp[0] == 'f':
+                        vertList.append(
+                            [
+                                float(arrtemp[1]) * 1e3,
+                                float(arrtemp[2]) * 1e3,
+                                float(arrtemp[3]) * 1e3,
+                            ]
+                        )
+                    elif arrtemp[0] == "f":
                         nFacet += 1
-                        faceList.append([int(arrtemp[1]), int(arrtemp[2]), int(arrtemp[3])])
-        elif fileName.endswith('.txt'):
-            nVertex, nFacet = [int(x) for x in next(polyFile).split()] # read first line
+                        faceList.append(
+                            [int(arrtemp[1]), int(arrtemp[2]), int(arrtemp[3])]
+                        )
+        elif fileName.endswith(".txt"):
+            nVertex, nFacet = [
+                int(x) for x in next(polyFile).split()
+            ]  # read first line
             vertList = []
             faceList = []
 
@@ -159,13 +198,21 @@ def loadPolyFromFileToList(fileName: str):
                     arrtemp.append(float(x))
 
                 if contLines < nVertex:
-                    vertList.append([float(arrtemp[0]*1e3),float(arrtemp[1]*1e3),float(arrtemp[2]*1e3)])
+                    vertList.append(
+                        [
+                            float(arrtemp[0] * 1e3),
+                            float(arrtemp[1] * 1e3),
+                            float(arrtemp[2] * 1e3),
+                        ]
+                    )
                 else:
-                    faceList.append([int(arrtemp[0]),int(arrtemp[1]),int(arrtemp[2])])
+                    faceList.append([int(arrtemp[0]), int(arrtemp[1]), int(arrtemp[2])])
 
                 contLines += 1
         else:
-            raise ValueError("Unrecognized file extension. Valid extensions are "
-                             "'.tab', '.obj', and '.txt'")
+            raise ValueError(
+                "Unrecognized file extension. Valid extensions are "
+                "'.tab', '.obj', and '.txt'"
+            )
 
         return [vertList, faceList, nVertex, nFacet]

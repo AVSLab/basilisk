@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -22,12 +21,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.simulation import simpleTransmitter
 from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import partitionedStorageUnit
@@ -35,9 +36,8 @@ from Basilisk.utilities import macros
 
 # update "module" in this function name to reflect the module name
 
-@pytest.mark.parametrize("function", ["checkDefault"
-                                      , "checkStatus"
-                                      ])
+
+@pytest.mark.parametrize("function", ["checkDefault", "checkStatus"])
 def test_simpleTransmitterAll(show_plots, function):
     """Module Unit Test"""
     func = globals().get(function)
@@ -61,23 +61,23 @@ def checkDefault():
 
     :return:
     """
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create the test module
     testModule = simpleTransmitter.SimpleTransmitter()
     testModule.ModelTag = "transmitter"
-    testModule.nodeBaudRate = 9600.  # baud
+    testModule.nodeBaudRate = 9600.0  # baud
     testModule.packetSize = -9600  # bits
     testModule.numBuffers = 1
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -85,14 +85,14 @@ def checkDefault():
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
-    instrument.nodeBaudRate = 9600.  # baud
-    instrument.nodeDataName = "Instrument 1" # baud
+    instrument.nodeBaudRate = 9600.0  # baud
+    instrument.nodeDataName = "Instrument 1"  # baud
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 8E9  # bits (1 GB)
+    dataMonitor.storageCapacity = 8e9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)
     unitTestSim.AddModelToTask(unitTaskName, dataMonitor)
@@ -103,7 +103,7 @@ def checkDefault():
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -116,12 +116,20 @@ def checkDefault():
     # compare the module results to the truth values
     accuracy = 1e-16
 
-    trueData = 9600.  # Module should be on after enough data is accrued
-    testArray = [0, 0, 0, trueData, trueData, trueData, trueData]   # Should go through three iterations of no data downlinked
+    trueData = 9600.0  # Module should be on after enough data is accrued
+    testArray = [
+        0,
+        0,
+        0,
+        trueData,
+        trueData,
+        trueData,
+        trueData,
+    ]  # Should go through three iterations of no data downlinked
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        testArray, generatedData, accuracy, "dataOutput",
-        testFailCount, testMessages)
+        testArray, generatedData, accuracy, "dataOutput", testFailCount, testMessages
+    )
 
     if testFailCount:
         print(testMessages)
@@ -130,26 +138,26 @@ def checkDefault():
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def checkStatus():
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     testModule = simpleTransmitter.SimpleTransmitter()
     testModule.ModelTag = "transmitter"
-    testModule.nodeBaudRate = 9600. # baud
-    testModule.packetSize = -9600 # bits
+    testModule.nodeBaudRate = 9600.0  # baud
+    testModule.packetSize = -9600  # bits
     testModule.numBuffers = 1
     testModule.dataStatus = 0
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -157,14 +165,14 @@ def checkStatus():
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
-    instrument.nodeBaudRate = 1200. # baud
-    instrument.nodeDataName = "Instrument 1" # baud
+    instrument.nodeBaudRate = 1200.0  # baud
+    instrument.nodeDataName = "Instrument 1"  # baud
     unitTestSim.AddModelToTask(unitTaskName, instrument)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 8E9 # bits (1 GB)
+    dataMonitor.storageCapacity = 8e9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(testModule.nodeDataOutMsg)
     unitTestSim.AddModelToTask(unitTaskName, dataMonitor)
@@ -183,7 +191,7 @@ def checkStatus():
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -197,8 +205,13 @@ def checkStatus():
     trueData = 0.0  # Module should be off
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        [trueData]*3, drawData, accuracy, "transmitterStatusTest",
-        testFailCount, testMessages)
+        [trueData] * 3,
+        drawData,
+        accuracy,
+        "transmitterStatusTest",
+        testFailCount,
+        testMessages,
+    )
 
     if testFailCount:
         print(testMessages)
@@ -207,7 +220,8 @@ def checkStatus():
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a

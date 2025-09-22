@@ -132,7 +132,6 @@ Illustration of Simulation Results
 
 """
 
-
 # Get current file path
 import inspect
 import os
@@ -147,9 +146,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/../')
-sys.path.append(path + '/../models')
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../")
+sys.path.append(path + "/../models")
+sys.path.append(path + "/../plotting")
 import BSK_Dynamics
 import BSK_Fsw
 import BSK_Plotting as BSK_plt
@@ -160,7 +159,7 @@ from BSK_masters import BSKScenario, BSKSim
 class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_AttitudeFeedbackRW, self).__init__()
-        self.name = 'scenario_AttitudeFeedbackRW'
+        self.name = "scenario_AttitudeFeedbackRW"
 
         # declare additional class variables
         self.rwSpeedRec = None
@@ -176,10 +175,13 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModels = self.get_DynModel()
-        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=DynModels.rwStateEffector
-                                            )
+        vizSupport.enableUnityVisualization(
+            self,
+            DynModels.taskName,
+            DynModels.scObject,
+            # , saveFile=__file__
+            rwEffectorList=DynModels.rwStateEffector,
+        )
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
@@ -192,13 +194,17 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
         oe.f = 85.3 * macros.D2R
 
         DynModels = self.get_DynModel()
-        mu = DynModels.gravFactory.gravBodies['earth'].mu
+        mu = DynModels.gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels.scObject.hub.omega_BN_BInit = [[0.1], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [
+            [0.1],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         FswModel = self.get_FswModel()
@@ -214,7 +220,9 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
 
         self.rwLogs = []
         for item in range(4):
-            self.rwLogs.append(DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime))
+            self.rwLogs.append(
+                DynModel.rwStateEffector.rwOutMsgs[item].recorder(samplingTime)
+            )
             self.AddModelToTask(DynModel.taskName, self.rwLogs[item])
 
         return
@@ -254,23 +262,23 @@ def runScenario(scenario):
     scenario.InitializeSimulation()
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
-    scenario.modeRequest = 'inertial3D'
+    simulationTime = macros.min2nano(10.0)
+    scenario.modeRequest = "inertial3D"
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
 
-    simulationTime = macros.min2nano(30.)
-    scenario.modeRequest = 'directInertial3D'
+    simulationTime = macros.min2nano(30.0)
+    scenario.modeRequest = "directInertial3D"
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
 
 
 def run(showPlots):
     """
-        The scenarios can be run with the followings setups parameters:
+    The scenarios can be run with the followings setups parameters:
 
-        Args:
-            showPlots (bool): Determines if the script should display plots
+    Args:
+        showPlots (bool): Determines if the script should display plots
 
     """
     TheScenario = scenario_AttitudeFeedbackRW()

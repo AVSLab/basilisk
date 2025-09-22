@@ -73,13 +73,13 @@ Illustration of Simulation Results
 
 """
 
-
 # Get current file path
 import inspect
 import os
 import sys
 
 import numpy as np
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
@@ -87,15 +87,15 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + "/..")
 from BSK_masters import BSKSim, BSKScenario
 
 # Import plotting files for your scenario
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../plotting")
 import BSK_Plotting as BSK_plt
 import BSK_Dynamics, BSK_Fsw
 
-sys.path.append(path + '/../../')
+sys.path.append(path + "/../../")
 import scenarioAttGuideHyperbolic as scene_plt
 
 
@@ -103,7 +103,7 @@ import scenarioAttGuideHyperbolic as scene_plt
 class scenario_VelocityPointing(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_VelocityPointing, self).__init__()
-        self.name = 'scenario_VelocityPointing'
+        self.name = "scenario_VelocityPointing"
 
         self.attNavRec = None
         self.transNavRec = None
@@ -118,10 +118,13 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModels = self.get_DynModel()
-        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=DynModels.rwStateEffector
-                                            )
+        vizSupport.enableUnityVisualization(
+            self,
+            DynModels.taskName,
+            DynModels.scObject,
+            # , saveFile=__file__
+            rwEffectorList=DynModels.rwStateEffector,
+        )
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
@@ -132,22 +135,33 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 30 * macros.D2R
-        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.sigma_BNInit = [
+            [0.1],
+            [0.2],
+            [-0.3],
+        ]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [
+            [0.001],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
         # Safe orbit elements for postprocessing
         self.oe = oe
 
-
     def log_outputs(self):
         # Dynamics process outputs
         samplingTime = self.get_FswModel().processTasksTimeStep
-        self.attNavRec = self.get_DynModel().simpleNavObject.attOutMsg.recorder(samplingTime)
-        self.transNavRec = self.get_DynModel().simpleNavObject.transOutMsg.recorder(samplingTime)
+        self.attNavRec = self.get_DynModel().simpleNavObject.attOutMsg.recorder(
+            samplingTime
+        )
+        self.transNavRec = self.get_DynModel().simpleNavObject.transOutMsg.recorder(
+            samplingTime
+        )
 
         # FSW process outputs
         self.attErrRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
@@ -174,10 +188,13 @@ class scenario_VelocityPointing(BSKSim, BSKScenario):
         scene_plt.plot_track_error_norm(timeLineSet, sigma_BR)
         scene_plt.plot_control_torque(timeLineSet, Lr)
         scene_plt.plot_rate_error(timeLineSet, omega_BR_B)
-        scene_plt.plot_orbit(self.oe,
-                             self.get_DynModel().gravFactory.gravBodies['earth'].mu,
-                             self.get_DynModel().gravFactory.gravBodies['earth'].radEquator,
-                             r_BN_N, v_BN_N)
+        scene_plt.plot_orbit(
+            self.oe,
+            self.get_DynModel().gravFactory.gravBodies["earth"].mu,
+            self.get_DynModel().gravFactory.gravBodies["earth"].radEquator,
+            r_BN_N,
+            v_BN_N,
+        )
         figureList = {}
         if showPlots:
             BSK_plt.show_all_plots()
@@ -193,19 +210,20 @@ def runScenario(TheScenario):
     # Initialize simulation
     TheScenario.InitializeSimulation()
     # Configure FSW mode
-    TheScenario.modeRequest = 'velocityPoint'
+    TheScenario.modeRequest = "velocityPoint"
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
     TheScenario.ConfigureStopTime(simulationTime)
     TheScenario.ExecuteSimulation()
 
+
 def run(showPlots):
     """
-       The scenarios can be run with the followings setups parameters:
+    The scenarios can be run with the followings setups parameters:
 
-       Args:
-           showPlots (bool): Determines if the script should display plots
+    Args:
+        showPlots (bool): Determines if the script should display plots
 
     """
     # Instantiate base simulation
@@ -216,6 +234,7 @@ def run(showPlots):
     figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
+
 
 if __name__ == "__main__":
     run(True)

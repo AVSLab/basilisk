@@ -27,10 +27,10 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 
 
-@pytest.mark.parametrize("startTime, endTime, startTheta, endTheta", [
-     (macros.sec2nano(1), macros.sec2nano(2), 0, pi/180)
-])
-
+@pytest.mark.parametrize(
+    "startTime, endTime, startTheta, endTheta",
+    [(macros.sec2nano(1), macros.sec2nano(2), 0, pi / 180)],
+)
 def test_hingedBodyLinearProfiler(show_plots, startTime, endTime, startTheta, endTheta):
     r"""
     **Validation Test Description**
@@ -54,11 +54,15 @@ def test_hingedBodyLinearProfiler(show_plots, startTime, endTime, startTheta, en
     Before deployment, theta should be 0 and ``thetaDot`` 0. During deployment, ``thetaDot`` should be 1 degree per second, with theta varying linearly. After deployment, theta should be 1 degree and ``thetaDot`` 0.
 
     """
-    [testResults, testMessage] = hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTheta, endTheta)
+    [testResults, testMessage] = hingedBodyLinearProfilerTestFunction(
+        show_plots, startTime, endTime, startTheta, endTheta
+    )
     assert testResults < 1, testMessage
 
 
-def hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTheta, endTheta):
+def hingedBodyLinearProfilerTestFunction(
+    show_plots, startTime, endTime, startTheta, endTheta
+):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -91,11 +95,20 @@ def hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTh
     unitTestSim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
-    trueTheta = np.array([0, 0, 0, pi/360, pi/180, pi/180, pi/180]);
-    trueThetaDot = np.array([0, 0, pi/180, pi/180, pi/180, 0, 0])
+    trueTheta = np.array([0, 0, 0, pi / 360, pi / 180, pi / 180, pi / 180])
+    trueThetaDot = np.array([0, 0, pi / 180, pi / 180, pi / 180, 0, 0])
 
-    testFailCount, testMessages = unitTestSupport.compareVector(trueTheta, dataLog.theta, accuracy, "theta", testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareVector(trueThetaDot, dataLog.thetaDot, accuracy, "thetaDot", testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        trueTheta, dataLog.theta, accuracy, "theta", testFailCount, testMessages
+    )
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        trueThetaDot,
+        dataLog.thetaDot,
+        accuracy,
+        "thetaDot",
+        testFailCount,
+        testMessages,
+    )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -106,4 +119,6 @@ def hingedBodyLinearProfilerTestFunction(show_plots, startTime, endTime, startTh
 
 
 if __name__ == "__main__":
-    test_hingedBodyLinearProfiler(False, macros.sec2nano(1), macros.sec2nano(2), 0, pi/180)
+    test_hingedBodyLinearProfiler(
+        False, macros.sec2nano(1), macros.sec2nano(2), 0, pi / 180
+    )

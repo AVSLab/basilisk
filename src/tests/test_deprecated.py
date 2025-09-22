@@ -23,6 +23,7 @@ exposed to users through SWIG, see:
 
     src\architecture\utilitiesSelfCheck\_UnitTest\swigDeprecatedCheck.i
 """
+
 import pytest
 
 # The following block represents the target code before deprecations:
@@ -53,8 +54,7 @@ from Basilisk.utilities import deprecated
 
 
 @deprecated.deprecated("2099/05/05", "Use standaloneFun_new() instead!")
-def standaloneFun(arg):
-    ...
+def standaloneFun(arg): ...
 
 
 @deprecated.deprecated("2099/05/05", "This entire class is replaced by RustTest")
@@ -69,8 +69,7 @@ class PythonTest:
         self.myPropertyInner = 0
 
     @deprecated.deprecated("2000/05/05", "myFun1 is super old!")
-    def myFun1(self):
-        ...
+    def myFun1(self): ...
 
     @property
     def myProperty(self):

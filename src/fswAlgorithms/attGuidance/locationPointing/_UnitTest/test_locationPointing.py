@@ -35,7 +35,10 @@ from Basilisk.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
-@pytest.mark.parametrize("r_LS_N", [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.], [0, -1, 0.], [1, 1, 1]])
+@pytest.mark.parametrize(
+    "r_LS_N",
+    [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [0, -1, 0.0], [1, 1, 1]],
+)
 @pytest.mark.parametrize("locationType", [0, 1, 2])
 @pytest.mark.parametrize("use3DRate", [True, False])
 def test_locationPointing(show_plots, r_LS_N, locationType, use3DRate, accuracy):
@@ -61,12 +64,15 @@ def test_locationPointing(show_plots, r_LS_N, locationType, use3DRate, accuracy)
     The script checks the attitude and rate outputs.
 
     """
-    [testResults, testMessage] = locationPointingTestFunction(show_plots, r_LS_N, locationType,
-                                                              use3DRate, accuracy)
+    [testResults, testMessage] = locationPointingTestFunction(
+        show_plots, r_LS_N, locationType, use3DRate, accuracy
+    )
     assert testResults < 1, testMessage
 
 
-def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, accuracy):
+def locationPointingTestFunction(
+    show_plots, r_LS_NIn, locationType, use3DRate, accuracy
+):
     """Test method"""
     testFailCount = 0
     testMessages = []
@@ -84,7 +90,7 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
     r_SN_N = np.array([10, 11, 12])
     r_LS_N = np.array(r_LS_NIn)
     omega_BN_B = np.array([0.001, 0.002, 0.003])
-    sigma_BN = np.array([0., 0., 0.])
+    sigma_BN = np.array([0.0, 0.0, 0.0])
     r_LN_N = r_LS_N + r_SN_N
 
     # setup module to be tested
@@ -146,42 +152,73 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
         unitTestSim.ExecuteSimulation()
         counter += 1
 
-    truthSigmaBR, truthOmegaBR, truthSigmaRN, truthOmegaRN = \
-        truthValues(pHat_B, r_LN_N, r_SN_N, scAttRec.sigma_BN, scAttRec.omega_BN_B, eps, timeStep,
-                    use3DRate)
+    truthSigmaBR, truthOmegaBR, truthSigmaRN, truthOmegaRN = truthValues(
+        pHat_B,
+        r_LN_N,
+        r_SN_N,
+        scAttRec.sigma_BN,
+        scAttRec.omega_BN_B,
+        eps,
+        timeStep,
+        use3DRate,
+    )
 
     # compare the module results to the truth values
     for i in range(0, len(truthSigmaBR)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.sigma_BR[i], truthSigmaBR[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            attGuidOutMsgRec.sigma_BR[i], truthSigmaBR[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test at t=" +
-                                str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed sigma_BR unit test at t="
+                + str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
     for i in range(0, len(truthOmegaBR)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(attGuidOutMsgRec.omega_BR_B[i], truthOmegaBR[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            attGuidOutMsgRec.omega_BR_B[i], truthOmegaBR[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test at t=" +
-                                str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed omega_BR_B unit test at t="
+                + str(attGuidOutMsgRec.times()[i] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
     for i in range(0, len(truthSigmaRN)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], truthSigmaRN[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            attRefOutMsgRec.sigma_RN[i], truthSigmaRN[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
-                                str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed sigma_RN unit test at t="
+                + str(attRefOutMsgRec.times()[i] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
     for i in range(0, len(truthOmegaRN)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(attRefOutMsgRec.omega_RN_N[i], truthOmegaRN[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            attRefOutMsgRec.omega_RN_N[i], truthOmegaRN[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test at t=" +
-                                str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed omega_RN_N unit test at t="
+                + str(attRefOutMsgRec.times()[i] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -191,17 +228,19 @@ def locationPointingTestFunction(show_plots, r_LS_NIn, locationType, use3DRate, 
     return [testFailCount, "".join(testMessages)]
 
 
-def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, dt, use3DRate):
+def truthValues(
+    pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, dt, use3DRate
+):
     # setup eHat180_B
-    eHat180_B = np.cross(pHat_B, np.array([1., 0., 0.]))
+    eHat180_B = np.cross(pHat_B, np.array([1.0, 0.0, 0.0]))
     if np.linalg.norm(eHat180_B) < 0.1:
-        eHat180_B = np.cross(pHat_B, np.array([0., 1., 0.]))
+        eHat180_B = np.cross(pHat_B, np.array([0.0, 1.0, 0.0]))
     eHat180_B = eHat180_B / np.linalg.norm(eHat180_B)
 
     r_LS_N = r_LN_N - r_SN_N
 
     counter = 0
-    omega_BR_B = np.array([0., 0., 0.])
+    omega_BR_B = np.array([0.0, 0.0, 0.0])
     sigma_BR_Out = []
     omega_BR_B_Out = []
     sigma_RN_Out = []
@@ -212,14 +251,14 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, 
         r_LS_B = dcmBN.dot(r_LS_N)
         phi = math.acos(pHat_B.dot(r_LS_B) / np.linalg.norm(r_LS_B))
         if phi < smallAngle:
-            sigma_BR = np.array([0., 0., 0.])
+            sigma_BR = np.array([0.0, 0.0, 0.0])
         else:
             if math.pi - phi < smallAngle:
                 eHat_B = eHat180_B
             else:
                 eHat_B = np.cross(pHat_B, r_LS_B)
             eHat_B = eHat_B / np.linalg.norm(eHat_B)
-            sigma_BR = - math.tan(phi / 4.) * eHat_B
+            sigma_BR = -math.tan(phi / 4.0) * eHat_B
 
         if counter >= 1:
             dsigma = (sigma_BR - sigma_BR_Out[counter - 1]) / dt
@@ -228,13 +267,17 @@ def truthValues(pHat_B, r_LN_N, r_SN_N, sigma_BNList, omega_BNList, smallAngle, 
 
         if use3DRate:
             rHat_LS_B = r_LS_B / np.linalg.norm(r_LS_B)
-            omega_BR_B = omega_BR_B + (omega_BNList[counter].dot(rHat_LS_B))*rHat_LS_B
+            omega_BR_B = omega_BR_B + (omega_BNList[counter].dot(rHat_LS_B)) * rHat_LS_B
 
         # store truth results
         sigma_BR_Out.append(sigma_BR)
         omega_BR_B_Out.append(omega_BR_B)
-        sigma_RN_Out.append(RigidBodyKinematics.addMRP(sigma_BNList[counter], -sigma_BR))
-        omega_RN_N_Out.append(np.transpose(dcmBN).dot(omega_BNList[counter] - omega_BR_B_Out[counter]))
+        sigma_RN_Out.append(
+            RigidBodyKinematics.addMRP(sigma_BNList[counter], -sigma_BR)
+        )
+        omega_RN_N_Out.append(
+            np.transpose(dcmBN).dot(omega_BNList[counter] - omega_BR_B_Out[counter])
+        )
 
         counter += 1
 

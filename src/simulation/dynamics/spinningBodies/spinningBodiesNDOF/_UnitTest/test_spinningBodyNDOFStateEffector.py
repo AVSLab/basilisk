@@ -30,10 +30,14 @@ import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.simulation import spacecraft, spinningBodyNDOFStateEffector, gravityEffector
+from Basilisk.simulation import (
+    spacecraft,
+    spinningBodyNDOFStateEffector,
+    gravityEffector,
+)
 from Basilisk.architecture import messaging
 
 
@@ -43,9 +47,11 @@ from Basilisk.architecture import messaging
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("function", ["spinningBodyNoInput"
-    , "spinningBodyLockAxis"
-    , "spinningBodyCommandedTorque"])
+
+@pytest.mark.parametrize(
+    "function",
+    ["spinningBodyNoInput", "spinningBodyLockAxis", "spinningBodyCommandedTorque"],
+)
 def test_spinningBody(show_plots, function):
     r"""
     **Validation Test Description**
@@ -102,16 +108,28 @@ def spinningBodyNoInput(show_plots):
     # Define properties of spinning bodies
     spinningBody1 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody1.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody1.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody1.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     spinningBody1.setDCM_S0P([[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
-    spinningBody1.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody1.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
+    spinningBody1.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody1.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     spinningBody1.setSHat_S([[0], [0], [1]])
     spinningBody1.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody1.setThetaDotInit(0.0 * macros.D2R)
@@ -120,16 +138,28 @@ def spinningBodyNoInput(show_plots):
 
     spinningBody2 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody2.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody2.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
-    spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]])
-    spinningBody2.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody2.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
+    spinningBody2.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
+    spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
+    spinningBody2.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody2.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     spinningBody2.setSHat_S([[0], [-1], [0]])
     spinningBody2.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody2.setThetaDotInit(0.0 * macros.D2R)
@@ -138,17 +168,29 @@ def spinningBodyNoInput(show_plots):
 
     spinningBody3 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody3.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody3.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody3.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     spinningBody3.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
-    spinningBody3.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody3.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
-    spinningBody3.setSHat_S([[np.sqrt(1/2)], [np.sqrt(1/2)], [0]])
+    spinningBody3.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody3.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody3.setSHat_S([[np.sqrt(1 / 2)], [np.sqrt(1 / 2)], [0]])
     spinningBody3.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody3.setThetaDotInit(0.0 * macros.D2R)
     spinningBody3.setK(np.random.random())
@@ -156,17 +198,29 @@ def spinningBodyNoInput(show_plots):
 
     spinningBody4 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody4.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody4.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
-    spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, .0, 1.0], [1.0, 0.0, 0.0]])
-    spinningBody4.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody4.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
-    spinningBody4.setSHat_S([[np.sqrt(1/2)], [-np.sqrt(1/2)], [0]])
+    spinningBody4.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
+    spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]])
+    spinningBody4.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody4.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody4.setSHat_S([[np.sqrt(1 / 2)], [-np.sqrt(1 / 2)], [0]])
     spinningBody4.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody4.setThetaDotInit(0.0 * macros.D2R)
     spinningBody4.setK(np.random.random())
@@ -181,8 +235,16 @@ def spinningBodyNoInput(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
@@ -193,7 +255,7 @@ def spinningBodyNoInput(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -202,7 +264,9 @@ def spinningBodyNoInput(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totRotEnergy", "totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N"])
+    scObjectLog = scObject.logger(
+        ["totRotEnergy", "totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Add states to log
@@ -252,12 +316,17 @@ def spinningBodyNoInput(show_plots):
     plt.close("all")
     plt.figure()
     ax = plt.axes()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Orbital Angular Momentum', fontsize='22')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Orbital Angular Momentum", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -265,21 +334,26 @@ def spinningBodyNoInput(show_plots):
     plt.figure()
     ax = plt.axes()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Orbital Energy', fontsize='22')
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Orbital Energy", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
 
     plt.figure()
     ax = plt.axes()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Rotational Angular Momentum', fontsize='22')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Rotational Angular Momentum", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -287,32 +361,32 @@ def spinningBodyNoInput(show_plots):
     plt.figure()
     ax = plt.axes()
     plt.plot(timeSec, (rotEnergy - initialRotEnergy) / initialRotEnergy)
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Rotational Energy', fontsize='22')
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Rotational Energy", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, theta1, label=r'$\theta_1$')
-    plt.plot(timeSec, theta2, label=r'$\theta_2$')
-    plt.plot(timeSec, theta3, label=r'$\theta_3$')
-    plt.plot(timeSec, theta4, label=r'$\theta_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Angle')
+    plt.plot(timeSec, theta1, label=r"$\theta_1$")
+    plt.plot(timeSec, theta2, label=r"$\theta_2$")
+    plt.plot(timeSec, theta3, label=r"$\theta_3$")
+    plt.plot(timeSec, theta4, label=r"$\theta_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Angle")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, theta1Dot, label=r'$\dot{\theta}_1$')
-    plt.plot(timeSec, theta2Dot, label=r'$\dot{\theta}_2$')
-    plt.plot(timeSec, theta3Dot, label=r'$\dot{\theta}_3$')
-    plt.plot(timeSec, theta4Dot, label=r'$\dot{\theta}_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Angle Rate')
+    plt.plot(timeSec, theta1Dot, label=r"$\dot{\theta}_1$")
+    plt.plot(timeSec, theta2Dot, label=r"$\dot{\theta}_2$")
+    plt.plot(timeSec, theta3Dot, label=r"$\dot{\theta}_3$")
+    plt.plot(timeSec, theta4Dot, label=r"$\dot{\theta}_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Angle Rate")
 
     if show_plots:
         plt.show()
@@ -355,16 +429,28 @@ def spinningBodyLockAxis(show_plots):
     # Define properties of spinning bodies
     spinningBody1 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody1.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody1.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody1.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     spinningBody1.setDCM_S0P([[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
-    spinningBody1.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody1.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
+    spinningBody1.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody1.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     spinningBody1.setSHat_S([[0], [0], [1]])
     spinningBody1.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody1.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
@@ -373,16 +459,28 @@ def spinningBodyLockAxis(show_plots):
 
     spinningBody2 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody2.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody2.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
-    spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]])
-    spinningBody2.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody2.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
+    spinningBody2.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
+    spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
+    spinningBody2.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody2.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     spinningBody2.setSHat_S([[0], [-1], [0]])
     spinningBody2.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody2.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
@@ -391,17 +489,29 @@ def spinningBodyLockAxis(show_plots):
 
     spinningBody3 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody3.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody3.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody3.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     spinningBody3.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
-    spinningBody3.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody3.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
-    spinningBody3.setSHat_S([[np.sqrt(1/2)], [np.sqrt(1/2)], [0]])
+    spinningBody3.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody3.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody3.setSHat_S([[np.sqrt(1 / 2)], [np.sqrt(1 / 2)], [0]])
     spinningBody3.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody3.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
     spinningBody3.setK(np.random.random())
@@ -409,17 +519,29 @@ def spinningBodyLockAxis(show_plots):
 
     spinningBody4 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody4.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody4.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
-    spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, .0, 1.0], [1.0, 0.0, 0.0]])
-    spinningBody4.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody4.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
-    spinningBody4.setSHat_S([[np.sqrt(1/2)], [-np.sqrt(1/2)], [0]])
+    spinningBody4.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
+    spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]])
+    spinningBody4.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody4.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody4.setSHat_S([[np.sqrt(1 / 2)], [-np.sqrt(1 / 2)], [0]])
     spinningBody4.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody4.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
     spinningBody4.setK(np.random.random())
@@ -434,8 +556,16 @@ def spinningBodyLockAxis(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
@@ -452,7 +582,7 @@ def spinningBodyLockAxis(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -461,7 +591,9 @@ def spinningBodyLockAxis(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totRotEnergy", "totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N"])
+    scObjectLog = scObject.logger(
+        ["totRotEnergy", "totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Add states to log
@@ -511,12 +643,17 @@ def spinningBodyLockAxis(show_plots):
     plt.close("all")
     plt.figure()
     ax = plt.axes()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Orbital Angular Momentum', fontsize='22')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Orbital Angular Momentum", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -524,21 +661,26 @@ def spinningBodyLockAxis(show_plots):
     plt.figure()
     ax = plt.axes()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Orbital Energy', fontsize='22')
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Orbital Energy", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
 
     plt.figure()
     ax = plt.axes()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Rotational Angular Momentum', fontsize='22')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Rotational Angular Momentum", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -546,32 +688,32 @@ def spinningBodyLockAxis(show_plots):
     plt.figure()
     ax = plt.axes()
     plt.plot(timeSec, (rotEnergy - initialRotEnergy) / initialRotEnergy)
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Rotational Energy', fontsize='22')
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Rotational Energy", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, theta1, label=r'$\theta_1$')
-    plt.plot(timeSec, theta2, label=r'$\theta_2$')
-    plt.plot(timeSec, theta3, label=r'$\theta_3$')
-    plt.plot(timeSec, theta4, label=r'$\theta_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Angle')
+    plt.plot(timeSec, theta1, label=r"$\theta_1$")
+    plt.plot(timeSec, theta2, label=r"$\theta_2$")
+    plt.plot(timeSec, theta3, label=r"$\theta_3$")
+    plt.plot(timeSec, theta4, label=r"$\theta_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Angle")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, theta1Dot, label=r'$\dot{\theta}_1$')
-    plt.plot(timeSec, theta2Dot, label=r'$\dot{\theta}_2$')
-    plt.plot(timeSec, theta3Dot, label=r'$\dot{\theta}_3$')
-    plt.plot(timeSec, theta4Dot, label=r'$\dot{\theta}_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Angle Rate')
+    plt.plot(timeSec, theta1Dot, label=r"$\dot{\theta}_1$")
+    plt.plot(timeSec, theta2Dot, label=r"$\dot{\theta}_2$")
+    plt.plot(timeSec, theta3Dot, label=r"$\dot{\theta}_3$")
+    plt.plot(timeSec, theta4Dot, label=r"$\dot{\theta}_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Angle Rate")
 
     if show_plots:
         plt.show()
@@ -614,16 +756,28 @@ def spinningBodyCommandedTorque(show_plots):
     # Define properties of spinning bodies
     spinningBody1 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody1.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody1.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody1.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     spinningBody1.setDCM_S0P([[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
-    spinningBody1.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody1.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
+    spinningBody1.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody1.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     spinningBody1.setSHat_S([[0], [0], [1]])
     spinningBody1.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody1.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
@@ -632,16 +786,28 @@ def spinningBodyCommandedTorque(show_plots):
 
     spinningBody2 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody2.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody2.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
-    spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]])
-    spinningBody2.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody2.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
+    spinningBody2.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
+    spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
+    spinningBody2.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody2.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
     spinningBody2.setSHat_S([[0], [-1], [0]])
     spinningBody2.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody2.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
@@ -650,17 +816,29 @@ def spinningBodyCommandedTorque(show_plots):
 
     spinningBody3 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody3.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody3.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody3.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
     spinningBody3.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
-    spinningBody3.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody3.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
-    spinningBody3.setSHat_S([[np.sqrt(1/2)], [np.sqrt(1/2)], [0]])
+    spinningBody3.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody3.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody3.setSHat_S([[np.sqrt(1 / 2)], [np.sqrt(1 / 2)], [0]])
     spinningBody3.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody3.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
     spinningBody3.setK(np.random.random())
@@ -668,17 +846,29 @@ def spinningBodyCommandedTorque(show_plots):
 
     spinningBody4 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody4.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody4.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
-    spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, .0, 1.0], [1.0, 0.0, 0.0]])
-    spinningBody4.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)],
-                              [np.random.uniform(-1.0, 1.0)]])
-    spinningBody4.setR_SP_P([[np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)],
-                             [np.random.uniform(-1.0, 1.0)]])
-    spinningBody4.setSHat_S([[np.sqrt(1/2)], [-np.sqrt(1/2)], [0]])
+    spinningBody4.setISPntSc_S(
+        [
+            [np.random.uniform(5.0, 100.0), 0.0, 0.0],
+            [0.0, np.random.uniform(5.0, 100.0), 0.0],
+            [0.0, 0.0, np.random.uniform(5.0, 100.0)],
+        ]
+    )
+    spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]])
+    spinningBody4.setR_ScS_S(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody4.setR_SP_P(
+        [
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+            [np.random.uniform(-1.0, 1.0)],
+        ]
+    )
+    spinningBody4.setSHat_S([[np.sqrt(1 / 2)], [-np.sqrt(1 / 2)], [0]])
     spinningBody4.setThetaInit(np.random.uniform(-10.0, 10.0) * macros.D2R)
     spinningBody4.setThetaDotInit(np.random.uniform(-1.0, 1.0) * macros.D2R)
     spinningBody4.setK(np.random.random())
@@ -693,8 +883,16 @@ def spinningBodyCommandedTorque(show_plots):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
@@ -711,7 +909,7 @@ def spinningBodyCommandedTorque(show_plots):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -720,7 +918,9 @@ def spinningBodyCommandedTorque(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totRotEnergy", "totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N"])
+    scObjectLog = scObject.logger(
+        ["totRotEnergy", "totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     # Add states to log
@@ -769,12 +969,17 @@ def spinningBodyCommandedTorque(show_plots):
     plt.close("all")
     plt.figure()
     ax = plt.axes()
-    plt.plot(timeSec, (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
-             timeSec, (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
-             timeSec, (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2])
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Orbital Angular Momentum', fontsize='22')
+    plt.plot(
+        timeSec,
+        (orbAngMom_N[:, 0] - initialOrbAngMom_N[0]) / initialOrbAngMom_N[0],
+        timeSec,
+        (orbAngMom_N[:, 1] - initialOrbAngMom_N[1]) / initialOrbAngMom_N[1],
+        timeSec,
+        (orbAngMom_N[:, 2] - initialOrbAngMom_N[2]) / initialOrbAngMom_N[2],
+    )
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Orbital Angular Momentum", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -782,21 +987,26 @@ def spinningBodyCommandedTorque(show_plots):
     plt.figure()
     ax = plt.axes()
     plt.plot(timeSec, (orbEnergy - initialOrbEnergy) / initialOrbEnergy)
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Orbital Energy', fontsize='22')
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Orbital Energy", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
 
     plt.figure()
     ax = plt.axes()
-    plt.plot(timeSec, (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
-             timeSec, (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
-             timeSec, (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2])
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Rotational Angular Momentum', fontsize='22')
+    plt.plot(
+        timeSec,
+        (rotAngMom_N[:, 0] - initialRotAngMom_N[0]) / initialRotAngMom_N[0],
+        timeSec,
+        (rotAngMom_N[:, 1] - initialRotAngMom_N[1]) / initialRotAngMom_N[1],
+        timeSec,
+        (rotAngMom_N[:, 2] - initialRotAngMom_N[2]) / initialRotAngMom_N[2],
+    )
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Rotational Angular Momentum", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -804,32 +1014,32 @@ def spinningBodyCommandedTorque(show_plots):
     plt.figure()
     ax = plt.axes()
     plt.plot(timeSec, (rotEnergy - initialRotEnergy) / initialRotEnergy)
-    plt.xlabel('time (s)', fontsize='18')
-    plt.ylabel('Relative Difference', fontsize='18')
-    plt.title('Rotational Energy', fontsize='22')
+    plt.xlabel("time (s)", fontsize="18")
+    plt.ylabel("Relative Difference", fontsize="18")
+    plt.title("Rotational Energy", fontsize="22")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, theta1, label=r'$\theta_1$')
-    plt.plot(timeSec, theta2, label=r'$\theta_2$')
-    plt.plot(timeSec, theta3, label=r'$\theta_3$')
-    plt.plot(timeSec, theta4, label=r'$\theta_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Angle')
+    plt.plot(timeSec, theta1, label=r"$\theta_1$")
+    plt.plot(timeSec, theta2, label=r"$\theta_2$")
+    plt.plot(timeSec, theta3, label=r"$\theta_3$")
+    plt.plot(timeSec, theta4, label=r"$\theta_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Angle")
 
     plt.figure()
     plt.clf()
-    plt.plot(timeSec, theta1Dot, label=r'$\dot{\theta}_1$')
-    plt.plot(timeSec, theta2Dot, label=r'$\dot{\theta}_2$')
-    plt.plot(timeSec, theta3Dot, label=r'$\dot{\theta}_3$')
-    plt.plot(timeSec, theta4Dot, label=r'$\dot{\theta}_4$')
-    plt.legend(loc='best')
-    plt.xlabel('time (s)')
-    plt.ylabel('Angle Rate')
+    plt.plot(timeSec, theta1Dot, label=r"$\dot{\theta}_1$")
+    plt.plot(timeSec, theta2Dot, label=r"$\dot{\theta}_2$")
+    plt.plot(timeSec, theta3Dot, label=r"$\dot{\theta}_3$")
+    plt.plot(timeSec, theta4Dot, label=r"$\dot{\theta}_4$")
+    plt.legend(loc="best")
+    plt.xlabel("time (s)")
+    plt.ylabel("Angle Rate")
 
     if show_plots:
         plt.show()

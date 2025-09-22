@@ -297,7 +297,7 @@ def run(show_plots, integratorCase):
     vizSupport.enableUnityVisualization(
         scSim,
         simTaskName,
-        scObject
+        scObject,
         # , saveFile=fileName
     )
 
@@ -328,7 +328,7 @@ def run(show_plots, integratorCase):
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
     p = oe.a * (1 - oe.e * oe.e)
-    if integratorCase == 'rk4':
+    if integratorCase == "rk4":
         plt.figure(1, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     # draw the planet
@@ -347,9 +347,8 @@ def run(show_plots, integratorCase):
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(
         rData * np.cos(fData) / 1000,
-        rData * np.sin(fData) / 1000
+        rData * np.sin(fData) / 1000,
         # , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
-        ,
         label=integratorCase,
         linewidth=3.0,
     )
@@ -392,5 +391,6 @@ def run(show_plots, integratorCase):
 #
 if __name__ == "__main__":
     run(
-        True, "rk4"  # show_plots
+        True,
+        "rk4",  # show_plots
     )  # integrator case(0 - rk4, 1 - rkf45, 2 - rkf78, 3 - euler, 4 - rk2, 5 - rk3, 6 - bogackiShampine)

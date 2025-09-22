@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -54,9 +53,9 @@ def unitephemeris_converter(show_plots):
     # Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
 
-    simulationTime = macros.sec2nano(30.)
+    simulationTime = macros.sec2nano(30.0)
     numDataPoints = 600
-    samplingTime = simulationTime // (numDataPoints-1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     DynUnitTestProc = sim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, samplingTime))
@@ -67,14 +66,14 @@ def unitephemeris_converter(show_plots):
     # Initialize the spice module
     spiceObject = spiceInterface.SpiceInterface()
     spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
+    spiceObject.SPICEDataPath = bskPath + "/supportData/EphemerisData/"
     spiceObject.addPlanetNames(spiceInterface.StringVector(planets))
     spiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
     sim.AddModelToTask(unitTaskName, spiceObject)
 
     # Initialize the ephemeris module
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.ModelTag = "EphemData"
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[0])  # earth
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[1])  # mars
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[2])  # sun
@@ -104,13 +103,13 @@ def unitephemeris_converter(show_plots):
         spicePlanetDCM_PN = dataSpiceLog[i].J20002Pfix
         spicePlanetDCM_PN_dot = dataSpiceLog[i].J20002Pfix_dot
         for j in range(0, numDataPoints):
-            dcm_PN = spicePlanetDCM_PN[j,:]
-            dcm_PN_dot = spicePlanetDCM_PN_dot[j,:]
-            sigma_BN[i,j,0:3] = RigidBodyKinematics.C2MRP(dcm_PN)
+            dcm_PN = spicePlanetDCM_PN[j, :]
+            dcm_PN_dot = spicePlanetDCM_PN_dot[j, :]
+            sigma_BN[i, j, 0:3] = RigidBodyKinematics.C2MRP(dcm_PN)
             omega_BN_B_tilde = -np.matmul(dcm_PN_dot, dcm_PN.T)
-            omega_BN_B[i,j,0] = omega_BN_B_tilde[2,1]
-            omega_BN_B[i,j,1] = omega_BN_B_tilde[0,2]
-            omega_BN_B[i,j,2] = omega_BN_B_tilde[1,0]
+            omega_BN_B[i, j, 0] = omega_BN_B_tilde[2, 1]
+            omega_BN_B[i, j, 1] = omega_BN_B_tilde[0, 2]
+            omega_BN_B[i, j, 2] = omega_BN_B_tilde[1, 0]
 
     # Get the position, velocities, attitude, attitude rate, and time for the message before and after the copy
     accuracy = 1e-12
@@ -121,10 +120,38 @@ def unitephemeris_converter(show_plots):
         spicePlanetVelData = dataSpiceLog[i].VelocityVector
         ephemPlanetAttData = dataEphemLog[i].sigma_BN
         ephemePlanetAngVelData = dataEphemLog[i].omega_BN_B
-        testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetPosData[:,0:3], ephemPlanetPosData, accuracy, "Position", testFailCount, testMessages)
-        testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetVelData[:,0:3], ephemPlanetVelData, accuracy, "Velocity", testFailCount, testMessages)
-        testFailCount, testMessages = unitTestSupport.compareArrayRelative(sigma_BN[i,:,:], ephemPlanetAttData, accuracy, "Attitude", testFailCount, testMessages)
-        testFailCount, testMessages = unitTestSupport.compareArray(omega_BN_B[i,:], ephemePlanetAngVelData, accuracy, "Angular Velocity", testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareArrayRelative(
+            spicePlanetPosData[:, 0:3],
+            ephemPlanetPosData,
+            accuracy,
+            "Position",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareArrayRelative(
+            spicePlanetVelData[:, 0:3],
+            ephemPlanetVelData,
+            accuracy,
+            "Velocity",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareArrayRelative(
+            sigma_BN[i, :, :],
+            ephemPlanetAttData,
+            accuracy,
+            "Attitude",
+            testFailCount,
+            testMessages,
+        )
+        testFailCount, testMessages = unitTestSupport.compareArray(
+            omega_BN_B[i, :],
+            ephemePlanetAngVelData,
+            accuracy,
+            "Angular Velocity",
+            testFailCount,
+            testMessages,
+        )
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -134,7 +161,7 @@ def unitephemeris_converter(show_plots):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 # This statement below ensures that the unit test scrip can be run as a

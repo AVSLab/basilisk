@@ -72,9 +72,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft, extForceTorque, msmForceTorque
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, RigidBodyKinematics, vizSupport, SpherePlot)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    RigidBodyKinematics,
+    vizSupport,
+    SpherePlot,
+)
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -143,17 +150,21 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, MSMmodule)
 
     # define electric potentials
-    voltLeaderInMsgData = messaging.VoltMsgPayload(voltage=-500) # [V] servicer potential
+    voltLeaderInMsgData = messaging.VoltMsgPayload(
+        voltage=-500
+    )  # [V] servicer potential
     voltLeaderInMsg = messaging.VoltMsg().write(voltLeaderInMsgData)
 
-    voltFollowerInMsgData = messaging.VoltMsgPayload(voltage=500) # [V] debris potential
+    voltFollowerInMsgData = messaging.VoltMsgPayload(
+        voltage=500
+    )  # [V] debris potential
     voltFollowerInMsg = messaging.VoltMsg().write(voltFollowerInMsgData)
 
     # Import multi-sphere model of GOESR bus and read them into an array of strings
     # For each list of 4, the first 3 values are the spacial location of an individual sphere relative to a center of
     # [0,0,0] and the forth value is the radius of the sphere
     path = os.path.dirname(os.path.abspath(__file__))
-    dataFileName = os.path.join(path, 'dataForExamples', 'GOESR_bus_80_sphs.csv')
+    dataFileName = os.path.join(path, "dataForExamples", "GOESR_bus_80_sphs.csv")
     scSphMod = open(dataFileName)
     type(scSphMod)
     csvreader = csv.reader(scSphMod)
@@ -168,25 +179,34 @@ def run(show_plots):
         radii.append(float(row.pop(3)))
         rownum = [float(i) for i in row]
         spherelocation.append(rownum)
-    spPosListLeader_H = spherelocation  # The location of each sphere for the leader spacecraft
+    spPosListLeader_H = (
+        spherelocation  # The location of each sphere for the leader spacecraft
+    )
     rListLeader = radii  # radius of each sphere in the leader spacecraft
-    spPosListFollower_H = spherelocation  # The location of each sphere for the follower spacecraft
+    spPosListFollower_H = (
+        spherelocation  # The location of each sphere for the follower spacecraft
+    )
     rListFollower = radii  # radius of each sphere in the follower spacecraft
 
-
-#    If you would like to simulate each spacecraft by a single sphere, uncomment this section (line186 - line189) of
+    #    If you would like to simulate each spacecraft by a single sphere, uncomment this section (line186 - line189) of
     #    code and comment out the previous section lines (162-181)
-#     create a list of sphere body-fixed locations and associated radii using one sphere for each spacecraft
-#    spPosListLeader_H = [[0,0,0]]  # one sphere located at origin of body frame
-#    rListLeader = [2]  # radius of sphere is 2m
-#    spPosListFollower_H = [[0,0,0]]  # one sphere located at origin of body frame
-#    rListFollower = [2]  # radius of sphere is 2m
+    #     create a list of sphere body-fixed locations and associated radii using one sphere for each spacecraft
+    #    spPosListLeader_H = [[0,0,0]]  # one sphere located at origin of body frame
+    #    rListLeader = [2]  # radius of sphere is 2m
+    #    spPosListFollower_H = [[0,0,0]]  # one sphere located at origin of body frame
+    #    rListFollower = [2]  # radius of sphere is 2m
 
     # add spacecraft to state
-    MSMmodule.addSpacecraftToModel(scObjectLeader.scStateOutMsg, messaging.DoubleVector(rListLeader),
-                                   unitTestSupport.npList2EigenXdVector(spPosListLeader_H))
-    MSMmodule.addSpacecraftToModel(scObjectFollower.scStateOutMsg, messaging.DoubleVector(rListFollower),
-                                   unitTestSupport.npList2EigenXdVector(spPosListFollower_H))
+    MSMmodule.addSpacecraftToModel(
+        scObjectLeader.scStateOutMsg,
+        messaging.DoubleVector(rListLeader),
+        unitTestSupport.npList2EigenXdVector(spPosListLeader_H),
+    )
+    MSMmodule.addSpacecraftToModel(
+        scObjectFollower.scStateOutMsg,
+        messaging.DoubleVector(rListFollower),
+        unitTestSupport.npList2EigenXdVector(spPosListFollower_H),
+    )
 
     # subscribe input messages to module
     MSMmodule.voltInMsgs[0].subscribeTo(voltLeaderInMsg)
@@ -213,24 +233,26 @@ def run(show_plots):
     # set up the Leader orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
     oe.a = 42164 * 1e3  # [m] Geosynchronous Orbit
-    oe.e = 0.
-    oe.i = 0.
-    oe.Omega = 0.
+    oe.e = 0.0
+    oe.i = 0.0
+    oe.Omega = 0.0
     oe.omega = 0
-    oe.f = 0.
+    oe.f = 0.0
     r_LN, v_LN = orbitalMotion.elem2rv(mu, oe)
     scObjectLeader.hub.r_CN_NInit = r_LN  # m
     scObjectLeader.hub.v_CN_NInit = v_LN  # m/s
     oe = orbitalMotion.rv2elem(mu, r_LN, v_LN)
 
     # setup Follower object states
-    r_FS = np.array([0, -50.0, 0.0])  # relative position of follower, 10m behind servicer in along-track direction
+    r_FS = np.array(
+        [0, -50.0, 0.0]
+    )  # relative position of follower, 10m behind servicer in along-track direction
     r_FN = r_FS + r_LN
     v_FN = v_LN
     scObjectFollower.hub.r_CN_NInit = r_FN  # m
     scObjectFollower.hub.v_CN_NInit = v_FN  # m/s
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n  # orbit period
+    P = 2.0 * np.pi / n  # orbit period
 
     #
     #   Setup data logging before the simulation is initialized
@@ -248,9 +270,12 @@ def run(show_plots):
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectLeader, scObjectFollower]
-                                                  # , saveFile=fileName,
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            dynTaskName,
+            [scObjectLeader, scObjectFollower],
+            # , saveFile=fileName,
+        )
 
     #
     #   initialize Simulation
@@ -264,8 +289,12 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # Retrieve the charge data of the spheres
-    LeaderSpCharges = unitTestSupport.columnToRowList(MSMmodule.chargeMsmOutMsgs[0].read().q)
-    FollowerSpCharges = unitTestSupport.columnToRowList(MSMmodule.chargeMsmOutMsgs[1].read().q)
+    LeaderSpCharges = unitTestSupport.columnToRowList(
+        MSMmodule.chargeMsmOutMsgs[0].read().q
+    )
+    FollowerSpCharges = unitTestSupport.columnToRowList(
+        MSMmodule.chargeMsmOutMsgs[1].read().q
+    )
 
     # retrieve the logged data from the recorders
     posDataL_N = dataRecL.r_BN_N
@@ -286,9 +315,12 @@ def run(show_plots):
     relZPosData_H = []
     for i in range(len(relPosData_N)):
         # Calculate the discrete cosine matrix for mapping from inertial frame to the Hill frame of the leader spacecraft
-        nrn = posDataL_N[i, :]/math.sqrt(posDataL_N[i, 0]**2 + posDataL_N[i, 1]**2 + posDataL_N[i, 2]**2)
-        nrh = np.cross(posDataL_N[i, 0:3], velDataL_N[i, 0:3])/np.linalg.norm(np.cross(posDataL_N[i, 0:3],
-                                                                                       velDataL_N[i, 0:3]))
+        nrn = posDataL_N[i, :] / math.sqrt(
+            posDataL_N[i, 0] ** 2 + posDataL_N[i, 1] ** 2 + posDataL_N[i, 2] ** 2
+        )
+        nrh = np.cross(posDataL_N[i, 0:3], velDataL_N[i, 0:3]) / np.linalg.norm(
+            np.cross(posDataL_N[i, 0:3], velDataL_N[i, 0:3])
+        )
         nre = np.cross(nrh, nrn)
         HN = nrn, nre, nrh
 
@@ -304,9 +336,24 @@ def run(show_plots):
 
     np.set_printoptions(precision=16)
 
-    figureList = plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attDataF_N, P, spPosListLeader_H,
-                            rListLeader, LeaderSpCharges, spPosListFollower_H, rListFollower, FollowerSpCharges,
-                            relXPosData_H, relYPosData_H, relZPosData_H)
+    figureList = plotOrbits(
+        timeData,
+        posDataL_N,
+        posDataF_N,
+        relPosMagn,
+        attDataL_N,
+        attDataF_N,
+        P,
+        spPosListLeader_H,
+        rListLeader,
+        LeaderSpCharges,
+        spPosListFollower_H,
+        rListFollower,
+        FollowerSpCharges,
+        relXPosData_H,
+        relYPosData_H,
+        relZPosData_H,
+    )
 
     if show_plots:
         plt.show()
@@ -317,10 +364,24 @@ def run(show_plots):
     return figureList
 
 
-def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attDataF_N, P, spPosListLeader_H, rListLeader,
-               LeaderSpCharges, spPosListFollower_H, rListFollower, FollowerSpCharges, relXPosData_H, relYPosData_H,
-               relZPosData_H):
-
+def plotOrbits(
+    timeData,
+    posDataL_N,
+    posDataF_N,
+    relPosMagn,
+    attDataL_N,
+    attDataF_N,
+    P,
+    spPosListLeader_H,
+    rListLeader,
+    LeaderSpCharges,
+    spPosListFollower_H,
+    rListFollower,
+    FollowerSpCharges,
+    relXPosData_H,
+    relYPosData_H,
+    relZPosData_H,
+):
     #
     # draw the total separation of the spacecrafts
     #
@@ -329,13 +390,13 @@ def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attData
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     plt.plot(timeData * macros.NANO2SEC / P, relPosMagn[:])
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Separation [m]')
-    plt.title('Total separation')
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Separation [m]")
+    plt.title("Total separation")
     figureList = {}
-    pltName = 'scenarioTwoChargedSC1'
+    pltName = "scenarioTwoChargedSC1"
     figureList[pltName] = plt.figure(1)
 
     #
@@ -343,9 +404,9 @@ def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attData
     #
 
     plt.figure(2, figsize=(5, 4))
-    ax = plt.axes(projection='3d')
+    ax = plt.axes(projection="3d")
     # Set the Leader S/C as the center of the plot
-    r_LN_N = np.array([0., 0., 0.])
+    r_LN_N = np.array([0.0, 0.0, 0.0])
     # get sphere locations
     dcm_NL = RigidBodyKinematics.MRP2C(attDataF_N[0, 0:3]).transpose()
     spPosL_N = np.dot(dcm_NL, np.array(spPosListLeader_H).transpose()).transpose()
@@ -358,30 +419,46 @@ def plotOrbits(timeData, posDataL_N, posDataF_N, relPosMagn, attDataL_N, attData
     z = np.outer(np.cos(u), np.ones_like(v))
     for ii in range(0, len(radiiL)):
         r_SpN_N = r_LN_N + spPosL_N[ii, 0:3]
-        ax.plot_surface(r_SpN_N[0] + radiiL[ii] * x, r_SpN_N[1] + radiiL[ii] * y, r_SpN_N[2] + radiiL[ii] * z, color="b")
+        ax.plot_surface(
+            r_SpN_N[0] + radiiL[ii] * x,
+            r_SpN_N[1] + radiiL[ii] * y,
+            r_SpN_N[2] + radiiL[ii] * z,
+            color="b",
+        )
 
     # Plot the relative position of the Follower spacecraft
     ax.plot(relXPosData_H, relYPosData_H, relZPosData_H)
-    ax.set_xlabel('Radial(m)')
-    ax.set_ylabel('Along Track(m)')
-    ax.set_zlabel('Orbit Normal (m)')
-    pltName = 'scenarioTwoChargedSC2'
+    ax.set_xlabel("Radial(m)")
+    ax.set_ylabel("Along Track(m)")
+    ax.set_zlabel("Orbit Normal (m)")
+    pltName = "scenarioTwoChargedSC2"
     figureList[pltName] = plt.figure(2)
 
     #
     # Draw the sphere representation of the satellites used by the MSM in the Hill frame of the Leader spacecraft
     #
-    SpherePlotList = SpherePlot.plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_H, rListLeader,
-               LeaderSpCharges, spPosListFollower_H, rListFollower, FollowerSpCharges)
+    SpherePlotList = SpherePlot.plotSpheres(
+        posDataL_N,
+        posDataF_N,
+        attDataL_N,
+        attDataF_N,
+        spPosListLeader_H,
+        rListLeader,
+        LeaderSpCharges,
+        spPosListFollower_H,
+        rListFollower,
+        FollowerSpCharges,
+    )
 
-    figureList['scenarioTwoChargedSC3'] = SpherePlotList['Charged_Spheres']
-    figureList['scenarioTwoChargedSC4'] = SpherePlotList['Colorbar']
+    figureList["scenarioTwoChargedSC3"] = SpherePlotList["Charged_Spheres"]
+    figureList["scenarioTwoChargedSC4"] = SpherePlotList["Colorbar"]
 
     return figureList
 
 
 def NormalizeData(data):
     return (data - np.min(data)) / (np.max(data) - np.min(data))
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a

@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -32,8 +31,12 @@ from Basilisk import __path__
 
 bskPath = __path__[0]
 from Basilisk.simulation import spacecraft, radiationPressure
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    unitTestSupport,
+)
 from Basilisk.utilities.simIncludeGravBody import gravBodyFactory
 
 
@@ -67,7 +70,9 @@ def radiationPressureIntegratedTest(show_plots):
     scObject.ModelTag = "spacecraftBody"
     sim.AddModelToTask(simTaskName, scObject)
 
-    srp = radiationPressure.RadiationPressure()  # default model is the SRP_CANNONBALL_MODEL
+    srp = (
+        radiationPressure.RadiationPressure()
+    )  # default model is the SRP_CANNONBALL_MODEL
     srp.area = 1.0
     srp.coefficientReflection = 1.3
     sim.AddModelToTask(simTaskName, srp, -1)
@@ -79,18 +84,20 @@ def radiationPressureIntegratedTest(show_plots):
     planet.isCentralBody = True
     mu = planet.mu
     gravFactory.createSun()
-    spice_path = bskPath + '/supportData/EphemerisData/'
-    gravFactory.createSpiceInterface(spice_path, '2021 MAY 04 07:47:49.965 (UTC)')
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    spice_path = bskPath + "/supportData/EphemerisData/"
+    gravFactory.createSpiceInterface(spice_path, "2021 MAY 04 07:47:49.965 (UTC)")
+    gravFactory.spiceObject.zeroBase = "Earth"
     sim.AddModelToTask(simTaskName, gravFactory.spiceObject, -1)
     srp.sunEphmInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[1])
 
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rGEO = 42000. * 1000     # meters
+    rGEO = 42000.0 * 1000  # meters
     oe.a = rGEO
     oe.e = 0.00001
     oe.i = 0.0 * macros.D2R
@@ -98,7 +105,9 @@ def radiationPressureIntegratedTest(show_plots):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
     # with circular or equatorial orbit, some angles are arbitrary
     print(rN)
 
@@ -110,7 +119,7 @@ def radiationPressureIntegratedTest(show_plots):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(P)
 
     #   Setup data logging before the simulation is initialized
@@ -155,22 +164,31 @@ def radiationPressureIntegratedTest(show_plots):
     pos_rel_earth_parse = pos_rel_earth[::skipValue]
 
     # true position for un perturbed 2 body GEO orbit with cannonball SRP
-    true_pos = np.array([[-2.18197848e+07,  3.58872415e+07,  0.00000000e+00]
-                        ,[-3.97753187e+07,  1.34888792e+07, -7.33231880e+01]
-                        ,[-3.91389859e+07, -1.52401375e+07, -3.06322198e+02]
-                        ,[-2.01838008e+07, -3.68366952e+07, -6.37764168e+02]
-                        ,[ 8.21683806e+06, -4.11950440e+07, -9.13393204e+02]
-                        ,[ 3.27532709e+07, -2.63024006e+07, -9.57828703e+02]
-                        ,[ 4.19944648e+07,  9.02522873e+05, -6.78102461e+02]
-                        ,[ 3.15828214e+07,  2.76842358e+07, -1.40473487e+02]
-                        ,[ 6.38617052e+06,  4.15047581e+07,  4.29674085e+02]
-                        ,[-2.18006914e+07,  3.58874726e+07,  7.40872311e+02]])
+    true_pos = np.array(
+        [
+            [-2.18197848e07, 3.58872415e07, 0.00000000e00],
+            [-3.97753187e07, 1.34888792e07, -7.33231880e01],
+            [-3.91389859e07, -1.52401375e07, -3.06322198e02],
+            [-2.01838008e07, -3.68366952e07, -6.37764168e02],
+            [8.21683806e06, -4.11950440e07, -9.13393204e02],
+            [3.27532709e07, -2.63024006e07, -9.57828703e02],
+            [4.19944648e07, 9.02522873e05, -6.78102461e02],
+            [3.15828214e07, 2.76842358e07, -1.40473487e02],
+            [6.38617052e06, 4.15047581e07, 4.29674085e02],
+            [-2.18006914e07, 3.58874726e07, 7.40872311e02],
+        ]
+    )
     # compare the results to the truth values
     accuracy = 10.0  # meters
 
     testFailCount, testMessages = unitTestSupport.compareArray(
-        true_pos, pos_rel_earth_parse, accuracy, "r_BN_N Vector",
-        testFailCount, testMessages)
+        true_pos,
+        pos_rel_earth_parse,
+        accuracy,
+        "r_BN_N Vector",
+        testFailCount,
+        testMessages,
+    )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -183,19 +201,22 @@ def radiationPressureIntegratedTest(show_plots):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(0, 3):
-        plt.plot(dataLog.times() * macros.NANO2SEC / P, pos_rel_earth[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
+        plt.plot(
+            dataLog.times() * macros.NANO2SEC / P,
+            pos_rel_earth[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
 
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
-    plt.title('Position Relative To Earth')
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Inertial Position [km]")
+    plt.title("Position Relative To Earth")
     if show_plots:
         plt.show()
-        plt.close('all')
+        plt.close("all")
 
     figureList = {}
     fileName = os.path.basename(os.path.splitext(__file__)[0])

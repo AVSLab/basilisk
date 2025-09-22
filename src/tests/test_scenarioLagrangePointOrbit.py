@@ -15,8 +15,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
-
 #
 # Basilisk Scenario Script and Integrated Test
 #
@@ -36,7 +34,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioLagrangePointOrbit
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -49,13 +47,17 @@ import scenarioLagrangePointOrbit
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 
-@pytest.mark.parametrize("lagrangePoint, nOrbits, timestep, showPlots", [
-    (1, 1, 300, False),
-    (2, 1, 300, False),
-    (3, 1, 300, False),
-    (4, 1, 300, False),
-    (5, 1, 300, False)
-])
+
+@pytest.mark.parametrize(
+    "lagrangePoint, nOrbits, timestep, showPlots",
+    [
+        (1, 1, 300, False),
+        (2, 1, 300, False),
+        (3, 1, 300, False),
+        (4, 1, 300, False),
+        (5, 1, 300, False),
+    ],
+)
 @pytest.mark.scenarioTest
 def test_scenarioLagrangePointOrbit(lagrangePoint, nOrbits, timestep, showPlots):
     """This function is called by the py.test environment."""
@@ -64,7 +66,9 @@ def test_scenarioLagrangePointOrbit(lagrangePoint, nOrbits, timestep, showPlots)
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioLagrangePointOrbit.run(lagrangePoint, nOrbits, timestep, showPlots)
+        figureList = scenarioLagrangePointOrbit.run(
+            lagrangePoint, nOrbits, timestep, showPlots
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
@@ -88,8 +92,8 @@ def test_scenarioLagrangePointOrbit(lagrangePoint, nOrbits, timestep, showPlots)
 
 if __name__ == "__main__":
     test_scenarioLagrangePointOrbit(
-        1,     # Lagrange point
+        1,  # Lagrange point
         1,  # Number of Moon orbits
-        300,   # Timestep (seconds)
-        False  # Show plots
+        300,  # Timestep (seconds)
+        False,  # Show plots
     )

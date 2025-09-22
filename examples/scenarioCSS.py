@@ -150,7 +150,6 @@ The resulting simulation results are shown below to be identical to the first se
 """
 
 
-
 #
 # Basilisk Scenario Script and Integrated Test
 #
@@ -163,19 +162,25 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.simulation import coarseSunSensor
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.utilities import vizSupport
 
 bskPath = __path__[0]
@@ -202,7 +207,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(300.)
+    simulationTime = macros.sec2nano(300.0)
 
     #
     #  create the simulation process
@@ -210,7 +215,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(1.)
+    simulationTimeStep = macros.sec2nano(1.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -221,20 +226,26 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
-    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     #
     # set initial spacecraft states
     #
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]              # m   - r_CN_N
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # m/s - v_CN_N
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [
+        [0.0],
+        [0.0],
+        [1.0 * macros.D2R],
+    ]  # rad/s - omega_BN_B
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -242,7 +253,9 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #
     # create simulation messages
     #
-    sunPositionMsgData = messaging.SpicePlanetStateMsgPayload(PositionVector=[0.0, om.AU*1000.0, 0.0])
+    sunPositionMsgData = messaging.SpicePlanetStateMsgPayload(
+        PositionVector=[0.0, om.AU * 1000.0, 0.0]
+    )
     sunPositionMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsgData)
 
     if useEclipse:
@@ -250,11 +263,11 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
         eclipseMsg = messaging.EclipseMsg().write(eclipseMsgData)
 
     def setupCSS(CSS):
-        CSS.fov = 80. * macros.D2R
+        CSS.fov = 80.0 * macros.D2R
         CSS.scaleFactor = 2.0
         CSS.maxOutput = 2.0
         CSS.minOutput = 0.5
-        CSS.r_B = [2.00131, 2.36638, 1.]
+        CSS.r_B = [2.00131, 2.36638, 1.0]
         CSS.sunInMsg.subscribeTo(sunPositionMsg)
         CSS.stateInMsg.subscribeTo(scObject.scStateOutMsg)
         if useKelly:
@@ -262,10 +275,10 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
         if useEclipse:
             CSS.sunEclipseInMsg.subscribeTo(eclipseMsg)
         if usePlatform:
-            CSS.setBodyToPlatformDCM(90. * macros.D2R, 0., 0.)
-            CSS.theta = -90. * macros.D2R
+            CSS.setBodyToPlatformDCM(90.0 * macros.D2R, 0.0, 0.0)
+            CSS.theta = -90.0 * macros.D2R
             CSS.phi = 0 * macros.D2R
-            CSS.setUnitDirectionVectorWithPerturbation(0., 0.)
+            CSS.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
         else:
             CSS.nHat_B = np.array([1.0, 0.0, 0.0])
 
@@ -283,8 +296,8 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     CSS2.CSSGroupID = 0
     CSS2.r_B = [-3.05, 0.55, 1.0]
     if usePlatform:
-        CSS2.theta = 0.*macros.D2R
-        CSS2.setUnitDirectionVectorWithPerturbation(0., 0.)
+        CSS2.theta = 0.0 * macros.D2R
+        CSS2.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
     else:
         CSS2.nHat_B = np.array([0.0, 1.0, 0.0])
 
@@ -292,11 +305,11 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     CSS3.ModelTag = "CSS3_sensor"
     setupCSS(CSS3)
     CSS3.CSSGroupID = 1
-    CSS3.fov = 45.0*macros.D2R
+    CSS3.fov = 45.0 * macros.D2R
     CSS3.r_B = [-3.05, 0.55, 1.0]
     if usePlatform:
-        CSS3.theta = 90. * macros.D2R
-        CSS3.setUnitDirectionVectorWithPerturbation(0., 0.)
+        CSS3.theta = 90.0 * macros.D2R
+        CSS3.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
     else:
         CSS3.nHat_B = np.array([-1.0, 0.0, 0.0])
 
@@ -335,13 +348,21 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
         scSim.AddModelToTask(simTaskName, css3Log)
 
     # optional saving off to Vizard compatible file
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__,
-                                              # liveStream=True,
-                                              cssList=[cssList]
-                                              )
-    vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True,
-                                       viewCSSBoresight=True, showCSSLabels=True)
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # saveFile=__file__,
+        # liveStream=True,
+        cssList=[cssList],
+    )
+    vizSupport.setInstrumentGuiSetting(
+        viz,
+        viewCSSPanel=True,
+        viewCSSCoverage=True,
+        viewCSSBoresight=True,
+        showCSSLabels=True,
+    )
 
     #
     #   initialize Simulation
@@ -362,7 +383,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     dataCSS2 = []
     dataCSS3 = []
     if useCSSConstellation:
-        dataCSSArray = cssConstLog.CosValue[:, :len(cssList)]
+        dataCSSArray = cssConstLog.CosValue[:, : len(cssList)]
     else:
         dataCSS1 = css1Log.OutputData
         dataCSS2 = css2Log.OutputData
@@ -373,31 +394,48 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     #   plot the results
     #
     fileNameString = os.path.basename(os.path.splitext(__file__)[0])
-    plt.close("all")        # clears out plots from earlier test runs
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     if useCSSConstellation:
         for idx in range(len(cssList)):
-            plt.plot(cssConstLog.times()*macros.NANO2SEC, dataCSSArray[:, idx],
-                         color=unitTestSupport.getLineColor(idx,3),
-                         label='CSS$_{'+str(idx)+'}$')
+            plt.plot(
+                cssConstLog.times() * macros.NANO2SEC,
+                dataCSSArray[:, idx],
+                color=unitTestSupport.getLineColor(idx, 3),
+                label="CSS$_{" + str(idx) + "}$",
+            )
     else:
         timeAxis = css1Log.times()
-        plt.plot(timeAxis * macros.NANO2SEC, dataCSS1,
-                 color=unitTestSupport.getLineColor(0, 3),
-                 label='CSS$_{1}$')
-        plt.plot(timeAxis * macros.NANO2SEC, dataCSS2,
-                 color=unitTestSupport.getLineColor(1, 3),
-                 label='CSS$_{2}$')
-        plt.plot(timeAxis * macros.NANO2SEC, dataCSS3,
-                 color=unitTestSupport.getLineColor(2, 3),
-                 label='CSS$_{3}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [sec]')
-    plt.ylabel('CSS Signals ')
+        plt.plot(
+            timeAxis * macros.NANO2SEC,
+            dataCSS1,
+            color=unitTestSupport.getLineColor(0, 3),
+            label="CSS$_{1}$",
+        )
+        plt.plot(
+            timeAxis * macros.NANO2SEC,
+            dataCSS2,
+            color=unitTestSupport.getLineColor(1, 3),
+            label="CSS$_{2}$",
+        )
+        plt.plot(
+            timeAxis * macros.NANO2SEC,
+            dataCSS3,
+            color=unitTestSupport.getLineColor(2, 3),
+            label="CSS$_{3}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [sec]")
+    plt.ylabel("CSS Signals ")
     figureList = {}
-    pltName = fileNameString+str(int(useCSSConstellation))+str(int(usePlatform))+str(int(useEclipse))+str(int(useKelly))
+    pltName = (
+        fileNameString
+        + str(int(useCSSConstellation))
+        + str(int(usePlatform))
+        + str(int(useEclipse))
+        + str(int(useKelly))
+    )
     figureList[pltName] = plt.figure(1)
-
 
     if show_plots:
         plt.show()
@@ -414,9 +452,9 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
 #
 if __name__ == "__main__":
     run(
-         True,        # show_plots
-         False,       # useCSSConstellation
-         False,       # usePlatform
-         False,       # useEclipse
-         False        # useKelly
-       )
+        True,  # show_plots
+        False,  # useCSSConstellation
+        False,  # usePlatform
+        False,  # useEclipse
+        False,  # useKelly
+    )
