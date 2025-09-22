@@ -13,5 +13,6 @@ pytest-rerunfailures==13.0
 
 pre-commit>=3.5.0,<=4.2.0
 clang-format==20.1.0
+ruff>=0.13.1
 
 psutil==7.0.0
