@@ -32,6 +32,7 @@ Version |release|
 - Fix typo in how :ref:`gravityEffector` compute the planets gravity potential contributions
 - Added fault modeling capability to :ref:`magnetometer` module.
 - Added new module :ref:`MJSystemCoM` to extract the system center of mass position and velocity from a MuJoCo simulation.
+- Added new module :ref:`MJSystemMassMatrix` to extract the system mass matrix from a MuJoCo simulation.
 - Refactored the CI build system scripts
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
