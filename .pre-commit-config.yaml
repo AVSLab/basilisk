@@ -14,3 +14,8 @@ repos:
     rev: v0.13.1
     hooks:
       - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v20.1.0
+    hooks:
+      - id: clang-format
+        files: \.(c|cc|cpp|cxx|h|hpp|ih|i)$
