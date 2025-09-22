@@ -62,3 +62,9 @@ venv/
 build/
 !.github/actions/build/
 !.github/actions/build/**
+
+# Ruff cache
+.ruff_cache/
+
+# UV
+uv.lock
