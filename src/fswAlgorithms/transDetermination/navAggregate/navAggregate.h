@@ -46,7 +46,7 @@ typedef struct {
     AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
     NavAttMsg_C navAttOutMsg; /*!< blended attitude navigation output message */
     NavTransMsg_C navTransOutMsg; /*!< blended translation navigation output message */
-    
+
     uint32_t attTimeIdx;        /*!< [-] The index of the message to use for attitude message time */
     uint32_t transTimeIdx;      /*!< [-] The index of the message to use for translation message time */
     uint32_t attIdx;        /*!< [-] The index of the message to use for inertial MRP*/
@@ -64,7 +64,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID);
     void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID);
     void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID);

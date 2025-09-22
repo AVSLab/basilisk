@@ -35,7 +35,7 @@ class PlanetHeading: public SysModel {
 public:
     PlanetHeading();
     ~PlanetHeading(){};
-    
+
     void UpdateState(uint64_t CurrentSimNanos) override;
     void Reset(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);

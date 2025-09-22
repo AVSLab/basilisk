@@ -33,7 +33,7 @@ provides information on what this message is used for.
 
 The gravity effector contains a list of ``GravBodyData`` objects which contain the planet mass and size properties etc.
 The following table lists the Spice planet ephemeris input message that can be connected to a ``GravBodyData`` object.
-If no message is connected, then the planet has zero position and orientation information by default.  
+If no message is connected, then the planet has zero position and orientation information by default.
 
 .. list-table:: Module I/O Messages
     :widths: 25 25 50

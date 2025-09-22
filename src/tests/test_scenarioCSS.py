@@ -79,4 +79,3 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

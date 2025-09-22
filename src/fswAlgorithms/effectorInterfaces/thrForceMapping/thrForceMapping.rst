@@ -32,5 +32,3 @@ provides information on what this message is used for.
     * - vehConfigInMsg
       - :ref:`VehicleConfigMsgPayload`
       - spacecraft configuration input message
-
-

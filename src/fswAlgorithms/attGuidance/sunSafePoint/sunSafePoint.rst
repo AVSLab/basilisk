@@ -29,4 +29,3 @@ provides information on what this message is used for.
     * - imuInMsg
       - :ref:`NavAttMsgPayload`
       - IMU input message
-

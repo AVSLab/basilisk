@@ -63,5 +63,3 @@ or saved off for future use.  For example, adding this command to this sample sc
 
 .. image:: ../../_images/static/qs-bsk-2b-order.svg
    :align: center
-
-

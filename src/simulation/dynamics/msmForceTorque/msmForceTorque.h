@@ -46,7 +46,7 @@ public:
 
 private:
     void readMessages();
-    
+
 public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
     std::vector<ReadFunctor<VoltMsgPayload>> voltInMsgs;     //!< vector of voltage input messages

@@ -35,4 +35,3 @@ scenarios as with the spacecraft example.  See the discussion in :ref:`bskPrinci
 Basilisk modules that inherit from the ``DynamicObject`` class can be linked.  If linked,
 then the associated module ordinate differential equations (ODEs) are integrated
 simultaneously.
-

@@ -55,5 +55,3 @@ Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follo
          20 - ap_3_-57
          21 - f107_1944_0
          22 - f107_24_-24
-
-

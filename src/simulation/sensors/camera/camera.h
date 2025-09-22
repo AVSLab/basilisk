@@ -41,7 +41,7 @@ class Camera: public SysModel {
 public:
     Camera();
     ~Camera();
-    
+
     void UpdateState(uint64_t currentSimNanos) override;
     void Reset(uint64_t currentSimNanos) override;
     void hsvAdjust(const cv::Mat&, cv::Mat &mDst);
@@ -60,7 +60,7 @@ public:
     std::string saveDir{};                 //!< The name of the directory to save images
     uint64_t sensorTimeTag{};              //!< [ns] Current time tag for sensor out
     int32_t saveImages{};                  //!< [-] 1 to save images to file for debugging
-    
+
     /*! Camera parameters */
     char parentName[MAX_STRING_LENGTH]{};  //!< [-] Name of the parent body to which the camera should be attached
     int cameraIsOn{}; //!< [-] Is the camera currently taking images

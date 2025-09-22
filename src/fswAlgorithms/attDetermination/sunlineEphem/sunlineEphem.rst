@@ -31,4 +31,3 @@ provides information on what this message is used for.
     * - scAttitudeInMsg
       - :ref:`NavAttMsgPayload`
       - name of the spacecraft attitude input message
-

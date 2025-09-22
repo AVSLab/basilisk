@@ -40,14 +40,14 @@ typedef struct {
     int i;                                              /*!< -- Flag used to set incorrect numerical answers to zero */
     uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
     AttRefMsgPayload attReferenceOutBuffer;                 //!< output msg copy
-    
+
     BSKLogger *bskLogger;                             //!< BSK Logging
 }spacecraftPointingConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID);
     void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
         int64_t moduleID);

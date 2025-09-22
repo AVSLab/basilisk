@@ -42,11 +42,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID);
     void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

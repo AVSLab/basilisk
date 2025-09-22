@@ -28,5 +28,3 @@ provides information on what this message is used for.
     * - stateOutMsg
       - :ref:`NavTransMsgPayload`
       - navigation output message
-
-

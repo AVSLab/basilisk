@@ -29,4 +29,3 @@ typedef struct {
 
 
 #endif //TEMPERATURE_H
-

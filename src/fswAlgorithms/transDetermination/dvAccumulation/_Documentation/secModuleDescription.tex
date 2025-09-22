@@ -9,7 +9,7 @@ In input message contains an array of accelerometer measurements $\leftexp{B}{\b
 
 
 \subsection{Reset() Functionality}
-The reset function has a few critical behaviors.  
+The reset function has a few critical behaviors.
 \begin{itemize}
 	\item The vector containing the net $\Delta \bm v$ is zero on reset.
 	\item The prior time tag $t_{n-1}$ is zero to zero on default.
@@ -19,7 +19,7 @@ The reset function has a few critical behaviors.
 
 
 \subsection{Update() Functionality}
-The update function reads in the latest accelerometer data input message and must process all the new measurements since the last update function call.  
+The update function reads in the latest accelerometer data input message and must process all the new measurements since the last update function call.
 \begin{itemize}
 	\item The accelerometer input message is read in and sorted by the time tags.
 	\item If the initialization flag is not true, then the integration is occurring for the first time.  To avoid large $\Delta t$ evaluations because of an old prior time $t_{n-1}$, the input data is looped over from the end of the array (i.e. from the newest to oldest) to find the first data time tag $t_{i}$ which is newer then the prior data time tag $t_{n-1}$.  Once found we set $t_{n-1} = t_{i}$, set the initialization flag to true and break the loop.  As a result the first new data set is not included in the $\Delta\bm v$ evaluation.

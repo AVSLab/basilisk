@@ -41,7 +41,7 @@ private:
     ~ModuleIdGenerator();
     ModuleIdGenerator(ModuleIdGenerator const &) {};
     ModuleIdGenerator& operator =(ModuleIdGenerator const &){return(*this);};
-    
+
 };
 
 #endif /* _ModuleIdGenerator_HH_ */

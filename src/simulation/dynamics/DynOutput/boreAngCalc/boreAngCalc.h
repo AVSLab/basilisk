@@ -39,7 +39,7 @@ class BoreAngCalc: public SysModel {
 public:
     BoreAngCalc();
     ~BoreAngCalc();
-    
+
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void computeCelestialAxisPoint();
@@ -47,7 +47,7 @@ public:
     void computeInertialOutputData();
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
-    
+
     ReadFunctor<SCStatesMsgPayload> scStateInMsg;           //!< (-) spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> celBodyInMsg;   //!< (-) celestial body state msg at which we pointing at
     Message<BoreAngleMsgPayload> angOutMsg;                 //!< (-) bore sight output message

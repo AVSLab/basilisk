@@ -41,14 +41,14 @@ extern "C" {
  *http://www.copsegrove.com/Pages/MWDGeomagneticModels.aspx
  */
 #define INCL_ERROR_BASE (0.20)
-#define DECL_ERROR_OFFSET_BASE (0.36)  
+#define DECL_ERROR_OFFSET_BASE (0.36)
 #define F_ERROR_BASE (130)
 #define DECL_ERROR_SLOPE_BASE (5000)
 #define WMM_ERROR_MULTIPLIER 1.21
 #define IGRF_ERROR_MULTIPLIER 1.21
 
 /*These error values are the NCEI error model
- * 
+ *
  */
 #define WMM_UNCERTAINTY_F 145
 #define WMM_UNCERTAINTY_H 128
@@ -112,9 +112,9 @@ manoj.c.nair@noaa.gov*/
 #define VERSIONDATE_LARGE "$Date: 2019-12-10 10:40:43 -0700 (Tue, 10 Dec 2019) $"
 
 
-typedef enum { 
-    DECLINATION, 
-    INCLINATION, 
+typedef enum {
+    DECLINATION,
+    INCLINATION,
     HOR_INTENSITY,
     TOTAL_INTENSITY,
     X_COMPONENT,
@@ -136,7 +136,7 @@ typedef struct {
     int nMaxSecVar; /*!< Maximum degree of spherical harmonic secular model */
     int SecularVariationUsed; /*!< Whether or not the magnetic secular variation vector will be needed by program*/
     double CoefficientFileEndDate; //!< variable
-    
+
 } MAGtype_MagneticModel;
 
 /*! structure definition */
@@ -298,8 +298,8 @@ int MAG_Geomag(MAGtype_Ellipsoid Ellip,
         MAGtype_GeoMagneticElements *GeoMagneticElements);
 
 void MAG_Gradient(MAGtype_Ellipsoid Ellip,
-        MAGtype_CoordGeodetic CoordGeodetic, 
-        MAGtype_MagneticModel *TimedMagneticModel,  
+        MAGtype_CoordGeodetic CoordGeodetic,
+        MAGtype_MagneticModel *TimedMagneticModel,
         MAGtype_Gradient *Gradient);
 
 
@@ -431,7 +431,7 @@ void MAG_SphericalToGeodetic(MAGtype_Ellipsoid Ellip, MAGtype_CoordSpherical Coo
 void MAG_TMfwd4(double Eps, double Epssq, double K0R4, double K0R4oa,
         double Acoeff[], double Lam0, double K0, double falseE,
         double falseN, int XYonly, double Lambda, double Phi,
-        double *X, double *Y, double *pscale, double *CoM);  
+        double *X, double *Y, double *pscale, double *CoM);
 
 int MAG_YearToDate(MAGtype_Date *Date);
 

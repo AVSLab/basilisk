@@ -31,7 +31,7 @@
 class WaypointReference: public SysModel {
 public:
     WaypointReference();
-    ~WaypointReference(); 
+    ~WaypointReference();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
@@ -50,14 +50,14 @@ public:
 private:
     std::ifstream *fileHandle;                                     //!< pointer to the file that is to be read
 	bool endOfFile;                                                //!< boolean that indicates if the last line of file has been reached
-    double pullScalar(std::istringstream *iss);                    
-    void pullVector(std::istringstream *iss, double *);            
-    void pullVector4(std::istringstream *iss, double *);   
+    double pullScalar(std::istringstream *iss);
+    void pullVector(std::istringstream *iss, double *);
+    void pullVector4(std::istringstream *iss, double *);
 	void pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t);
     uint64_t t_a;                                                  //!< [ns] time t_a in the data file
     uint64_t t_b;                                                  //!< [ns] time t_b in the data file
     AttRefMsgPayload attRefMsg_a;                                  //!< attitude at time t_a
-    AttRefMsgPayload attRefMsg_b;                                  //!< attitude at time t_b	
+    AttRefMsgPayload attRefMsg_b;                                  //!< attitude at time t_b
 	void linearInterpolation(uint64_t t_a, double v_a[3], uint64_t t_b, double v_b[3], uint64_t t, double *v);
 
 };

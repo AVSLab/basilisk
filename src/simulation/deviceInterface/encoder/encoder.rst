@@ -35,7 +35,7 @@ for the first iteration the time step is set at 0, the wheel speeds will not be 
 Discretization
 ~~~~~~~~~~~~~~
 
-Under normal operating conditions, the discretizer works by setting the wheel speed as a multiple of the resolution of the sensor. This resolution is calculated through the number of 
+Under normal operating conditions, the discretizer works by setting the wheel speed as a multiple of the resolution of the sensor. This resolution is calculated through the number of
 clicks per rotation that the sensor can handle. Let :math:`N` be the number of clicks measured during a time step:
 
 .. math::

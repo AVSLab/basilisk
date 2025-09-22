@@ -122,4 +122,3 @@ This section is to outline the steps needed to setup a Translating Body State Ef
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, translatingBody)
-

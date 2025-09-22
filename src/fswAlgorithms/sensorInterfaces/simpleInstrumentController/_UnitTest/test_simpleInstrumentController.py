@@ -80,7 +80,7 @@ def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, om
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
     [testResults, testMessage] = simpleInstrumentControllerTestFunction(show_plots, use_rate_limit, rate_limit, omega_mag, deviceStatus, controlStatus, expected_result)
-    
+
     assert testResults < 1, testMessage
 
 
@@ -128,7 +128,7 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
         inputDeviceStatusMsgData.deviceStatus = deviceStatus
         inputDeviceStatusMsg = messaging.DeviceStatusMsg().write(inputDeviceStatusMsgData)
         module.deviceStatusInMsg.subscribeTo(inputDeviceStatusMsg)
-    
+
     # Set the controllerStatus variable
     if controlStatus is not None:
         module.controllerStatus = controlStatus

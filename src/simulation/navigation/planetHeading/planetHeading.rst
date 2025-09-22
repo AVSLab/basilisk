@@ -78,4 +78,3 @@ The user can only instantiate this module and add it to a task.
     sim.AddModelToTask(task.Name, ph)
 
     dataLog = ph.planetHeadingOutMsg.recorder()
-

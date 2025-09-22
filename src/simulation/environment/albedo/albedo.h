@@ -84,7 +84,7 @@ public:
     ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;   //!< input message name for spacecraft data
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs; //!< vector of planet data input data
 
-    BSKLogger bskLogger;                        //!< BSK Logging    
+    BSKLogger bskLogger;                        //!< BSK Logging
     int defaultNumLat;                                 //!< [-] default number of latitude grid points
     int defaultNumLon;                                 //!< [-] default number of longitude grid points
     Eigen::Vector3d nHat_B_default;             //!< [-] default value for unit normal of the instrument (spacecraft body)

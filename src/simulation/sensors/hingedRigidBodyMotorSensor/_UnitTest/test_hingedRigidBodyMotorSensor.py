@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -52,7 +52,7 @@ def test_hingedRigidBodyMotorSensor(show_plots, thetaNoiseStd, thetaDotNoiseStd,
         accuracy (double): absolute accuracy value used in the validation tests
 
     **Description of Variables Being Tested**
-    
+
     The python evaluated sensed value is compared against the module output.
 
     """
@@ -66,7 +66,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
     testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    
+
     timeStep = 0.5
     totalTime = 10.0
 
@@ -82,7 +82,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
 
     # Configure blank module input messages
     hingedRigidBodyMotorSensorInMsgData = messaging.HingedRigidBodyMsgPayload()
-    
+
     # set up fake input message
     hingedRigidBodyMotorSensorInMsgData.theta = trueTheta;
     hingedRigidBodyMotorSensorInMsgData.thetaDot = trueThetaDot;
@@ -95,7 +95,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
     # set up output message recorder objects
     dataLog = module.hingedRigidBodyMotorSensorOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
-    
+
     # set up variables in sensor
     module.thetaNoiseStd = thetaNoiseStd
     module.thetaDotNoiseStd = thetaDotNoiseStd
@@ -113,11 +113,11 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
     # pull module data and make sure it is correct
     sensedTheta = dataLog.theta[-1]
     sensedThetaDot = dataLog.thetaDot[-1]
-    
+
     # add bias to test values
     biasTheta = trueTheta+thetaBias
     biasThetaDot = trueThetaDot+thetaDotBias
-    
+
     # discretize test values
     if thetaLSB > 0:
         discTheta = round(biasTheta/thetaLSB)*thetaLSB
@@ -127,7 +127,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
         discThetaDot = round(biasThetaDot/thetaDotLSB)*thetaDotLSB
     else:
         discThetaDot = biasThetaDot
-        
+
     print(sensedTheta)
     print(sensedThetaDot)
     print(trueTheta)
@@ -141,7 +141,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
         if not unitTestSupport.isDoubleEqual(sensedThetaDot, discThetaDot, accuracy):
             testMessages.append("Failed thetaDot bias.")
             testFailCount += 1
-    
+
     # check discretization
     if abs(thetaLSB) > accuracy:
         if not unitTestSupport.isDoubleEqual(sensedTheta, discTheta, accuracy):
@@ -155,7 +155,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
         print("PASSED: " + module.ModelTag)
     else:
         print(testMessages)
-        
+
     if show_plots:
         thetaVals = trueTheta*np.ones(int(totalTime/timeStep)+1)
         thetaDotVals = trueThetaDot*np.ones(int(totalTime/timeStep)+1)
@@ -181,7 +181,7 @@ def hingedRigidBodyMotorSensorTestFunction(show_plots, thetaNoiseStd, thetaDotNo
         plt.close("all")
 
     return [testFailCount, "".join(testMessages)]
-    
+
 
 if __name__ == "__main__":
     test_hingedRigidBodyMotorSensor(

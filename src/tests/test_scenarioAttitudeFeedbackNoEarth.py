@@ -84,4 +84,3 @@ def test_bskAttitudeFeedbackNoEarth(show_plots, useUnmodeledTorque, useIntGain, 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-

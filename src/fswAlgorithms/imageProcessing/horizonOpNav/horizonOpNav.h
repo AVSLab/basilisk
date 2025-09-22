@@ -38,7 +38,7 @@ typedef struct {
     CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
     NavAttMsg_C attInMsg; //!< attitude input message
     OpNavLimbMsg_C limbInMsg; //!< limb input message
-    
+
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
     double noiseSF;   //!< A scale factor to control measurement noise
 
@@ -48,14 +48,14 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_horizonOpNav(HorizonOpNavData *configData, int64_t moduleID);
     void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_t moduleID);
     void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R);
     void BackSub(double *R, double *inVec, int32_t nRow, double *n);
-    
+
 #ifdef __cplusplus
 }
 #endif

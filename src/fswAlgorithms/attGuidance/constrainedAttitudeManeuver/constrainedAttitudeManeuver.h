@@ -91,7 +91,7 @@ class ConstrainedAttitudeManeuver: public SysModel {
 public:
     ConstrainedAttitudeManeuver();
     ConstrainedAttitudeManeuver(int N);
-    ~ConstrainedAttitudeManeuver(); 
+    ~ConstrainedAttitudeManeuver();
     void SelfInit();  //!< Self initialization for C-wrapped messages
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);

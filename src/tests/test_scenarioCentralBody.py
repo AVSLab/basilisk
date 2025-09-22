@@ -92,4 +92,3 @@ def test_scenarioCentralBody(show_plots, useCentral):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

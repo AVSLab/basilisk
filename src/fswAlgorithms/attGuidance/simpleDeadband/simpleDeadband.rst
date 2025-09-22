@@ -24,4 +24,3 @@ provides information on what this message is used for.
     * - guidInMsg
       - :ref:`AttGuidMsgPayload`
       - incoming attitude guidance message
-

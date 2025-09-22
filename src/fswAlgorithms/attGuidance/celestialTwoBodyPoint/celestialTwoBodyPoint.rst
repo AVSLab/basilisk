@@ -32,4 +32,3 @@ provides information on what this message is used for.
     * - secCelBodyInMsg
       - :ref:`EphemerisMsgPayload`
       - (optional) secondary celestial body information
-

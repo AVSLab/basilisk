@@ -17,7 +17,7 @@
 #
 
 r"""
-This test demonstrates how to deprecate functions, classes, attributes, 
+This test demonstrates how to deprecate functions, classes, attributes,
 and properties defined in Python code. To learn how to deprecate C++ code
 exposed to users through SWIG, see:
 
@@ -42,7 +42,7 @@ class PythonTest:
     @property
     def myProperty(self):
         return self.myPropertyInner * 2
-    
+
     @myProperty.setter
     def myProperty(self, value: int):
         self.myPropertyInner = value / 2

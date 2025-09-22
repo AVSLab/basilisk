@@ -53,4 +53,3 @@ The following parameters must be set for the module:
 - ``K``: the MRP proportional feedback gain
 - ``P``: the :math:`\pmb\omega` tracking error proportional feedback gain
 - ``knownTorquePntB_B``: (Optional) the known external torque vector :math:`{}^{B}{\bf L}`.  The default value is a zero vector.
-

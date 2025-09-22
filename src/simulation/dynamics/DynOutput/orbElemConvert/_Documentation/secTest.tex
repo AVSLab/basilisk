@@ -1,5 +1,5 @@
 \section{Test Description and Success Criteria}
-The unit test, test\_orb\_elem\_convert.py,  validates the internal aspects of the Basilisk orb\_elem\_convert module by comparing module output to expected output. The unit test validates the conversions performed between Keplerian orbital elements and Cartesian vectors. This test begins by converting elements to Cartesian and is immediately followed by converting the results back to orbital elements, providing the opportunity to compare the initial input with the final output. This is repeated for a variety of parameters. 
+The unit test, test\_orb\_elem\_convert.py,  validates the internal aspects of the Basilisk orb\_elem\_convert module by comparing module output to expected output. The unit test validates the conversions performed between Keplerian orbital elements and Cartesian vectors. This test begins by converting elements to Cartesian and is immediately followed by converting the results back to orbital elements, providing the opportunity to compare the initial input with the final output. This is repeated for a variety of parameters.
 
 Differences between simulated and calculated output are measured, and those that approximately equal zero (typically $\delta < 10^{-9}$) qualify as a successful test. However, since the semimajor axis and the Cartesian vectors are greater than the other parameters by a factor of at least $10^7$, a higher discrepency is more tolerable. These tolerances are more clearly defined with the results.
 
@@ -8,7 +8,7 @@ This test verifies the conversion from orbital elements to Cartesian vectors by 
 \subsubsection{Calculation vs. Module}
 The first check compares calculated Cartesian vectors to the simulated results and verifies that the discrepancy is less than $10^{-9}$.
 
-\subsection{Cartesian to Element} 
+\subsection{Cartesian to Element}
 This test verifies, via two checks, that the conversion from Cartesian vectors to orbital elements is accurate. This test requires position and velocity vectors, which are obtained through initially converting from orbital elements to Cartesian, as described above. It also needs a gravitational constant input. The \textit{Elements2Cart} is set to \textit{False} and \textit{inputsGood} must be set to \textit{True}. Like in the previous conversion test, \textit{useEphemFormat} is alternated between \textit{True} and \textit{False} to ensure that the Cartesian vectors can use both planet and spacecraft state data identically and accurately. The calculations for this conversion are also performed seperately in the test to compare with the simulated results.
 \subsubsection{Calculation vs. Module}
 Similar to the first conversion test, this check compares the calculated orbital elements to the elements obtained from the module.
@@ -17,7 +17,7 @@ This second check is performed last and compares the final result, comprised of 
 
 \section{Test Parameters}
 
-The previous description only briefly mentions the input parameters required to perform the tests on this module, so this section details the parameters further. In addition to the parameters being converted, the unit test requires inputs that identify which conversion is performed, what type of state data are being used, and whether or not to proceed with the given input. 
+The previous description only briefly mentions the input parameters required to perform the tests on this module, so this section details the parameters further. In addition to the parameters being converted, the unit test requires inputs that identify which conversion is performed, what type of state data are being used, and whether or not to proceed with the given input.
 
 \begin{enumerate}
 	\item \underline{Euler Angles}:\\
@@ -33,7 +33,7 @@ The previous description only briefly mentions the input parameters required to 
 	\end{equation}
 	Inputs alternate between zero and these given values depending on the orbit type, which is specified in the results section. All angles must be input as radians, so the conversion from degrees is performed as shown in Eq. \ref{eq:42} - \ref{eq:44}.
 	\item \underline{True Anomaly}:\\
-	The true anomaly input stays the same for each parameter set because the different orbits do not require a unique value, as they may for inclination, ascending node, and argument of periapsis. The true anomaly value, however, is pulled from the same module as those parameters, giving 
+	The true anomaly input stays the same for each parameter set because the different orbits do not require a unique value, as they may for inclination, ascending node, and argument of periapsis. The true anomaly value, however, is pulled from the same module as those parameters, giving
 	\begin{equation} \label{eq:41}
 		f = 85.3^\circ = 1.489 \text{rad}
 	\end{equation}
@@ -64,7 +64,7 @@ The previous description only briefly mentions the input parameters required to 
 	\end{table}
 	\item \underline{Valid Input Identifier}\\
 	The last necessary parameter is another boolean flag, this time indicating whether the inputs are valid. This value is read from a message and distinguishes if it is written succesfully. If succesful, this allows the rest of the module to be run, initiating the conversion process. The test uses \textit{inputsGood} to execute this check where \textit{True} lets the module proceed and \textit{False} does not, so this value should always be \textit{True} for the module to execute properly.
-\end{enumerate}	
+\end{enumerate}
 The orbital element parameters are varied throughout the test to validate a range of orbits. Since the test performs both conversions consecutively and the Cartesian results depend on the Keplerian inputs, the position and velocity vectors used for the second conversion also vary. These parameters are discussed with the results in the next section.
 \begin{table}[H]
 	\caption{Error Tolerance-Note: Absolute Tolerance is abs(truth-value)}
@@ -95,8 +95,8 @@ All checks within test\_orb\_elem\_convert.py passed as expected with a toleranc
 		\hline
 		\textbf{Parameter Sets} & \textbf{Results} & \textbf{Notes} 									\\ \hline
 		1 & \input{AutoTex/IncEllip_a_1PassedText1}      	   &\input{AutoTex/IncEllip_a_1PassFailMsg1}\\
-		2 & \input{AutoTex/EquEllip_a_1PassedText1}      	   &\input{AutoTex/EquEllip_a_1PassFailMsg1}\\	
-		3 & \input{AutoTex/IncCirc_1PassedText1}      	   &\input{AutoTex/IncCirc_1PassFailMsg1}\\	
+		2 & \input{AutoTex/EquEllip_a_1PassedText1}      	   &\input{AutoTex/EquEllip_a_1PassFailMsg1}\\
+		3 & \input{AutoTex/IncCirc_1PassedText1}      	   &\input{AutoTex/IncCirc_1PassFailMsg1}\\
 		4 & \input{AutoTex/EquCirc_1PassedText1}      	   &\input{AutoTex/EquCirc_1PassFailMsg1}\\
 		5 & \input{AutoTex/IncPara_1PassedText1}      	   &\input{AutoTex/IncPara_1PassFailMsg1}\\
 		6 & \input{AutoTex/EquPara_1PassedText1}      	   &\input{AutoTex/EquPara_1PassFailMsg1}\\
@@ -109,7 +109,7 @@ All checks within test\_orb\_elem\_convert.py passed as expected with a toleranc
 	\begin{enumerate}
 		\item \underline{Inclined Elliptic Orbit ($0<e<1.0$,\quad $a>0$)}\\
 		To test elliptic orbtits, a range of semimajor axis inputs from $10-10^7$km is used. The eccentricity is also varied with inputs from $0.01-0.75$. As $a$ changes, $e=0.5$ and as $e$ changes, $a=10^7$km. All parameter sets passed for this case since the difference when comparing simulated and calculated results was always zero, as shown by Fig. \ref{fig:2} and \ref{fig:3}.
-\begin{figure}[H] 
+\begin{figure}[H]
 	\centering
 	\subfigure[$e=0.01$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_e_1.pdf}}
 	\subfigure[$e=0.75$ and $a=10^7$km]{\includegraphics[width=0.5\textwidth]{AutoTex/IncEllip_e_2.pdf}}
@@ -207,12 +207,12 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 	\caption{Cartesian to Element Test Results}
 	\label{tab:Elem to Cart results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c|c|c} % Column formatting, 
+	\begin{tabular}{c|c|c} % Column formatting,
 		\hline
 		\textbf{Parameter Sets} & \textbf{Results} & \textbf{Notes} 									\\ \hline
 		1 & \input{AutoTex/IncEllip_a_1PassedText2}      	   &\input{AutoTex/IncEllip_a_1PassFailMsg2}\\
-		2 & \input{AutoTex/EquEllip_a_1PassedText2}      	   &\input{AutoTex/EquEllip_a_1PassFailMsg2}\\	
-		3 & \input{AutoTex/IncCirc_1PassedText2}      	   &\input{AutoTex/IncCirc_1PassFailMsg2}\\	
+		2 & \input{AutoTex/EquEllip_a_1PassedText2}      	   &\input{AutoTex/EquEllip_a_1PassFailMsg2}\\
+		3 & \input{AutoTex/IncCirc_1PassedText2}      	   &\input{AutoTex/IncCirc_1PassFailMsg2}\\
 		4 & \input{AutoTex/EquCirc_1PassedText2}      	   &\input{AutoTex/EquCirc_1PassFailMsg2}\\
 		5 & \input{AutoTex/IncPara_1PassedText2}      	   &\input{AutoTex/IncPara_1PassFailMsg2}\\
 		6 & \input{AutoTex/EquPara_1PassedText2}      	   &\input{AutoTex/EquPara_1PassFailMsg2}\\
@@ -222,9 +222,9 @@ The equatorial parabolic orbit is tested with the same range of $a$ as the incli
 	\end{tabular}
 \end{table}
 	Orbital elements are tested by making two comparisons. The first compares the simulated output with the calculated output, like in the previous conversion. The second compares elements initially used as inputs for the first conversion with those produced as the output of the second. As observed when testing the previous conversion, the comparison between calculated and simulated elements results in complete agreement. Also, the two cases presented by the astronomical body identifier, once again, produce identical results. Thus, the main focus of the Cartesian to element test results is the input/output comparison.
-	
-	Displayed below are explanations of the results after converting Cartesian to elements. Graphical representations of the parameter comparisons for each orbit type are not provided for this test, since the output is already specified above as the input when converting from elements to Cartesian. Figures from above can also be referenced for the Cartesian inputs. 
-	
+
+	Displayed below are explanations of the results after converting Cartesian to elements. Graphical representations of the parameter comparisons for each orbit type are not provided for this test, since the output is already specified above as the input when converting from elements to Cartesian. Figures from above can also be referenced for the Cartesian inputs.
+
 	\begin{enumerate}
 		\item \underline{Inclined Elliptic Orbit ($0<e<1.0$,\quad $a>0$)}\\
 		All variations passed the tests performed, however, the discrepancy between semimajor axis initial input and simulated result increases as eccentricity approaches 1.0. This is because it approaches the parabolic case, which requires a different conversion method and makes the elliptic calculations less accurate. The discrepancy with the tested parameters never increases past $10^{-7}$km, though, and since the semimajor axis is typically on the scale of at least $10^7$km, this is acceptable. Fig. \ref{fig:aDiff} shows the change in semimajor axis discrepancy as eccentricity reaches 0.999. %and Figures \ref{fig:14} and \ref{fig:15} illustrate the test results.

@@ -35,7 +35,7 @@ typedef struct {
     double omega_max;                   //!< [rad/sec] Maximum rate command of steering control
 
     uint32_t ignoreOuterLoopFeedforward;//!< []      Boolean flag indicating if outer feedforward term should be included
-    
+
     /* declare module IO interfaces */
     RateCmdMsg_C rateCmdOutMsg;                 //!< rate command output message
     AttGuidMsg_C guidInMsg;                             //!< attitude guidance input message
@@ -46,14 +46,14 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID);
     void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
 
     void MRPSteeringLaw(mrpSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
-    
+
 #ifdef __cplusplus
 }
 #endif

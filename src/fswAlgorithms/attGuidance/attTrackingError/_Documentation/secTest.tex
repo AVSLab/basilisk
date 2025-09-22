@@ -13,13 +13,13 @@ In order to test the proper implementation of this module, the unit test verify 
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Output Value Tested}  &  \textbf{Tolerated Error}  \\ 
+		\textbf{Output Value Tested}  &  \textbf{Tolerated Error}  \\
 		\hline
-		$\sigma_{BR}$        & $10^{-12}$	   \\ 
-		$\leftexp{B}{\omega_{BR}}$ & $10^{-12}$	   \\ 
-		$\leftexp{B}{\omega_{RN}}$ & $10^{-12}$	   \\ 
+		$\sigma_{BR}$        & $10^{-12}$	   \\
+		$\leftexp{B}{\omega_{BR}}$ & $10^{-12}$	   \\
+		$\leftexp{B}{\omega_{RN}}$ & $10^{-12}$	   \\
 		$\leftexp{B}{\delta\omega_{RN}}$ & $10^{-12}$	   \\
 		\hline\hline
 	\end{tabular}
@@ -31,16 +31,16 @@ The error tolerances are given in Table \ref{tab:errortol}, while initial condit
 	\caption{Initial conditions}
 	\label{tab:ICs}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Navigation Information}  &  \textbf{Value}  \\ 
+		\textbf{Navigation Information}  &  \textbf{Value}  \\
 		\hline
-		$\sigma_{BN}$        & $\begin{bmatrix} 0.25 & -0.45 & 0.75\end{bmatrix}^T$	   \\ 
-		$\leftexp{B}{\omega_{BN}}$ &  $\begin{bmatrix} 0.25 & -0.45 & 0.75\end{bmatrix}^T$	   \\ 
+		$\sigma_{BN}$        & $\begin{bmatrix} 0.25 & -0.45 & 0.75\end{bmatrix}^T$	   \\
+		$\leftexp{B}{\omega_{BN}}$ &  $\begin{bmatrix} 0.25 & -0.45 & 0.75\end{bmatrix}^T$	   \\
 		\hline\hline
-		\textbf{Reference Information}  &  \textbf{Value}  \\ 
+		\textbf{Reference Information}  &  \textbf{Value}  \\
 		\hline
-		$\sigma_{RN}$ &  $\begin{bmatrix} 0.35 & -0.25& 0.15\end{bmatrix}^T$	   \\ 
+		$\sigma_{RN}$ &  $\begin{bmatrix} 0.35 & -0.25& 0.15\end{bmatrix}^T$	   \\
 		$\leftexp{N}{\omega_{RN}}$ &  $\begin{bmatrix} 0.018 & -0.032 & 0.015\end{bmatrix}^T$	   \\
 		$\delta \leftexp{N}{\omega_{RN}}$ &  $\begin{bmatrix} 0.048& -0.022& 0.025 \end{bmatrix}^T$	   \\
 		\hline\hline
@@ -53,13 +53,13 @@ Finally the precomputed expected values for the test are give in the following t
 	\caption{Precomputed Expected values}
 	\label{tab:exp}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Output Value Tested}  &  \textbf{Tolerated Error}  \\ 
+		\textbf{Output Value Tested}  &  \textbf{Tolerated Error}  \\
 		\hline
-		$\sigma_{BR}$        &$\begin{bmatrix}0.1836841481753408 & -0.0974447769418166 & -0.09896069560518146\end{bmatrix}^T$	   \\ 
-		$\leftexp{B}{\omega_{BR}}$ & $\begin{bmatrix}-0.01181207648013235 &-0.008916032420030655 &-0.0344122606253076\end{bmatrix}^T$	   \\ 
-		$\leftexp{B}{\omega_{RN}}$ & $\begin{bmatrix} -0.003187923519867655 &-0.003083967579969345 &0.0394122606253076\end{bmatrix}^T$  \\ 
+		$\sigma_{BR}$        &$\begin{bmatrix}0.1836841481753408 & -0.0974447769418166 & -0.09896069560518146\end{bmatrix}^T$	   \\
+		$\leftexp{B}{\omega_{BR}}$ & $\begin{bmatrix}-0.01181207648013235 &-0.008916032420030655 &-0.0344122606253076\end{bmatrix}^T$	   \\
+		$\leftexp{B}{\omega_{RN}}$ & $\begin{bmatrix} -0.003187923519867655 &-0.003083967579969345 &0.0394122606253076\end{bmatrix}^T$  \\
 		$\leftexp{B}{\delta \omega_{RN}}$ &$\begin{bmatrix} -0.02388623421245188 &-0.02835600277714878 & 0.04514847640452802\end{bmatrix}^T$	   \\
 		\hline\hline
 	\end{tabular}
@@ -73,18 +73,13 @@ All of the tests passed:
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c  } % Column formatting, 
+	\begin{tabular}{c | c  } % Column formatting,
 		\hline\hline
 	   \textbf{Check} 	&\textbf{Pass/Fail} \\ \hline
-	   1	   			& \input{AutoTeX/passFail_sigBR} \\ 
-	   2	   			& \input{AutoTeX/passFail_omega_BR_B} \\ 
-	   3	   			& \input{AutoTeX/passFail_omega_RN_B} \\ 
-	   4	   			& \input{AutoTeX/passFail_domega_RN_B} \\ 
+	   1	   			& \input{AutoTeX/passFail_sigBR} \\
+	   2	   			& \input{AutoTeX/passFail_omega_BR_B} \\
+	   3	   			& \input{AutoTeX/passFail_omega_RN_B} \\
+	   4	   			& \input{AutoTeX/passFail_domega_RN_B} \\
 	   \hline\hline
 	\end{tabular}
 \end{table}
-
-
-
-
-

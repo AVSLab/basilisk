@@ -11,4 +11,3 @@ the Basilisk simulation architecture. All these resources are always
 
 -  :download:`Understanding the Basilisk
    Architecture </resources/UnderstandingBskArchitecture.pptx>`
-

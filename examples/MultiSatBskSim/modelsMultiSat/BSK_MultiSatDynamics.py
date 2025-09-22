@@ -183,7 +183,7 @@ class BSKDynamicModels:
         self.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
         self.tankModel.radiusTankInit = 1
         self.tankModel.lengthTank = 1
-        
+
         # Add the tank and connect the thrusters
         self.scObject.addStateEffector(self.fuelTankStateEffector)
         self.fuelTankStateEffector.addThrusterSet(self.thrusterDynamicEffector)

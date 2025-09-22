@@ -72,4 +72,3 @@ def test_CMsgTimeWritten():
 
 if __name__ == "__main__":
     CMsgTimeWritten()
-

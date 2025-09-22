@@ -36,7 +36,7 @@ public:
     AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t, uint64_t),
         void (*SelfPtr)(void*, uint64_t)=NULL,
 		void(*ResetPtr)(void*, uint64_t, uint64_t) = NULL); //!< constructor
-    
+
     void UseData(void *IncomingData) {DataPtr = IncomingData;} //!< method
     void UseUpdate(void (*LocPtr)(void*, uint64_t, uint64_t)) {AlgUpdate = LocPtr;} //!< method
     void UseSelfInit(void (*LocPtr)(void*, uint64_t)) {AlgSelfInit = LocPtr;} //!< method
@@ -47,7 +47,7 @@ public:
     uint64_t getSelfInitAddress() {return reinterpret_cast<uint64_t>(*AlgSelfInit);} //!< method
     uint64_t getResetAddress() {return reinterpret_cast<uint64_t>(*AlgReset);} //!< method
     uint64_t getUpdateAddress() {return reinterpret_cast<uint64_t>(*AlgUpdate);} //!< method
-    
+
 public:
     void *DataPtr;                              //!< class variable
     AlgPtr AlgSelfInit;                         //!< class variable

@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import os
 
@@ -37,7 +37,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 def truthMagneticTorque(bField_N, sigmaBN, mtbCmds, GtMatrix, numMTB, maxDipole):
-    
+
     temp = np.asarray(GtMatrix[0:3*numMTB])
     GtMatrix = np.reshape(temp, (3, numMTB))
     bField_N = np.asarray(bField_N)
@@ -74,7 +74,7 @@ def test_MtbEffector(show_plots, accuracy, maxDipole):
 
     **Description of Variables Being Tested**
 
-    Here discuss what variables and states are being checked. 
+    Here discuss what variables and states are being checked.
     """
     [testResults, testMessage] = MtbEffectorTestFunction(show_plots, accuracy, maxDipole)
     assert testResults < 1, testMessage
@@ -84,7 +84,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     """Call this routine directly to run the unit test."""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-   
+
     # create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -108,8 +108,8 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
     mu = earth.mu
-    
-    
+
+
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskTestSat"
@@ -120,7 +120,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     scObject.hub.mHub = 10.0  # kg - spacecraft mass (arbitrary)
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
-    
+
     oe = orbitalMotion.ClassicElements()
     oe.a = 6778.14 * 1000.  # meters
     oe.e = 0.0
@@ -137,8 +137,8 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     # add spacecraft object
     scSim.AddModelToTask(simTaskName, scObject)
     scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
-    
-    
+
+
     # add magnetic field module
     magModule = magneticFieldWMM.MagneticFieldWMM()
     magModule.ModelTag = "WMM"
@@ -147,15 +147,15 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     magModule.epochInMsg.subscribeTo(epochMsg)
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
     scSim.AddModelToTask(simTaskName, magModule)
-    
-    
+
+
     # add magnetic torque bar effector
     mtbEff = MtbEffector.MtbEffector()
     mtbEff.ModelTag = "MtbEff"
     scObject.addDynamicEffector(mtbEff)
     scSim.AddModelToTask(simTaskName, mtbEff)
-    
-    
+
+
     # mtbConfigData message
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
     mtbConfigParams.numMTB = 3
@@ -167,30 +167,30 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     ]
     mtbConfigParams.maxMtbDipoles = [maxDipole]*4
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
-    
-    
+
+
     # MTBCmdMsgPayload, mtbCmdInMsg
     mtbCmdInMsgContainer = messaging.MTBCmdMsgPayload()
     mtbCmdInMsgContainer.mtbDipoleCmds = [0.2, 0.2, 0.2]
     mtbCmdInMsg = messaging.MTBCmdMsg().write(mtbCmdInMsgContainer)
-    
-    # subscribe to mesaages 
+
+    # subscribe to mesaages
     mtbEff.mtbCmdInMsg.subscribeTo(mtbCmdInMsg)
     mtbEff.mtbParamsInMsg.subscribeTo(mtbParamsInMsg)
     mtbEff.magInMsg.subscribeTo(magModule.envOutMsgs[0])
-    
-    
+
+
     # Setup data logging before the simulation is initialized
     numDataPoints = 3600
     samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLogMag = magModule.envOutMsgs[0].recorder(samplingTime)
     dataLogMTB = mtbEff.mtbOutMsg.recorder(samplingTime)
-    
+
     scSim.AddModelToTask(simTaskName, dataLogMTB)
     scSim.AddModelToTask(simTaskName, dataLogMag)
     scSim.AddModelToTask(simTaskName, dataLog)
-    
+
 
     # initialize Simulation
     scSim.InitializeSimulation()
@@ -204,7 +204,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     mtbData = dataLogMTB.mtbNetTorque_B
     dataMagField = dataLogMag.magField_N
     np.set_printoptions(precision=16)
-     
+
     # plot net mtb torque
     if show_plots:
         plt.close("all")  # clears out plots from earlier test runs
@@ -248,13 +248,13 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
                                           mtbConfigParams.numMTB,
                                           maxDipole
                                           )
-        
+
         testFailCount, testMessages = unitTestSupport.compareVector(mtbTauV,
                                                                     mtbTauTruth,
                                                                     accuracy,
                                                                     "mtbTorque_B",
                                                                     testFailCount, testMessages)
-     
+
     if testFailCount == 0:
         print("PASSED: Mtb Effector")
     else:
@@ -267,5 +267,3 @@ if __name__ == "__main__":
         1e-12,
         0.1
     )
-
-

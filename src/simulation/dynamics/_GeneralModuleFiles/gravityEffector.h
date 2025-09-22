@@ -33,7 +33,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 
 /** Container for gravitational body data
- * 
+ *
  * This class is designed to hold all of the information for a gravity
  * body.  The nominal use-case has it initialized at the python level and
  * attached to dynamics using the AddGravityBody method.
@@ -67,13 +67,13 @@ public:
     void loadEphemeris();
 
     /** Creates the following properies in the given statesIn object.
-     * 
+     *
      *      - [planetName].r_PN_N
      *      - [planetName].v_PN_N
      *      - [planetName].mu
      *      - [planetName].J20002Pfix
      *      - [planetName].J20002Pfix_dot
-     * 
+     *
      * vr_PN_N`, `v_PN_N`, and `mu` are initialized to zero, while `J20002Pfix` and `J20002Pfix_dot`
      * are initialized to the values stored in `this->localPlanet`. This usually means that
      * `J20002Pfix` is initialized to the identity matrix and `J20002Pfix_dot` to zero.
@@ -127,7 +127,7 @@ public:
     void registerProperties(DynParamManager &statesIn);
 
     /** Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
-     *  
+     *
      *   @param r_cF_N is position of center of mass of s/c wrt frame
      *   @param rDot_cF_N is the derivative of above
      */
@@ -145,8 +145,8 @@ public:
     /** Adds a `GravBodyData` associated with this effector */
     void addGravBody(std::shared_ptr<GravBodyData> gravBody);
 
-    /** Called to modify property names to prepend them by the string stored in nameOfSpacecraftAttachedTo 
-     * 
+    /** Called to modify property names to prepend them by the string stored in nameOfSpacecraftAttachedTo
+     *
      * This can be used to make property names unique between different `GravityEffector` in a simulation
      * with multiple dynamic objects.
     */

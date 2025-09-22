@@ -26,7 +26,7 @@
 
 
 /*! @brief Sub structure that contains all of the configuration data and output
-    information for a single thruster group.  There can be several thruster 
+    information for a single thruster group.  There can be several thruster
     groups available in a single control scheme.
 */
 typedef struct {

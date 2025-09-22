@@ -4,8 +4,8 @@ This section contains descriptions of how the gravity effector code works and in
 \subsection{Using Central Bodies and Relative Dynamics}
 \subsubsection{Using Central Bodies}
 In simulations with multiple planetary bodies, using dynamics relative to a central body can improve accuracy. Generally, this is the right thing to do rather than using an absolute coordinate set. If a user has a gravBody called \verb|earth|, the central body flag should be set to True.
-\verb|earth.isCentralBody = True|	
-The dynamics will then take care of themselves, but the user needs to be careful to input initial position and velocity values as \textit{relative to} the central body. This can be input from a set of Keplerian orbital elements using \verb|orbitalMotion.elem2rv| as in\\ \verb|Basilisk/tests/scenarios/scenarioBasicOrbit.py|. 
+\verb|earth.isCentralBody = True|
+The dynamics will then take care of themselves, but the user needs to be careful to input initial position and velocity values as \textit{relative to} the central body. This can be input from a set of Keplerian orbital elements using \verb|orbitalMotion.elem2rv| as in\\ \verb|Basilisk/tests/scenarios/scenarioBasicOrbit.py|.
 
 The user should be aware that if spacecraft position and velocity are read back from a message log or plotted that the absolute position and velocity will be returned. It will take additional work to convert the outputs back to a relative form by subtracting out the central body positions and velocities. No rotation will be needed, though.
 It is critical that the relative position and velocities are given in a frame which is linearly translated but \textbf{not rotated} from the simulation inertial frame. There is no handling of rotated relative frames within the dynamics. The orbital element to position and velocity conversion in the section below can be used for relative dynamics inputs, as well.

@@ -3,12 +3,12 @@
 \section{User Guide}
 
 \subsection{{\tt linearAlgebra} Library}
-The linear algebra library provides numerous C-based functions to perform basic matrix math operations.  For a complete list of functions supported, consult the {\tt linearAlgebra.h} file. 
+The linear algebra library provides numerous C-based functions to perform basic matrix math operations.  For a complete list of functions supported, consult the {\tt linearAlgebra.h} file.
 
 \subsubsection{Vector Operations}
 The vector related functions all begin with a letter '{\tt v}' and are broken down in the following categories depending on if the linear algebra operation is performed on a matrix of a general size, or of a specific size of 2, 3, 4 or 6.
 \begin{itemize}
-	\item if the function is  {\tt vXXXX()} the code works on a $n$x1 matrix of arbitrary length $n$.  
+	\item if the function is  {\tt vXXXX()} the code works on a $n$x1 matrix of arbitrary length $n$.
 	\item if the function is {\tt v2XXXX()}  the code works on a matrix of length 2 defined as {\tt double vec[2]}.
 	\item if the function is {\tt v3XXXX()}  the code works on a matrix of length 2 defined as {\tt double vec[3]}.
 	\item if the function is {\tt v4XXXX()} the code works on a matrix of length 2 defined as {\tt double vec[4]}.
@@ -26,7 +26,7 @@ The most extensive set of linear algebra support functions are for operation on 
 	\item {\tt OuterProduct}: Returns the outer product $\bm v_{1} \bm v_{2}^{T}$
 	\item {\tt Normalize}: Returns a normalized vector $\bm v_{1}/ v_{1}$
 	\item {\tt MaxAbs}: Returns the largest element of a vector
-	\item {\tt IsEqual}: Checks if two vector represnetations are identical	
+	\item {\tt IsEqual}: Checks if two vector represnetations are identical
 	\item {\tt IsZero}: Checks if a vector is full of zero elements
 	\item {\tt Print}: Prints the vector representation to a file
 	\item {\tt Sort}: Sorts the vector elements by size
@@ -42,12 +42,12 @@ The most extensive set of linear algebra support functions are for operation on 
 The matrix related functions are all labeled with a letter '{\tt M}' and are broken down into the following matrix dimension related categories:
 \begin{itemize}
 	\item  {\tt mXXXXy()}: the code works on a $n\times m$ matrix of arbitrary dimension $n$ and $m$.
-	\item {\tt m22XXXX()}: the code works on a $2\times 2$ matrix defined through {\tt mat[2][2]}. 
-	\item {\tt m33XXXX()}: the code works on a $3\times 3$ matrix defined through {\tt mat[3]3]}. 
-	\item {\tt m44XXXX()}: the code works on a $4\times 4$ matrix defined through {\tt mat[4][4]}. 
+	\item {\tt m22XXXX()}: the code works on a $2\times 2$ matrix defined through {\tt mat[2][2]}.
+	\item {\tt m33XXXX()}: the code works on a $3\times 3$ matrix defined through {\tt mat[3]3]}.
+	\item {\tt m44XXXX()}: the code works on a $4\times 4$ matrix defined through {\tt mat[4][4]}.
 \end{itemize}
 
-The following list provides an overview of the supported matrix functions.  Note that not al dimensions have all functions provided, but the 2, 3, and 4 dimensional matrix support is pretty complete.  
+The following list provides an overview of the supported matrix functions.  Note that not al dimensions have all functions provided, but the 2, 3, and 4 dimensional matrix support is pretty complete.
 \begin{itemize}
 	\item {\tt SetIdentity}: Returns an identity matrix
 	\item {\tt SetZero}: Returns a zero matrix
@@ -56,9 +56,9 @@ The following list provides an overview of the supported matrix functions.  Note
 	\item {\tt m33MultM33}: Performs the matrix to matrix multiplication $[M_{1}][M_{2}]$
 	\item {\tt m33MultM33t}: Performs the matrix to matrix multiplication $[M_{1}][M_{2}]^{T}$
 	\item {\tt m33tMultM33}: Performs the matrix to matrix multiplication $[M_{1}]^{T}[M_{2}]$
-	\item {\tt m33MultV3}: Computes $[M_{1}]\bm v_{1}$ 
-	\item {\tt m33tMultV3}: Computes $[M_{1}]^{T}\bm v_{1}$ 
-	\item {\tt v3tMultM33}: Computes $\bm v_{1}^{T}[M_{1}]$ 
+	\item {\tt m33MultV3}: Computes $[M_{1}]\bm v_{1}$
+	\item {\tt m33tMultV3}: Computes $[M_{1}]^{T}\bm v_{1}$
+	\item {\tt v3tMultM33}: Computes $\bm v_{1}^{T}[M_{1}]$
 	\item {\tt v3tMultM33t}: Computes  $\bm v_{1}^{T}[M_{1}]^{T}$
 	\item {\tt Tilde}: Returns the skew-symmetric matrix $[\tilde{\bm v}_{1}]$
 	\item {\tt Transpose}: Returns $[M_{1}]^{T}$
@@ -119,24 +119,24 @@ To convert from classical orbit elements to inertial Cartesian coordinates, the 
 \begin{verbatim}
 	elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
 \end{verbatim}
-is used where {\tt mu} is the gravitational constant of the 2-body problem, the classical elements are defined through 
+is used where {\tt mu} is the gravitational constant of the 2-body problem, the classical elements are defined through
 $$
 	(a, e, i, \Omega, \omega, f)
 $$
-where the anomaly angle is typically given by $f$, unless the orbit is a rectilinear motion in which case the anomaly angle input is $E$.  The function returns the inertial position and velocity vectors in the arrays {\tt rVec} and {\tt vVec}.  
+where the anomaly angle is typically given by $f$, unless the orbit is a rectilinear motion in which case the anomaly angle input is $E$.  The function returns the inertial position and velocity vectors in the arrays {\tt rVec} and {\tt vVec}.
 
 To convert from  inertial Cartesian coordinates to classical orbit elements, the function
 \begin{verbatim}
 	rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
 \end{verbatim}
-Beyond the classical elements listed above, this routine also stores the radius of perapses $r_{p}$ and apoapses $r_{a}$, as well as $\alpha = \dfrac{1}{a}$.  
+Beyond the classical elements listed above, this routine also stores the radius of perapses $r_{p}$ and apoapses $r_{a}$, as well as $\alpha = \dfrac{1}{a}$.
 
 
 \subsubsection{Space Environment Functions}
 \paragraph{Atmospheric Density}
 The Earth's atmospheric density $\rho$ is computed using\\
 \indent	{\tt double atmosphericDensity(double alt)} \\
-The density is returned as a scalar value.  
+The density is returned as a scalar value.
 
 \paragraph{Mean Debye Length}
 The mean Debye Length for the near-Earth environment is approximated, very crudely, through a polynomial fit.  The function returns the scalar $\lambda_{d}$ and is called through \\
@@ -146,21 +146,16 @@ The mean Debye Length for the near-Earth environment is approximated, very crude
 To compute an estimate of  the Earth's atmospheric drag acceleration, use the function: \\
 \indent {\tt void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec)}
 
-The inputs are the ballistic drag coefficient {\tt Cd}, the velocity-projected cross-sectional area {\tt A}, as well as the spacecraft mass {\tt m}.  Given the inertial position vectors {\tt rvec} and {\tt vvec}, the function returns the drag acceleration {\tt advec}.  
+The inputs are the ballistic drag coefficient {\tt Cd}, the velocity-projected cross-sectional area {\tt A}, as well as the spacecraft mass {\tt m}.  Given the inertial position vectors {\tt rvec} and {\tt vvec}, the function returns the drag acceleration {\tt advec}.
 
 \paragraph{Gravitational Zonal Harmonics}
 This function returns the inertial acceleration due to a planets zonal Harmonic.  The function call is:\\
 \indent {\tt  void jPerturb(double *rvec, int num, double *ajtot, ...)}
 
-If not option argument is provided, then the zonal harmonics of Earth are simulated.  About other celestial objects only the $J_{2}$ harmonic is implemented.  Here the object is specified through the {\tt CelestialObject\_t} enumeration.  For example, to get the $J_{2}$ zonal harmonic about Venus the argument {\tt CELESTIAL\_VENUS} is provided.  
+If not option argument is provided, then the zonal harmonics of Earth are simulated.  About other celestial objects only the $J_{2}$ harmonic is implemented.  Here the object is specified through the {\tt CelestialObject\_t} enumeration.  For example, to get the $J_{2}$ zonal harmonic about Venus the argument {\tt CELESTIAL\_VENUS} is provided.
 
 \paragraph{Solar Radiation Pressure Acceleration}
 To compute the inertial disturbance acceleration due to the solar radiation pressure use  the function\\
 \indent {\tt void solarRad(double A, double m, double *sunvec, double *arvec)}
 
-Here {\tt A} is the projected surface area, {\tt m} is the spacecraft mass, {\tt sunvec} is the sun position vector to the Sun in units of AU.  
-
-
-
-
-
+Here {\tt A} is the projected surface area, {\tt m} is the spacecraft mass, {\tt sunvec} is the sun position vector to the Sun in units of AU.

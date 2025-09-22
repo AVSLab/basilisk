@@ -27,7 +27,7 @@ use either of the following options which work in both version of
 Python::
 
        a = 3//2
-       a = 3./2 
+       a = 3./2
 
 Without modification the user will see an error in Python 3 complaining about an unsupported type conversion::
 

@@ -140,4 +140,3 @@ class BSKDynamicModels():
         self.SetSimpleNavObject()
         self.SetReactionWheelDynEffector()
         self.SetExternalForceTorqueObject()
-

@@ -48,14 +48,14 @@ Table \ref{tab:inputNavTable} shows the input message from the navigation system
 	\begin{tabular}{|l|l|l|p{3in}|}
 		\hline
 		\rowcolor{BrickRed}
-		\textcolor{white}{Name} & \textcolor{white}{Type} & 
-		\textcolor{white}{Length} & 
+		\textcolor{white}{Name} & \textcolor{white}{Type} &
+		\textcolor{white}{Length} &
 		\textcolor{white}{Description}  \\ \hline
-		$\bm{R}_S$ & double [] & 3 & 
-		Position vector of the spacecraft body-point with respect to the inertial frame in inertial frame components 
+		$\bm{R}_S$ & double [] & 3 &
+		Position vector of the spacecraft body-point with respect to the inertial frame in inertial frame components
 		($\leftexp{N}{\bm{r}}_{B/N}$) . \\ \hline
-		$\bm{v}_S$ & double [] & 3 & 
-		Velocity vector of the spacecraft point with respect to the inertial frame in inertial frame components 
+		$\bm{v}_S$ & double [] & 3 &
+		Velocity vector of the spacecraft point with respect to the inertial frame in inertial frame components
 		($\leftexp{N}{\bm{v}}_{B/N}$). \\ \hline
 	\end{tabular}
 	\label{tab:inputNavTable}
@@ -69,12 +69,12 @@ Table \ref{tab:inputCelTable} shows the input message from Spice about the main 
 	\begin{tabular}{|l|l|l|p{3in}|}
 		\hline
 		\rowcolor{BrickRed}
-		\textcolor{white}{Name} & \textcolor{white}{Type} & 
-		\textcolor{white}{Length} & 
+		\textcolor{white}{Name} & \textcolor{white}{Type} &
+		\textcolor{white}{Length} &
 		\textcolor{white}{Description}  \\ \hline
-		$\bm{R}_P$  & double [] & 3 & 
+		$\bm{R}_P$  & double [] & 3 &
 		Position vector of the main celestial object with respect to the inertial frame in inertial frame components . \\ \hline
-		$\bm{v}_P$  & double [] & 3 & 
+		$\bm{v}_P$  & double [] & 3 &
 		Velocity vector of the main celestial object with respect to the inertial frame in inertial frame components . \\ \hline
 	\end{tabular}
 	\label{tab:inputCelTable}
@@ -88,14 +88,14 @@ Table \ref{tab:outputTable} shows the Attitude Reference output message of the m
 	\begin{tabular}{|l|l|l|p{3in}|}
 		\hline
 		\rowcolor{BrickRed}
-		\textcolor{white}{Name} & \textcolor{white}{Type} & 
-		\textcolor{white}{Length} & 
+		\textcolor{white}{Name} & \textcolor{white}{Type} &
+		\textcolor{white}{Length} &
 		\textcolor{white}{Description}  \\ \hline
-		$\bm{\sigma}_{R/N}$ & double [] & 3 & 
+		$\bm{\sigma}_{R/N}$ & double [] & 3 &
 		MRP attitude set of the reference frame with respect to the reference. \\ \hline
-		$\leftexp{N} {\bm{\omega}_{R/N}}$ & double [] & 3 & 
+		$\leftexp{N} {\bm{\omega}_{R/N}}$ & double [] & 3 &
 		Angular rate vector of the reference frame with respect to the inertial expressed in inertial frame components. \\ \hline
-		$\leftexp{N} {\bm{\dot{\omega}}_{R/N}}$ & double [] & 3 & 
+		$\leftexp{N} {\bm{\dot{\omega}}_{R/N}}$ & double [] & 3 &
 		Angular acceleration vector of the reference frame with respect to the inertial expressed in inertial frame components. \\ \hline
 	\end{tabular}
 	\label{tab:outputTable}
@@ -126,7 +126,7 @@ In terms of the classical set of orbital elements, this DCM can also be expresse
 \begin{equation}
   \label{eq:VH2}
   [VH] = \begin{bmatrix}
-    \dfrac{1 + e \cos f}{\sqrt{1+e^{2}+2e \cos f}} & 
+    \dfrac{1 + e \cos f}{\sqrt{1+e^{2}+2e \cos f}} &
     -\dfrac{e \sin f}{\sqrt{1+e^{2}+2e \cos f} }
     & 0 \\
     \dfrac{e \sin f}{\sqrt{1+e^{2}+2e \cos f}}  & \dfrac{1 + e \cos f}{\sqrt{1+e^{2}+2e \cos f}} & 0\\
@@ -156,7 +156,7 @@ The same methodology is applied to compute the relative velocity vector:
 Note that the position and velocity vectors of the spacecraft and the celestial body, $\bm{R}_S$,  $\bm{R}_P$,  $\bm{v}_S$ and  $\bm{v}_P$ are the only inputs that this module requires. Having $\bm r$ and $\bm v$, the Velocity frame orientation is completely defined:
 \begin{subequations}
   \begin{equation}
-  \hat{\bm\imath}_{v} = \frac{\bm v}{v} 
+  \hat{\bm\imath}_{v} = \frac{\bm v}{v}
   \end{equation}
   \begin{equation}
   \hat{\bm\imath}_{h} = \frac{\bm{r}\times{\bm{v}}}{rv}
@@ -169,7 +169,7 @@ And the Direction Cosine Matrix to map from the reference frame to the inertial 
 \begin{equation}
 	[RN] =  \begin{bmatrix}
        		\hat{\bm\imath}_{n} \\
-		\hat{\bm\imath}_{v} \\ 
+		\hat{\bm\imath}_{v} \\
 		\hat{\bm\imath}_{h}
       \end{bmatrix}
 \end{equation}
@@ -177,7 +177,7 @@ The corresponding MRP attitude set is computed using the following function from
 $$ [RN] = \textrm{C2MRP}(\bm\sigma_{R/N})$$
 \section{Velocity Frame Rate Development}
 Next the Velocity frame rate $\dot\beta$ relative to the orbit frame is determined.
-Note the following identities from ~\eqref{eq:VH1} and ~\eqref{eq:VH2}: 
+Note the following identities from ~\eqref{eq:VH1} and ~\eqref{eq:VH2}:
 \begin{equation}
   \label{eq:tanbeta}
   \tan\beta = \frac{e \sin f}{1 + e \cos f}
@@ -194,7 +194,7 @@ Taking the derivative of Eq.~\eqref{eq:tanbeta} yields
 To find the relative angular acceleration $\ddot\beta$, Eq.~\eqref{eq:dbeta} is differentiated again.
 \begin{equation}
   \label{eq:ddbeta}
-  \ddot\beta = 
+  \ddot\beta =
    \frac{e(e+\cos f)}{1+e^{2}+2 e \cos f} \ddot f
    +\frac{
   e  (e^{2}-1)\sin f
@@ -220,7 +220,7 @@ Following, let us evaluate the Velocity frame angular vectors.  As both the $\ma
 
 \section{Angular Velocity Descriptions}
 Let $\mathcal{R}_{0}$ reference the Velocity orbit frame. Thus, $\bm\omega_{R_{0}/N}$ and $\dot{\bm\omega}_{R_{0}/N}$ correspond to the expressions in ~\eqref{eq:omegaVN} and ~\eqref{eq:domegaVN} respectively.
-The angular rate $\bm\omega_{R/N}$ and acceleration $\dot{\bm\omega}_{R/N}$ of the output reference frame $\mathcal{R}$  still need to be computed. 
+The angular rate $\bm\omega_{R/N}$ and acceleration $\dot{\bm\omega}_{R/N}$ of the output reference frame $\mathcal{R}$  still need to be computed.
 Since the desired attitude is a fixed-pointing one, $\mathcal{R}$ does not move relative to $\mathcal{R}_{0}$. Thus, the angular velocity of the reference frame happens to be:
 \begin{equation}
   \label{eq:omega_R}
@@ -241,22 +241,22 @@ Similarly, we find
 where $\ddot\beta$ and $\ddot f$ have been substituted by their corresponding expressions.
 
 Both $\bm\omega_{R/N}$ and $\bm{\dot\omega}_{R/N} $ need to be expressed in the inertial frame $N$. \newline
-Given 
+Given
 \begin{subequations}
 \begin{equation}
-\leftexp{R}{\bm \omega_{R/N} } = 
+\leftexp{R}{\bm \omega_{R/N} } =
       \begin{bmatrix}
        0\\ 0 \\ \dot{f}-\dot\beta
       \end{bmatrix}
 \end{equation}
 \begin{equation}
- \leftexp{R}{\bm{\dot{\omega}}_{R/N}  } = 
+ \leftexp{R}{\bm{\dot{\omega}}_{R/N}  } =
       \begin{bmatrix}
        0\\ 0 \\ \ddot{f}-\ddot\beta
       \end{bmatrix}
 \end{equation}
 \end{subequations}
-Then, 
+Then,
 \begin{subequations}
 \begin{equation}
 	\leftexp{N} {\bm{\omega}_{R/N}} =  [NR] \textrm{ }\leftexp{R} {\bm{\omega}_{R/N} }

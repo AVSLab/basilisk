@@ -130,5 +130,3 @@ def convertToIgrfDipoleCoefficients(nominalField, tilt, longitudeOfTilt, magFiel
     magFieldModule.g10 = nominalField*np.cos(theta_m)
 
     return
-
-

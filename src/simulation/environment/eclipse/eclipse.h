@@ -38,13 +38,13 @@ class Eclipse: public SysModel {
 public:
     Eclipse();
     ~Eclipse();
-    
+
     void Reset(uint64_t CurrenSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
-    
+
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> planetInMsgs;  //!< A vector of planet incoming state message names ordered by the sequence in which planet are added to the module

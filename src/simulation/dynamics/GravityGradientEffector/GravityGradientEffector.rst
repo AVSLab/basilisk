@@ -97,4 +97,3 @@ Module Output Message Name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The effector write an output message with the current gravity gradient torque information at each ``update`` cycle.
 The output message is ``gravityGradientOutMsg``.
-

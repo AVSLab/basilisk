@@ -62,4 +62,3 @@ RPM = (2.*math.pi/60.)
 
 #   variable to convert RPM to radians per second
 rpm2radsec = 2.0 * math.pi/60.
-

@@ -6,7 +6,7 @@
  * 20041227
  *
  * The NRLMSISE-00 model was developed by Mike Picone, Alan Hedin, and
- * Doug Drob. They also wrote a NRLMSISE-00 distribution package in 
+ * Doug Drob. They also wrote a NRLMSISE-00 distribution package in
  * FORTRAN which is available at
  * http://uap-www.nrl.navy.mil/models_web/msis/msis_home.htm
  *
@@ -28,12 +28,12 @@ struct nrlmsise_flags {
 	double sw[24];          //!< variable
 	double swc[24];         //!< variable
 };
-/*   
+/*
  *   Switches: to turn on and off particular variations use these switches.
  *   0 is off, 1 is on, and 2 is main effects off but cross terms on.
  *
- *   Standard values are 0 for switch 0 and 1 for switches 1 to 23. The 
- *   array "switches" needs to be set accordingly by the calling program. 
+ *   Standard values are 0 for switch 0 and 1 for switches 1 to 23. The
+ *   array "switches" needs to be set accordingly by the calling program.
  *   The arrays sw and swc are set internally.
  *
  *   switches[i]:
@@ -77,10 +77,10 @@ struct ap_array {
  *   2 : 3 hr AP index for 3 hrs before current time
  *   3 : 3 hr AP index for 6 hrs before current time
  *   4 : 3 hr AP index for 9 hrs before current time
- *   5 : Average of eight 3 hr AP indicies from 12 to 33 hrs 
+ *   5 : Average of eight 3 hr AP indicies from 12 to 33 hrs
  *           prior to current time
- *   6 : Average of eight 3 hr AP indicies from 36 to 57 hrs 
- *           prior to current time 
+ *   6 : Average of eight 3 hr AP indicies from 36 to 57 hrs
+ *           prior to current time
  */
 
 /*! NRL MSISE input structure */
@@ -98,9 +98,9 @@ struct nrlmsise_input {
 	struct ap_array *ap_a; /*!< see above */
 };
 /*
- *   NOTES ON INPUT VARIABLES: 
+ *   NOTES ON INPUT VARIABLES:
  *      UT, Local Time, and Longitude are used independently in the
- *      model and are not of equal importance for every situation.  
+ *      model and are not of equal importance for every situation.
  *      For the most physically realistic calculation these three
  *      variables should be consistent (lst=sec/3600 + g_long/15).
  *      The Equation of Time departures from the above formula
@@ -128,20 +128,20 @@ struct nrlmsise_output {
 	double d[9];   /*!< densities */
 	double t[2];   /*!< temperatures */
 };
-/* 
+/*
  *   OUTPUT VARIABLES:
  *      d[0] - HE NUMBER DENSITY(CM-3)
  *      d[1] - O NUMBER DENSITY(CM-3)
  *      d[2] - N2 NUMBER DENSITY(CM-3)
  *      d[3] - O2 NUMBER DENSITY(CM-3)
- *      d[4] - AR NUMBER DENSITY(CM-3)                       
+ *      d[4] - AR NUMBER DENSITY(CM-3)
  *      d[5] - TOTAL MASS DENSITY(GM/CM3) [includes d[8] in td7d]
  *      d[6] - H NUMBER DENSITY(CM-3)
  *      d[7] - N NUMBER DENSITY(CM-3)
  *      d[8] - Anomalous oxygen NUMBER DENSITY(CM-3)
  *      t[0] - EXOSPHERIC TEMPERATURE
  *      t[1] - TEMPERATURE AT ALT
- * 
+ *
  *
  *      O, H, and N are set to zero below 72.5 km
  *
@@ -149,7 +149,7 @@ struct nrlmsise_output {
  *      altitudes below 120 km. The 120 km gradient is left at global
  *      average value for altitudes below 72 km.
  *
- *      d[5], TOTAL MASS DENSITY, is NOT the same for subroutines GTD7 
+ *      d[5], TOTAL MASS DENSITY, is NOT the same for subroutines GTD7
  *      and GTD7D
  *
  *        SUBROUTINE GTD7 -- d[5] is the sum of the mass densities of the

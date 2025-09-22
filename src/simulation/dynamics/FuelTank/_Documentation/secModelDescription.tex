@@ -11,7 +11,7 @@
 \end{figure}
 
 The following derivation is a shortened version from Reference\cite{Panicucci:2017fu}. To help define the problem, Figure~\ref{fig:Spacecraft} is displayed. This problem involves a spacecraft consisting of a hub which is a rigid body and has a center of mass location labeled as point $B_c$. The hub has $M$ number of tanks and $N$ number of thrusters attached to it. The figure only shows one tank and one thruster but the analytical development is general. The $i_{\text{th}}$ tank has a center of mass location labeled as $F_{c_i}$ and the $j_{\text{th}}$ thruster is located at $B_j$. The body fixed reference frame $\mathcal{B}$: $\{\bm{\hat{b}}_1\,, \bm{\hat{b}}_2\,,\bm{\hat{b}}_3 \}$ with origin $B$ can be oriented in any direction and point $B$ can be located anywhere fixed to the hub. This means that point $B$ and the center of mass location of the spacecraft, $C$, are not necessarily coincident. As a result, the vector $\bm c$ defines the vector pointing from the body frame origin to the center of mass fo the spacecraft. The inertial reference frame $\mathcal{N}$: $\{\bm{\hat{n}}_1\,, \bm{\hat{n}}_2\,,\bm{\hat{n}}_3 \}$ is centered at $N$ and is fixed in inertial space.
-	
+
 	Throughout this paper, vector calculus is used and the notation to define certain quantities needs to be introduced. A position vector, $ \bm{r}_{C/N}$, is the vector pointing from $N$ to $C$. $\bm{\omega}_{\mathcal{B}/\mathcal{N}}$ is the angular velocity of the $\mathcal{B}$ frame with respect to the $\mathcal{N}$ frame.
 	$\dot{\bm{r}}$ denotes an inertial time derivate of vector $\bm{r}$ and  $\bm{r}'$ defines a time derivate of $\bm{r}$ with respect to the body frame. Using these definitions, the following describes the Reynolds transport theorem used in this formulation.
 
@@ -60,7 +60,7 @@ The derivation of the translational EOM must begins considering Newton's law for
 \end{equation}
 where $\dot{\bm{r}}_{M/N}$ is the velocity of the particle at the $M$ point expressed with respect to the inertial reference frame and $\bm{F}_{\text{ext}}$ is the sum of the external forces experienced by the body.
 
-As the total mass of the system is constant, the differentiation operator is brought inside the integration: 
+As the total mass of the system is constant, the differentiation operator is brought inside the integration:
 \begin{equation}\label{eq:eq4}
 	\frac{^{\mathcal{N}}\text{d}}{\text{d}\,t}\int_{\text{Body}}\dot{\bm{r}}_{M/N}\,	\text{d}m= \int_{\text{Body}}\ddot{\bm{r}}_{M/N}\,\text{d}m
 \end{equation}
@@ -79,7 +79,7 @@ By using the kinematic transport theorem, the expression of $\ddot{\bm{r}}_{M/B}
 	\bm{r}'_{M/B} + \dot{\bm{\omega}}_{\cal{B}/\cal{N}}\times \bm{r}_{M/B} + \bm{\omega}_{\cal{B}/\cal{N}}\times\left(\bm{\omega}_{\cal{B}/\cal{N}} \times \bm{r}_{B/M} \right)
 \end{equation}
 
-A Lagrangian formulation of the linear momentum equation is deduced by using Equations \eqref{eq:eq3}, \eqref{eq:eq4}, \eqref{eq:RcRbacc} and \eqref{eq:rMB_dot}: 
+A Lagrangian formulation of the linear momentum equation is deduced by using Equations \eqref{eq:eq3}, \eqref{eq:eq4}, \eqref{eq:RcRbacc} and \eqref{eq:rMB_dot}:
 
 \begin{multline}\label{eq:eq11}
 	\int_{\text{Body}}\left(\ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\times\bm{r}_{M/B} + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\bm{r}_{M/B}\right)\right)\text{d}m +\\+
@@ -88,7 +88,7 @@ A Lagrangian formulation of the linear momentum equation is deduced by using Equ
 
 The system mass is constant, therefore the derivative operator can be applied after the integration. This yields:
 
-\begin{equation}	
+\begin{equation}
 	\int_{\text{Body}}\bm{r}'_{M/B}\text{d}m = \frac{^{\mathcal{B}}\text{d}}{\text{d}t}\int_{\text{Body}}\bm{r}_{M/B}\text{d}m
 \end{equation}
 \begin{equation}
@@ -108,21 +108,21 @@ where $\bm{v}_{\text{rel}} = \bm{r}' _{M/B}$ because point $B$ is fixed with res
 
 \begin{multline}
 	\int_{\text{Body}}\left(\ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\times\bm{r}_{M/B} + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\bm{r}_{M/B}\right)\right)\text{d}m +\\+
-	2\,\bm{\omega}_{\mathcal{B}/\mathcal{N}}\times\left(\,\frac{^{\mathcal{B}} \text{d}}{\text{d}t}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B}\,\text{d}\mathcal{V} + \int_{\mathcal{A}_{\text{sc}}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}}\,\bm{r}_{M/B}\text{d}A\right) \;+ 	 \frac{^{\mathcal{B}} \text{d}^2}{\text{d}t^2}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B} \,\text{d}\mathcal{V} +\\+ \frac{^{\mathcal{B}} \text{d}}{\text{d}t} \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}_{M/B}\,\text{d}A + \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}'_{M/B}\,\text{d}A  
+	2\,\bm{\omega}_{\mathcal{B}/\mathcal{N}}\times\left(\,\frac{^{\mathcal{B}} \text{d}}{\text{d}t}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B}\,\text{d}\mathcal{V} + \int_{\mathcal{A}_{\text{sc}}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}}\,\bm{r}_{M/B}\text{d}A\right) \;+ 	 \frac{^{\mathcal{B}} \text{d}^2}{\text{d}t^2}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B} \,\text{d}\mathcal{V} +\\+ \frac{^{\mathcal{B}} \text{d}}{\text{d}t} \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}_{M/B}\,\text{d}A + \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}'_{M/B}\,\text{d}A
 	= \bm{F}_{\text{ext}}
-\end{multline} 
+\end{multline}
 
 As explained in previous work, if all of the mass is contained in the control volume at the initial time, then a particular relation results because no mass is outside the control volume at $t=0$ and the dynamic quantities will be transported out during the integration. This relationship is quantified in the following equation:
 
 \begin{multline}
-	\bm{F}_{\text{ext}} - \int_{\text{Body}}\left(\ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\times\bm{r}_{M/B} + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\bm{r}_{M/B}\right)\right)\text{d}m 
+	\bm{F}_{\text{ext}} - \int_{\text{Body}}\left(\ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\times\bm{r}_{M/B} + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\bm{r}_{M/B}\right)\right)\text{d}m
 	= \int_{\mathcal{V}_{\text{sc}}} \text{d}\bm{F}_{\text{vol}}+\\ +\int_{\mathcal{A}_{\text{sc}}} \text{d}\bm{F}_{\text{surf}} - \int_{\mathcal{V}_{\text{sc}}}\rho\,\left(\ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\times\bm{r}_{M/B} + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\bm{r}_{M/B}\right)\right)\text{d}\mathcal{V}
-\end{multline}  
+\end{multline}
 \noindent
 where the forces are divided into volumetric forces and the forces applied on the spacecraft surface. Rearranging this result, replacing the definition of $\bm{F}_{\text{ext}}$, and isolating the forces to the right hand side of the equation yields:
 \begin{multline}\label{eq:ComplTranslEOM}
 	\int_{\mathcal{V}_{\text{sc}}}\rho\,\left(\ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\times\bm{r}_{M/B} + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\bm{r}_{M/B}\right)\right)\text{d}\mathcal{V} +\\+
-	2\,\bm{\omega}_{\mathcal{B}/\mathcal{N}}\times\left(\,\frac{^{\mathcal{B}} \text{d}}{\text{d}t}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B}\,\text{d}\mathcal{V}\; + \int_{\mathcal{A}_{\text{sc}}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}}\,\bm{r}_{M/B}\text{d}A\right) \;+ 	 \frac{^{\mathcal{B}} \text{d}^2}{\text{d}t^2}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B} \,\text{d}\mathcal{V} +\\+ \frac{^{\mathcal{B}} \text{d}}{\text{d}t} \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}_{M/B}\,\text{d}A + \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}'_{M/B}\,\text{d}A  
+	2\,\bm{\omega}_{\mathcal{B}/\mathcal{N}}\times\left(\,\frac{^{\mathcal{B}} \text{d}}{\text{d}t}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B}\,\text{d}\mathcal{V}\; + \int_{\mathcal{A}_{\text{sc}}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}}\,\bm{r}_{M/B}\text{d}A\right) \;+ 	 \frac{^{\mathcal{B}} \text{d}^2}{\text{d}t^2}\int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B} \,\text{d}\mathcal{V} +\\+ \frac{^{\mathcal{B}} \text{d}}{\text{d}t} \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}_{M/B}\,\text{d}A + \int_{\mathcal{A}_\text{sc}} \rho\,\bm{r}'_{M/B}\cdot\bm{\hat{n}} \,\bm{r}'_{M/B}\,\text{d}A
 	= \int_{\mathcal{V}_{\text{sc}}} \text{d}\bm{F}_{\text{vol}} +\int_{\mathcal{A}_{\text{sc}}} \text{d}\bm{F}_{\text{surf}}
 \end{multline}
 
@@ -150,9 +150,9 @@ The first integral in Eqn. \eqref{eq:ComplTranslEOM} is computed using the fact 
 
 \begin{multline}\label{eq:eq19}
 	\int_{\mathcal{V}_{\text{sc}}}\rho\,\left(\ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\times\bm{r}_{M/B} + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\bm{r}_{M/B}\right)\right)\text{d}\mathcal{V} = \\=
-	m_{\text{sc}} \,\bm{\ddot{r}}_{B/N} + m_{\text{sc}}\,\bm{\dot{\omega}}_{\mathcal{B}/\mathcal{N}} \times\bm{c} + m_{\text{sc}}\,\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}}\times\bm{c}\right) 
+	m_{\text{sc}} \,\bm{\ddot{r}}_{B/N} + m_{\text{sc}}\,\bm{\dot{\omega}}_{\mathcal{B}/\mathcal{N}} \times\bm{c} + m_{\text{sc}}\,\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times\left(\bm{\omega}_{\mathcal{B}/\mathcal{N}}\times\bm{c}\right)
 \end{multline}
-\noindent 
+\noindent
 where $m_{\text{sc}}=m_{\text{hub}}+ \sum_{i=1}^{M}m_{\text{fuel}_i}$ is the instantaneous mass of the spacecraft. The second and fourth integrals are computed and yield:
 
 \begin{equation}\label{eq:eq20}
@@ -205,9 +205,9 @@ For further simplicity, the cross product is substituted with the associated ske
 \begin{multline}\label{eq:eq29}
 	\ddot{\bm{r}}_{B/N} + \left[\tilde{\bm{c}}\right]^T\dot{\bm{\omega}}_{\cal{B}/\cal{N}} =  \frac{\bm{F}_{\text{thr}}}{m_{\text{sc}}} - 2\,\frac{\dot{m}_{\text{fuel}}}{m_{\text{sc}}}\,\left(c' + \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]\times\bm{c}\right) - \bm{c}''+2\,\left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]^T
 	\bm{c}'\\- \ddot{m}_{\text{fuel}}\,\bm{c} + \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]^T \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \bm{c} +\frac{2}{m_{\text{sc}}}\sum_{j=1}^{N}\dot{m}_{\text{noz}_j} \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \bm{r}_{N_j/B}
-	\\+ \frac{	1}{m_{\text{sc}}} \sum_{j=1}^{N}\ddot{m}_{\text{noz}_j}\bm{r}_{Fc_j/B}  +\frac{\bm{F}_{\text{ext, vol}}}{m_{\text{sc}}}  + \frac{\bm{F}_{\text{ext, surf}}}{m_{\text{sc}}} 
+	\\+ \frac{	1}{m_{\text{sc}}} \sum_{j=1}^{N}\ddot{m}_{\text{noz}_j}\bm{r}_{Fc_j/B}  +\frac{\bm{F}_{\text{ext, vol}}}{m_{\text{sc}}}  + \frac{\bm{F}_{\text{ext, surf}}}{m_{\text{sc}}}
 \end{multline}
-Multiplying my 
+Multiplying my
 
 \begin{multline}\label{eq:eq30}
 m_{\text{sc}} \ddot{\bm{r}}_{B/N} - m_{\text{sc}} \left[\tilde{\bm{c}}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} =  \bm{F}_{\text{thr}} - 2\,\dot{m}_{\text{fuel}} \left(c' + \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]\times\bm{c}\right) - m_{\text{sc}} \bm{c}''-2 m_{\text{sc}} \,\left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]
@@ -237,7 +237,7 @@ The term on the left-hand side of the previous equation is manipulated in order 
 Knowing that $\ddot{\bm{r}}_{M/N}\,\text{\text{d}}m=\text{d}\bm{F}$, the torque caused by the forces acting on the body is  easily defined:
 
 \begin{equation}
-	\int_{\text{Body}}\bm{r}_{M/N} \times \text{d}\bm{F}-\int_{\text{Body}}  \rho\,\bm{r}_{B/N} \times \ddot{\bm{r}}_{M/N}\,\text{d}\mathcal{V} 
+	\int_{\text{Body}}\bm{r}_{M/N} \times \text{d}\bm{F}-\int_{\text{Body}}  \rho\,\bm{r}_{B/N} \times \ddot{\bm{r}}_{M/N}\,\text{d}\mathcal{V}
 	= \int_{\text{Body}} \left(\bm{r}_{M/N}-\bm{r}_{B/N}\right) \times \text{d}\bm{F} = \bm{L}_{B}
 \end{equation}
 \noindent
@@ -247,7 +247,7 @@ As the mass of the system is constant, the derivative of the angular momentum ab
 
 \begin{multline}
 	\int_{\text{Body}}  \rho\,\bm{r}_{M/B} \times \ddot{\bm{r}}_{M/B}\,\text{d}\mathcal{V}  = \frac{^\mathcal{N}\text{d}}{\text{d}t} \int_{\mathcal{V}_{\text{sc}}} \rho\,\bm{r}_{M/B} \times \dot{\bm{r}}_{M/B}\,\text{d}\mathcal{V} + \int_{\mathcal{A}_{\text{sc}}} \rho\,\bm{r}'_{M/B} \cdot\bm{\hat{n}} \left(\bm{r}_{M/B} \times \dot{\bm{r}}_{M/B}\right)\text{d}A
-\end{multline} 
+\end{multline}
 
 Moreover, similar to the translational equation, if all the mass of the system is assumed to be contained inside the control volume at the initial time, the following relationship results:
 
@@ -268,8 +268,8 @@ To perform the inertial derivative of $\bm{H}_{\text{sc, }B}$, first the definit
 where $\left[I_{\text{hub},\,B_c}\right]$ is the hub's inertia about its center of mass, $B_c$, and $\left[I_{\text{fuel}_i,\,Fc_i}\right]$ is the $i-$th tank's inertia about its center of mass, $Fc_i$. Furthermore, an analytical expression of mass depletion in the rotational motion is deduced:
 \begin{multline}\label{eq:HscB_dot}
 	\dot{\bm{H}}_{\text{sc, }B} = \left[I_{\text{hub},\,Bc}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} + \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\left[I_{\text{hub},\,Bc}\right]\bm{\omega}_{\cal{B}/\cal{N}}\right)+ \bm{r}_{Bc/B} \times m_\text{hub}\,\ddot{\bm{r}}_{Bc/B} +\\
-	+ \sum_{i=1}^{M}\left(\left[I_{\text{fuel}_i,\,Fc_i}\right] \dot{\bm{\omega}}_{\cal{B}/\cal{N}} + \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\left[I_{\text{fuel}_i,\,Fc_i}\right]\, \bm{\omega}_{\cal{B}/\cal{N}}\right) 
-	+ \bm{r}_{Fc_i/B} \times m_{\text{fuel}_i}\, \ddot{\bm{r}}_{Fc_i/B}+\right.\\ 
+	+ \sum_{i=1}^{M}\left(\left[I_{\text{fuel}_i,\,Fc_i}\right] \dot{\bm{\omega}}_{\cal{B}/\cal{N}} + \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\left[I_{\text{fuel}_i,\,Fc_i}\right]\, \bm{\omega}_{\cal{B}/\cal{N}}\right)
+	+ \bm{r}_{Fc_i/B} \times m_{\text{fuel}_i}\, \ddot{\bm{r}}_{Fc_i/B}+\right.\\
 	\left.+ \bm{r}_{Fc_i/B} \times \dot{m}_{\text{fuel}_i} \,\dot{\bm{r}}_{Fc_i/B} + \left[I_{\text{fuel}_i,\, Fc_i}\right]' \, \bm{\omega}_{\cal{B}/\cal{N}}\right)
 \end{multline}
 
@@ -278,21 +278,21 @@ It should be noted here that any relative motion of particles inside the fuel ta
 Additionally, the inertial time derivate of the vectors $\bm{r}_{Bc/B}$ and $\bm{r}_{Fc_i/B}$ is computed using the transport theorem between the two reference frames given in Equations \eqref{eq:rMB_ddot} and \eqref{eq:rMB_dot} and, considering that the point $B_c$ is fixed in the $\mathcal{B}$ frame, Equation \eqref{eq:HscB_dot} is rewritten:
 
 \begin{multline}\label{eq:HscB_complic}
-	\dot{\bm{H}}_{\text{sc, }B} = \left[I_{\text{hub},\,Bc}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} + \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\left[I_{\text{hub},\,Bc}\right]\bm{\omega}_{\cal{B}/\cal{N}}\right) 
+	\dot{\bm{H}}_{\text{sc, }B} = \left[I_{\text{hub},\,Bc}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} + \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\left[I_{\text{hub},\,Bc}\right]\bm{\omega}_{\cal{B}/\cal{N}}\right)
 	+ \bm{r}_{Bc/B} \times m_\text{hub}\,\left(\dot{\bm{\omega}}_{\cal{B}/\cal{N}} \times \bm{r}_{Bc/B} +\right.\\
-	+\left. \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\bm{\omega}_{\cal{B}/\cal{N}} \times \bm{r}_{Bc/B}\right) \right) 
-	+\sum_{i=1}^{M} \bigl(\left[I_{\text{fuel}_i,\,Fc_i}\right] \dot{\bm{\omega}}_{\cal{B}/\cal{N}} + \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\left[I_{\text{fuel}_i,\,Fc_i}\right] \bm{\omega}_{\cal{B}/\cal{N}}\right) +\\ 
+	+\left. \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\bm{\omega}_{\cal{B}/\cal{N}} \times \bm{r}_{Bc/B}\right) \right)
+	+\sum_{i=1}^{M} \bigl(\left[I_{\text{fuel}_i,\,Fc_i}\right] \dot{\bm{\omega}}_{\cal{B}/\cal{N}} + \bm{\omega}_{\cal{B}/\cal{N}} \times \left(\left[I_{\text{fuel}_i,\,Fc_i}\right] \bm{\omega}_{\cal{B}/\cal{N}}\right) +\\
 	+ \bm{r}_{Fc_i/B} \times m_{\text{fuel}_i}\, \bigl( \bm{r}''_{Fc_i/B} + 2\,\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times \bm{r}'_{Fc_i/B}
 	+ \dot{\bm{\omega}}_{\cal{B}/\cal{N}} \times \bm{r}_{Fc_i/B} + \bm{\omega}_{\cal{B}/\cal{N}} \times
-	\left(\bm{\omega}_{\cal{B}/\cal{N}} \times \bm{r}_{Fc_i/B}\right) \bigr)+\\ 
+	\left(\bm{\omega}_{\cal{B}/\cal{N}} \times \bm{r}_{Fc_i/B}\right) \bigr)+\\
 	+
-	\bm{r}_{Fc_i/B} \times \dot{m}_{\text{fuel}_i} \,\left(\bm{r}'_{Fc_i/B}+\bm{\omega}_{\cal{B}/\cal{N}} \times \bm{r}_{Fc_i/B}\right) 
+	\bm{r}_{Fc_i/B} \times \dot{m}_{\text{fuel}_i} \,\left(\bm{r}'_{Fc_i/B}+\bm{\omega}_{\cal{B}/\cal{N}} \times \bm{r}_{Fc_i/B}\right)
 	+ \left[I_{\text{fuel,}_i,\,Fc_i}\right]' \, \bm{\omega}_{\cal{B}/\cal{N}}\bigr)
 \end{multline}
 
 In order to simplify compact Equation \eqref{eq:HscB_complic} the following inertia matrices are defined using the skew symmetric matrix to replace the cross product:
 \begin{equation}\label{eq:eq44}
-	\left[I_{\text{hub},\,B}\right]= \left[I_{\text{hub},\,Bc}\right] + m_\text{hub}\, \left[\tilde{\bm{r}}_{Bc/B}\right]\left[\tilde{\bm{r}}_{Bc/B}\right]^T 
+	\left[I_{\text{hub},\,B}\right]= \left[I_{\text{hub},\,Bc}\right] + m_\text{hub}\, \left[\tilde{\bm{r}}_{Bc/B}\right]\left[\tilde{\bm{r}}_{Bc/B}\right]^T
 \end{equation}
 \begin{equation}\label{eq:eq45}
 	\left[I_{\text{fuel}_i,\,B}\right]= \left[I_{\text{fuel}_i,\,Fc_i}\right] + m_{\text{fuel}_i}\, \left[\tilde{\bm{r}}_{Fc_i/B}\right]\left[\tilde{\bm{r}}_{Fc_i/B}\right]^T
@@ -304,7 +304,7 @@ Moreover, using the Jacobi identity for the cross product $
 \mathbf {a} \times (\mathbf {b} \times \mathbf {c} )+\mathbf {b} \times (\mathbf {c} \times \mathbf {a} )+\mathbf {c} \times (\mathbf {a} \times \mathbf {b} )=\mathbf {0}$, the body relative time derivative of the fuel inertia in the $\mathcal{B}$ reference frame is introduced:
 
 \begin{multline}\label{eq:eq47}
-	\bm{r}_{Fc_i/B} \times \left(2\,\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times \bm{r}'_{Fc_i/B}\right) =-\bm{r}_{Fc_i/B} \times \left( \bm{r}'_{Fc_i/B} \times \bm{\omega}_{\mathcal{B}/\mathcal{N}}\right) 
+	\bm{r}_{Fc_i/B} \times \left(2\,\bm{\omega}_{\mathcal{B}/\mathcal{N}} \times \bm{r}'_{Fc_i/B}\right) =-\bm{r}_{Fc_i/B} \times \left( \bm{r}'_{Fc_i/B} \times \bm{\omega}_{\mathcal{B}/\mathcal{N}}\right)
 	+\\-\bm{r}'_{Fc_i/B} \times \left( \bm{r}_{Fc_i/B} \times \bm{\omega}_{\mathcal{B}/\mathcal{N}}\right) + \bm{\omega}_{\mathcal{B}/\mathcal{N}} \times \left(\bm{r}_{Fc_i/B}\times \bm{r}'_{Fc_i/B}\right)
 \end{multline}
 \begin{multline}\label{eq:eq48}
@@ -328,7 +328,7 @@ Equation~\eqref{eq:eq36} is updated with Equations \eqref{eq:eq49} and \eqref{eq
 	+\right. \\
 	\left.+ \dot{m}_{\text{fuel}_i} \left[\tilde{\bm{r}}_{Fc_i/B}\right]\bm{r}'_{Fc_i/B}+  {m}_{\text{fuel}_i}\,\left[\tilde{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\right] \left[\tilde{\bm{r}}_{Fc_i/B}\right] \bm{r}'_{Fc_i/B}\right)
 	+\sum_{j=1}^{N}\int_{\dot{m}_{\text{noz}_j}}\left[\tilde{\bm{r}}_{M/B}\right] ^T  \bm{v}_{\text{exh}_j}\,\text{d}\dot{m}+\\
-	+\sum_{j=1}^{N}\int_{\dot{m}_{\text{noz}_j}}\left[\tilde{\bm{r}}_{M/B}\right]   \left[\tilde{\bm{r}}_{M/B}\right]  \bm{\omega} _{\mathcal{B}/\mathcal{N}} \,\text{d}\dot{m} +\left[\tilde{\bm{c}}\right] m_{\text{sc}}\,\ddot{\bm{r}}_{B/N}=\bm{L}_{B,\,\text{vol}}+\bm{L}_{B,\,\text{surf}} 
+	+\sum_{j=1}^{N}\int_{\dot{m}_{\text{noz}_j}}\left[\tilde{\bm{r}}_{M/B}\right]   \left[\tilde{\bm{r}}_{M/B}\right]  \bm{\omega} _{\mathcal{B}/\mathcal{N}} \,\text{d}\dot{m} +\left[\tilde{\bm{c}}\right] m_{\text{sc}}\,\ddot{\bm{r}}_{B/N}=\bm{L}_{B,\,\text{vol}}+\bm{L}_{B,\,\text{surf}}
 \end{multline}
 
 The torque of each thruster nozzle is computed by the exhausting flow pressure distribution and by the lever arm distance from point $B$ and the application point of the force:
@@ -338,13 +338,13 @@ The torque of each thruster nozzle is computed by the exhausting flow pressure d
 Furthermore, a term taking into account the angular momentum variation caused by mass depletion is defined:
 
 \begin{equation}\label{eq:eq53}
-	\left[K\right]= \sum_{i=1}^{M}\left[I_{\text{fuel}_i,\,B}\right] '	+\sum_{j=1}^{N} \int_{\dot{m}_{\text{noz}_j}}\left[\tilde{\bm{r}}_{M/B}\right] \left[\tilde{\bm{r}}_{M/B}\right]\,\text{d}\dot{m} 
+	\left[K\right]= \sum_{i=1}^{M}\left[I_{\text{fuel}_i,\,B}\right] '	+\sum_{j=1}^{N} \int_{\dot{m}_{\text{noz}_j}}\left[\tilde{\bm{r}}_{M/B}\right] \left[\tilde{\bm{r}}_{M/B}\right]\,\text{d}\dot{m}
 \end{equation}
 
 The second integral in Equation \eqref{eq:eq53} is computed evaluating the momentum exchanged due to the fuel exiting the nozzle area (assuming a circular nozzle), coincident the interface surface between the spacecraft and the exhausted fuel:
 
 \begin{multline}
-	\int_{\dot{m}_{\text{noz}_j}}\left[\tilde{\bm{r}}_{M/B}\right] \left[\tilde{\bm{r}}_{M/B}\right]\,\text{d}\dot{m} 
+	\int_{\dot{m}_{\text{noz}_j}}\left[\tilde{\bm{r}}_{M/B}\right] \left[\tilde{\bm{r}}_{M/B}\right]\,\text{d}\dot{m}
 	=\int_{\dot{m}_{\text{noz}_j}}\left(\left[\tilde{\bm{r}}_{N_j/B}\right] + \left[\tilde{\bm{r}}_{M/N_j}\right]\right)\left(\left[\tilde{\bm{r}}_{N_j/B}\right] + \left[\tilde{\bm{r}}_{M/N_j}\right]\right)\,\text{d}\dot{m} =\\
 	=-\dot{m}_{\text{noz}_j}\left(\left[\tilde{\bm{r}}_{N_j/B}\right]\left[\tilde{\bm{r}}_{N_j/B}\right]^T + \frac{A_{\text{noz}_j}}{4\,\pi}\left[BM_j\right]\left[\begin{matrix}
 		2&0&0\\
@@ -356,10 +356,10 @@ The second integral in Equation \eqref{eq:eq53} is computed evaluating the momen
 where $A_{\text{noz}_j}$ is the exiting area of the j-th nozzle and $\left[BM_j\right]$ is the direction cosine matrix (DCM) from from the j-th nozzle frame $\mathcal{M}_j$, defined to have its origin at the $N_j$ point and its first axis in the exhausting velocity direction $\bm{v}_{\text{exh}_j}$, to the $\mathcal{B}$ frame.
 Finally the rotational EOM is written as:
 \begin{multline}\label{eq:eq55}
-	\left[I_{\text{sc, }B}\right]\,\dot{\bm{\omega}}_{\cal{B}/\cal{N}} + m_{\text{sc}} \left[\tilde{\bm{c}}\right]\ddot{\bm{r}}_{B/N}= \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]^T\left[I_{\text{sc, }B}\right]\,\bm{\omega}_{\cal{B}/\cal{N}} - \left[K\right]\,\bm{\omega} _{\mathcal{B}/\mathcal{N}}+\\+ \sum_{i=1}^{M}\left(m_{\text{fuel}_i}\,\left[\tilde{\bm{r}}_{Fc_i/B}\right]^T \bm{r}''_{Fc_i/B} + 
+	\left[I_{\text{sc, }B}\right]\,\dot{\bm{\omega}}_{\cal{B}/\cal{N}} + m_{\text{sc}} \left[\tilde{\bm{c}}\right]\ddot{\bm{r}}_{B/N}= \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]^T\left[I_{\text{sc, }B}\right]\,\bm{\omega}_{\cal{B}/\cal{N}} - \left[K\right]\,\bm{\omega} _{\mathcal{B}/\mathcal{N}}+\\+ \sum_{i=1}^{M}\left(m_{\text{fuel}_i}\,\left[\tilde{\bm{r}}_{Fc_i/B}\right]^T \bm{r}''_{Fc_i/B} +
 	{m}_{\text{fuel}_i}\,
 	\left[\tilde{\bm{\omega}}_{\mathcal{B}/\mathcal{N}}\right]^T \left[\tilde{\bm{r}}_{Fc_i/B}\right] \bm{r}'_{Fc_i/B}+\right.\\+\left.\dot{m}_{\text{fuel}_i} \left[\tilde{\bm{r}}_{Fc_i/B}\right]^T\bm{r}'_{Fc_i/B}\right)
-	+ \bm{L}_{B,\,\text{vol}}+\bm{L}_{B,\,\text{surf}}  + \sum_{j=1}^{N}\bm{L}_{B_{\text{thr}_j}} 
+	+ \bm{L}_{B,\,\text{vol}}+\bm{L}_{B,\,\text{surf}}  + \sum_{j=1}^{N}\bm{L}_{B_{\text{thr}_j}}
 \end{multline}
 This concludes the derivation of the EOMs needed to describe the translational and rotational motion of a spacecraft with depleting mass due to thrusters. The following section describes the models used for the fuel tanks.
 
@@ -369,7 +369,7 @@ The models and their main hypothesis are presented below:
 
 \begin{itemize}
 	\item The constant tank's volume model where a spherical reservoir maintains a fixed geometry, i.e. a constant radius, and a fixed barycenter.
-	\item The constant fuel's density model where a spherical tank keeps its geometrical shape but gradually change its volume, so its radius, to maintain constant the density of the fuel and it has a fixed center of mass. 
+	\item The constant fuel's density model where a spherical tank keeps its geometrical shape but gradually change its volume, so its radius, to maintain constant the density of the fuel and it has a fixed center of mass.
 	\item The emptying tank model where the fuel leaks out from an outlet in the spherical reservoir and the quantity of fuel decrease perpendicularly to the output direction modifying the barycenter position and the body's inertia accordingly to the mass distribution inside the tank.
 	\item The uniform burn cylinder model where a cylindrical tank does not change its geometrical shape and volume but the gas gradually decrease its density. As a consequence, the fuel barycenter remains fixed and the inertia varies accordingly to the mass variation.
 	\item The centrifugal burn cylinder model where a cylindrical tank is considered and the fuel burns radially from the center until the walls without breaking the tank's symmetry. The inertia tensor derivative is computed from these hypothesis and the barycenter remains in its initial position because the symmetry is conserved.
@@ -390,7 +390,7 @@ This model takes into account the variation of the fuel inside considering no va
 \end{equation}
 \begin{equation}
 	\left[I_{\text{fuel, }Tc}\right] = \frac{2}{5}\,m_{\text{fuel}} \,R_{\text{tank}}^2\, \left[I_{3\times3}\right]
-\end{equation} 
+\end{equation}
 \begin{equation}
 	\left[I_{\text{fuel, }Tc}\right]' = \frac{2}{5}\,\dot{m}_{\text{fuel}} \,R_{\text{tank}}^2\, \left[I_{3\times3}\right]
 \end{equation}
@@ -603,13 +603,10 @@ Finally, the tank's center of mass does not move as the mass variation is symmet
 Eqs.\eqref{eq:eq30} and \eqref{eq:eq55} are the translational and rotational EOMs for the fully coupled dynamics of mass depletion. However, it is common to use an "update-only" method for mass depletion which does not consider mass depletion as a dynamical effect. In contrast to the fully coupled model it simply updates the mass properties of the spacecraft. The equations for the "update-only" can be simplified to:
 
 \begin{equation}\label{eq:eq31}
-m_{\text{sc}} \ddot{\bm{r}}_{B/N} - m_{\text{sc}} \left[\tilde{\bm{c}}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} =  \bm{F}_{\text{thr}} - m_{\text{sc}} \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \bm{c} 
+m_{\text{sc}} \ddot{\bm{r}}_{B/N} - m_{\text{sc}} \left[\tilde{\bm{c}}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} =  \bm{F}_{\text{thr}} - m_{\text{sc}} \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \bm{c}
 \end{equation}
 
 \begin{equation}\label{eq:eq55}
 m_{\text{sc}} \left[\tilde{\bm{c}}\right]\ddot{\bm{r}}_{B/N} + \left[I_{\text{sc, }B}\right]\,\dot{\bm{\omega}}_{\cal{B}/\cal{N}} = - \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]\left[I_{\text{sc, }B}\right]\,\bm{\omega}_{\cal{B}/\cal{N}}
-+ \bm{L}_{B} + \sum_{j=1}^{N}\bm{L}_{B_{\text{thr}_j}} 
++ \bm{L}_{B} + \sum_{j=1}^{N}\bm{L}_{B_{\text{thr}_j}}
 \end{equation}
-
-
-

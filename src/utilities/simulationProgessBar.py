@@ -34,4 +34,3 @@ class SimulationProgressBar:
 
     def close(self):
         self.p.close()
-

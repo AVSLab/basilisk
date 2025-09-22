@@ -5,9 +5,9 @@ This module reads in the attitude reference message and adjusts it by a fixed ro
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -66,4 +66,3 @@ User Guide
 
 The only variable that is set with this module is the ``sigma_BcB`` MRP to rotate from the original
 body frame and the corrected frame.
-

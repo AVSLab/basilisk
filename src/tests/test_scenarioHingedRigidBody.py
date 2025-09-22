@@ -87,4 +87,3 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

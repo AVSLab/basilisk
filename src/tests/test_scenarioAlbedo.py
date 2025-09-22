@@ -83,4 +83,3 @@ def test_scenarioAlbedo(show_plots, albedoData, multipleInstrument, multiplePlan
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

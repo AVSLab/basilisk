@@ -31,4 +31,3 @@ provides information on what this message is used for.
     * - clockCorrInMsg
       - :ref:`TDBVehicleClockCorrelationMsgPayload`
       - clock correlation input message
-

@@ -40,7 +40,7 @@ typedef struct {
     SunlineFilterMsg_C filtDataOutMsg;              /*!< The name of the output filter data message*/
     CSSArraySensorMsg_C cssDataInMsg;               /*!< The name of the Input message*/
     CSSConfigMsg_C cssConfigInMsg;                  /*!< [-] The name of the CSS configuration message*/
-    
+
     double qObsVal;               /*!< [-] CSS instrument noise parameter*/
     double qProcVal;               /*!< [-] Process noise parameter*/
 
@@ -59,7 +59,7 @@ typedef struct {
 
     double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] Dynamics Matrix, A */
     double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_HALF];        /*!< [-] Measurement Matrix, H*/
-    
+
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Linearized measurement model data */
 
@@ -85,7 +85,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID);
 	void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
 		int64_t moduleID);
@@ -100,11 +100,11 @@ extern "C" {
     void sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_HALF], double qObsVal, int numObsInt, double *kalmanGain);
 
     void sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev_states[SKF_N_STATES_HALF], double *omega);
-    
+
     void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double *dynMat);
-    
+
     void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF], double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double qObsVal, int numObsInt, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_HALF], double *x, double *covar);
-    
+
     void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double qObsVal, int numObsInt, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_HALF], double *states, double *x, double *covar);
 
 #ifdef __cplusplus

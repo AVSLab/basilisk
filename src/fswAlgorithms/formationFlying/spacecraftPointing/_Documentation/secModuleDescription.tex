@@ -4,7 +4,7 @@
 
 \subsection{Module Goal}\label{subsec:goal}
 
-This module is intended for controlled formation flying applications where it is necessary to set up at least a chief spacecraft and a deputy spacecraft. The goal of this module is to align a vector defined by the user in the deputy body frame ($^{\cal B}{\bm a}$) with a vector that points from the deputy to the chief spacecraft ($^{\cal N}{\bm \rho}$). Both vectors are displayed in Fig.~\ref{fig:rel_point}. The $^{\cal B}{\bm a}$ vector defined by the user can, for instance, be the location of an antenna or a camera within the body frame. Besides the $^{\cal B}{\bm a}$ vector, the module uses the location of the chief and deputy spacecraft in the inertial frame as an input. The outputs of this module consist of the orientation of a reference frame that is built around the $^{\cal N}{\bm \rho}$ vector, the angular velocity of the reference frame, and the angular acceleration (all with respect to the inertial frame). Together with the attitude of the deputy spacecraft body frame, the outputs of this module can be fed into the attitude tracking error module. This module consequently calculates the error between the reference frame built around the $^{\cal N}{\bm \rho}$ vector and the spacecraft body frame to make sure that the body frame eventually aligns with this reference frame. 
+This module is intended for controlled formation flying applications where it is necessary to set up at least a chief spacecraft and a deputy spacecraft. The goal of this module is to align a vector defined by the user in the deputy body frame ($^{\cal B}{\bm a}$) with a vector that points from the deputy to the chief spacecraft ($^{\cal N}{\bm \rho}$). Both vectors are displayed in Fig.~\ref{fig:rel_point}. The $^{\cal B}{\bm a}$ vector defined by the user can, for instance, be the location of an antenna or a camera within the body frame. Besides the $^{\cal B}{\bm a}$ vector, the module uses the location of the chief and deputy spacecraft in the inertial frame as an input. The outputs of this module consist of the orientation of a reference frame that is built around the $^{\cal N}{\bm \rho}$ vector, the angular velocity of the reference frame, and the angular acceleration (all with respect to the inertial frame). Together with the attitude of the deputy spacecraft body frame, the outputs of this module can be fed into the attitude tracking error module. This module consequently calculates the error between the reference frame built around the $^{\cal N}{\bm \rho}$ vector and the spacecraft body frame to make sure that the body frame eventually aligns with this reference frame.
 
 \subsection{Equations}
 
@@ -23,7 +23,7 @@ As discussed in Sec.~\ref{subsec:goal} the inputs of this module are the positio
 	\label{fig:rel_point}
 \end{figure}
 
-Consequently, a coordinate system is built around the $^{\cal N}\hat{{\bm \rho}}$ vector as can be seen in Eq.~\eqref{eq:R-coordinates}. In this equation, ${^{\cal N}\hat{{\bm x}}}$, ${^{\cal N}\hat{{\bm y}}}$, and ${^{\cal N}\hat{{\bm z}}}$ are the normalized x-, y-, and z-components of the $\cal R$ frame written in $\cal N$ frame components. Furthermore, ${\hat{\bm z}}$ represents the z-component in the $\cal N$ frame ($[0,0,1]^{T}$). The entries in the direction cosine matrix (dcm) can be observed in Eq.~\eqref{eq:dcm_RN}. 
+Consequently, a coordinate system is built around the $^{\cal N}\hat{{\bm \rho}}$ vector as can be seen in Eq.~\eqref{eq:R-coordinates}. In this equation, ${^{\cal N}\hat{{\bm x}}}$, ${^{\cal N}\hat{{\bm y}}}$, and ${^{\cal N}\hat{{\bm z}}}$ are the normalized x-, y-, and z-components of the $\cal R$ frame written in $\cal N$ frame components. Furthermore, ${\hat{\bm z}}$ represents the z-component in the $\cal N$ frame ($[0,0,1]^{T}$). The entries in the direction cosine matrix (dcm) can be observed in Eq.~\eqref{eq:dcm_RN}.
 
 \begin{equation}
     \begin{split}
@@ -36,8 +36,8 @@ Consequently, a coordinate system is built around the $^{\cal N}\hat{{\bm \rho}}
 
 \begin{equation}
     [RN] = \begin{bmatrix}
-            {^{\cal N}\hat{{\bm x}}}^{T}\\ 
-            {^{\cal N}\hat{{\bm y}}}^{T}\\ 
+            {^{\cal N}\hat{{\bm x}}}^{T}\\
+            {^{\cal N}\hat{{\bm y}}}^{T}\\
             {^{\cal N}\hat{{\bm z}}}^{T}
             \end{bmatrix}
             \label{eq:dcm_RN}
@@ -79,8 +79,8 @@ The dcm that consequently maps the ${\cal B}$ frame to the ${\cal A}$ frame can 
 
 \begin{equation}
     [AB] = \begin{bmatrix}
-            {^{\cal B}\hat{{\bm x}}}^{T}\\ 
-            {^{\cal B}\hat{{\bm y}}}^{T}\\ 
+            {^{\cal B}\hat{{\bm x}}}^{T}\\
+            {^{\cal B}\hat{{\bm y}}}^{T}\\
             {^{\cal B}\hat{{\bm z}}}^{T}
             \end{bmatrix}
             \label{eq:dcm_AB}

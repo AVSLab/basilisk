@@ -60,5 +60,3 @@ User Guide
 ----------
 The only parameter that must be set is ``omega_RR0_R0`` representing the :math:`R_0`-constant spin axis
 :math:`{}^{R_0}{\pmb\omega}_{R/R0}`.
-
-

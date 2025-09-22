@@ -140,7 +140,7 @@ from Basilisk.utilities import vizSupport
 def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     """
     The scenarios can be run with the following setups parameters:
-    
+
     Args:
         show_plots (bool): Determines if the script should display plots
         orbitCase (str):  Specify the type of orbit to be simulated {'elliptical','circular'}
@@ -148,7 +148,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         useBias2 (bool): Flag to use a sensor bias on TAM 2
         useBounds1 (bool): Flag to use TAM 1 sensor bounds
         useBounds2 (bool): Flag to use TAM 2 sensor bounds
-    
+
     """
 
     # Create simulation variable names
@@ -466,4 +466,3 @@ if __name__ == "__main__":
         True,   #Use sensor bounds 1 (True,False)
         False   #Use sensor bounds 2 (True,False)
     )
-

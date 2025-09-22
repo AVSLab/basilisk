@@ -60,5 +60,3 @@ def test_simplePowerDemo(show_plots, attType):
     assert testFailCount < 1, testMessages
 
     return
-
-

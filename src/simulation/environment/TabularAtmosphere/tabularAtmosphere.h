@@ -33,10 +33,10 @@
 class TabularAtmosphere:  public AtmosphereBase {
 
     private:
-    
+
         // pulls density and temperature from atmospheric table at requested altitude, performs linear interpolation if necessary
         void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
-        
+
         int altList_length;     // length of list of altitude values extracted from the atmosphere table
         int rhoList_length;     // length of list of density values extracted from the atmosphere table
         int tempList_length;    // length of list of temperature values extracted from the atmosphere table

@@ -37,4 +37,3 @@ provides information on what this message is used for.
     * - gyrBuffInMsg
       - :ref:`AccDataMsgPayload`
       - rate gyro input message
-

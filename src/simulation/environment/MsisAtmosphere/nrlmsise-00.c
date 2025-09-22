@@ -207,7 +207,7 @@ double dnet (double dd, double dm, double zhm, double xmm, double xm) {
 			return dd;
 		if (dd==0)
 			return dm;
-	} 
+	}
 	ylog = a * log(dm/dd);
 	if (ylog<-10)
 		return dd;
@@ -240,7 +240,7 @@ void splini (double *xa, double *ya, double *y2a, int n, double x, double *y) {
 		if (khi<(n-1)) {
 			if (x<xa[khi])
 				xx=x;
-			else 
+			else
 				xx=xa[khi];
 		}
 		h = xa[khi] - xa[klo];
@@ -598,7 +598,7 @@ __inline_double sg0(double ex, double *p, double *ap) {
 }
 
 double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *flags) {
-/*       CALCULATE G(L) FUNCTION 
+/*       CALCULATE G(L) FUNCTION
  *       Upper Thermosphere Parameters */
 	double t[15];
 	int i,j;
@@ -648,7 +648,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 	plg[2][6] =(11.0*c*plg[2][5]-7.0*plg[2][4])/4.0;
 	plg[2][7] =(13.0*c*plg[2][6]-8.0*plg[2][5])/5.0;
 	plg[3][3] = 15.0*s2*s;
-	plg[3][4] = 105.0*s2*s*c; 
+	plg[3][4] = 105.0*s2*s*c;
 	plg[3][5] =(9.0*c*plg[3][4]-7.*plg[3][3])/2.0;
 	plg[3][6] =(11.0*c*plg[3][5]-8.*plg[3][4])/3.0;
 
@@ -800,7 +800,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 					+ apdf*flags->swc[12]* \
 					(p[83]*plg[0][1]+p[84]*plg[0][3]+p[85]*plg[0][5])* \
 					cos(sr*(input->sec-p[75]));
-			}			
+			}
 		}
 	}
 
@@ -818,7 +818,7 @@ double globe7(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 /* ------------------------------------------------------------------- */
 
 double glob7s(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *flags) {
-/*    VERSION OF GLOBE FOR LOWER ATMOSPHERE 10/26/99 
+/*    VERSION OF GLOBE FOR LOWER ATMOSPHERE 10/26/99
  */
 	double pset=2.0;
 	double t[14];
@@ -884,7 +884,7 @@ double glob7s(double *p, struct nrlmsise_input *input, struct nrlmsise_flags *fl
 	if ((int) flags->sw[9]) {
 		if (flags->sw[9]==1)
 			t[8] = apdf * (p[32] + p[45] * plg[0][2] * flags->swc[2]);
-		if (flags->sw[9]==-1)	
+		if (flags->sw[9]==-1)
 			t[8]=(p[50]*apt[0] + p[96]*plg[0][2] * apt[0]*flags->swc[2]);
 	}
 
@@ -995,7 +995,7 @@ void gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	if (input->alt>zmix)
 		dmc = 1.0 - (zn2[0]-input->alt)/(zn2[0] - zmix);
 	dz28=soutput.d[2];
-	
+
 	/**** N2 density ****/
 	dmr=soutput.d[2] / dm28m - 1.0;
 	output->d[2]=densm(input->alt,dm28m,xmm, &tz, mn3, zn3, meso_tn3, meso_tgn3, mn2, zn2, meso_tn2, meso_tgn2);
@@ -1047,7 +1047,7 @@ void gtd7d(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nr
 	if ((int) flags->sw[0])
 		output->d[5]=output->d[5]/1000;
 }
- 
+
 
 
 /* ------------------------------------------------------------------- */
@@ -1085,7 +1085,7 @@ void ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 		cl2 = cl*cl;
 		if (input->doy<182)
 			cd = (1.0 - (double) input->doy) / 91.25;
-		else 
+		else
 			cd = ((double) input->doy) / 91.25 - 3.0;
 		ca = 0;
 		if ((pl > -1.11) && (pl<=-0.23))
@@ -1139,7 +1139,7 @@ void ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrlmsise_output *output) {
 /*     Thermospheric portion of NRLMSISE-00
  *     See GTD7 for more extensive comments
- *     alt > 72.5 km! 
+ *     alt > 72.5 km!
  */
 	double za;
 	int i, j;
@@ -1173,7 +1173,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	double hc216, hcc232;
 	za = pdl[1][15];
 	zn1[0] = za;
-	for (j=0;j<9;j++) 
+	for (j=0;j<9;j++)
 		output->d[j]=0;
 
 	/* TINF VARIATIONS NOT IMPORTANT BELOW ZA OR ZN1(1) */
@@ -1228,7 +1228,7 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 	dd=output->d[2];
 	/* Turbopause */
 	zh28=pdm[2][2]*zhf;
-	zhm28=pdm[2][3]*pdl[1][5]; 
+	zhm28=pdm[2][3]*pdl[1][5];
 	xmd=28.0-xmm;
 	/* Mixed density at Zlb */
 	b28=densu(zh28,db28,tinf,tlb,xmd,(alpha[2]-1.0),&tz,ptm[5],s,mn1, zn1,meso_tn1,meso_tgn1);

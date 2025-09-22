@@ -59,7 +59,7 @@ def test_module(show_plots):     # update "module" in this function name to refl
     - ``dataVector[3]``
 
     **General Documentation Comments**
-    
+
     If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below.
     Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content
     should be understood by just looking at the figure.

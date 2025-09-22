@@ -46,7 +46,7 @@ def test_mtbMomentumManagement():     # update "module" in this function name to
     r"""
     **Validation Test Description**
 
-    This script tests that the module returns expected non-zero and zero 
+    This script tests that the module returns expected non-zero and zero
     outputs.
 
     **Description of Variables Being Tested**
@@ -91,7 +91,7 @@ def mtbMomentumManagementModuleTestFunction():
     rwConfigParams.JsList = [0.002, 0.002, 0.002, 0.002]
     rwConfigParams.numRW = 4
     rwParamsInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
-    
+
     # mtbConfigData message (array is ordered c11, c22, c33, c44, ...)
     mtbConfigParams = messaging.MTBArrayConfigMsgPayload()
     mtbConfigParams.numMTB = 3
@@ -103,12 +103,12 @@ def mtbMomentumManagementModuleTestFunction():
     ]
     mtbConfigParams.maxMtbDipoles = [10.]*mtbConfigParams.numMTB
     mtbParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbConfigParams)
-    
+
     # TAMSensorBodyMsg message (leads to non-invertible matrix)
     tamSensorBodyInMsgContainer = messaging.TAMSensorBodyMsgPayload()
     tamSensorBodyInMsgContainer.tam_B = [ 5E3 * 0.03782347,  5E3 * 0.49170516, 5E3 * -0.8699399]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
-    
+
     # rwSpeeds message
     rwSpeedsInMsgContainer = messaging.RWSpeedMsgPayload()
     rwSpeedsInMsgContainer.wheelSpeeds = [100., 200., 300., 400.]
@@ -118,7 +118,7 @@ def mtbMomentumManagementModuleTestFunction():
     rwMotorTorqueInMsgContainer = messaging.ArrayMotorTorqueMsgPayload()
     rwMotorTorqueInMsgContainer.motorTorque = [0., 0., 0., 0.]
     rwMotorTorqueInMsg = messaging.ArrayMotorTorqueMsg().write(rwMotorTorqueInMsgContainer)
-    
+
     # Setup logging on the test module output message so that we get all the writes to it
     resultMtbCmdOutMsg = module.mtbCmdOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultMtbCmdOutMsg)
@@ -131,7 +131,7 @@ def mtbMomentumManagementModuleTestFunction():
     module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
     module.rwMotorTorqueInMsg.subscribeTo(rwMotorTorqueInMsg)
-    
+
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
@@ -141,36 +141,36 @@ def mtbMomentumManagementModuleTestFunction():
     # simulation end time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
     accuracy = 1E-8
-    
-    
+
+
     '''
-        TEST 0: 
+        TEST 0:
             Check that mtbDipoleCmds and are non-zero.
     '''
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
-    
+
     testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0.],
                                                                 resultMtbCmdOutMsg.mtbDipoleCmds[0][0:3],
                                                                 accuracy,
                                                                 "tauMtbRequestOutMsg",
                                                                 testFailCount, testMessages, ExpectedResult=0)
-    
+
     testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0., 0.],
                                                                 resultRwMotorTorqueOutMsg.motorTorque[0][0:4],
                                                                 accuracy,
                                                                 "rwMotorTorqueOutMsg",
-                                                                testFailCount, testMessages, ExpectedResult=0)  
+                                                                testFailCount, testMessages, ExpectedResult=0)
     '''
 
-        TEST 1: 
+        TEST 1:
             Check that the mtbDipoleCmds are zero and that the resulting
             torque on the body is zero when the b field is zero.
     '''
     tamSensorBodyInMsgContainer.tam_B = [0., 0., 0.]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
     module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
-    
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
 
@@ -179,14 +179,14 @@ def mtbMomentumManagementModuleTestFunction():
                                                                 accuracy,
                                                                 "tauMtbRequestOutMsg",
                                                                 testFailCount, testMessages, ExpectedResult=1)
-    
+
     Gs = np.array(rwConfigParams.GsMatrix_B[0:12]).reshape(4, 3).T
     tauBody = Gs @ np.array(resultRwMotorTorqueOutMsg.motorTorque[0][0:4])
     testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0.],
                                                                 tauBody,
                                                                 accuracy,
                                                                 "rwMotorTorqueOutMsg",
-                                                                testFailCount, testMessages, ExpectedResult=1)  
+                                                                testFailCount, testMessages, ExpectedResult=1)
 
 
     # reset the module to test this functionality

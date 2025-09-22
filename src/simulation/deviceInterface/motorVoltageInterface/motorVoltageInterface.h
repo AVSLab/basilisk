@@ -36,7 +36,7 @@ class MotorVoltageInterface: public SysModel {
 public:
     MotorVoltageInterface();
     ~MotorVoltageInterface();
-   
+
     void computeMotorTorque();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -45,7 +45,7 @@ public:
     void setGains(Eigen::VectorXd gains); //!< --     Takes in an array of gains to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
     void setScaleFactors(Eigen::VectorXd scaleFactors); //!< --     Takes in an array of scale factors to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
     void setBiases(Eigen::VectorXd biases); //!< --     Takes in an array of biases to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
-    
+
 public:
     ReadFunctor<ArrayMotorVoltageMsgPayload> motorVoltageInMsg;     //!< --     Message that contains motor voltage input states
     Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg;//!< --     Output Message for motor torques

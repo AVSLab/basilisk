@@ -43,7 +43,7 @@ public:
 
     ReadFunctor<SCMassPropsMsgPayload> scMassPropsInMsg;        //!< sc mass properties input msg
     Message<VehicleConfigMsgPayload> vehicleConfigOutMsg;       //!< vehicle configuration output msg
-    
+
 
     BSKLogger bskLogger;              //!< -- BSK Logging
 

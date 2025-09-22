@@ -46,8 +46,8 @@ def test_mtbFeedforward_module():     # update "module" in this function name to
     r"""
     **Validation Test Description**
 
-    This script tests that the torqueRequestBody vector is computed as 
-    expected and that the algorithm doesn't fail when given inputs with a 
+    This script tests that the torqueRequestBody vector is computed as
+    expected and that the algorithm doesn't fail when given inputs with a
     value of zero.
 
     **Description of Variables Being Tested**
@@ -60,7 +60,7 @@ def test_mtbFeedforward_module():     # update "module" in this function name to
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
     [testResults, testMessage] = mtbFeedforwardModuleTestFunction()
     assert testResults < 1, testMessage
-    
+
 def mtbFeedforwardModuleTestFunction():
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -80,17 +80,17 @@ def mtbFeedforwardModuleTestFunction():
     module = mtbFeedforward.mtbFeedforward()
     module.ModelTag = "mrpFeedback"           # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
-    
+
     # Initialize CmdTorqueBodyMsg
     vehControlInMsgContainer = messaging.CmdTorqueBodyMsgPayload()
     vehControlInMsgContainer.torqueRequestBody = [0., 0., 0.]
     vehControlInMsg = messaging.CmdTorqueBodyMsg().write(vehControlInMsgContainer)
-    
+
     # Initialize DipoleRequestBodyMsg
     dipoleRequestMtbInMsgContainer = messaging.MTBCmdMsgPayload()
     dipoleRequestMtbInMsgContainer.mtbDipoleCmds = [1., 2., 3.]
-    dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer) 
-    
+    dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer)
+
     # Initialize TAMSensorBodyMsg
     tamSensorBodyInMsgContainer = messaging.TAMSensorBodyMsgPayload()
     tamSensorBodyInMsgContainer.tam_B = [ 1E-5, -3E-5, 5E-5]
@@ -100,90 +100,90 @@ def mtbFeedforwardModuleTestFunction():
     mtbArrayConfigParamsInMsgContainer = messaging.MTBArrayConfigMsgPayload()
     mtbArrayConfigParamsInMsgContainer.numMTB = 3
     mtbArrayConfigParamsInMsgContainer.maxMtbDipoles = [1E3, 1E3, 1E3]
-    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [1., 0., 0., 0., 1., 0., 0., 0., 1.]  
+    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
     mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
 
     # Setup logging on the test module output message so that we get all the writes to it
     resultVehControlOutMsg = module.vehControlOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, resultVehControlOutMsg)
-    
+
     # connect the message interfaces
     module.vehControlInMsg.subscribeTo(vehControlInMsg)
     module.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
     module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
     module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
-    
+
     # Set the simulation time.
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
     unitTestSim.InitializeSimulation()
 
     '''
-        TEST 1: 
+        TEST 1:
             Check that dipoles are non-zero expected value.
     '''
     unitTestSim.ExecuteSimulation()
     m = np.array(dipoleRequestMtbInMsgContainer.mtbDipoleCmds[0:3])
     b = np.array(tamSensorBodyInMsgContainer.tam_B)
-    expectedTorque = -np.cross(m, b)    
+    expectedTorque = -np.cross(m, b)
     testFailCount, testMessages = unitTestSupport.compareVector(expectedTorque,
                                                                 resultVehControlOutMsg.torqueRequestBody[0],
                                                                 accuracy,
                                                                 "torqueRequestBody",
-                                                                testFailCount, testMessages)                        
-    
+                                                                testFailCount, testMessages)
+
     '''
-        TEST 2: 
+        TEST 2:
             Check that torqueRequestBody is zero when b field is zero.
     '''
     tamSensorBodyInMsgContainer.tam_B = [0., 0., 0.]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
     module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
-    
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
-    expectedTorque = [0., 0., 0.]   
+    expectedTorque = [0., 0., 0.]
     testFailCount, testMessages = unitTestSupport.compareVector(expectedTorque,
                                                                 resultVehControlOutMsg.torqueRequestBody[0],
                                                                 accuracy,
                                                                 "torqueRequestBody",
                                                                 testFailCount, testMessages)
-    
+
     '''
-        TEST 3: 
+        TEST 3:
             Check that torqueRequestBody is zero when dipoles are zero.
     '''
     tamSensorBodyInMsgContainer.tam_B = [1E-5, -3E-5, 5E-5]
     tamSensorBodyInMsg = messaging.TAMSensorBodyMsg().write(tamSensorBodyInMsgContainer)
     module.tamSensorBodyInMsg.subscribeTo(tamSensorBodyInMsg)
-    
+
     dipoleRequestMtbInMsgContainer.mtbDipoleCmds = [0., 0., 0.]
-    dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer) 
+    dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer)
     module.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
-    
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
-    expectedTorque = [0., 0., 0.]   
+    expectedTorque = [0., 0., 0.]
     testFailCount, testMessages = unitTestSupport.compareVector(expectedTorque,
                                                                 resultVehControlOutMsg.torqueRequestBody[0],
                                                                 accuracy,
                                                                 "torqueRequestBody",
                                                                 testFailCount, testMessages)
-    
+
     '''
-        TEST 4: 
-            Check that torqueRequestBody is non-zero expected value with 
+        TEST 4:
+            Check that torqueRequestBody is non-zero expected value with
             non-trivial Gt matrix.
     '''
     dipoleRequestMtbInMsgContainer.mtbDipoleCmds = [7., -3.]
-    dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer) 
+    dipoleRequestMtbInMsg = messaging.MTBCmdMsg().write(dipoleRequestMtbInMsgContainer)
     module.dipoleRequestMtbInMsg.subscribeTo(dipoleRequestMtbInMsg)
-    
+
     beta = 45. * np.pi / 180.
     Gt = np.array([[np.cos(beta), -np.sin(beta)],[np.sin(beta),  np.cos(beta)], [0., 0.]])
     mtbArrayConfigParamsInMsgContainer.numMTB = 2
-    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [Gt[0, 0], Gt[0, 1], 
+    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [Gt[0, 0], Gt[0, 1],
                                                      Gt[1, 0], Gt[1, 1],
-                                                     Gt[2, 0], Gt[2, 1]]  
+                                                     Gt[2, 0], Gt[2, 1]]
     mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
     module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
 
@@ -191,13 +191,13 @@ def mtbFeedforwardModuleTestFunction():
     unitTestSim.ExecuteSimulation()
     m = Gt @ np.array(dipoleRequestMtbInMsgContainer.mtbDipoleCmds[0:2])
     b = np.array(tamSensorBodyInMsgContainer.tam_B)
-    expectedTorque = -np.cross(m, b) 
+    expectedTorque = -np.cross(m, b)
     testFailCount, testMessages = unitTestSupport.compareVector(expectedTorque,
                                                                 resultVehControlOutMsg.torqueRequestBody[0],
                                                                 accuracy,
                                                                 "torqueRequestBody",
                                                                 testFailCount, testMessages)
-    
+
     print("Accuracy used: " + str(accuracy))
     if testFailCount == 0:
         print("PASSED: mtbFeedforward unit test")
@@ -212,4 +212,3 @@ def mtbFeedforwardModuleTestFunction():
 #
 if __name__ == "__main__":
     test_mtbFeedforward_module()
-    

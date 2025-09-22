@@ -192,8 +192,8 @@ function(conan_cmake_settings result)
                 message(FATAL_ERROR "Conan: Unknown MSVC architecture [${MSVC_${LANGUAGE}_ARCHITECTURE_ID}]")
             endif()
         endif()
-		
-		
+
+
         conan_cmake_detect_vs_runtime(_vs_runtime)
         message(STATUS "Detected VS runtime: ${_vs_runtime}")
         set(_SETTINGS ${_SETTINGS} -s compiler.runtime=${_vs_runtime})
@@ -490,4 +490,3 @@ macro(conan_add_remote)
     execute_process(COMMAND ${CONAN_CMD} remote add ${CONAN_NAME} ${CONAN_URL}
       ${CONAN_INDEX_ARG} -f)
 endmacro()
-

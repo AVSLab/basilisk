@@ -166,7 +166,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     # Add energy and momentum variables to log
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
-    
+
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 

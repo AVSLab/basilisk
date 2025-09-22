@@ -24,4 +24,3 @@ provides information on what this message is used for.
     * - cssArrayOutMsg
       - :ref:`CSSArraySensorMsgPayload`
       - output message of corrected CSS data
-

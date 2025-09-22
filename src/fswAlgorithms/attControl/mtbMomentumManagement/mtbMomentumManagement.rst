@@ -47,4 +47,3 @@ The optional module list ``wheelSpeedBiases`` can be set to desired RW spin rate
 the default values are zero rates.
 
 Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
-

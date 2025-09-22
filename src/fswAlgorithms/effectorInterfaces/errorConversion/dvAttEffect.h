@@ -53,7 +53,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
     void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
         int64_t moduleID);
@@ -62,7 +62,7 @@ extern "C" {
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
                                   CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

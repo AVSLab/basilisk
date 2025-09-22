@@ -35,4 +35,3 @@ provides information on what this message is used for.
     * - ephOutMsg
       - :ref:`EphemerisMsgPayload`
       - converted ephemeris output message, stored in ``changeBodies[i]``
-

@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,7 +14,7 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
+#
 
 import pytest
 import os
@@ -39,35 +39,35 @@ splitPath = path.split(bskName)
 #4: attitude compliant, rate disabled, device status of 1, controller status of 0
 #5: attitude compliant, rate disabled, device status of 0, controller status of 1
 #6: attitude compliant, rate disabled, device status not written, controller status of 1
-#7: attitude compliant, rate disabled, rate noncompliant, device status not written, no 
+#7: attitude compliant, rate disabled, rate noncompliant, device status not written, no
 # controller status
-#8: attitude compliant, rate enabled, rate noncompliant, device status not written, no 
+#8: attitude compliant, rate enabled, rate noncompliant, device status not written, no
 # controller status
-#9: attitude compliant, rate enabled, rate compliant, device status not written, no 
+#9: attitude compliant, rate enabled, rate compliant, device status not written, no
 # controller status
 #10: attitude noncompliant, rate enabled, rate compliant
-tests = [(0.1, 0.01, 0, 0, 0, 1, 1, [1, 1, 1]), 
-         (0.1, 0.2, 0, 0, 0, 1, 1, [0, 0, 0]), 
-         (0.1, 0.01, 0, 0, 0, None, None, [0, 0, 0]), 
-         (0.1, 0.01, 0, 0, 0, 1, 0, [1, 1, 1]), 
-         (0.1, 0.01, 0, 0, 0, 0, 1, [0, 0, 0]), 
-         (0.1, 0.01, 0, 0, 0, None, 1, [1, 1, 1]), 
-         (0.1, 0.01, 0, 0.01, 0.1, None, 1, [1, 1, 1]), 
-         (0.1, 0.01, 1, 0.01, 0.1, None, 1, [0, 0, 0]), 
-         (0.1, 0.01, 1, 0.01, 0.001, 1, None, [1, 1, 1]), 
-         (0.1, 0.2, 1, 0.01, 0.001, 1, None, [0, 0, 0]) 
+tests = [(0.1, 0.01, 0, 0, 0, 1, 1, [1, 1, 1]),
+         (0.1, 0.2, 0, 0, 0, 1, 1, [0, 0, 0]),
+         (0.1, 0.01, 0, 0, 0, None, None, [0, 0, 0]),
+         (0.1, 0.01, 0, 0, 0, 1, 0, [1, 1, 1]),
+         (0.1, 0.01, 0, 0, 0, 0, 1, [0, 0, 0]),
+         (0.1, 0.01, 0, 0, 0, None, 1, [1, 1, 1]),
+         (0.1, 0.01, 0, 0.01, 0.1, None, 1, [1, 1, 1]),
+         (0.1, 0.01, 1, 0.01, 0.1, None, 1, [0, 0, 0]),
+         (0.1, 0.01, 1, 0.01, 0.001, 1, None, [1, 1, 1]),
+         (0.1, 0.2, 1, 0.01, 0.001, 1, None, [0, 0, 0])
         ]
 
-@pytest.mark.parametrize('att_limit, att_mag, use_rate_limit,rate_limit,omega_mag' + 
+@pytest.mark.parametrize('att_limit, att_mag, use_rate_limit,rate_limit,omega_mag' +
                          ',deviceStatus,controlStatus,expected_result', tests)
-def test_scanningInstrumentController(att_limit, att_mag, use_rate_limit, rate_limit, 
-                                    omega_mag, deviceStatus, controlStatus, 
+def test_scanningInstrumentController(att_limit, att_mag, use_rate_limit, rate_limit,
+                                    omega_mag, deviceStatus, controlStatus,
                                     expected_result):
     r"""
     **Validation Test Description**
 
     This test verifies if the module is working properly checking for input conditions
-    such as rate limit, attitude error, and device status. 
+    such as rate limit, attitude error, and device status.
 
     **Test Parameters**
 
@@ -83,19 +83,19 @@ def test_scanningInstrumentController(att_limit, att_mag, use_rate_limit, rate_l
 
     **Description of Variables Being Tested**
 
-    The test checks the data stored in deviceCmdOutMsg and compares it to the expected 
-    result. 
+    The test checks the data stored in deviceCmdOutMsg and compares it to the expected
+    result.
     """
-    
-    module_results = scanningInstrumentControllerTestFunction(att_limit, 
-                                        att_mag, use_rate_limit, rate_limit, omega_mag, 
+
+    module_results = scanningInstrumentControllerTestFunction(att_limit,
+                                        att_mag, use_rate_limit, rate_limit, omega_mag,
                                         deviceStatus, controlStatus, expected_result)
 
     np.testing.assert_array_equal(module_results, expected_result)
 
 
-def scanningInstrumentControllerTestFunction(att_limit = 0.1, att_mag = 0.1, 
-                        use_rate_limit=1, rate_limit=0.01, omega_mag=0.001, 
+def scanningInstrumentControllerTestFunction(att_limit = 0.1, att_mag = 0.1,
+                        use_rate_limit=1, rate_limit=0.01, omega_mag=0.001,
                         deviceStatus=None, controlStatus=None, expected_result=None):
     """Test method"""
     unitTaskName = "unitTask"

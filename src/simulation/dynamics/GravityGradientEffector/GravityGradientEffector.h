@@ -49,7 +49,7 @@ public:
 
 
 public:
-    Message<GravityGradientMsgPayload> gravityGradientOutMsg; //!< output message containing the gravity gradient 
+    Message<GravityGradientMsgPayload> gravityGradientOutMsg; //!< output message containing the gravity gradient
     StateData *hubSigma;                            //!< Hub/Inertial attitude represented by MRP
     StateData *r_BN_N;                              //!< Hub/Inertial position vector in inertial frame components
     Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components

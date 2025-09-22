@@ -63,11 +63,11 @@ typedef struct {
 
     double bVec_B[SKF_N_STATES_HALF];           //!< [-] current vector of the b frame used to make frame
     double switchTresh;                         //!< [-]  Threshold for switching frames
-    
+
     double stateInit[SKF_N_STATES_SWITCH];      //!< [-] State to initialize filter to
     double state[SKF_N_STATES_SWITCH];          //!< [-] State estimate for time TimeTag
     double statePrev[SKF_N_STATES_SWITCH];      //!< [-] Previous state logged for clean
-    
+
 	double wM[2 * SKF_N_STATES_SWITCH + 1];     //!< [-] Weighting vector for sigma points
 	double wC[2 * SKF_N_STATES_SWITCH + 1];     //!< [-] Weighting vector for sigma points
 
@@ -81,14 +81,14 @@ typedef struct {
 	double obs[MAX_N_CSS_MEAS];                                   //!< [-] Observation vector for frame
 	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES_SWITCH+1)];       //!< [-] Measurement model data
     double postFits[MAX_N_CSS_MEAS];                              //!< [-] PostFit residuals
-    
+
 	double SP[(2*SKF_N_STATES_SWITCH+1)*SKF_N_STATES_SWITCH];     //!< [-]    sigma point matrix
 
 	double qNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];       //!< [-] process noise matrix
 	double sQnoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];      //!< [-] cholesky of Qnoise
 
 	double qObs[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS]; //!< [-] Maximally sized obs noise matrix
-    
+
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];    //!< [-] CSS normal vectors converted over to body
     double CBias[MAX_NUM_CSS_SENSORS];          //!< [-] CSS individual calibration coefficients
     SunlineSuKFCFit kellFits[MAX_NUM_CSS_SENSORS]; //!< [-] Curve fit components for CSS sensors
@@ -106,7 +106,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID);
     void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
         int64_t moduleID);

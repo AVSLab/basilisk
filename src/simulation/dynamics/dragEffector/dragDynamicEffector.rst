@@ -19,4 +19,3 @@ provides information on what this message is used for.
     * - atmoDensInMsg
       - :ref:`AtmoPropsMsgPayload`
       - atmospheric density input message
-

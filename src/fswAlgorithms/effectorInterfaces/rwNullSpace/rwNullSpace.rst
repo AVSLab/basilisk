@@ -39,8 +39,3 @@ provides information on what this message is used for.
     * - rwMotorTorqueOutMsg
       - :ref:`ArrayMotorTorqueMsgPayload`
       - RW motor torque output message
-
-
-
-
-

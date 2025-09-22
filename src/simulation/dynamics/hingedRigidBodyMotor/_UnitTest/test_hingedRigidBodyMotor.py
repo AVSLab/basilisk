@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import pytest
 from Basilisk.architecture import messaging
@@ -50,7 +50,7 @@ def test_hingedRigidBodyMotor(show_plots, K, P, sensedTheta, sensedThetaDot, ref
         accuracy (double): unit text accuracy
 
     **Description of Variables Being Tested**
-    
+
     K and P are varied (note both must be set to positive values). The sensed hinged rigid body state is held constant while the reference is also varied to check positive and negative deltas.
 
     """
@@ -89,7 +89,7 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
     # subscribe input messages to module
     module.hingedBodyStateSensedInMsg.subscribeTo(hingedBodyStateSensedInMsg)
     module.hingedBodyStateReferenceInMsg.subscribeTo(hingedBodyStateReferenceInMsg)
-    
+
     module.K = K
     module.P = P
 
@@ -117,5 +117,3 @@ def hingedRigidBodyMotorTestFunction(show_plots, K, P, sensedTheta, sensedThetaD
 
 if __name__ == "__main__":
     test_hingedRigidBodyMotor(False, 5, 1, 1, .1, 1.2, .2, 1e-12) # first test case above
-
-

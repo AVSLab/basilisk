@@ -260,7 +260,7 @@ def cssWlsEstTestFunction(show_plots):
         # Pull logged data out into workspace for analysis
         sHatEst = navData.vehSunPntBdy
 
-        numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss) 
+        numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
         sHatEstUse = sHatEst[logLengthPrev:, :]  # Only data for this subtest
         numActiveUse = numActive[logLengthPrev + 1:, :]  # Only data for this subtest
 

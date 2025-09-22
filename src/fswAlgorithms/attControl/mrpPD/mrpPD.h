@@ -50,11 +50,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID);
     void Update_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

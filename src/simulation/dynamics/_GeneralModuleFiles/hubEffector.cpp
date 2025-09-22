@@ -185,7 +185,7 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_P*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
-    
+
     return;
 }
 

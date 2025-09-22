@@ -17,7 +17,7 @@ The ``tabularAtmosphere`` module handles the following behavior:
 #. Iterates through the list until the requested altitude is greater than the previous value in
    the list and less than the next value.
 #. Will interpolate between the altitude and return the interpolated density and temperature.
-      
+
 Module Assumptions and Limitations
 ----------------------------------
 Returns density = 0 kg/m^3 and temperature = 0 K when altitude is outside range of provided data
@@ -31,4 +31,3 @@ User Guide
 Required variables are ``altList``, ``rhoList``, and ``tempList``, each a standard vector of doubles.
 The lists must be sorted corresponding to ascending altitude, and be of the same nonzero length.
 Altitude must be provided in meters, density in kg/m^3, and temperature in Kelvin.
-    

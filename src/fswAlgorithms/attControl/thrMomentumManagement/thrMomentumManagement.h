@@ -54,11 +54,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID);
     void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

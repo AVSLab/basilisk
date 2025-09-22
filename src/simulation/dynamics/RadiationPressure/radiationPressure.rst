@@ -28,18 +28,3 @@ provides information on what this message is used for.
     * - sunEclipseInMsg
       - :ref:`EclipseMsgPayload`
       - (optional) sun eclipse input message
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

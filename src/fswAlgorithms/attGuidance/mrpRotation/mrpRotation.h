@@ -40,7 +40,7 @@ typedef struct {
     double priorCmdRates[3];                    //!< [rad/s] prior commanded angular velocity vector
     uint64_t priorTime;                         //!< [ns] last time the guidance module is called
     double dt;                                  //!< [s] integration time-step
-    
+
     /* Declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;                   //!< The name of the output message containing the Reference
     AttRefMsg_C attRefInMsg;                    //!< The name of the guidance reference input message
@@ -52,11 +52,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID);
     void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
     void checkRasterCommands(mrpRotationConfig *configData);
     void computeTimeStep(mrpRotationConfig *configData, uint64_t callTime);
     void computeMRPRotationReference(mrpRotationConfig *configData,
@@ -64,7 +64,7 @@ extern "C" {
                                      double omega_R0N_N[3],
                                      double domega_R0N_N[3],
                                      AttRefMsgPayload   *attRefOut);
-    
+
 #ifdef __cplusplus
 }
 #endif

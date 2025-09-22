@@ -23,7 +23,7 @@
 /*! albedo message definition */
 typedef struct {
     // Maximum albedo acting on the instrument
-    // considering the instrument's position 
+    // considering the instrument's position
     double albedoAtInstrumentMax;   //!< [-] Max albedo flux ratio at instrument
     double AfluxAtInstrumentMax;    //!< [W/m^2] Max albedo flux at instrument
     // Albedo acting on the instrument

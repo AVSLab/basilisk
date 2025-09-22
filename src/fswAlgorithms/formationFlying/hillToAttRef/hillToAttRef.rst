@@ -37,15 +37,15 @@ More details on this process can be found in this paper, `Linear Coupled Attitud
 
 Module Assumptions and Limitations
 ----------------------------------
-This module assumes that the user has supplied a gain matrix that correctly maps from relative positions and velocities to 
-relative attitudes such that attitude-coupled orbital dynamics will result in desired behavior. As a result, this module is best used 
-with other modules that implement attitude-coupled orbital dynamics, such as :ref:`facetDragDynamicEffector`. 
+This module assumes that the user has supplied a gain matrix that correctly maps from relative positions and velocities to
+relative attitudes such that attitude-coupled orbital dynamics will result in desired behavior. As a result, this module is best used
+with other modules that implement attitude-coupled orbital dynamics, such as :ref:`facetDragDynamicEffector`.
 
 
 User Guide
 ----------
-This module is configured to multiply a user-provided gain matrix by an evolving relative Hill-frame state. As such, 
-this module requires the user to provide a 3\times6 gain matrix. In addition, users can specify saturation limits for the 
+This module is configured to multiply a user-provided gain matrix by an evolving relative Hill-frame state. As such,
+this module requires the user to provide a 3\times6 gain matrix. In addition, users can specify saturation limits for the
 calculated relative MRP by specifying the ``relMRPMin`` and ``relMRPMax`` attributes.
 
 Notably, the computed relative attitude is automatically combined with a reference attitude (provided either as another :ref:`AttRefMsgPayload`

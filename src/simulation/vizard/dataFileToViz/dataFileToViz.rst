@@ -134,4 +134,3 @@ Next, the RW position, spin axis direction, the wheel speed and the maximum moto
     testModule.appendUMax(0.5)
 
 Repeat the above steps for each wheel.
-

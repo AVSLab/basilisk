@@ -26,4 +26,3 @@ Finally, there is the source-code itself.  That is always the ultimate guide to 
    Learn/bskPrinciples
    examples/index
    Learn/makingModules
-

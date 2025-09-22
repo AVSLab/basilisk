@@ -31,7 +31,7 @@
 typedef struct {
     NavTransMsg_C dvAcumOutMsg; //!< accumulated DV output message
     AccDataMsg_C accPktInMsg; //!< [-] input accelerometer message
-    
+
     uint32_t msgCount;      //!< [-] The total number of messages read from inputs
     uint32_t dvInitialized; //!< [-] Flag indicating whether DV has been started completely
     uint64_t previousTime;  //!< [ns] The clock time associated with the previous run of algorithm
@@ -43,7 +43,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID);
     void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
         int64_t moduleID);
@@ -52,7 +52,7 @@ extern "C" {
     void dvAccumulation_swap(AccPktDataMsgPayload *p, AccPktDataMsgPayload *q);
     int dvAccumulation_partition(AccPktDataMsgPayload *A, int start, int end);
     void dvAccumulation_QuickSort(AccPktDataMsgPayload *A, int start, int end);
-    
+
 #ifdef __cplusplus
 }
 #endif

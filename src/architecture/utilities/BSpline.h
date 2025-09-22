@@ -39,7 +39,7 @@ public:
     void setT(Eigen::VectorXd T);
     void setW(Eigen::VectorXd W);
     void setAvgXDot(double AvgXDot);
-    
+
     double AvgXDot;                  //!< desired average velocity norm
     Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
     Eigen::VectorXd W;               //!< weight vector for the LS approximation
@@ -59,7 +59,7 @@ public:
     bool XDDot_N_flag;               //!< indicates that second derivative at final point has been specified
 };
 
-//! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and 
+//! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and
 //! second-order derivatives, together with the time-tag vector T.
 class OutputDataSet {
 public:
@@ -67,7 +67,7 @@ public:
     ~OutputDataSet();
     void getData(double t, double x[3], double xDot[3], double xDDot[3]);
     double getStates(double t, int derivative,  int index);
-    
+
     Eigen::VectorXd T;               //!< time tags for each point of the interpolated trajectory
     Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory
     Eigen::VectorXd X2;              //!< coordinate #2 of the interpolated trajectory

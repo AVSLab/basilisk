@@ -44,5 +44,3 @@ If you execute this python code you should see the following terminal output:
     0.0
     BSK_INFORMATION: C Module ID 1 ran Update at 0.000000s
     1.0
-
-

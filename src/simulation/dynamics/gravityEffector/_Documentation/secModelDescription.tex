@@ -144,7 +144,7 @@ Since $P_l[x] = P_{l,0}[x]$ the potential can be written in a more compact way
 U(\mathbf{\bar r}) = \frac{\mu}{r} \sum_{l=0}^\infty \sum_{m=0}^l \bigg(\frac{R_{\text{ref}}}{r}\bigg)^l P_{l,m}[\sin(\phi)] \big[C_{l,m} \cos(m \lambda) + S_{l,m} \sin(m \lambda)\big]
 \end{equation}
 
-Some coefficients have a very interesting interpretation. 
+Some coefficients have a very interesting interpretation.
 \begin{align}
 	C_{0,0} &= 1\\
 	S_{l,0} &= 0 \quad \forall l \geq 0\\
@@ -383,9 +383,9 @@ U(\bar{\mathbf{r}})=- \frac{1}{2}G\sigma\sum_{f\in\text{faces}}\left(\mathbf{r}_
 \end{equation}
 
  The vector $\mathbf{r}_f$ extends from the evaluation point to any vertex on the face. The variable $\mathbf{n}_f$ is the outward-pointing normal vector of face $f$. The term $\omega_f$ is the signed solid angle subtended by the face $f$ when viewed from the evalution point. The variable $\mathbf{r}_e$ is a vector from the evaluation point to the initial vertex of edge $e$. The vector $\mathbf{n}_e$ is the normal of the edge lying on the face plane. The term $L_e$ corresponds to the potential of a 1D wire.
- 
+
  Note that in Werner and Scheeres\cite{werner1996}, the double summation term of \eqref{eq:polyhedral_potential} was simplified to a single summation over all polyhedron's edges. Although that reduction is convenient for mathematical compactness, retaining the double summation simplifies the algorithmic implementation (so that there is no need to check for common edges between adjacent faces).
- 
+
  In order to provide consistency with other gravity models, the density $\sigma$ is computed based on the polyhedron shape and the input gravity parameter $\mu$. The volume of a trisurface polyhedron is
  \begin{equation}
  V = \frac{1}{6}\sum_{f\in\text{faces}}|(\mathbf{r}^{f}_1\times\mathbf{r}^{f}_2)\cdot \mathbf{r}^{f}_3|,

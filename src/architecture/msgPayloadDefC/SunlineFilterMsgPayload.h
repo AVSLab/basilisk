@@ -30,7 +30,7 @@
 /*! @brief structure for filter-states output for the unscented kalman filter
  implementation of the sunline state estimator*/
 typedef struct {
-    double timeTag;                             //!< [s] Current time of validity for output 
+    double timeTag;                             //!< [s] Current time of validity for output
     double covar[SKF_N_STATES*SKF_N_STATES];    //!< [-] Current covariance of the filter
     double state[SKF_N_STATES];                 //!< [-] Current estimated state of the filter
     double stateError[SKF_N_STATES];            //!< [-] Current deviation of the state from the reference state

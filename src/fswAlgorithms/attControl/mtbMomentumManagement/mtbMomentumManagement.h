@@ -37,7 +37,7 @@ typedef struct {
      */
     double wheelSpeedBiases[MAX_EFF_CNT];           //!< [rad/s] reaction wheel speed biases
     double cGain;                                   //!<[1/s]  reaction wheel momentum feedback gain
-    
+
     /*
      * Inputs.
      */
@@ -46,13 +46,13 @@ typedef struct {
     TAMSensorBodyMsg_C tamSensorBodyInMsg;          //!< input message for magnetic field sensor data in the Body frame
     RWSpeedMsg_C rwSpeedsInMsg;                     //!< input message for RW speeds
     ArrayMotorTorqueMsg_C rwMotorTorqueInMsg;       //!< input message for RW motor torques
-    
+
     /*
      * Outputs.
      */
     MTBCmdMsg_C mtbCmdOutMsg;                       //!< output message for MTB dipole commands
     ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;      //!< output message for RW motor torques
-    
+
     /*
      * Other.
      */
@@ -67,7 +67,7 @@ typedef struct {
     double wheelSpeedError_W[MAX_EFF_CNT];          //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
     RWArrayConfigMsgPayload rwConfigParams;         //!< configuration for RW's
     MTBArrayConfigMsgPayload mtbConfigParams;       //!< configuration for MTB layout
-    
+
 }mtbMomentumManagementConfig;
 
 #ifdef __cplusplus

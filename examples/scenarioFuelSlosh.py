@@ -321,7 +321,7 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.AddModelToTask(simTaskName, dataLog)
 
     scLog = scObject.logger(
-        ["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"], 
+        ["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"],
         simulationTimeStep)
     scSim.AddModelToTask(simTaskName, scLog)
 
@@ -330,13 +330,13 @@ def run(show_plots, damping_parameter, timeStep):
         def get_rho(CurrentSimNanos, i):
             stateName = f'linearSpringMassDamperRho{i}'
             return scObject.dynManager.getStateObject(stateName).getState()[0][0]
-        
+
         damperRhoLog = pythonVariableLogger.PythonVariableLogger({
                 "damperRho1": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 1),
                 "damperRho2": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 2),
                 "damperRho3": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 3),
             }, simulationTimeStep)
-        
+
         scSim.AddModelToTask(simTaskName, damperRhoLog)
 
     #
@@ -436,7 +436,7 @@ def run(show_plots, damping_parameter, timeStep):
         plt.figure(6, figsize=(5, 4))
         for rhojOut in rhojOuts:
             plt.plot(time, rhojOut)
-        
+
         plt.legend(['Particle 1', 'Particle 2', 'Particle 3'], loc='lower right')
         plt.xlabel('Time (s)')
         plt.ylabel('Displacement (m)')

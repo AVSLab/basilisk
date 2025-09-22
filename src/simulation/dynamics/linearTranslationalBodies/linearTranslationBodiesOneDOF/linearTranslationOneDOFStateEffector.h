@@ -51,7 +51,7 @@ public:
     /** setter for `k` property */
     void setK(double k);
     /** setter for `c` property */
-    void setC(double c);                
+    void setC(double c);
     /** setter for `rhoInit` property */
     void setRhoInit(double rhoInit) {this->rhoInit = rhoInit;};
     /** setter for `rhoDotInit` property */

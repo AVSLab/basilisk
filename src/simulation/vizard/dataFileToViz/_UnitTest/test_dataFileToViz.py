@@ -347,7 +347,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.ConfigureStopTime(simulationTime) 
+    unitTestSim.ConfigureStopTime(simulationTime)
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -458,4 +458,3 @@ if __name__ == "__main__":
        )
     if os.path.exists(dataFileName):
         os.remove(dataFileName)
-

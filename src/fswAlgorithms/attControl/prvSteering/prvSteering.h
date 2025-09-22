@@ -34,7 +34,7 @@ typedef struct {
                                             in steering saturation function */
     double omega_max;                   /*!< [rad/sec] Maximum rate command of steering control */
 
-    /* declare module IO interfaces */    
+    /* declare module IO interfaces */
     RateCmdMsg_C rateCmdOutMsg;             //!< rate command output message
     AttGuidMsg_C guidInMsg;                 //!< attitude guidance input message
 
@@ -44,14 +44,14 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID);
     void Update_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
 
     void PRVSteeringLaw(PrvSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 
-    
+
 #ifdef __cplusplus
 }
 #endif

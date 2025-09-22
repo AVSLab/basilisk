@@ -33,10 +33,10 @@ typedef struct {
     /* Inputs.*/
     TAMSensorBodyMsg_C tamSensorBodyInMsg;          //!< [Tesla] input message for magnetic field sensor data in the Body frame
     CmdTorqueBodyMsg_C tauRequestInMsg;             //!< [N-m] input message containing control torque in the Body frame
-    
+
     /* Outputs.*/
     DipoleRequestBodyMsg_C dipoleRequestOutMsg;     //!< [A-m2] output message containing dipole request in the Body frame
-    
+
     /* Other. */
     BSKLogger *bskLogger;                           //!< BSK Logging
 }torque2DipoleConfig;

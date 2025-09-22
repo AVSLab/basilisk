@@ -63,11 +63,11 @@ public:
     Eigen::MatrixXd R_meas;  //!< Measurement noise covariance
     Eigen::VectorXd x_hat_k;  //!< Current state estimate
     Eigen::MatrixXd P_k;  //!< Current state estimation covariance
-    
+
     double alpha;  //!< UKF hyper-parameter
     double beta;  //!< UKF hyper-parameter
     double kappa;  //!< UKF hyper-parameter
-    
+
     Eigen::Matrix3d dcm_AN;  //!< Small body dcm
     Eigen::Vector3d omega_AN_A;  //!< Small body angular velocity
 

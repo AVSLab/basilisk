@@ -118,7 +118,7 @@ def hingedRigidBodyPIDMotorTestFunction(show_plots, thetaR, thetaDotR, theta, th
 
     # Construct algorithm and associated C++ container
     motor = hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotor()
-    motor.ModelTag = "hingedRigidBodyPIDMotor"  
+    motor.ModelTag = "hingedRigidBodyPIDMotor"
     motor.K = K
     motor.P = P
     motor.I = I
@@ -171,7 +171,7 @@ def hingedRigidBodyPIDMotorTestFunction(show_plots, thetaR, thetaDotR, theta, th
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_hingedRigidBodyPIDMotor( 
+    test_hingedRigidBodyPIDMotor(
                  False,
                  np.pi/3,
                  0,

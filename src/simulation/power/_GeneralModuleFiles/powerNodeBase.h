@@ -45,7 +45,7 @@ public:
 
 protected:
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages(); 
+    bool readMessages();
     virtual void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
     virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.

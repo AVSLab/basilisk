@@ -36,4 +36,3 @@ provides information on what this message is used for.
     * - attInMsg
       - :ref:`NavAttMsgPayload`
       - attitude input message
-

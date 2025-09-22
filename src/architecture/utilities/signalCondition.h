@@ -32,9 +32,9 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void    lowPassFilterSignal(double newMeas, LowPassFilterData *lpData);
-    
+
 #ifdef __cplusplus
 }
 #endif

@@ -54,10 +54,10 @@ Draft & Initial Revision & T. Teil \\
 The Sunline Extended Kalman filter (EKF) in the AVS Basilisk simulation is a sequential
 filter implemented to give the best estimate of the desired states.
 In this method we estimate the sun heading with no rigorous estimate of rate. This is done per the paper written by Steve O'Keefe, hence the module name "okeefeEKF".
-The EKF reads in the message written by the coarse sun sensor, and writes a message 
-containing the sun estimate. 
+The EKF reads in the message written by the coarse sun sensor, and writes a message
+containing the sun estimate.
 
-This document summarizes the content of the module, how to use it, and the test that 
+This document summarizes the content of the module, how to use it, and the test that
 was implemented for it. More information on the filter derivation can be found in Reference [\citenum{Teil:2018fe}], and more information on the square root unscented filter can be found in Reference [\citenum{OKeefe:2013fk}].
 
 
@@ -66,9 +66,9 @@ was implemented for it. More information on the filter derivation can be found i
 \subsection{Dynamics}
 
 The states that are estimated in this filter are the sunline vector, and it's rate of change $\bm X^* = \begin{bmatrix} \bm d\end{bmatrix}^T$. The star superscript represents that
-this is the reference state. 
+this is the reference state.
 
-The dynamics are given in equation \ref{eq:dyn}. Given the nature of the filter, there is an unobservable state component: the rotation about the $\bm d$ axis. In order to remedy this, we project the states along this axis and subtract them, in order to measure only observable state components. 
+The dynamics are given in equation \ref{eq:dyn}. Given the nature of the filter, there is an unobservable state component: the rotation about the $\bm d$ axis. In order to remedy this, we project the states along this axis and subtract them, in order to measure only observable state components.
 
 \begin{equation}\label{eq:dyn}
 \bm F(\bm X) =\dot{\bm d}  = - \bm \omega \times \bm d
@@ -78,25 +78,25 @@ This leads us to the computation of the dynamics matrix $A = \left[\frac{\partia
 
 \begin{align}\label{eq:dynmat}
 A&= \begin{bmatrix} \frac{\partial \bm F (\bm d, t_i)}{\partial \bm d}  \end{bmatrix} \\
-&=  - \begin{bmatrix} \tilde{\bm \omega}\end{bmatrix} 
+&=  - \begin{bmatrix} \tilde{\bm \omega}\end{bmatrix}
 \end{align}
 
 If rate gyro measurements are available, we can use the $\bm \omega$ vector that they provide. In the case where they are not available, we can approximate it by logging an extra time step of the sun heading vector estimate $\bm d$:
 
 \begin{equation}
-\bm \omega_k = \frac{1}{\Delta t} \frac{\bm d_k \times \bm d_{k-1}}{\|\bm d_k \times \bm d_{k-1} \|} \arccos\left( \frac{\bm d_k \cdot \bm d_{k-1}}{\|\bm d_k \| \| \bm d_{k-1}\|}\right) 
+\bm \omega_k = \frac{1}{\Delta t} \frac{\bm d_k \times \bm d_{k-1}}{\|\bm d_k \times \bm d_{k-1} \|} \arccos\left( \frac{\bm d_k \cdot \bm d_{k-1}}{\|\bm d_k \| \| \bm d_{k-1}\|}\right)
 \end{equation}
 
-The measurement model is given in equation \ref{eq:meas}, and the $H$ matrix defined as $H = \left[\frac{\partial \bm G (\bm X, t_i)}{\partial \bm X}\right]^{*}$ is given in equation $\ref{eq:Hmat}$. 
+The measurement model is given in equation \ref{eq:meas}, and the $H$ matrix defined as $H = \left[\frac{\partial \bm G (\bm X, t_i)}{\partial \bm X}\right]^{*}$ is given in equation $\ref{eq:Hmat}$.
 
-In this filter, the only measurements used are from the coarse sun sensor. For the $i^\mathrm{th}$ sensor, the measurement is simply given by the dot product of the sunline heading and the normal to the sensor. This yields easy partial derivatives for the H matrix, which is a matrix formed of the rows of transposed normal vectors (only for those which received a measurement). Hence the $H$ matrix has a changing size depending on the amount of measurements. 
+In this filter, the only measurements used are from the coarse sun sensor. For the $i^\mathrm{th}$ sensor, the measurement is simply given by the dot product of the sunline heading and the normal to the sensor. This yields easy partial derivatives for the H matrix, which is a matrix formed of the rows of transposed normal vectors (only for those which received a measurement). Hence the $H$ matrix has a changing size depending on the amount of measurements.
 
 \begin{equation}\label{eq:meas}
 \bm G_i(\bm X) = \bm n_i \cdot \bm d
 \end{equation}
 
 \begin{equation}\label{eq:Hmat}
-\bm H(\bm X) = \begin{bmatrix} \bm n_1^T \\ \vdots \\ \bm n_i^T \end{bmatrix} 
+\bm H(\bm X) = \begin{bmatrix} \bm n_1^T \\ \vdots \\ \bm n_i^T \end{bmatrix}
 \end{equation}
 
 \subsection{User initialization}
@@ -106,7 +106,7 @@ In order for the filter to run, the user must set a few parameters:
 
 
 \begin{itemize}
-\item The angle threshold under which the coarse sun sensors do not read the measurement: \\ 
+\item The angle threshold under which the coarse sun sensors do not read the measurement: \\
 \texttt{FilterContainer.sensorUseThresh = 0.}
 \item The process noise value, for instance:\\
  \texttt{FilterContainer.qProcVal = 0.001}
@@ -132,8 +132,8 @@ Once the filter has been properly setup in the python code, it can go through it
 
 \subsubsection*{Initialization}
 
-First the filter is initialized. This can be done at any time during a simulation in order to reset 
-the filter. 
+First the filter is initialized. This can be done at any time during a simulation in order to reset
+the filter.
 
 \begin{itemize}
 \item Time is set to $t_0$
@@ -161,7 +161,7 @@ This gives us $\bm X^*(t_i)$ and $\Phi(t_{i}, t_{i-1})$.
 
 \begin{itemize}
 \item $\bm X^*(t_i)$ previously computed becomes the most recent reference state
-\item $\bm x_i = \bm \bar{x}_i = \Phi(t_{i}, t_{i-1}) x_{i-1}$ is the new state error 
+\item $\bm x_i = \bm \bar{x}_i = \Phi(t_{i}, t_{i-1}) x_{i-1}$ is the new state error
 \item $P_i = \bar{P}_i =\Phi(t_{i}, t_{i-1}) P_{i-1} \Phi^T(t_{i}, t_{i-1})$ becomes the updated covariance
 \end{itemize}
 \underline{If a measurement is read in}, the algorithm computes the observation, the observation state matrix, and the Kalman Gain.
@@ -176,7 +176,7 @@ This gives us $\bm X^*(t_i)$ and $\Phi(t_{i}, t_{i-1})$.
 
 Depending on the covariance, the filter can either update as a classic, linear Kalman Filter, or as the Extended Kalman filter.
 This is done in order to assure robust and fast filter convergence. Indeed in a scenario with a very large initial covariance, the EKF's
-change in reference trajectory could delay or inhibit the convergence. In order to remedy this, a few linear updates are performed if the 
+change in reference trajectory could delay or inhibit the convergence. In order to remedy this, a few linear updates are performed if the
 maximum value in the covariance is greater than a user-set threshold.
 
 \underline{Linear update:}
@@ -198,7 +198,7 @@ $P_i = \left( I - K_i \tilde{H}_i\right) \bar{P}_{i} \left( I - K_i \tilde{H}_i\
 \item The new reference state is now used $\bm X^*(t_i)$ becomes $\bm X^*(t_{i-1})$
 \end{itemize}
 
- 
+
 
 
 \section{Test Design}
@@ -216,7 +216,7 @@ The test is split up into 4 subtests, the last one is parametrized in order to t
 
 \subsection{\texttt{sunline$\_$individual$\_$test}}
 
-In each of these individual tests, random inputs are fed to the methods and their values are computed in parallel in python. These two values are then compared to assure that the correct computations are taking place. 
+In each of these individual tests, random inputs are fed to the methods and their values are computed in parallel in python. These two values are then compared to assure that the correct computations are taking place.
 \begin{itemize}
 \item \underline{Dynamics Matrix}: This method computes the dynamics matrix $A$. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
@@ -268,9 +268,9 @@ Tolerance to absolute error with measurement noise: $\epsilon = 10^{-2}$
 
 \textcolor{ForestGreen}{Passed}
 
-Plotted results are seen in Figures \ref{fig:StatesPlot}, \ref{fig:StatesTarget}, and \ref{fig:PostFit}. Figure \ref{fig:StatesPlot} shows the state error and covariance over the run. We see the covariance initially grow, then come down quickly as measurements are used. It grows once again as the measurements stop before bringing the state error back to zero with a change in sun heading. 
+Plotted results are seen in Figures \ref{fig:StatesPlot}, \ref{fig:StatesTarget}, and \ref{fig:PostFit}. Figure \ref{fig:StatesPlot} shows the state error and covariance over the run. We see the covariance initially grow, then come down quickly as measurements are used. It grows once again as the measurements stop before bringing the state error back to zero with a change in sun heading.
 
-Figure \ref{fig:StatesTarget} shows the evolution of the state vector compared to the true values. The parts where there is a slight delay is due to the fact that no observations are read in. 
+Figure \ref{fig:StatesTarget} shows the evolution of the state vector compared to the true values. The parts where there is a slight delay is due to the fact that no observations are read in.
 
 Figure \ref{fig:PostFit} shows the post fit residuals for the filter, with the $3\sigma$ measurement noise values. We see that the observations are read in well an that the residuals are brought back down to noise. We do observe a slight bias in the noise. This could be due to the equations of motion, and is not concerning.
 

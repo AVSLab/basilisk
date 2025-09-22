@@ -42,4 +42,3 @@ provides information on what this message is used for.
     * - rateSteeringInMsg
       - :ref:`RateCmdMsgPayload`
       - commanded rate input message
-

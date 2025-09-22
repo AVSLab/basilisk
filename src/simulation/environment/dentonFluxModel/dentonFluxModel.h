@@ -43,7 +43,7 @@ public:
     // Methods
     void Reset(uint64_t CurrentSimNanos) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
-    
+
     /* public variables */
     int numOutputEnergies = -1; //!< number of energy bins used in the output message
     std::string kpIndex = ""; //!< Kp index
@@ -72,10 +72,10 @@ private:
 
     //!< Electron Flux:
     double mean_e_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
-    
+
     //!< Ion Flux:
     double mean_i_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
-        
+
     //!< Fill average centre energies, normalized by satellite
     double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
     3.161048,     4.153217,     5.539430,     7.464148,
@@ -87,7 +87,7 @@ private:
     2069.619628,  2703.301269,  3540.124511,  4639.775390,
     6069.347656,  7957.457519, 10436.841796, 13677.195312,
     17923.560546, 23488.560546, 30782.000000, 40326.937500};
-    
+
     double enProt[40] = { 1.816424,     2.284231,     2.904752,     3.639589,
     4.483188,     5.671049,     7.343667,     9.450922,
     11.934194,    15.105951,    19.372854,    24.943658,

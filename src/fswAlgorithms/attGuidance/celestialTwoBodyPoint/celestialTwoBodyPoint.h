@@ -41,8 +41,8 @@ typedef struct {
     double v_P2B_N[3];              //!< [m/s] planet 2 velocity vector relative to inertial frame, in N-frame components
     double a_P1B_N[3];              //!< [m/s^2] planet 1 acceleration vector relative to inertial frame, in N-frame components
     double a_P2B_N[3];              //!< [m/s^2] planet 2 acceleration vector relative to inertial frame, in N-frame components
-    
-    
+
+
     /* Declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;                       //!< The name of the output message*/
     EphemerisMsg_C celBodyInMsg;                    //!< The name of the celestial body message*/
@@ -60,13 +60,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, int64_t moduleID);
     void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleID);
     void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime);
-    
+
 #ifdef __cplusplus
 }
 #endif

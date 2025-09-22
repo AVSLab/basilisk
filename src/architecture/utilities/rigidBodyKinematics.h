@@ -258,7 +258,7 @@ extern "C" {
     void   subPRV(double *q10, double *q20, double *q);
     void   Mi(double angle, int axis, double C[3][3]);
     void   tilde(double *v, double mat[3][3]);
-    
+
 #ifdef __cplusplus
 }
 #endif

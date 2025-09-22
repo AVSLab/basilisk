@@ -28,4 +28,3 @@ provides information on what this message is used for.
     * - atmoDensInMsg
       - :ref:`AtmoPropsMsgPayload`
       - input message for atmospheric density information
-

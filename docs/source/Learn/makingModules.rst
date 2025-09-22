@@ -32,5 +32,3 @@ The following pages cover the primary tasks required to make a Basilisk module. 
    makingModules/makingDraftModule
    makingModules/makingModules-5
    makingModules/advancedTopics
-
-

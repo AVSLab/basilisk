@@ -71,7 +71,7 @@ public:
 
 private:
     AtmoPropsMsgPayload atmoInData;
-    
+
 };
 
 

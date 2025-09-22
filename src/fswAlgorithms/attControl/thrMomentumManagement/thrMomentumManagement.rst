@@ -29,4 +29,3 @@ provides information on what this message is used for.
     * - rwConfigDataInMsg
       - :ref:`RWArrayConfigMsgPayload`
       - name of the RWA configuration message
-

@@ -81,4 +81,3 @@ def test_bskAttitudeFeedback2T_stateEffTH(show_plots, useDVThrusters):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-

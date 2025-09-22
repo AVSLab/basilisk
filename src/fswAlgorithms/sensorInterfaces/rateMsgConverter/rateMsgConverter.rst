@@ -1,7 +1,7 @@
 Executive Summary
 -----------------
 
-The purpose of this module is to read in the IMU sensor body message from message type :ref:`IMUSensorBodyMsgPayload`, and store it in the output message of type :ref:`NavAttMsgPayload`.  The output message of type  :ref:`NavAttMsgPayload` is used as a common attitude input message by the FSW modules.  This output message is first zeroed, and then the rate vector is copied into the variable `omega\_BN\_B`. 
+The purpose of this module is to read in the IMU sensor body message from message type :ref:`IMUSensorBodyMsgPayload`, and store it in the output message of type :ref:`NavAttMsgPayload`.  The output message of type  :ref:`NavAttMsgPayload` is used as a common attitude input message by the FSW modules.  This output message is first zeroed, and then the rate vector is copied into the variable `omega\_BN\_B`.
 
 Message Connection Descriptions
 -------------------------------
@@ -22,6 +22,3 @@ provides information on what this message is used for.
     * - imuRateInMsg
       - :ref:`IMUSensorBodyMsgPayload`
       - attitude input message
-
-
-

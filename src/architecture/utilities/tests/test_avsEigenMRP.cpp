@@ -28,4 +28,3 @@ TEST(eigenMRP, testIdentity) {
 
     EXPECT_TRUE(sigma.norm() < 1e-10);
 }
-

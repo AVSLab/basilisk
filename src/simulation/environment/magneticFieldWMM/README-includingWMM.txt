@@ -1,8 +1,8 @@
-To include the WMM code, note that the following lines had to be changed to replace 
+To include the WMM code, note that the following lines had to be changed to replace
 
 	*(*magneticmodels)[]
 
-With 
+With
 
 	*(*magneticmodels)[1]
 

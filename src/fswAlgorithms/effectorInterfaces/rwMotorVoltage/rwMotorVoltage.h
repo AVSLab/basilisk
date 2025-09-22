@@ -60,11 +60,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID);
     void Update_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwMotorVoltage(rwMotorVoltageConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

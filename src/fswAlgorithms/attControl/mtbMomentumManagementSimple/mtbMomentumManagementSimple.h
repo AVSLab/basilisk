@@ -33,14 +33,14 @@
 typedef struct {
     /* Configs.*/
     double Kp;                                  //!<[1/s]  momentum feedback gain
-    
+
     /* Inputs.*/
     RWArrayConfigMsg_C rwParamsInMsg;           //!< input message containing RW parameters
     RWSpeedMsg_C rwSpeedsInMsg;                 //!< input message containingRW speeds
-    
+
     /* Outputs.*/
     CmdTorqueBodyMsg_C tauMtbRequestOutMsg;     //!< output message containing control torque in the Body frame
-    
+
     /* Other. */
     RWArrayConfigMsgPayload rwConfigParams;     //!< configuration for RW's
     double Gs[3 * MAX_EFF_CNT];                 //!< transformation from the wheelspace to the Body frame

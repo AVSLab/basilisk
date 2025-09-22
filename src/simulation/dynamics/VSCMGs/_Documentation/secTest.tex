@@ -43,13 +43,13 @@ In this test the simulation is placed into orbit around Earth with point gravity
 
 \section{Test Parameters}
 
-Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The energy-momentum conservation values will normally have an agreement down to 1e-14, but to ensure cross-platform agreement the tolerance was chose to be 1e-10. The position and attitude checks have a tolerance set to 1e-7 and is because 8 significant digits were chosen as the values being compared to. 
+Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The energy-momentum conservation values will normally have an agreement down to 1e-14, but to ensure cross-platform agreement the tolerance was chose to be 1e-10. The position and attitude checks have a tolerance set to 1e-7 and is because 8 significant digits were chosen as the values being compared to.
 
 \begin{table}[htbp]
 	\caption{Spacecraft Hub Parameters for Energy Momentum Conservation Scenarios}
 	\label{tab:hub}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -64,7 +64,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		sigma\_BNInit & Initial MRP of $\cal{B}$ frame & $\begin{bmatrix}
 		0.0 & 0.0 & 0.0
 		\end{bmatrix}^T$ & - \\
-		omega\_BN\_BInit & Initial Angular Velocity of $\cal{B}$ frame & $			
+		omega\_BN\_BInit & Initial Angular Velocity of $\cal{B}$ frame & $
 		\begin{bmatrix}
 		0.08 & & 0.01 & 0.0
 		\end{bmatrix}^T$ & rad/s \\
@@ -76,7 +76,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{VSCMG Parameters Across All Tests}
 	\label{tab:rw15}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -96,7 +96,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		gamma & Gimbal Angle & 0.0  & rad \\
 		rGcG\_G & Gimbal Center of Mass in the $\cal{G}$ Frame & $\begin{bmatrix}
 		0.0001 & -0.02 & 0.1 \end{bmatrix}^T$ & m \\
-		
+
 	\end{tabular}
 \end{table}
 
@@ -104,7 +104,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{VSCMG 1 Parameters Across All Tests}
 	\label{tab:rw12}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -126,7 +126,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{VSCMG 2 Parameters Across All Tests}
 	\label{tab:rw13}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -148,7 +148,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{VSCMG 3 Parameters Across All Tests}
 	\label{tab:rw14}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -170,12 +170,12 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Initial Conditions for Fully-Coupled Jitter Scenario with Gravity}
 	\label{tab:initial}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
 		r\_CN\_NInit & Initial Position of S/C & $\begin{bmatrix}
-		-4020339 &	7490567 & 5248299 
+		-4020339 &	7490567 & 5248299
 		\end{bmatrix}^T$ & m \\
 		v\_CN\_NInit & Initial Velocity of S/C & $\begin{bmatrix}
 		-5199.78 & -3436.68 & 1041.58
@@ -188,7 +188,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Initial Conditions for Fully-Coupled Jitter Scenario without Gravity}
 	\label{tab:initial2}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -206,7 +206,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{VSCMG Wheel and Gimbal Torque for Simple Jitter and Fully-Coupled Jitter Scenario without Gravity Scenarios}
 	\label{tab:initial3}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -224,14 +224,14 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Error Tolerance - Note: Relative Tolerance is $\textnormal{abs}(\frac{\textnormal{truth} - \textnormal{value}}{\textnormal{truth}}$)}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c |} % Column formatting, 
+	\begin{tabular}{| c | c |} % Column formatting,
 		\hline
 		Test   & Relative Tolerance \\
 		\hline
 		Energy and Momentum Conservation & 1e-10 \\
 		\hline
 		Position, Attitude Check & 1e-7 \\
-		\hline	
+		\hline
 	\end{tabular}
 \end{table}
 
@@ -271,12 +271,12 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Test results.}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c } % Column formatting, 
+	\begin{tabular}{c | c } % Column formatting,
 		\hline
 		\textbf{Test} 				    & \textbf{Pass/Fail}  \\ \hline
 		Balanced Wheels  & \input{AutoTeX/BalancedWheelsPassFail} \\
-		Simple Jitter  & \input{AutoTeX/JitterSimplePassFail}   \\ 
-		Fully Coupled Jitter & \input{AutoTeX/JitterFullyCoupledPassFail}  \\ 
+		Simple Jitter  & \input{AutoTeX/JitterSimplePassFail}   \\
+		Fully Coupled Jitter & \input{AutoTeX/JitterFullyCoupledPassFail}  \\
 		Fully Coupled Jitter + Gravity  & \input{AutoTeX/JitterFullyCoupledGravityPassFail}  \\ \hline
 	\end{tabular}
 \end{table}

@@ -19,7 +19,7 @@ Assume the dynamical system is given by
 \begin{equation}
 	\dot{\bm x} = \bm f(t, \bm x)
 \end{equation}
-The initial conditions are specified through $\bm x_{0} = \bm x(t_{0})$.  In integration time step is given through $h$.  
+The initial conditions are specified through $\bm x_{0} = \bm x(t_{0})$.  In integration time step is given through $h$.
 
 \subsection{Implemented Integrators}
 
@@ -29,7 +29,7 @@ A standard fixed time step 4th order Runge Kutta integrator is enabled by defaul
 	\bm k_{1} &= \bm f\left(t_{n}, \bm x_{n}\right) \\
 	\bm k_{2} &= \bm f\left(t_{n} + \frac{h}{2}, \bm x_{n} + \frac{h}{2} \bm k_{1}\right) \\
 	\bm k_{3} &= \bm f\left(t_{n} + \frac{h}{2}, \bm x_{n} + \frac{h}{2} \bm k_{2}\right) \\
-	\bm k_{4} &= \bm f\left(t_{n} + h, \bm x_{n} + h \bm k_{3}\right) 
+	\bm k_{4} &= \bm f\left(t_{n} + h, \bm x_{n} + h \bm k_{3}\right)
 \end{align}
 The state at the next integration time $t_{n+1} = t_{n} + h$ is
 \begin{equation}
@@ -43,7 +43,7 @@ The state at the next integration time $t_{n+1} = t_{n} + h$ is
 A 2nd order Runge-Kutta method is implemented through Heun's method.\footnote{\url{http://goo.gl/SWdyBZ}} The 2 $k_{i}$ values are defined as
 \begin{align}
 	\bm k_{1} &= \bm f(t_{n}, \bm x_{n}) \\
-	\bm k_{2} &= \bm f(t_{n} + h, \bm x_{n} + h \bm k_{1}) 
+	\bm k_{2} &= \bm f(t_{n} + h, \bm x_{n} + h \bm k_{1})
 \end{align}
 The state at the next integration time $t_{n+1} = t_{n} + h$ is
 \begin{equation}
@@ -56,7 +56,7 @@ The state at the next integration time $t_{n+1} = t_{n} + h$ is
 \subsubsection{1st Order Runge Kutta (Euler's Method)}
 A first order Runge-Kutta method is implemented through Euler's method. The one $k_{1}$ value is defined as
 \begin{align}
-	\bm k_{1} &= \bm f(t_{n}, \bm x_{n}) 
+	\bm k_{1} &= \bm f(t_{n}, \bm x_{n})
 \end{align}
 The state at the next integration time $t_{n+1} = t_{n} + h$ is
 \begin{equation}

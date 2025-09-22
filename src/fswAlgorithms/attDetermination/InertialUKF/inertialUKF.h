@@ -38,7 +38,7 @@
 /*! @brief Star Tracker (ST) sensor container structure.  Contains the msg input name and Id and sensor noise value.
  */
 typedef struct {
-    STAttMsg_C stInMsg;                       //!< star tracker input message 
+    STAttMsg_C stInMsg;                       //!< star tracker input message
     double noise[3*3];                        //!< [-] Per axis noise on the ST
 }STMessage;
 
@@ -58,7 +58,7 @@ typedef struct {
     RWArrayConfigMsg_C rwParamsInMsg;               //!< The name of the RWConfigParams input message
     RWSpeedMsg_C rwSpeedsInMsg;                     //!< [-] The name of the input RW speeds message
     AccDataMsg_C gyrBuffInMsg;                      //!< [-] Input message buffer from MIRU
-    
+
 
 	size_t numStates;             //!< [-] Number of states for this filter
 	size_t countHalfSPs;          //!< [-] Number of sigma points over 2
@@ -126,7 +126,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId);
     void Read_STMessages(InertialUKFConfig *configData);
     void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
@@ -140,7 +140,7 @@ extern "C" {
     void inertialUKFCleanUpdate(InertialUKFConfig *configData);
 	void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt);
     void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST);
-    
+
 #ifdef __cplusplus
 }
 #endif

@@ -38,7 +38,7 @@ public:
         : count(count_in)
     {
     }
-    
+
     /*! release the lock */
     inline void release()
     {
@@ -49,7 +49,7 @@ public:
         }
         cv.notify_one();
     }
-    
+
     /*! aquire the lock */
     inline void acquire()
     {

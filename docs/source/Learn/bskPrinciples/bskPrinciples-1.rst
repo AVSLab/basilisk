@@ -67,5 +67,3 @@ Next, the simulation length is set through ``ConfigureStopTime(stopTime)`` where
     scSim.ExecuteSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(10.0))
     scSim.ExecuteSimulation()
-
-

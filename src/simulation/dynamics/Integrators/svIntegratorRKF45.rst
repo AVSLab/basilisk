@@ -7,9 +7,3 @@ contains further information on this module's function,
 how to run it, as well as testing.
 
 The default ``absTol`` value is 1e-8, while the default ``relTol`` is 1e-4.
-
-
-
-
-
-

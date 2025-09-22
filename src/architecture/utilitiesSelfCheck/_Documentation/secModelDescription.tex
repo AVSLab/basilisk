@@ -19,11 +19,11 @@ The rigid body kinematics library provides a range of functions related to mappi
 
 
 \subsection{{\tt orbitalMotion} Library}
-Common celestial mechanics tools are implemented in the {\tt orbitalMotion} library, including transforming between anomaly angles, converting between inertial Cartesian position and velocity vector components and classical orbit elements, as well as evaluating simple space environment parameters.  The following developments use the notation and formulation of Chapter 9 in Reference~\citenum{schaub}.  The variable naming is reflected within the software code.  
+Common celestial mechanics tools are implemented in the {\tt orbitalMotion} library, including transforming between anomaly angles, converting between inertial Cartesian position and velocity vector components and classical orbit elements, as well as evaluating simple space environment parameters.  The following developments use the notation and formulation of Chapter 9 in Reference~\citenum{schaub}.  The variable naming is reflected within the software code.
 
 
 \subsubsection{Classical Orbital Elements}
-The classcial orbit elements are given by 
+The classcial orbit elements are given by
 $$
 	(a, e, i, \Omega, \omega, f)
 $$
@@ -34,22 +34,22 @@ where $a$ is the semi-major axis or SMA, $e$ is the eccentricity, $(\Omega, i, \
 \begin{figure}[t]
 	\centering
 	\subfigure[Orbit Frame Orientation Illustration]
-	{\label{fig:orbit313} 
-	\includegraphics[width=0.45\textwidth]{Figures/orbit313}}  	
-	\\	
+	{\label{fig:orbit313}
+	\includegraphics[width=0.45\textwidth]{Figures/orbit313}}
+	\\
 	\subfigure[Classical orbital parameter Illustration for an Elliptic Orbit]
 	{\label{fig:orbitElliptic}
-	\includegraphics[width=0.45\textwidth]{Figures/orbitEllipse}} 
+	\includegraphics[width=0.45\textwidth]{Figures/orbitEllipse}}
 	\subfigure[Classical orbital parameter Illustration for a Hyperbolic Orbit]
-	{\label{fig:orbitHyperbolic} 
-	\includegraphics[width=0.45\textwidth]{Figures/orbitHyperbola}}  
+	{\label{fig:orbitHyperbolic}
+	\includegraphics[width=0.45\textwidth]{Figures/orbitHyperbola}}
 	\caption{Orbit Elements, Axes and Frames Illustrations.\cite{schaub}}
 	\label{fig:orbitParameters}
 \end{figure}
 
 Finally, the true anomaly angle is given by $f$, while the eccentric anomaly angle is expressed through $E$ as illustrated in Figure~\ref{fig:orbitElliptic} for an elliptic orbit scenario.  The true and eccentric anomaly are related through\cite{schaub}
 \begin{equation}
-	\tan\left( \frac{f}{2} \right) = \sqrt{ \frac{1+e}{1-e} } \tan\left( \frac{E}{2} \right) 
+	\tan\left( \frac{f}{2} \right) = \sqrt{ \frac{1+e}{1-e} } \tan\left( \frac{E}{2} \right)
 \end{equation}
 The mean anomaly angle $M$ relates to the eccentric anomaly angle $E$ through\cite{schaub}
 \begin{equation}
@@ -58,7 +58,7 @@ The mean anomaly angle $M$ relates to the eccentric anomaly angle $E$ through\ci
 
 The classical orbit elements for a hyperbolic scenario are shown in Figure~\ref{fig:orbitHyperbolic}.  Note that the convention is used where the SMA is a negative value for a hyperbolic orbit, and thus $a < 0$ in this case.  The true anomaly angle $f$ definition is universal for all orbit types, while the hyperbolic anomaly $H$ relates to $f$ through
 \begin{equation}
-	\tanh\left( \frac{f}{2} \right) = \sqrt{ \frac{e+1}{e-1}} \tanh\left( \frac{H}{2} \right) 
+	\tanh\left( \frac{f}{2} \right) = \sqrt{ \frac{e+1}{e-1}} \tanh\left( \frac{H}{2} \right)
 \end{equation}
 The hyperbolic mean anomaly is defined in terms of the hyperbolic anomaly through
 \begin{equation}
@@ -66,13 +66,13 @@ The hyperbolic mean anomaly is defined in terms of the hyperbolic anomaly throug
 \end{equation}
 
 
-While mapping from eccentric or hyperbolic anomalies to mean anomalies is analytical, the inverse is not.  The sub-routines use Newton's method to numerically solve from mean anomalies to the corresponding eccentric or hyperbolic anomalies.  This is called solving Kepler's equation.  The iterations continue until a change tolerance of $10^{-13}$ radians is achieved, or a maximum of 200 iterations are performed.  Note that solving this Kepler's equation for most cases converges very quickly within 3-5 iterations.  
+While mapping from eccentric or hyperbolic anomalies to mean anomalies is analytical, the inverse is not.  The sub-routines use Newton's method to numerically solve from mean anomalies to the corresponding eccentric or hyperbolic anomalies.  This is called solving Kepler's equation.  The iterations continue until a change tolerance of $10^{-13}$ radians is achieved, or a maximum of 200 iterations are performed.  Note that solving this Kepler's equation for most cases converges very quickly within 3-5 iterations.
 
 
 
 
 \subsubsection{Orbit Element to Cartesian Coordinate Conversions}
-Let $\leftexp{N}{\bm r}_{C/N}$ and $\leftexp{N}{\bm v}_{C/N}$ be the inertial spacecraft center of mass $C$ position and velocity vector matrix representations, expressed with respect to inertial frame \frameDefinition{N} components.  Functions are provided to map from classical orbit elements to these Cartesian coordinates through {\tt elem2rv()}, as well as the inverse mapping from Cartesian to classical orbit elements through {\tt rv2elem()}.  
+Let $\leftexp{N}{\bm r}_{C/N}$ and $\leftexp{N}{\bm v}_{C/N}$ be the inertial spacecraft center of mass $C$ position and velocity vector matrix representations, expressed with respect to inertial frame \frameDefinition{N} components.  Functions are provided to map from classical orbit elements to these Cartesian coordinates through {\tt elem2rv()}, as well as the inverse mapping from Cartesian to classical orbit elements through {\tt rv2elem()}.
 
 \paragraph{{\tt elem2rv()} Function}
 The general conversion of classical orbit elements to the inertial Cartesian components is outlined in detail in section 9.6.2 of Reference~\citenum{schaub}.  Given the true anomaly angle $f$, the orbit radius is for any orbit type given by
@@ -83,7 +83,7 @@ If the satellite is not on a parabola, then $p$ is computed using
 \begin{equation}
 	p = a(1-e^{2})
 \end{equation}
-If the satellite is on a parabola, then the algorithm assumes $a=0$ (computers don't like infinity), and 
+If the satellite is on a parabola, then the algorithm assumes $a=0$ (computers don't like infinity), and
 \begin{equation}
 	p = 2*r_{p}
 \end{equation}
@@ -97,11 +97,11 @@ The inertial position vector is then given by\cite{schaub}
 \begin{equation}
 \bm r_{C/N} =r {\begin{matrix} ~ \\ ~ \\ ~
 \end{matrix}}^{\cal N}\!\!\!\!  \begin{pmatrix}
-\cos\Omega\cos\theta 
-- \sin\Omega\sin\theta\cos i \\ 
-\sin\Omega\cos\theta + \cos\Omega\sin\theta\cos 
+\cos\Omega\cos\theta
+- \sin\Omega\sin\theta\cos i \\
+\sin\Omega\cos\theta + \cos\Omega\sin\theta\cos
 i \\
- \sin\theta\sin i 
+ \sin\theta\sin i
  \end{pmatrix}
 \label{eq:tb:r2}
 \end{equation}
@@ -110,15 +110,15 @@ while the inertial velocity vector is
 \dot{\bm r}_{C/N} = -\frac{\mu}{h}
 {\begin{matrix} ~ \\ ~ \\ ~
 \end{matrix}}^{\cal N}\!\!\!\!  \begin{pmatrix}
-\cos\Omega (\sin\theta + e\sin\omega ) + \sin\Omega 
+\cos\Omega (\sin\theta + e\sin\omega ) + \sin\Omega
 (\cos\theta+e\cos\omega )\cos i \\
-\sin\Omega (\sin\theta + e\sin\omega ) - \cos\Omega ( \cos\theta 
+\sin\Omega (\sin\theta + e\sin\omega ) - \cos\Omega ( \cos\theta
 + e\cos\omega )\cos i \\
 -(\cos\theta + e\cos\omega )\sin i
 \end{pmatrix}
 \label{eq:tb:dr2}
 \end{equation}
-where $\mu$ is the gravitational constant and $h$ is the massless orbital angular momentum $\bm h = \bm r \times \dot{\bm r}$.  
+where $\mu$ is the gravitational constant and $h$ is the massless orbital angular momentum $\bm h = \bm r \times \dot{\bm r}$.
 
 
 The {\tt elem2rv()} function checks for a special rectilinear motion case.  Here the eccentricity is $e = 1$ while the SMA is non-zero with $|a|>0$.  Under this condition the spacecraft is moving purely along a radial direction relative to the planet, and the true anomaly angle no longer can be used to determine the spacecrafts location.  In this scenario the Eccentric or Hyperbolic anomaly angle $E$ can still be used to determine spacecraft position, and the {\tt elem2rv()} function assumes here that the anomaly angle provided is either $E$ or $H$ and not $f$.  For an ellipse the orbit radius is here computed using\cite{schaub}
@@ -132,11 +132,11 @@ where on a hyperbola the radius is
 The radial unit direction vector along which all rectilinear motion is occuring is
 \begin{equation}
 	\leftexp{N}{\hat{\bm\imath}}_{r}=\leftexp{N\!\!\!}{\begin{pmatrix}
-\cos\Omega\cos\omega 
-- \sin\Omega\sin\omega\cos i \\ 
-\sin\Omega\cos\omega + \cos\Omega\sin\omega\cos 
+\cos\Omega\cos\omega
+- \sin\Omega\sin\omega\cos i \\
+\sin\Omega\cos\omega + \cos\Omega\sin\omega\cos
 i \\
- \sin\theta\sin i 
+ \sin\theta\sin i
  \end{pmatrix}}
 \end{equation}
 The inertial position vector is then given by
@@ -166,12 +166,12 @@ To convert from the inertial position and velocity vectors to the corresponding 
 \begin{equation}
 	p = \frac{\bm h \cdot \bm h}{\mu}
 \end{equation}
-The line of nodes vector $\bm n$ is 
+The line of nodes vector $\bm n$ is
 \begin{equation}
 	\bm n = \hat{\bm n}_{3} \times \bm h
 \end{equation}
-Let $\hat{\bm n}$ be the normalized line of node axis. 
-If $|\bm n|$ is near zero, then the orbit is equatorial and the line of nodes is ill-defined. In this case we set $\hat{\bm n} = \hat{\bm n}_{1}$ such that $\Omega = 0$.  
+Let $\hat{\bm n}$ be the normalized line of node axis.
+If $|\bm n|$ is near zero, then the orbit is equatorial and the line of nodes is ill-defined. In this case we set $\hat{\bm n} = \hat{\bm n}_{1}$ such that $\Omega = 0$.
 
 The eccentricity vector $\bm e$ is computed using\cite{schaub}
 \begin{equation}
@@ -182,7 +182,7 @@ The eccentricity is then simply
 	e = |\bm e|
 \end{equation}
 Let $\hat{\bm\imath}_{e}$ be the normalized eccentricity vector.
-If $e$ is near zero, then the orbit is near circular and the periapses direction is ill defined.  In this case we set $\hat{\bm\imath}_{e} = \hat{\bm n}$ which results in $\omega = 0$.  
+If $e$ is near zero, then the orbit is near circular and the periapses direction is ill defined.  In this case we set $\hat{\bm\imath}_{e} = \hat{\bm n}$ which results in $\omega = 0$.
 
 Within this function the orbit radius is set through
 \begin{equation}
@@ -205,27 +205,27 @@ while the radius at apoapses is set to
 \begin{equation}
 	r_{a} = \frac{p}{1 - e}
 \end{equation}
-If $\alpha$ is zero, then the motion is parabolic and the SMA is not defined (i.e. is infinite).  In this case the code sets 
+If $\alpha$ is zero, then the motion is parabolic and the SMA is not defined (i.e. is infinite).  In this case the code sets
 $$
 	a = 0.0
 $$
 while $r_{a} = 0.0$ is returned as a value that is not defined in this case.
 
 
-Next the orbit frame orientation angles $\Omega$, $i$ and $\omega$ must be determined.  As classical elements are used, care must be given for particular singular orientations where some angles are ill-defined.  First, assume a non-circular non-equatorial orbit scenario.  In this case $\Omega$ is the angle between $\hat{\bm n}_{1}$ and $\bm n$ where care must be taken that the right quadrant is used.  
+Next the orbit frame orientation angles $\Omega$, $i$ and $\omega$ must be determined.  As classical elements are used, care must be given for particular singular orientations where some angles are ill-defined.  First, assume a non-circular non-equatorial orbit scenario.  In this case $\Omega$ is the angle between $\hat{\bm n}_{1}$ and $\bm n$ where care must be taken that the right quadrant is used.
 \begin{equation}
 	\tan \Omega = \frac{(\hat{\bm n}_{1} \times \hat{\bm n}) \cdot \hat{\bm n}_{3}}
 	{\hat{\bm n}_{1} \cdot \hat{\bm n}}
 \end{equation}
 
 
-The argument of periapses is the angle between $\hat{\bm n}$ and $\bm e$, where again quadrants must be checked.  
+The argument of periapses is the angle between $\hat{\bm n}$ and $\bm e$, where again quadrants must be checked.
 \begin{equation}
 	\tan \omega = \frac{(\hat{\bm \imath}_{n} \times \hat{\bm \imath}_{e}) \cdot \hat{\bm \imath}_{h}}
 	{\hat{\bm \imath}_{n} \cdot \hat{\bm \imath}_{e}}
 \end{equation}
 
-Finally, the inclination angle $i$ is the angle between $\bm h$ and $\hat{\bm n}_{3}$, but here no quadrants must be checked as this angle is defined as $0 \le i \le \pi$.  
+Finally, the inclination angle $i$ is the angle between $\bm h$ and $\hat{\bm n}_{3}$, but here no quadrants must be checked as this angle is defined as $0 \le i \le \pi$.
 \begin{equation}
 	\cos i = \hat{\bm \imath}_{h} \cdot \hat{\bm n}_{3}
 \end{equation}
@@ -240,7 +240,7 @@ The angles $\Omega$, $\omega$ and $f$ are returned to be a positive values betwe
 
 The 3-1-3 Euler angles representing the orbit frame orientation have singular configurations.  The following list discusses how each case is handled:
 \begin{itemize}
-	\item {\bfseries Equatorial non-circular orbit:} Here the ascending node $\Omega$ is ill-defined, and is  set to 0.0 radians.  
+	\item {\bfseries Equatorial non-circular orbit:} Here the ascending node $\Omega$ is ill-defined, and is  set to 0.0 radians.
 	\item {\bfseries Inclined circular orbit:}  Here the argument of periapses $\omega$ is ill-defined, and is set to 0.0 radians.
 	\item {\bfseries Equatorial circular orbit:} Here both $\Omega$ and $\omega$ are ill-defined are are each set to 0.0 radians.
 \end{itemize}
@@ -277,7 +277,7 @@ where $\rho$ is the local atmospheric density, $C_{d}$ is the drag coefficient, 
 \paragraph{Gravitational Zonal Harmonics}
 This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  For other planets only their $J_{2}$ value is used, while the higher order harmonics are set to zero.  The gravitational zonal harmonic accelerations are then given by\cite{schaub}
 \begin{align}
-	\bm a_{J_{2}} &=   -\frac{3}{2} J_{2} 
+	\bm a_{J_{2}} &=   -\frac{3}{2} J_{2}
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{2}
 	\leftexp{N\!\!\!}{
@@ -288,63 +288,63 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 	\end{pmatrix}}
 	\label{eq:gm:aJ2}
 	\\
-	\bm a_{J_{3}} &=  -\frac{1}{2} J_{3} 
+	\bm a_{J_{3}} &=  -\frac{1}{2} J_{3}
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{3}
 	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
-		5\left(7 \left(\frac{z}{r}\right)^{3} - 3 \left(\frac{z}{r}\right) 
+		5\left(7 \left(\frac{z}{r}\right)^{3} - 3 \left(\frac{z}{r}\right)
 		\right) \frac{x}{r} \\
-		5\left(7 \left(\frac{z}{r}\right)^{3} - 3 \left(\frac{z}{r}\right) 
+		5\left(7 \left(\frac{z}{r}\right)^{3} - 3 \left(\frac{z}{r}\right)
 		\right) \frac{y}{r} \\
-		3\left(10\left(\frac{z}{r}\right)^{2} - \frac{35}{3} 
-		\left(\frac{z}{r}\right)^{4} - 1 \right) 
+		3\left(10\left(\frac{z}{r}\right)^{2} - \frac{35}{3}
+		\left(\frac{z}{r}\right)^{4} - 1 \right)
 	\end{pmatrix}}
 	\label{eq:gm:aJ3}
 	\\
-	\bm a_{J_{4}} &=  -\frac{5}{8} J_{4} 
+	\bm a_{J_{4}} &=  -\frac{5}{8} J_{4}
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{4}
 	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
-		\left(3-42 \left(\frac{z}{r}\right)^{2} +63 \left(\frac{z}{r}\right)^{4} 
+		\left(3-42 \left(\frac{z}{r}\right)^{2} +63 \left(\frac{z}{r}\right)^{4}
 		\right) \frac{x}{r} \\
-		\left(3-42 \left(\frac{z}{r}\right)^{2} +63 \left(\frac{z}{r}\right)^{4} 
+		\left(3-42 \left(\frac{z}{r}\right)^{2} +63 \left(\frac{z}{r}\right)^{4}
 		\right) \frac{y}{r} \\
-		-\left(15-70\left(\frac{z}{r}\right)^{2} + 63 
+		-\left(15-70\left(\frac{z}{r}\right)^{2} + 63
 		\left(\frac{z}{r}\right)^{4}  \right) \frac{z}{r}
 	\end{pmatrix}}
 	\label{eq:gm:aJ4}
 	\\
-	\bm a_{J_{5}} &=  -\frac{J_{5}}{8}  
+	\bm a_{J_{5}} &=  -\frac{J_{5}}{8}
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{5}
 	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
-		3\left(35\left(\frac{z}{r}\right) - 210 
+		3\left(35\left(\frac{z}{r}\right) - 210
 		\left(\frac{z}{r}\right)^{3} +231 \left(\frac{z}{r}\right)^{5}
 		\right) \frac{x}{r} \\
-		3\left(35\left(\frac{z}{r}\right) - 210 
+		3\left(35\left(\frac{z}{r}\right) - 210
 		\left(\frac{z}{r}\right)^{3} +231 \left(\frac{z}{r}\right)^{5}
 		\right) \frac{y}{r} \\
-		\left(15- 315\left(\frac{z}{r}\right)^{2} \!\!+ 945 
-		\left( \frac{z}{r}\right)^{4}\!\! -693 \left(\frac{z}{r}\right)^{6} 
-		\right) 
+		\left(15- 315\left(\frac{z}{r}\right)^{2} \!\!+ 945
+		\left( \frac{z}{r}\right)^{4}\!\! -693 \left(\frac{z}{r}\right)^{6}
+		\right)
 	\end{pmatrix}}
 	\label{eq:gm:aJ5}
 	\\
-	\bm a_{J_{6}} &=  \frac{J_{6}}{16}  
+	\bm a_{J_{6}} &=  \frac{J_{6}}{16}
 	\left(\frac{\mu}{r^{2}}\right)\!
 	\left( \frac{r_{eq}}{r}\right)^{6}\!
 	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
 		\left(35 - 945 \left(\frac{z}{r}\right)^{2} \!\!
 		+ 3465 \left(\frac{z}{r}\right)^{4} \!\!
-		- 3003 \left(\frac{z}{r}\right)^{6} 
+		- 3003 \left(\frac{z}{r}\right)^{6}
 		\right) \frac{x}{r} \\
 		\left(35 - 945 \left(\frac{z}{r}\right)^{2} \!\!
 		+ 3465 \left(\frac{z}{r}\right)^{4} \!\!
-		- 3003 \left(\frac{z}{r}\right)^{6}  
+		- 3003 \left(\frac{z}{r}\right)^{6}
 		\right) \frac{y}{r} \\
 		\left( 3003 \left(\frac{z}{r}\right)^{6} \!\!
 		-4851 \left(\frac{z}{r}\right)^{4}\!\!

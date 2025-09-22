@@ -47,14 +47,14 @@ Table \ref{tab:inputNavTable} shows the input message from the navigation system
 	\begin{tabular}{|l|l|l|p{3in}|}
 		\hline
 		\rowcolor{BrickRed}
-		\textcolor{white}{Name} & \textcolor{white}{Type} & 
-		\textcolor{white}{Length} & 
+		\textcolor{white}{Name} & \textcolor{white}{Type} &
+		\textcolor{white}{Length} &
 		\textcolor{white}{Description}  \\ \hline
-		$\bm{R}_S$ & double [] & 3 & 
-		Position vector of the spacecraft body-point with respect to the inertial frame in inertial frame components 
+		$\bm{R}_S$ & double [] & 3 &
+		Position vector of the spacecraft body-point with respect to the inertial frame in inertial frame components
 		($\leftexp{N}{\bm{r}}_{B/N}$) . \\ \hline
-		$\bm{v}_S$ & double [] & 3 & 
-		Velocity vector of the spacecraft point with respect to the inertial frame in inertial frame components 
+		$\bm{v}_S$ & double [] & 3 &
+		Velocity vector of the spacecraft point with respect to the inertial frame in inertial frame components
 		($\leftexp{N}{\bm{v}}_{B/N}$). \\ \hline
 	\end{tabular}
 	\label{tab:inputNavTable}
@@ -67,12 +67,12 @@ Table \ref{tab:inputCelTable} shows the input message from Spice about the main 
 	\begin{tabular}{|l|l|l|p{3in}|}
 		\hline
 		\rowcolor{BrickRed}
-		\textcolor{white}{Name} & \textcolor{white}{Type} & 
-		\textcolor{white}{Length} & 
+		\textcolor{white}{Name} & \textcolor{white}{Type} &
+		\textcolor{white}{Length} &
 		\textcolor{white}{Description}  \\ \hline
-		$\bm{R}_P$  & double [] & 3 & 
+		$\bm{R}_P$  & double [] & 3 &
 		Position vector of the main celestial object with respect to the inertial frame in inertial frame components . \\ \hline
-		$\bm{v}_P$  & double [] & 3 & 
+		$\bm{v}_P$  & double [] & 3 &
 		Velocity vector of the main celestial object with respect to the inertial frame in inertial frame components . \\ \hline
 	\end{tabular}
 	\label{tab:inputCelTable}
@@ -85,14 +85,14 @@ Table \ref{tab:outputTable} shows the Attitude Reference output message of the m
 	\begin{tabular}{|l|l|l|p{3in}|}
 		\hline
 		\rowcolor{BrickRed}
-		\textcolor{white}{Name} & \textcolor{white}{Type} & 
-		\textcolor{white}{Length} & 
+		\textcolor{white}{Name} & \textcolor{white}{Type} &
+		\textcolor{white}{Length} &
 		\textcolor{white}{Description}  \\ \hline
-		$\sigma_{R/N}$ & double [] & 3 & 
+		$\sigma_{R/N}$ & double [] & 3 &
 		MRP attitude set of the reference frame with respect to the reference. \\ \hline
-		$\leftexp{N} \omega_{R/N}$ & double [] & 3 & 
+		$\leftexp{N} \omega_{R/N}$ & double [] & 3 &
 		Angular rate vector of the reference frame with respect to the inertial expressed in inertial frame components. \\ \hline
-		$\leftexp{N} {\dot{\omega}_{R/N}}$ & double [] & 3 & 
+		$\leftexp{N} {\dot{\omega}_{R/N}}$ & double [] & 3 &
 		Angular acceleration vector of the reference frame with respect to the inertial expressed in inertial frame components. \\ \hline
 	\end{tabular}
 	\label{tab:outputTable}
@@ -128,7 +128,7 @@ The same methodology is applied to compute the relative velocity vector:
 Note that the position and velocity vectors of the spacecraft and the celestial body, $\bm{R}_S$,  $\bm{R}_P$,  $\bm{v}_S$ and  $\bm{v}_P$ are the only inputs that this module requires. Having $\bm r$ and $\bm v$, the Hill frame orientation is completely defined:
 \begin{subequations}
 	\begin{equation}
-	\hat{\bm\imath}_{r} = \frac{\bm r}{r} 
+	\hat{\bm\imath}_{r} = \frac{\bm r}{r}
 	\end{equation}
 	\begin{equation}
 	\hat{\bm\imath}_{h} = \frac{\bm{r}\times{\bm{v}}}{r v}
@@ -141,7 +141,7 @@ And the Direction Cosine Matrix to map from the reference frame to the inertial 
 \begin{equation}
 	[RN] =  \begin{bmatrix}
        		\hat{\bm\imath}_{r} \\
-		\hat{\bm\imath}_{\theta} \\ 
+		\hat{\bm\imath}_{\theta} \\
 		\hat{\bm\imath}_{h}
       \end{bmatrix}
 \end{equation}
@@ -149,14 +149,14 @@ The corresponding MRP attitude set is computed using the following function from
 $$ [RN] = \textrm{C2MRP}(\bm\sigma_{R/N})$$
 
 \section{Angular Velocity Descriptions}
-Let $\mathcal{R}_{0}$ reference the Hill orbit frame. The orbit frame angular rate and acceleration vectors are given by 
+Let $\mathcal{R}_{0}$ reference the Hill orbit frame. The orbit frame angular rate and acceleration vectors are given by
 \begin{equation}
 	\label{eq:omega_R0}
-	\bm\omega_{R_{0}/N} = \dot f \hat{\bm\imath}_{h} 
+	\bm\omega_{R_{0}/N} = \dot f \hat{\bm\imath}_{h}
 \end{equation}
 \begin{equation}
 	\label{eq:domega_R0}
-	\dot{\bm\omega}_{R_{0}/N} = \ddot f \hat{\bm\imath}_{h} 
+	\dot{\bm\omega}_{R_{0}/N} = \ddot f \hat{\bm\imath}_{h}
 \end{equation}
 where $f$ is the true anomaly, whose variation is determined through the general standard astrodynamics relations:
 \begin{align}
@@ -164,7 +164,7 @@ where $f$ is the true anomaly, whose variation is determined through the general
   \\
   \ddot f &= - 2 \frac{\bm v \cdot \hat{\bm\imath}_{r}}{r} \dot f
 \end{align}
-The angular rate $\bm\omega_{R/N}$ and acceleration $\dot{\bm\omega}_{R/N}$ of the output reference frame $\mathcal{R}$  still need to be computed. 
+The angular rate $\bm\omega_{R/N}$ and acceleration $\dot{\bm\omega}_{R/N}$ of the output reference frame $\mathcal{R}$  still need to be computed.
 Since the desired attitude is a fixed-pointing one, $\mathcal{R}$ does not move relative to $\mathcal{R}_{0}$. Thus, the angular velocity of the reference frame happens to be
 \begin{equation}
 	\label{eq:omega_R}
@@ -176,22 +176,22 @@ Again, given that $ \hat{\bm\imath}_{h}$ is fixed as seen by the reference frame
 	\dot\omega_{R/N} = \ddot{f} \hat{\bm\imath}_{h}
 \end{equation}
 Both $\bm\omega_{R/N}$ and $\dot\omega_{R/N} $ need to be expressed in the inertial frame $N$. \newline
-Given 
+Given
 \begin{subequations}
 \begin{equation}
-\leftexp{R}{\bm \omega_{R/N} } = 
+\leftexp{R}{\bm \omega_{R/N} } =
       \begin{bmatrix}
        0\\ 0 \\ \dot{f}
       \end{bmatrix}
 \end{equation}
 \begin{equation}
- \leftexp{R}{\bm\dot{\omega}_{R/N}  } = 
+ \leftexp{R}{\bm\dot{\omega}_{R/N}  } =
       \begin{bmatrix}
        0\\ 0 \\ \ddot{f}
       \end{bmatrix}
 \end{equation}
 \end{subequations}
-Then, 
+Then,
 \begin{subequations}
 \begin{equation}
 	\leftexp{N} {\bm{\omega}_{R/N}} =  [NR] \textrm{ } \leftexp{R} {\bm\omega_{R/N} }

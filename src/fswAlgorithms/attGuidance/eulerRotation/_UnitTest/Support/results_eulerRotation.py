@@ -172,7 +172,3 @@ angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega
 # M3 = rbk.Mi(np.pi, 3)
 # print 'M3 = ', M3
 # print 'sigma = ', rbk.C2MRP(M3)
-
-
-
-

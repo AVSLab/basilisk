@@ -37,7 +37,7 @@ typedef struct {
     HillRelStateMsg_C hillStateInMsg;               //!< Provides state relative to chief
     AttRefMsg_C attRefInMsg;                        //!< (Optional) Provides basis for relative attitude
     NavAttMsg_C attNavInMsg;                        //!< (Optional) Provides basis for relative attitude
-    AttRefMsg_C attRefOutMsg;                       //!< Provides the attitude reference output message. 
+    AttRefMsg_C attRefOutMsg;                       //!< Provides the attitude reference output message.
     BSKLogger *bskLogger;                           //!< BSK Logging
 
     double gainMatrix[3][6]; //!< User-configured gain matrix that maps from hill states to relative attitudes.
@@ -59,4 +59,3 @@ extern "C" {
 
 
 #endif
-

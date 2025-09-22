@@ -36,7 +36,7 @@ def runner(show_plots, use_limits, msg_type):
     proc.addTask(task)
 
     #   Set up a test relative state vector
-    relative_state = [1000, 0, 0, 
+    relative_state = [1000, 0, 0,
                       0,    5, 0] # m / m/s
     #   Set up a dummy gain matrix
     lqr_gain_set = np.array([[0,1,0],
@@ -49,7 +49,7 @@ def runner(show_plots, use_limits, msg_type):
     hillStateMsgData.r_DC_H = relative_state[0:3]
     hillStateMsgData.v_DC_H = relative_state[3:]
     hillStateMsg = messaging.HillRelStateMsg().write(hillStateMsgData)
-    
+
 
     #   Set up the hillStateConverter
     depAttRef = hillToAttRef.hillToAttRef()
@@ -66,7 +66,7 @@ def runner(show_plots, use_limits, msg_type):
         attRefMsgData.sigma_RN = [0.2, 0.2, 0.2]
         attRefMsg = messaging.AttRefMsg().write(attRefMsgData)
         depAttRef.attRefInMsg.subscribeTo(attRefMsg)
-    
+
     if use_limits:
         depAttRef.relMRPMin = -0.2 #    Configure minimum MRP
         depAttRef.relMRPMax = 0.2  #    Configure maximum MRP
@@ -82,10 +82,10 @@ def runner(show_plots, use_limits, msg_type):
             ref_vals = [0.5, 0.5, 0.5]
         else:
             ref_vals = [0.2, 0.2, 0.2]
-    
+
     #   Store the output att ref message
     depAttRecorder = depAttRef.attRefOutMsg.recorder()
-    
+
     sim.AddModelToTask(taskName, depAttRef)
     sim.AddModelToTask(taskName, depAttRecorder)
 

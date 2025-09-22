@@ -112,4 +112,3 @@ def plotSpheres(posDataL_N, posDataF_N, attDataL_N, attDataF_N, spPosListLeader_
 
 def NormalizeData(data):
     return (data - np.min(data)) / (np.max(data) - np.min(data))
-

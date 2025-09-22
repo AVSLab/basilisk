@@ -44,11 +44,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_rwConfigData(rwConfigData_Config*configData, int64_t moduleID);
     void Update_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID);
     void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

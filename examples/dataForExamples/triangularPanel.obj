@@ -1,6 +1,6 @@
 # Apple ModelIO OBJ File: triangularPanel
 mtllib triangularPanel.mtl
-g 
+g
 v 1.9021 0 -0.05
 v -1.9021 -1.23605 -0.05
 v -1.9021 1.23605 -0.05

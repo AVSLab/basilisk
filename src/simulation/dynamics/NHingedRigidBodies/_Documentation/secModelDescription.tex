@@ -16,7 +16,7 @@ $\theta_i = \theta_{i,d} + \theta_{i,0}$ positive angle is in the upward directi
 The choice of state variables and their respective chosen generalized speeds are:
 
 \begin{equation}
-	\bm X = 
+	\bm X =
 	\begin{bmatrix}
 		\bm r_{B/N}\\
 		\bm \sigma_{\cal{B/N}}\\
@@ -32,7 +32,7 @@ The choice of state variables and their respective chosen generalized speeds are
 		\cdot\\
 		\dot{\theta}_{N_p}
 	\end{bmatrix}
-\end{equation} 	
+\end{equation}
 To create the partial velocity table, some velocities first need to be defined
 
 \begin{equation}
@@ -72,14 +72,14 @@ The summation in equation \ref{eq:rsin} and \ref{eq:rsindot} can be out of bound
 	\bm c = \frac{1}{m_{sc}}\Big[ \sum_{i=1}^{N_p} m_p {\bm r}_{S_i/B}\Big]
 \end{equation}
 \begin{equation}
-	\dot{\bm c} = {\bm c}' - [\tilde{\bm c}]{\bm \omega}_{\cal{B/N}} 
+	\dot{\bm c} = {\bm c}' - [\tilde{\bm c}]{\bm \omega}_{\cal{B/N}}
 \end{equation}
 \begin{equation}
-	{\bm c}' = \frac{m_p d}{m_{sc}} \sum_{i=1}^{N_p} \Big[\Big(\sum_{k=1}^{i} \dot{\theta}_k \Big) \bm{\hat{s}}_{i,3} + \sum_{n=1}^{i-1} 2\bm{\hat{s}}_{n,3}\Big(\sum_{k=1}^{n} \dot{\theta}_k \Big) \Big] 
+	{\bm c}' = \frac{m_p d}{m_{sc}} \sum_{i=1}^{N_p} \Big[\Big(\sum_{k=1}^{i} \dot{\theta}_k \Big) \bm{\hat{s}}_{i,3} + \sum_{n=1}^{i-1} 2\bm{\hat{s}}_{n,3}\Big(\sum_{k=1}^{n} \dot{\theta}_k \Big) \Big]
 	\label{eq:cprime1}
 \end{equation}
 \begin{equation}
-	{\bm c}' = \frac{m_p d}{m_{sc}} \Big[\sum_{i=1}^{N_p} \dot{\theta}_i  \sum_{n=i}^{N_p} (2[N_p - n]+1 )\bm{\hat{s}}_{n,3}\Big] 
+	{\bm c}' = \frac{m_p d}{m_{sc}} \Big[\sum_{i=1}^{N_p} \dot{\theta}_i  \sum_{n=i}^{N_p} (2[N_p - n]+1 )\bm{\hat{s}}_{n,3}\Big]
 	\label{eq:cprime2}
 \end{equation}
 Now the following partial velocity table can be created (here: $j = r-6$):
@@ -88,7 +88,7 @@ Now the following partial velocity table can be created (here: $j = r-6$):
 	\caption{Partial Velocity Table}
 	\label{tab:hub}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ |c | c | c | c | c | c |} % Column formatting, 
+	\begin{tabular}{ |c | c | c | c | c | c |} % Column formatting,
 		\hline
 		$r$ & $\bm v^{C}_{r}$ & $\bm v^{B}_{r}$  & $\bm \omega_{\textit{r}}^{\cal{B}}$ & $\bm v^{S_i}_{r}$ & $\bm \omega_{\textit{r}}^{\cal{S}_\textit{i}}$ \\
 		\hline \hline
@@ -149,7 +149,7 @@ Plugging Eq.~\eqref{eq:rsddot} into Eq.~\eqref{eq:KanesTrans} results in
 	+ 2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_i/B} +  \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{S_i/B}
 	\\ + \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_i/B})\Big] = \bm F_{\text{ext}}
 \end{multline}
-The body frame derivative can be written explicitly using the simplification used in Eqs. \ref{eq:cprime1} and \ref{eq:cprime2} (this simplification only works when $\bm{r}''_{S_i/B}$ is summed over all panels) 
+The body frame derivative can be written explicitly using the simplification used in Eqs. \ref{eq:cprime1} and \ref{eq:cprime2} (this simplification only works when $\bm{r}''_{S_i/B}$ is summed over all panels)
 \begin{equation}
 	m_{\text{p}} \sum^{N_p}_{i=1} \bm{r}''_{S_i/B} = \sum^{N_p}_{i=1} \Big[ \ddot{\theta}_i \sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3} + \Big(\sum^{i}_{k=1}\dot{\theta}_k\Big)^2 (2[N_p-i]+1) d m_{\text{p}} \bm{\hat{s}}_{i,1} \Big]
 \end{equation}
@@ -210,7 +210,7 @@ Plugging Eq. (\ref{eq:omegasidot}) into Eq. (\ref{eq:rotKane})
 	- \sum\limits_{i=1}^{N_p}[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{p}_i,S_i}] \bm\omega_{\cal B/N}
 	+ \sum\limits_{i=1}^{N_p}\bigg( - \ddot{\theta}\sum\limits_{k=i}^{N_p}\Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} \\
 	- \Big( \sum\limits_{k=1}^{i} \dot{\theta}\Big)^2 \Big[[\tilde{{\bm r}}_{S_{i}/B}] + \sum\limits_{n=i+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big] m_{\text{p}} d \bm{\hat{s}}_{i,1}
-	- m_{\text{p}} [\tilde{{\bm r}}_{S_{i}/B}] \Big[ 
+	- m_{\text{p}} [\tilde{{\bm r}}_{S_{i}/B}] \Big[
 	2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_i/B} +  \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{S_i/B}
 	\\
 	+ \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_i/B})\Big]
@@ -220,26 +220,26 @@ Plugging Eq. (\ref{eq:omegasidot}) into Eq. (\ref{eq:rotKane})
 
 \begin{multline}
 	\bm L_B - m_{\text{sc}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} -[I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N} - \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i}I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \sum\limits_{k=i}^{N_p}\Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} \Big] \ddot{\theta}_i \\
-	-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} 
-	+ \sum\limits_{i=1}^{N_p}\bigg(- 2 m_{\text{p}} [\tilde{{\bm r}}_{S_{i}/B}] \Big[\bm\omega_{\cal B/N} \times \bm{r}'_{S_i/B}\Big] -\big(\sum^{i}_{k=1}\dot{\theta}_k\big)(I_{s_{i,3}}-I_{s_{i,1}})(\hat{\bm s}_{i,1}\hat{\bm s}_{i,3}^{T}+\hat{\bm s}_{i,3}\hat{\bm s}_{i,1}^{T}) \bm\omega_{\cal B/N} \\ 
+	-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N}
+	+ \sum\limits_{i=1}^{N_p}\bigg(- 2 m_{\text{p}} [\tilde{{\bm r}}_{S_{i}/B}] \Big[\bm\omega_{\cal B/N} \times \bm{r}'_{S_i/B}\Big] -\big(\sum^{i}_{k=1}\dot{\theta}_k\big)(I_{s_{i,3}}-I_{s_{i,1}})(\hat{\bm s}_{i,1}\hat{\bm s}_{i,3}^{T}+\hat{\bm s}_{i,3}\hat{\bm s}_{i,1}^{T}) \bm\omega_{\cal B/N} \\
 	- \Big( \sum\limits_{k=1}^{i} \dot{\theta}\Big)^2 \Big[[\tilde{{\bm r}}_{S_{i}/B}] + \sum\limits_{n=i+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big] m_{\text{p}} d \bm{\hat{s}}_{i,1}
 	- I_{s_{i,2}} \big(\sum^{i}_{k=1}\dot{\theta}_k\big) [\bm{\tilde{\omega}}_{\cal B/N}] \bm{\hat{s}}_{i,2} \bigg) = 0
 \end{multline}
 Moving things to the correct sides
 \begin{multline}
 	m_{\text{sc}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} + [I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N} + \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i}I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \sum\limits_{k=i}^{N_p}\Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} \Big] \ddot{\theta}_i \\
-	= -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} - \sum\limits_{i=1}^{N_p}\bigg(2 m_{\text{p}} [\tilde{{\bm r}}_{S_{i}/B}] \Big[\bm\omega_{\cal B/N} \times \bm{r}'_{S_i/B}\Big] + \big(\sum^{i}_{k=1}\dot{\theta}_k\big)(I_{s_{i,3}}-I_{s_{i,1}})(\hat{\bm s}_{i,1}\hat{\bm s}_{i,3}^{T}+\hat{\bm s}_{i,3}\hat{\bm s}_{i,1}^{T}) \bm\omega_{\cal B/N} \\ 
+	= -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} - \sum\limits_{i=1}^{N_p}\bigg(2 m_{\text{p}} [\tilde{{\bm r}}_{S_{i}/B}] \Big[\bm\omega_{\cal B/N} \times \bm{r}'_{S_i/B}\Big] + \big(\sum^{i}_{k=1}\dot{\theta}_k\big)(I_{s_{i,3}}-I_{s_{i,1}})(\hat{\bm s}_{i,1}\hat{\bm s}_{i,3}^{T}+\hat{\bm s}_{i,3}\hat{\bm s}_{i,1}^{T}) \bm\omega_{\cal B/N} \\
 	+ \Big( \sum\limits_{k=1}^{i} \dot{\theta}\Big)^2 \Big[[\tilde{{\bm r}}_{S_{i}/B}] + \sum\limits_{n=i+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big] m_{\text{p}} d \bm{\hat{s}}_{i,1}
 	+ I_{s_{i,2}} \big(\sum^{i}_{k=1}\dot{\theta}_k\big) [\bm{\tilde{\omega}}_{\cal B/N}] \bm{\hat{s}}_{i,2} \bigg) + \bm L_B
 \end{multline}
 
 \begin{multline}
-	m_{\text{sc}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} + [I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N} + \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i}I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \sum\limits_{k=i}^{N_p}\Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} \Big] \ddot{\theta}_i 
+	m_{\text{sc}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} + [I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N} + \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i}I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \sum\limits_{k=i}^{N_p}\Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} \Big] \ddot{\theta}_i
 	\\
 	= -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} - \sum\limits_{i=1}^{N_p}\bigg( - m_{\text{p}}\Big[[\bm{\tilde{r}}'_{S_i/B}] [\bm{\tilde{r}}_{S_i/B}] + [\bm{\tilde{r}}_{S_i/B}] [\bm{\tilde{r}}'_{S_i/B}]\Big] \bm\omega_{\cal B/N} \\
-	+\big(\sum^{i}_{k=1}\dot{\theta}_k\big)(I_{s_{i,3}}-I_{s_{i,1}})(\hat{\bm s}_{i,1}\hat{\bm s}_{i,3}^{T}+\hat{\bm s}_{i,3}\hat{\bm s}_{i,1}^{T}) \bm\omega_{\cal B/N} 
+	+\big(\sum^{i}_{k=1}\dot{\theta}_k\big)(I_{s_{i,3}}-I_{s_{i,1}})(\hat{\bm s}_{i,1}\hat{\bm s}_{i,3}^{T}+\hat{\bm s}_{i,3}\hat{\bm s}_{i,1}^{T}) \bm\omega_{\cal B/N}
 	+ m_{\text{p}} [\tilde{\bm\omega}_{\cal B/N}] [\tilde{{\bm r}}_{S_{i}/B}] \bm{r}'_{S_i/B} \\
-	+ \Big( \sum\limits_{k=1}^{i} \dot{\theta}\Big)^2 \Big[[\tilde{{\bm r}}_{S_{i}/B}] 
+	+ \Big( \sum\limits_{k=1}^{i} \dot{\theta}\Big)^2 \Big[[\tilde{{\bm r}}_{S_{i}/B}]
 	+ \sum\limits_{n=i+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big] m_{\text{p}} d \bm{\hat{s}}_{i,1}
 	+ I_{s_{i,2}} \big(\sum^{i}_{k=1}\dot{\theta}_k\big) [\bm{\tilde{\omega}}_{\cal B/N}] \bm{\hat{s}}_{i,2} \bigg) + \bm L_B
 \end{multline}
@@ -258,9 +258,9 @@ Following the similar pattern for translational and rotational equations the gen
 
 \begin{multline}
 	\bm F_{r} = \bm \omega_{\textit{r}}^{\cal{S}_\textit{j}} \cdot (-k_j (\theta_j-\theta_{j,0}) \bm{\hat{s}}_{j,2} - c_j \dot{\theta}_j \bm{\hat{s}}_{j,2}  +k_{j+1} (\theta_{j+1}-\theta_{j+1,0}) \bm{\hat{s}}_{j,2} +c_{j+1} \dot{\theta}_{j+1} \bm{\hat{s}}_{j+1,2})\\
-	+ 2d\bm{\hat{s}}_{j,3}\cdot(\bm F_{ext,j+1} - m_{\textit{conn},j}\bm{\ddot{r}_{\textit{conn},j}}) = 
+	+ 2d\bm{\hat{s}}_{j,3}\cdot(\bm F_{ext,j+1} - m_{\textit{conn},j}\bm{\ddot{r}_{\textit{conn},j}}) =
 	-k_j (\theta_j-\theta_{j,0}) - c_j \dot{\theta}_j + k_{j+1} (\theta_{j+1}-\theta_{j+1,0}) + c_{j+1} \dot{\theta}_{j+1}\\
-	+ 2d\bm{\hat{s}}_{j,3}\cdot(\bm F_{ext,j+1} - m_{\textit{conn},j}\bm{\ddot{r}_{\textit{conn},j}}) = \textit{K} + 2d\bm{\hat{s}}_{j,3}\cdot(\bm F_{ext,j+1} - m_{\textit{conn},j}\bm{\ddot{r}_{\textit{conn},j}}) 
+	+ 2d\bm{\hat{s}}_{j,3}\cdot(\bm F_{ext,j+1} - m_{\textit{conn},j}\bm{\ddot{r}_{\textit{conn},j}}) = \textit{K} + 2d\bm{\hat{s}}_{j,3}\cdot(\bm F_{ext,j+1} - m_{\textit{conn},j}\bm{\ddot{r}_{\textit{conn},j}})
 \end{multline}
 Where $m_{\textit{conn},j}$ and $\bm{\ddot{r}_{\textit{conn},j}}$ are the mass and acceleration of the connected panels after the jth panel, and:
 \begin{equation}
@@ -303,8 +303,8 @@ Which can be plugged into Eq. (\ref{eq:afterkane}):
 	-I_{s_j,2} \sum^{N_p}_{i=1}\ddot{\theta}_i - \left( I_{s_{j,1}} - I_{s_{j,3}}\right) \omega_{s_{j,3}} \omega_{s_{j,1}}+ 2d\bm{\hat{s}}^{T}_{j,3}\bm F_{ext,j+1}
 	-m_p d \hat{s}^{T}_{j,3}[\bm r''_{S_{j}/B} + \sum^{N_p}_{i=1} 2 \bm r''_{S_{i}/B}]\\
 	-m_p d \hat{s}^{T}_{j,3}\Big[2[\bm{\tilde{\omega}}_{\cal B/N}]\bm r'_{S_{j}/B} + [\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}]\bm r_{S_{j}/B}\\
-	+\sum^{N_p}_{i=j+1}\Big(4[\bm{\tilde{\omega}}_{\cal B/N}]\bm r'_{S_{j}/B} 
-	+ 2[\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}]\bm r_{S_{j}/B} \Big)\Big] = 0 
+	+\sum^{N_p}_{i=j+1}\Big(4[\bm{\tilde{\omega}}_{\cal B/N}]\bm r'_{S_{j}/B}
+	+ 2[\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}]\bm r_{S_{j}/B} \Big)\Big] = 0
 \end{multline}
 The $\bm r''_{S_{j}/B}$ terms contain $\ddot{\theta}$ terms and thus need to be rewritten to a usable form. This is done by writing it out for several panels and finding a pattern, the result of this is shown next:
 \begin{multline}
@@ -312,7 +312,7 @@ The $\bm r''_{S_{j}/B}$ terms contain $\ddot{\theta}$ terms and thus need to be 
 	-I_{s_j,2} \sum^{N_p}_{i=1}\ddot{\theta}_i - \left( I_{s_{j,1}} - I_{s_{j,3}}\right) \omega_{s_{j,3}} \omega_{s_{j,1}}+ 2d\bm{\hat{s}}^{T}_{j,3}\bm F_{ext,j+1}\\
 	-m_p d \hat{s}^{T}_{j,3}\Big[2[\bm{\tilde{\omega}}_{\cal B/N}]\bm r'_{S_{j}/B} + [\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}]\bm r_{S_{j}/B}+\sum^{N_p}_{i=j+1}\Big(4[\bm{\tilde{\omega}}_{\cal B/N}]\bm r'_{S_{j}/B} + 2[\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}]\bm r_{S_{j}/B} \Big)\Big]\\
 	-m_p d^2 \hat{s}^{T}_{j,3}\sum^{N_p}_{i=1}\Big[\ddot{\theta}_i \sum^{N_p}_{k=i}(2\hat{s}_{k,3}+4\hat{s}_{k,3}(N_p-j) -H[k-j] 4\hat{s}_{k,3}(k-j)) - H[j-i]\hat{s}_{j,3} + \\
-	\Big( \sum^{i}_{n=1} \dot{\theta}\Big)^2 (2\hat{s}_{i,1}+4\hat{s}_{i,1}(N_p-j) -H[i-j] 4\hat{s}_{i,1}(i-j) - \Big( \sum^{i}_{n=1} \dot{\theta}_i\Big)^2 \hat{s}_{j,1} ) \Big] = 0 
+	\Big( \sum^{i}_{n=1} \dot{\theta}\Big)^2 (2\hat{s}_{i,1}+4\hat{s}_{i,1}(N_p-j) -H[i-j] 4\hat{s}_{i,1}(i-j) - \Big( \sum^{i}_{n=1} \dot{\theta}_i\Big)^2 \hat{s}_{j,1} ) \Big] = 0
 \end{multline}
 This finally leads to:
 \begin{multline}
@@ -348,7 +348,7 @@ With a matrix $[G]$ which has row elements defined as:
 \begin{equation}
 	\bm g_{j,1} =  -[I_{s_j,2} \bm{\hat{s}}_{j,2}^T -m_p d \hat{s}^{T}_{j,3}[\tilde{{\bm r}}_{S_{i}/B}]-\sum^{N_p}_{i=j+1} 2 m_p d \hat{s}^{T}_{j,3}[\tilde{{\bm r}}_{S_{i}/B}]
 \end{equation}
-Also defining the vector $\bm v$ 
+Also defining the vector $\bm v$
 \begin{multline}
 	\bm v_{j,1} =  K + 2d\bm{\hat{s}}^{T}_{j,3}\bm F_{ext,j+1} - \left( I_{s_{j,1}} - I_{s_{j,3}}\right) \omega_{s_{j,3}} \omega_{s_{j,1}} - m_p d \hat{s}^{T}_{j,3}\Big[2[\bm{\tilde{\omega}}_{\cal B/N}]\bm r'_{S_{j}/B} + [\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}]\bm r_{S_{j}/B}\\
 	+\sum^{N_p}_{i=j+1}\Big(4[\bm{\tilde{\omega}}_{\cal B/N}]\bm r'_{S_{j}/B} + 2[\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}]\bm r_{S_{j}/B} \Big) \\
@@ -403,7 +403,7 @@ The next step in the back substitution method is to analytically substitute Eq.~
 Combining like terms yields:
 
 \begin{multline}
-	\Bigg \lbrace m_{\textnormal{sc}}[I_{3\times 3}] + \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3}\Big] e_{i}^T[F] \Bigg \rbrace \ddot{\bm r}_{B/N} 
+	\Bigg \lbrace m_{\textnormal{sc}}[I_{3\times 3}] + \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3}\Big] e_{i}^T[F] \Bigg \rbrace \ddot{\bm r}_{B/N}
 	\\
 	+ \Bigg \lbrace -m_{\textnormal{sc}} [\tilde{\bm{c}}]  + \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3}\Big] e_{i}^T[G]\Bigg \rbrace \dot{\bm\omega}_{\cal B/N}\\
 	=  \bm F_{\textnormal{ext}} - 2 m_{\textnormal{sc}} [\tilde{\bm\omega}_{\cal B/N}]\bm{c}'
@@ -431,25 +431,25 @@ And combining like terms yields:
 \end{multline}
 With the following definitions:
 \begin{equation}
-	[A_{\text{contr}}] = \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3}\Big] e_{i}^T[F]  
+	[A_{\text{contr}}] = \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3}\Big] e_{i}^T[F]
 \end{equation}
 \begin{equation}
 	[B_{\text{contr}}] =  \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3}\Big] e_{i}^T[G]
 \end{equation}
 \begin{equation}
 	\bm v_{\text{trans,contr}} = -\sum^{N_p}_{i=1} \Big[ \Big(\sum^{i}_{k=1}\dot{\theta}_k\Big)^2 (2[N_p-i]+1) d m_{\text{p}} \bm{\hat{s}}_{i,1} \Big]\\
-	- \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3} e_{i}^T \bm v \Big] 
+	- \sum^{N_p}_{i=1} \Big[\sum^{N_p}_{k=i} (2[N_p-k]+1) d m_{\text{p}} \bm{\hat{s}}_{k,3} e_{i}^T \bm v \Big]
 \end{equation}
 \begin{equation}
-	[C_{\text{contr}}] = \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i} (I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} ) \Big]e_{i}^T[F]  
+	[C_{\text{contr}}] = \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i} (I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} ) \Big]e_{i}^T[F]
 \end{equation}
 \begin{equation}
 	[D_{\text{contr}}] = \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i} (I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} )\Big] e_{i}^T[G]
 \end{equation}
 \begin{multline}
 	[v_{\text{rot,contr}}] = - \sum\limits_{i=1}^{N_p}\bigg( m_{\text{p}} [\tilde{\bm\omega}_{\cal B/N}] [\tilde{{\bm r}}_{S_{i}/B}] \bm{r}'_{S_i/B} + \Big( \sum\limits_{k=1}^{i} \dot{\theta}\Big)^2 \Big[[\tilde{{\bm r}}_{S_{i}/B}] + \sum\limits_{n=i+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big] m_{\text{p}} d \bm{\hat{s}}_{i,1}\\
-	+ I_{s_{i,2}} \big(\sum^{i}_{k=1}\dot{\theta}_k\big) [\bm{\tilde{\omega}}_{\cal B/N}] \bm{\hat{s}}_{i,2} \bigg) 
-	- \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i} (I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} )\Big]  e_{i}^T \bm v 
+	+ I_{s_{i,2}} \big(\sum^{i}_{k=1}\dot{\theta}_k\big) [\bm{\tilde{\omega}}_{\cal B/N}] \bm{\hat{s}}_{i,2} \bigg)
+	- \sum\limits_{i=1}^{N_p} \Big[\sum^{N_p}_{k=i} (I_{s_{k,2}} \bm{\hat{s}}_{k,2} + \Big[ [\tilde{{\bm r}}_{S_{k}/B}] + \sum\limits_{n=k+1}^{N_p}2[\tilde{{\bm r}}_{S_{n}/B}]\Big]m_{\text{p}} d \bm{\hat{s}}_{k,3} )\Big]  e_{i}^T \bm v
 \end{multline}
 The full back substitution matrices then become:
 \begin{equation}
@@ -495,5 +495,3 @@ Solving the system-of-equations by
 \end{equation}
 
 Now Eq.~\eqref{eq:omegaDot} and ~\eqref{eq:rBNDDot} can be used to solve for $\dot{\bm\omega}_{\cal B/N}$ and $\ddot{\bm r}_{B/N}$. Once these second order state variables are solved for, Eq.~\eqref{eq:thetadot4} can be used to directly solve for $\ddot \theta_{i}$. This shows that the back substitution method can work seamlessly for interconnected bodies.
-
-

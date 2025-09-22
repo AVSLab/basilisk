@@ -35,7 +35,7 @@ class EphemerisConverter: public SysModel {
 public:
     EphemerisConverter();
     ~EphemerisConverter();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
     void readInputMessages();                       //!< class method

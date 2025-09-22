@@ -36,7 +36,7 @@ def test_hillStateConverter(show_plots):
     chiefNavMsg = messaging.NavTransMsg().write(chiefNavMsgData)
 
     depNavMsgData = messaging.NavTransMsgPayload()
-    depNavMsgData.r_BN_N = dep_r 
+    depNavMsgData.r_BN_N = dep_r
     depNavMsgData.v_BN_N = dep_v
     depNavMsg = messaging.NavTransMsg().write(depNavMsgData)
 
@@ -46,7 +46,7 @@ def test_hillStateConverter(show_plots):
     hillStateNav.chiefStateInMsg.subscribeTo(chiefNavMsg)
     hillStateNav.depStateInMsg.subscribeTo(depNavMsg)
     hillRecorder = hillStateNav.hillStateOutMsg.recorder()
-    
+
     sim.AddModelToTask(taskName, hillStateNav)
     sim.AddModelToTask(taskName, hillRecorder)
 

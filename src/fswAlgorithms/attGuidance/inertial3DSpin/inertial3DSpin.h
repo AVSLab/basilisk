@@ -35,7 +35,7 @@ typedef struct {
     /* declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;                     //!< reference attitude output message
     AttRefMsg_C attRefInMsg;                      //!< (optional) reference attitude input message
-    
+
     AttRefMsgPayload attRefOutBuffer;                    //!< [-] structure for the output data
     BSKLogger *bskLogger;                             //!< BSK Logging
 }inertial3DSpinConfig;
@@ -43,7 +43,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
     void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);

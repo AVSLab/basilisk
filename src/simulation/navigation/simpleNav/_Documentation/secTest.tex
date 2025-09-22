@@ -11,19 +11,19 @@ The unit test for the simple\_nav module is located in:\\
 
 \subsection{Subtests}
 
-\noindent This unit test is designed to functionally test the simulation model 
-outputs as well as get complete code path coverage.  The test design is broken 
+\noindent This unit test is designed to functionally test the simulation model
+outputs as well as get complete code path coverage.  The test design is broken
 up into three main parts:\\
 \begin{enumerate}
-\item{\underline{Error Bound Enforcement}: The simulation is run for 2.4 hours and the 
+\item{\underline{Error Bound Enforcement}: The simulation is run for 2.4 hours and the
    error bounds for all of the signals are tested. This test length is long enough to see both
    the walk in the signal and the noise, all the while not being so long as to slow down the test.
    The test ensures that the bounds are crossed no more than 30\% of the time.}
-\item{\underline{Error Bound Usage}: The error signals are checked for all of the model 
-   parameters over the course of the simulation to ensure that the error gets 
+\item{\underline{Error Bound Usage}: The error signals are checked for all of the model
+   parameters over the course of the simulation to ensure that the error gets
    to at least 80\% of its maximum error bound at least once, ensuring that noise is indeed
    properly introduced.}
-\item{\underline{Corner Case Check}: The simulation is intentionally given bad inputs to 
+\item{\underline{Corner Case Check}: The simulation is intentionally given bad inputs to
    ensure that it alerts the user and does not crash.}
 \end{enumerate}
 
@@ -47,7 +47,7 @@ Table~\ref{tab:bounds}
 \begin{tabular}{|c||c|c|c|c|c|c|}
 \hline
 Variable & Position & Velocity & Attitude & Rates & $\Delta$ V & Sun Position \\ \hline \hline
-Associated $\sigma$ & 5 (m)& 0.035 (m/s)& $\frac{1}{360}$ (deg) & 0.05 (deg/s) & 1 (deg) & 0.1 (deg) \\ \hline 
+Associated $\sigma$ & 5 (m)& 0.035 (m/s)& $\frac{1}{360}$ (deg) & 0.05 (deg/s) & 1 (deg) & 0.1 (deg) \\ \hline
 \end{tabular}
 \end{table}
 
@@ -58,7 +58,7 @@ Associated $\sigma$ & 5 (m)& 0.035 (m/s)& $\frac{1}{360}$ (deg) & 0.05 (deg/s) &
 \begin{tabular}{|c||c|c|c|c|c|c|}
 \hline
 Variable & Position & Velocity & Attitude & Rates & $\Delta$ V & Sun Position \\ \hline \hline
-Associated bounds & 1000 (m)& 1 (m/s)& 0.29 (deg) & 1.15 (deg/s) & 5 (deg) & 3.03 (deg) \\ \hline 
+Associated bounds & 1000 (m)& 1 (m/s)& 0.29 (deg) & 1.15 (deg/s) & 5 (deg) & 3.03 (deg) \\ \hline
 \end{tabular}
 \end{table}
 
@@ -81,20 +81,20 @@ The test used for the simple navigation tests the statistics of the Gauss Markov
 The test results are explained below and summarized in Table~\ref{tab:results}.
 
 \begin{enumerate}
-	\item{Error Bound Enforcement: We only want to violate the error bound a 
-		statistically small number of times as most bounds are specified 3-sigma.  
+	\item{Error Bound Enforcement: We only want to violate the error bound a
+		statistically small number of times as most bounds are specified 3-sigma.
 		All signals remained inside their bounds more than 1-sigma (~70\%) of the time.  }
-	\item{Error Bound Usage: As stated above, we want to ensure that the random 
-		walk process is effectively utilizing the error bound that it has been 
-		given and not remaining mired near zero.  All error signals cross up above 
+	\item{Error Bound Usage: As stated above, we want to ensure that the random
+		walk process is effectively utilizing the error bound that it has been
+		given and not remaining mired near zero.  All error signals cross up above
 		80\% of their error bound at least once.}
 \end{enumerate}
 
-\subsection{Corner case test} 
+\subsection{Corner case test}
 
 Corner Case Usage: All errors/warnings were stimulated and the simulation still ran without incident.
 The expected error message is not automatically validated within pytest, but the test can not pass
-if the corner case test did break the simulation. In that way it is a partially automated test. 
+if the corner case test did break the simulation. In that way it is a partially automated test.
 
 \subsection{Summary of Test Results}
 
@@ -118,14 +118,14 @@ pass.
 
 
 \subsection{Test Coverage}
-The method coverage for all of the methods included in the simple\_nav 
+The method coverage for all of the methods included in the simple\_nav
 module are tabulated in Tables~\ref{tab:cov_met} and \ref{tab:cov_met2}.
 
 \begin{table}[htbp]
 	\caption{Simple Navigation Test Analysis Results}
 	\label{tab:cov_met}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | r | r | r} % Column formatting, 
+	\begin{tabular}{c | r | r | r} % Column formatting,
 		\hline
 		Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
 		\hline
@@ -140,7 +140,7 @@ module are tabulated in Tables~\ref{tab:cov_met} and \ref{tab:cov_met2}.
 	\caption{GaussMarkov Test Analysis Results}
 	\label{tab:cov_met2}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | r | r | r} % Column formatting, 
+	\begin{tabular}{c | r | r | r} % Column formatting,
 		\hline
 		Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
 		\hline
@@ -154,20 +154,18 @@ module are tabulated in Tables~\ref{tab:cov_met} and \ref{tab:cov_met2}.
 		\hline
 	\end{tabular}
 \end{table}
-For all of the code this test was designed for, the coverage percentage is 
-100\%.  The CPU usage of the model is higher than would be ideal although this 
-might just be a symptom of the level of simplicity present in the overall 
-simulation.  The majority of the computations are coming from two pieces of the 
-GaussMarkov code.  
+For all of the code this test was designed for, the coverage percentage is
+100\%.  The CPU usage of the model is higher than would be ideal although this
+might just be a symptom of the level of simplicity present in the overall
+simulation.  The majority of the computations are coming from two pieces of the
+GaussMarkov code.
 
-The first is the random number generator.  The model is using 
-one of the simplest random number generators in the standard template library.  
-That is still a relatively expensive operation as random numbers are costly and 
-we generate a new random number for each state.  The second factor is in the 
-state and noise propagation.  Those are being performed with a matrix 
-multiplication that is an $n^2$ operation.  We could save some computations 
-here in the future if we took away the cross-correlation capability from some 
-of the states which would definitely be easy and accurate.  It would just take 
+The first is the random number generator.  The model is using
+one of the simplest random number generators in the standard template library.
+That is still a relatively expensive operation as random numbers are costly and
+we generate a new random number for each state.  The second factor is in the
+state and noise propagation.  Those are being performed with a matrix
+multiplication that is an $n^2$ operation.  We could save some computations
+here in the future if we took away the cross-correlation capability from some
+of the states which would definitely be easy and accurate.  It would just take
 some more code.
-
-

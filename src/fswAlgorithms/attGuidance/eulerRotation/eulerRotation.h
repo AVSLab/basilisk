@@ -43,7 +43,7 @@ typedef struct {
     double priorCmdRates[3];                    //!< [rad/s] prior commanded 321 Euler angle rates
     uint64_t priorTime;                         //!< [ns] last time the guidance module is called
     double dt;                                  //!< [s] integration time-step
-    
+
     /* Declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;                   //!< The name of the output message containing the Reference
     AttRefMsg_C attRefInMsg;                    //!< The name of the guidance reference input message
@@ -55,11 +55,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID);
     void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
     void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
     void checkRasterCommands(eulerRotationConfig *configData);
     void computeTimeStep(eulerRotationConfig *configData, uint64_t callTime);
     void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3]);
@@ -68,7 +68,7 @@ extern "C" {
                                        double omega_R0N_N[3],
                                        double domega_R0N_N[3],
                                        AttRefMsgPayload *attRefOut);
-    
+
 #ifdef __cplusplus
 }
 #endif

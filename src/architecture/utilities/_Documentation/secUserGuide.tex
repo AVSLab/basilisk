@@ -1,5 +1,5 @@
 \section{User Guide}
-This section contains conceptual overviews of the code and clear examples for the prospective user. 
+This section contains conceptual overviews of the code and clear examples for the prospective user.
 
 \subsection{Code Diagram}
 The diagram in Fig. \ref{img:codeFlow} demonstrates the basic logic of the IMU module. There is additional code that deals with auxiliary functions.  An example of IMU use is given in test\_imu\_sensor.py in the imu\_sensor \_UnitTest folder. Application of each IMU function follows a simple, linear progression until realistic IMU outputs are achieved and sent out via the messaging system.
@@ -16,7 +16,7 @@ The variables in Table \ref{tabular:vars} are available for user input. Variable
 	\caption{Definition and Explanation of Variables Used.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ | m{3cm}| m{3cm} | m{3cm} | m{6cm} |} % Column formatting, 
+	\begin{tabular}{ | m{3cm}| m{3cm} | m{3cm} | m{6cm} |} % Column formatting,
 		\hline
 		\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
 		InputStateMsg&N/A		   & string & Default setting: "inertial\_state\_output". This is the message from which the IMU receives spacecraft inertial data.\\ \hline

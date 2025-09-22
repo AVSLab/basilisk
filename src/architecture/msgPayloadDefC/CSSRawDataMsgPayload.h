@@ -23,7 +23,7 @@
 
 //!@brief CSS raw data output message definition.
 typedef struct {
-    double OutputData;       //!< CSS measurement output 
+    double OutputData;       //!< CSS measurement output
 }CSSRawDataMsgPayload;
 
 

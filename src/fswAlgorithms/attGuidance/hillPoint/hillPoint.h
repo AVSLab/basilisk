@@ -35,7 +35,7 @@
 /*!@brief Data structure for module to compute the Hill-frame pointing navigation solution.
  */
 typedef struct {
-    
+
     /* declare module IO interfaces */
     AttRefMsg_C attRefOutMsg;               //!<        The name of the output message
     NavTransMsg_C transNavInMsg;            //!<        The name of the incoming attitude command
@@ -50,7 +50,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID);
     void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID);

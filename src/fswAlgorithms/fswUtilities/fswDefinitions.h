@@ -18,7 +18,7 @@
  */
 /*
 * ADCSDefinitions.h
-* 
+*
 * Provide generation defintions related to the ADCS Algorithms
 *
 * University of Colorado, Autonomous Vehicle Systems (AVS) Lab

@@ -92,7 +92,7 @@ def test_ErrorPySysModel():
 
     mod = ErroringPythonModule()
 
-    simulated_syserr_reset = io.StringIO("")    
+    simulated_syserr_reset = io.StringIO("")
 
     with contextlib.redirect_stderr(simulated_syserr_reset):
         try:
@@ -116,7 +116,7 @@ def test_ErrorPySysModel():
             pass
 
     error_update = simulated_syserr_update.getvalue()
-    
+
     if len(error_update) == 0:
         testMessage.append("Reset did not print its exception")
     elif not error_update.rstrip().endswith("ValueError: Error in UpdateState"):

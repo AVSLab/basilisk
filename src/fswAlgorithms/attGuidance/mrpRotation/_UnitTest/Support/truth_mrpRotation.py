@@ -125,6 +125,3 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
 
 
     return ansSigma, ansOmega_RN_N, ansdOmega_RN_N
-
-
-

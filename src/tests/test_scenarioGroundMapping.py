@@ -53,5 +53,3 @@ def test_scenarioGroundMapping(show_plots):
     assert testFailCount < 1, testMessages
 
     return
-
-

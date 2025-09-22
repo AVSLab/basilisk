@@ -30,16 +30,16 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    
+
     /* Inputs. */
     CmdTorqueBodyMsg_C vehControlInMsg;                 //!< input message containing the current control torque in the Body frame
     MTBCmdMsg_C dipoleRequestMtbInMsg;                  //!< input message containing the individual dipole requests for each torque bar on the vehicle
     TAMSensorBodyMsg_C tamSensorBodyInMsg;              //!< [Tesla] input message for magnetic field sensor data in the Body frame
     MTBArrayConfigMsg_C mtbArrayConfigParamsInMsg;      //!< input message containing configuration parameters for all the torque bars on the vehicle
-    
+
     /* Outputs. */
     CmdTorqueBodyMsg_C vehControlOutMsg;                //!< output message containing the current control torque in the Body frame
-    
+
     /* Other. */
     MTBArrayConfigMsgPayload mtbArrayConfigParams;      //!< configuration for MTB layout
     BSKLogger *bskLogger;                               //!< BSK Logging

@@ -30,14 +30,14 @@ m_{\text{sc}} \ddot{\bm r}_{B/N} = m_{\text{sc}} \ddot{\bm r}_{C/N} =  \bm F_{\t
 \label{eq:Rbddot3}
 \end{equation}
 
-The following equation describes the rotational EOM if only rotational is enabled. This is similar to what can be seen in Reference~\cite{schaub} 
+The following equation describes the rotational EOM if only rotational is enabled. This is similar to what can be seen in Reference~\cite{schaub}
 \begin{equation}
 \Big[[I_{\text{sc},B}]+\sum\limits_{i=1}^{N} [D_{\textnormal{contr},i}]\Big] \dot{\bm\omega}_{\cal B/N} = - [\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} + \bm{L}_B +\sum\limits_{i=1}^{N} \bm v_{\textnormal{rot,contr},i}
 	\label{eq:Final6}
 \end{equation}
 $[D_{\textnormal{contr},i}]$ and $\bm v_{\textnormal{rot},i}$ will be defined in the next set of equations. The $[\bm{\tilde{\omega}}_{\cal B/N}]$ matrix is the matrix representation of the cross product operation.
 
-Finally, the two following equations describe the translational and rotational EOMs when the both rotational and translational equations are enabled. 
+Finally, the two following equations describe the translational and rotational EOMs when the both rotational and translational equations are enabled.
 
 \begin{multline}
 \Big(m_{\text{sc}} [I_{3\times3}] +\sum_{i=1}^{N}[A_{\textnormal{contr},i}]\Big)\ddot{\bm r}_{B/N}+\Big(-m_{\text{sc}} [\tilde{\bm{c}}] +\sum_{i=1}^{N}[B_{\textnormal{contr},i}]\Big) \dot{\bm\omega}_{\cal B/N} \\
@@ -50,10 +50,10 @@ Finally, the two following equations describe the translational and rotational E
 \begin{multline}
 \Big[m_{\text{sc}}[\tilde{\bm{c}}] +\sum\limits_{i=1}^{N}[C_{\textnormal{contr},i}]\Big]\ddot{\bm r}_{B/N}+\Big[[I_{\text{sc},B}]+\sum\limits_{i=1}^{N}[D_{\textnormal{contr},i}]\Big]\dot{\bm\omega}_{\cal B/N}
 \\
-= -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} 
+= -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N}
 - [I'_{\text{sc},B}] \bm\omega_{\cal B/N} + \bm{L}_B +\sum\limits_{i=1}^{N}\bm v_{\textnormal{rot,contr},i}
 \label{eq:Final9}
-\end{multline}	
+\end{multline}
 Where $[A_{\textnormal{contr},i}]$, $[B_{\textnormal{contr},i}]$, $[C_{\textnormal{contr},i}]$, $[D_{\textnormal{contr},i}]$, $\bm v_{\textnormal{trans,contr},i}$, and $\bm v_{\textnormal{rot,contr},i}$, are the contributions from the stateEffectors using the back-substitution method seen in Reference~\cite{Allard2016rz} and also discussed more in detail in the hinged rigid body state effector document.
 
 The equations can now be organized into the following matrix representation:
@@ -106,7 +106,7 @@ T_{\text{orb}} = \frac{1}{2} m_{sc} (\dot{\bm r}_{B/N}\cdot \dot{\bm r}_{B/N} + 
 
 \subsubsection{Total Orbital Potential Energy}
 
-The total orbital potential energy depends on what type of gravity model you are using. For simplicity, the orbital potential energy due to point gravity is included here but would need to be changed for spherical harmonics, etc. 
+The total orbital potential energy depends on what type of gravity model you are using. For simplicity, the orbital potential energy due to point gravity is included here but would need to be changed for spherical harmonics, etc.
 
 \begin{equation}
 V_{\text{orb}} = \frac{\mu}{\vert \bm r_{C/N} \vert}
@@ -128,7 +128,7 @@ T_{\text{rot}} = \frac{1}{2} \bm \omega_{\cal{B/N}}^T [I_{\text{hub},B_c}] \bm \
 + \sum\limits_{i}^{N}\Big(\frac{1}{2} \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}^T [I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
 + \frac{1}{2} m_{\text{eff}} \dot{\bm r}_{E_{c,i}/C} \cdot \dot{\bm r}_{E_{c,i}/C}\Big)
 \end{multline}
-Where $N$ is the number of state effectors attached to the hub, ``eff" is the current state effector which a frame specified as $\cal{E}_{\textit{i}}$ and a center of mass location labeled as point $E_{c,i}$. Expanding these terms similar to orbital kinetic energy results in 
+Where $N$ is the number of state effectors attached to the hub, ``eff" is the current state effector which a frame specified as $\cal{E}_{\textit{i}}$ and a center of mass location labeled as point $E_{c,i}$. Expanding these terms similar to orbital kinetic energy results in
 \begin{multline}
 T_{\text{rot}} = \frac{1}{2} \bm \omega_{\cal{B/N}}^T [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + \frac{1}{2} m_{\text{hub}} (\dot{\bm r}_{B_c/B} - \dot{\bm c}) \cdot (\dot{\bm r}_{B_c/B} - \dot{\bm c}) \\
 + \sum\limits_{i}^{N}\Big[\frac{1}{2} \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}^T [I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}

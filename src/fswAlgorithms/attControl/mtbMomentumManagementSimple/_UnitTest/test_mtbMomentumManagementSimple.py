@@ -44,7 +44,7 @@ def test_mtbMomentumManagementSimple():     # update "module" in this function n
     r"""
     **Validation Test Description**
 
-    This script tests that the module returns expected non-zero and zero 
+    This script tests that the module returns expected non-zero and zero
     outputs.
 
     **Description of Variables Being Tested**
@@ -86,7 +86,7 @@ def mtbMomentumManagementSimpleTestFunction():
     rwConfigParams.JsList = [0.002, 0.002, 0.002, 0.002]
     rwConfigParams.numRW = 4
     rwParamsInMsg = messaging.RWArrayConfigMsg().write(rwConfigParams)
-    
+
     # rwSpeeds message
     rwSpeedsInMsgContainer = messaging.RWSpeedMsgPayload()
     rwSpeedsInMsgContainer.wheelSpeeds = [100., 200., 300., 400.]
@@ -99,7 +99,7 @@ def mtbMomentumManagementSimpleTestFunction():
     # connect the message interfaces
     module.rwParamsInMsg.subscribeTo(rwParamsInMsg)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
-    
+
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
@@ -111,7 +111,7 @@ def mtbMomentumManagementSimpleTestFunction():
     accuracy = 1E-8
 
     '''
-        TEST 1: 
+        TEST 1:
             Check that tauMtbRequestOutMsg is non-zero when the wheel speeds
             are non-zero.
     '''
@@ -125,7 +125,7 @@ def mtbMomentumManagementSimpleTestFunction():
     hWheels_W = wheelSpeeds * rwConfigParams.JsList[0]
     hWheels_B  = Gs @ hWheels_W
     tauExpected = - module.Kp * hWheels_B
-    
+
     testFailCount, testMessages = unitTestSupport.compareVector(tauExpected,
                                                             resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
                                                             accuracy,
@@ -133,44 +133,44 @@ def mtbMomentumManagementSimpleTestFunction():
                                                             testFailCount, testMessages, ExpectedResult=1)
 
     '''
-        TEST 2: 
+        TEST 2:
             Check that tauMtbRequestOutMsg is the zero vector when the wheels
             speeds are zero.
     '''
     rwSpeedsInMsgContainer.wheelSpeeds = [0., 0., 0., 0.]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
-    
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
-    
+
     testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0.],
                                                             resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
                                                             accuracy,
                                                             "tauMtbRequestOutMsg",
                                                             testFailCount, testMessages, ExpectedResult=1)
-    
+
     '''
-        TEST 3: 
+        TEST 3:
             Check that tauMtbRequestOutMsg is the zero vector when the wheels
             speeds are non-zero and the feedback gain is zero.
     '''
     rwSpeedsInMsgContainer.wheelSpeeds = [100., 200., 300., 400.]
     rwSpeedsInMsg = messaging.RWSpeedMsg().write(rwSpeedsInMsgContainer)
     module.rwSpeedsInMsg.subscribeTo(rwSpeedsInMsg)
-    
+
     module.Kp = 0.
-    
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
-    
+
     testFailCount, testMessages = unitTestSupport.compareVector([0., 0., 0.],
                                                             resultTauMtbRequestOutMsg.torqueRequestBody[0][0:3],
                                                             accuracy,
                                                             "tauMtbRequestOutMsg",
                                                             testFailCount, testMessages, ExpectedResult=1)
-    
-    
+
+
     # reset the module to test this functionality
     module.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
 

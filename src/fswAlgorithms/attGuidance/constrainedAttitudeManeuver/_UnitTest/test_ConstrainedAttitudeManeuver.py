@@ -58,7 +58,7 @@ class constraint:
     def __init__(self, axis, color):
         self.axis =  axis / np.linalg.norm(axis)
         self.color = color
-        
+
 
 class node:
     def __init__(self, sigma_BN, constraints, **kwargs):
@@ -132,7 +132,7 @@ def distanceCart(n1, n2):
     return min(d1, d2, d3, d4)
 
 
-def distanceMRP(n1, n2):    
+def distanceMRP(n1, n2):
     s1 = n1.sigma_BN
     s2 = n2.sigma_BN
     sigma1norm2 = n1.sigma_BN[0]**2 + n1.sigma_BN[1]**2 + n1.sigma_BN[2]**2
@@ -166,7 +166,7 @@ def neighboringNodes(i, j, k):
 
 
 def generateGrid(n_start, n_goal, N, constraints, data):
-    
+
     u = np.linspace(0, 1, N, endpoint = True)
     nodes = {}
 
@@ -196,7 +196,7 @@ def generateGrid(n_start, n_goal, N, constraints, data):
                             for m in mirrorFunction(i, j, k+1):
                                 if (m[0], m[1], m[2]) not in nodes:
                                     nodes[(m[0], m[1], m[2])] = node([np.sign(m[0])*u[i], np.sign(m[1])*u[j], np.sign(m[2])*(1-u[i]**2-u[j]**2)**0.5], constraints, **data)
-    
+
     # link nodes
     for key1 in nodes:
         i = key1[0]
@@ -247,7 +247,7 @@ def generateGrid(n_start, n_goal, N, constraints, data):
         n_start.neighbors[key] = n_s.neighbors[key]
     for key in n_g.neighbors:
         nodes[key].neighbors[key_g] = n_goal
-    nodes[key_s] = n_start 
+    nodes[key_s] = n_start
     nodes[key_g] = n_goal
 
     return nodes
@@ -429,7 +429,7 @@ def effortBasedAStar(nodes, n_start, n_goal, omegaS, omegaG, avgOmega, I):
 # of the multiple test runs for this test.
 @pytest.mark.parametrize("N", [5,6])
 @pytest.mark.parametrize("keepOutFov", [20])
-@pytest.mark.parametrize("keepInFov", [70]) 
+@pytest.mark.parametrize("keepInFov", [70])
 @pytest.mark.parametrize("costFcnType", [0,1])
 @pytest.mark.parametrize("accuracy", [1e-12])
 def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, costFcnType, accuracy):
@@ -452,14 +452,14 @@ def test_constrainedAttitudeManeuver(show_plots, N, keepOutFov, keepInFov, costF
     **Description of Variables Being Tested**
 
     The tests to show the correctness of the module are the following:
-    
+
     - First of all, an equivalent grid is built in python. The first test consists in comparing the nodes generated
       in Python versus the nodes generated in C++. The check consists in verifying whether the same key indices
-      :math:`(i,j,k)` generate the same node coordinates :math:`\sigma_{BN}`. Secondly, it is checked whether 
+      :math:`(i,j,k)` generate the same node coordinates :math:`\sigma_{BN}`. Secondly, it is checked whether
       the same node is constraint-compliant or -incompliant both in Python and in C++.
 
     - After running the graph-search algorithm, a check is conduced to ensure the equivalence of the computed paths.
-      Note that this unit test does not run the effort-based version of A*, due to the slow nature of the Python 
+      Note that this unit test does not run the effort-based version of A*, due to the slow nature of the Python
       implementation. If the user wishes, it is possible to uncomment line 429 to also test the effort-based
       graph-search algorithm.
 
@@ -503,7 +503,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
     constraints = {'keepOut' : [], 'keepIn' : []}
     constraints['keepOut'].append( constraint(PlanetInertialPosition-SCInertialPosition, 'r') )
     constraints['keepIn'].append( constraint(PlanetInertialPosition-SCInertialPosition, 'g') )
-    data =  {'keepOut_b' : keepOutBoresight_B, 'keepOut_fov' : [keepOutFov], 
+    data =  {'keepOut_b' : keepOutBoresight_B, 'keepOut_fov' : [keepOutFov],
              'keepIn_b' : keepInBoresight_B, 'keepIn_fov' : [keepInFov, keepInFov]}
     n_start = node(SCInitialAttitude, constraints, **data)
     n_goal  = node(SCTargetAttitude, constraints, **data)
@@ -524,7 +524,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-    
+
     testModule = constrainedAttitudeManeuver.ConstrainedAttitudeManeuver(N)
     testModule.sigma_BN_goal = SCTargetAttitude
     testModule.omega_BN_B_goal = SCTargetAngRate
@@ -536,7 +536,7 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
     testModule.appendKeepInDirection(keepInBoresight_B[1], keepInFov)
     testModule.ModelTag = "testModule"
     unitTestSim.AddModelToTask(unitTaskName, testModule)
-	
+
     # connect messages
     SCStatesMsgData = messaging.SCStatesMsgPayload()
     SCStatesMsgData.r_BN_N = SCInertialPosition
@@ -676,11 +676,11 @@ def CAMTestFunction(N, keepOutFov, keepInFov, costFcnType, accuracy):
             testMessages.append("FAILED: " + testModule.ModelTag + " Error in C attitude reference message at t = {} sec \n".format(t))
         if not unitTestSupport.isVectorEqual(omegaDot_RN_N, CAMLogC.domega_RN_N[n], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + testModule.ModelTag + " Error in C attitude reference message at t = {} sec \n".format(t)) 
+            testMessages.append("FAILED: " + testModule.ModelTag + " Error in C attitude reference message at t = {} sec \n".format(t))
 
 
     return [testFailCount, ''.join(testMessages)]
-	   
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a

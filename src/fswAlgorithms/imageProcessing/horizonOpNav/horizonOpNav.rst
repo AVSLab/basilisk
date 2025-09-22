@@ -34,7 +34,3 @@ provides information on what this message is used for.
     * - limbInMsg
       - :ref:`OpNavLimbMsgPayload`
       - limb input message
-
-
-
-

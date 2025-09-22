@@ -101,4 +101,3 @@ Assume the module has an array called ``moreInMsgs`` which contain input message
 .. code:: cpp
 
     inMsgBuffer = SomeMsg_C_read(&configData->moreInMsgs[3]);
-

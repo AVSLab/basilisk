@@ -55,8 +55,8 @@ def test_RWUpdate(show_plots, accuracy):
 
     The objective of this script is to test the functionality of changing the reaction wheel (RW) characteristics while
     the simulation is running. It starts by testing the initial setup, and then does four additional tests: the first
-    two change the maximum allowed torque, the third one changes the maximum power limit, and the final one changes the 
-    current wheel speeds and maximum allowed wheel speeds. All these tests rely on the fact that, when a maximum or 
+    two change the maximum allowed torque, the third one changes the maximum power limit, and the final one changes the
+    current wheel speeds and maximum allowed wheel speeds. All these tests rely on the fact that, when a maximum or
     minimum value is surpassed, the applied torque is capped accordingly.
 
     As this test script is not parameterized, only one version of this script will run.

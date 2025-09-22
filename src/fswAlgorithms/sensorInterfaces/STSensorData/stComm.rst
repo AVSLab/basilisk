@@ -22,4 +22,3 @@ provides information on what this message is used for.
     * - stAttOutMsg
       - :ref:`STAttMsgPayload`
       - star tracker attitude output message
-

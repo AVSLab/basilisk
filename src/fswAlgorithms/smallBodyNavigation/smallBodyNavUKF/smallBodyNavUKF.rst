@@ -6,9 +6,9 @@ This module is only meant to test the possibility of estimating pairs of positio
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. _ModuleIO_smallBodyNavUKF:
@@ -17,7 +17,7 @@ provides information on what this message is used for.
 
     Figure 1: ``smallBodyNavUKF()`` Module I/O Illustration
 
-Note that this C++ FSW module provides both C- and C++-wrapped output messages.  The regular C++ wrapped output messages end with the usual ``...OutMsg``.  The C wrapped output messages have the same payload type, but end with ``...OutMsgC``.  
+Note that this C++ FSW module provides both C- and C++-wrapped output messages.  The regular C++ wrapped output messages end with the usual ``...OutMsg``.  The C wrapped output messages have the same payload type, but end with ``...OutMsgC``.
 
 .. list-table:: Module I/O Messages
     :widths: 25 25 50
@@ -44,9 +44,9 @@ Detailed Module Description
 ---------------------------
 General Function
 ^^^^^^^^^^^^^^^^
-The ``smallBodyNavUKF()`` module provides a complete translational state estimate for a spacecraft in proximity of a small body. 
-The relative spacecraft position and velocity, and the non-Keplerian acceleration (e.g. inhomogeneous gravity field) are estimated 
-by the filter. The filter assumes full observability of the relative position and that the small body state is perfectly known. 
+The ``smallBodyNavUKF()`` module provides a complete translational state estimate for a spacecraft in proximity of a small body.
+The relative spacecraft position and velocity, and the non-Keplerian acceleration (e.g. inhomogeneous gravity field) are estimated
+by the filter. The filter assumes full observability of the relative position and that the small body state is perfectly known.
 Future work may consider augmenting the estimates and using more realistic measurements. The full state vector may be found below:
 
 .. math::
@@ -81,13 +81,13 @@ The module start by initializing the weights for the unscented transform
     :label: eq:UT_weights
 
     w^{[0]}_{m}=\kappa / (\kappa + N),\>\>\>\>\>\> w^{[0]}_{c}=w^{[0]}_{m}+1-\alpha^2+\beta,\>\>\>\>\>\> w^{[i]}_{m}=w^{[i]}_{c}=1/(2N+\kappa) \>\> i\neq 0
- 
+
 
 Algorithm
 ^^^^^^^^^^
 This module employs an unscented Kalman filter (UKF) `Wan and Van Der Merwe <https://doi.org/10.1109/ASSPCC.2000.882463>`__ to estimate the
-relevant states. The UKF relies on the unscented transform (UT) to compute the non-linear transformation of a Gaussian distribution. Let 
-consider a random variable :math:`\mathbf{x}` of dimension :math:`N` modelled as a Gaussian distribution with mean :math:`\hat{\mathbf{x}}` 
+relevant states. The UKF relies on the unscented transform (UT) to compute the non-linear transformation of a Gaussian distribution. Let
+consider a random variable :math:`\mathbf{x}` of dimension :math:`N` modelled as a Gaussian distribution with mean :math:`\hat{\mathbf{x}}`
 and covariance :math:`P`. The UT computes numerically the resulting mean and covariance of :math:`\mathbf{y}=\mathbf{f}(\mathbf{x})` by
 creating :math:`2N+1` samples named sigma points as
 
@@ -96,7 +96,7 @@ creating :math:`2N+1` samples named sigma points as
 
     \pmb{\chi}^{[i]} = \hat{\mathbf{x}} \pm \left(\sqrt{(N+\kappa) P}\right)_{|i|},\>\> i = -N...N
 
-where :math:`|i|` denotes the columns of the matrix. Then, transform each sigma point as :math:`\pmb{\xi}^{[i]}=\mathbf{f}(\pmb{\chi}^{[i]})`. Finally, compute the mean and covariance of 
+where :math:`|i|` denotes the columns of the matrix. Then, transform each sigma point as :math:`\pmb{\xi}^{[i]}=\mathbf{f}(\pmb{\chi}^{[i]})`. Finally, compute the mean and covariance of
 :math:`\mathbf{y}=\mathbf{f}(\mathbf{x})` as
 
 .. math::
@@ -109,7 +109,7 @@ where :math:`|i|` denotes the columns of the matrix. Then, transform each sigma 
 
     R = \sum^{N}_{i=-N}w^{[i]}_{c}(\pmb{\xi}^{[i]} - \hat{\mathbf{y}})(\pmb{\xi}^{[i]} - \hat{\mathbf{y}})^T
 
-In the small body scenario under consideration, there are two transformation functions. The process propagation, assumed as simple 
+In the small body scenario under consideration, there are two transformation functions. The process propagation, assumed as simple
 forward Euler integration, as
 
 .. math::
@@ -139,7 +139,7 @@ Note that :math:`{}^A\Omega_{A/N}` is the cross-product matrix associated to the
 
 Under the previous considerations, the UKF estimation is as follows:
 
-1) Compute the a-priori state estimation :math:`\hat{\mathbf{x}}^{-}_{k+1}` and :math:`P^{-}_{k+1}` 
+1) Compute the a-priori state estimation :math:`\hat{\mathbf{x}}^{-}_{k+1}` and :math:`P^{-}_{k+1}`
 through the UT to the propagation function. Add the process noise uncertainty :math:`P_{proc}`
 
 .. math::
@@ -178,7 +178,7 @@ the UT to the state to measurements transformation function. Add the measurement
     :label: eq:kalman_update_covar
 
     P_{k+1} = P^{-}_{k+1} - KR^{-}_{k+1}K^T
-	
+
 
 These steps are based on `Wan and Van Der Merwe <https://doi.org/10.1109/ASSPCC.2000.882463>`__ (see algorithm 3.1). The weights selection
 can be consulted there but it is the one described in the initialization step. The filter hyper-parameters are :math:`\{\alpha, \beta, \kappa\}`.
@@ -213,4 +213,4 @@ The user could opt to set the following module variables (initialized by default
 - ``beta``, filter hyper-parameter (0 by default)
 - ``kappa``, filter hyper-parameter (:math:`10^{-3}` by default)
 
-The user must connect to each input message described in Table 1. 
+The user must connect to each input message described in Table 1.

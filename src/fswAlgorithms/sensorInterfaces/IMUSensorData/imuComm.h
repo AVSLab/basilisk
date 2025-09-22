@@ -40,12 +40,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID);
     void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleId);
     void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime,
         int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

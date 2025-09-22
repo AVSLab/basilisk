@@ -115,14 +115,14 @@ def sph2rv(xxsph):
     NOTE: this function assumes inertial and planet-fixed frames are aligned
     at this time
     """
-    
+
     r = xxsph[0]
     lon = xxsph[1]
     lat = xxsph[2]
     u = xxsph[3]
     gam = xxsph[4]
     hda = xxsph[5]
-    
+
     NI = np.eye(3)
     IE = np.array([[np.cos(lat) * np.cos(lon), -np.sin(lon), -np.sin(lat) * np.cos(lon)],
                    [np.cos(lat) * np.sin(lon), np.cos(lon), -np.sin(lat) * np.sin(lon)],
@@ -130,13 +130,13 @@ def sph2rv(xxsph):
     ES = np.array([[np.cos(gam), 0, np.sin(gam)],
                    [-np.sin(gam) * np.sin(hda), np.cos(hda), np.cos(gam) * np.sin(hda)],
                    [-np.sin(gam) * np.cos(hda), -np.sin(hda), np.cos(gam) * np.cos(hda)]])
-    
+
     e1_E = np.array([1,0,0])
     rvec_N = (r * NI @ IE) @ e1_E
-    
+
     s3_S = np.array([0,0,1])
     uvec_N = u * ( NI @ IE @ ES) @ s3_S
-    
+
     return rvec_N, uvec_N
 
 
@@ -171,7 +171,7 @@ def run(show_plots, planetCase):
     tabAtmo = tabularAtmosphere.TabularAtmosphere()   # update with current values
     tabAtmo.ModelTag = "tabularAtmosphere"            # update python name of test module
     atmoTaskName = "atmosphere"
-    
+
     # define constants & load data
     if planetCase == 'Earth':
         r_eq = 6378136.6
@@ -181,10 +181,10 @@ def run(show_plots, planetCase):
         r_eq = 3397.2 * 1000
         dataFileName = bskPath + '/supportData/AtmosphereData/MarsGRAMNominal.txt'
         altList, rhoList, tempList = readAtmTable(dataFileName, 'MarsGRAM')
-        
+
     # assign constants & ref. data to module
     tabAtmo.planetRadius = r_eq
-    tabAtmo.altList = tabularAtmosphere.DoubleVector(altList)    
+    tabAtmo.altList = tabularAtmosphere.DoubleVector(altList)
     tabAtmo.rhoList = tabularAtmosphere.DoubleVector(rhoList)
     tabAtmo.tempList = tabularAtmosphere.DoubleVector(tempList)
 
@@ -217,7 +217,7 @@ def run(show_plots, planetCase):
     scObject.ModelTag = "spacecraftBody"
     scObject.hub.mHub = m_sc
     tabAtmo.addSpacecraftToModel(scObject.scStateOutMsg)
-    
+
     simpleNavObj = simpleNav.SimpleNav()
     scSim.AddModelToTask(simTaskName, simpleNavObj)
     simpleNavObj.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -253,7 +253,7 @@ def run(show_plots, planetCase):
     hda = np.pi/2
     xxsph = [r,lon,lat,u,gam,hda]
     rN, vN = sph2rv(xxsph)
-    
+
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
 
@@ -378,5 +378,3 @@ def run(show_plots, planetCase):
     # close the plots being saved off to avoid over-writing old and new figures
 if __name__ == '__main__':
     run(True, 'Mars')      # planet arrival case, can be Earth or Mars
-    
-    

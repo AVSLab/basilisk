@@ -32,4 +32,3 @@ provides information on what this message is used for.
     * - cameraConfigInMsg
       - :ref:`CameraConfigMsgPayload`
       - name of the camera config message
-

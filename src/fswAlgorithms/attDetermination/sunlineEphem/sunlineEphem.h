@@ -37,7 +37,7 @@ typedef struct {
     EphemerisMsg_C sunPositionInMsg;           //!< The name of the sun ephemeris input message
     NavTransMsg_C scPositionInMsg;             //!< The name of the spacecraft ephemeris input message
     NavAttMsg_C scAttitudeInMsg;               //!< The name of the spacecraft attitude input message
-    
+
     BSKLogger *bskLogger; //!< BSK Logging
 
 }sunlineEphemConfig;
@@ -45,11 +45,11 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID);
     void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
     void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

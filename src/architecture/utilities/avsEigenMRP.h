@@ -33,7 +33,7 @@ namespace Eigen {
     template<typename Scalar, int Options = AutoAlign> class MRP;
 
 
-    
+
     /***************************************************************************
      * Definition of MRPBase<Derived>
      * The implementation is at the end of the file
@@ -609,7 +609,7 @@ namespace Eigen {
         res.coeffRef(2,1) = s2s3 + Scalar(4)*this->x()*ms2;
         res.coeffRef(2,2) = Scalar(4)*(-s1Sq - s2Sq + s3Sq)+ms2Sq;
         res = res / ps2 / ps2;
-        
+
         return res;
     }
 
@@ -818,7 +818,7 @@ namespace Eigen {
                 sig.z() = q.z()/num;
             }
         };
-        
+
         // set from a vector of coefficients assumed to be a MRP
         template<typename Other>
         /**
@@ -833,9 +833,9 @@ namespace Eigen {
                 q.coeffs() = vec;
             }
         };
-        
+
     } // end namespace internal
-    
+
 } // end namespace Eigen
 
 #endif // EIGEN_MRP_H

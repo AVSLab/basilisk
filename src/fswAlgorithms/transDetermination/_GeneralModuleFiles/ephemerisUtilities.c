@@ -28,11 +28,11 @@ double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
     double valueMult;
     double estValue;
     uint32_t i;
-    
+
     chebyPrev = 1.0;
     chebyNow = evalValue;
     valueMult = 2.0*evalValue;
-    
+
     estValue = chebyCoeff[0]*chebyPrev;
     if(nCoeff <= 1)
     {
@@ -46,6 +46,6 @@ double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
         chebyPrev = chebyLocalPrev;
         estValue += chebyCoeff[i]*chebyNow;
     }
-    
+
     return(estValue);
 }

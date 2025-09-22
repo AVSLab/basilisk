@@ -41,7 +41,7 @@ typedef struct {
     double velChebyCoeff[3*MAX_CHEB_COEFF];   /*!< [-] Set of coefficients for the velocity estimate*/
 }ChebyEphemRecord;
 
-/*! @brief Top level structure for the Chebyshev position ephemeris 
+/*! @brief Top level structure for the Chebyshev position ephemeris
            fit system. e
 */
 typedef struct {
@@ -59,13 +59,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID);
     void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                              int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

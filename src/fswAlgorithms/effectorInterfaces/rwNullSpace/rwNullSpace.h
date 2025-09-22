@@ -47,13 +47,13 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID);
     void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
         int64_t moduleID);
     void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                             int64_t moduleID);
-    
+
 #ifdef __cplusplus
 }
 #endif

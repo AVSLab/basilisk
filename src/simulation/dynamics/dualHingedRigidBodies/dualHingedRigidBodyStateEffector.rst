@@ -88,5 +88,3 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, panel1)
-
-

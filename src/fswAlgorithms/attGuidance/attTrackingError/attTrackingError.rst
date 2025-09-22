@@ -27,5 +27,3 @@ provides information on what this message is used for.
     * - attRefInMsg
       - :ref:`AttRefMsgPayload`
       - attitude reference input message
-
-

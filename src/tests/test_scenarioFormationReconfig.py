@@ -150,7 +150,7 @@ def test_scenarioFormationReconfig(show_plots, useRefAttitude):
     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
         trueVel2, dataVel2, accuracy, "deputy v2_BN_N Vector",
         testFailCount, testMessages)
-    
+
     testFailCount, testMessages = unitTestSupport.compareArray(
         trueAttErr, dataAttErr, accuracy, "deputy attitude Error",
         testFailCount, testMessages)

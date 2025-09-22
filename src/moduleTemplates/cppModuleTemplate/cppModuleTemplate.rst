@@ -3,7 +3,7 @@ Executive Summary
 
 This is a very basic dummy C++ Basilisk module that can be used as a template to create other C++ modules.
 It mimics the functionality of :ref:`cModuleTemplate`.  See that module for a more complete discussion
-of how to write the RST module documentation file.  
+of how to write the RST module documentation file.
 
 
 Message Connection Descriptions

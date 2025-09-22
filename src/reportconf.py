@@ -18,7 +18,7 @@
 
 """
 This reportconf.py file is executed by src/conftest.py if and only if
-the user has pytest-html installed. It is used to customize the contents of 
+the user has pytest-html installed. It is used to customize the contents of
 the pytest-html report and control where it is written.
 """
 
@@ -106,5 +106,3 @@ def pytest_html_results_table_header(cells):
 def pytest_html_results_table_row(report, cells):
     # remove the "links column from the report
     cells.pop()
-
-

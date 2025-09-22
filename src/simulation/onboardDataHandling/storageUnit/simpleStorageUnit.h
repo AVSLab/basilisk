@@ -39,5 +39,3 @@ private:
 };
 
 #endif //BASILISK_SIMPLESTORAGEUNIT_H
-
-

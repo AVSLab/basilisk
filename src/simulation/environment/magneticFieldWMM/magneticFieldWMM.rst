@@ -7,4 +7,3 @@ For more information on this module see this For more information on this module
 
 The module is a sub-class of the :ref:`magneticFieldBase` base class.  See that class for the nominal messages
 used and general instructions.
-
