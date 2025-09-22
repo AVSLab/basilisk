@@ -25,28 +25,28 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! module configuration message definition */
-typedef struct {
-    double dcm_BS[9];                           //!< [T] Row - Sensor to Body DCM
-    TAMSensorMsg_C tamInMsg;                    //!< [-] TAM interface input message
-    TAMSensorBodyMsg_C tamOutMsg;               //!< [-] TAM interface output message
+typedef struct
+{
+    double dcm_BS[9];             //!< [T] Row - Sensor to Body DCM
+    TAMSensorMsg_C tamInMsg;      //!< [-] TAM interface input message
+    TAMSensorBodyMsg_C tamOutMsg; //!< [-] TAM interface output message
 
-    TAMSensorBodyMsgPayload tamLocalOutput;     //!< [-] buffer of TAM output data structure
-    BSKLogger *bskLogger;                       //!< BSK Logging
-}tamConfigData;
+    TAMSensorBodyMsgPayload tamLocalOutput; //!< [-] buffer of TAM output data structure
+    BSKLogger* bskLogger;                   //!< BSK Logging
+} tamConfigData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID);
-    void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_tamProcessTelem(tamConfigData* configData, int64_t moduleID);
+    void Update_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID);
     void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

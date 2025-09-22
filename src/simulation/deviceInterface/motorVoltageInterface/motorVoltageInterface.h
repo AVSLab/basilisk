@@ -32,8 +32,9 @@
 #include <Eigen/Dense>
 
 /*! @brief RW voltage interface class */
-class MotorVoltageInterface: public SysModel {
-public:
+class MotorVoltageInterface : public SysModel
+{
+  public:
     MotorVoltageInterface();
     ~MotorVoltageInterface();
 
@@ -42,23 +43,26 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
-    void setGains(Eigen::VectorXd gains); //!< --     Takes in an array of gains to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
-    void setScaleFactors(Eigen::VectorXd scaleFactors); //!< --     Takes in an array of scale factors to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
-    void setBiases(Eigen::VectorXd biases); //!< --     Takes in an array of biases to set for rws and sets them, leaving blanks up to MAX_EFF_COUNT
+    void setGains(Eigen::VectorXd gains); //!< --     Takes in an array of gains to set for rws and sets them, leaving
+                                          //!< blanks up to MAX_EFF_COUNT
+    void setScaleFactors(Eigen::VectorXd scaleFactors); //!< --     Takes in an array of scale factors to set for rws
+                                                        //!< and sets them, leaving blanks up to MAX_EFF_COUNT
+    void setBiases(Eigen::VectorXd biases); //!< --     Takes in an array of biases to set for rws and sets them,
+                                            //!< leaving blanks up to MAX_EFF_COUNT
 
-public:
-    ReadFunctor<ArrayMotorVoltageMsgPayload> motorVoltageInMsg;     //!< --     Message that contains motor voltage input states
-    Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg;//!< --     Output Message for motor torques
-    Eigen::VectorXd voltage2TorqueGain;          //!< Nm/V   gain to convert voltage to motor torque
-    Eigen::VectorXd scaleFactor;                 //!<        scale the output - like a constant gain error
-    Eigen::VectorXd bias;                        //!< Nm     A bias to add to the torque output
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+  public:
+    ReadFunctor<ArrayMotorVoltageMsgPayload>
+      motorVoltageInMsg;                                   //!< --     Message that contains motor voltage input states
+    Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg; //!< --     Output Message for motor torques
+    Eigen::VectorXd voltage2TorqueGain;                    //!< Nm/V   gain to convert voltage to motor torque
+    Eigen::VectorXd scaleFactor;                           //!<        scale the output - like a constant gain error
+    Eigen::VectorXd bias;                                  //!< Nm     A bias to add to the torque output
+    BSKLogger bskLogger;                                   //!< -- BSK Logging
 
-private:
-    ArrayMotorTorqueMsgPayload outputTorqueBuffer;//!< [Nm] copy of module output buffer
-    uint64_t prevTime;                  //!< -- Previous simulation time observed
-    ArrayMotorVoltageMsgPayload inputVoltageBuffer;//!< [V] One-time allocation for time savings
+  private:
+    ArrayMotorTorqueMsgPayload outputTorqueBuffer;  //!< [Nm] copy of module output buffer
+    uint64_t prevTime;                              //!< -- Previous simulation time observed
+    ArrayMotorVoltageMsgPayload inputVoltageBuffer; //!< [V] One-time allocation for time savings
 };
-
 
 #endif

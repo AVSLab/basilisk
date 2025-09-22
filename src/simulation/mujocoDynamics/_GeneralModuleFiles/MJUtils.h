@@ -32,13 +32,13 @@
 
 #include <Eigen/Dense>
 
-namespace MJBasilisk::detail
-{
+namespace MJBasilisk::detail {
 
 /// @cond
 /** Can be used in `std::unique_ptr<T, mjTDelete>` to correctly clear MuJoCo objects. */
 template<typename Type, void(Deleter)(Type*)>
-struct mjDeleter {
+struct mjDeleter
+{
     /** Calls the template argument Deleter on the given pointer */
     void operator()(Type* ptr) const { Deleter(ptr); }
 };
@@ -53,8 +53,9 @@ using mjSpecDeleter = mjDeleter<mjSpec, mj_deleteSpec>;
 using mjVFSDeleter = mjDeleter<mjVFS, mj_deleteVFS>;
 
 /** Loggs an error message and then throws an error. */
-template <typename T = std::invalid_argument>
-[[noreturn]] inline void logAndThrow (const std::string& error, BSKLogger* logger = nullptr)
+template<typename T = std::invalid_argument>
+[[noreturn]] inline void
+logAndThrow(const std::string& error, BSKLogger* logger = nullptr)
 {
     if (logger) {
         logger->bskLog(BSK_ERROR, error.c_str());
@@ -67,14 +68,16 @@ template <typename T = std::invalid_argument>
 /** Calls ``logAndThrow<std::runtime_error>`` with the given input
  *
  * Meant to be used as an error callback for MuJoCo's ``mju_user_error``.
-*/
-void logMujocoError(const char* err);
+ */
+void
+logMujocoError(const char* err);
 
 /** Calls ``BSKLogger::bskLog`` with the given input
  *
  * Meant to be used as an error callback for MuJoCo's ``mju_user_warning``.
-*/
-void logMujocoWarning(const char* err);
+ */
+void
+logMujocoWarning(const char* err);
 
 } // namespace MJBasilisk::detail
 

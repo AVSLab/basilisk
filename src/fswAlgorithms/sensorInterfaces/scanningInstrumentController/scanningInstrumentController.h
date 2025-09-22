@@ -29,27 +29,33 @@
 
 /*! @brief Module to perform continuous instrument control
  */
-typedef struct {
-    double attErrTolerance; //!< Normalized MRP attitude error tolerance
+typedef struct
+{
+    double attErrTolerance;        //!< Normalized MRP attitude error tolerance
     unsigned int useRateTolerance; //!< Flag to enable rate error tolerance
-    double rateErrTolerance; //!< Rate error tolerance in rad/s
-    unsigned int controllerStatus;  //!< dictates whether or not the controller should be running
+    double rateErrTolerance;       //!< Rate error tolerance in rad/s
+    unsigned int controllerStatus; //!< dictates whether or not the controller should be running
 
     /* declare module IO interfaces */
-    AccessMsg_C accessInMsg;  //!< Ground location access
-    AttGuidMsg_C attGuidInMsg;  //!< Attitude guidance input message
-    DeviceStatusMsg_C deviceStatusInMsg;  //!< Device status input message
-    DeviceCmdMsg_C deviceCmdOutMsg;  //!< Device status output message
+    AccessMsg_C accessInMsg;             //!< Ground location access
+    AttGuidMsg_C attGuidInMsg;           //!< Attitude guidance input message
+    DeviceStatusMsg_C deviceStatusInMsg; //!< Device status input message
+    DeviceCmdMsg_C deviceCmdOutMsg;      //!< Device status output message
 
-    BSKLogger *bskLogger;  //!< BSK Logging
-}scanningInstrumentControllerConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} scanningInstrumentControllerConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    void SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig *configData, int64_t moduleID);
-    void Update_scanningInstrumentController(scanningInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_scanningInstrumentController(scanningInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig* configData, int64_t moduleID);
+    void Update_scanningInstrumentController(scanningInstrumentControllerConfig* configData,
+                                             uint64_t callTime,
+                                             int64_t moduleID);
+    void Reset_scanningInstrumentController(scanningInstrumentControllerConfig* configData,
+                                            uint64_t callTime,
+                                            int64_t moduleID);
 
 #ifdef __cplusplus
 }

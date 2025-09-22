@@ -31,45 +31,42 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
-
-
 /*! @brief module configuration message */
-typedef struct {
-    RWSpeedMsg_C rwSpeedInMsg; /*!< (-) The name of the input RW speeds message*/
-    RWConstellationMsg_C rwConfigInMsg; /*!< [-] The name of the RWA configuration message*/
-    THRArrayConfigMsg_C thrConfigInMsg; /*!< [-] The name of the thruster configuration message*/
-    VehicleConfigMsg_C vecConfigInMsg; /*!< [-] The name of the input spacecraft mass properties message*/
-	THRArrayOnTimeCmdMsg_C thrCmdOutMsg;  /*!< (-) The name of the output thrust command block*/
+typedef struct
+{
+    RWSpeedMsg_C rwSpeedInMsg;           /*!< (-) The name of the input RW speeds message*/
+    RWConstellationMsg_C rwConfigInMsg;  /*!< [-] The name of the RWA configuration message*/
+    THRArrayConfigMsg_C thrConfigInMsg;  /*!< [-] The name of the thruster configuration message*/
+    VehicleConfigMsg_C vecConfigInMsg;   /*!< [-] The name of the input spacecraft mass properties message*/
+    THRArrayOnTimeCmdMsg_C thrCmdOutMsg; /*!< (-) The name of the output thrust command block*/
 
-	double rwAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the reaction wheel spin axes*/
-	double thrAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thrusters*/
-	double thrTorqueMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thruster torques*/
-	double maxFiring;          /*!< (s) Maximum time to fire a jet for*/
-	double thrFiringPeriod;    /*!< (s) The amount of time to rest between thruster firings*/
-	int    numRWAs;            /*!< (-) Number of reaction wheels being desaturated*/
-	int    numThrusters;       /*!< (-) Number of thrusters available in the align map*/
-	double accumulatedImp[3];  /*!< (s) The accumulated firing in the body frame*/
-	double currDMDir[3];       /*!< (-) The current direction of momentum reduction*/
-	double totalAccumFiring;   /*!< (s) The total thruster duration we've commanded*/
-	double DMThresh;           /*!< (r/s) The point at which to stop decrementing momentum*/
-	uint64_t previousFiring;   /*!< (ns) Time that the last firing command was given*/
+    double rwAlignMap[3 * MAX_EFF_CNT];   /*!< (-) Alignment of the reaction wheel spin axes*/
+    double thrAlignMap[3 * MAX_EFF_CNT];  /*!< (-) Alignment of the vehicle thrusters*/
+    double thrTorqueMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thruster torques*/
+    double maxFiring;                     /*!< (s) Maximum time to fire a jet for*/
+    double thrFiringPeriod;               /*!< (s) The amount of time to rest between thruster firings*/
+    int numRWAs;                          /*!< (-) Number of reaction wheels being desaturated*/
+    int numThrusters;                     /*!< (-) Number of thrusters available in the align map*/
+    double accumulatedImp[3];             /*!< (s) The accumulated firing in the body frame*/
+    double currDMDir[3];                  /*!< (-) The current direction of momentum reduction*/
+    double totalAccumFiring;              /*!< (s) The total thruster duration we've commanded*/
+    double DMThresh;                      /*!< (r/s) The point at which to stop decrementing momentum*/
+    uint64_t previousFiring;              /*!< (ns) Time that the last firing command was given*/
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}thrustRWDesatConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} thrustRWDesatConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID);
-    void Reset_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Update_thrustRWDesat(thrustRWDesatConfig *configData, uint64_t callTime,
-        int64_t moduleID);
+    void SelfInit_thrustRWDesat(thrustRWDesatConfig* configData, int64_t moduleID);
+    void Reset_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Update_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

@@ -20,16 +20,17 @@
 #include "magneticFieldCenteredDipole.h"
 #include "architecture/utilities/linearAlgebra.h"
 
-/*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
+/*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by
+   default.
 
  */
 MagneticFieldCenteredDipole::MagneticFieldCenteredDipole()
 {
     //! - Set the default magnetic properties to yield a zero response
-    this->g10 = 0.0;            // [T]
-    this->g11 = 0.0;            // [T]
-    this->h11 = 0.0;            // [T]
-    this->planetRadius = 0.0;   // [m]
+    this->g10 = 0.0;          // [T]
+    this->g11 = 0.0;          // [T]
+    this->h11 = 0.0;          // [T]
+    this->planetRadius = 0.0; // [m]
 
     return;
 }
@@ -47,7 +48,8 @@ MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
  @param currentTime current time (s)
 
  */
-void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
+void
+MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, double currentTime)
 {
     Eigen::Vector3d magField_P;         // [T] magnetic field in Planet fixed frame
     Eigen::Vector3d rHat_P;             // [] normalized position vector in E frame components
@@ -58,7 +60,8 @@ void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldMsgPay
 
     //! - compute magnetic field vector in E-frame components (see p. 405 in doi:10.1007/978-1-4939-0802-8)
     dipoleCoefficients << this->g11, this->h11, this->g10;
-    magField_P = pow(this->planetRadius/this->orbitRadius,3)*(3* rHat_P*rHat_P.dot(dipoleCoefficients) - dipoleCoefficients);
+    magField_P = pow(this->planetRadius / this->orbitRadius, 3) *
+                 (3 * rHat_P * rHat_P.dot(dipoleCoefficients) - dipoleCoefficients);
 
     //! - convert magnetic field vector in N-frame components and store in output message
     m33tMultV3(this->planetState.J20002Pfix, magField_P.data(), msg->magField_N);

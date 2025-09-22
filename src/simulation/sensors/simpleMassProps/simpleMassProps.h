@@ -27,8 +27,9 @@
 #include "architecture/messaging/messaging.h"
 
 /*! @brief FSW mass properties converter module class */
-class SimpleMassProps: public SysModel {
-public:
+class SimpleMassProps : public SysModel
+{
+  public:
     SimpleMassProps();
     ~SimpleMassProps();
 
@@ -38,22 +39,15 @@ public:
     void computeMassProperties();
     void UpdateState(uint64_t CurrentSimNanos);
 
+  public:
+    ReadFunctor<SCMassPropsMsgPayload> scMassPropsInMsg;  //!< sc mass properties input msg
+    Message<VehicleConfigMsgPayload> vehicleConfigOutMsg; //!< vehicle configuration output msg
 
-public:
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-    ReadFunctor<SCMassPropsMsgPayload> scMassPropsInMsg;        //!< sc mass properties input msg
-    Message<VehicleConfigMsgPayload> vehicleConfigOutMsg;       //!< vehicle configuration output msg
-
-
-    BSKLogger bskLogger;              //!< -- BSK Logging
-
-private:
-
-    SCMassPropsMsgPayload scMassPropsMsgBuffer;         //! buffer for the mass properties message
-    VehicleConfigMsgPayload vehicleConfigMsgBuffer;     //! buffer for the vehicle configuration message
-
-
+  private:
+    SCMassPropsMsgPayload scMassPropsMsgBuffer;     //! buffer for the mass properties message
+    VehicleConfigMsgPayload vehicleConfigMsgBuffer; //! buffer for the vehicle configuration message
 };
-
 
 #endif

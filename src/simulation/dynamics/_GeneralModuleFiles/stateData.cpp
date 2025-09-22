@@ -17,46 +17,50 @@
 
  */
 
-
 #include "stateData.h"
 
-std::unique_ptr<StateData> StateData::clone() const
+std::unique_ptr<StateData>
+StateData::clone() const
 {
     auto result = std::make_unique<StateData>(this->stateName, this->state);
     result->stateDeriv = this->stateDeriv;
     return result;
 }
 
-StateData::StateData(std::string inName, const Eigen::MatrixXd & newState)
-: stateName(inName)
+StateData::StateData(std::string inName, const Eigen::MatrixXd& newState)
+  : stateName(inName)
 {
     setState(newState);
     stateDeriv.resizeLike(state);
-    setDerivative( Eigen::MatrixXd::Zero(state.innerSize(), state.outerSize()) );
+    setDerivative(Eigen::MatrixXd::Zero(state.innerSize(), state.outerSize()));
 }
 
-void StateData::setState(const Eigen::MatrixXd & newState)
+void
+StateData::setState(const Eigen::MatrixXd& newState)
 {
     state = newState;
 }
 
-void StateData::propagateState(double dt)
+void
+StateData::propagateState(double dt)
 {
     state += stateDeriv * dt;
 }
 
-
-void StateData::setDerivative(const Eigen::MatrixXd & newDeriv)
+void
+StateData::setDerivative(const Eigen::MatrixXd& newDeriv)
 {
     stateDeriv = newDeriv;
 }
 
-void StateData::scaleState(double scaleFactor)
+void
+StateData::scaleState(double scaleFactor)
 {
     state *= scaleFactor;
 }
 
-void StateData::addState(const StateData& other)
+void
+StateData::addState(const StateData& other)
 {
     state += other.state;
 }

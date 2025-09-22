@@ -26,38 +26,38 @@
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
 #include "cMsgCInterface/THRConfigMsg_C.h"
 
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
 
     /* declare these user-defined quantities */
-    double sigma_MB[3];                                   //!< orientation of the M frame w.r.t. the B frame
-    double r_BM_M[3];                                     //!< position of B frame origin w.r.t. M frame origin, in M frame coordinates
-    double r_FM_F[3];                                     //!< position of F frame origin w.r.t. M frame origin, in F frame coordinates
+    double sigma_MB[3]; //!< orientation of the M frame w.r.t. the B frame
+    double r_BM_M[3];   //!< position of B frame origin w.r.t. M frame origin, in M frame coordinates
+    double r_FM_F[3];   //!< position of F frame origin w.r.t. M frame origin, in F frame coordinates
 
-    double K;                                             //!< momentum dumping time constant [1/s]
+    double K; //!< momentum dumping time constant [1/s]
 
     /* declare module IO interfaces */
-    THRConfigMsg_C            thrusterConfigFInMsg;       //!< input thruster configuration msg
-    HingedRigidBodyMsg_C      hingedRigidBody1InMsg;      //!< output msg containing theta1 reference and thetaDot1 reference
-    HingedRigidBodyMsg_C      hingedRigidBody2InMsg;      //!< output msg containing theta2 reference and thetaDot2 reference
-    THRConfigMsg_C            thrusterConfigBOutMsg;      //!< output msg containing the thruster configuration infor in B-frame
+    THRConfigMsg_C thrusterConfigFInMsg;        //!< input thruster configuration msg
+    HingedRigidBodyMsg_C hingedRigidBody1InMsg; //!< output msg containing theta1 reference and thetaDot1 reference
+    HingedRigidBodyMsg_C hingedRigidBody2InMsg; //!< output msg containing theta2 reference and thetaDot2 reference
+    THRConfigMsg_C thrusterConfigBOutMsg;       //!< output msg containing the thruster configuration infor in B-frame
 
-    BSKLogger *bskLogger;                                 //!< BSK Logging
+    BSKLogger* bskLogger; //!< BSK Logging
 
-}thrusterPlatformStateConfig;
+} thrusterPlatformStateConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_thrusterPlatformState(thrusterPlatformStateConfig *configData, int64_t moduleID);
-    void Reset_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Update_thrusterPlatformState(thrusterPlatformStateConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_thrusterPlatformState(thrusterPlatformStateConfig* configData, int64_t moduleID);
+    void Reset_thrusterPlatformState(thrusterPlatformStateConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Update_thrusterPlatformState(thrusterPlatformStateConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

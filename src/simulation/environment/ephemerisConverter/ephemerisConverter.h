@@ -29,29 +29,28 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief ephemeric converter class */
-class EphemerisConverter: public SysModel {
-public:
+class EphemerisConverter : public SysModel
+{
+  public:
     EphemerisConverter();
     ~EphemerisConverter();
 
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
-    void readInputMessages();                       //!< class method
+    void readInputMessages(); //!< class method
     void convertEphemData(uint64_t clockNow);
     void writeOutputMessages(uint64_t Clock);
-    void addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *msg);
+    void addSpiceInputMsg(Message<SpicePlanetStateMsgPayload>* msg);
 
-public:
-    std::vector<Message<EphemerisMsgPayload>*> ephemOutMsgs; //!< vector of planet ephemeris output messages
-    std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs;    //!< vector of planet spice state input messages
+  public:
+    std::vector<Message<EphemerisMsgPayload>*> ephemOutMsgs;          //!< vector of planet ephemeris output messages
+    std::vector<ReadFunctor<SpicePlanetStateMsgPayload>> spiceInMsgs; //!< vector of planet spice state input messages
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
-private:
+    BSKLogger bskLogger; //!< -- BSK Logging
+  private:
     std::vector<EphemerisMsgPayload> ephemOutBuffers;       //!< output message buffers
     std::vector<SpicePlanetStateMsgPayload> spiceInBuffers; //!< spice input message copies
 };
-
 
 #endif

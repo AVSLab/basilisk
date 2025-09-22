@@ -28,12 +28,12 @@
 #include <iostream>
 
 MJBody::MJBody(mjsBody* body, MJSpec& spec)
-    : MJObject(body), spec(spec)
+  : MJObject(body)
+  , spec(spec)
 {
 
     // SITES
-    for (auto child = mjs_firstChild(body, mjOBJ_SITE, 0); child; child = mjs_nextChild(body, child, 0))
-    {
+    for (auto child = mjs_firstChild(body, mjOBJ_SITE, 0); child; child = mjs_nextChild(body, child, 0)) {
 
         auto mjssite = mjs_asSite(child);
         assert(mjssite != NULL);
@@ -49,32 +49,30 @@ MJBody::MJBody(mjsBody* body, MJSpec& spec)
     }
 
     // JOINTS
-    for (auto child = mjs_firstChild(body, mjOBJ_JOINT, 0); child; child = mjs_nextChild(body, child, 0))
-    {
+    for (auto child = mjs_firstChild(body, mjOBJ_JOINT, 0); child; child = mjs_nextChild(body, child, 0)) {
 
         auto mjsjoint = mjs_asJoint(child);
         assert(mjsjoint != NULL);
 
-        switch (mjsjoint->type)
-        {
-        case mjJNT_HINGE:
-        case mjJNT_SLIDE:
-            this->scalarJoints.emplace_back(mjsjoint, *this);
-            break;
-        case mjJNT_BALL:
-            this->ballJoint.emplace(mjsjoint, *this);
-            break;
-        case mjJNT_FREE:
-            this->freeJoint.emplace(mjsjoint, *this);
-            break;
-        default:
-            throw std::runtime_error("Unknown joint type."); // should not happen unless MuJoCo adds new joint
+        switch (mjsjoint->type) {
+            case mjJNT_HINGE:
+            case mjJNT_SLIDE:
+                this->scalarJoints.emplace_back(mjsjoint, *this);
+                break;
+            case mjJNT_BALL:
+                this->ballJoint.emplace(mjsjoint, *this);
+                break;
+            case mjJNT_FREE:
+                this->freeJoint.emplace(mjsjoint, *this);
+                break;
+            default:
+                throw std::runtime_error("Unknown joint type."); // should not happen unless MuJoCo adds new joint
         }
     }
-
 }
 
-void MJBody::configure(const mjModel* mujocoModel)
+void
+MJBody::configure(const mjModel* mujocoModel)
 {
     MJObject::configure(mujocoModel);
 
@@ -104,14 +102,13 @@ void MJBody::configure(const mjModel* mujocoModel)
         this->getSpec().getScene().logAndThrow("Tried to configure MJBody before massState was created.");
     }
 
-    this->massState->setState(Eigen::Matrix<double, 1, 1>{mujocoModel->body_mass[this->getId()]});
+    this->massState->setState(Eigen::Matrix<double, 1, 1>{ mujocoModel->body_mass[this->getId()] });
 }
 
-MJSite& MJBody::getSite(const std::string& name)
+MJSite&
+MJBody::getSite(const std::string& name)
 {
-    auto sitePtr = std::find_if(std::begin(sites), std::end(sites), [&](auto&& obj) {
-        return obj.getName() == name;
-    });
+    auto sitePtr = std::find_if(std::begin(sites), std::end(sites), [&](auto&& obj) { return obj.getName() == name; });
 
     if (sitePtr == std::end(sites)) {
         this->getSpec().getScene().logAndThrow("Unknown site '" + name + "' in body '" + this->name + "'");
@@ -120,99 +117,105 @@ MJSite& MJBody::getSite(const std::string& name)
     return *sitePtr;
 }
 
-MJScalarJoint& MJBody::getScalarJoint(const std::string& name)
+MJScalarJoint&
+MJBody::getScalarJoint(const std::string& name)
 {
-    auto jointPtr = std::find_if(std::begin(scalarJoints), std::end(scalarJoints), [&](auto&& obj) {
-        return obj.getName() == name;
-    });
+    auto jointPtr =
+      std::find_if(std::begin(scalarJoints), std::end(scalarJoints), [&](auto&& obj) { return obj.getName() == name; });
 
-    if (jointPtr != std::end(scalarJoints)) return *jointPtr;
+    if (jointPtr != std::end(scalarJoints))
+        return *jointPtr;
 
     this->getSpec().getScene().logAndThrow("Unknown scalar joint '" + name + "' in body '" + this->getName() + "'");
 }
 
-MJBallJoint& MJBody::getBallJoint()
+MJBallJoint&
+MJBody::getBallJoint()
 {
     if (!this->ballJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to get a ball joint for a body without ball joints: " +
-                                                    name);
+        this->getSpec().getScene().logAndThrow<std::runtime_error>(
+          "Tried to get a ball joint for a body without ball joints: " + name);
     }
     return this->ballJoint.value();
 }
 
-
-MJFreeJoint & MJBody::getFreeJoint()
+MJFreeJoint&
+MJBody::getFreeJoint()
 {
     if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to get a free joint for a body without free joints: " +
-                                                    name);
+        this->getSpec().getScene().logAndThrow<std::runtime_error>(
+          "Tried to get a free joint for a body without free joints: " + name);
     }
     return this->freeJoint.value();
 }
 
-void MJBody::setPosition(const Eigen::Vector3d& position)
+void
+MJBody::setPosition(const Eigen::Vector3d& position)
 {
     if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set position in non-free body " +
-                                                    name);
+        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set position in non-free body " + name);
     }
     this->freeJoint.value().setPosition(position);
 }
 
-void MJBody::setVelocity(const Eigen::Vector3d& velocity)
+void
+MJBody::setVelocity(const Eigen::Vector3d& velocity)
 {
     if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set velocity in non-free body " +
-                                                    name);
+        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set velocity in non-free body " + name);
     }
     this->freeJoint.value().setVelocity(velocity);
 }
 
-void MJBody::setAttitude(const Eigen::MRPd& attitude)
+void
+MJBody::setAttitude(const Eigen::MRPd& attitude)
 {
     if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set attitude in non-free body " +
-                                                    name);
+        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set attitude in non-free body " + name);
     }
     this->freeJoint.value().setAttitude(attitude);
 }
 
-void MJBody::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
+void
+MJBody::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     if (!this->freeJoint.has_value()) {
         this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set attitude rate in non-free body " +
-                                                    name);
+                                                                   name);
     }
     this->freeJoint.value().setAttitudeRate(attitudeRate);
 }
 
-void MJBody::writeFwdKinematicsMessages(mjModel* m, mjData* d, uint64_t CurrentSimNanos)
+void
+MJBody::writeFwdKinematicsMessages(mjModel* m, mjData* d, uint64_t CurrentSimNanos)
 {
     for (auto&& site : this->sites) {
         site.writeFwdKinematicsMessage(m, d, CurrentSimNanos);
     }
 }
 
-void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
+void
+MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
 {
     SCMassPropsMsgPayload massPropertiesOutMsgPayload;
 
     massPropertiesOutMsgPayload.massSC = this->massState->getState()(0);
-    this->massPropertiesOutMsg.write(&massPropertiesOutMsgPayload,
-                                     this->getSpec().getScene().moduleID,
-                                     CurrentSimNanos);
+    this->massPropertiesOutMsg.write(
+      &massPropertiesOutMsgPayload, this->getSpec().getScene().moduleID, CurrentSimNanos);
 
     for (auto&& joint : this->scalarJoints) {
         joint.writeJointStateMessage(CurrentSimNanos);
     }
 }
 
-void MJBody::registerStates(DynParamRegisterer paramManager)
+void
+MJBody::registerStates(DynParamRegisterer paramManager)
 {
     this->massState = paramManager.registerState(1, 1, "mass");
 }
 
-void MJBody::updateMujocoModelFromMassProps()
+void
+MJBody::updateMujocoModelFromMassProps()
 {
     auto m = spec.getMujocoModel();
 
@@ -235,27 +238,29 @@ void MJBody::updateMujocoModelFromMassProps()
     }
 }
 
-void MJBody::updateMassPropsDerivative()
+void
+MJBody::updateMassPropsDerivative()
 {
     if (this->derivativeMassPropertiesInMsg.isLinked()) {
         auto deriv = this->derivativeMassPropertiesInMsg();
-        this->massState->setDerivative(Eigen::Matrix<double, 1, 1>{deriv.massSC});
+        this->massState->setDerivative(Eigen::Matrix<double, 1, 1>{ deriv.massSC });
     }
 }
 
-void MJBody::updateConstrainedEqualityJoints()
+void
+MJBody::updateConstrainedEqualityJoints()
 {
     for (auto&& joint : this->scalarJoints) {
         joint.updateConstrainedEquality();
     }
 }
 
-void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Eigen::MRPd& attitude)
+void
+MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Eigen::MRPd& attitude)
 {
 
     if (this->hasSite(name)) {
-        this->getSpec().getScene().logAndThrow("Tried to create site " + name + " twice for body " +
-                                     this->name);
+        this->getSpec().getScene().logAndThrow("Tried to create site " + name + " twice for body " + this->name);
     }
 
     auto mjssite = mjs_addSite(this->mjsObject, 0);
@@ -269,9 +274,9 @@ void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Ei
     site.setAttitudeRelativeToBody(attitude);
 }
 
-bool MJBody::hasSite(const std::string& name) const
+bool
+MJBody::hasSite(const std::string& name) const
 {
-    return std::find_if(std::begin(sites), std::end(sites), [&](auto&& obj) {
-               return obj.getName() == name;
-           }) != std::end(sites);
+    return std::find_if(std::begin(sites), std::end(sites), [&](auto&& obj) { return obj.getName() == name; }) !=
+           std::end(sites);
 }

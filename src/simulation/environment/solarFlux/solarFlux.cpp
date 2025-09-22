@@ -20,11 +20,11 @@
 #include "solarFlux.h"
 #include "architecture/utilities/astroConstants.h"
 
-
 /*! This method is used to reset the module. Currently no tasks are required.
 
  */
-void SolarFlux::Reset(uint64_t CurrentSimNanos)
+void
+SolarFlux::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
@@ -40,7 +40,8 @@ void SolarFlux::Reset(uint64_t CurrentSimNanos)
 /*! Read Messages and scale the solar flux then write it out
 
  */
-void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
+void
+SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
 
@@ -48,7 +49,7 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
     auto r_SSc_N = this->r_SN_N - this->r_ScN_N;
 
     /*! - compute the scalar distance to the sun.  The following math requires this to be in km. */
-    double dist_SSc_N = r_SSc_N.norm() / 1000;  // to km
+    double dist_SSc_N = r_SSc_N.norm() / 1000; // to km
 
     /*! - compute the local solar flux value */
     this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;
@@ -59,7 +60,8 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 /*! This method is used to  read messages and save values to member attributes
 
  */
-void SolarFlux::readMessages()
+void
+SolarFlux::readMessages()
 {
     /*! - read in planet state message (required) */
     SpicePlanetStateMsgPayload sunPositionMsgData;
@@ -77,13 +79,14 @@ void SolarFlux::readMessages()
         eclipseInMsgData = this->eclipseInMsg();
         this->eclipseFactor = eclipseInMsgData.shadowFactor;
     }
-
 }
 
 /*! This method is used to write the output flux message
 
  */
-void SolarFlux::writeMessages(uint64_t CurrentSimNanos) {
-    SolarFluxMsgPayload fluxMsgOutData = {this->fluxAtSpacecraft};
+void
+SolarFlux::writeMessages(uint64_t CurrentSimNanos)
+{
+    SolarFluxMsgPayload fluxMsgOutData = { this->fluxAtSpacecraft };
     this->solarFluxOutMsg.write(&fluxMsgOutData, this->moduleID, CurrentSimNanos);
 }

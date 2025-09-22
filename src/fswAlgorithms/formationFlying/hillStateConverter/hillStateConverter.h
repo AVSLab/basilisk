@@ -30,29 +30,29 @@
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/HillRelStateMsg_C.h"
 
-
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* declare module IO interfaces */
-    HillRelStateMsg_C hillStateOutMsg; //!< Output message containing relative state of deputy to chief in chief hill coordinates
+    HillRelStateMsg_C
+      hillStateOutMsg; //!< Output message containing relative state of deputy to chief in chief hill coordinates
     NavTransMsg_C chiefStateInMsg; //!< Input message containing chief inertial translational state estimate
-    NavTransMsg_C depStateInMsg; //!< Input message containing deputy inertial translational state estimate
+    NavTransMsg_C depStateInMsg;   //!< Input message containing deputy inertial translational state estimate
 
-    BSKLogger *bskLogger;                           //!< BSK Logging
-}HillStateConverterConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} HillStateConverterConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID);
-    void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_hillStateConverter(HillStateConverterConfig* configData, int64_t moduleID);
+    void Update_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

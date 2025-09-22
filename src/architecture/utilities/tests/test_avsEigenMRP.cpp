@@ -21,8 +21,8 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include <gtest/gtest.h>
 
-
-TEST(eigenMRP, testIdentity) {
+TEST(eigenMRP, testIdentity)
+{
     Eigen::MRPd sigma;
     sigma = sigma.Identity();
 

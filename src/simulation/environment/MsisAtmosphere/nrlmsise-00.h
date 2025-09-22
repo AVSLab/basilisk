@@ -16,17 +16,16 @@
  * updated releases of this package.
  */
 
-
-
 /* ------------------------------------------------------------------- */
 /* ------------------------------- INPUT ----------------------------- */
 /* ------------------------------------------------------------------- */
 
 /*! NRL MSIS flags structure */
-struct nrlmsise_flags {
-	int switches[24];       //!< variable
-	double sw[24];          //!< variable
-	double swc[24];         //!< variable
+struct nrlmsise_flags
+{
+    int switches[24]; //!< variable
+    double sw[24];    //!< variable
+    double swc[24];   //!< variable
 };
 /*
  *   Switches: to turn on and off particular variations use these switches.
@@ -68,8 +67,9 @@ struct nrlmsise_flags {
  */
 
 /*! ap array structure */
-struct ap_array {
-	double a[7];    //!< variable
+struct ap_array
+{
+    double a[7]; //!< variable
 };
 /* Array containing the following magnetic values:
  *   0 : daily AP
@@ -84,18 +84,19 @@ struct ap_array {
  */
 
 /*! NRL MSISE input structure */
-struct nrlmsise_input {
-	int year;      /*!< year, currently ignored */
-	int doy;       /*!< day of year */
-	double sec;    /*!< seconds in day (UT) */
-	double alt;    /*!< altitude in kilometers */
-	double g_lat;  /*!< geodetic latitude */
-	double g_long; /*!< geodetic longitude */
-	double lst;    /*!< local apparent solar time (hours), see note below */
-	double f107A;  /*!< 81 day average of F10.7 flux (centered on doy) */
-	double f107;   /*!< daily F10.7 flux for previous day */
-	double ap;     /*!< magnetic index(daily) */
-	struct ap_array *ap_a; /*!< see above */
+struct nrlmsise_input
+{
+    int year;              /*!< year, currently ignored */
+    int doy;               /*!< day of year */
+    double sec;            /*!< seconds in day (UT) */
+    double alt;            /*!< altitude in kilometers */
+    double g_lat;          /*!< geodetic latitude */
+    double g_long;         /*!< geodetic longitude */
+    double lst;            /*!< local apparent solar time (hours), see note below */
+    double f107A;          /*!< 81 day average of F10.7 flux (centered on doy) */
+    double f107;           /*!< daily F10.7 flux for previous day */
+    double ap;             /*!< magnetic index(daily) */
+    struct ap_array* ap_a; /*!< see above */
 };
 /*
  *   NOTES ON INPUT VARIABLES:
@@ -118,15 +119,14 @@ struct nrlmsise_input {
  *      150., 150., and 4. respectively.
  */
 
-
-
 /* ------------------------------------------------------------------- */
 /* ------------------------------ OUTPUT ----------------------------- */
 /* ------------------------------------------------------------------- */
 /*! NRL MSISE output structure */
-struct nrlmsise_output {
-	double d[9];   /*!< densities */
-	double t[2];   /*!< temperatures */
+struct nrlmsise_output
+{
+    double d[9]; /*!< densities */
+    double t[2]; /*!< temperatures */
 };
 /*
  *   OUTPUT VARIABLES:
@@ -162,8 +162,6 @@ struct nrlmsise_output {
  *        in this model, INCLUDING anomalous oxygen.
  */
 
-
-
 /* ------------------------------------------------------------------- */
 /* --------------------------- PROTOTYPES ---------------------------- */
 /* ------------------------------------------------------------------- */
@@ -172,10 +170,8 @@ struct nrlmsise_output {
 /*   Neutral Atmosphere Empircial Model from the surface to lower
  *   exosphere.
  */
-void gtd7 (struct nrlmsise_input *input, \
-           struct nrlmsise_flags *flags, \
-           struct nrlmsise_output *output);
-
+void
+gtd7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
 
 /* GTD7D */
 /*   This subroutine provides Effective Total Mass Density for output
@@ -183,29 +179,21 @@ void gtd7 (struct nrlmsise_input *input, \
  *   affect satellite drag above 500 km. See the section "output" for
  *   additional details.
  */
-void gtd7d(struct nrlmsise_input *input, \
-           struct nrlmsise_flags *flags, \
-           struct nrlmsise_output *output);
-
+void
+gtd7d(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
 
 /* GTS7 */
 /*   Thermospheric portion of NRLMSISE-00
  */
-void gts7 (struct nrlmsise_input *input, \
-	   struct nrlmsise_flags *flags, \
-	   struct nrlmsise_output *output);
-
+void
+gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
 
 /* GHP7 */
 /*   To specify outputs at a pressure level (press) rather than at
  *   an altitude.
  */
-void ghp7 (struct nrlmsise_input *input, \
-           struct nrlmsise_flags *flags, \
-           struct nrlmsise_output *output, \
-           double press);
-
-
+void
+ghp7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output, double press);
 
 /* ------------------------------------------------------------------- */
 /* ----------------------- COMPILATION TWEAKS ------------------------ */

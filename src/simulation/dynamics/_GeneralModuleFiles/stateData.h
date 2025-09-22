@@ -27,13 +27,13 @@
 /** @brief Represents a physical state, which has a name, a value, and a derivative. */
 class StateData
 {
-public:
+  public:
     Eigen::MatrixXd state;       //!< [-] State value storage
     Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
     const std::string stateName; //!< [-] Name of the state
     BSKLogger bskLogger;         //!< -- BSK Logging
 
-public:
+  public:
     /** Creates a new state with the given name and set's the initial state.
      *
      * The state derivative will be resized to the same size as the state and zero'd.

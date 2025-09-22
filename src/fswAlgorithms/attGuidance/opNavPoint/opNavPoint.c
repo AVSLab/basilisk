@@ -30,11 +30,11 @@
  @param configData The configuration data associated with the opNav guidance
  @param moduleID The Basilisk module identifier
  */
-void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
+void
+SelfInit_opNavPoint(OpNavPointConfig* configData, int64_t moduleID)
 {
     AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -43,7 +43,8 @@ void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double v1[3];
 
@@ -59,14 +60,17 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
     }
 
     /* compute an Eigen axis orthogonal to alignAxis_C */
-    if (v3Norm(configData->alignAxis_C)  < 0.1) {
+    if (v3Norm(configData->alignAxis_C) < 0.1) {
         char info[MAX_LOGGING_LENGTH];
-        sprintf(info, "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
-          configData->alignAxis_C[0], configData->alignAxis_C[1], configData->alignAxis_C[2]);
+        sprintf(info,
+                "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
+                configData->alignAxis_C[0],
+                configData->alignAxis_C[1],
+                configData->alignAxis_C[2]);
         _bskLog(configData->bskLogger, BSK_ERROR, info);
     } else {
         v3Set(1., 0., 0., v1);
-        v3Normalize(configData->alignAxis_C, configData->alignAxis_C);    /* ensure that this vector is a unit vector */
+        v3Normalize(configData->alignAxis_C, configData->alignAxis_C); /* ensure that this vector is a unit vector */
         v3Cross(configData->alignAxis_C, v1, configData->eHat180_B);
         if (v3Norm(configData->eHat180_B) < 0.1) {
             v3Set(0., 1., 0., v1);
@@ -88,17 +92,17 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_opNavPoint(OpNavPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     OpNavMsgPayload opNavMsg;
     double cthNormalized;
     double timeWithoutMeas;
     double currentHeading_C[3], alignAxis_B[3];
-    double hNorm;                   /* Norm of measured direction vector */
-    double e_hat[3];                /* Principal rotation Axis */
-    double omega_BN_B[3];           /* r/s inertial body angular velocity vector in B frame components */
-    double omega_RN_B[3];           /* r/s local copy of the desired reference frame rate */
+    double hNorm;         /* Norm of measured direction vector */
+    double e_hat[3];      /* Principal rotation Axis */
+    double omega_BN_B[3]; /* r/s inertial body angular velocity vector in B frame components */
+    double omega_RN_B[3]; /* r/s local copy of the desired reference frame rate */
     double dcm_BN[3][3], dcm_CB[3][3], dcm_CN[3][3];
     NavAttMsgPayload localImuDataInBuffer;
     CameraConfigMsgPayload cameraSpecs;
@@ -108,37 +112,37 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
 
-    if (configData->lastTime==0){
-        configData->lastTime=callTime*1E-9;
+    if (configData->lastTime == 0) {
+        configData->lastTime = callTime * 1E-9;
         v3SetZero(configData->currentHeading_N);
     }
-    timeWithoutMeas = callTime*1E-9 - configData->lastTime;
+    timeWithoutMeas = callTime * 1E-9 - configData->lastTime;
 
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     m33MultM33(dcm_CB, dcm_BN, dcm_CN);
-    /*! Compute the current error vector if it is valid. This checks for a valid, non-stale, previous message, or a new fresh measurement.*/
-    if((opNavMsg.valid == 1 || v3IsZero(configData->currentHeading_N, 1E-10) == 0) && (timeWithoutMeas < configData->timeOut)){
+    /*! Compute the current error vector if it is valid. This checks for a valid, non-stale, previous message, or a new
+     * fresh measurement.*/
+    if ((opNavMsg.valid == 1 || v3IsZero(configData->currentHeading_N, 1E-10) == 0) &&
+        (timeWithoutMeas < configData->timeOut)) {
         /*! - If a valid image is in save the heading direction for future use*/
-        if (opNavMsg.valid == 1){
-            configData->lastTime = callTime*1E-9;
+        if (opNavMsg.valid == 1) {
+            configData->lastTime = callTime * 1E-9;
             v3Copy(opNavMsg.r_BN_C, currentHeading_C);
             m33tMultV3(dcm_CN, opNavMsg.r_BN_C, configData->currentHeading_N);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);
-            v3Scale(1/hNorm, currentHeading_C, currentHeading_C);
-        }
-        else{
+            v3Scale(1 / hNorm, currentHeading_C, currentHeading_C);
+        } else {
             /*! - Else use the previous direction in order to continue guidance */
             m33MultV3(dcm_CN, configData->currentHeading_N, currentHeading_C);
             v3Scale(-1, currentHeading_C, currentHeading_C);
             hNorm = v3Norm(currentHeading_C);
-            v3Scale(1/hNorm, currentHeading_C, currentHeading_C);
+            v3Scale(1 / hNorm, currentHeading_C, currentHeading_C);
         }
         cthNormalized = v3Dot(configData->alignAxis_C, currentHeading_C);
-        cthNormalized = fabs(cthNormalized) > 1.0 ?
-        cthNormalized/fabs(cthNormalized) : cthNormalized;
+        cthNormalized = fabs(cthNormalized) > 1.0 ? cthNormalized / fabs(cthNormalized) : cthNormalized;
         configData->opNavAngleErr = safeAcos(cthNormalized);
 
         /*
@@ -146,7 +150,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
          */
         if (configData->opNavAngleErr < configData->smallAngle) {
             /* opNav heading and desired camera axis are essentially aligned.  Set attitude error to zero. */
-             v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
+            v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
         } else {
             if (M_PI - configData->opNavAngleErr < configData->smallAngle) {
                 /* the commanded camera vector nearly is opposite the opNav heading */
@@ -156,7 +160,8 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
                 v3Cross(currentHeading_C, configData->alignAxis_C, e_hat);
             }
             v3Normalize(e_hat, configData->opNavMnvrVec);
-            v3Scale(tan(configData->opNavAngleErr*0.25), configData->opNavMnvrVec,
+            v3Scale(tan(configData->opNavAngleErr * 0.25),
+                    configData->opNavMnvrVec,
                     configData->attGuidanceOutBuffer.sigma_BR);
             MRPswitch(configData->attGuidanceOutBuffer.sigma_BR, 1.0, configData->attGuidanceOutBuffer.sigma_BR);
         }
@@ -168,7 +173,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
     } else {
-        configData->lastTime=0;
+        configData->lastTime = 0;
         /* no proper opNav direction vector is available */
         v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
 

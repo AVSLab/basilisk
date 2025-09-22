@@ -30,7 +30,8 @@
 #include <vector>
 
 /** A DynamicObject is a Basilisk model with states that must be integrated */
-class DynamicObject : public SysModel {
+class DynamicObject : public SysModel
+{
   public:
     DynParamManager dynManager;     /**< Dynamics parameter manager for all effectors */
     StateVecIntegrator* integrator; /**< Integrator used to propagate state forward */
@@ -57,10 +58,10 @@ class DynamicObject : public SysModel {
     virtual void postIntegration(uint64_t callTimeNanos) = 0;
 
     /** Initializes the dynamics and variables */
-    virtual void initializeDynamics(){};
+    virtual void initializeDynamics() {};
 
     /** Computes energy and momentum of the system */
-    virtual void computeEnergyMomentum(double t){};
+    virtual void computeEnergyMomentum(double t) {};
 
     /** Prepares the dynamic object to be integrated, integrates the states
      * forward in time, and finally performs the post-integration steps.
@@ -78,8 +79,8 @@ class DynamicObject : public SysModel {
   public:
     /** flag indicating that another spacecraft object is controlling the integration */
     bool isDynamicsSynced = false;
-    double timeStep = 0.0;   /**< [s] integration time step */
-    double timeBefore = 0.0; /**< [s] prior time value */
+    double timeStep = 0.0;        /**< [s] integration time step */
+    double timeBefore = 0.0;      /**< [s] prior time value */
     uint64_t timeBeforeNanos = 0; /**< [ns] prior time value */
 };
 

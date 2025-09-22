@@ -21,8 +21,8 @@
 
 #include <iostream>
 
-
-FuelTank::FuelTank() {
+FuelTank::FuelTank()
+{
     this->effProps.mEff = 0.0;
     this->effProps.IEffPntB_B.setZero();
     this->effProps.rEff_CB_B.setZero();
@@ -39,12 +39,15 @@ FuelTank::FuelTank() {
 
 uint64_t FuelTank::effectorID = 1;
 
-FuelTank::~FuelTank() {
+FuelTank::~FuelTank()
+{
     FuelTank::effectorID = 1;
 }
 
 /*! optionally set the name of the mass state to be used by the state manager */
-void FuelTank::setNameOfMassState(const std::string nameOfMassState) {
+void
+FuelTank::setNameOfMassState(const std::string nameOfMassState)
+{
     this->nameOfMassState = nameOfMassState;
 }
 
@@ -52,36 +55,48 @@ void FuelTank::setNameOfMassState(const std::string nameOfMassState) {
 
  @param model fuel tank model type
  */
-void FuelTank::setTankModel(FuelTankModel *model) {
+void
+FuelTank::setTankModel(FuelTankModel* model)
+{
     this->fuelTankModel = model;
 }
 
 /*! Attach a fuel slosh particle to the tank */
-void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
+void
+FuelTank::pushFuelSloshParticle(FuelSlosh* particle)
+{
     // Add a fuel slosh particle to the vector of fuel slosh particles
     this->fuelSloshParticles.push_back(particle);
 }
 
 /*! Attach a thruster dynamic effector to the tank */
-void FuelTank::addThrusterSet(ThrusterDynamicEffector *dynEff) {
+void
+FuelTank::addThrusterSet(ThrusterDynamicEffector* dynEff)
+{
     thrDynEffectors.push_back(dynEff);
     dynEff->fuelMass = this->fuelTankModel->propMassInit;
 }
 
 /*! Attach a thruster state effector to the tank */
-void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
+void
+FuelTank::addThrusterSet(ThrusterStateEffector* stateEff)
+{
     thrStateEffectors.push_back(stateEff);
 }
 
 /*! Link states that the module accesses */
-void FuelTank::linkInStates(DynParamManager &statesIn) {
+void
+FuelTank::linkInStates(DynParamManager& statesIn)
+{
     // Grab access to the hubs omega_BN_N
     this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
 }
 
 /*! Register states. The fuel tank has one state associated with it: mass, and it also has the
  responsibility to call register states for the fuel slosh particles */
-void FuelTank::registerStates(DynParamManager &statesIn) {
+void
+FuelTank::registerStates(DynParamManager& statesIn)
+{
     // Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
     this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
@@ -90,15 +105,17 @@ void FuelTank::registerStates(DynParamManager &statesIn) {
 }
 
 /*! Fuel tank add its contributions the mass of the vehicle. */
-void FuelTank::updateEffectorMassProps(double integTime) {
+void
+FuelTank::updateEffectorMassProps(double integTime)
+{
     // Add contributions of the mass of the tank
     double massLocal = this->massState->getState()(0, 0);
     this->fuelTankModel->computeTankProps(massLocal);
     this->r_TcB_B = r_TB_B + this->dcm_TB.transpose() * this->fuelTankModel->r_TcT_T;
     this->effProps.mEff = massLocal;
     this->ITankPntT_B = this->dcm_TB.transpose() * fuelTankModel->ITankPntT_T * this->dcm_TB;
-    this->effProps.IEffPntB_B = ITankPntT_B + massLocal * (r_TcB_B.dot(r_TcB_B) * Eigen::Matrix3d::Identity()
-                                                           - r_TcB_B * r_TcB_B.transpose());
+    this->effProps.IEffPntB_B =
+      ITankPntT_B + massLocal * (r_TcB_B.dot(r_TcB_B) * Eigen::Matrix3d::Identity() - r_TcB_B * r_TcB_B.transpose());
     this->effProps.rEff_CB_B = this->r_TcB_B;
 
     // This does not incorporate mEffDot into cPrime for high fidelity mass depletion
@@ -106,20 +123,19 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 
     // Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
-    for (auto &dynEffector: this->thrDynEffectors) {
+    for (auto& dynEffector : this->thrDynEffectors) {
         dynEffector->computeStateContribution(integTime);
         this->fuelConsumption += dynEffector->stateDerivContribution(0);
     }
 
-    for (auto &stateEffector: this->thrStateEffectors) {
+    for (auto& stateEffector : this->thrStateEffectors) {
         stateEffector->updateEffectorMassProps(integTime);
         this->fuelConsumption += stateEffector->stateDerivContribution(0);
     }
 
     // Mass depletion (finding total mass in tank)
     double totalMass = massLocal;
-    for (auto fuelSloshInt = this->fuelSloshParticles.begin();
-         fuelSloshInt < this->fuelSloshParticles.end();
+    for (auto fuelSloshInt = this->fuelSloshParticles.begin(); fuelSloshInt < this->fuelSloshParticles.end();
          fuelSloshInt++) {
         // Retrieve current mass value of fuelSlosh particle
         (*fuelSloshInt)->retrieveMassValue(integTime);
@@ -127,8 +143,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         totalMass += (*fuelSloshInt)->fuelMass;
     }
     // Set mass depletion rate of fuelSloshParticles
-    for (auto fuelSloshInt = this->fuelSloshParticles.begin();
-         fuelSloshInt < this->fuelSloshParticles.end();
+    for (auto fuelSloshInt = this->fuelSloshParticles.begin(); fuelSloshInt < this->fuelSloshParticles.end();
          fuelSloshInt++) {
         // Find fuelSlosh particle mass to fuel tank mass ratio
         (*fuelSloshInt)->massToTotalTankMassRatio = (*fuelSloshInt)->fuelMass / totalMass;
@@ -137,7 +152,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
     }
 
     // Set total fuel mass parameter for thruster dynamic effectors experiencing blow down effects
-    for (auto &dynEffector: this->thrDynEffectors) {
+    for (auto& dynEffector : this->thrDynEffectors) {
         dynEffector->fuelMass = totalMass;
     }
 
@@ -147,11 +162,13 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 }
 
 /*! Fuel tank adds its contributions to the matrices for the back-sub method. */
-void FuelTank::updateContributions(double integTime,
-                                   BackSubMatrices &backSubContr,
-                                   Eigen::Vector3d sigma_BN,
-                                   Eigen::Vector3d omega_BN_B,
-                                   Eigen::Vector3d g_N) {
+void
+FuelTank::updateContributions(double integTime,
+                              BackSubMatrices& backSubContr,
+                              Eigen::Vector3d sigma_BN,
+                              Eigen::Vector3d omega_BN_B,
+                              Eigen::Vector3d g_N)
+{
     Eigen::Vector3d r_TB_BLocal;
     Eigen::Vector3d rPrime_TB_BLocal;
     Eigen::Vector3d rPPrime_TB_BLocal;
@@ -169,29 +186,33 @@ void FuelTank::updateContributions(double integTime,
     rPPrime_TB_BLocal = this->fuelTankModel->rPPrime_TcT_T;
     omega_BN_BLocal = this->omegaState->getState();
     if (!this->updateOnly) {
-        backSubContr.vecRot = -this->massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
-                              - this->massState->getState()(0, 0) * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
-                              - this->massState->getStateDeriv()(0, 0) * r_TB_BLocal.cross(rPrime_TB_BLocal);
+        backSubContr.vecRot =
+          -this->massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal) -
+          this->massState->getState()(0, 0) * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal)) -
+          this->massState->getStateDeriv()(0, 0) * r_TB_BLocal.cross(rPrime_TB_BLocal);
         backSubContr.vecRot -= this->fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
     }
-
 }
 
 /*! Fuel tank computes its derivative */
-void FuelTank::computeDerivatives(double integTime,
-                                  Eigen::Vector3d rDDot_BN_N,
-                                  Eigen::Vector3d omegaDot_BN_B,
-                                  Eigen::Vector3d sigma_BN) {
+void
+FuelTank::computeDerivatives(double integTime,
+                             Eigen::Vector3d rDDot_BN_N,
+                             Eigen::Vector3d omegaDot_BN_B,
+                             Eigen::Vector3d sigma_BN)
+{
     Eigen::MatrixXd conv(1, 1);
     conv(0, 0) = -this->tankFuelConsumption;
     this->massState->setDerivative(conv);
 }
 
 /*! Fuel tank contributes to the energy and momentum calculations */
-void FuelTank::updateEnergyMomContributions(double integTime,
-                                            Eigen::Vector3d &rotAngMomPntCContr_B,
-                                            double &rotEnergyContr,
-                                            Eigen::Vector3d omega_BN_B) {
+void
+FuelTank::updateEnergyMomContributions(double integTime,
+                                       Eigen::Vector3d& rotAngMomPntCContr_B,
+                                       double& rotEnergyContr,
+                                       Eigen::Vector3d omega_BN_B)
+{
     // Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = this->omegaState->getState();
@@ -203,15 +224,17 @@ void FuelTank::updateEnergyMomContributions(double integTime,
     rotAngMomPntCContr_B += this->ITankPntT_B * omegaLocal_BN_B + massLocal * this->r_TcB_B.cross(rDot_TcB_B);
 
     // Find rotational energy contribution from the hub
-    rotEnergyContr += 1.0 / 2.0 * omegaLocal_BN_B.dot(this->ITankPntT_B * omegaLocal_BN_B) + 1.0 / 2.0 * massLocal *
-                                                                                       rDot_TcB_B.dot(rDot_TcB_B);
+    rotEnergyContr += 1.0 / 2.0 * omegaLocal_BN_B.dot(this->ITankPntT_B * omegaLocal_BN_B) +
+                      1.0 / 2.0 * massLocal * rDot_TcB_B.dot(rDot_TcB_B);
 }
 
 /*! Compute fuel tank mass properties and outputs them as a message.
 
  @param currentClock The current simulation time (used for time stamping)
  */
-void FuelTank::writeOutputMessages(uint64_t currentClock) {
+void
+FuelTank::writeOutputMessages(uint64_t currentClock)
+{
     this->fuelTankMassPropMsg = this->fuelTankOutMsg.zeroMsgPayload;
     this->fuelTankMassPropMsg.fuelMass = this->effProps.mEff;
     this->fuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
@@ -223,6 +246,8 @@ void FuelTank::writeOutputMessages(uint64_t currentClock) {
 
  @param currentSimNanos The current simulation time in nanoseconds
  */
-void FuelTank::UpdateState(uint64_t currentSimNanos) {
+void
+FuelTank::UpdateState(uint64_t currentSimNanos)
+{
     this->writeOutputMessages(currentSimNanos);
 }

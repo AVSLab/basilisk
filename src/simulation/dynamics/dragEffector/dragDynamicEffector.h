@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef DRAG_DYNAMIC_EFFECTOR_H
 #define DRAG_DYNAMIC_EFFECTOR_H
 
@@ -34,23 +33,24 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
-
-
-//! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.
-typedef struct {
-    double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction
-    double dragCoeff;                        //!< --  Nondimensional drag coefficient
-    Eigen::Vector3d comOffset;               //!< m distance from center of mass to center of projected area
-}DragBaseData;
+//! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and
+//! its drag coefficient.
+typedef struct
+{
+    double projectedArea;      //!< m^2   Area of spacecraft projected in velocity direction
+    double dragCoeff;          //!< --  Nondimensional drag coefficient
+    Eigen::Vector3d comOffset; //!< m distance from center of mass to center of projected area
+} DragBaseData;
 
 /*! @brief drag dynamic effector */
-class DragDynamicEffector: public SysModel, public DynamicEffector {
-public:
+class DragDynamicEffector
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     DragDynamicEffector();
     ~DragDynamicEffector();
-    void linkInStates(DynParamManager& states);             //!< class method
+    void linkInStates(DynParamManager& states); //!< class method
     void computeForceTorque(double integTime, double timeStep);
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -59,20 +59,18 @@ public:
     void cannonballDrag();
     void updateDragDir();
 
-public:
-    DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
-    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;        //!< -- message used to read density inputs
-    std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
-    StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
-    StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d v_B;                                   //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the inertial frame
-    BSKLogger bskLogger;                                   //!< -- BSK Logging
+  public:
+    DragBaseData coreParams;                        //!< -- Struct used to hold drag parameters
+    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< -- message used to read density inputs
+    std::string modelType;                          //!< -- String used to set the type of model used to compute drag
+    StateData* hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
+    StateData* hubVelocity;                         //!< m/s Hub inertial velocity vector
+    Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity
+    Eigen::Vector3d v_hat_B;                        //!< -- Drag force direction in the inertial frame
+    BSKLogger bskLogger;                            //!< -- BSK Logging
 
-private:
+  private:
     AtmoPropsMsgPayload atmoInData;
-
 };
-
 
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

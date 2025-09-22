@@ -27,30 +27,33 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief space to ground data transmitter class */
-class SpaceToGroundTransmitter: public DataNodeBase {
-public:
+class SpaceToGroundTransmitter : public DataNodeBase
+{
+  public:
     SpaceToGroundTransmitter();
     ~SpaceToGroundTransmitter();
-    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg);
-    void addAccessMsgToTransmitter(Message<AccessMsgPayload> *tmpAccessMsg);
+    void addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg);
+    void addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg);
 
-private:
-    void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime);
+  private:
+    void evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, double currentTime);
     bool customReadMessages();
 
-public:
+  public:
     double packetSize; //!< Size of packet to downklink (bytes)
-    int numBuffers; //!< Number of buffers the transmitter can access
-    std::vector<ReadFunctor<DataStorageStatusMsgPayload>> storageUnitInMsgs; //!< vector of input messages for storage unit messages
-    std::vector<ReadFunctor<AccessMsgPayload>> groundLocationAccessInMsgs;   //!< vector of input message for ground location access
-    std::vector<DataStorageStatusMsgPayload> storageUnitMsgsBuffer;   //!< local copy of data storage messages
-    uint64_t hasAccess;                                     //!< class variable
-    BSKLogger bskLogger;                                    //!< class variable
+    int numBuffers;    //!< Number of buffers the transmitter can access
+    std::vector<ReadFunctor<DataStorageStatusMsgPayload>>
+      storageUnitInMsgs; //!< vector of input messages for storage unit messages
+    std::vector<ReadFunctor<AccessMsgPayload>>
+      groundLocationAccessInMsgs; //!< vector of input message for ground location access
+    std::vector<DataStorageStatusMsgPayload> storageUnitMsgsBuffer; //!< local copy of data storage messages
+    uint64_t hasAccess;                                             //!< class variable
+    BSKLogger bskLogger;                                            //!< class variable
 
-private:
-    double packetTransmitted; //!< Amount of packet downlinked (bytes)
-    double currentTimestep; //!< Current timestep tracked for data packet integration
-    double previousTime; //!< Previous timestep tracked for data packet integration
+  private:
+    double packetTransmitted;                               //!< Amount of packet downlinked (bytes)
+    double currentTimestep;                                 //!< Current timestep tracked for data packet integration
+    double previousTime;                                    //!< Previous timestep tracked for data packet integration
     std::vector<AccessMsgPayload> groundLocationAccessMsgs; //!< local copy of ground access messages
 };
-#endif //BASILISK_SPACETOGROUNDTRANSMITTER_H
+#endif // BASILISK_SPACETOGROUNDTRANSMITTER_H

@@ -31,36 +31,35 @@
 #include "architecture/msgPayloadDefC/OpNavCirclesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief The CNN based center radius visual tracking module. */
-class CenterRadiusCNN: public SysModel {
-public:
+class CenterRadiusCNN : public SysModel
+{
+  public:
     CenterRadiusCNN();
     ~CenterRadiusCNN();
 
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
 
-public:
-    std::string filename;                //!< Filename for module to read an image directly
-    Message<OpNavCirclesMsgPayload> opnavCirclesOutMsg;  //!< The name of the OpNavCirclesMsg output message
+  public:
+    std::string filename;                               //!< Filename for module to read an image directly
+    Message<OpNavCirclesMsgPayload> opnavCirclesOutMsg; //!< The name of the OpNavCirclesMsg output message
 
-    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
+    ReadFunctor<CameraImageMsgPayload> imageInMsg; //!< The name of the camera output message
 
-    std::string pathToNetwork;                  //!< Path to the trained CNN
-    uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
+    std::string pathToNetwork; //!< Path to the trained CNN
+    uint64_t sensorTimeTag;    //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
-    int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
-    double pixelNoise[3];                 //!< [-] Pixel Noise for the estimate
-    BSKLogger bskLogger;                //!< -- BSK Logging
+    int32_t saveImages;   //!< [-] 1 to save images to file for debugging
+    double pixelNoise[3]; //!< [-] Pixel Noise for the estimate
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
-private:
-    cv::dnn::Net positionNet2;           //!< Network for evaluation of centers
+  private:
+    cv::dnn::Net positionNet2; //!< Network for evaluation of centers
 };
-
 
 #endif

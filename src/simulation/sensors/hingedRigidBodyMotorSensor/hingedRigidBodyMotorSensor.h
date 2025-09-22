@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef HINGEDRIGIDBODYMOTORSENSOR_H
 #define HINGEDRIGIDBODYMOTORSENSOR_H
 
@@ -28,10 +27,12 @@
 #include "architecture/utilities/discretize.h"
 #include <stdint.h>
 #include <random>
-/*! @brief Outputs measured angle and angle rate for a hinged rigid body, adding optional noise, bias, and discretization.
+/*! @brief Outputs measured angle and angle rate for a hinged rigid body, adding optional noise, bias, and
+ * discretization.
  */
-class HingedRigidBodyMotorSensor: public SysModel {
-public:
+class HingedRigidBodyMotorSensor : public SysModel
+{
+  public:
     HingedRigidBodyMotorSensor();
     ~HingedRigidBodyMotorSensor();
 
@@ -40,25 +41,24 @@ public:
 
     void setRNGSeed(unsigned int newSeed); //!< for setting the seed
 
-public:
+  public:
+    double thetaNoiseStd;    //!< [rad] standard deviation for Gaussian noise to theta
+    double thetaDotNoiseStd; //!< [rad/s] standard deviation for Gaussian noise to theta dot
+    double thetaBias;        //!< [rad] bias added to true theta
+    double thetaDotBias;     //!< [rad/s] bias added to true theta dot
+    double thetaLSB;         //!< [rad] discretization for theta
+    double thetaDotLSB;      //!< [rad/s] discretization for theta dot
 
-    double thetaNoiseStd;       //!< [rad] standard deviation for Gaussian noise to theta
-    double thetaDotNoiseStd;    //!< [rad/s] standard deviation for Gaussian noise to theta dot
-    double thetaBias;           //!< [rad] bias added to true theta
-    double thetaDotBias;        //!< [rad/s] bias added to true theta dot
-    double thetaLSB;            //!< [rad] discretization for theta
-    double thetaDotLSB;         //!< [rad/s] discretization for theta dot
+    ReadFunctor<HingedRigidBodyMsgPayload>
+      hingedRigidBodyMotorSensorInMsg; //!< input message for true rigid body state (theta, theta dot)
 
-    ReadFunctor<HingedRigidBodyMsgPayload> hingedRigidBodyMotorSensorInMsg;  //!< input message for true rigid body state (theta, theta dot)
+    Message<HingedRigidBodyMsgPayload> hingedRigidBodyMotorSensorOutMsg; //!< output message for sensed rigid body state
 
-    Message<HingedRigidBodyMsgPayload> hingedRigidBodyMotorSensorOutMsg;  //!< output message for sensed rigid body state
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-    BSKLogger bskLogger;              //!< -- BSK Logging
-
-private:
-    std::minstd_rand rGen; //!< -- Random number generator for model
-    std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
+  private:
+    std::minstd_rand rGen;                 //!< -- Random number generator for model
+    std::normal_distribution<double> rNum; //!< -- Random number distribution for model
 };
-
 
 #endif

@@ -165,7 +165,6 @@ SpacecraftLocation::ReadMessages()
         this->eclipseInMsgData = this->eclipseInMsg();
     }
 
-
     return (planetRead && scRead && sunRead && eclipseRead);
 }
 

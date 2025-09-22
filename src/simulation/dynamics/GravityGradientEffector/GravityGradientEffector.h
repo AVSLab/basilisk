@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H
 #define GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H
 
@@ -33,11 +32,12 @@
 #include "architecture/msgPayloadDefC/GravityGradientMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-
-
 /*! @brief gravity gradient gradient module */
-class GravityGradientEffector: public SysModel, public DynamicEffector {
-public:
+class GravityGradientEffector
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     GravityGradientEffector();
     ~GravityGradientEffector();
     void linkInStates(DynParamManager& states);
@@ -47,23 +47,20 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void addPlanetName(std::string planetName);
 
-
-public:
+  public:
     Message<GravityGradientMsgPayload> gravityGradientOutMsg; //!< output message containing the gravity gradient
-    StateData *hubSigma;                            //!< Hub/Inertial attitude represented by MRP
-    StateData *r_BN_N;                              //!< Hub/Inertial position vector in inertial frame components
-    Eigen::MatrixXd *ISCPntB_B;                     //!< [kg m^2] current spacecraft inertia about point B, B-frame components
-    Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *m_SC;                          //!< [kg] mass of spacecraft
-    std::vector<Eigen::MatrixXd *> r_PN_N;          //!< [m] vector of inertial planet positions
-    std::vector<Eigen::MatrixXd *> muPlanet;        //!< [m^3/s^-2] gravitational constant of planet
+    StateData* hubSigma;                                      //!< Hub/Inertial attitude represented by MRP
+    StateData* r_BN_N;                      //!< Hub/Inertial position vector in inertial frame components
+    Eigen::MatrixXd* ISCPntB_B;             //!< [kg m^2] current spacecraft inertia about point B, B-frame components
+    Eigen::MatrixXd* c_B;                   //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd* m_SC;                  //!< [kg] mass of spacecraft
+    std::vector<Eigen::MatrixXd*> r_PN_N;   //!< [m] vector of inertial planet positions
+    std::vector<Eigen::MatrixXd*> muPlanet; //!< [m^3/s^-2] gravitational constant of planet
 
-    BSKLogger bskLogger;                            //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
-private:
-    std::vector<std::string> planetPropertyNames;   //!< Names of planets we want to track
-
+  private:
+    std::vector<std::string> planetPropertyNames; //!< Names of planets we want to track
 };
-
 
 #endif /* GRAVITY_GRADIENT_DYNAMIC_EFFECTOR_H */

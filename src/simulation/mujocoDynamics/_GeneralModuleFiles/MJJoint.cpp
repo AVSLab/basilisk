@@ -23,10 +23,9 @@
 #include "MJScene.h"
 #include "MJSpec.h"
 
-namespace
-{
-mjsEquality* createConstrainedEquality(const std::string& jointName,
-                                                   mjSpec* spec)
+namespace {
+mjsEquality*
+createConstrainedEquality(const std::string& jointName, mjSpec* spec)
 {
     auto mjsequality = mjs_addEquality(spec, 0);
 
@@ -36,8 +35,7 @@ mjsEquality* createConstrainedEquality(const std::string& jointName,
     mjs_setString(mjsequality->name1, jointName.c_str());
     mjsequality->type = mjEQ_JOINT;
     mjsequality->active = false;
-    for (auto i = 0; i < mjNEQDATA; i++)
-    {
+    for (auto i = 0; i < mjNEQDATA; i++) {
         mjsequality->data[i] = 0;
     }
 
@@ -45,7 +43,8 @@ mjsEquality* createConstrainedEquality(const std::string& jointName,
 }
 } // namespace
 
-void MJJoint::configure(const mjModel* m)
+void
+MJJoint::configure(const mjModel* m)
 {
     MJObject::configure(m);
 
@@ -53,29 +52,30 @@ void MJJoint::configure(const mjModel* m)
     this->qvelAdr = m->jnt_dofadr[this->getId()];
 }
 
-void MJJoint::checkInitialized()
+void
+MJJoint::checkInitialized()
 {
     if (!this->qposAdr.has_value()) {
         return body.getSpec().getScene().logAndThrow<std::runtime_error>(
-            "Tried to manipulate joint state before the joint was configured.");
+          "Tried to manipulate joint state before the joint was configured.");
     }
 }
 
 MJScalarJoint::MJScalarJoint(mjsJoint* joint, MJBody& body)
-    : MJJoint(joint, body),
-      constrainedEquality(
-        createConstrainedEquality(name, body.getSpec().getMujocoSpec()),
-        body.getSpec()
-    )
-{}
+  : MJJoint(joint, body)
+  , constrainedEquality(createConstrainedEquality(name, body.getSpec().getMujocoSpec()), body.getSpec())
+{
+}
 
-void MJScalarJoint::configure(const mjModel* m)
+void
+MJScalarJoint::configure(const mjModel* m)
 {
     MJJoint::configure(m);
     this->constrainedEquality.configure(m);
 }
 
-void MJScalarJoint::updateConstrainedEquality()
+void
+MJScalarJoint::updateConstrainedEquality()
 {
     bool useConstraint = this->constrainedStateInMsg.isLinked();
     this->constrainedEquality.setActive(useConstraint);
@@ -84,7 +84,8 @@ void MJScalarJoint::updateConstrainedEquality()
     }
 }
 
-void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
+void
+MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
 {
     checkInitialized();
 
@@ -99,7 +100,8 @@ void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
     this->stateDotOutMsg.write(&stateDotOutMsgPayload, body.getSpec().getScene().moduleID, 0);
 }
 
-void MJScalarJoint::setPosition(double value)
+void
+MJScalarJoint::setPosition(double value)
 {
     checkInitialized();
 
@@ -107,7 +109,8 @@ void MJScalarJoint::setPosition(double value)
     body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJScalarJoint::setVelocity(double value)
+void
+MJScalarJoint::setVelocity(double value)
 {
     checkInitialized();
 
@@ -121,7 +124,8 @@ MJScalarJoint::getConstrainedEquality()
     return this->constrainedEquality;
 }
 
-void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
+void
+MJFreeJoint::setPosition(const Eigen::Vector3d& position)
 {
     checkInitialized();
 
@@ -132,7 +136,8 @@ void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
     body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
+void
+MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
 {
     checkInitialized();
 
@@ -143,7 +148,8 @@ void MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
     body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
+void
+MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
 {
     checkInitialized();
 
@@ -153,11 +159,12 @@ void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
     auto mat = attitude.toRotationMatrix();
     auto quat = Eigen::Quaterniond(mat);
 
-    qposState.middleRows(i + 3, 4) = Eigen::Vector4d{quat.w(), quat.x(), quat.y(), quat.z()};
+    qposState.middleRows(i + 3, 4) = Eigen::Vector4d{ quat.w(), quat.x(), quat.y(), quat.z() };
     body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
+void
+MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     checkInitialized();
 

@@ -32,7 +32,8 @@ LambertSurfaceRelativeVelocity::~LambertSurfaceRelativeVelocity() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos)
+void
+LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
@@ -48,17 +49,18 @@ void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
+void
+LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
 
     // surface frame: s1 in east direction, s2 in north direction, s3 in up direction
     Eigen::Vector3d s1Hat_N;
-    if (omega_PN_N.norm() > 1e-6){
+    if (omega_PN_N.norm() > 1e-6) {
         s1Hat_N = (this->omega_PN_N.cross(this->r_BN_N)).normalized();
     } else {
-        Eigen::Vector3d z_N = {0.0, 0.0, 1.0};
+        Eigen::Vector3d z_N = { 0.0, 0.0, 1.0 };
         s1Hat_N = (z_N.cross(this->r_BN_N)).normalized();
     }
     Eigen::Vector3d s3Hat_N = this->r_BN_N.normalized();
@@ -67,7 +69,7 @@ void LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
     Eigen::Matrix3d dcm_SN;
     dcm_SN << s1Hat_N.transpose(), s2Hat_N.transpose(), s3Hat_N.transpose();
 
-    this->v_BN_N = this->omega_PN_N.cross(this->r_BN_N) + dcm_SN.transpose()*this->vRelativeDesired_S;
+    this->v_BN_N = this->omega_PN_N.cross(this->r_BN_N) + dcm_SN.transpose() * this->vRelativeDesired_S;
 
     // write messages
     this->writeMessages(currentSimNanos);
@@ -76,7 +78,9 @@ void LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
 /*! This method reads the input messages each call of updateState.
 
 */
-void LambertSurfaceRelativeVelocity::readMessages(){
+void
+LambertSurfaceRelativeVelocity::readMessages()
+{
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
     EphemerisMsgPayload ephemerisInMsgBuffer = this->ephemerisInMsg();
 
@@ -85,14 +89,16 @@ void LambertSurfaceRelativeVelocity::readMessages(){
     Eigen::MRPd sigma_PN = cArray2EigenMRPd(ephemerisInMsgBuffer.sigma_BN);
     this->dcm_PN = sigma_PN.toRotationMatrix().transpose();
     Eigen::Vector3d omega_PN_P = cArray2EigenVector3d(ephemerisInMsgBuffer.omega_BN_B);
-    this->omega_PN_N = this->dcm_PN.transpose()*omega_PN_P;
+    this->omega_PN_N = this->dcm_PN.transpose() * omega_PN_P;
 }
 
 /*! This method writes the output messages each call of updateState
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos){
+void
+LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos)
+{
     DesiredVelocityMsgPayload desiredVelocityOutMsgBuffer;
     desiredVelocityOutMsgBuffer = this->desiredVelocityOutMsg.zeroMsgPayload;
 
@@ -103,11 +109,14 @@ void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos){
     this->desiredVelocityOutMsg.write(&desiredVelocityOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
-void LambertSurfaceRelativeVelocity::setVRelativeDesired_S(const Eigen::Vector3d value)
+void
+LambertSurfaceRelativeVelocity::setVRelativeDesired_S(const Eigen::Vector3d value)
 {
     this->vRelativeDesired_S = value;
 }
 
-void LambertSurfaceRelativeVelocity::setTime(const double value){
+void
+LambertSurfaceRelativeVelocity::setTime(const double value)
+{
     this->time = value;
 }

@@ -17,57 +17,64 @@
 
 */
 
-
 #include "fswAlgorithms/formationFlying/formationBarycenter/formationBarycenter.h"
 #include "architecture/utilities/orbitalMotion.h"
 #include <math.h>
 
-
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-FormationBarycenter::FormationBarycenter() {
+FormationBarycenter::FormationBarycenter()
+{
     this->useOrbitalElements = false;
     this->mu = 0;
 }
 
 /*! Module Destructor */
-FormationBarycenter::~FormationBarycenter() {
-}
+FormationBarycenter::~FormationBarycenter() {}
 
 /*! This method self initializes the C-wrapped output message.
-*/
-void FormationBarycenter::SelfInit()
+ */
+void
+FormationBarycenter::SelfInit()
 {
     NavTransMsg_C_init(&this->transOutMsgC);
 }
 
-
-
 /*! This method is used to reset the module and checks that required input messages are connected.
-*/
-void FormationBarycenter::Reset(uint64_t CurrentSimNanos) {
+ */
+void
+FormationBarycenter::Reset(uint64_t CurrentSimNanos)
+{
     // check that required input messages are connected
     if (this->scNavInMsgs.size() == 0 || this->scPayloadInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
+        bskLogger.bskLog(
+          BSK_ERROR,
+          "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     // check if the gravitational parameter is set if using orbital elements averaging
     if (this->mu == 0 && this->useOrbitalElements) {
-        bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
+        bskLogger.bskLog(
+          BSK_ERROR,
+          "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
     }
-
 }
 
 /*! Adds a scNav and scPayload messages name to the vector of names to be subscribed to.
-*/
-void FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg, Message<VehicleConfigMsgPayload>* tmpScPayloadMsg) {
+ */
+void
+FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg,
+                                          Message<VehicleConfigMsgPayload>* tmpScPayloadMsg)
+{
     this->scNavInMsgs.push_back(tmpScNavMsg->addSubscriber());
     this->scPayloadInMsgs.push_back(tmpScPayloadMsg->addSubscriber());
 }
 
 /*! Reads the input messages
-*/
-void FormationBarycenter::ReadInputMessages() {
+ */
+void
+FormationBarycenter::ReadInputMessages()
+{
 
     NavTransMsgPayload scNavMsg;
     VehicleConfigMsgPayload scPayloadMsg;
@@ -83,16 +90,17 @@ void FormationBarycenter::ReadInputMessages() {
         this->scNavBuffer.push_back(scNavMsg);
         this->scPayloadBuffer.push_back(scPayloadMsg);
     }
-
 }
 
 /*! Does the barycenter calculations
-*/
-void FormationBarycenter::computeBaricenter() {
-    //create temporarary variables
-    double barycenter[] {0, 0, 0};
-    double barycenterVelocity[] {0, 0, 0};
-    double totalMass {0};
+ */
+void
+FormationBarycenter::computeBaricenter()
+{
+    // create temporarary variables
+    double barycenter[]{ 0, 0, 0 };
+    double barycenterVelocity[]{ 0, 0, 0 };
+    double totalMass{ 0 };
 
     // check which averaging to use
     if (!this->useOrbitalElements) {
@@ -136,7 +144,6 @@ void FormationBarycenter::computeBaricenter() {
             fCosineSum += this->scPayloadBuffer.at(c).massSC * cos(tempElements.f);
 
             totalMass += this->scPayloadBuffer.at(c).massSC;
-
         }
 
         orbitElements.a /= totalMass;
@@ -158,8 +165,10 @@ void FormationBarycenter::computeBaricenter() {
 }
 
 /*! writes the output messages
-*/
-void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
+ */
+void
+FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock)
+{
     // write C++ output message
     this->transOutMsg.write(&this->transOutBuffer, this->moduleID, CurrentClock);
 
@@ -168,8 +177,9 @@ void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock) {
 }
 
 /*! This is the main method that gets called every time the module is updated.
-*/
-void FormationBarycenter::UpdateState(uint64_t CurrentSimNanos)
+ */
+void
+FormationBarycenter::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadInputMessages();
     this->transOutBuffer = this->transOutMsg.zeroMsgPayload; // zero the output message buffer

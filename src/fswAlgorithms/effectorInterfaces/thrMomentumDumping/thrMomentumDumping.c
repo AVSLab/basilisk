@@ -26,20 +26,20 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 
-
 /*!
  \verbatim embed:rst
-    This method initializes the configData for this module.  It creates a single output message of type :ref:`THRArrayOnTimeCmdMsgPayload`.
+    This method initializes the configData for this module.  It creates a single output message of type
+ :ref:`THRArrayOnTimeCmdMsgPayload`.
  \endverbatim
 
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
+void
+SelfInit_thrMomentumDumping(thrMomentumDumpingConfig* configData, int64_t moduleID)
 {
     THRArrayOnTimeCmdMsg_C_init(&configData->thrusterOnTimeOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -48,11 +48,12 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t m
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_thrMomentumDumping(thrMomentumDumpingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    THRArrayConfigMsgPayload    localThrusterData;     /* local copy of the thruster data message */
-    CmdTorqueBodyMsgPayload     DeltaHInMsg;
-    int                         i;
+    THRArrayConfigMsgPayload localThrusterData; /* local copy of the thruster data message */
+    CmdTorqueBodyMsgPayload DeltaHInMsg;
+    int i;
 
     /*! - reset the prior time flag state.  If set to zero, the control time step is not evaluated on the
      first function call */
@@ -72,7 +73,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
     /*! - read in number of thrusters installed and maximum thrust values */
     localThrusterData = THRArrayConfigMsg_C_read(&configData->thrusterConfInMsg);
     configData->numThrusters = localThrusterData.numThrusters;
-    for (i=0;i<configData->numThrusters;i++) {
+    for (i = 0; i < configData->numThrusters; i++) {
         configData->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust;
     }
 
@@ -94,9 +95,8 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     /*! - perform sanity check that the module maxCounterValue value is set to a positive value */
     if (configData->maxCounterValue < 1) {
-        _bskLog(configData->bskLogger, BSK_WARNING,"The maxCounterValue flag must be set to a positive value.");
+        _bskLog(configData->bskLogger, BSK_WARNING, "The maxCounterValue flag must be set to a positive value.");
     }
-
 }
 
 /*! This method reads in the requested thruster impulse message.  If it is a new message then a fresh
@@ -107,27 +107,30 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_thrMomentumDumping(thrMomentumDumpingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    double              dt;                             /* [s]    control update period */
-    double              *Delta_P_input;                 /* []     pointer to vector of requested net thruster impulses */
-    double              *tOnOut;                        /*        pointer to vector of requested thruster on times per dumping cycle */
-    THRArrayOnTimeCmdMsgPayload thrOnTimeOut;           /* []     output message container */
-    THRArrayCmdForceMsgPayload thrusterImpulseInMsg;    /* []     thruster inpulse input message */
-    CmdTorqueBodyMsgPayload  DeltaHInMsg;               /* []     commanded Delta_H input message */
-    uint64_t            timeOfDeltaHMsg;
-    int                 i;
+    double dt;             /* [s]    control update period */
+    double* Delta_P_input; /* []     pointer to vector of requested net thruster impulses */
+    double* tOnOut;        /*        pointer to vector of requested thruster on times per dumping cycle */
+    THRArrayOnTimeCmdMsgPayload thrOnTimeOut;        /* []     output message container */
+    THRArrayCmdForceMsgPayload thrusterImpulseInMsg; /* []     thruster inpulse input message */
+    CmdTorqueBodyMsgPayload DeltaHInMsg;             /* []     commanded Delta_H input message */
+    uint64_t timeOfDeltaHMsg;
+    int i;
 
     /*! - zero the output array of on-time values */
     tOnOut = thrOnTimeOut.OnTimeRequest;
     thrOnTimeOut = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
 
     /*! - check if this is the first call after reset.  If yes, write zero output message and exit */
-    if (configData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
+    if (configData->priorTime != 0) { /* don't compute dt if this is the first call after a reset */
 
         /* - compute control update time */
         dt = diffNanoToSec(callTime, configData->priorTime);
-        if (dt < 0.0) {dt = 0.0;}             /* ensure no negative numbers are used */
+        if (dt < 0.0) {
+            dt = 0.0;
+        } /* ensure no negative numbers are used */
 
         /*! - Read the requester thruster impulse input message */
         thrusterImpulseInMsg = THRArrayCmdForceMsg_C_read(&configData->thrusterImpulseInMsg);
@@ -137,14 +140,14 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
          with current momentum dumping) */
         DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
         timeOfDeltaHMsg = CmdTorqueBodyMsg_C_timeWritten(&configData->deltaHInMsg);
-        if (configData->lastDeltaHInMsgTime == timeOfDeltaHMsg){
+        if (configData->lastDeltaHInMsgTime == timeOfDeltaHMsg) {
             /* identical net thruster impulse request case, continue with existing RW momentum dumping */
             if (configData->thrDumpingCounter <= 0) {
                 /* time to fire thrusters again */
                 mCopy(configData->thrOnTimeRemaining, 1, configData->numThrusters, tOnOut);
                 /* subtract next control period from remaining impulse time */
-                for (i=0;i<configData->numThrusters;i++) {
-                    if (configData->thrOnTimeRemaining[i] >0.0){
+                for (i = 0; i < configData->numThrusters; i++) {
+                    if (configData->thrOnTimeRemaining[i] > 0.0) {
                         configData->thrOnTimeRemaining[i] -= dt;
                     }
                 }
@@ -155,37 +158,36 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
                 configData->thrDumpingCounter -= 1;
             }
 
-
         } else {
             /* new net thruster impulse request case */
             configData->lastDeltaHInMsgTime = timeOfDeltaHMsg;
             mCopy(Delta_P_input, 1, configData->numThrusters, configData->Delta_p); /* store current Delta_p */
-            for (i=0;i<configData->numThrusters;i++) {
+            for (i = 0; i < configData->numThrusters; i++) {
                 /* compute net time required to implement requested thruster impulse */
-                configData->thrOnTimeRemaining[i] = configData->Delta_p[i]/configData->thrMaxForce[i];
+                configData->thrOnTimeRemaining[i] = configData->Delta_p[i] / configData->thrMaxForce[i];
             }
             /* set thruster on time to requested impulse time */
             mCopy(configData->thrOnTimeRemaining, 1, configData->numThrusters, tOnOut);
             /* reset the dumping counter */
             configData->thrDumpingCounter = configData->maxCounterValue;
             /* subtract next control period from remaining impulse time */
-            for (i=0;i<configData->numThrusters;i++) {
+            for (i = 0; i < configData->numThrusters; i++) {
                 configData->thrOnTimeRemaining[i] -= dt;
             }
         }
 
         /*! - check for negative, saturated firing times or negative remaining times */
-        for (i=0;i<configData->numThrusters;i++) {
+        for (i = 0; i < configData->numThrusters; i++) {
             /* if thruster on time is less than the minimum firing time, set thrust time command to zero */
-            if (tOnOut[i] < configData->thrMinFireTime){
+            if (tOnOut[i] < configData->thrMinFireTime) {
                 tOnOut[i] = 0.0;
             }
             /* if the thruster time remainder is negative, zero out the remainder */
-            if (configData->thrOnTimeRemaining[i] < 0.0){
+            if (configData->thrOnTimeRemaining[i] < 0.0) {
                 configData->thrOnTimeRemaining[i] = 0.0;
             }
             /* if the thruster on time is larger than the control period, set it equal to control period */
-            if (tOnOut[i] > dt){
+            if (tOnOut[i] > dt) {
                 tOnOut[i] = dt;
             }
         }

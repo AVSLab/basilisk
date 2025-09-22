@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef MTBFEEDFORWARD_H
 #define MTBFEEDFORWARD_H
 
@@ -29,28 +28,32 @@
 #include "cMsgCInterface/MTBArrayConfigMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
 
     /* Inputs. */
-    CmdTorqueBodyMsg_C vehControlInMsg;                 //!< input message containing the current control torque in the Body frame
-    MTBCmdMsg_C dipoleRequestMtbInMsg;                  //!< input message containing the individual dipole requests for each torque bar on the vehicle
-    TAMSensorBodyMsg_C tamSensorBodyInMsg;              //!< [Tesla] input message for magnetic field sensor data in the Body frame
-    MTBArrayConfigMsg_C mtbArrayConfigParamsInMsg;      //!< input message containing configuration parameters for all the torque bars on the vehicle
+    CmdTorqueBodyMsg_C vehControlInMsg; //!< input message containing the current control torque in the Body frame
+    MTBCmdMsg_C dipoleRequestMtbInMsg;  //!< input message containing the individual dipole requests for each torque bar
+                                        //!< on the vehicle
+    TAMSensorBodyMsg_C tamSensorBodyInMsg; //!< [Tesla] input message for magnetic field sensor data in the Body frame
+    MTBArrayConfigMsg_C mtbArrayConfigParamsInMsg; //!< input message containing configuration parameters for all the
+                                                   //!< torque bars on the vehicle
 
     /* Outputs. */
-    CmdTorqueBodyMsg_C vehControlOutMsg;                //!< output message containing the current control torque in the Body frame
+    CmdTorqueBodyMsg_C vehControlOutMsg; //!< output message containing the current control torque in the Body frame
 
     /* Other. */
-    MTBArrayConfigMsgPayload mtbArrayConfigParams;      //!< configuration for MTB layout
-    BSKLogger *bskLogger;                               //!< BSK Logging
-}mtbFeedforwardConfig;
+    MTBArrayConfigMsgPayload mtbArrayConfigParams; //!< configuration for MTB layout
+    BSKLogger* bskLogger;                          //!< BSK Logging
+} mtbFeedforwardConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    void SelfInit_mtbFeedforward(mtbFeedforwardConfig *configData, int64_t moduleID);
-    void Update_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_mtbFeedforward(mtbFeedforwardConfig* configData, int64_t moduleID);
+    void Update_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

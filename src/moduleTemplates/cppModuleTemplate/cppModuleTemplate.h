@@ -28,34 +28,32 @@
 #include <array>
 
 /*! @brief basic Basilisk C++ module class */
-class CppModuleTemplate: public SysModel {
-public:
+class CppModuleTemplate : public SysModel
+{
+  public:
     CppModuleTemplate();
     ~CppModuleTemplate();
 
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-    Message<CModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
-    ReadFunctor<CModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
+    Message<CModuleTemplateMsgPayload> dataOutMsg;    //!< attitude navigation output msg
+    ReadFunctor<CModuleTemplateMsgPayload> dataInMsg; //!< translation navigation output msg
 
-    BSKLogger bskLogger;                               //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
     /** setter for `dummy` property */
     void setDummy(double value);
     /** getter for `dummy` property */
-    double getDummy() const {return this->dummy;}
+    double getDummy() const { return this->dummy; }
     /** setter for `dumVector` property */
     void setDumVector(std::array<double, 3> value);
     /** getter for `dumVector` property */
-    std::array<double, 3> getDumVector() const {return this->dumVector;}
+    std::array<double, 3> getDumVector() const { return this->dumVector; }
 
-private:
-
-    double dummy = {};                                 //!< [units] sample module variable declaration
-    std::array<double, 3> dumVector = {};              //!< [units] sample vector variable
-
+  private:
+    double dummy = {};                    //!< [units] sample module variable declaration
+    std::array<double, 3> dumVector = {}; //!< [units] sample vector variable
 };
-
 
 #endif

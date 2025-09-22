@@ -41,45 +41,51 @@ TabularAtmosphere::~TabularAtmosphere()
     return;
 }
 
-/*! Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero lengths.
-*
-*/
-void TabularAtmosphere::customReset(uint64_t CurrentClock)
+/*! Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero
+ * lengths.
+ *
+ */
+void
+TabularAtmosphere::customReset(uint64_t CurrentClock)
 {
-    this->altList_length = (int) this->altList.size();
-    this->rhoList_length = (int) this->rhoList.size();
-    this->tempList_length = (int) this->tempList.size();
+    this->altList_length = (int)this->altList.size();
+    this->rhoList_length = (int)this->rhoList.size();
+    this->tempList_length = (int)this->tempList.size();
 
-
-    if((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)){
+    if ((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)) {
         bskLogger.bskLog(BSK_ERROR, "Input arrays not of equal length.");
     }
 
-    if(this->altList_length == 0){
+    if (this->altList_length == 0) {
         bskLogger.bskLog(BSK_ERROR, "No data in altitude list.");
-    } else if(this->rhoList_length == 0){
+    } else if (this->rhoList_length == 0) {
         bskLogger.bskLog(BSK_ERROR, "No data in density list.");
-    } else if(this->tempList_length == 0){
+    } else if (this->tempList_length == 0) {
         bskLogger.bskLog(BSK_ERROR, "No data in temperature list.");
     }
 
     return;
 }
 
-/*! evaluate function interpolates from given data lists. Sets density and temp to 0 if altitude outside bounds of input lists OR if outside bounds of envMinReach and envMaxReach.
-*
-*/
-void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
+/*! evaluate function interpolates from given data lists. Sets density and temp to 0 if altitude outside bounds of input
+ * lists OR if outside bounds of envMinReach and envMaxReach.
+ *
+ */
+void
+TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime)
 {
     if ((this->orbitAltitude < this->altList[0]) || (this->orbitAltitude > this->altList.back())) {
         msg->neutralDensity = 0.0;
         msg->localTemp = 0.0;
-    }
-    else {
+    } else {
         for (uint32_t i = 0; i <= this->altList.size() - 1; i++) {
             if (this->altList[i] > this->orbitAltitude) {
-                msg->neutralDensity = this->rhoList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) * (this->rhoList[i] - this->rhoList[i - 1]) / (this->altList[i] - this->altList[i - 1]);
-                msg->localTemp = this->tempList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) * (this->tempList[i] - this->tempList[i - 1]) / (this->altList[i] - this->altList[i - 1]);
+                msg->neutralDensity = this->rhoList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) *
+                                                               (this->rhoList[i] - this->rhoList[i - 1]) /
+                                                               (this->altList[i] - this->altList[i - 1]);
+                msg->localTemp = this->tempList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) *
+                                                           (this->tempList[i] - this->tempList[i - 1]) /
+                                                           (this->altList[i] - this->altList[i - 1]);
                 break;
             }
         }

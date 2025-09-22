@@ -24,14 +24,14 @@
 
 DragDynamicEffector::DragDynamicEffector()
 {
-	this->coreParams.projectedArea = 0.0;
-	this->coreParams.dragCoeff = 0.0;
+    this->coreParams.projectedArea = 0.0;
+    this->coreParams.dragCoeff = 0.0;
     this->coreParams.comOffset.setZero();
-	this->modelType = "cannonball";
-	this->forceExternal_B.fill(0.0);
-	this->torqueExternalPntB_B.fill(0.0);
-	this->v_B.fill(0.0);
-	this->v_hat_B.fill(0.0);
+    this->modelType = "cannonball";
+    this->forceExternal_B.fill(0.0);
+    this->torqueExternalPntB_B.fill(0.0);
+    this->v_B.fill(0.0);
+    this->v_hat_B.fill(0.0);
 
     return;
 }
@@ -39,41 +39,41 @@ DragDynamicEffector::DragDynamicEffector()
 /*! The destructor.*/
 DragDynamicEffector::~DragDynamicEffector()
 {
-	return;
+    return;
 }
-
 
 /*! This method is used to reset the module.
 
  */
-void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
+void
+DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "dragDynamicEffector.atmoDensInMsg was not linked.");
     }
-
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
 
  */
-void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
+void
+DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-	return;
+    return;
 }
-
 
 /*! This method is used to read the incoming density message and update the internal density/
 atmospheric data.
 
  */
-bool DragDynamicEffector::ReadInputs()
+bool
+DragDynamicEffector::ReadInputs()
 {
-	bool dataGood;
+    bool dataGood;
     this->atmoInData = this->atmoDensInMsg();
     dataGood = this->atmoDensInMsg.isWritten();
-	return(dataGood);
+    return (dataGood);
 }
 
 /*!
@@ -82,47 +82,56 @@ bool DragDynamicEffector::ReadInputs()
 
     @param states simulation states
  */
-void DragDynamicEffector::linkInStates(DynParamManager& states){
+void
+DragDynamicEffector::linkInStates(DynParamManager& states)
+{
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 }
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
-*/
-void DragDynamicEffector::updateDragDir(){
+ */
+void
+DragDynamicEffector::updateDragDir()
+{
     Eigen::MRPd sigmaBN;
     sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
-	this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
-	this->v_hat_B = this->v_B / this->v_B.norm();
+    this->v_B = dcm_BN * this->hubVelocity->getState(); // [m/s] sc velocity
+    this->v_hat_B = this->v_B / this->v_B.norm();
 
-	return;
+    return;
 }
 
 /*! This method implements a simple "cannnonball" (attitude-independent) drag model.
-*/
-void DragDynamicEffector::cannonballDrag(){
-  	//! Begin method steps
-  	//! - Zero out the structure force/torque for the drag set
-  	this->forceExternal_B.setZero();
+ */
+void
+DragDynamicEffector::cannonballDrag()
+{
+    //! Begin method steps
+    //! - Zero out the structure force/torque for the drag set
+    this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-  	this->forceExternal_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
-  	this->torqueExternalPntB_B = this->coreParams.comOffset.cross(forceExternal_B);
+    this->forceExternal_B = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) *
+                            this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0) * this->v_hat_B;
+    this->torqueExternalPntB_B = this->coreParams.comOffset.cross(forceExternal_B);
 
-  	return;
+    return;
 }
 
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
 */
-void DragDynamicEffector::computeForceTorque(double integTime, double timeStep){
-	updateDragDir();
-	if(this->modelType == "cannonball"){
-		cannonballDrag();
-  	}
-  	return;
+void
+DragDynamicEffector::computeForceTorque(double integTime, double timeStep)
+{
+    updateDragDir();
+    if (this->modelType == "cannonball") {
+        cannonballDrag();
+    }
+    return;
 }
 
 /*! This method is called to update the local atmospheric conditions at each timestep.
@@ -130,8 +139,9 @@ Naturally, this means that conditions are held piecewise-constant over an integr
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void
+DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-	ReadInputs();
-	return;
+    ReadInputs();
+    return;
 }

@@ -30,8 +30,7 @@
 #include "MJBody.h"
 #include "MJUtils.h"
 
-namespace Eigen
-{
+namespace Eigen {
 using Vector6d = Eigen::Matrix<double, 6, 1>;
 }
 
@@ -48,7 +47,7 @@ class MJScene;
  */
 class MJSpec
 {
-public:
+  public:
     /**
      * @brief Guard to temporarily disable model recompilation.
      *
@@ -57,14 +56,16 @@ public:
      * trigger a model recompilation, but for efficiency recompilation is supressed
      * until a later moment.
      */
-    struct NoRecompileGuard {
+    struct NoRecompileGuard
+    {
         /**
          * @brief Constructs the guard and disables recompilation.
          *
          * @param spec Reference to the `MJSpec` object.
          */
         NoRecompileGuard(MJSpec& spec)
-            : spec(spec), prevShouldRecompileWhenAsked(spec.shouldRecompileWhenAsked)
+          : spec(spec)
+          , prevShouldRecompileWhenAsked(spec.shouldRecompileWhenAsked)
         {
             spec.shouldRecompileWhenAsked = false;
         }
@@ -74,7 +75,7 @@ public:
          */
         ~NoRecompileGuard() { spec.shouldRecompileWhenAsked = prevShouldRecompileWhenAsked; }
 
-        MJSpec& spec; ///< Reference to the `MJSpec` object.
+        MJSpec& spec;                      ///< Reference to the `MJSpec` object.
         bool prevShouldRecompileWhenAsked; ///< Previous state of recompilation flag.
     };
 
@@ -180,7 +181,8 @@ public:
      * @return Reference to the actuator of type `T`.
      * @throws std::invalid_argument If the actuator does not exist or has a different type.
      */
-    template <typename T> T& getActuator(const std::string& name);
+    template<typename T>
+    T& getActuator(const std::string& name);
 
     /**
      * @brief Adds a single-input actuator acting on a joint (`MJSingleActuator`).
@@ -191,8 +193,7 @@ public:
      * @param joint The joint to attach the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addJointSingleActuator(const std::string& name,
-                                        const std::string& joint);
+    MJSingleActuator& addJointSingleActuator(const std::string& name, const std::string& joint);
 
     /**
      * @brief Adds a single-input actuator (`MJSingleActuator`).
@@ -214,9 +215,7 @@ public:
      * @param gear The gear parameters for the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addSingleActuator(const std::string& name,
-                                        const std::string& site,
-                                        const Eigen::Vector6d& gear);
+    MJSingleActuator& addSingleActuator(const std::string& name, const std::string& site, const Eigen::Vector6d& gear);
 
     /**
      * @brief Adds a composite actuator to the specification.
@@ -230,18 +229,19 @@ public:
      * @param site The site to attach the actuator.
      * @return Reference to the created actuator of type `T`.
      */
-    template <typename T> T& addCompositeActuator(const std::string& name, const std::string& site);
+    template<typename T>
+    T& addCompositeActuator(const std::string& name, const std::string& site);
 
-protected:
-    std::unique_ptr<mjSpec, MJBasilisk::detail::mjSpecDeleter> spec; ///< MuJoCo spec.
-    std::unique_ptr<mjModel, MJBasilisk::detail::mjModelDeleter> model; ///< MuJoCo model.
-    std::unique_ptr<mjData, MJBasilisk::detail::mjDataDeleter> data; ///< MuJoCo data.
+  protected:
+    std::unique_ptr<mjSpec, MJBasilisk::detail::mjSpecDeleter> spec;            ///< MuJoCo spec.
+    std::unique_ptr<mjModel, MJBasilisk::detail::mjModelDeleter> model;         ///< MuJoCo model.
+    std::unique_ptr<mjData, MJBasilisk::detail::mjDataDeleter> data;            ///< MuJoCo data.
     std::unique_ptr<mjVFS, MJBasilisk::detail::mjVFSDeleter> virtualFileSystem; ///< MuJoCo virtual file system.
 
-    MJScene& scene; ///< Reference to the associated scene.
+    MJScene& scene;                                     ///< Reference to the associated scene.
     std::vector<std::unique_ptr<MJActuator>> actuators; ///< List of actuators.
-    std::list<MJBody> bodies; ///< List of bodies.
-    std::list<MJEquality> equalities; ///< List of equalities.
+    std::list<MJBody> bodies;                           ///< List of bodies.
+    std::list<MJEquality> equalities;                   ///< List of equalities.
 
     /**
      * A number of operations on the mjSpec (like adding elements)
@@ -261,12 +261,12 @@ protected:
      */
     bool shouldRecompileWhenAsked = true;
 
-protected:
-    void loadBodies(); ///< Load bodies in spec into MJBody
-    void loadActuators(); ///< Load actuators in spec into MJActuator
+  protected:
+    void loadBodies();     ///< Load bodies in spec into MJBody
+    void loadActuators();  ///< Load actuators in spec into MJActuator
     void loadEqualities(); ///< Load equalities in spec into MJEquality
 
-protected:
+  protected:
     /**
      * Creates an actuator of type `T`, where `T` must be one of: `MJForceActuator`,
      * `MJTorqueActuator`, or `MJForceTorqueActuator`.
@@ -281,65 +281,60 @@ protected:
      * @param siteHint The site to attach the actuator.
      * @param existingActuators Colleciton of existing `MJActuatorObject` to use.
      * @return Reference to the created actuator of type `T`.
-    */
-    template <typename T>
-    std::unique_ptr<T>
-    createActuator(const std::string& name,
-                   const std::string& siteHint,
-                   std::unordered_map<std::string, MJActuatorObject>& existingActuators);
+     */
+    template<typename T>
+    std::unique_ptr<T> createActuator(const std::string& name,
+                                      const std::string& siteHint,
+                                      std::unordered_map<std::string, MJActuatorObject>& existingActuators);
 };
 
 // Implementation of templated methods
 
-template <typename T> T& MJSpec::getActuator(const std::string& name)
+template<typename T>
+T&
+MJSpec::getActuator(const std::string& name)
 {
-    auto actuatorPtr = std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) {
-        return obj->getName() == name;
-    });
+    auto actuatorPtr =
+      std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) { return obj->getName() == name; });
 
     if (actuatorPtr == std::end(actuators))
-        MJBasilisk::detail::logAndThrow("Tried to get actuator '" + name +
-                                        "' but it does not exist.");
+        MJBasilisk::detail::logAndThrow("Tried to get actuator '" + name + "' but it does not exist.");
 
     auto casted = dynamic_cast<T*>(actuatorPtr->get());
     if (!casted)
-        MJBasilisk::detail::logAndThrow("Tried to get actuator '" + name +
-                                        "', but it is not of the expected type.");
+        MJBasilisk::detail::logAndThrow("Tried to get actuator '" + name + "', but it is not of the expected type.");
 
     return *casted;
 }
 
-template<class> constexpr bool dependent_false = false;
+template<class>
+constexpr bool dependent_false = false;
 
-template <typename T>
+template<typename T>
 std::unique_ptr<T>
 MJSpec::createActuator(const std::string& name,
                        const std::string& siteHint,
                        std::unordered_map<std::string, MJActuatorObject>& existingActuators)
 {
-        // Composite actuator types require multiple mujoco actuators
+    // Composite actuator types require multiple mujoco actuators
     // with different gears
     std::vector<std::pair<std::string, size_t>> subactuatorNameAndGears;
     if constexpr (std::is_same_v<T, MJForceActuator>) {
         subactuatorNameAndGears = {
-            {name + "_fx", 0},
-            {name + "_fy", 1},
-            {name + "_fz", 2},
+            { name + "_fx", 0 },
+            { name + "_fy", 1 },
+            { name + "_fz", 2 },
         };
     } else if constexpr (std::is_same_v<T, MJTorqueActuator>) {
         subactuatorNameAndGears = {
-            {name + "_mx", 3},
-            {name + "_my", 4},
-            {name + "_mz", 5},
+            { name + "_mx", 3 },
+            { name + "_my", 4 },
+            { name + "_mz", 5 },
         };
     } else if constexpr (std::is_same_v<T, MJForceTorqueActuator>) {
         subactuatorNameAndGears = {
-            {name + "_fx", 0},
-            {name + "_fy", 1},
-            {name + "_fz", 2},
-            {name + "_mx", 3},
-            {name + "_my", 4},
-            {name + "_mz", 5},
+            { name + "_fx", 0 }, { name + "_fy", 1 }, { name + "_fz", 2 },
+            { name + "_mx", 3 }, { name + "_my", 4 }, { name + "_mz", 5 },
         };
     } else {
         // I'd like to do static_assert(false, ...) but not all compilers support it
@@ -348,7 +343,7 @@ MJSpec::createActuator(const std::string& name,
     std::vector<MJActuatorObject> subActuatorObjects;
 
     for (auto&& [subActuatorName, gearInd] : subactuatorNameAndGears) {
-                 // The object already exists! We can just reuse it
+        // The object already exists! We can just reuse it
         if (existingActuators.count(subActuatorName)) {
             subActuatorObjects.emplace_back(std::move(existingActuators.at(subActuatorName)));
             existingActuators.erase(subActuatorName);
@@ -356,8 +351,8 @@ MJSpec::createActuator(const std::string& name,
         // We need to generate a new subactuator name, but we can only do so if
         // siteHint was given
         else if (siteHint.empty()) {
-            MJBasilisk::detail::logAndThrow("Tried to autogenerate mujoco actuator for actuator " +
-                                            name + ", but no 'site' was provided.");
+            MJBasilisk::detail::logAndThrow("Tried to autogenerate mujoco actuator for actuator " + name +
+                                            ", but no 'site' was provided.");
         }
         // We need to create the mjs element with the given hint and gear
         else {
@@ -377,8 +372,9 @@ MJSpec::createActuator(const std::string& name,
     return std::make_unique<T>(name, std::move(subActuatorObjects));
 }
 
-template <typename T>
-inline T& MJSpec::addCompositeActuator(const std::string& name, const std::string& site)
+template<typename T>
+inline T&
+MJSpec::addCompositeActuator(const std::string& name, const std::string& site)
 {
     if ((this->hasActuator(name)))
         MJBasilisk::detail::logAndThrow("Tried to add actuator with name '" + name +

@@ -24,15 +24,14 @@
 
 #include "MJScene.h"
 
-namespace
-{
-std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter)
+namespace {
+std::vector<std::string>
+readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter)
 {
     std::string value;
 
-    for (auto element = mjs_firstElement(spec, mjOBJ_TEXT); element;
-         element = mjs_nextElement(spec, element)) {
-                    auto mjstext = mjs_asText(element);
+    for (auto element = mjs_firstElement(spec, mjOBJ_TEXT); element; element = mjs_nextElement(spec, element)) {
+        auto mjstext = mjs_asText(element);
         assert(mjstext != NULL);
         if (mjs_getString(mjstext->name) == key) {
             value = mjs_getString(mjstext->data);
@@ -40,15 +39,14 @@ std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& 
         }
     }
     std::istringstream iss(value);
-    std::vector<std::string> tokens{std::istream_iterator<std::string>{iss},
-                                    std::istream_iterator<std::string>{}};
+    std::vector<std::string> tokens{ std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{} };
     return tokens;
 }
 
 std::vector<std::pair<std::string, std::string>>
 readCustomDoubleSplit(mjSpec* spec, const std::string& key, char delimiter1, char delimiter2)
 {
-        auto input = readCustomSingleSplit(spec, key, delimiter1);
+    auto input = readCustomSingleSplit(spec, key, delimiter1);
     std::vector<std::pair<std::string, std::string>> result;
 
     for (const auto& str : input) {
@@ -64,39 +62,37 @@ readCustomDoubleSplit(mjSpec* spec, const std::string& key, char delimiter1, cha
 } // namespace
 
 MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::string>& files)
-    : scene(scene)
+  : scene(scene)
 {
     this->virtualFileSystem.reset(new mjVFS());
     mj_defaultVFS(virtualFileSystem.get());
 
     std::string loadingError;
-        for (auto&& file : files) {
+    for (auto&& file : files) {
         switch (mj_addFileVFS(virtualFileSystem.get(), "", file.c_str())) {
-        case 0:
-            break; // success
-        case 1:
-            loadingError = "Error loading file " + file + ": VFS memory is full.";
-            break;
-        case 2:
-            loadingError = "Error loading file " + file + ": file name used multiple times.";
-            break;
-        case -1:
-            loadingError = "Error loading file " + file + ": internal error.";
-            break;
-        default:
-            assert(false); // should never happen
+            case 0:
+                break; // success
+            case 1:
+                loadingError = "Error loading file " + file + ": VFS memory is full.";
+                break;
+            case 2:
+                loadingError = "Error loading file " + file + ": file name used multiple times.";
+                break;
+            case -1:
+                loadingError = "Error loading file " + file + ": internal error.";
+                break;
+            default:
+                assert(false); // should never happen
         };
     }
 
-    if (!loadingError.empty())
-    {
+    if (!loadingError.empty()) {
         MJBasilisk::detail::logAndThrow(loadingError);
     }
 
     char error[1024];
-    auto maybeSpec =
-        mj_parseXMLString(xmlString.c_str(), virtualFileSystem.get(), error, sizeof(error));
-        // mj_parseXMLString returns null in case of parsing error
+    auto maybeSpec = mj_parseXMLString(xmlString.c_str(), virtualFileSystem.get(), error, sizeof(error));
+    // mj_parseXMLString returns null in case of parsing error
     if (maybeSpec) {
         this->spec.reset(maybeSpec);
     } else {
@@ -115,18 +111,18 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
         // until it goes out of scope. This allows the rest of the functions
         // to make changes that should trigger a recompile without doing
         // so. This is done for efficiency, but care should be taken.
-        MJSpec::NoRecompileGuard guard{*this};
+        MJSpec::NoRecompileGuard guard{ *this };
         this->loadBodies();
         this->loadActuators();
         this->loadEqualities();
     }
 }
 
-void MJSpec::loadBodies()
+void
+MJSpec::loadBodies()
 {
     // Start at 1 to skip the worldbody
-    for (auto i = 1; i < this->model->nbody; i++)
-    {
+    for (auto i = 1; i < this->model->nbody; i++) {
         const auto bodyname = this->model->names + this->model->name_bodyadr[i];
 
         auto mjsbody = mjs_findBody(this->spec.get(), bodyname);
@@ -136,7 +132,8 @@ void MJSpec::loadBodies()
     }
 }
 
-void MJSpec::loadActuators()
+void
+MJSpec::loadActuators()
 {
 
     // Iterate over all the existing actuators in the spec
@@ -162,28 +159,27 @@ void MJSpec::loadActuators()
     // so that the actuators remaining are not used by any composite actuator.
     for (auto&& [actuatorName, siteHint] :
          readCustomDoubleSplit(this->spec.get(), "basilisk:forceactuator", ' ', '@')) {
-                    this->actuators.emplace_back(
-            this->createActuator<MJForceActuator>(actuatorName, siteHint, actuatorObjects));
+        this->actuators.emplace_back(this->createActuator<MJForceActuator>(actuatorName, siteHint, actuatorObjects));
     }
     for (auto&& [actuatorName, siteHint] :
          readCustomDoubleSplit(this->spec.get(), "basilisk:torqueactuator", ' ', '@')) {
-        this->actuators.emplace_back(
-            this->createActuator<MJTorqueActuator>(actuatorName, siteHint, actuatorObjects));
+        this->actuators.emplace_back(this->createActuator<MJTorqueActuator>(actuatorName, siteHint, actuatorObjects));
     }
     for (auto&& [actuatorName, siteHint] :
          readCustomDoubleSplit(this->spec.get(), "basilisk:forcetorqueactuator", ' ', '@')) {
         this->actuators.emplace_back(
-            this->createActuator<MJForceTorqueActuator>(actuatorName, siteHint, actuatorObjects));
+          this->createActuator<MJForceTorqueActuator>(actuatorName, siteHint, actuatorObjects));
     }
     // For those actuators not used by the composite actuators, we generate
     // a MJSingleActuator
     for (auto&& [actuatorName, actuatorObj] : actuatorObjects) {
         this->actuators.emplace_back(
-            std::make_unique<MJSingleActuator>(actuatorName, std::vector{std::move(actuatorObj)}));
+          std::make_unique<MJSingleActuator>(actuatorName, std::vector{ std::move(actuatorObj) }));
     }
 }
 
-void MJSpec::loadEqualities()
+void
+MJSpec::loadEqualities()
 {
     for (auto element = mjs_firstElement(this->spec.get(), mjOBJ_EQUALITY); element;
          element = mjs_nextElement(this->spec.get(), element)) {
@@ -195,27 +191,30 @@ void MJSpec::loadEqualities()
     }
 }
 
-mjModel* MJSpec::getMujocoModel()
+mjModel*
+MJSpec::getMujocoModel()
 {
     recompileIfNeeded();
     return this->model.get();
 }
 
-mjData* MJSpec::getMujocoData()
+mjData*
+MJSpec::getMujocoData()
 {
     recompileIfNeeded();
     return this->data.get();
 }
 
-bool MJSpec::hasActuator(const std::string& name)
+bool
+MJSpec::hasActuator(const std::string& name)
 {
     return std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) {
                return obj->getName() == name;
            }) != std::end(actuators);
 }
 
-MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name,
-                                            const std::string& joint)
+MJSingleActuator&
+MJSpec::addJointSingleActuator(const std::string& name, const std::string& joint)
 {
     if (this->hasActuator(name)) {
         MJBasilisk::detail::logAndThrow("Tried to add actuator with name '" + name +
@@ -231,13 +230,12 @@ MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name,
     newMjsActuator->biastype = mjBIAS_NONE;
     newMjsActuator->gainprm[0] = 1;
     auto& actuator = this->actuators.emplace_back(
-        std::make_unique<MJSingleActuator>(name, std::vector{MJActuatorObject{newMjsActuator}}));
+      std::make_unique<MJSingleActuator>(name, std::vector{ MJActuatorObject{ newMjsActuator } }));
     return *static_cast<MJSingleActuator*>(actuator.get());
 }
 
-MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
-                                            const std::string& site,
-                                            const Eigen::Vector6d& gear)
+MJSingleActuator&
+MJSpec::addSingleActuator(const std::string& name, const std::string& site, const Eigen::Vector6d& gear)
 {
     if (this->hasActuator(name)) {
         MJBasilisk::detail::logAndThrow("Tried to add actuator with name '" + name +
@@ -254,20 +252,18 @@ MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
     newMjsActuator->gainprm[0] = 1;
     std::copy_n(gear.data(), 6, newMjsActuator->gear);
     auto& actuator = this->actuators.emplace_back(
-        std::make_unique<MJSingleActuator>(name, std::vector{MJActuatorObject{newMjsActuator}}));
+      std::make_unique<MJSingleActuator>(name, std::vector{ MJActuatorObject{ newMjsActuator } }));
     return *static_cast<MJSingleActuator*>(actuator.get());
 }
 
-bool MJSpec::recompileIfNeeded()
+bool
+MJSpec::recompileIfNeeded()
 {
     if (!(this->shouldRecompile && this->shouldRecompileWhenAsked)) {
         return false;
     }
 
-    mj_recompile(this->spec.get(),
-                 this->virtualFileSystem.get(),
-                 this->model.get(),
-                 this->data.get());
+    mj_recompile(this->spec.get(), this->virtualFileSystem.get(), this->model.get(), this->data.get());
 
     this->shouldRecompile = false;
     configure();
@@ -275,7 +271,8 @@ bool MJSpec::recompileIfNeeded()
     return true;
 }
 
-void MJSpec::configure()
+void
+MJSpec::configure()
 {
     // Configure the bodies, which caches the body id corresponding to the name,
     // and also configures all sites and updates the position of the COM

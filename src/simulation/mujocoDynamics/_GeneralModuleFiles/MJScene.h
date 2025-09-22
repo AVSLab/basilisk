@@ -41,7 +41,7 @@
  */
 class MJScene : public DynamicObject
 {
-public:
+  public:
     /**
      * @brief Constructs an MJScene object using an XML string.
      *
@@ -146,8 +146,7 @@ public:
      * @param joint The joint to attach the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addJointSingleActuator(const std::string& name,
-                                        const std::string& joint);
+    MJSingleActuator& addJointSingleActuator(const std::string& name, const std::string& joint);
 
     /**
      * @brief Adds a single-input actuator acting on a joint (`MJSingleActuator`).
@@ -158,8 +157,7 @@ public:
      * @param joint The joint to attach the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addJointSingleActuator(const std::string& name,
-                                        const MJJoint& joint);
+    MJSingleActuator& addJointSingleActuator(const std::string& name, const MJJoint& joint);
 
     /**
      * @brief Adds a single-input actuator (`MJSingleActuator`).
@@ -181,9 +179,7 @@ public:
      * @param gear The gear parameters for the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addSingleActuator(const std::string& name,
-                                        const std::string& site,
-                                        const Eigen::Vector6d& gear);
+    MJSingleActuator& addSingleActuator(const std::string& name, const std::string& site, const Eigen::Vector6d& gear);
 
     /**
      * @brief Adds a single-input actuator (`MJSingleActuator`).
@@ -205,9 +201,7 @@ public:
      * @param gear The gear parameters for the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addSingleActuator(const std::string& name,
-                                        const MJSite& site,
-                                        const Eigen::Vector6d& gear);
+    MJSingleActuator& addSingleActuator(const std::string& name, const MJSite& site, const Eigen::Vector6d& gear);
 
     /**
      * @brief Adds a force actuator to the scene.
@@ -542,10 +536,10 @@ public:
      * @tparam T The type of the exception to throw.
      * @param error The error message.
      */
-    template <typename T = std::invalid_argument>
-    [[noreturn]] void logAndThrow (const std::string& error);
+    template<typename T = std::invalid_argument>
+    [[noreturn]] void logAndThrow(const std::string& error);
 
-public:
+  public:
     static const int FWD_KINEMATICS_PRIORITY = 10000; ///< Priority for default forward kinematics model.
 
     /** @brief Flag to run the equations of motion after integration.
@@ -561,9 +555,10 @@ public:
      */
     bool extraEoMCall = false;
 
-    Message<MJSceneStateMsgPayload> stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
+    Message<MJSceneStateMsgPayload>
+      stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
 
-protected:
+  protected:
     /**
      * @brief Updates MuJoCo structs from the Basilisk `StateData` objects.
      */
@@ -576,21 +571,23 @@ protected:
      */
     void writeOutputStateMessages(uint64_t CurrentSimNanos);
 
-protected:
-    MJSpec spec; ///< `MJSpec` (MuJoCo model specification wrapper) associated with this scene.
-    bool mjModelConstStale = false; ///< Flag indicating stale model constants.
+  protected:
+    MJSpec spec;                        ///< `MJSpec` (MuJoCo model specification wrapper) associated with this scene.
+    bool mjModelConstStale = false;     ///< Flag indicating stale model constants.
     bool forwardKinematicsStale = true; ///< Flag indicating stale forward kinematics.
 
     SysModelTask dynamicsTask; ///< Task managing models involved in the dynamics of this scene.
-    std::vector<std::unique_ptr<SysModel>> ownedSysModel; ///< System models that should be cleared on this scene destruction.
+    std::vector<std::unique_ptr<SysModel>>
+      ownedSysModel; ///< System models that should be cleared on this scene destruction.
 
     MJQPosStateData* qposState; ///< Position state data.
-    StateData* qvelState; ///< Velocity state data.
-    StateData* actState; ///< Actuator state data.
+    StateData* qvelState;       ///< Velocity state data.
+    StateData* actState;        ///< Actuator state data.
 };
 
-template <typename T>
-inline void MJScene::logAndThrow (const std::string& error)
+template<typename T>
+inline void
+MJScene::logAndThrow(const std::string& error)
 {
     MJBasilisk::detail::logAndThrow<T>(error, &this->bskLogger);
 }

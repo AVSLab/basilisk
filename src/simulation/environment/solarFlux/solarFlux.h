@@ -29,30 +29,29 @@
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-
 /*! @brief solar flux class */
-class SolarFlux: public SysModel {
-public:
-    SolarFlux(){};
-    ~SolarFlux(){};
+class SolarFlux : public SysModel
+{
+  public:
+    SolarFlux() {};
+    ~SolarFlux() {};
 
     void Reset(uint64_t CurrentSimNanos) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);
     void readMessages();
 
-public:
-    ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;       //!< sun state input message
-    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
-    Message<SolarFluxMsgPayload> solarFluxOutMsg;                   //!< solar flux output message
-    ReadFunctor<EclipseMsgPayload> eclipseInMsg;                    //!< (optional) eclipse input message
+  public:
+    ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg; //!< sun state input message
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;     //!< spacecraft state input message
+    Message<SolarFluxMsgPayload> solarFluxOutMsg;             //!< solar flux output message
+    ReadFunctor<EclipseMsgPayload> eclipseInMsg;              //!< (optional) eclipse input message
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-private:
-    double fluxAtSpacecraft;  //!< [W/m2]
-    double eclipseFactor = 1.0;  //!< [] 1.0 is full sun, 0.0 is full eclipse
-    Eigen::Vector3d r_SN_N;  //!< [m] sun position
-    Eigen::Vector3d r_ScN_N;  //!< [m] s/c position
-
+  private:
+    double fluxAtSpacecraft;    //!< [W/m2]
+    double eclipseFactor = 1.0; //!< [] 1.0 is full sun, 0.0 is full eclipse
+    Eigen::Vector3d r_SN_N;     //!< [m] sun position
+    Eigen::Vector3d r_ScN_N;    //!< [m] s/c position
 };

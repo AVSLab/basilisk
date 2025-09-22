@@ -34,7 +34,8 @@ LambertSecondDV::~LambertSecondDV() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSecondDV::Reset(uint64_t currentSimNanos)
+void
+LambertSecondDV::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertSolutionInMsg.isLinked()) {
@@ -49,7 +50,8 @@ void LambertSecondDV::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSecondDV::UpdateState(uint64_t currentSimNanos)
+void
+LambertSecondDV::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -65,17 +67,17 @@ void LambertSecondDV::UpdateState(uint64_t currentSimNanos)
     It also checks if the message contents are valid for this module.
 
 */
-void LambertSecondDV::readMessages()
+void
+LambertSecondDV::readMessages()
 {
     LambertSolutionMsgPayload lambertSolutionInMsgBuffer = this->lambertSolutionInMsg();
     DesiredVelocityMsgPayload desiredVelocityInMsgBuffer = this->desiredVelocityInMsg();
 
     // lambert solution content
-    if (this->lambertSolutionSpecifier == 1){
+    if (this->lambertSolutionSpecifier == 1) {
         this->vExpected_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v2_N);
         this->validLambert = lambertSolutionInMsgBuffer.valid;
-    }
-    else if (this->lambertSolutionSpecifier == 2){
+    } else if (this->lambertSolutionSpecifier == 2) {
         this->vExpected_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v2Sol2_N);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
     } else {
@@ -93,7 +95,8 @@ void LambertSecondDV::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSecondDV::writeMessages(uint64_t currentSimNanos)
+void
+LambertSecondDV::writeMessages(uint64_t currentSimNanos)
 {
     DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer;
     dvBurnCmdOutMsgBuffer = this->dvBurnCmdOutMsg.zeroMsgPayload;
@@ -117,6 +120,8 @@ void LambertSecondDV::writeMessages(uint64_t currentSimNanos)
     this->dvBurnCmdOutMsg.write(&dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
-void LambertSecondDV::setLambertSolutionSpecifier(const double value){
+void
+LambertSecondDV::setLambertSolutionSpecifier(const double value)
+{
     this->lambertSolutionSpecifier = value;
 }

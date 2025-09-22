@@ -17,7 +17,6 @@
 
 */
 
-
 #include "simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.h"
 #include <iostream>
 
@@ -31,14 +30,13 @@ HingedRigidBodyMotor::HingedRigidBodyMotor()
 }
 
 /*! Module Destructor */
-HingedRigidBodyMotor::~HingedRigidBodyMotor()
-{
-}
+HingedRigidBodyMotor::~HingedRigidBodyMotor() {}
 
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
+void
+HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
 {
     //! check that required input messages are connected
     if (!this->hingedBodyStateSensedInMsg.isLinked()) {
@@ -50,14 +48,14 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
     if (this->K <= 0.0 || this->P <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotor K and P must be set to positive values.");
     }
-
 }
 
-
-/*! This is the main method that gets called every time the module is updated.  It calculates a motor torque on a hinged rigid body using a simple PD control law.
+/*! This is the main method that gets called every time the module is updated.  It calculates a motor torque on a hinged
+   rigid body using a simple PD control law.
 
 */
-void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
+void
+HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
 {
     //! local variables
     double sensedTheta;
@@ -66,9 +64,9 @@ void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
     double refThetaDot;
     double torque;
 
-    HingedRigidBodyMsgPayload hingedBodyStateSensedInMsgBuffer;  //!< local copy of message buffer for reference
-    HingedRigidBodyMsgPayload hingedBodyStateReferenceInMsgBuffer;  //!< local copy of message buffer for measurement
-    ArrayMotorTorqueMsgPayload motorTorqueOutMsgBuffer;  //!< local copy of message buffer for motor torque
+    HingedRigidBodyMsgPayload hingedBodyStateSensedInMsgBuffer;    //!< local copy of message buffer for reference
+    HingedRigidBodyMsgPayload hingedBodyStateReferenceInMsgBuffer; //!< local copy of message buffer for measurement
+    ArrayMotorTorqueMsgPayload motorTorqueOutMsgBuffer;            //!< local copy of message buffer for motor torque
 
     //! zero the output message buffers before assigning values
     motorTorqueOutMsgBuffer = this->motorTorqueOutMsg.zeroMsgPayload;

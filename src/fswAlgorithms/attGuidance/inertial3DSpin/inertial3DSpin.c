@@ -28,15 +28,11 @@
 #include "fswAlgorithms/attGuidance/inertial3DSpin/inertial3DSpin.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-
-
-
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
-
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -45,12 +41,12 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
+void
+SelfInit_inertial3DSpin(inertial3DSpinConfig* configData, int64_t moduleID)
 {
     /*! - Create output message for module */
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -59,12 +55,13 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID)
 {
 
-    configData->priorTime = 0;              /* reset the prior time flag state.  If set
-                                             to zero, the control time step is not evaluated on the
-                                             first function call */
+    configData->priorTime = 0; /* reset the prior time flag state.  If set
+                                to zero, the control time step is not evaluated on the
+                                first function call */
 }
 
 /*! This method performs all the main computations of the module
@@ -73,7 +70,8 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, i
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer;
@@ -86,8 +84,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
 
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
-    if (configData->priorTime == 0)
-    {
+    if (configData->priorTime == 0) {
         dt = 0.0;
         v3Copy(attRefInMsgBuffer.sigma_RN, configData->sigma_RN);
     } else {
@@ -96,11 +93,8 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
 
     /*! - Generate inertial 3D Spinning Reference */
     configData->attRefOutBuffer = AttRefMsg_C_zeroMsgPayload();
-    computeReference_inertial3DSpin(configData,
-                                    attRefInMsgBuffer.omega_RN_N,
-                                    attRefInMsgBuffer.domega_RN_N,
-                                    configData->omega_RR0_R0,
-                                    dt);
+    computeReference_inertial3DSpin(
+      configData, attRefInMsgBuffer.omega_RN_N, attRefInMsgBuffer.domega_RN_N, configData->omega_RR0_R0, dt);
     /*! - Write output message */
     AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg, moduleID, callTime);
 
@@ -108,11 +102,12 @@ void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, 
     configData->priorTime = callTime;
 }
 
-void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
-                                     double omega_R0N_N[3],
-                                     double domega_R0N_N[3],
-                                     double omega_RR0_R0[3],
-                                     double dt)
+void
+computeReference_inertial3DSpin(inertial3DSpinConfig* configData,
+                                double omega_R0N_N[3],
+                                double domega_R0N_N[3],
+                                double omega_RR0_R0[3],
+                                double dt)
 {
     double omega_RN_N[3];
     double domega_RN_N[3];
@@ -130,7 +125,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
     v3Add(v3Temp, domega_R0N_N, domega_RN_N);
 
     /*! Integrate Attitude */
-    double B[3][3]; /* MRP rate matrix */
+    double B[3][3];       /* MRP rate matrix */
     double omega_RN_R[3]; /* inertial angular rate of ref R in R frame components */
     m33MultV3(dcm_RN, omega_RN_N, omega_RN_R);
     BmatMRP(configData->sigma_RN, B);

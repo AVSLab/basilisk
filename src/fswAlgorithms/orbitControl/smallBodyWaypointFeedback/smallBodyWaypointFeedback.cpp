@@ -31,7 +31,7 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
     this->o_hat_3_tilde(0, 1) = -1;
     this->o_hat_3_tilde(1, 0) = 1;
     this->o_hat_1 << 1, 0, 0;
-    this->I.setIdentity(3,3);
+    this->I.setIdentity(3, 3);
     this->C_SRP = 1.0;
     this->P_0 = 4.56e-6;
     this->rho = 0.4;
@@ -40,19 +40,20 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
 }
 
 /*! Module Destructor */
-SmallBodyWaypointFeedback::~SmallBodyWaypointFeedback()
-{
-}
+SmallBodyWaypointFeedback::~SmallBodyWaypointFeedback() {}
 
 /*! Initialize C-wrapped output messages */
-void SmallBodyWaypointFeedback::SelfInit(){
+void
+SmallBodyWaypointFeedback::SelfInit()
+{
     CmdForceBodyMsg_C_init(&this->forceOutMsgC);
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos)
+void
+SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -67,13 +68,14 @@ void SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos)
     if (!this->sunEphemerisInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "SmallBodyWaypointFeedback.sunEphemerisInMsg was not linked.");
     }
-
 }
 
 /*! This method reads the input messages each call of updateState
 
 */
-void SmallBodyWaypointFeedback::readMessages(){
+void
+SmallBodyWaypointFeedback::readMessages()
+{
     /* read in the input messages */
     navTransInMsgBuffer = this->navTransInMsg();
     navAttInMsgBuffer = this->navAttInMsg();
@@ -84,7 +86,9 @@ void SmallBodyWaypointFeedback::readMessages(){
 /*! This method computes the control using a Lyapunov feedback law
 
 */
-void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
+void
+SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos)
+{
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
      * enough to consider them known apriori */
     rv2elem(mu_sun, asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, &oe_ast);
@@ -103,7 +107,7 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
      * centered at the origin of the sun, not the solar system's barycenter */
     r_ON_N = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N);
     r_SN_N = cArray2EigenVector3d(sunEphemerisInMsgBuffer.r_BdyZero_N);
-    r_SO_O = dcm_ON * (r_SN_N - r_ON_N);  // small body to sun pos vector
+    r_SO_O = dcm_ON * (r_SN_N - r_ON_N); // small body to sun pos vector
 
     /* Compute the dcm from the body frame to the body's hill frame */
     double dcm_BN[3][3];
@@ -114,7 +118,12 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
     /* Compute x1, x2 from the input messages */
     double r_BO_O[3];
     double v_BO_O[3];
-    rv2hill(asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, navTransInMsgBuffer.r_BN_N, navTransInMsgBuffer.v_BN_N, r_BO_O, v_BO_O);
+    rv2hill(asteroidEphemerisInMsgBuffer.r_BdyZero_N,
+            asteroidEphemerisInMsgBuffer.v_BdyZero_N,
+            navTransInMsgBuffer.r_BN_N,
+            navTransInMsgBuffer.v_BN_N,
+            r_BO_O,
+            v_BO_O);
     x1 = cArray2EigenVector3d(r_BO_O);
     x2 = cArray2EigenVector3d(v_BO_O);
 
@@ -124,21 +133,17 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
 
     /* Now compute current f */
     f_curr =
-            -F_ddot * o_hat_3_tilde * x1 - 2 * F_dot * o_hat_3_tilde * x2 -
-            pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1
-            - mu_ast * x1 / pow(x1.norm(), 3)
-            + mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1 /
-              pow(r_SO_O.norm(), 3)
-            + C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU*1000.,2) * o_hat_1 / pow(r_SO_O.norm(), 2);
+      -F_ddot * o_hat_3_tilde * x1 - 2 * F_dot * o_hat_3_tilde * x2 -
+      pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1 - mu_ast * x1 / pow(x1.norm(), 3) +
+      mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1 / pow(r_SO_O.norm(), 3) +
+      C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
 
     /* Now compute reference f */
-    f_ref =
-            -F_ddot * o_hat_3_tilde * x1_ref - 2 * F_dot * o_hat_3_tilde * x2_ref -
-            pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1_ref
-            - mu_ast * x1_ref / pow(x1_ref.norm(), 3)
-            + mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1_ref /
-              pow(r_SO_O.norm(), 3)
-            + C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU*1000.,2) * o_hat_1 / pow(r_SO_O.norm(), 2);
+    f_ref = -F_ddot * o_hat_3_tilde * x1_ref - 2 * F_dot * o_hat_3_tilde * x2_ref -
+            pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1_ref - mu_ast * x1_ref / pow(x1_ref.norm(), 3) +
+            mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1_ref /
+              pow(r_SO_O.norm(), 3) +
+            C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
 
     /* Compute the thrust in the small body's hill frame */
     thrust_O = -(f_curr - f_ref) - K1 * dx1 - K2 * dx2;
@@ -150,7 +155,8 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
 
 */
-void SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
+void
+SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->computeControl(CurrentSimNanos);
@@ -161,7 +167,9 @@ void SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
 /*! This method reads the input messages each call of updateState
 
 */
-void SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos){
+void
+SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos)
+{
     /* Create the output message buffer */
     CmdForceBodyMsgPayload forceOutMsgBuffer;
 

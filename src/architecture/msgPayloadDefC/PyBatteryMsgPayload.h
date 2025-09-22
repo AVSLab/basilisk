@@ -23,20 +23,19 @@
 #include <string>
 #include <stdint.h>
 
-
 //! @brief Container for all battery output data
 /*! This structure contains all data output by the python battery module*/
-typedef struct {
-    double stateOfCharge;                       //!< [%] Battery state of charge as %-full
-    double stateOfChargeAh;                     //!< [Ah] Battery state of charge un-scaled
-    double solarArrayTemperature;               //!< [K] Temperature of solar arrays
-    double busVoltage;                          //!< [V] Bus voltage
-    double batteryCurrent;                      //!< [A] Total current flowing through battery
-    double solarArrayCurrent;                   //!< [A] Current sent to battery from solar arrays
-    double batteryEMF;                          //!< [V] Electro-motive force of battery at this current form look-up table
-    double batteryESR;                          //!< [Ohms] Equivalent Series Resistance of battery from look-up table
-    double batteryVoltage;                      //!< [V] total voltage across battery
-}PyBatteryMsgPayload;
-
+typedef struct
+{
+    double stateOfCharge;         //!< [%] Battery state of charge as %-full
+    double stateOfChargeAh;       //!< [Ah] Battery state of charge un-scaled
+    double solarArrayTemperature; //!< [K] Temperature of solar arrays
+    double busVoltage;            //!< [V] Bus voltage
+    double batteryCurrent;        //!< [A] Total current flowing through battery
+    double solarArrayCurrent;     //!< [A] Current sent to battery from solar arrays
+    double batteryEMF;            //!< [V] Electro-motive force of battery at this current form look-up table
+    double batteryESR;            //!< [Ohms] Equivalent Series Resistance of battery from look-up table
+    double batteryVoltage;        //!< [V] total voltage across battery
+} PyBatteryMsgPayload;
 
 #endif

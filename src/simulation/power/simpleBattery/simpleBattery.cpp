@@ -19,7 +19,8 @@
 #include "simpleBattery.h"
 
 /*! The constructor creates a SimpleBattery instance with zero stored charge */
-SimpleBattery::SimpleBattery(){
+SimpleBattery::SimpleBattery()
+{
 
     this->storageCapacity = -1.0;
     this->storedCharge = 0.0;
@@ -27,14 +28,17 @@ SimpleBattery::SimpleBattery(){
     return;
 }
 
-SimpleBattery::~SimpleBattery(){
+SimpleBattery::~SimpleBattery()
+{
 
     return;
 }
 
 /*! custom reset function.
  */
-void SimpleBattery::customReset(uint64_t CurrentClock) {
+void
+SimpleBattery::customReset(uint64_t CurrentClock)
+{
 
     if (this->storageCapacity <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "The storageCapacity variable must be set to a positive value.");
@@ -43,40 +47,43 @@ void SimpleBattery::customReset(uint64_t CurrentClock) {
 }
 
 /*! This method allows the user to set the fault status of the battery capacity
-*/
-void SimpleBattery::readInputMessage(){
-     if(this->batteryFaultInMsg.isLinked()){
+ */
+void
+SimpleBattery::readInputMessage()
+{
+    if (this->batteryFaultInMsg.isLinked()) {
         PowerStorageFaultMsgPayload faultMsg;
         faultMsg = this->batteryFaultInMsg();
         this->faultCapacityRatio = faultMsg.faultCapacityRatio;
-     }
-     else{
+    } else {
         this->faultCapacityRatio = 1.0;
-     }
+    }
 }
 
-/*! This method integrates the current net power, and checks to see whether the integrated power falls between 0 and the battery's storageCapacity.
+/*! This method integrates the current net power, and checks to see whether the integrated power falls between 0 and the
+ battery's storageCapacity.
  @param *msg:  pointer to a PowerStorageStatusMsgPayload instance
 
  */
-void SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) {
+void
+SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload* msg)
+{
 
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
 
-    if(this->storedCharge > this->storageCapacity) {
+    if (this->storedCharge > this->storageCapacity) {
         this->storedCharge = this->storageCapacity;
     }
 
-    if(this->storedCharge < 0)
-    {
+    if (this->storedCharge < 0) {
         this->storedCharge = 0;
     }
 
     this->readInputMessage();
     if (this->faultCapacityRatio < 0 || this->faultCapacityRatio > 1) {
         bskLogger.bskLog(BSK_ERROR, "faultCapacityRatio should be between 0 and 1!");
-    } else if(this->storedCharge > this->storageCapacity * this->faultCapacityRatio) {
-            this->storedCharge = this->storageCapacity * this->faultCapacityRatio;
+    } else if (this->storedCharge > this->storageCapacity * this->faultCapacityRatio) {
+        this->storedCharge = this->storageCapacity * this->faultCapacityRatio;
     }
 
     msg->storageCapacity = this->storageCapacity;

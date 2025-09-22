@@ -35,13 +35,15 @@
  */
 class MJFwdKinematics : public SysModel
 {
-public:
+  public:
     /**
      * @brief Constructor for MJFwdKinematics.
      * @param scene Reference to an MJScene object.
      */
-    MJFwdKinematics(MJScene& scene) : scene(scene) {}
-
+    MJFwdKinematics(MJScene& scene)
+      : scene(scene)
+    {
+    }
 
     /**
      * @brief Computes the forward kinematics for the given scene.
@@ -57,7 +59,7 @@ public:
      */
     void UpdateState(uint64_t CurrentSimNanos) { fwdKinematics(this->scene, CurrentSimNanos); };
 
-protected:
+  protected:
     MJScene& scene; ///< Reference to the MJScene object.
 };
 

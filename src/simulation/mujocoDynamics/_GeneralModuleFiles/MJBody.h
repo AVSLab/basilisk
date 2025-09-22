@@ -46,8 +46,9 @@
  *
  * @return A string view representing the body type.
  */
-template <>
-constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsBody>()
+template<>
+constexpr std::string_view
+MJBasilisk::detail::getObjectTypeName<mjsBody>()
 {
     return "body";
 }
@@ -64,7 +65,7 @@ class MJSpec;
  */
 class MJBody : public MJObject<mjsBody>
 {
-public:
+  public:
     /**
      * @brief Constructs an `MJBody` with a given MuJoCo body object and the spec where it's created.
      *
@@ -93,9 +94,7 @@ public:
      * @param position The position of the site relative to the body.
      * @param attitude The orientation of the site as Modified Rodrigues Parameters (MRP).
      */
-    void addSite(std::string name,
-                 const Eigen::Vector3d& position,
-                 const Eigen::MRPd& attitude = {0., 0., 0.});
+    void addSite(std::string name, const Eigen::Vector3d& position, const Eigen::MRPd& attitude = { 0., 0., 0. });
 
     /**
      * @brief Checks if the body has a site with a given name.
@@ -292,18 +291,18 @@ public:
      */
     void updateConstrainedEqualityJoints();
 
-public:
+  public:
     Message<SCMassPropsMsgPayload> massPropertiesOutMsg; ///< Message to output body mass properties.
 
     ReadFunctor<SCMassPropsMsgPayload> derivativeMassPropertiesInMsg; ///< Functor to read mass properties derivatives.
 
-protected:
+  protected:
     MJSpec& spec; ///< Reference to the spec where this body is defined.
 
     std::list<MJSite> sites; ///< List of sites associated with the body.
 
-    std::optional<MJFreeJoint> freeJoint; ///< Optional free joint associated with the body.
-    std::optional<MJBallJoint> ballJoint; ///< Optional ball joint associated with the body.
+    std::optional<MJFreeJoint> freeJoint;  ///< Optional free joint associated with the body.
+    std::optional<MJBallJoint> ballJoint;  ///< Optional ball joint associated with the body.
     std::list<MJScalarJoint> scalarJoints; ///< List of scalar joints associated with the body.
 
     StateData* massState; ///< State data representing the mass of the body.

@@ -45,9 +45,10 @@
  * continous first and second derivatives, which might be useful for
  * certain applications.
  */
-template <typename T, size_t nArgs = 1> class Interpolator : public SysModel
+template<typename T, size_t nArgs = 1>
+class Interpolator : public SysModel
 {
-public:
+  public:
     /** Set the points to use for interpolation. The first column corresponds
      * to the independent value, the simulation time in nanoseconds, while the
      * rest of columns are the data to use for interpolation.
@@ -60,16 +61,14 @@ public:
     void setDataPoints(const Eigen::MatrixXd& points, uint16_t degrees = 1)
     {
         if (points.cols() != (nArgs + 1)) {
-            auto error =
-                "Expected points to have exactly " + std::to_string(nArgs + 1) + " columns.";
+            auto error = "Expected points to have exactly " + std::to_string(nArgs + 1) + " columns.";
             this->bskLogger.bskLog(BSK_ERROR, error.c_str());
             throw std::invalid_argument(error);
         }
 
         if (points.rows() <= int(degrees)) {
-            auto error =
-                "Provided 'degrees' is higher or equal than number of data points (illegal for "
-                "interpolation).";
+            auto error = "Provided 'degrees' is higher or equal than number of data points (illegal for "
+                         "interpolation).";
             this->bskLogger.bskLog(BSK_ERROR, error);
             throw std::invalid_argument(error);
         }
@@ -91,7 +90,7 @@ public:
          * where eps is a small value (1 nanosecond) so that the numbers are not the same.
          */
         if (degrees == 0) {
-            Eigen::MatrixXd modPoints{(points.rows() - 1) * 2 + 1, nArgs + 1};
+            Eigen::MatrixXd modPoints{ (points.rows() - 1) * 2 + 1, nArgs + 1 };
 
             for (int i = 0; i < points.rows() - 1; i++) {
                 modPoints.row(i * 2) = points.row(i);
@@ -111,7 +110,7 @@ public:
      *
      * @param CurrentSimNanos The current simulation time in nanoseconds used to update
      *                        the state of the interpolator and generate the output message.
-    */
+     */
     void Reset(uint64_t CurrentSimNanos) { UpdateState(CurrentSimNanos); }
 
     /**
@@ -135,23 +134,19 @@ public:
         }
 
         auto payload = this->interpolatedOutMsg.zeroMsgPayload;
-        this->setPayloadValues(
-            payload,
-            CurrentSimNanos,
-            this->spline(scale(double(CurrentSimNanos)))
-        );
+        this->setPayloadValues(payload, CurrentSimNanos, this->spline(scale(double(CurrentSimNanos))));
 
         interpolatedOutMsg.write(&payload, this->moduleID, CurrentSimNanos);
     }
 
-public:
+  public:
     /** Result message of the interpolation */
     Message<T> interpolatedOutMsg;
 
     /** Logger used to log errors */
     BSKLogger bskLogger;
 
-protected:
+  protected:
     /** Called by `UpdateState` with the simulation time and the interpolated values.
      *
      * This method should modify the given paylod object and fill it with the
@@ -171,10 +166,7 @@ protected:
      * @param val The value to scale.
      * @return The scaled value in the range [0, 1].
      */
-    double scale(double val)
-    {
-        return std::clamp((val - this->xMin) / (this->xMax - this->xMin), 0., 1.);
-    }
+    double scale(double val) { return std::clamp((val - this->xMin) / (this->xMax - this->xMin), 0., 1.); }
 
     /**
      * Scales a vector of values to the range [0, 1] based on the object's xMin and xMax.
@@ -188,8 +180,7 @@ protected:
      */
     Eigen::VectorXd scale(Eigen::VectorXd val)
     {
-        return (val - Eigen::VectorXd::Constant(val.size(), this->xMin)) /
-               (this->xMax - this->xMin);
+        return (val - Eigen::VectorXd::Constant(val.size(), this->xMin)) / (this->xMax - this->xMin);
     }
 
     /**
@@ -213,15 +204,14 @@ protected:
             throw std::invalid_argument(error);
         }
 
-        this->spline = Eigen::SplineFitting<decltype(spline)>::Interpolate(
-            points.rightCols(nArgs).transpose(), // yp
-            degrees,
-            scale(points.col(0)));
+        this->spline = Eigen::SplineFitting<decltype(spline)>::Interpolate(points.rightCols(nArgs).transpose(), // yp
+                                                                           degrees,
+                                                                           scale(points.col(0)));
     }
 
-protected:
-    double xMin = 0; /**< Minimum independent value in the data points */
-    double xMax = 0; /**< Maximum independent value in the data points */
+  protected:
+    double xMin = 0;                     /**< Minimum independent value in the data points */
+    double xMax = 0;                     /**< Maximum independent value in the data points */
     Eigen::Spline<double, nArgs> spline; /**< Spline object */
 };
 

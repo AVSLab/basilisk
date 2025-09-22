@@ -31,34 +31,33 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief The configuration structure for the horizon OpNav module.*/
-typedef struct {
-    OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
+typedef struct
+{
+    OpNavMsg_C opNavOutMsg;              //!< [-] output navigation message for relative position
     CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
-    NavAttMsg_C attInMsg; //!< attitude input message
-    OpNavLimbMsg_C limbInMsg; //!< limb input message
+    NavAttMsg_C attInMsg;                //!< attitude input message
+    OpNavLimbMsg_C limbInMsg;            //!< limb input message
 
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
-    double noiseSF;   //!< A scale factor to control measurement noise
+    double noiseSF;       //!< A scale factor to control measurement noise
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}HorizonOpNavData;
+    BSKLogger* bskLogger; //!< BSK Logging
+} HorizonOpNavData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_horizonOpNav(HorizonOpNavData *configData, int64_t moduleID);
-    void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_t moduleID);
-    void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R);
-    void BackSub(double *R, double *inVec, int32_t nRow, double *n);
+    void SelfInit_horizonOpNav(HorizonOpNavData* configData, int64_t moduleID);
+    void Update_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t moduleID);
+    void QRDecomp(double* inMat, int32_t nRow, double* Q, double* R);
+    void BackSub(double* R, double* inVec, int32_t nRow, double* n);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

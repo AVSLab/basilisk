@@ -24,24 +24,23 @@
 
 /*! @brief module ID generating class */
 #ifdef _WIN32
-class __declspec( dllexport) ModuleIdGenerator
+class __declspec(dllexport) ModuleIdGenerator
 #else
 class ModuleIdGenerator
 #endif
 {
-public:
-    int64_t checkoutModuleID();  //! -- Assigns next integer module ID
-    static ModuleIdGenerator* GetInstance();  //! -- returns a pointer to the sim instance of ModuleIdGenerator
+  public:
+    int64_t checkoutModuleID();              //! -- Assigns next integer module ID
+    static ModuleIdGenerator* GetInstance(); //! -- returns a pointer to the sim instance of ModuleIdGenerator
 
-private:
-    int64_t nextModuleID;  //!< the next module ID to give out when a module (SysModel sub-class) comes online
-    static ModuleIdGenerator *TheInstance;        //!< instance of simulation module
+  private:
+    int64_t nextModuleID; //!< the next module ID to give out when a module (SysModel sub-class) comes online
+    static ModuleIdGenerator* TheInstance; //!< instance of simulation module
 
     ModuleIdGenerator();
     ~ModuleIdGenerator();
-    ModuleIdGenerator(ModuleIdGenerator const &) {};
-    ModuleIdGenerator& operator =(ModuleIdGenerator const &){return(*this);};
-
+    ModuleIdGenerator(ModuleIdGenerator const&) {};
+    ModuleIdGenerator& operator=(ModuleIdGenerator const&) { return (*this); };
 };
 
 #endif /* _ModuleIdGenerator_HH_ */

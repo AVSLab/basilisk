@@ -27,26 +27,26 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief Structure used to define a common structure for top level vehicle information*/
-typedef struct {
-    double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
-    double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
-    double massSC;                /*!< [kg] Spacecraft mass */
+typedef struct
+{
+    double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
+    double CoM_B[3];                    /*!< [m] Center of mass of spacecraft in body*/
+    double massSC;                      /*!< [kg] Spacecraft mass */
     VehicleConfigMsg_C vecConfigOutMsg; /*!< [-] Name of the output properties message*/
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}VehConfigInputData;
+    BSKLogger* bskLogger; //!< BSK Logging
+} VehConfigInputData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID);
-void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID);
-void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID);
+    void Update_vehicleConfigData(VehConfigInputData* configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_vehicleConfigData(VehConfigInputData* configData, int64_t moduleID);
+    void Reset_vehicleConfigData(VehConfigInputData* configData, uint64_t callTime, int64_t moduleID);
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

@@ -28,34 +28,31 @@
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
 /*! @brief Top level structure for the nominal delta-V guidance */
-typedef struct {
+typedef struct
+{
     DvExecutionDataMsg_C burnExecOutMsg; /*!< [-] The name of burn execution output message*/
-    NavTransMsg_C navDataInMsg; /*!< [-] The name of the incoming attitude command */
-    DvBurnCmdMsg_C burnDataInMsg;/*!< [-] Input message that configures the vehicle burn*/
+    NavTransMsg_C navDataInMsg;          /*!< [-] The name of the incoming attitude command */
+    DvBurnCmdMsg_C burnDataInMsg;        /*!< [-] Input message that configures the vehicle burn*/
     THRArrayOnTimeCmdMsg_C thrCmdOutMsg; /*!< [-] Output thruster message name */
-    double dvInit[3];        /*!< (m/s) DV reading off the accelerometers at burn start*/
-    uint32_t burnExecuting;  /*!< (-) Flag indicating whether the burn is in progress or not*/
-    uint32_t burnComplete;   /*!< (-) Flag indicating that burn has completed successfully*/
+    double dvInit[3];                    /*!< (m/s) DV reading off the accelerometers at burn start*/
+    uint32_t burnExecuting;              /*!< (-) Flag indicating whether the burn is in progress or not*/
+    uint32_t burnComplete;               /*!< (-) Flag indicating that burn has completed successfully*/
 
-    BSKLogger *bskLogger;   //!< BSK Logging
-}dvExecuteGuidanceConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} dvExecuteGuidanceConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID);
-    void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
-                       int64_t moduleID);
+    void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, int64_t moduleID);
+    void Update_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

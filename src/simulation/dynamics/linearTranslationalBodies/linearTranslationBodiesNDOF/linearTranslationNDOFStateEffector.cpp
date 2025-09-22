@@ -42,10 +42,12 @@ uint64_t linearTranslationNDOFStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 linearTranslationNDOFStateEffector::~linearTranslationNDOFStateEffector()
 {
-    linearTranslationNDOFStateEffector::effectorID --;    /* reset the panel ID*/
+    linearTranslationNDOFStateEffector::effectorID--; /* reset the panel ID*/
 }
 
-void translatingBody::setMass(double mass) {
+void
+translatingBody::setMass(double mass)
+{
     if (mass > 0.0)
         this->mass = mass;
     else {
@@ -53,16 +55,19 @@ void translatingBody::setMass(double mass) {
     }
 }
 
-void translatingBody::setFHat_P(Eigen::Vector3d fHat_P) {
+void
+translatingBody::setFHat_P(Eigen::Vector3d fHat_P)
+{
     if (fHat_P.norm() > 0.01) {
         this->fHat_P = fHat_P.normalized();
-    }
-    else {
+    } else {
         this->bskLogger.bskLog(BSK_ERROR, "Norm of fHat must be greater than 0.");
     }
 }
 
-void translatingBody::setK(double k) {
+void
+translatingBody::setK(double k)
+{
     if (k >= 0.0)
         this->k = k;
     else {
@@ -70,7 +75,9 @@ void translatingBody::setK(double k) {
     }
 }
 
-void translatingBody::setC(double c) {
+void
+translatingBody::setC(double c)
+{
     if (c >= 0.0)
         this->c = c;
     else {
@@ -79,20 +86,22 @@ void translatingBody::setC(double c) {
 }
 
 /*! This method is used to reset the module. */
-void linearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock)
+void
+linearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock)
 {
-    for(auto& translatingBody: this->translatingBodyVec) {
+    for (auto& translatingBody : this->translatingBodyVec) {
         if (translatingBody.fHat_P.norm() > 0.0) {
             translatingBody.fHat_P.normalize();
-        }
-        else {
+        } else {
             bskLogger.bskLog(BSK_ERROR, "Norm of fHat must be greater than 0. sHat may not have been set by the user.");
         }
     }
 }
 
 /*! This method is used to add a translating body. */
-void linearTranslationNDOFStateEffector::addTranslatingBody(const translatingBody& newBody) {
+void
+linearTranslationNDOFStateEffector::addTranslatingBody(const translatingBody& newBody)
+{
     // Pushback new body
     translatingBodyVec.push_back(newBody);
     this->N++;
@@ -103,20 +112,21 @@ void linearTranslationNDOFStateEffector::addTranslatingBody(const translatingBod
     this->translatingBodyRefInMsgs.push_back(ReadFunctor<LinearTranslationRigidBodyMsgPayload>());
 
     // resize A B and C
-    this->ARho.conservativeResize(this->ARho.rows()+1, 3);
-    this->BRho.conservativeResize(this->BRho.rows()+1, 3);
-    this->CRho.conservativeResize(this->CRho.rows()+1);
+    this->ARho.conservativeResize(this->ARho.rows() + 1, 3);
+    this->BRho.conservativeResize(this->BRho.rows() + 1, 3);
+    this->CRho.conservativeResize(this->CRho.rows() + 1);
 }
 
 /*! This method reads motor force, lock flag, and reference state messages. */
-void linearTranslationNDOFStateEffector::readInputMessages()
+void
+linearTranslationNDOFStateEffector::readInputMessages()
 {
     //! - Read the incoming command array
     if (this->motorForceInMsg.isLinked() && this->motorForceInMsg.isWritten()) {
         ArrayMotorForceMsgPayload incomingCmdBuffer;
         incomingCmdBuffer = this->motorForceInMsg();
         int i = 0;
-        for(auto& translatingBody: this->translatingBodyVec) {
+        for (auto& translatingBody : this->translatingBodyVec) {
             translatingBody.u = incomingCmdBuffer.motorForce[i];
             i++;
         }
@@ -127,15 +137,16 @@ void linearTranslationNDOFStateEffector::readInputMessages()
         ArrayEffectorLockMsgPayload incomingLockBuffer;
         incomingLockBuffer = this->motorLockInMsg();
         int i = 0;
-        for(auto& translatingBody: this->translatingBodyVec) {
+        for (auto& translatingBody : this->translatingBodyVec) {
             translatingBody.isAxisLocked = incomingLockBuffer.effectorLockFlag[i];
             i++;
         }
     }
 
     int translatingBodyIndex = 0;
-    for(auto& translatingBody: this->translatingBodyVec) {
-        if (this->translatingBodyRefInMsgs[translatingBodyIndex].isLinked() && this->translatingBodyRefInMsgs[translatingBodyIndex].isWritten()) {
+    for (auto& translatingBody : this->translatingBodyVec) {
+        if (this->translatingBodyRefInMsgs[translatingBodyIndex].isLinked() &&
+            this->translatingBodyRefInMsgs[translatingBodyIndex].isWritten()) {
             LinearTranslationRigidBodyMsgPayload incomingRefBuffer;
             incomingRefBuffer = this->translatingBodyRefInMsgs[translatingBodyIndex]();
             translatingBody.rhoRef = incomingRefBuffer.rho;
@@ -146,13 +157,14 @@ void linearTranslationNDOFStateEffector::readInputMessages()
 }
 
 /*! This method takes the computed rho states and outputs them to the messaging system. */
-void linearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
+void
+linearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     // Write out the translating body output messages
     int i = 0;
     LinearTranslationRigidBodyMsgPayload translatingBodyBuffer;
     SCStatesMsgPayload configLogMsg;
-    for(auto& translatingBody: this->translatingBodyVec) {
+    for (auto& translatingBody : this->translatingBodyVec) {
         if (this->translatingBodyOutMsgs[i]->isLinked()) {
             translatingBodyBuffer = this->translatingBodyOutMsgs[i]->zeroMsgPayload;
             translatingBodyBuffer.rho = translatingBody.rho;
@@ -176,31 +188,35 @@ void linearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
 }
 
 /*! This method prepends the name of the spacecraft for multi-spacecraft simulations.*/
-void linearTranslationNDOFStateEffector::prependSpacecraftNameToStates()
+void
+linearTranslationNDOFStateEffector::prependSpacecraftNameToStates()
 {
     this->nameOfRhoState = this->nameOfSpacecraftAttachedTo + this->nameOfRhoState;
     this->nameOfRhoDotState = this->nameOfSpacecraftAttachedTo + this->nameOfRhoDotState;
 }
 
 /*! This method allows the TB state effector to have access to the hub states and gravity*/
-void linearTranslationNDOFStateEffector::linkInStates(DynParamManager& statesIn)
+void
+linearTranslationNDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
 }
 
-/*! This method allows the TB state effector to register its states: rho and rhoDot with the dynamic parameter manager */
-void linearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
+/*! This method allows the TB state effector to register its states: rho and rhoDot with the dynamic parameter manager
+ */
+void
+linearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
 {
     // Register the rho states
     this->rhoState = states.registerState(N, 1, this->nameOfRhoState);
     this->rhoDotState = states.registerState(N, 1, this->nameOfRhoDotState);
-    Eigen::MatrixXd RhoInitMatrix(N,1);
-    Eigen::MatrixXd RhoDotInitMatrix(N,1);
+    Eigen::MatrixXd RhoInitMatrix(N, 1);
+    Eigen::MatrixXd RhoDotInitMatrix(N, 1);
     int i = 0;
-    for(const auto& translatingBody: this->translatingBodyVec) {
-        RhoInitMatrix(i,0) = translatingBody.rhoInit;
-        RhoDotInitMatrix(i,0) = translatingBody.rhoDotInit;
+    for (const auto& translatingBody : this->translatingBodyVec) {
+        RhoInitMatrix(i, 0) = translatingBody.rhoInit;
+        RhoDotInitMatrix(i, 0) = translatingBody.rhoDotInit;
         i++;
     }
     this->rhoState->setState(RhoInitMatrix);
@@ -209,7 +225,8 @@ void linearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
 
 /*! This method allows the TB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
-void linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime)
+void
+linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime)
 {
     this->effProps.mEff = 0.0;
     this->effProps.rEff_CB_B = Eigen::Vector3d::Zero();
@@ -218,7 +235,7 @@ void linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
     this->effProps.IEffPrimePntB_B = Eigen::Matrix3d::Zero();
 
     int i = 0;
-    for(auto& translatingBody: this->translatingBodyVec) {
+    for (auto& translatingBody : this->translatingBodyVec) {
         if (translatingBody.isAxisLocked) {
             auto rhoDotVector = this->rhoDotState->getState();
             rhoDotVector(i) = 0.0;
@@ -236,8 +253,8 @@ void linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
             translatingBody.dcm_FB = translatingBody.dcm_FP;
             translatingBody.fHat_B = translatingBody.fHat_P;
         } else {
-            translatingBody.dcm_FB = translatingBody.dcm_FP * this->translatingBodyVec[i-1].dcm_FB;
-            translatingBody.fHat_B = this->translatingBodyVec[i-1].dcm_FB.transpose() * translatingBody.fHat_P;
+            translatingBody.dcm_FB = translatingBody.dcm_FP * this->translatingBodyVec[i - 1].dcm_FB;
+            translatingBody.fHat_B = this->translatingBodyVec[i - 1].dcm_FB.transpose() * translatingBody.fHat_P;
         }
         translatingBody.r_FF0_B = translatingBody.rho * translatingBody.fHat_B;
 
@@ -249,17 +266,19 @@ void linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
             translatingBody.r_FP_B = translatingBody.r_F0P_B + translatingBody.r_FF0_B;
             translatingBody.r_FB_B = translatingBody.r_FP_B;
         } else {
-            translatingBody.r_F0P_B = this->translatingBodyVec[i-1].dcm_FB.transpose() * translatingBody.r_F0P_P;
+            translatingBody.r_F0P_B = this->translatingBodyVec[i - 1].dcm_FB.transpose() * translatingBody.r_F0P_P;
             translatingBody.r_FP_B = translatingBody.r_F0P_B + translatingBody.r_FF0_B;
-            translatingBody.r_FB_B = translatingBody.r_FP_B + this->translatingBodyVec[i-1].r_FB_B;
+            translatingBody.r_FB_B = translatingBody.r_FP_B + this->translatingBodyVec[i - 1].r_FB_B;
         }
         translatingBody.r_FcB_B = translatingBody.r_FcF_B + translatingBody.r_FB_B;
         this->effProps.rEff_CB_B += translatingBody.mass * translatingBody.r_FcB_B;
 
         // Find the inertia of the bodies about point B
         translatingBody.rTilde_FcB_B = eigenTilde(translatingBody.r_FcB_B);
-        translatingBody.IPntFc_B = translatingBody.dcm_FB.transpose() * translatingBody.IPntFc_F * translatingBody.dcm_FB;
-        this->effProps.IEffPntB_B += translatingBody.IPntFc_B - translatingBody.mass * translatingBody.rTilde_FcB_B * translatingBody.rTilde_FcB_B;
+        translatingBody.IPntFc_B =
+          translatingBody.dcm_FB.transpose() * translatingBody.IPntFc_F * translatingBody.dcm_FB;
+        this->effProps.IEffPntB_B +=
+          translatingBody.IPntFc_B - translatingBody.mass * translatingBody.rTilde_FcB_B * translatingBody.rTilde_FcB_B;
 
         // Find rPrime_FcB_B
         translatingBody.rPrime_FcF_B = Eigen::Vector3d::Zero();
@@ -268,7 +287,7 @@ void linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
         if (i == 0) {
             translatingBody.rPrime_FB_B = translatingBody.rPrime_FP_B;
         } else {
-            translatingBody.rPrime_FB_B = translatingBody.rPrime_FP_B + this->translatingBodyVec[i-1].rPrime_FB_B;
+            translatingBody.rPrime_FB_B = translatingBody.rPrime_FP_B + this->translatingBodyVec[i - 1].rPrime_FB_B;
         }
         translatingBody.rPrime_FcB_B = translatingBody.rPrime_FcF_B + translatingBody.rPrime_FB_B;
         this->effProps.rEffPrime_CB_B += translatingBody.mass * translatingBody.rPrime_FcB_B;
@@ -276,7 +295,9 @@ void linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
         // Find the body-frame time derivative of the inertia of each arm and the entire spacecraft
         translatingBody.IPrimePntFc_B = Eigen::Matrix3d::Zero();
         Eigen::Matrix3d rPrimeTilde_FcB_B = eigenTilde(translatingBody.rPrime_FcB_B);
-        this->effProps.IEffPrimePntB_B += translatingBody.IPrimePntFc_B - translatingBody.mass * (rPrimeTilde_FcB_B * translatingBody.rTilde_FcB_B + translatingBody.rTilde_FcB_B * rPrimeTilde_FcB_B);
+        this->effProps.IEffPrimePntB_B +=
+          translatingBody.IPrimePntFc_B - translatingBody.mass * (rPrimeTilde_FcB_B * translatingBody.rTilde_FcB_B +
+                                                                  translatingBody.rTilde_FcB_B * rPrimeTilde_FcB_B);
 
         i++;
     }
@@ -286,7 +307,12 @@ void linearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
 
 /*! This method allows the TB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void linearTranslationNDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void
+linearTranslationNDOFStateEffector::updateContributions(double integTime,
+                                                        BackSubMatrices& backSubContr,
+                                                        Eigen::Vector3d sigma_BN,
+                                                        Eigen::Vector3d omega_BN_B,
+                                                        Eigen::Vector3d g_N)
 {
     // Find the DCM from N to B frames
     this->sigma_BN = sigma_BN;
@@ -311,51 +337,55 @@ void linearTranslationNDOFStateEffector::updateContributions(double integTime, B
 }
 
 /*! This method compute MRho for back-sub */
-void linearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
+void
+linearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
 {
-    for (int n = 0; n<this->N; n++) {
-        for (int i = 0; i<this->N; i++) {
-            MRho(n,i) = 0.0;
+    for (int n = 0; n < this->N; n++) {
+        for (int i = 0; i < this->N; i++) {
+            MRho(n, i) = 0.0;
             if ((this->translatingBodyVec[n].isAxisLocked || this->translatingBodyVec[i].isAxisLocked) && n != i)
                 continue;
-            for (int j = (i<=n) ? n : i; j<this->N; j++) {
-                MRho(n,i) += this->translatingBodyVec[n].fHat_B.transpose() * this->translatingBodyVec[j].mass
-                    * this->translatingBodyVec[i].fHat_B;
+            for (int j = (i <= n) ? n : i; j < this->N; j++) {
+                MRho(n, i) += this->translatingBodyVec[n].fHat_B.transpose() * this->translatingBodyVec[j].mass *
+                              this->translatingBodyVec[i].fHat_B;
             }
         }
     }
 }
 
 /*! This method compute ARhoStar for back-sub */
-void linearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixXd& ARhoStar)
+void
+linearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixXd& ARhoStar)
 {
-    for (int n = 0; n<this->N; n++) {
+    for (int n = 0; n < this->N; n++) {
         if (this->translatingBodyVec[n].isAxisLocked)
             continue;
-        for (int i = n; i<this->N; i++) {
+        for (int i = n; i < this->N; i++) {
             ARhoStar.row(n) -= this->translatingBodyVec[n].fHat_B.transpose() * this->translatingBodyVec[i].mass;
         }
     }
 }
 
 /*! This method compute BRhoStar for back-sub */
-void linearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixXd& BRhoStar)
+void
+linearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixXd& BRhoStar)
 {
-    for (int n = 0; n<this->N; n++) {
+    for (int n = 0; n < this->N; n++) {
         if (this->translatingBodyVec[n].isAxisLocked)
             continue;
-        for (int i = n; i<this->N; i++) {
+        for (int i = n; i < this->N; i++) {
             Eigen::Vector3d r_FciB_B = this->translatingBodyVec[i].r_FcB_B;
             Eigen::Matrix3d rTilde_FciB_B = eigenTilde(r_FciB_B);
 
-            BRhoStar.row(n) += this->translatingBodyVec[n].fHat_B.transpose() * this->translatingBodyVec[i].mass * rTilde_FciB_B;
+            BRhoStar.row(n) +=
+              this->translatingBodyVec[n].fHat_B.transpose() * this->translatingBodyVec[i].mass * rTilde_FciB_B;
         }
     }
 }
 
 /*! This method compute CRhoStar for back-sub */
-void linearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar,
-                                                      const Eigen::Vector3d& g_N)
+void
+linearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar, const Eigen::Vector3d& g_N)
 {
     Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 
@@ -364,51 +394,63 @@ void linearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoSt
     g_B = this->dcm_BN * g_N;
     Eigen::Vector3d F_g = Eigen::Vector3d::Zero().transpose();
 
-    for (int n = 0; n<this->N; n++) {
+    for (int n = 0; n < this->N; n++) {
         if (this->translatingBodyVec[n].isAxisLocked)
             continue;
-        CRhoStar(n, 0) = this->translatingBodyVec[n].u
-                           - this->translatingBodyVec[n].k * (this->translatingBodyVec[n].rho -
-                           this->translatingBodyVec[n].rhoRef) - this->translatingBodyVec[n].c *
-                           (this->translatingBodyVec[n].rhoDot - this->translatingBodyVec[n].rhoDotRef);
-        for (int i = n; i<this->N; i++) {
+        CRhoStar(n, 0) =
+          this->translatingBodyVec[n].u -
+          this->translatingBodyVec[n].k * (this->translatingBodyVec[n].rho - this->translatingBodyVec[n].rhoRef) -
+          this->translatingBodyVec[n].c * (this->translatingBodyVec[n].rhoDot - this->translatingBodyVec[n].rhoDotRef);
+        for (int i = n; i < this->N; i++) {
             Eigen::Vector3d r_FciB_B = this->translatingBodyVec[i].r_FcB_B;
             Eigen::Vector3d rPrime_FciB_B = this->translatingBodyVec[i].rPrime_FcB_B;
 
             F_g = this->translatingBodyVec[i].mass * g_B;
-            CRhoStar(n, 0) += this->translatingBodyVec[n].fHat_B.transpose() * (F_g - this->translatingBodyVec[i].mass *
-                              (omegaTilde_BN_B * omegaTilde_BN_B * r_FciB_B + 2 * omegaTilde_BN_B * rPrime_FciB_B));
+            CRhoStar(n, 0) += this->translatingBodyVec[n].fHat_B.transpose() *
+                              (F_g - this->translatingBodyVec[i].mass * (omegaTilde_BN_B * omegaTilde_BN_B * r_FciB_B +
+                                                                         2 * omegaTilde_BN_B * rPrime_FciB_B));
         }
     }
 }
 
 /*! This method computes the back-sub contributions of the system */
-void linearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr) const
+void
+linearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr) const
 {
     Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 
-    for (int i = 0; i<this->N; i++) {
-    Eigen::Matrix3d rTilde_FciB_B = eigenTilde(this->translatingBodyVec[i].r_FcB_B);
-    Eigen::Vector3d rPrime_FciB_B = this->translatingBodyVec[i].rPrime_FcB_B;
-    backSubContr.vecRot -= this->translatingBodyVec[i].mass * omegaTilde_BN_B * rTilde_FciB_B * rPrime_FciB_B;
+    for (int i = 0; i < this->N; i++) {
+        Eigen::Matrix3d rTilde_FciB_B = eigenTilde(this->translatingBodyVec[i].r_FcB_B);
+        Eigen::Vector3d rPrime_FciB_B = this->translatingBodyVec[i].rPrime_FcB_B;
+        backSubContr.vecRot -= this->translatingBodyVec[i].mass * omegaTilde_BN_B * rTilde_FciB_B * rPrime_FciB_B;
         for (int j = i; j < this->N; j++) {
             Eigen::Matrix3d rTilde_FcjB_B = eigenTilde(this->translatingBodyVec[j].r_FcB_B);
 
             // Translation contributions
-            backSubContr.matrixA += this->translatingBodyVec[j].mass *  this->translatingBodyVec[i].fHat_B * this->ARho.row(i);
-            backSubContr.matrixB += this->translatingBodyVec[j].mass *  this->translatingBodyVec[i].fHat_B * this->BRho.row(i);
-            backSubContr.vecTrans -= this->translatingBodyVec[j].mass * this->translatingBodyVec[i].fHat_B * this->CRho.row(i);
+            backSubContr.matrixA +=
+              this->translatingBodyVec[j].mass * this->translatingBodyVec[i].fHat_B * this->ARho.row(i);
+            backSubContr.matrixB +=
+              this->translatingBodyVec[j].mass * this->translatingBodyVec[i].fHat_B * this->BRho.row(i);
+            backSubContr.vecTrans -=
+              this->translatingBodyVec[j].mass * this->translatingBodyVec[i].fHat_B * this->CRho.row(i);
 
             // Rotation contributions
-            backSubContr.matrixC += this->translatingBodyVec[j].mass * rTilde_FcjB_B * this->translatingBodyVec[i].fHat_B * this->ARho.row(i);
-            backSubContr.matrixD += this->translatingBodyVec[j].mass * rTilde_FcjB_B * this->translatingBodyVec[i].fHat_B * this->BRho.row(i);
-            backSubContr.vecRot -= this->translatingBodyVec[j].mass * rTilde_FcjB_B * this->translatingBodyVec[i].fHat_B * this->CRho.row(i);
+            backSubContr.matrixC +=
+              this->translatingBodyVec[j].mass * rTilde_FcjB_B * this->translatingBodyVec[i].fHat_B * this->ARho.row(i);
+            backSubContr.matrixD +=
+              this->translatingBodyVec[j].mass * rTilde_FcjB_B * this->translatingBodyVec[i].fHat_B * this->BRho.row(i);
+            backSubContr.vecRot -=
+              this->translatingBodyVec[j].mass * rTilde_FcjB_B * this->translatingBodyVec[i].fHat_B * this->CRho.row(i);
         }
     }
 }
 
 /*! This method is used to find the derivatives for the TB stateEffector: rhoDDot and the kinematic derivative */
-void linearTranslationNDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void
+linearTranslationNDOFStateEffector::computeDerivatives(double integTime,
+                                                       Eigen::Vector3d rDDot_BN_N,
+                                                       Eigen::Vector3d omegaDot_BN_B,
+                                                       Eigen::Vector3d sigma_BN)
 {
     // Find rDDotLoc_BN_B
     const Eigen::Vector3d& rDDotLocal_BN_N = rDDot_BN_N;
@@ -420,11 +462,13 @@ void linearTranslationNDOFStateEffector::computeDerivatives(double integTime, Ei
     this->rhoDotState->setDerivative(rhoDDot);
 }
 
-/*! This method is for calculating the contributions of the TB state effector to the energy and momentum of the spacecraft */
-void linearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTime,
-                                                                      Eigen::Vector3d & rotAngMomPntCContr_B,
-                                                                      double & rotEnergyContr,
-                                                                      Eigen::Vector3d omega_BN_B)
+/*! This method is for calculating the contributions of the TB state effector to the energy and momentum of the
+ * spacecraft */
+void
+linearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTime,
+                                                                 Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                                 double& rotEnergyContr,
+                                                                 Eigen::Vector3d omega_BN_B)
 {
     this->omega_BN_B = omega_BN_B;
     Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
@@ -432,7 +476,7 @@ void linearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
     rotAngMomPntCContr_B = Eigen::Vector3d::Zero();
     rotEnergyContr = 0.0;
 
-    for(auto& translatingBody: this->translatingBodyVec) {
+    for (auto& translatingBody : this->translatingBodyVec) {
         // Update omega_FN_B
         translatingBody.omega_FN_B = this->omega_BN_B;
 
@@ -440,20 +484,23 @@ void linearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
         translatingBody.rDot_FcB_B = translatingBody.rPrime_FcB_B + omegaTilde_BN_B * translatingBody.r_FcB_B;
 
         // Find rotational angular momentum contribution from hub
-        rotAngMomPntCContr_B += translatingBody.IPntFc_B * translatingBody.omega_FN_B + translatingBody.mass * translatingBody.rTilde_FcB_B * translatingBody.rDot_FcB_B;
+        rotAngMomPntCContr_B += translatingBody.IPntFc_B * translatingBody.omega_FN_B +
+                                translatingBody.mass * translatingBody.rTilde_FcB_B * translatingBody.rDot_FcB_B;
 
         // Find rotational energy contribution from the hub
-        rotEnergyContr += 1.0 / 2.0 * translatingBody.omega_FN_B.dot(translatingBody.IPntFc_B * translatingBody.omega_FN_B)
-                        + 1.0 / 2.0 * translatingBody.mass * translatingBody.rDot_FcB_B.dot(translatingBody.rDot_FcB_B)
-                        + 1.0 / 2.0 * translatingBody.k * (translatingBody.rho - translatingBody.rhoRef) *
-                        (translatingBody.rho - translatingBody.rhoRef);
+        rotEnergyContr +=
+          1.0 / 2.0 * translatingBody.omega_FN_B.dot(translatingBody.IPntFc_B * translatingBody.omega_FN_B) +
+          1.0 / 2.0 * translatingBody.mass * translatingBody.rDot_FcB_B.dot(translatingBody.rDot_FcB_B) +
+          1.0 / 2.0 * translatingBody.k * (translatingBody.rho - translatingBody.rhoRef) *
+            (translatingBody.rho - translatingBody.rhoRef);
     }
 }
 
 /*! This method computes the translating body states relative to the inertial frame */
-void linearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
+void
+linearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
 {
-    for(auto& translatingBody: this->translatingBodyVec) {
+    for (auto& translatingBody : this->translatingBodyVec) {
         // Compute the rotational properties
         Eigen::Matrix3d dcm_FN;
         dcm_FN = translatingBody.dcm_FB * this->dcm_BN;
@@ -461,13 +508,16 @@ void linearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
         translatingBody.omega_FN_F = translatingBody.dcm_FB.transpose().transpose() * translatingBody.omega_FN_B;
 
         // Compute the translation properties
-        translatingBody.r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * translatingBody.r_FcB_B;
-        translatingBody.v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * translatingBody.rDot_FcB_B;
+        translatingBody.r_FcN_N =
+          (Eigen::Vector3d) * this->inertialPositionProperty + this->dcm_BN.transpose() * translatingBody.r_FcB_B;
+        translatingBody.v_FcN_N =
+          (Eigen::Vector3d) * this->inertialVelocityProperty + this->dcm_BN.transpose() * translatingBody.rDot_FcB_B;
     }
 }
 
 /*! This method is used so that the simulation will ask TB to update messages */
-void linearTranslationNDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void
+linearTranslationNDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeTranslatingBodyInertialStates();

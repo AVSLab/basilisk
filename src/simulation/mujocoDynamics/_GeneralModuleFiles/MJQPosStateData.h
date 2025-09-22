@@ -35,7 +35,7 @@
  */
 class MJQPosStateData : public StateData
 {
-public:
+  public:
     /**
      * @brief Constructs an MJQPosStateData object.
      *
@@ -43,7 +43,7 @@ public:
      * @param newState The initial state matrix.
      */
     MJQPosStateData(std::string inName, const Eigen::MatrixXd& newState)
-        : StateData(std::move(inName), newState){};
+      : StateData(std::move(inName), newState) {};
 
     /**
      * @brief Creates a clone of the current state data object.
@@ -72,7 +72,7 @@ public:
      */
     void propagateState(double dt) override;
 
-protected:
+  protected:
     mjModel* mujocoModel; ///< Pointer to the MuJoCo model associated with the state.
 };
 

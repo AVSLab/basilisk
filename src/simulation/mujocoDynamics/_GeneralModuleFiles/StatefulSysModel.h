@@ -38,12 +38,13 @@
  */
 class DynParamRegisterer
 {
-public:
+  public:
     /** Constructor */
     DynParamRegisterer(DynParamManager& manager, std::string stateNamePrefix)
-        : manager(manager)
-        , stateNamePrefix(stateNamePrefix)
-        {}
+      : manager(manager)
+      , stateNamePrefix(stateNamePrefix)
+    {
+    }
 
     /** Creates and returns a new state, which will be managed by the
      * underlying ``DynParamManager``.
@@ -55,17 +56,15 @@ public:
      * This method may optionally be templated to create StateData of
      * subclasses of StateData.
      */
-    template <typename StateDataType = StateData,
-              std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
+    template<typename StateDataType = StateData,
+             std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
     inline StateDataType* registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
     {
-        return this->manager.registerState<StateDataType>(
-            nRow, nCol, this->stateNamePrefix + stateName
-        );
+        return this->manager.registerState<StateDataType>(nRow, nCol, this->stateNamePrefix + stateName);
     }
 
-protected:
-    DynParamManager& manager; ///< wrapped manager
+  protected:
+    DynParamManager& manager;    ///< wrapped manager
     std::string stateNamePrefix; ///< prefix added to all registered state names
 };
 
@@ -88,7 +87,7 @@ protected:
  */
 class StatefulSysModel : public SysModel
 {
-public:
+  public:
     /** Default constructor */
     StatefulSysModel() = default;
 

@@ -37,8 +37,9 @@ class MJBody;
  *
  * @return A string view representing the site type.
  */
-template <>
-constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsSite>()
+template<>
+constexpr std::string_view
+MJBasilisk::detail::getObjectTypeName<mjsSite>()
 {
     return "site";
 }
@@ -53,7 +54,7 @@ constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsSite>()
  */
 class MJSite : public MJObject<mjsSite>
 {
-public:
+  public:
     /**
      * @brief Constructs an `MJSite` object with a given MuJoCo site object
      * and the body where it's attached.
@@ -103,10 +104,10 @@ public:
      */
     void writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t CurrentSimNanos);
 
-public:
+  public:
     Message<SCStatesMsgPayload> stateOutMsg; ///< Message to output site frame state.
 
-protected:
+  protected:
     MJBody& body; ///< Reference to the body to which the site is attached.
 };
 

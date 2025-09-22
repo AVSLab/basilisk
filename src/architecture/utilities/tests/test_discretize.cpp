@@ -21,8 +21,8 @@
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 
-
-TEST(Discretize, testRoundToZero) {
+TEST(Discretize, testRoundToZero)
+{
     Discretize discretizor = Discretize(3);
     discretizor.setRoundDirection(TO_ZERO);
     discretizor.setCarryError(false);
@@ -40,7 +40,8 @@ TEST(Discretize, testRoundToZero) {
     EXPECT_TRUE(states == expected);
 }
 
-TEST(Discretize, testRoundFromZero) {
+TEST(Discretize, testRoundFromZero)
+{
     Discretize discretizor = Discretize(3);
     discretizor.setRoundDirection(FROM_ZERO);
     discretizor.setCarryError(false);
@@ -58,7 +59,8 @@ TEST(Discretize, testRoundFromZero) {
     EXPECT_TRUE(states == expected);
 }
 
-TEST(Discretize, testRoundNear) {
+TEST(Discretize, testRoundNear)
+{
     Discretize discretizor = Discretize(3);
     discretizor.setRoundDirection(NEAR);
     discretizor.setCarryError(false);
@@ -76,7 +78,8 @@ TEST(Discretize, testRoundNear) {
     EXPECT_TRUE(states == expected);
 }
 
-TEST(Discretize, testRoundToZeroCarryError) {
+TEST(Discretize, testRoundToZeroCarryError)
+{
     Discretize discretizor = Discretize(3);
     discretizor.setRoundDirection(TO_ZERO);
     discretizor.setCarryError(true);
@@ -91,7 +94,7 @@ TEST(Discretize, testRoundToZeroCarryError) {
     states << 0.1, 10.1, 15;
 
     Eigen::Vector3d output;
-    for(uint64_t i = 0; i < 2; i++){
+    for (uint64_t i = 0; i < 2; i++) {
         output = discretizor.discretize(states);
         EXPECT_TRUE(output == expected);
         expected << 0, 10, 20;

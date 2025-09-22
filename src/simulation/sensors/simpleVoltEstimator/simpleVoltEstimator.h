@@ -29,8 +29,9 @@
 #include "architecture/messaging/messaging.h"
 
 /*! @brief simple voltage estimation module class */
-class SimpleVoltEstimator: public SysModel {
-public:
+class SimpleVoltEstimator : public SysModel
+{
+  public:
     SimpleVoltEstimator();
     ~SimpleVoltEstimator();
 
@@ -44,21 +45,21 @@ public:
     void setAMatrix(const Eigen::MatrixXd& propMatrix);
     Eigen::MatrixXd getAMatrix() const;
 
-public:
-    Eigen::MatrixXd PMatrix;          //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
-    Eigen::VectorXd walkBounds;       //!< -- "3-sigma" errors to permit for states
-    Eigen::VectorXd voltErrors;        //!< -- Current voltage errors applied to truth
-    Message<VoltMsgPayload> voltOutMsg;    //!< voltage output msg
-    VoltMsgPayload trueVoltState;    //!< -- voltage state without errors
-    VoltMsgPayload estVoltState;     //!< -- voltage state including errors
-    BSKLogger bskLogger;              //!< -- BSK Logging
+  public:
+    Eigen::MatrixXd
+      PMatrix; //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+    Eigen::VectorXd walkBounds;         //!< -- "3-sigma" errors to permit for states
+    Eigen::VectorXd voltErrors;         //!< -- Current voltage errors applied to truth
+    Message<VoltMsgPayload> voltOutMsg; //!< voltage output msg
+    VoltMsgPayload trueVoltState;       //!< -- voltage state without errors
+    VoltMsgPayload estVoltState;        //!< -- voltage state including errors
+    BSKLogger bskLogger;                //!< -- BSK Logging
 
-    ReadFunctor<VoltMsgPayload> voltInMsg;          //!< voltage input msg
+    ReadFunctor<VoltMsgPayload> voltInMsg; //!< voltage input msg
 
-private:
-    Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;            //!< -- Gauss-markov error states
+  private:
+    Eigen::MatrixXd AMatrix; //!< -- The matrix used to propagate the state
+    GaussMarkov errorModel;  //!< -- Gauss-markov error states
 };
-
 
 #endif

@@ -29,10 +29,10 @@
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief planet ephemeris class */
-class PlanetEphemeris: public SysModel {
-public:
+class PlanetEphemeris : public SysModel
+{
+  public:
     PlanetEphemeris();
     ~PlanetEphemeris();
 
@@ -41,24 +41,23 @@ public:
 
     void setPlanetNames(std::vector<std::string> planetNames);
 
-public:
+  public:
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetOutMsgs; //!< -- vector of planet state output messages
 
-    std::vector<ClassicElements>planetElements; //!< -- Vector of planet classical orbit elements
+    std::vector<ClassicElements> planetElements; //!< -- Vector of planet classical orbit elements
 
-    std::vector<double> rightAscension;         //!< [r] right ascension of the north pole rotation axis (pos. 3-axis)
-    std::vector<double> declination;            //!< [r] Declination of the north pole rotation axis (neg. 2-axis)
-    std::vector<double> lst0;                   //!< [r] initial planet local sidereal time angle (pos. 3-axis)
+    std::vector<double> rightAscension; //!< [r] right ascension of the north pole rotation axis (pos. 3-axis)
+    std::vector<double> declination;    //!< [r] Declination of the north pole rotation axis (neg. 2-axis)
+    std::vector<double> lst0;           //!< [r] initial planet local sidereal time angle (pos. 3-axis)
 
-    std::vector<double> rotRate;                //!< [r/s] planet rotation rate
+    std::vector<double> rotRate; //!< [r/s] planet rotation rate
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-private:
-    std::vector<std::string> planetNames;       //!< -- Vector of planet names
-    double epochTime;                           //!< [s] time of provided planet ephemeris epoch
-    int computeAttitudeFlag;                    //!< -- flag indicating if the planet orienation information is provided
+  private:
+    std::vector<std::string> planetNames; //!< -- Vector of planet names
+    double epochTime;                     //!< [s] time of provided planet ephemeris epoch
+    int computeAttitudeFlag;              //!< -- flag indicating if the planet orienation information is provided
 };
-
 
 #endif

@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef LAMBERTPLANNER_H
 #define LAMBERTPLANNER_H
 
@@ -32,8 +31,9 @@
 
 /*! @brief This module creates the LambertProblemMsg to be used for the LambertSolver module
  */
-class LambertPlanner: public SysModel {
-public:
+class LambertPlanner : public SysModel
+{
+  public:
     LambertPlanner();
     ~LambertPlanner();
 
@@ -43,54 +43,54 @@ public:
     void useSolverIzzoMethod();
     void useSolverGoodingMethod();
 
-    ReadFunctor<NavTransMsgPayload> navTransInMsg;                      //!< translational navigation input message
-    Message<LambertProblemMsgPayload> lambertProblemOutMsg;             //!< lambert problem output message
+    ReadFunctor<NavTransMsgPayload> navTransInMsg;          //!< translational navigation input message
+    Message<LambertProblemMsgPayload> lambertProblemOutMsg; //!< lambert problem output message
 
-    BSKLogger bskLogger;                                                //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
     /** setter for `r_TN_N` */
     void setR_TN_N(const Eigen::Vector3d value);
     /** getter for `r_TN_N` */
-    Eigen::Vector3d getR_TN_N() const {return this->r_TN_N;}
+    Eigen::Vector3d getR_TN_N() const { return this->r_TN_N; }
     /** setter for `finalTime` */
     void setFinalTime(const double value);
     /** getter for `finalTime` */
-    double getFinalTime() const {return this->finalTime;}
+    double getFinalTime() const { return this->finalTime; }
     /** setter for `maneuverTime` */
     void setManeuverTime(const double value);
     /** getter for `maneuverTime` */
-    double getManeuverTime() const {return this->maneuverTime;}
+    double getManeuverTime() const { return this->maneuverTime; }
     /** setter for `mu` */
     void setMu(const double value);
     /** getter for `mu` */
-    double getMu() const {return this->mu;}
+    double getMu() const { return this->mu; }
     /** setter for `numRevolutions` */
     void setNumRevolutions(const int value);
     /** getter for `numRevolutions` */
-    int getNumRevolutions() const {return this->numRevolutions;}
+    int getNumRevolutions() const { return this->numRevolutions; }
 
-private:
+  private:
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
     std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
-            const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
-            std::array<double, 2> interval,
-            const Eigen::VectorXd& X0,
-            double dt);
+      const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+      std::array<double, 2> interval,
+      const Eigen::VectorXd& X0,
+      double dt);
     Eigen::VectorXd RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
                         const Eigen::VectorXd& X0,
                         double t0,
                         double dt);
 
-    Eigen::Vector3d r_TN_N; //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
-    double finalTime{}; //!< [s] time at which target position should be reached
-    double maneuverTime{}; //!< [s] time at which maneuver should be executed
-    double mu{}; //!< [m^3 s^-2] gravitational parameter
-    int numRevolutions = 0; //!< [-] number of revolutions to be completed (completed orbits)
+    Eigen::Vector3d r_TN_N;    //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
+    double finalTime{};        //!< [s] time at which target position should be reached
+    double maneuverTime{};     //!< [s] time at which maneuver should be executed
+    double mu{};               //!< [m^3 s^-2] gravitational parameter
+    int numRevolutions = 0;    //!< [-] number of revolutions to be completed (completed orbits)
     SolverMethod solverMethod; //!< lambert solver algorithm (GOODING or IZZO)
-    double time{}; //!< [s] Current vehicle time-tag associated with measurements
-    Eigen::Vector3d r_N; //!< [m] Current inertial spacecraft position vector in inertial frame N components
-    Eigen::Vector3d v_N; //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
+    double time{};             //!< [s] Current vehicle time-tag associated with measurements
+    Eigen::Vector3d r_N;       //!< [m] Current inertial spacecraft position vector in inertial frame N components
+    Eigen::Vector3d v_N;       //!< [m/s] Current inertial velocity of the spacecraft in inertial frame N components
     Eigen::Vector3d rm_N; //!< [m] Expected inertial spacecraft position vector at maneuver time tm in inertial frame N
 };
 

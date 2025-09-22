@@ -29,7 +29,8 @@
  * This message can be used to represent the current state of a joint, or
  * to indicate the desired state when constraining the state of a joint.
  */
-typedef struct {
+typedef struct
+{
     double state; //!< [rad] or [m] State of the joint
 } ScalarJointStateMsgPayload;
 

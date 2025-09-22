@@ -28,7 +28,8 @@
  @param configData The configuration data associated with the sun safe control
  @param moduleID The ID associated with the configData
  */
-void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
+void
+SelfInit_sunSafeACS(sunSafeACSConfig* configData, int64_t moduleID)
 {
     THRArrayOnTimeCmdMsg_C_init(&configData->thrData.thrOnTimeOutMsg);
 }
@@ -39,15 +40,14 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
-                        int64_t moduleID)
+void
+Reset_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");
     }
 }
-
 
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
@@ -56,15 +56,14 @@ void Reset_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     CmdTorqueBodyMsgPayload cntrRequest;
 
     /*! - Read the input parsed CSS sensor data message*/
     cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
-    computeSingleThrustBlock(&(configData->thrData), callTime,
-                             &cntrRequest, moduleID);
+    computeSingleThrustBlock(&(configData->thrData), callTime, &cntrRequest, moduleID);
 
     return;
 }

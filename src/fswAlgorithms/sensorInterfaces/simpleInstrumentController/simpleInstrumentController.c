@@ -33,7 +33,8 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *configData, int64_t moduleID)
+void
+SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID)
 {
     configData->imaged = 0;
     configData->controllerStatus = 1;
@@ -47,11 +48,13 @@ void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *confi
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->locationAccessInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
+        _bskLog(
+          configData->bskLogger, BSK_ERROR, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
     }
     if (!AttGuidMsg_C_isLinked(&configData->attGuidInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleInstrumentController.attGuidInMsg wasn't connected.");
@@ -67,16 +70,17 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double sigma_BR_norm; //!< Norm of sigma_BR
     double omega_BR_norm; //!< Norm of omega_BR
 
     /* Local copies of the msg buffers*/
-    AccessMsgPayload accessInMsgBuffer;  //!< local copy of input message buffer
-    AttGuidMsgPayload attGuidInMsgBuffer;  //!< local copy of output message buffer
+    AccessMsgPayload accessInMsgBuffer;             //!< local copy of input message buffer
+    AttGuidMsgPayload attGuidInMsgBuffer;           //!< local copy of output message buffer
     DeviceStatusMsgPayload deviceStatusInMsgBuffer; //!< local copy of input message buffer
-    DeviceCmdMsgPayload deviceCmdOutMsgBuffer;  //!< local copy of output message buffer
+    DeviceCmdMsgPayload deviceCmdOutMsgBuffer;      //!< local copy of output message buffer
 
     // zero output buffer
     deviceCmdOutMsgBuffer = DeviceCmdMsg_C_zeroMsgPayload();
@@ -99,12 +103,12 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     if (configData->controllerStatus) {
         // If the target has not been imaged
         if (!configData->imaged) {
-            /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
-            error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
-            if ((sigma_BR_norm <= configData->attErrTolerance)
-                && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
-                && (accessInMsgBuffer.hasAccess))
-            {
+            /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the
+            rate error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
+            if ((sigma_BR_norm <= configData->attErrTolerance) &&
+                (!configData->useRateTolerance ||
+                 (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
+                && (accessInMsgBuffer.hasAccess)) {
                 deviceCmdOutMsgBuffer.deviceCmd = 1;
                 configData->imaged = 1;
                 // Otherwise, turn off the instrument

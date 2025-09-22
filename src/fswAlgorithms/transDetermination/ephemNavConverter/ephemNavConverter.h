@@ -25,28 +25,26 @@
 #include "cMsgCInterface/EphemerisMsg_C.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 
-
 /*! @brief The configuration structure for the ephemNavConverter module.*/
-typedef struct {
+typedef struct
+{
     NavTransMsg_C stateOutMsg; //!< [-] output navigation message for pos/vel
-    EphemerisMsg_C ephInMsg; //!< ephemeris input message
+    EphemerisMsg_C ephInMsg;   //!< ephemeris input message
 
-    BSKLogger *bskLogger;   //!< BSK Logging
-}EphemNavConverterData;
+    BSKLogger* bskLogger; //!< BSK Logging
+} EphemNavConverterData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID);
-    void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
-                              int64_t moduleID);
+    void SelfInit_ephemNavConverter(EphemNavConverterData* configData, int64_t moduleID);
+    void Update_ephemNavConverter(EphemNavConverterData* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_ephemNavConverter(EphemNavConverterData* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

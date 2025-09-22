@@ -11,27 +11,33 @@
 #include "mex.h"
 
 /* The function that computes a dot product of two 3D vector */
-double dotProduct(double *a, double *b){
+double
+dotProduct(double* a, double* b)
+{
     /* Assign variable to dot product output */
     double c;
 
     /* Compute dot product */
-    c = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    c = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
     /* Return output */
     return c;
 }
 
 /* The function that computes a cross product of two 3D vectors */
-void crossProduct(double *c, double *a, double *b){
+void
+crossProduct(double* c, double* a, double* b)
+{
     /* Compute cross product for each component */
-    c[0] = a[1]*b[2] - a[2]*b[1];
-    c[1] = a[2]*b[0] - a[0]*b[2];
-    c[2] = a[0]*b[1] - a[1]*b[0];
+    c[0] = a[1] * b[2] - a[2] * b[1];
+    c[1] = a[2] * b[0] - a[0] * b[2];
+    c[2] = a[0] * b[1] - a[1] * b[0];
 }
 
 /* The function that computes a 3D vector norm L2 */
-double normVector(double *a){
+double
+normVector(double* a)
+{
     /* Declare variable to loop through its 3 components */
     int i_3D;
 
@@ -39,7 +45,7 @@ double normVector(double *a){
     double norm = 0.0;
 
     /* Loop through all its 3 components */
-    for (i_3D = 0; i_3D < 3; i_3D++){
+    for (i_3D = 0; i_3D < 3; i_3D++) {
         /* Summatory add square of each vector component */
         norm += pow(a[i_3D], 2.0);
     }
@@ -52,18 +58,18 @@ double normVector(double *a){
 }
 
 /* The function that computes the min between two integer numbers */
-int intmin(int a, int b){
+int
+intmin(int a, int b)
+{
     /* Define output number */
     int c;
 
     /* If statement to check what number is lower */
-    if (a < b){
+    if (a < b) {
         c = a;
-    }
-    else if (b < a){
+    } else if (b < a) {
         c = b;
-    }
-    else{
+    } else {
         c = a;
     }
 
@@ -72,23 +78,26 @@ int intmin(int a, int b){
 }
 
 /* The function that computes the dyad product between two 3D vectors */
-void dyadProduct(double c[3][3], double *a, double *b){
+void
+dyadProduct(double c[3][3], double* a, double* b)
+{
     /* Declare auxiliary variables to loop */
     int i, j;
 
     /* Loop through rows */
-    for (i = 0; i < 3; i++){
+    for (i = 0; i < 3; i++) {
         /*Loop through columns */
-        for (j = 0; j < 3; j++){
-            c[i][j] = a[i]*b[j];
+        for (j = 0; j < 3; j++) {
+            c[i][j] = a[i] * b[j];
         }
     }
 }
 
 /* The function that computes a product between a 3D matrix and vector and
  multiplies the result with a desired scalar if neccesary*/
-void matrixvectorProduct(double *c, double a[3][3], double *b,
-        double factor, int flag){
+void
+matrixvectorProduct(double* c, double a[3][3], double* b, double factor, int flag)
+{
     /* Define for loops auxiliary variable */
     int i, j;
 
@@ -100,22 +109,21 @@ void matrixvectorProduct(double *c, double a[3][3], double *b,
 
     /* If statement to decide if the vector will multiply by the right side
      * or the left side */
-    if (flag == 1){
+    if (flag == 1) {
         /* Premultiply by the left side (row vector) */
-        for (i = 0; i < 3; i++){
-            for (j = 0; j < 3; j++){
-                c[i] = c[i] + a[j][i]*b[j];
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                c[i] = c[i] + a[j][i] * b[j];
             }
 
             /* Multiply vector value by multiplication factor */
             c[i] = c[i] * factor;
         }
-    }
-    else{
+    } else {
         /* By default multiply by the right side (column vector) */
-        for (i = 0; i < 3; i++){
-            for (j = 0; j < 3; j++){
-                c[i] = c[i] + a[i][j]*b[j];
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                c[i] = c[i] + a[i][j] * b[j];
                 /*printf("%lf \t %lf \t %lf \t %lf\n", c[i], a[i][j], b[j], factor);*/
             }
 
@@ -126,19 +134,19 @@ void matrixvectorProduct(double *c, double a[3][3], double *b,
 }
 
 /* The gateway function */
-void mexFunction( int nlhs, mxArray *plhs[],
-                  int nrhs, const mxArray *prhs[] )
+void
+mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 {
-    /* Macros for the input arguments */
-    #define r_IN prhs[0]
-    #define xyz_IN prhs[1]
-    #define order_IN prhs[2]
-    #define rho_IN prhs[3]
-    #define G_IN prhs[4]
+/* Macros for the input arguments */
+#define r_IN prhs[0]
+#define xyz_IN prhs[1]
+#define order_IN prhs[2]
+#define rho_IN prhs[3]
+#define G_IN prhs[4]
 
-    /* Macros for the output arguments */
-    #define dU_OUT plhs[0]
-    #define lU_OUT plhs[1]
+/* Macros for the output arguments */
+#define dU_OUT plhs[0]
+#define lU_OUT plhs[1]
 
     /* Declare input arguments */
     double *r, *xyz, *order, rho, G;
@@ -181,9 +189,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
     double Le;
     double Ee[3][3];
-    double EereLe[3] = {0, 0, 0};
+    double EereLe[3] = { 0, 0, 0 };
 
-    double dUe[3] = {0, 0, 0};
+    double dUe[3] = { 0, 0, 0 };
 
     double cross_rj_rk[3];
     double wf;
@@ -191,7 +199,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     double dot_nf_rf;
     double dot_nf_rf_wf;
 
-    double dUf[3] = {0, 0, 0};
+    double dUf[3] = { 0, 0, 0 };
 
     /* Get the pointers to the data of r, xyz and order */
     r = mxGetPr(r_IN);
@@ -222,20 +230,20 @@ void mexFunction( int nlhs, mxArray *plhs[],
     lU[0] = 0.0;
 
     /* Loop through each facect */
-    for (m_order = 0; m_order < M_order; m_order++){
+    for (m_order = 0; m_order < M_order; m_order++) {
         /* Fill auxiliary variables with vertex order on each facet
          * (1 has to be substracted because C arrays starts in 0)*/
         i = order[m_order] - 1;
         j = order[m_order + M_order] - 1;
-        k = order[m_order + 2*M_order] - 1;
+        k = order[m_order + 2 * M_order] - 1;
 
         /* Loop through each 3D position */
-        for (i_3D = 0; i_3D < 3; i_3D++){
+        for (i_3D = 0; i_3D < 3; i_3D++) {
             /* Compute vectors going from each vertex to the evaluation
              * point */
-            ri_idx[i_3D] = xyz[i + M_xyz*i_3D] - r[i_3D];
-            rj_idx[i_3D] = xyz[j + M_xyz*i_3D] - r[i_3D];
-            rk_idx[i_3D] = xyz[k + M_xyz*i_3D] - r[i_3D];
+            ri_idx[i_3D] = xyz[i + M_xyz * i_3D] - r[i_3D];
+            rj_idx[i_3D] = xyz[j + M_xyz * i_3D] - r[i_3D];
+            rk_idx[i_3D] = xyz[k + M_xyz * i_3D] - r[i_3D];
 
             /* Compute two edge vectors for a-posteriori normal
              * facet computation */
@@ -261,10 +269,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
         nf_idx[2] = nf_vec[2] / norm_nf_vec;
 
         /* Loop through each facet edge */
-        for (n_order = 0; n_order < N_order; n_order++){
+        for (n_order = 0; n_order < N_order; n_order++) {
             /* Switch to determine edge being computed */
-            switch(n_order){
-                case 0 :
+            switch (n_order) {
+                case 0:
                     /* Obtain smallest vertex index, , in this way, the
                      * same vertex is used both times the calculations are
                      * performed for that particular edge: one edge belongs
@@ -272,17 +280,17 @@ void mexFunction( int nlhs, mxArray *plhs[],
                     i_min = intmin(i, j);
 
                     /* Loop through 1,2,3 */
-                    for (i_3D = 0; i_3D < 3; i_3D++){
+                    for (i_3D = 0; i_3D < 3; i_3D++) {
                         r1[i_3D] = ri_idx[i_3D];
                         r2[i_3D] = rj_idx[i_3D];
-                        re[i_3D] = xyz[i_min + M_xyz*i_3D] - r[i_3D];
+                        re[i_3D] = xyz[i_min + M_xyz * i_3D] - r[i_3D];
                     }
 
                     /* Assign norm */
                     a = norm_ri_idx;
                     b = norm_rj_idx;
                     break;
-                case 1 :
+                case 1:
                     /* Obtain smallest vertex index, , in this way, the
                      * same vertex is used both times the calculations are
                      * performed for that particular edge: one edge belongs
@@ -290,17 +298,17 @@ void mexFunction( int nlhs, mxArray *plhs[],
                     i_min = intmin(j, k);
 
                     /* Loop through 1,2,3 */
-                    for (i_3D = 0; i_3D < 3; i_3D++){
+                    for (i_3D = 0; i_3D < 3; i_3D++) {
                         r1[i_3D] = rj_idx[i_3D];
                         r2[i_3D] = rk_idx[i_3D];
-                        re[i_3D] = xyz[i_min + M_xyz*i_3D] - r[i_3D];
+                        re[i_3D] = xyz[i_min + M_xyz * i_3D] - r[i_3D];
                     }
 
                     /* Assign norm */
                     a = norm_rj_idx;
                     b = norm_rk_idx;
                     break;
-                case 2 :
+                case 2:
                     /* Obtain smallest vertex index, , in this way, the
                      * same vertex is used both times the calculations are
                      * performed for that particular edge: one edge belongs
@@ -308,10 +316,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
                     i_min = intmin(i, k);
 
                     /* Loop through 1,2,3 */
-                    for (i_3D = 0; i_3D < 3; i_3D++){
+                    for (i_3D = 0; i_3D < 3; i_3D++) {
                         r1[i_3D] = rk_idx[i_3D];
                         r2[i_3D] = ri_idx[i_3D];
-                        re[i_3D] = xyz[i_min + M_xyz*i_3D] - r[i_3D];
+                        re[i_3D] = xyz[i_min + M_xyz * i_3D] - r[i_3D];
                     }
 
                     /* Assign norm */
@@ -336,7 +344,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
             n12[2] = n12_vec[2] / norm_n12_vec;
 
             /* Dimensionless per-edge factor */
-            Le = log((a+b+e) / (a+b-e));
+            Le = log((a + b + e) / (a + b - e));
 
             /* Compute dyad product between nf_idx and n12 */
             dyadProduct(Ee, nf_idx, n12);
@@ -355,11 +363,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
         /* Compute solid angle for the current facet. Dimensionless
          * per-face factor*/
-        wf = 2*atan2(dotProduct(ri_idx, cross_rj_rk),
-                norm_ri_idx*norm_rj_idx*norm_rk_idx +
-                norm_ri_idx*dotProduct(rj_idx, rk_idx) +
-                norm_rj_idx*dotProduct(rk_idx, ri_idx) +
-                norm_rk_idx*dotProduct(ri_idx, rj_idx));
+        wf = 2 * atan2(dotProduct(ri_idx, cross_rj_rk),
+                       norm_ri_idx * norm_rj_idx * norm_rk_idx + norm_ri_idx * dotProduct(rj_idx, rk_idx) +
+                         norm_rj_idx * dotProduct(rk_idx, ri_idx) + norm_rk_idx * dotProduct(ri_idx, rj_idx));
 
         /* Compute auxiliary dot product for solid angle contribution.
          * rf is taken as ri */
@@ -367,21 +373,21 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
         /* Auxiliary constant term to compute current solid angle facet
          * contribution */
-        dot_nf_rf_wf = dot_nf_rf*wf;
+        dot_nf_rf_wf = dot_nf_rf * wf;
 
         /* Add current solid angle facet contribution to dUf */
-        dUf[0] = dUf[0] + nf_idx[0]*dot_nf_rf_wf;
-        dUf[1] = dUf[1] + nf_idx[1]*dot_nf_rf_wf;
-        dUf[2] = dUf[2] + nf_idx[2]*dot_nf_rf_wf;
+        dUf[0] = dUf[0] + nf_idx[0] * dot_nf_rf_wf;
+        dUf[1] = dUf[1] + nf_idx[1] * dot_nf_rf_wf;
+        dUf[2] = dUf[2] + nf_idx[2] * dot_nf_rf_wf;
 
         /* Update lU with solid angle */
         lU[0] = lU[0] + wf;
-     }
+    }
 
     /* Potential computation*/
-    dU[0] = G*rho*(-dUe[0] + dUf[0]);
-    dU[1] = G*rho*(-dUe[1] + dUf[1]);
-    dU[2] = G*rho*(-dUe[2] + dUf[2]);
+    dU[0] = G * rho * (-dUe[0] + dUf[0]);
+    dU[1] = G * rho * (-dUe[1] + dUf[1]);
+    dU[2] = G * rho * (-dUe[2] + dUf[2]);
 
     return;
 }

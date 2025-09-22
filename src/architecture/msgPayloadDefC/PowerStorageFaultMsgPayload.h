@@ -20,11 +20,10 @@
 #ifndef BASILISK_POWERSTORAGEFAULTSIMMSG_H
 #define BASILISK_POWERSTORAGEFAULTSIMMSG_H
 
-
-
 /*! @brief Message to store current battery stored charge, maximum charge, and received power.*/
-typedef struct{
+typedef struct
+{
     double faultCapacityRatio; //!< Fault capacity ratio (faulted capacity / nominal capacity)
-}PowerStorageFaultMsgPayload;
+} PowerStorageFaultMsgPayload;
 
-#endif //BASILISK_POWERSTORAGEFAULTSIMMSG_H
+#endif // BASILISK_POWERSTORAGEFAULTSIMMSG_H

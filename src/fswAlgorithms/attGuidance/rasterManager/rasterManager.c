@@ -32,34 +32,30 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-
-
-
-void SelfInit_rasterManager(rasterManagerConfig *configData, int64_t moduleID)
+void
+SelfInit_rasterManager(rasterManagerConfig* configData, int64_t moduleID)
 {
     AttStateMsg_C_init(&configData->attStateOutMsg);
 }
 
-
-void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_rasterManager(rasterManagerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     configData->mnvrActive = 0;
     configData->scanSelector = 0;
 }
 
-
-void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_rasterManager(rasterManagerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double currentMnvrTime;
     configData->scanSelector = configData->scanSelector % configData->numRasters;
-    if (configData->mnvrActive == 0)
-    {
+    if (configData->mnvrActive == 0) {
         configData->mnvrStartTime = callTime;
         configData->mnvrActive = 1;
     }
     currentMnvrTime = (callTime - configData->mnvrStartTime) * 1E-9;
-    if (currentMnvrTime < configData->rasterTimes[configData->scanSelector])
-    {
+    if (currentMnvrTime < configData->rasterTimes[configData->scanSelector]) {
         v3Copy(&configData->scanningAngles[3 * configData->scanSelector], configData->attOutSet.state);
         v3Copy(&configData->scanningRates[3 * configData->scanSelector], configData->attOutSet.rate);
     } else {
@@ -67,13 +63,15 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
         configData->scanSelector += 1;
 
         char info[MAX_LOGGING_LENGTH];
-        sprintf(info, "Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ", configData->scanSelector,
-               configData->attOutSet.state[0],
-               configData->attOutSet.state[1],
-               configData->attOutSet.state[2],
-               configData->attOutSet.rate[0],
-               configData->attOutSet.rate[1],
-               configData->attOutSet.rate[2]);
+        sprintf(info,
+                "Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ",
+                configData->scanSelector,
+                configData->attOutSet.state[0],
+                configData->attOutSet.state[1],
+                configData->attOutSet.state[2],
+                configData->attOutSet.rate[0],
+                configData->attOutSet.rate[1],
+                configData->attOutSet.rate[2]);
         _bskLog(configData->bskLogger, BSK_INFORMATION, info);
     }
 

@@ -28,12 +28,11 @@
 /* modify the path to reflect the new module names */
 #include "limbFinding.h"
 
-
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 LimbFinding::LimbFinding()
 {
     this->filename = "";
-    this->saveDir ="";
+    this->saveDir = "";
     this->saveImages = 0;
     this->blurrSize = 3;
     this->cannyThreshHigh = 200;
@@ -41,19 +40,19 @@ LimbFinding::LimbFinding()
     this->limbNumThresh = 50;
 }
 
-
 /*! This is the destructor */
 LimbFinding::~LimbFinding()
 {
     return;
 }
 
-
-/*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
+/*! This method performs a complete reset of the module.  Local module variables that retain time varying states between
+ function calls are reset to their default values.
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LimbFinding::Reset(uint64_t CurrentSimNanos)
+void
+LimbFinding::Reset(uint64_t CurrentSimNanos)
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -61,11 +60,13 @@ void LimbFinding::Reset(uint64_t CurrentSimNanos)
     }
 }
 
-/*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It performs a greyscale, and blur on the image to facilitate edge-detection.
+/*! This module reads an OpNav image and extracts limb points from its content using OpenCV's Canny Transform. It
+ performs a greyscale, and blur on the image to facilitate edge-detection.
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
+void
+LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;
@@ -75,55 +76,54 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
     limbMsg = this->opnavLimbOutMsg.zeroMsgPayload;
 
     cv::Mat imageCV, blurred, edgeImage;
-    if (this->saveDir != ""){
-        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+    if (this->saveDir != "") {
+        dirName = this->saveDir + std::to_string(CurrentSimNanos * 1E-9) + ".jpg";
+    } else {
+        dirName = "./" + std::to_string(CurrentSimNanos * 1E-9) + ".jpg";
     }
-    else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
 
     /*! - Read in the bitmap*/
-    if(this->imageInMsg.isLinked())
-    {
+    if (this->imageInMsg.isLinked()) {
         imageBuffer = this->imageInMsg();
         this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
     /* Added for debugging purposes*/
-    if (!this->filename.empty()){
+    if (!this->filename.empty()) {
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
-    }
-    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
+    } else if (imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos) {
         /*! - Recast image pointer to CV type*/
-        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
+                                                (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-        if (this->saveImages == 1){
+        if (this->saveImages == 1) {
             cv::imwrite(dirName, imageCV);
         }
-    }
-    else{
+    } else {
         /*! - If no image is present, write zeros in message */
         this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);
-        return;}
+        return;
+    }
     /*! - Greyscale the image */
-    cv::cvtColor( imageCV, imageCV, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(imageCV, imageCV, cv::COLOR_BGR2GRAY);
     /*! - Lightly blur it */
-    cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize), 1);
+    cv::GaussianBlur(imageCV, blurred, cv::Size(this->blurrSize, this->blurrSize), 1);
     /*! - Apply the Canny Transform to find the limbPoints*/
-    cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh,  3, true);
-    if (cv::countNonZero(edgeImage)>this->limbNumThresh){
+    cv::Canny(blurred, edgeImage, this->cannyThreshLow, this->cannyThreshHigh, 3, true);
+    if (cv::countNonZero(edgeImage) > this->limbNumThresh) {
         std::vector<cv::Point2i> locations;
         cv::findNonZero(edgeImage, locations);
-        limbMsg.numLimbPoints =0;
-        for(size_t i = 0; i<locations.size() && i<MAX_LIMB_PNTS; i++ )
-        {
+        limbMsg.numLimbPoints = 0;
+        for (size_t i = 0; i < locations.size() && i < MAX_LIMB_PNTS; i++) {
             /*! - Store the non zero pixels of the canny transform and count them*/
-            limbMsg.limbPoints[2*i] = locations[i].x;
-            limbMsg.limbPoints[2*i+1] = locations[i].y;
+            limbMsg.limbPoints[2 * i] = locations[i].x;
+            limbMsg.limbPoints[2 * i + 1] = locations[i].y;
             limbMsg.numLimbPoints += 1;
         }
         limbMsg.valid = 1;
         limbMsg.planetIds = 2;
     }
 
-    limbMsg.timeTag = (double) this->sensorTimeTag;
+    limbMsg.timeTag = (double)this->sensorTimeTag;
     limbMsg.cameraID = imageBuffer.cameraID;
 
     this->opnavLimbOutMsg.write(&limbMsg, this->moduleID, CurrentSimNanos);

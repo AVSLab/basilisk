@@ -23,7 +23,6 @@
 // Internal utilities
 #include "architecture/utilities/orbitalMotion.h"
 
-
 /*!
  \verbatim embed:rst
     This method initializes the module's hillStateOutMsg.
@@ -32,7 +31,8 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID)
+void
+SelfInit_hillStateConverter(HillStateConverterConfig* configData, int64_t moduleID)
 {
     HillRelStateMsg_C_init(&configData->hillStateOutMsg);
 }
@@ -43,7 +43,8 @@ void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t m
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefStateInMsg)) {
@@ -60,7 +61,8 @@ void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t cal
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read the input messages */
     NavTransMsgPayload chiefStateIn;
@@ -72,9 +74,12 @@ void Update_hillStateConverter(HillStateConverterConfig *configData, uint64_t ca
     hillStateOut = HillRelStateMsg_C_zeroMsgPayload();
 
     /*! - Add the module specific code */
-    rv2hill(chiefStateIn.r_BN_N, chiefStateIn.v_BN_N,
-            depStateIn.r_BN_N,  depStateIn.v_BN_N,
-            hillStateOut.r_DC_H, hillStateOut.v_DC_H);
+    rv2hill(chiefStateIn.r_BN_N,
+            chiefStateIn.v_BN_N,
+            depStateIn.r_BN_N,
+            depStateIn.v_BN_N,
+            hillStateOut.r_DC_H,
+            hillStateOut.v_DC_H);
 
     /*! - write the module output message */
     HillRelStateMsg_C_write(&hillStateOut, &configData->hillStateOutMsg, moduleID, callTime);

@@ -35,7 +35,8 @@
  * and the `input` in this message defines the magnitude of both. Other actuators
  * in MuJoCo are supported and controled with this message.
  */
-typedef struct {
+typedef struct
+{
     double input; //!< [-] Real valued input
 } SingleActuatorMsgPayload;
 

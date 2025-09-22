@@ -24,33 +24,32 @@
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/CModuleTemplateMsg_C.h"
 
-
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* declare module private variables */
-    double dummy;                                   //!< [units] sample module variable declaration
-    double dumVector[3];                            //!< [units] sample vector variable
+    double dummy;        //!< [units] sample module variable declaration
+    double dumVector[3]; //!< [units] sample vector variable
 
     /* declare module IO interfaces */
-    CModuleTemplateMsg_C dataOutMsg;              //!< sample output message
-    CModuleTemplateMsg_C dataInMsg;               //!< sample input message
+    CModuleTemplateMsg_C dataOutMsg; //!< sample output message
+    CModuleTemplateMsg_C dataInMsg;  //!< sample input message
 
-    double  inputVector[3];                         //!< [units]  vector description
-    BSKLogger *bskLogger;                           //!< BSK Logging
-}cModuleTemplateConfig;
+    double inputVector[3]; //!< [units]  vector description
+    BSKLogger* bskLogger;  //!< BSK Logging
+} cModuleTemplateConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleID);
-    void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_cModuleTemplate(cModuleTemplateConfig* configData, int64_t moduleID);
+    void Update_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

@@ -28,34 +28,32 @@
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 
-
-
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* declare module IO interfaces */
-    HillRelStateMsg_C hillStateInMsg;               //!< Provides state relative to chief
-    AttRefMsg_C attRefInMsg;                        //!< (Optional) Provides basis for relative attitude
-    NavAttMsg_C attNavInMsg;                        //!< (Optional) Provides basis for relative attitude
-    AttRefMsg_C attRefOutMsg;                       //!< Provides the attitude reference output message.
-    BSKLogger *bskLogger;                           //!< BSK Logging
+    HillRelStateMsg_C hillStateInMsg; //!< Provides state relative to chief
+    AttRefMsg_C attRefInMsg;          //!< (Optional) Provides basis for relative attitude
+    NavAttMsg_C attNavInMsg;          //!< (Optional) Provides basis for relative attitude
+    AttRefMsg_C attRefOutMsg;         //!< Provides the attitude reference output message.
+    BSKLogger* bskLogger;             //!< BSK Logging
 
     double gainMatrix[3][6]; //!< User-configured gain matrix that maps from hill states to relative attitudes.
     double relMRPMin;        //!< Minimum value for the relative MRP components; user-configurable.
     double relMRPMax;        //!< Maximum value for the relative MRP components; user-configurable.
-}HillToAttRefConfig;
+} HillToAttRefConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID);
-    void Update_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_hillToAttRef(HillToAttRefConfig *configData, uint64_t callTime, int64_t moduleID);
-    AttRefMsgPayload RelativeToInertialMRP(HillToAttRefConfig *configData, double relativeAtt[3], double sigma_XN[3]);
+    void SelfInit_hillToAttRef(HillToAttRefConfig* configData, int64_t moduleID);
+    void Update_hillToAttRef(HillToAttRefConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_hillToAttRef(HillToAttRefConfig* configData, uint64_t callTime, int64_t moduleID);
+    AttRefMsgPayload RelativeToInertialMRP(HillToAttRefConfig* configData, double relativeAtt[3], double sigma_XN[3]);
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

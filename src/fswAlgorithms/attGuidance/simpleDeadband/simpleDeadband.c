@@ -25,13 +25,10 @@
 #include "fswAlgorithms/attGuidance/simpleDeadband/simpleDeadband.h"
 #include <math.h>
 
-
-
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "architecture/utilities/linearAlgebra.h"
-
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -40,11 +37,11 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
+void
+SelfInit_simpleDeadband(simpleDeadbandConfig* configData, int64_t moduleID)
 {
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -53,7 +50,8 @@ void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
@@ -69,7 +67,8 @@ void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, i
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read the input message and set it as the output by default */
     configData->attGuidOut = AttGuidMsg_C_read(&configData->guidInMsg);
@@ -86,21 +85,21 @@ void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, 
     return;
 }
 
-
-/*! This method applies a two-level deadbanding logic (according to the current average simple compared with the set threshold)
- and decides whether control should be switched ON/OFF or not.
+/*! This method applies a two-level deadbanding logic (according to the current average simple compared with the set
+ threshold) and decides whether control should be switched ON/OFF or not.
 
  @param configData The configuration data associated with the attitude tracking simple module
  */
-void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData)
+void
+applyDBLogic_simpleDeadband(simpleDeadbandConfig* configData)
 {
-    uint32_t areErrorsBelowUpperThresh = (configData->attError < configData->outerAttThresh && configData->rateError < configData->outerRateThresh);
-    uint32_t areErrorsBelowLowerThresh = (configData->attError < configData->innerAttThresh && configData->rateError < configData->innerRateThresh);
+    uint32_t areErrorsBelowUpperThresh =
+      (configData->attError < configData->outerAttThresh && configData->rateError < configData->outerRateThresh);
+    uint32_t areErrorsBelowLowerThresh =
+      (configData->attError < configData->innerAttThresh && configData->rateError < configData->innerRateThresh);
 
-    if (areErrorsBelowUpperThresh)
-    {
-        if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && configData->wasControlOff))
-        {
+    if (areErrorsBelowUpperThresh) {
+        if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && configData->wasControlOff)) {
             /* Set simples to zero in order to turn off control */
             v3SetZero(configData->attGuidOut.sigma_BR);
             v3SetZero(configData->attGuidOut.omega_BR_B);
@@ -108,5 +107,7 @@ void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData)
         } else {
             configData->wasControlOff = 0;
         }
-    } else { configData->wasControlOff = 0; }
+    } else {
+        configData->wasControlOff = 0;
+    }
 }

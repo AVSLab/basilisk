@@ -20,11 +20,10 @@
 #ifndef eclipseSimMsg_h
 #define eclipseSimMsg_h
 
-
 //!@brief Eclipse shadow factor message definition.
-typedef struct {
-    double shadowFactor;       //!< Proportion of illumination due to eclipse. 0 = fully shadowed, 1 = fully illuminated.
-}EclipseMsgPayload;
-
+typedef struct
+{
+    double shadowFactor; //!< Proportion of illumination due to eclipse. 0 = fully shadowed, 1 = fully illuminated.
+} EclipseMsgPayload;
 
 #endif /* eclipseSimMsg_h */

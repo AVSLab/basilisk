@@ -30,39 +30,37 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
-	double              pulseRemainder[MAX_EFF_CNT];            //!< [-] Unimplemented thrust pulses (number of minimum pulses)
-	double              thrMinFireTime;              			//!< [s] Minimum fire time
-	int      			numThrusters;							//!< [-] The number of thrusters available on vehicle
-	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
-	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pulsing (1)
+typedef struct
+{
+    double pulseRemainder[MAX_EFF_CNT]; //!< [-] Unimplemented thrust pulses (number of minimum pulses)
+    double thrMinFireTime;              //!< [s] Minimum fire time
+    int numThrusters;                   //!< [-] The number of thrusters available on vehicle
+    double maxThrust[MAX_EFF_CNT];      //!< [N] Max thrust
+    int baseThrustState;                //!< [-] Indicates on-pulsing (0) or off-pulsing (1)
 
-	uint64_t			prevCallTime;							//!< callTime from previous function call
+    uint64_t prevCallTime; //!< callTime from previous function call
 
+    /* declare module IO interfaces */
+    THRArrayCmdForceMsg_C thrForceInMsg; //!< The name of the Input message
+    THRArrayOnTimeCmdMsg_C onTimeOutMsg; //!< The name of the output message, onTimeOutMsg
+    THRArrayConfigMsg_C thrConfInMsg;    //!< The name of the thruster cluster Input message
 
-	/* declare module IO interfaces */
-    THRArrayCmdForceMsg_C thrForceInMsg;        	            //!< The name of the Input message
-    THRArrayOnTimeCmdMsg_C onTimeOutMsg;       	                //!< The name of the output message, onTimeOutMsg
-    THRArrayConfigMsg_C thrConfInMsg;			                //!< The name of the thruster cluster Input message
+    BSKLogger* bskLogger; //!< BSK Logging
 
-	BSKLogger *bskLogger;                             //!< BSK Logging
-
-}thrFiringRemainderConfig;
+} thrFiringRemainderConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID);
-    void Update_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_thrFiringRemainder(thrFiringRemainderConfig* configData, int64_t moduleID);
+    void Update_thrFiringRemainder(thrFiringRemainderConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_thrFiringRemainder(thrFiringRemainderConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

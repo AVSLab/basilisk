@@ -23,13 +23,11 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "RWConfigElementMsgPayload.h"
 
-
-
 /*! @brief Message used to define an array of RW FSW configurations  */
-typedef struct {
-    int numRW;                                          //!< [-] number of RWs
-    RWConfigElementMsgPayload reactionWheels[MAX_EFF_CNT];  //!< [-] array of the reaction wheels
-}RWConstellationMsgPayload;
-
+typedef struct
+{
+    int numRW;                                             //!< [-] number of RWs
+    RWConfigElementMsgPayload reactionWheels[MAX_EFF_CNT]; //!< [-] array of the reaction wheels
+} RWConstellationMsgPayload;
 
 #endif

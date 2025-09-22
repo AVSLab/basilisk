@@ -17,17 +17,16 @@
 
  */
 
-
 #include "torqueScheduler.h"
 #include "string.h"
-
 
 /*! This method initializes the output messages for this module.
 
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_torqueScheduler(torqueSchedulerConfig *configData, int64_t moduleID)
+void
+SelfInit_torqueScheduler(torqueSchedulerConfig* configData, int64_t moduleID)
 {
     ArrayMotorTorqueMsg_C_init(&configData->motorTorqueOutMsg);
     ArrayEffectorLockMsg_C_init(&configData->effectorLockOutMsg);
@@ -40,7 +39,8 @@ void SelfInit_torqueScheduler(torqueSchedulerConfig *configData, int64_t moduleI
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->motorTorque1InMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "torqueScheduler.motorTorque1InMsg wasn't connected.");
@@ -64,12 +64,13 @@ void Reset_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign buffer messages */
-    ArrayMotorTorqueMsgPayload  motorTorque1In  = ArrayMotorTorqueMsg_C_read(&configData->motorTorque1InMsg);
-    ArrayMotorTorqueMsgPayload  motorTorque2In  = ArrayMotorTorqueMsg_C_read(&configData->motorTorque2InMsg);
-    ArrayMotorTorqueMsgPayload  motorTorqueOut  = ArrayMotorTorqueMsg_C_zeroMsgPayload();
+    ArrayMotorTorqueMsgPayload motorTorque1In = ArrayMotorTorqueMsg_C_read(&configData->motorTorque1InMsg);
+    ArrayMotorTorqueMsgPayload motorTorque2In = ArrayMotorTorqueMsg_C_read(&configData->motorTorque2InMsg);
+    ArrayMotorTorqueMsgPayload motorTorqueOut = ArrayMotorTorqueMsg_C_zeroMsgPayload();
     ArrayEffectorLockMsgPayload effectorLockOut = ArrayEffectorLockMsg_C_zeroMsgPayload();
 
     /*! compute current time from Reset call */
@@ -90,8 +91,7 @@ void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime
             if (t > configData->tSwitch) {
                 effectorLockOut.effectorLockFlag[0] = 1;
                 effectorLockOut.effectorLockFlag[1] = 0;
-            }
-            else {
+            } else {
                 effectorLockOut.effectorLockFlag[0] = 0;
                 effectorLockOut.effectorLockFlag[1] = 1;
             }
@@ -101,8 +101,7 @@ void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime
             if (t > configData->tSwitch) {
                 effectorLockOut.effectorLockFlag[0] = 0;
                 effectorLockOut.effectorLockFlag[1] = 1;
-            }
-            else {
+            } else {
                 effectorLockOut.effectorLockFlag[0] = 1;
                 effectorLockOut.effectorLockFlag[1] = 0;
             }
@@ -114,8 +113,9 @@ void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime
             break;
 
         default:
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
-
+            _bskLog(configData->bskLogger,
+                    BSK_ERROR,
+                    "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
     }
 
     /* write output messages */

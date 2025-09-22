@@ -46,10 +46,14 @@
  * @tparam DesiredPositionMsgPayload Type of desired position message payload (defaults to measured).
  * @tparam DesiredVelocityMsgPayload Type of desired velocity message payload (defaults to measured).
  */
-template<typename MeasuredPositionMsgPayload, typename MeasuredVelocityMsgPayload, typename OutputMsgPayload, typename DesiredPositionMsgPayload = MeasuredPositionMsgPayload, typename DesiredVelocityMsgPayload = MeasuredVelocityMsgPayload>
+template<typename MeasuredPositionMsgPayload,
+         typename MeasuredVelocityMsgPayload,
+         typename OutputMsgPayload,
+         typename DesiredPositionMsgPayload = MeasuredPositionMsgPayload,
+         typename DesiredVelocityMsgPayload = MeasuredVelocityMsgPayload>
 class PIDController : public StatefulSysModel
 {
-public:
+  public:
     /** @brief Virtual destructor for safe inheritance. */
     virtual ~PIDController() = default;
 
@@ -75,28 +79,24 @@ public:
      * @brief Get the current integral error state.
      * @return The integral error value.
      */
-    double getIntegralError() {
-        if (!this->integralErrorState)
-        {
+    double getIntegralError()
+    {
+        if (!this->integralErrorState) {
             MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                "Tried to get integral error before simulation has been initialized",
-                &bskLogger
-            );
+              "Tried to get integral error before simulation has been initialized", &bskLogger);
         }
-        return this->integralErrorState->getState()(0,0);
+        return this->integralErrorState->getState()(0, 0);
     }
 
     /**
      * @brief Set the integral error state.
      * @param val Value to set.
      */
-    void setIntegralError(double val) {
-        if (!this->integralErrorState)
-        {
+    void setIntegralError(double val)
+    {
+        if (!this->integralErrorState) {
             MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                "Tried to set integral error before simulation has been initialized",
-                &bskLogger
-            );
+              "Tried to set integral error before simulation has been initialized", &bskLogger);
         }
         this->integralErrorState->setState(Eigen::Matrix<double, 1, 1>::Constant(val));
     }
@@ -124,46 +124,32 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override
     {
         double positionError = 0;
-        if (this->Kp != 0)
-        {
-            if (!desiredPosInMsg.isLinked())
-            {
+        if (this->Kp != 0) {
+            if (!desiredPosInMsg.isLinked()) {
                 MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: desiredPosInMsg must be linked when Kp is non-zero.",
-                    &bskLogger
-                );
+                  "PIDController [" + ModelTag + "]: desiredPosInMsg must be linked when Kp is non-zero.", &bskLogger);
             }
-            if (!measuredPosInMsg.isLinked())
-            {
+            if (!measuredPosInMsg.isLinked()) {
                 MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: measuredPosInMsg must be linked when Kp is non-zero.",
-                    &bskLogger
-                );
+                  "PIDController [" + ModelTag + "]: measuredPosInMsg must be linked when Kp is non-zero.", &bskLogger);
             }
             positionError = readDesiredPosition(desiredPosInMsg()) - readMeasuredPosition(measuredPosInMsg());
         }
 
         double velocityError = 0;
-        if (this->Kd != 0)
-        {
-            if (!desiredVelInMsg.isLinked())
-            {
+        if (this->Kd != 0) {
+            if (!desiredVelInMsg.isLinked()) {
                 MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: desiredVelInMsg must be linked when Kd is non-zero.",
-                    &bskLogger
-                );
+                  "PIDController [" + ModelTag + "]: desiredVelInMsg must be linked when Kd is non-zero.", &bskLogger);
             }
-            if (!measuredVelInMsg.isLinked())
-            {
+            if (!measuredVelInMsg.isLinked()) {
                 MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: measuredVelInMsg must be linked when Kd is non-zero.",
-                    &bskLogger
-                );
+                  "PIDController [" + ModelTag + "]: measuredVelInMsg must be linked when Kd is non-zero.", &bskLogger);
             }
             velocityError = readDesiredVelocity(desiredVelInMsg()) - readMeasuredVelocity(measuredVelInMsg());
         }
 
-        double integralError = this->integralErrorState->getState()(0,0);
+        double integralError = this->integralErrorState->getState()(0, 0);
 
         double outputVal = this->Kp * positionError + this->Kd * velocityError + this->Ki * integralError;
 
@@ -172,7 +158,7 @@ public:
         outputOutMsg.write(&payload, CurrentSimNanos, this->moduleID);
     }
 
-public:
+  public:
     /** @brief Input message functor for measured position.*/
     ReadFunctor<MeasuredPositionMsgPayload> measuredPosInMsg;
 
@@ -190,7 +176,7 @@ public:
 
     BSKLogger bskLogger; ///< BSK Logging
 
-protected:
+  protected:
     /**
      * @brief Read the measured position from the input payload.
      * @param i Measured position message payload.
@@ -228,7 +214,7 @@ protected:
      */
     virtual void writeOutput(OutputMsgPayload& o, double val) = 0;
 
-protected:
+  protected:
     /** @brief State data for the integral error term.*/
     StateData* integralErrorState = nullptr;
 

@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef VSCMG_GIMBAL_RATE_SERVO_H
 #define VSCMG_GIMBAL_RATE_SERVO_H
 
@@ -35,32 +34,32 @@
 
 /*! @brief Mapping desired gimbal rates and RW wheel accelerations to motor torques.
  */
-class VscmgGimbalRateServo: public SysModel {
-public:
+class VscmgGimbalRateServo : public SysModel
+{
+  public:
     VscmgGimbalRateServo();
     ~VscmgGimbalRateServo() = default;
     void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-public:
+  public:
     ReadFunctor<VSCMGArrayConfigMsgPayload> vsmcgParamsInMsg;  //!< [-] VSCMG array configuration input message
-    ReadFunctor<VSCMGRefStatesMsgPayload> vscmgRefStatesInMsg;  //!< [-] reference VSCMG states input message
-    ReadFunctor<NavAttMsgPayload> attInMsg;  //!< [-] attitude navigation input message
-    ReadFunctor<VSCMGSpeedMsgPayload> speedsInMsg;  //!< [-] VSCMG speeds input message
-    Message<VSCMGArrayTorqueMsgPayload> cmdsOutMsg;  //!< [-] VSCMG motor torque C++ output message
-    VSCMGArrayTorqueMsg_C               cmdsOutMsgC = {};    //!< [-] VSCMG motor torque C output message
-    BSKLogger bskLogger;              //!< [-] BSK Logging
+    ReadFunctor<VSCMGRefStatesMsgPayload> vscmgRefStatesInMsg; //!< [-] reference VSCMG states input message
+    ReadFunctor<NavAttMsgPayload> attInMsg;                    //!< [-] attitude navigation input message
+    ReadFunctor<VSCMGSpeedMsgPayload> speedsInMsg;             //!< [-] VSCMG speeds input message
+    Message<VSCMGArrayTorqueMsgPayload> cmdsOutMsg;            //!< [-] VSCMG motor torque C++ output message
+    VSCMGArrayTorqueMsg_C cmdsOutMsgC = {};                    //!< [-] VSCMG motor torque C output message
+    BSKLogger bskLogger;                                       //!< [-] BSK Logging
 
-    void setK_gammaDot(double);  //!< [-] setter for `K-gammaDot` property
-    double getK_gammaDot() const {return this->K_gammaDot;}   //!< [-] getter for `K-gammaDot` property
+    void setK_gammaDot(double);                               //!< [-] setter for `K-gammaDot` property
+    double getK_gammaDot() const { return this->K_gammaDot; } //!< [-] getter for `K-gammaDot` property
 
-private:
-    double K_gammaDot;  //!< [1/s] proportional gain applied to gimbal rate errors
-    VSCMGArrayTorqueMsgPayload outputTorques;   //!< [-] output torques for the VSCMGs
-    VSCMGArrayConfigMsgPayload vscmgConfigParams;  //!< [-] struct to store message containing VSCMG config parameters in body B frame
-
+  private:
+    double K_gammaDot;                        //!< [1/s] proportional gain applied to gimbal rate errors
+    VSCMGArrayTorqueMsgPayload outputTorques; //!< [-] output torques for the VSCMGs
+    VSCMGArrayConfigMsgPayload
+      vscmgConfigParams; //!< [-] struct to store message containing VSCMG config parameters in body B frame
 };
-
 
 #endif

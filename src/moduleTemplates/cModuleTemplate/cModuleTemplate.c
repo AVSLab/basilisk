@@ -25,13 +25,10 @@
 #include "cModuleTemplate.h"
 #include "string.h"
 
-
-
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "architecture/utilities/linearAlgebra.h"
-
 
 /*!
     This method initializes the output messages for this module.
@@ -39,11 +36,11 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleID)
+void
+SelfInit_cModuleTemplate(cModuleTemplateConfig* configData, int64_t moduleID)
 {
     CModuleTemplateMsg_C_init(&configData->dataOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -52,16 +49,17 @@ void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleI
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! reset any required variables */
     configData->dummy = 0.0;
     char info[MAX_LOGGING_LENGTH];
-    sprintf(info, "Variable dummy set to %f in reset.",configData->dummy);
+    sprintf(info, "Variable dummy set to %f in reset.", configData->dummy);
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     /* initialize the output message to zero on reset */
-    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
+    CModuleTemplateMsgPayload outMsgBuffer; /*!< local output message copy */
     outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();
     CModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
 }
@@ -72,11 +70,12 @@ void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    double Lr[3];                                   /*!< [unit] variable description */
-    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
-    CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
+    double Lr[3];                           /*!< [unit] variable description */
+    CModuleTemplateMsgPayload outMsgBuffer; /*!< local output message copy */
+    CModuleTemplateMsgPayload inMsgBuffer;  /*!< local copy of input message */
 
     // always zero the output buffer first
     outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();
@@ -102,7 +101,7 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
     char info[MAX_LOGGING_LENGTH];
-    sprintf(info, "C Module ID %lld ran Update at %fs", (long long int) moduleID, (double) callTime/(1e9));
+    sprintf(info, "C Module ID %lld ran Update at %fs", (long long int)moduleID, (double)callTime / (1e9));
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     return;

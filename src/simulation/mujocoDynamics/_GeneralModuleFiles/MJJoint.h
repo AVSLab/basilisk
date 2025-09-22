@@ -40,8 +40,9 @@ class MJBody;
  *
  * @return A string view representing the joint type.
  */
-template <>
-constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsJoint>()
+template<>
+constexpr std::string_view
+MJBasilisk::detail::getObjectTypeName<mjsJoint>()
 {
     return "joint";
 }
@@ -55,7 +56,7 @@ constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsJoint>()
  */
 class MJJoint : public MJObject<mjsJoint>
 {
-public:
+  public:
     /**
      * @brief Constructs an `MJJoint` with a given joint and the body
      * it's attached to.
@@ -63,7 +64,11 @@ public:
      * @param joint Pointer to the MuJoCo joint.
      * @param body Reference to the body the joint is associated with.
      */
-    MJJoint(mjsJoint* joint, MJBody& body) : MJObject(joint), body(body) {}
+    MJJoint(mjsJoint* joint, MJBody& body)
+      : MJObject(joint)
+      , body(body)
+    {
+    }
 
     // Delete copy and move constructors and assignment operators
     MJJoint(const MJJoint&) = delete;
@@ -83,7 +88,7 @@ public:
      */
     void configure(const mjModel* m);
 
-protected:
+  protected:
     /**
      * @brief Checks if the joint has been properly initialized.
      *
@@ -91,7 +96,7 @@ protected:
      */
     void checkInitialized();
 
-protected:
+  protected:
     MJBody& body; ///< Reference to the body the joint is attached to.
 
     std::optional<size_t> qposAdr; ///< Address for position in the state vector.
@@ -113,7 +118,7 @@ protected:
  */
 class MJScalarJoint : public MJJoint
 {
-public:
+  public:
     /**
      * @brief Constructs an `MJScalarJoint` with a given joint and body.
      *
@@ -180,13 +185,13 @@ public:
      */
     void writeJointStateMessage(uint64_t CurrentSimNanos);
 
-public:
-    Message<ScalarJointStateMsgPayload> stateOutMsg; ///< Message to output joint position state.
+  public:
+    Message<ScalarJointStateMsgPayload> stateOutMsg;    ///< Message to output joint position state.
     Message<ScalarJointStateMsgPayload> stateDotOutMsg; ///< Message to output joint velocity state.
 
     ReadFunctor<ScalarJointStateMsgPayload> constrainedStateInMsg; ///< Functor to read constrained state input.
 
-protected:
+  protected:
     /** An equality used to enforce a specific state for the joint. */
     MJSingleJointEquality constrainedEquality;
 };
@@ -198,7 +203,7 @@ protected:
  */
 class MJBallJoint : public MJJoint
 {
-public:
+  public:
     /** Use constructor from MJJoint */
     using MJJoint::MJJoint;
 };
@@ -212,7 +217,7 @@ public:
  */
 class MJFreeJoint : public MJJoint
 {
-public:
+  public:
     /** Use constructor from MJJoint */
     using MJJoint::MJJoint;
 
@@ -233,7 +238,8 @@ public:
     /**
      * @brief Sets the attitude (orientation) of the free joint.
      *
-     * @param attitude The orientation represented as Modified Rodrigues Parameters (MRP) with respect to the inertial frame.
+     * @param attitude The orientation represented as Modified Rodrigues Parameters (MRP) with respect to the inertial
+     * frame.
      */
     void setAttitude(const Eigen::MRPd& attitude);
 

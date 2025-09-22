@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef MTBEFFECTOR_H
 #define MTBEFFECTOR_H
 
@@ -35,9 +34,12 @@
 
 /*! @brief This module converts magnetic torque bar dipoles to body torques.
  */
-class MtbEffector: public SysModel, public DynamicEffector {
+class MtbEffector
+  : public SysModel
+  , public DynamicEffector
+{
 
-public:
+  public:
     MtbEffector();
     ~MtbEffector();
     void Reset(uint64_t CurrentSimNanos);
@@ -46,19 +48,20 @@ public:
     void computeForceTorque(double integTime, double timeStep);
     void WriteOutputMessages(uint64_t CurrentClock);
 
-public:
-    Message<MTBMsgPayload> mtbOutMsg;                       //!< output message containing net torque produced by the torque bars in Body components
-    StateData *hubSigma;                                    //!< Hub/Inertial attitude represented by MRP
-    ReadFunctor<MTBCmdMsgPayload> mtbCmdInMsg;              //!< input msg for commanded mtb dipole array in the magnetic torque bar frame T
-    ReadFunctor<MagneticFieldMsgPayload> magInMsg;          //!< input msg for magnetic field data in inertial frame N
-    ReadFunctor<MTBArrayConfigMsgPayload> mtbParamsInMsg;   //!< input msg for layout of magnetic torque bars
-    BSKLogger bskLogger;                                    //!< -- BSK Logging
+  public:
+    Message<MTBMsgPayload>
+      mtbOutMsg;         //!< output message containing net torque produced by the torque bars in Body components
+    StateData* hubSigma; //!< Hub/Inertial attitude represented by MRP
+    ReadFunctor<MTBCmdMsgPayload>
+      mtbCmdInMsg; //!< input msg for commanded mtb dipole array in the magnetic torque bar frame T
+    ReadFunctor<MagneticFieldMsgPayload> magInMsg;        //!< input msg for magnetic field data in inertial frame N
+    ReadFunctor<MTBArrayConfigMsgPayload> mtbParamsInMsg; //!< input msg for layout of magnetic torque bars
+    BSKLogger bskLogger;                                  //!< -- BSK Logging
 
-private:
-    MTBCmdMsgPayload mtbCmdInMsgBuffer;         //!< msg buffer or commanded mtb dipole array in the magnetic torque bar frame T
-    MagneticFieldMsgPayload magInMsgBuffer;     //!< msg buffer for magnetic field data in inertial frame N
-    MTBArrayConfigMsgPayload mtbConfigParams;   //!< msg for layout of magnetic torque bars
+  private:
+    MTBCmdMsgPayload mtbCmdInMsgBuffer; //!< msg buffer or commanded mtb dipole array in the magnetic torque bar frame T
+    MagneticFieldMsgPayload magInMsgBuffer;   //!< msg buffer for magnetic field data in inertial frame N
+    MTBArrayConfigMsgPayload mtbConfigParams; //!< msg for layout of magnetic torque bars
 };
-
 
 #endif

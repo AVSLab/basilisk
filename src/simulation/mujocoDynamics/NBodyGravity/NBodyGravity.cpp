@@ -25,39 +25,37 @@ void
 NBodyGravity::Reset(uint64_t CurrentSimNanos)
 {
     std::string errorPreffix = "In NBodyGravity '" + ModelTag + "': ";
-    for (auto&& [name, target] : targets)
-    {
-        if (!target.centerOfMassStateInMsg.isLinked())
-        {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "Target '" + name + "' centerOfMassStateInMsg is not linked!", &bskLogger);
+    for (auto&& [name, target] : targets) {
+        if (!target.centerOfMassStateInMsg.isLinked()) {
+            MJBasilisk::detail::logAndThrow<std::runtime_error>(
+              errorPreffix + "Target '" + name + "' centerOfMassStateInMsg is not linked!", &bskLogger);
         }
 
-        if (!target.massPropertiesInMsg.isLinked())
-        {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "Target '" + name + "' massPropertiesInMsg is not linked!", &bskLogger);
+        if (!target.massPropertiesInMsg.isLinked()) {
+            MJBasilisk::detail::logAndThrow<std::runtime_error>(
+              errorPreffix + "Target '" + name + "' massPropertiesInMsg is not linked!", &bskLogger);
         }
     }
 
     bool foundCentralSource = false;
 
-    for (auto&& [name, source] : sources)
-    {
-        if (sources.size() > 1 && !source.stateInMsg.isLinked())
-        {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "Source '" + name + "' stateInMsg is not linked but there are more than one sources!", &bskLogger);
+    for (auto&& [name, source] : sources) {
+        if (sources.size() > 1 && !source.stateInMsg.isLinked()) {
+            MJBasilisk::detail::logAndThrow<std::runtime_error>(
+              errorPreffix + "Source '" + name + "' stateInMsg is not linked but there are more than one sources!",
+              &bskLogger);
         }
 
         auto error = source.model->initializeParameters();
-        if (error)
-        {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "While initializing source '" + name + "' gravity model, " + *error, &bskLogger);
+        if (error) {
+            MJBasilisk::detail::logAndThrow<std::runtime_error>(
+              errorPreffix + "While initializing source '" + name + "' gravity model, " + *error, &bskLogger);
         }
 
-        if (source.isCentralBody)
-        {
-            if (foundCentralSource)
-            {
-                MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "More than one central body!", &bskLogger);
+        if (source.isCentralBody) {
+            if (foundCentralSource) {
+                MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "More than one central body!",
+                                                                    &bskLogger);
             }
             foundCentralSource = true;
         }
@@ -67,10 +65,9 @@ NBodyGravity::Reset(uint64_t CurrentSimNanos)
 void
 NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
 {
-    for (auto&& [_, target] : targets)
-    {
+    for (auto&& [_, target] : targets) {
         auto targetStatePayload = target.centerOfMassStateInMsg();
-        Eigen::Matrix3d dcm_BN = std::invoke([&](){
+        Eigen::Matrix3d dcm_BN = std::invoke([&]() {
             double dcm_BN[3][3];
             MRP2C(targetStatePayload.sigma_BN, dcm_BN);
             return cArray2EigenMatrix3d(*dcm_BN);
@@ -91,10 +88,9 @@ NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
 GravitySource&
 NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravityModel> gravityModel, bool isCentralBody)
 {
-    auto[source, actuallyEmplaced] = this->sources.emplace(name, GravitySource{gravityModel, {}, isCentralBody});
+    auto [source, actuallyEmplaced] = this->sources.emplace(name, GravitySource{ gravityModel, {}, isCentralBody });
 
-    if (!actuallyEmplaced)
-    {
+    if (!actuallyEmplaced) {
         MJBasilisk::detail::logAndThrow("Cannot use repeated source name " + name, &bskLogger);
     }
 
@@ -108,14 +104,10 @@ NBodyGravity::addGravityTarget(std::string name)
     // GravityTarget. This avoids copying the `Message<...>` in GravityTarget,
     // which proved to cause weird bugs (multiple messages pointing to the same
     // address in memory for their payload).
-    auto[target, actuallyEmplaced] = this->targets.emplace(
-        std::piecewise_construct,
-        std::forward_as_tuple(name),
-        std::forward_as_tuple()
-    );
+    auto [target, actuallyEmplaced] =
+      this->targets.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple());
 
-    if (!actuallyEmplaced)
-    {
+    if (!actuallyEmplaced) {
         MJBasilisk::detail::logAndThrow("Cannot use repeated target name " + name, &bskLogger);
     }
 
@@ -128,13 +120,13 @@ NBodyGravity::addGravityTarget(std::string name, MJSite& site)
     auto& target = addGravityTarget(name);
 
     /* Tie the state outMsg of the site to the inMsg of the gravity target */
-    target.centerOfMassStateInMsg.subscribeTo( &site.stateOutMsg );
+    target.centerOfMassStateInMsg.subscribeTo(&site.stateOutMsg);
 
     /* Create a new actuator on the site, then tie the force outMsg of
     the gravity target to the actuator force inMsg */
     std::string actuatorName = ModelTag + "_gravity_target_at_" + name;
     auto& actuator = site.getBody().getSpec().getScene().addForceActuator(actuatorName, site.getName());
-    actuator.forceInMsg.subscribeTo( &target.massFixedForceOutMsg );
+    actuator.forceInMsg.subscribeTo(&target.massFixedForceOutMsg);
     return target;
 }
 
@@ -142,7 +134,7 @@ GravityTarget&
 NBodyGravity::addGravityTarget(std::string name, MJBody& body)
 {
     auto& target = addGravityTarget(std::move(name), body.getCenterOfMass());
-    target.massPropertiesInMsg.subscribeTo( &body.massPropertiesOutMsg );
+    target.massPropertiesInMsg.subscribeTo(&body.massPropertiesOutMsg);
     return target;
 }
 
@@ -151,9 +143,8 @@ NBodyGravity::computeAccelerationFromSource(GravitySource& source, Eigen::Vector
 {
     // Orientation and positon of the gravity source in J2000
     Eigen::Matrix3d dcm_sourceFixedJ2000 = Eigen::Matrix3d::Identity();
-    Eigen::Vector3d r_sourceJ200= Eigen::Vector3d::Zero();
-    if (source.stateInMsg.isLinked())
-    {
+    Eigen::Vector3d r_sourceJ200 = Eigen::Vector3d::Zero();
+    if (source.stateInMsg.isLinked()) {
         auto spicePayload = source.stateInMsg();
         dcm_sourceFixedJ2000 = c2DArray2EigenMatrix3d(spicePayload.J20002Pfix); // .transpose()
         r_sourceJ200 = cArray2EigenVector3d(spicePayload.PositionVector);
@@ -198,13 +189,14 @@ NBodyGravity::computeAccelerationOnTarget(GravityTarget& target)
     Eigen::Vector3d r_centralSourceSpiceRef_N = Eigen::Vector3d::Zero();
     bool centralSourceExists = false;
 
-    for (auto&& [_, source] : sources)
-    {
-        if (!source.isCentralBody) continue;
+    for (auto&& [_, source] : sources) {
+        if (!source.isCentralBody)
+            continue;
 
         centralSourceExists = true;
 
-        if (!source.stateInMsg.isLinked()) break;
+        if (!source.stateInMsg.isLinked())
+            break;
 
         auto spicePayload = source.stateInMsg();
         r_centralSourceSpiceRef_N = cArray2EigenVector3d(spicePayload.PositionVector);
@@ -221,15 +213,13 @@ NBodyGravity::computeAccelerationOnTarget(GravityTarget& target)
 
     // Total acceleration is the sum of accelerations produced by each source
     // But also taking into account the relative acceleration of the central body
-    for (auto&& [_, source] : sources)
-    {
+    for (auto&& [_, source] : sources) {
         grav_N += computeAccelerationFromSource(source, r_targetSpiceRef_N);
 
         // If there is a central body, and 'source' is not this one,
         // then we need to take into account the acceleration of the central
         // body due to the effect of this other source.
-        if (centralSourceExists && !source.isCentralBody)
-        {
+        if (centralSourceExists && !source.isCentralBody) {
             grav_N -= computeAccelerationFromSource(source, r_centralSourceSpiceRef_N);
         }
     }

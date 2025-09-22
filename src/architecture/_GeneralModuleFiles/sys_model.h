@@ -27,7 +27,7 @@
 /*! @brief Simulation System Model Class */
 class SysModel
 {
-public:
+  public:
     SysModel();
 
     /**
@@ -38,27 +38,26 @@ public:
      *
      * @param obj The SysModel object to copy data from.
      */
-    SysModel(const SysModel &obj);
+    SysModel(const SysModel& obj);
 
-    virtual ~SysModel(){};
+    virtual ~SysModel() {};
 
     /** Initializes the module, create messages */
-    virtual void SelfInit(){};
+    virtual void SelfInit() {};
 
     /** ??? */
-    virtual void IntegratedInit(){};
+    virtual void IntegratedInit() {};
 
     /** Reads incoming messages, performs module actions, writes output messages */
-    virtual void UpdateState(uint64_t CurrentSimNanos){};
+    virtual void UpdateState(uint64_t CurrentSimNanos) {};
 
     /** Called at simulation initialization, resets module to specified time */
-    virtual void Reset(uint64_t CurrentSimNanos){};
+    virtual void Reset(uint64_t CurrentSimNanos) {};
 
     std::string ModelTag = "";     //!< Basilisk module tag name
     uint64_t CallCounts = 0;       //!< Counts on the model being called
     uint32_t RNGSeed = 0x1badcad1; //!< Giving everyone a random seed for ease of MC
     int64_t moduleID;              //!< Module ID for this module  (handed out by module_id_generator)
 };
-
 
 #endif /* _SYS_MODEL_H_ */

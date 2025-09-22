@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef THRUSTER_DYNAMIC_EFFECTOR_H
 #define THRUSTER_DYNAMIC_EFFECTOR_H
 
@@ -38,11 +37,12 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
-
 /*! @brief thruster dynamic effector class */
-class ThrusterDynamicEffector: public SysModel, public DynamicEffector {
-public:
+class ThrusterDynamicEffector
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
     void linkInStates(DynParamManager& states);
@@ -60,35 +60,33 @@ public:
     void UpdateThrusterProperties();
     void computeBlowDownDecay(std::shared_ptr<THRSimConfig> CurrentThruster);
 
-public:
-    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
-    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
+  public:
+    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;         //!< -- input message with thruster commands
+    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs; //!< -- output message vector for thruster data
 
-    int stepsInRamp;                               //!< class variable
+    int stepsInRamp;                                         //!< class variable
     std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< -- Thruster information
-    std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
-    double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
-    double fuelMass;                               //!< kg Current total fuel mass of connected fuel tank
-    double prevFireTime;                           //!< s  Previous thruster firing time
-	double thrFactorToTime(std::shared_ptr<THRSimConfig> thrData,
-		std::vector<THRTimePair> *thrRamp);
-	StateData *hubSigma;                           //!< pointer to the hub attitude states
-    StateData *hubOmega;                           //!< pointer to the hub angular velocity states
-    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    std::vector<double> NewThrustCmds;                       //!< -- Incoming thrust commands
+    double mDotTotal;                                        //!< kg/s Current mass flow rate of thrusters
+    double fuelMass;                                         //!< kg Current total fuel mass of connected fuel tank
+    double prevFireTime;                                     //!< s  Previous thruster firing time
+    double thrFactorToTime(std::shared_ptr<THRSimConfig> thrData, std::vector<THRTimePair>* thrRamp);
+    StateData* hubSigma;                       //!< pointer to the hub attitude states
+    StateData* hubOmega;                       //!< pointer to the hub angular velocity states
+    Eigen::MatrixXd* inertialPositionProperty; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-private:
-    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
-    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+  private:
+    std::vector<THROutputMsgPayload> thrusterOutBuffer; //!< -- Message buffer for thruster data
+    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;      //!< -- One-time allocation for savings
 
-    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
+    std::vector<ReadFunctor<SCStatesMsgPayload>>
+      attachedBodyInMsgs; //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
 
-    uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
-
+    uint64_t prevCommandTime; //!< -- Time for previous valid thruster firing
 };
-
 
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

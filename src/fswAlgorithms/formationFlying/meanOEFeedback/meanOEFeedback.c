@@ -26,11 +26,17 @@
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
-                                  NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg);
-static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
-static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
-static double adjust_range(double lower, double upper, double angle);
+static void
+calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
+                      NavTransMsgPayload chiefTransMsg,
+                      NavTransMsgPayload deputyTransMsg,
+                      CmdForceInertialMsgPayload* forceMsg);
+static void
+calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
+static void
+calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
+static double
+adjust_range(double lower, double upper, double angle);
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -39,10 +45,11 @@ static double adjust_range(double lower, double upper, double angle);
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
-void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID) {
+void
+SelfInit_meanOEFeedback(meanOEFeedbackConfig* configData, int64_t moduleID)
+{
     CmdForceInertialMsg_C_init(&configData->forceOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
@@ -52,7 +59,9 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID) {
+void
+Reset_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
+{
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");
@@ -80,7 +89,9 @@ void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, i
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID) {
+void
+Update_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
+{
     // in
     NavTransMsgPayload chiefTransMsg;
     NavTransMsgPayload deputyTransMsg;
@@ -107,8 +118,12 @@ void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, 
  @param deputyTransMsg Deputy's position and velocity
  @param forceMsg force output (3-axis)
  */
-static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgPayload chiefTransMsg,
-                                  NavTransMsgPayload deputyTransMsg, CmdForceInertialMsgPayload *forceMsg) {
+static void
+calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
+                      NavTransMsgPayload chiefTransMsg,
+                      NavTransMsgPayload deputyTransMsg,
+                      CmdForceInertialMsgPayload* forceMsg)
+{
     // position&velocity to osculating classic orbital elements
     ClassicElements oe_cl_osc_c, oe_cl_osc_d;
     rv2elem(configData->mu, chiefTransMsg.r_BN_N, chiefTransMsg.v_BN_N, &oe_cl_osc_c);
@@ -180,12 +195,14 @@ static void calc_LyapunovFeedback(meanOEFeedbackConfig *configData, NavTransMsgP
  @param oe_cl nonsingular orbital elements
  @param B
  */
-static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]) {
+static void
+calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3])
+{
     // define parameters necessary to calculate Bmatrix
     double a = oe_cl.a;
     double e = oe_cl.e;
     double i = oe_cl.i;
-//    double Omega = oe_cl.Omega;
+    //    double Omega = oe_cl.Omega;
     double omega = oe_cl.omega;
     double f = oe_cl.f;
     double theta = omega + f;
@@ -197,8 +214,8 @@ static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]) {
     double r = p / (1 + e * cos(f));
 
     // sabstitute into Bmatrix
-    B[0][0] = 2.0 * pow(a, 2) * e * sin(f) / h / a;  // nomalization
-    B[0][1] = 2.0 * pow(a, 2) * p / (h * r) / a;     // nomalization
+    B[0][0] = 2.0 * pow(a, 2) * e * sin(f) / h / a; // nomalization
+    B[0][1] = 2.0 * pow(a, 2) * p / (h * r) / a;    // nomalization
     B[0][2] = 0;
 
     B[1][0] = p * sin(f) / h;
@@ -234,7 +251,9 @@ static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]) {
  @param oe_eq nonsingular orbital elements
  @param B
  */
-static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]) {
+static void
+calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3])
+{
     // define parameters necessary to calculate Bmatrix
     double a = oe_eq.a;
     double P1 = oe_eq.P1;
@@ -251,8 +270,8 @@ static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]) {
     double p = p_r * r;
 
     // sabstitute into Bmatrix
-    B[0][0] = 2.0 * pow(a, 2) / h * (P2 * sin(L) - P1 * cos(L)) / a;  // nomalization
-    B[0][1] = 2.0 * pow(a, 2) * p_r / h / a;                          // nomalization
+    B[0][0] = 2.0 * pow(a, 2) / h * (P2 * sin(L) - P1 * cos(L)) / a; // nomalization
+    B[0][1] = 2.0 * pow(a, 2) * p_r / h / a;                         // nomalization
     B[0][2] = 0;
 
     B[1][0] = -p * cos(L) / h;
@@ -278,13 +297,16 @@ static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]) {
 }
 
 /*! This function is used to adjust a certain value in a certain range between lower threshold and upper threshold.
- This function is particularily used to adjsut angles used in orbital motions such as True Anomaly, Mean Anomaly, and so on.
+ This function is particularily used to adjsut angles used in orbital motions such as True Anomaly, Mean Anomaly, and so
+ on.
  @return double
  @param lower lower threshold
  @param upper upper threshold
  @param angle an angle which you want to be between lower and upper
 */
-static double adjust_range(double lower, double upper, double angle) {
+static double
+adjust_range(double lower, double upper, double angle)
+{
     if (upper < lower) {
         printf("illegal parameters\n");
         return -1;

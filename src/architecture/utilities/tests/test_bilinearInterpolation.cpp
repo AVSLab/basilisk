@@ -26,7 +26,8 @@ std::default_random_engine generator(rd());
 std::uniform_real_distribution<double> valueDistribution(-10, 10);
 std::uniform_real_distribution<double> boundDistribution(0, 2);
 
-TEST(BilinearInterpolationTest, HandlesNormalInputs) {
+TEST(BilinearInterpolationTest, HandlesNormalInputs)
+{
     double x = valueDistribution(generator);
     double x1 = x - boundDistribution(generator);
     double x2 = x + boundDistribution(generator);
@@ -41,9 +42,9 @@ TEST(BilinearInterpolationTest, HandlesNormalInputs) {
     double z22 = valueDistribution(generator);
 
     // Bilinearly interpolate to solve for z
-    double z = 1 / ((x2 - x1) * (y2 - y1)) * (z11 * (x2 - x) * (y2 - y) + z21 * (x - x1) * (y2 - y)
-                                          + z12 * (x2 - x) * (y - y1)
-                                          + z22 * (x - x1) * (y - y1));
+    double z =
+      1 / ((x2 - x1) * (y2 - y1)) *
+      (z11 * (x2 - x) * (y2 - y) + z21 * (x - x1) * (y2 - y) + z12 * (x2 - x) * (y - y1) + z22 * (x - x1) * (y - y1));
 
     EXPECT_EQ(bilinearInterpolation(x1, x2, y1, y2, z11, z12, z21, z22, x, y), z);
 }

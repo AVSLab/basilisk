@@ -31,57 +31,59 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /*
      * Configs.
      */
-    double wheelSpeedBiases[MAX_EFF_CNT];           //!< [rad/s] reaction wheel speed biases
-    double cGain;                                   //!<[1/s]  reaction wheel momentum feedback gain
+    double wheelSpeedBiases[MAX_EFF_CNT]; //!< [rad/s] reaction wheel speed biases
+    double cGain;                         //!<[1/s]  reaction wheel momentum feedback gain
 
     /*
      * Inputs.
      */
-    RWArrayConfigMsg_C rwParamsInMsg;               //!< input message for RW parameters
-    MTBArrayConfigMsg_C mtbParamsInMsg;             //!< input message for MTB layout
-    TAMSensorBodyMsg_C tamSensorBodyInMsg;          //!< input message for magnetic field sensor data in the Body frame
-    RWSpeedMsg_C rwSpeedsInMsg;                     //!< input message for RW speeds
-    ArrayMotorTorqueMsg_C rwMotorTorqueInMsg;       //!< input message for RW motor torques
+    RWArrayConfigMsg_C rwParamsInMsg;         //!< input message for RW parameters
+    MTBArrayConfigMsg_C mtbParamsInMsg;       //!< input message for MTB layout
+    TAMSensorBodyMsg_C tamSensorBodyInMsg;    //!< input message for magnetic field sensor data in the Body frame
+    RWSpeedMsg_C rwSpeedsInMsg;               //!< input message for RW speeds
+    ArrayMotorTorqueMsg_C rwMotorTorqueInMsg; //!< input message for RW motor torques
 
     /*
      * Outputs.
      */
-    MTBCmdMsg_C mtbCmdOutMsg;                       //!< output message for MTB dipole commands
-    ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;      //!< output message for RW motor torques
+    MTBCmdMsg_C mtbCmdOutMsg;                  //!< output message for MTB dipole commands
+    ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg; //!< output message for RW motor torques
 
     /*
      * Other.
      */
-    BSKLogger *bskLogger;                           //!< BSK Logging
-    double tauDesiredMTB_B[3];                      //!< [N-m] desired torque produced by the magnetic torque bars in the Body frame
-    double tauDesiredRW_B[3];                       //!< [N-m]  desired torque produced by the reaction wheels in the Body frame
-    double hDeltaWheels_W[MAX_EFF_CNT];             //!<  [N-m-s] momentum of each wheel
-    double hDeltaWheels_B[3];                       //!<  [N-m-s] momentum of reaction wheels in the Body frame
-    double tauDesiredRW_W[MAX_EFF_CNT];             //!<  [N-m] Desired individual wheel torques
-    double tauIdealRW_W[MAX_EFF_CNT];               //!<  [N-m-s] Ideal individual wheel torques
-    double tauIdealRW_B[MAX_EFF_CNT];               //!<  [N-m-s] Ideal wheel torque in the body frame
-    double wheelSpeedError_W[MAX_EFF_CNT];          //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
-    RWArrayConfigMsgPayload rwConfigParams;         //!< configuration for RW's
-    MTBArrayConfigMsgPayload mtbConfigParams;       //!< configuration for MTB layout
+    BSKLogger* bskLogger;               //!< BSK Logging
+    double tauDesiredMTB_B[3];          //!< [N-m] desired torque produced by the magnetic torque bars in the Body frame
+    double tauDesiredRW_B[3];           //!< [N-m]  desired torque produced by the reaction wheels in the Body frame
+    double hDeltaWheels_W[MAX_EFF_CNT]; //!<  [N-m-s] momentum of each wheel
+    double hDeltaWheels_B[3];           //!<  [N-m-s] momentum of reaction wheels in the Body frame
+    double tauDesiredRW_W[MAX_EFF_CNT]; //!<  [N-m] Desired individual wheel torques
+    double tauIdealRW_W[MAX_EFF_CNT];   //!<  [N-m-s] Ideal individual wheel torques
+    double tauIdealRW_B[MAX_EFF_CNT];   //!<  [N-m-s] Ideal wheel torque in the body frame
+    double
+      wheelSpeedError_W[MAX_EFF_CNT]; //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
+    RWArrayConfigMsgPayload rwConfigParams;   //!< configuration for RW's
+    MTBArrayConfigMsgPayload mtbConfigParams; //!< configuration for MTB layout
 
-}mtbMomentumManagementConfig;
+} mtbMomentumManagementConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig *configData, int64_t moduleID);
-    void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID);
-    void v3TildeM(double v[3], void *result);
+    void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig* configData, int64_t moduleID);
+    void Update_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID);
+    void v3TildeM(double v[3], void* result);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

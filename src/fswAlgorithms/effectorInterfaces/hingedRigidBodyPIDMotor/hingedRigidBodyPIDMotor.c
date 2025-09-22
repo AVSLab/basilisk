@@ -17,7 +17,6 @@
 
  */
 
-
 /* modify the path to reflect the new module names */
 #include "hingedRigidBodyPIDMotor.h"
 #include "string.h"
@@ -31,11 +30,11 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, int64_t moduleID)
+void
+SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, int64_t moduleID)
 {
     ArrayMotorTorqueMsg_C_init(&configData->motorTorqueOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -44,7 +43,8 @@ void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData,
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBodyInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: solarArrayAngle.hingedRigidBodyInMsg wasn't connected.");
@@ -65,15 +65,16 @@ void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, ui
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign buffer messages */
     ArrayMotorTorqueMsgPayload motorTorqueOut = ArrayMotorTorqueMsg_C_zeroMsgPayload();
-    HingedRigidBodyMsgPayload  hingedRigidBodyIn = HingedRigidBodyMsg_C_read(&configData->hingedRigidBodyInMsg);
-    HingedRigidBodyMsgPayload  hingedRigidBodyRefIn = HingedRigidBodyMsg_C_read(&configData->hingedRigidBodyRefInMsg);
+    HingedRigidBodyMsgPayload hingedRigidBodyIn = HingedRigidBodyMsg_C_read(&configData->hingedRigidBodyInMsg);
+    HingedRigidBodyMsgPayload hingedRigidBodyRefIn = HingedRigidBodyMsg_C_read(&configData->hingedRigidBodyRefInMsg);
 
     /*! compute angle error and error rate */
-    double thetaError    = hingedRigidBodyRefIn.theta - hingedRigidBodyIn.theta;
+    double thetaError = hingedRigidBodyRefIn.theta - hingedRigidBodyIn.theta;
     double thetaErrorDot = hingedRigidBodyRefIn.thetaDot - hingedRigidBodyIn.thetaDot;
 
     /*! extract gains from input */

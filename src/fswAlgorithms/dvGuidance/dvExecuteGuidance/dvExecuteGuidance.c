@@ -30,12 +30,12 @@
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param moduleID The ID associated with the configData
  */
-void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
+void
+SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, int64_t moduleID)
 {
     DvExecutionDataMsg_C_init(&configData->burnExecOutMsg);
     THRArrayOnTimeCmdMsg_C_init(&configData->thrCmdOutMsg);
 }
-
 
 /*! @brief This resets the module.
 
@@ -43,8 +43,8 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t mod
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The unique module identifier
  */
-void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
-                       int64_t moduleID)
+void
+Reset_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->navDataInMsg)) {
@@ -55,9 +55,6 @@ void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callT
     }
 }
 
-
-
-
 /*! This method takes its own internal variables and creates an output attitude
     command to use for burn execution.  It also flags whether the burn should
     be happening or not.
@@ -66,12 +63,12 @@ void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callT
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double burnAccum[3];
     double dvExecuteMag;
-	double burnTime;
+    double burnTime;
     double dvMag;
 
     NavTransMsgPayload navData;
@@ -83,30 +80,24 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     navData = NavTransMsg_C_read(&configData->navDataInMsg);
     localBurnData = DvBurnCmdMsg_C_read(&configData->burnDataInMsg);
 
-    burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
+    burnTime = ((int64_t)callTime - (int64_t)localBurnData.burnStartTime) * 1.0E-9;
     v3SetZero(burnAccum);
-    if((configData->burnExecuting == 0 && burnTime >= 0.0)
-        && configData->burnComplete != 1)
-    {
+    if ((configData->burnExecuting == 0 && burnTime >= 0.0) && configData->burnComplete != 1) {
         configData->burnExecuting = 1;
         v3Copy(navData.vehAccumDV, configData->dvInit);
         configData->burnComplete = 0;
     }
 
-    if(configData->burnExecuting)
-    {
+    if (configData->burnExecuting) {
         v3Subtract(navData.vehAccumDV, configData->dvInit, burnAccum);
     }
 
     dvMag = v3Norm(localBurnData.dvInrtlCmd);
     dvExecuteMag = v3Norm(burnAccum);
-    configData->burnComplete = configData->burnComplete == 1 ||
-        dvExecuteMag > dvMag;
-    configData->burnExecuting = configData->burnComplete != 1 &&
-        configData->burnExecuting == 1;
+    configData->burnComplete = configData->burnComplete == 1 || dvExecuteMag > dvMag;
+    configData->burnExecuting = configData->burnComplete != 1 && configData->burnExecuting == 1;
 
-    if(configData->burnComplete)
-    {
+    if (configData->burnComplete) {
         effCmd = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
         THRArrayOnTimeCmdMsg_C_write(&effCmd, &configData->thrCmdOutMsg, moduleID, callTime);
     }
