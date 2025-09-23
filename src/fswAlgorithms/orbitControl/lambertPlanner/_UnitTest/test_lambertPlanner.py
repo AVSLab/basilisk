@@ -40,9 +40,9 @@ paramArray = [revs, time_maneuver, time_final, eccentricities]
 # create list with all combinations of parameters
 paramList = list(itertools.product(*paramArray))
 
+
 @pytest.mark.parametrize("accuracy", [1e-2])
 @pytest.mark.parametrize("p1_revs, p2_tm, p3_tf, p4_eccs", paramList)
-
 def test_lambertPlanner(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accuracy):
     r"""
     **Validation Test Description**
@@ -83,16 +83,16 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
 
     solver = messaging.IZZO
     muBody = 3.986004418e14
-    t0 = 100.
+    t0 = 100.0
     revs = p1_revs
     tm = p2_tm
     tf = p3_tf
     ecc = p4_eccs
-    targetPosition = np.array([7000*1000., -1000*1000., 2000*1000.])
+    targetPosition = np.array([7000 * 1000.0, -1000 * 1000.0, 2000 * 1000.0])
 
     # set up orbit using classical orbit elements
     oe1 = orbitalMotion.ClassicElements()
-    r = 10000. * 1000  # meters
+    r = 10000.0 * 1000  # meters
     if ecc < 1.0:
         # elliptic case
         oe1.a = r
@@ -100,10 +100,10 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
         # parabolic and hyperbolic case
         oe1.a = -r
     oe1.e = ecc
-    oe1.i = 10. * macros.D2R
-    oe1.Omega = 20. * macros.D2R
-    oe1.omega = 30. * macros.D2R
-    oe1.f = 40. * macros.D2R
+    oe1.i = 10.0 * macros.D2R
+    oe1.Omega = 20.0 * macros.D2R
+    oe1.omega = 30.0 * macros.D2R
+    oe1.f = 40.0 * macros.D2R
     # spacecraft state at initial time
     r0_BN_N, v0_BN_N = orbitalMotion.elem2rv_parab(muBody, oe1)
 
@@ -112,23 +112,23 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
     if ecc < 1.0:
         # elliptic case
         M1 = orbitalMotion.E2M(orbitalMotion.f2E(oe1.f, ecc), ecc)
-        n = np.sqrt(muBody/(oe1.a)**3)
-        M2 = M1 + n*(tm-t0)
+        n = np.sqrt(muBody / (oe1.a) ** 3)
+        M2 = M1 + n * (tm - t0)
         oe2.f = orbitalMotion.E2f(orbitalMotion.M2E(M2, ecc), ecc)
     elif ecc == 1.0:
         # parabolic case
-        D1 = np.tan(oe1.f/2)
-        M1 = D1 + 1/3*D1**3
-        n = np.sqrt(muBody/(2*(-oe1.a)**3))
-        M2 = M1 + n*(tm-t0)
-        A = 3./2.*M2
-        B = (A + np.sqrt(A**2 + 1))**(1./3.)
-        oe2.f = 2.*np.arctan(B-1./B)
+        D1 = np.tan(oe1.f / 2)
+        M1 = D1 + 1 / 3 * D1**3
+        n = np.sqrt(muBody / (2 * (-oe1.a) ** 3))
+        M2 = M1 + n * (tm - t0)
+        A = 3.0 / 2.0 * M2
+        B = (A + np.sqrt(A**2 + 1)) ** (1.0 / 3.0)
+        oe2.f = 2.0 * np.arctan(B - 1.0 / B)
     else:
         # hyperbolic case
         N1 = orbitalMotion.H2N(orbitalMotion.f2H(oe1.f, ecc), ecc)
-        n = np.sqrt(muBody/(-oe1.a)**3)
-        N2 = N1 + n*(tm-t0)
+        n = np.sqrt(muBody / (-oe1.a) ** 3)
+        N2 = N1 + n * (tm - t0)
         oe2.f = orbitalMotion.H2f(orbitalMotion.N2H(N2, ecc), ecc)
 
     # spacecraft state at maneuver time
@@ -189,50 +189,59 @@ def lambertPlannerTestFunction(show_plots, p1_revs, p2_tm, p3_tf, p4_eccs, accur
         solverNameTrue = "Izzo"
 
     # make sure module output data is correct
-    paramsString = ' for rev={}, maneuver time={}, final time={}, eccentricity={}, accuracy={}'.format(
-        str(p1_revs),
-        str(p2_tm),
-        str(p3_tf),
-        str(p4_eccs),
-        str(accuracy))
+    paramsString = " for rev={}, maneuver time={}, final time={}, eccentricity={}, accuracy={}".format(
+        str(p1_revs), str(p2_tm), str(p3_tf), str(p4_eccs), str(accuracy)
+    )
 
     np.testing.assert_string_equal(solverName, solverNameTrue)
 
-    np.testing.assert_allclose(r1_N,
-                               r1vecTrue,
-                               rtol=accuracy,
-                               atol=0,
-                               err_msg=('Variable: r1_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        r1_N,
+        r1vecTrue,
+        rtol=accuracy,
+        atol=0,
+        err_msg=("Variable: r1_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(r2_N,
-                               r2vecTrue,
-                               rtol=accuracy,
-                               atol=0,
-                               err_msg=('Variable: r2_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        r2_N,
+        r2vecTrue,
+        rtol=accuracy,
+        atol=0,
+        err_msg=("Variable: r2_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(transferTime,
-                               transferTimeTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: transferTime,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        transferTime,
+        transferTimeTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: transferTime," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(mu,
-                               muTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: mu,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        mu,
+        muTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: mu," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(numRevolutions,
-                               numRevolutionsTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: numRevolutions,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        numRevolutions,
+        numRevolutionsTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: numRevolutions," + paramsString),
+        verbose=True,
+    )
 
 
 if __name__ == "__main__":
-    test_lambertPlanner(False, revs[0], time_maneuver[0], time_final[1], eccentricities[0], 1e-2)
+    test_lambertPlanner(
+        False, revs[0], time_maneuver[0], time_final[1], eccentricities[0], 1e-2
+    )

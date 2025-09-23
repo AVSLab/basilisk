@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 #
@@ -37,7 +34,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioSmallBodyLandmarks
 
 
@@ -50,17 +47,15 @@ import scenarioSmallBodyLandmarks
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useBatch", [
-    True])
+@pytest.mark.parametrize("useBatch", [True])
 @pytest.mark.scenarioTest
-
 def test_scenarioSmallBodyLandmarks(show_plots, useBatch):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
         batch_diff, figureList = scenarioSmallBodyLandmarks.run(show_plots, useBatch)
@@ -76,8 +71,10 @@ def test_scenarioSmallBodyLandmarks(show_plots, useBatch):
     accuracy = 1e-6  # not dimensional
     if (batch_diff > accuracy).any():
         testFailCount += 1
-        testMessages += "FAILED: scenarioSmallBodyLandmarks Sim Base Class " \
-                        "and processBatch() method consistency test"
+        testMessages += (
+            "FAILED: scenarioSmallBodyLandmarks Sim Base Class "
+            "and processBatch() method consistency test"
+        )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -91,8 +88,9 @@ def test_scenarioSmallBodyLandmarks(show_plots, useBatch):
 
     assert testFailCount < 1, testMessages
 
+
 if __name__ == "__main__":
     test_scenarioSmallBodyLandmarks(
-        False,       # show_plots
-        False        # useBatch
+        False,  # show_plots
+        False,  # useBatch
     )

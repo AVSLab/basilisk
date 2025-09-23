@@ -20,32 +20,29 @@
 #ifndef BASILISK_SIMPLEBATTERY_H
 #define BASILISK_SIMPLEBATTERY_H
 
-
 #include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
 #include "architecture/msgPayloadDefC/PowerStorageFaultMsgPayload.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief simple battery class */
-class SimpleBattery: public PowerStorageBase {
+class SimpleBattery : public PowerStorageBase
+{
 
-public:
+  public:
     SimpleBattery();
     ~SimpleBattery();
     void readInputMessage();
     ReadFunctor<PowerStorageFaultMsgPayload> batteryFaultInMsg; //!< input message to record battery status
 
-private:
+  private:
     void customReset(uint64_t CurrentClock);
-    void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg);
+    void evaluateBatteryModel(PowerStorageStatusMsgPayload* msg);
     double faultCapacityRatio; //!< Fault capacity ratio (faulted capacity / nominal capacity)
 
-public:
+  public:
     double storageCapacity; //!< [W-s] Battery capacity in Watt-seconds (Joules).
-    BSKLogger bskLogger;                      //!< -- BSK Logging
-
+    BSKLogger bskLogger;    //!< -- BSK Logging
 };
 
-
-#endif //BASILISK_SIMPLEBATTERY_H
+#endif // BASILISK_SIMPLEBATTERY_H

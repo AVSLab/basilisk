@@ -32,15 +32,17 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import motorThermal                    # import the module that is to be tested
-from Basilisk.architecture import messaging                      # import the message definitions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+from Basilisk.simulation import motorThermal  # import the module that is to be tested
+from Basilisk.architecture import messaging  # import the message definitions
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeRW
@@ -57,7 +59,6 @@ from Basilisk.simulation import reactionWheelStateEffector
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
 # The first parametrize arguments are shown last in the pytest argument list
 @pytest.mark.parametrize("accuracy", [1e-8])
-
 def test_motorThermal(show_plots, accuracy):
     r"""
     **Validation Test Description**
@@ -110,7 +111,7 @@ def motorThermalTest(show_plots, accuracy):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(1.)
+    simulationTime = macros.sec2nano(1.0)
 
     #
     #  create the simulation process
@@ -139,13 +140,14 @@ def motorThermalTest(show_plots, accuracy):
     varRWModel = messaging.BalancedWheels
 
     # create the reaction wheels
-    RW = rwFactory.create('Honeywell_HR16',
-                          [1, 0, 0],  # gsHat_B
-                          Omega=4000.,  # RPM
-                          maxMomentum=50.,
-                          RWModel=varRWModel,
-                          useRWfriction=True
-                          )
+    RW = rwFactory.create(
+        "Honeywell_HR16",
+        [1, 0, 0],  # gsHat_B
+        Omega=4000.0,  # RPM
+        maxMomentum=50.0,
+        RWModel=varRWModel,
+        useRWfriction=True,
+    )
     numRW = rwFactory.getNumOfDevices()
 
     # set maximum values for RW speed
@@ -167,13 +169,12 @@ def motorThermalTest(show_plots, accuracy):
     #
 
     thermalModel = motorThermal.MotorThermal()
-    thermalModel.ModelTag = 'rwThermals'
+    thermalModel.ModelTag = "rwThermals"
     thermalModel.currentTemperature = 0  # [ºC]
     thermalModel.efficiency = 0.5
     thermalModel.ambientThermalResistance = 10
     thermalModel.motorHeatCapacity = 10
     thermalModel.rwStateInMsg.subscribeTo(rwStateEffector.rwOutMsgs[0])
-
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
@@ -205,7 +206,7 @@ def motorThermalTest(show_plots, accuracy):
     thermalModel.ambientTemperature = 20
 
     # run the second test (motor is colder than ambient)
-    unitTestSim.ConfigureStopTime(2*simulationTime)
+    unitTestSim.ConfigureStopTime(2 * simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
@@ -214,7 +215,7 @@ def motorThermalTest(show_plots, accuracy):
     thermalModel.ambientTemperature = 0
 
     # run the second test (motor is hotter than ambient)
-    unitTestSim.ConfigureStopTime(3*simulationTime)
+    unitTestSim.ConfigureStopTime(3 * simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
@@ -228,12 +229,40 @@ def motorThermalTest(show_plots, accuracy):
     # set the truth vectors
     #
 
-    trueTemp = np.array([0.83985244, 1.67941113, 2.51867637, 3.35764846, 4.19632769, 5.03471435, 5.87280873,
-                         6.71061112, 7.54812182, 8.38534113,
-                         0.86531353, 1.73030786, 2.59498331, 3.45934019, 4.32337882, 5.18709952, 6.05050261,
-                         6.91358841, 7.77635723, 8.6388094,
-                         20.83077463, 21.6612646, 22.49147018, 23.32139167, 24.15102935, 24.9803835, 25.8094544,
-                         26.63824235, 27.46674761, 28.29497048])
+    trueTemp = np.array(
+        [
+            0.83985244,
+            1.67941113,
+            2.51867637,
+            3.35764846,
+            4.19632769,
+            5.03471435,
+            5.87280873,
+            6.71061112,
+            7.54812182,
+            8.38534113,
+            0.86531353,
+            1.73030786,
+            2.59498331,
+            3.45934019,
+            4.32337882,
+            5.18709952,
+            6.05050261,
+            6.91358841,
+            7.77635723,
+            8.6388094,
+            20.83077463,
+            21.6612646,
+            22.49147018,
+            23.32139167,
+            24.15102935,
+            24.9803835,
+            25.8094544,
+            26.63824235,
+            27.46674761,
+            28.29497048,
+        ]
+    )
 
     #
     # compare the module results to the true values
@@ -243,16 +272,23 @@ def motorThermalTest(show_plots, accuracy):
 
     for i in range(numTests):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(rwTemp[10*i+1:10*i+11], trueTemp[10*i:10*i+10], 10, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            rwTemp[10 * i + 1 : 10 * i + 11],
+            trueTemp[10 * i : 10 * i + 10],
+            10,
+            accuracy,
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: Motor Temperature Test failed test " + str(i+1) + "\n")
+            testMessages.append(
+                "FAILED: Motor Temperature Test failed test " + str(i + 1) + "\n"
+            )
 
     if not testFailCount:
         print("PASSED")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -261,5 +297,5 @@ def motorThermalTest(show_plots, accuracy):
 if __name__ == "__main__":
     test_motorThermal(
         False,  # show_plots
-        1e-8    # accuracy
+        1e-8,  # accuracy
     )

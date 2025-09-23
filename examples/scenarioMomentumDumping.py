@@ -87,20 +87,37 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk import __path__
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque,
-                                    thrMomentumManagement, thrForceMapping, thrMomentumDumping)
-from Basilisk.simulation import (reactionWheelStateEffector, thrusterDynamicEffector, simpleNav, spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, simIncludeThruster, unitTestSupport, vizSupport)
+from Basilisk.fswAlgorithms import (
+    mrpFeedback,
+    attTrackingError,
+    inertial3D,
+    rwMotorTorque,
+    thrMomentumManagement,
+    thrForceMapping,
+    thrMomentumDumping,
+)
+from Basilisk.simulation import (
+    reactionWheelStateEffector,
+    thrusterDynamicEffector,
+    simpleNav,
+    spacecraft,
+)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    simIncludeThruster,
+    unitTestSupport,
+    vizSupport,
+)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-
 def run(show_plots):
-
     # Create simulation variable names
     fswTask = "fswTask"
     dynTask = "dynTask"
@@ -136,8 +153,8 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # Next a series of gravitational bodies are included
-    gravBodies = gravFactory.createBodies('earth', 'sun')
-    planet = gravBodies['earth']
+    gravBodies = gravFactory.createBodies("earth", "sun")
+    planet = gravBodies["earth"]
     planet.isCentralBody = True
 
     mu = planet.mu
@@ -151,7 +168,7 @@ def run(show_plots):
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
 
     # Earth is gravity center
-    spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = "Earth"
 
     # The SPICE object is added to the simulation task list.
     scSim.AddModelToTask(fswTask, spiceObject, 2)
@@ -161,7 +178,7 @@ def run(show_plots):
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 7000. * 1000      # meters
+    oe.a = 7000.0 * 1000  # meters
     oe.e = 0.0001
     oe.i = 33.3 * macros.D2R
     oe.Omega = 148.2 * macros.D2R
@@ -170,17 +187,23 @@ def run(show_plots):
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
-    scObject.hub.r_CN_NInit = rN                          # m   - r_BN_N
-    scObject.hub.v_CN_NInit = vN                          # m/s - v_BN_N
-    scObject.hub.sigma_BNInit = [0, 0., 0.]              # MRP set to customize initial inertial attitude
-    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]      # rad/s - omega_CN_B
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
+    scObject.hub.sigma_BNInit = [
+        0,
+        0.0,
+        0.0,
+    ]  # MRP set to customize initial inertial attitude
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
     # define the simulation inertia
-    I = [1700,  0.,    0.,
-         0.,    1700,  0.,
-         0.,    0.,    1800]
+    I = [1700, 0.0, 0.0, 0.0, 1700, 0.0, 0.0, 0.0, 1800]
     scObject.hub.mHub = 2500  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.28]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [1.28],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     #
@@ -193,15 +216,35 @@ def run(show_plots):
     varRWModel = messaging.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    c = 2**(-0.5)
-    RW1 = rwFactory.create('Honeywell_HR16', [c, 0, c], maxMomentum=100., Omega=4000.  # RPM
-                           , RWModel=varRWModel)
-    RW2 = rwFactory.create('Honeywell_HR16', [0, c, c], maxMomentum=100., Omega=2000.  # RPM
-                           , RWModel=varRWModel)
-    RW3 = rwFactory.create('Honeywell_HR16', [-c, 0, c], maxMomentum=100., Omega=3500.  # RPM
-                           , RWModel=varRWModel)
-    RW4 = rwFactory.create('Honeywell_HR16', [0, -c, c], maxMomentum=100., Omega=0.  # RPM
-                           , RWModel=varRWModel)
+    c = 2 ** (-0.5)
+    RW1 = rwFactory.create(
+        "Honeywell_HR16",
+        [c, 0, c],
+        maxMomentum=100.0,
+        Omega=4000.0,  # RPM
+        RWModel=varRWModel,
+    )
+    RW2 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, c, c],
+        maxMomentum=100.0,
+        Omega=2000.0,  # RPM
+        RWModel=varRWModel,
+    )
+    RW3 = rwFactory.create(
+        "Honeywell_HR16",
+        [-c, 0, c],
+        maxMomentum=100.0,
+        Omega=3500.0,  # RPM
+        RWModel=varRWModel,
+    )
+    RW4 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, -c, c],
+        maxMomentum=100.0,
+        Omega=0.0,  # RPM
+        RWModel=varRWModel,
+    )
 
     numRW = rwFactory.getNumOfDevices()
     RW = [RW1, RW2, RW3, RW4]
@@ -221,24 +264,24 @@ def run(show_plots):
     a = 1
     b = 1.28
     location = [
-        [-a, -a,  b],
-        [ a, -a, -b],
-        [ a, -a,  b],
-        [ a,  a, -b],
-        [ a,  a,  b],
-        [-a,  a, -b],
-        [-a,  a,  b],
-        [-a, -a, -b]
+        [-a, -a, b],
+        [a, -a, -b],
+        [a, -a, b],
+        [a, a, -b],
+        [a, a, b],
+        [-a, a, -b],
+        [-a, a, b],
+        [-a, -a, -b],
     ]
     direction = [
-        [ 1,  0,  0],
-        [-1,  0,  0],
-        [ 0,  1,  0],
-        [ 0, -1,  0],
-        [-1,  0,  0],
-        [ 1,  0,  0],
-        [ 0, -1,  0],
-        [ 0,  1,  0]
+        [1, 0, 0],
+        [-1, 0, 0],
+        [0, 1, 0],
+        [0, -1, 0],
+        [-1, 0, 0],
+        [1, 0, 0],
+        [0, -1, 0],
+        [0, 1, 0],
     ]
 
     # create the set of thruster in the dynamics task
@@ -250,7 +293,7 @@ def run(show_plots):
 
     # create the thruster devices by specifying the thruster type and its location and direction
     for pos_B, dir_B in zip(location, direction):
-        thFactory.create('MOOG_Monarc_5', pos_B, dir_B, MaxThrust=5.0)
+        thFactory.create("MOOG_Monarc_5", pos_B, dir_B, MaxThrust=5.0)
 
     # get number of thruster devices
     numTh = thFactory.getNumOfDevices()
@@ -275,7 +318,7 @@ def run(show_plots):
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(fswTask, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.sigma_R0N = [0.0, 0.0, 0.0]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
@@ -289,9 +332,9 @@ def run(show_plots):
     decayTime = 10.0
     xi = 1.0
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
-    mrpControl.P = 3*np.max(I)/decayTime
-    mrpControl.K = (mrpControl.P/xi)*(mrpControl.P/xi)/np.max(I)
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.P = 3 * np.max(I) / decayTime
+    mrpControl.K = (mrpControl.P / xi) * (mrpControl.P / xi) / np.max(I)
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
 
@@ -306,7 +349,7 @@ def run(show_plots):
     thrDesatControl = thrMomentumManagement.thrMomentumManagement()
     thrDesatControl.ModelTag = "thrMomentumManagement"
     scSim.AddModelToTask(fswTask, thrDesatControl)
-    thrDesatControl.hs_min = 80   # Nms  :  maximum wheel momentum
+    thrDesatControl.hs_min = 80  # Nms  :  maximum wheel momentum
 
     # setup the thruster force mapping module
     thrForceMappingObj = thrForceMapping.thrForceMapping()
@@ -314,14 +357,14 @@ def run(show_plots):
     scSim.AddModelToTask(fswTask, thrForceMappingObj)
     thrForceMappingObj.controlAxes_B = controlAxes_B
     thrForceMappingObj.thrForceSign = 1
-    thrForceMappingObj.angErrThresh = 3.15    # this needs to be larger than pi (180 deg) for the module to work in the momentum dumping scenario
+    thrForceMappingObj.angErrThresh = 3.15  # this needs to be larger than pi (180 deg) for the module to work in the momentum dumping scenario
 
     # setup the thruster momentum dumping module
     thrDump = thrMomentumDumping.thrMomentumDumping()
     thrDump.ModelTag = "thrDump"
     scSim.AddModelToTask(fswTask, thrDump)
-    thrDump.maxCounterValue = 100          # number of control periods (simulationTimeStepFsw) to wait between two subsequent on-times
-    thrDump.thrMinFireTime = 0.02          # thruster firing resolution
+    thrDump.maxCounterValue = 100  # number of control periods (simulationTimeStepFsw) to wait between two subsequent on-times
+    thrDump.thrMinFireTime = 0.02  # thruster firing resolution
 
     #
     # create simulation messages
@@ -333,16 +376,21 @@ def run(show_plots):
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, dynTask, scObject
-                                              # , saveFile=fileName
-                                              , rwEffectorList=rwStateEffector
-                                              , thrEffectorList=thrusterSet
-                                              )
-    vizSupport.setActuatorGuiSetting(viz, viewRWPanel=True,
-                                     viewRWHUD=True,
-                                     viewThrusterPanel=True,
-                                     viewThrusterHUD=True
-                                     )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        dynTask,
+        scObject,
+        # , saveFile=fileName
+        rwEffectorList=rwStateEffector,
+        thrEffectorList=thrusterSet,
+    )
+    vizSupport.setActuatorGuiSetting(
+        viz,
+        viewRWPanel=True,
+        viewRWHUD=True,
+        viewThrusterPanel=True,
+        viewThrusterHUD=True,
+    )
 
     # link messages
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
@@ -366,12 +414,13 @@ def run(show_plots):
     thrDump.thrusterImpulseInMsg.subscribeTo(thrForceMappingObj.thrForceCmdOutMsg)
     thrusterSet.cmdsInMsg.subscribeTo(thrDump.thrusterOnTimeOutMsg)
 
-
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 5000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStepDyn, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStepDyn, numDataPoints
+    )
     sNavRec = sNavObject.attOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, sNavRec)
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
@@ -380,7 +429,7 @@ def run(show_plots):
     scSim.AddModelToTask(dynTask, rwMotorLog)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, attErrorLog)
-    deltaHLog  = thrDesatControl.deltaHOutMsg.recorder(samplingTime)
+    deltaHLog = thrDesatControl.deltaHOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, deltaHLog)
     thrMapLog = thrForceMappingObj.thrForceCmdOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, thrMapLog)
@@ -440,7 +489,6 @@ def run(show_plots):
 
     np.set_printoptions(precision=16)
 
-
     # Displays the plots relative to the S/C attitude and rates errors, wheel momenta, thruster impulses, on times, and thruster firing intervals
 
     timeData = rwMotorLog.times() * macros.NANO2SEC
@@ -488,98 +536,132 @@ def plot_attitude_error(timeData, dataSigmaBR):
     """Plot the attitude errors."""
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + r'$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeData,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + r"$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
+
 
 def plot_rate_error(timeData, dataOmegaBR):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx+1) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (rad/s) ')
+        plt.plot(
+            timeData,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx + 1) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error (rad/s) ")
+
 
 def plot_rw_momenta(timeData, dataOmegaRw, RW, numRW):
     """Plot the RW momenta."""
     totMomentumNorm = []
     for j in range(len(timeData)):
-        totMomentum = np.array([0,0,0])
+        totMomentum = np.array([0, 0, 0])
         for idx in range(numRW):
             for k in range(3):
-                totMomentum[k] = totMomentum[k] + dataOmegaRw[j, idx] * RW[idx].Js * RW[idx].gsHat_B[k][0]
+                totMomentum[k] = (
+                    totMomentum[k]
+                    + dataOmegaRw[j, idx] * RW[idx].Js * RW[idx].gsHat_B[k][0]
+                )
         totMomentumNorm.append(np.linalg.norm(totMomentum))
     plt.figure(3)
     for idx in range(numRW):
-        plt.plot(timeData, dataOmegaRw[:, idx] * RW[idx].Js,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$H_{' + str(idx+1) + r'}$')
-    plt.plot(timeData, totMomentumNorm, '--',
-             label=r'$\|H\|$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Momentum (Nms)')
+        plt.plot(
+            timeData,
+            dataOmegaRw[:, idx] * RW[idx].Js,
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$H_{" + str(idx + 1) + r"}$",
+        )
+    plt.plot(timeData, totMomentumNorm, "--", label=r"$\|H\|$")
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Momentum (Nms)")
+
 
 def plot_DH(timeData, dataDH):
     """Plot the body angular velocity rate tracking errors."""
     plt.figure(4)
     for idx in range(3):
-        plt.plot(timeData, dataDH[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\Delta H_{' + str(idx+1) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Dumped momentum (Nms) ')
+        plt.plot(
+            timeData,
+            dataDH[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\Delta H_{" + str(idx + 1) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Dumped momentum (Nms) ")
+
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     """Plot the RW spin rates."""
     plt.figure(5)
     for idx in range(numRW):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\Omega_{' + str(idx+1) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
+        plt.plot(
+            timeData,
+            dataOmegaRW[:, idx] / macros.RPM,
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\Omega_{" + str(idx + 1) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Speed (RPM) ")
+
 
 def plot_thrImpulse(timeDataFSW, dataMap, numTh):
     """Plot the Thruster force values."""
     plt.figure(5)
     for idx in range(numTh):
-        plt.plot(timeDataFSW, dataMap[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
-                 label=r'$thrImpulse_{' + str(idx+1) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Impulse requested [Ns]')
+        plt.plot(
+            timeDataFSW,
+            dataMap[:, idx],
+            color=unitTestSupport.getLineColor(idx, numTh),
+            label=r"$thrImpulse_{" + str(idx + 1) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Impulse requested [Ns]")
+
 
 def plot_OnTimeRequest(timeData, dataOnTime, numTh):
     """Plot the thruster on time requests."""
     plt.figure(6)
     for idx in range(numTh):
-        plt.plot(timeData, dataOnTime[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
-                 label=r'$OnTimeRequest_{' + str(idx+1) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('OnTimeRequest [sec]')
+        plt.plot(
+            timeData,
+            dataOnTime[:, idx],
+            color=unitTestSupport.getLineColor(idx, numTh),
+            label=r"$OnTimeRequest_{" + str(idx + 1) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("OnTimeRequest [sec]")
+
 
 def plot_thrForce(timeDataFSW, dataThr, numTh):
     """Plot the Thruster force values."""
     plt.figure(7)
     for idx in range(numTh):
-        plt.plot(timeDataFSW, dataThr[idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
-                 label=r'$thrForce_{' + str(idx+1) + r'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Thruster force [N]')
+        plt.plot(
+            timeDataFSW,
+            dataThr[idx],
+            color=unitTestSupport.getLineColor(idx, numTh),
+            label=r"$thrForce_{" + str(idx + 1) + r"}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Thruster force [N]")
+
 
 if __name__ == "__main__":
     run(True)

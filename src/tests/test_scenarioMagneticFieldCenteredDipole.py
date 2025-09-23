@@ -36,7 +36,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioMagneticFieldCenteredDipole
 
 
@@ -49,23 +49,23 @@ import scenarioMagneticFieldCenteredDipole
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("orbitCase, planetCase", [
-    ('circular', 'Earth'),
-    ('elliptical', 'Earth'),
-    ('elliptical', 'Jupiter')
-])
+@pytest.mark.parametrize(
+    "orbitCase, planetCase",
+    [("circular", "Earth"), ("elliptical", "Earth"), ("elliptical", "Jupiter")],
+)
 @pytest.mark.scenarioTest
-
 def test_scenarioMagneticField(show_plots, orbitCase, planetCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioMagneticFieldCenteredDipole.run(show_plots, orbitCase, planetCase)
+        figureList = scenarioMagneticFieldCenteredDipole.run(
+            show_plots, orbitCase, planetCase
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
@@ -85,4 +85,3 @@ def test_scenarioMagneticField(show_plots, orbitCase, planetCase):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

@@ -17,7 +17,6 @@
 
 */
 
-
 #include "fswAlgorithms/attGuidance/attRefCorrection/attRefCorrection.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -28,11 +27,11 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_attRefCorrection(attRefCorrectionConfig  *configData, int64_t moduleID)
+void
+SelfInit_attRefCorrection(attRefCorrectionConfig* configData, int64_t moduleID)
 {
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -42,7 +41,8 @@ void SelfInit_attRefCorrection(attRefCorrectionConfig  *configData, int64_t modu
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_attRefCorrection(attRefCorrectionConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required message has not been connected
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
@@ -50,17 +50,17 @@ void Reset_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTim
     }
 }
 
-
 /*! Corrects the reference attitude message by a fixed rotation
 
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_attRefCorrection(attRefCorrectionConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    AttRefMsgPayload attRefMsgBuffer;     //!< local copy of message buffer
-    double sigma_BBc[3];                    //!< MRP from corrected body frame to body frame
+    AttRefMsgPayload attRefMsgBuffer; //!< local copy of message buffer
+    double sigma_BBc[3];              //!< MRP from corrected body frame to body frame
 
     // read in the input messages
     attRefMsgBuffer = AttRefMsg_C_read(&configData->attRefInMsg);

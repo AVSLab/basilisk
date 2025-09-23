@@ -39,4 +39,3 @@ provides information on what this message is used for.
     * - circlesInMsg
       - :ref:`OpNavCirclesMsgPayload`
       - circles input message
-

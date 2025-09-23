@@ -6,6 +6,7 @@ from Basilisk.architecture import sysModel
 
 LoggingFunction = Callable[[int], Any]
 
+
 class PythonVariableLogger(sysModel.SysModel):
     """This a Python Module that will call one or multiple functions
     and store their results. After the simulation is over, these
@@ -26,23 +27,22 @@ class PythonVariableLogger(sysModel.SysModel):
         timesSquared = log.a
         timesCubed   = log.b
     """
-    def __new__(cls, logging_functions: Dict[str, LoggingFunction], min_log_period: int=0):
+
+    def __new__(
+        cls, logging_functions: Dict[str, LoggingFunction], min_log_period: int = 0
+    ):
         # Generate an instance specific class that has properties for each logging function
         # NOTE: properties must be set on the class, not the instance itself
         properties = {
-            name: property(
-                    lambda self, name=name: np.array(self._variables[name])
-                )
-                for name in logging_functions
+            name: property(lambda self, name=name: np.array(self._variables[name]))
+            for name in logging_functions
         }
-        dyncls = type('PythonVariableLoggerDynamic', (cls, ), properties)
+        dyncls = type("PythonVariableLoggerDynamic", (cls,), properties)
 
         return super(PythonVariableLogger, dyncls).__new__(dyncls)
 
     def __init__(
-        self,
-        logging_functions: Dict[str, LoggingFunction],
-        min_log_period: int = 0
+        self, logging_functions: Dict[str, LoggingFunction], min_log_period: int = 0
     ) -> None:
         """Initializer.
 
@@ -83,9 +83,11 @@ class PythonVariableLogger(sysModel.SysModel):
                 try:
                     val = logging_function(CurrentSimNanos)
                 except Exception as ex:
-                    self.bskLogger.bskLog(sysModel.BSK_ERROR,
-                                        f"Error while logging '{variable_name}'"
-                                        f" in logger '{self.ModelTag}': {ex}")
+                    self.bskLogger.bskLog(
+                        sysModel.BSK_ERROR,
+                        f"Error while logging '{variable_name}'"
+                        f" in logger '{self.ModelTag}': {ex}",
+                    )
                     val = None
                 val = np.array(val).squeeze()
                 self._variables[variable_name].append(val)

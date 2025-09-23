@@ -23,8 +23,9 @@ import importlib.util
 from tqdm import tqdm
 
 # define the print color codes
-statusColor = '\033[92m'
-endColor = '\033[0m'
+statusColor = "\033[92m"
+endColor = "\033[0m"
+
 
 def download_file(url, destination_path):
     """Download a file from a URL with a progress bar."""
@@ -36,7 +37,9 @@ def download_file(url, destination_path):
         # Get the total file size from headers
         total_size = int(response.headers.get("content-length", 0))
 
-        os.makedirs(os.path.dirname(destination_path), exist_ok=True)  # Ensure destination folder exists
+        os.makedirs(
+            os.path.dirname(destination_path), exist_ok=True
+        )  # Ensure destination folder exists
 
         # Download the file with tqdm progress bar
         with open(destination_path, "wb") as file, tqdm(
@@ -57,6 +60,7 @@ def download_file(url, destination_path):
     except Exception as e:
         print(f"Unexpected error: {e}")
         sys.exit(1)
+
 
 def main():
     """
@@ -108,6 +112,7 @@ def main():
         download_file(url, destination_path)
 
     print("All files downloaded successfully.")
+
 
 if __name__ == "__main__":
     main()

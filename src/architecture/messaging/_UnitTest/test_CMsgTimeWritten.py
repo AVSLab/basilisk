@@ -39,7 +39,7 @@ def test_CMsgTimeWritten():
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.0)))
 
     # create modules
     mod1 = cModuleTemplate.cModuleTemplate()
@@ -58,12 +58,14 @@ def test_CMsgTimeWritten():
     scSim.ConfigureStopTime(macros.sec2nano(1.0))
     scSim.ExecuteSimulation()
 
-    testFailCount, testMessages = uts.compareVector(msgRec.timesWritten()
-                                                    , msgRec.times()
-                                                    , 0.01
-                                                    , "recorded msg timesWritten was not correct."
-                                                    , testFailCount
-                                                    , testMessages)
+    testFailCount, testMessages = uts.compareVector(
+        msgRec.timesWritten(),
+        msgRec.times(),
+        0.01,
+        "recorded msg timesWritten was not correct.",
+        testFailCount,
+        testMessages,
+    )
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -72,4 +74,3 @@ def test_CMsgTimeWritten():
 
 if __name__ == "__main__":
     CMsgTimeWritten()
-

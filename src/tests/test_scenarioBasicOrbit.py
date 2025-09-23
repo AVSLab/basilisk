@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 #
@@ -38,7 +35,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioBasicOrbit
 
 
@@ -51,25 +48,29 @@ import scenarioBasicOrbit
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("orbitCase, useSphericalHarmonics, planetCase", [
-    ('LEO', False, 'Earth'),
-    ('GTO', False, 'Earth'),
-    ('GEO', False, 'Earth'),
-    ('LEO', True, 'Earth'),
-    ('LEO', False, 'Mars')
-])
+@pytest.mark.parametrize(
+    "orbitCase, useSphericalHarmonics, planetCase",
+    [
+        ("LEO", False, "Earth"),
+        ("GTO", False, "Earth"),
+        ("GEO", False, "Earth"),
+        ("LEO", True, "Earth"),
+        ("LEO", False, "Mars"),
+    ],
+)
 @pytest.mark.scenarioTest
-
 def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
-        posData, figureList = scenarioBasicOrbit.run(show_plots, orbitCase, useSphericalHarmonics, planetCase)
+        posData, figureList = scenarioBasicOrbit.run(
+            show_plots, orbitCase, useSphericalHarmonics, planetCase
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
@@ -97,10 +98,11 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 
     assert testFailCount < 1, testMessages
 
+
 if __name__ == "__main__":
     test_scenarioBasicOrbit(
-        False,        # show_plots
-        'LEO',       # orbit Case (LEO, GTO, GEO)
-        False,       # useSphericalHarmonics
-        'Mars'      # planetCase (Earth, Mars)
+        False,  # show_plots
+        "LEO",  # orbit Case (LEO, GTO, GEO)
+        False,  # useSphericalHarmonics
+        "Mars",  # planetCase (Earth, Mars)
     )

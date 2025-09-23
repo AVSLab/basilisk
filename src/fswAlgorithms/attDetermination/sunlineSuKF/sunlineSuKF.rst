@@ -32,4 +32,3 @@ provides information on what this message is used for.
     * - cssConfigInMsg
       - :ref:`CSSConfigMsgPayload`
       - name of the CSS configuration input message
-

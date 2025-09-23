@@ -6,12 +6,15 @@ import shutil
 from conan.tools.files import get, copy, load, download
 from conan import ConanFile
 
+
 class MujocoConan(ConanFile):
     name = "mujoco"
     settings = "os", "arch"
 
     def set_version(self):
-        self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
+        self.version = load(
+            self, os.path.join(self.recipe_folder, "version.txt")
+        ).strip()
 
     def package(self):
         url_format = "https://github.com/google-deepmind/mujoco/releases/download/{version}/mujoco-{version}-{file}"
@@ -34,7 +37,7 @@ class MujocoConan(ConanFile):
         if os_setting == "Linux" or os_setting == "Windows":
             self._package_linux_windows(url)
 
-        else: # Macos
+        else:  # Macos
             self._package_macos(url)
 
     def _package_linux_windows(self, url: str):
@@ -42,7 +45,9 @@ class MujocoConan(ConanFile):
         try:
             get(self, url, strip_root=self.settings.os == "Linux")
         except Exception as ex:
-            raise Exception(f"Failed to download MuJoCo source code from: '{url}'. Is the link reachable?") from ex
+            raise Exception(
+                f"Failed to download MuJoCo source code from: '{url}'. Is the link reachable?"
+            ) from ex
 
         package_include = os.path.join(self.package_folder, "include")
         package_lib = os.path.join(self.package_folder, "lib")
@@ -64,7 +69,9 @@ class MujocoConan(ConanFile):
         try:
             download(self, url, filename)
         except Exception as ex:
-            raise Exception(f"Failed to download MuJoCo source code from: '{url}'. Is the link reachable?") from ex
+            raise Exception(
+                f"Failed to download MuJoCo source code from: '{url}'. Is the link reachable?"
+            ) from ex
 
         disk = None
 
@@ -72,22 +79,29 @@ class MujocoConan(ConanFile):
             disk, mount_points = MujocoConan._mount_dmg_with_disk(filename)
 
             if not mount_points:
-                self.output.error(f"No mount points found at {filename}, downloaded from {url}")
+                self.output.error(
+                    f"No mount points found at {filename}, downloaded from {url}"
+                )
 
             self.output.info(f"Mounted DMG at: {', '.join(mount_points)}")
 
             possible_framework_dirs = [
-                os.path.join(d, "mujoco.framework")
-                for d in mount_points
+                os.path.join(d, "mujoco.framework") for d in mount_points
             ]
 
-            framework_dir = next((d for d in possible_framework_dirs if os.path.isdir(d)), None)
+            framework_dir = next(
+                (d for d in possible_framework_dirs if os.path.isdir(d)), None
+            )
             if framework_dir is None:
-                self.output.error("Failed to find any mount that contains the folder 'mujoco.framework'")
+                self.output.error(
+                    "Failed to find any mount that contains the folder 'mujoco.framework'"
+                )
 
             # Copy the headers to the expected include/mujoco folder
             headers_dir = os.path.join(framework_dir, "Versions", "A", "Headers")
-            package_include_mujoco = os.path.join(self.package_folder, "include", "mujoco")
+            package_include_mujoco = os.path.join(
+                self.package_folder, "include", "mujoco"
+            )
             copy(self, "*.h", headers_dir, package_include_mujoco)
 
             # Copy the entire mujoco.framework dir
@@ -102,7 +116,6 @@ class MujocoConan(ConanFile):
                     self._detach_disk(disk)
                 except Exception as e:
                     self.output.error(f"Failed to detach disk: {e}")
-
 
     def package_info(self):
         if self.settings.os == "Macos":
@@ -119,7 +132,8 @@ class MujocoConan(ConanFile):
         """
         result = subprocess.run(
             ["hdiutil", "attach", dmg_path, "-nobrowse", "-plist"],
-            capture_output=True, check=True
+            capture_output=True,
+            check=True,
         )
         plist_data = plistlib.loads(result.stdout)
         # The disk identifier is available in one of the system-entities;

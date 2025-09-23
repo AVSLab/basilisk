@@ -38,7 +38,7 @@ from Basilisk.utilities import macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
@@ -49,14 +49,16 @@ splitPath = path.split(bskName)
 @pytest.mark.parametrize("transPosRef2", [0.5])  # [m]
 @pytest.mark.parametrize("transAccelMax", [0.01, 0.005])  # [m/s^2]
 @pytest.mark.parametrize("accuracy", [1e-8])
-def test_prescribedLinearTranslation(show_plots,
-                                     coastOptionBangDuration,
-                                     smoothingDuration,
-                                     transPosInit,
-                                     transPosRef1,
-                                     transPosRef2,
-                                     transAccelMax,
-                                     accuracy):
+def test_prescribedLinearTranslation(
+    show_plots,
+    coastOptionBangDuration,
+    smoothingDuration,
+    transPosInit,
+    transPosRef1,
+    transPosRef2,
+    transAccelMax,
+    accuracy,
+):
     r"""
     **Validation Test Description**
 
@@ -122,8 +124,12 @@ def test_prescribedLinearTranslation(show_plots,
     linearTransRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
     linearTransRigidBodyMessageData.rho = transPosRef1  # [m]
     linearTransRigidBodyMessageData.rhoDot = 0.0  # [m/s]
-    linearTransRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTransRigidBodyMessageData)
-    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTransRigidBodyMessage)
+    linearTransRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(
+        linearTransRigidBodyMessageData
+    )
+    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(
+        linearTransRigidBodyMessage
+    )
 
     # Log module data for module unit test validation
     prescribedStatesDataLog = prescribedTrans.prescribedTranslationOutMsg.recorder()
@@ -139,8 +145,12 @@ def test_prescribedLinearTranslation(show_plots,
     linearTransRigidBodyMessageData = messaging.LinearTranslationRigidBodyMsgPayload()
     linearTransRigidBodyMessageData.rho = transPosRef2  # [m]
     linearTransRigidBodyMessageData.rhoDot = 0.0  # [m/s]
-    linearTransRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(linearTransRigidBodyMessageData)
-    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(linearTransRigidBodyMessage)
+    linearTransRigidBodyMessage = messaging.LinearTranslationRigidBodyMsg().write(
+        linearTransRigidBodyMessageData
+    )
+    prescribedTrans.linearTranslationRigidBodyInMsg.subscribeTo(
+        linearTransRigidBodyMessage
+    )
 
     # Execute the second translation segment
     unitTestSim.ConfigureStopTime(macros.sec2nano(2 * simTime))
@@ -158,14 +168,13 @@ def test_prescribedLinearTranslation(show_plots,
     transPosFinal2 = r_PM_M[-1].dot(transAxis_M)
     transPosFinalList = [transPosFinal1, transPosFinal2]  # [m]
     transPosRefList = [transPosRef1, transPosRef2]  # [m]
-    np.testing.assert_allclose(transPosRefList,
-                               transPosFinalList,
-                               atol=accuracy,
-                               verbose=True)
+    np.testing.assert_allclose(
+        transPosRefList, transPosFinalList, atol=accuracy, verbose=True
+    )
 
     # Unit test validation 2: Numerically check that the profiled accelerations,
     # velocities, and displacements are correct
-    if (smoothingDuration > 0.0):
+    if smoothingDuration > 0.0:
         transAccel = rPrimePrime_PM_M.dot(transAxis_M)
         transVel = rPrime_PM_M.dot(transAxis_M)
         transPos = r_PM_M.dot(transAxis_M)
@@ -173,25 +182,33 @@ def test_prescribedLinearTranslation(show_plots,
         transVelNumerical = []
         for i in range(len(timespan) - 1):
             # First order forward difference
-            transAccelNumerical.append((transVel[i+1] - transVel[i]) / testTimeStepSec)
-            transVelNumerical.append((transPos[i+1] - transPos[i]) / testTimeStepSec)
+            transAccelNumerical.append(
+                (transVel[i + 1] - transVel[i]) / testTimeStepSec
+            )
+            transVelNumerical.append((transPos[i + 1] - transPos[i]) / testTimeStepSec)
 
-        np.testing.assert_allclose(transAccel[0:-1],
-                                   transAccelNumerical,
-                                   atol=1e-2,
-                                   verbose=True)
-        np.testing.assert_allclose(transVel[0:-1],
-                                   transVelNumerical,
-                                   atol=1e-2,
-                                   verbose=True)
+        np.testing.assert_allclose(
+            transAccel[0:-1], transAccelNumerical, atol=1e-2, verbose=True
+        )
+        np.testing.assert_allclose(
+            transVel[0:-1], transVelNumerical, atol=1e-2, verbose=True
+        )
         if show_plots:
             # Plot the difference between the numerical and profiled results
             plt.figure()
             plt.clf()
-            plt.plot(timespan[0:-1], transAccelNumerical - transAccel[0:-1], label=r'$\ddot{\rho}$')
-            plt.plot(timespan[0:-1], transVelNumerical - transVel[0:-1], label=r"$\dot{\rho}$")
-            plt.title(r'Profiled vs Numerical Difference', fontsize=14)
-            plt.legend(loc='upper right', prop={'size': 12})
+            plt.plot(
+                timespan[0:-1],
+                transAccelNumerical - transAccel[0:-1],
+                label=r"$\ddot{\rho}$",
+            )
+            plt.plot(
+                timespan[0:-1],
+                transVelNumerical - transVel[0:-1],
+                label=r"$\dot{\rho}$",
+            )
+            plt.title(r"Profiled vs Numerical Difference", fontsize=14)
+            plt.legend(loc="upper right", prop={"size": 12})
             plt.grid(True)
 
     if show_plots:
@@ -203,33 +220,42 @@ def test_prescribedLinearTranslation(show_plots,
         plt.figure()
         plt.clf()
         plt.plot(timespan, r_PM_M.dot(transAxis_M), label=r"$l$")
-        plt.plot(timespan, transPosInitPlotting, '--', label=r'$\rho_{0}$')
-        plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
-        plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
-        plt.title(r'Profiled Translational Position $\rho_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
-        plt.ylabel('(m)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 12})
+        plt.plot(timespan, transPosInitPlotting, "--", label=r"$\rho_{0}$")
+        plt.plot(timespan, transPosRef1Plotting, "--", label=r"$\rho_{Ref_1}$")
+        plt.plot(timespan, transPosRef2Plotting, "--", label=r"$\rho_{Ref_2}$")
+        plt.title(
+            r"Profiled Translational Position $\rho_{\mathcal{P}/\mathcal{M}}$",
+            fontsize=14,
+        )
+        plt.ylabel("(m)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 12})
         plt.grid(True)
 
         # 1B. Plot transVel
         plt.figure()
         plt.clf()
         plt.plot(timespan, rPrime_PM_M.dot(transAxis_M), label=r"$\dot{\rho}$")
-        plt.title(r'Profiled Translational Velocity $\dot{\rho}_{\mathcal{P}/\mathcal{M}}$', fontsize=14)
-        plt.ylabel('(m/s)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 12})
+        plt.title(
+            r"Profiled Translational Velocity $\dot{\rho}_{\mathcal{P}/\mathcal{M}}$",
+            fontsize=14,
+        )
+        plt.ylabel("(m/s)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 12})
         plt.grid(True)
 
         # 1C. Plot transAccel
         plt.figure()
         plt.clf()
         plt.plot(timespan, rPrimePrime_PM_M.dot(transAxis_M), label=r"$\ddot{\rho}$")
-        plt.title(r'Profiled Translational Acceleration $\ddot{\rho}_{\mathcal{P}/\mathcal{M}}$ ', fontsize=14)
-        plt.ylabel('(m/s$^2$)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 12})
+        plt.title(
+            r"Profiled Translational Acceleration $\ddot{\rho}_{\mathcal{P}/\mathcal{M}}$ ",
+            fontsize=14,
+        )
+        plt.ylabel("(m/s$^2$)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper right", prop={"size": 12})
         plt.grid(True)
 
         # 2. Plot the prescribed translational states
@@ -238,43 +264,53 @@ def test_prescribedLinearTranslation(show_plots,
         transPosRef2Plotting = np.ones(len(timespan)) * transPosRef2  # [m]
         plt.figure()
         plt.clf()
-        plt.plot(timespan, r_PM_M[:, 0], label=r'$r_{1}$')
-        plt.plot(timespan, r_PM_M[:, 1], label=r'$r_{2}$')
-        plt.plot(timespan, r_PM_M[:, 2], label=r'$r_{3}$')
-        plt.plot(timespan, transPosRef1Plotting, '--', label=r'$\rho_{Ref_1}$')
-        plt.plot(timespan, transPosRef2Plotting, '--', label=r'$\rho_{Ref_2}$')
-        plt.title(r'${}^\mathcal{M} r_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-        plt.ylabel('(m)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='center left', prop={'size': 12})
+        plt.plot(timespan, r_PM_M[:, 0], label=r"$r_{1}$")
+        plt.plot(timespan, r_PM_M[:, 1], label=r"$r_{2}$")
+        plt.plot(timespan, r_PM_M[:, 2], label=r"$r_{3}$")
+        plt.plot(timespan, transPosRef1Plotting, "--", label=r"$\rho_{Ref_1}$")
+        plt.plot(timespan, transPosRef2Plotting, "--", label=r"$\rho_{Ref_2}$")
+        plt.title(
+            r"${}^\mathcal{M} r_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(m)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="center left", prop={"size": 12})
         plt.grid(True)
 
         # 2B. Plot rPrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrime_PM_M[:, 0], label='1')
-        plt.plot(timespan, rPrime_PM_M[:, 1], label='2')
-        plt.plot(timespan, rPrime_PM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} r$Prime$_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-        plt.ylabel('(m/s)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper left', prop={'size': 12})
+        plt.plot(timespan, rPrime_PM_M[:, 0], label="1")
+        plt.plot(timespan, rPrime_PM_M[:, 1], label="2")
+        plt.plot(timespan, rPrime_PM_M[:, 2], label="3")
+        plt.title(
+            r"${}^\mathcal{M} r$Prime$_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(m/s)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper left", prop={"size": 12})
         plt.grid(True)
 
         # 2C. Plot rPrimePrime_PM_P
         plt.figure()
         plt.clf()
-        plt.plot(timespan, rPrimePrime_PM_M[:, 0], label='1')
-        plt.plot(timespan, rPrimePrime_PM_M[:, 1], label='2')
-        plt.plot(timespan, rPrimePrime_PM_M[:, 2], label='3')
-        plt.title(r'${}^\mathcal{M} r$PrimePrime$_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory', fontsize=14)
-        plt.ylabel('(m/s$^2$)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper left', prop={'size': 12})
+        plt.plot(timespan, rPrimePrime_PM_M[:, 0], label="1")
+        plt.plot(timespan, rPrimePrime_PM_M[:, 1], label="2")
+        plt.plot(timespan, rPrimePrime_PM_M[:, 2], label="3")
+        plt.title(
+            r"${}^\mathcal{M} r$PrimePrime$_{\mathcal{P}/\mathcal{M}}$ Profiled Trajectory",
+            fontsize=14,
+        )
+        plt.ylabel("(m/s$^2$)", fontsize=14)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.legend(loc="upper left", prop={"size": 12})
         plt.grid(True)
 
         plt.show()
     plt.close("all")
+
 
 if __name__ == "__main__":
     test_prescribedLinearTranslation(
@@ -285,5 +321,5 @@ if __name__ == "__main__":
         -1.0,  # [m] transPosRef1
         0.5,  # [m] transPosRef2
         0.01,  # [m/s^2] transAccelMax
-        1e-8  # accuracy
+        1e-8,  # accuracy
     )

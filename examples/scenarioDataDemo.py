@@ -67,6 +67,7 @@ demonstrate the data stored, generated, and downlinked.
 
 
 """
+
 import os
 
 import numpy as np
@@ -76,6 +77,7 @@ from Basilisk.simulation import simpleInstrument
 from Basilisk.simulation import simpleStorageUnit
 from Basilisk.simulation import simpleTransmitter
 from Basilisk.simulation import spacecraft
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -89,14 +91,14 @@ path = os.path.dirname(os.path.abspath(__file__))
 
 
 def run(show_plots):
-    taskName = "unitTask"               # arbitrary name (don't change)
-    processname = "TestProcess"         # arbitrary name (don't change)
+    taskName = "unitTask"  # arbitrary name (don't change)
+    processname = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     scenarioSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(1.0)     # update process rate update time
+    testProcessRate = macros.sec2nano(1.0)  # update process rate update time
     testProc = scenarioSim.CreateNewProcess(processname)
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
@@ -108,30 +110,30 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     planet = gravFactory.createEarth()
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     sun = gravFactory.createSun()
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
 
     # setup Spice interface for some solar system bodies
-    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
+    timeInitString = "2021 MAY 04 07:47:48.965 (UTC)"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
     scenarioSim.AddModelToTask(taskName, spiceObject, -1)
 
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
-    oe.a = astroConstants.REQ_EARTH*1e3 + 400e3
+    oe.a = astroConstants.REQ_EARTH * 1e3 + 400e3
     oe.e = 0.0
-    oe.i = 0.0*macros.D2R
+    oe.i = 0.0 * macros.D2R
 
-    oe.Omega = 0.0*macros.D2R
-    oe.omega = 0.0*macros.D2R
-    oe.f     = 75.0*macros.D2R
+    oe.Omega = 0.0 * macros.D2R
+    oe.omega = 0.0 * macros.D2R
+    oe.f = 75.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu / oe.a / oe.a / oe.a)
+    P = 2.0 * np.pi / n
 
     scObject.hub.r_CN_NInit = rN
     scObject.hub.v_CN_NInit = vN
@@ -143,29 +145,29 @@ def run(show_plots):
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
-    instrument.nodeBaudRate = 1200.  # baud
+    instrument.nodeBaudRate = 1200.0  # baud
     instrument.nodeDataName = "Instrument 1"  # baud
     scenarioSim.AddModelToTask(taskName, instrument)
 
     # Create another instrument
     instrument2 = simpleInstrument.SimpleInstrument()
     instrument2.ModelTag = "instrument2"
-    instrument2.nodeBaudRate = 1200. # baud
-    instrument2.nodeDataName = "Instrument 2" # baud
+    instrument2.nodeBaudRate = 1200.0  # baud
+    instrument2.nodeDataName = "Instrument 2"  # baud
     scenarioSim.AddModelToTask(taskName, instrument2)
 
     # Create a "transmitter"
     transmitter = simpleTransmitter.SimpleTransmitter()
     transmitter.ModelTag = "transmitter"
-    transmitter.nodeBaudRate = -16000.  # baud
-    transmitter.packetSize = -1E6  # bits
+    transmitter.nodeBaudRate = -16000.0  # baud
+    transmitter.packetSize = -1e6  # bits
     transmitter.numBuffers = 2
     scenarioSim.AddModelToTask(taskName, transmitter)
 
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 8E9  # bits (1 GB)
+    dataMonitor.storageCapacity = 8e9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(instrument2.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
@@ -178,7 +180,7 @@ def run(show_plots):
     # Create a simpleStorageUnit and attach the instrument to it
     dataMonitor2 = simpleStorageUnit.SimpleStorageUnit()
     dataMonitor2.ModelTag = "dataMonitor2"
-    dataMonitor2.storageCapacity = 1E5  # bits
+    dataMonitor2.storageCapacity = 1e5  # bits
     dataMonitor2.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(instrument2.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(transmitter.nodeDataOutMsg)
@@ -195,7 +197,7 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.sec2nano(P))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.sec2nano(P))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     scenarioSim.ExecuteSimulation()
@@ -214,11 +216,11 @@ def run(show_plots):
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    plt.plot(tvec, storageLevel / 8E3, label='Data Unit Total Storage Level (KB)')
-    plt.plot(tvec, storedData[:, 0] / 8E3, label='Instrument 1 Partition Level (KB)')
-    plt.plot(tvec, storedData[:, 1] / 8E3, label='Instrument 2 Partition Level (KB)')
-    plt.xlabel('Time (Hr)')
-    plt.ylabel('Data Stored (KB)')
+    plt.plot(tvec, storageLevel / 8e3, label="Data Unit Total Storage Level (KB)")
+    plt.plot(tvec, storedData[:, 0] / 8e3, label="Instrument 1 Partition Level (KB)")
+    plt.plot(tvec, storedData[:, 1] / 8e3, label="Instrument 2 Partition Level (KB)")
+    plt.xlabel("Time (Hr)")
+    plt.ylabel("Data Stored (KB)")
     plt.grid(True)
     plt.legend()
 
@@ -227,9 +229,9 @@ def run(show_plots):
 
     plt.figure(2)
 
-    plt.plot(tvec, storageNetBaud / 8E3, label='Net Baud Rate (KB/s)')
-    plt.xlabel('Time (Hr)')
-    plt.ylabel('Data Rate (KB/s)')
+    plt.plot(tvec, storageNetBaud / 8e3, label="Net Baud Rate (KB/s)")
+    plt.xlabel("Time (Hr)")
+    plt.ylabel("Data Rate (KB/s)")
     plt.grid(True)
     plt.legend()
 
@@ -241,6 +243,7 @@ def run(show_plots):
     plt.close("all")
 
     return figureList
+
 
 # This statement below ensures that the unitTestScript can be run as a
 # stand-alone python script

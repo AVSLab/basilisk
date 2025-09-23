@@ -178,7 +178,6 @@ the simulation across multiple runs and thus unexpected behavior will occur.
 #           scenarioAttitudeFeedbackRW with dispersed initial parameters
 #
 
-
 import inspect
 import math
 import os
@@ -193,6 +192,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
 # import general simulation support files
@@ -221,8 +221,12 @@ from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.architecture import messaging
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
-                                                       NormalVectorCartDispersion, InertiaTensorDispersion)
+from Basilisk.utilities.MonteCarlo.Dispersions import (
+    UniformEulerAngleMRPDispersion,
+    UniformDispersion,
+    NormalVectorCartDispersion,
+    InertiaTensorDispersion,
+)
 
 # Add this import and check at the beginning of the file
 import importlib
@@ -230,6 +234,7 @@ import importlib
 # Try to import Bokeh, set availability flag
 try:
     import bokeh
+
     bokeh_available = True
     from Basilisk.utilities.MonteCarlo.AnalysisBaseClass import MonteCarloPlotter
 except ImportError:
@@ -254,8 +259,8 @@ rwOutName = ["rw1Msg", "rw2Msg", "rw3Msg"]
 
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 500
-simulationTime = macros.min2nano(10.)
-samplingTime = simulationTime // (numDataPoints-1)
+simulationTime = macros.min2nano(10.0)
+samplingTime = simulationTime // (numDataPoints - 1)
 
 
 def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
@@ -306,37 +311,78 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
     monteCarlo.setArchiveDir(dirName)
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
-    dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
-    dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
-    dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
-    dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    dispInertia = 'hubref.IHubPntBc_B'
-    dispRW1Axis = 'RW1.gsHat_B'
-    dispRW2Axis = 'RW2.gsHat_B'
-    dispRW3Axis = 'RW3.gsHat_B'
-    dispRW1Omega = 'RW1.Omega'
-    dispRW2Omega = 'RW2.Omega'
-    dispRW3Omega = 'RW3.Omega'
-    dispVoltageIO_0 = 'rwVoltageIO.voltage2TorqueGain[0]'
-    dispVoltageIO_1 = 'rwVoltageIO.voltage2TorqueGain[1]'
-    dispVoltageIO_2 = 'rwVoltageIO.voltage2TorqueGain[2]'
+    dispMRPInit = "TaskList[0].TaskModels[0].hub.sigma_BNInit"
+    dispOmegaInit = "TaskList[0].TaskModels[0].hub.omega_BN_BInit"
+    dispMass = "TaskList[0].TaskModels[0].hub.mHub"
+    dispCoMOff = "TaskList[0].TaskModels[0].hub.r_BcB_B"
+    dispInertia = "hubref.IHubPntBc_B"
+    dispRW1Axis = "RW1.gsHat_B"
+    dispRW2Axis = "RW2.gsHat_B"
+    dispRW3Axis = "RW3.gsHat_B"
+    dispRW1Omega = "RW1.Omega"
+    dispRW2Omega = "RW2.Omega"
+    dispRW3Omega = "RW3.Omega"
+    dispVoltageIO_0 = "rwVoltageIO.voltage2TorqueGain[0]"
+    dispVoltageIO_1 = "rwVoltageIO.voltage2TorqueGain[1]"
+    dispVoltageIO_2 = "rwVoltageIO.voltage2TorqueGain[2]"
     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
 
     # Add dispersions with their dispersion type
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180)
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(dispMass, ([750.0 - 0.05 * 750, 750.0 + 0.05 * 750]))
+    )
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(
+            dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]
+        )
+    )
     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
-    monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
-    monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
-    monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(
+            dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]
+        )
+    )
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(
+            dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]
+        )
+    )
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(
+            dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]
+        )
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(dispRW1Omega, ([100.0 - 0.05 * 100, 100.0 + 0.05 * 100]))
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(dispRW2Omega, ([200.0 - 0.05 * 200, 200.0 + 0.05 * 200]))
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(dispRW3Omega, ([300.0 - 0.05 * 300, 300.0 + 0.05 * 300]))
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(
+            dispVoltageIO_0,
+            ([0.2 / 10.0 - 0.05 * 0.2 / 10.0, 0.2 / 10.0 + 0.05 * 0.2 / 10.0]),
+        )
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(
+            dispVoltageIO_1,
+            ([0.2 / 10.0 - 0.05 * 0.2 / 10.0, 0.2 / 10.0 + 0.05 * 0.2 / 10.0]),
+        )
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(
+            dispVoltageIO_2,
+            ([0.2 / 10.0 - 0.05 * 0.2 / 10.0, 0.2 / 10.0 + 0.05 * 0.2 / 10.0]),
+        )
+    )
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also has a callback,
@@ -374,10 +420,14 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
 
         # Then retained data from any run can then be accessed in the form of a dictionary
         # with two sub-dictionaries for messages and variables:
-        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-        assert retainedData is not None, "Retained data should be available after execution"
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS - 1)
+        assert retainedData is not None, (
+            "Retained data should be available after execution"
+        )
         assert "messages" in retainedData, "Retained data should retain messages"
-        assert guidMsgName + ".sigma_BR" in retainedData["messages"], "Retained messages should exist"
+        assert guidMsgName + ".sigma_BR" in retainedData["messages"], (
+            "Retained messages should exist"
+        )
 
         # We also can rerun a case using the same parameters and random seeds
         # If we rerun a properly set-up run, it should output the same data.
@@ -385,39 +435,46 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
         oldOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
 
         # Rerunning the case shouldn't fail
-        failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+        failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS - 1])
         assert len(failed) == 0, "Should rerun case successfully"
 
         # Now access the newly retained data to see if it changed
-        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS - 1)
         newOutput = retainedData["messages"][guidMsgName + ".sigma_BR"]
         for k1, v1 in enumerate(oldOutput):
             for k2, v2 in enumerate(v1):
-                assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
-                "Outputs shouldn't change on runs if random seeds are same"
+                assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < 0.001, (
+                    "Outputs shouldn't change on runs if random seeds are same"
+                )
 
         # We can also access the initial parameters
         # The random seeds should differ between runs, so we will test that
-        params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
-        params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
-        assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+        params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS - 1)
+        params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS - 2)
+        assert "TaskList[0].TaskModels[0].RNGSeed" in params1, (
+            "random number seed should be applied"
+        )
         for dispName in dispList:
             assert dispName in params1, "dispersion should be applied"
             # assert two different runs had different parameters.
-            assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+            assert params1[dispName] != params2[dispName], (
+                "dispersion should be different in each run"
+            )
 
         if useBokeh and bokeh_available:
             # Create the Bokeh application
             plotter = MonteCarloPlotter(dirName)
-            plotter.load_data([
-                guidMsgName + ".sigma_BR",
-                guidMsgName + ".omega_BR_B",
-                rwSpeedMsgName + ".wheelSpeeds",
-                voltMsgName + ".voltage",
-                rwOutName[0] + ".u_current",
-                rwOutName[1] + ".u_current",
-                rwOutName[2] + ".u_current"
-            ])
+            plotter.load_data(
+                [
+                    guidMsgName + ".sigma_BR",
+                    guidMsgName + ".omega_BR_B",
+                    rwSpeedMsgName + ".wheelSpeeds",
+                    voltMsgName + ".voltage",
+                    rwOutName[0] + ".u_current",
+                    rwOutName[1] + ".u_current",
+                    rwOutName[2] + ".u_current",
+                ]
+            )
             plotter.show_plots()
         elif show_plots:
             # Use matplotlib for plotting
@@ -453,10 +510,12 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
             plt.close("all")
 
         # Now we clean up data from this test
-        os.remove(icName + '/' + 'MonteCarlo.data')
+        os.remove(icName + "/" + "MonteCarlo.data")
         for i in range(numberICs):
-            os.remove(icName + '/' + 'run' + str(i) + '.data')
-        assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
+            os.remove(icName + "/" + "run" + str(i) + ".data")
+        assert not os.path.exists(icName + "/" + "MonteCarlo.data"), (
+            "No leftover data should exist after the test"
+        )
 
     # Delete Monte Carlo data if configured to do so. (default is True)
     if delete_data:
@@ -464,9 +523,9 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
 
     return dirName
 
+
 # This function creates the simulation to be executed in parallel.
 def createScenarioAttitudeFeedbackRW():
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -489,7 +548,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(0.1)
     scSim.dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -500,11 +559,13 @@ def createScenarioAttitudeFeedbackRW():
     scSim.scObject = spacecraft.Spacecraft()
     scSim.scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scSim.scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scSim.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scSim.scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scSim.scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scSim.hubref = scSim.scObject.hub
 
@@ -515,7 +576,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.rwVoltageIO.ModelTag = "rwVoltageInterface"
 
     # set module parameters(s)
-    scSim.rwVoltageIO.setGains(np.array([0.2/10.]*3))  # [Nm/V] conversion gain
+    scSim.rwVoltageIO.setGains(np.array([0.2 / 10.0] * 3))  # [Nm/V] conversion gain
 
     # Add test module to runtime call list
     scSim.AddModelToTask(simTaskName, scSim.rwVoltageIO)
@@ -540,30 +601,37 @@ def createScenarioAttitudeFeedbackRW():
     scSim.varRWModel = messaging.BalancedWheels
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    scSim.RW1 = scSim.rwFactory.create('Honeywell_HR16'
-                           , [1, 0, 0]
-                           , maxMomentum=50.
-                           , Omega=100.                 # RPM
-                           , RWModel= scSim.varRWModel
-                           )
-    scSim.RW2 = scSim.rwFactory.create('Honeywell_HR16'
-                           , [0, 1, 0]
-                           , maxMomentum=50.
-                           , Omega=200.                 # RPM
-                           , RWModel= scSim.varRWModel
-                           )
-    scSim.RW3 = scSim.rwFactory.create('Honeywell_HR16'
-                           , [0, 0, 1]
-                           , maxMomentum=50.
-                           , Omega=300.                 # RPM
-                           , rWB_B = [0.5, 0.5, 0.5]    # meters
-                           , RWModel= scSim.varRWModel
-                           )
+    scSim.RW1 = scSim.rwFactory.create(
+        "Honeywell_HR16",
+        [1, 0, 0],
+        maxMomentum=50.0,
+        Omega=100.0,  # RPM
+        RWModel=scSim.varRWModel,
+    )
+    scSim.RW2 = scSim.rwFactory.create(
+        "Honeywell_HR16",
+        [0, 1, 0],
+        maxMomentum=50.0,
+        Omega=200.0,  # RPM
+        RWModel=scSim.varRWModel,
+    )
+    scSim.RW3 = scSim.rwFactory.create(
+        "Honeywell_HR16",
+        [0, 0, 1],
+        maxMomentum=50.0,
+        Omega=300.0,  # RPM
+        rWB_B=[0.5, 0.5, 0.5],  # meters
+        RWModel=scSim.varRWModel,
+    )
     numRW = scSim.rwFactory.getNumOfDevices()
     # create RW object container and tie to spacecraft object
     scSim.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    scSim.rwFactory.addToSpacecraft(scSim.scObject.ModelTag, scSim.rwStateEffector, scSim.scObject)
-    scSim.rwStateEffector.rwMotorCmdInMsg.subscribeTo(scSim.rwVoltageIO.motorTorqueOutMsg)
+    scSim.rwFactory.addToSpacecraft(
+        scSim.scObject.ModelTag, scSim.rwStateEffector, scSim.scObject
+    )
+    scSim.rwStateEffector.rwMotorCmdInMsg.subscribeTo(
+        scSim.rwVoltageIO.motorTorqueOutMsg
+    )
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, scSim.rwStateEffector, 2)
@@ -595,7 +663,11 @@ def createScenarioAttitudeFeedbackRW():
     scSim.inertial3DObj = inertial3D.inertial3D()
     scSim.inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, scSim.inertial3DObj)
-    scSim.inertial3DObj.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    scSim.inertial3DObj.sigma_R0N = [
+        0.0,
+        0.0,
+        0.0,
+    ]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     scSim.attError = attTrackingError.attTrackingError()
@@ -612,10 +684,10 @@ def createScenarioAttitudeFeedbackRW():
     scSim.mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
     scSim.mrpControl.rwParamsInMsg.subscribeTo(scSim.fswRwConfMsg)
     scSim.mrpControl.rwSpeedsInMsg.subscribeTo(scSim.rwStateEffector.rwSpeedOutMsg)
-    scSim.mrpControl.K  =   3.5
-    scSim.mrpControl.Ki =   -1          # make value negative to turn off integral feedback
-    scSim.mrpControl.P  = 30.0
-    scSim.mrpControl.integralLimit = 2./scSim.mrpControl.Ki * 0.1
+    scSim.mrpControl.K = 3.5
+    scSim.mrpControl.Ki = -1  # make value negative to turn off integral feedback
+    scSim.mrpControl.P = 30.0
+    scSim.mrpControl.integralLimit = 2.0 / scSim.mrpControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
     scSim.rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
@@ -625,11 +697,7 @@ def createScenarioAttitudeFeedbackRW():
     scSim.rwMotorTorqueObj.vehControlInMsg.subscribeTo(scSim.mrpControl.cmdTorqueOutMsg)
     scSim.rwMotorTorqueObj.rwParamsInMsg.subscribeTo(scSim.fswRwConfMsg)
     # Make the RW control all three body axes
-    controlAxes_B = [
-             1,0,0
-            ,0,1,0
-            ,0,0,1
-        ]
+    controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     scSim.rwMotorTorqueObj.controlAxes_B = controlAxes_B
 
     scSim.fswRWVoltage = rwMotorVoltage.rwMotorVoltage()
@@ -639,7 +707,9 @@ def createScenarioAttitudeFeedbackRW():
     scSim.AddModelToTask(simTaskName, scSim.fswRWVoltage)
 
     # Initialize the test module configuration data
-    scSim.fswRWVoltage.torqueInMsg.subscribeTo(scSim.rwMotorTorqueObj.rwMotorTorqueOutMsg)
+    scSim.fswRWVoltage.torqueInMsg.subscribeTo(
+        scSim.rwMotorTorqueObj.rwMotorTorqueOutMsg
+    )
     scSim.fswRWVoltage.rwParamsInMsg.subscribeTo(scSim.fswRwConfMsg)
     scSim.rwVoltageIO.motorVoltageInMsg.subscribeTo(scSim.fswRWVoltage.voltageOutMsg)
     # set module parameters
@@ -651,23 +721,25 @@ def createScenarioAttitudeFeedbackRW():
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0                                           # meters
-    oe.e     = 0.01
-    oe.i     = 33.3*macros.D2R
-    oe.Omega = 48.2*macros.D2R
-    oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    oe.a = 10000000.0  # meters
+    oe.e = 0.01
+    oe.i = 33.3 * macros.D2R
+    oe.Omega = 48.2 * macros.D2R
+    oe.omega = 347.8 * macros.D2R
+    oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scSim.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scSim.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-    scSim.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_CN_B
-    scSim.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_CN_B
+    scSim.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_CN_B
+    scSim.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
 
     # store the msg recorder modules in a dictionary list so the retention policy class can pull the data
     # when the simulation ends
     scSim.msgRecList = {}
 
-    scSim.msgRecList[rwMotorTorqueMsgName] = scSim.rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    scSim.msgRecList[rwMotorTorqueMsgName] = (
+        scSim.rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
+    )
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwMotorTorqueMsgName])
 
     scSim.msgRecList[guidMsgName] = scSim.attError.attGuidOutMsg.recorder(samplingTime)
@@ -676,15 +748,21 @@ def createScenarioAttitudeFeedbackRW():
     scSim.msgRecList[transMsgName] = sNavObject.transOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[transMsgName])
 
-    scSim.msgRecList[rwSpeedMsgName] = scSim.rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+    scSim.msgRecList[rwSpeedMsgName] = scSim.rwStateEffector.rwSpeedOutMsg.recorder(
+        samplingTime
+    )
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[rwSpeedMsgName])
 
-    scSim.msgRecList[voltMsgName] = scSim.fswRWVoltage.voltageOutMsg.recorder(samplingTime)
+    scSim.msgRecList[voltMsgName] = scSim.fswRWVoltage.voltageOutMsg.recorder(
+        samplingTime
+    )
     scSim.AddModelToTask(simTaskName, scSim.msgRecList[voltMsgName])
 
     c = 0
     for msgName in rwOutName:
-        scSim.msgRecList[msgName] = scSim.rwStateEffector.rwOutMsgs[c].recorder(samplingTime)
+        scSim.msgRecList[msgName] = scSim.rwStateEffector.rwOutMsgs[c].recorder(
+            samplingTime
+        )
         scSim.AddModelToTask(simTaskName, scSim.msgRecList[msgName])
         c += 1
 
@@ -704,75 +782,95 @@ def executeScenario(sim):
 # It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
     #   retrieve the logged data
-    dataUsReq = data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:,1:]
-    dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"][:,1:]
-    dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"][:,1:]
-    dataPos = data["messages"][transMsgName + ".r_BN_N"][:,1:]
-    dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"][:,1:]
-    dataVolt = data["messages"][voltMsgName + ".voltage"][:,1:]
+    dataUsReq = data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:, 1:]
+    dataSigmaBR = data["messages"][guidMsgName + ".sigma_BR"][:, 1:]
+    dataOmegaBR = data["messages"][guidMsgName + ".omega_BR_B"][:, 1:]
+    dataPos = data["messages"][transMsgName + ".r_BN_N"][:, 1:]
+    dataOmegaRW = data["messages"][rwSpeedMsgName + ".wheelSpeeds"][:, 1:]
+    dataVolt = data["messages"][voltMsgName + ".voltage"][:, 1:]
     dataRW = []
     for msgName in rwOutName:
-        dataRW.append(data["messages"][msgName+".u_current"][:,1:])
+        dataRW.append(data["messages"][msgName + ".u_current"][:, 1:])
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
 
-    timeData = data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:,0] * macros.NANO2MIN
+    timeData = (
+        data["messages"][rwMotorTorqueMsgName + ".motorTorque"][:, 0] * macros.NANO2MIN
+    )
 
     figureList = {}
     plt.figure(1)
-    pltName = 'AttitudeError'
+    pltName = "AttitudeError"
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 label='Run ' + str(data["index"]) + r' $\sigma_'+str(idx)+'$')
+        plt.plot(
+            timeData,
+            dataSigmaBR[:, idx],
+            label="Run " + str(data["index"]) + r" $\sigma_" + str(idx) + "$",
+        )
     # plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
-    pltName = 'RWMotorTorque'
+    pltName = "RWMotorTorque"
     for idx in range(3):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 label='Run ' + str(data["index"]) + r' $\hat u_{s,'+str(idx)+'}$')
-        plt.plot(timeData, dataRW[idx],
-                 label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
+        plt.plot(
+            timeData,
+            dataUsReq[:, idx],
+            "--",
+            label="Run " + str(data["index"]) + r" $\hat u_{s," + str(idx) + "}$",
+        )
+        plt.plot(
+            timeData,
+            dataRW[idx],
+            label="Run " + str(data["index"]) + " $u_{s," + str(idx) + "}$",
+        )
     # plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Motor Torque (Nm)")
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
-    pltName = 'RateTrackingError'
+    pltName = "RateTrackingError"
     for idx in range(3):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 label='Run ' + str(data["index"]) + r' $\omega_{BR,'+str(idx)+'}$')
+        plt.plot(
+            timeData,
+            dataOmegaBR[:, idx],
+            label="Run " + str(data["index"]) + r" $\omega_{BR," + str(idx) + "}$",
+        )
     # plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (rad/s) ')
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error (rad/s) ")
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
-    pltName = 'RWSpeed'
+    pltName = "RWSpeed"
     for idx in range(len(rwOutName)):
-        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
+        plt.plot(
+            timeData,
+            dataOmegaRW[:, idx] / macros.RPM,
+            label="Run " + str(data["index"]) + r" $\Omega_{" + str(idx) + "}$",
+        )
     # plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Speed (RPM) ")
     figureList[pltName] = plt.figure(4)
 
     plt.figure(5)
-    pltName = 'RWVoltage'
+    pltName = "RWVoltage"
     for idx in range(len(rwOutName)):
-        plt.plot(timeData, dataVolt[:, idx],
-                 label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
+        plt.plot(
+            timeData,
+            dataVolt[:, idx],
+            label="Run " + str(data["index"]) + " $V_{" + str(idx) + "}$",
+        )
     # plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Voltage (V) ')
+    plt.xlabel("Time [min]")
+    plt.ylabel("RW Voltage (V) ")
     figureList[pltName] = plt.figure(5)
 
     return figureList
@@ -783,8 +881,8 @@ def plotSimAndSave(data, retentionPolicy):
     for pltName, plt in list(figureList.items()):
         # plt.subplots_adjust(top = 0.6, bottom = 0.4)
         unitTestSupport.saveScenarioFigure(
-            fileNameString + "_" + pltName
-            , plt, path + "/dataForExamples")
+            fileNameString + "_" + pltName, plt, path + "/dataForExamples"
+        )
 
     return
 
@@ -792,6 +890,7 @@ def plotSimAndSave(data, retentionPolicy):
 # Modify the __main__ section
 if __name__ == "__main__":
     import sys
+
     delete_data = True
     useBokeh = False
 
@@ -817,17 +916,25 @@ if __name__ == "__main__":
 
         def bk_worker(doc):
             def update():
-                dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=False, useBokeh=True)
+                dirName = run(
+                    saveFigures=True,
+                    case=1,
+                    show_plots=True,
+                    delete_data=False,
+                    useBokeh=True,
+                )
                 plotter = MonteCarloPlotter(dirName)
-                plotter.load_data([
-                    rwOutName[0] + ".u_current",
-                    rwOutName[1] + ".u_current",
-                    rwOutName[2] + ".u_current",
-                    guidMsgName + ".sigma_BR",
-                    guidMsgName + ".omega_BR_B",
-                    rwSpeedMsgName + ".wheelSpeeds",
-                    voltMsgName + ".voltage"
-                ])
+                plotter.load_data(
+                    [
+                        rwOutName[0] + ".u_current",
+                        rwOutName[1] + ".u_current",
+                        rwOutName[2] + ".u_current",
+                        guidMsgName + ".sigma_BR",
+                        guidMsgName + ".omega_BR_B",
+                        rwSpeedMsgName + ".wheelSpeeds",
+                        voltMsgName + ".voltage",
+                    ]
+                )
                 layout = plotter.show_plots()
 
                 # Add close button functionality
@@ -842,7 +949,9 @@ if __name__ == "__main__":
                             }
                         }, 100);
                         """
-                        doc.add_next_tick_callback(lambda: doc.js_on_event(None, script))
+                        doc.add_next_tick_callback(
+                            lambda: doc.js_on_event(None, script)
+                        )
 
                         # Stop the Bokeh server
                         doc.remove_root(layout)
@@ -854,10 +963,20 @@ if __name__ == "__main__":
                         logger.error(f"Error during shutdown: {str(e)}")
                         sys.exit(1)
 
-                close_button = Button(label="Close Application", button_type="danger", width=150)
+                close_button = Button(
+                    label="Close Application", button_type="danger", width=150
+                )
                 close_button.on_click(close_callback)
-                layout.children.insert(-1, row(Spacer(width=20), close_button, Spacer(width=20),
-                                            sizing_mode="fixed", align="center"))
+                layout.children.insert(
+                    -1,
+                    row(
+                        Spacer(width=20),
+                        close_button,
+                        Spacer(width=20),
+                        sizing_mode="fixed",
+                        align="center",
+                    ),
+                )
 
                 doc.add_root(layout)
                 doc.title = "BSK Monte Carlo Visualization"
@@ -865,10 +984,12 @@ if __name__ == "__main__":
             doc.add_next_tick_callback(update)
 
         print("Starting Bokeh server")
-        server = Server({'/': Application(FunctionHandler(bk_worker))})
+        server = Server({"/": Application(FunctionHandler(bk_worker))})
         server.start()
-        print('Opening Bokeh application on http://localhost:5006/')
+        print("Opening Bokeh application on http://localhost:5006/")
         server.io_loop.add_callback(server.show, "/")
         server.io_loop.start()
     else:
-        dirName = run(saveFigures=True, case=1, show_plots=True, delete_data=True, useBokeh=False)
+        dirName = run(
+            saveFigures=True, case=1, show_plots=True, delete_data=True, useBokeh=False
+        )

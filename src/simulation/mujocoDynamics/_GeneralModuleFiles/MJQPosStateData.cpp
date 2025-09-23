@@ -21,9 +21,14 @@
 
 #include <algorithm>
 
-std::unique_ptr<StateData> MJQPosStateData::clone() const { return std::unique_ptr<StateData>(); }
+std::unique_ptr<StateData>
+MJQPosStateData::clone() const
+{
+    return std::unique_ptr<StateData>();
+}
 
-void MJQPosStateData::configure(mjModel* mujocoModel)
+void
+MJQPosStateData::configure(mjModel* mujocoModel)
 {
     this->mujocoModel = mujocoModel;
 
@@ -31,7 +36,8 @@ void MJQPosStateData::configure(mjModel* mujocoModel)
     this->stateDeriv.resize(mujocoModel->nv, 1);
 }
 
-void MJQPosStateData::propagateState(double dt)
+void
+MJQPosStateData::propagateState(double dt)
 {
     mj_integratePos(this->mujocoModel, this->state.data(), this->stateDeriv.data(), dt);
 }

@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef TORQUE2DIPOLE_H
 #define TORQUE2DIPOLE_H
 
@@ -28,25 +27,27 @@
 #include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
 
     /* Inputs.*/
-    TAMSensorBodyMsg_C tamSensorBodyInMsg;          //!< [Tesla] input message for magnetic field sensor data in the Body frame
-    CmdTorqueBodyMsg_C tauRequestInMsg;             //!< [N-m] input message containing control torque in the Body frame
-    
+    TAMSensorBodyMsg_C tamSensorBodyInMsg; //!< [Tesla] input message for magnetic field sensor data in the Body frame
+    CmdTorqueBodyMsg_C tauRequestInMsg;    //!< [N-m] input message containing control torque in the Body frame
+
     /* Outputs.*/
-    DipoleRequestBodyMsg_C dipoleRequestOutMsg;     //!< [A-m2] output message containing dipole request in the Body frame
-    
+    DipoleRequestBodyMsg_C dipoleRequestOutMsg; //!< [A-m2] output message containing dipole request in the Body frame
+
     /* Other. */
-    BSKLogger *bskLogger;                           //!< BSK Logging
-}torque2DipoleConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} torque2DipoleConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    void SelfInit_torque2Dipole(torque2DipoleConfig *configData, int64_t moduleID);
-    void Update_torque2Dipole(torque2DipoleConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_torque2Dipole(torque2DipoleConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_torque2Dipole(torque2DipoleConfig* configData, int64_t moduleID);
+    void Update_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

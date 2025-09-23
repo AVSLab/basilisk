@@ -2,7 +2,7 @@
 
 
 \section{Test Description and Success Criteria}
-The unit test creates a desired thruster force input vector and then runs the simulation for 3 seconds.  If the {\tt resetCheck} flag is true then a {\tt reset()} method is called and the simulation is repeated for another 2.5 seconds.  If the {\tt dvOn} flag is set than the off-pulsing mode is checked.  
+The unit test creates a desired thruster force input vector and then runs the simulation for 3 seconds.  If the {\tt resetCheck} flag is true then a {\tt reset()} method is called and the simulation is repeated for another 2.5 seconds.  If the {\tt dvOn} flag is set than the off-pulsing mode is checked.
 
 
 
@@ -15,11 +15,11 @@ The simulation sets up 8 thrusters.  All permutations with the {\tt resetCheck} 
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\
 		\hline
-		{\tt OnTimeRequest}        & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt OnTimeRequest}        & \input{AutoTeX/toleranceValue}	   \\
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -33,16 +33,14 @@ All of the tests passed:
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c  | c } % Column formatting, 
+	\begin{tabular}{c | c  | c } % Column formatting,
 		\hline\hline
-		{\tt resetCheck} & {\tt dvOn} &\textbf{Pass/Fail} \\ 
+		{\tt resetCheck} & {\tt dvOn} &\textbf{Pass/Fail} \\
 		\hline
-	   False & False	   		& \input{AutoTeX/passFailFalseFalse} \\ 
-	   False & True	   			& \input{AutoTeX/passFailFalseTrue} \\ 
-	   True & False	   			& \input{AutoTeX/passFailTrueFalse} \\ 
-	   True & True	   			& \input{AutoTeX/passFailTrueTrue} \\ 
+	   False & False	   		& \input{AutoTeX/passFailFalseFalse} \\
+	   False & True	   			& \input{AutoTeX/passFailFalseTrue} \\
+	   True & False	   			& \input{AutoTeX/passFailTrueFalse} \\
+	   True & True	   			& \input{AutoTeX/passFailTrueTrue} \\
 	   \hline\hline
 	\end{tabular}
 \end{table}
-
-

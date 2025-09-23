@@ -70,5 +70,3 @@ Frequently Asked Questions
     - The custom Basilisk modules are built into a ``Basilisk.ExternalModules`` package.  For example, to load a module called ``customCppModule``, use::
 
         from Basilisk.ExternalModules import customCppModule
-
-

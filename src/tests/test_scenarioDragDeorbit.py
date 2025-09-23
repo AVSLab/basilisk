@@ -34,7 +34,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioDragDeorbit
 
 
@@ -47,10 +47,9 @@ import scenarioDragDeorbit
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("initialAlt, deorbitAlt, model", [
-    (250, 100, "exponential"),
-    (250, 100, "msis")
-])
+@pytest.mark.parametrize(
+    "initialAlt, deorbitAlt, model", [(250, 100, "exponential"), (250, 100, "msis")]
+)
 @pytest.mark.scenarioTest
 def test_scenarioDragDeorbit(show_plots, initialAlt, deorbitAlt, model):
     """This function is called by the py.test environment."""
@@ -88,5 +87,5 @@ if __name__ == "__main__":
         False,  # show_plots
         initialAlt=250,
         deorbitAlt=100,
-        model="msis"
+        model="msis",
     )

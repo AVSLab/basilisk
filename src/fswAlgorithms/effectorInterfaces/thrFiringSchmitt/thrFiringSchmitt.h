@@ -30,44 +30,42 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* declare module public variables */
-    double              level_on;                               //!< [-] ON duty cycle fraction
-    double              level_off;                              //!< [-] OFF duty cycle fraction 
-    double              thrMinFireTime;                         //!< [s] Minimum ON time for thrusters
-    int                 baseThrustState;                        //!< [-] Indicates on-pulsing (0) or off-pusling (1)
+    double level_on;       //!< [-] ON duty cycle fraction
+    double level_off;      //!< [-] OFF duty cycle fraction
+    double thrMinFireTime; //!< [s] Minimum ON time for thrusters
+    int baseThrustState;   //!< [-] Indicates on-pulsing (0) or off-pusling (1)
 
     /* declare module private variables */
-	int                 numThrusters;							//!< [-] The number of thrusters available on vehicle
-	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
-	boolean_t			lastThrustState[MAX_EFF_CNT];			//!< [-] ON/OFF state of thrusters from previous call
+    int numThrusters;                       //!< [-] The number of thrusters available on vehicle
+    double maxThrust[MAX_EFF_CNT];          //!< [N] Max thrust
+    boolean_t lastThrustState[MAX_EFF_CNT]; //!< [-] ON/OFF state of thrusters from previous call
 
-	uint64_t			prevCallTime;							//!< callTime from previous function call
+    uint64_t prevCallTime; //!< callTime from previous function call
 
     /* declare module IO interfaces */
     THRArrayCmdForceMsg_C thrForceInMsg; //!< The name of the Input message
-    THRArrayOnTimeCmdMsg_C onTimeOutMsg;  //!< The name of the output message*, onTimeOutMsg
-    THRArrayConfigMsg_C thrConfInMsg;	//!< The name of the thruster cluster Input message
+    THRArrayOnTimeCmdMsg_C onTimeOutMsg; //!< The name of the output message*, onTimeOutMsg
+    THRArrayConfigMsg_C thrConfInMsg;    //!< The name of the thruster cluster Input message
 
-  BSKLogger *bskLogger;                             //!< BSK Logging
+    BSKLogger* bskLogger; //!< BSK Logging
 
-}thrFiringSchmittConfig;
+} thrFiringSchmittConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, int64_t moduleID);
-    void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
+    void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig* configData, int64_t moduleID);
+    void Update_thrFiringSchmitt(thrFiringSchmittConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_thrFiringSchmitt(thrFiringSchmittConfig* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

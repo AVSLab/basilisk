@@ -34,13 +34,13 @@
  @param configData The configuration data associated with the null space control
  @param moduleID The ID associated with the configData
  */
-void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
+void
+SelfInit_mrpRotation(mrpRotationConfig* configData, int64_t moduleID)
 {
     AttRefMsg_C_init(&configData->attRefOutMsg);
 
     return;
 }
-
 
 /*! @brief This resets the module to original states.
 
@@ -48,7 +48,8 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
@@ -59,7 +60,6 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t
 
     v3SetZero(configData->priorCmdSet);
     v3SetZero(configData->priorCmdRates);
-
 }
 
 /*! @brief This method takes the input attitude reference frame, and and superimposes the dynamics MRP
@@ -69,19 +69,20 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read input messages */
-    AttRefMsgPayload inputRef;                                /* [-] read in the [R_0N] input reference message */
-    AttRefMsgPayload attRefOut;                               /* [-] structure for the Reference frame output data */
+    AttRefMsgPayload inputRef;  /* [-] read in the [R_0N] input reference message */
+    AttRefMsgPayload attRefOut; /* [-] structure for the Reference frame output data */
 
     /*!- read in input reference frame message */
     inputRef = AttRefMsg_C_read(&configData->attRefInMsg);
 
-    /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
-    if (AttStateMsg_C_isLinked(&configData->desiredAttInMsg))
-    {
-        AttStateMsgPayload attStates;                         /* [-] initial [RR_0] attitude state message */
+    /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP
+     * rotation */
+    if (AttStateMsg_C_isLinked(&configData->desiredAttInMsg)) {
+        AttStateMsgPayload attStates; /* [-] initial [RR_0] attitude state message */
 
         /* - Read Raster Manager messages */
         attStates = AttStateMsg_C_read(&configData->desiredAttInMsg);
@@ -98,12 +99,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
 
     /*! - Compute output reference frame */
     attRefOut = AttRefMsg_C_zeroMsgPayload();
-    computeMRPRotationReference(configData,
-                                inputRef.sigma_RN,
-                                inputRef.omega_RN_N,
-                                inputRef.domega_RN_N,
-                                &attRefOut);
-
+    computeMRPRotationReference(configData, inputRef.sigma_RN, inputRef.omega_RN_N, inputRef.domega_RN_N, &attRefOut);
 
     /*! - write attitude guidance reference output */
     AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
@@ -113,19 +109,17 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_
     return;
 }
 
-
-
 /*! @brief This function checks if there is a new commanded raster maneuver message available
 
  @param configData The configuration data associated with the mrpRotation module
  */
-void checkRasterCommands(mrpRotationConfig *configData)
+void
+checkRasterCommands(mrpRotationConfig* configData)
 {
-    int32_t prevCmdActive = v3IsEqual(configData->cmdSet, configData->priorCmdSet , 1E-12)
-                            && v3IsEqual(configData->cmdRates, configData->priorCmdRates , 1E-12);
+    int32_t prevCmdActive = v3IsEqual(configData->cmdSet, configData->priorCmdSet, 1E-12) &&
+                            v3IsEqual(configData->cmdRates, configData->priorCmdRates, 1E-12);
     /*! - check if a new attitude reference command message content is availble */
-    if (!prevCmdActive)
-    {
+    if (!prevCmdActive) {
         /*! - copy over the commanded initial MRP and rate information */
         v3Copy(configData->cmdSet, configData->mrpSet);
         v3Copy(configData->cmdRates, configData->omega_RR0_R);
@@ -141,16 +135,15 @@ void checkRasterCommands(mrpRotationConfig *configData)
  @param configData The configuration data associated with the mrpRotation module
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void computeTimeStep(mrpRotationConfig *configData, uint64_t callTime)
+void
+computeTimeStep(mrpRotationConfig* configData, uint64_t callTime)
 {
-    if (configData->priorTime == 0)
-    {
+    if (configData->priorTime == 0) {
         configData->dt = 0.0;
     } else {
         configData->dt = diffNanoToSec(callTime, configData->priorTime);
     }
 }
-
 
 /*! @brief This function computes the reference (MRP attitude Set, angular velocity and angular acceleration)
  associated with a rotation defined in terms of an initial MRP set and a constant angular velocity vector
@@ -161,20 +154,21 @@ void computeTimeStep(mrpRotationConfig *configData, uint64_t callTime)
  @param domega_R0N_N The input reference frame angular acceleration vector
  @param attRefOut The output message copy
  */
-void computeMRPRotationReference(mrpRotationConfig *configData,
-                                 double sigma_R0N[3],
-                                 double omega_R0N_N[3],
-                                 double domega_R0N_N[3],
-                                 AttRefMsgPayload   *attRefOut)
+void
+computeMRPRotationReference(mrpRotationConfig* configData,
+                            double sigma_R0N[3],
+                            double omega_R0N_N[3],
+                            double domega_R0N_N[3],
+                            AttRefMsgPayload* attRefOut)
 {
-    double attIncrement[3];         /* [] increment in MRP attitude coordinates  */
-    double RR0[3][3];               /* [] DCM rotating from R0 to R */
-    double R0N[3][3];               /* [] DCM rotating from N to R0 */
-    double RN[3][3];                /* [] DCM rotating from N to R */
-    double sigmaDot_RR0[3];         /* [1/s] MRP rates */
-    double B[3][3];                 /* [] B matrix relating omega to MRP rates */
-    double omega_RR0_N[3];          /* [r/s] angular velocity of R frame relative to input R0 frame */
-    double domega_RR0_N[3];         /* [r/s^2] inertial derivative of angular velocity vector between R and R0 frames */
+    double attIncrement[3]; /* [] increment in MRP attitude coordinates  */
+    double RR0[3][3];       /* [] DCM rotating from R0 to R */
+    double R0N[3][3];       /* [] DCM rotating from N to R0 */
+    double RN[3][3];        /* [] DCM rotating from N to R */
+    double sigmaDot_RR0[3]; /* [1/s] MRP rates */
+    double B[3][3];         /* [] B matrix relating omega to MRP rates */
+    double omega_RR0_N[3];  /* [r/s] angular velocity of R frame relative to input R0 frame */
+    double domega_RR0_N[3]; /* [r/s^2] inertial derivative of angular velocity vector between R and R0 frames */
 
     /*! - Compute attitude reference frame R/N information */
     MRP2C(sigma_R0N, R0N);

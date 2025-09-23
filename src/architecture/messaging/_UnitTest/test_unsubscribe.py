@@ -21,11 +21,12 @@ from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.architecture import messaging
 from Basilisk.architecture import bskLogging
 
+
 def assertConnectionWithValues(
     inMsg: Union[messaging.CModuleTemplateMsg_C, messaging.CModuleTemplateMsgReader],
-    outMsg: Union[messaging.CModuleTemplateMsg_C, messaging.CModuleTemplateMsg]
+    outMsg: Union[messaging.CModuleTemplateMsg_C, messaging.CModuleTemplateMsg],
 ):
-    val = time.time() # unique value
+    val = time.time()  # unique value
 
     payload = messaging.CModuleTemplateMsgPayload()
     payload.dataVector = [val, 0, 0]
@@ -37,6 +38,7 @@ def assertConnectionWithValues(
         readPayload: messaging.CModuleTemplateMsgPayload = inMsg()
 
     assert readPayload.dataVector[0] == val
+
 
 def test_unsubscribe():
     """
@@ -100,6 +102,7 @@ def test_unsubscribe():
 
     assert not messaging.CModuleTemplateMsg_C_isLinked(cMod.dataInMsg)
     assert not cppMod.dataInMsg.isLinked()
+
 
 if __name__ == "__main__":
     test_unsubscribe()

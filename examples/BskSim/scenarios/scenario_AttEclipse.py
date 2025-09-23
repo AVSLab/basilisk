@@ -130,6 +130,7 @@ import os
 import sys
 
 import numpy as np
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
@@ -137,15 +138,16 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + "/..")
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics, BSK_Fsw
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../plotting")
 import BSK_Plotting as BSK_plt
 
-sys.path.append(path + '/../../scenarios')
+sys.path.append(path + "/../../scenarios")
+
 
 # To begin, one must first create a class that will
 # inherent from the masterSim class and provide a name to the sim.
@@ -154,7 +156,7 @@ sys.path.append(path + '/../../scenarios')
 class scenario_AttitudeEclipse(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_AttitudeEclipse, self).__init__(fswRate=1.0, dynRate=1.0)
-        self.name = 'scenario_AttitudeEclipse'
+        self.name = "scenario_AttitudeEclipse"
 
         self.shadowRec = None
         self.rwSpeedRec = None
@@ -170,10 +172,13 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModels = self.get_DynModel()
-        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=DynModels.rwStateEffector
-                                            )
+        vizSupport.enableUnityVisualization(
+            self,
+            DynModels.taskName,
+            DynModels.scObject,
+            # , saveFile=__file__
+            rwEffectorList=DynModels.rwStateEffector,
+        )
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
@@ -185,25 +190,39 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         self.get_DynModel().scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         self.get_DynModel().scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-        self.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.get_DynModel().scObject.hub.sigma_BNInit = [
+            [0.1],
+            [0.2],
+            [-0.3],
+        ]  # sigma_BN_B
+        self.get_DynModel().scObject.hub.omega_BN_BInit = [
+            [0.001],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         samplingTime = self.get_FswModel().processTasksTimeStep
 
         # Dynamics process outputs: log messages below if desired.
-        self.shadowRec = self.get_DynModel().eclipseObject.eclipseOutMsgs[0].recorder(samplingTime)
-        self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+        self.shadowRec = (
+            self.get_DynModel().eclipseObject.eclipseOutMsgs[0].recorder(samplingTime)
+        )
+        self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(
+            samplingTime
+        )
 
         # FSW process outputs
         self.rwMotorRec = self.get_FswModel().cmdRwMotorMsg.recorder(samplingTime)
         self.sunSafeRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
-        self.cssEstRec = self.get_FswModel().cssWlsEst.navStateOutMsg.recorder(samplingTime)
+        self.cssEstRec = self.get_FswModel().cssWlsEst.navStateOutMsg.recorder(
+            samplingTime
+        )
 
         self.AddModelToTask(self.get_DynModel().taskName, self.shadowRec)
         self.AddModelToTask(self.get_DynModel().taskName, self.rwSpeedRec)
@@ -243,7 +262,14 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed", "shadowFraction", "sunDirectionVector"]
+            figureNames = [
+                "attitudeErrorNorm",
+                "rwMotorTorque",
+                "rateError",
+                "rwSpeed",
+                "shadowFraction",
+                "sunDirectionVector",
+            ]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
@@ -253,7 +279,7 @@ def runScenario(TheScenario):
     # Initialize simulation
     TheScenario.InitializeSimulation()
     # Configure FSW mode
-    TheScenario.modeRequest = 'sunSafePoint'
+    TheScenario.modeRequest = "sunSafePoint"
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(60.0)
@@ -263,10 +289,10 @@ def runScenario(TheScenario):
 
 def run(showPlots):
     """
-        The scenarios can be run with the followings setups parameters:
+    The scenarios can be run with the followings setups parameters:
 
-        Args:
-            showPlots (bool): Determines if the script should display plots
+    Args:
+        showPlots (bool): Determines if the script should display plots
 
     """
 

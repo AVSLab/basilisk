@@ -23,12 +23,15 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging, astroConstants
 from Basilisk.fswAlgorithms import formationBarycenter
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, orbitalMotion
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    unitTestSupport,
+    macros,
+    orbitalMotion,
+)
 
 
 @pytest.mark.parametrize("accuracy", [1e-1])
-
-
 def test_formationBarycenter(show_plots, accuracy):
     r"""
     **Validation Test Description**
@@ -70,7 +73,7 @@ def formationBarycenterTestFunction(show_plots, accuracy):
     unitProcessName = "TestProcess"
 
     unitTestSim = SimulationBaseClass.SimBaseClass()
-    testProcessRate = macros.sec2nano(1.)
+    testProcessRate = macros.sec2nano(1.0)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -80,10 +83,10 @@ def formationBarycenterTestFunction(show_plots, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, barycenterModule)
 
     # Configure each spacecraft's position and velocity
-    mu = astroConstants.MU_EARTH*1e9  # m^3/s^2
+    mu = astroConstants.MU_EARTH * 1e9  # m^3/s^2
 
     oe1 = orbitalMotion.ClassicElements()
-    oe1.a = 1.1 * astroConstants.REQ_EARTH*1e3  # m
+    oe1.a = 1.1 * astroConstants.REQ_EARTH * 1e3  # m
     oe1.e = 0.01
     oe1.i = 45.0 * macros.D2R
     oe1.Omega = 48.2 * macros.D2R
@@ -157,18 +160,42 @@ def formationBarycenterTestFunction(show_plots, accuracy):
     barycenterC = barycenterOutMsgC.r_BN_N
     barycenterVelocityC = barycenterOutMsgC.v_BN_N
     elements = orbitalMotion.rv2elem(mu, barycenter[1], barycenterVelocity[1])
-    elementsArray = [elements.a, elements.e, elements.i, elements.Omega, elements.omega, elements.f]
+    elementsArray = [
+        elements.a,
+        elements.e,
+        elements.i,
+        elements.Omega,
+        elements.omega,
+        elements.f,
+    ]
     elementsC = orbitalMotion.rv2elem(mu, barycenterC[1], barycenterVelocityC[1])
-    elementsArrayC = [elementsC.a, elementsC.e, elementsC.i, elementsC.Omega, elementsC.omega, elementsC.f]
+    elementsArrayC = [
+        elementsC.a,
+        elementsC.e,
+        elementsC.i,
+        elementsC.Omega,
+        elementsC.omega,
+        elementsC.f,
+    ]
 
     # Set the true values
     trueBarycenter = np.array([-2795611.0423523, 4349073.25701624, 4711567.73659507])
     trueBarycenterVelocity = np.array([-5738.71806601, -4744.64063227, 1079.61501999])
-    trueElements = [7015950.259999997, 0.0099, 0.7579092276785376, 0.8412486994612671, 6.07025513843626, 1.5855546253383273]
+    trueElements = [
+        7015950.259999997,
+        0.0099,
+        0.7579092276785376,
+        0.8412486994612671,
+        6.07025513843626,
+        1.5855546253383273,
+    ]
 
     # Verify the data
-    if not unitTestSupport.isArrayEqual(barycenter[0], trueBarycenter, 3, accuracy) or \
-            not unitTestSupport.isArrayEqual(barycenterVelocity[0], trueBarycenterVelocity, 3, accuracy):
+    if not unitTestSupport.isArrayEqual(
+        barycenter[0], trueBarycenter, 3, accuracy
+    ) or not unitTestSupport.isArrayEqual(
+        barycenterVelocity[0], trueBarycenterVelocity, 3, accuracy
+    ):
         testFailCount += 1
         testMessages.append("FAILED: formationBarycenter cartesian unit test.")
 
@@ -176,14 +203,21 @@ def formationBarycenterTestFunction(show_plots, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: formationBarycenter orbital element unit test.")
 
-    if not unitTestSupport.isArrayEqual(barycenterC[0], trueBarycenter, 3, accuracy) or \
-            not unitTestSupport.isArrayEqual(barycenterVelocityC[0], trueBarycenterVelocity, 3, accuracy):
+    if not unitTestSupport.isArrayEqual(
+        barycenterC[0], trueBarycenter, 3, accuracy
+    ) or not unitTestSupport.isArrayEqual(
+        barycenterVelocityC[0], trueBarycenterVelocity, 3, accuracy
+    ):
         testFailCount += 1
-        testMessages.append("FAILED: formationBarycenter C message cartesian unit test.")
+        testMessages.append(
+            "FAILED: formationBarycenter C message cartesian unit test."
+        )
 
     if not unitTestSupport.isArrayEqual(elementsArrayC, trueElements, 6, accuracy):
         testFailCount += 1
-        testMessages.append("FAILED: formationBarycenter C message orbital element unit test.")
+        testMessages.append(
+            "FAILED: formationBarycenter C message orbital element unit test."
+        )
 
     if testFailCount == 0:
         print("PASSED: formationBarycenter unit test.")
@@ -196,5 +230,5 @@ def formationBarycenterTestFunction(show_plots, accuracy):
 if __name__ == "__main__":
     test_formationBarycenter(
         False,  # show_plots
-        1e-8  # accuracy
+        1e-8,  # accuracy
     )

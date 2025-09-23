@@ -2,7 +2,7 @@
 This test is located in \texttt{simulation/dynamics/FuelTank/UnitTest/\newline
 test\_fuelSloshParticleStateEffector.py}. In this integrated test there are three fuel slosh particles connected to the spacecraft hub.  Depending on the scenario, there are different success criteria. These are outlined in the following subsections:
 \subsection{Gravity integrated test}
-In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the fuel slosh particles. The following parameters are being tested. 
+In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the fuel slosh particles. The following parameters are being tested.
 \begin{itemize}
 	\item Conservation of orbital angular momentum
 	\item Conservation of orbital energy
@@ -29,13 +29,13 @@ In this test, the spacecraft is placed in free space (no gravity) and has dampin
 
 \section{Test Parameters}
 
-Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The error tolerance for the energy and momentum tests is 1e-10 and that was chosen to ensure cross platform success of the test, however it is expected to get conservation of energy and momentum down to 1e-14 or lower. 
+Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The error tolerance for the energy and momentum tests is 1e-10 and that was chosen to ensure cross platform success of the test, however it is expected to get conservation of energy and momentum down to 1e-14 or lower.
 
 \begin{table}[htbp]
 	\caption{Spacecraft Hub Parameters}
 	\label{tab:hub}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -57,7 +57,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Fuel Slosh Particle 1 Parameters}
 	\label{tab:slosh1}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -80,7 +80,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Fuel Slosh Particle 2 Parameters}
 	\label{tab:slosh2}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -103,7 +103,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Fuel Slosh Particle 3 Parameters}
 	\label{tab:slosh3}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -126,7 +126,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Initial Conditions}
 	\label{tab:initial}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -143,7 +143,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		(Particle 3) rhoDotInit  & (Particle 3) Initial $\dot{\rho}$ & 0.0 & m/s \\
 		\hline
 		r\_CN\_NInit & Initial Position of S/C (gravity scenarios) & $\begin{bmatrix}
-		-4020339 &	7490567 & 5248299 
+		-4020339 &	7490567 & 5248299
 		\end{bmatrix}^T$ & m \\
 		\hline
 		v\_CN\_NInit & Initial Velocity of S/C (gravity scenarios) & $\begin{bmatrix}
@@ -151,7 +151,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		\end{bmatrix}^T$ & m/s \\
 		\hline
 		r\_CN\_NInit & Initial Position of S/C (no gravity) & $\begin{bmatrix}
-		0.5 & 0.4 & -0.7 
+		0.5 & 0.4 & -0.7
 		\end{bmatrix}^T$ & m \\
 		\hline
 		v\_CN\_NInit & Initial Velocity of S/C (no gravity) & $\begin{bmatrix}
@@ -173,12 +173,12 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Error Tolerance - Note: Relative Tolerance is $\textnormal{abs}(\frac{\textnormal{truth} - \textnormal{value}}{\textnormal{truth}}$)}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c |} % Column formatting, 
+	\begin{tabular}{| c | c |} % Column formatting,
 		\hline
 		Test   & Relative Tolerance \\
 		\hline
 		Energy and Momentum Conservation & 1e-10 \\
-		\hline	
+		\hline
 	\end{tabular}
 \end{table}
 
@@ -186,7 +186,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \section{Test Results}
 
-The following figures show the conservation of the quantities described in the success criteria for each scenario. The conservation plots are all relative difference plots. All conservation plots show integration error which is the desired result. In the python test these values are automatically checked therefore when the tests pass, these values have all been confirmed to be conserved. An additional note: the angular momentum plots are plotting the change in the components of the angular momentum vector in the inertial frame. The individual components are not labeled because the goal is for each component to show conservation therefore the individual components do not have separate information needing to be specified.  
+The following figures show the conservation of the quantities described in the success criteria for each scenario. The conservation plots are all relative difference plots. All conservation plots show integration error which is the desired result. In the python test these values are automatically checked therefore when the tests pass, these values have all been confirmed to be conserved. An additional note: the angular momentum plots are plotting the change in the components of the angular momentum vector in the inertial frame. The individual components are not labeled because the goal is for each component to show conservation therefore the individual components do not have separate information needing to be specified.
 
 \subsection{Gravity with no damping scenario}
 \begin{figure}[htbp]

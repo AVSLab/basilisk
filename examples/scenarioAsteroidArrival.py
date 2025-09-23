@@ -202,9 +202,27 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport, unitTestSupport, orbitalMotion)
-from Basilisk.simulation import spacecraft, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
-from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+    vizSupport,
+    unitTestSupport,
+    orbitalMotion,
+)
+from Basilisk.simulation import (
+    spacecraft,
+    extForceTorque,
+    simpleNav,
+    ephemerisConverter,
+    planetEphemeris,
+)
+from Basilisk.fswAlgorithms import (
+    mrpFeedback,
+    attTrackingError,
+    velocityPoint,
+    locationPointing,
+)
 from Basilisk.architecture import messaging, astroConstants
 
 try:
@@ -247,15 +265,15 @@ def run(show_plots):
 
     # Setup celestial object ephemeris module for the asteroid
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.ModelTag = "planetEphemeris"
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
     # Specify orbital parameters of the asteroid
     timeInitString = "2011 January 1 0:00:00.0"
     diam = 2 * 245.03  # m
-    G = 6.67408 * (10 ** -11)  # m^3 / kg*s^2
-    massBennu = 7.329 * (10 ** 10)  # kg
+    G = 6.67408 * (10**-11)  # m^3 / kg*s^2
+    massBennu = 7.329 * (10**10)  # kg
     mu = G * massBennu  # Bennu grav. parameter, m^3/s^2
     oeAsteroid = planetEphemeris.ClassicElements()
     oeAsteroid.a = 1.1264 * astroConstants.AU * 1000  # m
@@ -270,23 +288,25 @@ def run(show_plots):
     gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([85.65 * macros.D2R])
     gravBodyEphem.declination = planetEphemeris.DoubleVector([-60.17 * macros.D2R])
     gravBodyEphem.lst0 = planetEphemeris.DoubleVector([0.0 * macros.D2R])
-    gravBodyEphem.rotRate = planetEphemeris.DoubleVector([360 * macros.D2R / (4.296057 * 3600.)])  # rad/sec
+    gravBodyEphem.rotRate = planetEphemeris.DoubleVector(
+        [360 * macros.D2R / (4.296057 * 3600.0)]
+    )  # rad/sec
 
     # Set orbital radii about asteroid
-    r0 = diam/2.0 + 800  # capture orbit, meters
-    r1 = diam/2.0 + 600  # intermediate orbit, meters
-    r2 = diam/2.0 + 400  # final science orbit, meters
-    r3 = diam/2.0 + 200  # meters, very close fly-by, elliptic orbit
+    r0 = diam / 2.0 + 800  # capture orbit, meters
+    r1 = diam / 2.0 + 600  # intermediate orbit, meters
+    r2 = diam / 2.0 + 400  # final science orbit, meters
+    r3 = diam / 2.0 + 200  # meters, very close fly-by, elliptic orbit
     rP = r0
-    rA = 3*rP
+    rA = 3 * rP
 
     # Set orbital periods
-    P0 = np.pi*2/np.sqrt(mu/(r0**3))
-    P01 = np.pi*2/np.sqrt(mu/(((r0+r1)/2)**3))
-    P1 = np.pi*2/np.sqrt(mu/(r1**3))
-    P12 = np.pi*2/np.sqrt(mu/(((r1+r2)/2)**3))
-    P2 = np.pi*2/np.sqrt(mu/(r2**3))
-    P23 = np.pi*2/np.sqrt(mu/(((r2+r3)/2)**3))
+    P0 = np.pi * 2 / np.sqrt(mu / (r0**3))
+    P01 = np.pi * 2 / np.sqrt(mu / (((r0 + r1) / 2) ** 3))
+    P1 = np.pi * 2 / np.sqrt(mu / (r1**3))
+    P12 = np.pi * 2 / np.sqrt(mu / (((r1 + r2) / 2) ** 3))
+    P2 = np.pi * 2 / np.sqrt(mu / (r2**3))
+    P23 = np.pi * 2 / np.sqrt(mu / (((r2 + r3) / 2) ** 3))
 
     # Create additional gravitational bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -305,12 +325,15 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, spiceObject)
 
     # Create the asteroid custom gravitational body
-    asteroid = gravFactory.createCustomGravObject("bennu", mu
-                                                  , modelDictionaryKey="Bennu"
-                                                  , radEquator=565. / 2.0
-                                                  )
-    asteroid.isCentralBody = True  # ensures the asteroid is the central gravitational body
-    asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])  # connect asteroid ephem. to custom grav body
+    asteroid = gravFactory.createCustomGravObject(
+        "bennu", mu, modelDictionaryKey="Bennu", radEquator=565.0 / 2.0
+    )
+    asteroid.isCentralBody = (
+        True  # ensures the asteroid is the central gravitational body
+    )
+    asteroid.planetBodyInMsg.subscribeTo(
+        gravBodyEphem.planetOutMsgs[0]
+    )  # connect asteroid ephem. to custom grav body
 
     # Create the spacecraft object
     scObject = spacecraft.Spacecraft()
@@ -323,7 +346,7 @@ def run(show_plots):
     # Create an ephemeris converter to convert messages of type
     # 'SpicePlanetStateMsgPayload' to 'EphemerisMsgPayload'
     ephemObject = ephemerisConverter.EphemerisConverter()
-    ephemObject.ModelTag = 'EphemData'
+    ephemObject.ModelTag = "EphemData"
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[earthIdx])
     ephemObject.addSpiceInputMsg(spiceObject.planetStateOutMsgs[sunIdx])
     # Recall the asteroid was not created with Spice.
@@ -331,32 +354,38 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, ephemObject)
 
     # Define the spacecraft inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # Define the initial spacecraft orbit about the asteroid
     oe = orbitalMotion.ClassicElements()
-    oe.a = (rP + rA)/2.0
+    oe.a = (rP + rA) / 2.0
     oe.e = 1 - (rP / oe.a)
     oe.i = 90.0 * macros.D2R
     oe.Omega = 180.0 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = -45.0 * macros.D2R
-    Ecc = np.arctan(np.tan(-oe.f/2)*np.sqrt((1-oe.e)/(1+oe.e)))*2 # eccentric anomaly
-    M = Ecc - oe.e*np.sin(Ecc) # mean anomaly
-    n = np.sqrt(mu/(oe.a**3))
-    h = np.sqrt(mu*oe.a*(1-oe.e**2)) # specific angular momentum
-    vP = h/rP
-    V_SC_C_B = np.sqrt(mu / rP)     # [m/s] (2) spacecraft circular parking speed relative to bennu.
+    Ecc = (
+        np.arctan(np.tan(-oe.f / 2) * np.sqrt((1 - oe.e) / (1 + oe.e))) * 2
+    )  # eccentric anomaly
+    M = Ecc - oe.e * np.sin(Ecc)  # mean anomaly
+    n = np.sqrt(mu / (oe.a**3))
+    h = np.sqrt(mu * oe.a * (1 - oe.e**2))  # specific angular momentum
+    vP = h / rP
+    V_SC_C_B = np.sqrt(
+        mu / rP
+    )  # [m/s] (2) spacecraft circular parking speed relative to bennu.
     Delta_V_Parking_Orbit = V_SC_C_B - vP
 
     # Setting initial position and velocity vectors using orbital elements
     r_N, v_N = orbitalMotion.elem2rv(mu, oe)
-    T1 = M/n  # time until spacecraft reaches periapsis of arrival trajectory
+    T1 = M / n  # time until spacecraft reaches periapsis of arrival trajectory
 
     # Initialize spacecraft states with the initialization variables
     scObject.hub.r_CN_NInit = r_N  # [m]   = r_BN_N
@@ -405,7 +434,9 @@ def run(show_plots):
     sciencePointGuidance.celBodyInMsg.subscribeTo(ephemObject.ephemOutMsgs[asteroidIdx])
     sciencePointGuidance.scTransInMsg.subscribeTo(sNavObject.transOutMsg)
     sciencePointGuidance.scAttInMsg.subscribeTo(sNavObject.attOutMsg)
-    sciencePointGuidance.pHat_B = cameraLocation  # y-axis set for science-pointing sensor
+    sciencePointGuidance.pHat_B = (
+        cameraLocation  # y-axis set for science-pointing sensor
+    )
     sciencePointGuidance.useBoresightRateDamping = 1
     scSim.AddModelToTask(simTaskName, sciencePointGuidance)
 
@@ -423,7 +454,9 @@ def run(show_plots):
     attError = attTrackingError.attTrackingError()
     attError.ModelTag = "attErrorInertial3D"
     scSim.AddModelToTask(simTaskName, attError)
-    attError.attRefInMsg.subscribeTo(sunPointGuidance.attRefOutMsg)  # initial flight mode
+    attError.attRefInMsg.subscribeTo(
+        sunPointGuidance.attRefOutMsg
+    )  # initial flight mode
     attError.attNavInMsg.subscribeTo(sNavObject.attOutMsg)
 
     # Create the FSW vehicle configuration message
@@ -438,10 +471,10 @@ def run(show_plots):
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
     mrpControl.Ki = -1.0  # make value negative to turn off integral feedback
-    II = 900.
-    mrpControl.P = 2*II/(20*60)
-    mrpControl.K = mrpControl.P*mrpControl.P/II
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    II = 900.0
+    mrpControl.P = 2 * II / (20 * 60)
+    mrpControl.K = mrpControl.P * mrpControl.P / II
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     # Connect the torque command to external torque effector
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -461,15 +494,17 @@ def run(show_plots):
         genericSensor.fieldOfView.push_back(10.0 * macros.D2R)
         genericSensor.normalVector = cameraLocation
         genericSensor.size = 10
-        genericSensor.color = vizInterface.IntVector(vizSupport.toRGBA255("white", alpha=0.1))
+        genericSensor.color = vizInterface.IntVector(
+            vizSupport.toRGBA255("white", alpha=0.1)
+        )
         genericSensor.label = "scienceCamera"
         genericSensor.genericSensorCmd = 1
 
         # Set up the antenna visualization for transmission to Earth
         transceiverHUD = vizInterface.Transceiver()
-        transceiverHUD.r_SB_B = [0., 0., 1.38]
+        transceiverHUD.r_SB_B = [0.0, 0.0, 1.38]
         transceiverHUD.fieldOfView = 40.0 * macros.D2R
-        transceiverHUD.normalVector = [0., 0., 1.]
+        transceiverHUD.normalVector = [0.0, 0.0, 1.0]
         transceiverHUD.color = vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
         transceiverHUD.label = "antenna"
         transceiverHUD.animationSpeed = 1
@@ -499,9 +534,12 @@ def run(show_plots):
         scData.thrInfo = vizInterface.ThrClusterVector([thrInfo])
 
         # Create the Vizard visualization file and set parameters
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  # , saveFile=fileName
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # , saveFile=fileName
+        )
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
 
         viz.settings.showCelestialBodyLabels = 1
@@ -515,10 +553,15 @@ def run(show_plots):
         viz.settings.keyboardAngularRate = np.deg2rad(0.5)
 
         # Create the science mode camera
-        vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
-                                        fieldOfView=10 * macros.D2R,
-                                        displayName="10˚ FOV Camera",
-                                        pointingVector_B=[0, 1, 0], position_B=cameraLocation)
+        vizSupport.createStandardCamera(
+            viz,
+            setMode=1,
+            spacecraftName=scObject.ModelTag,
+            fieldOfView=10 * macros.D2R,
+            displayName="10˚ FOV Camera",
+            pointingVector_B=[0, 1, 0],
+            position_B=cameraLocation,
+        )
 
         # Note: After running the enableUnityVisualization() method, we need to clear the
         # vizInterface spacecraft data container, scData, and push our custom copy to it.
@@ -575,12 +618,16 @@ def run(show_plots):
             transceiverHUD.transceiverState = 0  # antenna off
             genericSensor.isHidden = 1
         if burnSign > 0:
-            attError.sigma_R0R = [np.tan((np.pi/2)/4), 0, 0]
+            attError.sigma_R0R = [np.tan((np.pi / 2) / 4), 0, 0]
         else:
             attError.sigma_R0R = [-np.tan((np.pi / 2) / 4), 0, 0]
         minTime = 40 * 60
         if simTime < minTime:
-            print("ERROR: runPosDvBurn must have simTime larger than " + str(minTime) + " min")
+            print(
+                "ERROR: runPosDvBurn must have simTime larger than "
+                + str(minTime)
+                + " min"
+            )
             exit(1)
         else:
             simulationTime += macros.sec2nano(minTime)
@@ -595,7 +642,7 @@ def run(show_plots):
 
     simulationTime = 0
     np.set_printoptions(precision=16)
-    burnTime = 200*60
+    burnTime = 200 * 60
 
     # Run thruster burn for arrival to the capture orbit with thrusters on
     runDvBurn(T1, -1, velAsteroidGuidance.attRefOutMsg)
@@ -611,9 +658,9 @@ def run(show_plots):
 
     # Travel in a circular orbit at r0, incorporating several attitude pointing modes
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
-    runSensorSciencePointing(P0/3.-burnTime)
-    runPanelSunPointing(P0/3.)
-    runAntennaEarthPointing(P0/3. - burnTime)
+    runSensorSciencePointing(P0 / 3.0 - burnTime)
+    runPanelSunPointing(P0 / 3.0)
+    runAntennaEarthPointing(P0 / 3.0 - burnTime)
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Get access to dynManager translational states for future access to the states
@@ -626,7 +673,7 @@ def run(show_plots):
     # Conduct the first burn of a Hohmann transfer from r0 to r1
     rData = np.linalg.norm(rN)
     vData = np.linalg.norm(vN)
-    at = (rData + r1) * .5
+    at = (rData + r1) * 0.5
     v0p = np.sqrt((2 * mu / rData) - (mu / at))
     vHat = vN / vData
     vVt = vN + vHat * (v0p - vData)
@@ -635,7 +682,7 @@ def run(show_plots):
 
     # Run thruster burn mode along with sun-pointing during the transfer orbit
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
-    runPanelSunPointing(P01/2. - burnTime*2)
+    runPanelSunPointing(P01 / 2.0 - burnTime * 2)
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Retrieve the latest relative position and velocity components
@@ -653,8 +700,8 @@ def run(show_plots):
 
     # Run thruster burn visualization along with attitude pointing modes
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
-    runSensorSciencePointing(P1/4-burnTime)
-    runAntennaEarthPointing(P1/4-burnTime)
+    runSensorSciencePointing(P1 / 4 - burnTime)
+    runAntennaEarthPointing(P1 / 4 - burnTime)
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Retrieve the latest relative position and velocity components
@@ -664,7 +711,7 @@ def run(show_plots):
     # Conduct a second Hohmann transfer from r1 to r2, initial burn
     rData = np.linalg.norm(rN)
     vData = np.linalg.norm(vN)
-    at = (rData + r2) * .5
+    at = (rData + r2) * 0.5
     v2p = np.sqrt((2 * mu / rData) - (mu / at))
     vHat = vN / vData
     vVt = vN + vHat * (v2p - vData)
@@ -673,7 +720,7 @@ def run(show_plots):
 
     # Run thruster burn section with science pointing mode
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
-    runSensorSciencePointing(P12/2-burnTime*2)
+    runSensorSciencePointing(P12 / 2 - burnTime * 2)
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
 
     # Retrieve the latest relative position and velocity components
@@ -691,7 +738,7 @@ def run(show_plots):
 
     # Run thruster visualization with science pointing mode
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
-    runSensorSciencePointing(P2-burnTime)
+    runSensorSciencePointing(P2 - burnTime)
 
     # Retrieve the latest relative position and velocity components
     rN = scRec.r_BN_N[-1] - astRec.PositionVector[-1]
@@ -700,7 +747,7 @@ def run(show_plots):
     # Conduct a third Hohmann transfer from r2 to r3, initial burn
     rData = np.linalg.norm(rN)
     vData = np.linalg.norm(vN)
-    at = (rData + r3) * .5
+    at = (rData + r3) * 0.5
     v3p = np.sqrt((2 * mu / rData) - (mu / at))
     vHat = vN / vData
     vVt = vN + vHat * (v3p - vData)
@@ -709,7 +756,7 @@ def run(show_plots):
 
     # Run thruster visualization with science-pointing mode
     runDvBurn(burnTime, -1, velAsteroidGuidance.attRefOutMsg)
-    runSensorSciencePointing(3*P23-burnTime)
+    runSensorSciencePointing(3 * P23 - burnTime)
 
     # Retrieve logged spacecraft position relative to asteroid
     posData1 = scRec.r_BN_N  # inertial pos. wrt. Sun
@@ -741,27 +788,38 @@ def plotOrbits(timeAxis, posData1, posData2, rP, diam):
     # Draw the planet
     fig = plt.gcf()
     ax = fig.gca()
-    ax.set_aspect('equal')
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-    planetColor = '#008800'
-    planetRadius = .5*(diam) # m
+    ax.set_aspect("equal")
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
+    ax.get_xaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
+    planetColor = "#008800"
+    planetRadius = 0.5 * (diam)  # m
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
 
     # Draw the actual orbit from pulled data (DataRec)
-    plt.plot(posData2[:, 0], posData2[:, 2], color='orangered',
-             label='Simulated Flight')
-    plt.xlabel('X Distance, Inertial [m]')
-    plt.ylabel('Z Distance, Inertial [m]')
+    plt.plot(
+        posData2[:, 0], posData2[:, 2], color="orangered", label="Simulated Flight"
+    )
+    plt.xlabel("X Distance, Inertial [m]")
+    plt.ylabel("Z Distance, Inertial [m]")
 
     # Draw desired parking orbit
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for indx in range(0, len(fData)):
         rData.append(rP)
-    plt.plot(rData* np.cos(fData), rData * np.sin(fData), '--', color='#555555', label='Desired Circ.Capture Orbit')
-    plt.legend(loc='upper right')
+    plt.plot(
+        rData * np.cos(fData),
+        rData * np.sin(fData),
+        "--",
+        color="#555555",
+        label="Desired Circ.Capture Orbit",
+    )
+    plt.legend(loc="upper right")
     plt.grid()
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)

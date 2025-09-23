@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import pytest
 from Basilisk.architecture import messaging
@@ -69,50 +69,52 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
 
     # Configure space object state and voltage input messages
     sc0StateInMsgsData = messaging.SCStatesMsgPayload()
-    sc0StateInMsgsData.r_BN_N = [10., 2., 3.]
+    sc0StateInMsgsData.r_BN_N = [10.0, 2.0, 3.0]
     sc0StateInMsgsData.sigma_BN = [0.1, 0.2, 0.3]
     sc0StateInMsg = messaging.SCStatesMsg().write(sc0StateInMsgsData)
 
     sc1StateInMsgsData = messaging.SCStatesMsgPayload()
-    sc1StateInMsgsData.r_BN_N = [-10., -2., 3.]
+    sc1StateInMsgsData.r_BN_N = [-10.0, -2.0, 3.0]
     sc1StateInMsgsData.sigma_BN = [-0.1, 0.2, 0.3]
     sc1StateInMsg = messaging.SCStatesMsg().write(sc1StateInMsgsData)
 
     sc2StateInMsgsData = messaging.SCStatesMsgPayload()
-    sc2StateInMsgsData.r_BN_N = [1., 1., 0.]
+    sc2StateInMsgsData.r_BN_N = [1.0, 1.0, 0.0]
     sc2StateInMsgsData.sigma_BN = [0.1, 0.2, -0.3]
     sc2StateInMsg = messaging.SCStatesMsg().write(sc2StateInMsgsData)
 
     volt0InMsgData = messaging.VoltMsgPayload()
-    volt0InMsgData.voltage = 30000.
+    volt0InMsgData.voltage = 30000.0
     volt0InMsg = messaging.VoltMsg().write(volt0InMsgData)
 
     volt1InMsgData = messaging.VoltMsgPayload()
-    volt1InMsgData.voltage = -10000.
+    volt1InMsgData.voltage = -10000.0
     volt1InMsg = messaging.VoltMsg().write(volt1InMsgData)
 
     volt2InMsgData = messaging.VoltMsgPayload()
-    volt2InMsgData.voltage = 20000.
+    volt2InMsgData.voltage = 20000.0
     volt2InMsg = messaging.VoltMsg().write(volt2InMsgData)
 
     # create a list of sphere body-fixed locations and associated radii
-    spPosList = [
-        [1., 2., 3.]
-        , [4., 5., 6.]
-        , [14., 5., 6.]
-    ]
-    rList = [1., 2., 1.5]
+    spPosList = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [14.0, 5.0, 6.0]]
+    rList = [1.0, 2.0, 1.5]
 
     # add spacecraft to state
-    module.addSpacecraftToModel(sc0StateInMsg
-                                , messaging.DoubleVector(rList[:-1])
-                                , unitTestSupport.npList2EigenXdVector(spPosList[:-1]))
-    module.addSpacecraftToModel(sc1StateInMsg
-                                , messaging.DoubleVector(rList)
-                                , unitTestSupport.npList2EigenXdVector(spPosList))
-    module.addSpacecraftToModel(sc2StateInMsg
-                                , messaging.DoubleVector(rList[:-1])
-                                , unitTestSupport.npList2EigenXdVector(spPosList[:-1]))
+    module.addSpacecraftToModel(
+        sc0StateInMsg,
+        messaging.DoubleVector(rList[:-1]),
+        unitTestSupport.npList2EigenXdVector(spPosList[:-1]),
+    )
+    module.addSpacecraftToModel(
+        sc1StateInMsg,
+        messaging.DoubleVector(rList),
+        unitTestSupport.npList2EigenXdVector(spPosList),
+    )
+    module.addSpacecraftToModel(
+        sc2StateInMsg,
+        messaging.DoubleVector(rList[:-1]),
+        unitTestSupport.npList2EigenXdVector(spPosList[:-1]),
+    )
 
     # subscribe input messages to module
     module.voltInMsgs[0].subscribeTo(volt0InMsg)
@@ -124,39 +126,51 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
 
     # set truth force and torque values
     fTruth = [
-        [6.48179e-05, 0.00147205, 0.000924806]
-        , [0.00107182, -0.000240543, 0.000110224]
-        , [-0.00113664, -0.00123151, -0.00103503]
+        [6.48179e-05, 0.00147205, 0.000924806],
+        [0.00107182, -0.000240543, 0.000110224],
+        [-0.00113664, -0.00123151, -0.00103503],
     ]
     tauTruth = [
-        [-0.00268192, 0.00295288, -0.000603687]
-        , [0.00688387, -0.00209438, -0.00647544]
-        , [0.00581629, 0.007876, -0.00986612]
+        [-0.00268192, 0.00295288, -0.000603687],
+        [0.00688387, -0.00209438, -0.00647544],
+        [0.00581629, 0.007876, -0.00986612],
     ]
     chargeTruth = [
-        [1.99932e-6, 5.73861e-6]
-        , [-1.06715e-6, -2.51072e-6, -1.94044e-6]
-        , [1.30148e-6, 3.23131e-6]
+        [1.99932e-6, 5.73861e-6],
+        [-1.06715e-6, -2.51072e-6, -1.94044e-6],
+        [1.30148e-6, 3.23131e-6],
     ]
 
     # pull module data and make sure it is correct
     for i in range(3):
         f = module.eForceOutMsgs[i].read().forceRequestInertial
-        testFailCount, testMessages = \
-            unitTestSupport.compareDoubleArrayRelative(f, fTruth[i],
-                                                       accuracy, "sc" + str(i) + " force test",
-                                                       testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
+            f,
+            fTruth[i],
+            accuracy,
+            "sc" + str(i) + " force test",
+            testFailCount,
+            testMessages,
+        )
         tau = module.eTorqueOutMsgs[i].read().torqueRequestBody
-        testFailCount, testMessages = \
-            unitTestSupport.compareDoubleArrayRelative(tau, tauTruth[i],
-                                                       accuracy, "sc" + str(i) + " torque test",
-                                                       testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
+            tau,
+            tauTruth[i],
+            accuracy,
+            "sc" + str(i) + " torque test",
+            testFailCount,
+            testMessages,
+        )
 
         charge = unitTestSupport.columnToRowList(module.chargeMsmOutMsgs[i].read().q)
-        testFailCount, testMessages = \
-            unitTestSupport.compareListRelative(charge, chargeTruth[i],
-                                                       accuracy, "sc" + str(i) + " charge test",
-                                                       testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareListRelative(
+            charge,
+            chargeTruth[i],
+            accuracy,
+            "sc" + str(i) + " charge test",
+            testFailCount,
+            testMessages,
+        )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -168,5 +182,3 @@ def msmForceTorqueTestFunction(show_plots, accuracy):
 
 if __name__ == "__main__":
     test_msmForceTorque(False, 1e-4)
-
-

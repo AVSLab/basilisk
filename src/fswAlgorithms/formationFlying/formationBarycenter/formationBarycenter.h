@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef FORMATION_BARYCENTER_H
 #define FORMATION_BARYCENTER_H
 
@@ -30,10 +29,12 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
-/*! @brief This module computes the barycenter of a swarm of satellites, either using cartesian coordinates or orbital elements. 
+/*! @brief This module computes the barycenter of a swarm of satellites, either using cartesian coordinates or orbital
+ * elements.
  */
-class FormationBarycenter: public SysModel {
-public:
+class FormationBarycenter : public SysModel
+{
+  public:
     FormationBarycenter();
     ~FormationBarycenter();
 
@@ -41,28 +42,28 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputMessages();
-    void addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg, Message<VehicleConfigMsgPayload>* tmpScPayloadMsg);
+    void addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg,
+                              Message<VehicleConfigMsgPayload>* tmpScPayloadMsg);
     void computeBaricenter();
     void WriteOutputMessage(uint64_t CurrentClock);
 
-public:
-    std::vector<ReadFunctor<NavTransMsgPayload>> scNavInMsgs;  //!< spacecraft navigation input msg
-    std::vector<ReadFunctor<VehicleConfigMsgPayload>> scPayloadInMsgs;  //!< spacecraft payload input msg
+  public:
+    std::vector<ReadFunctor<NavTransMsgPayload>> scNavInMsgs;          //!< spacecraft navigation input msg
+    std::vector<ReadFunctor<VehicleConfigMsgPayload>> scPayloadInMsgs; //!< spacecraft payload input msg
 
-    Message<NavTransMsgPayload> transOutMsg;    //!< translation navigation output msg   
-    NavTransMsg_C transOutMsgC = {};        //!< C-wrapped translation navigation output msg, zeroed
+    Message<NavTransMsgPayload> transOutMsg; //!< translation navigation output msg
+    NavTransMsg_C transOutMsgC = {};         //!< C-wrapped translation navigation output msg, zeroed
 
-    bool useOrbitalElements;        //!< flag that determines whether to use cartesian or orbital elementd weighted averaging
-    double mu;      //!< gravitational parameter to be used with orbital elements averaging
+    bool useOrbitalElements; //!< flag that determines whether to use cartesian or orbital elementd weighted averaging
+    double mu;               //!< gravitational parameter to be used with orbital elements averaging
 
-    BSKLogger bskLogger;              //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-private:
-    std::vector<NavTransMsgPayload> scNavBuffer;             //!< buffer of spacecraft navigation info
-    std::vector<VehicleConfigMsgPayload> scPayloadBuffer;             //!< buffer of spacecraft payload
+  private:
+    std::vector<NavTransMsgPayload> scNavBuffer;          //!< buffer of spacecraft navigation info
+    std::vector<VehicleConfigMsgPayload> scPayloadBuffer; //!< buffer of spacecraft payload
 
-    NavTransMsgPayload transOutBuffer;      //!< buffer for the output message
-
+    NavTransMsgPayload transOutBuffer; //!< buffer for the output message
 };
 
 #endif

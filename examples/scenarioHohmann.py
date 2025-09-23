@@ -124,10 +124,10 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def plotOrbit(rFirst, rSecond, posData):
     # plot the earth
-    ax = plt.axes(projection='3d')
-    planetColor = '#008800'
+    ax = plt.axes(projection="3d")
+    planetColor = "#008800"
     planetRadius = 6378.1
-    u, v = np.mgrid[0:2 * np.pi:40j, 0:np.pi:40j]
+    u, v = np.mgrid[0 : 2 * np.pi : 40j, 0 : np.pi : 40j]
     x = planetRadius * np.cos(u) * np.sin(v)
     y = planetRadius * np.sin(u) * np.sin(v)
     z = planetRadius * np.cos(v)
@@ -142,45 +142,59 @@ def plotOrbit(rFirst, rSecond, posData):
 
     ax.plot_surface(x, y, z, color=planetColor)
     # plot the orbit
-    ax.plot3D(posData[:, 0] / 1000, posData[:, 1] / 1000, posData[:, 2] / 1000,
-              color='orangered', label='Simulated Flight')
-    ax.set_xlabel('x [km]')
-    ax.set_ylabel('y [km]')
-    ax.set_zlabel('z [km]')
-    ax.set_aspect('equal')
+    ax.plot3D(
+        posData[:, 0] / 1000,
+        posData[:, 1] / 1000,
+        posData[:, 2] / 1000,
+        color="orangered",
+        label="Simulated Flight",
+    )
+    ax.set_xlabel("x [km]")
+    ax.set_ylabel("y [km]")
+    ax.set_zlabel("z [km]")
+    ax.set_aspect("equal")
 
 
 def plotAttitudeError(timeAxis, attErrorData):
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, attErrorData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='best')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            attErrorData[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="best")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
 
 
 def plotAttitude(timeAxis, attData):
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, attData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='best')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude $\sigma_{B/N}$')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            attData[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="best")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude $\sigma_{B/N}$")
 
 
 def plotReferenceAttitude(timeAxis, attRefData):
     plt.figure(4)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, attRefData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='best')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Reference Attitude $\sigma_{R/N}$')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            attRefData[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="best")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Reference Attitude $\sigma_{R/N}$")
 
 
 def run(show_plots, rFirst, rSecond):
@@ -213,11 +227,13 @@ def run(show_plots, rFirst, rSecond):
     # Initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # Add spacecraft object to the simulation process
@@ -231,10 +247,10 @@ def run(show_plots, rFirst, rSecond):
 
     # Override information with SPICE
     timeInitString = "2021 MAY 04 07:47:48.965 (UTC)"
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'Earth'
+    gravFactory.createSpiceInterface(
+        bskPath + "/supportData/EphemerisData/", timeInitString, epochInMsg=True
+    )
+    gravFactory.spiceObject.zeroBase = "Earth"
     gravFactory.addBodiesTo(scObject)
 
     # Add ephemeris for Hill frame
@@ -245,9 +261,9 @@ def run(show_plots, rFirst, rSecond):
 
     # Add RW devices
     rwFactory = simIncludeRW.rwFactory()
-    RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.)
-    RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.)
-    RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.)
+    RW1 = rwFactory.create("Honeywell_HR16", [1, 0, 0], maxMomentum=50.0, Omega=100.0)
+    RW2 = rwFactory.create("Honeywell_HR16", [0, 1, 0], maxMomentum=50.0, Omega=200.0)
+    RW3 = rwFactory.create("Honeywell_HR16", [0, 0, 1], maxMomentum=50.0, Omega=300.0)
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwStateEffector.ModelTag = "RW_cluster"
     rwFactory.addToSpacecraft(rwStateEffector.ModelTag, rwStateEffector, scObject)
@@ -266,12 +282,14 @@ def run(show_plots, rFirst, rSecond):
     firstBurn = velocityPoint.velocityPoint()
     firstBurn.ModelTag = "velocityPoint"
     firstBurn.mu = mu
-    scSim.fswProcess.addTask(scSim.CreateNewTask("firstBurnTask", simulationTimeStep), 5)
+    scSim.fswProcess.addTask(
+        scSim.CreateNewTask("firstBurnTask", simulationTimeStep), 5
+    )
     scSim.AddModelToTask("firstBurnTask", firstBurn)
 
     firstBurnMRPRotation = mrpRotation.mrpRotation()
     firstBurnMRPRotation.ModelTag = "mrpRotation"
-    sigma_RR0 = np.array([np.tan(- np.pi / 8), 0, 0])
+    sigma_RR0 = np.array([np.tan(-np.pi / 8), 0, 0])
     firstBurnMRPRotation.mrpSet = sigma_RR0
     scSim.AddModelToTask("firstBurnTask", firstBurnMRPRotation)
     messaging.AttRefMsg_C_addAuthor(firstBurnMRPRotation.attRefOutMsg, attRefMsg)
@@ -280,7 +298,9 @@ def run(show_plots, rFirst, rSecond):
     secondBurn = velocityPoint.velocityPoint()
     secondBurn.ModelTag = "velocityPoint"
     secondBurn.mu = mu
-    scSim.fswProcess.addTask(scSim.CreateNewTask("secondBurnTask", simulationTimeStep), 5)
+    scSim.fswProcess.addTask(
+        scSim.CreateNewTask("secondBurnTask", simulationTimeStep), 5
+    )
     scSim.AddModelToTask("secondBurnTask", secondBurn)
 
     # Need to get this reference attitude to rotate 180
@@ -294,7 +314,9 @@ def run(show_plots, rFirst, rSecond):
     # Set up hill point guidance module
     attGuidanceHillPoint = hillPoint.hillPoint()
     attGuidanceHillPoint.ModelTag = "hillPoint"
-    scSim.fswProcess.addTask(scSim.CreateNewTask("hillPointTask", simulationTimeStep), 5)
+    scSim.fswProcess.addTask(
+        scSim.CreateNewTask("hillPointTask", simulationTimeStep), 5
+    )
     scSim.AddModelToTask("hillPointTask", attGuidanceHillPoint)
     messaging.AttRefMsg_C_addAuthor(attGuidanceHillPoint.attRefOutMsg, attRefMsg)
 
@@ -419,25 +441,28 @@ def run(show_plots, rFirst, rSecond):
 
     # Set the simulation time variable and the period of the first orbit
     simulationTime = 0
-    P1 = 2 * np.pi * np.sqrt(oe.a ** 3 / mu)
+    P1 = 2 * np.pi * np.sqrt(oe.a**3 / mu)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     scSim.InitializeSimulation()
     scSim.ShowExecutionOrder()
     scSim.SetProgressBar(True)
 
     # Start in Hill Point and run 40% of a period on the initial circular orbit
-    scSim.modeRequest = 'hillPoint'
+    scSim.modeRequest = "hillPoint"
     simulationTime += macros.sec2nano(0.4 * P1)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
     # Change to first burn orientation in preparation for burn
-    scSim.modeRequest = 'firstBurn'
+    scSim.modeRequest = "firstBurn"
     simulationTime += macros.sec2nano(0.1 * P1)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
@@ -450,7 +475,7 @@ def run(show_plots, rFirst, rSecond):
     # Conduct the first burn of a Hohmann transfer from rFirst to rSecond
     rData = np.linalg.norm(rN)
     vData = np.linalg.norm(vN)
-    at = (rData + rSecond) * .5
+    at = (rData + rSecond) * 0.5
     vt1 = np.sqrt((2 * mu / rData) - (mu / at))
     Delta_V_1 = vt1 - vData
     vHat = vN / np.linalg.norm(vN)
@@ -458,7 +483,7 @@ def run(show_plots, rFirst, rSecond):
     velRef.setState(new_v)
 
     # Define the transfer time
-    time_Transfer = np.pi * np.sqrt(at ** 3 / mu)
+    time_Transfer = np.pi * np.sqrt(at**3 / mu)
 
     # Continue the simulation with new delta v
     simulationTime += macros.sec2nano(0.2 * time_Transfer)
@@ -466,13 +491,13 @@ def run(show_plots, rFirst, rSecond):
     scSim.ExecuteSimulation()
 
     # Change back to hill point for 60% of transfer orbit
-    scSim.modeRequest = 'hillPoint'
+    scSim.modeRequest = "hillPoint"
     simulationTime += macros.sec2nano(0.6 * time_Transfer)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
     # Change to second burn orientation in preparation for second burn
-    scSim.modeRequest = 'secondBurn'
+    scSim.modeRequest = "secondBurn"
     simulationTime += macros.sec2nano(0.2 * time_Transfer)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
@@ -484,7 +509,7 @@ def run(show_plots, rFirst, rSecond):
     # Conduct the second burn of a Hohmann transfer from rFirst to rSecond
     rData = np.linalg.norm(rN)
     vData = np.linalg.norm(vN)
-    at = (rData + rSecond) * .5
+    at = (rData + rSecond) * 0.5
     vt2 = np.sqrt((2 * mu / rData) - (mu / at))
     Delta_V_2 = vt2 - vData
     vHat = vN / np.linalg.norm(vN)  # unit vec?
@@ -493,7 +518,7 @@ def run(show_plots, rFirst, rSecond):
 
     # Find the period for second orbit
     a2 = rSecond
-    P2 = 2 * np.pi * np.sqrt(a2 ** 3 / mu)
+    P2 = 2 * np.pi * np.sqrt(a2**3 / mu)
 
     # Continue the simulation with new delta v
     simulationTime += macros.sec2nano(0.1 * P2)
@@ -501,7 +526,7 @@ def run(show_plots, rFirst, rSecond):
     scSim.ExecuteSimulation()
 
     # Change back to Hill Point on second orbit
-    scSim.modeRequest = 'hillPoint'
+    scSim.modeRequest = "hillPoint"
     simulationTime += macros.sec2nano(0.2 * P2)
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
@@ -550,5 +575,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         7000000,  # major axis first orbit (m)
-        42164000  # major axis second orbit (m)
+        42164000,  # major axis second orbit (m)
     )

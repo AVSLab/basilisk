@@ -59,8 +59,8 @@ def test_integration(showPlots: bool = False):
 
     ref = np.loadtxt(REFERENCE_DATA)
 
-    dt = ref[1, 0] - ref[0, 0] # s
-    tf = ref[check, 0] # s
+    dt = ref[1, 0] - ref[0, 0]  # s
+    tf = ref[check, 0]  # s
 
     # Create sim, process, and task
     scSim = SimulationBaseClass.SimBaseClass()
@@ -78,9 +78,13 @@ def test_integration(showPlots: bool = False):
     # initialize the simulation and set the initial rates
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(tf))
-    scene.getBody("cube").setAttitudeRate([0.1, 0.2, 0.3]) # rad/s
-    scene.getBody("panel_1").getScalarJoint("panel_1_elevation").setVelocity(0.1) # rad/s
-    scene.getBody("panel_2").getScalarJoint("panel_2_elevation").setVelocity(0.1) # rad/s
+    scene.getBody("cube").setAttitudeRate([0.1, 0.2, 0.3])  # rad/s
+    scene.getBody("panel_1").getScalarJoint("panel_1_elevation").setVelocity(
+        0.1
+    )  # rad/s
+    scene.getBody("panel_2").getScalarJoint("panel_2_elevation").setVelocity(
+        0.1
+    )  # rad/s
 
     # Run the sim
     scSim.ExecuteSimulation()

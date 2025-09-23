@@ -113,10 +113,10 @@ def run(showPlots: bool = False, visualize: bool = False):
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
     """
-    dt = 1 # s
+    dt = 1  # s
 
-    timeThrustTurnOff = 47.5 # s
-    tf = 70 # s
+    timeThrustTurnOff = 47.5  # s
+    tf = 70  # s
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -159,7 +159,7 @@ def run(showPlots: bool = False, visualize: bool = False):
     gravity.frameInMsg.subscribeTo(gravityApplicationSite.stateOutMsg)
 
     # Set a thruster force of 275 N trying to slowdown our descent
-    thrust = 275 # N
+    thrust = 275  # N
     thrustMsg = messaging.SingleActuatorMsg()
     thrustMsg.write(messaging.SingleActuatorMsgPayload(input=thrust))
 
@@ -178,14 +178,14 @@ def run(showPlots: bool = False, visualize: bool = False):
     scSim.InitializeSimulation()
 
     # Initial velocity of 1 m/s towards asteroid
-    scene.getBody("hub").setVelocity([0, 0, -1]) # m/s
+    scene.getBody("hub").setVelocity([0, 0, -1])  # m/s
 
     # Run the simulation for some time with the thruster on
     scSim.ConfigureStopTime(macros.sec2nano(timeThrustTurnOff))
     scSim.ExecuteSimulation()
 
     # Near surface, turn off thrusters and let gravity land us
-    thrustMsg.write(messaging.SingleActuatorMsgPayload(input=0)) # N
+    thrustMsg.write(messaging.SingleActuatorMsgPayload(input=0))  # N
 
     # Run until simulation completion
     scSim.ConfigureStopTime(macros.sec2nano(tf))

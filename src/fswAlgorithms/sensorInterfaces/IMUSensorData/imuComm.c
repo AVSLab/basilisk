@@ -28,12 +28,11 @@
  @param configData The configuration data associated with the IMU sensor interface
  @param moduleID The ID associated with the configData
  */
-void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
+void
+SelfInit_imuProcessTelem(IMUConfigData* configData, int64_t moduleID)
 {
     IMUSensorBodyMsg_C_init(&configData->imuSensorOutMsg);
-
 }
-
 
 /*! This method resets the module.
 
@@ -41,7 +40,8 @@ void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required message has not been connected
     if (!IMUSensorMsg_C_isLinked(&configData->imuComInMsg)) {
@@ -56,20 +56,17 @@ void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     IMUSensorMsgPayload LocalInput;
 
     // read imu com msg
     LocalInput = IMUSensorMsg_C_read(&configData->imuComInMsg);
-    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.DVFramePlatform,
-              configData->outMsgBuffer.DVFrameBody);
-    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.AccelPlatform,
-              configData->outMsgBuffer.AccelBody);
-    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.DRFramePlatform,
-              configData->outMsgBuffer.DRFrameBody);
-    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.AngVelPlatform,
-              configData->outMsgBuffer.AngVelBody);
+    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.DVFramePlatform, configData->outMsgBuffer.DVFrameBody);
+    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.AccelPlatform, configData->outMsgBuffer.AccelBody);
+    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.DRFramePlatform, configData->outMsgBuffer.DRFrameBody);
+    m33MultV3(RECAST3X3 configData->dcm_BP, LocalInput.AngVelPlatform, configData->outMsgBuffer.AngVelBody);
 
     IMUSensorBodyMsg_C_write(&configData->outMsgBuffer, &configData->imuSensorOutMsg, moduleID, callTime);
 

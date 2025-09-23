@@ -30,58 +30,64 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import vscmgVelocitySteering
 
+
 def defaultVSCMG():
     VSCMG = messaging.VSCMGConfigMsgPayload()
 
-    VSCMG.rGB_B = [[0.],[0.],[0.]]
-    VSCMG.gsHat0_B = [[0.],[0.],[0.]]
-    VSCMG.gtHat0_B = [[0.],[0.],[0.]]
-    VSCMG.ggHat_B = [[0.],[0.],[0.]]
+    VSCMG.rGB_B = [[0.0], [0.0], [0.0]]
+    VSCMG.gsHat0_B = [[0.0], [0.0], [0.0]]
+    VSCMG.gtHat0_B = [[0.0], [0.0], [0.0]]
+    VSCMG.ggHat_B = [[0.0], [0.0], [0.0]]
     VSCMG.u_s_max = -1
     VSCMG.u_s_min = -1
-    VSCMG.u_s_f = 0.
+    VSCMG.u_s_f = 0.0
     VSCMG.wheelLinearFrictionRatio = -1
-    VSCMG.u_g_current = 0.
+    VSCMG.u_g_current = 0.0
     VSCMG.u_g_max = -1
     VSCMG.u_g_min = -1
-    VSCMG.u_g_f = 0.
+    VSCMG.u_g_f = 0.0
     VSCMG.gimbalLinearFrictionRatio = -1
     VSCMG.Omega = 14.4
-    VSCMG.gamma = 0.
-    VSCMG.gammaDot = 0.
-    VSCMG.Omega_max = 6000. * macros.RPM
+    VSCMG.gamma = 0.0
+    VSCMG.gammaDot = 0.0
+    VSCMG.Omega_max = 6000.0 * macros.RPM
     VSCMG.gammaDot_max = -1
     VSCMG.IW1 = 0.1
     VSCMG.IW2 = 0.04
     VSCMG.IW3 = 0.03
     VSCMG.IG1 = 0.03
-    VSCMG.IG2 = 0.
-    VSCMG.IG3 = 0.
-    VSCMG.U_s = 0.
-    VSCMG.U_d = 0.
-    VSCMG.l = 0.
-    VSCMG.L = 0.
-    VSCMG.rGcG_G = [[0.],[0.],[0.]]
-    VSCMG.massW = 0.
-    VSCMG.massG = 0.
+    VSCMG.IG2 = 0.0
+    VSCMG.IG3 = 0.0
+    VSCMG.U_s = 0.0
+    VSCMG.U_d = 0.0
+    VSCMG.l = 0.0
+    VSCMG.L = 0.0
+    VSCMG.rGcG_G = [[0.0], [0.0], [0.0]]
+    VSCMG.massW = 0.0
+    VSCMG.massG = 0.0
     VSCMG.VSCMGModel = 0
     return VSCMG
+
 
 def setupVSCMGs(numVSCMGs):
     VSCMGs = []
 
-    ang = 54.75 * np.pi/180
+    ang = 54.75 * np.pi / 180
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[0].ggHat_B = [[math.cos(ang)], [0.0], [math.sin(ang)]]
     VSCMGs[0].gsHat0_B = [[0.0], [1.0], [0.0]]
-    VSCMGs[0].gtHat0_B = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
+    VSCMGs[0].gtHat0_B = np.cross(
+        np.array([math.cos(ang), 0.0, math.sin(ang)]), np.array([0.0, 1.0, 0.0])
+    )
 
     if numVSCMGs > 1:
         VSCMGs.append(defaultVSCMG())
         VSCMGs[1].gsHat0_B = [[0.0], [-1.0], [0.0]]
         VSCMGs[1].ggHat_B = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
-        VSCMGs[1].gtHat0_B = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
+        VSCMGs[1].gtHat0_B = np.cross(
+            np.array([-math.cos(ang), 0.0, math.sin(ang)]), np.array([0.0, -1.0, 0.0])
+        )
 
         if numVSCMGs == 4:
             VSCMGs.append(defaultVSCMG())
@@ -90,14 +96,14 @@ def setupVSCMGs(numVSCMGs):
             ggHat2_B = np.array([0.0, math.cos(ang), math.sin(ang)])
             gtHat2_t0_B = np.cross(ggHat2_B, gsHat2_t0_B)
             gtHat2_t0_B /= np.linalg.norm(gtHat2_t0_B)
-            BG2 = np.column_stack([gsHat2_t0_B,
-                            gtHat2_t0_B,
-                            ggHat2_B])
-            GG02 = np.array([
-                [-math.cos(VSCMGs[2].gamma), math.sin(VSCMGs[2].gamma), 0.0],
-                [-math.sin(VSCMGs[2].gamma),  -math.cos(VSCMGs[2].gamma), 0.0],
-                [0.0,             0.0,          1.0]
-                ])
+            BG2 = np.column_stack([gsHat2_t0_B, gtHat2_t0_B, ggHat2_B])
+            GG02 = np.array(
+                [
+                    [-math.cos(VSCMGs[2].gamma), math.sin(VSCMGs[2].gamma), 0.0],
+                    [-math.sin(VSCMGs[2].gamma), -math.cos(VSCMGs[2].gamma), 0.0],
+                    [0.0, 0.0, 1.0],
+                ]
+            )
             BG02 = BG2 @ GG02
             VSCMGs[2].gsHat0_B = [[BG02[0][0]], [BG02[1][0]], [BG02[2][0]]]
             VSCMGs[2].gtHat0_B = [[BG02[0][1]], [BG02[1][1]], [BG02[2][1]]]
@@ -109,14 +115,14 @@ def setupVSCMGs(numVSCMGs):
             ggHat3_B = np.array([0.0, -math.cos(ang), math.sin(ang)])
             gtHat3_t0_B = np.cross(ggHat3_B, gsHat3_t0_B)
             gtHat3_t0_B /= np.linalg.norm(gtHat3_t0_B)
-            BG3 = np.column_stack([gsHat3_t0_B,
-                            gtHat3_t0_B,
-                            ggHat3_B])
-            GG03 = np.array([
-                [-math.cos(VSCMGs[3].gamma), math.sin(VSCMGs[3].gamma), 0.0],
-                [-math.sin(VSCMGs[3].gamma),  -math.cos(VSCMGs[3].gamma), 0.0],
-                [0.0,             0.0,          1.0]
-                ])
+            BG3 = np.column_stack([gsHat3_t0_B, gtHat3_t0_B, ggHat3_B])
+            GG03 = np.array(
+                [
+                    [-math.cos(VSCMGs[3].gamma), math.sin(VSCMGs[3].gamma), 0.0],
+                    [-math.sin(VSCMGs[3].gamma), -math.cos(VSCMGs[3].gamma), 0.0],
+                    [0.0, 0.0, 1.0],
+                ]
+            )
             BG03 = BG3 @ GG03
             VSCMGs[3].gsHat0_B = [[BG03[0][0]], [BG03[1][0]], [BG03[2][0]]]
             VSCMGs[3].gtHat0_B = [[BG03[0][1]], [BG03[1][1]], [BG03[2][1]]]
@@ -124,8 +130,8 @@ def setupVSCMGs(numVSCMGs):
 
     return VSCMGs
 
-def etaDot(VSCMGs,numVSCMGs, omega_BN_B, omega_RN_B, mu, W0_s, W_g, Lr):
 
+def etaDot(VSCMGs, numVSCMGs, omega_BN_B, omega_RN_B, mu, W0_s, W_g, Lr):
     h_bar = np.zeros(numVSCMGs)
     # Calculate the D matrices
     D0 = np.zeros((3, numVSCMGs))
@@ -134,16 +140,18 @@ def etaDot(VSCMGs,numVSCMGs, omega_BN_B, omega_RN_B, mu, W0_s, W_g, Lr):
     D3 = np.zeros((3, numVSCMGs))
     D4 = np.zeros((3, numVSCMGs))
     for i in range(numVSCMGs):
-        BG0 = np.column_stack((
-            np.array(VSCMGs[i].gsHat0_B).flatten(),
-            np.array(VSCMGs[i].gtHat0_B).flatten(),
-            np.array(VSCMGs[i].ggHat_B).flatten()
-        ))
+        BG0 = np.column_stack(
+            (
+                np.array(VSCMGs[i].gsHat0_B).flatten(),
+                np.array(VSCMGs[i].gtHat0_B).flatten(),
+                np.array(VSCMGs[i].ggHat_B).flatten(),
+            )
+        )
         GG0 = np.identity(3)
-        GG0[0,0] = np.cos(VSCMGs[i].gamma)
-        GG0[0,1] = np.sin(VSCMGs[i].gamma)
-        GG0[1,0] = -GG0[0,1]
-        GG0[1,1] = GG0[0,0]
+        GG0[0, 0] = np.cos(VSCMGs[i].gamma)
+        GG0[0, 1] = np.sin(VSCMGs[i].gamma)
+        GG0[1, 0] = -GG0[0, 1]
+        GG0[1, 1] = GG0[0, 0]
         BG = BG0 @ GG0.T
         gsHat = BG[:, 0]
         gtHat = BG[:, 1]
@@ -160,38 +168,44 @@ def etaDot(VSCMGs,numVSCMGs, omega_BN_B, omega_RN_B, mu, W0_s, W_g, Lr):
 
         Omega = VSCMGs[i].Omega
 
-        D0[:,i] = gsHat*Iws
-        D1[:,i] = (Iws*Omega + Js/2*omega_s)*gtHat + Js/2*omega_t*gsHat
-        D2[:,i] = 1/2*Jt*(omega_t*gsHat + omega_s*gtHat)
-        D3[:,i] = Jg*(omega_t*gsHat - omega_s*gtHat)
-        D4[:,i] = 1/2*(Js-Jt)*(np.outer(gsHat,gtHat) @ omega_RN + np.outer(gtHat,gsHat) @ omega_RN)
+        D0[:, i] = gsHat * Iws
+        D1[:, i] = (Iws * Omega + Js / 2 * omega_s) * gtHat + Js / 2 * omega_t * gsHat
+        D2[:, i] = 1 / 2 * Jt * (omega_t * gsHat + omega_s * gtHat)
+        D3[:, i] = Jg * (omega_t * gsHat - omega_s * gtHat)
+        D4[:, i] = (
+            1
+            / 2
+            * (Js - Jt)
+            * (np.outer(gsHat, gtHat) @ omega_RN + np.outer(gtHat, gsHat) @ omega_RN)
+        )
 
-        h_bar[i] = Js*Omega
+        h_bar[i] = Js * Omega
 
-    D = D1-D2+D3+D4
-    Q = np.column_stack([D0,D])
+    D = D1 - D2 + D3 + D4
+    Q = np.column_stack([D0, D])
 
     mean_h_bar = np.mean(h_bar)
     h_bar_squared = mean_h_bar**2
-    delta = np.linalg.det(1/h_bar_squared * (D1 @ D1.T))
+    delta = np.linalg.det(1 / h_bar_squared * (D1 @ D1.T))
 
-    W = np.zeros((2*numVSCMGs, 2*numVSCMGs))
+    W = np.zeros((2 * numVSCMGs, 2 * numVSCMGs))
     for i in range(numVSCMGs):
-        W_si = W0_s[i] * np.exp(-mu*delta)
-        W[i,i] = W_si
-        W[numVSCMGs+i,numVSCMGs+i] = W_g[i]
+        W_si = W0_s[i] * np.exp(-mu * delta)
+        W[i, i] = W_si
+        W[numVSCMGs + i, numVSCMGs + i] = W_g[i]
 
     QWQT = Q @ W @ Q.T
     etaDot = W @ Q.T @ np.linalg.solve(QWQT, -np.array(Lr))
 
     return etaDot
 
-@pytest.mark.parametrize("numVSCMGs", [2,4])
 
+@pytest.mark.parametrize("numVSCMGs", [2, 4])
 def test_vscmgVelocitySteering(show_plots, numVSCMGs):
-   """Module Unit Test"""
-   [testResults, testMessage] = vscmgVelocitySteeringTest(show_plots, numVSCMGs)
-   assert testResults < 1, testMessage
+    """Module Unit Test"""
+    [testResults, testMessage] = vscmgVelocitySteeringTest(show_plots, numVSCMGs)
+    assert testResults < 1, testMessage
+
 
 def vscmgVelocitySteeringTest(show_plots, numVSCMGs):
     r"""
@@ -239,7 +253,7 @@ def vscmgVelocitySteeringTest(show_plots, numVSCMGs):
     attIn.omega_BN_B = omega_BN_B
 
     # setup hub reference angular velocity
-    omega_RN_B = [ 0.00649856, -0.01231292, -0.01172612]
+    omega_RN_B = [0.00649856, -0.01231292, -0.01172612]
     guideIn = messaging.AttGuidMsgPayload()
     guideIn.omega_RN_B = omega_RN_B
 
@@ -248,10 +262,19 @@ def vscmgVelocitySteeringTest(show_plots, numVSCMGs):
     fswSetupVSCMGs.clearSetup()
     for i in range(numVSCMGs):
         fswSetupVSCMGs.create(
-            VSCMGs[i].gsHat0_B, VSCMGs[i].gtHat0_B, VSCMGs[i].ggHat_B,
-            VSCMGs[i].IG1, VSCMGs[i].IG2, VSCMGs[i].IG3,
-            VSCMGs[i].IW1, VSCMGs[i].IW2, VSCMGs[i].IW3,
-            VSCMGs[i].Omega, VSCMGs[i].gamma, VSCMGs[i].gammaDot)
+            VSCMGs[i].gsHat0_B,
+            VSCMGs[i].gtHat0_B,
+            VSCMGs[i].ggHat_B,
+            VSCMGs[i].IG1,
+            VSCMGs[i].IG2,
+            VSCMGs[i].IG3,
+            VSCMGs[i].IW1,
+            VSCMGs[i].IW2,
+            VSCMGs[i].IW3,
+            VSCMGs[i].Omega,
+            VSCMGs[i].gamma,
+            VSCMGs[i].gammaDot,
+        )
 
     # setup speeds message
     speedsArray = messaging.VSCMGSpeedMsgPayload()
@@ -296,24 +319,38 @@ def vscmgVelocitySteeringTest(show_plots, numVSCMGs):
     unitTestSim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
-    wheelAccels = dataLog.wheelAccels[0,:numVSCMGs]
-    gimbalRates = dataLog.gimbalRates[0,:numVSCMGs]
-    wheelAccelsC = dataLogC.wheelAccels[0,:numVSCMGs]
-    gimbalRatesC = dataLogC.gimbalRates[0,:numVSCMGs]
+    wheelAccels = dataLog.wheelAccels[0, :numVSCMGs]
+    gimbalRates = dataLog.gimbalRates[0, :numVSCMGs]
+    wheelAccelsC = dataLogC.wheelAccels[0, :numVSCMGs]
+    gimbalRatesC = dataLogC.gimbalRates[0, :numVSCMGs]
 
     moduleOutputs = np.concatenate((wheelAccels, gimbalRates))
     moduleOutputsC = np.concatenate((wheelAccelsC, gimbalRatesC))
 
     # set the output truth values
-    trueOutputs = etaDot(VSCMGs,numVSCMGs, omega_BN_B, omega_RN_B, mu, W0_s, W_g, Lr)
+    trueOutputs = etaDot(VSCMGs, numVSCMGs, omega_BN_B, omega_RN_B, mu, W0_s, W_g, Lr)
 
     # compare the module output values to the truth values
     accuracy = 1e-12
-    testFailCount, testMessages = unitTestSupport.compareArrayND([trueOutputs], [moduleOutputs], accuracy, "VSCMGDesiredStates",
-                                                                 2*numVSCMGs, testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        [trueOutputs],
+        [moduleOutputs],
+        accuracy,
+        "VSCMGDesiredStates",
+        2 * numVSCMGs,
+        testFailCount,
+        testMessages,
+    )
 
-    testFailCount, testMessages = unitTestSupport.compareArrayND([moduleOutputs], [moduleOutputsC], accuracy, "cMsgTorques",
-                                                                 2 * numVSCMGs, testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        [moduleOutputs],
+        [moduleOutputsC],
+        accuracy,
+        "cMsgTorques",
+        2 * numVSCMGs,
+        testFailCount,
+        testMessages,
+    )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)

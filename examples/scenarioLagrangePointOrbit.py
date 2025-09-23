@@ -136,12 +136,19 @@ from Basilisk import __path__
 from Basilisk.simulation import orbElemConvert
 from Basilisk.simulation import spacecraft
 from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+)
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     """
@@ -182,56 +189,60 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     # Setup gravity factory and gravity bodies
     # Include bodies as a list of SPICE names
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies('moon', 'earth')
-    gravBodies['earth'].isCentralBody = True
+    gravBodies = gravFactory.createBodies("moon", "earth")
+    gravBodies["earth"].isCentralBody = True
 
     # Add gravity bodies to the spacecraft dynamics
     gravFactory.addBodiesTo(scObject)
 
     # Create default SPICE module, specify start date/time.
     timeInitString = "2022 August 31 15:00:00.0"
-    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
+    spiceTimeStringFormat = "%Y %B %d %H:%M:%S.%f"
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
-    spiceObject.zeroBase = 'Earth'
+    spiceObject.zeroBase = "Earth"
 
     # Add SPICE object to the simulation task list
     scSim.AddModelToTask(simTaskName, spiceObject, 1)
 
     # Import SPICE ephemeris data into the python environment
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + "de430.bsp")  # solar system bodies
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + "naif0012.tls")  # leap second file
+    pyswice.furnsh_c(
+        spiceObject.SPICEDataPath + "de-403-masses.tpc"
+    )  # solar system masses
+    pyswice.furnsh_c(
+        spiceObject.SPICEDataPath + "pck00010.tpc"
+    )  # generic Planetary Constants Kernel
 
     # Set spacecraft ICs
     # Use Earth data
-    moonSpiceName = 'moon'
-    moonInitialState = 1000 * spkRead(moonSpiceName, timeInitString, 'J2000', 'earth')
+    moonSpiceName = "moon"
+    moonInitialState = 1000 * spkRead(moonSpiceName, timeInitString, "J2000", "earth")
     moon_rN_init = moonInitialState[0:3]
     moon_vN_init = moonInitialState[3:6]
-    moon = gravBodies['moon']
-    earth = gravBodies['earth']
+    moon = gravBodies["moon"]
+    earth = gravBodies["earth"]
     oe = orbitalMotion.rv2elem(earth.mu, moon_rN_init, moon_vN_init)
     moon_a = oe.a
 
     # Delay or advance the spacecraft by a few degrees to prevent strange spacecraft-moon interactions when the
     # spacecraft wanders from the unstable equilibrium points
     if lagrangePoint == 1:
-        oe.a = oe.a * (1-np.power(moon.mu / (3*earth.mu), 1./3.))
-        oe.f = oe.f + macros.D2R*4
+        oe.a = oe.a * (1 - np.power(moon.mu / (3 * earth.mu), 1.0 / 3.0))
+        oe.f = oe.f + macros.D2R * 4
     elif lagrangePoint == 2:
-        oe.a = oe.a * (1+np.power(moon.mu / (3*earth.mu), 1./3.))
-        oe.f = oe.f - macros.D2R*4
+        oe.a = oe.a * (1 + np.power(moon.mu / (3 * earth.mu), 1.0 / 3.0))
+        oe.f = oe.f - macros.D2R * 4
     elif lagrangePoint == 3:
-        oe.a = oe.a * (1-(7*moon.mu/(12*earth.mu)))
+        oe.a = oe.a * (1 - (7 * moon.mu / (12 * earth.mu)))
         oe.f = oe.f + np.pi
     elif lagrangePoint == 4:
-        oe.f = oe.f + np.pi/3
+        oe.f = oe.f + np.pi / 3
     else:
-        oe.f = oe.f - np.pi/3
+        oe.f = oe.f - np.pi / 3
 
-    oe.f = oe.f - macros.D2R*2
+    oe.f = oe.f - macros.D2R * 2
 
     rN, vN = orbitalMotion.elem2rv(earth.mu, oe)
 
@@ -240,20 +251,25 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
 
     # Set simulation time
     n = np.sqrt(earth.mu / np.power(moon_a, 3))
-    P = 2 * np.pi/n
-    simulationTime = macros.sec2nano(nOrbits*P)
+    P = 2 * np.pi / n
+    simulationTime = macros.sec2nano(nOrbits * P)
 
     # Setup data logging
     numDataPoints = 1000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
 
     # Setup spacecraft data recorder
     scDataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scDataRec)
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # saveFile=__file__
+    )
     # Initialize simulation
     scSim.InitializeSimulation()
 
@@ -276,10 +292,10 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     fig = plt.figure(1, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     ax = fig.gca()
-    ax.ticklabel_format(style='scientific', scilimits=[-5, 3])
+    ax.ticklabel_format(style="scientific", scilimits=[-5, 3])
 
     # Draw 'cartoon' Earth
-    ax.add_artist(plt.Circle((0, 0), 0.2e5, color='b'))
+    ax.add_artist(plt.Circle((0, 0), 0.2e5, color="b"))
 
     # Plot spacecraft orbit data
     rDataSpacecraft = []
@@ -287,9 +303,16 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     for ii in range(len(posData)):
         oeDataSpacecraft = orbitalMotion.rv2elem(earth.mu, posData[ii], velData[ii])
         rDataSpacecraft.append(oeDataSpacecraft.rmag)
-        fDataSpacecraft.append(oeDataSpacecraft.f + oeDataSpacecraft.omega - oe.omega)  # Why the add/subtract of omegas?
-    plt.plot(rDataSpacecraft * np.cos(fDataSpacecraft) / 1000, rDataSpacecraft * np.sin(fDataSpacecraft) / 1000,
-             color='g', linewidth=3.0, label='Spacecraft')
+        fDataSpacecraft.append(
+            oeDataSpacecraft.f + oeDataSpacecraft.omega - oe.omega
+        )  # Why the add/subtract of omegas?
+    plt.plot(
+        rDataSpacecraft * np.cos(fDataSpacecraft) / 1000,
+        rDataSpacecraft * np.sin(fDataSpacecraft) / 1000,
+        color="g",
+        linewidth=3.0,
+        label="Spacecraft",
+    )
 
     # Plot moon orbit data
     rDataMoon = []
@@ -300,17 +323,22 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
         usec = (simTime - sec) * 1e6
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        moonState = 1000 * spkRead(moonSpiceName, timeString, 'J2000', 'earth')
+        moonState = 1000 * spkRead(moonSpiceName, timeString, "J2000", "earth")
         moon_rN = moonState[0:3]
         moon_vN = moonState[3:6]
         oeDataMoon = orbitalMotion.rv2elem(earth.mu, moon_rN, moon_vN)
         rDataMoon.append(oeDataMoon.rmag)
         fDataMoon.append(oeDataMoon.f + oeDataMoon.omega - oe.omega)
-    plt.plot(rDataMoon * np.cos(fDataMoon) / 1000, rDataMoon * np.sin(fDataMoon) / 1000, color='0.5', linewidth=3.0,
-             label='Moon')
+    plt.plot(
+        rDataMoon * np.cos(fDataMoon) / 1000,
+        rDataMoon * np.sin(fDataMoon) / 1000,
+        color="0.5",
+        linewidth=3.0,
+        label="Moon",
+    )
 
-    plt.xlabel('$i_e$ Coord. [km]')
-    plt.ylabel('$i_p$ Coord. [km]')
+    plt.xlabel("$i_e$ Coord. [km]")
+    plt.ylabel("$i_p$ Coord. [km]")
     plt.grid()
     plt.legend()
     pltName = fileName + "L" + str(lagrangePoint) + "Fig1"
@@ -320,10 +348,10 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     fig = plt.figure(2, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     ax = fig.gca()
-    ax.ticklabel_format(style='scientific', scilimits=[-5, 3])
+    ax.ticklabel_format(style="scientific", scilimits=[-5, 3])
 
     # Draw 'cartoon' Earth
-    ax.add_artist(plt.Circle((0, 0), 0.2e5, color='b'))
+    ax.add_artist(plt.Circle((0, 0), 0.2e5, color="b"))
 
     # Plot spacecraft and Moon orbit data
     rDataSpacecraft = []
@@ -331,14 +359,13 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
     rDataMoon = []
     fDataMoon = []
     for ii in range(len(posData)):
-
         # Get Moon f
         simTime = timeData[ii] * macros.NANO2SEC
         sec = int(simTime)
         usec = (simTime - sec) * 1e6
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        moonState = 1000 * spkRead(moonSpiceName, timeString, 'J2000', 'earth')
+        moonState = 1000 * spkRead(moonSpiceName, timeString, "J2000", "earth")
         moon_rN = moonState[0:3]
         moon_vN = moonState[3:6]
         oeDataMoon = orbitalMotion.rv2elem(earth.mu, moon_rN, moon_vN)
@@ -347,19 +374,31 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
         # Get spacecraft data, with spacecraft f = oe data f - moon f
         oeDataSpacecraft = orbitalMotion.rv2elem(earth.mu, posData[ii], velData[ii])
         rDataSpacecraft.append(oeDataSpacecraft.rmag)
-        fDataSpacecraft.append(oeDataSpacecraft.f - moon_f + oeDataSpacecraft.omega - oe.omega)
+        fDataSpacecraft.append(
+            oeDataSpacecraft.f - moon_f + oeDataSpacecraft.omega - oe.omega
+        )
 
         # Get Moon data
         rDataMoon.append(oeDataMoon.rmag)
         fDataMoon.append(0)
 
-    plt.plot(rDataSpacecraft * np.cos(fDataSpacecraft) / 1000, rDataSpacecraft * np.sin(fDataSpacecraft) / 1000,
-             color='g', linewidth=3.0, label='Spacecraft')
-    plt.plot(rDataMoon * np.cos(fDataMoon) / 1000, rDataMoon * np.sin(fDataMoon) / 1000, color='0.5', linewidth=3.0,
-             label='Moon')
+    plt.plot(
+        rDataSpacecraft * np.cos(fDataSpacecraft) / 1000,
+        rDataSpacecraft * np.sin(fDataSpacecraft) / 1000,
+        color="g",
+        linewidth=3.0,
+        label="Spacecraft",
+    )
+    plt.plot(
+        rDataMoon * np.cos(fDataMoon) / 1000,
+        rDataMoon * np.sin(fDataMoon) / 1000,
+        color="0.5",
+        linewidth=3.0,
+        label="Moon",
+    )
 
-    plt.xlabel('Earth-Moon axis [km]')
-    plt.ylabel('Earth-Moon perpendicular axis [km]')
+    plt.xlabel("Earth-Moon axis [km]")
+    plt.ylabel("Earth-Moon perpendicular axis [km]")
     plt.grid()
     plt.legend()
     pltName = fileName + "L" + str(lagrangePoint) + "Fig2"
@@ -372,18 +411,22 @@ def run(lagrangePoint, nOrbits, timestep, showPlots=True):
 
     # Unload spice libraries
     gravFactory.unloadSpiceKernels()
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    pyswice.unload_c(spiceObject.SPICEDataPath + "de430.bsp")  # solar system bodies
+    pyswice.unload_c(spiceObject.SPICEDataPath + "naif0012.tls")  # leap second file
+    pyswice.unload_c(
+        spiceObject.SPICEDataPath + "de-403-masses.tpc"
+    )  # solar system masses
+    pyswice.unload_c(
+        spiceObject.SPICEDataPath + "pck00010.tpc"
+    )  # generic Planetary Constants Kernel
 
     return figureList
 
 
 if __name__ == "__main__":
     run(
-        5,      # Lagrange point
-        1,      # Number of Moon orbits
-        300,       # Timestep (seconds)
-        True    # Show plots
+        5,  # Lagrange point
+        1,  # Number of Moon orbits
+        300,  # Timestep (seconds)
+        True,  # Show plots
     )

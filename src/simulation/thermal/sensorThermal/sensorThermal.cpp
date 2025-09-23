@@ -5,7 +5,8 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
-SensorThermal::SensorThermal(){
+SensorThermal::SensorThermal()
+{
 
     this->shadowFactor = 1;
 
@@ -16,26 +17,28 @@ SensorThermal::SensorThermal(){
     this->sensorEmissivity = -1;
 
     // Initialize the optional parameters
-    this->sensorMass = 1; //! - Default to 1 kg
-    this->sensorSpecificHeat = 890; //! - Specific heat of aluminum
-    this->T_0 = 30; //! - Initial temperature of 30 deg C
-    this->sensorPowerDraw = 0.0; //! - Assuming 0 power draw
-    this->S = 1366; //! - Solar constant at 1AU
-    this->boltzmannConst = 5.76051e-8;  //! -  Boltzmann constant
+    this->sensorMass = 1;              //! - Default to 1 kg
+    this->sensorSpecificHeat = 890;    //! - Specific heat of aluminum
+    this->T_0 = 30;                    //! - Initial temperature of 30 deg C
+    this->sensorPowerDraw = 0.0;       //! - Assuming 0 power draw
+    this->S = 1366;                    //! - Solar constant at 1AU
+    this->boltzmannConst = 5.76051e-8; //! -  Boltzmann constant
     this->CurrentSimSecondsOld = 0;
     this->sensorPowerStatus = 1; //! - Default is sensor turned on (0 for off)
     return;
-
 }
 
-SensorThermal::~SensorThermal(){
+SensorThermal::~SensorThermal()
+{
 
     return;
 }
 
 /*! Thermal sensor reset function
  */
-void SensorThermal::Reset(uint64_t CurrentClock) {
+void
+SensorThermal::Reset(uint64_t CurrentClock)
+{
 
     this->shadowFactor = 1.0;
 
@@ -72,7 +75,8 @@ void SensorThermal::Reset(uint64_t CurrentClock) {
     return;
 }
 
-void SensorThermal::readMessages()
+void
+SensorThermal::readMessages()
 {
     //! - Zero ephemeris information
     this->sunData = sunInMsg.zeroMsgPayload;
@@ -85,15 +89,14 @@ void SensorThermal::readMessages()
     this->stateCurrent = this->stateInMsg();
 
     //! - Read in optional sun eclipse input message
-    if(this->sunEclipseInMsg.isLinked()) {
-        EclipseMsgPayload sunVisibilityFactor;          // sun visiblity input message
+    if (this->sunEclipseInMsg.isLinked()) {
+        EclipseMsgPayload sunVisibilityFactor; // sun visiblity input message
         sunVisibilityFactor = this->sunEclipseInMsg();
         this->shadowFactor = sunVisibilityFactor.shadowFactor;
     }
 
     //! if  the device status msg is connected, read in and update sensor power status
-    if(this->sensorStatusInMsg.isLinked())
-    {
+    if (this->sensorStatusInMsg.isLinked()) {
         DeviceStatusMsgPayload statusMsg;
         statusMsg = this->sensorStatusInMsg();
         this->sensorPowerStatus = statusMsg.deviceStatus;
@@ -103,24 +106,25 @@ void SensorThermal::readMessages()
 /*! Provides logic for running the read / compute / write operation that is the module's function.
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
+void
+SensorThermal::UpdateState(uint64_t CurrentSimNanos)
 {
 
     //! - Read in messages
     this->readMessages();
 
     //! - Evaluate model
-    this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
+    this->evaluateThermalModel(CurrentSimNanos * NANO2SEC);
 
     //! - Write output
     this->writeMessages(CurrentSimNanos);
-
 }
 
 /*! This method writes out a message.
 
  */
-void SensorThermal::writeMessages(uint64_t CurrentClock)
+void
+SensorThermal::writeMessages(uint64_t CurrentClock)
 {
     //! - write temperature output message
     this->temperatureOutMsg.write(&this->temperatureMsgBuffer, this->moduleID, CurrentClock);
@@ -128,19 +132,21 @@ void SensorThermal::writeMessages(uint64_t CurrentClock)
     return;
 }
 
-/*! This method computes the spacecraft-sun vector, the sensor's projected area, and the sunDistanceFactor based on the magnitude of the spacecraft sun vector.
+/*! This method computes the spacecraft-sun vector, the sensor's projected area, and the sunDistanceFactor based on the
+   magnitude of the spacecraft sun vector.
 
  */
-void SensorThermal::computeSunData()
+void
+SensorThermal::computeSunData()
 {
-    Eigen::Vector3d r_SB_N;         //!< [m] Sun position relative to spacecraft body B
-    Eigen::Vector3d sHat_N;         //!< [] unit sun heading vector in inertial frame N
-    Eigen::Matrix3d dcm_BN;         //!< [] DCM from inertial N to body B
+    Eigen::Vector3d r_SB_N; //!< [m] Sun position relative to spacecraft body B
+    Eigen::Vector3d sHat_N; //!< [] unit sun heading vector in inertial frame N
+    Eigen::Matrix3d dcm_BN; //!< [] DCM from inertial N to body B
 
-    Eigen::Vector3d r_BN_N;         //!< [m] spacecraft B position relative to sun S
-    Eigen::Vector3d r_SN_N;         //!< [m] sun position relative to inertial
-    Eigen::MRPd sigma_BN;           //!< [] MRP attitude of body relative to inertial
-    Eigen::Vector3d sHat_B;         //!< [] unit Sun heading vector relative to the spacecraft in B frame.
+    Eigen::Vector3d r_BN_N; //!< [m] spacecraft B position relative to sun S
+    Eigen::Vector3d r_SN_N; //!< [m] sun position relative to inertial
+    Eigen::MRPd sigma_BN;   //!< [] MRP attitude of body relative to inertial
+    Eigen::Vector3d sHat_B; //!< [] unit Sun heading vector relative to the spacecraft in B frame.
 
     //! - Read Message data to eigen
     r_BN_N = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
@@ -157,7 +163,7 @@ void SensorThermal::computeSunData()
 
     //! - Compute the sensor projected area
     this->projectedArea = this->sensorArea * (sHat_B.dot(this->nHat_B));
-    if(this->projectedArea<0){
+    if (this->projectedArea < 0) {
         this->projectedArea = 0;
     }
 }
@@ -170,22 +176,26 @@ void SensorThermal::computeSunData()
 5. Computing the current temperature based on the change in temperature
 
  */
-void SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds) {
+void
+SensorThermal::evaluateThermalModel(uint64_t CurrentSimSeconds)
+{
 
     //! - Compute the sun data
     this->computeSunData();
 
     //! - Compute Q_in
-    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorPowerStatus;
+    this->Q_in = this->shadowFactor * this->S * this->projectedArea * this->sensorAbsorptivity +
+                 this->sensorPowerDraw * this->sensorPowerStatus;
 
     //! - Compute Q_out
-    this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);
+    this->Q_out =
+      this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);
 
     //! - Compute change in energy using Euler integration
-    double dT = (this->Q_in - this->Q_out)/(this->sensorSpecificHeat*this->sensorMass);
+    double dT = (this->Q_in - this->Q_out) / (this->sensorSpecificHeat * this->sensorMass);
 
     //! - Compute the current temperature
-    this->sensorTemp = this->sensorTemp + dT*(CurrentSimSeconds - this->CurrentSimSecondsOld);
+    this->sensorTemp = this->sensorTemp + dT * (CurrentSimSeconds - this->CurrentSimSecondsOld);
 
     //! - Set the old CurrentSimSeconds to the current timestep
     this->CurrentSimSecondsOld = CurrentSimSeconds;

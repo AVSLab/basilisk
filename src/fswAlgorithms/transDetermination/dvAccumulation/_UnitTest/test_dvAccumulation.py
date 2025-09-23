@@ -19,23 +19,27 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 def generateAccData():
-    """ Returns a list of random AccPktDataFswMsg."""
+    """Returns a list of random AccPktDataFswMsg."""
     accPktList = list()
     for _ in range(120):
         accPacketData = messaging.AccPktDataMsgPayload()
         accPacketData.measTime = abs(int(random.normal(5e7, 1e7)))
-        accPacketData.accel_B = random.normal(0.1, 0.2, 3)  # Acceleration in platform frame [m/s2]
+        accPacketData.accel_B = random.normal(
+            0.1, 0.2, 3
+        )  # Acceleration in platform frame [m/s2]
         accPktList.append(accPacketData)
 
     return accPktList
 
+
 def test_dv_accumulation():
-    """ Test dvAccumulation. """
+    """Test dvAccumulation."""
     [testResults, testMessage] = dvAccumulationTestFunction()
     assert testResults < 1, testMessage
 
+
 def dvAccumulationTestFunction():
-    """ Test the dvAccumulation module. Setup a simulation, """
+    """Test the dvAccumulation module. Setup a simulation,"""
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -56,8 +60,12 @@ def dvAccumulationTestFunction():
         invData.accPkts[i].measTime = invMeasTimes[i]
 
     # Run module quicksort function
-    dvAccumulation.dvAccumulation_QuickSort(randData.accPkts[0], 0, messaging.MAX_ACC_BUF_PKT - 1)
-    dvAccumulation.dvAccumulation_QuickSort(invData.accPkts[0], 0, messaging.MAX_ACC_BUF_PKT - 1)
+    dvAccumulation.dvAccumulation_QuickSort(
+        randData.accPkts[0], 0, messaging.MAX_ACC_BUF_PKT - 1
+    )
+    dvAccumulation.dvAccumulation_QuickSort(
+        invData.accPkts[0], 0, messaging.MAX_ACC_BUF_PKT - 1
+    )
 
     # Check that sorted packets properly
     randMeasTimes.sort()
@@ -78,7 +86,9 @@ def dvAccumulationTestFunction():
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # Add a new task to the process
+    testProc.addTask(
+        unitTestSim.CreateNewTask(unitTaskName, testProcessRate)
+    )  # Add a new task to the process
 
     # Construct the dvAccumulation module
     # Set the names for the input messages
@@ -129,37 +139,48 @@ def dvAccumulationTestFunction():
     # print(outputNavMsgData)
     # print(timeMsgData)
 
-    trueDVVector = [[4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
-                 [ 4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
-                 [ 4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
-                 [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03],
-                 [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03]]
-    trueTime = np.array([7.2123026e+07, 7.2123026e+07, 7.2123026e+07, 7.6667436e+07, 7.6667436e+07]) * macros.NANO2SEC
+    trueDVVector = [
+        [4.82820079e-03, 7.81971465e-03, 2.29605663e-03],
+        [4.82820079e-03, 7.81971465e-03, 2.29605663e-03],
+        [4.82820079e-03, 7.81971465e-03, 2.29605663e-03],
+        [6.44596343e-03, 9.00203561e-03, 2.60580728e-03],
+        [6.44596343e-03, 9.00203561e-03, 2.60580728e-03],
+    ]
+    trueTime = (
+        np.array([7.2123026e07, 7.2123026e07, 7.2123026e07, 7.6667436e07, 7.6667436e07])
+        * macros.NANO2SEC
+    )
 
     accuracy = 1e-6
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueDVVector, outputNavMsgData,
-                                                                 accuracy,
-                                                                 "dvAccumulation output",
-                                                                 2, testFailCount, testMessages)
-    testFailCount, testMessages = unitTestSupport.compareArrayND([trueTime], [timeMsgData],
-                                                                 accuracy, "timeTag", 5,
-                                                                 testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        trueDVVector,
+        outputNavMsgData,
+        accuracy,
+        "dvAccumulation output",
+        2,
+        testFailCount,
+        testMessages,
+    )
+    testFailCount, testMessages = unitTestSupport.compareArrayND(
+        [trueTime], [timeMsgData], accuracy, "timeTag", 5, testFailCount, testMessages
+    )
 
     snippentName = "passFail"
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_dv_accumulation()

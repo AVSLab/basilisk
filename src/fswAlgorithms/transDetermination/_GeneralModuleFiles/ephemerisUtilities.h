@@ -22,13 +22,12 @@
 
 #include <stdint.h>
 
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
     /*! Calculate Chebychev Polynominal */
-    double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
-                               double evalValue);
+    double calculateChebyValue(double* chebyCoeff, uint32_t nCoeff, double evalValue);
 
 #ifdef __cplusplus
 }

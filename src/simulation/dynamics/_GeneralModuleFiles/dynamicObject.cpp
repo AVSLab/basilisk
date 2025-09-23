@@ -20,14 +20,14 @@
 #include "dynamicObject.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
+void
+DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
 {
     if (this->isDynamicsSynced) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You cannot set the integrator of a DynamicObject with synced integration. "
-            "If you want to change the integrator, change the integrator of the primary "
-            "DynamicObject.");
+        bskLogger.bskLog(BSK_WARNING,
+                         "You cannot set the integrator of a DynamicObject with synced integration. "
+                         "If you want to change the integrator, change the integrator of the primary "
+                         "DynamicObject.");
         return;
     }
 
@@ -37,8 +37,7 @@ void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
     }
 
     if (newIntegrator->dynPtrs.at(0) != this) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "New integrator must have been created using this DynamicObject");
+        bskLogger.bskLog(BSK_ERROR, "New integrator must have been created using this DynamicObject");
         return;
     }
 
@@ -53,15 +52,18 @@ void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
     this->integrator = newIntegrator;
 }
 
-void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
+void
+DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
 {
     this->integrator->dynPtrs.push_back(dynPtr);
     dynPtr->isDynamicsSynced = true;
 }
 
-void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
+void
+DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
 {
-    if (this->isDynamicsSynced) return;
+    if (this->isDynamicsSynced)
+        return;
 
     for (const auto& dynPtr : this->integrator->dynPtrs) {
         dynPtr->preIntegration(integrateToThisTimeNanos);

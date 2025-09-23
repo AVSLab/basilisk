@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -16,7 +15,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
 import inspect
 import math
 import os
@@ -28,7 +26,9 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
@@ -60,17 +60,18 @@ def test_unitExponentialAtmosphere():
     snippetName = "passFail"
     testSum = sum(testResults)
     if testSum == 0:
-        colorText = 'ForestGreen'
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        colorText = "ForestGreen"
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        colorText = "Red"
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
     if testSum == 0:
         print("Passed")
 
     assert testSum < 1, testMessage
+
 
 def AddSpacecraftToModel(atmoModel):
     testFailCount = 0
@@ -89,24 +90,27 @@ def AddSpacecraftToModel(atmoModel):
     if len(atmoModel.scStateInMsgs) != 2:
         testFailCount += 1
         testMessages.append(
-            "FAILED: ExponentialAtmosphere does not have enough input message names.")
+            "FAILED: ExponentialAtmosphere does not have enough input message names."
+        )
 
     if len(atmoModel.envOutMsgs) != 2:
         testFailCount += 1
         testMessages.append(
-            "FAILED: ExponentialAtmosphere does not have enough output message names.")
+            "FAILED: ExponentialAtmosphere does not have enough output message names."
+        )
     return testFailCount, testMessages
 
+
 ##  Test specific atmospheric model performance
+
 
 def TestExponentialAtmosphere():
     testFailCount = 0
     testMessages = []
 
     def expAtmoComp(alt, baseDens, scaleHeight):
-        density = baseDens * math.exp(-alt/scaleHeight)
+        density = baseDens * math.exp(-alt / scaleHeight)
         return density
-
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -119,7 +123,7 @@ def TestExponentialAtmosphere():
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
@@ -140,16 +144,18 @@ def TestExponentialAtmosphere():
 
     planet = gravFactory.createEarth()
 
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spacecraft
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     #
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
 
-    r_eq = 6371*1000.0
+    r_eq = 6371 * 1000.0
     refBaseDens = 1.217
     refScaleHeight = 8500.0
 
@@ -158,16 +164,17 @@ def TestExponentialAtmosphere():
     newAtmo.scaleHeight = refScaleHeight
     newAtmo.planetRadius = r_eq
 
-
-    oe.a = r_eq + 300.*1000
+    oe.a = r_eq + 300.0 * 1000
     oe.e = 0.0
-    oe.i = 0.0*macros.D2R
+    oe.i = 0.0 * macros.D2R
 
-    oe.Omega = 0.0*macros.D2R
-    oe.omega = 0.0*macros.D2R
-    oe.f     = 0.0*macros.D2R
+    oe.Omega = 0.0 * macros.D2R
+    oe.omega = 0.0 * macros.D2R
+    oe.f = 0.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
     # with circular or equatorial orbit, some angles are
     # arbitrary
 
@@ -177,18 +184,19 @@ def TestExponentialAtmosphere():
     scObject.hub.r_CN_NInit = rN  # m - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m - v_CN_N
 
-
     # set the simulation time
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu / oe.a / oe.a / oe.a)
+    P = 2.0 * np.pi / n
 
-    simulationTime = macros.sec2nano(0.5*P)
+    simulationTime = macros.sec2nano(0.5 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     denLog = newAtmo.envOutMsgs[0].recorder(samplingTime)
 
@@ -221,22 +229,29 @@ def TestExponentialAtmosphere():
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     if len(densData) > 0:
-        for ind in range(0,len(densData)):
+        for ind in range(0, len(densData)):
             dist = np.linalg.norm(posData[ind])
             alt = dist - newAtmo.planetRadius
 
             trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
             # check a vector values
-            if not unitTestSupport.isDoubleEqualRelative(densData[ind], trueDensity, accuracy):
+            if not unitTestSupport.isDoubleEqualRelative(
+                densData[ind], trueDensity, accuracy
+            ):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
+                    "FAILED:  ExpAtmo failed density unit test at t="
+                    + str(densData[ind, 0] * macros.NANO2SEC)
+                    + "sec with a value difference of "
+                    + str(densData[ind, 1] - trueDensity)
+                )
     else:
         testFailCount += 1
         testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
 
     return testFailCount, testMessages
 
-if __name__=='__main__':
+
+if __name__ == "__main__":
     # TestExponentialAtmosphere()
     test_unitExponentialAtmosphere()

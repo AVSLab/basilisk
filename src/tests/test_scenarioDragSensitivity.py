@@ -27,7 +27,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioDragSensitivity as sds
 
 
@@ -62,4 +62,3 @@ def test_scenarioDragSensitivity(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-

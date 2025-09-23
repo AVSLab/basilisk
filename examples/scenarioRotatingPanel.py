@@ -87,6 +87,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.
 #
@@ -100,16 +101,24 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+)
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.simulation import coarseSunSensor
 import math
+
 
 def run(show_plots):
     """
@@ -131,7 +140,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(1.)
+    simulationTimeStep = macros.sec2nano(1.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # create the spacecraft hub
@@ -150,14 +159,14 @@ def run(show_plots):
     # create sun position message
     sunMessage = messaging.SpicePlanetStateMsgPayload(
         PlanetName="Sun",
-        PositionVector=[0, orbitalMotion.AU*1000, 0],
+        PositionVector=[0, orbitalMotion.AU * 1000, 0],
     )
     sunStateMsg = messaging.SpicePlanetStateMsg().write(sunMessage)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000  # meters
-    rGEO = 42000. * 1000  # meters
+    rLEO = 7000.0 * 1000  # meters
+    rGEO = 42000.0 * 1000  # meters
     oe.a = (rLEO + rGEO) / 2.0
     oe.e = 1.0 - rLEO / oe.a
     oe.i = 0.0 * macros.D2R
@@ -165,13 +174,19 @@ def run(show_plots):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)  # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     # point the body 3 axis towards the sun in the inertial n2 direction
-    scObject.hub.sigma_BNInit = [[math.tan(-90./4.*macros.D2R)], [0.0], [0.0]]  # sigma_BN_B
+    scObject.hub.sigma_BNInit = [
+        [math.tan(-90.0 / 4.0 * macros.D2R)],
+        [0.0],
+        [0.0],
+    ]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     #
@@ -208,18 +223,22 @@ def run(show_plots):
     #
     CSS1 = coarseSunSensor.CoarseSunSensor()
     CSS1.ModelTag = "CSS1_sensor"
-    CSS1.fov = 45. * macros.D2R
+    CSS1.fov = 45.0 * macros.D2R
     CSS1.scaleFactor = 1.0
     CSS1.sunInMsg.subscribeTo(sunStateMsg)
     CSS1.nHat_B = [1, 0, 0]
-    CSS1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)  # states relative to panel states
+    CSS1.stateInMsg.subscribeTo(
+        panel1.hingedRigidBodyConfigLogOutMsg
+    )  # states relative to panel states
     CSS2 = coarseSunSensor.CoarseSunSensor()
     CSS2.ModelTag = "CSS2_sensor"
-    CSS2.fov = 45. * macros.D2R
+    CSS2.fov = 45.0 * macros.D2R
     CSS2.scaleFactor = 1.0
     CSS2.sunInMsg.subscribeTo(sunStateMsg)
     CSS2.nHat_B = [0, 0, 1]
-    CSS2.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)  # states relative to panel states
+    CSS2.stateInMsg.subscribeTo(
+        panel1.hingedRigidBodyConfigLogOutMsg
+    )  # states relative to panel states
 
     #
     # add modules to simulation task list
@@ -232,12 +251,14 @@ def run(show_plots):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(0.05 * P)
 
     # Setup data logging before the simulation is initialized
     numDataPoints = 200
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     pl1Log = panel1.hingedRigidBodyOutMsg.recorder(samplingTime)
     spLog = solarPanel.nodePowerOutMsg.recorder(samplingTime)
@@ -250,11 +271,14 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, css2Log)
 
     # Vizard Visualization Option
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__,
-                                              # liveStream=True,
-                                              cssList=[[CSS1, CSS2]]
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # saveFile=__file__,
+        # liveStream=True,
+        cssList=[[CSS1, CSS2]],
+    )
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
@@ -269,7 +293,9 @@ def run(show_plots):
 
     np.set_printoptions(precision=16)
 
-    figureList = plotOrbits(dataLog.times(), dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log)
+    figureList = plotOrbits(
+        dataLog.times(), dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, css2Log
+    )
 
     if show_plots:
         plt.show()
@@ -287,15 +313,18 @@ def plotOrbits(timeAxis, dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, cs
     plt.figure(figCounter)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     timeData = timeAxis * macros.NANO2MIN
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'MRP Attitude $\sigma_{B/N}$')
+        plt.plot(
+            timeData,
+            dataSigmaBN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"MRP Attitude $\sigma_{B/N}$")
     figureList = {}
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
@@ -304,17 +333,17 @@ def plotOrbits(timeAxis, dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, cs
     figCounter += 1
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
-    ax1.plot(timeData, panel1thetaLog*macros.R2D % 360, '--', color='royalblue')
-    ax1.fill_between(timeData, 0, 90, facecolor='gold')
-    ax1.fill_between(timeData, 270, 360, facecolor='gold')
+    ax1.plot(timeData, panel1thetaLog * macros.R2D % 360, "--", color="royalblue")
+    ax1.fill_between(timeData, 0, 90, facecolor="gold")
+    ax1.fill_between(timeData, 270, 360, facecolor="gold")
     ax1.set_yticks([0, 90, 180, 270, 360])
-    plt.xlabel('Time [min]')
-    plt.ylabel('Panel Angle [deg]', color='royalblue')
+    plt.xlabel("Time [min]")
+    plt.ylabel("Panel Angle [deg]", color="royalblue")
     ax2 = plt.figure(figCounter).add_subplot(111, sharex=ax1, frameon=False)
-    ax2.plot(timeData, solarPowerLog, color='goldenrod')
+    ax2.plot(timeData, solarPowerLog, color="goldenrod")
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position("right")
-    plt.ylabel('Solar Panel Power [W]', color='goldenrod')
+    plt.ylabel("Solar Panel Power [W]", color="goldenrod")
     pltName = fileName + str(figCounter) + "panel1theta"
     figureList[pltName] = plt.figure(figCounter)
 
@@ -322,24 +351,20 @@ def plotOrbits(timeAxis, dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, cs
     figCounter += 1
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
-    ax1.plot(timeData, panel1thetaLog*macros.R2D % 360, '--', color='royalblue')
+    ax1.plot(timeData, panel1thetaLog * macros.R2D % 360, "--", color="royalblue")
     ax1.set_yticks([0, 90, 180, 270, 360])
-    plt.xlabel('Time [min]')
-    plt.ylabel('Panel Angle [deg]', color='royalblue')
+    plt.xlabel("Time [min]")
+    plt.ylabel("Panel Angle [deg]", color="royalblue")
     ax2 = plt.figure(figCounter).add_subplot(111, sharex=ax1, frameon=False)
-    ax2.plot(timeData, css1Log,
-             color='tab:pink',
-             label=r'CSS$_1$')
-    ax2.plot(timeData, css2Log,
-             color='tab:olive',
-             label=r'CSS$_2$')
-    ax1.fill_between(timeData, 225, 315, facecolor='pink')
-    ax1.fill_between(timeData, 315, 360, facecolor='palegoldenrod')
-    ax1.fill_between(timeData, 0, 45, facecolor='palegoldenrod')
-    plt.legend(loc='lower right')
+    ax2.plot(timeData, css1Log, color="tab:pink", label=r"CSS$_1$")
+    ax2.plot(timeData, css2Log, color="tab:olive", label=r"CSS$_2$")
+    ax1.fill_between(timeData, 225, 315, facecolor="pink")
+    ax1.fill_between(timeData, 315, 360, facecolor="palegoldenrod")
+    ax1.fill_between(timeData, 0, 45, facecolor="palegoldenrod")
+    plt.legend(loc="lower right")
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position("right")
-    plt.ylabel(r'CSS Signals')
+    plt.ylabel(r"CSS Signals")
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
 

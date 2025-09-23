@@ -7,16 +7,16 @@ The resulting actual values and differences with hand-computed values are shown 
 
 
 \subsection{Test 2}
-This test repeats the values of test 1, except that the RW motor torque input vector is set to \input{AutoTex/usTrueFalseFalse.tex} Nm.  This should saturate the first and last RW voltage output, which is seen in Table~\ref{tbl:testTrueFalseFalse}. 
+This test repeats the values of test 1, except that the RW motor torque input vector is set to \input{AutoTex/usTrueFalseFalse.tex} Nm.  This should saturate the first and last RW voltage output, which is seen in Table~\ref{tbl:testTrueFalseFalse}.
 
 
 \subsection{Test 3}
-This test repeats the values of test 1, except that a RW availability message is created.  Here all RWs have a status of {\tt AVAILABLE} except for the 3rd RW which is {\tt UNAVAILALBE}.    The 3rd RW voltages should thus all be 0.0 in this case, which is seen in Table~\ref{tbl:testFalseTrueFalse}. 
+This test repeats the values of test 1, except that a RW availability message is created.  Here all RWs have a status of {\tt AVAILABLE} except for the 3rd RW which is {\tt UNAVAILALBE}.    The 3rd RW voltages should thus all be 0.0 in this case, which is seen in Table~\ref{tbl:testFalseTrueFalse}.
 
 
 \subsection{Test 4}
 
-This test repeats the values of test 1, except that a RW wheel speed message is created.  The feedback gain is set to $K = 1.5$.  For the first 1.0 seconds the RW wheel speeds are set to \input{AutoTeX/Omega1.tex} rad/sec.  At 1.0 seconds the RW wheel speeds are set to  \input{AutoTeX/Omega2.tex} rad/sec.  Then the module is reset at 1.5 seconds and the simulation continued for another 1.5 second for a 3 second total simulation time.   The speed message remains the same after the reset.   Table~\ref{tbl:testFalseFalseTrue} shows the results of the actual values, and the differences with the hand-computed values.  
+This test repeats the values of test 1, except that a RW wheel speed message is created.  The feedback gain is set to $K = 1.5$.  For the first 1.0 seconds the RW wheel speeds are set to \input{AutoTeX/Omega1.tex} rad/sec.  At 1.0 seconds the RW wheel speeds are set to  \input{AutoTeX/Omega2.tex} rad/sec.  Then the module is reset at 1.5 seconds and the simulation continued for another 1.5 second for a 3 second total simulation time.   The speed message remains the same after the reset.   Table~\ref{tbl:testFalseFalseTrue} shows the results of the actual values, and the differences with the hand-computed values.
 
 
 \section{Test Parameters}
@@ -34,7 +34,7 @@ All of the tests passed:
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c  } % Column formatting, 
+	\begin{tabular}{c | c  } % Column formatting,
 		\hline
 		\textbf{Test} 						  		&\textbf{Pass/Fail} \\ \hline
 	   1	   			& \input{AutoTex/passFailOne} \\ \hline

@@ -31,7 +31,8 @@
 /** StateVector represents an ordered collection of StateData,
  * with each state having a unique name.
  */
-class StateVector {
+class StateVector
+{
   public:
     /** All states managed by the StateVector, cached
      * by name.
@@ -51,7 +52,7 @@ class StateVector {
     StateVector(const StateVector& other);
 
     /** Assignment operator */
-    StateVector& operator= (const StateVector&);
+    StateVector& operator=(const StateVector&);
 
     /** Sets the values of the states of this StateVector to a copy the
      * values of the states of the other StateVector.
@@ -75,7 +76,8 @@ class StateVector {
 };
 
 /** A class that manages a set of states and properties. */
-class DynParamManager {
+class DynParamManager
+{
   public:
     /** A map of properties managed by this class.
      *
@@ -101,8 +103,8 @@ class DynParamManager {
      * This method may optionally be templated to create StateData of
      * subclasses of StateData.
      */
-    template <typename StateDataType = StateData,
-              std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
+    template<typename StateDataType = StateData,
+             std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
     StateDataType* registerState(uint32_t nRow, uint32_t nCol, std::string stateName);
 
     /** Retrieves the handler to a previously registered StateData.
@@ -144,21 +146,19 @@ class DynParamManager {
     void propagateStateVector(double dt);
 };
 
-template <typename StateDataType,
-          std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool>>
-StateDataType* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
+template<typename StateDataType, std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool>>
+StateDataType*
+DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
 {
     if (stateName == "") {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Your state name can't be an empty string.  Come on.  You get null.");
+        bskLogger.bskLog(BSK_ERROR, "Your state name can't be an empty string.  Come on.  You get null.");
         return nullptr;
     }
 
     if (stateContainer.stateMap.count(stateName) > 0) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You created a state with the name: %s more than once.  Go ahead and don't do this.",
-            stateName.c_str());
+        bskLogger.bskLog(BSK_WARNING,
+                         "You created a state with the name: %s more than once.  Go ahead and don't do this.",
+                         stateName.c_str());
 
         auto& stateData = stateContainer.stateMap.at(stateName);
 

@@ -21,12 +21,14 @@ from Basilisk.utilities import SimulationBaseClass
 try:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import StatefulSysModel
+
     couldImportMujoco = True
 except:
     couldImportMujoco = False
 
 import pytest
 import numpy as np
+
 
 @pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_stateful():
@@ -49,18 +51,17 @@ def test_stateful():
             """Called at every integrator step"""
             t = macros.NANO2SEC * CurrentSimNanos
             x = self.xState.getState()[0][0]
-            self.xState.setDerivative( [[t*x]] )
+            self.xState.setDerivative([[t * x]])
 
-
-    dt = 0.01 # s
-    tf = 1 # s
+    dt = 0.01  # s
+    tf = 1  # s
 
     # Create sim, process, and task
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess("test")
     dynProcess.addTask(scSim.CreateNewTask("test", macros.sec2nano(dt)))
 
-    scene = mujoco.MJScene("<mujoco/>") # empty scene, no multi-body dynamics
+    scene = mujoco.MJScene("<mujoco/>")  # empty scene, no multi-body dynamics
     scSim.AddModelToTask("test", scene)
 
     expState = ExponentialStateModel()
@@ -70,7 +71,7 @@ def test_stateful():
 
     # Run the sim
     scSim.InitializeSimulation()
-    expState.xState.setState([[1]]) # initialize state to 1
+    expState.xState.setState([[1]])  # initialize state to 1
 
     # Run for tf seconds
     scSim.ConfigureStopTime(macros.sec2nano(tf))
@@ -78,12 +79,15 @@ def test_stateful():
 
     # Check that the state name has the model tag and ID prepended
     expected_name = f"{expState.ModelTag}_{expState.moduleID}_x"
-    assert expState.xState.getName() == expected_name, f"{expState.xState.getName()} != {expected_name}"
+    assert expState.xState.getName() == expected_name, (
+        f"{expState.xState.getName()} != {expected_name}"
+    )
 
     # The state follows dx/dt=x*t for x(0) = 1
     # So we expect x(tf=1) to be e^(tf^2/2)
-    expected = np.exp( tf**2 / 2 )
+    expected = np.exp(tf**2 / 2)
     assert expState.xState.getState()[0][0] == pytest.approx(expected)
+
 
 if __name__ == "__main__":
     if True:

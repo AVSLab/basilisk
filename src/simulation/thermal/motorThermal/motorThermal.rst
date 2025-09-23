@@ -1,7 +1,7 @@
 Executive Summary
 -----------------
 
-Module that computes the motor temperature. It takes into account mechanical power efficiency, as well as friction, 
+Module that computes the motor temperature. It takes into account mechanical power efficiency, as well as friction,
 as sources of heat. There is also a dissipative term due to the temperature gradient between the motor and the
 air surrounding it.
 
@@ -36,7 +36,7 @@ power :math:`P_{mec}` is given by:
 .. math::
     P_{mec}=\Omega \times u_s
 
-where :math:`\Omega` is the motor angular velocity and :math:`u_s` represents the applied torque. Given the mechanical efficiency :math:`\eta`, we can convert 
+where :math:`\Omega` is the motor angular velocity and :math:`u_s` represents the applied torque. Given the mechanical efficiency :math:`\eta`, we can convert
 mechanical power into thermal power as follows:
 
 .. math::
@@ -48,7 +48,7 @@ Similarly to the mechanical power, the friction dissipation is given by:
     P_{f}=\Omega \times \tau_f
 
 where :math:`\tau_f` represents the friction torque. The absolute value of these two terms added together represents the thermal power generation. As for the power
-dissipation, we assume a temperature gradient between the motor and the surrounding environment. For simplicity, a constant ambient temperature is considered. The 
+dissipation, we assume a temperature gradient between the motor and the surrounding environment. For simplicity, a constant ambient temperature is considered. The
 thermal power dissipation is calculated using the temperature difference between the motor and the environment, scaled by the ambient's thermal resistance :math:`R_{ambient}`:
 
 .. math::

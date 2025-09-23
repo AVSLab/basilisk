@@ -93,5 +93,3 @@ After executing the script you should see the following terminal output:
     [2.0, 0.0, 0.0]
     cppMsg:
     [2.0, 0.0, 0.0]
-
-

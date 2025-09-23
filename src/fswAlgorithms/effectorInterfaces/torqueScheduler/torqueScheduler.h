@@ -25,38 +25,38 @@
 #include "cMsgCInterface/ArrayMotorTorqueMsg_C.h"
 #include "cMsgCInterface/ArrayEffectorLockMsg_C.h"
 
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
 
     /* declare these user-defined inputs */
-    int    lockFlag;                               //!< flag to control the scheduler logic
-    double tSwitch;                                //!< [s] time span after t0 at which controller switches to second angle
+    int lockFlag;   //!< flag to control the scheduler logic
+    double tSwitch; //!< [s] time span after t0 at which controller switches to second angle
 
     /* declare this quantity that is a module internal variable */
-    uint64_t t0;                                   //!< [ns] epoch time where module is reset
+    uint64_t t0; //!< [ns] epoch time where module is reset
 
     /* declare module IO interfaces */
-    ArrayMotorTorqueMsg_C  motorTorque1InMsg;      //!< input motor torque message #1
-    ArrayMotorTorqueMsg_C  motorTorque2InMsg;      //!< input motor torque message #1
-    ArrayMotorTorqueMsg_C  motorTorqueOutMsg;      //!< output msg containing the motor torque to the array drive
-    ArrayEffectorLockMsg_C effectorLockOutMsg;     //!< output msg containing the flag to actuate or lock the motor
+    ArrayMotorTorqueMsg_C motorTorque1InMsg;   //!< input motor torque message #1
+    ArrayMotorTorqueMsg_C motorTorque2InMsg;   //!< input motor torque message #1
+    ArrayMotorTorqueMsg_C motorTorqueOutMsg;   //!< output msg containing the motor torque to the array drive
+    ArrayEffectorLockMsg_C effectorLockOutMsg; //!< output msg containing the flag to actuate or lock the motor
 
-    BSKLogger *bskLogger;                          //!< BSK Logging
+    BSKLogger* bskLogger; //!< BSK Logging
 
-}torqueSchedulerConfig;
+} torqueSchedulerConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_torqueScheduler(torqueSchedulerConfig *configData, int64_t moduleID);
-    void Reset_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_torqueScheduler(torqueSchedulerConfig* configData, int64_t moduleID);
+    void Reset_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Update_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

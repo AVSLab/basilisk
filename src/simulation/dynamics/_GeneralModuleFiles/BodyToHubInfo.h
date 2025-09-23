@@ -21,18 +21,15 @@
 #define SIM_THRUSTER_BODYTOHUBINFO_H
 #include <stdint.h>
 
-
 /*! attached body to hub information structure*/
 typedef struct
-//@cond DOXYGEN_IGNORE
-BodyToHubInfo
+  //@cond DOXYGEN_IGNORE
+  BodyToHubInfo
 //@endcond
 {
-    Eigen::Vector3d r_FB_B;         //!< position vector of the frame F relative to frame B
-    Eigen::Vector3d omega_FB_B;     //!< angular velocity of F relative to B
-    Eigen::Matrix3d dcm_BF;         //!< DCM of B relative to F
-}BodyToHubInfo;
-
-
+    Eigen::Vector3d r_FB_B;     //!< position vector of the frame F relative to frame B
+    Eigen::Vector3d omega_FB_B; //!< angular velocity of F relative to B
+    Eigen::Matrix3d dcm_BF;     //!< DCM of B relative to F
+} BodyToHubInfo;
 
 #endif

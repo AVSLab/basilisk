@@ -73,18 +73,18 @@ At this point, all of the information needed to solve for Eq. \ref{eq:SN} is kno
 	\subitem \textbf{Success Criteria}: The outputs match to acceptable tolerance and are visually confirmed to be capped.
 	\item \underline{Discretization} The IMU is run with all clean inputs, i.e. nonzero accelerations and angular accelerations of the spacecraft and this is compared to the truth values generated in python. Outputs are discretized.
 	\subitem \textbf{Success Criteria}: The outputs match to acceptable tolerance and are visually confirmed to be discretized. Note. Two points in time always fail this test. This has to do with the python generated and c++ generated values being ever-so-slightly off and not discretizing at the same point. They match at the next timesteps and have been ignored for the test.
-\end{enumerate} 
+\end{enumerate}
 As an additional check, $[PB]$ is calculated separately for the truth values and $yaw$, $pitch$, and $roll$ are fed to the IMU which calculates this value independently. In this way, the multiple set-up options for the IMU are validated.
 
 
 \section{Test Parameters}
-This section summarizes the specific error tolerances for each test. Error tolerances are determined based on whether the test results comparison should be exact or approximate due to integration or other reasons. Error tolerances for each test are summarized in table \ref{tab:errortol}. 
+This section summarizes the specific error tolerances for each test. Error tolerances are determined based on whether the test results comparison should be exact or approximate due to integration or other reasons. Error tolerances for each test are summarized in table \ref{tab:errortol}.
 
 \begin{table}[H]
 	\caption{Error tolerance for each test. Note that tolerances are relative $\frac{truth-output}{truth}$}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c  | c  | c  | c  | c  | c  | c  | c } % Column formatting, 
+	\begin{tabular}{ c | c | c  | c  | c  | c  | c  | c  | c  | c } % Column formatting,
 		\hline
 		\rot{\textbf{Test}}								& \rot{\textbf{Tolerance}} 		&\rot{\textbf{GyroLSB}}& \rot{\textbf{AccelLSB}}& \rot{\textbf{RotMax}}&\rot{\textbf{TransMax}}&\rot{\textbf{RotNoise}}&\rot{\textbf{TransNoise}}&\rot{\textbf{RotBias}}&\rot{\textbf{TransBias}}  \\ \hline
 		Clean													& \input{AutoTex/cleanaccuracy}	& \input{AutoTex/cleangyroLSB}& \input{AutoTex/cleanaccelLSB}& \input{AutoTex/cleanrotMax}& \input{AutoTex/cleantransMax}& \input{AutoTex/cleanrotNoise}& \input{AutoTex/cleantransNoise}& \input{AutoTex/cleanrotBias}& \input{AutoTex/cleanTransBias} \\ \hline
@@ -105,7 +105,7 @@ All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:result
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c  } % Column formatting, 
+	\begin{tabular}{c | c  } % Column formatting,
 		\hline
 		\textbf{Test} 						  		&\textbf{Pass/Fail} \\ \hline
 		Clean	   			& \input{AutoTex/cleanpassFail} \\ \hline

@@ -49,7 +49,7 @@ v1.0 & Initial document & H. Schaub \\
 	\label{fig:extPulse1}
 \end{figure}
 \section{Introduction}
-This module allows a special pulsed external disturbance torque $\bm \tau$ to be applied onto a rigid body.   The torque is taken about the body-fixed point $B$, and the vector components are given in the body frame $\mathcal{B}$ as illustrated in Figure~\ref{fig:extPulse1}.  
+This module allows a special pulsed external disturbance torque $\bm \tau$ to be applied onto a rigid body.   The torque is taken about the body-fixed point $B$, and the vector components are given in the body frame $\mathcal{B}$ as illustrated in Figure~\ref{fig:extPulse1}.
 
 
 
@@ -61,7 +61,7 @@ This module allows a special pulsed external disturbance torque $\bm \tau$ to be
 	\label{fig:extPulse2}
 \end{figure}
 \section{Specifying the Pulsed Disturbance Torque}
-The module creates a cyclic disturbance torque which is applied to the rigid body.  The torque vector $\bm\tau$ is applied for equal time periods as $+\bm\tau$ and $-\bm\tau$.  This is followed by a specified off period before repeating.  This pattern is illustrated in Figure~\ref{fig:extPulse2}.  
+The module creates a cyclic disturbance torque which is applied to the rigid body.  The torque vector $\bm\tau$ is applied for equal time periods as $+\bm\tau$ and $-\bm\tau$.  This is followed by a specified off period before repeating.  This pattern is illustrated in Figure~\ref{fig:extPulse2}.
 
 Note that the pulse and off periods are specified through integer counts of the simulation integration time.
 
@@ -69,7 +69,7 @@ Note that the pulse and off periods are specified through integer counts of the 
 
 
 \section{Module Parameters}
-The external disturbance torque vector and pulsing parameters are set directly from python.  
+The external disturbance torque vector and pulsing parameters are set directly from python.
 
 \subsection{{\tt pulsedTorqueExternalPntB\_B} Parameter}
 This vector sets the external torque, about point $B$, in $\mathcal{B}$ body-frame vector components.

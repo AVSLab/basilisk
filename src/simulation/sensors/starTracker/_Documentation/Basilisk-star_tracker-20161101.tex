@@ -55,7 +55,7 @@ This test is located in {\tt simulation/sensors/star\_tracker/\_UnitTest/test\_s
 	\item \underline{Structure to Body Transformation} The check verifies that the module correctly applied the structure to body frame transformation to the attitude coordinate output.
 	\item \underline{Process Noise} The check verifies that the Gauss-Markov model applies noise of appropriate mean and standard deviation to the attitude coordinate output. This check does not consider bias random walk.
 	\item \underline{Bias Random Walk Bounds} The check verifies that the Gauss-Markov model correctly applies bias random walk to the attitude coordinate output. Specified walk bounds are validated.
-\end{enumerate} 
+\end{enumerate}
 
 \section{Test Parameters}
 
@@ -85,7 +85,7 @@ All checks within test\_star\_tracker.py passed as expected. Table \ref{tab:resu
 	\caption{Test results.}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c | c | c | c | c } % Column formatting, 
+	\begin{tabular}{c | c | c | c | c | c } % Column formatting,
 		\hline
 		   & Attitude I/O & Time Stamp I/O & T\_str2Bdy & Process Noise & Bias Walk Bounds \\
 		\hline

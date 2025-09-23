@@ -49,18 +49,24 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, hillPoint)
+from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, hillPoint
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav, spacecraft
 from Basilisk.simulation import spacecraftLocation
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+)
 
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -81,7 +87,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(140.)
+    simulationTime = macros.min2nano(140.0)
 
     #
     #  create the simulation process
@@ -100,18 +106,14 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "Servicer"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # create the debris object states
     scObject2 = spacecraft.Spacecraft()
     scObject2.ModelTag = "Debris"
-    I2 = [600., 0., 0.,
-          0., 650., 0.,
-          0., 0, 450.]
+    I2 = [600.0, 0.0, 0.0, 0.0, 650.0, 0.0, 0.0, 0, 450.0]
     scObject2.hub.mHub = 350.0  # kg
     scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
 
@@ -150,10 +152,10 @@ def run(show_plots):
     scLocation.addSpacecraftToModel(scObject2.scStateOutMsg)
     scLocation.primaryScStateInMsg.subscribeTo(scObject.scStateOutMsg)
     scLocation.rEquator = earth.radEquator
-    scLocation.rPolar = earth.radEquator*0.98
+    scLocation.rPolar = earth.radEquator * 0.98
     scLocation.aHat_B = [0, 1, 0]
-    scLocation.theta = np.radians(10.)
-    scLocation.maximumRange = 55.
+    scLocation.theta = np.radians(10.0)
+    scLocation.maximumRange = 55.0
     scSim.AddModelToTask(simTaskName, scLocation)
 
     #
@@ -187,7 +189,7 @@ def run(show_plots):
     mrpControl.K = 3.5
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     #
@@ -216,7 +218,7 @@ def run(show_plots):
     # setup 1st debris object states
     oe2 = copy.deepcopy(oe)
     oe2.e += 0.000001
-    oe2.f += 40./oe2.a
+    oe2.f += 40.0 / oe2.a
     r2N, v2N = orbitalMotion.elem2rv(mu, oe2)
     scObject2.hub.r_CN_NInit = r2N  # m   - r_CN_N
     scObject2.hub.v_CN_NInit = v2N  # m/s - v_CN_N
@@ -226,17 +228,22 @@ def run(show_plots):
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # to save the BSK data to a file, uncomment the saveFile line below
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
-                                                  # , saveFile=fileName,
-                                                  )
-        vizSupport.addLocation(viz, stationName="antenna"
-                               , parentBodyName='Servicer'
-                               , r_GP_P=[0, 2, 0]
-                               , gHat_P=[0, 1, 0]
-                               , fieldOfView=2*scLocation.theta
-                               , range=scLocation.maximumRange
-                               , color='pink'
-                               )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            [scObject, scObject2],
+            # , saveFile=fileName,
+        )
+        vizSupport.addLocation(
+            viz,
+            stationName="antenna",
+            parentBodyName="Servicer",
+            r_GP_P=[0, 2, 0],
+            gHat_P=[0, 1, 0],
+            fieldOfView=2 * scLocation.theta,
+            range=scLocation.maximumRange,
+            color="pink",
+        )
         viz.settings.showLocationCommLines = 1
         viz.settings.showLocationCones = 1
         viz.settings.showLocationLabels = 1
@@ -254,13 +261,13 @@ def run(show_plots):
     #
     #   plot the results
     #
-    dataLog  = accessRec.hasAccess
+    dataLog = accessRec.hasAccess
     timeData = accessRec.times() * macros.NANO2MIN
 
     plt.figure(1)
     plt.plot(timeData, dataLog)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Sat-Sat Access')
+    plt.xlabel("Time [min]")
+    plt.ylabel("Sat-Sat Access")
 
     figureList = {}
     pltName = fileName + "1"
@@ -281,5 +288,5 @@ def run(show_plots):
 #
 if __name__ == "__main__":
     run(
-        True   # show_plots
+        True  # show_plots
     )

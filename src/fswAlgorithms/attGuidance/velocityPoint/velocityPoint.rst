@@ -31,4 +31,3 @@ provides information on what this message is used for.
     * - celBodyInMsg
       - :ref:`EphemerisMsgPayload`
       - (optional )primary celestial body information input message
-

@@ -34,7 +34,7 @@ def run():
     dynProcess = scSim.CreateNewProcess("dynamicsProcess")
 
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.)))
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask", macros.sec2nano(1.0)))
 
     # create modules
     mod1 = cModuleTemplate.cModuleTemplate()
@@ -47,12 +47,12 @@ def run():
 
     # set module variables
     mod1.dummy = 1
-    mod1.dumVector = [1., 2., 3.]
+    mod1.dumVector = [1.0, 2.0, 3.0]
     mod2.setDummy(1)
-    mod2.setDumVector([1., 2., 3.])
+    mod2.setDumVector([1.0, 2.0, 3.0])
 
     # request these module variables to be recorded
-    mod1Logger = mod1.logger("dummy", macros.sec2nano(1.))
+    mod1Logger = mod1.logger("dummy", macros.sec2nano(1.0))
     scSim.AddModelToTask("dynamicsTask", mod1Logger)
     mod2Logger = mod2.logger(["dummy", "dumVector"])
     scSim.AddModelToTask("dynamicsTask", mod2Logger)
@@ -74,6 +74,7 @@ def run():
     print(mod2Logger.dummy)
     print("mod2.getDumVector():")
     print(mod2Logger.dumVector)
+
 
 if __name__ == "__main__":
     run()

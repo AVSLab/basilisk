@@ -16,6 +16,7 @@ try:
 except:
     couldImportMujoco = False
 
+
 @pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_jointPIDController(showPlots: bool = False):
     """
@@ -23,10 +24,10 @@ def test_jointPIDController(showPlots: bool = False):
     Verifies that the controller computes the correct output for given input messages.
     Plots joint angle, velocity, and control torque if plot=True.
     """
-    dt = .1
+    dt = 0.1
     tf = 50
 
-    desiredPosition = np.pi/2
+    desiredPosition = np.pi / 2
     desiredVelocity = desiredPosition / tf
 
     scSim = SimulationBaseClass.SimBaseClass()
@@ -35,7 +36,7 @@ def test_jointPIDController(showPlots: bool = False):
 
     # Create the MJScene from a simple cannonball body
     scene = mujoco.MJScene(
-r"""
+        r"""
 <mujoco>
     <option gravity="0 0 0"/>
     <worldbody>
@@ -54,10 +55,9 @@ r"""
     armMotor: mujoco.MJSingleActuator = scene.addJointSingleActuator("arm", armJoint)
 
     desiredPosInterpolator = mujoco.ScalarJointStateInterpolator()
-    desiredPosInterpolator.setDataPoints([
-        [0, 0],
-        [macros.sec2nano(tf), desiredPosition]
-    ])
+    desiredPosInterpolator.setDataPoints(
+        [[0, 0], [macros.sec2nano(tf), desiredPosition]]
+    )
     scene.AddModelToDynamicsTask(desiredPosInterpolator)
 
     armController = MJPIDControllers.JointPIDController()
@@ -67,16 +67,16 @@ r"""
     scene.AddModelToDynamicsTask(armController)
 
     payload = messaging.ScalarJointStateMsgPayload()
-    payload.state = desiredVelocity # constant
+    payload.state = desiredVelocity  # constant
     desiredVelMsg = messaging.ScalarJointStateMsg().write(payload)
 
-    armController.measuredPosInMsg.subscribeTo( armJoint.stateOutMsg )
-    armController.measuredVelInMsg.subscribeTo( armJoint.stateDotOutMsg )
+    armController.measuredPosInMsg.subscribeTo(armJoint.stateOutMsg)
+    armController.measuredVelInMsg.subscribeTo(armJoint.stateDotOutMsg)
 
-    armController.desiredPosInMsg.subscribeTo( desiredPosInterpolator.interpolatedOutMsg )
-    armController.desiredVelInMsg.subscribeTo( desiredVelMsg )
+    armController.desiredPosInMsg.subscribeTo(desiredPosInterpolator.interpolatedOutMsg)
+    armController.desiredVelInMsg.subscribeTo(desiredVelMsg)
 
-    armMotor.actuatorInMsg.subscribeTo( armController.outputOutMsg )
+    armMotor.actuatorInMsg.subscribeTo(armController.outputOutMsg)
 
     desiredJointAngleRecorder = desiredPosInterpolator.interpolatedOutMsg.recorder()
     jointAngleRecorder = armJoint.stateOutMsg.recorder()
@@ -97,7 +97,7 @@ r"""
     scSim.ExecuteSimulation()
 
     t = jointAngleRecorder.times()
-    pos  = jointAngleRecorder.state
+    pos = jointAngleRecorder.state
     desiredPos = desiredJointAngleRecorder.state
     vel = jointVelocityRecorder.state
     torque = torqueRecorder.input
@@ -105,19 +105,21 @@ r"""
 
     # Plot results
     if showPlots:
-        plt.figure(figsize=(10,6))
-        plt.subplot(3,1,1)
+        plt.figure(figsize=(10, 6))
+        plt.subplot(3, 1, 1)
         plt.plot(t, pos, label="Joint Angle")
-        plt.plot(t, desiredPos, color='r', linestyle='--', label="Desired Angle")
+        plt.plot(t, desiredPos, color="r", linestyle="--", label="Desired Angle")
         plt.ylabel("Angle [rad]")
         plt.legend()
-        plt.subplot(3,1,2)
+        plt.subplot(3, 1, 2)
         plt.plot(t, vel, label="Joint Velocity")
-        plt.plot(t[:-1], np.diff(pos)/np.diff(t), linestyle=":", label="dx/dt")
-        plt.axhline(desiredVelocity, color='r', linestyle='--', label="Desired Velocity")
+        plt.plot(t[:-1], np.diff(pos) / np.diff(t), linestyle=":", label="dx/dt")
+        plt.axhline(
+            desiredVelocity, color="r", linestyle="--", label="Desired Velocity"
+        )
         plt.ylabel("Velocity [rad/s]")
         plt.legend()
-        plt.subplot(3,1,3)
+        plt.subplot(3, 1, 3)
         plt.plot(t, torque, label="Control Torque")
         plt.ylabel("Torque [Nm]")
         plt.xlabel("Time [s]")
@@ -128,20 +130,24 @@ r"""
     # verify PID formula
     for i in range(len(torque)):
         expected_output = (
-            armController.getProportionalGain() * (desiredPos[i] - pos[i]) +
-            armController.getDerivativeGain() * (desiredVelocity - vel[i]) +
-            armController.getIntegralGain() * integralError[i]
+            armController.getProportionalGain() * (desiredPos[i] - pos[i])
+            + armController.getDerivativeGain() * (desiredVelocity - vel[i])
+            + armController.getIntegralGain() * integralError[i]
         )
-        assert torque[i] == pytest.approx(expected_output, abs=1e-6), \
+        assert torque[i] == pytest.approx(expected_output, abs=1e-6), (
             f"At t={t[i]:.2f}s, PID output {torque[i]} != expected {expected_output}"
+        )
 
     # Assert final joint position is close to desired
-    assert pos[-1] == pytest.approx(desiredPosition, rel=1e-2), \
+    assert pos[-1] == pytest.approx(desiredPosition, rel=1e-2), (
         f"Final joint position {pos[-1]} not close to desired {desiredPosition}"
+    )
 
     # Assert velocity settles near zero
-    assert vel[-1] == pytest.approx(desiredVelocity, rel=1e-2), \
+    assert vel[-1] == pytest.approx(desiredVelocity, rel=1e-2), (
         f"Final joint velocity {vel[-1]} not close to desired {desiredVelocity}"
+    )
+
 
 if __name__ == "__main__":
     test_jointPIDController(True)

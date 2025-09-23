@@ -425,9 +425,8 @@ def run(show_plots):
         viz = vizSupport.enableUnityVisualization(
             scSim,
             simTaskName,
-            scObject
+            scObject,
             # , saveFile=fileName
-            ,
             genericSensorList=genericSensorHUD,
             transceiverList=transceiverHUD,
             genericStorageList=hdDevicePanel,

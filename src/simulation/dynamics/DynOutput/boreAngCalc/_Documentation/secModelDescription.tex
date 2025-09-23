@@ -6,13 +6,13 @@ The Bore Angle Calculation model uses vector mathematics in order to calculate t
 	\centerline{
 		 \includegraphics[height = 3in]{Figures/missAngleImg.JPG}
 	}
-	\caption{All of the vectors and the miss angle are labeled here. $\bm O$ is the vector that represents the boresight of the instrument that the test is interested in. $\bm{L}$ is the direction that the spacecraft should be pointing its boresight in. $\bm M$ is the miss angle of the boresight to its desired direction. All of the $\bm r$ vectors are various position vectors designated by their subscripts.} 
+	\caption{All of the vectors and the miss angle are labeled here. $\bm O$ is the vector that represents the boresight of the instrument that the test is interested in. $\bm{L}$ is the direction that the spacecraft should be pointing its boresight in. $\bm M$ is the miss angle of the boresight to its desired direction. All of the $\bm r$ vectors are various position vectors designated by their subscripts.}
 	\label{fig:Fig1}
 \end{figure}
 
 The model begins by creating a direction cosine martix to represent the pointing frame from the inertial frame. Then the boresight vector is projected into this frame, and the miss angle and the azimuth angle are calculated using standard trigonometry. These calculations are performed in the following way:
 
-First, the unit relative position vector of the spacecraft is calculated relative to the celestial body that the spacecraft is supposed to be pointing at. Using Equation \ref{eq:rePos}. Where $\hat{\bm r}_{B/S}$ is the unit relative position of the spacecraft to the planet, $\bm r_{N/S}$ is the position of the celestial body in the inertial frame, and $\bm r_{N/B}$ is the position of the spacecraft in the inertial frame. 
+First, the unit relative position vector of the spacecraft is calculated relative to the celestial body that the spacecraft is supposed to be pointing at. Using Equation \ref{eq:rePos}. Where $\hat{\bm r}_{B/S}$ is the unit relative position of the spacecraft to the planet, $\bm r_{N/S}$ is the position of the celestial body in the inertial frame, and $\bm r_{N/B}$ is the position of the spacecraft in the inertial frame.
 
  \begin{equation}
  	\label{eq:rePos}
@@ -60,7 +60,7 @@ Alternatively, the basline vector can be defined in the inertial frame instead o
 	\caption{The azimuth angle, A is shown here with respect to the pointing coordinate frame and the vectors used to construct the azimuth angle.}
 	\label{fig:Fig2}
 \end{figure}
- 
+
 The azimuth angle is calculated by passing the product of the last two components of the borsight vector. This is shown in Equation \ref{eq:azAng} and in Figure \ref{fig:Fig2}.
 
  \begin{equation}

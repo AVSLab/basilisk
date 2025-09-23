@@ -82,7 +82,7 @@ def planetNavTestFunction(show_plots):
     # Configure blank module input messages
     ephemerisInMsgData = messaging.EphemerisMsgPayload()
     ephemerisInMsgData.r_BdyZero_N = [10000.0, 0.0, 0.0]
-    ephemerisInMsgData.v_BdyZero_N = [0., 0.0, 0.0]
+    ephemerisInMsgData.v_BdyZero_N = [0.0, 0.0, 0.0]
     ephemerisInMsgData.sigma_BN = [0.0, 0.0, 0.0]
     ephemerisInMsgData.omega_BN_B = [0.0, 0.0, 0.0]
     ephemerisInMsg = messaging.EphemerisMsg().write(ephemerisInMsgData)
@@ -93,7 +93,7 @@ def planetNavTestFunction(show_plots):
     module.ModelTag = "PlanetNavigation"
     posBound = numpy.array([1000.0] * 3)
     velBound = numpy.array([1.0] * 3)
-    attBound = numpy.array([5E-3] * 3)
+    attBound = numpy.array([5e-3] * 3)
     rateBound = numpy.array([0.02] * 3)
 
     posSigma = 5.0
@@ -101,20 +101,35 @@ def planetNavTestFunction(show_plots):
     attSigma = 1.0 / 360.0 * math.pi / 180.0
     rateSigma = 0.05 * math.pi / 180.0
 
-    pMatrix = [[posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma]]
+    pMatrix = [
+        [posSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, posSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, posSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, velSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, velSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, velSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, attSigma, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, attSigma, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, attSigma, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rateSigma, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rateSigma, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rateSigma],
+    ]
 
-    errorBounds = [[1000.], [1000.], [1000.], [1.], [1.], [1.], [0.005], [0.005], [0.005], [0.02], [0.02], [0.02]]
+    errorBounds = [
+        [1000.0],
+        [1000.0],
+        [1000.0],
+        [1.0],
+        [1.0],
+        [1.0],
+        [0.005],
+        [0.005],
+        [0.005],
+        [0.02],
+        [0.02],
+        [0.02],
+    ]
 
     module.walkBounds = errorBounds
     module.PMatrix = pMatrix
@@ -127,7 +142,7 @@ def planetNavTestFunction(show_plots):
 
     # Execute the simulation
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))
+    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1e9))
     unitTestSim.ExecuteSimulation()
 
     # Pull module data and make sure it is correct
@@ -136,7 +151,7 @@ def planetNavTestFunction(show_plots):
     sigma_BN = ephemerisOutMsgRec.sigma_BN
     omega_BN_B = ephemerisOutMsgRec.omega_BN_B
 
-    countAllow = r_BN_N.shape[0] * 0.3/100.
+    countAllow = r_BN_N.shape[0] * 0.3 / 100.0
 
     posDiffCount = 0
     velDiffCount = 0
@@ -175,19 +190,19 @@ def planetNavTestFunction(show_plots):
     rateDiffCount = 0
     i = 0
     while i < r_BN_N.shape[0]:
-        posVecDiff = r_BN_N[i,0:] - ephemerisInMsgData.r_BdyZero_N
-        velVecDiff = v_BN_N[i,0:] - ephemerisInMsgData.v_BdyZero_N
-        attVecDiff = sigma_BN[i,0:] - ephemerisInMsgData.sigma_BN
-        rateVecDiff = omega_BN_B[i,0:] - ephemerisInMsgData.omega_BN_B
-        j=0
-        while j<3:
-            if abs(posVecDiff[j]) > posBound[j]*sigmaThreshold:
+        posVecDiff = r_BN_N[i, 0:] - ephemerisInMsgData.r_BdyZero_N
+        velVecDiff = v_BN_N[i, 0:] - ephemerisInMsgData.v_BdyZero_N
+        attVecDiff = sigma_BN[i, 0:] - ephemerisInMsgData.sigma_BN
+        rateVecDiff = omega_BN_B[i, 0:] - ephemerisInMsgData.omega_BN_B
+        j = 0
+        while j < 3:
+            if abs(posVecDiff[j]) > posBound[j] * sigmaThreshold:
                 posDiffCount += 1
-            if abs(velVecDiff[j]) > velBound[j]*sigmaThreshold:
+            if abs(velVecDiff[j]) > velBound[j] * sigmaThreshold:
                 velDiffCount += 1
-            if abs(attVecDiff[j]) > attBound[j]*sigmaThreshold:
+            if abs(attVecDiff[j]) > attBound[j] * sigmaThreshold:
                 attDiffCount += 1
-            if abs(rateVecDiff[j]) > rateBound[j]*sigmaThreshold:
+            if abs(rateVecDiff[j]) > rateBound[j] * sigmaThreshold:
                 rateDiffCount += 1
             j += 1
         i += 1
@@ -198,67 +213,87 @@ def planetNavTestFunction(show_plots):
         if count < 1:
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts - " + str(count))
-    plt.close('all')
-    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, r_BN_N[:,0], label='x-position')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, r_BN_N[:,1], label='y-position')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, r_BN_N[:,2], label='z-position')
+    plt.close("all")
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, r_BN_N[:, 0], label="x-position")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, r_BN_N[:, 1], label="y-position")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, r_BN_N[:, 2], label="z-position")
 
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Position (m)')
+    plt.legend(loc="upper left")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Position (m)")
 
-    plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, v_BN_N[:,0], label='x-velocity')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, v_BN_N[:,1], label='y-velocity')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, v_BN_N[:,2], label='z-velocity')
+    plt.figure(2, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, v_BN_N[:, 0], label="x-velocity")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, v_BN_N[:, 1], label="y-velocity")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, v_BN_N[:, 2], label="z-velocity")
 
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Velocity (m/s)')
+    plt.legend(loc="upper left")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Velocity (m/s)")
 
+    plt.figure(3, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, sigma_BN[:, 0], label="x-rotation")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, sigma_BN[:, 1], label="y-rotation")
+    plt.plot(ephemerisOutMsgRec.times() * 1.0e-9, sigma_BN[:, 2], label="z-rotation")
 
-    plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, sigma_BN[:, 0], label='x-rotation')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, sigma_BN[:, 1], label='y-rotation')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, sigma_BN[:, 2], label='z-rotation')
+    plt.legend(loc="upper left")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Attitude (rad)")
 
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Attitude (rad)')
+    plt.figure(4, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+    plt.plot(
+        ephemerisOutMsgRec.times() * 1.0e-9, omega_BN_B[:, 0], label="x-angular vel."
+    )
+    plt.plot(
+        ephemerisOutMsgRec.times() * 1.0e-9, omega_BN_B[:, 1], label="y-angular vel."
+    )
+    plt.plot(
+        ephemerisOutMsgRec.times() * 1.0e-9, omega_BN_B[:, 2], label="z-angular vel."
+    )
 
-    plt.figure(4, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, omega_BN_B[:, 0], label='x-angular vel.')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, omega_BN_B[:, 1], label='y-angular vel.')
-    plt.plot(ephemerisOutMsgRec.times() * 1.0E-9, omega_BN_B[:, 2], label='z-angular vel.')
-
-    plt.legend(loc='upper left')
-    plt.xlabel('Time (s)')
-    plt.ylabel('Attitude (rad)')
+    plt.legend(loc="upper left")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Attitude (rad)")
 
     if show_plots:
         plt.show()
-    plt.close('all')
+    plt.close("all")
 
     # Corner case usage
-    pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
-    stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+    pMatrixBad = [
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    ]
+    stateBoundsBad = [
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+    ]
     module.walkBounds = stateBoundsBad
     module.PMatrix = pMatrixBad
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(1E8))
+    unitTestSim.ConfigureStopTime(int(1e8))
     unitTestSim.ExecuteSimulation()
 
     # print out success message if no error were found
@@ -268,7 +303,7 @@ def planetNavTestFunction(show_plots):
     assert testFailCount < 1, testMessages
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def test_gauss_markov_properties():
@@ -281,6 +316,7 @@ def test_gauss_markov_properties():
     [testResults, testMessage] = gauss_markov_test()
     assert testResults < 1, testMessage
 
+
 def gauss_markov_test():
     testFailCount = 0
     testMessages = []
@@ -291,7 +327,7 @@ def gauss_markov_test():
     unitTaskName = "unitTask"
 
     unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
-    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1e8)))
 
     # Initialize the test module
     pNavObject = planetNav.PlanetNav()
@@ -315,24 +351,36 @@ def gauss_markov_test():
     rateSigma = 0.05 * math.pi / 180.0
 
     # Setup P matrix
-    pMatrix = [[posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma]]
+    pMatrix = [
+        [posSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, posSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, posSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, velSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, velSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, velSigma, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, attSigma, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, attSigma, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, attSigma, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rateSigma, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rateSigma, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rateSigma],
+    ]
 
     # Setup error bounds
-    errorBounds = [[1000.], [1000.], [1000.],
-                  [1.], [1.], [1.],
-                  [0.005], [0.005], [0.005],
-                  [0.02], [0.02], [0.02]]
+    errorBounds = [
+        [1000.0],
+        [1000.0],
+        [1000.0],
+        [1.0],
+        [1.0],
+        [1.0],
+        [0.005],
+        [0.005],
+        [0.005],
+        [0.02],
+        [0.02],
+        [0.02],
+    ]
 
     pNavObject.walkBounds = errorBounds
     pNavObject.PMatrix = pMatrix
@@ -343,18 +391,20 @@ def gauss_markov_test():
 
     # Run simulation
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))  # Run for same duration as simpleNav test
+    unitTestSim.ConfigureStopTime(
+        int(60 * 144.0 * 1e9)
+    )  # Run for same duration as simpleNav test
     unitTestSim.ExecuteSimulation()
 
     # Extract position data for analysis
     posNav = numpy.array(dataLog.r_BdyZero_N)
 
     # Test 1: Statistical Checks
-    countAllow = posNav.shape[0] * 0.3/100.  # Allow 0.3% violations
+    countAllow = posNav.shape[0] * 0.3 / 100.0  # Allow 0.3% violations
     posDiffCount = 0
     i = 0
     while i < posNav.shape[0]:
-        posVecDiff = posNav[i,:] - ephemerisInMsgData.r_BdyZero_N
+        posVecDiff = posNav[i, :] - ephemerisInMsgData.r_BdyZero_N
         j = 0
         hasViolation = False
         while j < 3:
@@ -367,14 +417,16 @@ def gauss_markov_test():
 
     if posDiffCount > countAllow:
         testFailCount += 1
-        testMessages.append(f"FAILED: Too many position errors ({posDiffCount} > {countAllow})")
+        testMessages.append(
+            f"FAILED: Too many position errors ({posDiffCount} > {countAllow})"
+        )
 
     # Test 2: Error Bound Usage Check
     sigmaThreshold = 0.8
     posDiffCount = 0
     i = 0
     while i < posNav.shape[0]:
-        posVecDiff = posNav[i,:] - ephemerisInMsgData.r_BdyZero_N
+        posVecDiff = posNav[i, :] - ephemerisInMsgData.r_BdyZero_N
         j = 0
         hasLargeError = False
         while j < 3:
@@ -392,7 +444,7 @@ def gauss_markov_test():
     if testFailCount == 0:
         print("PASSED: Gauss-Markov noise tests successful")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 if __name__ == "__main__":

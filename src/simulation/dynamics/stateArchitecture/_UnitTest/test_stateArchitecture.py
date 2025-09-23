@@ -27,6 +27,7 @@ from Basilisk.simulation import stateArchitecture
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
+
 def stateData(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -44,19 +45,19 @@ def stateData(show_plots):
 
     predictedDerivative = [[0.0], [0.0]]
 
-    if(newState.getRowSize() != len(stateUse)):
+    if newState.getRowSize() != len(stateUse):
         testFailCount += 1
         testMessages.append("State row sized incorrectly")
-    if(newState.getColumnSize() != len(stateUse[0])):
+    if newState.getColumnSize() != len(stateUse[0]):
         testFailCount += 1
         testMessages.append("State column sized incorrectly")
-    if(newState.getName() != stateName):
+    if newState.getName() != stateName:
         testFailCount += 1
         testMessages.append("State name incorrect")
-    if(newState.getState() != stateUse):
+    if newState.getState() != stateUse:
         testFailCount += 1
         testMessages.append("State equality check failure.")
-    if(newState.getStateDeriv() != predictedDerivative):
+    if newState.getStateDeriv() != predictedDerivative:
         testFailCount += 1
         testMessages.append("State derivative zero check failure.")
 
@@ -64,15 +65,17 @@ def stateData(show_plots):
     newState.setDerivative(derivativeInc)
     newState.propagateState(0.1)
 
-    predictedDerivativeNum = numpy.array(predictedDerivative) + numpy.array(derivativeInc)
+    predictedDerivativeNum = numpy.array(predictedDerivative) + numpy.array(
+        derivativeInc
+    )
     obsDerivativeNum = numpy.array(newState.getStateDeriv())
-    if(obsDerivativeNum.tolist() != predictedDerivativeNum.tolist()):
+    if obsDerivativeNum.tolist() != predictedDerivativeNum.tolist():
         testFailCount += 1
         testMessages.append("State derivative update check failure.")
 
     stateUpdateNum = numpy.array(newState.getState())
-    predUpStateNum = numpy.array(stateUse) + predictedDerivativeNum*0.1
-    if(stateUpdateNum.tolist() != stateUpdateNum.tolist()):
+    predUpStateNum = numpy.array(stateUse) + predictedDerivativeNum * 0.1
+    if stateUpdateNum.tolist() != stateUpdateNum.tolist():
         testFailCount += 1
         testMessages.append("State propagation update check failure.")
 
@@ -81,23 +84,23 @@ def stateData(show_plots):
     priorState *= scaleFactor
     newState.scaleState(scaleFactor)
     stateUpdateNum = numpy.array(newState.getState())
-    if(stateUpdateNum.tolist() != priorState.tolist()):
+    if stateUpdateNum.tolist() != priorState.tolist():
         testFailCount += 1
         testMessages.append("State scaling update check failure.")
 
     dummyState = stateArchitecture.StateData("dummy", newState.getState())
 
     dummyState.addState(newState)
-    if(dummyState.getState() != (2.0*stateUpdateNum).tolist()):
+    if dummyState.getState() != (2.0 * stateUpdateNum).tolist():
         testFailCount += 1
         testMessages.append("Plus operator failed on StateData")
-
 
     if testFailCount == 0:
         print("PASSED: " + " State data")
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def stateProperties(show_plots):
     """Module Unit Test"""
@@ -128,7 +131,7 @@ def stateProperties(show_plots):
         testFailCount += 1
         testMessages.append("Set and property reference matching failed.")
 
-    newGravList = [[0.0], [9.81*2], [-0.1]]
+    newGravList = [[0.0], [9.81 * 2], [-0.1]]
     newManager.createProperty(gravName, newGravList)
     propRef = newManager.getPropertyReference(gravName)
     if propRef != newGravList:
@@ -137,8 +140,8 @@ def stateProperties(show_plots):
 
     try:
         wrongGravList = [[0.0], [9.81], [-0.1]]
-        newManager.setPropertyValue(gravName+"Scott", wrongGravList)
-        propRef = newManager.getPropertyReference(gravName+"Scott")
+        newManager.setPropertyValue(gravName + "Scott", wrongGravList)
+        propRef = newManager.getPropertyReference(gravName + "Scott")
         testFailCount += 1
         testMessages.append("Set and property reference matching failed.")
     except BasiliskError:
@@ -152,12 +155,12 @@ def stateProperties(show_plots):
         testFailCount += 1
         testMessages.append("1x1 Eigen property creation failed.")
 
-
     if testFailCount == 0:
         print("PASSED: " + " State properties")
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def stateArchitectureTest(show_plots):
     """Module Unit Test"""
@@ -191,20 +194,22 @@ def stateArchitectureTest(show_plots):
         testFailCount += 1
         testMessages.append("Failed to return proper state name for velocity")
 
-
-    if(newManager.registerState(stateDim[0], stateDim[1], positionName).getName() != positionName):
+    if (
+        newManager.registerState(stateDim[0], stateDim[1], positionName).getName()
+        != positionName
+    ):
         testFailCount += 1
         testMessages.append("Failed to return proper state name in overload of call")
 
     try:
-        newManager.registerState(stateDim[0], stateDim[1]+2, positionName)
+        newManager.registerState(stateDim[0], stateDim[1] + 2, positionName)
         testFailCount += 1
     except BasiliskError:
         pass
 
     positionStateLookup = newManager.getStateObject("Array1_flex")
 
-    if(positionStateLookup.getName() != flexName):
+    if positionStateLookup.getName() != flexName:
         testFailCount += 1
         testMessages.append("State lookup for solar array flex failed")
 
@@ -215,18 +220,18 @@ def stateArchitectureTest(show_plots):
     vectorComposite = newManager.getStateVector()
     vectorComposite.addStates(vectorComposite)
     vectorComposite.scaleStates(vectorFactor)
-    numpyOutput = (numpy.array(vecStart) + numpy.array(vecStart))*vectorFactor
+    numpyOutput = (numpy.array(vecStart) + numpy.array(vecStart)) * vectorFactor
     newManager.updateStateVector(vectorComposite)
 
-    if(velState.getState() != numpyOutput.tolist()):
+    if velState.getState() != numpyOutput.tolist():
         testFailCount += 1
         testMessages.append("Velocity state update via state-manager failed")
 
     dt = 1.0
     posState.setDerivative(vecStart)
     newManager.propagateStateVector(dt)
-    numpyOutput += numpy.array(vecStart)*dt
-    if(posState.getState() != numpyOutput.tolist()):
+    numpyOutput += numpy.array(vecStart) * dt
+    if posState.getState() != numpyOutput.tolist():
         testFailCount += 1
         testMessages.append("Position state propagation via state-manager failed")
 
@@ -234,7 +239,8 @@ def stateArchitectureTest(show_plots):
         print("PASSED: " + " State manager")
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def EigenConversions(show_plots):
     """Module Unit Test"""
@@ -250,10 +256,10 @@ def EigenConversions(show_plots):
     outputArray = sim_model.new_doubleArray(3)
     stateArchitecture.eigenVector3d2CArray(inputArray, outputArray)
 
-    flatList =  [y for x in inputArray for y in x]
+    flatList = [y for x in inputArray for y in x]
 
     for i in range(len(flatList)):
-        if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
+        if flatList[i] != sim_model.doubleArray_getitem(outputArray, i):
             testFailCount += 1
             testMessages.append("3-vector conversion failed")
 
@@ -261,10 +267,10 @@ def EigenConversions(show_plots):
     outputArray = sim_model.new_doubleArray(9)
     stateArchitecture.eigenMatrix3d2CArray(inputArray, outputArray)
 
-    flatList =  [y for x in inputArray for y in x]
+    flatList = [y for x in inputArray for y in x]
 
     for i in range(len(flatList)):
-        if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
+        if flatList[i] != sim_model.doubleArray_getitem(outputArray, i):
             print(sim_model.doubleArray_getitem(outputArray, i))
             testFailCount += 1
             testMessages.append("3x3 matrix conversion failed")
@@ -273,10 +279,10 @@ def EigenConversions(show_plots):
     outputArray = sim_model.new_doubleArray(12)
     stateArchitecture.eigenMatrixXd2CArray(inputArray, outputArray)
 
-    flatList =  [y for x in inputArray for y in x]
+    flatList = [y for x in inputArray for y in x]
 
     for i in range(len(flatList)):
-        if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
+        if flatList[i] != sim_model.doubleArray_getitem(outputArray, i):
             print(sim_model.doubleArray_getitem(outputArray, i))
             testFailCount += 1
             testMessages.append("3x4 matrix conversion failed")
@@ -285,15 +291,18 @@ def EigenConversions(show_plots):
         print("PASSED: " + " Eigen Conversions")
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 FUNCTIONS = (stateData, stateArchitectureTest, stateProperties, EigenConversions)
+
 
 @pytest.mark.parametrize("function", FUNCTIONS)
 def test_stateArchitectureAllTests(show_plots, function):
     """Module Unit Test"""
     [testResults, testMessage] = function(show_plots)
     assert testResults < 1, testMessage
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "--tb=native"])

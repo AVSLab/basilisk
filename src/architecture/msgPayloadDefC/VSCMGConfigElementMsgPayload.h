@@ -24,18 +24,18 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief VSCMG array configuration FSW msg */
-typedef struct{
-    double gsHat0_B[3];   //!< [-]    The initial VSCMG first axis matrix in body frame components
-    double gtHat0_B[3];   //!< [-]    The initial VSCMG second axis matrix in body frame components
-    double ggHat_B[3];   //!< [-]    The VSCMG third axis matrix in body frame components
-    double Js;         //!< [kgm2] The first axis inertia for VSCMG
-    double Jt;         //!< [kgm2] The second axis inertia for VSCMG
-    double Jg;         //!< [kgm2] The third axis inertia for VSCMG
-    double Iws;       //!< [kgm2] The wheel spin axis inertia for VSCMG
-    double Omega0;   //!< [rad/s] The initial wheel speed for VSCMG
-    double gamma0;   //!< [rad] The initial gimbal angle for VSCMG
-    double gammaDot0; //!< [rad/s] The initial gimbal rate for VSCMG
-}VSCMGConfigElementMsgPayload;
-
+typedef struct
+{
+    double gsHat0_B[3]; //!< [-]    The initial VSCMG first axis matrix in body frame components
+    double gtHat0_B[3]; //!< [-]    The initial VSCMG second axis matrix in body frame components
+    double ggHat_B[3];  //!< [-]    The VSCMG third axis matrix in body frame components
+    double Js;          //!< [kgm2] The first axis inertia for VSCMG
+    double Jt;          //!< [kgm2] The second axis inertia for VSCMG
+    double Jg;          //!< [kgm2] The third axis inertia for VSCMG
+    double Iws;         //!< [kgm2] The wheel spin axis inertia for VSCMG
+    double Omega0;      //!< [rad/s] The initial wheel speed for VSCMG
+    double gamma0;      //!< [rad] The initial gimbal angle for VSCMG
+    double gammaDot0;   //!< [rad/s] The initial gimbal rate for VSCMG
+} VSCMGConfigElementMsgPayload;
 
 #endif

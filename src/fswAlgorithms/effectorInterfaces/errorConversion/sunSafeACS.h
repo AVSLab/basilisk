@@ -30,27 +30,26 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief module configuration message */
-typedef struct {
-    ThrustGroupData thrData;  /*!< Collection of thruster configuration data*/
+typedef struct
+{
+    ThrustGroupData thrData;               /*!< Collection of thruster configuration data*/
     CmdTorqueBodyMsg_C cmdTorqueBodyInMsg; /*!< -- The name of the Input message*/
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}sunSafeACSConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} sunSafeACSConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID);
-    void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime, int64_t moduleID);
+
+    void SelfInit_sunSafeACS(sunSafeACSConfig* configData, int64_t moduleID);
+    void Update_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

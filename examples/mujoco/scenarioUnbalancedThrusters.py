@@ -91,8 +91,8 @@ def run(showPlots: bool = False, visualize: bool = False):
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
     """
-    dt = 1 # s
-    tf = 2.5 * 60 # s
+    dt = 1  # s
+    tf = 2.5 * 60  # s
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -108,14 +108,13 @@ def run(showPlots: bool = False, visualize: bool = False):
     integ = svIntegrators.svIntegratorRKF45(scene)
     scene.setIntegrator(integ)
 
-    thrust = 5 # N
-    mDot = -1 # kg/s
+    thrust = 5  # N
+    mDot = -1  # kg/s
 
     messages = []
     massPropRecorders = []
 
     for i in range(1, 5):
-
         # Define a standalone ``SingleActuatorMsg`` used to
         # define the force that each thruster applies.
         # The thrusters defined in the XML ('tank_1_thrust', etc.)
@@ -140,7 +139,9 @@ def run(showPlots: bool = False, visualize: bool = False):
         # is decreasing linearly with time, with the last tank
         # decreasing at twice the rate of the others.
         mDotMsg = messaging.SCMassPropsMsg()
-        mDotMsg.write(messaging.SCMassPropsMsgPayload(massSC=mDot if i < 4 else mDot * 2))
+        mDotMsg.write(
+            messaging.SCMassPropsMsgPayload(massSC=mDot if i < 4 else mDot * 2)
+        )
 
         bodyName = f"tank_{i}"
         body = scene.getBody(bodyName)
@@ -173,11 +174,10 @@ def run(showPlots: bool = False, visualize: bool = False):
     scSim.ExecuteSimulation()
 
     if showPlots:
-
         # Plot the mass of the tanks
         for i, (style, rec) in enumerate(zip(("-", "--", ":", "-"), massPropRecorders)):
             plt.plot(
-                rec.times(), np.squeeze(rec.massSC), style, label=f"Thruster {i+1}"
+                rec.times(), np.squeeze(rec.massSC), style, label=f"Thruster {i + 1}"
             )
         plt.xlabel("Time [s]")
         plt.ylabel("Mass [kg]")

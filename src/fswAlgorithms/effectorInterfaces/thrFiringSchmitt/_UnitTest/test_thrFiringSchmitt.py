@@ -33,16 +33,14 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import thrFiringSchmitt            # import the module that is to be tested
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+from Basilisk.fswAlgorithms import (
+    thrFiringSchmitt,
+)  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.architecture import messaging
@@ -55,35 +53,39 @@ from Basilisk.architecture import messaging
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("resetCheck, dvOn", [
-    (False, False),
-    (True, False),
-    (False, True),
-    (True, True),
-])
+@pytest.mark.parametrize(
+    "resetCheck, dvOn",
+    [
+        (False, False),
+        (True, False),
+        (False, True),
+        (True, True),
+    ],
+)
 
 # update "module" in this function name to reflect the module name
 def test_thrFiringSchmitt(show_plots, resetCheck, dvOn):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn)
+    [testResults, testMessage] = thrFiringSchmittTestFunction(
+        show_plots, resetCheck, dvOn
+    )
     assert testResults < 1, testMessage
 
 
 def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     module = thrFiringSchmitt.thrFiringSchmitt()
@@ -99,8 +101,8 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     else:
         module.baseThrustState = 0
 
-    module.level_on = .75
-    module.level_off = .25
+    module.level_on = 0.75
+    module.level_off = 0.25
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
@@ -112,8 +114,8 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
         [-0.86360, -0.82550, -1.79070],
         [-0.82550, -0.86360, -1.79070],
         [0.82550, 0.86360, -1.79070],
-        [0.86360, 0.82550, -1.79070]
-        ]
+        [0.86360, 0.82550, -1.79070],
+    ]
     rcsDirectionData = [
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
@@ -122,8 +124,8 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
         [-1.0, 0.0, 0.0],
         [0.0, -1.0, 0.0],
         [0.0, 1.0, 0.0],
-        [1.0, 0.0, 0.0]
-        ]
+        [1.0, 0.0, 0.0],
+    ]
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.5)
@@ -162,94 +164,94 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     inputMessageData.thrForce = effReq1
     thrCmdMsg.write(inputMessageData)
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-
 
     inputMessageData.thrForce = effReq2
     thrCmdMsg.write(inputMessageData)
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-
 
     inputMessageData.thrForce = effReq3
     thrCmdMsg.write(inputMessageData)
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-
 
     inputMessageData.thrForce = effReq4
     thrCmdMsg.write(inputMessageData)
-    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     if resetCheck:
         # reset the module to test this functionality
-        module.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
+        module.Reset(
+            macros.sec2nano(3.0)
+        )  # this module reset function needs a time input (in NanoSeconds)
 
         # run the module again for an additional 1.0 seconds
-        unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))        # seconds to stop simulation
+        unitTestSim.ConfigureStopTime(
+            macros.sec2nano(5.5)
+        )  # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
-
 
     # This pulls the actual data log from the simulation run.
     moduleOutput = dataLog.OnTimeRequest[:, :numThrusters]
     # print moduleOutput
 
     # set the filtered output truth states
-    if resetCheck==1:
+    if resetCheck == 1:
         if dvOn == 1:
             trueVector = [
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   ]
+                [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+            ]
         else:
             trueVector = [
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   ]
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+            ]
 
     else:
         if dvOn == 1:
             trueVector = [
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
-                   ]
+                [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+            ]
         else:
             trueVector = [
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-                   ]
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+            ]
 
         # else:
         #     testFailCount+=1
@@ -259,18 +261,19 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     accuracy = 1e-12
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
-                                                               "OnTimeRequest", testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector, moduleOutput, accuracy, "OnTimeRequest", testFailCount, testMessages
+    )
 
     snippentName = "passFail" + str(resetCheck) + str(dvOn)
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # First set a non-zero thruster force request
@@ -282,18 +285,21 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     # Now call Reset() and verify output is zeroed
     module.Reset(0)  # Pass 0 as currentSimNanos
-    expectedOnTime = [0.] * messaging.MAX_EFF_CNT
-    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedOnTime),
-                                                                np.array(module.onTimeOutMsg.read().OnTimeRequest),
-                                                                1e-3,
-                                                                "Reset() zeroed onTime",
-                                                                testFailCount, testMessages)
+    expectedOnTime = [0.0] * messaging.MAX_EFF_CNT
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        np.array(expectedOnTime),
+        np.array(module.onTimeOutMsg.read().OnTimeRequest),
+        1e-3,
+        "Reset() zeroed onTime",
+        testFailCount,
+        testMessages,
+    )
 
     print("Accuracy used: " + str(accuracy))
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -301,8 +307,8 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_thrFiringSchmitt(              # update "module" in function name
-                 False,
-                 True,           # resetOn
-                 False           # dvOn
-               )
+    test_thrFiringSchmitt(  # update "module" in function name
+        False,
+        True,  # resetOn
+        False,  # dvOn
+    )

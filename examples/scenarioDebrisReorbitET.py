@@ -74,9 +74,15 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import etSphericalControl
 from Basilisk.simulation import simpleNav, spacecraft, extForceTorque, msmForceTorque
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, vizSupport, deprecated)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+    deprecated,
+)
 
 try:
     from Basilisk.simulation import vizInterface
@@ -136,10 +142,14 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, scObjectDebris)
 
     # Create VehicleConfig messages including the S/C mass (for etSphericalControl)
-    servicerConfigOutData = messaging.VehicleConfigMsgPayload(massSC=scObjectServicer.hub.mHub)
+    servicerConfigOutData = messaging.VehicleConfigMsgPayload(
+        massSC=scObjectServicer.hub.mHub
+    )
     servicerVehicleConfigMsg = messaging.VehicleConfigMsg().write(servicerConfigOutData)
 
-    debrisConfigOutData = messaging.VehicleConfigMsgPayload(massSC=scObjectDebris.hub.mHub)
+    debrisConfigOutData = messaging.VehicleConfigMsgPayload(
+        massSC=scObjectDebris.hub.mHub
+    )
     debrisVehicleConfigMsg = messaging.VehicleConfigMsg().write(debrisConfigOutData)
 
     # clear prior gravitational body and SPICE setup definitions
@@ -160,25 +170,31 @@ def run(show_plots):
     scSim.AddModelToTask(dynTaskName, MSMmodule)
 
     # define electric potentials
-    voltServicerInMsgData = messaging.VoltMsgPayload(voltage=25000.)
-  # [V] servicer potential
+    voltServicerInMsgData = messaging.VoltMsgPayload(voltage=25000.0)
+    # [V] servicer potential
     voltServicerInMsg = messaging.VoltMsg().write(voltServicerInMsgData)
 
-    voltDebrisInMsgData = messaging.VoltMsgPayload(voltage=-25000.)
-  # [V] debris potential
+    voltDebrisInMsgData = messaging.VoltMsgPayload(voltage=-25000.0)
+    # [V] debris potential
     voltDebrisInMsg = messaging.VoltMsg().write(voltDebrisInMsgData)
 
     # create a list of sphere body-fixed locations and associated radii
-    spPosListServicer = [[0., 0., 0.]]  # one sphere located at origin of body frame
-    rListServicer = [5.]  # radius of sphere is 5m
-    spPosListDebris = [[0., 0., 0.]]  # one sphere located at origin of body frame
-    rListDebris = [4.]  # radius of sphere is 4m
+    spPosListServicer = [[0.0, 0.0, 0.0]]  # one sphere located at origin of body frame
+    rListServicer = [5.0]  # radius of sphere is 5m
+    spPosListDebris = [[0.0, 0.0, 0.0]]  # one sphere located at origin of body frame
+    rListDebris = [4.0]  # radius of sphere is 4m
 
     # add spacecraft to state
-    MSMmodule.addSpacecraftToModel(scObjectServicer.scStateOutMsg, messaging.DoubleVector(rListServicer),
-                                   unitTestSupport.npList2EigenXdVector(spPosListServicer))
-    MSMmodule.addSpacecraftToModel(scObjectDebris.scStateOutMsg, messaging.DoubleVector(rListDebris),
-                                   unitTestSupport.npList2EigenXdVector(spPosListDebris))
+    MSMmodule.addSpacecraftToModel(
+        scObjectServicer.scStateOutMsg,
+        messaging.DoubleVector(rListServicer),
+        unitTestSupport.npList2EigenXdVector(spPosListServicer),
+    )
+    MSMmodule.addSpacecraftToModel(
+        scObjectDebris.scStateOutMsg,
+        messaging.DoubleVector(rListDebris),
+        unitTestSupport.npList2EigenXdVector(spPosListDebris),
+    )
 
     # subscribe input messages to module
     MSMmodule.voltInMsgs[0].subscribeTo(voltServicerInMsg)
@@ -231,65 +247,77 @@ def run(show_plots):
     etSphericalControlObj.ModelTag = "ETcontrol"
 
     # connect required messages
-    etSphericalControlObj.servicerTransInMsg.subscribeTo(sNavObjectServicer.transOutMsg)  # servicer translation
-    etSphericalControlObj.debrisTransInMsg.subscribeTo(sNavObjectDebris.transOutMsg)  # debris translation
-    etSphericalControlObj.servicerAttInMsg.subscribeTo(sNavObjectServicer.attOutMsg)  # servicer attitude
-    etSphericalControlObj.servicerVehicleConfigInMsg.subscribeTo(servicerVehicleConfigMsg)  # servicer mass
-    etSphericalControlObj.debrisVehicleConfigInMsg.subscribeTo(debrisVehicleConfigMsg)  # debris mass
-    etSphericalControlObj.eForceInMsg.subscribeTo(MSMmodule.eForceOutMsgs[0])  # eForce on servicer (for feed-forward)
+    etSphericalControlObj.servicerTransInMsg.subscribeTo(
+        sNavObjectServicer.transOutMsg
+    )  # servicer translation
+    etSphericalControlObj.debrisTransInMsg.subscribeTo(
+        sNavObjectDebris.transOutMsg
+    )  # debris translation
+    etSphericalControlObj.servicerAttInMsg.subscribeTo(
+        sNavObjectServicer.attOutMsg
+    )  # servicer attitude
+    etSphericalControlObj.servicerVehicleConfigInMsg.subscribeTo(
+        servicerVehicleConfigMsg
+    )  # servicer mass
+    etSphericalControlObj.debrisVehicleConfigInMsg.subscribeTo(
+        debrisVehicleConfigMsg
+    )  # debris mass
+    etSphericalControlObj.eForceInMsg.subscribeTo(
+        MSMmodule.eForceOutMsgs[0]
+    )  # eForce on servicer (for feed-forward)
 
     # set module parameters
     # feedback gain matrices
     Ki = 4e-7
-    Pi = 1.85 * Ki ** 0.5
-    etSphericalControlObj.K = [Ki, 0.0, 0.0,
-                                0.0, Ki, 0.0,
-                                0.0, 0.0, Ki]
-    etSphericalControlObj.P = [Pi, 0.0, 0.0,
-                                0.0, Pi, 0.0,
-                                0.0, 0.0, Pi]
+    Pi = 1.85 * Ki**0.5
+    etSphericalControlObj.K = [Ki, 0.0, 0.0, 0.0, Ki, 0.0, 0.0, 0.0, Ki]
+    etSphericalControlObj.P = [Pi, 0.0, 0.0, 0.0, Pi, 0.0, 0.0, 0.0, Pi]
     # desired relative position in spherical coordinates (reference state)
     etSphericalControlObj.L_r = 30.0  # separation distance
-    etSphericalControlObj.theta_r = 0.  # in-plane rotation angle
-    etSphericalControlObj.phi_r = 0.  # out-of-plane rotation angle
+    etSphericalControlObj.theta_r = 0.0  # in-plane rotation angle
+    etSphericalControlObj.phi_r = 0.0  # out-of-plane rotation angle
     etSphericalControlObj.mu = mu  # gravitational parameter
 
     # add module to fsw task
     scSim.AddModelToTask(fswTaskName, etSphericalControlObj)
     # connect output control thrust force with external force on servicer
-    extFTObjectServicerControl.cmdForceInertialInMsg.subscribeTo(etSphericalControlObj.forceInertialOutMsg)
+    extFTObjectServicerControl.cmdForceInertialInMsg.subscribeTo(
+        etSphericalControlObj.forceInertialOutMsg
+    )
 
     #
     #   set initial Spacecraft States
     #
     # setup the servicer orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 42164. * 1e3  # [m] geostationary orbit
-    oe.e = 0.
-    oe.i = 0.
-    oe.Omega = 0.
+    oe.a = 42164.0 * 1e3  # [m] geostationary orbit
+    oe.e = 0.0
+    oe.i = 0.0
+    oe.Omega = 0.0
     oe.omega = 0
-    oe.f = 0.
+    oe.f = 0.0
     r_SN, v_SN = orbitalMotion.elem2rv(mu, oe)
     scObjectServicer.hub.r_CN_NInit = r_SN  # m
     scObjectServicer.hub.v_CN_NInit = v_SN  # m/s
     oe = orbitalMotion.rv2elem(mu, r_SN, v_SN)
 
     # setup debris object states
-    r_DS = np.array([0, -50.0, 0.0])  # relative position of debris, 50m behind servicer in along-track direction
+    r_DS = np.array(
+        [0, -50.0, 0.0]
+    )  # relative position of debris, 50m behind servicer in along-track direction
     r_DN = r_DS + r_SN
     v_DN = v_SN
     scObjectDebris.hub.r_CN_NInit = r_DN  # m
     scObjectDebris.hub.v_CN_NInit = v_DN  # m/s
 
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n  # orbit period
+    P = 2.0 * np.pi / n  # orbit period
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 1000
-    simulationTime = macros.sec2nano(1. * P)
+    simulationTime = macros.sec2nano(1.0 * P)
     samplingTime = simulationTime // (numDataPoints - 1)
     dataRecS = scObjectServicer.scStateOutMsg.recorder(samplingTime)
     dataRecD = scObjectDebris.scStateOutMsg.recorder(samplingTime)
@@ -303,7 +331,7 @@ def run(show_plots):
         msmInfoServicer = vizInterface.MultiShapeInfo()
         msmInfoServicer.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[0])
         msmServicerList = []
-        for (pos, rad) in zip(spPosListServicer, rListServicer):
+        for pos, rad in zip(spPosListServicer, rListServicer):
             msmServicer = vizInterface.MultiShape()
             msmServicer.position = pos
             msmServicer.dimensions = [rad, rad, rad]
@@ -316,7 +344,7 @@ def run(show_plots):
         msmInfoDebris = vizInterface.MultiShapeInfo()
         msmInfoDebris.msmChargeInMsg.subscribeTo(MSMmodule.chargeMsmOutMsgs[1])
         msmDebrisList = []
-        for (pos, rad) in zip(spPosListDebris, rListDebris):
+        for pos, rad in zip(spPosListDebris, rListDebris):
             msmDebris = vizInterface.MultiShape()
             msmDebris.position = pos
             msmDebris.dimensions = [rad, rad, rad]
@@ -333,10 +361,13 @@ def run(show_plots):
         vizInterface.MultiSphereInfo()
         vizInterface.MultiSphereVector()
 
-        viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, [scObjectServicer, scObjectDebris]
-                                                  # , saveFile=fileName
-                                                  , msmInfoList=[msmInfoServicer, msmInfoDebris]
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            dynTaskName,
+            [scObjectServicer, scObjectDebris],
+            # , saveFile=fileName
+            msmInfoList=[msmInfoServicer, msmInfoDebris],
+        )
 
     #
     #   initialize Simulation
@@ -359,7 +390,9 @@ def run(show_plots):
 
     np.set_printoptions(precision=16)
 
-    figureList = plotOrbits(timeData, posDataS, velDataS, posDataD, velDataD, oe, mu, P, earth)
+    figureList = plotOrbits(
+        timeData, posDataS, velDataS, posDataD, velDataD, oe, mu, P, earth
+    )
 
     if show_plots:
         plt.show()
@@ -376,12 +409,12 @@ def plotOrbits(timeData, posDataS, velDataS, posDataD, velDataD, oe, mu, P, plan
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     relPosData = posDataS[:, 0:3] - posDataD[:, 0:3]
     relPosMagn = np.linalg.norm(relPosData, axis=1)
     plt.plot(timeData * macros.NANO2SEC / P, relPosMagn[:])
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Separation [m]')
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Separation [m]")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
@@ -389,11 +422,11 @@ def plotOrbits(timeData, posDataS, velDataS, posDataD, velDataD, oe, mu, P, plan
     # draw orbit in perifocal frame
     p = oe.a * (1 - oe.e * oe.e)
     plt.figure(2)
-    plt.axis('equal')
+    plt.axis("equal")
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
-    planetColor = '#008800'
+    planetColor = "#008800"
     planetRadius = planet.radEquator / 1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
@@ -403,16 +436,25 @@ def plotOrbits(timeData, posDataS, velDataS, posDataD, velDataD, oe, mu, P, plan
         oeData = orbitalMotion.rv2elem(mu, posDataS[idx, 0:3], velDataS[idx, 0:3])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0)
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000,
+        color="#aa0000",
+        linewidth=3.0,
+    )
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555'
-             )
-    plt.xlabel('$x$ Cord. [km]')
-    plt.ylabel('$y$ Cord. [km]')
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000,
+        "--",
+        color="#555555",
+    )
+    plt.xlabel("$x$ Cord. [km]")
+    plt.ylabel("$y$ Cord. [km]")
     plt.grid()
 
     pltName = fileName + "2"
@@ -421,14 +463,19 @@ def plotOrbits(timeData, posDataS, velDataS, posDataD, velDataD, oe, mu, P, plan
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     aData = []
     for idx in range(0, len(posDataS)):
         oeData = orbitalMotion.rv2elem(mu, posDataD[idx, 0:3], velDataD[idx, 0:3])
         aData.append(oeData.a)
-    plt.plot(timeData * macros.NANO2SEC / P, (aData - oe.a) / 1000., color='#aa0000', linewidth=3.0)
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Increase of semi-major axis [km]')
+    plt.plot(
+        timeData * macros.NANO2SEC / P,
+        (aData - oe.a) / 1000.0,
+        color="#aa0000",
+        linewidth=3.0,
+    )
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Increase of semi-major axis [km]")
 
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)

@@ -61,6 +61,7 @@ import os
 import sys
 
 from Basilisk.architecture import messaging
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
@@ -68,9 +69,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/../')
-sys.path.append(path + '/../modelsMultiSat')
-sys.path.append(path + '/../plottingMultiSat')
+sys.path.append(path + "/../")
+sys.path.append(path + "/../modelsMultiSat")
+sys.path.append(path + "/../plottingMultiSat")
 from BSK_MultiSatMasters import BSKSim, BSKScenario
 import BSK_EnvironmentEarth, BSK_EnvironmentMercury, BSK_MultiSatDynamics
 
@@ -81,8 +82,10 @@ import BSK_MultiSatPlotting as plt
 # Create your own scenario child class
 class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
     def __init__(self, numberSpacecraft, environment):
-        super(scenario_BasicOrbitFormationFlying, self).__init__(numberSpacecraft, fswRate=10, dynRate=10, envRate=10)
-        self.name = 'scenario_BasicOrbitFormationFlying'
+        super(scenario_BasicOrbitFormationFlying, self).__init__(
+            numberSpacecraft, fswRate=10, dynRate=10, envRate=10
+        )
+        self.name = "scenario_BasicOrbitFormationFlying"
 
         if environment == "Earth":
             self.set_EnvModel(BSK_EnvironmentEarth)
@@ -119,7 +122,8 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             batteryPanel.label = "Battery"
             batteryPanel.units = "Ws"
             batteryPanel.color = vizSupport.vizInterface.IntVector(
-                vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green"))
+                vizSupport.toRGBA255("red") + vizSupport.toRGBA255("green")
+            )
             batteryPanel.thresholds = vizSupport.vizInterface.IntVector([20])
             batteryInMsg = messaging.PowerStorageStatusMsgReader()
             batteryInMsg.subscribeTo(self.DynModels[0].powerMonitor.batPowerOutMsg)
@@ -128,9 +132,13 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             tankPanel = vizSupport.vizInterface.GenericStorage()
             tankPanel.label = "Tank"
             tankPanel.units = "kg"
-            tankPanel.color = vizSupport.vizInterface.IntVector(vizSupport.toRGBA255("cyan"))
+            tankPanel.color = vizSupport.vizInterface.IntVector(
+                vizSupport.toRGBA255("cyan")
+            )
             tankInMsg = messaging.FuelTankMsgReader()
-            tankInMsg.subscribeTo(self.DynModels[0].fuelTankStateEffector.fuelTankOutMsg)
+            tankInMsg.subscribeTo(
+                self.DynModels[0].fuelTankStateEffector.fuelTankOutMsg
+            )
             tankPanel.fuelTankStateInMsg = tankInMsg
 
             # Add this line to maintain Python references
@@ -139,11 +147,14 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             storageList = [None] * self.numberSpacecraft
             storageList[0] = [batteryPanel, tankPanel]
 
-            viz = vizSupport.enableUnityVisualization(self, self.DynModels[0].taskName, DynModelsList
-                                                      # , saveFile=__file__
-                                                      , rwEffectorList=rwStateEffectorList
-                                                      , genericStorageList=storageList
-                                                      )
+            viz = vizSupport.enableUnityVisualization(
+                self,
+                self.DynModels[0].taskName,
+                DynModelsList,
+                # , saveFile=__file__
+                rwEffectorList=rwStateEffectorList,
+                genericStorageList=storageList,
+            )
             vizSupport.setInstrumentGuiSetting(viz, showGenericStoragePanel=True)
 
     def configure_initial_conditions(self):
@@ -153,7 +164,7 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
         # Configure Dynamics initial conditions
         for i in range(self.numberSpacecraft):
             self.oe.append(orbitalMotion.ClassicElements())
-            self.oe[i].a = 1.1 * EnvModel.planetRadius + 1E5 * (i + 1)  # meters
+            self.oe[i].a = 1.1 * EnvModel.planetRadius + 1e5 * (i + 1)  # meters
             self.oe[i].e = 0.01 + 0.001 * (i)
             self.oe[i].i = 45.0 * macros.D2R
             self.oe[i].Omega = (48.2 + 5.0 * i) * macros.D2R
@@ -163,8 +174,16 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
             orbitalMotion.rv2elem(EnvModel.mu, rN, vN)
             DynModels[i].scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
             DynModels[i].scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-            DynModels[i].scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels[0].scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
+            DynModels[i].scObject.hub.sigma_BNInit = [
+                [0.1],
+                [0.2],
+                [-0.3],
+            ]  # sigma_BN_B
+        DynModels[0].scObject.hub.omega_BN_BInit = [
+            [0.0],
+            [0.0],
+            [0.0],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         # Process outputs
@@ -175,22 +194,44 @@ class scenario_BasicOrbitFormationFlying(BSKSim, BSKScenario):
 
         # Loop through every spacecraft
         for spacecraft in range(self.numberSpacecraft):
-
             # log the navigation messages
-            self.snTransLog.append(DynModels[spacecraft].simpleNavObject.transOutMsg.recorder(self.samplingTime))
-            self.snAttLog.append(DynModels[spacecraft].simpleNavObject.attOutMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.snTransLog[spacecraft])
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.snAttLog[spacecraft])
+            self.snTransLog.append(
+                DynModels[spacecraft].simpleNavObject.transOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.snAttLog.append(
+                DynModels[spacecraft].simpleNavObject.attOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.snTransLog[spacecraft]
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.snAttLog[spacecraft]
+            )
 
             # log the RW wheel speed information
-            self.rwSpeedLog.append(DynModels[spacecraft].rwStateEffector.rwSpeedOutMsg.recorder(self.samplingTime))
-            self.AddModelToTask(DynModels[spacecraft].taskName, self.rwSpeedLog[spacecraft])
+            self.rwSpeedLog.append(
+                DynModels[spacecraft].rwStateEffector.rwSpeedOutMsg.recorder(
+                    self.samplingTime
+                )
+            )
+            self.AddModelToTask(
+                DynModels[spacecraft].taskName, self.rwSpeedLog[spacecraft]
+            )
 
             # log addition RW information (power, etc)
             for item in range(DynModels[spacecraft].numRW):
                 self.rwLogs[spacecraft].append(
-                    DynModels[spacecraft].rwStateEffector.rwOutMsgs[item].recorder(self.samplingTime))
-                self.AddModelToTask(DynModels[spacecraft].taskName, self.rwLogs[spacecraft][item])
+                    DynModels[spacecraft]
+                    .rwStateEffector.rwOutMsgs[item]
+                    .recorder(self.samplingTime)
+                )
+                self.AddModelToTask(
+                    DynModels[spacecraft].taskName, self.rwLogs[spacecraft][item]
+                )
 
     def pull_outputs(self, show_plots):
         #
@@ -260,8 +301,9 @@ def run(show_plots, numberSpacecraft, environment, numThreads):
 
 
 if __name__ == "__main__":
-    run(show_plots=True,
+    run(
+        show_plots=True,
         numberSpacecraft=32,
         environment="Earth",  # Earth or Mercury
-        numThreads=4
-        )
+        numThreads=4,
+    )

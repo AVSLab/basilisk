@@ -26,31 +26,27 @@
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
-
 /*! @brief Top level structure for the nominal delta-V guidance
  */
-typedef struct {
-    AttRefMsg_C attRefOutMsg;           //!< The name of the output message
-    DvBurnCmdMsg_C burnDataInMsg;       //!< Input message that configures the vehicle burn
+typedef struct
+{
+    AttRefMsg_C attRefOutMsg;     //!< The name of the output message
+    DvBurnCmdMsg_C burnDataInMsg; //!< Input message that configures the vehicle burn
 
-    BSKLogger *bskLogger;   //!< BSK Logging
-}dvGuidanceConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} dvGuidanceConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID);
-    void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-                           int64_t moduleID);
+    void SelfInit_dvGuidance(dvGuidanceConfig* configData, int64_t moduleID);
+    void Update_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

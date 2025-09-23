@@ -20,24 +20,22 @@
 #ifndef BASILISK_SIMPLESTORAGEUNIT_H
 #define BASILISK_SIMPLESTORAGEUNIT_H
 
-
 #include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief simple storage unit class */
-class SimpleStorageUnit: public DataStorageUnitBase {
+class SimpleStorageUnit : public DataStorageUnitBase
+{
 
-public:
+  public:
     SimpleStorageUnit();
     ~SimpleStorageUnit();
     void setDataBuffer(int64_t data); //!< Method to add/remove data from the storage unit once
 
-private:
-    void customReset(uint64_t CurrentClock); //!< Custom Reset method
-    void integrateDataStatus(double currentTime); //!< Overwrites the integrateDataStatus method to create a single partition in the storage unit ("STORED DATA")
-
+  private:
+    void customReset(uint64_t CurrentClock);      //!< Custom Reset method
+    void integrateDataStatus(double currentTime); //!< Overwrites the integrateDataStatus method to create a single
+                                                  //!< partition in the storage unit ("STORED DATA")
 };
 
-#endif //BASILISK_SIMPLESTORAGEUNIT_H
-
-
+#endif // BASILISK_SIMPLESTORAGEUNIT_H

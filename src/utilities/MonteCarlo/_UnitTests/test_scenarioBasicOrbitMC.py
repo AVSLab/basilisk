@@ -27,10 +27,17 @@ path = os.path.dirname(os.path.abspath(filename))
 # sys.path.append(bskPath + 'PythonModules')
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, OrbitalElementDispersion
+from Basilisk.utilities.MonteCarlo.Dispersions import (
+    UniformEulerAngleMRPDispersion,
+    UniformDispersion,
+    NormalVectorCartDispersion,
+    OrbitalElementDispersion,
+)
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import orbitalMotion
@@ -51,8 +58,9 @@ retainedRate = macros.sec2nano(10)
 var1 = "v_BN_N"
 var2 = "r_BN_N"
 
+
 def myCreationFunction():
-    """ function that returns a simulation """
+    """function that returns a simulation"""
     #  Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
 
@@ -64,7 +72,7 @@ def myCreationFunction():
     dynProcess = sim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Setup the simulation modules
@@ -78,22 +86,26 @@ def myCreationFunction():
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
-    planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt'
-                                        , 2
-                                        )
+    planet.useSphericalHarmonicsGravityModel(
+        bskPath + "/supportData/LocalGravData/GGM03S-J2-only.txt", 2
+    )
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([planet])
 
     # Setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rGEO = 42000. * 1000  # meters
+    rGEO = 42000.0 * 1000  # meters
     oe.a = rGEO
     oe.e = 0.00001
     oe.i = 0.0 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
-    rN, vN = orbitalMotion.elem2rv(planet.mu, oe)  # this stores consistent initial orbit elements
-    oe = orbitalMotion.rv2elem(planet.mu, rN, vN)  # with circular or equatorial orbit, some angles are arbitrary
+    rN, vN = orbitalMotion.elem2rv(
+        planet.mu, oe
+    )  # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        planet.mu, rN, vN
+    )  # with circular or equatorial orbit, some angles are arbitrary
 
     #   initialize Spacecraft States with the initialization variables
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
@@ -101,7 +113,7 @@ def myCreationFunction():
 
     # set the simulation time
     mean_motion = np.sqrt(planet.mu / oe.a / oe.a / oe.a)
-    period = 2. * np.pi / mean_motion
+    period = 2.0 * np.pi / mean_motion
     simulationTime = macros.sec2nano(period / 4)
 
     sim.msgRecList = {}
@@ -115,19 +127,25 @@ def myCreationFunction():
 
 
 def myExecutionFunction(sim):
-    """ function that executes a simulation """
+    """function that executes a simulation"""
     sim.InitializeSimulation()
     sim.ExecuteSimulation()
 
-colorList = ['b', 'r', 'g', 'k']
+
+colorList = ["b", "r", "g", "k"]
+
 
 def myDataCallback(monteCarloData, retentionPolicy):
     data = np.array(monteCarloData["messages"][retainedMessageName + ".r_BN_N"])
-    plt.plot(data[:, 1], data[:, 2], colorList[monteCarloData["index"]], label="run " + str(monteCarloData["index"]))
-    plt.xlabel('X-coordinate')
-    plt.ylabel('Y-coordinate')
+    plt.plot(
+        data[:, 1],
+        data[:, 2],
+        colorList[monteCarloData["index"]],
+        label="run " + str(monteCarloData["index"]),
+    )
+    plt.xlabel("X-coordinate")
+    plt.ylabel("Y-coordinate")
     plt.legend()
-
 
 
 @pytest.mark.slowtest
@@ -144,15 +162,15 @@ def test_MonteCarloSimulation(show_plots):
     monteCarlo.setArchiveDir(dirName)
 
     # Add some dispersions
-    disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
-    disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
-    disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
-    disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    disp5Name = 'TaskList[0].TaskModels[0].hub.r_CN_NInit'
-    disp6Name = 'TaskList[0].TaskModels[0].hub.v_CN_NInit'
+    disp1Name = "TaskList[0].TaskModels[0].hub.sigma_BNInit"
+    disp2Name = "TaskList[0].TaskModels[0].hub.omega_BN_BInit"
+    disp3Name = "TaskList[0].TaskModels[0].hub.mHub"
+    disp4Name = "TaskList[0].TaskModels[0].hub.r_BcB_B"
+    disp5Name = "TaskList[0].TaskModels[0].hub.r_CN_NInit"
+    disp6Name = "TaskList[0].TaskModels[0].hub.v_CN_NInit"
     dispDict = {}
-    dispDict["mu"] = 0.3986004415E+15
-    dispDict["a"] = ["normal", 42000 * 1E3, 2000 * 1E3]
+    dispDict["mu"] = 0.3986004415e15
+    dispDict["a"] = ["normal", 42000 * 1e3, 2000 * 1e3]
     dispDict["e"] = ["uniform", 0, 0.5]
     dispDict["i"] = ["uniform", -80, 80]
     dispDict["Omega"] = None
@@ -160,10 +178,17 @@ def test_MonteCarloSimulation(show_plots):
     dispDict["f"] = ["uniform", 0, 359]
     monteCarlo.addDispersion(OrbitalElementDispersion(disp5Name, disp6Name, dispDict))
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
     monteCarlo.addDispersion(
-        NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+        NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180)
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3]))
+    )
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(
+            disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]
+        )
+    )
 
     # Add retention policy
     retentionPolicy = RetentionPolicy()
@@ -178,33 +203,42 @@ def test_MonteCarloSimulation(show_plots):
     # Test loading data from runs from disk
     monteCarloLoaded = Controller.load(dirName)
 
-    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS - 1)
     assert retainedData is not None, "Retained data should be available after execution"
     assert "messages" in retainedData, "Retained data should retain messages"
-    assert retainedMessageName + ".r_BN_N" in retainedData["messages"], "Retained messages should exist"
-    assert retainedMessageName + ".v_BN_N" in retainedData["messages"], "Retained messages should exist"
+    assert retainedMessageName + ".r_BN_N" in retainedData["messages"], (
+        "Retained messages should exist"
+    )
+    assert retainedMessageName + ".v_BN_N" in retainedData["messages"], (
+        "Retained messages should exist"
+    )
 
     # rerun the case and it should be the same, because we dispersed random seeds
     oldOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
 
-    failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+    failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS - 1])
     assert len(failed) == 0, "Should rerun case successfully"
 
-    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS - 1)
     newOutput = retainedData["messages"][retainedMessageName + ".r_BN_N"]
     for k1, v1 in enumerate(oldOutput):
         for k2, v2 in enumerate(v1):
-            assert np.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
-            "Outputs shouldn't change on runs if random seeds are same"
+            assert np.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < 0.001, (
+                "Outputs shouldn't change on runs if random seeds are same"
+            )
 
     # test the initial parameters were saved from runs, and they differ between runs
-    params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
-    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
-    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+    params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS - 1)
+    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS - 2)
+    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, (
+        "random number seed should be applied"
+    )
     for dispName in [disp1Name, disp2Name, disp3Name, disp4Name]:
         assert dispName in params1, "dispersion should be applied"
         # assert two different runs had different parameters.
-        assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+        assert params1[dispName] != params2[dispName], (
+            "dispersion should be different in each run"
+        )
 
     monteCarloLoaded.executeCallbacks()
     if show_plots:

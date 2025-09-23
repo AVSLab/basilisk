@@ -34,8 +34,13 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-@pytest.mark.parametrize("thrusterConstructor", [thrusterDynamicEffector.ThrusterDynamicEffector,
-                                                 thrusterStateEffector.ThrusterStateEffector])
+@pytest.mark.parametrize(
+    "thrusterConstructor",
+    [
+        thrusterDynamicEffector.ThrusterDynamicEffector,
+        thrusterStateEffector.ThrusterStateEffector,
+    ],
+)
 def test_massDepletionTest(show_plots, thrusterConstructor):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -60,9 +65,9 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     # add thruster devices
     thFactory = simIncludeThruster.thrusterFactory()
     thFactory.create(
-        'TEST_Thruster',
+        "TEST_Thruster",
         [1, 0, 0],  # location in B-frame
-        [0, 1, 0]  # direction in B-frame
+        [0, 1, 0],  # direction in B-frame
     )
 
     # create thruster object container and tie to spacecraft object
@@ -94,10 +99,12 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.planetName = "earth_planet_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15  # meters
+    unitTestSim.earthGravBody.mu = 0.3986004415e15  # meters
     unitTestSim.earthGravBody.isCentralBody = True
 
-    scObject.gravField.gravBodies = spacecraft.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector(
+        [unitTestSim.earthGravBody]
+    )
 
     dataLog = scObject.scStateOutMsg.recorder()
     fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
@@ -109,12 +116,22 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     unitTestSim.InitializeSimulation()
@@ -125,9 +142,15 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     stopTime = 60.0 * 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(
+        scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N
+    )
+    rotAngMom_N = unitTestSupport.addTimeColumn(
+        scObjectLog.times(), scObjectLog.totRotAngMomPntC_N
+    )
+    rotEnergy = unitTestSupport.addTimeColumn(
+        scObjectLog.times(), scObjectLog.totRotEnergy
+    )
 
     thrust = thrLog.thrustForce_B
     thrustPercentage = thrLog.thrustFactor
@@ -136,19 +159,37 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
 
     plt.close("all")
     plt.figure(1)
-    plt.plot(orbAngMom_N[:, 0] * 1e-9, orbAngMom_N[:, 1] - orbAngMom_N[0, 1], orbAngMom_N[:, 0] * 1e-9,
-             orbAngMom_N[:, 2] - orbAngMom_N[0, 2], orbAngMom_N[:, 0] * 1e-9, orbAngMom_N[:, 3] - orbAngMom_N[0, 3])
+    plt.plot(
+        orbAngMom_N[:, 0] * 1e-9,
+        orbAngMom_N[:, 1] - orbAngMom_N[0, 1],
+        orbAngMom_N[:, 0] * 1e-9,
+        orbAngMom_N[:, 2] - orbAngMom_N[0, 2],
+        orbAngMom_N[:, 0] * 1e-9,
+        orbAngMom_N[:, 3] - orbAngMom_N[0, 3],
+    )
     plt.title("Change in Orbital Angular Momentum")
     plt.figure(2)
-    plt.plot(rotAngMom_N[:, 0] * 1e-9, rotAngMom_N[:, 1] - rotAngMom_N[0, 1], rotAngMom_N[:, 0] * 1e-9,
-             rotAngMom_N[:, 2] - rotAngMom_N[0, 2], rotAngMom_N[:, 0] * 1e-9, rotAngMom_N[:, 3] - rotAngMom_N[0, 3])
+    plt.plot(
+        rotAngMom_N[:, 0] * 1e-9,
+        rotAngMom_N[:, 1] - rotAngMom_N[0, 1],
+        rotAngMom_N[:, 0] * 1e-9,
+        rotAngMom_N[:, 2] - rotAngMom_N[0, 2],
+        rotAngMom_N[:, 0] * 1e-9,
+        rotAngMom_N[:, 3] - rotAngMom_N[0, 3],
+    )
     plt.title("Change in Rotational Angular Momentum")
     plt.figure(3)
     plt.plot(rotEnergy[:, 0] * 1e-9, rotEnergy[:, 1] - rotEnergy[0, 1])
     plt.title("Change in Rotational Energy")
     plt.figure(4)
-    plt.plot(thrLog.times() * 1e-9, thrust[:, 0], thrLog.times() * 1e-9, thrust[:, 1], thrLog.times() * 1e-9,
-             thrust[:, 2])
+    plt.plot(
+        thrLog.times() * 1e-9,
+        thrust[:, 0],
+        thrLog.times() * 1e-9,
+        thrust[:, 1],
+        thrLog.times() * 1e-9,
+        thrust[:, 2],
+    )
     plt.xlim([0, 20])
     plt.ylim([0, 1])
     plt.title("Thrust")
@@ -168,7 +209,7 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
 
     if show_plots:
         plt.show()
-        plt.close('all')
+        plt.close("all")
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
@@ -176,23 +217,41 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     dataSigma = [[dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     if thrustersEffector.__class__.__name__ == "ThrusterDynamicEffector":
-        truePos = [[-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]]
-        trueSigma = [[1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]]
+        truePos = [
+            [-6.7815933935338277e06, 4.9468685979815889e06, 5.4867416696776701e06]
+        ]
+        trueSigma = [
+            [1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]
+        ]
     elif thrustersEffector.__class__.__name__ == "ThrusterStateEffector":
         truePos = [[-6781593.400948599, 4946868.619447934, 5486741.690842073]]
         trueSigma = [[0.14366625871003397, -0.06488330854626220, 0.3032637107362375]]
 
     for i in range(0, len(truePos)):
-        np.testing.assert_allclose(dataPos[i], truePos[i], rtol=1e-6, err_msg="Thruster position not equal")
+        np.testing.assert_allclose(
+            dataPos[i], truePos[i], rtol=1e-6, err_msg="Thruster position not equal"
+        )
 
     for i in range(0, len(trueSigma)):
         # check a vector values
-        np.testing.assert_allclose(dataSigma[i], trueSigma[i], rtol=1e-4, err_msg="Thruster attitude not equal")
+        np.testing.assert_allclose(
+            dataSigma[i], trueSigma[i], rtol=1e-4, err_msg="Thruster attitude not equal"
+        )
 
     # target value computed from MaxThrust / (EARTH_GRAV * steadyIsp)
-    np.testing.assert_allclose(fuelMassDot[100], -0.000403404216123, rtol=1e-3,
-                               err_msg="Thruster mass depletion not ramped up")
-    np.testing.assert_allclose(fuelMassDot[-1],0, rtol=1e-12, err_msg="Thruster mass depletion not ramped down")
+    np.testing.assert_allclose(
+        fuelMassDot[100],
+        -0.000403404216123,
+        rtol=1e-3,
+        err_msg="Thruster mass depletion not ramped up",
+    )
+    np.testing.assert_allclose(
+        fuelMassDot[-1],
+        0,
+        rtol=1e-12,
+        err_msg="Thruster mass depletion not ramped down",
+    )
+
 
 if __name__ == "__main__":
     test_massDepletionTest(True, thrusterDynamicEffector.ThrusterDynamicEffector)

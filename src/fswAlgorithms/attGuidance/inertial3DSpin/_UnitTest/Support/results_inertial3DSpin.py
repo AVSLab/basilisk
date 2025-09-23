@@ -23,8 +23,8 @@ from Basilisk.utilities import macros as mc
 
 np.set_printoptions(precision=12)
 
-def printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_RR0_R, dt):
 
+def printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_RR0_R, dt):
     # Compute angular Rate
     RN = rbk.MRP2C(sigma_R0N)
     omega_RR0_N = np.dot(RN.T, omega_RR0_R)
@@ -37,22 +37,22 @@ def printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_RR0_R, dt):
     omega_RN_R = np.dot(RN, omega_RN_N)
     B = rbk.BmatMRP(sigma_R0N)
     dsigma_RN = 0.25 * np.dot(B, omega_RN_R)
-    sigma_RN =  sigma_R0N + dsigma_RN * dt
+    sigma_RN = sigma_R0N + dsigma_RN * dt
     rbk.MRPswitch(sigma_RN, 1)
 
     # Print results
-    print('sigma_RN = ', sigma_RN)
-    print('omega_RN_N = ', omega_RN_N)
-    print('domega_RN_N = ', domega_RN_N)
-    print('\n')
+    print("sigma_RN = ", sigma_RN)
+    print("omega_RN_N = ", omega_RN_N)
+    print("domega_RN_N = ", domega_RN_N)
+    print("\n")
     return sigma_RN
 
 
 sigma_R0N = np.array([0.1, 0.2, 0.3])
-omega_R0N_N = np.array([0., 0., 0.])
-domega_R0N_N = np.array([0., 0., 0.])
-omega_spin = np.array([1., -1., 0.5]) * mc.D2R
-print('CallTime = 0.0')
+omega_R0N_N = np.array([0.0, 0.0, 0.0])
+domega_R0N_N = np.array([0.0, 0.0, 0.0])
+omega_spin = np.array([1.0, -1.0, 0.5]) * mc.D2R
+print("CallTime = 0.0")
 dt = 0.0
 sigma_RN = printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_spin, dt)
 dt = 0.5

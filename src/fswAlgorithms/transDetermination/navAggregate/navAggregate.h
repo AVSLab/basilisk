@@ -27,28 +27,30 @@
 
 #define MAX_AGG_NAV_MSG 10
 
-
 /*! structure containing the attitude navigation message name, ID and local buffer*/
-typedef struct {
-    NavAttMsg_C navAttInMsg; /*!< attitude navigation input message*/
+typedef struct
+{
+    NavAttMsg_C navAttInMsg;     /*!< attitude navigation input message*/
     NavAttMsgPayload msgStorage; /*!< [-] Local buffer to store nav message*/
-}AggregateAttInput;
+} AggregateAttInput;
 
 /*! structure containing the translational navigation message name, ID and local buffer*/
-typedef struct {
-    NavTransMsg_C navTransInMsg; /*!< translation navigation input message*/
+typedef struct
+{
+    NavTransMsg_C navTransInMsg;   /*!< translation navigation input message*/
     NavTransMsgPayload msgStorage; /*!< [-] Local buffer to store nav message*/
-}AggregateTransInput;
+} AggregateTransInput;
 
 /*! @brief Top level structure for the aggregagted navigation message module.  */
-typedef struct {
-    AggregateAttInput attMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
+typedef struct
+{
+    AggregateAttInput attMsgs[MAX_AGG_NAV_MSG];     /*!< [-] The incoming nav message buffer */
     AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
-    NavAttMsg_C navAttOutMsg; /*!< blended attitude navigation output message */
-    NavTransMsg_C navTransOutMsg; /*!< blended translation navigation output message */
-    
-    uint32_t attTimeIdx;        /*!< [-] The index of the message to use for attitude message time */
-    uint32_t transTimeIdx;      /*!< [-] The index of the message to use for translation message time */
+    NavAttMsg_C navAttOutMsg;                       /*!< blended attitude navigation output message */
+    NavTransMsg_C navTransOutMsg;                   /*!< blended translation navigation output message */
+
+    uint32_t attTimeIdx;    /*!< [-] The index of the message to use for attitude message time */
+    uint32_t transTimeIdx;  /*!< [-] The index of the message to use for translation message time */
     uint32_t attIdx;        /*!< [-] The index of the message to use for inertial MRP*/
     uint32_t rateIdx;       /*!< [-] The index of the message to use for attitude rate*/
     uint32_t posIdx;        /*!< [-] The index of the message to use for inertial position*/
@@ -58,20 +60,20 @@ typedef struct {
     uint32_t attMsgCount;   /*!< [-] The total number of messages available as inputs */
     uint32_t transMsgCount; /*!< [-] The total number of messages available as inputs */
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}NavAggregateData;
+    BSKLogger* bskLogger; //!< BSK Logging
+} NavAggregateData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID);
-    void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID);
+
+    void SelfInit_aggregateNav(NavAggregateData* configData, int64_t moduleID);
+    void Update_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

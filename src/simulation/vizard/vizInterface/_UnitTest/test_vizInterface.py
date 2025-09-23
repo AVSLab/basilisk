@@ -33,24 +33,33 @@ import numpy as np
 try:
     import vizMessage_pb2
     import google.protobuf.internal.decoder as decoder
+
     protoFound = True
 except ModuleNotFoundError:
     protoFound = False
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
 # Import all modules that are going to be called in this simulation
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport,
-                                vizSupport, simIncludeThruster)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+    simIncludeThruster,
+)
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 from Basilisk.simulation import thrusterDynamicEffector
 import pytest
 import time
+
 try:
     from Basilisk.simulation import vizInterface
 except ImportError:
@@ -91,7 +100,7 @@ def vizInterfaceTest(show_plots, accuracy):
 
     # Early quit if protobuf or Vizard not configured
     if not protoFound or not vizSupport.vizFound:
-        return [testFailCount, ''.join(testMessages)]
+        return [testFailCount, "".join(testMessages)]
 
     # Create simulation variable names
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -132,7 +141,7 @@ def vizInterfaceTest(show_plots, accuracy):
     # Set up orbit
     #
     oe = orbitalMotion.ClassicElements()
-    rGEO = 42000. * 1000  # meters
+    rGEO = 42000.0 * 1000  # meters
     oe.a = rGEO
     oe.e = 0.00001
     oe.i = 0.0 * macros.D2R
@@ -145,8 +154,8 @@ def vizInterfaceTest(show_plots, accuracy):
     #
     # Initialize Spacecraft States with the initialization variables
     #
-    scObject.hub.r_CN_NInit = rN                   # m   - r_BN_N
-    scObject.hub.v_CN_NInit = vN                   # m/s - v_BN_N
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     scObject.hub.omega_BN_BInit = (0.1, 0.2, 0.3)  # rad/s - sigma_BN
 
     # Create spacecraft data container
@@ -161,8 +170,9 @@ def vizInterfaceTest(show_plots, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, scState_dataRec)
 
     sName = "testVizInterface"
-    viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, scObject
-                                              , saveFile=sName)
+    viz = vizSupport.enableUnityVisualization(
+        unitTestSim, unitTaskName, scObject, saveFile=sName
+    )
 
     viz.settings.orbitLinesOn = 1
     viz.settings.spacecraftCSon = 1
@@ -195,7 +205,7 @@ def vizInterfaceTest(show_plots, accuracy):
 
     # Each test method requires a single assert method to be called
     # This check below just makes sure no subtest failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 # Parses varint from file
@@ -220,7 +230,7 @@ def read_varint(file):
 # Parses protobuffer messages from binary file
 def read_protobuf_messages(fname):
     messages = []
-    with open(fname, 'rb') as f:
+    with open(fname, "rb") as f:
         while True:
             try:
                 # Read the varint that indicates the message size.
@@ -247,7 +257,6 @@ def read_protobuf_messages(fname):
 
 # Checks spacecraft states between data recorder and saved binary
 def checkSpacecraftStates(msgList, scState_dataRec, accuracy):
-
     r_BN_N = scState_dataRec.r_BN_N
     v_BN_N = scState_dataRec.v_BN_N
     sigma_BN = scState_dataRec.sigma_BN
@@ -260,15 +269,15 @@ def checkSpacecraftStates(msgList, scState_dataRec, accuracy):
         assert len(msg_i.spacecraft) == 1, "Number of spacecraft mismatch"
         # Position check
         protoPos = msg_i.spacecraft[0].position
-        recPos = r_BN_N[i+1][0:3]
+        recPos = r_BN_N[i + 1][0:3]
         assert np.isclose(protoPos, recPos, 0, accuracy).all(), "Position mismatch"
         # Velocity check
         protoVel = msg_i.spacecraft[0].velocity
-        recVel = v_BN_N[i+1][0:3]
+        recVel = v_BN_N[i + 1][0:3]
         assert np.isclose(protoVel, recVel, 0, accuracy).all(), "Velocity mismatch"
         # Rotation check
         protoRot = msg_i.spacecraft[0].rotation
-        recRot = sigma_BN[i+1][0:3]
+        recRot = sigma_BN[i + 1][0:3]
         assert np.isclose(protoRot, recRot, 0, accuracy).all(), "Rotation mismatch"
 
 
@@ -280,8 +289,12 @@ def checkCelestialBodies(msgList):
         # Number of celestial bodies check
         assert len(msg_i.celestialBodies) == 1, "Celestial bodies mismatch"
         # Central body checks
-        assert msg_i.celestialBodies[0].position == [0.0, 0.0, 0.0], "Celestial body position mismatch"
-        assert msg_i.celestialBodies[0].velocity == [0.0, 0.0, 0.0], "Celestial body velocity mismatch"
+        assert msg_i.celestialBodies[0].position == [0.0, 0.0, 0.0], (
+            "Celestial body position mismatch"
+        )
+        assert msg_i.celestialBodies[0].velocity == [0.0, 0.0, 0.0], (
+            "Celestial body velocity mismatch"
+        )
 
 
 # Checks for settings message at first timestep, validates contents
@@ -290,20 +303,28 @@ def checkSettings(msgList, testProcessRate):
     for i in range(n):
         msg_i = msgList[i]
 
-        assert msg_i.currentTime.frameNumber == i+1, "Frame number is incorrect"
-        assert msg_i.currentTime.simTimeElapsed == testProcessRate*(i+1), "Sim time elapsed is incorrect"
+        assert msg_i.currentTime.frameNumber == i + 1, "Frame number is incorrect"
+        assert msg_i.currentTime.simTimeElapsed == testProcessRate * (i + 1), (
+            "Sim time elapsed is incorrect"
+        )
 
         if i == 0:
             # Check for settings
-            assert msg_i.HasField("settings"), "Should have settings message at first timestep"
-            assert msg_i.HasField("epoch"), "Should have epoch message at first timestep"
+            assert msg_i.HasField("settings"), (
+                "Should have settings message at first timestep"
+            )
+            assert msg_i.HasField("epoch"), (
+                "Should have epoch message at first timestep"
+            )
             # Validate specific settings
             assert msg_i.settings.orbitLinesOn == 1, "Orbit lines not on"
             assert msg_i.settings.spacecraftCSon == 1, "Spacecraft CS not on"
             assert msg_i.settings.keyboardLiveInput == "abcd", "Incorrect key listeners"
         else:
             # Check for absence of settings
-            assert not msg_i.HasField("settings"), "Should only have settings message at first timestep"
+            assert not msg_i.HasField("settings"), (
+                "Should only have settings message at first timestep"
+            )
 
 
 #
@@ -312,5 +333,5 @@ def checkSettings(msgList, testProcessRate):
 if __name__ == "__main__":
     test_vizInterface(
         False,  # show_plots
-        1e-8    # accuracy
+        1e-8,  # accuracy
     )

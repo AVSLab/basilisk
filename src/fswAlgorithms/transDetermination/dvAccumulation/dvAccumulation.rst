@@ -31,4 +31,3 @@ provides information on what this message is used for.
     * - accPktInMsg
       - :ref:`AccDataMsgPayload`
       - input accelerometer message
-

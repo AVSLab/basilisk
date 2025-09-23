@@ -18,16 +18,19 @@
 import numpy as np
 from numpy import linalg as la
 from numpy import sin, cos
+
 np.set_printoptions(precision=12)
 
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import astroFunctions as af
 
+
 def normalize(v):
-    norm=np.linalg.norm(v)
-    if norm==0:
-       return v
-    return v/norm
+    norm = np.linalg.norm(v)
+    if norm == 0:
+        return v
+    return v / norm
+
 
 def printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, mu):
     r = r_BN_N - celBodyPosVec
@@ -38,7 +41,7 @@ def printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, mu)
     i_v = normalize(v)
     i_h = normalize(h)
     i_n = np.cross(i_v, i_h)
-    VN = np.array([ i_n, i_v, i_h ])
+    VN = np.array([i_n, i_v, i_h])
     sigma_VN = rbk.C2MRP(VN)
 
     hm = la.norm(h)
@@ -56,11 +59,12 @@ def printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, mu)
     omega_VN_N = (-dBdt + dfdt) * i_h
     domega_VN_N = (-ddBdt2 + ddfdt2) * i_h
 
-    print('sigma_VN = ', sigma_VN)
-    print('omega_VN_N = ', omega_VN_N)
-    print('domega_VN_N = ', domega_VN_N)
+    print("sigma_VN = ", sigma_VN)
+    print("omega_VN_N = ", omega_VN_N)
+    print("domega_VN_N = ", domega_VN_N)
 
     return (sigma_VN, omega_VN_N, domega_VN_N)
+
 
 # MAIN
 # Initial Conditions (IC)

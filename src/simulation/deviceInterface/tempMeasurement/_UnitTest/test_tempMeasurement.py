@@ -39,6 +39,7 @@ from Basilisk.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 # Need RNGSeed 464374481
@@ -50,11 +51,12 @@ path = os.path.dirname(os.path.abspath(__file__))
         "TEMP_FAULT_STUCK_VALUE",
         "TEMP_FAULT_SPIKING",
         "BIASED",
-        "GAUSS_MARKOV"
-    ])
+        "GAUSS_MARKOV",
+    ],
+)
 # provide a unique test method name, starting with test_
 def test_sensorThermalFault(tempFault):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(tempFault)
     assert testResults < 1, testMessage
@@ -62,7 +64,6 @@ def test_sensorThermalFault(tempFault):
 
 
 def run(tempFault):
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -74,7 +75,7 @@ def run(tempFault):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(100.)
+    simulationTime = macros.sec2nano(100.0)
 
     #
     #  create the simulation process
@@ -95,21 +96,20 @@ def run(tempFault):
 
     #  set the spacecraft message
     scStateMsgPayload = messaging.SCStatesMsgPayload()
-    scStateMsgPayload.r_BN_N = [6378*1000., 0., 0.]
-    scStateMsgPayload.sigma_BN = [0., 0., 0.]
+    scStateMsgPayload.r_BN_N = [6378 * 1000.0, 0.0, 0.0]
+    scStateMsgPayload.sigma_BN = [0.0, 0.0, 0.0]
     scStateMsg = messaging.SCStatesMsg().write(scStateMsgPayload)
 
     #  set the sun message
     sunMsgPayload = messaging.SpicePlanetStateMsgPayload()
-    sunMsgPayload.PositionVector = [astroConstants.AU*1000., 0., 0.]
+    sunMsgPayload.PositionVector = [astroConstants.AU * 1000.0, 0.0, 0.0]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunMsgPayload)
-
 
     #
     #   set up the truth value temperature modeling
     #
     sensorThermalModel = sensorThermal.SensorThermal()
-    sensorThermalModel.ModelTag = 'sensorThermalModel'
+    sensorThermalModel.ModelTag = "sensorThermalModel"
     sensorThermalModel.nHat_B = [0, 0, 1]
     sensorThermalModel.sensorArea = 1.0  # m^2
     sensorThermalModel.sensorAbsorptivity = 0.25
@@ -151,7 +151,7 @@ def run(tempFault):
     elif tempFault == "TEMP_FAULT_STUCK_CURRENT":
         truthValue = -2.1722164230619447
         unitTestSim.InitializeSimulation()
-        unitTestSim.ConfigureStopTime(round(simulationTime/2.0))
+        unitTestSim.ConfigureStopTime(round(simulationTime / 2.0))
         unitTestSim.ExecuteSimulation()
         tempMeasurementModel.faultState = tempMeasurement.TEMP_FAULT_STUCK_CURRENT
         unitTestSim.ConfigureStopTime(simulationTime)
@@ -161,7 +161,7 @@ def run(tempFault):
         truthValue = 10.0
         tempMeasurementModel.stuckValue = 10.0
         unitTestSim.InitializeSimulation()
-        unitTestSim.ConfigureStopTime(round(simulationTime/2.0))
+        unitTestSim.ConfigureStopTime(round(simulationTime / 2.0))
         unitTestSim.ExecuteSimulation()
         tempMeasurementModel.faultState = tempMeasurement.TEMP_FAULT_STUCK_VALUE
         unitTestSim.ConfigureStopTime(simulationTime)
@@ -172,27 +172,111 @@ def run(tempFault):
         unitTestSim.InitializeSimulation()
         unitTestSim.ConfigureStopTime(simulationTime)
         unitTestSim.ExecuteSimulation()
-        nominals = np.array([ 0.,         -0.04439869, -0.08875756, -0.13307667,
-            -0.17735608, -0.22159584, -0.265796,   -0.30995662, -0.35407775,
-            -0.39815946, -0.44220178, -0.48620479, -0.53016852, -0.57409304,
-            -0.6179784,  -0.66182465, -0.70563184, -0.74940004, -0.79312929,
-            -0.83681965, -0.88047117, -0.9240839,  -0.9676579,  -1.01119321,
-            -1.0546899,  -1.09814802, -1.14156761, -1.18494873, -1.22829144,
-            -1.27159578, -1.31486181, -1.35808958, -1.40127914, -1.44443055,
-            -1.48754385, -1.5306191, -1.57365634, -1.61665564, -1.65961704,
-            -1.7025406,  -1.74542636, -1.78827437, -1.83108469, -1.87385737,
-            -1.91659246, -1.95929001, -2.00195007, -2.04457269, -2.08715792,
-            -2.12970582, -2.17221642, -2.21468979, -2.25712597, -2.29952502,
-            -2.34188697, -2.38421189, -2.42649982, -2.46875082, -2.51096492,
-            -2.55314219, -2.59528266, -2.6373864,  -2.67945344, -2.72148384,
-            -2.76347765, -2.80543491, -2.84735568, -2.88924,    -2.93108792,
-            -2.9728995 , -3.01467477, -3.05641378, -3.0981166,  -3.13978325,
-            -3.1814138,  -3.22300829, -3.26456677, -3.30608928, -3.34757587,
-            -3.38902659, -3.43044149, -3.47182062, -3.51316402, -3.55447174,
-            -3.59574383, -3.63698033, -3.67818129, -3.71934677, -3.76047679,
-            -3.80157142, -3.8426307,  -3.88365467, -3.92464338, -3.96559689,
-            -4.00651522, -4.04739844, -4.08824658, -4.1290597,  -4.16983783,
-            -4.21058103, -4.25128934])
+        nominals = np.array(
+            [
+                0.0,
+                -0.04439869,
+                -0.08875756,
+                -0.13307667,
+                -0.17735608,
+                -0.22159584,
+                -0.265796,
+                -0.30995662,
+                -0.35407775,
+                -0.39815946,
+                -0.44220178,
+                -0.48620479,
+                -0.53016852,
+                -0.57409304,
+                -0.6179784,
+                -0.66182465,
+                -0.70563184,
+                -0.74940004,
+                -0.79312929,
+                -0.83681965,
+                -0.88047117,
+                -0.9240839,
+                -0.9676579,
+                -1.01119321,
+                -1.0546899,
+                -1.09814802,
+                -1.14156761,
+                -1.18494873,
+                -1.22829144,
+                -1.27159578,
+                -1.31486181,
+                -1.35808958,
+                -1.40127914,
+                -1.44443055,
+                -1.48754385,
+                -1.5306191,
+                -1.57365634,
+                -1.61665564,
+                -1.65961704,
+                -1.7025406,
+                -1.74542636,
+                -1.78827437,
+                -1.83108469,
+                -1.87385737,
+                -1.91659246,
+                -1.95929001,
+                -2.00195007,
+                -2.04457269,
+                -2.08715792,
+                -2.12970582,
+                -2.17221642,
+                -2.21468979,
+                -2.25712597,
+                -2.29952502,
+                -2.34188697,
+                -2.38421189,
+                -2.42649982,
+                -2.46875082,
+                -2.51096492,
+                -2.55314219,
+                -2.59528266,
+                -2.6373864,
+                -2.67945344,
+                -2.72148384,
+                -2.76347765,
+                -2.80543491,
+                -2.84735568,
+                -2.88924,
+                -2.93108792,
+                -2.9728995,
+                -3.01467477,
+                -3.05641378,
+                -3.0981166,
+                -3.13978325,
+                -3.1814138,
+                -3.22300829,
+                -3.26456677,
+                -3.30608928,
+                -3.34757587,
+                -3.38902659,
+                -3.43044149,
+                -3.47182062,
+                -3.51316402,
+                -3.55447174,
+                -3.59574383,
+                -3.63698033,
+                -3.67818129,
+                -3.71934677,
+                -3.76047679,
+                -3.80157142,
+                -3.8426307,
+                -3.88365467,
+                -3.92464338,
+                -3.96559689,
+                -4.00651522,
+                -4.04739844,
+                -4.08824658,
+                -4.1290597,
+                -4.16983783,
+                -4.21058103,
+                -4.25128934,
+            ]
+        )
 
         testValue = 0
         sensorTemp = np.array(tempLog.temperature)
@@ -203,7 +287,7 @@ def run(tempFault):
             else:
                 if abs(sensorTemp[ii]) > 1e-6:
                     testValue = testValue + 1
-        testValue = testValue/len(nominals)
+        testValue = testValue / len(nominals)
     elif tempFault == "BIASED":
         biasVal = 1.0
         tempMeasurementModel.senBias = biasVal
@@ -217,23 +301,22 @@ def run(tempFault):
     else:
         NotImplementedError("Fault type specified does not exist.")
 
-
     sensorTemp = np.array(tempLog.temperature)
     print(sensorTemp)
-
-
 
     #
     # compare the module results to the true values
     #
 
     if tempFault == "TEMP_FAULT_SPIKING":
-        if not unitTestSupport.isDoubleEqualRelative(testValue, truthValue, 5E-1): # only 101 values so need this to be relatively relaxed (within 50%)
-            testFailCount+= 1
-    elif not unitTestSupport.isDoubleEqualRelative(sensorTemp[-1], truthValue, 1E-12):
+        if not unitTestSupport.isDoubleEqualRelative(
+            testValue, truthValue, 5e-1
+        ):  # only 101 values so need this to be relatively relaxed (within 50%)
+            testFailCount += 1
+    elif not unitTestSupport.isDoubleEqualRelative(sensorTemp[-1], truthValue, 1e-12):
         testFailCount += 1
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
 
@@ -247,6 +330,7 @@ def test_gauss_markov_properties():
     """
     [testResults, testMessage] = gauss_markov_test()
     assert testResults < 1, testMessage
+
 
 def gauss_markov_test():
     testFailCount = 0
@@ -264,7 +348,7 @@ def gauss_markov_test():
 
     # Set up the thermal sensor model
     sensorThermalModel = sensorThermal.SensorThermal()
-    sensorThermalModel.ModelTag = 'sensorThermalModel'
+    sensorThermalModel.ModelTag = "sensorThermalModel"
     sensorThermalModel.nHat_B = [0, 0, 1]
     sensorThermalModel.sensorArea = 1.0
     sensorThermalModel.sensorAbsorptivity = 0.25
@@ -276,8 +360,12 @@ def gauss_markov_test():
 
     # Set up required messages
     scStateMsg = messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload())
-    sunMsg = messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload())
-    deviceStatusMsg = messaging.DeviceStatusMsg().write(messaging.DeviceStatusMsgPayload())
+    sunMsg = messaging.SpicePlanetStateMsg().write(
+        messaging.SpicePlanetStateMsgPayload()
+    )
+    deviceStatusMsg = messaging.DeviceStatusMsg().write(
+        messaging.DeviceStatusMsgPayload()
+    )
 
     sensorThermalModel.stateInMsg.subscribeTo(scStateMsg)
     sensorThermalModel.sunInMsg.subscribeTo(sunMsg)
@@ -321,7 +409,7 @@ def gauss_markov_test():
     print(f"Bound: {tempMeasurementModel.walkBounds}")
 
     # Test 1: Statistical Checks
-    countAllow = len(tempData) * 0.3/100.  # Allow 0.3% violations
+    countAllow = len(tempData) * 0.3 / 100.0  # Allow 0.3% violations
     tempDiffCount = 0
     for temp in tempData:
         if abs(temp - sensorThermalModel.T_0) > tempMeasurementModel.walkBounds:
@@ -329,13 +417,18 @@ def gauss_markov_test():
 
     if tempDiffCount > countAllow:
         testFailCount += 1
-        testMessages.append(f"FAILED: Too many temperature errors ({tempDiffCount} > {countAllow})")
+        testMessages.append(
+            f"FAILED: Too many temperature errors ({tempDiffCount} > {countAllow})"
+        )
 
     # Test 2: Error Bound Usage Check - similar to simpleNav approach
     sigmaThreshold = 0.8
     hasLargeError = False
     for temp in tempData:
-        if abs(temp - sensorThermalModel.T_0) > tempMeasurementModel.walkBounds * sigmaThreshold:
+        if (
+            abs(temp - sensorThermalModel.T_0)
+            > tempMeasurementModel.walkBounds * sigmaThreshold
+        ):
             hasLargeError = True
             break
 
@@ -346,7 +439,7 @@ def gauss_markov_test():
     if testFailCount == 0:
         print("PASSED: Gauss-Markov noise tests successful")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 if __name__ == "__main__":

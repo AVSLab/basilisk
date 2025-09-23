@@ -31,7 +31,7 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
@@ -46,19 +46,18 @@ from Basilisk.architecture import bskLogging
 
 
 def computeGamma(alpha, delta):
-
-    if alpha >= 0 and alpha <= np.pi/2:
-        if delta < np.pi/2 - alpha:
-            gamma = np.pi/2 - alpha - delta
-        elif delta > alpha + np.pi/2:
-            gamma = - np.pi/2 - alpha + delta
+    if alpha >= 0 and alpha <= np.pi / 2:
+        if delta < np.pi / 2 - alpha:
+            gamma = np.pi / 2 - alpha - delta
+        elif delta > alpha + np.pi / 2:
+            gamma = -np.pi / 2 - alpha + delta
         else:
             gamma = 0
     else:
-        if delta < alpha - np.pi/2:
-            gamma = - np.pi/2 + alpha - delta
-        elif delta > 3/2*np.pi - alpha:
-            gamma = alpha + delta - 3/2*np.pi
+        if delta < alpha - np.pi / 2:
+            gamma = -np.pi / 2 + alpha - delta
+        elif delta > 3 / 2 * np.pi - alpha:
+            gamma = alpha + delta - 3 / 2 * np.pi
         else:
             gamma = 0
 
@@ -70,14 +69,22 @@ def computeGamma(alpha, delta):
 ang = np.linspace(0, np.pi, 5, endpoint=False)
 ang = list(ang)
 
+
 @pytest.mark.parametrize("alpha", ang)
 @pytest.mark.parametrize("delta", ang)
-@pytest.mark.parametrize("bodyAxisInput", [0,1])
-@pytest.mark.parametrize("inertialAxisInput", [0,1,2])
-@pytest.mark.parametrize("alignmentPriority", [0,1])
+@pytest.mark.parametrize("bodyAxisInput", [0, 1])
+@pytest.mark.parametrize("inertialAxisInput", [0, 1, 2])
+@pytest.mark.parametrize("alignmentPriority", [0, 1])
 @pytest.mark.parametrize("accuracy", [1e-12])
-
-def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, inertialAxisInput, alignmentPriority, accuracy):
+def test_oneAxisSolarArrayPointTestFunction(
+    show_plots,
+    alpha,
+    delta,
+    bodyAxisInput,
+    inertialAxisInput,
+    alignmentPriority,
+    accuracy,
+):
     r"""
     **Validation Test Description**
 
@@ -119,18 +126,33 @@ def test_oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisIn
     module for multiple update calls. To ensure fast execution of the unit test, this is avoided.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, inertialAxisInput, alignmentPriority, accuracy)
+    [testResults, testMessage] = oneAxisSolarArrayPointTestFunction(
+        show_plots,
+        alpha,
+        delta,
+        bodyAxisInput,
+        inertialAxisInput,
+        alignmentPriority,
+        accuracy,
+    )
 
     assert testResults < 1, testMessage
 
 
-def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, inertialAxisInput, alignmentPriority, accuracy):
-
+def oneAxisSolarArrayPointTestFunction(
+    show_plots,
+    alpha,
+    delta,
+    bodyAxisInput,
+    inertialAxisInput,
+    alignmentPriority,
+    accuracy,
+):
     gamma_true = computeGamma(alpha, delta)
 
-    rHat_SB_N = np.array([1, 2, 3])                            # Sun direction in inertial coordinates
+    rHat_SB_N = np.array([1, 2, 3])  # Sun direction in inertial coordinates
     rHat_SB_N = rHat_SB_N / np.linalg.norm(rHat_SB_N)
-    a1Hat_B = np.array([9, 8, 7])                            # array axis direction in body frame
+    a1Hat_B = np.array([9, 8, 7])  # array axis direction in body frame
     a1Hat_B = a1Hat_B / np.linalg.norm(a1Hat_B)
 
     a = np.cross(rHat_SB_N, [4, 5, 6])
@@ -142,13 +164,17 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
     DCM1 = rbk.PRV2C(a * alpha)
     DCM2 = rbk.PRV2C(d * delta)
 
-    hHat_N = np.matmul(DCM1, rHat_SB_N)             # required thrust direction in inertial frame, at an angle alpha from rHat_SB_N
-    hHat_B = np.matmul(DCM2, a1Hat_B)               # required thrust direction in inertial frame, at an angle alpha from rHat_SB_N
+    hHat_N = np.matmul(
+        DCM1, rHat_SB_N
+    )  # required thrust direction in inertial frame, at an angle alpha from rHat_SB_N
+    hHat_B = np.matmul(
+        DCM2, a1Hat_B
+    )  # required thrust direction in inertial frame, at an angle alpha from rHat_SB_N
 
-    testFailCount = 0                                        # zero unit test result counter
-    testMessages = []                                        # create empty array to store test log messages
-    unitTaskName = "unitTask"                                # arbitrary name (don't change)
-    unitProcessName = "TestProcess"                          # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
@@ -209,7 +235,6 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
         ephemerisMsg = messaging.EphemerisMsg().write(ephemerisData)
         attReferenceCongfig.ephemerisInMsg.subscribeTo(ephemerisMsg)
 
-
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = attReferenceCongfig.attRefOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
@@ -231,28 +256,38 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
     RN = rbk.MRP2C(sigma_RN)
     NR = RN.transpose()
     a1Hat_N = np.matmul(NR, a1Hat_B)
-    gamma_sim = np.arcsin( abs( np.clip( np.dot(rHat_SB_N, a1Hat_N), -1, 1 ) ) )
+    gamma_sim = np.arcsin(abs(np.clip(np.dot(rHat_SB_N, a1Hat_N), -1, 1)))
 
     # set the filtered output truth states
     if alignmentPriority == 0:
         if not unitTestSupport.isDoubleEqual(gamma_sim, gamma_true, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for "
+            testMessages.append(
+                "FAILED: "
+                + attReferenceCongfig.ModelTag
+                + " Module failed incidence angle for "
                 "bodyAxisInput = {}, inertialAxisInput = {} and priorityFlag = {}".format(
-                    bodyAxisInput, inertialAxisInput, alignmentPriority))
+                    bodyAxisInput, inertialAxisInput, alignmentPriority
+                )
+            )
     else:
         if not unitTestSupport.isDoubleEqual(gamma_sim, 0, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + attReferenceCongfig.ModelTag + " Module failed incidence angle for "
+            testMessages.append(
+                "FAILED: "
+                + attReferenceCongfig.ModelTag
+                + " Module failed incidence angle for "
                 "bodyAxisInput = {}, inertialAxisInput = {} and priorityFlag = {}".format(
-                    bodyAxisInput, inertialAxisInput, alignmentPriority))
+                    bodyAxisInput, inertialAxisInput, alignmentPriority
+                )
+            )
 
     if testFailCount:
         print(testMessages)
     else:
         print("Unit Test Passed")
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -261,11 +296,11 @@ def oneAxisSolarArrayPointTestFunction(show_plots, alpha, delta, bodyAxisInput, 
 #
 if __name__ == "__main__":
     oneAxisSolarArrayPointTestFunction(
-                 False,
-                 np.pi,     # alpha
-                 np.pi,     # delta
-                 0,           # flagB
-                 1,           # flagN
-                 0,           # priorityFlag
-                 1e-9         # accuracy
-               )
+        False,
+        np.pi,  # alpha
+        np.pi,  # delta
+        0,  # flagB
+        1,  # flagN
+        0,  # priorityFlag
+        1e-9,  # accuracy
+    )

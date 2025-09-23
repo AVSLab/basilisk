@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -31,7 +30,7 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
@@ -41,7 +40,9 @@ try:
     from PIL import Image, ImageDraw
 except ImportError:
     importErr = True
-    reasonErr = "python Pillow package not installed---can't test CenterRadiusCNN module"
+    reasonErr = (
+        "python Pillow package not installed---can't test CenterRadiusCNN module"
+    )
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -60,12 +61,12 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("image, saveImage", [
-                    ("mars.jpg", False),
-                   ("mars2.jpg", False),
-                   ("mars3.jpg", False)
-])
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+@pytest.mark.parametrize(
+    "image, saveImage",
+    [("mars.jpg", False), ("mars2.jpg", False), ("mars3.jpg", False)],
+)
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, image, saveImage):
@@ -80,23 +81,22 @@ def test_module(show_plots, image, saveImage):
 
 
 def cnnTest(show_plots, image, saveImage):
-
     # Truth values from python
-    imagePath = path + '/' + image
+    imagePath = path + "/" + image
     input_image = Image.open(imagePath)
     input_image.load()
     #################################################
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -111,7 +111,7 @@ def cnnTest(show_plots, image, saveImage):
 
     module.pathToNetwork = path + "/../CAD.onnx"
     module.filename = imagePath
-    module.pixelNoise = [5,5,5]
+    module.pixelNoise = [5, 5, 5]
 
     circles = []
     if image == "mars.jpg":
@@ -130,12 +130,12 @@ def cnnTest(show_plots, image, saveImage):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    centers = dataLog.circlesCenters[:, :10*2]
+    centers = dataLog.circlesCenters[:, : 10 * 2]
     radii = dataLog.circlesRadii[:, :10]
 
     # Output image:
@@ -145,31 +145,31 @@ def cnnTest(show_plots, image, saveImage):
 
     imageProcCircles = []
     for j in range(len(radii[-1, 0:])):
-        if radii[-1,j] > 0:
-            imageProcCircles.append((centers[-1, 2*j], centers[-1, 2*j+1], radii[-1, j]))
+        if radii[-1, j] > 0:
+            imageProcCircles.append(
+                (centers[-1, 2 * j], centers[-1, 2 * j + 1], radii[-1, j])
+            )
     for x, y, r in imageProcCircles:
         draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
 
     # Save output image
     if saveImage:
-        output_image.save("result_"+ image)
+        output_image.save("result_" + image)
 
     if show_plots:
         print(imageProcCircles[0])
         output_image.show()
 
-
     #   print out success message if no error were found
     for testCircle, refCircle in zip(imageProcCircles, circles):
         for i in range(3):
-            if np.abs((testCircle[i] - refCircle[i])/refCircle[i])>1:
-                testFailCount+=1
+            if np.abs((testCircle[i] - refCircle[i]) / refCircle[i]) > 1:
+                testFailCount += 1
                 testMessages.append("Test failed processing " + image)
-
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -180,4 +180,4 @@ if __name__ == "__main__":
     if importErr:
         print(reasonErr)
         exit(1)
-    cnnTest(True, "mars.jpg", True) # mars images
+    cnnTest(True, "mars.jpg", True)  # mars images

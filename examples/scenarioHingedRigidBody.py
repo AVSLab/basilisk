@@ -146,26 +146,37 @@ import os
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # Allows for forces to act on the spacecraft without adding an effector like a thruster
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import hingedRigidBodyStateEffector
+
 # import simulation related support
-from Basilisk.simulation import \
-    spacecraft  # The base of any spacecraft simulation which deals with spacecraft dynamics
+from Basilisk.simulation import (
+    spacecraft,
+)  # The base of any spacecraft simulation which deals with spacecraft dynamics
+
 # import general simulation support files
-from Basilisk.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
+from Basilisk.utilities import (
+    SimulationBaseClass,
+)  # The class which contains the basilisk simuation environment
 from Basilisk.utilities import macros  # Some unit conversions
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def run(show_plots):
     """
@@ -230,7 +241,7 @@ def run(show_plots):
     scSim.panel2.mass = 100.0
     scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel2.d = 1.5
-    scSim.panel2.k = 1000.
+    scSim.panel2.k = 1000.0
     scSim.panel2.c = 0.0  # c is the rotational damping coefficient for the hinge, which is modeled as a spring.
     scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -255,7 +266,7 @@ def run(show_plots):
     # setup extForceTorque module
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "maneuverThrust"
-    extFTObject.extForce_N = [[0.], [0.], [0.]]
+    extFTObject.extForce_N = [[0.0], [0.0], [0.0]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
     # Ending the HingedRigidBody State Effector
@@ -265,7 +276,7 @@ def run(show_plots):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000  # meters
+    rLEO = 7000.0 * 1000  # meters
     oe.a = rLEO
     oe.e = 0.0001
     oe.i = 0.0 * macros.D2R
@@ -278,7 +289,7 @@ def run(show_plots):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTimeFactor = 0.01
     simulationTime = macros.sec2nano(simulationTimeFactor * P)
 
@@ -286,7 +297,9 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     pl1Log = scSim.panel1.hingedRigidBodyOutMsg.recorder(samplingTime)
     pl2Log = scSim.panel2.hingedRigidBodyOutMsg.recorder(samplingTime)
@@ -295,9 +308,12 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, pl2Log)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -311,8 +327,10 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # compute maneuver Delta_v's
-    extFTObject.extForce_N = [[-2050.], [-1430.], [-.00076]]
-    T2 = macros.sec2nano(935.)  # this is the amount of time to get a deltaV equal to what the other tutorial has.
+    extFTObject.extForce_N = [[-2050.0], [-1430.0], [-0.00076]]
+    T2 = macros.sec2nano(
+        935.0
+    )  # this is the amount of time to get a deltaV equal to what the other tutorial has.
 
     # run simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime + T2)
@@ -339,52 +357,58 @@ def run(show_plots):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [h]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [h]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
-    pltName = fileName + "1" + str(int(0.))
+    pltName = fileName + "1" + str(int(0.0))
     figureList[pltName] = plt.figure(1)
 
     # show SMA
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     rData = []
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem_parab(mu, posData[idx], velData[idx])
-        rData.append(oeData.rmag / 1000.)
-    plt.plot(timeAxis * macros.NANO2MIN, rData, color='#aa0000',
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel('Radius [km]')
-    pltName = fileName + "2" + str(int(0.))
+        rData.append(oeData.rmag / 1000.0)
+    plt.plot(
+        timeAxis * macros.NANO2MIN,
+        rData,
+        color="#aa0000",
+    )
+    plt.xlabel("Time [min]")
+    plt.ylabel("Radius [km]")
+    pltName = fileName + "2" + str(int(0.0))
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     plt.plot(timeAxis * macros.NANO2MIN, panel1thetaLog)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Panel 1 Angular Displacement [r]')
-    pltName = fileName + "panel1theta" + str(int(0.))
+    plt.xlabel("Time [min]")
+    plt.ylabel("Panel 1 Angular Displacement [r]")
+    pltName = fileName + "panel1theta" + str(int(0.0))
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     plt.plot(timeAxis * macros.NANO2MIN, panel2thetaLog)
-    plt.xlabel('Time [min]')
-    plt.ylabel('Panel 2 Angular Displacement [r]')
-    pltName = fileName + "panel2theta" + str(int(0.))
+    plt.xlabel("Time [min]")
+    plt.ylabel("Panel 2 Angular Displacement [r]")
+    pltName = fileName + "panel2theta" + str(int(0.0))
     figureList[pltName] = plt.figure(4)
 
     if show_plots:

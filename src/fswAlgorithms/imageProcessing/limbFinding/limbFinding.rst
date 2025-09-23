@@ -28,6 +28,3 @@ provides information on what this message is used for.
     * - imageInMsg
       - :ref:`CameraImageMsgPayload`
       - camera image input message
-
-
-

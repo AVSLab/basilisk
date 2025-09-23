@@ -40,24 +40,32 @@ solver = ["Gooding", "Izzo"]
 revs = [0, 1, 4]
 times = [1e2, 1e6]
 eccentricities = [0.0, 0.05, 1.0, 1.2]
-transferAngle = [30., 90., 180., 210., -60., 500.]
-alignmentThreshold = [1.]
+transferAngle = [30.0, 90.0, 180.0, 210.0, -60.0, 500.0]
+alignmentThreshold = [1.0]
 
 paramArray = [solver, revs, times, eccentricities, transferAngle, alignmentThreshold]
 # create list with all combinations of parameters
 paramList = list(itertools.product(*paramArray))
 # transfer angles >= 180 or < 0 not applicable for parabolic and hyperbolic transfer. Delete from list.
-paramList = [item for item in paramList if not (item[3] >= 1.0 and (item[4] >= 180. or item[4] < 0.))]
+paramList = [
+    item
+    for item in paramList
+    if not (item[3] >= 1.0 and (item[4] >= 180.0 or item[4] < 0.0))
+]
 # add cases to check alignmentThreshold module parameter
-paramList.append((solver[0], revs[0], times[0], eccentricities[0], 0.5, 1.))
-paramList.append((solver[0], revs[0], times[0], eccentricities[0], 1.5, 1.))
-paramList.append((solver[0], revs[0], times[0], eccentricities[0], 1.5, 2.))
-paramList.append((solver[0], revs[0], times[0], eccentricities[0], 2.5, 2.))
+paramList.append((solver[0], revs[0], times[0], eccentricities[0], 0.5, 1.0))
+paramList.append((solver[0], revs[0], times[0], eccentricities[0], 1.5, 1.0))
+paramList.append((solver[0], revs[0], times[0], eccentricities[0], 1.5, 2.0))
+paramList.append((solver[0], revs[0], times[0], eccentricities[0], 2.5, 2.0))
+
 
 @pytest.mark.parametrize("accuracy", [1e-2])
-@pytest.mark.parametrize("p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align", paramList)
-
-def test_lambertSolver(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy):
+@pytest.mark.parametrize(
+    "p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align", paramList
+)
+def test_lambertSolver(
+    show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy
+):
     r"""
     **Validation Test Description**
 
@@ -89,10 +97,14 @@ def test_lambertSolver(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_ang
 
     For the multi-revolution case, the solution for the free variable x is also tested.
     """
-    lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy)
+    lambertSolverTestFunction(
+        show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy
+    )
 
 
-def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy):
+def lambertSolverTestFunction(
+    show_plots, p1_solver, p2_revs, p3_times, p4_eccs, p5_angles, p6_align, accuracy
+):
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
 
@@ -112,7 +124,7 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     # set up the transfer orbit using classical orbit elements
     mu = 3.986004418e14
     oe1 = orbitalMotion.ClassicElements()
-    r = 10000. * 1000  # meters
+    r = 10000.0 * 1000  # meters
     if p4_eccs < 1.0:
         # elliptic case
         oe1.a = r
@@ -120,16 +132,16 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         # parabolic and hyperbolic case
         oe1.a = -r
     oe1.e = p4_eccs
-    oe1.i = 5. * macros.D2R
-    oe1.Omega = 25. * macros.D2R
-    oe1.omega = 30. * macros.D2R
-    oe1.f = 10. * macros.D2R
+    oe1.i = 5.0 * macros.D2R
+    oe1.Omega = 25.0 * macros.D2R
+    oe1.omega = 30.0 * macros.D2R
+    oe1.f = 10.0 * macros.D2R
     r1_N, v1_N = orbitalMotion.elem2rv_parab(mu, oe1)
 
     oe2 = copy.deepcopy(oe1)
     oe2.f = oe1.f + p5_angles * macros.D2R
     # Izzo and Gooding Lambert algorithms only consider positive transfer angles. Convert to 0 < angle < 2pi
-    oe2.f = (oe2.f*macros.R2D % 360) * macros.D2R
+    oe2.f = (oe2.f * macros.R2D % 360) * macros.D2R
     r2_N, v2_N = orbitalMotion.elem2rv_parab(mu, oe2)
 
     # determine time-of-flight for given transfer orbit and position vectors (true anomalies)
@@ -140,22 +152,22 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
         # elliptic case
         M1 = orbitalMotion.E2M(orbitalMotion.f2E(oe1.f, p4_eccs), p4_eccs)
         M2 = orbitalMotion.E2M(orbitalMotion.f2E(oe2.f, p4_eccs), p4_eccs)
-        n = np.sqrt(mu/(oe1.a)**3)
-        t_transfer = np.abs(M2-M1)/n
+        n = np.sqrt(mu / (oe1.a) ** 3)
+        t_transfer = np.abs(M2 - M1) / n
     elif p4_eccs == 1.0:
         # parabolic case
-        D1 = np.tan(oe1.f/2)
-        D2 = np.tan(oe2.f/2)
-        M1 = D1 + 1/3*D1**3
-        M2 = D2 + 1/3*D2**3
-        n = np.sqrt(mu/(2*(-oe1.a)**3))
-        t_transfer = np.abs(M2-M1)/n
+        D1 = np.tan(oe1.f / 2)
+        D2 = np.tan(oe2.f / 2)
+        M1 = D1 + 1 / 3 * D1**3
+        M2 = D2 + 1 / 3 * D2**3
+        n = np.sqrt(mu / (2 * (-oe1.a) ** 3))
+        t_transfer = np.abs(M2 - M1) / n
     else:
         # hyperbolic case
         N1 = orbitalMotion.H2N(orbitalMotion.f2H(oe1.f, p4_eccs), p4_eccs)
         N2 = orbitalMotion.H2N(orbitalMotion.f2H(oe2.f, p4_eccs), p4_eccs)
-        n = np.sqrt(mu/(-oe1.a)**3)
-        t_transfer = np.abs(N2-N1)/n
+        n = np.sqrt(mu / (-oe1.a) ** 3)
+        t_transfer = np.abs(N2 - N1) / n
 
     solverName = p1_solver
     time = t_transfer
@@ -197,7 +209,7 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
     validFlagSol2 = lambertSolutionOutMsgRec.validSol2[0]
 
     # for multi-revolution case, use external Lambert solver
-    if revs > 0 and p5_angles != 180.:
+    if revs > 0 and p5_angles != 180.0:
         Izzo = IzzoSolve(np.array(r1_N), np.array(r2_N), time, mu, revs)
         Izzo.solve()
         numSolutions = len(Izzo.x)
@@ -207,29 +219,29 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
 
     # if the transfer angle is smaller than alignmentThreshold, the two position vectors are too aligned.
     # They might not define a plane, so no solution should be returned.
-    if abs(np.sin(p5_angles*macros.D2R)) < abs(np.sin(p6_align*macros.D2R)):
+    if abs(np.sin(p5_angles * macros.D2R)) < abs(np.sin(p6_align * macros.D2R)):
         alignmentFlag = True
     else:
         alignmentFlag = False
 
-    if alignmentFlag or (revs > 0 and idx+1 > numSolutions):
+    if alignmentFlag or (revs > 0 and idx + 1 > numSolutions):
         # 1. if transfer angle is smaller than alignmentThreshold, no solution should be returned
         # 2. external Lambert solver does not compute solution if requested transfer time is less than minimum
         # time-of-flight for multi-revolution solution. In this case set all true outputs to zero
         # (so does the lambert module as well, since no solution exists for the requested time-of-flight)
-        v1True_N = np.array([0., 0., 0.])
-        v2True_N = np.array([0., 0., 0.])
+        v1True_N = np.array([0.0, 0.0, 0.0])
+        v2True_N = np.array([0.0, 0.0, 0.0])
         validFlagTrue = 0
-        v1TrueSol2_N = np.array([0., 0., 0.])
-        v2TrueSol2_N = np.array([0., 0., 0.])
+        v1TrueSol2_N = np.array([0.0, 0.0, 0.0])
+        v2TrueSol2_N = np.array([0.0, 0.0, 0.0])
         validFlagTrueSol2 = 0
     elif revs == 0:
         # for zero-revolution case, obtain true velocity vectors from computed transfer orbit
         v1True_N = v1_N
         v2True_N = v2_N
         validFlagTrue = 1
-        v1TrueSol2_N = np.array([0., 0., 0.])
-        v2TrueSol2_N = np.array([0., 0., 0.])
+        v1TrueSol2_N = np.array([0.0, 0.0, 0.0])
+        v2TrueSol2_N = np.array([0.0, 0.0, 0.0])
         validFlagTrueSol2 = 0
     else:
         # for multi-revolution case, obtain true velocity vectors from external Lambert solver script if solution exist
@@ -242,85 +254,112 @@ def lambertSolverTestFunction(show_plots, p1_solver, p2_revs, p3_times, p4_eccs,
 
     # only compare solution for free variable x for multi-revolution case (for 0 revolution case,
     # external lambert solver is not called so no true value is available)
-    if (alignmentFlag == False and revs > 0 and idx < numSolutions):
+    if alignmentFlag == False and revs > 0 and idx < numSolutions:
         x = lambertPerformanceOutMsgRec.x[0]
         xSol2 = lambertPerformanceOutMsgRec.xSol2[0]
         xTrue = Izzo.x[idx]
         xTrueSol2 = Izzo.x[idxSol2]
     else:
-        x = 0.
-        xSol2 = 0.
-        xTrue = 0.
-        xTrueSol2 = 0.
+        x = 0.0
+        xSol2 = 0.0
+        xTrue = 0.0
+        xTrueSol2 = 0.0
 
     # make sure module output data is correct
-    paramsString = ' for solver={}, rev={}, time={}, eccentricity={}, angle={}, alignmentThreshold={}, ' \
-                   'accuracy={}'.format(
-                    str(p1_solver),
-                    str(p2_revs),
-                    str(p3_times),
-                    str(p4_eccs),
-                    str(p5_angles),
-                    str(p6_align),
-                    str(accuracy))
+    paramsString = (
+        " for solver={}, rev={}, time={}, eccentricity={}, angle={}, alignmentThreshold={}, "
+        "accuracy={}".format(
+            str(p1_solver),
+            str(p2_revs),
+            str(p3_times),
+            str(p4_eccs),
+            str(p5_angles),
+            str(p6_align),
+            str(accuracy),
+        )
+    )
 
-    np.testing.assert_allclose(v1_N,
-                               v1True_N,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: v1_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        v1_N,
+        v1True_N,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: v1_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(v2_N,
-                               v2True_N,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: v2_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        v2_N,
+        v2True_N,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: v2_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(validFlag,
-                               validFlagTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: validFlag,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        validFlag,
+        validFlagTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: validFlag," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(v1Sol2_N,
-                               v1TrueSol2_N,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: v1Sol2_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        v1Sol2_N,
+        v1TrueSol2_N,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: v1Sol2_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(v2Sol2_N,
-                               v2TrueSol2_N,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: v2Sol2_N,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        v2Sol2_N,
+        v2TrueSol2_N,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: v2Sol2_N," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(validFlagSol2,
-                               validFlagTrueSol2,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: validFlagSol2,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        validFlagSol2,
+        validFlagTrueSol2,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: validFlagSol2," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(x,
-                               xTrue,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: x,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        x,
+        xTrue,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: x," + paramsString),
+        verbose=True,
+    )
 
-    np.testing.assert_allclose(xSol2,
-                               xTrueSol2,
-                               rtol=0,
-                               atol=accuracy,
-                               err_msg=('Variable: xSol2,' + paramsString),
-                               verbose=True)
+    np.testing.assert_allclose(
+        xSol2,
+        xTrueSol2,
+        rtol=0,
+        atol=accuracy,
+        err_msg=("Variable: xSol2," + paramsString),
+        verbose=True,
+    )
 
 
 if __name__ == "__main__":
-    test_lambertSolver(False, solver[1], revs[0],
-                       times[1], eccentricities[1], transferAngle[0], alignmentThreshold[0], 1e-2)
+    test_lambertSolver(
+        False,
+        solver[1],
+        revs[0],
+        times[1],
+        eccentricities[1],
+        transferAngle[0],
+        alignmentThreshold[0],
+        1e-2,
+    )

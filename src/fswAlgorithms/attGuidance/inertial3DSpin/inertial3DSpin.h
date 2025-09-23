@@ -27,27 +27,30 @@
 
 /*!@brief module configuration structure definition.
  */
-typedef struct {
+typedef struct
+{
     /* declare module private variables */
-    double sigma_RN[3];                              /*!< MPR of reference frame relative to inertial N frame */
-    double omega_RR0_R0[3];                          /*!< [r/s] constant angular velocity spin vector of the spinning R frame relative to the input frame R0 */
-    uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
+    double sigma_RN[3];     /*!< MPR of reference frame relative to inertial N frame */
+    double omega_RR0_R0[3]; /*!< [r/s] constant angular velocity spin vector of the spinning R frame relative to the
+                               input frame R0 */
+    uint64_t priorTime;     /*!< [ns] last time the guidance module is called */
     /* declare module IO interfaces */
-    AttRefMsg_C attRefOutMsg;                     //!< reference attitude output message
-    AttRefMsg_C attRefInMsg;                      //!< (optional) reference attitude input message
-    
-    AttRefMsgPayload attRefOutBuffer;                    //!< [-] structure for the output data
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}inertial3DSpinConfig;
+    AttRefMsg_C attRefOutMsg; //!< reference attitude output message
+    AttRefMsg_C attRefInMsg;  //!< (optional) reference attitude input message
+
+    AttRefMsgPayload attRefOutBuffer; //!< [-] structure for the output data
+    BSKLogger* bskLogger;             //!< BSK Logging
+} inertial3DSpinConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID);
-    void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID);
-    void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
+
+    void SelfInit_inertial3DSpin(inertial3DSpinConfig* configData, int64_t moduleID);
+    void Update_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID);
+    void computeReference_inertial3DSpin(inertial3DSpinConfig* configData,
                                          double omega_R0N_N[3],
                                          double domega_R0N_N[3],
                                          double omega_RR0_R[3],
@@ -56,6 +59,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

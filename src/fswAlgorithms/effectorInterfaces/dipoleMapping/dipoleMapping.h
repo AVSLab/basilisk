@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef DIPOLEMAPPING_H
 #define DIPOLEMAPPING_H
 
@@ -29,28 +28,34 @@
 #include "cMsgCInterface/TAMSensorBodyMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* Configs.*/
-    double steeringMatrix[MAX_EFF_CNT * 3];             //!< matrix for mapping body frame dipole request to individual torque bar dipoles
+    double steeringMatrix[MAX_EFF_CNT *
+                          3]; //!< matrix for mapping body frame dipole request to individual torque bar dipoles
 
     /* Inputs. */
-    MTBArrayConfigMsg_C mtbArrayConfigParamsInMsg;      //!< input message containing configuration parameters for all the torque bars on the vehicle
-    DipoleRequestBodyMsg_C dipoleRequestBodyInMsg;      //!< [A-m2] input message containing the requested body frame dipole
+    MTBArrayConfigMsg_C mtbArrayConfigParamsInMsg; //!< input message containing configuration parameters for all the
+                                                   //!< torque bars on the vehicle
+    DipoleRequestBodyMsg_C dipoleRequestBodyInMsg; //!< [A-m2] input message containing the requested body frame dipole
 
     /* Outputs. */
-    MTBCmdMsg_C dipoleRequestMtbOutMsg;                 //!< [A-m2] output message containing the individual dipole requests for each torque bar on the vehicle
+    MTBCmdMsg_C dipoleRequestMtbOutMsg; //!< [A-m2] output message containing the individual dipole requests for each
+                                        //!< torque bar on the vehicle
 
     /* Other. */
-    MTBArrayConfigMsgPayload mtbArrayConfigParams;      //!< configuration parameters for all the torque bars used on the vehicle
-    BSKLogger *bskLogger;                               //!< BSK Logging
-}dipoleMappingConfig;
+    MTBArrayConfigMsgPayload
+      mtbArrayConfigParams; //!< configuration parameters for all the torque bars used on the vehicle
+    BSKLogger* bskLogger;   //!< BSK Logging
+} dipoleMappingConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    void SelfInit_dipoleMapping(dipoleMappingConfig *configData, int64_t moduleID);
-    void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_dipoleMapping(dipoleMappingConfig* configData, int64_t moduleID);
+    void Reset_dipoleMapping(dipoleMappingConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Update_dipoleMapping(dipoleMappingConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

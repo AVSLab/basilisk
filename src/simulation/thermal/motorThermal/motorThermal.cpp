@@ -24,11 +24,11 @@
     values and initializes the various parts of the model */
 MotorThermal::MotorThermal()
 {
-    this->currentTemperature = -273.15;     //!< current temperature defaults to absolute zero
-    this->ambientTemperature = 0.0;         //!< ambient temperature defaults to 0 Celsius
-    this->ambientThermalResistance = -1.0;  //!< ambient thermal resistance
-    this->motorHeatCapacity = -1.0;         //!< motor heat capacity
-    this->efficiency = 1.0;                 //!< default efficiency is 1.0
+    this->currentTemperature = -273.15;    //!< current temperature defaults to absolute zero
+    this->ambientTemperature = 0.0;        //!< ambient temperature defaults to 0 Celsius
+    this->ambientThermalResistance = -1.0; //!< ambient thermal resistance
+    this->motorHeatCapacity = -1.0;        //!< motor heat capacity
+    this->efficiency = 1.0;                //!< default efficiency is 1.0
 }
 
 /*! Module Destructor.  */
@@ -37,41 +37,42 @@ MotorThermal::~MotorThermal()
     return;
 }
 
-
 /*! This method is used to reset the module.
 
  */
-void MotorThermal::Reset(uint64_t CurrentSimNanos)
+void
+MotorThermal::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message is linked
-    if (!this->rwStateInMsg.isLinked())
-    {
+    if (!this->rwStateInMsg.isLinked()) {
         bskLogger.bskLog(BSK_ERROR, "motorThermal.rwStateInMsg is not linked.");
     }
 
-    // if the current temperature is at or below absolute zero, it means either the temperature wasn't set properly or some error occurred
-    if (this->currentTemperature <= -273.15)
-    {
+    // if the current temperature is at or below absolute zero, it means either the temperature wasn't set properly or
+    // some error occurred
+    if (this->currentTemperature <= -273.15) {
         bskLogger.bskLog(BSK_ERROR, "motorThermal: current temperature is at or below absolute zero.");
     }
 
     // throw an error if the efficiency is not between 0.0 and 1.0
-    if (this->efficiency <= 0.0 || this->efficiency >= 1.0)
-    {
-        bskLogger.bskLog(BSK_ERROR, "motorThermal: efficiency is %f, must be a value greater than 0.0 and smaller than 1.0.",
-            this->efficiency);
+    if (this->efficiency <= 0.0 || this->efficiency >= 1.0) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "motorThermal: efficiency is %f, must be a value greater than 0.0 and smaller than 1.0.",
+                         this->efficiency);
     }
 
     // if the ambient heat capacity is at or below zero, it means either the value wasn't set properly
-    if (this->ambientThermalResistance <= 0)
-    {
-        bskLogger.bskLog(BSK_ERROR, "motorThermal: current ambient thermal resistance is at or below zero, must be a positive number. The value has either not been set, or has not been set properly.");
+    if (this->ambientThermalResistance <= 0) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "motorThermal: current ambient thermal resistance is at or below zero, must be a positive "
+                         "number. The value has either not been set, or has not been set properly.");
     }
 
     // if the motor heat capacity is at or below zero, it means either the value wasn't set properly
-    if (this->motorHeatCapacity <= 0)
-    {
-        bskLogger.bskLog(BSK_ERROR, "Current ambient heat capacity is at or below zero, must be a positive number. The value has either not been set, or has not been set properly.");
+    if (this->motorHeatCapacity <= 0) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "Current ambient heat capacity is at or below zero, must be a positive number. The value has "
+                         "either not been set, or has not been set properly.");
     }
 
     // reset the previous time
@@ -85,7 +86,8 @@ void MotorThermal::Reset(uint64_t CurrentSimNanos)
 
 /*! This method reads the reaction wheel state input message
  */
-void MotorThermal::readInputMessages()
+void
+MotorThermal::readInputMessages()
 {
     // read the incoming power message
     this->rwStateBuffer = this->rwStateInMsg();
@@ -97,7 +99,8 @@ void MotorThermal::readInputMessages()
 
  @param CurrentClock The clock time associated with the model call
  */
-void MotorThermal::writeOutputMessages(uint64_t CurrentClock)
+void
+MotorThermal::writeOutputMessages(uint64_t CurrentClock)
 {
     this->temperatureOutMsg.write(&this->temperatureBuffer, this->moduleID, CurrentClock);
 
@@ -106,7 +109,8 @@ void MotorThermal::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method computes the reaction wheel temperature
  */
-void MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
+void
+MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
 {
     double wheelPower;
     double frictionHeat;
@@ -139,8 +143,9 @@ void MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
 }
 
 /*! This method is used to update the module.
-*/
-void MotorThermal::UpdateState(uint64_t CurrentSimNanos)
+ */
+void
+MotorThermal::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeTemperature(CurrentSimNanos);

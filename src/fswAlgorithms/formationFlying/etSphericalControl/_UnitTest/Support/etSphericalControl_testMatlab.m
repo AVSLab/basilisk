@@ -94,7 +94,7 @@ t = 5*3600; % simulation time
 tSpan = 0:dT:t;
 options = odeset('Maxstep', 10, 'RelTol', 1e-12, 'AbsTol', 1e-12);
 
-% STRUCTURE FOR SV: 
+% STRUCTURE FOR SV:
 % [1:3]-position 1          |   [14:16]-position 2
 % [4:6]-velocity 1          |   [17:19]-Velocity 2
 % [7:10]-quat 1             |   [20:23]-quat 2
@@ -102,7 +102,7 @@ options = odeset('Maxstep', 10, 'RelTol', 1e-12, 'AbsTol', 1e-12);
 
 dT = tSpan(2)-tSpan(1);
 
-tic 
+tic
 
 [~, statesPerturbed] = ode15s(@(t,y) inertialDynamicsET(t,y,params),tSpan,Y0,options);
 
@@ -131,7 +131,7 @@ plot(tSpan/3600, vecnorm(pos1Pert-pos2Pert, 2, 2))
 %% Functions
 
 function [dy, uTot_H, aElec_H, F1_H, F2_H, L1_H, L2_H, qs] = inertialDynamicsET(t, u, params)
-% STRUCTURE FOR U: 
+% STRUCTURE FOR U:
 % [1:3]-position 1          |   [14:16]-position 2
 % [4:6]-velocity 1          |   [17:19]-Velocity 2
 % [7:10]-quat 1             |   [20:23]-quat 2
@@ -148,14 +148,14 @@ r_DN_N = u(14:16);
 v_DN_N = u(17:19);
 
 a = norm(r_TN_N);
-n = sqrt(mu/a^3);      
+n = sqrt(mu/a^3);
 
 h_r = r_TN_N/norm(r_TN_N);
 h_h = cross(r_TN_N, v_TN_N)/norm(cross(r_TN_N, v_TN_N));
 h_theta = cross(h_h, h_r);
 DCM_HN = [h_r'; h_theta'; h_h'];
 
-rho_N = (r_DN_N-r_TN_N)*1000; % position from servicer to the target        
+rho_N = (r_DN_N-r_TN_N)*1000; % position from servicer to the target
 rhoDot_N = (v_DN_N-v_TN_N)*1000; % inertial relative velocity
 
 omega_HN = cross(r_TN_N, v_TN_N) / (norm(r_TN_N).^2); % angular velocity
@@ -202,7 +202,7 @@ if isfield(params,'chargeEstError') && strcmp(params.chargeEstError, 'on')
 else
     uTot_H = - u_H - F1_H*(1/params.m1 + 1/params.m2)/1000;
 end
-    
+
 if norm(F1_H) > 1 || norm(F2_H) > 1  %check for higher forces than expected
     F1_H = F1_H/norm(F1_H);
     F2_H = F2_H/norm(F2_H);
@@ -219,11 +219,11 @@ aElec_N(1:3) = DCM_HN'*aElec_H(1:3)';
 aElec_N(4:6) = DCM_HN'*aElec_H(4:6)';
 
 % SC1 translation-SERVICER
-x = u(1); 
+x = u(1);
 y = u(2);
 z = u(3);
-xdot = u(4); 
-ydot = u(5); 
+xdot = u(4);
+ydot = u(5);
 zdot = u(6);
 
 r = (x^2 + y^2 + z^2)^0.5;
@@ -234,7 +234,7 @@ zddot = -mu*z/(r^3) + aElec_N(3) + uTot_N(3);
 dX_T = [xdot; ydot; zdot; xddot; yddot; zddot];
 
 % Find Target translation
-x = u(14); 
+x = u(14);
 y = u(15);
 z = u(16);
 xdot = u(17);
@@ -263,7 +263,7 @@ B =@(beta) [-beta(2) -beta(3) -beta(4);
 betaDotD = .5*B(beta_DH)*omega_D;
 
 omegaTDot = params.I2\(cross(-omega_D, params.I2*omega_D) + LElec_H(4:6)') ;
-    
+
 if strcmp(params.trackingOmega,'true')
     omega_T = omega_D; %assuming att alg tracks target's rotational rates
     omegaSDot = omegaTDot;
@@ -287,8 +287,8 @@ end
 
 function [ r,v ] = OE2SV( a,inclination,argPer,RAAN,theta,enorm)
 %orbital elements at initial time
-% a = r1; %semi-major axis [kilometers] 
-% enorm  = 0; %eccentricity. 
+% a = r1; %semi-major axis [kilometers]
+% enorm  = 0; %eccentricity.
 % inclination = 0; %inclination [degrees]
 % RAAN = 0; %  right ascension of the ascending node [degrees]
 % argPer = 0; % argument of perigee [degrees]
@@ -306,7 +306,7 @@ end
 
 mu = constants.muEarth;
 
-%converting orbital parameters to ECI cartsian coordinates 
+%converting orbital parameters to ECI cartsian coordinates
 p = a*(1-enorm^2); %intermediate variable
 q = p/(1+enorm*cosd(theta));%intermediate variable
 
@@ -314,8 +314,8 @@ q = p/(1+enorm*cosd(theta));%intermediate variable
 R_pqw(1,1) = q*cosd(theta);
 R_pqw(2,1) = q*sind(theta);
 R_pqw(3,1) = 0;
-    
-% Creating v vector in pqw coordinates    
+
+% Creating v vector in pqw coordinates
 V_pqw(1,1) = -(mu/p)^.5*sind(theta);
 V_pqw(2,1) = ((mu/p)^.5)*(enorm + cosd(theta));
 V_pqw(3,1) =   0;
@@ -355,14 +355,14 @@ function [ F1, F2, L1, L2, qs, overlapFlag] = multisphereFT( SPHS1, SPHS2, r, V,
 if nargin < 5
     C1 = eye(3);
     C2 = eye(3);
-    COM1 = [ 0 0 0 ]';   
+    COM1 = [ 0 0 0 ]';
     COM2 = [ 0 0 0 ]';
 elseif nargin < 6
     C2 = eye(3);
-    COM1 = [ 0 0 0 ]';   
+    COM1 = [ 0 0 0 ]';
     COM2 = [ 0 0 0 ]';
 elseif nargin < 7
-    COM1 = [ 0 0 0 ]';   
+    COM1 = [ 0 0 0 ]';
     COM2 = [ 0 0 0 ]';
 end
 
@@ -372,11 +372,11 @@ k = constants.Kc;
 % number of spheres in body 1, body 2, total
 n1 = size(SPHS1,2);
 n2 = size(SPHS2,2);
-n = n1 + n2; 
+n = n1 + n2;
 
 % rotate positions of spheres according to DCMs
 SPHS1t = SPHS1;
-SPHS1t(1:3,:) = C1*(SPHS1(1:3,:)) + r*ones(1,n1); 
+SPHS1t(1:3,:) = C1*(SPHS1(1:3,:)) + r*ones(1,n1);
 SPHS2(1:3,:) = C2*(SPHS2(1:3,:)); %
 
 % build matrix with all spheres
@@ -418,7 +418,7 @@ qs2 = qs(n1+1:end);
 % Find force
 % F = k*q1*q2*r/r^3
 
-%compute distances 
+%compute distances
 sph1 = repmat(SPHS1t(1:3,:), 1, size(SPHS2,2));
 sph2 = repelem(SPHS2(1:3,:), 1, size(SPHS1t,2));
 
@@ -439,7 +439,7 @@ if norm(F1) >1
 end
 % Find torque
 % L = r X f
-%compute distances RELATIVE TO CENTER OF MASSES 
+%compute distances RELATIVE TO CENTER OF MASSES
 sph1 = repmat(SPHS1t(1:3,:) + COM1, 1, size(SPHS2,2));
 sph22 = repelem(SPHS2(1:3,:) + COM2, 1, size(SPHS1t,2));
 
@@ -451,9 +451,3 @@ if norm(abs(L1)-abs(L2)) < eps() && nnz(V)>1
 end
 
 end
-
-
-
-
-
-

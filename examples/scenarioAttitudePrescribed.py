@@ -85,21 +85,28 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.fswAlgorithms import attRefCorrection
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import hillPoint
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -126,7 +133,7 @@ def run(show_plots, useAltBodyFrame):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(3*60.)
+    simulationTime = macros.min2nano(3 * 60.0)
 
     #
     #  create the simulation process
@@ -145,11 +152,13 @@ def run(show_plots, useAltBodyFrame):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bsk-Sat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -181,7 +190,6 @@ def run(show_plots, useAltBodyFrame):
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
 
-
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simpleNav.SimpleNav()
@@ -207,7 +215,7 @@ def run(show_plots, useAltBodyFrame):
         attRefCor = attRefCorrection.attRefCorrection()
         attRefCor.ModelTag = "attRefCor"
         scSim.AddModelToTask(simTaskName, attRefCor)
-        attRefCor.sigma_BcB = [0.0, 0.0, math.tan(math.pi/8)]
+        attRefCor.sigma_BcB = [0.0, 0.0, math.tan(math.pi / 8)]
         attRefCor.attRefInMsg.subscribeTo(attGuidance.attRefOutMsg)
         scObject.attRefInMsg.subscribeTo(attRefCor.attRefOutMsg)
     else:
@@ -217,14 +225,19 @@ def run(show_plots, useAltBodyFrame):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, snAttLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              # , saveFile=fileName
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -252,12 +265,15 @@ def run(show_plots, useAltBodyFrame):
 
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeLineSet, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Inertial Attitude $\sigma_{B/N}$')
+        plt.plot(
+            timeLineSet,
+            dataSigmaBN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Inertial Attitude $\sigma_{B/N}$")
     figureList = {}
     pltName = fileName + "1" + str(int(useAltBodyFrame))
     figureList[pltName] = plt.figure(1)
@@ -278,5 +294,5 @@ def run(show_plots, useAltBodyFrame):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        False  # useAltBodyFrame
+        False,  # useAltBodyFrame
     )

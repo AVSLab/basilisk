@@ -26,7 +26,9 @@
 /*! This method self initializes the C-wrapped output message.
 
 */
-void PrescribedLinearTranslation::SelfInit() {
+void
+PrescribedLinearTranslation::SelfInit()
+{
     PrescribedTranslationMsg_C_init(&this->prescribedTranslationOutMsgC);
 }
 
@@ -34,11 +36,12 @@ void PrescribedLinearTranslation::SelfInit() {
 
  @param callTime [ns] Time the method is called
 */
-void PrescribedLinearTranslation::Reset(uint64_t callTime) {
+void
+PrescribedLinearTranslation::Reset(uint64_t callTime)
+{
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
-        _bskLog(this->bskLogger,
-                BSK_ERROR,
-                "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
+        _bskLog(
+          this->bskLogger, BSK_ERROR, "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
     }
 
     this->tInit = 0.0;
@@ -54,7 +57,9 @@ The prescribed translational states are then written to the output message.
 
  @param callTime [ns] Time the method is called
 */
-void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
+void
+PrescribedLinearTranslation::UpdateState(uint64_t callTime)
+{
     // Read the input message
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn;
     if (this->linearTranslationRigidBodyInMsg.isWritten()) {
@@ -95,7 +100,9 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
 /*! This intermediate method groups the calculation of translation parameters into a single method.
 
 */
-void PrescribedLinearTranslation::computeTranslationParameters() {
+void
+PrescribedLinearTranslation::computeTranslationParameters()
+{
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
             this->computeSmoothedBangCoastBangParameters();
@@ -114,7 +121,9 @@ void PrescribedLinearTranslation::computeTranslationParameters() {
 /*! This method computes the required parameters for the translation with a non-smoothed bang-bang acceleration profile.
 
 */
-void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing() {
+void
+PrescribedLinearTranslation::computeBangBangParametersNoSmoothing()
+{
     // Determine the total time required for the translation
     double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8.0) / this->transAccelMax);
 
@@ -125,24 +134,27 @@ void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing() {
     this->t_b1 = this->tInit + (totalTransTime / 2.0);
 
     // Define the parabolic constants for the first and second half of the translation
-    this->a = 0.5 * (this->transPosRef - this->transPosInit)
-              / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
-    this->b = -0.5 * (this->transPosRef - this->transPosInit)
-              / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
+    this->a =
+      0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+    this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
 }
 
-/*! This method computes the required parameters for the translation with a non-smoothed bang-coast-bang acceleration profile.
+/*! This method computes the required parameters for the translation with a non-smoothed bang-coast-bang acceleration
+   profile.
 
 */
-void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing() {
+void
+PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing()
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
     // Determine the time at the end of the first bang segment t_b1
     this->t_b1 = this->tInit + this->coastOptionBangDuration;
 
     // Determine the hub-relative position at time t_b1
-    this->transPos_tb1 = sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration
-                         * this->coastOptionBangDuration + this->transPosInit;
+    this->transPos_tb1 =
+      sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
+      this->transPosInit;
     this->transVel_tb1 = sign * this->transAccelMax * this->coastOptionBangDuration;
 
     // Determine the distance traveled during the coast period
@@ -168,7 +180,9 @@ void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing() {
 /*! This method computes the required parameters for the translation with a smoothed bang-bang acceleration profile.
 
 */
-void PrescribedLinearTranslation::computeSmoothedBangBangParameters() {
+void
+PrescribedLinearTranslation::computeSmoothedBangBangParameters()
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
     // Determine the time at the end of the first smoothing segment t_s1
@@ -176,49 +190,53 @@ void PrescribedLinearTranslation::computeSmoothedBangBangParameters() {
 
     // Determine the hub-relative position and velocity at time t_s1
     this->transVel_ts1 = sign * 0.5 * this->transAccelMax * this->smoothingDuration;
-    this->transPos_ts1 = sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration
-                         + this->transPosInit;
+    this->transPos_ts1 = sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
+                         this->transPosInit;
 
     // Determine the duration of the bang segment bangDuration
     double aTerm = sign * 0.5 * this->transAccelMax;
     double bTerm = (sign * this->transAccelMax * this->smoothingDuration + this->transVel_ts1) / aTerm;
-    double cTerm = (sign * (2.0 / 5.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration
-                   + this->transVel_ts1 * this->smoothingDuration + this->transPos_ts1
-                   - 0.5 * (this->transPosRef + this->transPosInit)) / aTerm;
-    double bangDuration = (- bTerm + sqrt(bTerm * bTerm - 4.0 * cTerm)) / 2.0;
+    double cTerm = (sign * (2.0 / 5.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
+                    this->transVel_ts1 * this->smoothingDuration + this->transPos_ts1 -
+                    0.5 * (this->transPosRef + this->transPosInit)) /
+                   aTerm;
+    double bangDuration = (-bTerm + sqrt(bTerm * bTerm - 4.0 * cTerm)) / 2.0;
 
     // Determine the time at the end of the first bang segment t_b1
     this->t_b1 = this->t_s1 + bangDuration;
 
     // Determine the hub-relative position and velocity at time t_b1
     this->transVel_tb1 = sign * this->transAccelMax * bangDuration + this->transVel_ts1;
-    this->transPos_tb1 = sign * 0.5 * this->transAccelMax * bangDuration * bangDuration
-                         + this->transVel_ts1 * bangDuration + this->transPos_ts1;
+    this->transPos_tb1 = sign * 0.5 * this->transAccelMax * bangDuration * bangDuration +
+                         this->transVel_ts1 * bangDuration + this->transPos_ts1;
 
     // Determine the time at the end of the second smoothing segment t_s2
     this->t_s2 = this->t_b1 + 2.0 * this->smoothingDuration;
 
     // Determine the hub-relative position and velocity at time t_s2
     this->transVel_ts2 = this->transVel_tb1;
-    this->transPos_ts2 = sign * (4.0 / 5.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration
-                         + this->transVel_tb1 * 2.0 * this->smoothingDuration + this->transPos_tb1;
+    this->transPos_ts2 = sign * (4.0 / 5.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
+                         this->transVel_tb1 * 2.0 * this->smoothingDuration + this->transPos_tb1;
 
     // Determine the time at the end of the second bang segment t_b2
     this->t_b2 = this->t_s2 + bangDuration;
 
     // Determine the hub-relative position and velocity at time t_b2
-    this->transVel_tb2 = - sign * this->transAccelMax * bangDuration + this->transVel_ts2;
-    this->transPos_tb2 = - sign * 0.5 * this->transAccelMax * bangDuration * bangDuration
-                         + this->transVel_ts2 * bangDuration + this->transPos_ts2;
+    this->transVel_tb2 = -sign * this->transAccelMax * bangDuration + this->transVel_ts2;
+    this->transPos_tb2 = -sign * 0.5 * this->transAccelMax * bangDuration * bangDuration +
+                         this->transVel_ts2 * bangDuration + this->transPos_ts2;
 
     // Determine the time when the translation is complete t_f
     this->t_f = this->t_b2 + this->smoothingDuration;
 }
 
-/*! This method computes the required parameters for the translation with a smoothed bang-coast-bang acceleration profile.
+/*! This method computes the required parameters for the translation with a smoothed bang-coast-bang acceleration
+   profile.
 
 */
-void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters() {
+void
+PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters()
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
     // Determine the time at the end of the first smoothing segment t_s1
@@ -226,25 +244,25 @@ void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters() {
 
     // Determine the hub-relative position and velocity at time t_s1
     this->transVel_ts1 = sign * 0.5 * this->transAccelMax * this->smoothingDuration;
-    this->transPos_ts1 = sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration
-                         + this->transPosInit;
+    this->transPos_ts1 = sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
+                         this->transPosInit;
 
     // Determine the time at the end of the first bang segment t_b1
     this->t_b1 = this->t_s1 + this->coastOptionBangDuration;
 
     // Determine the hub-relative position and velocity at time t_b1
     this->transVel_tb1 = sign * this->transAccelMax * this->coastOptionBangDuration + this->transVel_ts1;
-    this->transPos_tb1 = sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration
-                         * this->coastOptionBangDuration + this->transVel_ts1 * this->coastOptionBangDuration
-                         + this->transPos_ts1;
+    this->transPos_tb1 =
+      sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
+      this->transVel_ts1 * this->coastOptionBangDuration + this->transPos_ts1;
 
     // Determine the time at the end of the second smoothing segment t_s2
     this->t_s2 = this->t_b1 + this->smoothingDuration;
 
     // Determine the hub-relative position and velocity at time t_s2
     this->transVel_ts2 = sign * 0.5 * this->transAccelMax * this->smoothingDuration + this->transVel_tb1;
-    this->transPos_ts2 = sign * (7.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration
-                         + this->transVel_tb1 * this->smoothingDuration + this->transPos_tb1;
+    this->transPos_ts2 = sign * (7.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
+                         this->transVel_tb1 * this->smoothingDuration + this->transPos_tb1;
 
     // Compute the time at the end of the coast segment t_c
     double deltaPosCoast = (this->transPosRef - this->transPosInit) - 2 * (this->transPos_ts2 - this->transPosInit);
@@ -258,18 +276,19 @@ void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters() {
     this->t_s3 = this->t_c + this->smoothingDuration;
 
     // Determine the hub-relative position and velocity at time t_s3
-    this->transVel_ts3 = - sign * 0.5 * this->transAccelMax * this->smoothingDuration + this->transVel_tc;
-    this->transPos_ts3 = - sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration
-                         + this->transVel_tc * this->smoothingDuration + this->transPos_tc;
+    this->transVel_ts3 = -sign * 0.5 * this->transAccelMax * this->smoothingDuration + this->transVel_tc;
+    this->transPos_ts3 =
+      -sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
+      this->transVel_tc * this->smoothingDuration + this->transPos_tc;
 
     // Determine the time at the end of the second bang segment t_b2
     this->t_b2 = this->t_s3 + this->coastOptionBangDuration;
 
     // Determine the hub-relative position and velocity at time t_b2
-    this->transVel_tb2 = - sign * this->transAccelMax * this->coastOptionBangDuration + this->transVel_ts3;
-    this->transPos_tb2 = - sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration
-                         * this->coastOptionBangDuration + this->transVel_ts3 * this->coastOptionBangDuration
-                         + this->transPos_ts3;
+    this->transVel_tb2 = -sign * this->transAccelMax * this->coastOptionBangDuration + this->transVel_ts3;
+    this->transPos_tb2 =
+      -sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
+      this->transVel_ts3 * this->coastOptionBangDuration + this->transPos_ts3;
 
     // Determine the time when the translation is complete t_f
     this->t_f = this->t_b2 + this->smoothingDuration;
@@ -278,9 +297,11 @@ void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters() {
 /*! This intermediate method groups the calculation of the current translational states into a single method.
 
 */
-void PrescribedLinearTranslation::computeCurrentState(double t) {
+void
+PrescribedLinearTranslation::computeCurrentState(double t)
+{
     if (this->coastOptionBangDuration > 0.0) {
-        if(this->smoothingDuration > 0.0) {
+        if (this->smoothingDuration > 0.0) {
             if (this->isInFirstSmoothedSegment(t)) {
                 this->computeFirstSmoothedSegment(t);
             } else if (this->isInFirstBangSegment(t)) {
@@ -340,7 +361,9 @@ void PrescribedLinearTranslation::computeCurrentState(double t) {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
+bool
+PrescribedLinearTranslation::isInFirstBangSegment(double t) const
+{
     if (this->smoothingDuration > 0.0) {
         return (t > this->t_s1 && t <= this->t_b1 && this->t_f - this->tInit != 0.0);
     } else {
@@ -352,7 +375,9 @@ bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInSecondBangSegment(double t) const {
+bool
+PrescribedLinearTranslation::isInSecondBangSegment(double t) const
+{
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
             return (t > this->t_s3 && t <= this->t_b2 && this->t_f - this->tInit != 0.0);
@@ -372,15 +397,20 @@ bool PrescribedLinearTranslation::isInSecondBangSegment(double t) const {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInFirstSmoothedSegment(double t) const {
+bool
+PrescribedLinearTranslation::isInFirstSmoothedSegment(double t) const
+{
     return (t <= this->t_s1 && this->t_f - this->tInit != 0.0);
 }
 
-/*! This method determines if the current time is within the second smoothing segment for the smoothed profiler options..
+/*! This method determines if the current time is within the second smoothing segment for the smoothed profiler
+ options..
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInSecondSmoothedSegment(double t) const {
+bool
+PrescribedLinearTranslation::isInSecondSmoothedSegment(double t) const
+{
     return (t > this->t_b1 && t <= this->t_s2 && this->t_f - this->tInit != 0.0);
 }
 
@@ -388,7 +418,9 @@ bool PrescribedLinearTranslation::isInSecondSmoothedSegment(double t) const {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInThirdSmoothedSegment(double t) const {
+bool
+PrescribedLinearTranslation::isInThirdSmoothedSegment(double t) const
+{
     if (this->coastOptionBangDuration > 0.0) {
         return (t > this->t_c && t <= this->t_s3 && this->t_f - this->tInit != 0.0);
     } else {
@@ -396,11 +428,14 @@ bool PrescribedLinearTranslation::isInThirdSmoothedSegment(double t) const {
     }
 }
 
-/*! This method determines if the current time is within the fourth smoothing segment for the smoothed bang-coast-bang option.
+/*! This method determines if the current time is within the fourth smoothing segment for the smoothed bang-coast-bang
+ option.
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInFourthSmoothedSegment(double t) const {
+bool
+PrescribedLinearTranslation::isInFourthSmoothedSegment(double t) const
+{
     return (t > this->t_b2 && t <= this->t_f && this->t_f - this->tInit != 0.0);
 }
 
@@ -408,10 +443,12 @@ bool PrescribedLinearTranslation::isInFourthSmoothedSegment(double t) const {
  @return bool
  @param t [s] Current simulation time
 */
-bool PrescribedLinearTranslation::isInCoastSegment(double t) const {
+bool
+PrescribedLinearTranslation::isInCoastSegment(double t) const
+{
     if (this->smoothingDuration > 0.0) {
         return (t > this->t_s2 && t <= this->t_c && this->t_f - this->tInit != 0.0);
-    } else{
+    } else {
         return (t > this->t_b1 && t <= this->t_c && this->t_f - this->tInit != 0.0);
     }
 }
@@ -420,14 +457,16 @@ bool PrescribedLinearTranslation::isInCoastSegment(double t) const {
 
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeFirstBangSegment(double t) {
+void
+PrescribedLinearTranslation::computeFirstBangSegment(double t)
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
     this->transAccel = sign * this->transAccelMax;
 
     if (this->smoothingDuration > 0.0) {
         this->transVel = this->transAccel * (t - this->t_s1) + this->transVel_ts1;
-        this->transPos = 0.5 * this->transAccel * (t - this->t_s1) * (t - this->t_s1)
-                         + this->transVel_ts1 * (t - this->t_s1) + this->transPos_ts1;
+        this->transPos = 0.5 * this->transAccel * (t - this->t_s1) * (t - this->t_s1) +
+                         this->transVel_ts1 * (t - this->t_s1) + this->transPos_ts1;
     } else {
         this->transVel = this->transAccel * (t - this->tInit);
         this->transPos = this->a * (t - this->tInit) * (t - this->tInit) + this->transPosInit;
@@ -438,19 +477,21 @@ void PrescribedLinearTranslation::computeFirstBangSegment(double t) {
 
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeSecondBangSegment(double t) {
+void
+PrescribedLinearTranslation::computeSecondBangSegment(double t)
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
-    this->transAccel = - sign * this->transAccelMax;
+    this->transAccel = -sign * this->transAccelMax;
 
     if (this->smoothingDuration > 0.0) {
         if (this->coastOptionBangDuration > 0.0) {
             this->transVel = this->transAccel * (t - this->t_s3) + this->transVel_ts3;
-            this->transPos = 0.5 * this->transAccel * (t - this->t_s3) * (t - this->t_s3)
-                             + this->transVel_ts3 * (t - this->t_s3) + this->transPos_ts3;
+            this->transPos = 0.5 * this->transAccel * (t - this->t_s3) * (t - this->t_s3) +
+                             this->transVel_ts3 * (t - this->t_s3) + this->transPos_ts3;
         } else {
             this->transVel = this->transAccel * (t - this->t_s2) + this->transVel_ts2;
-            this->transPos = 0.5 * this->transAccel * (t - this->t_s2) * (t - this->t_s2)
-                             + this->transVel_ts2 * (t - this->t_s2) + this->transPos_ts2;
+            this->transPos = 0.5 * this->transAccel * (t - this->t_s2) * (t - this->t_s2) +
+                             this->transVel_ts2 * (t - this->t_s2) + this->transPos_ts2;
         }
     } else {
         this->transVel = this->transAccel * (t - this->t_f);
@@ -462,20 +503,22 @@ void PrescribedLinearTranslation::computeSecondBangSegment(double t) {
 
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeFirstSmoothedSegment(double t) {
+void
+PrescribedLinearTranslation::computeFirstSmoothedSegment(double t)
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
     double term1 = (3.0 * (t - this->tInit) * (t - this->tInit)) / (this->smoothingDuration * this->smoothingDuration);
-    double term2 = (2.0 * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
-                   / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-    double term3 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit))
-                   / (this->smoothingDuration * this->smoothingDuration);
-    double term4 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
-                   / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-    double term5 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
-                   / (4.0 * this->smoothingDuration * this->smoothingDuration);
-    double term6 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit))
-                   / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term2 = (2.0 * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
+                   (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term3 =
+      ((t - this->tInit) * (t - this->tInit) * (t - this->tInit)) / (this->smoothingDuration * this->smoothingDuration);
+    double term4 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
+                   (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term5 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
+                   (4.0 * this->smoothingDuration * this->smoothingDuration);
+    double term6 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
+                   (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
 
     this->transAccel = sign * this->transAccelMax * (term1 - term2);
     this->transVel = sign * this->transAccelMax * (term3 - term4);
@@ -486,7 +529,9 @@ void PrescribedLinearTranslation::computeFirstSmoothedSegment(double t) {
 
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeSecondSmoothedSegment(double t) {
+void
+PrescribedLinearTranslation::computeSecondSmoothedSegment(double t)
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
     double term1;
@@ -499,43 +544,45 @@ void PrescribedLinearTranslation::computeSecondSmoothedSegment(double t) {
 
     if (this->coastOptionBangDuration > 0.0) {
         term1 = (3.0 * (t - this->t_b1) * (t - this->t_b1)) / (this->smoothingDuration * this->smoothingDuration);
-        term2 = (2.0 * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-        term3 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (this->smoothingDuration * this->smoothingDuration);
-        term4 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term2 = (2.0 * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
         term5 = 0.5 * (t - this->t_b1) * (t - this->t_b1);
-        term6 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (4.0 * this->smoothingDuration * this->smoothingDuration);
-        term7 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term6 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (4.0 * this->smoothingDuration * this->smoothingDuration);
+        term7 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     } else {
         term1 = (3.0 * (t - this->t_b1) * (t - this->t_b1)) / (2.0 * this->smoothingDuration * this->smoothingDuration);
-        term2 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-        term3 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (2.0 * this->smoothingDuration * this->smoothingDuration);
-        term4 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (8.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term2 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (2.0 * this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (8.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
         term5 = 0.5 * (t - this->t_b1) * (t - this->t_b1);
-        term6 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (8.0 * this->smoothingDuration * this->smoothingDuration);
-        term7 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1))
-                / (40.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term6 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (8.0 * this->smoothingDuration * this->smoothingDuration);
+        term7 = ((t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1) * (t - this->t_b1)) /
+                (40.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     }
 
     this->transAccel = sign * this->transAccelMax * (1.0 - term1 + term2);
     this->transVel = sign * this->transAccelMax * ((t - this->t_b1) - term3 + term4) + this->transVel_tb1;
-    this->transPos = sign * this->transAccelMax * (term5 - term6 + term7)
-                     + this->transVel_tb1 * (t - this->t_b1) + this->transPos_tb1;
+    this->transPos =
+      sign * this->transAccelMax * (term5 - term6 + term7) + this->transVel_tb1 * (t - this->t_b1) + this->transPos_tb1;
 }
 
 /*! This method computes the third smoothing segment scalar translational states for the smoothed profiler options.
 
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeThirdSmoothedSegment(double t) {
+void
+PrescribedLinearTranslation::computeThirdSmoothedSegment(double t)
+{
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
     double term1;
@@ -548,70 +595,76 @@ void PrescribedLinearTranslation::computeThirdSmoothedSegment(double t) {
 
     if (this->coastOptionBangDuration > 0.0) {
         term1 = (3.0 * (t - this->t_c) * (t - this->t_c)) / (this->smoothingDuration * this->smoothingDuration);
-        term2 = (2.0 * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
-                / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-        term3 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c))
-                / (this->smoothingDuration * this->smoothingDuration);
-        term4 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
-                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-        term5 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
-                / (4.0 * this->smoothingDuration * this->smoothingDuration);
-        term6 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c))
-                / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term2 = (2.0 * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
+                (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 =
+          ((t - this->t_c) * (t - this->t_c) * (t - this->t_c)) / (this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
+                (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term5 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
+                (4.0 * this->smoothingDuration * this->smoothingDuration);
+        term6 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
+                (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
 
-        this->transAccel = - sign * this->transAccelMax * (term1 - term2);
-        this->transVel = - sign * this->transAccelMax * (term3 - term4) + this->transVel_tc;
-        this->transPos = - sign * this->transAccelMax * (term5 - term6) + this->transVel_tc * (t - this->t_c) + this->transPos_tc;
+        this->transAccel = -sign * this->transAccelMax * (term1 - term2);
+        this->transVel = -sign * this->transAccelMax * (term3 - term4) + this->transVel_tc;
+        this->transPos =
+          -sign * this->transAccelMax * (term5 - term6) + this->transVel_tc * (t - this->t_c) + this->transPos_tc;
     } else {
         term1 = (3.0 * (t - this->t_b2) * (t - this->t_b2)) / (this->smoothingDuration * this->smoothingDuration);
-        term2 = (2.0 * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
-                / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-        term3 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
-                / (this->smoothingDuration * this->smoothingDuration);
-        term4 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
-                / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-        term5 = - 0.5 * (t - this->t_b2) * (t - this->t_b2);
-        term6 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
-                / (4.0 * this->smoothingDuration * this->smoothingDuration);
-        term7 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2))
-                / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term2 = (2.0 * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2)) /
+                (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term3 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2)) /
+                (this->smoothingDuration * this->smoothingDuration);
+        term4 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2)) /
+                (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+        term5 = -0.5 * (t - this->t_b2) * (t - this->t_b2);
+        term6 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2)) /
+                (4.0 * this->smoothingDuration * this->smoothingDuration);
+        term7 = ((t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2)) /
+                (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
 
-        this->transAccel = sign * this->transAccelMax * ( - 1.0 + term1 - term2);
-        this->transVel = sign * this->transAccelMax * ( - (t - this->t_b2) + term3 - term4) + this->transVel_tb2;
-        this->transPos = sign * this->transAccelMax * (term5 + term6 - term7) + this->transVel_tb2 * (t - this->t_b2)
-                         + this->transPos_tb2;
+        this->transAccel = sign * this->transAccelMax * (-1.0 + term1 - term2);
+        this->transVel = sign * this->transAccelMax * (-(t - this->t_b2) + term3 - term4) + this->transVel_tb2;
+        this->transPos = sign * this->transAccelMax * (term5 + term6 - term7) + this->transVel_tb2 * (t - this->t_b2) +
+                         this->transPos_tb2;
     }
 }
 
-/*! This method computes the fourth smoothing segment scalar translational states for the smoothed bang-coast-bang option.
+/*! This method computes the fourth smoothing segment scalar translational states for the smoothed bang-coast-bang
+ option.
 
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeFourthSmoothedSegment(double t) {
+void
+PrescribedLinearTranslation::computeFourthSmoothedSegment(double t)
+{
     double term1 = (3.0 * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
-    double term2 = (2.0 * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
-                   / (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-    double term3 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t))
-                   / (this->smoothingDuration * this->smoothingDuration);
-    double term4 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
-                   / (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-    double term5 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
-                   / (4.0 * this->smoothingDuration * this->smoothingDuration);
-    double term6 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t))
-                   / (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term2 = (2.0 * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
+                   (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term3 =
+      ((this->t_f - t) * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
+    double term4 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
+                   (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
+    double term5 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
+                   (4.0 * this->smoothingDuration * this->smoothingDuration);
+    double term6 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
+                   (10.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
 
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
-    this->transAccel = - sign * this->transAccelMax * (term1 - term2);
+    this->transAccel = -sign * this->transAccelMax * (term1 - term2);
     this->transVel = sign * this->transAccelMax * (term3 - term4);
-    this->transPos = - sign * this->transAccelMax * (term5 - term6) + this->transPosRef;
+    this->transPos = -sign * this->transAccelMax * (term5 - term6) + this->transPosRef;
 }
 
 /*! This method computes the coast segment scalar translational states
 
  @param t [s] Current simulation time
 */
-void PrescribedLinearTranslation::computeCoastSegment(double t) {
+void
+PrescribedLinearTranslation::computeCoastSegment(double t)
+{
     this->transAccel = 0.0;
 
     if (this->smoothingDuration > 0.0) {
@@ -626,7 +679,9 @@ void PrescribedLinearTranslation::computeCoastSegment(double t) {
 /*! This method computes the scalar translational states when the translation is complete.
 
 */
-void PrescribedLinearTranslation::computeTranslationComplete() {
+void
+PrescribedLinearTranslation::computeTranslationComplete()
+{
     this->transAccel = 0.0;
     this->transVel = 0.0;
     this->transPos = this->transPosRef;
@@ -636,7 +691,9 @@ void PrescribedLinearTranslation::computeTranslationComplete() {
 /*! This method writes the module output messages and computes the output message data.
 
 */
-void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
+void
+PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime)
+{
     // Create the output buffer message
     PrescribedTranslationMsgPayload prescribedTranslationMsgOut;
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyMsgOut;
@@ -646,13 +703,13 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
     linearTranslationRigidBodyMsgOut = LinearTranslationRigidBodyMsgPayload();
 
     // Compute the translational body position relative to the mount frame M expressed in M frame components
-    Eigen::Vector3d r_PM_M = this->transPos * this->transHat_M;  // [m]
+    Eigen::Vector3d r_PM_M = this->transPos * this->transHat_M; // [m]
 
     // Compute the translational body velocity relative to the mount frame M expressed in M frame components
-    Eigen::Vector3d rPrime_PM_M = this->transVel * this->transHat_M;  // [m/s]
+    Eigen::Vector3d rPrime_PM_M = this->transVel * this->transHat_M; // [m/s]
 
     // Compute the translational body acceleration relative to the mount frame M expressed in M frame components
-    Eigen::Vector3d rPrimePrime_PM_M = this->transAccel * this->transHat_M;  // [m/s^2]
+    Eigen::Vector3d rPrimePrime_PM_M = this->transAccel * this->transHat_M; // [m/s^2]
 
     // Copy the module variables to the output buffer message
     eigenVector3d2CArray(r_PM_M, prescribedTranslationMsgOut.r_PM_M);
@@ -663,8 +720,8 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
 
     // Write the output messages
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
-    PrescribedTranslationMsg_C_write(&prescribedTranslationMsgOut,
-                                     &prescribedTranslationOutMsgC, this->moduleID, callTime);
+    PrescribedTranslationMsg_C_write(
+      &prescribedTranslationMsgOut, &prescribedTranslationOutMsgC, this->moduleID, callTime);
     this->linearTranslationRigidBodyOutMsg.write(&linearTranslationRigidBodyMsgOut, this->moduleID, callTime);
 }
 
@@ -672,7 +729,9 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime) {
 
  @param coastOptionBangDuration [s] Bang segment time duration
 */
-void PrescribedLinearTranslation::setCoastOptionBangDuration(const double coastOptionBangDuration) {
+void
+PrescribedLinearTranslation::setCoastOptionBangDuration(const double coastOptionBangDuration)
+{
     this->coastOptionBangDuration = coastOptionBangDuration;
 }
 
@@ -680,7 +739,9 @@ void PrescribedLinearTranslation::setCoastOptionBangDuration(const double coastO
 
  @param smoothingDuration [s] Duration the acceleration is smoothed until reaching the given maximum acceleration value
 */
-void PrescribedLinearTranslation::setSmoothingDuration(const double smoothingDuration) {
+void
+PrescribedLinearTranslation::setSmoothingDuration(const double smoothingDuration)
+{
     this->smoothingDuration = smoothingDuration;
 }
 
@@ -688,7 +749,9 @@ void PrescribedLinearTranslation::setSmoothingDuration(const double smoothingDur
 
  @param transAccelMax [m/s^2] Bang segment linear angular acceleration
 */
-void PrescribedLinearTranslation::setTransAccelMax(const double transAccelMax) {
+void
+PrescribedLinearTranslation::setTransAccelMax(const double transAccelMax)
+{
     this->transAccelMax = transAccelMax;
 }
 
@@ -696,7 +759,9 @@ void PrescribedLinearTranslation::setTransAccelMax(const double transAccelMax) {
 
  @param transHat_M Translating body axis of translation (unit vector)
 */
-void PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d &transHat_M) {
+void
+PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d& transHat_M)
+{
     this->transHat_M = transHat_M;
 }
 
@@ -704,41 +769,53 @@ void PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d &transHat_
 
  @param transPosInit [m] Initial translating body position relative to the hub
 */
-void PrescribedLinearTranslation::setTransPosInit(const double transPosInit) {
+void
+PrescribedLinearTranslation::setTransPosInit(const double transPosInit)
+{
     this->transPosInit = transPosInit;
 }
 
 /*! Getter method for the coast option bang duration.
  @return double
 */
-double PrescribedLinearTranslation::getCoastOptionBangDuration() const {
+double
+PrescribedLinearTranslation::getCoastOptionBangDuration() const
+{
     return this->coastOptionBangDuration;
 }
 
 /*! Getter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value.
  @return double
 */
-double PrescribedLinearTranslation::getSmoothingDuration() const {
+double
+PrescribedLinearTranslation::getSmoothingDuration() const
+{
     return this->smoothingDuration;
 }
 
 /*! Getter method for the bang segment scalar linear acceleration.
  @return double
 */
-double PrescribedLinearTranslation::getTransAccelMax() const {
+double
+PrescribedLinearTranslation::getTransAccelMax() const
+{
     return this->transAccelMax;
 }
 
 /*! Getter method for the translating body axis of translation.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d &PrescribedLinearTranslation::getTransHat_M() const {
+const Eigen::Vector3d&
+PrescribedLinearTranslation::getTransHat_M() const
+{
     return this->transHat_M;
 }
 
 /*! Getter method for the initial translating body position.
  @return double
 */
-double PrescribedLinearTranslation::getTransPosInit() const {
+double
+PrescribedLinearTranslation::getTransPosInit() const
+{
     return this->transPosInit;
 }

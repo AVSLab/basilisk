@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2019, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -30,7 +29,7 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
@@ -45,6 +44,7 @@ from Basilisk.architecture import messaging
 # Uncomment this line if this test has an expected failure, adjust message as needed.
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
+
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
@@ -68,18 +68,19 @@ def test_module(show_plots):
     [testResults, testMessage] = tamCommTestFunction(show_plots)
     assert testResults < 1, testMessage
 
+
 def tamCommTestFunction(show_plots):
-    """ Test the tamComm module """
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    """Test the tamComm module"""
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -112,7 +113,7 @@ def tamCommTestFunction(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -123,17 +124,18 @@ def tamCommTestFunction(show_plots):
     # This pulls the actual data log from the simulation run.
     moduleOutput = dataLog.tam_B
     # set the filtered output truth states
-    trueVector = [
-        [-1e-5, 2e-6, -3e-5],
-        [-1e-5, 2e-6, -3e-5],
-        [-1e-5, 2e-6, -3e-5]
-    ]
+    trueVector = [[-1e-5, 2e-6, -3e-5], [-1e-5, 2e-6, -3e-5], [-1e-5, 2e-6, -3e-5]]
     for i in range(len(trueVector)):
         trueVector[i] = np.dot(dcm3, trueVector[i])
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "TAM Output Vector",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        moduleOutput,
+        accuracy,
+        "TAM Output Vector",
+        testFailCount,
+        testMessages,
+    )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -144,7 +146,8 @@ def tamCommTestFunction(show_plots):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a

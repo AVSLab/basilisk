@@ -31,40 +31,41 @@
 #ifndef BASILISK_SIMPOWERSTORAGEBASE_H
 #define BASILISK_SIMPOWERSTORAGEBASE_H
 
-
 /*! @brief power storage base class */
-class PowerStorageBase: public SysModel  {
-public:
+class PowerStorageBase : public SysModel
+{
+  public:
     PowerStorageBase();
     ~PowerStorageBase();
     void Reset(uint64_t CurrentSimNanos);
-    void addPowerNodeToModel(Message<PowerNodeUsageMsgPayload> *tmpNodeMsg);
+    void addPowerNodeToModel(Message<PowerNodeUsageMsgPayload>* tmpNodeMsg);
     void UpdateState(uint64_t CurrentSimNanos);
 
-protected:
+  protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
-    void integratePowerStatus(double currentTime); //!< Integrates the net power given the current time using a simple Euler method.
+    void integratePowerStatus(
+      double currentTime); //!< Integrates the net power given the current time using a simple Euler method.
     double sumAllInputs(); //!< Sums over the input power consumption messages.
-    virtual void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) = 0; //!< Virtual function to represent power storage computation or losses.
-    virtual void customReset(uint64_t CurrentClock); //!< Custom Reset() method, similar to customSelfInit.
+    virtual void evaluateBatteryModel(
+      PowerStorageStatusMsgPayload* msg) = 0; //!< Virtual function to represent power storage computation or losses.
+    virtual void customReset(uint64_t CurrentClock);            //!< Custom Reset() method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t currentSimNanos); //!< Custom Write() method, similar to customSelfInit.
-    virtual bool customReadMessages();//!< Custom Read() method, similar to customSelfInit.
+    virtual bool customReadMessages();                          //!< Custom Read() method, similar to customSelfInit.
 
-public:
-    std::vector<ReadFunctor<PowerNodeUsageMsgPayload>> nodePowerUseInMsgs;    //!< Vector of power node input message names
-    Message<PowerStorageStatusMsgPayload> batPowerOutMsg; //!< power storage status output message
-    double storedCharge_Init;//!< [W-s] Initial stored charge set by the user. Defaults to 0.
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+  public:
+    std::vector<ReadFunctor<PowerNodeUsageMsgPayload>> nodePowerUseInMsgs; //!< Vector of power node input message names
+    Message<PowerStorageStatusMsgPayload> batPowerOutMsg;                  //!< power storage status output message
+    double storedCharge_Init; //!< [W-s] Initial stored charge set by the user. Defaults to 0.
+    BSKLogger bskLogger;      //!< -- BSK Logging
 
-protected:
-    PowerStorageStatusMsgPayload storageStatusMsg;                  //!< class variable
-    std::vector<PowerNodeUsageMsgPayload> nodeWattMsgs;             //!< class variable
-    double previousTime; //!< Previous time used for integration
-    double currentTimestep;//!< [s] Timestep duration in seconds.
-    double storedCharge; //!< [W-s] Stored charge in Watt-hours.
-    double currentPowerSum;//!< [W] Current net power.
+  protected:
+    PowerStorageStatusMsgPayload storageStatusMsg;      //!< class variable
+    std::vector<PowerNodeUsageMsgPayload> nodeWattMsgs; //!< class variable
+    double previousTime;                                //!< Previous time used for integration
+    double currentTimestep;                             //!< [s] Timestep duration in seconds.
+    double storedCharge;                                //!< [W-s] Stored charge in Watt-hours.
+    double currentPowerSum;                             //!< [W] Current net power.
 };
 
-
-#endif //BASILISK_SIMPOWERSTORAGEBASE_H
+#endif // BASILISK_SIMPOWERSTORAGEBASE_H

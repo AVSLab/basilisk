@@ -23,7 +23,7 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 from Basilisk.utilities import SimulationBaseClass
@@ -31,18 +31,23 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleBattery
 from Basilisk.utilities import macros
 
-params_set_data = [(5., 5., 5., 10., 0.3),
-                    (1., 1., 5., 10., 0.3),
-                    (5., 5., 5., 10., 0),
-                    (5., 5., 5., 10., 1),
-                    (5, 5, 5, 10, 1e-3),
-                    (5., -5., 5., 10., 0.5)]
+params_set_data = [
+    (5.0, 5.0, 5.0, 10.0, 0.3),
+    (1.0, 1.0, 5.0, 10.0, 0.3),
+    (5.0, 5.0, 5.0, 10.0, 0),
+    (5.0, 5.0, 5.0, 10.0, 1),
+    (5, 5, 5, 10, 1e-3),
+    (5.0, -5.0, 5.0, 10.0, 0.5),
+]
+
 
 @pytest.mark.parametrize(
-        "storedChargeInit, netPower_1, netPower_2, batteryCapacity, faultCapacityRatio",
-        params_set_data)
-
-def test_storage_limits(storedChargeInit, netPower_1, netPower_2, batteryCapacity, faultCapacityRatio):
+    "storedChargeInit, netPower_1, netPower_2, batteryCapacity, faultCapacityRatio",
+    params_set_data,
+)
+def test_storage_limits(
+    storedChargeInit, netPower_1, netPower_2, batteryCapacity, faultCapacityRatio
+):
     """
     **Validation Test Description**
 
@@ -58,14 +63,14 @@ def test_storage_limits(storedChargeInit, netPower_1, netPower_2, batteryCapacit
     :return: void
     """
 
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -103,25 +108,35 @@ def test_storage_limits(storedChargeInit, netPower_1, netPower_2, batteryCapacit
     capacityLog = dataLog.storageCapacity
 
     #   Check 1 - is capacity logged correctly?
-    for ind in range(0,len(capacityLog)):
+    for ind in range(0, len(capacityLog)):
         capacity = capacityLog[ind]
-        np.testing.assert_allclose(capacity, batteryCapacity, atol=1e-4,
-            err_msg=("FAILED: SimpleBattery with fault did not correctly log the capacity."))
+        np.testing.assert_allclose(
+            capacity,
+            batteryCapacity,
+            atol=1e-4,
+            err_msg=(
+                "FAILED: SimpleBattery with fault did not correctly log the capacity."
+            ),
+        )
 
     #   Check 2 - is stored power correct?
-    for ind in range(0,len(storedChargeLog)):
+    for ind in range(0, len(storedChargeLog)):
         storedCharge = storedChargeLog[ind]
         assert storedCharge <= capacityLog[ind] * faultCapacityRatio, (
-            "FAILED: SimpleBattery's stored charge exceeded its faulted capacity.")
+            "FAILED: SimpleBattery's stored charge exceeded its faulted capacity."
+        )
 
-        assert storedCharge >= 0., (
-            "FAILED: SimpleBattery's stored charge was negative.")
+        assert storedCharge >= 0.0, (
+            "FAILED: SimpleBattery's stored charge was negative."
+        )
 
 
 if __name__ == "__main__":
-    storedChargeInit = 1.
-    netPower_1 = 1.
-    netPower_2 = 5.
-    batteryCapacity = 10.
+    storedChargeInit = 1.0
+    netPower_1 = 1.0
+    netPower_2 = 5.0
+    batteryCapacity = 10.0
     faultCapacityRatio = 0.3
-    test_storage_limits(storedChargeInit, netPower_1, netPower_2, batteryCapacity, faultCapacityRatio)
+    test_storage_limits(
+        storedChargeInit, netPower_1, netPower_2, batteryCapacity, faultCapacityRatio
+    )

@@ -18,7 +18,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/MultiSatBskSim/scenariosMultiSat')
+sys.path.append(path + "/../../examples/MultiSatBskSim/scenariosMultiSat")
 import scenario_AttGuidMultiSat
 
 
@@ -26,6 +26,7 @@ import scenario_AttGuidMultiSat
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -65,5 +66,5 @@ def test_scenarioAttGuidMultiSat(show_plots, numberSpacecraft):
 if __name__ == "__main__":
     test_scenarioAttGuidMultiSat(
         False,  # show_plots
-        3  # numberSpacecraft
+        3,  # numberSpacecraft
     )

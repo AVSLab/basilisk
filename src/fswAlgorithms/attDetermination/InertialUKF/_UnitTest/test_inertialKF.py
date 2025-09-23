@@ -25,15 +25,17 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to be tested
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-textSnippetPassed = r'\textcolor{ForestGreen}{' + "PASSED" + '}'
-textSnippetFailed = r'\textcolor{Red}{' + "Failed" + '}'
+textSnippetPassed = r"\textcolor{ForestGreen}{" + "PASSED" + "}"
+textSnippetFailed = r"\textcolor{Red}{" + "Failed" + "}"
+
 
 def setupFilterData(filterObject):
-
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
@@ -41,35 +43,84 @@ def setupFilterData(filterObject):
 
     ST1Data = inertialUKF.STMessage()
 
-    ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
-                     0.0, 0.00017 * 0.00017, 0.0,
-                     0.0, 0.0, 0.00017 * 0.00017]
+    ST1Data.noise = [
+        0.00017 * 0.00017,
+        0.0,
+        0.0,
+        0.0,
+        0.00017 * 0.00017,
+        0.0,
+        0.0,
+        0.0,
+        0.00017 * 0.00017,
+    ]
 
     ST2Data = inertialUKF.STMessage()
 
-    ST2Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
-                     0.0, 0.00017 * 0.00017, 0.0,
-                     0.0, 0.0, 0.00017 * 0.00017]
+    ST2Data.noise = [
+        0.00017 * 0.00017,
+        0.0,
+        0.0,
+        0.0,
+        0.00017 * 0.00017,
+        0.0,
+        0.0,
+        0.0,
+        0.00017 * 0.00017,
+    ]
     STList = [ST1Data, ST2Data]
     filterObject.STDatasStruct.STMessages = STList
     filterObject.STDatasStruct.numST = len(STList)
 
     filterObject.stateInit = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.covarInit = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
-                              0.0, 0.04, 0.0, 0.0, 0.0, 0.0,
-                              0.0, 0.0, 0.04, 0.0, 0.0, 0.0,
-                              0.0, 0.0, 0.0, 0.004, 0.0, 0.0,
-                              0.0, 0.0, 0.0, 0.0, 0.004, 0.0,
-                              0.0, 0.0, 0.0, 0.0, 0.0, 0.004]
+    filterObject.covarInit = [
+        0.04,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.04,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.04,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.004,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.004,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.004,
+    ]
     qNoiseIn = numpy.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.0017*0.0017
-    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.00017*0.00017
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 0.0017 * 0.0017
+    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 0.00017 * 0.00017
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
 
     lpDataUse = inertialUKF.LowPassFilterData()
     lpDataUse.hStep = 0.5
-    lpDataUse.omegCutoff = 15.0/(2.0*math.pi)
+    lpDataUse.omegCutoff = 15.0 / (2.0 * math.pi)
     filterObject.gyroFilt = [lpDataUse, lpDataUse, lpDataUse]
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -92,9 +143,12 @@ def all_inertial_kfTest(show_plots):
     # [testResults, testMessage] = faultScenarios()
     # assert testResults < 1, testMessage
 
+
 def test_FilterMethods():
     [testResults, testMessage] = filterMethods()
     assert testResults < 1, testMessage
+
+
 def filterMethods():
     """Module Unit Test"""
     testFailCount = 0
@@ -111,7 +165,7 @@ def filterMethods():
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    accuracy = 1E-10
+    accuracy = 1e-10
     # Construct algorithm and associated C++ container
     module = inertialUKF.inertialUKF()
     module.ModelTag = "inertialUKF"
@@ -136,12 +190,12 @@ def filterMethods():
     STList = [ST1Data, ST2Data, ST3Data]
 
     state = inertialUKF.new_doubleArray(6)
-    stateInput = numpy.array([1., 0., 0., 0.1, 0.1, 0.1])
+    stateInput = numpy.array([1.0, 0.0, 0.0, 0.1, 0.1, 0.1])
     for i in range(len(stateInput)):
         inertialUKF.doubleArray_setitem(state, i, stateInput[i])
 
-    wheelAccel = numpy.array([-5, 5]) / 1. * numpy.array([1., 1])
-    angAccel = -0.5 * (wheelAccel[0] + wheelAccel[1]) * numpy.array([1., 0., 0])
+    wheelAccel = numpy.array([-5, 5]) / 1.0 * numpy.array([1.0, 1])
+    angAccel = -0.5 * (wheelAccel[0] + wheelAccel[1]) * numpy.array([1.0, 0.0, 0])
     expectedRate = numpy.array(stateInput[3:]) + angAccel
 
     inertialUKF.inertialStateProp(module.getConfig(), state, 0.5)
@@ -155,9 +209,7 @@ def filterMethods():
 
     setupFilterData(module)
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    I = [1000., 0., 0.,
-     0., 800., 0.,
-     0., 0., 800.]
+    I = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800.0]
     vehicleConfigOut.ISCPntB_B = I
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
@@ -188,27 +240,35 @@ def filterMethods():
 
     # Star Tracker Read Message and Order method
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(1E9)
+    unitTestSim.ConfigureStopTime(1e9)
     unitTestSim.ExecuteSimulation()
 
-    stOrdered = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.stSensorOrder)
-    if numpy.linalg.norm(numpy.array(stOrdered[0]) - numpy.array([0., 2, 1, 0, 0])) > accuracy:
+    stOrdered = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.stSensorOrder
+    )
+    if (
+        numpy.linalg.norm(numpy.array(stOrdered[0]) - numpy.array([0.0, 2, 1, 0, 0]))
+        > accuracy
+    ):
         testFailCount += 1
         testMessages.append("ST order test failed")
 
     unitTestSupport.writeTeXSnippet("toleranceValue00", str(accuracy), path)
     if testFailCount == 0:
-        print('Passed: test_FilterMethods')
+        print("Passed: test_FilterMethods")
         unitTestSupport.writeTeXSnippet("passFail00", textSnippetPassed, path)
     else:
-        print('Failed: test_FilterMethods')
+        print("Failed: test_FilterMethods")
         unitTestSupport.writeTeXSnippet("passFail00", textSnippetFailed, path)
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def test_stateUpdateInertialAttitude(show_plots):
     [testResults, testMessage] = stateUpdateInertialAttitude(show_plots)
     assert testResults < 1, testMessage
+
+
 def stateUpdateInertialAttitude(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -241,9 +301,7 @@ def stateUpdateInertialAttitude(show_plots):
     module.maxTimeJump = 10
 
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
+    I = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800.0]
     vehicleConfigOut.ISCPntB_B = I
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
@@ -255,10 +313,10 @@ def stateUpdateInertialAttitude(show_plots):
     stMessage2.MRP_BdyInrtl = [0.3, 0.4, 0.5]
     st2InMsg = messaging.STAttMsg()
 
-#    stateTarget = testVector.tolist()
-#    stateTarget.extend([0.0, 0.0, 0.0])
-#    module.state = [0.7, 0.7, 0.0]
-    inertialUKFLog = module.logger(["covar", "state"], testProcessRate*10)
+    #    stateTarget = testVector.tolist()
+    #    stateTarget.extend([0.0, 0.0, 0.0])
+    #    module.state = [0.7, 0.7, 0.0]
+    inertialUKFLog = module.logger(["covar", "state"], testProcessRate * 10)
     unitTestSim.AddModelToTask(unitTaskName, inertialUKFLog)
 
     # make input messages but don't write to them
@@ -278,85 +336,111 @@ def stateUpdateInertialAttitude(show_plots):
 
     for i in range(20000):
         if i > 21:
-            stMessage1.timeTag = int(i*0.5*1E9)
-            stMessage2.timeTag = int(i*0.5*1E9)
+            stMessage1.timeTag = int(i * 0.5 * 1e9)
+            stMessage2.timeTag = int(i * 0.5 * 1e9)
             st1InMsg.write(stMessage1, unitTestSim.TotalSim.CurrentNanos)
             st2InMsg.write(stMessage2, unitTestSim.TotalSim.CurrentNanos)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
-    accuracy = 1.0E-5
+    covarLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.covar
+    )
+    stateLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.state
+    )
+    accuracy = 1.0e-5
     unitTestSupport.writeTeXSnippet("toleranceValue11", str(accuracy), path)
     for i in range(3):
-        if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
+        if covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]:
             testFailCount += 1
             testMessages.append("Covariance update failure")
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+            unitTestSupport.writeTeXSnippet("passFail11", textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
-        if(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]) > accuracy):
-            print(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]))
+            unitTestSupport.writeTeXSnippet("passFail11", textSnippetPassed, path)
+        if abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]) > accuracy:
+            print(abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]))
             testFailCount += 1
             testMessages.append("State update failure")
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+            unitTestSupport.writeTeXSnippet("passFail11", textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
+            unitTestSupport.writeTeXSnippet("passFail11", textSnippetPassed, path)
 
     stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
     stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
 
     for i in range(20000):
         if i > 20:
-            stMessage1.timeTag = int((i+20000)*0.25*1E9)
-            stMessage2.timeTag = int((i+20000)*0.5*1E9)
+            stMessage1.timeTag = int((i + 20000) * 0.25 * 1e9)
+            stMessage2.timeTag = int((i + 20000) * 0.5 * 1e9)
             st1InMsg.write(stMessage1, unitTestSim.TotalSim.CurrentNanos)
             st2InMsg.write(stMessage2, unitTestSim.TotalSim.CurrentNanos)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+20000+1)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 20000 + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.covar
+    )
+    stateLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.state
+    )
     for i in range(3):
-        if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
+        if covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]:
             testFailCount += 1
             testMessages.append("Covariance update large failure")
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+            unitTestSupport.writeTeXSnippet("passFail11", textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
+            unitTestSupport.writeTeXSnippet("passFail11", textSnippetPassed, path)
     plt.figure()
     for i in range(module.numStates):
-        plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1], label='State_' +str(i))
+        plt.plot(stateLog[:, 0] * 1.0e-9, stateLog[:, i + 1], label="State_" + str(i))
         plt.legend()
         plt.ylim([-1, 1])
 
-    unitTestSupport.writeFigureLaTeX('Test11', 'Test 1 State convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX(
+        "Test11",
+        "Test 1 State convergence",
+        plt,
+        "width=0.9\\textwidth, keepaspectratio",
+        path,
+    )
     plt.figure()
     for i in range(module.numStates):
-        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*module.numStates+i+1], label='Covar_' +str(i))
+        plt.plot(
+            covarLog[:, 0] * 1.0e-9,
+            covarLog[:, i * module.numStates + i + 1],
+            label="Covar_" + str(i),
+        )
         plt.legend()
-        plt.ylim([0, 2.E-7])
+        plt.ylim([0, 2.0e-7])
 
-    unitTestSupport.writeFigureLaTeX('Test12', 'Test 1 Covariance convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
-    if(show_plots):
+    unitTestSupport.writeFigureLaTeX(
+        "Test12",
+        "Test 1 Covariance convergence",
+        plt,
+        "width=0.9\\textwidth, keepaspectratio",
+        path,
+    )
+    if show_plots:
         plt.show()
-        plt.close('all')
+        plt.close("all")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print('Passed: test_StateUpdateInertialAttitude')
+        print("Passed: test_StateUpdateInertialAttitude")
     else:
-        print('Failed: test_StateUpdateInertialAttitude')
+        print("Failed: test_StateUpdateInertialAttitude")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def BROKENtest_statePropInertialAttitude(show_plots):
     [testResults, testMessage] = statePropInertialAttitude(show_plots)
     assert testResults < 1, testMessage
+
+
 def statePropInertialAttitude(show_plots):
     """Module Unit Test"""
 
@@ -388,14 +472,11 @@ def statePropInertialAttitude(show_plots):
 
     setupFilterData(module)
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
+    I = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800.0]
     vehicleConfigOut.ISCPntB_B = I
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
-
-    inertialUKFLog = module.logger(["covar", "state"], testProcessRate*10)
+    inertialUKFLog = module.logger(["covar", "state"], testProcessRate * 10)
 
     # make input messages but don't write to them
     rwSpeedInMsg = messaging.RWSpeedMsg()
@@ -412,43 +493,49 @@ def statePropInertialAttitude(show_plots):
     module.rwParamsInMsg.subscribeTo(rwConfigInMsg)
     module.gyrBuffInMsg.subscribeTo(gyroInMsg)
 
-
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.covar
+    )
+    stateLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.state
+    )
 
-    accuracy = 1.0E-10
+    accuracy = 1.0e-10
     unitTestSupport.writeTeXSnippet("toleranceValue22", str(accuracy), path)
     for i in range(6):
-        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > accuracy):
+        if abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > accuracy:
             testFailCount += 1
             testMessages.append("State propagation failure")
-            unitTestSupport.writeTeXSnippet('passFail22', textSnippetFailed, path)
+            unitTestSupport.writeTeXSnippet("passFail22", textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail22', textSnippetPassed, path)
+            unitTestSupport.writeTeXSnippet("passFail22", textSnippetPassed, path)
 
     for i in range(6):
-       if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
-           testFailCount += 1
-           testMessages.append("State covariance failure i="+str(i))
+        if covarLog[-1, i * 6 + i + 1] <= covarLog[0, i * 6 + i + 1]:
+            testFailCount += 1
+            testMessages.append("State covariance failure i=" + str(i))
 
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag + " state propagation")
     else:
-        print('Failed: test_StatePropInertialAttitude')
+        print("Failed: test_StatePropInertialAttitude")
         print(testMessages)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def test_stateUpdateRWInertialAttitude(show_plots):
     [testResults, testMessage] = stateUpdateRWInertialAttitude(show_plots)
     assert testResults < 1, testMessage
+
+
 def stateUpdateRWInertialAttitude(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -480,9 +567,7 @@ def stateUpdateRWInertialAttitude(show_plots):
     setupFilterData(module)
 
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
+    I = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800.0]
     vehicleConfigOut.ISCPntB_B = I
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
@@ -490,10 +575,9 @@ def stateUpdateRWInertialAttitude(show_plots):
     rwArrayConfigOut.numRW = 3
     rwConfigInMsg = messaging.RWArrayConfigMsg().write(rwArrayConfigOut)
 
-
     rwSpeedIntMsg = messaging.RWSpeedMsgPayload()
     rwSpeedIntMsg.wheelSpeeds = [0.1, 0.01, 0.1]
-    rwSpeedIntMsg.wheelThetas = [0.,0.,0.]
+    rwSpeedIntMsg.wheelThetas = [0.0, 0.0, 0.0]
     rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedIntMsg)
 
     stMessage1 = messaging.STAttMsgPayload()
@@ -507,7 +591,7 @@ def stateUpdateRWInertialAttitude(show_plots):
     #    stateTarget = testVector.tolist()
     #    stateTarget.extend([0.0, 0.0, 0.0])
     #    module.state = [0.7, 0.7, 0.0]
-    inertialUKFLog = module.logger(["covar", "state"], testProcessRate*10)
+    inertialUKFLog = module.logger(["covar", "state"], testProcessRate * 10)
     unitTestSim.AddModelToTask(unitTaskName, inertialUKFLog)
 
     # make input messages but don't write to them
@@ -525,75 +609,99 @@ def stateUpdateRWInertialAttitude(show_plots):
 
     for i in range(20000):
         if i > 20:
-            stMessage1.timeTag = int(i * 0.5 * 1E9)
-            stMessage2.timeTag = int(i * 0.5 * 1E9)
+            stMessage1.timeTag = int(i * 0.5 * 1e9)
+            stMessage2.timeTag = int(i * 0.5 * 1e9)
             st1InMsg.write(stMessage1, unitTestSim.TotalSim.CurrentNanos)
             st2InMsg.write(stMessage2, unitTestSim.TotalSim.CurrentNanos)
 
-        if i==10000:
+        if i == 10000:
             rwSpeedIntMsg.wheelSpeeds = [0.5, 0.1, 0.05]
             rwSpeedInMsg.write(rwSpeedIntMsg, 0)
 
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.covar
+    )
+    stateLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.state
+    )
     print(inertialUKFLog.covar, covarLog)
 
-    accuracy = 1.0E-5
+    accuracy = 1.0e-5
     unitTestSupport.writeTeXSnippet("toleranceValue33", str(accuracy), path)
     for i in range(3):
-        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
+        if covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]:
             testFailCount += 1
             testMessages.append("Covariance update with RW failure")
-        if (abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]) > accuracy):
+        if abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]) > accuracy:
             print(abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]))
             testFailCount += 1
             testMessages.append("State update with RW failure")
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetFailed, path)
+            unitTestSupport.writeTeXSnippet("passFail33", textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetPassed, path)
+            unitTestSupport.writeTeXSnippet("passFail33", textSnippetPassed, path)
 
     stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
     stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
 
     for i in range(20000):
         if i > 20:
-            stMessage1.timeTag = int((i + 20000) * 0.25 * 1E9)
-            stMessage2.timeTag = int((i + 20000) * 0.5 * 1E9)
+            stMessage1.timeTag = int((i + 20000) * 0.25 * 1e9)
+            stMessage2.timeTag = int((i + 20000) * 0.5 * 1e9)
             st1InMsg.write(stMessage1, unitTestSim.TotalSim.CurrentNanos)
             st2InMsg.write(stMessage2, unitTestSim.TotalSim.CurrentNanos)
 
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 20000 + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.covar
+    )
+    stateLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.state
+    )
     for i in range(3):
-        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
+        if covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]:
             testFailCount += 1
             testMessages.append("Covariance update large failure")
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetFailed, path)
+            unitTestSupport.writeTeXSnippet("passFail33", textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetPassed, path)
+            unitTestSupport.writeTeXSnippet("passFail33", textSnippetPassed, path)
     plt.figure()
     for i in range(module.numStates):
-        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1], label='State_' +str(i))
+        plt.plot(stateLog[:, 0] * 1.0e-9, stateLog[:, i + 1], label="State_" + str(i))
         plt.legend()
         plt.ylim([-1, 1])
 
-    unitTestSupport.writeFigureLaTeX('Test31', 'Test 3 State convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX(
+        "Test31",
+        "Test 3 State convergence",
+        plt,
+        "width=0.7\\textwidth, keepaspectratio",
+        path,
+    )
     plt.figure()
     for i in range(module.numStates):
-        plt.plot(covarLog[:, 0] * 1.0E-9, covarLog[:, i * module.numStates + i + 1], label='Covar_' +str(i))
+        plt.plot(
+            covarLog[:, 0] * 1.0e-9,
+            covarLog[:, i * module.numStates + i + 1],
+            label="Covar_" + str(i),
+        )
         plt.legend()
-        plt.ylim([0., 2E-7])
+        plt.ylim([0.0, 2e-7])
 
-    unitTestSupport.writeFigureLaTeX('Test32', 'Test 3 Covariance convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
-    if (show_plots):
+    unitTestSupport.writeFigureLaTeX(
+        "Test32",
+        "Test 3 Covariance convergence",
+        plt,
+        "width=0.7\\textwidth, keepaspectratio",
+        path,
+    )
+    if show_plots:
         plt.show()
-        plt.close('all')
+        plt.close("all")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -601,11 +709,14 @@ def stateUpdateRWInertialAttitude(show_plots):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def BROKENtest_StatePropRateInertialAttitude(show_plots):
     [testResults, testMessage] = statePropRateInertialAttitude(show_plots)
     assert testResults < 1, testMessage
+
+
 def statePropRateInertialAttitude(show_plots):
     """Module Unit Test"""
 
@@ -641,21 +752,61 @@ def statePropRateInertialAttitude(show_plots):
     module.switchMag = 1.2
 
     module.stateInit = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    module.covarInit = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
-                              0.0, 0.04, 0.0, 0.0, 0.0, 0.0,
-                              0.0, 0.0, 0.04, 0.0, 0.0, 0.0,
-                              0.0, 0.0, 0.0, 0.004, 0.0, 0.0,
-                              0.0, 0.0, 0.0, 0.0, 0.004, 0.0,
-                              0.0, 0.0, 0.0, 0.0, 0.0, 0.004]
+    module.covarInit = [
+        0.04,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.04,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.04,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.004,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.004,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.004,
+    ]
     qNoiseIn = numpy.identity(6)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 0.0017 * 0.0017
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6] * 0.00017 * 0.00017
     module.qNoise = qNoiseIn.reshape(36).tolist()
 
     ST1Data = inertialUKF.STMessage()
-    ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
-                         0.0, 0.00017 * 0.00017, 0.0,
-                         0.0, 0.0, 0.00017 * 0.00017]
+    ST1Data.noise = [
+        0.00017 * 0.00017,
+        0.0,
+        0.0,
+        0.0,
+        0.00017 * 0.00017,
+        0.0,
+        0.0,
+        0.0,
+        0.00017 * 0.00017,
+    ]
     STList = [ST1Data]
     module.STDatasStruct.STMessages = STList
     module.STDatasStruct.numST = len(STList)
@@ -666,19 +817,19 @@ def statePropRateInertialAttitude(show_plots):
     module.gyroFilt = [lpDataUse, lpDataUse, lpDataUse]
 
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
+    I = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800.0]
     vehicleConfigOut.ISCPntB_B = I
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
-    stateInit = [0.0, 0.0, 0.0, math.pi/18.0, 0.0, 0.0]
+    stateInit = [0.0, 0.0, 0.0, math.pi / 18.0, 0.0, 0.0]
     module.stateInit = stateInit
-    inertialUKFLog = module.logger(["covar", "sigma_BNOut", "omega_BN_BOut"], testProcessRate*10)
+    inertialUKFLog = module.logger(
+        ["covar", "sigma_BNOut", "omega_BN_BOut"], testProcessRate * 10
+    )
 
     stMessage1 = messaging.STAttMsgPayload()
-    stMessage1.MRP_BdyInrtl = [0., 0., 0.]
-    stMessage1.timeTag = int(1* 1E9)
+    stMessage1.MRP_BdyInrtl = [0.0, 0.0, 0.0]
+    stMessage1.timeTag = int(1 * 1e9)
     st1InMsg = messaging.STAttMsg()
 
     # make input messages but don't write to them
@@ -694,35 +845,46 @@ def statePropRateInertialAttitude(show_plots):
     module.gyrBuffInMsg.subscribeTo(gyroInMsg)
 
     unitTestSim.InitializeSimulation()
-    st1InMsg.write(stMessage1, int(1 * 1E9))
+    st1InMsg.write(stMessage1, int(1 * 1e9))
     gyroBufferData = messaging.AccDataMsgPayload()
-    for i in range(3600*2+1):
-        gyroBufferData.accPkts[i%inertialUKF.MAX_ACC_BUF_PKT].measTime = (int(i*0.5*1E9))
-        gyroBufferData.accPkts[i%inertialUKF.MAX_ACC_BUF_PKT].gyro_B = \
-            [math.pi/18.0, 0.0, 0.0]
-        gyroInMsg.write(gyroBufferData, (int(i*0.5*1E9)))
+    for i in range(3600 * 2 + 1):
+        gyroBufferData.accPkts[i % inertialUKF.MAX_ACC_BUF_PKT].measTime = int(
+            i * 0.5 * 1e9
+        )
+        gyroBufferData.accPkts[i % inertialUKF.MAX_ACC_BUF_PKT].gyro_B = [
+            math.pi / 18.0,
+            0.0,
+            0.0,
+        ]
+        gyroInMsg.write(gyroBufferData, (int(i * 0.5 * 1e9)))
 
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    sigmaLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.sigma_BNOut)
-    omegaLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.omega_BN_BOut)
-    accuracy = 1.0E-3
+    covarLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.covar
+    )
+    sigmaLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.sigma_BNOut
+    )
+    omegaLog = unitTestSupport.addTimeColumn(
+        inertialUKFLog.times(), inertialUKFLog.omega_BN_BOut
+    )
+    accuracy = 1.0e-3
     unitTestSupport.writeTeXSnippet("toleranceValue44", str(accuracy), path)
     for i in range(3):
-        if(abs(omegaLog[-1, i+1] - stateInit[i+3]) > accuracy):
-            print(abs(omegaLog[-1, i+1] - stateInit[i+3]))
+        if abs(omegaLog[-1, i + 1] - stateInit[i + 3]) > accuracy:
+            print(abs(omegaLog[-1, i + 1] - stateInit[i + 3]))
             testFailCount += 1
             testMessages.append("State omega propagation failure")
-            unitTestSupport.writeTeXSnippet('passFail44', textSnippetFailed, path)
+            unitTestSupport.writeTeXSnippet("passFail44", textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail44', textSnippetPassed, path)
+            unitTestSupport.writeTeXSnippet("passFail44", textSnippetPassed, path)
 
     for i in range(6):
-       if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
-           testFailCount += 1
-           testMessages.append("State covariance failure")
+        if covarLog[-1, i * 6 + i + 1] <= covarLog[0, i * 6 + i + 1]:
+            testFailCount += 1
+            testMessages.append("State covariance failure")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -732,11 +894,14 @@ def statePropRateInertialAttitude(show_plots):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def BROKENtest_FaultScenarios(show_plots):
     [testResults, testMessage] = faultScenarios(show_plots)
     assert testResults < 1, testMessage
+
+
 def faultScenarios(show_plots):
     """Module Unit Test"""
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -761,42 +926,188 @@ def faultScenarios(show_plots):
     # Clean methods for Measurement and Time Updates
     moduleConfigClean1 = inertialUKF.InertialUKFConfig()
     moduleConfigClean1.numStates = 6
-    moduleConfigClean1.state = [0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.statePrev = [0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.sBar = [0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.sBarPrev = [1., 0., 0., 0., 0., 0.,
-                                   0., 1., 0., 0., 0., 0.,
-                                   0., 0., 1., 0., 0., 0.,
-                                   0., 0., 0., 1., 0., 0.,
-                                   0., 0., 0., 0., 1., 0.,
-                                   0., 0., 0., 0., 0., 1.]
-    moduleConfigClean1.covar = [0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.]
-    moduleConfigClean1.covarPrev = [2., 0., 0., 0., 0., 0.,
-                                    0., 2., 0., 0., 0., 0.,
-                                    0., 0., 2., 0., 0., 0.,
-                                    0., 0., 0., 2., 0., 0.,
-                                    0., 0., 0., 0., 2., 0.,
-                                    0., 0., 0., 0., 0., 2.]
+    moduleConfigClean1.state = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    moduleConfigClean1.statePrev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    moduleConfigClean1.sBar = [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    ]
+    moduleConfigClean1.sBarPrev = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+    ]
+    moduleConfigClean1.covar = [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    ]
+    moduleConfigClean1.covarPrev = [
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+    ]
 
     inertialUKF.inertialUKFCleanUpdate(moduleConfigClean1)
 
-    if numpy.linalg.norm(numpy.array(moduleConfigClean1.covarPrev) - numpy.array(moduleConfigClean1.covar)) > 1E10:
+    if (
+        numpy.linalg.norm(
+            numpy.array(moduleConfigClean1.covarPrev)
+            - numpy.array(moduleConfigClean1.covar)
+        )
+        > 1e10
+    ):
         testFailCount += 1
         testMessages.append("inertialUKFClean Covar failed")
-    if numpy.linalg.norm(numpy.array(moduleConfigClean1.statePrev) - numpy.array(moduleConfigClean1.state)) > 1E10:
+    if (
+        numpy.linalg.norm(
+            numpy.array(moduleConfigClean1.statePrev)
+            - numpy.array(moduleConfigClean1.state)
+        )
+        > 1e10
+    ):
         testFailCount += 1
         testMessages.append("inertialUKFClean States failed")
-    if numpy.linalg.norm(numpy.array(moduleConfigClean1.sBar) - numpy.array(moduleConfigClean1.sBarPrev)) > 1E10:
+    if (
+        numpy.linalg.norm(
+            numpy.array(moduleConfigClean1.sBar)
+            - numpy.array(moduleConfigClean1.sBarPrev)
+        )
+        > 1e10
+    ):
         testFailCount += 1
         testMessages.append("inertialUKFClean sBar failed")
 
@@ -804,20 +1115,18 @@ def faultScenarios(show_plots):
     moduleConfigClean1.rwConfigParams.numRW = 2
     moduleConfigClean1.rwSpeeds.wheelSpeeds = [10, 5]
     moduleConfigClean1.rwSpeedPrev.wheelSpeeds = [15, 10]
-    moduleConfigClean1.rwConfigParams.JsList = [1., 1.]
-    moduleConfigClean1.rwConfigParams.GsMatrix_B = [1., 0., 0., 1., 0., 0.]
-    moduleConfigClean1.speedDt = 1.
-    #moduleConfigClean1.IInv = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+    moduleConfigClean1.rwConfigParams.JsList = [1.0, 1.0]
+    moduleConfigClean1.rwConfigParams.GsMatrix_B = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+    moduleConfigClean1.speedDt = 1.0
+    # moduleConfigClean1.IInv = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
 
     # Bad Time and Measurement Update
     st1 = messaging.STAttMsgPayload()
-    st1.timeTag = macros.sec2nano(1.)
+    st1.timeTag = macros.sec2nano(1.0)
     st1.MRP_BdyInrtl = [0.1, 0.2, 0.3]
 
     ST1Data = inertialUKF.STMessage()
-    ST1Data.noise = [1., 0., 0.,
-                     0., 1., 0.,
-                     0., 0., 1.]
+    ST1Data.noise = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
 
     STList = [ST1Data]
 
@@ -863,7 +1172,7 @@ def faultScenarios(show_plots):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 if __name__ == "__main__":

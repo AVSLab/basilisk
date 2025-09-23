@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef FORCETORQUETHRFORCEMAPPING_H
 #define FORCETORQUETHRFORCEMAPPING_H
 
@@ -31,31 +30,37 @@
 
 /*! @brief This module maps thruster forces for arbitrary forces and torques
  */
-typedef struct {
+typedef struct
+{
     /* declare module public variables */
-    double   rThruster_B[MAX_EFF_CNT][3];           //!< [m]     local copy of the thruster locations
-    double   gtThruster_B[MAX_EFF_CNT][3];          //!< []      local copy of the thruster force unit direction vectors
+    double rThruster_B[MAX_EFF_CNT][3];  //!< [m]     local copy of the thruster locations
+    double gtThruster_B[MAX_EFF_CNT][3]; //!< []      local copy of the thruster force unit direction vectors
 
     /* declare module private variables */
-    uint32_t numThrusters;                          //!< []      The number of thrusters available on vehicle
-    double CoM_B[3];                                //!< [m]     CoM of the s/c
+    uint32_t numThrusters; //!< []      The number of thrusters available on vehicle
+    double CoM_B[3];       //!< [m]     CoM of the s/c
 
     /* declare module IO interfaces */
-    CmdTorqueBodyMsg_C cmdTorqueInMsg;  //!< (optional) vehicle control (Lr) input message
-    CmdForceBodyMsg_C cmdForceInMsg;  //!< (optional) vehicle control force input message
-    THRArrayConfigMsg_C thrConfigInMsg;  //!< thruster cluster configuration input message
-    VehicleConfigMsg_C vehConfigInMsg;  //!< vehicle config input message
-    THRArrayCmdForceMsg_C thrForceCmdOutMsg;  //!< thruster force command output message
+    CmdTorqueBodyMsg_C cmdTorqueInMsg;       //!< (optional) vehicle control (Lr) input message
+    CmdForceBodyMsg_C cmdForceInMsg;         //!< (optional) vehicle control force input message
+    THRArrayConfigMsg_C thrConfigInMsg;      //!< thruster cluster configuration input message
+    VehicleConfigMsg_C vehConfigInMsg;       //!< vehicle config input message
+    THRArrayCmdForceMsg_C thrForceCmdOutMsg; //!< thruster force command output message
 
-    BSKLogger *bskLogger;  //!< BSK Logging
-}forceTorqueThrForceMappingConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} forceTorqueThrForceMappingConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    void SelfInit_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configData, int64_t moduleID);
-    void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData, int64_t moduleID);
+    void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData,
+                                           uint64_t callTime,
+                                           int64_t moduleID);
+    void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData,
+                                          uint64_t callTime,
+                                          int64_t moduleID);
 
 #ifdef __cplusplus
 }

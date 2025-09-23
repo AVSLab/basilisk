@@ -22,20 +22,22 @@
 
 #include <math.h>
 
-int isEqual(double a, double b, double accuracy)
+int
+isEqual(double a, double b, double accuracy)
 {
-    if(fabs(a - b) > accuracy) {
+    if (fabs(a - b) > accuracy) {
         return 0;
     }
     return 1;
 }
 
-int isEqualRel(double a, double b, double accuracy)
+int
+isEqualRel(double a, double b, double accuracy)
 {
-    if(fabs(a - b)/fabs(a) > accuracy) {
+    if (fabs(a - b) / fabs(a) > accuracy) {
         return 0;
     }
     return 1;
 }
 
-#endif //UNITTESTCOMPARATORS_H
+#endif // UNITTESTCOMPARATORS_H

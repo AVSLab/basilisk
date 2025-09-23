@@ -28,8 +28,8 @@ from Basilisk.utilities import unitTestSupport
 
 import pytest
 
-@pytest.mark.parametrize("maxRange", [1e-12, 0.001, -1.0])
 
+@pytest.mark.parametrize("maxRange", [1e-12, 0.001, -1.0])
 def test_groundMapping(maxRange):
     r"""
     This test checks two points to determine if they are accessible for mapping or not. One point should be mapped,
@@ -60,21 +60,21 @@ def groundMappingTestFunction(maxRange):
 
     # Configure blank module input messages
     planetInMsgData = messaging.SpicePlanetStateMsgPayload()
-    planetInMsgData.J20002Pfix = [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]]
-    planetInMsgData.PositionVector = [0., 0., 0.]
+    planetInMsgData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    planetInMsgData.PositionVector = [0.0, 0.0, 0.0]
     planetInMsg = messaging.SpicePlanetStateMsg().write(planetInMsgData)
 
     scStateInMsgData = messaging.SCStatesMsgPayload()
-    scStateInMsgData.r_BN_N = [0., -1., 0.]
-    scStateInMsgData.sigma_BN = [0., 0., 0.]
+    scStateInMsgData.r_BN_N = [0.0, -1.0, 0.0]
+    scStateInMsgData.sigma_BN = [0.0, 0.0, 0.0]
     scStateInMsg = messaging.SCStatesMsg().write(scStateInMsgData)
 
     # Create the initial imaging target
     groundMap = groundMapping.GroundMapping()
     groundMap.ModelTag = "groundMapping"
-    groundMap.addPointToModel([0., -0.1, 0.])
-    groundMap.addPointToModel([0., 0., math.tan(np.radians(22.5))+0.1])
-    groundMap.minimumElevation = np.radians(45.)
+    groundMap.addPointToModel([0.0, -0.1, 0.0])
+    groundMap.addPointToModel([0.0, 0.0, math.tan(np.radians(22.5)) + 0.1])
+    groundMap.minimumElevation = np.radians(45.0)
     if maxRange > 0.0:
         groundMap.maximumRange = maxRange
     groundMap.cameraPos_B = [0, 0, 0]
@@ -107,7 +107,7 @@ def groundMappingTestFunction(maxRange):
             map_access[idx] = 1
 
     # If the first target is not mapped, failure
-    if not map_access[0] and (maxRange > 1.0 or maxRange < 0.0) :
+    if not map_access[0] and (maxRange > 1.0 or maxRange < 0.0):
         testFailCount += 1
 
     # If the second target is mapped, failure

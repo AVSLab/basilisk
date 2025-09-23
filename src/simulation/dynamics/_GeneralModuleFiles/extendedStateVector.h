@@ -60,7 +60,8 @@ makes performing state-wise operations easier.
 using ExtendedStateId = std::pair<size_t, std::string>;
 
 /** ExtendedStateIdHash is required to make ExtendedStateId hashable (usable as a key in a map) */
-struct ExtendedStateIdHash {
+struct ExtendedStateIdHash
+{
     /** Generates a hash value (integer) from an ExtendedStateId object */
     std::size_t operator()(const ExtendedStateId& p) const
     {
@@ -77,8 +78,8 @@ struct ExtendedStateIdHash {
  *
  * It also supports several utility functions.
  */
-class ExtendedStateVector
-    : public std::unordered_map<ExtendedStateId, Eigen::MatrixXd, ExtendedStateIdHash> {
+class ExtendedStateVector : public std::unordered_map<ExtendedStateId, Eigen::MatrixXd, ExtendedStateIdHash>
+{
   public:
     /**
      * Builds a ExtendedStateVector from all states in the given
@@ -100,17 +101,15 @@ class ExtendedStateVector
      * A new ExtendedStateVector is built from the results of each call
      * of the functor.
      */
-    ExtendedStateVector
-    map(std::function<Eigen::MatrixXd(const size_t&, const std::string&, const Eigen::MatrixXd&)>
-            functor) const;
+    ExtendedStateVector map(
+      std::function<Eigen::MatrixXd(const size_t&, const std::string&, const Eigen::MatrixXd&)> functor) const;
 
     /**
      * Similar to the map method, except that no
      * ExtendedStateVector is returned because the given functor
      * does not produce any values.
      */
-    void apply(std::function<void(const size_t&, const std::string&, const Eigen::MatrixXd&)>
-                   functor) const;
+    void apply(std::function<void(const size_t&, const std::string&, const Eigen::MatrixXd&)> functor) const;
 
     /**
      * Modifies each Eigen::MatrixXd stored in this object according to

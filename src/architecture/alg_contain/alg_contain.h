@@ -17,44 +17,43 @@
 
  */
 
-
 #ifndef ALG_CONTAIN_H
 #define ALG_CONTAIN_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
 
-
 typedef void (*AlgPtr)(void*, uint64_t);
 typedef void (*AlgUpdatePtr)(void*, uint64_t, uint64_t);
 
 /*! @brief AlgContain Class */
-class AlgContain: public SysModel {
-public:
+class AlgContain : public SysModel
+{
+  public:
     AlgContain();
     ~AlgContain();
-    AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t, uint64_t),
-        void (*SelfPtr)(void*, uint64_t)=NULL,
-		void(*ResetPtr)(void*, uint64_t, uint64_t) = NULL); //!< constructor
-    
-    void UseData(void *IncomingData) {DataPtr = IncomingData;} //!< method
-    void UseUpdate(void (*LocPtr)(void*, uint64_t, uint64_t)) {AlgUpdate = LocPtr;} //!< method
-    void UseSelfInit(void (*LocPtr)(void*, uint64_t)) {AlgSelfInit = LocPtr;} //!< method
-	void UseReset(void(*LocPtr)(void*, uint64_t, uint64_t)) { AlgReset = LocPtr; } //!< method
-    void SelfInit(); //!< method
-    void UpdateState(uint64_t CurrentSimNanos); //!< method
-	void Reset(uint64_t CurrentSimNanos); //!< method
-    uint64_t getSelfInitAddress() {return reinterpret_cast<uint64_t>(*AlgSelfInit);} //!< method
-    uint64_t getResetAddress() {return reinterpret_cast<uint64_t>(*AlgReset);} //!< method
-    uint64_t getUpdateAddress() {return reinterpret_cast<uint64_t>(*AlgUpdate);} //!< method
-    
-public:
-    void *DataPtr;                              //!< class variable
-    AlgPtr AlgSelfInit;                         //!< class variable
-	AlgUpdatePtr AlgReset;                      //!< class variable
-    AlgUpdatePtr AlgUpdate;                     //!< class variable
-    BSKLogger bskLogger;                      //!< -- BSK Logging
-};
+    AlgContain(void* DataIn,
+               void (*UpPtr)(void*, uint64_t, uint64_t),
+               void (*SelfPtr)(void*, uint64_t) = NULL,
+               void (*ResetPtr)(void*, uint64_t, uint64_t) = NULL); //!< constructor
 
+    void UseData(void* IncomingData) { DataPtr = IncomingData; }                       //!< method
+    void UseUpdate(void (*LocPtr)(void*, uint64_t, uint64_t)) { AlgUpdate = LocPtr; }  //!< method
+    void UseSelfInit(void (*LocPtr)(void*, uint64_t)) { AlgSelfInit = LocPtr; }        //!< method
+    void UseReset(void (*LocPtr)(void*, uint64_t, uint64_t)) { AlgReset = LocPtr; }    //!< method
+    void SelfInit();                                                                   //!< method
+    void UpdateState(uint64_t CurrentSimNanos);                                        //!< method
+    void Reset(uint64_t CurrentSimNanos);                                              //!< method
+    uint64_t getSelfInitAddress() { return reinterpret_cast<uint64_t>(*AlgSelfInit); } //!< method
+    uint64_t getResetAddress() { return reinterpret_cast<uint64_t>(*AlgReset); }       //!< method
+    uint64_t getUpdateAddress() { return reinterpret_cast<uint64_t>(*AlgUpdate); }     //!< method
+
+  public:
+    void* DataPtr;          //!< class variable
+    AlgPtr AlgSelfInit;     //!< class variable
+    AlgUpdatePtr AlgReset;  //!< class variable
+    AlgUpdatePtr AlgUpdate; //!< class variable
+    BSKLogger bskLogger;    //!< -- BSK Logging
+};
 
 #endif

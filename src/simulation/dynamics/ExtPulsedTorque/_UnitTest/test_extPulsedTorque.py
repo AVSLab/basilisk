@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -28,7 +27,9 @@ import pytest
 from Basilisk.simulation import ExtPulsedTorque
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -37,22 +38,18 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("offCount", [
-      (3)
-     ,(0)
-])
+@pytest.mark.parametrize("offCount", [(3), (0)])
 # provide a unique test method name, starting with test_
 def test_module(show_plots, offCount):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(
-            show_plots, offCount)
+    [testResults, testMessage] = run(show_plots, offCount)
     assert testResults < 1, testMessage
 
 
 def run(show_plots, offCount):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"
     unitProcessName = "testProcess"
 
@@ -73,7 +70,7 @@ def run(show_plots, offCount):
     testObject.readInputMessages()
     testObject.writeOutputMessages(0)
 
-    testObject.pulsedTorqueExternalPntB_B = [[-1], [1],[ -1]]
+    testObject.pulsedTorqueExternalPntB_B = [[-1], [1], [-1]]
     testObject.countOnPulse = 1
     testObject.countOff = offCount
 
@@ -96,60 +93,68 @@ def run(show_plots, offCount):
     DT = 0.1
     testProcessRate = macros.sec2nano(DT)
     for tStop in range(1, 11):
-        scSim.ConfigureStopTime(macros.sec2nano(tStop*DT))
+        scSim.ConfigureStopTime(macros.sec2nano(tStop * DT))
         scSim.ExecuteSimulation()
         testObject.computeForceTorque(scSim.TotalSim.CurrentNanos, testProcessRate)
         scSim.TotalSim.SingleStepProcesses()
 
     # log the data
-    dataTorque = testObjectLog.torqueExternalPntB_B[1:,:]
+    dataTorque = testObjectLog.torqueExternalPntB_B[1:, :]
 
     np.set_printoptions(precision=16)
 
     #
     #   set true position information
     #
-    if (offCount == 3):
+    if offCount == 3:
         trueTorque_B = [
-                  [0.0, 0.0, 0.0]
-                , [-1.0, 1.0, -1.0]
-                , [1.0, -1.0, 1.0]
-                , [0.0, 0.0, 0.0]
-                , [0.0, 0.0, 0.0]
-                , [0.0, 0.0, 0.0]
-                , [-1.0, 1.0, -1.0]
-                , [1.0, -1.0, 1.0]
-                , [0.0, 0.0, 0.0]
-                , [0.0, 0.0, 0.0]
-                , [0.0, 0.0, 0.0]
+            [0.0, 0.0, 0.0],
+            [-1.0, 1.0, -1.0],
+            [1.0, -1.0, 1.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [-1.0, 1.0, -1.0],
+            [1.0, -1.0, 1.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
         ]
-    if (offCount == 0):
+    if offCount == 0:
         trueTorque_B = [
-                  [0.0, 0.0, 0.0]
-                , [-1.0, 1.0, -1.0]
-                , [1.0, -1.0, 1.0]
-                , [-1.0, 1.0, -1.0]
-                , [1.0, -1.0, 1.0]
-                , [-1.0, 1.0, -1.0]
-                , [1.0, -1.0, 1.0]
-                , [-1.0, 1.0, -1.0]
-                , [1.0, -1.0, 1.0]
-                , [-1.0, 1.0, -1.0]
-                , [1.0, -1.0, 1.0]
+            [0.0, 0.0, 0.0],
+            [-1.0, 1.0, -1.0],
+            [1.0, -1.0, 1.0],
+            [-1.0, 1.0, -1.0],
+            [1.0, -1.0, 1.0],
+            [-1.0, 1.0, -1.0],
+            [1.0, -1.0, 1.0],
+            [-1.0, 1.0, -1.0],
+            [1.0, -1.0, 1.0],
+            [-1.0, 1.0, -1.0],
+            [1.0, -1.0, 1.0],
         ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
 
-    if (len(trueTorque_B) != len(dataTorque)):
+    if len(trueTorque_B) != len(dataTorque):
         testFailCount += 1
-        testMessages.append("FAILED:  ExtPulsedTorque failed torque unit test (unequal array sizes)\n")
+        testMessages.append(
+            "FAILED:  ExtPulsedTorque failed torque unit test (unequal array sizes)\n"
+        )
     else:
-        for i in range(0,len(trueTorque_B)):
+        for i in range(0, len(trueTorque_B)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataTorque[i],trueTorque_B[i],3,accuracy):
+            if not unitTestSupport.isArrayEqual(
+                dataTorque[i], trueTorque_B[i], 3, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED:  ExtPulsedTorque failed torque unit test at t=" + str(dataTorque[i,0]*macros.NANO2SEC) + "sec\n")
+                testMessages.append(
+                    "FAILED:  ExtPulsedTorque failed torque unit test at t="
+                    + str(dataTorque[i, 0] * macros.NANO2SEC)
+                    + "sec\n"
+                )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -157,14 +162,15 @@ def run(show_plots, offCount):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(False,       # show_plots
-                3            # offCount
-               )
-
+    test_module(
+        False,  # show_plots
+        3,  # offCount
+    )

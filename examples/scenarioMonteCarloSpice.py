@@ -50,7 +50,6 @@ The user should be careful to load the Spice or use within the Python code withi
 # Purpose:  This Monte Carlo example shows how to properly use Spice in such simulations.
 #
 
-
 import inspect
 import os
 import shutil
@@ -62,6 +61,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # @endcond
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
@@ -96,34 +96,33 @@ class MySimulation(SimulationBaseClass.SimBaseClass):
         simTaskName = "simTask"
         simProcessName = "simProcess"
 
-
         self.dynProcess = self.CreateNewProcess(simProcessName)
 
-        self.dynProcess.addTask(self.CreateNewTask(simTaskName, macros.sec2nano(10.)))
+        self.dynProcess.addTask(self.CreateNewTask(simTaskName, macros.sec2nano(10.0)))
 
         self.scObject = spacecraft.Spacecraft()
         self.AddModelToTask(simTaskName, self.scObject, 1)
-        self.scObject.hub.r_CN_NInit = [7000000.0, 0.0, 0.0]     # m   - r_CN_N
-        self.scObject.hub.v_CN_NInit = [0.0, 7500.0, 0.0]        # m/s - v_CN_N
-
+        self.scObject.hub.r_CN_NInit = [7000000.0, 0.0, 0.0]  # m   - r_CN_N
+        self.scObject.hub.v_CN_NInit = [0.0, 7500.0, 0.0]  # m/s - v_CN_N
 
         # operate on pyswice
         dataPath = bskPath + "/supportData/EphemerisData/"
-        self.scSpiceName = 'HUBBLE SPACE TELESCOPE'
-        pyswice.furnsh_c(dataPath + 'naif0011.tls')
-        pyswice.furnsh_c(dataPath + 'pck00010.tpc')
-        pyswice.furnsh_c(dataPath + 'de-403-masses.tpc')
-        pyswice.furnsh_c(dataPath + 'de430.bsp')
-        pyswice.furnsh_c(dataPath + 'hst_edited.bsp')
+        self.scSpiceName = "HUBBLE SPACE TELESCOPE"
+        pyswice.furnsh_c(dataPath + "naif0011.tls")
+        pyswice.furnsh_c(dataPath + "pck00010.tpc")
+        pyswice.furnsh_c(dataPath + "de-403-masses.tpc")
+        pyswice.furnsh_c(dataPath + "de430.bsp")
+        pyswice.furnsh_c(dataPath + "hst_edited.bsp")
 
         self.accessSpiceKernel()
 
     def accessSpiceKernel(self):
-        startCalendarTime = '2012 APR 29 15:18:14.907 (UTC)'
-        zeroBase = 'Sun'
-        integFrame = 'j2000'
+        startCalendarTime = "2012 APR 29 15:18:14.907 (UTC)"
+        zeroBase = "Sun"
+        integFrame = "j2000"
         stateOut = spkRead(self.scSpiceName, startCalendarTime, integFrame, zeroBase)
         print(stateOut)
+
 
 def run():
     """
@@ -166,7 +165,7 @@ def run():
 
 
 def executeScenario(sim):
-    sim.ConfigureStopTime(macros.sec2nano(100.))
+    sim.ConfigureStopTime(macros.sec2nano(100.0))
     sim.InitializeSimulation()
 
     # Here is another example where it is allowable to run the python spice routines within a MC simulation setup

@@ -31,11 +31,11 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID)
+void
+SelfInit_mrpSteering(mrpSteeringConfig* configData, int64_t moduleID)
 {
     RateCmdMsg_C_init(&configData->rateCmdOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -44,7 +44,8 @@ void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Reset_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check for required input message
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
@@ -61,11 +62,11 @@ void Reset_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    AttGuidMsgPayload guidCmd;              /* Guidance Message */
-    RateCmdMsgPayload outMsg;               /* copy of output message */
+    AttGuidMsgPayload guidCmd; /* Guidance Message */
+    RateCmdMsgPayload outMsg;  /* copy of output message */
 
     /*! - Zero message copies*/
     outMsg = RateCmdMsg_C_zeroMsgPayload();
@@ -91,19 +92,21 @@ void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime,
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates
  */
-void MRPSteeringLaw(mrpSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
+void
+MRPSteeringLaw(mrpSteeringConfig* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
 {
-    double  sigma_i;        /* ith component of sigma_B/R */
-    double  B[3][3];        /* B-matrix of MRP differential kinematic equations */
-    double  sigma_p[3];     /* MRP rates */
-    double  value;
-    int     i;
+    double sigma_i;    /* ith component of sigma_B/R */
+    double B[3][3];    /* B-matrix of MRP differential kinematic equations */
+    double sigma_p[3]; /* MRP rates */
+    double value;
+    int i;
 
     /* Equation (18): Determine the desired steering rates  */
-    for (i=0;i<3;i++) {
-        sigma_i  = sigma_BR[i];
-        value        = atan(M_PI_2/configData->omega_max*(configData->K1*sigma_i
-                       + configData->K3*sigma_i*sigma_i*sigma_i))/M_PI_2*configData->omega_max;
+    for (i = 0; i < 3; i++) {
+        sigma_i = sigma_BR[i];
+        value = atan(M_PI_2 / configData->omega_max *
+                     (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i)) /
+                M_PI_2 * configData->omega_max;
         omega_ast[i] = -value;
     }
     v3SetZero(omega_ast_p);
@@ -112,11 +115,14 @@ void MRPSteeringLaw(mrpSteeringConfig *configData, double sigma_BR[3], double om
         BmatMRP(sigma_BR, B);
         m33MultV3(B, omega_ast, sigma_p);
         v3Scale(0.25, sigma_p, sigma_p);
-        for (i=0;i<3;i++) {
-            sigma_i  = sigma_BR[i];
-            value = (3*configData->K3*sigma_i*sigma_i + configData->K1)/
-                                (pow(M_PI_2/configData->omega_max*(configData->K1*sigma_i + configData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
-            omega_ast_p[i] = - value*sigma_p[i];
+        for (i = 0; i < 3; i++) {
+            sigma_i = sigma_BR[i];
+            value = (3 * configData->K3 * sigma_i * sigma_i + configData->K1) /
+                    (pow(M_PI_2 / configData->omega_max *
+                           (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i),
+                         2) +
+                     1);
+            omega_ast_p[i] = -value * sigma_p[i];
         }
     }
     return;

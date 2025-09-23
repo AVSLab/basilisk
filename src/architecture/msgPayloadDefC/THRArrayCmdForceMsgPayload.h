@@ -22,12 +22,10 @@
 
 #include "architecture/utilities/macroDefinitions.h"
 
-
-
 /*! @brief Message used to define a vector of thruster force commands */
-typedef struct {
-    double thrForce[MAX_EFF_CNT];     //!< [N] array of thruster force values 
-}THRArrayCmdForceMsgPayload;
-
+typedef struct
+{
+    double thrForce[MAX_EFF_CNT]; //!< [N] array of thruster force values
+} THRArrayCmdForceMsgPayload;
 
 #endif

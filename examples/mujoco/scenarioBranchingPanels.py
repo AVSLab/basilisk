@@ -86,18 +86,25 @@ import numpy as np
 CURRENT_FOLDER = os.path.dirname(__file__)
 XML_PATH = f"{CURRENT_FOLDER}/sat_w_branching_panels.xml"
 
+
 @contextmanager
 def catchtime():
     tic = toc = perf_counter()
     yield lambda: toc - tic
     toc = perf_counter()
 
+
 BLUE = "#004488"
 YELLOW = "#DDAA33"
 RED = "#BB5566"
 
+
 def generateProfiles(
-    initialPoint: float, finalPoint: float, vMax: float, aMax: float, timeOffset: int = 0
+    initialPoint: float,
+    finalPoint: float,
+    vMax: float,
+    aMax: float,
+    timeOffset: int = 0,
 ) -> List[mujoco.ScalarJointStateInterpolator]:
     """
     Generate a position and velocity profile for a point-to-point movement.
@@ -180,6 +187,7 @@ def generateProfiles(
 
     return interpolators
 
+
 def run(showPlots: bool = False, visualize: bool = False):
     """Main function, see scenario description.
 
@@ -191,7 +199,7 @@ def run(showPlots: bool = False, visualize: bool = False):
     """
 
     dt = macros.sec2nano(10)
-    operationTime = macros.sec2nano(90*60)
+    operationTime = macros.sec2nano(90 * 60)
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -246,11 +254,11 @@ def run(showPlots: bool = False, visualize: bool = False):
 
         # Generate the position and velocity profiles for the joint
         positionInterpolator, velocityInterpolator = generateProfiles(
-            initialPoint=initialAngle, # rad
-            finalPoint=0, # rad
+            initialPoint=initialAngle,  # rad
+            finalPoint=0,  # rad
             vMax=np.deg2rad(0.05),
             aMax=np.deg2rad(0.0001),
-            timeOffset=timeOffset
+            timeOffset=timeOffset,
         )
 
         # Use the C++ JointPIDController
@@ -262,8 +270,12 @@ def run(showPlots: bool = False, visualize: bool = False):
 
         # Connect the interpolators to the PID controller for the desired
         # position and velocity
-        pidController.desiredPosInMsg.subscribeTo(positionInterpolator.interpolatedOutMsg)
-        pidController.desiredVelInMsg.subscribeTo(velocityInterpolator.interpolatedOutMsg)
+        pidController.desiredPosInMsg.subscribeTo(
+            positionInterpolator.interpolatedOutMsg
+        )
+        pidController.desiredVelInMsg.subscribeTo(
+            velocityInterpolator.interpolatedOutMsg
+        )
 
         # Connect the PID controller to the joint for the measured position and velocity
         pidController.measuredPosInMsg.subscribeTo(joint.stateOutMsg)
@@ -307,7 +319,7 @@ def run(showPlots: bool = False, visualize: bool = False):
         # create a stand-alone message with the given joint angle
         jointConstraintMsg = messaging.ScalarJointStateMsg()
         jointConstraintMsgPayload = messaging.ScalarJointStateMsgPayload()
-        jointConstraintMsgPayload.state = angle # rad
+        jointConstraintMsgPayload.state = angle  # rad
         jointConstraintMsg.write(jointConstraintMsgPayload, 0, -1)
 
         # connect the message to the `constrainedStateInMsg` input of
@@ -325,12 +337,12 @@ def run(showPlots: bool = False, visualize: bool = False):
         joint = joints[panelID]
         joint.constrainedStateInMsg.unsubscribe()
 
-    addJointController("10", initialAngle=np.pi/2, timeOffset=0)
-    addJointController("20", initialAngle=np.pi,   timeOffset=0)
-    addJointController("1p", initialAngle=np.pi,   timeOffset=operationTime)
-    addJointController("2p", initialAngle=np.pi,   timeOffset=operationTime)
-    addJointController("1n", initialAngle=np.pi,   timeOffset=2*operationTime)
-    addJointController("2n", initialAngle=np.pi,   timeOffset=2*operationTime)
+    addJointController("10", initialAngle=np.pi / 2, timeOffset=0)
+    addJointController("20", initialAngle=np.pi, timeOffset=0)
+    addJointController("1p", initialAngle=np.pi, timeOffset=operationTime)
+    addJointController("2p", initialAngle=np.pi, timeOffset=operationTime)
+    addJointController("1n", initialAngle=np.pi, timeOffset=2 * operationTime)
+    addJointController("2n", initialAngle=np.pi, timeOffset=2 * operationTime)
 
     for panelID in ["1p", "1n", "2p", "2n"]:
         lockJoint(panelID, angle=np.pi)
@@ -354,7 +366,7 @@ def run(showPlots: bool = False, visualize: bool = False):
 
     # Set the initial angles of the joints (stowed configuration)
     for panelID in ["10", "1p", "1n", "20", "2p", "2n"]:
-        initialAngle = np.pi/2 if panelID == "10" else np.pi # rad
+        initialAngle = np.pi / 2 if panelID == "10" else np.pi  # rad
         joints[panelID].setPosition(initialAngle)
 
     # Configure the stop time of the simulation
@@ -371,7 +383,7 @@ def run(showPlots: bool = False, visualize: bool = False):
     unlockJoint("2p")
 
     # Configure the stop time of the simulation
-    scSim.ConfigureStopTime(2*operationTime)
+    scSim.ConfigureStopTime(2 * operationTime)
 
     # Run the simulation
     with catchtime() as executeTime:
@@ -384,7 +396,7 @@ def run(showPlots: bool = False, visualize: bool = False):
     unlockJoint("2n")
 
     # Configure the stop time of the simulation
-    scSim.ConfigureStopTime(3*operationTime)
+    scSim.ConfigureStopTime(3 * operationTime)
 
     # Run the simulation
     with catchtime() as executeTime:
@@ -396,9 +408,10 @@ def run(showPlots: bool = False, visualize: bool = False):
         import matplotlib.pyplot as plt
 
         # Plot the desired and achieved joint angle for each panel
-        fig, axs = plt.subplots(ncols=2, nrows=3, sharex="all", sharey="all", squeeze=False)
+        fig, axs = plt.subplots(
+            ncols=2, nrows=3, sharex="all", sharey="all", squeeze=False
+        )
         for ax, panelID in zip(axs.flat, ["10", "20", "1p", "2p", "1n", "2n"]):
-
             desiredPosRecorder = desiredPosRecorderModels[panelID]
             measuredPosRecorder = measuredPosRecorderModels[panelID]
 
@@ -407,7 +420,7 @@ def run(showPlots: bool = False, visualize: bool = False):
                 np.rad2deg(desiredPosRecorder.state),
                 "-",
                 color=BLUE,
-                lw = 2,
+                lw=2,
                 label="Desired Profile" if ax is axs.flat[0] else None,
             )
             ax.plot(
@@ -415,16 +428,18 @@ def run(showPlots: bool = False, visualize: bool = False):
                 np.rad2deg(measuredPosRecorder.state),
                 "--",
                 color=RED,
-                lw = 2,
+                lw=2,
                 label="Achieved" if ax is axs.flat[0] else None,
             )
             for line in [1, 2]:
-                ax.axvline(line * operationTime * macros.NANO2MIN, color="k", linestyle=":")
+                ax.axvline(
+                    line * operationTime * macros.NANO2MIN, color="k", linestyle=":"
+                )
             ax.set_title(f"Panel {panelID}")
             ax.set_yticks([0, 45, 90, 135, 180])
-            if ax in axs[:,0]:
+            if ax in axs[:, 0]:
                 ax.set_ylabel("Angle [deg]")
-            if ax in axs[-1,:]:
+            if ax in axs[-1, :]:
                 ax.set_xlabel("Time [min]")
 
         fig.suptitle("Panel angle")
@@ -437,9 +452,8 @@ def run(showPlots: bool = False, visualize: bool = False):
     if visualize:
         speedUp = 120
         qpos = np.squeeze(stateRecorder.qpos)
-        mujoco.visualize(
-            stateRecorder.times(), qpos, scene, speedUp
-        )
+        mujoco.visualize(stateRecorder.times(), qpos, scene, speedUp)
+
 
 if __name__ == "__main__":
     run(True, True)

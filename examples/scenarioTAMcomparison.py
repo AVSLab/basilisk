@@ -115,6 +115,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -130,17 +131,23 @@ from Basilisk.simulation import magnetometer
 
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+)
 from Basilisk.utilities import simSetPlanetEnvironment
 
-#attempt to import vizard
+# attempt to import vizard
 from Basilisk.utilities import vizSupport
+
 
 def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     """
     The scenarios can be run with the following setups parameters:
-    
+
     Args:
         show_plots (bool): Determines if the script should display plots
         orbitCase (str):  Specify the type of orbit to be simulated {'elliptical','circular'}
@@ -148,7 +155,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         useBias2 (bool): Flag to use a sensor bias on TAM 2
         useBounds1 (bool): Flag to use TAM 1 sensor bounds
         useBounds2 (bool): Flag to use TAM 2 sensor bounds
-    
+
     """
 
     # Create simulation variable names
@@ -162,7 +169,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -179,7 +186,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
-    planet.isCentralBody = True          # ensure this is the central gravitational body
+    planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     req = planet.radEquator
 
@@ -189,11 +196,13 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     #
     # create the centered dipole magnetic field
     #
-    magModule1 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
+    magModule1 = (
+        magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+    )  # default is Earth centered dipole module
     magModule1.ModelTag = "CenteredDipole"
-    simSetPlanetEnvironment.centeredDipoleMagField(magModule1, 'earth')
+    simSetPlanetEnvironment.centeredDipoleMagField(magModule1, "earth")
 
-    if orbitCase == 'elliptical':
+    if orbitCase == "elliptical":
         # Note that more then one magnetic field can be attached to a planet.
         # In the elliptic Earth orbit scenario
         # a second magnetic field module `magModule2` is created with a
@@ -219,14 +228,16 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
 
     magModule3 = magneticFieldWMM.MagneticFieldWMM()
     magModule3.ModelTag = "WMM"
-    magModule3.dataPath = bskPath + '/supportData/MagneticField/'
+    magModule3.dataPath = bskPath + "/supportData/MagneticField/"
     # set epoch date/time message
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+        "2019 June 27, 10:23:0.0 (UTC)"
+    )
     magModule3.epochInMsg.subscribeTo(epochMsg)
     # set the minReach and maxReach values if on an elliptic orbit
-    if orbitCase == 'elliptical':
-        magModule3.envMinReach = 10000 * 1000.
-        magModule3.envMaxReach = 20000 * 1000.
+    if orbitCase == "elliptical":
+        magModule3.envMinReach = 10000 * 1000.0
+        magModule3.envMaxReach = 20000 * 1000.0
 
     # add spacecraft to the magnetic field modules so it can read the sc position messages
     magModule1.addSpacecraftToModel(scObject.scStateOutMsg)
@@ -247,45 +258,47 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     TAM1.senNoiseStd = [100e-9, 100e-9, 100e-9]
     TAM2.senNoiseStd = [100e-9, 100e-9, 100e-9]
 
-    if orbitCase == 'elliptical':
-        TAM3 = magnetometer.Magnetometer()  # TAM3 is a dummy TAM used to plot Dipole Magnetic Model 2
+    if orbitCase == "elliptical":
+        TAM3 = (
+            magnetometer.Magnetometer()
+        )  # TAM3 is a dummy TAM used to plot Dipole Magnetic Model 2
         TAM3.ModelTag = "TAM3_sensor"
         TAM3.scaleFactor = 1.0
         TAM3.senNoiseStd = [100e-9, 100e-9, 100e-9]
 
     if useBias1:
-        useBias1_str = 'True'
+        useBias1_str = "True"
         TAM1.senBias = [0, 0, -1e-6]  # Tesla
-        if orbitCase == 'elliptical':
+        if orbitCase == "elliptical":
             TAM3.senBias = [0, 0, -1e-6]  # Tesla
     else:
-        useBias1_str = 'False'
+        useBias1_str = "False"
     if useBounds1:
-        useBounds1_str = 'True'
-        TAM1.maxOutput = 2.5E-5  # Tesla
-        TAM1.minOutput = -2.5E-5  # Tesla
-        if orbitCase == 'elliptical':
-            TAM3.maxOutput = 2.5E-5  # Tesla
-            TAM3.minOutput = -2.5E-5  # Tesla
+        useBounds1_str = "True"
+        TAM1.maxOutput = 2.5e-5  # Tesla
+        TAM1.minOutput = -2.5e-5  # Tesla
+        if orbitCase == "elliptical":
+            TAM3.maxOutput = 2.5e-5  # Tesla
+            TAM3.minOutput = -2.5e-5  # Tesla
     else:
-        useBounds1_str = 'False'
+        useBounds1_str = "False"
     TAM1.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, TAM1)
-    if orbitCase == 'elliptical':
+    if orbitCase == "elliptical":
         TAM3.stateInMsg.subscribeTo(scObject.scStateOutMsg)
         scSim.AddModelToTask(simTaskName, TAM3)
 
     if useBias2:
-        useBias2_str = 'True'
+        useBias2_str = "True"
         TAM2.senBias = [0, 0, -1e-6]  # Tesla
     else:
-        useBias2_str = 'False'
+        useBias2_str = "False"
     if useBounds2:
-        useBounds2_str = 'True'
-        TAM2.maxOutput = 2.5E-5  # Tesla
-        TAM2.minOutput = -2.5E-5  # Tesla
+        useBounds2_str = "True"
+        TAM2.maxOutput = 2.5e-5  # Tesla
+        TAM2.minOutput = -2.5e-5  # Tesla
     else:
-        useBounds2_str = 'False'
+        useBounds2_str = "False"
     TAM2.stateInMsg.subscribeTo(scObject.scStateOutMsg)
     scSim.AddModelToTask(simTaskName, TAM2)
 
@@ -295,10 +308,10 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
     rPeriapses = req * 1.1  # meters
-    if orbitCase == 'circular':
+    if orbitCase == "circular":
         oe.a = rPeriapses
         oe.e = 0.0000
-    elif orbitCase == 'elliptical':
+    elif orbitCase == "elliptical":
         rApoapses = req * 3.5
         oe.a = (rPeriapses + rApoapses) / 2.0
         oe.e = 1.0 - rPeriapses / oe.a
@@ -310,7 +323,9 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)  # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
     # with circular or equatorial orbit, some angles are arbitrary
 
     #
@@ -321,14 +336,16 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
-    simulationTime = macros.sec2nano(1. * P)
+    P = 2.0 * np.pi / n
+    simulationTime = macros.sec2nano(1.0 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     mag1Log = magModule1.envOutMsgs[0].recorder(samplingTime)
     mag3Log = magModule3.envOutMsgs[0].recorder(samplingTime)
     tam1Log = TAM1.tamDataOutMsg.recorder(samplingTime)
@@ -341,7 +358,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     scSim.AddModelToTask(simTaskName, dataLog)
     TAM1.magInMsg.subscribeTo(magModule1.envOutMsgs[0])
     TAM2.magInMsg.subscribeTo(magModule3.envOutMsgs[0])
-    if orbitCase == 'elliptical':
+    if orbitCase == "elliptical":
         mag2Log = magModule2.envOutMsgs[0].recorder(samplingTime)
         tam3Log = TAM3.tamDataOutMsg.recorder(samplingTime)
         scSim.AddModelToTask(simTaskName, mag2Log)
@@ -349,9 +366,12 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         TAM3.magInMsg.subscribeTo(magModule2.envOutMsgs[0])
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     scSim.InitializeSimulation()
 
@@ -368,7 +388,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     mag3Data = mag3Log.magField_N
     tam1Data = tam1Log.tam_S
     tam2Data = tam2Log.tam_S
-    if orbitCase == 'elliptical':
+    if orbitCase == "elliptical":
         mag2Data = mag2Log.magField_N
         tam3Data = tam3Log.tam_S
     posData = dataLog.r_BN_N
@@ -384,65 +404,112 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
     rData = []
     timeAxis = dataLog.times()
     for idx in range(len(posData)):
         rMag = np.linalg.norm(posData[idx])
-        rData.append(rMag / 1000.)
-    plt.plot(timeAxis * macros.NANO2SEC / P, rData, color='#aa0000')
-    if orbitCase == 'elliptical':
-        plt.plot(timeAxis * macros.NANO2SEC / P, [magModule3.envMinReach / 1000.] * len(rData), color='#007700',
-                 dashes=[5, 5, 5, 5])
-        plt.plot(timeAxis * macros.NANO2SEC / P, [magModule3.envMaxReach / 1000.] * len(rData),
-                 color='#007700', dashes=[5, 5, 5, 5])
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Radius [km]')
+        rData.append(rMag / 1000.0)
+    plt.plot(timeAxis * macros.NANO2SEC / P, rData, color="#aa0000")
+    if orbitCase == "elliptical":
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            [magModule3.envMinReach / 1000.0] * len(rData),
+            color="#007700",
+            dashes=[5, 5, 5, 5],
+        )
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            [magModule3.envMaxReach / 1000.0] * len(rData),
+            color="#007700",
+            dashes=[5, 5, 5, 5],
+        )
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Radius [km]")
     plt.ylim(min(rData) * 0.9, max(rData) * 1.1)
     figureList = {}
-    pltName = fileName + "1" + orbitCase + useBias1_str + useBounds1_str + useBias2_str + useBounds2_str
+    pltName = (
+        fileName
+        + "1"
+        + orbitCase
+        + useBias1_str
+        + useBounds1_str
+        + useBias2_str
+        + useBounds2_str
+    )
     figureList[pltName] = plt.figure(1)
 
     # plot 2
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2SEC / P, tam1Data[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$TAM_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Magnetic Field [nT] ')
-    plt.title('Centered Dipole Model')
-    if orbitCase == 'elliptical':
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            tam1Data[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$TAM_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Magnetic Field [nT] ")
+    plt.title("Centered Dipole Model")
+    if orbitCase == "elliptical":
         for idx in range(3):
-            plt.plot(timeAxis * macros.NANO2SEC / P, tam3Data[:, idx] * 1e9, '--',
-                     color=unitTestSupport.getLineColor(idx, 3),
-                     label=r'$TAM_{' + str(idx) + '}$')
-    pltName = fileName + "2" + orbitCase + useBias1_str + useBounds1_str + useBias2_str + useBounds2_str
+            plt.plot(
+                timeAxis * macros.NANO2SEC / P,
+                tam3Data[:, idx] * 1e9,
+                "--",
+                color=unitTestSupport.getLineColor(idx, 3),
+                label=r"$TAM_{" + str(idx) + "}$",
+            )
+    pltName = (
+        fileName
+        + "2"
+        + orbitCase
+        + useBias1_str
+        + useBounds1_str
+        + useBias2_str
+        + useBounds2_str
+    )
     figureList[pltName] = plt.figure(2)
 
     # plot 3
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2SEC / P, tam2Data[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$TAM_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Magnetic Field [nT] ')
-    plt.title('WMM Model')
-    pltName = fileName + "3" + orbitCase + useBias1_str + useBounds1_str + useBias2_str + useBounds2_str
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            tam2Data[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$TAM_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Magnetic Field [nT] ")
+    plt.title("WMM Model")
+    pltName = (
+        fileName
+        + "3"
+        + orbitCase
+        + useBias1_str
+        + useBounds1_str
+        + useBias2_str
+        + useBounds2_str
+    )
     figureList[pltName] = plt.figure(3)
-
 
     if show_plots:
         plt.show()
@@ -460,10 +527,9 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
 if __name__ == "__main__":
     run(
         True,  # show_plots (True,False)
-        'circular',  # orbit Case (circular, elliptical)
-        False,  #use Bias 1 (True,False)
-        False,  #use Bias 2 (True,False)
-        True,   #Use sensor bounds 1 (True,False)
-        False   #Use sensor bounds 2 (True,False)
+        "circular",  # orbit Case (circular, elliptical)
+        False,  # use Bias 1 (True,False)
+        False,  # use Bias 2 (True,False)
+        True,  # Use sensor bounds 1 (True,False)
+        False,  # Use sensor bounds 2 (True,False)
     )
-

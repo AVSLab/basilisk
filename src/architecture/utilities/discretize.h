@@ -24,37 +24,37 @@
 #include <stdint.h>
 #include <Eigen/Dense>
 
-
-typedef enum {
+typedef enum
+{
     TO_ZERO,
     FROM_ZERO,
     NEAR
 } roundDirection_t;
 
 /*! This module discretizes data for output. It has the option to carry over discretization error or not.
-*/
+ */
 class Discretize
 {
 
-public:
+  public:
     Discretize();
     Discretize(uint8_t numStates);
     ~Discretize();
-//    void setLSBByBits(uint8_t numBits, double min, double max);
-//    /*!@brief Method determines the size of an output data bin (bit-value) making sure that zero is
-//     a possible output and giving proportionate numbers of bits to the size of max and min void*/
+    //    void setLSBByBits(uint8_t numBits, double min, double max);
+    //    /*!@brief Method determines the size of an output data bin (bit-value) making sure that zero is
+    //     a possible output and giving proportionate numbers of bits to the size of max and min void*/
 
     /*!@brief Avoid calculating bit value (bin size) and just set it because a resolution is known
        @param givenLSB
      */
-    void setLSB(Eigen::VectorXd givenLSB) {this->LSB = givenLSB;}
+    void setLSB(Eigen::VectorXd givenLSB) { this->LSB = givenLSB; }
 
     void setRoundDirection(roundDirection_t direction);
 
     /*!@brief Sets the round direction (toZero, fromZero, near) for discretization
      @param carryErrorIn
      */
-    void setCarryError(bool carryErrorIn){this->carryError = carryErrorIn;}
+    void setCarryError(bool carryErrorIn) { this->carryError = carryErrorIn; }
 
     /*!@brief Discretizes the given truth vector according to a least significant bit (binSize)
        @param undiscretizedVector
@@ -63,16 +63,16 @@ public:
 
     /*!@brief Get the discretization errors
      @return the errors due to discretization in a corresponding vector*/
-    Eigen::VectorXd getDiscretizationErrors(){return(this->discErrors);}
+    Eigen::VectorXd getDiscretizationErrors() { return (this->discErrors); }
 
-    Eigen::VectorXd LSB;                //!< -- size of bin, bit value, least significant bit
+    Eigen::VectorXd LSB; //!< -- size of bin, bit value, least significant bit
 
-private:
-    roundDirection_t roundDirection;    //!< -- Direction to round when discretizing. "toZero", "fromZero", and "near" are the options.
-    uint8_t numStates;                  //!< -- Number of states to be discretized (length of vector fed in)
-    Eigen::VectorXd discErrors;         //!< -- Errors from discretization. Can be returned to adjusted integrated values.
-    bool carryError;                    //!< -- true if discError should be added next time around, false if not.
+  private:
+    roundDirection_t
+      roundDirection;  //!< -- Direction to round when discretizing. "toZero", "fromZero", and "near" are the options.
+    uint8_t numStates; //!< -- Number of states to be discretized (length of vector fed in)
+    Eigen::VectorXd discErrors; //!< -- Errors from discretization. Can be returned to adjusted integrated values.
+    bool carryError;            //!< -- true if discError should be added next time around, false if not.
 };
-
 
 #endif /* _discretize_HH_ */

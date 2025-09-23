@@ -25,11 +25,16 @@
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import eulerRotation  # import the module that is to be tested
+from Basilisk.fswAlgorithms import (
+    eulerRotation,
+)  # import the module that is to be tested
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -38,9 +43,8 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("function", ["run"
-                                      , "run2"
-                                      ])
+
+@pytest.mark.parametrize("function", ["run", "run2"])
 def test_all_test_eulerRotation(show_plots, function):
     """Module Unit Test"""
     testFunction = globals().get(function)
@@ -53,23 +57,22 @@ def test_all_test_eulerRotation(show_plots, function):
 
 
 def run(show_plots):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Test times
-    updateTime = 0.5     # update process rate update time
+    updateTime = 0.5  # update process rate update time
     totalTestSimTime = 1.5
 
     # Create test thread
     testProcessRate = mc.sec2nano(updateTime)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
 
     # Construct algorithm and associated C++ container
     module = eulerRotation.eulerRotation()
@@ -90,7 +93,9 @@ def run(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateOutData = (
+        messaging.AttRefMsgPayload()
+    )  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
@@ -113,7 +118,9 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(mc.sec2nano(totalTestSimTime))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(
+        mc.sec2nano(totalTestSimTime)
+    )  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -130,12 +137,12 @@ def run(show_plots):
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
         [-0.193031238249, 0.608048400483, 0.386062476497],
-        [-0.193144351314,  0.607931107381,  0.386360300559],
-        [-0.193257454832,  0.607813704445,  0.386658117585]
+        [-0.193144351314, 0.607931107381, 0.386360300559],
+        [-0.193257454832, 0.607813704445, 0.386658117585],
     ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "sigma_RN Set",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector, moduleOutput, accuracy, "sigma_RN Set", testFailCount, testMessages
+    )
     # print '\n sigma_RN = ', moduleOutput[:, 1:], '\n'
     #
     # check omega_RN_N
@@ -143,14 +150,19 @@ def run(show_plots):
     moduleOutput = dataLog.omega_RN_N
     # set the filtered output truth states
     trueVector = [
-        [0.101246280045,  0.000182644489,  0.001208139578],
-        [0.101246280045,  0.000182644489,  0.001208139578],
-        [0.101246280045,  0.000182644489,  0.001208139578],
-        [0.101246280045,  0.000182644489,  0.001208139578]
+        [0.101246280045, 0.000182644489, 0.001208139578],
+        [0.101246280045, 0.000182644489, 0.001208139578],
+        [0.101246280045, 0.000182644489, 0.001208139578],
+        [0.101246280045, 0.000182644489, 0.001208139578],
     ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "omega_RN_N Vector",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        moduleOutput,
+        accuracy,
+        "omega_RN_N Vector",
+        testFailCount,
+        testMessages,
+    )
 
     #
     # check domega_RN_N
@@ -158,30 +170,35 @@ def run(show_plots):
     moduleOutput = dataLog.domega_RN_N
     # set the filtered output truth states
     trueVector = [
-        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
-        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
-        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
-        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05]
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
     ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "domega_RN_N Vector",
-                                                               testFailCount, testMessages)
-
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        moduleOutput,
+        accuracy,
+        "domega_RN_N Vector",
+        testFailCount,
+        testMessages,
+    )
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
-#    if show_plots:
-#        # plot a sample variable.
-#        plt.figure(1)
-#        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-#        plt.legend(loc='upper left')
-#        plt.xlabel('Time [s]')
-#        plt.ylabel('Variable Description [unit]')
-#        plt.show()
+    #    if show_plots:
+    #        # plot a sample variable.
+    #        plt.figure(1)
+    #        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
+    #        plt.legend(loc='upper left')
+    #        plt.xlabel('Time [s]')
+    #        plt.ylabel('Variable Description [unit]')
+    #        plt.show()
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def run2(show_plots):
     testFailCount = 0  # zero unit test result counter
@@ -220,7 +237,9 @@ def run2(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = messaging.AttRefMsgPayload()  # Create a structure for the input message
+    RefStateOutData = (
+        messaging.AttRefMsgPayload()
+    )  # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
@@ -252,7 +271,9 @@ def run2(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(mc.sec2nano(totalTestSimTime))  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(
+        mc.sec2nano(totalTestSimTime)
+    )  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -269,11 +290,11 @@ def run2(show_plots):
         [-0.193031238249, 0.608048400483, 0.386062476497],
         [-0.193031238249, 0.608048400483, 0.386062476497],
         [-0.193144351314, 0.607931107381, 0.386360300559],
-        [-0.193257454832, 0.607813704445, 0.386658117585]
+        [-0.193257454832, 0.607813704445, 0.386658117585],
     ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "sigma_RN Set",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector, moduleOutput, accuracy, "sigma_RN Set", testFailCount, testMessages
+    )
     # print '\n sigma_RN = ', moduleOutput[:, 1:], '\n'
     #
     # check omega_RN_N
@@ -284,11 +305,16 @@ def run2(show_plots):
         [0.101246280045, 0.000182644489, 0.001208139578],
         [0.101246280045, 0.000182644489, 0.001208139578],
         [0.101246280045, 0.000182644489, 0.001208139578],
-        [0.101246280045, 0.000182644489, 0.001208139578]
+        [0.101246280045, 0.000182644489, 0.001208139578],
     ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "omega_RN_N Vector",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        moduleOutput,
+        accuracy,
+        "omega_RN_N Vector",
+        testFailCount,
+        testMessages,
+    )
 
     #
     # check domega_RN_N
@@ -296,19 +322,23 @@ def run2(show_plots):
     moduleOutput = dataLog.domega_RN_N
     # set the filtered output truth states
     trueVector = [
-        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],
-        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],
-        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],
-        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05]
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e00, -1.208139577635e-04, 1.826444892823e-05],
     ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "domega_RN_N Vector",
-                                                               testFailCount, testMessages)
-
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        moduleOutput,
+        accuracy,
+        "domega_RN_N Vector",
+        testFailCount,
+        testMessages,
+    )
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #

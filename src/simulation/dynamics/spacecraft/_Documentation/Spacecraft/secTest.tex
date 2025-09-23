@@ -4,7 +4,7 @@
 This test is located in \texttt{simulation/dynamics/SpacecraftDynamics/spacecraft/\_UnitTest/\newline
 test\_spacecraft.py}. Depending on the scenario, there are different success criteria. These are outlined in the following subsections:
 \subsection{Translation Only with Gravity Scenario}
-In this test the simulation is placed into orbit around Earth with point gravity and the spacecraft only has translational equations being evaluated. The following parameters are being tested. 
+In this test the simulation is placed into orbit around Earth with point gravity and the spacecraft only has translational equations being evaluated. The following parameters are being tested.
 \begin{itemize}
 	\item Conservation of orbital angular momentum
 	\item Conservation of orbital energy
@@ -22,7 +22,7 @@ In this test, the spacecraft only has rotational equations being evaluated. The 
 \end{itemize}
 The calculations for both the switching of the MRPs and the BOE for rotational dynamics need to be further discussed. The following sections outline these checks.
 
-\subsubsection{MRP switching test} 
+\subsubsection{MRP switching test}
 The MRP switching check needs to be discussed. In Basilisk the MRPs are switched to the shadow set in \textit{hubEffector} after one step of the integration using the method \textit{modifyStates()} which is available to all \textit{stateEffectors} that need to change their states to a different but equivalent form. The MRP switching adheres to the following equation\cite{schaub}:
 
 \begin{equation}
@@ -36,7 +36,7 @@ The MRP switching check needs to be discussed. In Basilisk the MRPs are switched
 \label{eq:ballin}
 \end{equation}
 
-To check that the switch in the simulation is behaving the way it should, the following check was developed. If the switch happened at time $t_\textnormal{s}$, then there are two variables from the sim that will be used: $\bm \sigma(t_\textnormal{s-1})$ and $\bm \sigma(t_\textnormal{s})$. The intermediate MRP that is switched in the sim is not an output of the simulation, but we will call this variable $\bm \sigma_0(t_\textnormal{s})$. To check the switching the following math occurs: 
+To check that the switch in the simulation is behaving the way it should, the following check was developed. If the switch happened at time $t_\textnormal{s}$, then there are two variables from the sim that will be used: $\bm \sigma(t_\textnormal{s-1})$ and $\bm \sigma(t_\textnormal{s})$. The intermediate MRP that is switched in the sim is not an output of the simulation, but we will call this variable $\bm \sigma_0(t_\textnormal{s})$. To check the switching the following math occurs:
 
 \begin{equation}
 \bm \sigma_0(t_\textnormal{s}) \approx \bm \sigma(t_\textnormal{s-1}) + \frac{\bm \sigma(t_\textnormal{s-1}) - \bm \sigma(t_\textnormal{s-2})}{\Delta t} \Delta t
@@ -109,7 +109,7 @@ In this test, the spacecraft is placed into an orbit with simple gravity and als
 
 \subsection{Translational BOE Calculation Scenario}
 
-The translational BOE calculation can be seen in Figure~\ref{fig:BOETrans}. In this test a positive force is placed on the hub in the $\hat{\bm b}_1$ direction with no torque and no initial rotation of the spacecraft. This results in the 1 degree of freedom problem seen in Figure~\ref{fig:BOETrans}. The force is applied for some length of time, left off for a length of time, and then a negative force is applied ot the system for some length of time. The test is ensuring that Basilisk is giving the same results as the BOE calculation. 
+The translational BOE calculation can be seen in Figure~\ref{fig:BOETrans}. In this test a positive force is placed on the hub in the $\hat{\bm b}_1$ direction with no torque and no initial rotation of the spacecraft. This results in the 1 degree of freedom problem seen in Figure~\ref{fig:BOETrans}. The force is applied for some length of time, left off for a length of time, and then a negative force is applied ot the system for some length of time. The test is ensuring that Basilisk is giving the same results as the BOE calculation.
 
 \begin{figure}[htbp]
 	\centerline{
@@ -134,13 +134,13 @@ The test runs two simulations: one with the body frame origin defined at the cen
 
 Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}.
 
-The energy/momentum conservation, rotational BOE, and translational BOE relative tolerance values were chosen to be 1e-10 to ensure cross-platform success. However, the expected relative tolerance for these three tests are $\approx$ 1e-15, which is about machine precision. This is because the integration time step was low enough that the integrator was introducing very small errors with respect to the exact solution. This gives great confidence in the simulations. The position and attitude relative tolerance values (including Point B Vs. Point C tests) were chosen because the values saved in python to compare to had 10 significant digits. Therefore, 1e-8 was chosen to ensure platform success. This agreement is very good and gives further confidence in the solution. Finally, the MRP switching relative tolerance was chosen to be 1e-5 because of the time step dependency of this test. Since the test involves a numerical difference the accuracy gets better the smaller the step size. For example with a step size of 0.001, the resulting relative accuracy was 1e-7 but if a step size of 0.001 is used, 1e-13 was the resulting relative accuracy. Therefore, 1e-5 was chosen to ensure cross platform success and to use a step size of 0.001 for speed. However, since as the step size goes down the simulation approaches the analytical solution, this tests gives very good confidence in the simulation. 
+The energy/momentum conservation, rotational BOE, and translational BOE relative tolerance values were chosen to be 1e-10 to ensure cross-platform success. However, the expected relative tolerance for these three tests are $\approx$ 1e-15, which is about machine precision. This is because the integration time step was low enough that the integrator was introducing very small errors with respect to the exact solution. This gives great confidence in the simulations. The position and attitude relative tolerance values (including Point B Vs. Point C tests) were chosen because the values saved in python to compare to had 10 significant digits. Therefore, 1e-8 was chosen to ensure platform success. This agreement is very good and gives further confidence in the solution. Finally, the MRP switching relative tolerance was chosen to be 1e-5 because of the time step dependency of this test. Since the test involves a numerical difference the accuracy gets better the smaller the step size. For example with a step size of 0.001, the resulting relative accuracy was 1e-7 but if a step size of 0.001 is used, 1e-13 was the resulting relative accuracy. Therefore, 1e-5 was chosen to ensure cross platform success and to use a step size of 0.001 for speed. However, since as the step size goes down the simulation approaches the analytical solution, this tests gives very good confidence in the simulation.
 
 \begin{table}[htbp]
 	\caption{Spacecraft Hub Parameters}
 	\label{tab:hub}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -160,18 +160,18 @@ The energy/momentum conservation, rotational BOE, and translational BOE relative
 	\caption{Initial Conditions of the simulations}
 	\label{tab:initial}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | p{2.25in} | c | c } % Column formatting, 
+	\begin{tabular}{ c | p{2.25in} | c | c } % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
 		r\_CN\_NInit & Initial Position of S/C (gravity scenarios) & $\begin{bmatrix}
-		-4020339 &	7490567 & 5248299 
+		-4020339 &	7490567 & 5248299
 		\end{bmatrix}^T$ & m \\
 		v\_CN\_NInit & Initial Velocity of S/C (gravity scenarios) & $\begin{bmatrix}
 		-5199.78 & -3436.68 & 1041.58
 		\end{bmatrix}^T$ & m/s \\
 		r\_CN\_NInit & Initial Position of S/C (no gravity) & $\begin{bmatrix}
-		0.0 & 0.0 & 0.0 
+		0.0 & 0.0 & 0.0
 		\end{bmatrix}^T$ & m \\
 		v\_CN\_NInit & Initial Velocity of S/C (no gravity) & $\begin{bmatrix}
 		0.0 & 0.0 & 0.0
@@ -196,7 +196,7 @@ The energy/momentum conservation, rotational BOE, and translational BOE relative
 	\caption{Error Tolerance - Note: Relative Tolerance is $\textnormal{abs}(\frac{\textnormal{truth} - \textnormal{value}}{\textnormal{truth}}$)}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline
 		\textbf{Test}   & \textbf{Relative Tolerance} \\
 		\hline
@@ -207,7 +207,7 @@ The energy/momentum conservation, rotational BOE, and translational BOE relative
 		Rotational BOE & 1e-10 \\
 		Translational BOE & 1e-10 \\
 		Point B Vs. Point C & 1e-8 \\
-		\hline	
+		\hline
 	\end{tabular}
 \end{table}
 

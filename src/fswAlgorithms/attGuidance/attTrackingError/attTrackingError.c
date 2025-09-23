@@ -21,7 +21,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
@@ -29,19 +28,21 @@
  @param configData The configuration data associated with the attitude tracking error module
  @param moduleID The ID associated with the configData
  */
-void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
+void
+SelfInit_attTrackingError(attTrackingErrorConfig* configData, int64_t moduleID)
 {
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
 }
 
-
-/*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
+/*! This method performs a complete reset of the module. Local module variables that retain time varying states between
+ function calls are reset to their default values.
 
  @param configData The configuration data associated with the attitude tracking error module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
@@ -54,17 +55,20 @@ void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTim
     return;
 }
 
-/*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance message.
+/*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the
+ Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance
+ message.
 
  @param configData The configuration data associated with the attitude tracking error module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    AttRefMsgPayload ref;                      /* reference guidance message */
-    NavAttMsgPayload nav;                      /* navigation message */
-    AttGuidMsgPayload attGuidOut;              /* Guidance message */
+    AttRefMsgPayload ref;         /* reference guidance message */
+    NavAttMsgPayload nav;         /* navigation message */
+    AttGuidMsgPayload attGuidOut; /* Guidance message */
 
     /*! - Read the input messages */
     attGuidOut = AttGuidMsg_C_zeroMsgPayload();
@@ -86,22 +90,25 @@ void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTi
  @param ref The reference attitude
  @param attGuidOut Output attitude guidance message
  */
-void computeAttitudeError(double sigma_R0R[3], NavAttMsgPayload nav, AttRefMsgPayload ref, AttGuidMsgPayload *attGuidOut){
-    double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
-    double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
-    double      dcm_BN[3][3];               /* DCM from inertial to body frame */
+void
+computeAttitudeError(double sigma_R0R[3], NavAttMsgPayload nav, AttRefMsgPayload ref, AttGuidMsgPayload* attGuidOut)
+{
+    double sigma_RR0[3]; /* MRP from the original reference frame R0 to the corrected reference frame R */
+    double sigma_RN[3];  /* MRP from inertial to updated reference frame */
+    double dcm_BN[3][3]; /* DCM from inertial to body frame */
 
     /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
     v3Scale(-1.0, sigma_R0R, sigma_RR0);
     addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
 
-    subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR);               /*! - compute attitude error */
+    subMRP(nav.sigma_BN, sigma_RN, attGuidOut->sigma_BR); /*! - compute attitude error */
 
-    MRP2C(nav.sigma_BN, dcm_BN);                                /* [BN] */
-    m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B);              /*! - compute reference omega in body frame components */
+    MRP2C(nav.sigma_BN, dcm_BN);                               /* [BN] */
+    m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B); /*! - compute reference omega in body frame components */
 
-    v3Subtract(nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
+    v3Subtract(
+      nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B); /*! - delta_omega = omega_B - [BR].omega.r */
 
-    m33MultV3(dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
-
+    m33MultV3(
+      dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B); /*! - compute reference d(omega)/dt in body frame components */
 }

@@ -2,7 +2,7 @@
 
 \section{Model Description}
 \subsection{Introduction}
-This technical note outlines how the attitude tracking errors are evaluated relative to a given reference frame. The reference frame from the chain of guidance modules is called $\mathcal{R}_{0}$, while the body corrected reference frame orientation is $\mathcal{R}$.  
+This technical note outlines how the attitude tracking errors are evaluated relative to a given reference frame. The reference frame from the chain of guidance modules is called $\mathcal{R}_{0}$, while the body corrected reference frame orientation is $\mathcal{R}$.
 
 \subsection{Reference Frame Definitions}
 Let the primary body-fixed coordinate frame be \frameDefinition{B}. However, instead of aligning this frame with a reference, a corrected body frame $\mathcal{B}_{c}$ is to be aligned with a reference frame.   Let the uncorrected reference orientation be given by $\mathcal{R}_{0}$.  Thus, the guidance goal is to drive $\mathcal{B}_{c} \rightarrow \mathcal{R}_{0}$, which yields
@@ -15,11 +15,11 @@ where $\mathcal{N}$ is an inertial reference frame.  Rearranging this relationsh
 \end{equation}
 where $\mathcal{R}$ is a corrected reference frame.  Note that $[B_{c} B] = [R_{0}R]$.  Thus, the corrected reference orientation is computed using
 \begin{equation}
-	 [RN] = [R_{0} R]^{T} [R_{0}N] 
+	 [RN] = [R_{0} R]^{T} [R_{0}N]
 \end{equation}
-where the body-frame correction is subtracted from the original reference orientation.  
+where the body-frame correction is subtracted from the original reference orientation.
 
-The benefit of of driving $\mathcal{B} \rightarrow \mathcal{R}$ instead of $\mathcal{B}_{c} \rightarrow \mathcal{R}_{0}$ is that the body frame, along with the many device position and orientation vectors expressed in  body-frame components, don't have to be rotated for each control evaluation.  In simple terms, if the corrected body frame is a 60\dg rotation from the body frame, then the 60\dg is subtracted from the original reference orientation.  This allows all body inertia tensor and reaction wheel heading vector descriptions to remain in the primary body frame $\mathcal{B}$.  
+The benefit of of driving $\mathcal{B} \rightarrow \mathcal{R}$ instead of $\mathcal{B}_{c} \rightarrow \mathcal{R}_{0}$ is that the body frame, along with the many device position and orientation vectors expressed in  body-frame components, don't have to be rotated for each control evaluation.  In simple terms, if the corrected body frame is a 60\dg rotation from the body frame, then the 60\dg is subtracted from the original reference orientation.  This allows all body inertia tensor and reaction wheel heading vector descriptions to remain in the primary body frame $\mathcal{B}$.
 
 Assume the initial uncorrected reference frame $\mathcal{R}_{0}$ is given through the MRP set $\bm\sigma_{R_{0}/N}$
 \begin{equation}
@@ -31,12 +31,12 @@ The relative orientation of the corrected body frame relative to the primary bod
 \end{equation}
 To apply this correction to the original reference frame, using the Direction Cosine Matrix (DCM) description, this is determined through
 \begin{equation}
-	[RN(\bm\sigma_{R/N})] = [R_{0}R(\bm\sigma_{R_{0}/R})]^{T} [R_{0}N(\bm\sigma_{R_{0}/N})] = 
+	[RN(\bm\sigma_{R/N})] = [R_{0}R(\bm\sigma_{R_{0}/R})]^{T} [R_{0}N(\bm\sigma_{R_{0}/N})] =
 	[R_{0}R(-\bm\sigma_{R_{0}/R})] [R_{0}N(\bm\sigma_{R_{0}/N})]
 \end{equation}
 where the convenient MRP identity
 \begin{equation}
-	 [R_{0}R(\bm\sigma_{R_{0}/R})]^{T} = [R_{0}R(-\bm\sigma_{R_{0}/R})] 
+	 [R_{0}R(\bm\sigma_{R_{0}/R})]^{T} = [R_{0}R(-\bm\sigma_{R_{0}/R})]
 \end{equation}
 
 Note the following MRP addition property developed in Reference~\citenum{schaub}.  If
@@ -51,7 +51,7 @@ then
 		1 + |\bm\sigma '|^{2} |\bm\sigma''|^{2} - 2 \bm\sigma' \cdot \bm\sigma''
 	}
 \end{equation}
-In the RigidBodyKinematics software library of Reference~\citenum{schaub}, this MRP evaluation is achieved with 
+In the RigidBodyKinematics software library of Reference~\citenum{schaub}, this MRP evaluation is achieved with
 $$
 	\bm\sigma = {\tt addMRP}(\bm\sigma ', \bm\sigma'')
 $$
@@ -79,9 +79,9 @@ The angular velocity tracking error is defined as
 \end{equation}
 The correct reference frame angular velocity is
 \begin{equation}
-	\bm\omega_{R/N} = \bm\omega_{R/R_{0}} + \bm\omega_{R_{0}/N} =  \bm\omega_{R_{0}/N} 
+	\bm\omega_{R/N} = \bm\omega_{R/R_{0}} + \bm\omega_{R_{0}/N} =  \bm\omega_{R_{0}/N}
 \end{equation}
-because the body frame correction $[B_{c} B] = [R_{0}R]$ is a constant angular offset.  
+because the body frame correction $[B_{c} B] = [R_{0}R]$ is a constant angular offset.
 
 The required inertial reference frame rate vector, in body frame components, is then given by
 \begin{equation}

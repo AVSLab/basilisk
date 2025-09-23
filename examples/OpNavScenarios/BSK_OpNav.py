@@ -102,7 +102,6 @@ the scenario is run with python. Saving is left to the user's discretion.
 
 """
 
-
 # Get current file path
 import inspect
 import os
@@ -116,10 +115,10 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import Dynamics and FSW models
-sys.path.append(path + '/modelsOpNav')
+sys.path.append(path + "/modelsOpNav")
 
 # TODO : Modify the path to the viz here
-appPath = '/Applications/Vizard.app/Contents/MacOS/Vizard' #If on Mac
+appPath = "/Applications/Vizard.app/Contents/MacOS/Vizard"  # If on Mac
 # appPath = './../../Applications/Vizard.app' #If on Linux
 
 
@@ -127,6 +126,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
     """
     BSK Simulation base class for opNav scenarios
     """
+
     def __init__(self, fswRate=0.1, dynRate=0.1):
         self.dynRate = dynRate
         self.fswRate = fswRate
@@ -146,24 +146,32 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fsw_added = False
 
     def get_DynModel(self):
-        assert (self.dynamics_added is True), "It is mandatory to use a dynamics model as an argument"
+        assert self.dynamics_added is True, (
+            "It is mandatory to use a dynamics model as an argument"
+        )
         return self.DynModels
 
     def set_DynModel(self, dynModel):
         self.dynamics_added = True
-        self.DynamicsProcessName = 'DynamicsProcess'  # Create simulation process name
-        self.dynProc = self.CreateNewProcess(self.DynamicsProcessName, 100)  # Create process
-        self.DynModels = dynModel.BSKDynamicModels(self, self.dynRate)  # Create Dynamics and FSW classes
+        self.DynamicsProcessName = "DynamicsProcess"  # Create simulation process name
+        self.dynProc = self.CreateNewProcess(
+            self.DynamicsProcessName, 100
+        )  # Create process
+        self.DynModels = dynModel.BSKDynamicModels(
+            self, self.dynRate
+        )  # Create Dynamics and FSW classes
 
     def get_FswModel(self):
-        assert (self.fsw_added is True), "A flight software model has not been added yet"
+        assert self.fsw_added is True, "A flight software model has not been added yet"
         return self.FSWModels
 
     def set_FswModel(self, fswModel):
         self.fsw_added = True
         self.FSWProcessName = "FSWProcess"  # Create simulation process name
         self.fswProc = self.CreateNewProcess(self.FSWProcessName, 10)  # Create process
-        self.FSWModels = fswModel.BSKFswModels(self, self.fswRate)  # Create Dynamics and FSW classes
+        self.FSWModels = fswModel.BSKFswModels(
+            self, self.fswRate
+        )  # Create Dynamics and FSW classes
 
 
 class BSKScenario(object):
@@ -176,38 +184,45 @@ class BSKScenario(object):
 
     def configure_initial_conditions(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
 
     def log_outputs(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
 
     def pull_outputs(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
+
     def run_vizard(self, mode):
         try:
             self.vizard = subprocess.Popen(
-                [self.masterSim.vizPath, "--args", mode, "tcp://localhost:5556"], stdout=subprocess.DEVNULL)
+                [self.masterSim.vizPath, "--args", mode, "tcp://localhost:5556"],
+                stdout=subprocess.DEVNULL,
+            )
 
             print("Vizard spawned with PID = " + str(self.vizard.pid))
         except FileNotFoundError:
             print("Vizard application not found")
             if sys.platform != "darwin":
                 print(
-                    "Either download Vizard at this path %s or change appPath in BSK_OpNav.py file" % self.masterSim.vizPath)
+                    "Either download Vizard at this path %s or change appPath in BSK_OpNav.py file"
+                    % self.masterSim.vizPath
+                )
             else:
-                print("1. Download  Vizard interface \n2. Move it to Applications \n"
-                      "3. Change only application name while initializing appPath variable in BSK_OpNav")
+                print(
+                    "1. Download  Vizard interface \n2. Move it to Applications \n"
+                    "3. Change only application name while initializing appPath variable in BSK_OpNav"
+                )
             exit(1)
-    def end_scenario(self):
 
+    def end_scenario(self):
         if self.vizard is None:
             print("vizard application is not launched")
             exit(1)

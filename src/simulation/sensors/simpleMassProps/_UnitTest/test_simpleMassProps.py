@@ -32,12 +32,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.simulation import simpleMassProps
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging  # import the message definitions
@@ -101,17 +103,19 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
 
     # Construct algorithm and associated C++ container
     scMassPropsModule = simpleMassProps.SimpleMassProps()  # update with current values
-    scMassPropsModule.ModelTag = "scMassPropsModule"  # update python name of test module
+    scMassPropsModule.ModelTag = (
+        "scMassPropsModule"  # update python name of test module
+    )
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scMassPropsModule)
 
     # Create input message
-    scMassPropsData = messaging.SCMassPropsMsgPayload()  # Create a structure for the input message
+    scMassPropsData = (
+        messaging.SCMassPropsMsgPayload()
+    )  # Create a structure for the input message
     scMassPropsData.massSC = 100
-    scMassPropsData.ISC_PntB_B = np.array([[40, 0, 0],
-                                  [0, 50, 0],
-                                  [0, 0, 60]])
+    scMassPropsData.ISC_PntB_B = np.array([[40, 0, 0], [0, 50, 0], [0, 0, 60]])
     scMassPropsData.c_B = np.array([0.0, 0.0, 0.0])
     scMassPropsMsg = messaging.SCMassPropsMsg().write(scMassPropsData)
     scMassPropsModule.scMassPropsInMsg.subscribeTo(scMassPropsMsg)
@@ -128,9 +132,7 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
 
     # Change the mass, inertia and center of mass properties
     scMassPropsData.massSC = 500
-    scMassPropsData.ISC_PntB_B = [[200, 0, 0],
-                                  [0, 300, 0],
-                                  [0, 0, 400]]
+    scMassPropsData.ISC_PntB_B = [[200, 0, 0], [0, 300, 0], [0, 0, 400]]
     scMassPropsData.c_B = [1.0, -1.0, 0.0]
     scMassPropsMsg = messaging.SCMassPropsMsg().write(scMassPropsData)
     scMassPropsModule.scMassPropsInMsg.subscribeTo(scMassPropsMsg)
@@ -140,22 +142,32 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
 
     # set the filtered output truth states
     trueMass = [100, 500]
-    trueInertia = [[40, 0, 0, 0, 50, 0, 0, 0, 60],
-                   [200, 0, 0, 0, 300, 0, 0, 0, 400]]
-    trueCoM = [[0.0, 0.0, 0.0],
-               [1.0, -1.0, 0.0]]
+    trueInertia = [[40, 0, 0, 0, 50, 0, 0, 0, 60], [200, 0, 0, 0, 300, 0, 0, 0, 400]]
+    trueCoM = [[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]]
 
     for i in range(2):
         # check a vector values
-        if not unitTestSupport.isDoubleEqual(vehicleDataLog.massSC[i], trueMass[i], accuracy):
+        if not unitTestSupport.isDoubleEqual(
+            vehicleDataLog.massSC[i], trueMass[i], accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: simpleMassProps mass test " + str(i+1) + "\n")
-        if not unitTestSupport.isArrayEqual(vehicleDataLog.ISCPntB_B[i], trueInertia[i], 9, accuracy):
+            testMessages.append(
+                "FAILED: simpleMassProps mass test " + str(i + 1) + "\n"
+            )
+        if not unitTestSupport.isArrayEqual(
+            vehicleDataLog.ISCPntB_B[i], trueInertia[i], 9, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: simpleMassProps inertia test " + str(i+1) + "\n")
-        if not unitTestSupport.isArrayEqual(vehicleDataLog.CoM_B[i], trueCoM[i], 3, accuracy):
+            testMessages.append(
+                "FAILED: simpleMassProps inertia test " + str(i + 1) + "\n"
+            )
+        if not unitTestSupport.isArrayEqual(
+            vehicleDataLog.CoM_B[i], trueCoM[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: simpleMassProps center of mass test " + str(i+1) + "\n")
+            testMessages.append(
+                "FAILED: simpleMassProps center of mass test " + str(i + 1) + "\n"
+            )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -163,7 +175,7 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -173,5 +185,5 @@ def simpleMassPropsTestFunction(show_plots, accuracy):
 if __name__ == "__main__":
     test_module(  # update "module" in function name
         False,
-        1e-8  # accuracy
+        1e-8,  # accuracy
     )

@@ -61,18 +61,25 @@ def test_thrustCMEstimation(show_plots, dT, accuracy):
 
 
 def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
+    r_CB_B = np.array([0, 0, 0])  # exact CM location
 
-    r_CB_B = np.array([0, 0, 0])       # exact CM location
+    r_TB_B = np.array(
+        [
+            [6, 5, 4],  # simulated thrust application point
+            [5, 4, 6],
+            [4, 6, 5],
+            [-6, 5, 4],
+        ]
+    )
 
-    r_TB_B = np.array([[6, 5, 4],      # simulated thrust application point
-                       [5, 4, 6],
-                       [4, 6, 5],
-                       [-6, 5, 4]])
-
-    T_B = np.array([[1, 2, 3],         # simulated thrust vector
-                    [2, 3, 1],
-                    [3, 1, 2],
-                    [1, -2, 3]])
+    T_B = np.array(
+        [
+            [1, 2, 3],  # simulated thrust vector
+            [2, 3, 1],
+            [3, 1, 2],
+            [1, -2, 3],
+        ]
+    )
 
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
@@ -81,7 +88,7 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(dT)     # update process rate update time
+    testProcessRate = macros.sec2nano(dT)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -127,11 +134,15 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
     unitTestSim.AddModelToTask(unitTaskName, cmEstimateLog)
 
     t = dT
-    R0 = np.array([[cmEstimation.R0[0][0], 0, 0],
-                   [0, cmEstimation.R0[1][0], 0],
-                   [0, 0, cmEstimation.R0[2][0]]])
+    R0 = np.array(
+        [
+            [cmEstimation.R0[0][0], 0, 0],
+            [0, cmEstimation.R0[1][0], 0],
+            [0, 0, cmEstimation.R0[2][0]],
+        ]
+    )
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(t-0.1))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(t - 0.1))
     for i in range(len(r_TB_B)):
         thrBConfig.timeTag = macros.sec2nano(t)
         thrBConfig.rThrust_B = r_TB_B[i]
@@ -140,13 +151,13 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
         thrConfigBMsg.write(thrBConfig)
 
         intTorque.timeTag = macros.sec2nano(t)
-        uMeasNoise = np.random.multivariate_normal([0,0,0], R0, size=1)
+        uMeasNoise = np.random.multivariate_normal([0, 0, 0], R0, size=1)
         intTorque.torqueRequestBody = -np.cross(r_TB_B[i], T_B[i]) + uMeasNoise[0]
         intFeedbackTorqueMsg.write(intTorque)
 
         t += dT
         unitTestSim.ExecuteSimulation()
-        unitTestSim.ConfigureStopTime(macros.sec2nano(t-0.1))
+        unitTestSim.ConfigureStopTime(macros.sec2nano(t - 0.1))
 
     #   retrieve the logged data
     stateErr = cmEstimateLog.stateError
@@ -156,17 +167,25 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
 
     # check that post-fit residuals are smaller in magnitude that pre-fit residuals at each measurement
     for i in range(len(r_TB_B)):
-        np.testing.assert_array_less(np.linalg.norm(postFit[i]), np.linalg.norm(preFit[i]) + accuracy, verbose=True)
+        np.testing.assert_array_less(
+            np.linalg.norm(postFit[i]),
+            np.linalg.norm(preFit[i]) + accuracy,
+            verbose=True,
+        )
 
     # check that components of post-fit residuals are within 3-sigma bounds of measurement covariance
     for i in range(len(r_TB_B)):
         for j in range(3):
-            np.testing.assert_array_less(postFit[i][j], 3*(R0[j][j])**0.5 + accuracy, verbose=True)
+            np.testing.assert_array_less(
+                postFit[i][j], 3 * (R0[j][j]) ** 0.5 + accuracy, verbose=True
+            )
 
     # check that components of state errors are within 3-sigma bounds of state covariance
     for i in range(len(r_TB_B)):
         for j in range(3):
-            np.testing.assert_array_less(stateErr[i][j], 3*sigma[i][j] + accuracy, verbose=True)
+            np.testing.assert_array_less(
+                stateErr[i][j], 3 * sigma[i][j] + accuracy, verbose=True
+            )
 
     return
 
@@ -177,7 +196,7 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
 #
 if __name__ == "__main__":
     test_thrustCMEstimation(
-        True,                # show_plots
-        10,                  # dTsim
-        1e-12                # accuracy
+        True,  # show_plots
+        10,  # dTsim
+        1e-12,  # accuracy
     )

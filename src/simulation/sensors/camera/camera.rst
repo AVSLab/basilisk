@@ -5,7 +5,7 @@ codebase. Although images are provided by the visualization, they are
 renders of the Unity engine and are not necessarily representative of
 a camera. The module reads in an image from a file, or in the
 simulation as a pointer to image data, then corrupts it according to
-input parameters. 
+input parameters.
 
 Module Assumptions and Limitations
 ----------------------------------

@@ -26,38 +26,39 @@
 #include "cMsgCInterface/ArrayMotorTorqueMsg_C.h"
 
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
 
     /*! declare these user-defined input parameters */
-    double K;                 //!< proportional gain
-    double P;                 //!< derivative gain
-    double I;                 //!< integral gain
+    double K; //!< proportional gain
+    double P; //!< derivative gain
+    double I; //!< integral gain
 
     /*! declare these variables for internal computations */
-    uint64_t priorTime;       //!< prior function call time for trapezoid integration
-    double   priorThetaError; //!< theta error at prior function call
-    double   intError;        //!< integral error
+    uint64_t priorTime;     //!< prior function call time for trapezoid integration
+    double priorThetaError; //!< theta error at prior function call
+    double intError;        //!< integral error
 
     /* declare module IO interfaces */
-    HingedRigidBodyMsg_C   hingedRigidBodyInMsg;      //!< input spinning body message
-    HingedRigidBodyMsg_C   hingedRigidBodyRefInMsg;   //!< output msg containing spinning body target angle and angle rate
-    ArrayMotorTorqueMsg_C  motorTorqueOutMsg;         //!< output msg containing the motor torque to the array drive
+    HingedRigidBodyMsg_C hingedRigidBodyInMsg;    //!< input spinning body message
+    HingedRigidBodyMsg_C hingedRigidBodyRefInMsg; //!< output msg containing spinning body target angle and angle rate
+    ArrayMotorTorqueMsg_C motorTorqueOutMsg;      //!< output msg containing the motor torque to the array drive
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
+    BSKLogger* bskLogger; //!< BSK Logging
 
-}hingedRigidBodyPIDMotorConfig;
+} hingedRigidBodyPIDMotorConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, int64_t moduleID);
-    void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, int64_t moduleID);
+    void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

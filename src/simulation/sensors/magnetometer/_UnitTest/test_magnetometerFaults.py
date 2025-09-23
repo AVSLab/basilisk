@@ -38,52 +38,161 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
-@pytest.mark.parametrize("axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, errTol", [
-    # --- Nominal ---
-    (magnetometer.NOMINAL, magnetometer.NOMINAL, magnetometer.NOMINAL,
-     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),
-
-    # --- StuckValue cases ---
-    (magnetometer.MAG_FAULT_STUCK_VALUE, magnetometer.NOMINAL, magnetometer.NOMINAL,
-     [5.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),   # X stuck
-    (magnetometer.NOMINAL, magnetometer.MAG_FAULT_STUCK_VALUE, magnetometer.NOMINAL,
-     [0.0, -10.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01), # Y stuck
-    (magnetometer.NOMINAL, magnetometer.NOMINAL, magnetometer.MAG_FAULT_STUCK_VALUE,
-     [0.0, 0.0, 2.5], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),   # Z stuck
-    (magnetometer.MAG_FAULT_STUCK_VALUE, magnetometer.MAG_FAULT_STUCK_VALUE, magnetometer.MAG_FAULT_STUCK_VALUE,
-     [1.0, -2.0, 3.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),  # all stuck at different values
-
-    # --- StuckCurrent cases ---
-    (magnetometer.MAG_FAULT_STUCK_CURRENT, magnetometer.NOMINAL, magnetometer.NOMINAL,
-     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),   # X stuck at current
-    (magnetometer.NOMINAL, magnetometer.MAG_FAULT_STUCK_CURRENT, magnetometer.NOMINAL,
-     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),   # Y stuck at current
-    (magnetometer.NOMINAL, magnetometer.NOMINAL, magnetometer.MAG_FAULT_STUCK_CURRENT,
-     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),   # Z stuck at current
-    (magnetometer.MAG_FAULT_STUCK_CURRENT, magnetometer.MAG_FAULT_STUCK_CURRENT, magnetometer.MAG_FAULT_STUCK_CURRENT,
-     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.0, 1.0, 1.0], 0.01),   # all stuck at current
-
-    # --- Spiking deterministic (prob=1) ---
-    (magnetometer.MAG_FAULT_SPIKING, magnetometer.NOMINAL, magnetometer.NOMINAL,
-     [0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [10.0, 1.0, 1.0], 0.01),  # X always spikes ×10
-    (magnetometer.NOMINAL, magnetometer.MAG_FAULT_SPIKING, magnetometer.NOMINAL,
-     [0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, -3.0, 1.0], 0.01),  # Y always spikes ×-3
-    (magnetometer.NOMINAL, magnetometer.NOMINAL, magnetometer.MAG_FAULT_SPIKING,
-     [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 1.0, 0.0], 0.01),   # Z always spikes to zero
-
-    # --- Spiking probabilistic ---
-    (magnetometer.MAG_FAULT_SPIKING, magnetometer.NOMINAL, magnetometer.NOMINAL,
-     [0.0, 0.0, 0.0], [0.2, 0.0, 0.0], [2.0, 1.0, 1.0], 0.01),   # X spikes ~20% of steps ×2
-    (magnetometer.NOMINAL, magnetometer.MAG_FAULT_SPIKING, magnetometer.MAG_FAULT_SPIKING,
-     [0.0, 0.0, 0.0], [0.0, 0.5, 0.5], [1.0, 2.0, -1.0], 0.01),  # Y spikes ×2, Z spikes inverted ×-1
-
-    # --- Mixed faults ---
-    (magnetometer.MAG_FAULT_STUCK_VALUE, magnetometer.MAG_FAULT_STUCK_CURRENT, magnetometer.MAG_FAULT_SPIKING,
-     [4.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 1.0, 3.0], 0.01),   # X stuck=4, Y stuck-current, Z spikes ×3
-    (magnetometer.MAG_FAULT_SPIKING, magnetometer.MAG_FAULT_STUCK_VALUE, magnetometer.NOMINAL,
-     [0.0, -7.0, 0.0], [1.0, 0.0, 0.0], [5.0, 1.0, 1.0], 0.01),  # X spikes ×5, Y stuck=-7
-])
-
+@pytest.mark.parametrize(
+    "axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, errTol",
+    [
+        # --- Nominal ---
+        (
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),
+        # --- StuckValue cases ---
+        (
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            [5.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # X stuck
+        (
+            magnetometer.NOMINAL,
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            magnetometer.NOMINAL,
+            [0.0, -10.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # Y stuck
+        (
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            [0.0, 0.0, 2.5],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # Z stuck
+        (
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            [1.0, -2.0, 3.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # all stuck at different values
+        # --- StuckCurrent cases ---
+        (
+            magnetometer.MAG_FAULT_STUCK_CURRENT,
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # X stuck at current
+        (
+            magnetometer.NOMINAL,
+            magnetometer.MAG_FAULT_STUCK_CURRENT,
+            magnetometer.NOMINAL,
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # Y stuck at current
+        (
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            magnetometer.MAG_FAULT_STUCK_CURRENT,
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # Z stuck at current
+        (
+            magnetometer.MAG_FAULT_STUCK_CURRENT,
+            magnetometer.MAG_FAULT_STUCK_CURRENT,
+            magnetometer.MAG_FAULT_STUCK_CURRENT,
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],
+            0.01,
+        ),  # all stuck at current
+        # --- Spiking deterministic (prob=1) ---
+        (
+            magnetometer.MAG_FAULT_SPIKING,
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [10.0, 1.0, 1.0],
+            0.01,
+        ),  # X always spikes ×10
+        (
+            magnetometer.NOMINAL,
+            magnetometer.MAG_FAULT_SPIKING,
+            magnetometer.NOMINAL,
+            [0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [1.0, -3.0, 1.0],
+            0.01,
+        ),  # Y always spikes ×-3
+        (
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            magnetometer.MAG_FAULT_SPIKING,
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [1.0, 1.0, 0.0],
+            0.01,
+        ),  # Z always spikes to zero
+        # --- Spiking probabilistic ---
+        (
+            magnetometer.MAG_FAULT_SPIKING,
+            magnetometer.NOMINAL,
+            magnetometer.NOMINAL,
+            [0.0, 0.0, 0.0],
+            [0.2, 0.0, 0.0],
+            [2.0, 1.0, 1.0],
+            0.01,
+        ),  # X spikes ~20% of steps ×2
+        (
+            magnetometer.NOMINAL,
+            magnetometer.MAG_FAULT_SPIKING,
+            magnetometer.MAG_FAULT_SPIKING,
+            [0.0, 0.0, 0.0],
+            [0.0, 0.5, 0.5],
+            [1.0, 2.0, -1.0],
+            0.01,
+        ),  # Y spikes ×2, Z spikes inverted ×-1
+        # --- Mixed faults ---
+        (
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            magnetometer.MAG_FAULT_STUCK_CURRENT,
+            magnetometer.MAG_FAULT_SPIKING,
+            [4.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [1.0, 1.0, 3.0],
+            0.01,
+        ),  # X stuck=4, Y stuck-current, Z spikes ×3
+        (
+            magnetometer.MAG_FAULT_SPIKING,
+            magnetometer.MAG_FAULT_STUCK_VALUE,
+            magnetometer.NOMINAL,
+            [0.0, -7.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [5.0, 1.0, 1.0],
+            0.01,
+        ),  # X spikes ×5, Y stuck=-7
+    ],
+)
 def test_magnetometer_faults(
     axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, errTol
 ):
@@ -92,6 +201,7 @@ def test_magnetometer_faults(
     )
     assert testResults < 1, testMessages
     __tracebackhide__ = True
+
 
 def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, errTol):
     testFailCount = 0  # zero unit test result counter
@@ -119,7 +229,11 @@ def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, 
 
     # Set-up fake magnetic field
     magFieldMsg = messaging.MagneticFieldMsgPayload()
-    trueMagField = [1e-5, 2e-5, 1.5e-5]  # [T] true magnetic field outputs in inertial frame
+    trueMagField = [
+        1e-5,
+        2e-5,
+        1.5e-5,
+    ]  # [T] true magnetic field outputs in inertial frame
     magFieldMsg.magField_N = trueMagField
     magMsg = messaging.MagneticFieldMsg().write(magFieldMsg)
     testModule.magInMsg.subscribeTo(magMsg)
@@ -197,7 +311,7 @@ def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, 
             if not unitTestSupport.isArrayEqualRelative(measured, true, 3, errTol):
                 testFailCount += 1
                 testMessages.append(
-                    f"TAM data without fault failed comparison with {errTol*100}% tolerance"
+                    f"TAM data without fault failed comparison with {errTol * 100}% tolerance"
                 )
         else:
             for j, state in enumerate([axis0State, axis1State, axis2State]):
@@ -206,7 +320,7 @@ def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, 
                 ):
                     testFailCount += 1
                     testMessages.append(
-                        f"TAM data without fault failed comparison with {errTol*100}% tolerance"
+                        f"TAM data without fault failed comparison with {errTol * 100}% tolerance"
                     )
                 elif (
                     state == magnetometer.MAG_FAULT_STUCK_VALUE
@@ -216,7 +330,7 @@ def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, 
                 ):
                     testFailCount += 1
                     testMessages.append(
-                        f"TAM data with stuck value fault failed comparison with {errTol*100}% tolerance"
+                        f"TAM data with stuck value fault failed comparison with {errTol * 100}% tolerance"
                     )
                 elif (
                     state == magnetometer.MAG_FAULT_STUCK_CURRENT
@@ -226,7 +340,7 @@ def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, 
                 ):
                     testFailCount += 1
                     testMessages.append(
-                        f"TAM data with stuck current fault failed comparison with {errTol*100}% tolerance"
+                        f"TAM data with stuck current fault failed comparison with {errTol * 100}% tolerance"
                     )
                 elif state == magnetometer.MAG_FAULT_SPIKING:
                     expected_spike = true[j] * spikeAmount[j]
@@ -236,7 +350,7 @@ def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, 
                         ):
                             testFailCount += 1
                             testMessages.append(
-                                f"TAM data with deterministic spiking fault failed comparison with {errTol*100}% tolerance"
+                                f"TAM data with deterministic spiking fault failed comparison with {errTol * 100}% tolerance"
                             )
                     else:
                         if not (
@@ -249,7 +363,7 @@ def run(axis0State, axis1State, axis2State, stuckValue, spikeProb, spikeAmount, 
                         ):
                             testFailCount += 1
                             testMessages.append(
-                                f"TAM data with probabilistic spiking fault failed comparison with {errTol*100}% tolerance"
+                                f"TAM data with probabilistic spiking fault failed comparison with {errTol * 100}% tolerance"
                             )
 
                         # Count spikes for later fraction check

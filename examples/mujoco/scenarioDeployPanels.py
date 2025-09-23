@@ -77,9 +77,9 @@ import numpy as np
 CURRENT_FOLDER = os.path.dirname(__file__)
 XML_PATH = f"{CURRENT_FOLDER}/sat_w_deployable_panels.xml"
 
-JOINT_START_END = [(np.pi / 2, 0), (np.pi, 0), (np.pi, 0)] # rad
-MAX_PROFILE_VEL = np.deg2rad(0.05) # rad
-MAX_PROFILE_ACCEL = np.deg2rad(0.0001) # rad
+JOINT_START_END = [(np.pi / 2, 0), (np.pi, 0), (np.pi, 0)]  # rad
+MAX_PROFILE_VEL = np.deg2rad(0.05)  # rad
+MAX_PROFILE_ACCEL = np.deg2rad(0.0001)  # rad
 
 
 @contextmanager
@@ -185,8 +185,8 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
             run on the simulation results. Defaults to False.
     """
 
-    dt = 1 # s
-    tf = 80 * 60 # s
+    dt = 1  # s
+    tf = 80 * 60  # s
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -325,7 +325,7 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
     # and attitude of any free-floating bodies. Moreover, you can do
     # this at any time during the simulation.
     if initialSpin:
-        scene.getBody("hub").setAttitudeRate([0, 0.8, 0]) # rad/s
+        scene.getBody("hub").setAttitudeRate([0, 0.8, 0])  # rad/s
 
     # Configure the stop time of the simulation
     scSim.ConfigureStopTime(macros.sec2nano(tf))
@@ -342,7 +342,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
         # Plot the desired and achieved joint angle for each panel
         fig, axs = plt.subplots(2, 3)
         for ax, (side, i) in zip(axs.flat, panelIds):
-
             desiredPosRecorder = desiredPosRecorderModels[(side, i)]
             measuredPosRecorder = measuredPosRecorderModels[(side, i)]
 
@@ -425,7 +424,7 @@ class PIDController(StatefulSysModel.StatefulSysModel):
 
     def registerStates(self, registerer: StatefulSysModel.DynParamRegisterer):
         self.integralErrorState = registerer.registerState(1, 1, "integralError")
-        self.integralErrorState.setState([[0]]) # explicitely zero initialize
+        self.integralErrorState.setState([[0]])  # explicitely zero initialize
 
     def UpdateState(self, CurrentSimNanos: int):
         """Computes the control command from the measured and desired
@@ -436,7 +435,11 @@ class PIDController(StatefulSysModel.StatefulSysModel):
         stateIntegralError = self.integralErrorState.getState()[0][0]
 
         # Compute the control output
-        control_output = self.K_p * stateError + self.K_d * stateDotError + self.K_i * stateIntegralError
+        control_output = (
+            self.K_p * stateError
+            + self.K_d * stateDotError
+            + self.K_i * stateIntegralError
+        )
 
         # Set the derivative of the integral error inner state
         self.integralErrorState.setDerivative([[stateError]])

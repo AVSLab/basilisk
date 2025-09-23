@@ -26,17 +26,21 @@
 
 #include <sstream>
 
-MJSite::MJSite(mjsSite* site, MJBody& body) : MJObject(site), body(body) {}
+MJSite::MJSite(mjsSite* site, MJBody& body)
+  : MJObject(site)
+  , body(body)
+{
+}
 
-void MJSite::setPositionRelativeToBody(const Eigen::Vector3d& position)
+void
+MJSite::setPositionRelativeToBody(const Eigen::Vector3d& position)
 {
     // Copy new position in the mjSpec
     std::copy_n(position.data(), 3, mjsObject->pos);
 
     // If id exists, then this site has already been configured with
     // an mjModel. Thus, update the position in said mjModel
-    if (this->id.has_value())
-    {
+    if (this->id.has_value()) {
         auto model = this->body.getSpec().getMujocoModel();
         std::copy_n(position.data(), 3, model->site_pos + 3 * this->getId());
 
@@ -45,19 +49,19 @@ void MJSite::setPositionRelativeToBody(const Eigen::Vector3d& position)
     }
 }
 
-void MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
+void
+MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
 {
     auto mat = attitude.toRotationMatrix();
     auto quat = Eigen::Quaterniond(mat);
-    auto quatVec = Eigen::Vector4d{quat.w(), quat.x(), quat.y(), quat.z()};
+    auto quatVec = Eigen::Vector4d{ quat.w(), quat.x(), quat.y(), quat.z() };
 
     // Copy new quat in the mjSpec
     std::copy_n(quatVec.data(), 4, mjsObject->quat);
 
     // If id exists, then this site has already been configured with
     // an mjModel. Thus, update the quat in said mjModel
-    if (this->id.has_value())
-    {
+    if (this->id.has_value()) {
         auto model = this->body.getSpec().getMujocoModel();
         std::copy_n(quatVec.data(), 4, model->site_quat + 4 * this->getId());
 
@@ -66,14 +70,14 @@ void MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
     }
 }
 
-void MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t CurrentSimNanos)
+void
+MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t CurrentSimNanos)
 {
     SCStatesMsgPayload payload;
 
     std::copy_n(data->site_xpos + 3 * this->getId(), 3, payload.r_BN_N);
-    Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> rot{data->site_xmat +
-                                                                 9 * this->getId()};
-    Eigen::Map<Eigen::MRPd> mrpd{payload.sigma_BN};
+    Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> rot{ data->site_xmat + 9 * this->getId() };
+    Eigen::Map<Eigen::MRPd> mrpd{ payload.sigma_BN };
     mrpd = rot;
 
     double res[6];

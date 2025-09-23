@@ -59,7 +59,8 @@ double lastx = 0;
 double lasty = 0;
 
 // keyboard callback
-void keyboard(GLFWwindow* window, int key, int scancode, int act, int mods)
+void
+keyboard(GLFWwindow* window, int key, int scancode, int act, int mods)
 {
     // backspace: reset simulation
     if (act == GLFW_PRESS && key == GLFW_KEY_BACKSPACE) {
@@ -69,7 +70,8 @@ void keyboard(GLFWwindow* window, int key, int scancode, int act, int mods)
 }
 
 // mouse button callback
-void mouseButton(GLFWwindow* window, int button, int act, int mods)
+void
+mouseButton(GLFWwindow* window, int button, int act, int mods)
 {
     // update button state
     button_left = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
@@ -81,7 +83,8 @@ void mouseButton(GLFWwindow* window, int button, int act, int mods)
 }
 
 // mouse move callback
-void mouseMove(GLFWwindow* window, double xpos, double ypos)
+void
+mouseMove(GLFWwindow* window, double xpos, double ypos)
 {
     // no buttons down: nothing to do
     if (!button_left && !button_middle && !button_right) {
@@ -99,8 +102,8 @@ void mouseMove(GLFWwindow* window, double xpos, double ypos)
     glfwGetWindowSize(window, &width, &height);
 
     // get shift key state
-    bool mod_shift = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-                      glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
+    bool mod_shift =
+      (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
 
     // determine action based on mouse button
     mjtMouse action;
@@ -117,13 +120,15 @@ void mouseMove(GLFWwindow* window, double xpos, double ypos)
 }
 
 // scroll callback
-void scroll(GLFWwindow* window, double xoffset, double yoffset)
+void
+scroll(GLFWwindow* window, double xoffset, double yoffset)
 {
     // emulate vertical mouse motion = 5% of window height
     mjv_moveCamera(m, mjMOUSE_ZOOM, 0, -0.05 * yoffset, &scn, &cam);
 }
 
-std::vector<std::vector<double>> readNumericFile(const std::string& filename)
+std::vector<std::vector<double>>
+readNumericFile(const std::string& filename)
 {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -150,25 +155,25 @@ std::vector<std::vector<double>> readNumericFile(const std::string& filename)
     return data;
 }
 
-bool endsWith(std::string_view str, std::string_view suffix)
+bool
+endsWith(std::string_view str, std::string_view suffix)
 {
-    return str.size() >= suffix.size() &&
-           str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+    return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
-void interpolateQpos(const mjModel* m,
-                     double* qpos,
-                     double t,
-                     const std::vector<double>& left,
-                     const std::vector<double>& right)
+void
+interpolateQpos(const mjModel* m,
+                double* qpos,
+                double t,
+                const std::vector<double>& left,
+                const std::vector<double>& right)
 {
     auto tMin = left.at(0) / 1e9;
     auto tMax = right.at(0) / 1e9;
     auto scaledT = (t - tMin) / (tMax - tMin);
 
     auto lerpAt = [&](size_t qposIndex) {
-        qpos[qposIndex] =
-            left.at(qposIndex + 1) * (1 - scaledT) + right.at(qposIndex + 1) * scaledT;
+        qpos[qposIndex] = left.at(qposIndex + 1) * (1 - scaledT) + right.at(qposIndex + 1) * scaledT;
     };
 
     auto slerpAt = [&left, &right, scaledT, qpos](size_t qposIndex) {
@@ -211,29 +216,30 @@ void interpolateQpos(const mjModel* m,
         int padr = m->jnt_qposadr[j];
 
         switch ((mjtJoint)m->jnt_type[j]) {
-        case mjJNT_FREE:
-            // position interpolate
-            for (int i = 0; i < 3; i++) {
-                lerpAt(padr + i);
-            }
-            // quaternion interpolate
-            slerpAt(padr + 3);
-            break;
+            case mjJNT_FREE:
+                // position interpolate
+                for (int i = 0; i < 3; i++) {
+                    lerpAt(padr + i);
+                }
+                // quaternion interpolate
+                slerpAt(padr + 3);
+                break;
 
-        case mjJNT_BALL:
-            // quaternion interpolate
-            slerpAt(padr);
-            break;
+            case mjJNT_BALL:
+                // quaternion interpolate
+                slerpAt(padr);
+                break;
 
-        case mjJNT_HINGE:
-        case mjJNT_SLIDE:
-            // scalar interpolation
-            lerpAt(padr);
+            case mjJNT_HINGE:
+            case mjJNT_SLIDE:
+                // scalar interpolation
+                lerpAt(padr);
         }
     }
 }
 
-struct cli {
+struct cli
+{
     std::string modelFileName;
     std::string stateFileName;
     double speedUp = 1;
@@ -244,30 +250,25 @@ struct cli {
     {
         cli cli;
 
-        CLI::App app{"'replay' takes a MuJoCo model file and a series 'qpos' generated during a "
-                     "simulation and visualizes the result."};
+        CLI::App app{ "'replay' takes a MuJoCo model file and a series 'qpos' generated during a "
+                      "simulation and visualizes the result." };
         argv = app.ensure_utf8(argv);
 
         app.add_option("-m,--model", cli.modelFileName, "Path to MuJoCo model file.");
 
-        app.add_option("-s,--state",
-                       cli.stateFileName,
-                       "Path to file that contains the state evolution in time.");
+        app.add_option("-s,--state", cli.stateFileName, "Path to file that contains the state evolution in time.");
 
-        app.add_option(
-            "--speed",
-            cli.speedUp,
-            "Factor with which to speed up simulation replay. =1 is real time, =2 is double "
-            "speed, =0.2 is five times slower, etc.");
+        app.add_option("--speed",
+                       cli.speedUp,
+                       "Factor with which to speed up simulation replay. =1 is real time, =2 is double "
+                       "speed, =0.2 is five times slower, etc.");
 
         app.add_option("--track",
                        cli.trackingBodyName,
                        "Name of the body to track during visualization, by default, the first free "
                        "body in the simulation. If 'none', camera is moved freely by user.");
 
-        app.add_option("--file",
-                       cli.extraFiles,
-                       "Path to extra file to expose to MuJoCo, for example for a mesh.");
+        app.add_option("--file", cli.extraFiles, "Path to extra file to expose to MuJoCo, for example for a mesh.");
 
         try {
             app.parse(argc, argv);
@@ -284,7 +285,8 @@ struct cli {
 };
 
 // main function
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
     auto cli = cli::parse(argc, argv);
 
@@ -292,20 +294,20 @@ int main(int argc, char** argv)
 
     for (auto&& file : cli.extraFiles) {
         switch (mj_addFileVFS(&vfs, "", file.c_str())) {
-        case 0:
-            break; // success
-        case 1:
-            std::cerr << "Error loading file " + file + ": VFS memory is full.";
-            return 1;
-        case 2:
-            std::cerr << "Error loading file " + file + ": file name used multiple times.";
-            return 1;
-        case -1:
-            std::cerr << "Error loading file " + file + ": internal error.";
-            return 1;
-        default:
-            std::cerr << "Error loading file " + file + ".";
-            return 1; // should never happen
+            case 0:
+                break; // success
+            case 1:
+                std::cerr << "Error loading file " + file + ": VFS memory is full.";
+                return 1;
+            case 2:
+                std::cerr << "Error loading file " + file + ": file name used multiple times.";
+                return 1;
+            case -1:
+                std::cerr << "Error loading file " + file + ": internal error.";
+                return 1;
+            default:
+                std::cerr << "Error loading file " + file + ".";
+                return 1; // should never happen
         };
     }
 
@@ -384,7 +386,7 @@ int main(int argc, char** argv)
     while (!glfwWindowShouldClose(window)) {
 
         // get framebuffer viewport
-        mjrRect viewport = {0, 0, 0, 0};
+        mjrRect viewport = { 0, 0, 0, 0 };
         glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
 
         if (i < qpos.size()) {
@@ -416,12 +418,7 @@ int main(int argc, char** argv)
         stamp << "Time = " << std::fixed << std::setprecision(3) << secondsAtWhichToRender << " s";
         mjr_overlay(mjFONT_NORMAL, mjGRID_BOTTOMLEFT, viewport, stamp.str().c_str(), NULL, &con);
 
-        mjr_overlay(mjFONT_NORMAL,
-                    mjGRID_BOTTOMRIGHT,
-                    viewport,
-                    "BASILISK\nAVS LAB\nCU BOULDER",
-                    NULL,
-                    &con);
+        mjr_overlay(mjFONT_NORMAL, mjGRID_BOTTOMRIGHT, viewport, "BASILISK\nAVS LAB\nCU BOULDER", NULL, &con);
 
         // swap OpenGL buffers (blocking call due to v-sync)
         glfwSwapBuffers(window);

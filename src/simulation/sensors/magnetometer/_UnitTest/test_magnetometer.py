@@ -33,40 +33,66 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-bskPath = path.split('src')[0]
+bskPath = path.split("src")[0]
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.simulation import magnetometer
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
-@pytest.mark.parametrize("useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol", [
-    (True, True, True, True, True, 0.05),      # With noise - use 5% tolerance
-    (True, False, False, True, True, 0.05),    # With noise - use 5% tolerance
-    (False, True, True, True, True, 0.01),     # No noise - can use tighter 1% tolerance
-    (False, False, False, True, True, 0.01),   # No noise - can use tighter 1% tolerance
-])
-def test_module(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol):
-    [testResults, testMessages] = run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol)
+@pytest.mark.parametrize(
+    "useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol",
+    [
+        (True, True, True, True, True, 0.05),  # With noise - use 5% tolerance
+        (True, False, False, True, True, 0.05),  # With noise - use 5% tolerance
+        (
+            False,
+            True,
+            True,
+            True,
+            True,
+            0.01,
+        ),  # No noise - can use tighter 1% tolerance
+        (
+            False,
+            False,
+            False,
+            True,
+            True,
+            0.01,
+        ),  # No noise - can use tighter 1% tolerance
+    ],
+)
+def test_module(
+    show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol
+):
+    [testResults, testMessages] = run(
+        show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol
+    )
     assert testResults < 1, testMessages
     __tracebackhide__ = True
 
+
 def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, errTol):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProcessRate_s = 0.01
-    testProcessRate = macros.sec2nano(testProcessRate_s)     # update process rate update time
+    testProcessRate = macros.sec2nano(
+        testProcessRate_s
+    )  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -93,17 +119,23 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
 
     # Set-up fake magnetic field
     magFieldMsg = messaging.MagneticFieldMsgPayload()
-    trueMagField = [1e-5, 2e-5, 1.5e-5]  # [T] true magnetic field outputs in inertial frame
+    trueMagField = [
+        1e-5,
+        2e-5,
+        1.5e-5,
+    ]  # [T] true magnetic field outputs in inertial frame
     magFieldMsg.magField_N = trueMagField
     magMsg = messaging.MagneticFieldMsg().write(magFieldMsg)
     testModule.magInMsg.subscribeTo(magMsg)
 
     # Set-up fake attitude
     satelliteStateMsg = messaging.SCStatesMsgPayload()
-    angles = np.linspace(0., 2 * np.pi, 59000)
+    angles = np.linspace(0.0, 2 * np.pi, 59000)
     sigmas = np.zeros(len(angles))
     for i in range(len(sigmas)):  # convert rotation angle about 3rd axis to MRP
-        sigmas[i] = np.tan(angles[i] / 4.)  # This is iterated through in the execution for loop
+        sigmas[i] = np.tan(
+            angles[i] / 4.0
+        )  # This is iterated through in the execution for loop
         satelliteStateMsg.sigma_BN = [0.3, 0.2, sigmas[i]]
     scMsg = messaging.SCStatesMsg().write(satelliteStateMsg)
     testModule.stateInMsg.subscribeTo(scMsg)
@@ -116,7 +148,7 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     dcm_SB_py = rbk.euler3212C([yaw, pitch, roll])  # for checking the dcm_SB
     dcm_SB = testModule.setBodyToSensorDCM(yaw, pitch, roll)
     dcm_SN = np.dot(dcm_SB, dcm_BN)
-    trueTam_S =  np.dot(dcm_SN, trueMagField)
+    trueTam_S = np.dot(dcm_SN, trueMagField)
 
     if useBias:
         trueTam_S += bias  # Tesla
@@ -147,33 +179,40 @@ def run(show_plots, useNoiseStd, useBias, useMinOut, useMaxOut, useScaleFactor, 
     if useNoiseStd:
         if not unitTestSupport.isArrayEqualRelative(tamData[0], trueTam_S, 3, errTol):
             testFailCount += 1
-            testMessages.append(f"TAM data with noise failed comparison with {errTol*100}% tolerance")
+            testMessages.append(
+                f"TAM data with noise failed comparison with {errTol * 100}% tolerance"
+            )
     else:
         # For non-noisy data we can use stricter comparison
         if not unitTestSupport.isArrayEqual(tamData[0], trueTam_S, 3, errTol):
             testFailCount += 1
-            testMessages.append(f"TAM data failed comparison with {errTol*100}% tolerance")
+            testMessages.append(
+                f"TAM data failed comparison with {errTol * 100}% tolerance"
+            )
 
     #   print out success or failure message
     if testFailCount == 0:
         print("PASSED: " + testModule.ModelTag)
     else:
         print("Failed: " + testModule.ModelTag)
-    print("This test uses a relative accuracy value of " + str(errTol*100) + " percent")
+    print(
+        "This test uses a relative accuracy value of " + str(errTol * 100) + " percent"
+    )
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 False,  # show_plots
-                 True,   # useNoiseStd
-                 True,   # useBias
-                 True,   # useMinOut
-                 True,   # useMaxOut
-                 True,   # useScaleFactor
-                 1e-2    # errTol
-               )
+    test_module(  # update "module" in function name
+        False,  # show_plots
+        True,  # useNoiseStd
+        True,  # useBias
+        True,  # useMinOut
+        True,  # useMaxOut
+        True,  # useScaleFactor
+        1e-2,  # errTol
+    )

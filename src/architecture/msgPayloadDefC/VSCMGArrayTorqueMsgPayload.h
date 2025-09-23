@@ -22,15 +22,11 @@
 
 #include "architecture/utilities/macroDefinitions.h"
 
-
 /*! @brief Structure used to define the output definition for vehicle effectors*/
-typedef struct {
-    double wheelTorque[MAX_EFF_CNT];	//!< [N-m] VSCMG wheel torque array
-	double gimbalTorque[MAX_EFF_CNT];	//!< [N-m] VSCMG gimbal torque array
-}VSCMGArrayTorqueMsgPayload;
-
-
-
-
+typedef struct
+{
+    double wheelTorque[MAX_EFF_CNT];  //!< [N-m] VSCMG wheel torque array
+    double gimbalTorque[MAX_EFF_CNT]; //!< [N-m] VSCMG gimbal torque array
+} VSCMGArrayTorqueMsgPayload;
 
 #endif

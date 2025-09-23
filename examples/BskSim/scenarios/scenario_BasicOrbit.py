@@ -162,9 +162,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/../')
-sys.path.append(path + '/../models')
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../")
+sys.path.append(path + "/../models")
+sys.path.append(path + "/../plotting")
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics
 import BSK_Fsw
@@ -177,7 +177,7 @@ import BSK_Plotting as BSK_plt
 class scenario_BasicOrbit(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_BasicOrbit, self).__init__()
-        self.name = 'scenario_BasicOrbit'
+        self.name = "scenario_BasicOrbit"
 
         # declare empty class variables
         self.sNavAttRec = None
@@ -190,10 +190,13 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         self.log_outputs()
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
-        vizSupport.enableUnityVisualization(self, self.DynModels.taskName, self.DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=self.DynModels.rwStateEffector
-                                            )
+        vizSupport.enableUnityVisualization(
+            self,
+            self.DynModels.taskName,
+            self.DynModels.scObject,
+            # , saveFile=__file__
+            rwEffectorList=self.DynModels.rwStateEffector,
+        )
 
     def configure_initial_conditions(self):
         DynModels = self.get_DynModel()
@@ -206,13 +209,17 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = DynModels.gravFactory.gravBodies['earth'].mu
+        mu = DynModels.gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [
+            [0.001],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         # Dynamics process outputs
@@ -246,15 +253,14 @@ class scenario_BasicOrbit(BSKSim, BSKScenario):
 
 
 def runScenario(scenario):
-
     # Initialize simulation
     scenario.InitializeSimulation()
 
     # Configure FSW mode
-    scenario.modeRequest = 'standby'
+    scenario.modeRequest = "standby"
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
     scenario.ConfigureStopTime(simulationTime)
 
     scenario.ExecuteSimulation()
@@ -275,6 +281,7 @@ def run(showPlots):
     figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
+
 
 if __name__ == "__main__":
     run(True)

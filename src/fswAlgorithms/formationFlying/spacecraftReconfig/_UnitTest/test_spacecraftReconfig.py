@@ -26,13 +26,18 @@
 
 import pytest
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
+from Basilisk.fswAlgorithms import (
+    spacecraftReconfig,
+)  # import the module that is to be tested
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -41,13 +46,15 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
+
 @pytest.mark.parametrize("useRefAttitude", [True, False])
 @pytest.mark.parametrize("accuracy", [1e-9])
-
 def test_spacecraftReconfig(show_plots, useRefAttitude, accuracy):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy)
+    [testResults, testMessage] = spacecraftReconfigTestFunction(
+        show_plots, useRefAttitude, accuracy
+    )
     assert testResults < 1, testMessage
 
 
@@ -61,10 +68,14 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # process rate
     testProc = unitTestSim.CreateNewProcess(unitProcessName)  # create new process
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
+    testProc.addTask(
+        unitTestSim.CreateNewTask(unitTaskName, testProcessRate)
+    )  # create new task
     # Construct algorithm and associated C++ container
     module = spacecraftReconfig.spacecraftReconfig()
-    module.ModelTag = "spacecraftReconfig"  # update python name of test spacecraftReconfig
+    module.ModelTag = (
+        "spacecraftReconfig"  # update python name of test spacecraftReconfig
+    )
     module.targetClassicOED = [0.0000, 0.0000, 0.0000, 0.0001, 0.0002, 0.0003]
     module.attControlTime = 400  # [s]
     module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
@@ -82,8 +93,10 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     oe.Omega = 0.3
     oe.omega = 0.4
     oe.f = 0.5
-    (r_BN_N, v_BN_N) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe)
-    chiefNavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
+    (r_BN_N, v_BN_N) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH * 1e9, oe)
+    chiefNavStateOutData = (
+        messaging.NavTransMsgPayload()
+    )  # Create a structure for the input message
     chiefNavStateOutData.timeTag = 0
     chiefNavStateOutData.r_BN_N = r_BN_N
     chiefNavStateOutData.v_BN_N = v_BN_N
@@ -100,8 +113,10 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
     oe2.Omega = 0.0 + 0.0003
     oe2.omega = 0.0 + 0.0002
     oe2.f = 0.0001
-    (r_BN_N2, v_BN_N2) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe2)
-    deputyNavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
+    (r_BN_N2, v_BN_N2) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH * 1e9, oe2)
+    deputyNavStateOutData = (
+        messaging.NavTransMsgPayload()
+    )  # Create a structure for the input message
     deputyNavStateOutData.timeTag = 0
     deputyNavStateOutData.r_BN_N = r_BN_N2
     deputyNavStateOutData.v_BN_N = v_BN_N2
@@ -159,26 +174,36 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
 
     # This pulls the actual data log from the simulation run.
     attOutput = dataLog.sigma_RN
-    resetPeriod = unitTestSupport.addTimeColumn(moduleLog.times(), moduleLog.resetPeriod)
+    resetPeriod = unitTestSupport.addTimeColumn(
+        moduleLog.times(), moduleLog.resetPeriod
+    )
     # set the filtered output truth states
     if useRefAttitude:
-        trueVector = [[1.0,0.0,0.0]]
+        trueVector = [[1.0, 0.0, 0.0]]
     else:
-        trueVector = [[0.38532697209248595,
-                       -0.7016349090839732,
-                       -0.4026194572440069]]
+        trueVector = [[0.38532697209248595, -0.7016349090839732, -0.4026194572440069]]
     trueResetPeriod = 28148.5466910579925752244889736
     # compare the spacecraftReconfig results to the truth values
     for i in range(0, len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(attOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN" + " unit test at t="
-                                + str(attOutput[i, 0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed sigma_RN"
+                + " unit test at t="
+                + str(attOutput[i, 0] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
-    if (not unitTestSupport.isDoubleEqualRelative(resetPeriod[0,1], trueResetPeriod, accuracy)):
+    if not unitTestSupport.isDoubleEqualRelative(
+        resetPeriod[0, 1], trueResetPeriod, accuracy
+    ):
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed " + "resetPeriod")
+        testMessages.append(
+            "FAILED: " + module.ModelTag + " Module failed " + "resetPeriod"
+        )
     #   print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -186,7 +211,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -197,5 +222,5 @@ if __name__ == "__main__":
     test_spacecraftReconfig(
         False,  # show_plots
         True,  # useRefAttitude
-        1e-9    # accuracy
+        1e-9,  # accuracy
     )

@@ -103,14 +103,39 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk import __path__
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarArrayPoint, rwMotorTorque,
-                                    hingedRigidBodyPIDMotor, solarArrayReference, thrusterPlatformReference,
-                                    thrusterPlatformState, thrustCMEstimation, torqueScheduler)
-from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
-                                 spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector,
-                                 thrusterStateEffector, facetSRPDynamicEffector, boreAngCalc)
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
-                                unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
+from Basilisk.fswAlgorithms import (
+    mrpFeedback,
+    attTrackingError,
+    oneAxisSolarArrayPoint,
+    rwMotorTorque,
+    hingedRigidBodyPIDMotor,
+    solarArrayReference,
+    thrusterPlatformReference,
+    thrusterPlatformState,
+    thrustCMEstimation,
+    torqueScheduler,
+)
+from Basilisk.simulation import (
+    reactionWheelStateEffector,
+    simpleNav,
+    simpleMassProps,
+    spacecraft,
+    spinningBodyOneDOFStateEffector,
+    spinningBodyTwoDOFStateEffector,
+    thrusterStateEffector,
+    facetSRPDynamicEffector,
+    boreAngCalc,
+)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    unitTestSupport,
+    vizSupport,
+    RigidBodyKinematics as rbk,
+)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -170,9 +195,9 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # Next a series of gravitational bodies are included
-    gravBodies = gravFactory.createBodies(['sun'])
-    gravBodies['sun'].isCentralBody = True
-    mu = gravBodies['sun'].mu
+    gravBodies = gravFactory.createBodies(["sun"])
+    gravBodies["sun"].isCentralBody = True
+    mu = gravBodies["sun"].mu
 
     # The configured gravitational bodies are added to the spacecraft dynamics with the usual command:
     gravFactory.addBodiesTo(scObject)
@@ -181,19 +206,19 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     timeInitString = "2023 OCTOBER 22 00:00:00.0"
 
     # The following is a support macro that creates a `gravFactory.spiceObject` instance
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
+    gravFactory.createSpiceInterface(
+        bskPath + "/supportData/EphemerisData/", timeInitString, epochInMsg=True
+    )
 
     # Sun is gravity center
-    gravFactory.spiceObject.zeroBase = 'Sun'
+    gravFactory.spiceObject.zeroBase = "Sun"
 
     # The SPICE object is added to the simulation task list.
     scSim.AddModelToTask(fswTask, gravFactory.spiceObject, 2)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 100e9      # meters
+    oe.a = 100e9  # meters
     oe.e = 0.001
     oe.i = 0.0 * macros.D2R
     oe.Omega = 0.0 * macros.D2R
@@ -202,17 +227,23 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
-    scObject.hub.r_CN_NInit = rN                          # m   - r_BN_N
-    scObject.hub.v_CN_NInit = vN                          # m/s - v_BN_N
-    scObject.hub.sigma_BNInit = [0, 0., 0.]              # MRP set to customize initial inertial attitude
-    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]      # rad/s - omega_CN_B
+    scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
+    scObject.hub.sigma_BNInit = [
+        0,
+        0.0,
+        0.0,
+    ]  # MRP set to customize initial inertial attitude
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_CN_B
 
     # define the simulation inertia
-    I = [ 1725,    -5,   -12,
-            -5,  5525,    43,
-            -12,   43,  4810]
+    I = [1725, -5, -12, -5, 5525, 43, -12, 43, 4810]
     scObject.hub.mHub = 2500  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.008], [-0.010], [1.214]]  # [m] - position vector of hub CM relative to the body-fixed point B
+    scObject.hub.r_BcB_B = [
+        [0.008],
+        [-0.010],
+        [1.214],
+    ]  # [m] - position vector of hub CM relative to the body-fixed point B
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     #
@@ -222,22 +253,30 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     rwFactory = simIncludeRW.rwFactory()
 
     # specify RW momentum capacity
-    maxRWMomentum = 100.  # Nms
+    maxRWMomentum = 100.0  # Nms
 
     # Define orthogonal RW pyramid
     # -- Pointing directions
     rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * macros.D2R
     rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * macros.D2R
-    rwPosVector = [[0.8, 0.8, 1.8],
-                    [0.8, -0.8, 1.8],
-                    [-0.8, -0.8, 1.8],
-                    [-0.8, 0.8, 1.8]]
+    rwPosVector = [
+        [0.8, 0.8, 1.8],
+        [0.8, -0.8, 1.8],
+        [-0.8, -0.8, 1.8],
+        [-0.8, 0.8, 1.8],
+    ]
 
     Gs = []
     for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
         gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))
         Gs.append(gsHat)
-        rwFactory.create('Honeywell_HR16', gsHat, maxMomentum=maxRWMomentum, rWB_B=posVector, Omega=0.)
+        rwFactory.create(
+            "Honeywell_HR16",
+            gsHat,
+            maxMomentum=maxRWMomentum,
+            rWB_B=posVector,
+            Omega=0.0,
+        )
 
     numRW = rwFactory.getNumOfDevices()
 
@@ -271,9 +310,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     RSAList[0].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[0].sHat_S = [0, 1, 0]
     RSAList[0].dcm_S0B = [[0, 0, 1], [1, 0, 0], [0, 1, 0]]
-    RSAList[0].IPntSc_S = [[250.0, 0.0, 0.0],
-                           [0.0, 250.0, 0.0],
-                           [0.0, 0.0, 500.0]]
+    RSAList[0].IPntSc_S = [[250.0, 0.0, 0.0], [0.0, 250.0, 0.0], [0.0, 0.0, 500.0]]
     RSAList[0].mass = 85
     RSAList[0].k = 0
     RSAList[0].c = 0
@@ -288,9 +325,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     RSAList[1].r_ScS_S = [0.0, 3.75, 0.0]
     RSAList[1].sHat_S = [0, 1, 0]
     RSAList[1].dcm_S0B = [[0, 0, -1], [-1, 0, 0], [0, 1, 0]]
-    RSAList[1].IPntSc_S = [[250.0, 0.0, 0.0],
-                           [0.0, 250.0, 0.0],
-                           [0.0, 0.0, 500.0]]
+    RSAList[1].IPntSc_S = [[250.0, 0.0, 0.0], [0.0, 250.0, 0.0], [0.0, 0.0, 500.0]]
     RSAList[1].mass = 85
     RSAList[1].k = 0
     RSAList[1].c = 0
@@ -376,17 +411,19 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     lenYHub = 1.8  # [m]
     lenZHub = 2.86  # [m]
     arrayDiam = 7.262
-    area2 = np.pi*(0.5 * arrayDiam)*(0.5 * arrayDiam)  # [m^2]
-    facetAreaList = [lenYHub * lenZHub,
-                     lenXHub * lenZHub,
-                     lenYHub * lenZHub,
-                     lenXHub * lenZHub,
-                     lenXHub * lenYHub,
-                     lenXHub * lenYHub,
-                     area2,
-                     area2,
-                     area2,
-                     area2]
+    area2 = np.pi * (0.5 * arrayDiam) * (0.5 * arrayDiam)  # [m^2]
+    facetAreaList = [
+        lenYHub * lenZHub,
+        lenXHub * lenZHub,
+        lenYHub * lenZHub,
+        lenXHub * lenZHub,
+        lenXHub * lenYHub,
+        lenXHub * lenYHub,
+        area2,
+        area2,
+        area2,
+        area2,
+    ]
 
     # Define the initial facet attitudes relative to B frame
     prv_F01B = (macros.D2R * -90.0) * np.array([0.0, 0.0, 1.0])
@@ -399,40 +436,46 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     prv_F08B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
     prv_F09B = (macros.D2R * 0.0) * np.array([0.0, 0.0, 1.0])
     prv_F010B = (macros.D2R * 180.0) * np.array([0.0, 0.0, 1.0])
-    facetDcm_F0BList = [rbk.PRV2C(prv_F01B),
-                        rbk.PRV2C(prv_F02B),
-                        rbk.PRV2C(prv_F03B),
-                        rbk.PRV2C(prv_F04B),
-                        rbk.PRV2C(prv_F05B),
-                        rbk.PRV2C(prv_F06B),
-                        rbk.PRV2C(prv_F07B),
-                        rbk.PRV2C(prv_F08B),
-                        rbk.PRV2C(prv_F09B),
-                        rbk.PRV2C(prv_F010B)]
+    facetDcm_F0BList = [
+        rbk.PRV2C(prv_F01B),
+        rbk.PRV2C(prv_F02B),
+        rbk.PRV2C(prv_F03B),
+        rbk.PRV2C(prv_F04B),
+        rbk.PRV2C(prv_F05B),
+        rbk.PRV2C(prv_F06B),
+        rbk.PRV2C(prv_F07B),
+        rbk.PRV2C(prv_F08B),
+        rbk.PRV2C(prv_F09B),
+        rbk.PRV2C(prv_F010B),
+    ]
 
     # Define the facet normal vectors in F frame components
-    facetNHat_FList = [np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0]),
-                       np.array([0.0, 1.0, 0.0])]
+    facetNHat_FList = [
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+    ]
 
     # Define facet articulation axes in F frame components
-    facetRotHat_FList = [np.array([0.0, 0.0, 0.0]),
-                         np.array([0.0, 0.0, 0.0]),
-                         np.array([0.0, 0.0, 0.0]),
-                         np.array([0.0, 0.0, 0.0]),
-                         np.array([0.0, 0.0, 0.0]),
-                         np.array([0.0, 0.0, 0.0]),
-                         np.array([1.0, 0.0, 0.0]),
-                         np.array([-1.0, 0.0, 0.0]),
-                         np.array([-1.0, 0.0, 0.0]),
-                         np.array([1.0, 0.0, 0.0])]
+    facetRotHat_FList = [
+        np.array([0.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 0.0]),
+        np.array([1.0, 0.0, 0.0]),
+        np.array([-1.0, 0.0, 0.0]),
+        np.array([-1.0, 0.0, 0.0]),
+        np.array([1.0, 0.0, 0.0]),
+    ]
 
     # Define the facet center of pressure locations with respect to point B in B frame components
     facetLoc1 = np.array([0.5 * lenXHub, 0.0, 0.5 * lenZHub])  # [m]
@@ -445,21 +488,38 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     facetLoc8 = np.array([3.75 + 0.5 * lenXHub, 0.00, 0.45])  # [m]
     facetLoc9 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
     facetLoc10 = np.array([-(3.75 + 0.5 * lenXHub), 0.0, 0.45])  # [m]
-    facetR_CopB_BList = [facetLoc1, facetLoc2, facetLoc3, facetLoc4, facetLoc5, facetLoc6, facetLoc7, facetLoc8, facetLoc9, facetLoc10]
+    facetR_CopB_BList = [
+        facetLoc1,
+        facetLoc2,
+        facetLoc3,
+        facetLoc4,
+        facetLoc5,
+        facetLoc6,
+        facetLoc7,
+        facetLoc8,
+        facetLoc9,
+        facetLoc10,
+    ]
 
     # Define the facet optical coefficients
-    facetSpecularCoeffList = np.array([0.336, 0.336, 0.336, 0.336, 0.336, 0.336, 0.16, 0.00, 0.16, 0.00])
-    facetDiffuseCoeffList = np.array([0.139, 0.139, 0.139, 0.139, 0.139, 0.139, 0.16, 0.56, 0.16, 0.56])
+    facetSpecularCoeffList = np.array(
+        [0.336, 0.336, 0.336, 0.336, 0.336, 0.336, 0.16, 0.00, 0.16, 0.00]
+    )
+    facetDiffuseCoeffList = np.array(
+        [0.139, 0.139, 0.139, 0.139, 0.139, 0.139, 0.16, 0.56, 0.16, 0.56]
+    )
 
     # Populate the scGeometry structure with the facet information
     for i in range(len(facetAreaList)):
-        SRP.addFacet(facetAreaList[i],
-                     facetDcm_F0BList[i],
-                     facetNHat_FList[i],
-                     facetRotHat_FList[i],
-                     facetR_CopB_BList[i],
-                     facetDiffuseCoeffList[i],
-                     facetSpecularCoeffList[i])
+        SRP.addFacet(
+            facetAreaList[i],
+            facetDcm_F0BList[i],
+            facetNHat_FList[i],
+            facetRotHat_FList[i],
+            facetR_CopB_BList[i],
+            facetDiffuseCoeffList[i],
+            facetSpecularCoeffList[i],
+        )
 
     SRP.ModelTag = "FacetSRP"
     SRP.addArticulatedFacet(RSAList[0].spinningBodyOutMsg)
@@ -485,7 +545,9 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     cmEstimator = thrustCMEstimation.ThrustCMEstimation()
     cmEstimator.ModelTag = "cmEstimator"
     cmEstimator.attitudeTol = 1e-6
-    cmEstimator.r_CB_B = r_CB_B_0 # Real CoM_B location = [0.113244, 0.025605, 1.239834]
+    cmEstimator.r_CB_B = (
+        r_CB_B_0  # Real CoM_B location = [0.113244, 0.025605, 1.239834]
+    )
     cmEstimator.P0 = [0.0025, 0.0025, 0.0025]
     cmEstimator.R0 = [1e-10, 1e-10, 1e-10]
     scSim.AddModelToTask(fswTask, cmEstimator, None, 29)
@@ -503,12 +565,12 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
 
     # Set up platform reference module
     pltReference = thrusterPlatformReference.thrusterPlatformReference()
-    pltReference.ModelTag = 'thrusterPlatformReference'
+    pltReference.ModelTag = "thrusterPlatformReference"
     pltReference.sigma_MB = pltState.sigma_MB
     pltReference.r_BM_M = pltState.r_BM_M
     pltReference.r_FM_F = pltState.r_FM_F
-    pltReference.theta1Max = np.pi/12
-    pltReference.theta2Max = np.pi/12
+    pltReference.theta1Max = np.pi / 12
+    pltReference.theta2Max = np.pi / 12
     if thrMomManagement:
         pltReference.K = 2.5e-4
     else:
@@ -520,7 +582,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     pltController = []
     for item in range(2):
         pltController.append(hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotor())
-        pltController[item].ModelTag = "PltMototorGimbal"+str(item+1)
+        pltController[item].ModelTag = "PltMototorGimbal" + str(item + 1)
         pltController[item].K = 0.5
         pltController[item].P = 3
         scSim.AddModelToTask(fswTask, pltController[item], 27)
@@ -535,19 +597,23 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     # Set up attitude guidance module
     sepPoint = oneAxisSolarArrayPoint.oneAxisSolarArrayPoint()
     sepPoint.ModelTag = "sepPointGuidance"
-    sepPoint.a1Hat_B = [1, 0, 0]          # solar array drive axis
-    sepPoint.a2Hat_B = [0, 1, 0]          # antiparallel direction to the sensitive surface
-    sepPoint.hHat_N = [1, 0, 0]           # random inertial thrust direction
+    sepPoint.a1Hat_B = [1, 0, 0]  # solar array drive axis
+    sepPoint.a2Hat_B = [0, 1, 0]  # antiparallel direction to the sensitive surface
+    sepPoint.hHat_N = [1, 0, 0]  # random inertial thrust direction
     scSim.AddModelToTask(fswTask, sepPoint, 25)
 
     # Set up the solar array reference modules
     saReference = []
     for item in range(numRSA):
         saReference.append(solarArrayReference.solarArrayReference())
-        saReference[item].ModelTag = "SolarArrayReference"+str(item+1)
-        saReference[item].a1Hat_B = [(-1)**item, 0, 0]
+        saReference[item].ModelTag = "SolarArrayReference" + str(item + 1)
+        saReference[item].a1Hat_B = [(-1) ** item, 0, 0]
         saReference[item].a2Hat_B = [0, 1, 0]
-        saReference[item].r_AB_B = [(-1)**item * 0.5 * (lenXHub + arrayDiam), 0.0, 0.45]
+        saReference[item].r_AB_B = [
+            (-1) ** item * 0.5 * (lenXHub + arrayDiam),
+            0.0,
+            0.45,
+        ]
         saReference[item].pointingMode = 0
         saReference[item].n = 2
         saReference[item].sigma = 1e-3
@@ -558,7 +624,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     saController = []
     for item in range(numRSA):
         saController.append(hingedRigidBodyPIDMotor.hingedRigidBodyPIDMotor())
-        saController[item].ModelTag = "SolarArrayMotor"+str(item+1)
+        saController[item].ModelTag = "SolarArrayMotor" + str(item + 1)
         saController[item].K = 1.25
         saController[item].P = 50
         saController[item].I = 3e-3
@@ -575,7 +641,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     mrpControl.Ki = 1e-5
     mrpControl.P = 275
     mrpControl.K = 9
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
     mrpControl.controlLawType = 1
     scSim.AddModelToTask(fswTask, mrpControl, 21)
 
@@ -586,7 +652,9 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     scSim.AddModelToTask(fswTask, rwMotorTorqueObj, 20)
 
     # Configure thruster on-time message
-    thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload(OnTimeRequest=[3600*24*7])
+    thrOnTimeMsgData = messaging.THRArrayOnTimeCmdMsgPayload(
+        OnTimeRequest=[3600 * 24 * 7]
+    )
     thrOnTimeMsg = messaging.THRArrayOnTimeCmdMsg().write(thrOnTimeMsgData)
 
     # Write cmEstimator output msg to the standalone message vcMsg_CoM
@@ -604,37 +672,45 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     sc_body_list.append([RSAList[1].ModelTag, RSAList[1].spinningBodyConfigLogOutMsg])
 
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, dynTask, sc_body_list
-                                                  # , saveFile=__file__
-                                                  )
-        viz.settings.ambient = 0.7  # increase ambient light to make the shaded spacecraft more visible
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            dynTask,
+            sc_body_list,
+            # , saveFile=__file__
+        )
+        viz.settings.ambient = (
+            0.7  # increase ambient light to make the shaded spacecraft more visible
+        )
         viz.settings.orbitLinesOn = -1  # turn off osculating orbit line
         current_path = os.path.dirname(os.path.abspath(__file__))
         # Specifying relative model path is useful for sharing scenarios and resources:
-        texture_path = os.path.join('..', 'dataForExamples', 'texture')
+        texture_path = os.path.join("..", "dataForExamples", "texture")
         # Specifying absolute model path is preferable for live-streaming:
         # texture_path = os.path.join(current_path, 'dataForExamples', 'texture')
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[sc_body_list[0].ModelTag]
-                                     , modelPath="CUBE"
-                                     , customTexturePath=os.path.join(texture_path, 'foil_n.png')
-                                     , offset=[0, 0, 0]
-                                     , scale=[2.5, 2.5, 2.5]
-                                     )
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[sc_body_list[1][0]]
-                                     , modelPath="CYLINDER"
-                                     , customTexturePath=os.path.join(texture_path, 'panel.jpg')
-                                     , offset=[-0.035, 0.25, -0.087]
-                                     , scale=[7, 7, 0.05]
-                                     )
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[sc_body_list[2][0]]
-                                     , modelPath="CYLINDER"
-                                     , customTexturePath=os.path.join(texture_path, 'panel.jpg')
-                                     , offset=[0.128, 0.25, -0.087]
-                                     , scale=[7, 7, 0.05]
-                                     )
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[sc_body_list[0].ModelTag],
+            modelPath="CUBE",
+            customTexturePath=os.path.join(texture_path, "foil_n.png"),
+            offset=[0, 0, 0],
+            scale=[2.5, 2.5, 2.5],
+        )
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[sc_body_list[1][0]],
+            modelPath="CYLINDER",
+            customTexturePath=os.path.join(texture_path, "panel.jpg"),
+            offset=[-0.035, 0.25, -0.087],
+            scale=[7, 7, 0.05],
+        )
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[sc_body_list[2][0]],
+            modelPath="CYLINDER",
+            customTexturePath=os.path.join(texture_path, "panel.jpg"),
+            offset=[0.128, 0.25, -0.087],
+            scale=[7, 7, 0.05],
+        )
 
     # Connect messages
     sNavObject.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
@@ -653,9 +729,13 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     cmEstimator.attGuidInMsg.subscribeTo(attError.attGuidOutMsg)
     cmEstimator.vehConfigInMsg.subscribeTo(simpleMassPropsObject.vehicleConfigOutMsg)
     if cmEstimation:
-        pltReference.vehConfigInMsg.subscribeTo(vcMsg_CoM)                                 # connect to this msg for estimated CM
+        pltReference.vehConfigInMsg.subscribeTo(
+            vcMsg_CoM
+        )  # connect to this msg for estimated CM
     else:
-        pltReference.vehConfigInMsg.subscribeTo(simpleMassPropsObject.vehicleConfigOutMsg) # connect to this msg for exact CM information
+        pltReference.vehConfigInMsg.subscribeTo(
+            simpleMassPropsObject.vehicleConfigOutMsg
+        )  # connect to this msg for exact CM information
     pltReference.thrusterConfigFInMsg.subscribeTo(thrConfigFMsg)
     pltReference.rwConfigDataInMsg.subscribeTo(fswRwConfigMsg)
     pltReference.rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
@@ -677,28 +757,48 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     for item in range(numRSA):
         saReference[item].attNavInMsg.subscribeTo(sNavObject.attOutMsg)
         saReference[item].attRefInMsg.subscribeTo(sepPoint.attRefOutMsg)
-        saReference[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
+        saReference[item].hingedRigidBodyInMsg.subscribeTo(
+            RSAList[item].spinningBodyOutMsg
+        )
         saReference[item].rwSpeedsInMsg.subscribeTo(rwStateEffector.rwSpeedOutMsg)
         saReference[item].rwConfigDataInMsg.subscribeTo(fswRwConfigMsg)
         if cmEstimation:
             saReference[item].vehConfigInMsg.subscribeTo(vcMsg_CoM)
         else:
-            saReference[item].vehConfigInMsg.subscribeTo(simpleMassPropsObject.vehicleConfigOutMsg)
-        saController[item].hingedRigidBodyInMsg.subscribeTo(RSAList[item].spinningBodyOutMsg)
-        saController[item].hingedRigidBodyRefInMsg.subscribeTo(saReference[item].hingedRigidBodyRefOutMsg)
-        saBoresightList[item].scStateInMsg.subscribeTo(RSAList[item].spinningBodyConfigLogOutMsg)
-        saBoresightList[item].celBodyInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[0])
+            saReference[item].vehConfigInMsg.subscribeTo(
+                simpleMassPropsObject.vehicleConfigOutMsg
+            )
+        saController[item].hingedRigidBodyInMsg.subscribeTo(
+            RSAList[item].spinningBodyOutMsg
+        )
+        saController[item].hingedRigidBodyRefInMsg.subscribeTo(
+            saReference[item].hingedRigidBodyRefOutMsg
+        )
+        saBoresightList[item].scStateInMsg.subscribeTo(
+            RSAList[item].spinningBodyConfigLogOutMsg
+        )
+        saBoresightList[item].celBodyInMsg.subscribeTo(
+            gravFactory.spiceObject.planetStateOutMsgs[0]
+        )
     for item in range(2):
-        pltController[item].hingedRigidBodyInMsg.subscribeTo(platform.spinningBodyOutMsgs[item])
-    pltController[0].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef1OutMsg)
-    pltController[1].hingedRigidBodyRefInMsg.subscribeTo(pltReference.hingedRigidBodyRef2OutMsg)
+        pltController[item].hingedRigidBodyInMsg.subscribeTo(
+            platform.spinningBodyOutMsgs[item]
+        )
+    pltController[0].hingedRigidBodyRefInMsg.subscribeTo(
+        pltReference.hingedRigidBodyRef1OutMsg
+    )
+    pltController[1].hingedRigidBodyRefInMsg.subscribeTo(
+        pltReference.hingedRigidBodyRef2OutMsg
+    )
     sepThruster.cmdsInMsg.subscribeTo(thrOnTimeMsg)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = simulationTime / simulationTimeStepFsw
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStepFsw, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStepFsw, numDataPoints
+    )
 
     vehConfigLog = simpleMassPropsObject.vehicleConfigOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, vehConfigLog)
@@ -739,15 +839,21 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     for item in range(numRSA):
         saAngleLogs.append(RSAList[item].spinningBodyOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(dynTask, saAngleLogs[item])
-        saRefAngleLogs.append(saReference[item].hingedRigidBodyRefOutMsg.recorder(samplingTime))
+        saRefAngleLogs.append(
+            saReference[item].hingedRigidBodyRefOutMsg.recorder(samplingTime)
+        )
         scSim.AddModelToTask(dynTask, saRefAngleLogs[item])
         saBoresightLogs.append(saBoresightList[item].angOutMsg.recorder(samplingTime))
         scSim.AddModelToTask(dynTask, saBoresightLogs[item])
 
     pltAngleLogs = []
     pltRefAngleLogs = []
-    pltRefAngleLogs.append(pltReference.hingedRigidBodyRef1OutMsg.recorder(samplingTime))
-    pltRefAngleLogs.append(pltReference.hingedRigidBodyRef2OutMsg.recorder(samplingTime))
+    pltRefAngleLogs.append(
+        pltReference.hingedRigidBodyRef1OutMsg.recorder(samplingTime)
+    )
+    pltRefAngleLogs.append(
+        pltReference.hingedRigidBodyRef2OutMsg.recorder(samplingTime)
+    )
     for item in range(2):
         scSim.AddModelToTask(dynTask, pltRefAngleLogs[item])
         pltAngleLogs.append(platform.spinningBodyOutMsgs[item].recorder(samplingTime))
@@ -805,7 +911,9 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     dataSRPTorquePntB = srpTorqueLog.torqueExternalPntB_B
     dataSRPTorquePntC = []
     for i in range(len(dataSRPForce)):
-        dataSRPTorquePntC.append(dataSRPTorquePntB[i] - np.cross(dataRealCM[i], dataSRPForce[i]))
+        dataSRPTorquePntC.append(
+            dataSRPTorquePntB[i] - np.cross(dataRealCM[i], dataSRPForce[i])
+        )
     dataSRPTorquePntC = np.array(dataSRPTorquePntC)
 
     thrLoc_F = thrLog.thrusterLocation
@@ -813,51 +921,83 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     thrForce = thrLog.thrustForce
     thrVec_F = []
     for i in range(len(thrForce)):
-        thrVec_F.append(thrForce[i]*thrDir_F[i])
+        thrVec_F.append(thrForce[i] * thrDir_F[i])
     thrVec_F = np.array(thrVec_F)
 
     # Plot the results
     plt.close("all")
     figureList = {}
     plot_attitude(timeData, dataSigmaBN, dataSigmaRN, figID=1)
-    pltName = fileName+"1"+str(int(thrMomManagement))+str(int(cmEstimation))
+    pltName = fileName + "1" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(1)
     plot_attitude_error(timeData, dataSigmaBR, figID=2)
-    pltName = fileName+"2"+str(int(thrMomManagement))+str(int(cmEstimation))
+    pltName = fileName + "2" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(2)
     plot_rw_speeds(timeData, dataOmegaRW, numRW, figID=3)
-    pltName = fileName+"3"+str(int(thrMomManagement))+str(int(cmEstimation))
+    pltName = fileName + "3" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(3)
     plot_solar_array_angle(timeData, dataAlpha, dataAlphaRef, figID=4)
-    pltName = fileName+"4"+str(int(thrMomManagement))+str(int(cmEstimation))
+    pltName = fileName + "4" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(4)
     plot_platform_angle(timeData, dataNu, dataNuRef, figID=5)
-    pltName = fileName+"5"+str(int(thrMomManagement))+str(int(cmEstimation))
+    pltName = fileName + "5" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(5)
-    plot_thruster_cm_offset(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrDir_F, figID=6)
-    pltName = fileName+"6"+str(int(thrMomManagement))+str(int(cmEstimation))
+    plot_thruster_cm_offset(
+        timeData,
+        dataRealCM,
+        dataNu,
+        platform.r_S1B_B,
+        platform.dcm_S10B,
+        thrLoc_F,
+        thrDir_F,
+        figID=6,
+    )
+    pltName = fileName + "6" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(6)
-    plot_external_torque(timeData, dataSRPTorquePntC, yString='SRP', figID=7)
-    pltName = fileName+"7"+str(int(thrMomManagement))+str(int(cmEstimation))
+    plot_external_torque(timeData, dataSRPTorquePntC, yString="SRP", figID=7)
+    pltName = fileName + "7" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(7)
-    plot_thr_torque(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, figID=8)
-    pltName = fileName+"8"+str(int(thrMomManagement))+str(int(cmEstimation))
+    plot_thr_torque(
+        timeData,
+        dataRealCM,
+        dataNu,
+        platform.r_S1B_B,
+        platform.dcm_S10B,
+        thrLoc_F,
+        thrVec_F,
+        THRConfig.swirlTorque,
+        figID=8,
+    )
+    pltName = fileName + "8" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(8)
-    plot_net_torques(timeData, dataRealCM, dataNu, platform.r_S1B_B, platform.dcm_S10B, thrLoc_F, thrVec_F, THRConfig.swirlTorque, dataSRPTorquePntC, figID=9)
-    pltName = fileName+"9"+str(int(thrMomManagement))+str(int(cmEstimation))
+    plot_net_torques(
+        timeData,
+        dataRealCM,
+        dataNu,
+        platform.r_S1B_B,
+        platform.dcm_S10B,
+        thrLoc_F,
+        thrVec_F,
+        THRConfig.swirlTorque,
+        dataSRPTorquePntC,
+        figID=9,
+    )
+    pltName = fileName + "9" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(9)
     plot_solar_array_pointing_error(timeData, dataSAPointing, figID=10)
-    pltName = fileName+"10"+str(int(thrMomManagement))+str(int(cmEstimation))
+    pltName = fileName + "10" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(10)
     plot_neg_Y_pointing_error(timeData, dataNegYPointing, figID=11)
-    pltName = fileName+"11"+str(int(thrMomManagement))+str(int(cmEstimation))
+    pltName = fileName + "11" + str(int(thrMomManagement)) + str(int(cmEstimation))
     figureList[pltName] = plt.figure(11)
     if cmEstimation:
         plot_state_errors(timeData, dataStateError, dataCovariance, figID=12)
-        pltName = fileName+"12"+str(int(thrMomManagement))+str(int(cmEstimation))
+        pltName = fileName + "12" + str(int(thrMomManagement)) + str(int(cmEstimation))
         figureList[pltName] = plt.figure(12)
-        plot_residuals(timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0]**0.5, figID=13)
-        pltName = fileName+"13"+str(int(thrMomManagement))+str(int(cmEstimation))
+        plot_residuals(
+            timeData, dataPreFit, dataPostFit, cmEstimator.R0[0][0] ** 0.5, figID=13
+        )
+        pltName = fileName + "13" + str(int(thrMomManagement)) + str(int(cmEstimation))
         figureList[pltName] = plt.figure(13)
 
     if showPlots:
@@ -874,62 +1014,104 @@ def plot_attitude(timeData, dataSigmaBN, dataSigmaRN, figID=None):
     """Plot the spacecraft attitude w.r.t. reference."""
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_{BN,' + str(idx + 1) + '}$')
+        plt.plot(
+            timeData,
+            dataSigmaBN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_{BN," + str(idx + 1) + "}$",
+        )
     for idx in range(3):
-        plt.plot(timeData, dataSigmaRN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3), linestyle='dashed',
-                 label=r'$\sigma_{RN,' + str(idx + 1) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel(r'Attitude $\sigma$')
+        plt.plot(
+            timeData,
+            dataSigmaRN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            linestyle="dashed",
+            label=r"$\sigma_{RN," + str(idx + 1) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel(r"Attitude $\sigma$")
+
 
 def plot_attitude_error(timeData, dataSigmaBR, figID=None):
     """Plot the spacecraft attitude error."""
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx + 1) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel(r'Attitude Tracking Error $\sigma_{B/R}$')
+        plt.plot(
+            timeData,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx + 1) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel(r"Attitude Tracking Error $\sigma_{B/R}$")
+
 
 def plot_rw_speeds(timeData, dataOmegaRW, numRW, figID=None):
     """Plot the RW spin rates."""
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(numRW):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label=r'$\Omega_{' + str(idx + 1) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel('RW Speed (RPM) ')
+        plt.plot(
+            timeData,
+            dataOmegaRW[:, idx] / macros.RPM,
+            color=unitTestSupport.getLineColor(idx, numRW),
+            label=r"$\Omega_{" + str(idx + 1) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel("RW Speed (RPM) ")
+
 
 def plot_solar_array_angle(timeData, dataAngle, dataRefAngle, figID=None):
     """Plot the solar array angles w.r.t references."""
     plt.figure(figID, figsize=(5, 2.75))
     for i, angle in enumerate(dataAngle):
-        plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), label=r'$\alpha_' + str(i+1) + '$')
+        plt.plot(
+            timeData,
+            angle / np.pi * 180,
+            color="C" + str(i),
+            label=r"$\alpha_" + str(i + 1) + "$",
+        )
     for i, angle in enumerate(dataRefAngle):
-        plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), linestyle='dashed', label=r'$\alpha_{R,' + str(i+1) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel(r'Solar Array Angles [deg]')
+        plt.plot(
+            timeData,
+            angle / np.pi * 180,
+            color="C" + str(i),
+            linestyle="dashed",
+            label=r"$\alpha_{R," + str(i + 1) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel(r"Solar Array Angles [deg]")
+
 
 def plot_platform_angle(timeData, dataAngle, dataRefAngle, figID=None):
     """Plot the platform tip and tilt angles w.r.t. references."""
-    plt.figure(figID, figsize=(5,2.75))
+    plt.figure(figID, figsize=(5, 2.75))
     for i, angle in enumerate(dataAngle):
-        plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), label=r'$\nu_' + str(i+1) + '$')
+        plt.plot(
+            timeData,
+            angle / np.pi * 180,
+            color="C" + str(i),
+            label=r"$\nu_" + str(i + 1) + "$",
+        )
     for i, angle in enumerate(dataRefAngle):
-        plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), linestyle='dashed', label=r'$\nu_{R,' + str(i+1) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel(r'Platform Angles [deg]')
+        plt.plot(
+            timeData,
+            angle / np.pi * 180,
+            color="C" + str(i),
+            linestyle="dashed",
+            label=r"$\nu_{R," + str(i + 1) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel(r"Platform Angles [deg]")
 
-def plot_thruster_cm_offset(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrDir_F, figID=None):
+
+def plot_thruster_cm_offset(
+    timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrDir_F, figID=None
+):
     """Plot the angle between thrust vector and system CM."""
     r_MB_B = np.array([dataMB_B[0][0], dataMB_B[1][0], dataMB_B[2][0]])
     dataAngOffset = []
@@ -940,33 +1122,52 @@ def plot_thruster_cm_offset(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThr
         r_TM_B = np.matmul(BF, dataThrLoc_F[i])
         r_CT_B = dataCM[i] - r_TM_B - r_MB_B
         thrDir_B = np.matmul(BF, dataThrDir_F[i])
-        dataAngOffset.append(np.arccos(min(max(np.dot(r_CT_B, thrDir_B) / np.linalg.norm(r_CT_B), -1), 1)))
+        dataAngOffset.append(
+            np.arccos(
+                min(max(np.dot(r_CT_B, thrDir_B) / np.linalg.norm(r_CT_B), -1), 1)
+            )
+        )
         cross = np.cross(r_CT_B, thrDir_B)
         if np.arctan2(cross[1], cross[0]) < 0:
             dataAngOffset[-1] = -dataAngOffset[-1]
 
     dataAngOffset = np.array(dataAngOffset) * macros.R2D
     plt.figure(figID, figsize=(5, 2.75))
-    plt.plot(timeData, dataAngOffset, label=r'$\Delta \theta$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel('CM Offset Ang [deg]')
+    plt.plot(timeData, dataAngOffset, label=r"$\Delta \theta$")
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel("CM Offset Ang [deg]")
+
 
 def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
     """Plot the external torques."""
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(3):
-        plt.plot(timeData, dataTorque[:, idx] * 1000,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'${}^BL_' + str(idx+1) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
+        plt.plot(
+            timeData,
+            dataTorque[:, idx] * 1000,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"${}^BL_" + str(idx + 1) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
     if yString:
-        plt.ylabel(yString + ' Torque [mNm]')
+        plt.ylabel(yString + " Torque [mNm]")
     else:
-        plt.ylabel('Torque [mNm]')
+        plt.ylabel("Torque [mNm]")
 
-def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, swirlTorque, figID=None):
+
+def plot_thr_torque(
+    timeData,
+    dataCM,
+    dataNu,
+    dataMB_B,
+    dataM0B,
+    dataThrLoc_F,
+    dataThrVec_F,
+    swirlTorque,
+    figID=None,
+):
     """Plot the thruster torque about CM."""
     r_MB_B = np.array([dataMB_B[0][0], dataMB_B[1][0], dataMB_B[2][0]])
     dataThrTorque = []
@@ -979,9 +1180,21 @@ def plot_thr_torque(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, d
         thrVec_B = np.matmul(BF, dataThrVec_F[i])
         dataThrTorque.append(np.cross(r_TC_B, thrVec_B) + thrVec_B * swirlTorque)
     dataThrTorque = np.array(dataThrTorque)
-    plot_external_torque(timeData, dataThrTorque, yString=r'Thruster', figID=figID)
+    plot_external_torque(timeData, dataThrTorque, yString=r"Thruster", figID=figID)
 
-def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, dataThrVec_F, swirlTorque, dataSRP, figID=None):
+
+def plot_net_torques(
+    timeData,
+    dataCM,
+    dataNu,
+    dataMB_B,
+    dataM0B,
+    dataThrLoc_F,
+    dataThrVec_F,
+    swirlTorque,
+    dataSRP,
+    figID=None,
+):
     """Plot the net external torques in the plane perpendicular to the thrust vector."""
     r_MB_B = np.array([dataMB_B[0][0], dataMB_B[1][0], dataMB_B[2][0]])
     dataDeltaL = []
@@ -995,78 +1208,140 @@ def plot_net_torques(timeData, dataCM, dataNu, dataMB_B, dataM0B, dataThrLoc_F, 
         thrTorque_B = np.cross(r_TC_B, thrVec_B) + thrVec_B * swirlTorque
         dataDeltaL.append(dataSRP[i] + thrTorque_B)
     dataDeltaL = np.array(dataDeltaL)
-    plot_external_torque(timeData, dataDeltaL, yString=r'Net Ext.', figID=figID)
+    plot_external_torque(timeData, dataDeltaL, yString=r"Net Ext.", figID=figID)
+
 
 def plot_state_errors(timeData, data1, data2, figID=None):
     """Plot the error between estimated CM and true CM."""
     plt.figure(figID, figsize=(5, 6))
-    plt.subplot(3,1,1)
-    plt.plot(timeData, data1[:, 0]*1000, color='C0', linestyle='solid', label=r'$\Delta r_1$')
-    plt.plot(timeData,  3*data2[:, 0]*1000, color='C0', linestyle='dashed', label=r'$\pm 3\sigma_1$')
-    plt.plot(timeData, -3*data2[:, 0]*1000, color='C0', linestyle='dashed')
-    plt.legend(loc='upper right')
-    plt.ylabel('$r_{CM,1}$ [mm]')
+    plt.subplot(3, 1, 1)
+    plt.plot(
+        timeData,
+        data1[:, 0] * 1000,
+        color="C0",
+        linestyle="solid",
+        label=r"$\Delta r_1$",
+    )
+    plt.plot(
+        timeData,
+        3 * data2[:, 0] * 1000,
+        color="C0",
+        linestyle="dashed",
+        label=r"$\pm 3\sigma_1$",
+    )
+    plt.plot(timeData, -3 * data2[:, 0] * 1000, color="C0", linestyle="dashed")
+    plt.legend(loc="upper right")
+    plt.ylabel("$r_{CM,1}$ [mm]")
     plt.grid()
-    plt.subplot(3,1,2)
-    plt.plot(timeData, data1[:, 1]*1000, color='C1', linestyle='solid', label=r'$\Delta r_2$')
-    plt.plot(timeData,  3*data2[:, 1]*1000, color='C1', linestyle='dashed', label=r'$\pm 3\sigma_2$')
-    plt.plot(timeData, -3*data2[:, 1]*1000, color='C1', linestyle='dashed')
-    plt.legend(loc='upper right')
-    plt.ylabel('$r_{CM,2}$ [mm]')
+    plt.subplot(3, 1, 2)
+    plt.plot(
+        timeData,
+        data1[:, 1] * 1000,
+        color="C1",
+        linestyle="solid",
+        label=r"$\Delta r_2$",
+    )
+    plt.plot(
+        timeData,
+        3 * data2[:, 1] * 1000,
+        color="C1",
+        linestyle="dashed",
+        label=r"$\pm 3\sigma_2$",
+    )
+    plt.plot(timeData, -3 * data2[:, 1] * 1000, color="C1", linestyle="dashed")
+    plt.legend(loc="upper right")
+    plt.ylabel("$r_{CM,2}$ [mm]")
     plt.grid()
-    plt.subplot(3,1,3)
-    plt.plot(timeData, data1[:, 2]*1000, color='C2', linestyle='solid', label=r'$\Delta r_3$')
-    plt.plot(timeData,  3*data2[:, 2]*1000, color='C2', linestyle='dashed', label=r'$\pm 3\sigma_3$')
-    plt.plot(timeData, -3*data2[:, 2]*1000, color='C2', linestyle='dashed')
-    plt.legend(loc='upper right')
-    plt.ylabel('$r_{CM,3}$ [mm]')
+    plt.subplot(3, 1, 3)
+    plt.plot(
+        timeData,
+        data1[:, 2] * 1000,
+        color="C2",
+        linestyle="solid",
+        label=r"$\Delta r_3$",
+    )
+    plt.plot(
+        timeData,
+        3 * data2[:, 2] * 1000,
+        color="C2",
+        linestyle="dashed",
+        label=r"$\pm 3\sigma_3$",
+    )
+    plt.plot(timeData, -3 * data2[:, 2] * 1000, color="C2", linestyle="dashed")
+    plt.legend(loc="upper right")
+    plt.ylabel("$r_{CM,3}$ [mm]")
     plt.grid()
-    plt.xlabel('Time [hours]')
+    plt.xlabel("Time [hours]")
+
 
 def plot_residuals(timeData, preFit, postFit, R, figID=None):
     """Plot pre-fit and post-fit residuals on integral feedback torque measurements."""
     plt.figure(figID, figsize=(5, 6))
     plt.subplot(2, 1, 1)
-    plt.plot(timeData, preFit[:, 0]*1e3, color='C0', linestyle='solid', label=r'$\rho_1$')
-    plt.plot(timeData, preFit[:, 1]*1e3, color='C1', linestyle='solid', label=r'$\rho_2$')
-    plt.plot(timeData, preFit[:, 2]*1e3, color='C2', linestyle='solid', label=r'$\rho_3$')
-    plt.ylabel('Pre-Fit residuals [mNm]')
-    plt.legend(loc='upper right')
+    plt.plot(
+        timeData, preFit[:, 0] * 1e3, color="C0", linestyle="solid", label=r"$\rho_1$"
+    )
+    plt.plot(
+        timeData, preFit[:, 1] * 1e3, color="C1", linestyle="solid", label=r"$\rho_2$"
+    )
+    plt.plot(
+        timeData, preFit[:, 2] * 1e3, color="C2", linestyle="solid", label=r"$\rho_3$"
+    )
+    plt.ylabel("Pre-Fit residuals [mNm]")
+    plt.legend(loc="upper right")
     plt.grid()
-    plt.subplot(2,1,2)
-    plt.plot(timeData, postFit[:, 0]*1e3, color='C0', linestyle='dashed', label=r'$\rho_1$')
-    plt.plot(timeData, postFit[:, 1]*1e3, color='C1', linestyle='dashed', label=r'$\rho_2$')
-    plt.plot(timeData, postFit[:, 2]*1e3, color='C2', linestyle='dashed', label=r'$\rho_3$')
-    plt.plot([timeData[0],timeData[-1]],[3000*R,3000*R], color='C3', linestyle='dashed', label=r'$\pm 3\sigma_R$')
-    plt.plot([timeData[0],timeData[-1]],[-3000*R,-3000*R], color='C3', linestyle='dashed')
-    plt.legend(loc='upper right')
-    plt.ylabel('Post-Fit residuals [mNm]')
+    plt.subplot(2, 1, 2)
+    plt.plot(
+        timeData, postFit[:, 0] * 1e3, color="C0", linestyle="dashed", label=r"$\rho_1$"
+    )
+    plt.plot(
+        timeData, postFit[:, 1] * 1e3, color="C1", linestyle="dashed", label=r"$\rho_2$"
+    )
+    plt.plot(
+        timeData, postFit[:, 2] * 1e3, color="C2", linestyle="dashed", label=r"$\rho_3$"
+    )
+    plt.plot(
+        [timeData[0], timeData[-1]],
+        [3000 * R, 3000 * R],
+        color="C3",
+        linestyle="dashed",
+        label=r"$\pm 3\sigma_R$",
+    )
+    plt.plot(
+        [timeData[0], timeData[-1]],
+        [-3000 * R, -3000 * R],
+        color="C3",
+        linestyle="dashed",
+    )
+    plt.legend(loc="upper right")
+    plt.ylabel("Post-Fit residuals [mNm]")
     plt.grid()
-    plt.xlabel('Time [hours]')
+    plt.xlabel("Time [hours]")
+
 
 def plot_solar_array_pointing_error(timeData, dataAngle, figID=None):
     """Plot the solar array angles w.r.t references."""
     plt.figure(figID, figsize=(5, 2.75))
     for i, angle in enumerate(dataAngle):
-        plt.plot(timeData, angle / np.pi * 180, color='C'+str(i), label=r'$\gamma_' + str(i+1) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel(r'Solar Array Pointing Error [deg]')
+        plt.plot(
+            timeData,
+            angle / np.pi * 180,
+            color="C" + str(i),
+            label=r"$\gamma_" + str(i + 1) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel(r"Solar Array Pointing Error [deg]")
+
 
 def plot_neg_Y_pointing_error(timeData, dataAngle, figID=None):
     """Plot the solar array angles w.r.t references."""
     plt.figure(figID, figsize=(5, 2.75))
-    plt.plot(timeData, dataAngle / np.pi * 180, color='C'+str(3), label=r'$\delta$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [hours]')
-    plt.ylabel(r'Sensitive Platform Pointing [deg]')
+    plt.plot(timeData, dataAngle / np.pi * 180, color="C" + str(3), label=r"$\delta$")
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [hours]")
+    plt.ylabel(r"Sensitive Platform Pointing [deg]")
 
 
 if __name__ == "__main__":
-    run(
-        False,
-        True,
-        False,
-        True,
-        True
-    )
+    run(False, True, False, True, True)

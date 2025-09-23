@@ -16,6 +16,7 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import numpy as np
+
 np.set_printoptions(precision=12)
 
 # Initial Conditions
@@ -24,11 +25,7 @@ omega_BR_B = np.array([0.010, -0.020, 0.015])
 omega_RN_B = np.array([-0.02, -0.01, 0.005])
 domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
 
-I = np.array([
-    [1000., 0., 0.],
-    [0., 800., 0.],
-    [0., 0., 800.]
-])
+I = np.array([[1000.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 800.0]])
 
 K = 0.15
 P = 150.0
@@ -43,4 +40,4 @@ Lr += L
 Lr *= -1.0
 
 # Print Results
-print('Lr = ', Lr)
+print("Lr = ", Lr)

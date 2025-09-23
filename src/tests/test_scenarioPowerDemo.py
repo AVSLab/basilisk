@@ -27,16 +27,16 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioPowerDemo
 
-@pytest.mark.scenarioTest
 
+@pytest.mark.scenarioTest
 def test_simplePowerDemo(show_plots):
     """This function is called by the py.test environment."""
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     # each test method requires a single assert method to be called
     try:
@@ -50,10 +50,6 @@ def test_simplePowerDemo(show_plots):
         testFailCount += 1
         testMessages.append("Power tutorial failed.")
 
-
-
     assert testFailCount < 1, testMessages
 
     return
-
-

@@ -118,30 +118,37 @@ to settle on a value that matches the un-modeled external torque.
 # Creation Date:  Nov. 25, 2016
 #
 
-
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 # import message declarations
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import inertial3D
+
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import mrpFeedback
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav
+
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -170,7 +177,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
 
     #
     #  create the simulation process
@@ -192,11 +199,13 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -239,7 +248,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(fswTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.sigma_R0N = [0.0, 0.0, 0.0]  # set the desired inertial orientation
 
     # setup the attitude tracking error evaluation module
     attError = attTrackingError.attTrackingError()
@@ -256,18 +265,22 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     else:
         mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     #
     #   Setup data logging before the simulation is initialized
     #
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 100
-    dataLog = scObject.scStateOutMsg.recorder(unitTestSupport.samplingTime(simulationTime, simTimeStep, numDataPoints))
-    attErrorLog = attError.attGuidOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
-                                                                                     fswTimeStep, numDataPoints))
-    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
-                                                                                    fswTimeStep, numDataPoints))
+    dataLog = scObject.scStateOutMsg.recorder(
+        unitTestSupport.samplingTime(simulationTime, simTimeStep, numDataPoints)
+    )
+    attErrorLog = attError.attGuidOutMsg.recorder(
+        unitTestSupport.samplingTime(simulationTime, fswTimeStep, numDataPoints)
+    )
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(
+        unitTestSupport.samplingTime(simulationTime, fswTimeStep, numDataPoints)
+    )
 
     scSim.AddModelToTask(dynTaskName, dataLog)
     scSim.AddModelToTask(fswTaskName, attErrorLog)
@@ -310,9 +323,12 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, dynTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        dynTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation
@@ -345,53 +361,68 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataSigmaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
     figureList = {}
     pltName = fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataLr[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Control Torque $L_r$ [Nm]")
     pltName = fileName + "2" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataOmegaBR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
 
     plt.figure(4)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataPos[:, idx] / 1000,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Inertial Position [km] ')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataPos[:, idx] / 1000,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Inertial Position [km] ")
 
     plt.figure(5)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Inertial MRP Attitude ')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            dataSigmaBN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Inertial MRP Attitude ")
 
     if show_plots:
         plt.show()
@@ -410,5 +441,5 @@ if __name__ == "__main__":
     run(
         True,  # show_plots
         False,  # useUnmodeledTorque
-        False  # useIntGain
-        )
+        False,  # useIntGain
+    )

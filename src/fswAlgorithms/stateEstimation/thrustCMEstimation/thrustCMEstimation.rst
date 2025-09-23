@@ -83,7 +83,7 @@ The required module configuration is::
     cmEstimation.P0 = [0.0025, 0.0025, 0.0025]
     cmEstimation.R0 = [1e-9, 1e-9, 1e-9]
     unitTestSim.AddModelToTask(unitTaskName, cmEstimation)
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters
@@ -105,4 +105,3 @@ The module is configurable with the following parameters:
    * - ``R0``
      - [0, 0, 0]
      - diagonal elements of the measurement noise covariance
-

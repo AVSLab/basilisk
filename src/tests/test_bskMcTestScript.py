@@ -41,25 +41,26 @@ bokeh_available = bokeh_spec is not None
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples/MonteCarloExamples')
+sys.path.append(path + "/../../examples/MonteCarloExamples")
+
 
 # Skip test if Python version is less than 3.9
-@pytest.mark.skipif(sys.version_info < (3, 9),
-                    reason="Test has issues with Controller class and older python.")
-
+@pytest.mark.skipif(
+    sys.version_info < (3, 9),
+    reason="Test has issues with Controller class and older python.",
+)
 # Skip test if Bokeh is not available
-@pytest.mark.skipif(not bokeh_available,
-                    reason="Bokeh is not available. Skipping test.")
+@pytest.mark.skipif(
+    not bokeh_available, reason="Bokeh is not available. Skipping test."
+)
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest
-
 def test_scenarioBskMcScenarios(show_plots):
     # These need to be run in serial such that the data is produced for analysis
-    scenarios = ['scenarioBskSimAttFeedbackMC',
-                 'scenarioVisualizeMonteCarlo']
+    scenarios = ["scenarioBskSimAttFeedbackMC", "scenarioVisualizeMonteCarlo"]
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     for i, bskSimCase in enumerate(scenarios):
         # import the bskSim script to be tested
@@ -76,7 +77,11 @@ def test_scenarioBskMcScenarios(show_plots):
             testMessages.append(f"Error in {bskSimCase}: {str(err)}")
 
     # Clean up
-    if os.path.exists(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/"):
-        shutil.rmtree(path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/")
+    if os.path.exists(
+        path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/"
+    ):
+        shutil.rmtree(
+            path + "/../../examples/MonteCarloExamples/scenarioBskSimAttFeedbackMC/"
+        )
 
     assert testFailCount < 1, testMessages

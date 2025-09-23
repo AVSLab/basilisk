@@ -25,7 +25,6 @@
 #
 
 
-
 import inspect
 import os
 import sys
@@ -36,18 +35,16 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioCSSFilters
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("FilterType, simTime", [
-      ('uKF', 400)
-    , ('EKF', 400)
-    , ('OEKF', 400)
-    , ('SEKF', 400)
-    , ('SuKF', 400)
-])
+@pytest.mark.parametrize(
+    "FilterType, simTime",
+    [("uKF", 400), ("EKF", 400), ("OEKF", 400), ("SEKF", 400), ("SuKF", 400)],
+)
 @pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_
@@ -55,8 +52,8 @@ def test_Filters(show_plots, FilterType, simTime):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
         scenarioCSSFilters.run(True, show_plots, FilterType, simTime)
@@ -71,5 +68,3 @@ def test_Filters(show_plots, FilterType, simTime):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-
-

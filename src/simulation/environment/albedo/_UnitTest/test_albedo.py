@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2020, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -41,12 +40,14 @@ bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))
 
+
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
-@pytest.mark.parametrize("planetCase", ['earth', 'mars'])
-@pytest.mark.parametrize("modelType", ['ALBEDO_AVG_IMPLICIT', 'ALBEDO_AVG_EXPLICIT', 'ALBEDO_DATA'])
+@pytest.mark.parametrize("planetCase", ["earth", "mars"])
+@pytest.mark.parametrize(
+    "modelType", ["ALBEDO_AVG_IMPLICIT", "ALBEDO_AVG_EXPLICIT", "ALBEDO_DATA"]
+)
 @pytest.mark.parametrize("useEclipse", [True, False])
-
 def test_unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     """
     **Validation Test Description**
@@ -71,7 +72,9 @@ def test_unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitAlbedo(show_plots, planetCase, modelType, useEclipse)
+    [testResults, testMessage] = unitAlbedo(
+        show_plots, planetCase, modelType, useEclipse
+    )
     assert testResults < 1, testMessage
 
 
@@ -95,9 +98,9 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     # Albedo A1
     albModule = albedo.Albedo()
     albModule.ModelTag = "Albedo_0"
-    if modelType == 'ALBEDO_DATA':
+    if modelType == "ALBEDO_DATA":
         dataPath = os.path.abspath(bskPath + "/supportData/AlbedoData/")
-        if planetCase == 'earth':
+        if planetCase == "earth":
             fileName = "Earth_ALB_2018_CERES_All_10x10.csv"
         else:
             fileName = "Mars_ALB_TES_10x10.csv"
@@ -106,8 +109,10 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
         ALB_avg = 0.5
         numLat = 200
         numLon = 400
-        if modelType == 'ALBEDO_AVG_EXPLICIT':
-            albModule.addPlanetandAlbedoAverageModel(planetInMsg, ALB_avg, numLat, numLon)
+        if modelType == "ALBEDO_AVG_EXPLICIT":
+            albModule.addPlanetandAlbedoAverageModel(
+                planetInMsg, ALB_avg, numLat, numLon
+            )
         else:
             albModule.addPlanetandAlbedoAverageModel(planetInMsg)
 
@@ -118,15 +123,15 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
 
     # Create dummy planet message
     planetPositionMsg = messaging.SpicePlanetStateMsgPayload()
-    planetPositionMsg.PositionVector = [0., 0., 0.]
+    planetPositionMsg.PositionVector = [0.0, 0.0, 0.0]
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    if planetCase == 'earth':
+    if planetCase == "earth":
         planet = gravFactory.createEarth()
-        sunPositionMsg.PositionVector = [-om.AU * 1000., 0.0, 0.0]
-    elif planetCase == 'mars':
+        sunPositionMsg.PositionVector = [-om.AU * 1000.0, 0.0, 0.0]
+    elif planetCase == "mars":
         planet = gravFactory.createMars()
-        sunPositionMsg.PositionVector = [-1.5 * om.AU * 1000., 0.0, 0.0]
+        sunPositionMsg.PositionVector = [-1.5 * om.AU * 1000.0, 0.0, 0.0]
     planetPositionMsg.PlanetName = planetCase
     planetPositionMsg.J20002Pfix = np.identity(3)
 
@@ -135,15 +140,15 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     # Create dummy spacecraft message
     scStateMsg = messaging.SCStatesMsgPayload()
     rSC = req + 6000 * 1000  # meters
-    alpha = 71. * macros.D2R
+    alpha = 71.0 * macros.D2R
     scStateMsg.r_BN_N = np.dot(rSC, [np.cos(alpha), np.sin(alpha), 0.0])
-    scStateMsg.sigma_BN = [0., 0., 0.]
+    scStateMsg.sigma_BN = [0.0, 0.0, 0.0]
 
     # Albedo instrument configuration
     config1 = albedo.instConfig_t()
-    config1.fov = 80. * macros.D2R
+    config1.fov = 80.0 * macros.D2R
     config1.nHat_B = np.array([-np.cos(alpha), -np.sin(alpha), 0.0])
-    config1.r_IB_B = np.array([0., 0., 0.])
+    config1.r_IB_B = np.array([0.0, 0.0, 0.0])
     albModule.addInstrumentConfig(config1)
 
     sunInMsg = messaging.SpicePlanetStateMsg().write(sunPositionMsg)
@@ -166,15 +171,15 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     unitTestSim.TotalSim.SingleStepProcesses()
     # This pulls the actual data log from the simulation run.
     dataAlb0 = dataLog.albedoAtInstrument
-    errTol = 1E-12
-    if planetCase == 'earth':
-        if modelType == 'ALBEDO_DATA':
+    errTol = 1e-12
+    if planetCase == "earth":
+        if modelType == "ALBEDO_DATA":
             if useEclipse:
                 truthAlb = 0.0022055492477917
             else:
                 truthAlb = 0.0022055492477917
         else:
-            if modelType == 'ALBEDO_AVG_EXPLICIT':
+            if modelType == "ALBEDO_AVG_EXPLICIT":
                 if useEclipse:
                     truthAlb = 0.0041742091531996
                 else:
@@ -185,13 +190,13 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
                 else:
                     truthAlb = 0.002421222716229847
     else:
-        if modelType == 'ALBEDO_DATA':
+        if modelType == "ALBEDO_DATA":
             if useEclipse:
                 truthAlb = 0.0014001432717662
             else:
                 truthAlb = 0.0014001432717662
         else:
-            if modelType == 'ALBEDO_AVG_EXPLICIT':
+            if modelType == "ALBEDO_AVG_EXPLICIT":
                 if useEclipse:
                     truthAlb = 0.0035681407388827
                 else:
@@ -206,12 +211,15 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
         testFailCount += 1
     #   print out success or failure message
     if testFailCount == 0:
-            print("PASSED: " + albModule.ModelTag)
+        print("PASSED: " + albModule.ModelTag)
     else:
-            print("Failed: " + albModule.ModelTag)
-    print("This test uses a relative accuracy value of " + str(errTol * 100) + " percent")
+        print("Failed: " + albModule.ModelTag)
+    print(
+        "This test uses a relative accuracy value of " + str(errTol * 100) + " percent"
+    )
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def test_albedo_invalid_file(tmp_path):
     """Verify that Albedo model returns gracefully when file cannot be loaded.
@@ -243,13 +251,16 @@ def test_albedo_invalid_file(tmp_path):
     albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
 
     with pytest.raises(BasiliskError):
-        albModule.addPlanetandAlbedoDataModel(planetInMsg, str(tmp_path), "does_not_exist.file")
+        albModule.addPlanetandAlbedoDataModel(
+            planetInMsg, str(tmp_path), "does_not_exist.file"
+        )
         albModule.Reset(0)
 
     # the fact that we got here without segfaulting means the test
     # passed
     assert True
 
+
 if __name__ == "__main__":
     # unitAlbedo(False, 'earth', 'ALBEDO_AVG_EXPLICIT', True)
-    unitAlbedo(False, 'mars', 'ALBEDO_AVG_IMPLICIT', False)
+    unitAlbedo(False, "mars", "ALBEDO_AVG_IMPLICIT", False)

@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef FACET_DRAG_DYNAMIC_EFFECTOR_H
 #define FACET_DRAG_DYNAMIC_EFFECTOR_H
 
@@ -33,51 +32,47 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
-
-
 /*! @brief spacecraft geometry data */
-typedef struct {
-  std::vector<double> facetAreas;                   //!< vector of facet areas
-  std::vector<double> facetCoeffs;                  //!< vector of facet coefficients
-  std::vector<Eigen::Vector3d> facetNormals_B;      //!< vector of facet normals
-  std::vector<Eigen::Vector3d> facetLocations_B;    //!< vector of facet locations
-}SpacecraftGeometryData;
-
+typedef struct
+{
+    std::vector<double> facetAreas;                //!< vector of facet areas
+    std::vector<double> facetCoeffs;               //!< vector of facet coefficients
+    std::vector<Eigen::Vector3d> facetNormals_B;   //!< vector of facet normals
+    std::vector<Eigen::Vector3d> facetLocations_B; //!< vector of facet locations
+} SpacecraftGeometryData;
 
 /*! @brief faceted atmospheric drag dynamic effector */
-class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
-public:
-
-
+class FacetDragDynamicEffector
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     FacetDragDynamicEffector();
     ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime, double timeStep);
-    void Reset(uint64_t CurrentSimNanos);               //!< class method
+    void Reset(uint64_t CurrentSimNanos); //!< class method
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
-private:
-
+  private:
     void plateDrag();
     void updateDragDir();
-public:
+
+  public:
     uint64_t numFacets;                             //!< number of facets
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
-    StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
-    StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
+    StateData* hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
+    StateData* hubVelocity;                         //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                        //!< class variable
     BSKLogger bskLogger;                            //!< -- BSK Logging
 
-private:
+  private:
     AtmoPropsMsgPayload atmoInData;
-    SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
-
+    SpacecraftGeometryData scGeometry; //!< -- Struct to hold spacecraft facet data
 };
 
-#endif 
+#endif

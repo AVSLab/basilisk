@@ -77,8 +77,19 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Basilisk.utilities import (SimulationBaseClass, vizSupport, simIncludeGravBody, macros, orbitalMotion, unitTestSupport)
-from Basilisk.simulation import spacecraft, spinningBodyNDOFStateEffector, prescribedRotation1DOF
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    vizSupport,
+    simIncludeGravBody,
+    macros,
+    orbitalMotion,
+    unitTestSupport,
+)
+from Basilisk.simulation import (
+    spacecraft,
+    spinningBodyNDOFStateEffector,
+    prescribedRotation1DOF,
+)
 from Basilisk.architecture import messaging
 
 from Basilisk import __path__
@@ -119,7 +130,7 @@ class geometryClass:
 
 def createSimBaseClass():
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.simulationTime = macros.min2nano(5.)
+    scSim.simulationTime = macros.min2nano(5.0)
     scSim.dynTaskName = "dynTask"
     scSim.dynProcess = scSim.CreateNewProcess("dynProcess")
     dynTimeStep = macros.sec2nano(0.2)
@@ -132,9 +143,29 @@ def setUpSpacecraft(scSim, scGeometry):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "scObject"
     scObject.hub.mHub = scGeometry.massHub
-    scObject.hub.IHubPntBc_B = [[scGeometry.massHub / 12 * (scGeometry.lengthHub ** 2 + scGeometry.heightHub ** 2), 0.0, 0.0],
-                                [0.0, scGeometry.massHub / 12 * (scGeometry.widthHub ** 2 + scGeometry.heightHub ** 2), 0.0],
-                                [0.0, 0.0, scGeometry.massHub / 12 * (scGeometry.lengthHub ** 2 + scGeometry.widthHub ** 2)]]
+    scObject.hub.IHubPntBc_B = [
+        [
+            scGeometry.massHub
+            / 12
+            * (scGeometry.lengthHub**2 + scGeometry.heightHub**2),
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            scGeometry.massHub
+            / 12
+            * (scGeometry.widthHub**2 + scGeometry.heightHub**2),
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            scGeometry.massHub
+            / 12
+            * (scGeometry.lengthHub**2 + scGeometry.widthHub**2),
+        ],
+    ]
     scSim.AddModelToTask(scSim.dynTaskName, scObject)
 
     return scObject
@@ -158,7 +189,13 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
     spinningBody.setISPntSc_S([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
     spinningBody.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     spinningBody.setR_ScS_S([[0.0], [scGeometry.heightLink / 2], [0.0]])
-    spinningBody.setR_SP_P([[0], [scGeometry.lengthHub / 2], [scGeometry.heightHub / 2 - scGeometry.diameterLink / 2]])
+    spinningBody.setR_SP_P(
+        [
+            [0],
+            [scGeometry.lengthHub / 2],
+            [scGeometry.heightHub / 2 - scGeometry.diameterLink / 2],
+        ]
+    )
     spinningBody.setSHat_S([[1], [0], [0]])
     spinningBody.setThetaInit(0 * macros.D2R)
     spinningBody.setThetaDotInit(0 * macros.D2R)
@@ -172,20 +209,44 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
     profiler.setThetaInit(spinningBody.getThetaInit())
     profiler.setSmoothingDuration(10)
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
-    spinningBodyEffector.spinningBodyRefInMsgs[0].subscribeTo(profiler.spinningBodyOutMsg)
+    spinningBodyEffector.spinningBodyRefInMsgs[0].subscribeTo(
+        profiler.spinningBodyOutMsg
+    )
 
     hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
         theta=-30 * macros.D2R,  # [rad]
         thetaDot=0.0,  # [rad/s]
     )
-    hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(
+        hingedRigidBodyMessageData
+    )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
 
     spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody.setMass(scGeometry.massLink)
-    spinningBody.setISPntSc_S([[spinningBody.getMass() / 12 * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink ** 2), 0.0, 0.0],
-                               [0.0, spinningBody.getMass() / 12 * (scGeometry.diameterLink / 2) ** 2, 0.0],
-                               [0.0, 0.0, spinningBody.getMass() / 12 * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink ** 2)]])
+    spinningBody.setISPntSc_S(
+        [
+            [
+                spinningBody.getMass()
+                / 12
+                * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink**2),
+                0.0,
+                0.0,
+            ],
+            [
+                0.0,
+                spinningBody.getMass() / 12 * (scGeometry.diameterLink / 2) ** 2,
+                0.0,
+            ],
+            [
+                0.0,
+                0.0,
+                spinningBody.getMass()
+                / 12
+                * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink**2),
+            ],
+        ]
+    )
     spinningBody.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     spinningBody.setR_ScS_S([[0.0], [scGeometry.heightLink / 2], [0.0]])
     spinningBody.setR_SP_P([[0], [0], [0]])
@@ -202,13 +263,17 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
     profiler.setThetaInit(spinningBody.getThetaInit())
     profiler.setSmoothingDuration(10)
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
-    spinningBodyEffector.spinningBodyRefInMsgs[1].subscribeTo(profiler.spinningBodyOutMsg)
+    spinningBodyEffector.spinningBodyRefInMsgs[1].subscribeTo(
+        profiler.spinningBodyOutMsg
+    )
 
     hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
         theta=45 * macros.D2R,  # [rad]
         thetaDot=0.0,  # [rad/s]
     )
-    hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(
+        hingedRigidBodyMessageData
+    )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
 
 
@@ -232,20 +297,44 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
     profiler.setThetaInit(spinningBody.getThetaInit())
     profiler.setSmoothingDuration(10)
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
-    spinningBodyEffector.spinningBodyRefInMsgs[2].subscribeTo(profiler.spinningBodyOutMsg)
+    spinningBodyEffector.spinningBodyRefInMsgs[2].subscribeTo(
+        profiler.spinningBodyOutMsg
+    )
 
     hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
         theta=90 * macros.D2R,  # [rad]
         thetaDot=0.0,  # [rad/s]
     )
-    hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    hingedRigidBodyMessage1 = messaging.HingedRigidBodyMsg().write(
+        hingedRigidBodyMessageData
+    )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
 
     spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody.setMass(scGeometry.massLink)
-    spinningBody.setISPntSc_S([[spinningBody.getMass() / 12 * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink ** 2), 0.0, 0.0],
-                               [0.0, spinningBody.getMass() / 12 * (scGeometry.diameterLink / 2) ** 2, 0.0],
-                               [0.0, 0.0, spinningBody.getMass() / 12 * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink ** 2)]])
+    spinningBody.setISPntSc_S(
+        [
+            [
+                spinningBody.getMass()
+                / 12
+                * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink**2),
+                0.0,
+                0.0,
+            ],
+            [
+                0.0,
+                spinningBody.getMass() / 12 * (scGeometry.diameterLink / 2) ** 2,
+                0.0,
+            ],
+            [
+                0.0,
+                0.0,
+                spinningBody.getMass()
+                / 12
+                * (3 * (scGeometry.diameterLink / 2) ** 2 + scGeometry.heightLink**2),
+            ],
+        ]
+    )
     spinningBody.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     spinningBody.setR_ScS_S([[0.0], [scGeometry.heightLink / 2], [0.0]])
     spinningBody.setR_SP_P([[0], [0], [0]])
@@ -262,26 +351,32 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
     profiler.setThetaInit(spinningBody.getThetaInit())
     profiler.setSmoothingDuration(10)
     scSim.AddModelToTask(scSim.dynTaskName, profiler)
-    spinningBodyEffector.spinningBodyRefInMsgs[3].subscribeTo(profiler.spinningBodyOutMsg)
+    spinningBodyEffector.spinningBodyRefInMsgs[3].subscribeTo(
+        profiler.spinningBodyOutMsg
+    )
 
     hingedRigidBodyMessageData = messaging.HingedRigidBodyMsgPayload(
-        theta=-20 * macros.D2R, # [rad]
-        thetaDot=0.0, # [rad/s]
+        theta=-20 * macros.D2R,  # [rad]
+        thetaDot=0.0,  # [rad/s]
     )
-    hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(hingedRigidBodyMessageData)
+    hingedRigidBodyMessage2 = messaging.HingedRigidBodyMsg().write(
+        hingedRigidBodyMessageData
+    )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
 
 
 def setUpGravity(scSim, scObject):
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(['earth', 'sun'])
-    gravBodies['earth'].isCentralBody = True
-    mu = gravBodies['earth'].mu
+    gravBodies = gravFactory.createBodies(["earth", "sun"])
+    gravBodies["earth"].isCentralBody = True
+    mu = gravBodies["earth"].mu
     gravFactory.addBodiesTo(scObject)
 
     timeInitString = "2012 MAY 1 00:28:30.0"
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString, epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'earth'
+    gravFactory.createSpiceInterface(
+        bskPath + "/supportData/EphemerisData/", timeInitString, epochInMsg=True
+    )
+    gravFactory.spiceObject.zeroBase = "earth"
     scSim.AddModelToTask(scSim.dynTaskName, gravFactory.spiceObject)
 
     return mu
@@ -314,29 +409,48 @@ def setUpRecorders(scSim, scObject, roboticArmEffector):
 
 
 def setUpVizard(scSim, scObject, roboticArmEffector, scGeometry):
-    scBodyList = [scObject,
-                  ["arm1", roboticArmEffector.spinningBodyConfigLogOutMsgs[1]],
-                  ["arm2", roboticArmEffector.spinningBodyConfigLogOutMsgs[3]]]
+    scBodyList = [
+        scObject,
+        ["arm1", roboticArmEffector.spinningBodyConfigLogOutMsgs[1]],
+        ["arm2", roboticArmEffector.spinningBodyConfigLogOutMsgs[3]],
+    ]
 
-    viz = vizSupport.enableUnityVisualization(scSim, scSim.dynTaskName, scBodyList
-                                              # , saveFile=fileName
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        scSim.dynTaskName,
+        scBodyList,
+        # , saveFile=fileName
+    )
 
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[scObject.ModelTag]
-                                 , modelPath="CUBE"
-                                 , color=vizSupport.toRGBA255("gold")
-                                 , scale=[scGeometry.widthHub, scGeometry.lengthHub, scGeometry.heightHub])
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=["arm1"]
-                                 , modelPath="CYLINDER"
-                                 , scale=[scGeometry.diameterLink, scGeometry.diameterLink, scGeometry.heightLink / 2]
-                                 , rotation=[np.pi / 2, 0, 0])
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=["arm2"]
-                                 , modelPath="CYLINDER"
-                                 , scale=[scGeometry.diameterLink, scGeometry.diameterLink, scGeometry.heightLink / 2]
-                                 , rotation=[np.pi / 2, 0, 0])
+    vizSupport.createCustomModel(
+        viz,
+        simBodiesToModify=[scObject.ModelTag],
+        modelPath="CUBE",
+        color=vizSupport.toRGBA255("gold"),
+        scale=[scGeometry.widthHub, scGeometry.lengthHub, scGeometry.heightHub],
+    )
+    vizSupport.createCustomModel(
+        viz,
+        simBodiesToModify=["arm1"],
+        modelPath="CYLINDER",
+        scale=[
+            scGeometry.diameterLink,
+            scGeometry.diameterLink,
+            scGeometry.heightLink / 2,
+        ],
+        rotation=[np.pi / 2, 0, 0],
+    )
+    vizSupport.createCustomModel(
+        viz,
+        simBodiesToModify=["arm2"],
+        modelPath="CYLINDER",
+        scale=[
+            scGeometry.diameterLink,
+            scGeometry.diameterLink,
+            scGeometry.heightLink / 2,
+        ],
+        rotation=[np.pi / 2, 0, 0],
+    )
     viz.settings.orbitLinesOn = -1
 
 
@@ -363,11 +477,11 @@ def plotting(show_plots, scLog, thetaLog):
     plt.clf()
     ax = plt.axes()
     for idx, angle in enumerate(theta):
-        plt.plot(dynTimeMin, macros.R2D * angle, label=r'$\theta_' + str(idx + 1) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Angles', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\theta$ [deg]', fontsize='18')
+        plt.plot(dynTimeMin, macros.R2D * angle, label=r"$\theta_" + str(idx + 1) + "$")
+    plt.legend(fontsize="14")
+    plt.title("Angles", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\theta$ [deg]", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -378,11 +492,15 @@ def plotting(show_plots, scLog, thetaLog):
     plt.clf()
     ax = plt.axes()
     for idx, angleRate in enumerate(thetaDot):
-        plt.plot(dynTimeMin, macros.R2D * angleRate, label=r'$\dot{\theta}_' + str(idx + 1) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Angle Rates', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\dot{\theta}$ [deg/s]', fontsize='18')
+        plt.plot(
+            dynTimeMin,
+            macros.R2D * angleRate,
+            label=r"$\dot{\theta}_" + str(idx + 1) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Angle Rates", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\dot{\theta}$ [deg/s]", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -393,13 +511,16 @@ def plotting(show_plots, scLog, thetaLog):
     plt.clf()
     ax = plt.axes()
     for idx in range(3):
-        plt.plot(dynTimeMin, sigma_BN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Attitude', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\sigma_{B/N}$', fontsize='18')
+        plt.plot(
+            dynTimeMin,
+            sigma_BN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Attitude", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\sigma_{B/N}$", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -410,13 +531,16 @@ def plotting(show_plots, scLog, thetaLog):
     plt.clf()
     ax = plt.axes()
     for idx in range(3):
-        plt.plot(dynTimeMin, omega_BN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_' + str(idx) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Attitude Rate', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\omega_{B/N}$', fontsize='18')
+        plt.plot(
+            dynTimeMin,
+            omega_BN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_" + str(idx) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Attitude Rate", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\omega_{B/N}$", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)

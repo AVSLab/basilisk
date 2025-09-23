@@ -30,7 +30,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioDeployingPanel.py
 
-The simulation includes two deploying panels that start undeployed. The first panel deploys fully, 
+The simulation includes two deploying panels that start undeployed. The first panel deploys fully,
 but the second panel deploys off-nominally (to 80%), leading to a reduced power output.
 
 
@@ -90,8 +90,14 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+)
 from Basilisk.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
 from Basilisk.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
 import math
@@ -115,7 +121,7 @@ def run(show_plots):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(.1)
+    simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # create the spacecraft hub
@@ -127,21 +133,21 @@ def run(show_plots):
     # setup Earth Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
-    gravBodies = gravFactory.createBodies('earth', 'sun')
-    gravBodies['earth'].isCentralBody = True
-    mu = gravBodies['earth'].mu
+    gravBodies = gravFactory.createBodies("earth", "sun")
+    gravBodies["earth"].isCentralBody = True
+    mu = gravBodies["earth"].mu
     sun = 1
     gravFactory.addBodiesTo(scObject)
 
     timeInitString = "2012 MAY 1 00:28:30.0"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
-    spiceObject.zeroBase = 'earth'
+    spiceObject.zeroBase = "earth"
     scSim.AddModelToTask(simTaskName, spiceObject)
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000  # meters
-    rGEO = 42000. * 1000  # meters
+    rLEO = 7000.0 * 1000  # meters
+    rGEO = 42000.0 * 1000  # meters
     oe.a = (rLEO + rGEO) / 2.0
     oe.e = 1.0 - rLEO / oe.a
     oe.i = 0.0 * macros.D2R
@@ -149,13 +155,19 @@ def run(show_plots):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)  # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     # point the body 3 axis towards the sun in the inertial n2 direction
-    scObject.hub.sigma_BNInit = [[math.tan(-90. / 4. * macros.D2R)], [0.0], [0.0]]  # sigma_BN_B
+    scObject.hub.sigma_BNInit = [
+        [math.tan(-90.0 / 4.0 * macros.D2R)],
+        [0.0],
+        [0.0],
+    ]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     # configure panels
@@ -163,10 +175,10 @@ def run(show_plots):
     panel1.ModelTag = "panel1"
     panel1.mass = 100.0
     panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    panel1.d = 1.5  
-    panel1.k = 200.
-    panel1.c = 20.  
-    panel1.r_HB_B = [[-.5], [0.0], [-1.0]]
+    panel1.d = 1.5
+    panel1.k = 200.0
+    panel1.c = 20.0
+    panel1.r_HB_B = [[-0.5], [0.0], [-1.0]]
     panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     panel1.thetaInit = -np.pi
     panel1.thetaDotInit = 0
@@ -175,10 +187,10 @@ def run(show_plots):
     panel2.ModelTag = "panel2"
     panel2.mass = 100.0
     panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    panel2.d = 1.5  
-    panel2.k = 200.
-    panel2.c = 20.  
-    panel2.r_HB_B = [[.5], [0.0], [-1.0]]
+    panel2.d = 1.5
+    panel2.k = 200.0
+    panel2.c = 20.0
+    panel2.r_HB_B = [[0.5], [0.0], [-1.0]]
     panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     panel2.thetaInit = -np.pi
     panel2.thetaDotInit = 0
@@ -213,11 +225,15 @@ def run(show_plots):
     motor2.P = 10  # derivative gain constant
 
     motor1.hingedBodyStateSensedInMsg.subscribeTo(panel1.hingedRigidBodyOutMsg)
-    motor1.hingedBodyStateReferenceInMsg.subscribeTo(profiler1.hingedRigidBodyReferenceOutMsg)
+    motor1.hingedBodyStateReferenceInMsg.subscribeTo(
+        profiler1.hingedRigidBodyReferenceOutMsg
+    )
     panel1.motorTorqueInMsg.subscribeTo(motor1.motorTorqueOutMsg)
 
     motor2.hingedBodyStateSensedInMsg.subscribeTo(panel2.hingedRigidBodyOutMsg)
-    motor2.hingedBodyStateReferenceInMsg.subscribeTo(profiler2.hingedRigidBodyReferenceOutMsg)
+    motor2.hingedBodyStateReferenceInMsg.subscribeTo(
+        profiler2.hingedRigidBodyReferenceOutMsg
+    )
     panel2.motorTorqueInMsg.subscribeTo(motor2.motorTorqueOutMsg)
 
     # add panel to spacecraft hub
@@ -228,7 +244,7 @@ def run(show_plots):
 
     solarPanel1 = simpleSolarPanel.SimpleSolarPanel()
     solarPanel1.ModelTag = "pwr1"
-    solarPanel1.nHat_B = [0, 0, 1]  
+    solarPanel1.nHat_B = [0, 0, 1]
     solarPanel1.panelArea = 2.0  # m^2
     solarPanel1.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)
@@ -236,7 +252,7 @@ def run(show_plots):
 
     solarPanel2 = simpleSolarPanel.SimpleSolarPanel()
     solarPanel2.ModelTag = "pwr2"
-    solarPanel2.nHat_B = [0, 0, 1] 
+    solarPanel2.nHat_B = [0, 0, 1]
     solarPanel2.panelArea = 2.0  # m^2
     solarPanel2.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel2.stateInMsg.subscribeTo(panel2.hingedRigidBodyConfigLogOutMsg)
@@ -259,7 +275,9 @@ def run(show_plots):
 
     # Setup data logging before the simulation is initialized
     numDataPoints = 1000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     p1Log = panel1.hingedRigidBodyOutMsg.recorder(samplingTime)
     prof1Log = profiler1.hingedRigidBodyReferenceOutMsg.recorder(samplingTime)
@@ -280,24 +298,31 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, pwr2Log)
 
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName,
-                                                  [scObject
-                                                      , [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg]
-                                                      , [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg]
-                                                   ]
-                                                  # , saveFile=__file__
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            [
+                scObject,
+                [panel1.ModelTag, panel1.hingedRigidBodyConfigLogOutMsg],
+                [panel2.ModelTag, panel2.hingedRigidBodyConfigLogOutMsg],
+            ],
+            # , saveFile=__file__
+        )
 
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[panel1.ModelTag]
-                                     , modelPath="CUBE"
-                                     , scale=[3, 1, 0.1]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[panel2.ModelTag]
-                                     , modelPath="CUBE"
-                                     , scale=[3, 1, 0.1]
-                                     , color=vizSupport.toRGBA255("blue"))
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[panel1.ModelTag],
+            modelPath="CUBE",
+            scale=[3, 1, 0.1],
+            color=vizSupport.toRGBA255("blue"),
+        )
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[panel2.ModelTag],
+            modelPath="CUBE",
+            scale=[3, 1, 0.1],
+            color=vizSupport.toRGBA255("blue"),
+        )
         viz.settings.orbitLinesOn = -1
 
     scSim.InitializeSimulation()
@@ -316,10 +341,17 @@ def run(show_plots):
 
     np.set_printoptions(precision=16)
 
-    figureList = plotOrbits(dataLog.times(), dataSigmaBN, dataOmegaBN_B, 
-                            panel1thetaLog, panel1thetaDotLog,
-                            panel2thetaLog, panel2thetaDotLog, 
-                            pwrLog1, pwrLog2)
+    figureList = plotOrbits(
+        dataLog.times(),
+        dataSigmaBN,
+        dataOmegaBN_B,
+        panel1thetaLog,
+        panel1thetaDotLog,
+        panel2thetaLog,
+        panel2thetaDotLog,
+        pwrLog1,
+        pwrLog2,
+    )
 
     if show_plots:
         plt.show()
@@ -330,10 +362,17 @@ def run(show_plots):
     return figureList
 
 
-def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
-               panel1thetaLog, panel1thetaDotLog,
-               panel2thetaLog, panel2thetaDotLog,
-               pwrLog1, pwrLog2):
+def plotOrbits(
+    timeAxis,
+    dataSigmaBN,
+    dataOmegaBN,
+    panel1thetaLog,
+    panel1thetaDotLog,
+    panel2thetaLog,
+    panel2thetaDotLog,
+    pwrLog1,
+    pwrLog2,
+):
     plt.close("all")  # clears out plots from earlier test runs
 
     # sigma B/N
@@ -341,15 +380,18 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     plt.figure(figCounter)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     timeData = timeAxis * macros.NANO2SEC
     for idx in range(3):
-        plt.plot(timeData, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [s]')
-    plt.ylabel(r'MRP Attitude $\sigma_{B/N}$')
+        plt.plot(
+            timeData,
+            dataSigmaBN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [s]")
+    plt.ylabel(r"MRP Attitude $\sigma_{B/N}$")
     figureList = {}
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
@@ -359,14 +401,17 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     plt.figure(figCounter)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(3):
-        plt.plot(timeData, dataOmegaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [s]')
-    plt.ylabel(r'Rate $\omega_{B/N}$')
+        plt.plot(
+            timeData,
+            dataOmegaBN[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [s]")
+    plt.ylabel(r"Rate $\omega_{B/N}$")
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
 
@@ -374,14 +419,14 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     figCounter += 1
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
-    ax1.plot(timeData, panel1thetaLog, color='royalblue')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Panel 1 Angle [rad]', color='royalblue')
+    ax1.plot(timeData, panel1thetaLog, color="royalblue")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Panel 1 Angle [rad]", color="royalblue")
     ax2 = plt.figure(figCounter).add_subplot(111, sharex=ax1, frameon=False)
-    ax2.plot(timeData, panel1thetaDotLog, color='indianred')
+    ax2.plot(timeData, panel1thetaDotLog, color="indianred")
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position("right")
-    plt.ylabel('Panel 1 Angle Rate [rad/s]', color='indianred')
+    plt.ylabel("Panel 1 Angle Rate [rad/s]", color="indianred")
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
 
@@ -389,14 +434,14 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     figCounter += 1
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
-    ax1.plot(timeData, panel2thetaLog, color='royalblue')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Panel 2 Angle [rad]', color='royalblue')
+    ax1.plot(timeData, panel2thetaLog, color="royalblue")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Panel 2 Angle [rad]", color="royalblue")
     ax2 = plt.figure(figCounter).add_subplot(111, sharex=ax1, frameon=False)
-    ax2.plot(timeData, panel2thetaDotLog, color='indianred')
+    ax2.plot(timeData, panel2thetaDotLog, color="indianred")
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position("right")
-    plt.ylabel('Panel 2 Angle Rate [rad/s]', color='indianred')
+    plt.ylabel("Panel 2 Angle Rate [rad/s]", color="indianred")
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
 
@@ -404,11 +449,11 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     figCounter += 1
     plt.figure(figCounter)
     ax1 = plt.figure(figCounter).add_subplot(111)
-    ax1.plot(timeData, pwrLog1, color='goldenrod', label="Panel 1")
-    ax1.plot(timeData, pwrLog2, '--', color='goldenrod', label="Panel 2")
-    plt.xlabel('Time [s]')
-    plt.ylabel('Panel Power [W]')
-    plt.legend(loc='lower right')
+    ax1.plot(timeData, pwrLog1, color="goldenrod", label="Panel 1")
+    ax1.plot(timeData, pwrLog2, "--", color="goldenrod", label="Panel 2")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Panel Power [W]")
+    plt.legend(loc="lower right")
     pltName = fileName + str(figCounter)
     figureList[pltName] = plt.figure(figCounter)
 

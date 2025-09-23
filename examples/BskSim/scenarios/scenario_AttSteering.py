@@ -71,13 +71,13 @@ Illustration of Simulation Results
 
 """
 
-
 # Get current file path
 import inspect
 import os
 import sys
 
 import numpy as np
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
@@ -85,12 +85,12 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + "/..")
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics, BSK_Fsw
 
 # Import plotting file for your scenario
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../plotting")
 import BSK_Plotting as BSK_plt
 
 
@@ -98,7 +98,7 @@ import BSK_Plotting as BSK_plt
 class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_AttitudeSteeringRW, self).__init__()
-        self.name = 'scenario_AttitudeSteeringRW'
+        self.name = "scenario_AttitudeSteeringRW"
 
         self.rwSpeedRec = None
         self.attErrRec = None
@@ -113,10 +113,13 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModels = self.get_DynModel()
-        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=DynModels.rwStateEffector
-                                            )
+        vizSupport.enableUnityVisualization(
+            self,
+            DynModels.taskName,
+            DynModels.scObject,
+            # , saveFile=__file__
+            rwEffectorList=DynModels.rwStateEffector,
+        )
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
@@ -127,7 +130,7 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.get_DynModel().gravFactory.gravBodies['earth'].mu
+        mu = self.get_DynModel().gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         self.get_DynModel().scObject.hub.r_CN_NInit = rN  # [m]
@@ -138,10 +141,14 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
     def log_outputs(self):
         samplingTime = self.get_FswModel().processTasksTimeStep
         # Dynamics process outputs:
-        self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(samplingTime)
+        self.rwSpeedRec = self.get_DynModel().rwStateEffector.rwSpeedOutMsg.recorder(
+            samplingTime
+        )
         # FSW process outputs
         self.attErrRec = self.get_FswModel().attGuidMsg.recorder(samplingTime)
-        self.rateCmdRec = self.get_FswModel().mrpSteering.rateCmdOutMsg.recorder(samplingTime)
+        self.rateCmdRec = self.get_FswModel().mrpSteering.rateCmdOutMsg.recorder(
+            samplingTime
+        )
         self.rwMotorRec = self.get_FswModel().cmdRwMotorMsg.recorder(samplingTime)
 
         self.AddModelToTask(self.get_DynModel().taskName, self.rwSpeedRec)
@@ -180,17 +187,18 @@ class scenario_AttitudeSteeringRW(BSKSim, BSKScenario):
 
         return figureList
 
-def runScenario(scenario):
 
+def runScenario(scenario):
     # Initialize simulation
     scenario.InitializeSimulation()
     # Configure FSW mode
-    scenario.modeRequest = 'steeringRW'
+    scenario.modeRequest = "steeringRW"
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
+
 
 def run(showPlots):
     """
@@ -207,6 +215,7 @@ def run(showPlots):
     figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
+
 
 if __name__ == "__main__":
     run(True)

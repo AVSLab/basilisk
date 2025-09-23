@@ -177,7 +177,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     simProcessName = "simProcess"
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess(simProcessName)
-    simulationTimeStep = macros.sec2nano(15.)
+    simulationTimeStep = macros.sec2nano(15.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # Initialize atmosphere model and add to sim
@@ -192,11 +192,29 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
         ap = 8
         f107 = 110
         sw_msg = {
-            "ap_24_0": ap, "ap_3_0": ap, "ap_3_-3": ap, "ap_3_-6": ap, "ap_3_-9": ap,
-            "ap_3_-12": ap, "ap_3_-15": ap, "ap_3_-18": ap, "ap_3_-21": ap, "ap_3_-24": ap,
-            "ap_3_-27": ap, "ap_3_-30": ap, "ap_3_-33": ap, "ap_3_-36": ap, "ap_3_-39": ap,
-            "ap_3_-42": ap, "ap_3_-45": ap, "ap_3_-48": ap, "ap_3_-51": ap, "ap_3_-54": ap,
-            "ap_3_-57": ap, "f107_1944_0": f107, "f107_24_-24": f107
+            "ap_24_0": ap,
+            "ap_3_0": ap,
+            "ap_3_-3": ap,
+            "ap_3_-6": ap,
+            "ap_3_-9": ap,
+            "ap_3_-12": ap,
+            "ap_3_-15": ap,
+            "ap_3_-18": ap,
+            "ap_3_-21": ap,
+            "ap_3_-24": ap,
+            "ap_3_-27": ap,
+            "ap_3_-30": ap,
+            "ap_3_-33": ap,
+            "ap_3_-36": ap,
+            "ap_3_-39": ap,
+            "ap_3_-42": ap,
+            "ap_3_-45": ap,
+            "ap_3_-48": ap,
+            "ap_3_-51": ap,
+            "ap_3_-54": ap,
+            "ap_3_-57": ap,
+            "f107_1944_0": f107,
+            "f107_24_-24": f107,
         }
 
         swMsgList = []
@@ -256,10 +274,12 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
 
     # set the simulation time increments
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     simulationTime = macros.sec2nano(100 * P)
     numDataPoints = 10000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
 
     # Setup data logging before the simulation is initialized
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
@@ -290,10 +310,13 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     # be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by
     # Vizard and played back after running the BSK simulation.
     # To enable this, uncomment this line:]
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__
-                                              # liveStream=True
-                                              )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # saveFile=__file__
+        # liveStream=True
+    )
 
     # initialize Simulation
     scSim.InitializeSimulation()
@@ -308,7 +331,9 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential"):
     dragForce = forceLog.forceExternal_B
     denseData = dataAtmoLog.neutralDensity
 
-    figureList = plotOrbits(dataRec.times(), posData, velData, dragForce, denseData, oe, mu, planet, model)
+    figureList = plotOrbits(
+        dataRec.times(), posData, velData, dragForce, denseData, oe, mu, planet, model
+    )
 
     if show_plots:
         plt.show()
@@ -337,8 +362,8 @@ def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet,
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
     # draw the planet
     fig, ax = register_fig(1)
-    ax.axis('equal')
-    planetColor = '#008800'
+    ax.axis("equal")
+    planetColor = "#008800"
     planetRadius = planet.radEquator / 1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
@@ -348,32 +373,36 @@ def plotOrbits(timeAxis, posData, velData, dragForce, denseData, oe, mu, planet,
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=1.0
-             )
-    plt.xlabel('$i_e$ Cord. [km]')
-    plt.ylabel('$i_p$ Cord. [km]')
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000,
+        color="#aa0000",
+        linewidth=1.0,
+    )
+    plt.xlabel("$i_e$ Cord. [km]")
+    plt.ylabel("$i_p$ Cord. [km]")
 
     # draw altitude as a function of time
     fig, ax = register_fig(2)
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     alt = np.array(rData) / 1000 - planetRadius
     plt.plot(timeAxis * macros.NANO2HOUR, alt)
-    plt.xlabel('$t$ [h]')
-    plt.ylabel('Alt. [km]')
+    plt.xlabel("$t$ [h]")
+    plt.ylabel("Alt. [km]")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     # draw density as a function of altitude
     fig, ax = register_fig(3)
     plt.semilogy(alt, denseData)
-    plt.xlabel('Alt. [km]')
-    plt.ylabel('$\\rho$ [kg/m$^2$]')
+    plt.xlabel("Alt. [km]")
+    plt.ylabel("$\\rho$ [kg/m$^2$]")
 
     # draw drag as a function of time
     fig, ax = register_fig(4)
     plt.semilogy(timeAxis * macros.NANO2HOUR, np.linalg.norm(dragForce, 2, 1))
-    plt.xlabel('$t$ [hr]')
-    plt.ylabel('$|F_drag|$ [N]')
+    plt.xlabel("$t$ [hr]")
+    plt.ylabel("$|F_drag|$ [N]")
 
     return figureList
 
@@ -383,5 +412,5 @@ if __name__ == "__main__":
         show_plots=True,
         initialAlt=250,
         deorbitAlt=100,
-        model="msis"   # "msis", "exponential"
+        model="msis",  # "msis", "exponential"
     )

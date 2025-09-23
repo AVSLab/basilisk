@@ -30,14 +30,16 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import sensorThermal                    # import the module that is to be tested
-from Basilisk.architecture import messaging                      # import the message definitions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
+from Basilisk.simulation import sensorThermal  # import the module that is to be tested
+from Basilisk.architecture import messaging  # import the message definitions
 from Basilisk.utilities import macros
 from Basilisk.architecture import astroConstants
 
@@ -53,8 +55,6 @@ from Basilisk.architecture import astroConstants
 # The first parametrize arguments are shown last in the pytest argument list
 # Accuracy parametrization for pytest-html generation
 @pytest.mark.parametrize("accuracy", [1e-6])
-
-
 def test_sensorThermal(show_plots, accuracy):
     r"""
     **Validation Test Description**
@@ -101,7 +101,7 @@ def sensorThermalTest(show_plots, accuracy):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(1.)
+    simulationTime = macros.sec2nano(1.0)
 
     #
     #  create the simulation process
@@ -122,21 +122,20 @@ def sensorThermalTest(show_plots, accuracy):
 
     #  set the spacecraft message
     scStateMsgPayload = messaging.SCStatesMsgPayload()
-    scStateMsgPayload.r_BN_N = [6378*1000., 0., 0.]
-    scStateMsgPayload.sigma_BN = [0., 0., 0.]
+    scStateMsgPayload.r_BN_N = [6378 * 1000.0, 0.0, 0.0]
+    scStateMsgPayload.sigma_BN = [0.0, 0.0, 0.0]
     scStateMsg = messaging.SCStatesMsg().write(scStateMsgPayload)
 
     #  set the sun message
     sunMsgPayload = messaging.SpicePlanetStateMsgPayload()
-    sunMsgPayload.PositionVector = [astroConstants.AU*1000., 0., 0.]
+    sunMsgPayload.PositionVector = [astroConstants.AU * 1000.0, 0.0, 0.0]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunMsgPayload)
-
 
     #
     #   Setup the temperature modeling
     #
     sensorThermalModel = sensorThermal.SensorThermal()
-    sensorThermalModel.ModelTag = 'sensorThermalModel'
+    sensorThermalModel.ModelTag = "sensorThermalModel"
     sensorThermalModel.nHat_B = [0, 0, 1]
     sensorThermalModel.sensorArea = 1.0  # m^2
     sensorThermalModel.sensorAbsorptivity = 0.25
@@ -175,16 +174,16 @@ def sensorThermalTest(show_plots, accuracy):
     sensorThermalModel.Reset(simulationTime)
 
     # run the second test (hot case)
-    unitTestSim.ConfigureStopTime(2*simulationTime)
+    unitTestSim.ConfigureStopTime(2 * simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
     # change the test conditions
     sensorThermalModel.T_0 = -74.8505
-    sensorThermalModel.Reset(2*simulationTime)
+    sensorThermalModel.Reset(2 * simulationTime)
 
     # run the second test (cold case)
-    unitTestSim.ConfigureStopTime(3*simulationTime)
+    unitTestSim.ConfigureStopTime(3 * simulationTime)
     unitTestSim.ExecuteSimulation()
     numTests += 1
 
@@ -209,14 +208,16 @@ def sensorThermalTest(show_plots, accuracy):
         # check a vector values
         if not unitTestSupport.isDoubleEqual(sensorTemp[i], trueTemp[i], accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Sensor Temperature Test failed test " + str(i+1) + "\n")
+            testMessages.append(
+                "FAILED: Sensor Temperature Test failed test " + str(i + 1) + "\n"
+            )
 
     if not testFailCount:
         print("PASSED")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -225,5 +226,5 @@ def sensorThermalTest(show_plots, accuracy):
 if __name__ == "__main__":
     test_sensorThermal(
         False,  # show_plots
-        1e-6    # accuracy
+        1e-6,  # accuracy
     )

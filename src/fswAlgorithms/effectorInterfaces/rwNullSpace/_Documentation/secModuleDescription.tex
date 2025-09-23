@@ -13,7 +13,7 @@ This module aims to drive the reaction wheel (RW) speeds to desired values by us
 \end{enumerate}
 There is one optional input message which provides the desired RW speeds.  If this message is not connected, then the desired speeds default to zero values.
 
-The module output message is a RW motor torque array message that sums the input control torque solution with the new null space torque solution that will reduce the RW speeds.  
+The module output message is a RW motor torque array message that sums the input control torque solution with the new null space torque solution that will reduce the RW speeds.
 
 
 \subsection{RW Null Space Mathematics}
@@ -40,8 +40,8 @@ Let $J_{s_{i}}>0$ be the RW inertia about the spin axis $\hat{\bm g}_{s_{i}}$, $
 \begin{equation}
 	\Delta\Omega_i = \Omega_i - \Omega_{i,d}
 \end{equation}
- be the wheel speed tracking errors.  
- 
+ be the wheel speed tracking errors.
+
 The RW motor torque equation is given by\cite{schaub}
 \begin{equation}
 	u_{s_{i}} = J_{s_{i}} (\dot\Omega_{i} + \hat{\bm g}_{s_{i}}^{T} \dot{\bm \omega} )
@@ -58,7 +58,7 @@ where the feedback gain $K>0$.  Then setting $u_{s_{i}} = d_{i}$ ideally provide
 \begin{equation}
 	J_{s_{i}} \dot\Omega_{i} + K\Delta\Omega_{i} = 0
 \end{equation}
-as $\dot\Omega_{i,d} = 0$.  
+as $\dot\Omega_{i,d} = 0$.
 
 
 
@@ -73,9 +73,5 @@ If this RW motor torque were directly applied then a non-zero torque would be pr
 
 Assume the attitude feedback RW motor control solution is given by $\bm u_{s,\text{cont}}$, then final module RW motor torque array is the sum of these two torques.
 \begin{equation}
-	\bm u_{s} = \bm u_{s,\text{cont}} + \bm u_{s,\text{null}} 
+	\bm u_{s} = \bm u_{s,\text{cont}} + \bm u_{s,\text{null}}
 \end{equation}
-
-
-
-

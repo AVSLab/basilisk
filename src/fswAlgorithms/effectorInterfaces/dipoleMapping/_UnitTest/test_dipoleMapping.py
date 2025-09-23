@@ -27,13 +27,18 @@
 import numpy as np
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging  # import the message definitions
-from Basilisk.fswAlgorithms import dipoleMapping  # import the module that is to be tested
+from Basilisk.fswAlgorithms import (
+    dipoleMapping,
+)  # import the module that is to be tested
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
-accuracy = 1E-12
+accuracy = 1e-12
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -41,7 +46,8 @@ accuracy = 1E-12
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
-def test_dipoleMapping_module():     # update "module" in this function name to reflect the module name
+
+def test_dipoleMapping_module():  # update "module" in this function name to reflect the module name
     r"""
     **Validation Test Description**
 
@@ -60,38 +66,53 @@ def test_dipoleMapping_module():     # update "module" in this function name to 
     [testResults, testMessage] = dipoleMappingModuleTestFunction()
     assert testResults < 1, testMessage
 
+
 def dipoleMappingModuleTestFunction():
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.01)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Initialize module under test's config message and add module to runtime call list
     module = dipoleMapping.dipoleMapping()
-    module.steeringMatrix = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    module.ModelTag = "dipoleMapping"           # update python name of test module
+    module.steeringMatrix = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    module.ModelTag = "dipoleMapping"  # update python name of test module
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # Initialize DipoleRequestBodyMsg
     dipoleRequestBodyInMsgContainer = messaging.DipoleRequestBodyMsgPayload()
-    dipoleRequestBodyInMsgContainer.dipole_B = [1., 2., 3.]
-    dipoleRequestBodyInMsg = messaging.DipoleRequestBodyMsg().write(dipoleRequestBodyInMsgContainer)
+    dipoleRequestBodyInMsgContainer.dipole_B = [1.0, 2.0, 3.0]
+    dipoleRequestBodyInMsg = messaging.DipoleRequestBodyMsg().write(
+        dipoleRequestBodyInMsgContainer
+    )
 
     # Initialize MTBArrayConfigMsg
     mtbArrayConfigParamsInMsgContainer = messaging.MTBArrayConfigMsgPayload()
     mtbArrayConfigParamsInMsgContainer.numMTB = 3
-    mtbArrayConfigParamsInMsgContainer.maxMtbDipoles = [1E3, 1E3, 1E3]
-    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
-    mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
+    mtbArrayConfigParamsInMsgContainer.maxMtbDipoles = [1e3, 1e3, 1e3]
+    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+    ]
+    mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(
+        mtbArrayConfigParamsInMsgContainer
+    )
 
     # Setup logging on the test module output message so that we get all the writes to it
     resultDipoleRequestMtbOutMsg = module.dipoleRequestMtbOutMsg.recorder()
@@ -102,76 +123,104 @@ def dipoleMappingModuleTestFunction():
     module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
 
     # Set the simulation time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))  # seconds to stop simulation
     unitTestSim.InitializeSimulation()
 
-    '''
+    """
         TEST 1:
             Check that dipoles is non-zero expected value with trivial
             steeringMatrix.
-    '''
+    """
     unitTestSim.ExecuteSimulation()
-    expectedDipole = [0.] * messaging.MAX_EFF_CNT
-    expectedDipole[0:3] = [1., 2., 3.]
-    testFailCount, testMessages = unitTestSupport.compareVector(expectedDipole,
-                                                                resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
-                                                                accuracy,
-                                                                "dipoles",
-                                                                testFailCount, testMessages)
-    '''
+    expectedDipole = [0.0] * messaging.MAX_EFF_CNT
+    expectedDipole[0:3] = [1.0, 2.0, 3.0]
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        expectedDipole,
+        resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
+        accuracy,
+        "dipoles",
+        testFailCount,
+        testMessages,
+    )
+    """
         TEST 2:
             Check that dipoles is non-zero with non-trivial steeringMatrix.
-    '''
-    beta = 45. * np.pi / 180.
-    Gt = np.array([[np.cos(beta), -np.sin(beta)],[np.sin(beta),  np.cos(beta)], [0., 0.]])
+    """
+    beta = 45.0 * np.pi / 180.0
+    Gt = np.array(
+        [[np.cos(beta), -np.sin(beta)], [np.sin(beta), np.cos(beta)], [0.0, 0.0]]
+    )
     GtInverse = np.linalg.pinv(Gt)
     mtbArrayConfigParamsInMsgContainer.numMTB = 2
-    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [Gt[0, 0], Gt[0, 1],
-                                                     Gt[1, 0], Gt[1, 1],
-                                                     Gt[2, 0], Gt[2, 1]]
-    mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(mtbArrayConfigParamsInMsgContainer)
+    mtbArrayConfigParamsInMsgContainer.GtMatrix_B = [
+        Gt[0, 0],
+        Gt[0, 1],
+        Gt[1, 0],
+        Gt[1, 1],
+        Gt[2, 0],
+        Gt[2, 1],
+    ]
+    mtbArrayConfigParamsInMsg = messaging.MTBArrayConfigMsg().write(
+        mtbArrayConfigParamsInMsgContainer
+    )
     module.mtbArrayConfigParamsInMsg.subscribeTo(mtbArrayConfigParamsInMsg)
 
-    module.steeringMatrix = [GtInverse[0, 0], GtInverse[0, 1], GtInverse[0, 2],
-                                   GtInverse[1, 0], GtInverse[1, 1], GtInverse[1, 2]]
+    module.steeringMatrix = [
+        GtInverse[0, 0],
+        GtInverse[0, 1],
+        GtInverse[0, 2],
+        GtInverse[1, 0],
+        GtInverse[1, 1],
+        GtInverse[1, 2],
+    ]
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
 
-    expectedDipole = [0.] * messaging.MAX_EFF_CNT
+    expectedDipole = [0.0] * messaging.MAX_EFF_CNT
     expectedDipole[0:2] = GtInverse @ np.array(dipoleRequestBodyInMsgContainer.dipole_B)
-    testFailCount, testMessages = unitTestSupport.compareVector(expectedDipole,
-                                                            resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
-                                                            accuracy,
-                                                            "dipoles",
-                                                            testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        expectedDipole,
+        resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
+        accuracy,
+        "dipoles",
+        testFailCount,
+        testMessages,
+    )
 
-    '''
+    """
         TEST 3:
             Check that dipoles is zero with zero input dipole.
-    '''
-    dipoleRequestBodyInMsgContainer.dipole_B = [0., 0., 0.]
-    dipoleRequestBodyInMsg = messaging.DipoleRequestBodyMsg().write(dipoleRequestBodyInMsgContainer)
+    """
+    dipoleRequestBodyInMsgContainer.dipole_B = [0.0, 0.0, 0.0]
+    dipoleRequestBodyInMsg = messaging.DipoleRequestBodyMsg().write(
+        dipoleRequestBodyInMsgContainer
+    )
     module.dipoleRequestBodyInMsg.subscribeTo(dipoleRequestBodyInMsg)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ExecuteSimulation()
 
     unitTestSim.ExecuteSimulation()
-    expectedDipole = [0.] * messaging.MAX_EFF_CNT
-    testFailCount, testMessages = unitTestSupport.compareVector(expectedDipole,
-                                                                resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
-                                                                accuracy,
-                                                                "dipoles",
-                                                                testFailCount, testMessages)
+    expectedDipole = [0.0] * messaging.MAX_EFF_CNT
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        expectedDipole,
+        resultDipoleRequestMtbOutMsg.mtbDipoleCmds[0],
+        accuracy,
+        "dipoles",
+        testFailCount,
+        testMessages,
+    )
 
-    '''
+    """
         TEST 4:
             Check that Reset() zeros the output message.
-    '''
+    """
     # First set a non-zero dipole request
-    dipoleRequestBodyInMsgContainer.dipole_B = [1., 2., 3.]
-    dipoleRequestBodyInMsg = messaging.DipoleRequestBodyMsg().write(dipoleRequestBodyInMsgContainer)
+    dipoleRequestBodyInMsgContainer.dipole_B = [1.0, 2.0, 3.0]
+    dipoleRequestBodyInMsg = messaging.DipoleRequestBodyMsg().write(
+        dipoleRequestBodyInMsgContainer
+    )
     module.dipoleRequestBodyInMsg.subscribeTo(dipoleRequestBodyInMsg)
 
     unitTestSim.InitializeSimulation()
@@ -179,19 +228,22 @@ def dipoleMappingModuleTestFunction():
 
     # Now call Reset() and verify output is zeroed
     module.Reset(0)  # Pass 0 as currentSimNanos
-    expectedDipole = [0.] * messaging.MAX_EFF_CNT
-    testFailCount, testMessages = unitTestSupport.compareVector(np.array(expectedDipole),
-                                                                np.array(module.dipoleRequestMtbOutMsg.read().mtbDipoleCmds),
-                                                                1e-3,
-                                                                "Reset() zeroed dipole",
-                                                                testFailCount, testMessages)
+    expectedDipole = [0.0] * messaging.MAX_EFF_CNT
+    testFailCount, testMessages = unitTestSupport.compareVector(
+        np.array(expectedDipole),
+        np.array(module.dipoleRequestMtbOutMsg.read().mtbDipoleCmds),
+        1e-3,
+        "Reset() zeroed dipole",
+        testFailCount,
+        testMessages,
+    )
 
     print("Accuracy used: " + str(accuracy))
     if testFailCount == 0:
         print("PASSED: dipoleMapping unit test")
     else:
         print("Failed: dipoleMapping unit test")
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #

@@ -29,4 +29,3 @@ provides information on what this message is used for.
     * - attReferenceOutMsg
       - :ref:`AttRefMsgPayload`
       - attitude reference output message
-

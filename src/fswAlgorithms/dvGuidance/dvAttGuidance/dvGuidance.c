@@ -29,11 +29,11 @@
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param moduleID The unique module identifier
  */
-void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
+void
+SelfInit_dvGuidance(dvGuidanceConfig* configData, int64_t moduleID)
 {
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
-
 
 /*! @brief This resets the module.
 
@@ -41,8 +41,8 @@ void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The unique module identifier
  */
-void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-                       int64_t moduleID)
+void
+Reset_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
@@ -59,18 +59,18 @@ void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The unique module identifier
  */
-void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    double dcm_BubN[3][3];           /* dcm, inertial to base burn frame */
-    double dcm_ButN[3][3];           /* dcm, inertial to current burn frame */
-    double dcm_ButBub[3][3];         /* dcm, rotating from base to current burn frame */
-    double dvHat_N[3];               /* unit vector, direction of delta velocity in the inertial frame */
-    double bu2_N[3];                 /* vector, vector which becomes the BubN DCM's second basis vector */
-	double burnTime;                 /* duration for which to thrust */
-	double rotPRV[3];                /* principle rotation vector about which to rotate during the burn */
-    DvBurnCmdMsgPayload localBurnData;   /* [-] input message container */
-    AttRefMsgPayload attCmd;             /* [-] Output attitude command data to send */
+    double dcm_BubN[3][3];             /* dcm, inertial to base burn frame */
+    double dcm_ButN[3][3];             /* dcm, inertial to current burn frame */
+    double dcm_ButBub[3][3];           /* dcm, rotating from base to current burn frame */
+    double dvHat_N[3];                 /* unit vector, direction of delta velocity in the inertial frame */
+    double bu2_N[3];                   /* vector, vector which becomes the BubN DCM's second basis vector */
+    double burnTime;                   /* duration for which to thrust */
+    double rotPRV[3];                  /* principle rotation vector about which to rotate during the burn */
+    DvBurnCmdMsgPayload localBurnData; /* [-] input message container */
+    AttRefMsgPayload attCmd;           /* [-] Output attitude command data to send */
 
     /*! - zero the output message containers */
     attCmd = AttRefMsg_C_zeroMsgPayload();
@@ -93,14 +93,14 @@ void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
      The current frame differs from the base burn frame via a constant 3-axis rotation */
     v3SetZero(rotPRV);
     rotPRV[2] = 1.0;
-    v3Scale(burnTime*localBurnData.dvRotVecMag, rotPRV, rotPRV);
+    v3Scale(burnTime * localBurnData.dvRotVecMag, rotPRV, rotPRV);
     PRV2C(rotPRV, dcm_ButBub);
-	m33MultM33(dcm_ButBub, dcm_BubN, dcm_ButN);
+    m33MultM33(dcm_ButBub, dcm_BubN, dcm_ButN);
 
     /*! - Compute the reference attitude */
-	C2MRP(RECAST3X3 &dcm_ButN, attCmd.sigma_RN);
+    C2MRP(RECAST3X3 & dcm_ButN, attCmd.sigma_RN);
     /*! - Compute the reference frame angular rate vector */
-	v3Scale(localBurnData.dvRotVecMag, dcm_ButN[2], attCmd.omega_RN_N);
+    v3Scale(localBurnData.dvRotVecMag, dcm_ButN[2], attCmd.omega_RN_N);
     /*! - Zero the reference frame angular acceleration vector */
     v3SetZero(attCmd.domega_RN_N);
 

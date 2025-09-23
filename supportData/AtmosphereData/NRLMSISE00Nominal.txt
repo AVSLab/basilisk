@@ -13,21 +13,21 @@ Optional input parameters:
 Sunspot number(Rz12) =not specified
 Ionospheric index(IG12) =not specified
 Upper limit for Electron content = not specified
-F peak model =  
-Ne Topside =  
-foF2 Storm model =  
-Bottomside Thickness =  
-F1 occurrence probability =  
-D-Region Ne =  
-Topside Te =  
-Ion Composition =  
+F peak model =
+Ne Topside =
+foF2 Storm model =
+Bottomside Thickness =
+F1 occurrence probability =
+D-Region Ne =
+Topside Te =
+Ion Composition =
 
 Selected output parameters:
 1  Height, km
 2  Mass_density, g/cm-3
 3  Temperature_neutral, K
 
-1         2         3         
+1         2         3
     0.0 1.233E-03  286.4
     0.5 1.168E-03  284.8
     1.0 1.108E-03  282.7

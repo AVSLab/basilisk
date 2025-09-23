@@ -29,17 +29,15 @@
  @param configData The configuration data associated with the sun safe control
  @param moduleID The ID associated with the configData
  */
-void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
+void
+SelfInit_dvAttEffect(dvAttEffectConfig* configData, int64_t moduleID)
 {
     uint32_t i;
 
     /*! - Loop over number of thruster blocks and create output messages */
-    for(i=0; i<configData->numThrGroups; i=i+1)
-    {
+    for (i = 0; i < configData->numThrGroups; i = i + 1) {
         THRArrayOnTimeCmdMsg_C_init(&configData->thrGroups[i].thrOnTimeOutMsg);
     }
-
-
 }
 
 /*! This method resets the module.
@@ -48,20 +46,19 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-                        int64_t moduleID)
+void
+Reset_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvAttEffect.cmdTorqueBodyInMsg wasn't connected.");
     }
 
-    for(uint32_t i=0; i<configData->numThrGroups; i=i+1)
-    {
+    for (uint32_t i = 0; i < configData->numThrGroups; i = i + 1) {
         configData->thrGroups[i].cmdRequests = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
-        THRArrayOnTimeCmdMsg_C_write(&configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, moduleID, callTime);
+        THRArrayOnTimeCmdMsg_C_write(
+          &configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, moduleID, callTime);
     }
-
 }
 
 /*! This method takes the estimated body-observed sun vector and computes the
@@ -71,8 +68,8 @@ void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     uint32_t i;
     CmdTorqueBodyMsgPayload cntrRequest;
@@ -80,17 +77,18 @@ void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
     /*! - Read the input requested torque from the feedback controller*/
     cntrRequest = CmdTorqueBodyMsg_C_read(&configData->cmdTorqueBodyInMsg);
 
-    for(i=0; i<configData->numThrGroups; i=i+1)
-    {
-        computeSingleThrustBlock(&(configData->thrGroups[i]), callTime,
-            &cntrRequest, moduleID);
+    for (i = 0; i < configData->numThrGroups; i = i + 1) {
+        computeSingleThrustBlock(&(configData->thrGroups[i]), callTime, &cntrRequest, moduleID);
     }
 
     return;
 }
 
-void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID)
+void
+computeSingleThrustBlock(ThrustGroupData* thrData,
+                         uint64_t callTime,
+                         CmdTorqueBodyMsgPayload* contrReq,
+                         int64_t moduleID)
 {
     double unSortOnTime[MAX_EFF_CNT];
     effPairs unSortPairs[MAX_EFF_CNT];
@@ -98,55 +96,46 @@ CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID)
     uint32_t i;
     double localRequest[3];
 
-    v3Copy(contrReq->torqueRequestBody, localRequest);      /* to generate a positive torque onto the spacecraft */
-    mMultV(thrData->thrOnMap, thrData->numEffectors, 3,
-           localRequest, unSortOnTime);
+    v3Copy(contrReq->torqueRequestBody, localRequest); /* to generate a positive torque onto the spacecraft */
+    mMultV(thrData->thrOnMap, thrData->numEffectors, 3, localRequest, unSortOnTime);
 
-    for(i=0; i<thrData->numEffectors; i=i+1)
-    {
+    for (i = 0; i < thrData->numEffectors; i = i + 1) {
         unSortOnTime[i] = unSortOnTime[i] + thrData->nomThrustOn;
     }
 
-    for(i=0; i<thrData->numEffectors; i=i+1)
-    {
-        if(unSortOnTime[i] < thrData->minThrustRequest)
-        {
+    for (i = 0; i < thrData->numEffectors; i = i + 1) {
+        if (unSortOnTime[i] < thrData->minThrustRequest) {
             unSortOnTime[i] = 0.0;
         }
     }
 
-    for(i=0; i<thrData->numEffectors; i++)
-    {
+    for (i = 0; i < thrData->numEffectors; i++) {
         unSortPairs[i].onTime = unSortOnTime[i];
         unSortPairs[i].thrustIndex = i;
     }
     effectorVSort(unSortPairs, sortPairs, thrData->numEffectors);
     thrData->cmdRequests = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
-    for(i=0; i<thrData->maxNumCmds; i=i+1)
-    {
-        thrData->cmdRequests.OnTimeRequest[sortPairs[i].thrustIndex] =
-        sortPairs[i].onTime;
+    for (i = 0; i < thrData->maxNumCmds; i = i + 1) {
+        thrData->cmdRequests.OnTimeRequest[sortPairs[i].thrustIndex] = sortPairs[i].onTime;
     }
     THRArrayOnTimeCmdMsg_C_write(&thrData->cmdRequests, &thrData->thrOnTimeOutMsg, moduleID, callTime);
 }
 
-void effectorVSort(effPairs *Input, effPairs *Output, size_t dim)
+void
+effectorVSort(effPairs* Input, effPairs* Output, size_t dim)
 {
     size_t i, j;
     int Swapped;
     Swapped = 1;
-    memcpy(Output, Input, dim*sizeof(effPairs));
-    for(i=0; i<dim && Swapped > 0; i++)
-    {
+    memcpy(Output, Input, dim * sizeof(effPairs));
+    for (i = 0; i < dim && Swapped > 0; i++) {
         Swapped = 0;
-        for(j=0; j<dim-1; j++)
-        {
-            if(Output[j].onTime<Output[j+1].onTime)
-            {
-                double tempOn = Output[j+1].onTime;
-                uint32_t tempIndex = Output[j+1].thrustIndex;
-                Output[j+1].onTime = Output[j].onTime;
-                Output[j+1].thrustIndex = Output[j].thrustIndex;
+        for (j = 0; j < dim - 1; j++) {
+            if (Output[j].onTime < Output[j + 1].onTime) {
+                double tempOn = Output[j + 1].onTime;
+                uint32_t tempIndex = Output[j + 1].thrustIndex;
+                Output[j + 1].onTime = Output[j].onTime;
+                Output[j + 1].thrustIndex = Output[j].thrustIndex;
                 Output[j].onTime = tempOn;
                 Output[j].thrustIndex = tempIndex;
                 Swapped = 1;

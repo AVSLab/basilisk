@@ -26,44 +26,44 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"TN", " ", "=", " ", 
+ RowBox[{"TN", " ", "=", " ",
   RowBox[{
-   RowBox[{"Euler2", "[", 
-    RowBox[{"-", "DEC"}], "]"}], ".", 
+   RowBox[{"Euler2", "[",
+    RowBox[{"-", "DEC"}], "]"}], ".",
    RowBox[{"Euler3", "[", "RAN", "]"}]}]}]], "Input",
- CellChangeTimes->{{3.765454285416875*^9, 3.765454312645727*^9}, 
+ CellChangeTimes->{{3.765454285416875*^9, 3.765454312645727*^9},
    3.76545442492126*^9},
  CellLabel->"In[7]:=",ExpressionUUID->"c5c4d2e5-81f4-44bf-afb0-dccb873abdab"],
 
 Cell[BoxData[
- RowBox[{"{", 
+ RowBox[{"{",
   RowBox[{
-   RowBox[{"{", 
+   RowBox[{"{",
     RowBox[{
      RowBox[{
-      RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-      RowBox[{"Cos", "[", "RAN", "]"}]}], ",", 
+      RowBox[{"Cos", "[", "DEC", "]"}], " ",
+      RowBox[{"Cos", "[", "RAN", "]"}]}], ",",
      RowBox[{
-      RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-      RowBox[{"Sin", "[", "RAN", "]"}]}], ",", 
-     RowBox[{"Sin", "[", "DEC", "]"}]}], "}"}], ",", 
-   RowBox[{"{", 
+      RowBox[{"Cos", "[", "DEC", "]"}], " ",
+      RowBox[{"Sin", "[", "RAN", "]"}]}], ",",
+     RowBox[{"Sin", "[", "DEC", "]"}]}], "}"}], ",",
+   RowBox[{"{",
     RowBox[{
-     RowBox[{"-", 
-      RowBox[{"Sin", "[", "RAN", "]"}]}], ",", 
-     RowBox[{"Cos", "[", "RAN", "]"}], ",", "0"}], "}"}], ",", 
-   RowBox[{"{", 
+     RowBox[{"-",
+      RowBox[{"Sin", "[", "RAN", "]"}]}], ",",
+     RowBox[{"Cos", "[", "RAN", "]"}], ",", "0"}], "}"}], ",",
+   RowBox[{"{",
     RowBox[{
      RowBox[{
-      RowBox[{"-", 
-       RowBox[{"Cos", "[", "RAN", "]"}]}], " ", 
-      RowBox[{"Sin", "[", "DEC", "]"}]}], ",", 
+      RowBox[{"-",
+       RowBox[{"Cos", "[", "RAN", "]"}]}], " ",
+      RowBox[{"Sin", "[", "DEC", "]"}]}], ",",
      RowBox[{
-      RowBox[{"-", 
-       RowBox[{"Sin", "[", "DEC", "]"}]}], " ", 
-      RowBox[{"Sin", "[", "RAN", "]"}]}], ",", 
+      RowBox[{"-",
+       RowBox[{"Sin", "[", "DEC", "]"}]}], " ",
+      RowBox[{"Sin", "[", "RAN", "]"}]}], ",",
      RowBox[{"Cos", "[", "DEC", "]"}]}], "}"}]}], "}"}]], "Output",
- CellChangeTimes->{{3.7654543052874727`*^9, 3.7654543149305687`*^9}, 
+ CellChangeTimes->{{3.7654543052874727`*^9, 3.7654543149305687`*^9},
    3.765454426618465*^9},
  CellLabel->"Out[7]=",ExpressionUUID->"4821bd12-4f69-44bf-87fe-7e449ec2f564"]
 }, Open  ]],
@@ -80,36 +80,36 @@ Cell[BoxData[
   RowBox[{"(", "\[NoBreak]", GridBox[{
      {
       RowBox[{
-       RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-       RowBox[{"Cos", "[", "RAN", "]"}]}], 
+       RowBox[{"Cos", "[", "DEC", "]"}], " ",
+       RowBox[{"Cos", "[", "RAN", "]"}]}],
       RowBox[{
-       RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-       RowBox[{"Sin", "[", "RAN", "]"}]}], 
+       RowBox[{"Cos", "[", "DEC", "]"}], " ",
+       RowBox[{"Sin", "[", "RAN", "]"}]}],
       RowBox[{"Sin", "[", "DEC", "]"}]},
      {
-      RowBox[{"-", 
-       RowBox[{"Sin", "[", "RAN", "]"}]}], 
+      RowBox[{"-",
+       RowBox[{"Sin", "[", "RAN", "]"}]}],
       RowBox[{"Cos", "[", "RAN", "]"}], "0"},
      {
       RowBox[{
-       RowBox[{"-", 
-        RowBox[{"Cos", "[", "RAN", "]"}]}], " ", 
-       RowBox[{"Sin", "[", "DEC", "]"}]}], 
+       RowBox[{"-",
+        RowBox[{"Cos", "[", "RAN", "]"}]}], " ",
+       RowBox[{"Sin", "[", "DEC", "]"}]}],
       RowBox[{
-       RowBox[{"-", 
-        RowBox[{"Sin", "[", "DEC", "]"}]}], " ", 
-       RowBox[{"Sin", "[", "RAN", "]"}]}], 
+       RowBox[{"-",
+        RowBox[{"Sin", "[", "DEC", "]"}]}], " ",
+       RowBox[{"Sin", "[", "RAN", "]"}]}],
       RowBox[{"Cos", "[", "DEC", "]"}]}
     },
     GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
     GridBoxSpacings->{"Columns" -> {
         Offset[0.27999999999999997`], {
-         Offset[0.7]}, 
+         Offset[0.7]},
         Offset[0.27999999999999997`]}, "Rows" -> {
         Offset[0.2], {
-         Offset[0.4]}, 
+         Offset[0.4]},
         Offset[0.2]}}], "\[NoBreak]", ")"}],
-  Function[BoxForm`e$, 
+  Function[BoxForm`e$,
    MatrixForm[BoxForm`e$]]]], "Output",
  CellChangeTimes->{3.765454321303668*^9, 3.765454427563768*^9},
  CellLabel->
@@ -121,40 +121,40 @@ Cell[CellGroupData[{
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"Transpose", "[", "TN", "]"}], ".", 
-  RowBox[{"{", 
+  RowBox[{"Transpose", "[", "TN", "]"}], ".",
+  RowBox[{"{",
    RowBox[{"1", ",", "0", ",", "0"}], "}"}]}]], "Input",
  CellChangeTimes->{{3.765454344839806*^9, 3.765454366029573*^9}, {
    3.765455907168633*^9, 3.765455908839137*^9}, 3.76545618953152*^9},
  CellLabel->"In[12]:=",ExpressionUUID->"7edac139-27ce-47ea-948a-a0f7c74198f1"],
 
 Cell[BoxData[
- RowBox[{"{", 
+ RowBox[{"{",
   RowBox[{
    RowBox[{
-    RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-    RowBox[{"Cos", "[", "RAN", "]"}]}], ",", 
+    RowBox[{"Cos", "[", "DEC", "]"}], " ",
+    RowBox[{"Cos", "[", "RAN", "]"}]}], ",",
    RowBox[{
-    RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-    RowBox[{"Sin", "[", "RAN", "]"}]}], ",", 
+    RowBox[{"Cos", "[", "DEC", "]"}], " ",
+    RowBox[{"Sin", "[", "RAN", "]"}]}], ",",
    RowBox[{"Sin", "[", "DEC", "]"}]}], "}"}]], "Output",
- CellChangeTimes->{{3.765454348932735*^9, 3.7654543664130783`*^9}, 
+ CellChangeTimes->{{3.765454348932735*^9, 3.7654543664130783`*^9},
    3.7654544282707787`*^9, 3.7654559094489737`*^9, 3.765456190122552*^9},
  CellLabel->"Out[12]=",ExpressionUUID->"90aca915-3903-4093-b667-397131b1faa3"]
 }, Open  ]],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"eHatN", "[", 
-   RowBox[{"RAN_", ",", " ", "DEC_"}], "]"}], ":=", " ", 
-  RowBox[{"{", 
+  RowBox[{"eHatN", "[",
+   RowBox[{"RAN_", ",", " ", "DEC_"}], "]"}], ":=", " ",
+  RowBox[{"{",
    RowBox[{
     RowBox[{
-     RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-     RowBox[{"Cos", "[", "RAN", "]"}]}], ",", 
+     RowBox[{"Cos", "[", "DEC", "]"}], " ",
+     RowBox[{"Cos", "[", "RAN", "]"}]}], ",",
     RowBox[{
-     RowBox[{"Cos", "[", "DEC", "]"}], " ", 
-     RowBox[{"Sin", "[", "RAN", "]"}]}], ",", 
+     RowBox[{"Cos", "[", "DEC", "]"}], " ",
+     RowBox[{"Sin", "[", "RAN", "]"}]}], ",",
     RowBox[{"Sin", "[", "DEC", "]"}]}], "}"}]}]], "Input",
  CellChangeTimes->{{3.765456169641238*^9, 3.765456186316567*^9}},
  CellLabel->"In[15]:=",ExpressionUUID->"85f896b7-449c-437d-9fac-bab7fcd9ce84"],
@@ -162,8 +162,8 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"CForm", "[", 
-  RowBox[{"eHatN", "[", 
+ RowBox[{"CForm", "[",
+  RowBox[{"eHatN", "[",
    RowBox[{"RAN", ",", "DEC"}], "]"}], "]"}]], "Input",
  CellChangeTimes->{{3.7654559110219507`*^9, 3.765455915357334*^9}, {
   3.765456206807485*^9, 3.7654562100464573`*^9}},
@@ -178,17 +178,17 @@ Cell["List(Cos(DEC)*Cos(RAN),Cos(DEC)*Sin(RAN),Sin(DEC))", "Output",
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"eHatN", "[", 
+ RowBox[{"eHatN", "[",
   RowBox[{
-   RowBox[{"272.76", " ", "Degree"}], ",", " ", 
+   RowBox[{"272.76", " ", "Degree"}], ",", " ",
    RowBox[{"67.16", " ", "Degree"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.7654562717426662`*^9, 3.7654562839052277`*^9}},
  CellLabel->"In[17]:=",ExpressionUUID->"1b585cf2-1304-4360-a71f-9ead827f30e0"],
 
 Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{"0.018690814168902073`", ",", 
-   RowBox[{"-", "0.3877088083617989`"}], ",", "0.9215923900425705`"}], 
+ RowBox[{"{",
+  RowBox[{"0.018690814168902073`", ",",
+   RowBox[{"-", "0.3877088083617989`"}], ",", "0.9215923900425705`"}],
   "}"}]], "Output",
  CellChangeTimes->{3.765456284425082*^9},
  CellLabel->"Out[17]=",ExpressionUUID->"31076b61-bee2-4b5a-bb50-968bd78addcd"]
@@ -235,4 +235,3 @@ Cell[6108, 187, 282, 6, 68, "Output",ExpressionUUID->"31076b61-bee2-4b5a-bb50-96
 }
 ]
 *)
-

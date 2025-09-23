@@ -7,13 +7,13 @@ The mathematical description of gravity effects are implemented in gravityEffect
 	\begin{itemize}
 		\item \textbf{Simple Gravity}: The code can compute a gravity acceleration between two bodies according to Newton's law of universal gravitation given $\mu$ and the distance between the bodies.
 		\item \textbf{Spherical Harmonics}: The code can compute gravity acceleration between two bodies using the more-complex method of spherical harmonics. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided a "degree" of spherical harmonics to be used and spherical harmonics coefficients useful up to that degree.
-		\item \textbf{Polyhedral:} The code can compute gravity acceleration between two bodies using the polyhedral model. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided with the vertexes positions and their assignment to faces. 
+		\item \textbf{Polyhedral:} The code can compute gravity acceleration between two bodies using the polyhedral model. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided with the vertexes positions and their assignment to faces.
 	\end{itemize}
 	\item \textbf{Multiple Body Effects}: The code can stack the effects of multiple gravity bodies on top of each other to determine the net effect on a spacecraft. The user must indicate in the spacecraft set-up which gravitational bodies should be taken into account.
 	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the DynParamManager.
 	\item \textbf{Interface: Energy Contributions}: The code sends spacecraft energy contributions via \\updateEnergyContributions() which is called by the spacecraft.
 	\item \textbf{Interface: GravBody States}: The code outputs GravBody states(ephemeris information) via the Basilisk messaging system.
-	
+
 \end{itemize}
 
 \section{Model Assumptions and Limitations}
@@ -30,7 +30,5 @@ The limitations of polyhedral gravity model are well-known and clearly explained
 \begin{itemize}
 	\item \textbf{Constant Density}: The polyhedron gravity computation assumes that the body has constant density. Consequently, this method does not account for spatial density variations that typically arise within the internal structure of bodies or in contact binary asteroids.
 	\item \textbf{Shape Accuracy}: The polyhedral model assumes the body shape is described as a polyhedron which is an approximation of the continuous real shape. The resolution of the model can be augmented by increasing the number of vertexes and faces though, in turn, this may considerably slow down the gravity evaluation times. Let recall that the polyhedron gravity computation requires to loop over all faces and edges.
-	\item \textbf{Trisurface Polyhedron:} The implemented computation is case-specific for polyhedrons with faces composed of three vertexes. This reduces the possible polyhedrons to a single geometrical topology. However, the trisurface polyhedron is the standardized shape for small bodies.     
+	\item \textbf{Trisurface Polyhedron:} The implemented computation is case-specific for polyhedrons with faces composed of three vertexes. This reduces the possible polyhedrons to a single geometrical topology. However, the trisurface polyhedron is the standardized shape for small bodies.
 \end{itemize}
-
-

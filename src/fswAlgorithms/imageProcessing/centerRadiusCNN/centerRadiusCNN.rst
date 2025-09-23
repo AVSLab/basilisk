@@ -8,7 +8,7 @@ Module Assumptions and Limitations
 ----------------------------------
 The module's assumptions are limited to the model it uploads. The training and performance of this module is not
 protected by this implementation. This assumption is seen in the pixelNoise variable where the user sets the
-performance of the net. 
+performance of the net.
 
 Message Connection Descriptions
 -------------------------------
@@ -40,4 +40,3 @@ The module is set easily using the path to the module and message names:
 
     moduleConfig.pathToNetwork = path + "/../position_net2_trained_11-14.onnx"
     moduleConfig.pixelNoise = [5,5,5]
-

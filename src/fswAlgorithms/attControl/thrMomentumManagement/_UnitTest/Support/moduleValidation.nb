@@ -40,48 +40,48 @@ Cell["Setup", "Section",
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"Gs", " ", "=", " ", 
-   RowBox[{"Transpose", "[", 
-    RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{"Gs", " ", "=", " ",
+   RowBox[{"Transpose", "[",
+    RowBox[{"{", "\[IndentingNewLine]",
      RowBox[{
-      RowBox[{"{", 
-       RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", "\[IndentingNewLine]", 
-      RowBox[{"{", 
-       RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", "\[IndentingNewLine]", 
-      RowBox[{"{", 
-       RowBox[{"0", ",", "0", ",", "1"}], "}"}], ",", "\[IndentingNewLine]", 
-      RowBox[{"{", 
+      RowBox[{"{",
+       RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", "\[IndentingNewLine]",
+      RowBox[{"{",
+       RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", "\[IndentingNewLine]",
+      RowBox[{"{",
+       RowBox[{"0", ",", "0", ",", "1"}], "}"}], ",", "\[IndentingNewLine]",
+      RowBox[{"{",
        RowBox[{
-       "0.5773502691896258", ",", "0.5773502691896258", ",", 
-        "0.5773502691896258"}], "}"}]}], "\[IndentingNewLine]", "}"}], 
+       "0.5773502691896258", ",", "0.5773502691896258", ",",
+        "0.5773502691896258"}], "}"}]}], "\[IndentingNewLine]", "}"}],
     "]"}]}], ";"}]], "Input",
  CellChangeTimes->{{3.680549004346599*^9, 3.680549057463821*^9}}],
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"Js", " ", "=", " ", "0.1"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"Js", " ", "=", " ", "0.1"}], ";"}], "\[IndentingNewLine]",
  RowBox[{
-  RowBox[{"\[CapitalOmega]", " ", "=", " ", 
-   RowBox[{"{", 
-    RowBox[{"10.0", ",", 
-     RowBox[{"-", "25.0"}], ",", "50.0", ",", "100.0"}], "}"}]}], " ", 
+  RowBox[{"\[CapitalOmega]", " ", "=", " ",
+   RowBox[{"{",
+    RowBox[{"10.0", ",",
+     RowBox[{"-", "25.0"}], ",", "50.0", ",", "100.0"}], "}"}]}], " ",
   ";"}]}], "Input",
  CellChangeTimes->{{3.680549053258911*^9, 3.6805490551248503`*^9}, {
-  3.680549147020412*^9, 3.680549208150548*^9}, {3.680549294819573*^9, 
+  3.680549147020412*^9, 3.680549208150548*^9}, {3.680549294819573*^9,
   3.680549307218649*^9}, {3.680552257005039*^9, 3.6805522623510523`*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"hsMin", " ", "=", " ", 
-  RowBox[{"100.", "*", 
-   RowBox[{"(", 
+ RowBox[{"hsMin", " ", "=", " ",
+  RowBox[{"100.", "*",
+   RowBox[{"(",
     RowBox[{"100", "/", "6000"}], ")"}]}]}]], "Input",
  CellChangeTimes->{{3.680549247998562*^9, 3.680549282648554*^9}}],
 
 Cell[BoxData[
  FormBox["1.6666666666666667`", TraditionalForm]], "Output",
- CellChangeTimes->{{3.6805492803172903`*^9, 3.680549296031262*^9}, 
+ CellChangeTimes->{{3.6805492803172903`*^9, 3.680549296031262*^9},
    3.6807971989549837`*^9}]
 }, Open  ]]
 }, Open  ]],
@@ -94,7 +94,7 @@ Cell["Test 1", "Section",
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"hsVec", " ", "=", " ", 
+ RowBox[{"hsVec", " ", "=", " ",
   RowBox[{
    RowBox[{"Gs", ".", "\[CapitalOmega]"}], " ", "Js"}]}]], "Input",
  CellChangeTimes->{{3.680549138003388*^9, 3.680549143697287*^9}, {
@@ -102,45 +102,45 @@ Cell[BoxData[
 
 Cell[BoxData[
  FormBox[
-  RowBox[{"{", 
+  RowBox[{"{",
    RowBox[{
-   "6.773502691896258`", ",", "3.273502691896258`", ",", 
+   "6.773502691896258`", ",", "3.273502691896258`", ",",
     "10.773502691896258`"}], "}"}], TraditionalForm]], "Output",
  CellChangeTimes->{{3.680549238610064*^9, 3.68054924149529*^9}, {
-   3.680549299872415*^9, 3.6805493139012547`*^9}, 3.6805522694870996`*^9, 
+   3.680549299872415*^9, 3.6805493139012547`*^9}, 3.6805522694870996`*^9,
    3.680797198990876*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"hsMag", " ", "=", " ", 
+ RowBox[{"hsMag", " ", "=", " ",
   RowBox[{"Norm", "[", "hsVec", "]"}]}]], "Input",
  CellChangeTimes->{{3.680549268723393*^9, 3.680549274468587*^9}}],
 
 Cell[BoxData[
  FormBox["13.140187169263376`", TraditionalForm]], "Output",
- CellChangeTimes->{{3.68054927529919*^9, 3.680549314539229*^9}, 
+ CellChangeTimes->{{3.68054927529919*^9, 3.680549314539229*^9},
    3.680552271514022*^9, 3.680797199021256*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"\[CapitalDelta]H", " ", "=", "  ", 
-  RowBox[{"hsVec", " ", 
+ RowBox[{"\[CapitalDelta]H", " ", "=", "  ",
+  RowBox[{"hsVec", " ",
    RowBox[{
-    RowBox[{"(", " ", 
+    RowBox[{"(", " ",
      RowBox[{"hsMag", "-", "hsMin"}], ")"}], "/", "hsMag"}]}]}]], "Input",
  CellChangeTimes->{{3.680549124749299*^9, 3.680549127858089*^9}, {
-  3.68054944841485*^9, 3.680549490569532*^9}, {3.680797199984902*^9, 
+  3.68054944841485*^9, 3.680549490569532*^9}, {3.680797199984902*^9,
   3.680797200439456*^9}}],
 
 Cell[BoxData[
  FormBox[
-  RowBox[{"{", 
+  RowBox[{"{",
    RowBox[{
-   "5.914369484146579`", ",", "2.858300248464629`", ",", 
+   "5.914369484146579`", ",", "2.858300248464629`", ",",
     "9.407020039211664`"}], "}"}], TraditionalForm]], "Output",
  CellChangeTimes->{{3.680549466625996*^9, 3.680549491199304*^9}, {
   3.680797199044258*^9, 3.68079720076966*^9}}]
@@ -199,4 +199,3 @@ Cell[4171, 138, 287, 7, 62, "Output"]
 }
 ]
 *)
-

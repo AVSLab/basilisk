@@ -39,8 +39,9 @@
  *
  * @return A string view representing the actuator type.
  */
-template <>
-constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsActuator>()
+template<>
+constexpr std::string_view
+MJBasilisk::detail::getObjectTypeName<mjsActuator>()
 {
     return "actuator";
 }
@@ -61,7 +62,7 @@ constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsActuator>()
  */
 class MJActuatorObject : public MJObject<mjsActuator>
 {
-public:
+  public:
     /** Use the same constructor as MJObject */
     using MJObject<mjsActuator>::MJObject;
 
@@ -89,7 +90,7 @@ public:
  */
 class MJActuator
 {
-public:
+  public:
     /**
      * @brief Constructs an MJActuator with a specified name and actuator objects.
      *
@@ -98,7 +99,10 @@ public:
      * the individual actuator parts.
      */
     MJActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
-        : name(std::move(name)), subActuators(subActuators) {}
+      : name(std::move(name))
+      , subActuators(subActuators)
+    {
+    }
 
     // Delete copy and move constructors and assignment operators
     MJActuator(const MJActuator&) = delete;
@@ -142,8 +146,8 @@ public:
      */
     virtual std::vector<double> readControlMessages() = 0;
 
-protected:
-    std::string name; ///< The name of the actuator.
+  protected:
+    std::string name;                           ///< The name of the actuator.
     std::vector<MJActuatorObject> subActuators; ///< The individual actuator objects.
 };
 
@@ -159,7 +163,7 @@ protected:
  */
 class MJSingleActuator : public MJActuator
 {
-public:
+  public:
     /** Use the same constructor as MJActuator */
     using MJActuator::MJActuator;
 
@@ -185,7 +189,7 @@ public:
  */
 class MJForceActuator : public MJActuator
 {
-public:
+  public:
     /** Use the same constructor as MJActuator */
     using MJActuator::MJActuator;
 
@@ -211,7 +215,7 @@ public:
  */
 class MJTorqueActuator : public MJActuator
 {
-public:
+  public:
     /** Use the same constructor as MJActuator */
     using MJActuator::MJActuator;
 
@@ -237,7 +241,7 @@ public:
  */
 class MJForceTorqueActuator : public MJActuator
 {
-public:
+  public:
     /** Use the same constructor as MJActuator */
     using MJActuator::MJActuator;
 
@@ -248,7 +252,7 @@ public:
      */
     std::vector<double> readControlMessages() override;
 
-    ReadFunctor<ForceAtSiteMsgPayload> forceInMsg; ///< Functor to read force control messages.
+    ReadFunctor<ForceAtSiteMsgPayload> forceInMsg;   ///< Functor to read force control messages.
     ReadFunctor<TorqueAtSiteMsgPayload> torqueInMsg; ///< Functor to read torque control messages.
 };
 

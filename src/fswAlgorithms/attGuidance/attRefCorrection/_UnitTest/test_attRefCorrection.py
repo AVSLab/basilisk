@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,8 @@
 #  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# 
-# 
+#
+#
 
 import math
 
@@ -28,7 +28,6 @@ from Basilisk.utilities import unitTestSupport
 
 
 @pytest.mark.parametrize("accuracy", [1e-12])
-
 def test_attRefCorrection(show_plots, accuracy):
     r"""
     **Validation Test Description**
@@ -64,11 +63,11 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
     module = attRefCorrection.attRefCorrection()
     module.ModelTag = "attRefCorrectionTag"
     unitTestSim.AddModelToTask(unitTaskName, module)
-    module.sigma_BcB = [math.tan(math.pi/4), 0.0, 0.0]
+    module.sigma_BcB = [math.tan(math.pi / 4), 0.0, 0.0]
 
     # Configure blank module input messages
     attRefInMsgData = messaging.AttRefMsgPayload()
-    attRefInMsgData.sigma_RN = [math.tan(math.pi/8), 0.0, 0.0]
+    attRefInMsgData.sigma_RN = [math.tan(math.pi / 8), 0.0, 0.0]
     attRefInMsg = messaging.AttRefMsg().write(attRefInMsgData)
 
     # subscribe input messages to module
@@ -86,16 +85,22 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
     trueVector = [
         [-math.tan(math.pi / 8), 0.0, 0.0],
         [-math.tan(math.pi / 8), 0.0, 0.0],
-        [-math.tan(math.pi / 8), 0.0, 0.0]
+        [-math.tan(math.pi / 8), 0.0, 0.0],
     ]
     # compare the module results to the truth values
     for i in range(0, len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(attRefOutMsgRec.sigma_RN[i], trueVector[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            attRefOutMsgRec.sigma_RN[i], trueVector[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_RN unit test at t=" +
-                                str(attRefOutMsgRec.times()[i] * macros.NANO2SEC) +
-                                "sec\n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed sigma_RN unit test at t="
+                + str(attRefOutMsgRec.times()[i] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -107,5 +112,3 @@ def attRefCorrectionTestFunction(show_plots, accuracy):
 
 if __name__ == "__main__":
     test_attRefCorrection(False, 1e-12)
-
-

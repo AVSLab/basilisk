@@ -29,11 +29,11 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
+void
+SelfInit_oeStateEphem(OEStateEphemData* configData, int64_t moduleID)
 {
     EphemerisMsg_C_init(&configData->stateFitOutMsg);
 }
-
 
 /*! This Reset method is empty
 
@@ -41,8 +41,8 @@ void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
-                         int64_t moduleID)
+void
+Reset_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required message has not been connected
     if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
@@ -58,14 +58,15 @@ void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_t moduleID)
 {
-    double currentScaledValue;              /* [s] scaled time value to within [-1,1] */
-    double currentEphTime;                  /* [s] current ephemeris time */
-    double smallestTimeDifference;          /* [s] smallest difference to the time interval mid-point */
-    double timeDifference;                  /* [s] time difference with respect to an interval mid-point */
-    double anomalyAngle;                    /* [r] general anomaly angle variable */
-    ChebyOERecord *currRec;                 /* []  pointer to the current Chebyshev record being used */
+    double currentScaledValue;     /* [s] scaled time value to within [-1,1] */
+    double currentEphTime;         /* [s] current ephemeris time */
+    double smallestTimeDifference; /* [s] smallest difference to the time interval mid-point */
+    double timeDifference;         /* [s] time difference with respect to an interval mid-point */
+    double anomalyAngle;           /* [r] general anomaly angle variable */
+    ChebyOERecord* currRec;        /* []  pointer to the current Chebyshev record being used */
     int i;
     TDBVehicleClockCorrelationMsgPayload localCorr;
     EphemerisMsgPayload tmpOutputState;
@@ -77,44 +78,35 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
     localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
 
     /*! - compute time for fitting interval */
-    currentEphTime = callTime*NANO2SEC;
+    currentEphTime = callTime * NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
     /*! - select the fitting coefficients for the nearest fit interval */
     configData->coeffSelector = 0;
     smallestTimeDifference = fabs(currentEphTime - configData->ephArray[0].ephemTimeMid);
-    for(i=1; i<MAX_OE_RECORDS; i++)
-    {
+    for (i = 1; i < MAX_OE_RECORDS; i++) {
         timeDifference = fabs(currentEphTime - configData->ephArray[i].ephemTimeMid);
-        if(timeDifference < smallestTimeDifference)
-        {
-            configData->coeffSelector = (uint32_t) i;
+        if (timeDifference < smallestTimeDifference) {
+            configData->coeffSelector = (uint32_t)i;
             smallestTimeDifference = timeDifference;
         }
     }
 
     /*! - determine the scaled fitting time */
     currRec = &(configData->ephArray[configData->coeffSelector]);
-    currentScaledValue = (currentEphTime - currRec->ephemTimeMid)/currRec->ephemTimeRad;
-    if(fabs(currentScaledValue) > 1.0)
-    {
-        currentScaledValue = currentScaledValue/fabs(currentScaledValue);
+    currentScaledValue = (currentEphTime - currRec->ephemTimeMid) / currRec->ephemTimeRad;
+    if (fabs(currentScaledValue) > 1.0) {
+        currentScaledValue = currentScaledValue / fabs(currentScaledValue);
     }
 
     /* - determine orbit elements from chebychev polynominals */
-    tmpOutputState.timeTag = callTime*NANO2SEC;
-    orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.i = calculateChebyValue(currRec->incCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.e = calculateChebyValue(currRec->eccCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.omega = calculateChebyValue(currRec->argPerCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    anomalyAngle = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff,
-                                   currentScaledValue);
+    tmpOutputState.timeTag = callTime * NANO2SEC;
+    orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff, currentScaledValue);
+    orbEl.i = calculateChebyValue(currRec->incCoeff, currRec->nChebCoeff, currentScaledValue);
+    orbEl.e = calculateChebyValue(currRec->eccCoeff, currRec->nChebCoeff, currentScaledValue);
+    orbEl.omega = calculateChebyValue(currRec->argPerCoeff, currRec->nChebCoeff, currentScaledValue);
+    orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff, currentScaledValue);
+    anomalyAngle = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff, currentScaledValue);
 
     /*! - determine the true anomaly angle */
     if (currRec->anomalyFlag == 0) {
@@ -130,15 +122,14 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
     /*! - determine semi-major axis */
     if (fabs(orbEl.e - 1.0) > 1e-12) {
         /* elliptic or hyperbolic case */
-        orbEl.a = orbEl.rPeriap/(1.0-orbEl.e);
+        orbEl.a = orbEl.rPeriap / (1.0 - orbEl.e);
     } else {
         /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
         orbEl.a = 0.0;
     }
 
     /*! - Determine position and velocity vectors */
-    elem2rv(configData->muCentral, &orbEl, tmpOutputState.r_BdyZero_N,
-            tmpOutputState.v_BdyZero_N);
+    elem2rv(configData->muCentral, &orbEl, tmpOutputState.r_BdyZero_N, tmpOutputState.v_BdyZero_N);
 
     /*! - Write the output message */
     EphemerisMsg_C_write(&tmpOutputState, &configData->stateFitOutMsg, moduleID, callTime);

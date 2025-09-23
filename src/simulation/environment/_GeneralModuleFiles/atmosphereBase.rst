@@ -31,5 +31,3 @@ provides information on what this message is used for.
     * - epochInMsg
       - :ref:`EpochMsgPayload`
       - (optional) epoch date/time input message
-
-

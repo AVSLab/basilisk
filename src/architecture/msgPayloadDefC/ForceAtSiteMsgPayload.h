@@ -25,8 +25,9 @@
  * Sites are locations fixed on a body (in the context of MJScene) with an
  * associated reference frame. This message represents a force that
  * could be applied at this site and expressed on the site's reference frame.
-*/
-typedef struct {
+ */
+typedef struct
+{
     double force_S[3]; //!< [N] Force in Newtons
 } ForceAtSiteMsgPayload;
 

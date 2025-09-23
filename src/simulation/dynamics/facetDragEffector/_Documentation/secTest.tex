@@ -11,7 +11,7 @@ This test verifies that the user can specify the atmospheric density message use
 
 \subsubsection{testDragForce}
 
-This test verifies that the module correctly calculates the drag force given the model's assumptions. It also implicitly tests the compatibility of facetDrag and exponentialAtmosphere. 
+This test verifies that the module correctly calculates the drag force given the model's assumptions. It also implicitly tests the compatibility of facetDrag and exponentialAtmosphere.
 
 \subsubsection{testShadow}
 
@@ -21,17 +21,17 @@ This test verifies that panels that are not in the flow are correctly ignored fo
 
 \subsubsection{test\_unitFacetDrag.py}
 
-This unit test runs setDensityMessage, testDragForce, and testShadow to verify the functionality of the module. 
+This unit test runs setDensityMessage, testDragForce, and testShadow to verify the functionality of the module.
 
 \section{Test Parameters}
-The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
+The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\
 		\hline
 		{\tt newDrag.forceExternal\_N}        & \input{AutoTeX/toleranceValue} (relative)   \\ 		\hline\hline
 	\end{tabular}
@@ -48,15 +48,12 @@ The following table shows the test result.
 	\caption{Test result for test\_unitFacetDrag.py}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c  | c } % Column formatting, 
+	\begin{tabular}{c  | c } % Column formatting,
 		\hline\hline
-		\textbf{Check} &  \textbf{Pass/Fail} \\ 
+		\textbf{Check} &  \textbf{Pass/Fail} \\
 		\hline
-		1 &  \input{AutoTeX/unitTestPassFail} \\ 
+		1 &  \input{AutoTeX/unitTestPassFail} \\
 		\hline
 		\hline
 	\end{tabular}
 \end{table}
-
-
-

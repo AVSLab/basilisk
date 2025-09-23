@@ -2,11 +2,11 @@
 
 \section{Model Description}
 \subsection{General Module Behavior}
-The purpose of this module is to implement a magnetic field model that rotates with a planet fixed frame \frameDefinition{P}.  Here $\hat{\bm p}_{3}$ is the typical positive rotation axis and $\hat{\bm p}_{1}$ and $\hat{\bm p}_{2}$ span the planet's equatorial plane. 
+The purpose of this module is to implement a magnetic field model that rotates with a planet fixed frame \frameDefinition{P}.  Here $\hat{\bm p}_{3}$ is the typical positive rotation axis and $\hat{\bm p}_{1}$ and $\hat{\bm p}_{2}$ span the planet's equatorial plane.
 
-{\tt MagneticFieldCenteredDipole} is a child of the {\tt MagneticFieldBase} base class and provides a simple centered dipole magnetic field model. 
+{\tt MagneticFieldCenteredDipole} is a child of the {\tt MagneticFieldBase} base class and provides a simple centered dipole magnetic field model.
 By invoking the magnetic field module, the default values are set such that the dipole parameters are zeroed and the magnetic field output is a zero vector.
-The reach of the model controlled by setting the variables {\tt envMinReach} and {\tt envMaxReach} to positive values.  These values are the radial distance from the planet center.  The default values are -1 which turns off this checking where the atmosphere model as unbounded reach.  
+The reach of the model controlled by setting the variables {\tt envMinReach} and {\tt envMaxReach} to positive values.  These values are the radial distance from the planet center.  The default values are -1 which turns off this checking where the atmosphere model as unbounded reach.
 
 There are a multitude of magnetic field models.\footnote{\url { https://geomag.colorado.edu/geomagnetic-and-electric-field-models.html}} The goal with Basilisk is to provide a simple and consistent interface to a range of models.  The list of models is expected to grow over time.
 
@@ -17,7 +17,7 @@ For the following developments, the spacecraft location relative to the planet f
 \begin{equation}
 	\bm r_{B/P} = \bm r_{B/O} - \bm r_{P/O}
 \end{equation}
-If no planet ephemeris message is specified, then the planet position vector $\bm r_{P/O}$ is set to zero.  
+If no planet ephemeris message is specified, then the planet position vector $\bm r_{P/O}$ is set to zero.
 
 Let $[PN]$ be the direction cosine matrix\cite{schaub} that relates the rotating planet-fixed frame relative to an inertial frame \frameDefinition{N}.  The simulation provides the spacecraft position vector in inertial frame components.  The planet centric position vector is then written in Earth-fixed frame components using
 \begin{equation}
@@ -32,7 +32,7 @@ The centered dipole model is a first order result of the more complex spherical 
 \begin{equation}
 	V(\bm r_{B/P}) = \frac{\bm m \cdot \bm r_{B/P}}{|\bm r_{B/P}|^{3}}
 \end{equation}
-with the dipole vector being defined in Earth fixed frame $\cal E$ coordinates as 
+with the dipole vector being defined in Earth fixed frame $\cal E$ coordinates as
 \begin{equation}
 	\bm m = \leftexp{E}{\begin{bmatrix}
 		g_{1}^{1} \\ h_{1}^{1} \\ g_{1}^{0}
@@ -43,7 +43,7 @@ The magnetic field vector $\bm B$ is  expressed at the spacecraft location as
 	\bm B(\bm r_{B/P}) = - \nabla V(\bm r_{B/P}) = \frac{3 (\bm m \cdot \bm r_{B/P}) \bm r_{B/P} - \bm r_{B/P} \cdot \bm r_{B/P} \bm m}{|\bm r_{B/P}|^{5}}
 	= \frac{1}{|\bm r_{B/P}|^{3}} \left ( 3 (\bm m \cdot \hat{\bm r}) \hat{\bm r} - \bm m \right)
 \end{equation}
-where 
+where
 \begin{equation}
 	\hat{\bm r} = \frac{\bm r_{B/P}}{|\bm r_{B/P}|}
 \end{equation}

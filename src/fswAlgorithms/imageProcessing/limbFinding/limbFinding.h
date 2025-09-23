@@ -35,35 +35,31 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief visual limb finding module */
-class LimbFinding: public SysModel {
-public:
+class LimbFinding : public SysModel
+{
+  public:
     LimbFinding();
     ~LimbFinding();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
-    
-public:
-    std::string filename;                //!< Filename for module to read an image directly
+
+  public:
+    std::string filename;                          //!< Filename for module to read an image directly
     Message<OpNavLimbMsgPayload> opnavLimbOutMsg;  //!< The name of the Limb output message
-    ReadFunctor<CameraImageMsgPayload> imageInMsg;          //!< The name of the camera output message
-    std::string saveDir;                //!< Directory to save images to
+    ReadFunctor<CameraImageMsgPayload> imageInMsg; //!< The name of the camera output message
+    std::string saveDir;                           //!< Directory to save images to
 
-    uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
+    uint64_t sensorTimeTag; //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for Limb finding*/
-    int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels
-    int32_t cannyThreshHigh;                 //!< [px] Canny edge detection Threshold
-    int32_t cannyThreshLow;                  //!< [-] Second Threshold for Canny detection
-    int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
-    int32_t limbNumThresh;                  //!< [-] Threshold for when a limb is detected
-    
-    BSKLogger bskLogger;                //!< -- BSK Logging
+    int32_t blurrSize;       //!< [px] Size of the blurring box in pixels
+    int32_t cannyThreshHigh; //!< [px] Canny edge detection Threshold
+    int32_t cannyThreshLow;  //!< [-] Second Threshold for Canny detection
+    int32_t saveImages;      //!< [-] 1 to save images to file for debugging
+    int32_t limbNumThresh;   //!< [-] Threshold for when a limb is detected
 
+    BSKLogger bskLogger; //!< -- BSK Logging
 };
 
-
 #endif
-

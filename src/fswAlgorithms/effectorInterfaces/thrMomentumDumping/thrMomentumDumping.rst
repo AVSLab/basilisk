@@ -39,4 +39,3 @@ provides information on what this message is used for.
     * - deltaHInMsg
       - :ref:`CmdTorqueBodyMsgPayload`
       - requested momentum change input message
-

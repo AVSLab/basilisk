@@ -22,9 +22,9 @@
 
 #include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 
-
 /*! @brief Structure used to define the individual RW configuration data message*/
-typedef struct {
+typedef struct
+{
     double rWB_B[3];            //!< [m], position vector of the RW relative to the spacecraft body frame
     double gsHat_B[3];          //!< [-] spin axis unit vector in body frame
     double w2Hat0_B[3];         //!< [-] initial torque axis unit vector in body frame
@@ -38,7 +38,7 @@ typedef struct {
     double U_s;                 //!< [kg-m], static imbalance
     double U_d;                 //!< [kg-m^2], dynamic imbalance
     double d;                   //!< [m], wheel center of mass offset from wheel frame origin
-    double J13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
+    double J13;                 //!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
     double u_current;           //!< [N-m], current motor torque
     double frictionTorque;      //!< [N-m], friction Torque
     double u_max;               //!< [N-m], Max torque
@@ -48,8 +48,6 @@ typedef struct {
     double P_max;               //!< [N-m/s], maximum wheel power
     double linearFrictionRatio; //!< [%] ratio relative to max speed value up to which the friction behaves linearly
     RWModels RWModel;           //!< [-], Type of imbalance model to use
-}RWConfigLogMsgPayload;
-
-
+} RWConfigLogMsgPayload;
 
 #endif

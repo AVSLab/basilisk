@@ -16,16 +16,14 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 import numpy as np
+
 np.set_printoptions(precision=12)
 
 
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
-
-
 def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset):
-
     ansSigma = []
     ansOmega_RN_N = []
     ansdOmega_RN_N = []
@@ -37,7 +35,7 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
 
     # compute 0th time step
     s0 = np.array(sigma_RR0)
-    s1=rbk.addMRP(np.array(sigma_R0N), np.array(sigma_RR0))
+    s1 = rbk.addMRP(np.array(sigma_R0N), np.array(sigma_RR0))
     RR0 = rbk.MRP2C(sigma_RR0)
     RN = np.dot(RR0, R0N)
 
@@ -55,7 +53,7 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
     ansdOmega_RN_N.append(domega_RN_N.tolist())
 
     # compute 1st time step
-    B =  rbk.BmatMRP(sigma_RR0)
+    B = rbk.BmatMRP(sigma_RR0)
     sigma_RR0 += dt * 0.25 * np.dot(B, omega_RR0_R)
     RR0 = rbk.MRP2C(sigma_RR0)
     RN = np.dot(RR0, R0N)
@@ -69,10 +67,9 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
     domega_RR0_N = np.cross(omega_R0N_N, omega_RR0_N)
     domega_RN_N = domega_RR0_N + domega_R0N_N
     ansdOmega_RN_N.append(domega_RN_N.tolist())
-
 
     # compute 2nd time step
-    B =  rbk.BmatMRP(sigma_RR0)
+    B = rbk.BmatMRP(sigma_RR0)
     sigma_RR0 += dt * 0.25 * np.dot(B, omega_RR0_R)
     RR0 = rbk.MRP2C(sigma_RR0)
     RN = np.dot(RR0, R0N)
@@ -86,7 +83,6 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
     domega_RR0_N = np.cross(omega_R0N_N, omega_RR0_N)
     domega_RN_N = domega_RR0_N + domega_R0N_N
     ansdOmega_RN_N.append(domega_RN_N.tolist())
-
 
     # Testing Reset function
     if testReset:
@@ -123,8 +119,4 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
         domega_RN_N = domega_RR0_N + domega_R0N_N
         ansdOmega_RN_N.append(domega_RN_N.tolist())
 
-
     return ansSigma, ansOmega_RN_N, ansdOmega_RN_N
-
-
-

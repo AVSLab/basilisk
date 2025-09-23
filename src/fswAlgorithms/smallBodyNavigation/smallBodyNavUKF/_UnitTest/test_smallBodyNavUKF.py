@@ -63,35 +63,45 @@ def smallBodyNavUKFTestFunction(show_plots):
     module.alpha = 0  # Filter hyperparameter
     module.beta = 2  # Filter hyperparameter
     module.kappa = 1e-3  # Filter hyperparameter
-    module.mu_ast = 17.2882449693*1e9  # Gravitational constant of the asteroid m^3/s^2
-    module.P_proc = (0.1*np.identity(9)).tolist()  # Process Noise
-    module.R_meas = (0.1*np.identity(3)).tolist()  # Measurement Noise
+    module.mu_ast = (
+        17.2882449693 * 1e9
+    )  # Gravitational constant of the asteroid m^3/s^2
+    module.P_proc = (0.1 * np.identity(9)).tolist()  # Process Noise
+    module.R_meas = (0.1 * np.identity(3)).tolist()  # Measurement Noise
 
     vesta_radius = 2.3612 * orbitalMotion.AU * 1000  # meters
-    vesta_velocity = np.sqrt(orbitalMotion.MU_SUN*(1000.**3)/vesta_radius) # m/s, assumes circular orbit
+    vesta_velocity = np.sqrt(
+        orbitalMotion.MU_SUN * (1000.0**3) / vesta_radius
+    )  # m/s, assumes circular orbit
 
-    x_0 = [2010., 1510., 1010., 0., 2., 0., 0.14, 0., 0.]
+    x_0 = [2010.0, 1510.0, 1010.0, 0.0, 2.0, 0.0, 0.14, 0.0, 0.0]
     module.x_hat_k = x_0
-    module.P_k = [[1000., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 1000., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 1000., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 1, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 1, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 1, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 1e-3, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 1e-3, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 1e-3]]
-    #module.P_k = P_k.tolist()
+    module.P_k = [
+        [1000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 1000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 1000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 1, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 1, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1e-3, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1e-3, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1e-3],
+    ]
+    # module.P_k = P_k.tolist()
 
     # Configure blank module input messages
     navTransInMsgData = messaging.NavTransMsgPayload()
-    navTransInMsgData.r_BN_N = [vesta_radius + 600. * 1000., -400. * 1000, 200. * 1000]
-    navTransInMsgData.v_BN_N = [0., vesta_velocity, 0.]
+    navTransInMsgData.r_BN_N = [
+        vesta_radius + 600.0 * 1000.0,
+        -400.0 * 1000,
+        200.0 * 1000,
+    ]
+    navTransInMsgData.v_BN_N = [0.0, vesta_velocity, 0.0]
     navTransInMsg = messaging.NavTransMsg().write(navTransInMsgData)
 
     asteroidEphemerisInMsgData = messaging.EphemerisMsgPayload()
-    asteroidEphemerisInMsgData.r_BdyZero_N = [vesta_radius, 0., 0.]
-    asteroidEphemerisInMsgData.v_BdyZero_N = [0., vesta_velocity, 0.]
+    asteroidEphemerisInMsgData.r_BdyZero_N = [vesta_radius, 0.0, 0.0]
+    asteroidEphemerisInMsgData.v_BdyZero_N = [0.0, vesta_velocity, 0.0]
     asteroidEphemerisInMsgData.sigma_BN = [0.0, 0.0, 0.0]
     asteroidEphemerisInMsgData.omega_BN_B = [0.0, 0.0, 0.0]
     asteroidEphemerisInMsg = messaging.EphemerisMsg().write(asteroidEphemerisInMsgData)
@@ -118,50 +128,72 @@ def smallBodyNavUKFTestFunction(show_plots):
     # been considered and the spacecraft velocity in the small body
     # fixed frame is null, then the measured acceleration should correspond
     # to the Keplerian gravity with opposite sign
-    true_r = np.array([[600. * 1000, -400. * 1000, 200. * 1000]])
-    true_v = np.array([[0., 0., 0.]])
-    true_a = module.mu_ast * true_r / (np.linalg.norm(true_r))**3
+    true_r = np.array([[600.0 * 1000, -400.0 * 1000, 200.0 * 1000]])
+    true_v = np.array([[0.0, 0.0, 0.0]])
+    true_a = module.mu_ast * true_r / (np.linalg.norm(true_r)) ** 3
     true_x_hat = np.zeros(9)
     true_x_hat[0:3] = true_r
     true_x_hat[3:6] = true_v
     true_x_hat[6:9] = true_a
 
     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
-        [true_x_hat], np.array([x_hat[-1,:]]), 0.01, "x_hat",
-        testFailCount, testMessages)
+        [true_x_hat],
+        np.array([x_hat[-1, :]]),
+        0.01,
+        "x_hat",
+        testFailCount,
+        testMessages,
+    )
 
     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
-        [true_x_hat], np.array([x_hat_c_wrapped[-1,:]]), 0.01, "x_hat_c_wrapped",
-        testFailCount, testMessages)
+        [true_x_hat],
+        np.array([x_hat_c_wrapped[-1, :]]),
+        0.01,
+        "x_hat_c_wrapped",
+        testFailCount,
+        testMessages,
+    )
 
-    plt.close('all')
-    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.close("all")
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
     plt.ticklabel_format(useOffset=False)
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,0] / 1000, label='x-pos')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,1] / 1000, label='y-pos')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,2] / 1000, label='z-pos')
-    plt.legend(loc='lower left')
-    plt.xlabel('Time (min)')
-    plt.ylabel('${}^{A}r_{BA}$ (km)')
-    plt.title('Estimated Relative Spacecraft Position')
+    plt.plot(
+        smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60,
+        x_hat[:, 0] / 1000,
+        label="x-pos",
+    )
+    plt.plot(
+        smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60,
+        x_hat[:, 1] / 1000,
+        label="y-pos",
+    )
+    plt.plot(
+        smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60,
+        x_hat[:, 2] / 1000,
+        label="z-pos",
+    )
+    plt.legend(loc="lower left")
+    plt.xlabel("Time (min)")
+    plt.ylabel("${}^{A}r_{BA}$ (km)")
+    plt.title("Estimated Relative Spacecraft Position")
 
-    plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,3], label='x-vel')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,4], label='y-vel')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,5], label='z-vel')
-    plt.legend(loc='upper right')
-    plt.xlabel('Time (min)')
-    plt.ylabel('${}^{A}v_{BA}$ (m/s)')
-    plt.title('Estimated Spacecraft Velocity')
+    plt.figure(2, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60, x_hat[:, 3], label="x-vel")
+    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60, x_hat[:, 4], label="y-vel")
+    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60, x_hat[:, 5], label="z-vel")
+    plt.legend(loc="upper right")
+    plt.xlabel("Time (min)")
+    plt.ylabel("${}^{A}v_{BA}$ (m/s)")
+    plt.title("Estimated Spacecraft Velocity")
 
-    plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,6], label='x-acc')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,7], label='y-acc')
-    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0E-9 / 60, x_hat[:,8], label='z-acc')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time (min)')
-    plt.ylabel('${}^{A}a_{BA}$ (m/s^2)')
-    plt.title('Estimated Non-Keplerian Acceleration')
+    plt.figure(3, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60, x_hat[:, 6], label="x-acc")
+    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60, x_hat[:, 7], label="y-acc")
+    plt.plot(smallBodyNavUKFOutMsgRec.times() * 1.0e-9 / 60, x_hat[:, 8], label="z-acc")
+    plt.legend(loc="lower right")
+    plt.xlabel("Time (min)")
+    plt.ylabel("${}^{A}a_{BA}$ (m/s^2)")
+    plt.title("Estimated Non-Keplerian Acceleration")
 
     if show_plots:
         plt.show()

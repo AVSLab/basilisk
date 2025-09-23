@@ -17,7 +17,6 @@
 
 */
 
-
 #include "mtbMomentumManagementSimple.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <stdio.h>
@@ -28,7 +27,8 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig  *configData, int64_t moduleID)
+void
+SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, int64_t moduleID)
 {
     /*
      * Initialize the output message.
@@ -38,7 +38,6 @@ void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig  *co
     return;
 }
 
-
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
     Check if required input messages are connected.
@@ -47,15 +46,16 @@ void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig  *co
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Check if the required input messages are connected.
      */
-    if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)){
+    if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
-    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)){
+    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
 
@@ -79,20 +79,20 @@ void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *config
     return;
 }
 
-
 /*! This routine calculate the current desired torque in the Body frame to meet the momentum target.
 
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Initialize local variables.
      */
-    double hWheels_B[3] = {0.0, 0.0, 0.0};                      // the net momentum of the reaction wheels in the body frame
-    double hWheels_W[MAX_EFF_CNT];                              // array of individual wheel momentum values
+    double hWheels_B[3] = { 0.0, 0.0, 0.0 }; // the net momentum of the reaction wheels in the body frame
+    double hWheels_W[MAX_EFF_CNT];           // array of individual wheel momentum values
     vSetZero(hWheels_W, configData->rwConfigParams.numRW);
 
     /*
@@ -103,7 +103,8 @@ void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *confi
 
     /*! - Compute wheel momentum in Body frame components by calculating it first in the wheel frame and then
          transforming it from the wheel space into the body frame using Gs.*/
-    vElementwiseMult(rwSpeedsInMsgBuffer.wheelSpeeds, configData->rwConfigParams.numRW, configData->rwConfigParams.JsList, hWheels_W);
+    vElementwiseMult(
+      rwSpeedsInMsgBuffer.wheelSpeeds, configData->rwConfigParams.numRW, configData->rwConfigParams.JsList, hWheels_W);
     mMultV(configData->Gs, 3, configData->rwConfigParams.numRW, hWheels_W, hWheels_B);
 
     /*! - Compute the feedback torque command by multiplying the wheel momentum in the Body frame by the proportional

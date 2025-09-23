@@ -29,7 +29,7 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
@@ -58,32 +58,27 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.skipif(importErr, reason= reasonErr)
-@pytest.mark.parametrize("HSV", [
-    [0, 0, 0]
-    , [1.0, 20.0, -30.0]
-    , [-1.0, 20.0, -30.0]
-    , [3.14159, 100, -100]
-])
-@pytest.mark.parametrize("BGR", [
-    [0, 0, 0]
-    , [10, 20, 30]
-    , [-10, -30, 50]
-    , [-100, 200, 20]
-])
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+@pytest.mark.parametrize(
+    "HSV", [[0, 0, 0], [1.0, 20.0, -30.0], [-1.0, 20.0, -30.0], [3.14159, 100, -100]]
+)
+@pytest.mark.parametrize(
+    "BGR", [[0, 0, 0], [10, 20, 30], [-10, -30, 50], [-100, 200, 20]]
+)
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, HSV, BGR):
     """
-        **Validation Test Description**
+    **Validation Test Description**
 
-        This module tests the color shifting capability of the camera module. Multiple HSV and BGR color
-        adjustments are tests on a TV test image.
+    This module tests the color shifting capability of the camera module. Multiple HSV and BGR color
+    adjustments are tests on a TV test image.
 
-        **Description of Variables Being Tested**
+    **Description of Variables Being Tested**
 
-        Multiple points on the test images are adjusted in python and compared to the BSK camera module
-        saved image.  The HSV and BGR color corrections are applied on a series of points in the test image.
-        The integer red, green and blue color values are checked to be identical.
+    Multiple points on the test images are adjusted in python and compared to the BSK camera module
+    saved image.  The HSV and BGR color corrections are applied on a series of points in the test image.
+    The integer red, green and blue color values are checked to be identical.
 
     """
     # each test method requires a single assert method to be called
@@ -91,8 +86,15 @@ def test_module(show_plots, HSV, BGR):
     [testResults, testMessage] = cameraColorTest(image, HSV, BGR)
 
     # Clean up
-    imagePath = path + '/' + image
-    savedImage = '/'.join(imagePath.split('/')[:-1]) + '/hsv' + str(HSV) + 'bgr' + str(BGR) + '0.000000.png'
+    imagePath = path + "/" + image
+    savedImage = (
+        "/".join(imagePath.split("/")[:-1])
+        + "/hsv"
+        + str(HSV)
+        + "bgr"
+        + str(BGR)
+        + "0.000000.png"
+    )
     try:
         os.remove(savedImage)
     except FileNotFoundError:
@@ -115,7 +117,7 @@ def cameraColorTest(image, HSV, BGR):
         exit()
 
     # Truth values from python
-    imagePath = path + '/' + image
+    imagePath = path + "/" + image
     input_image = Image.open(imagePath)
     input_image.load()
     #################################################
@@ -142,12 +144,14 @@ def cameraColorTest(image, HSV, BGR):
     module.filename = imagePath
     module.saveImages = True
     # make each image saved have a unique name for this test case
-    module.saveDir = '/'.join(imagePath.split('/')[:-1]) + '/hsv' + str(HSV) + 'bgr' + str(BGR)
+    module.saveDir = (
+        "/".join(imagePath.split("/")[:-1]) + "/hsv" + str(HSV) + "bgr" + str(BGR)
+    )
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = messaging.CameraImageMsgPayload()
-    inputMessageData.timeTag = int(1E9)
+    inputMessageData.timeTag = int(1e9)
     inputMessageData.cameraID = 1
     inCamMsg = messaging.CameraImageMsg().write(inputMessageData)
     module.imageInMsg.subscribeTo(inCamMsg)
@@ -165,7 +169,7 @@ def cameraColorTest(image, HSV, BGR):
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    corruptedPath = module.saveDir + '0.000000.png'
+    corruptedPath = module.saveDir + "0.000000.png"
 
     #   print out error message if test failed
     if not trueColorAdjust(imagePath, corruptedPath, HSV, BGR):
@@ -174,16 +178,16 @@ def cameraColorTest(image, HSV, BGR):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def rgb_to_hsv(rgb):
     hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
-    return [hsv[0] * 180., hsv[1] * 255., hsv[2]]
+    return [hsv[0] * 180.0, hsv[1] * 255.0, hsv[2]]
 
 
 def hsv_to_rgb(hsv):
-    rgb = colorsys.hsv_to_rgb(hsv[0]/180., hsv[1]/255., hsv[2]/255.)
+    rgb = colorsys.hsv_to_rgb(hsv[0] / 180.0, hsv[1] / 255.0, hsv[2] / 255.0)
     return [rgb[0] * 255, rgb[1] * 255, rgb[2] * 255]
 
 
@@ -192,8 +196,17 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
     output = Image.open(corrupted).load()
 
     # these points correspond to the included 'tv_test.png'
-    testPoints = [(100, 300), (250, 300), (450, 300), (600, 300), (700, 300), (950, 300), (1100, 300), (300, 800),
-                  (880, 780)]
+    testPoints = [
+        (100, 300),
+        (250, 300),
+        (450, 300),
+        (600, 300),
+        (700, 300),
+        (950, 300),
+        (1100, 300),
+        (300, 800),
+        (880, 780),
+    ]
 
     for point in testPoints:
         px = point[0]
@@ -204,25 +217,25 @@ def trueColorAdjust(image, corrupted, HSV, BGR):
         expected = [0, 0, 0]
         input_degrees = math.degrees(HSV[0])
         h_360 = (hsv[0] * 2) + input_degrees
-        h_360 -= 360. * math.floor(h_360 * (1. / 360.))
+        h_360 -= 360.0 * math.floor(h_360 * (1.0 / 360.0))
         h_360 = int(h_360 / 2)
         if h_360 == 180:
             h_360 = 0
         expected[0] = int(h_360)
 
         for i in range(2):
-            expected[i+1] = int(hsv[i+1] * (HSV[i+1]/100. + 1.))
-            if expected[i+1] < 0:
-                expected[i+1] = 0
-            if expected[i+1] > 255:
-                expected[i+1] = 255
+            expected[i + 1] = int(hsv[i + 1] * (HSV[i + 1] / 100.0 + 1.0))
+            if expected[i + 1] < 0:
+                expected[i + 1] = 0
+            if expected[i + 1] > 255:
+                expected[i + 1] = 255
 
         expectedAfterHSV = hsv_to_rgb(expected)
         expectedAfterHSV = [int(i) for i in expectedAfterHSV]
 
         # do BGR adjustment
         for i in range(3):
-            expected[i] = int((BGR[2 - i] / 100. + 1.) * expectedAfterHSV[i])
+            expected[i] = int((BGR[2 - i] / 100.0 + 1.0) * expectedAfterHSV[i])
             if expected[i] > 255:
                 expected[i] = 255
             if expected[i] < 0:

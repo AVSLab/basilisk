@@ -31,10 +31,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.simulation import spacecraft, spinningBodyOneDOFStateEffector, gravityEffector
+from Basilisk.simulation import (
+    spacecraft,
+    spinningBodyOneDOFStateEffector,
+    gravityEffector,
+)
 from Basilisk.architecture import messaging
 
 
@@ -43,12 +47,15 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-@pytest.mark.parametrize("cmdTorque, lock, thetaRef", [
-    (0.0, False, 0.0)
-    , (0.0, True, 0.0)
-    , (1.0, False, 0.0)
-    , (0.0, False, 20.0 * macros.D2R)
-])
+@pytest.mark.parametrize(
+    "cmdTorque, lock, thetaRef",
+    [
+        (0.0, False, 0.0),
+        (0.0, True, 0.0),
+        (1.0, False, 0.0),
+        (0.0, False, 20.0 * macros.D2R),
+    ],
+)
 def test_spinningBody(show_plots, cmdTorque, lock, thetaRef):
     r"""
     **Validation Test Description**
@@ -101,8 +108,16 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
@@ -112,7 +127,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     # Define properties of spinning body
     spinningBody.mass = 50.0
     spinningBody.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
-    spinningBody.dcm_S0B = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
+    spinningBody.dcm_S0B = [[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]]
     spinningBody.r_ScS_S = [[1.0], [0.0], [-1.0]]
     spinningBody.r_SB_B = [[0.5], [-1.5], [-0.5]]
     spinningBody.sHat_S = [[0], [-1], [0]]
@@ -155,7 +170,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # meters!
+    earthGravBody.mu = 0.3986004415e15  # meters!
     earthGravBody.isCentralBody = True
     scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
@@ -164,9 +179,11 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
     # Add energy and momentum variables to log
-    scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
+    scObjectLog = scObject.logger(
+        ["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"]
+    )
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
-    
+
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
@@ -180,10 +197,18 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged variables
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = unitTestSupport.addTimeColumn(
+        scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N
+    )
+    rotAngMom_N = unitTestSupport.addTimeColumn(
+        scObjectLog.times(), scObjectLog.totRotAngMomPntC_N
+    )
+    rotEnergy = unitTestSupport.addTimeColumn(
+        scObjectLog.times(), scObjectLog.totRotEnergy
+    )
+    orbEnergy = unitTestSupport.addTimeColumn(
+        scObjectLog.times(), scObjectLog.totOrbEnergy
+    )
     theta = thetaData.theta
     thetaDot = thetaData.thetaDot
 
@@ -201,47 +226,61 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     plt.close("all")
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
-             orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
-             orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Angular Momentum')
+    plt.plot(
+        orbAngMom_N[:, 0] * 1e-9,
+        (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
+        orbAngMom_N[:, 0] * 1e-9,
+        (orbAngMom_N[:, 2] - orbAngMom_N[0, 2]) / orbAngMom_N[0, 2],
+        orbAngMom_N[:, 0] * 1e-9,
+        (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Orbital Energy')
+    plt.plot(
+        orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1]
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Orbital Energy")
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]) / rotAngMom_N[0, 1],
-             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]) / rotAngMom_N[0, 2],
-             rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) / rotAngMom_N[0, 3])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Angular Momentum')
+    plt.plot(
+        rotAngMom_N[:, 0] * 1e-9,
+        (rotAngMom_N[:, 1] - rotAngMom_N[0, 1]) / rotAngMom_N[0, 1],
+        rotAngMom_N[:, 0] * 1e-9,
+        (rotAngMom_N[:, 2] - rotAngMom_N[0, 2]) / rotAngMom_N[0, 2],
+        rotAngMom_N[:, 0] * 1e-9,
+        (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) / rotAngMom_N[0, 3],
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]) / rotEnergy[0, 1])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    plt.title('Rotational Energy')
+    plt.plot(
+        rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]) / rotEnergy[0, 1]
+    )
+    plt.xlabel("time (s)")
+    plt.ylabel("Relative Difference")
+    plt.title("Rotational Energy")
 
     plt.figure()
     plt.clf()
     plt.plot(thetaData.times() * 1e-9, theta)
-    plt.xlabel('time (s)')
-    plt.ylabel('theta')
+    plt.xlabel("time (s)")
+    plt.ylabel("theta")
 
     plt.figure()
     plt.clf()
     plt.plot(thetaData.times() * 1e-9, thetaDot)
-    plt.xlabel('time (s)')
-    plt.ylabel('thetaDot')
+    plt.xlabel("time (s)")
+    plt.ylabel("thetaDot")
 
     if show_plots:
         plt.show()
@@ -256,36 +295,52 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
 
     for i in range(0, len(initialOrbAngMom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i], initialOrbAngMom_N[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqualRelative(
+            finalOrbAngMom[i], initialOrbAngMom_N[i], 3, accuracy
+        ):
             testFailCount += 1
             testMessages.append(
-                "FAILED: Spinning Body integrated test failed orbital angular momentum unit test")
+                "FAILED: Spinning Body integrated test failed orbital angular momentum unit test"
+            )
 
     for i in range(0, len(initialRotAngMom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqualRelative(
+            finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy
+        ):
             testFailCount += 1
             testMessages.append(
-                "FAILED: Spinning Body integrated test failed rotational angular momentum unit test")
+                "FAILED: Spinning Body integrated test failed rotational angular momentum unit test"
+            )
 
     # Only check rotational energy if no torques and no damping are applied
     if cmdTorque == 0.0 and thetaRef == 0.0:
         for i in range(0, len(initialRotEnergy)):
             # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(
+                finalRotEnergy[i], initialRotEnergy[i], 1, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED: Spinning Body integrated test failed rotational energy unit test")
+                testMessages.append(
+                    "FAILED: Spinning Body integrated test failed rotational energy unit test"
+                )
 
     for i in range(0, len(initialOrbEnergy)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy):
+        if not unitTestSupport.isArrayEqualRelative(
+            finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: Spinning Body integrated test failed orbital energy unit test")
+            testMessages.append(
+                "FAILED: Spinning Body integrated test failed orbital energy unit test"
+            )
 
     if thetaRef != 0.0:
         if not unitTestSupport.isDoubleEqual(theta[-1], thetaRef, 0.01):
             testFailCount += 1
-            testMessages.append("FAILED: Spinning Body integrated test failed angle convergence unit test")
+            testMessages.append(
+                "FAILED: Spinning Body integrated test failed angle convergence unit test"
+            )
 
     if testFailCount == 0:
         print("PASSED: " + " Spinning Body gravity integrated test")
@@ -293,7 +348,7 @@ def spinningBody(show_plots, cmdTorque, lock, thetaRef):
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 if __name__ == "__main__":

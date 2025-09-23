@@ -13,7 +13,7 @@ The orb\_elem\_convert module is responsible for converting between a set of six
 	\captionsetup{justification=centering}
 	\includegraphics[width=0.3\textwidth]{Figures/orb_elem.png}
 	\caption{Illustration of Keplerian Orbital Elements and Plane}\label{fig:OrbElem}
-\end{figure} 
+\end{figure}
 The mathematical methods for conversion vary depending on parameter values, specifically semimajor axis and eccentricity inputs. Outlined below are three cases for varying $a$ and $e$. Although the first case is supported when converting from orbital elements to Cartesian, it is not accurate for the reverse process and is considered a limitation of this module. The mathematical model is still briefly explained below but the first case is not tested. These cases all result in three-component position and velocity vectors.
 \paragraph{Case 1 (\boldmath$e=1.0$, $a>0$):}
 This case specifies a rectilinear, elliptical orbit. The first steps in obtaining position and velocity vectors is to find the orbit radius and the magnitude of rectilinear velocity. The orbit radius $r$ depends on the semimajor axis, eccentricity, and true anomaly. The velocity, as expected, depends on the orbit radius, semimajor axis, and gravitational constant. Both of these values can be found using the following equations:
@@ -136,7 +136,7 @@ The vector $\bm{n}$ consists of three components, which will be referred to as $
 \paragraph{Case 1 (Non-circular, inclined orbit):}
 A non-circular orbit is specified with $e>0$ and an inclined orbit has an inclination $i>0$. Since it is for inclined orbits, this case depends on the line of nodes. Each remaining orbital element is calculated with cosine expressions, so depending on the sign of the line of nodes components, the angles may need to be adjusted by a $2\pi$ radians. Subcases are shown for these adjustments.
 \begin{equation} \label{eq:29}
-\Omega = 
+\Omega =
 \begin{cases}
 \cos^{-1}(\frac{\bm{\hat{n}}_1}{n}) & \bm{\hat{n}}_2 > 0\\
 2\pi - \cos^{-1}(\frac{\bm{\hat{n}}_1}{n}) & \bm{\hat{n}}_2 < 0
@@ -144,13 +144,13 @@ A non-circular orbit is specified with $e>0$ and an inclined orbit has an inclin
 \end{equation}
 Calculating the ascending node requires the eccentricity vector found previously in Eq. \ref{eq:18}.
 \begin{equation} \label{eq:30}
-\omega = 
+\omega =
 \begin{cases}
 \cos^{-1}(\frac{\bm{n} \cdot \bm{e}}{n e}) & \bm{\hat{n}}_3 > 0\\
 2\pi - \cos^{-1}(\frac{\bm{n} \cdot \bm{e}}{n e}) & \bm{\hat{n}}_3 < 0
 \end{cases}
 \end{equation}
-Finding the true anomaly also requires the eccentricity vector as well as the position vector, its magnitude, and the velocity vector. 
+Finding the true anomaly also requires the eccentricity vector as well as the position vector, its magnitude, and the velocity vector.
 \begin{equation} \label{eq:31}
 f =
 \begin{cases}
@@ -165,7 +165,7 @@ An equatorial orbit is specified with $i>0$. The true anomaly can still be calcu
 \end{equation}
 It also uses the true longitude of periapsis, defining
 \begin{equation}
-\omega = 
+\omega =
 \begin{cases}
 \cos^{-1}(\frac{\bm{\hat{e}}_1}{n e}) & \bm{\hat{e}}_2 > 0 \\
 2\pi - \cos^{-1}(\frac{\bm{\hat{e}}_1}{n e}) & \bm{\hat{e}}_2 < 0
@@ -201,7 +201,7 @@ f=\begin{cases}
 \end{equation}
 Lastly, to ensure the appropriate value is used for the true anomaly, it should be checked whether the orbit is parabolic or hyperbolic. For both of these orbit types, a true anomaly greater than $\pi$ and less then $2\pi$ would mean the body is outside of the orbit. Thus, a limit must be applied to the true anomaly for parabolic and hyperbolic orbits, as shown below. The sign of $f$ remains the same after changing the magnitude.
 \begin{equation}
-f = 
+f =
 \begin{cases}
 \pm 2\pi & \quad |e|\geq 1.0 \quad \textrm{and} \quad |\pm f|>\pi
 \end{cases}

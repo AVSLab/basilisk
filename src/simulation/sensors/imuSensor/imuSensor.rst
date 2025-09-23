@@ -30,4 +30,3 @@ provides information on what this message is used for.
     * - sensorOutMsg
       - :ref:`IMUSensorMsgPayload`
       - output message name for IMU output data
-

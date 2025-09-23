@@ -89,104 +89,106 @@ class thrusterFactory(object):
         try:
             getattr(self, thrusterType)(TH)
         except:
-            print('ERROR: Thruster type ' + thrusterType + ' is not implemented')
+            print("ERROR: Thruster type " + thrusterType + " is not implemented")
             exit(1)
 
         # set device states from the input arguments.  Note that these may override what is set in
         # the above function call
-        if 'areaNozzle' in kwargs:
-            varAreaNozzle = kwargs['areaNozzle']
+        if "areaNozzle" in kwargs:
+            varAreaNozzle = kwargs["areaNozzle"]
             if not isinstance(varAreaNozzle, (float)):
-                print('ERROR: areaNozzle must be a float argument')
+                print("ERROR: areaNozzle must be a float argument")
                 exit(1)
             else:
                 TH.areaNozzle = varAreaNozzle
 
-        if 'steadyIsp' in kwargs:
-            varSteadyIsp = kwargs['steadyIsp']
+        if "steadyIsp" in kwargs:
+            varSteadyIsp = kwargs["steadyIsp"]
             if not isinstance(varSteadyIsp, (float)):
-                print('ERROR: steadyIsp must be a float argument')
+                print("ERROR: steadyIsp must be a float argument")
                 exit(1)
             else:
                 TH.steadyIsp = varSteadyIsp
 
-        if 'MaxThrust' in kwargs:
-            varMaxThrust = kwargs['MaxThrust']
+        if "MaxThrust" in kwargs:
+            varMaxThrust = kwargs["MaxThrust"]
             if not isinstance(varMaxThrust, (float)):
-                print('ERROR: MaxThrust must be a float argument')
+                print("ERROR: MaxThrust must be a float argument")
                 exit(1)
             else:
                 TH.MaxThrust = varMaxThrust
 
-        if 'MaxSwirlTorque' in kwargs:
-            varMaxSwirlTorque = kwargs['MaxSwirlTorque']
+        if "MaxSwirlTorque" in kwargs:
+            varMaxSwirlTorque = kwargs["MaxSwirlTorque"]
             if not isinstance(varMaxSwirlTorque, (float)):
-                print('ERROR: MaxSwirlTorque must be a float argument')
+                print("ERROR: MaxSwirlTorque must be a float argument")
                 exit(1)
             else:
                 TH.MaxSwirlTorque = varMaxSwirlTorque
 
-        if 'thrusterMagDisp' in kwargs:
-            varThrusterMagDisp = kwargs['thrusterMagDisp']
+        if "thrusterMagDisp" in kwargs:
+            varThrusterMagDisp = kwargs["thrusterMagDisp"]
             if not isinstance(varMaxThrust, (float)):
-                print('ERROR: varThrusterMagDisp must be a float argument')
+                print("ERROR: varThrusterMagDisp must be a float argument")
                 exit(1)
             else:
                 TH.thrusterMagDisp = varThrusterMagDisp
 
-        if 'MinOnTime' in kwargs:
-            varMinOnTime = kwargs['MinOnTime']
+        if "MinOnTime" in kwargs:
+            varMinOnTime = kwargs["MinOnTime"]
             if not isinstance(varMinOnTime, (float)):
-                print('ERROR: MinOnTime must be a float argument')
+                print("ERROR: MinOnTime must be a float argument")
                 exit(1)
             else:
                 TH.MinOnTime = varMinOnTime
 
-        if 'cutoffFrequency' in kwargs:
-            varCutoffFrequency = kwargs['cutoffFrequency']
+        if "cutoffFrequency" in kwargs:
+            varCutoffFrequency = kwargs["cutoffFrequency"]
             if not isinstance(varCutoffFrequency, (float)):
-                print('ERROR: cutoffFrequency must be a float argument')
+                print("ERROR: cutoffFrequency must be a float argument")
                 exit(1)
             else:
                 TH.cutoffFrequency = varCutoffFrequency
 
-        if 'useMinPulseTime' in kwargs:
-            varUseMinPulseTime = kwargs['useMinPulseTime']
+        if "useMinPulseTime" in kwargs:
+            varUseMinPulseTime = kwargs["useMinPulseTime"]
             if not isinstance(varUseMinPulseTime, (bool)):
-                print('ERROR: useMinPulseTime must be a BOOL argument')
+                print("ERROR: useMinPulseTime must be a BOOL argument")
                 exit(1)
         else:
             varUseMinPulseTime = False  # default value
         if not varUseMinPulseTime:
             TH.MinOnTime = 0.0
 
-        if 'label' in kwargs:
-            varLabel = kwargs['label']
+        if "label" in kwargs:
+            varLabel = kwargs["label"]
             if not isinstance(varLabel, (str)):
-                print('ERROR: TH label must be a string')
+                print("ERROR: TH label must be a string")
                 exit(1)
             if len(varLabel) > 5:
-                print('ERROR: TH label string is longer than 5 characters')
+                print("ERROR: TH label string is longer than 5 characters")
                 exit(1)
         else:
-            varLabel = 'TH' + str(len(self.thrusterList) + 1)  # default device labeling
+            varLabel = "TH" + str(len(self.thrusterList) + 1)  # default device labeling
         TH.label = varLabel
 
-        if 'thrBlowDownCoeff' in kwargs:
-            thrBlowDownCoeff = kwargs['thrBlowDownCoeff']
+        if "thrBlowDownCoeff" in kwargs:
+            thrBlowDownCoeff = kwargs["thrBlowDownCoeff"]
             if not isinstance(thrBlowDownCoeff, list):
-                print('ERROR: thruster blow down coefficients must be a numerical list')
+                print("ERROR: thruster blow down coefficients must be a numerical list")
                 exit(1)
             else:
-                for coeff in thrBlowDownCoeff: TH.thrBlowDownCoeff.push_back(coeff)
+                for coeff in thrBlowDownCoeff:
+                    TH.thrBlowDownCoeff.push_back(coeff)
 
-        if 'ispBlowDownCoeff' in kwargs:
-            ispBlowDownCoeff = kwargs['ispBlowDownCoeff']
+        if "ispBlowDownCoeff" in kwargs:
+            ispBlowDownCoeff = kwargs["ispBlowDownCoeff"]
             if not isinstance(ispBlowDownCoeff, list):
-                print('ERROR: Isp blow down coefficients must be a numerical list')
+                print("ERROR: Isp blow down coefficients must be a numerical list")
                 exit(1)
             else:
-                for coeff in ispBlowDownCoeff: TH.ispBlowDownCoeff.push_back(coeff)
+                for coeff in ispBlowDownCoeff:
+                    TH.ispBlowDownCoeff.push_back(coeff)
 
         # set thruster force direction axis
         norm = numpy.linalg.norm(tHat_B)
@@ -194,7 +196,10 @@ class thrusterFactory(object):
             tHat_B = tHat_B / norm
         else:
             print(
-                'Error: Thruster ' + sys._getframe().f_code.co_name + ' direction tHat input must be non-zero 3x1 vector')
+                "Error: Thruster "
+                + sys._getframe().f_code.co_name
+                + " direction tHat input must be non-zero 3x1 vector"
+            )
             exit(1)
         TH.thrDir_B = [[tHat_B[0]], [tHat_B[1]], [tHat_B[2]]]
 
@@ -207,17 +212,17 @@ class thrusterFactory(object):
 
     def addToSpacecraft(self, modelTag, thEffector, sc):
         """
-            This function should be called after all Thruster devices are created with create()
-            It creates the C-class container for the array of TH devices, and attaches
-            this container to the spacecraft object
+        This function should be called after all Thruster devices are created with create()
+        It creates the C-class container for the array of TH devices, and attaches
+        this container to the spacecraft object
 
-            Parameters
-            ----------
-            modelTag:  string
-                module model tag string
-            thEffector: thrusterEffector
-                thruster effector handle
-            sc: spacecraft
+        Parameters
+        ----------
+        modelTag:  string
+            module model tag string
+        thEffector: thrusterEffector
+            thruster effector handle
+        sc: spacecraft
         """
 
         thEffector.ModelTag = modelTag
@@ -227,9 +232,9 @@ class thrusterFactory(object):
 
         # Check the type of thruster effector
         thrusterType = str(type(thEffector))
-        if 'ThrusterDynamicEffector' in thrusterType:
+        if "ThrusterDynamicEffector" in thrusterType:
             sc.addDynamicEffector(thEffector)
-        elif 'ThrusterStateEffector' in thrusterType:
+        elif "ThrusterStateEffector" in thrusterType:
             sc.addStateEffector(thEffector)
         else:
             print("This isn't a thruster effector. You did something wrong.")
@@ -259,8 +264,12 @@ class thrusterFactory(object):
             #   Converts from THRConfigSimMsg to THRConfigFswMsg
             fswThruster = messaging.THRConfigMsgPayload()
             fswThruster.maxThrust = simThruster.MaxThrust
-            fswThruster.rThrust_B = [val for sublist in simThruster.thrLoc_B for val in sublist]
-            fswThruster.tHatThrust_B = [val for sublist in simThruster.thrDir_B for val in sublist]
+            fswThruster.rThrust_B = [
+                val for sublist in simThruster.thrLoc_B for val in sublist
+            ]
+            fswThruster.tHatThrust_B = [
+                val for sublist in simThruster.thrDir_B for val in sublist
+            ]
             messaging.ThrustConfigArray_setitem(thrMessage.thrusters, i, fswThruster)
             i += 1
 

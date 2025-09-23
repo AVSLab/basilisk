@@ -1,5 +1,6 @@
-''' '''
-'''
+""" """
+
+"""
  ISC License
 
  Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -16,7 +17,7 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-'''
+"""
 import numpy
 import pytest
 from Basilisk.architecture import messaging
@@ -29,27 +30,60 @@ import SunLineSuKF_test_utilities as FilterPlots
 def addTimeColumn(time, data):
     return numpy.transpose(numpy.vstack([[time], numpy.transpose(data)]))
 
+
 def setupFilterData(filterObject, initialized):
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
     if initialized:
-        filterObject.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0, 1.]
+        filterObject.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0]
         filterObject.filterInitialized = 1
     else:
         filterObject.filterInitialized = 0
 
-    filterObject.covarInit = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 1E-4]
+    filterObject.covarInit = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e-4,
+    ]
     qNoiseIn = numpy.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001*0.001
-    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001
-    qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.0000002*0.0000002
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3] * 0.001 * 0.001
+    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5] * 0.001 * 0.001
+    qNoiseIn[5, 5] = qNoiseIn[5, 5] * 0.0000002 * 0.0000002
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.002
     filterObject.sensorUseThresh = 0.0
@@ -60,12 +94,7 @@ def setupFilterData(filterObject, initialized):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-@pytest.mark.parametrize("kellyOn", [
-    (False),
-    (True)
-])
-
-
+@pytest.mark.parametrize("kellyOn", [(False), (True)])
 def test_all_sunline_kf(show_plots, kellyOn):
     """Module Unit Test"""
     [testResults, testMessage] = SwitchMethods()
@@ -91,24 +120,27 @@ def SwitchMethods():
     ###################################################################################
     numStates = 6
 
-    inputStates = [2, 1, 0.75, 0.1, 0.4, 0.]
+    inputStates = [2, 1, 0.75, 0.1, 0.4, 0.0]
     sunheading = inputStates[:3]
-    bvec1 = [0., 1., 0.]
+    bvec1 = [0.0, 1.0, 0.0]
     b1 = numpy.array(bvec1)
 
-    dcm_BS = [1., 0., 0.,
-             0., 1., 0.,
-             0., 0., 1.]
+    dcm_BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
 
     # Fill in expected values for test
 
-    DCM_exp = numpy.zeros([3,3])
+    DCM_exp = numpy.zeros([3, 3])
     W_exp = numpy.eye(numStates)
 
-    DCM_exp[:, 0] = numpy.array(inputStates[0:3]) / (numpy.linalg.norm(numpy.array(inputStates[0:3])))
-    DCM_exp[:, 1] = numpy.cross(DCM_exp[:, 0], b1) / numpy.linalg.norm(numpy.array(numpy.cross(DCM_exp[:, 0], b1)))
+    DCM_exp[:, 0] = numpy.array(inputStates[0:3]) / (
+        numpy.linalg.norm(numpy.array(inputStates[0:3]))
+    )
+    DCM_exp[:, 1] = numpy.cross(DCM_exp[:, 0], b1) / numpy.linalg.norm(
+        numpy.array(numpy.cross(DCM_exp[:, 0], b1))
+    )
     DCM_exp[:, 2] = numpy.cross(DCM_exp[:, 0], DCM_exp[:, 1]) / numpy.linalg.norm(
-        numpy.cross(DCM_exp[:, 0], DCM_exp[:, 1]))
+        numpy.cross(DCM_exp[:, 0], DCM_exp[:, 1])
+    )
 
     # Fill in the variables for the test
     dcm = sunlineSuKF.new_doubleArray(3 * 3)
@@ -123,12 +155,11 @@ def SwitchMethods():
     for j in range(9):
         dcmOut.append(sunlineSuKF.doubleArray_getitem(dcm, j))
 
-
     errorNorm = numpy.zeros(1)
     errorNorm[0] = numpy.linalg.norm(DCM_exp - numpy.array(dcmOut).reshape([3, 3]))
 
     for i in range(len(errorNorm)):
-        if (errorNorm[i] > 1.0E-10):
+        if errorNorm[i] > 1.0e-10:
             testFailCount += 1
             testMessages.append("Frame switch failure \n")
 
@@ -136,38 +167,82 @@ def SwitchMethods():
     ## Test the Switching method
     ###################################################################################
 
-    inputStates = [2,1,0.75,0.1,0.4, 1.]
-    bvec1 = [0.,1.,0.]
+    inputStates = [2, 1, 0.75, 0.1, 0.4, 1.0]
+    bvec1 = [0.0, 1.0, 0.0]
     b1 = numpy.array(bvec1)
-    covar = [1., 0., 0., 1., 0., 0.,
-             0., 1., 0., 0., 1., 0.,
-             0., 0., 1., 0., 0., 1.,
-             1., 0., 0., 1., 0., 0.,
-             0., 1., 0., 0., 1., 0.,
-             0., 0., 1., 0., 0., 1.]
-    noise =0.01
+    covar = [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+    ]
+    noise = 0.01
 
     # Fill in expected values for test
 
-    DCM_BSold = numpy.zeros([3,3])
-    DCM_BSnew = numpy.zeros([3,3])
+    DCM_BSold = numpy.zeros([3, 3])
+    DCM_BSnew = numpy.zeros([3, 3])
     Switch = numpy.eye(numStates)
     SwitchBSold = numpy.eye(numStates)
     SwitchBSnew = numpy.eye(numStates)
 
-    DCM_BSold[:,0] = numpy.array(inputStates[0:3])/(numpy.linalg.norm(numpy.array(inputStates[0:3])))
-    DCM_BSold[:,1] = numpy.cross(DCM_BSold[:,0], b1)/numpy.linalg.norm(numpy.array(numpy.cross(DCM_BSold[:,0], b1)))
-    DCM_BSold[:,2] = numpy.cross(DCM_BSold[:,0], DCM_BSold[:,1])/numpy.linalg.norm(numpy.cross(DCM_BSold[:,0], DCM_BSold[:,1]))
+    DCM_BSold[:, 0] = numpy.array(inputStates[0:3]) / (
+        numpy.linalg.norm(numpy.array(inputStates[0:3]))
+    )
+    DCM_BSold[:, 1] = numpy.cross(DCM_BSold[:, 0], b1) / numpy.linalg.norm(
+        numpy.array(numpy.cross(DCM_BSold[:, 0], b1))
+    )
+    DCM_BSold[:, 2] = numpy.cross(DCM_BSold[:, 0], DCM_BSold[:, 1]) / numpy.linalg.norm(
+        numpy.cross(DCM_BSold[:, 0], DCM_BSold[:, 1])
+    )
     SwitchBSold[3:5, 3:5] = DCM_BSold[1:3, 1:3]
 
-    b2 = numpy.array([1.,0.,0.])
-    DCM_BSnew[:,0] = numpy.array(inputStates[0:3])/(numpy.linalg.norm(numpy.array(inputStates[0:3])))
-    DCM_BSnew[:,1] = numpy.cross(DCM_BSnew[:,0], b2)/numpy.linalg.norm(numpy.array(numpy.cross(DCM_BSnew[:,0], b2)))
-    DCM_BSnew[:,2] = numpy.cross(DCM_BSnew[:,0], DCM_BSnew[:,1])/numpy.linalg.norm(numpy.cross(DCM_BSnew[:,0], DCM_BSnew[:,1]))
+    b2 = numpy.array([1.0, 0.0, 0.0])
+    DCM_BSnew[:, 0] = numpy.array(inputStates[0:3]) / (
+        numpy.linalg.norm(numpy.array(inputStates[0:3]))
+    )
+    DCM_BSnew[:, 1] = numpy.cross(DCM_BSnew[:, 0], b2) / numpy.linalg.norm(
+        numpy.array(numpy.cross(DCM_BSnew[:, 0], b2))
+    )
+    DCM_BSnew[:, 2] = numpy.cross(DCM_BSnew[:, 0], DCM_BSnew[:, 1]) / numpy.linalg.norm(
+        numpy.cross(DCM_BSnew[:, 0], DCM_BSnew[:, 1])
+    )
     SwitchBSnew[3:5, 3:5] = DCM_BSnew[1:3, 1:3]
 
     DCM_newOld = numpy.dot(DCM_BSnew.T, DCM_BSold)
-    Switch[3:5, 3:5] = DCM_newOld[1:3,1:3]
+    Switch[3:5, 3:5] = DCM_newOld[1:3, 1:3]
 
     # Fill in the variables for the test
     bvec = sunlineSuKF.new_doubleArray(3)
@@ -178,7 +253,7 @@ def SwitchMethods():
         sunlineSuKF.doubleArray_setitem(bvec, i, bvec1[i])
     for i in range(numStates):
         sunlineSuKF.doubleArray_setitem(states, i, inputStates[i])
-    for j in range(numStates*numStates):
+    for j in range(numStates * numStates):
         sunlineSuKF.doubleArray_setitem(covarMat, j, covar[j])
         # sunlineSEKF.doubleArray_setitem(switchBS, j, switchInput[j])
 
@@ -192,9 +267,8 @@ def SwitchMethods():
         bvecOut.append(sunlineSuKF.doubleArray_getitem(bvec, i))
     for i in range(numStates):
         stateOut.append(sunlineSuKF.doubleArray_getitem(states, i))
-    for j in range(numStates*numStates):
+    for j in range(numStates * numStates):
         covarOut.append(sunlineSuKF.doubleArray_getitem(covarMat, j))
-
 
     expectedState = numpy.dot(Switch, numpy.array(inputStates))
     Pk = numpy.array(covar).reshape([numStates, numStates])
@@ -202,24 +276,26 @@ def SwitchMethods():
 
     errorNorm = numpy.zeros(3)
     errorNorm[0] = numpy.linalg.norm(numpy.array(stateOut) - expectedState)
-    errorNorm[1] = numpy.linalg.norm(expectedP - numpy.array(covarOut).reshape([numStates, numStates]))
+    errorNorm[1] = numpy.linalg.norm(
+        expectedP - numpy.array(covarOut).reshape([numStates, numStates])
+    )
     errorNorm[2] = numpy.linalg.norm(numpy.array(bvecOut) - b2)
 
     for i in range(len(errorNorm)):
-        if (errorNorm[i] > 1.0E-10):
+        if errorNorm[i] > 1.0e-10:
             testFailCount += 1
             testMessages.append("Frame switch failure \n")
-
 
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + " SuKF switch tests")
     else:
-        print(str(testFailCount) + ' tests failed')
+        print(str(testFailCount) + " tests failed")
         print(testMessages)
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def StateUpdateSunLine(show_plots, kellyOn):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -252,14 +328,14 @@ def StateUpdateSunLine(show_plots, kellyOn):
     cssConstelation = messaging.CSSConfigMsgPayload()
 
     CSSOrientationList = [
-       [0.70710678118654746, -0.5, 0.5],
-       [0.70710678118654746, -0.5, -0.5],
-       [0.70710678118654746, 0.5, -0.5],
-       [0.70710678118654746, 0.5, 0.5],
-       [-0.70710678118654746, 0, 0.70710678118654757],
-       [-0.70710678118654746, 0.70710678118654757, 0.0],
-       [-0.70710678118654746, 0, -0.70710678118654757],
-       [-0.70710678118654746, -0.70710678118654757, 0.0],
+        [0.70710678118654746, -0.5, 0.5],
+        [0.70710678118654746, -0.5, -0.5],
+        [0.70710678118654746, 0.5, -0.5],
+        [0.70710678118654746, 0.5, 0.5],
+        [-0.70710678118654746, 0, 0.70710678118654757],
+        [-0.70710678118654746, 0.70710678118654757, 0.0],
+        [-0.70710678118654746, 0, -0.70710678118654757],
+        [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
     totalCSSList = []
     for CSSHat in CSSOrientationList:
@@ -280,24 +356,26 @@ def StateUpdateSunLine(show_plots, kellyOn):
         for j in range(len(CSSOrientationList)):
             kellyData = sunlineSuKF.SunlineSuKFCFit()
             kellyData.cssKellFact = 0.05
-            kellyData.cssKellPow = 2.
-            kellyData.cssRelScale = 1.
+            kellyData.cssKellPow = 2.0
+            kellyData.cssRelScale = 1.0
             kellList.append(kellyData)
         module.kellFits = kellList
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
-    testVector/=numpy.linalg.norm(testVector)
+    testVector /= numpy.linalg.norm(testVector)
     inputData = messaging.CSSArraySensorMsgPayload()
     dotList = []
     for element in CSSOrientationList:
-        dotProd = numpy.dot(numpy.array(element), testVector)/(numpy.linalg.norm(element)*numpy.linalg.norm(testVector))
+        dotProd = numpy.dot(numpy.array(element), testVector) / (
+            numpy.linalg.norm(element) * numpy.linalg.norm(testVector)
+        )
         dotList.append(dotProd)
 
     inputData.CosValue = dotList
     cssDataInMsg = messaging.CSSArraySensorMsg()
 
     stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 1.])
+    stateTarget.extend([0.0, 0.0, 1.0])
     # module.stateInit = [0.7, 0.7, 0.0, 0.01, 0.001, 1.]
 
     # connect messages
@@ -309,32 +387,49 @@ def StateUpdateSunLine(show_plots, kellyOn):
     if kellyOn:
         time = 1000
     else:
-        time =  500
+        time = 500
     for i in range(time):
         cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
     stateLog = addTimeColumn(dataLog.times(), dataLog.state)
     postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
     covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
-    accuracy = 1.0E-3
+    accuracy = 1.0e-3
     if kellyOn:
-        accuracy = 1.0E-2 # 1% Error test for the kelly curves given errors
+        accuracy = 1.0e-2  # 1% Error test for the kelly curves given errors
     for i in range(numStates):
-        if(covarLog[-1, i*numStates+1+i] > covarLog[0, i*numStates+1+i]):
+        if covarLog[-1, i * numStates + 1 + i] > covarLog[0, i * numStates + 1 + i]:
             testFailCount += 1
             testMessages.append("Covariance update failure first part")
-    if(numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3]))) > accuracy):
-        print(numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3]))))
+    if (
+        numpy.arccos(
+            numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])
+            / (
+                numpy.linalg.norm(stateLog[-1, 1:4])
+                * numpy.linalg.norm(stateTarget[0:3])
+            )
+        )
+        > accuracy
+    ):
+        print(
+            numpy.arccos(
+                numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])
+                / (
+                    numpy.linalg.norm(stateLog[-1, 1:4])
+                    * numpy.linalg.norm(stateTarget[0:3])
+                )
+            )
+        )
         testFailCount += 1
         testMessages.append("Pointing update failure")
-    if(numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]) > accuracy):
-        print(numpy.linalg.norm(stateLog[-1,  4:7] - stateTarget[3:6]))
+    if numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]) > accuracy:
+        print(numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]))
         testFailCount += 1
         testMessages.append("Rate update failure")
-    if(abs(stateLog[-1, 6] - stateTarget[5]) > accuracy):
+    if abs(stateLog[-1, 6] - stateTarget[5]) > accuracy:
         print(abs(stateLog[-1, 6] - stateTarget[5]))
         testFailCount += 1
         testMessages.append("Sun Intensity update failure")
@@ -351,7 +446,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     for i in range(time):
         if i > 20:
             cssDataInMsg.write(inputData, unitTestSim.TotalSim.CurrentNanos)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+time+1)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + time + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
     stateLog = addTimeColumn(dataLog.times(), dataLog.state)
@@ -362,19 +457,38 @@ def StateUpdateSunLine(show_plots, kellyOn):
     stateTarget.extend([0.0, 0.0, 1.0])
 
     for i in range(numStates):
-        if(covarLog[-1, i*numStates+1+i] > covarLog[0, i*numStates+1+i]):
-            print(covarLog[-1, i*numStates+1+i] - covarLog[0, i*numStates+1+i])
+        if covarLog[-1, i * numStates + 1 + i] > covarLog[0, i * numStates + 1 + i]:
+            print(
+                covarLog[-1, i * numStates + 1 + i] - covarLog[0, i * numStates + 1 + i]
+            )
             testFailCount += 1
             testMessages.append("Covariance update failure")
-    if(numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3]))) > accuracy):
-        print(numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3]))))
+    if (
+        numpy.arccos(
+            numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])
+            / (
+                numpy.linalg.norm(stateLog[-1, 1:4])
+                * numpy.linalg.norm(stateTarget[0:3])
+            )
+        )
+        > accuracy
+    ):
+        print(
+            numpy.arccos(
+                numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])
+                / (
+                    numpy.linalg.norm(stateLog[-1, 1:4])
+                    * numpy.linalg.norm(stateTarget[0:3])
+                )
+            )
+        )
         testFailCount += 1
         testMessages.append("Pointing update failure")
-    if(numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]) > accuracy):
-        print(numpy.linalg.norm(stateLog[-1,  4:7] - stateTarget[3:6]))
+    if numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]) > accuracy:
+        print(numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]))
         testFailCount += 1
         testMessages.append("Rate update failure")
-    if(abs(stateLog[-1, 6] - stateTarget[5]) > accuracy):
+    if abs(stateLog[-1, 6] - stateTarget[5]) > accuracy:
         print(abs(stateLog[-1, 6] - stateTarget[5]))
         testFailCount += 1
         testMessages.append("Sun Intensity update failure")
@@ -390,7 +504,8 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def StatePropSunLine(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -443,12 +558,10 @@ def StatePropSunLine(show_plots):
     FilterPlots.PostFitResiduals(postFitLog, module.qObsVal, show_plots)
 
     for i in range(numStates):
-        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
-            print(abs(stateLog[-1, i+1] - stateLog[0, i+1]))
+        if abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0e-10:
+            print(abs(stateLog[-1, i + 1] - stateLog[0, i + 1]))
             testFailCount += 1
             testMessages.append("State propagation failure")
-
-
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -456,7 +569,8 @@ def StatePropSunLine(show_plots):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def FaultScenarios():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -482,42 +596,185 @@ def FaultScenarios():
     moduleClean1 = sunlineSuKF.SunlineSuKFConfig()
     moduleClean1.numStates = 6
     moduleClean1.countHalfSPs = moduleClean1.numStates
-    moduleClean1.state = [0., 0., 0., 0., 0., 0.]
-    moduleClean1.statePrev = [0., 0., 0., 0., 0., 0.]
-    moduleClean1.sBar = [0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0.]
-    moduleClean1.sBarPrev = [1., 0., 0., 0., 0., 0.,
-                                   0., 1., 0., 0., 0., 0.,
-                                   0., 0., 1., 0., 0., 0.,
-                                   0., 0., 0., 1., 0., 0.,
-                                   0., 0., 0., 0., 1., 0.,
-                                   0., 0., 0., 0., 0., 1.]
-    moduleClean1.covar = [0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.,
-                                0., 0., 0., 0., 0., 0.]
-    moduleClean1.covarPrev = [2., 0., 0., 0., 0., 0.,
-                                    0., 2., 0., 0., 0., 0.,
-                                    0., 0., 2., 0., 0., 0.,
-                                    0., 0., 0., 2., 0., 0.,
-                                    0., 0., 0., 0., 2., 0.,
-                                    0., 0., 0., 0., 0., 2.]
+    moduleClean1.state = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    moduleClean1.statePrev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    moduleClean1.sBar = [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    ]
+    moduleClean1.sBarPrev = [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+    ]
+    moduleClean1.covar = [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    ]
+    moduleClean1.covarPrev = [
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+    ]
 
     sunlineSuKF.sunlineSuKFCleanUpdate(moduleClean1)
 
-    if numpy.linalg.norm(numpy.array(moduleClean1.covarPrev) - numpy.array(moduleClean1.covar)) > 1E10:
+    if (
+        numpy.linalg.norm(
+            numpy.array(moduleClean1.covarPrev) - numpy.array(moduleClean1.covar)
+        )
+        > 1e10
+    ):
         testFailCount += 1
         testMessages.append("sunlineSuKFClean Covar failed")
-    if numpy.linalg.norm(numpy.array(moduleClean1.statePrev) - numpy.array(moduleClean1.state)) > 1E10:
+    if (
+        numpy.linalg.norm(
+            numpy.array(moduleClean1.statePrev) - numpy.array(moduleClean1.state)
+        )
+        > 1e10
+    ):
         testFailCount += 1
         testMessages.append("sunlineSuKFClean States failed")
-    if numpy.linalg.norm(numpy.array(moduleClean1.sBar) - numpy.array(moduleClean1.sBarPrev)) > 1E10:
+    if (
+        numpy.linalg.norm(
+            numpy.array(moduleClean1.sBar) - numpy.array(moduleClean1.sBarPrev)
+        )
+        > 1e10
+    ):
         testFailCount += 1
         testMessages.append("sunlineSuKFClean sBar failed")
 
@@ -543,14 +800,14 @@ def FaultScenarios():
         testFailCount += 1
         testMessages.append("Failed to catch bad Update and clean in Meas update")
 
-
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: fault detection test")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 if __name__ == "__main__":
     # test_all_sunline_kf(True)

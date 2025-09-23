@@ -31,4 +31,3 @@ provides information on what this message is used for.
     * - planetOutMsgs
       - :ref:`SpicePlanetStateMsgPayload`
       - vector of planet spice state output messages
-

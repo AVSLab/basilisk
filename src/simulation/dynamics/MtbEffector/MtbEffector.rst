@@ -4,9 +4,9 @@ This module converts magnetic torque bar dipoles to body torques.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -33,4 +33,3 @@ provides information on what this message is used for.
 User Guide
 ----------
 Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
-

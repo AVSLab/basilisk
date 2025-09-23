@@ -22,7 +22,7 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
@@ -39,10 +39,10 @@ from Basilisk.architecture import bskLogging
 # of the multiple test runs for this test.  Note that the order in that you add the parametrize method
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
 # The first parametrize arguments are shown last in the pytest argument list
-@pytest.mark.parametrize("seed", list(np.linspace(1,10,10)))
+@pytest.mark.parametrize("seed", list(np.linspace(1, 10, 10)))
 @pytest.mark.parametrize("delta_CM", [0.1, 0.2, 0.3])
-@pytest.mark.parametrize("K", [0,1,5,10])
-@pytest.mark.parametrize("thetaMax", [-1, np.pi/36])
+@pytest.mark.parametrize("K", [0, 1, 5, 10])
+@pytest.mark.parametrize("thetaMax", [-1, np.pi / 36])
 @pytest.mark.parametrize("accuracy", [1e-10])
 # update "module" in this function name to reflect the module name
 def test_platformRotation(show_plots, delta_CM, K, thetaMax, seed, accuracy):
@@ -88,7 +88,6 @@ def test_platformRotation(show_plots, delta_CM, K, thetaMax, seed, accuracy):
 
 
 def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accuracy):
-
     random.seed(seed)
 
     euler_angles_123 = np.array([5.0 * macros.D2R, 10.0 * macros.D2R, 0.0])
@@ -96,20 +95,20 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
     r_BM_M = np.array([0.0, 0.1, 1.4])
     r_FM_F = np.array([0.0, 0.0, -0.1])
     r_TF_F = np.array([-0.01, 0.03, 0.02])
-    T_F    = np.array([1.0, 1.0, 10.0])
+    T_F = np.array([1.0, 1.0, 10.0])
 
-    r_CB_B = np.array([0,0,0]) + np.random.rand(3)
+    r_CB_B = np.array([0, 0, 0]) + np.random.rand(3)
     r_CB_B = r_CB_B / np.linalg.norm(r_CB_B) * delta_CM
 
-    unitTaskName = "unitTask"                # arbitrary name (don't change)
-    unitProcessName = "TestProcess"          # arbitrary name (don't change)
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(1)     # update process rate update time
+    testProcessRate = macros.sec2nano(1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -145,7 +144,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
 
     # Create input RW configuration msg
     inputRWConfigMsgData = messaging.RWArrayConfigMsgPayload()
-    inputRWConfigMsgData.GsMatrix_B = [1,0,0,0,1,0,0,0,1]
+    inputRWConfigMsgData.GsMatrix_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
     inputRWConfigMsgData.JsList = [0.01, 0.01, 0.01]
     inputRWConfigMsgData.numRW = 3
     inputRWConfigMsgData.uMax = [0.001, 0.001, 0.001]
@@ -177,7 +176,7 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -193,23 +192,29 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
     r_CM_F = np.matmul(FM, r_CM_M)
     r_CT_F = r_CM_F - r_FM_F - r_TF_F
 
-    offset = np.linalg.norm(np.cross(r_CT_F,T_F) / np.linalg.norm(np.array(r_CT_F)) / np.linalg.norm(np.array(T_F)))
+    offset = np.linalg.norm(
+        np.cross(r_CT_F, T_F)
+        / np.linalg.norm(np.array(r_CT_F))
+        / np.linalg.norm(np.array(T_F))
+    )
 
     # check if the CM offset is zero if control gain K is also 0
     if K == 0 and thetaMax < 0:
         np.testing.assert_allclose(offset, 0.0, rtol=0, atol=accuracy, verbose=True)
 
-    T_B_hat_sim = bodyHeadingLog.rHat_XB_B[0]               # simulation result
+    T_B_hat_sim = bodyHeadingLog.rHat_XB_B[0]  # simulation result
     FB = np.matmul(FM, MB)
     T_B = np.matmul(FB.transpose(), T_F)
-    T_B_hat = T_B / np.linalg.norm(T_B)                     # truth value
+    T_B_hat = T_B / np.linalg.norm(T_B)  # truth value
 
     # compare the module results to the python computation for body-frame thruster direction
-    np.testing.assert_allclose(T_B_hat_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(
+        T_B_hat_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True
+    )
 
-    L_B_sim = thrusterTorqueLog.torqueRequestBody[0]        # simulation result
+    L_B_sim = thrusterTorqueLog.torqueRequestBody[0]  # simulation result
     L_F = np.cross(r_CT_F, T_F)
-    L_B = np.matmul(FB.transpose(),L_F)
+    L_B = np.matmul(FB.transpose(), L_F)
 
     # compare the module results to the python computation for body-frame cmd torque
     np.testing.assert_allclose(L_B_sim, L_B, rtol=0, atol=accuracy, verbose=True)
@@ -221,7 +226,9 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
     tMax_sim = thrConfigBLog.maxThrust[0]
     np.testing.assert_allclose(r_TB_B_sim, r_TB_B, rtol=0, atol=accuracy, verbose=True)
     np.testing.assert_allclose(tHat_B_sim, T_B_hat, rtol=0, atol=accuracy, verbose=True)
-    np.testing.assert_allclose(tMax_sim, np.linalg.norm(T_B), rtol=0, atol=accuracy, verbose=True)
+    np.testing.assert_allclose(
+        tMax_sim, np.linalg.norm(T_B), rtol=0, atol=accuracy, verbose=True
+    )
 
     # compare the output reference angle
     if thetaMax > 0:
@@ -237,10 +244,10 @@ def platformRotationTestFunction(show_plots, delta_CM, K, thetaMax, seed, accura
 #
 if __name__ == "__main__":
     test_platformRotation(
-                 False,                   # show_plots
-                 0.1,                     # delta_CM
-                 0,                       # K
-                 -1,                      # thetaMax
-                 np.random.rand(1)[0],    # seed
-                 1e-10                    # accuracy
-               )
+        False,  # show_plots
+        0.1,  # delta_CM
+        0,  # K
+        -1,  # thetaMax
+        np.random.rand(1)[0],  # seed
+        1e-10,  # accuracy
+    )

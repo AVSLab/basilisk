@@ -22,13 +22,15 @@
 
 namespace {
 // Computes the term (2 - d_l), where d_l is the kronecker delta.
-inline double getK(const size_t degree)
+inline double
+getK(const size_t degree)
 {
     return (degree == 0) ? 1.0 : 2.0;
 }
 }
 
-std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters()
+std::optional<std::string>
+SphericalHarmonicsGravityModel::initializeParameters()
 {
     if (this->cBar.size() == 0 || this->sBar.size() == 0) {
         return "Could not initialize spherical harmonics: the 'C' or 'S' parameters were not "
@@ -39,18 +41,17 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
         std::vector<double> aRow, n1Row, n2Row;
         aRow.resize(i + 1, 0.0);
         // Diagonal elements of A_bar
-        if (i == 0) { aRow[i] = 1.0; }
-        else {
-            aRow[i] = sqrt(double((2 * i + 1) * getK(i)) / (2 * i * getK(i - 1))) *
-                      this->aBar[i - 1][i - 1];
+        if (i == 0) {
+            aRow[i] = 1.0;
+        } else {
+            aRow[i] = sqrt(double((2 * i + 1) * getK(i)) / (2 * i * getK(i - 1))) * this->aBar[i - 1][i - 1];
         }
         n1Row.resize(i + 1, 0.0);
         n2Row.resize(i + 1, 0.0);
         for (size_t m = 0; m <= i; m++) {
             if (i >= m + 2) {
                 n1Row[m] = sqrt(double((2 * i + 1) * (2 * i - 1)) / ((i - m) * (i + m)));
-                n2Row[m] = sqrt(double((i + m - 1) * (2 * i + 1) * (i - m - 1)) /
-                                ((i + m) * (i - m) * (2 * i - 3)));
+                n2Row[m] = sqrt(double((i + m - 1) * (2 * i + 1) * (i - m - 1)) / ((i + m) * (i - m) * (2 * i - 3)));
             }
         }
         this->n1.push_back(n1Row);
@@ -64,9 +65,10 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
         nq1Row.resize(l + 1, 0.0);
         nq2Row.resize(l + 1, 0.0);
         for (size_t m = 0; m <= l; m++) {
-            if (m < l) { nq1Row[m] = sqrt(double((l - m) * getK(m) * (l + m + 1)) / getK(m + 1)); }
-            nq2Row[m] = sqrt(double((l + m + 2) * (l + m + 1) * (2 * l + 1) * getK(m)) /
-                             ((2 * l + 3) * getK(m + 1)));
+            if (m < l) {
+                nq1Row[m] = sqrt(double((l - m) * getK(m) * (l + m + 1)) / getK(m + 1));
+            }
+            nq2Row[m] = sqrt(double((l + m + 2) * (l + m + 1) * (2 * l + 1) * getK(m)) / ((2 * l + 3) * getK(m + 1)));
         }
         this->nQuot1.push_back(nq1Row);
         this->nQuot2.push_back(nq2Row);
@@ -91,11 +93,11 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
 
 Eigen::Vector3d
 SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed,
-                                             size_t degree, bool include_zero_degree) const
+                                             size_t degree,
+                                             bool include_zero_degree) const
 {
     if (degree > this->maxDeg) {
-        auto errorMsg =
-            "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
+        auto errorMsg = "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
         bskLogger.bskLog(BSK_ERROR, errorMsg);
     }
 
@@ -126,16 +128,14 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
     // Lower terms of A_bar
     for (size_t m = 0; m <= order + 1; m++) {
         for (size_t l = m + 2; l <= degree + 1; l++) {
-            this->aBar[l][m] =
-                u * this->n1[l][m] * this->aBar[l - 1][m] - this->n2[l][m] * this->aBar[l - 2][m];
+            this->aBar[l][m] = u * this->n1[l][m] * this->aBar[l - 1][m] - this->n2[l][m] * this->aBar[l - 2][m];
         }
 
         // Computation of real and imaginary parts of (2+j*t)^m
         if (m == 0) {
             rE.push_back(1.0);
             iM.push_back(0.0);
-        }
-        else {
+        } else {
             rE.push_back(s * rE[m - 1] - t * iM[m - 1]);
             iM.push_back(s * iM[m - 1] + t * rE[m - 1]);
         }
@@ -175,15 +175,16 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
             if (m == 0) {
                 E = 0.0;
                 F = 0.0;
-            }
-            else {
+            } else {
                 E = this->cBar[l][m] * rE[m - 1] + this->sBar[l][m] * iM[m - 1];
                 F = this->sBar[l][m] * rE[m - 1] - this->cBar[l][m] * iM[m - 1];
             }
 
             sum_a1 = sum_a1 + m * this->aBar[l][m] * E;
             sum_a2 = sum_a2 + m * this->aBar[l][m] * F;
-            if (m < l) { sum_a3 = sum_a3 + this->nQuot1[l][m] * this->aBar[l][m + 1] * D; }
+            if (m < l) {
+                sum_a3 = sum_a3 + this->nQuot1[l][m] * this->aBar[l][m + 1] * D;
+            }
             sum_a4 = sum_a4 + this->nQuot2[l][m] * this->aBar[l + 1][m + 1] * D;
         }
 
@@ -193,11 +194,11 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
         a4 = a4 - rhol[l + 1] / radEquator * sum_a4;
     }
 
-    return {a1 + s * a4, a2 + t * a4, a3 + u * a4};
+    return { a1 + s * a4, a2 + t * a4, a3 + u * a4 };
 }
 
-double SphericalHarmonicsGravityModel::computePotentialEnergy(
-    const Eigen::Vector3d& positionWrtPlanet_N) const
+double
+SphericalHarmonicsGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const
 {
     return -this->muBody / positionWrtPlanet_N.norm();
 }

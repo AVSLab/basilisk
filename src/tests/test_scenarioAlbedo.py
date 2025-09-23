@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2020, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -35,7 +34,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioAlbedo
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -44,17 +43,22 @@ import scenarioAlbedo
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("albedoData, multipleInstrument, multiplePlanet, useEclipse", [
-    (True, False, False, False),
-    (False, True, False, False),
-    (False, True, False, True),
-    (False, True, True, False)
-])
+@pytest.mark.parametrize(
+    "albedoData, multipleInstrument, multiplePlanet, useEclipse",
+    [
+        (True, False, False, False),
+        (False, True, False, False),
+        (False, True, False, True),
+        (False, True, True, False),
+    ],
+)
 @pytest.mark.scenarioTest
-
-def test_scenarioAlbedo(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse):
+def test_scenarioAlbedo(
+    show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse
+):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
@@ -63,7 +67,9 @@ def test_scenarioAlbedo(show_plots, albedoData, multipleInstrument, multiplePlan
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioAlbedo.run(show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 25)
+        figureList = scenarioAlbedo.run(
+            show_plots, albedoData, multipleInstrument, multiplePlanet, useEclipse, 25
+        )
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
@@ -83,4 +89,3 @@ def test_scenarioAlbedo(show_plots, albedoData, multipleInstrument, multiplePlan
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
-

@@ -23,9 +23,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+splitPath = path.split("simulation")
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    unitTestSupport,
+    macros,
+    RigidBodyKinematics as rbk,
+)
 from Basilisk.simulation import spacecraft, thrusterStateEffector
 from Basilisk.architecture import messaging
 from Basilisk.architecture import sysModel
@@ -38,12 +43,12 @@ class ResultsStore:
 
     def texSnippet(self):
         for i in range(len(self.PassFail)):
-            snippetName = 'Result' + str(i)
-            if self.PassFail[i] == 'PASSED':
-                textColor = 'ForestGreen'
-            elif self.PassFail[i] == 'FAILED':
-                textColor = 'Red'
-            texSnippet = r'\textcolor{' + textColor + '}{' + self.PassFail[i] + '}'
+            snippetName = "Result" + str(i)
+            if self.PassFail[i] == "PASSED":
+                textColor = "ForestGreen"
+            elif self.PassFail[i] == "FAILED":
+                textColor = "Red"
+            texSnippet = r"\textcolor{" + textColor + "}{" + self.PassFail[i] + "}"
             unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 
@@ -57,22 +62,118 @@ def testFixture():
 def thrusterEffectorAllTests(show_plots):
     [testResults, testMessage] = test_unitThrusters(show_plots)
 
+
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody", [
-    (1, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust on
-    (1, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust off
-    (1, 0., 2.0, 60., -15., [[-1.125], [0.5], [-2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust on, different orientation and location
-    (1, 1., 0.0, 60., -15., [[-1.125], [0.5], [-2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 1 thruster, thrust off, different orientation and location
-    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust on
-    (2, 1., 0.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust off
-    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 2.0, macros.sec2nano(0.01), "OFF"),  # 2 thrusters, thrust on, swirl torque
-    (2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "ON")  # 2 thrusters, attached body
-])
+@pytest.mark.parametrize(
+    "thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody",
+    [
+        (
+            1,
+            0.0,
+            2.0,
+            30.0,
+            15.0,
+            [[1.125], [0.5], [2.0]],
+            0.0,
+            macros.sec2nano(0.01),
+            "OFF",
+        ),  # 1 thruster, thrust on
+        (
+            1,
+            1.0,
+            0.0,
+            30.0,
+            15.0,
+            [[1.125], [0.5], [2.0]],
+            0.0,
+            macros.sec2nano(0.01),
+            "OFF",
+        ),  # 1 thruster, thrust off
+        (
+            1,
+            0.0,
+            2.0,
+            60.0,
+            -15.0,
+            [[-1.125], [0.5], [-2.0]],
+            0.0,
+            macros.sec2nano(0.01),
+            "OFF",
+        ),  # 1 thruster, thrust on, different orientation and location
+        (
+            1,
+            1.0,
+            0.0,
+            60.0,
+            -15.0,
+            [[-1.125], [0.5], [-2.0]],
+            0.0,
+            macros.sec2nano(0.01),
+            "OFF",
+        ),  # 1 thruster, thrust off, different orientation and location
+        (
+            2,
+            0.0,
+            2.0,
+            30.0,
+            15.0,
+            [[1.125], [0.5], [2.0]],
+            0.0,
+            macros.sec2nano(0.01),
+            "OFF",
+        ),  # 2 thrusters, thrust on
+        (
+            2,
+            1.0,
+            0.0,
+            30.0,
+            15.0,
+            [[1.125], [0.5], [2.0]],
+            0.0,
+            macros.sec2nano(0.01),
+            "OFF",
+        ),  # 2 thrusters, thrust off
+        (
+            2,
+            0.0,
+            2.0,
+            30.0,
+            15.0,
+            [[1.125], [0.5], [2.0]],
+            2.0,
+            macros.sec2nano(0.01),
+            "OFF",
+        ),  # 2 thrusters, thrust on, swirl torque
+        (
+            2,
+            0.0,
+            2.0,
+            30.0,
+            15.0,
+            [[1.125], [0.5], [2.0]],
+            0.0,
+            macros.sec2nano(0.01),
+            "ON",
+        ),  # 2 thrusters, attached body
+    ],
+)
 # provide a unique test method name, starting with test_
-def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody):
+def test_unitThrusters(
+    testFixture,
+    show_plots,
+    thrustNumber,
+    initialConditions,
+    duration,
+    long_angle,
+    lat_angle,
+    location,
+    swirlTorque,
+    rate,
+    attachBody,
+):
     r"""
     **Validation Test Description**
 
@@ -124,13 +225,36 @@ def test_unitThrusters(testFixture, show_plots, thrustNumber, initialConditions,
     All these variables are compared to the true values from the closed-form expressions given in :ref:`thrusterStateEffector`.
     """
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle,
-                                               lat_angle, location, swirlTorque, rate, attachBody)
+    [testResults, testMessage] = unitThrusters(
+        testFixture,
+        show_plots,
+        thrustNumber,
+        initialConditions,
+        duration,
+        long_angle,
+        lat_angle,
+        location,
+        swirlTorque,
+        rate,
+        attachBody,
+    )
     assert testResults < 1, testMessage
 
 
 # Run the test
-def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody):
+def unitThrusters(
+    testFixture,
+    show_plots,
+    thrustNumber,
+    initialConditions,
+    duration,
+    long_angle,
+    lat_angle,
+    location,
+    swirlTorque,
+    rate,
+    attachBody,
+):
     __tracebackhide__ = True
 
     testFailCount = 0  # zero unit test result counter
@@ -164,8 +288,16 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
+    scObject.hub.r_CN_NInit = [
+        [-4020338.690396649],
+        [7490566.741852513],
+        [5248299.211589362],
+    ]
+    scObject.hub.v_CN_NInit = [
+        [-5199.77710904224],
+        [-3436.681645356935],
+        [1041.576797498721],
+    ]
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
@@ -184,8 +316,11 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     lat_angle_rad = lat_angle_deg * math.pi / 180.0
     thruster1 = thrusterStateEffector.THRSimConfig()
     thruster1.thrLoc_B = location  # Parametrized location for thruster
-    thruster1.thrDir_B = [[math.cos(long_angle_rad) * math.cos(lat_angle_rad)],
-                          [math.sin(long_angle_rad) * math.cos(lat_angle_rad)], [math.sin(lat_angle_rad)]]
+    thruster1.thrDir_B = [
+        [math.cos(long_angle_rad) * math.cos(lat_angle_rad)],
+        [math.sin(long_angle_rad) * math.cos(lat_angle_rad)],
+        [math.sin(lat_angle_rad)],
+    ]
     thruster1.MaxThrust = 10.0
     thruster1.steadyIsp = 226.7
     thruster1.MinOnTime = 0.006
@@ -193,24 +328,49 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     thruster1.MaxSwirlTorque = swirlTorque
     thrusterSet.addThruster(thruster1)
 
-    loc1 = np.array([thruster1.thrLoc_B[0][0], thruster1.thrLoc_B[1][0], thruster1.thrLoc_B[2][0]])
-    dir1 = np.array([thruster1.thrDir_B[0][0], thruster1.thrDir_B[1][0], thruster1.thrDir_B[2][0]])
+    loc1 = np.array(
+        [thruster1.thrLoc_B[0][0], thruster1.thrLoc_B[1][0], thruster1.thrLoc_B[2][0]]
+    )
+    dir1 = np.array(
+        [thruster1.thrDir_B[0][0], thruster1.thrDir_B[1][0], thruster1.thrDir_B[2][0]]
+    )
 
     #  Create thruster characteristic parameters for thruster 2
     if thrustNumber == 2:
         thruster2 = thrusterStateEffector.THRSimConfig()
-        thruster2.thrLoc_B = np.array([[1.], [0.0], [0.0]]).reshape([3, 1])
+        thruster2.thrLoc_B = np.array([[1.0], [0.0], [0.0]]).reshape([3, 1])
         thruster2.thrDir_B = np.array(
-            [[math.cos(long_angle_rad + math.pi / 4.) * math.cos(lat_angle_rad - math.pi / 4.)],
-             [math.sin(long_angle_rad + math.pi / 4.) * math.cos(lat_angle_rad - math.pi / 4.)],
-             [math.sin(lat_angle_rad - math.pi / 4.)]]).reshape([3, 1])
+            [
+                [
+                    math.cos(long_angle_rad + math.pi / 4.0)
+                    * math.cos(lat_angle_rad - math.pi / 4.0)
+                ],
+                [
+                    math.sin(long_angle_rad + math.pi / 4.0)
+                    * math.cos(lat_angle_rad - math.pi / 4.0)
+                ],
+                [math.sin(lat_angle_rad - math.pi / 4.0)],
+            ]
+        ).reshape([3, 1])
         thruster2.MaxThrust = 20.0
         thruster2.steadyIsp = 226.7
         thruster2.MinOnTime = 0.006
         thruster2.cutoffFrequency = 2
 
-        loc2 = np.array([thruster2.thrLoc_B[0][0], thruster2.thrLoc_B[1][0], thruster2.thrLoc_B[2][0]])
-        dir2 = np.array([thruster2.thrDir_B[0][0], thruster2.thrDir_B[1][0], thruster2.thrDir_B[2][0]])
+        loc2 = np.array(
+            [
+                thruster2.thrLoc_B[0][0],
+                thruster2.thrLoc_B[1][0],
+                thruster2.thrLoc_B[2][0],
+            ]
+        )
+        dir2 = np.array(
+            [
+                thruster2.thrDir_B[0][0],
+                thruster2.thrDir_B[1][0],
+                thruster2.thrDir_B[2][0],
+            ]
+        )
 
         if attachBody == "ON":
             # Set up the dcm and location
@@ -252,7 +412,9 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     thrDurationTime = macros.sec2nano(2.0)
 
     # Log variables of interest
-    thrusterSetLog = thrusterSet.logger(["forceOnBody_B", "torqueOnBodyPntB_B", "mDotTotal"])
+    thrusterSetLog = thrusterSet.logger(
+        ["forceOnBody_B", "torqueOnBodyPntB_B", "mDotTotal"]
+    )
     TotalSim.AddModelToTask(unitTaskName2, thrusterSetLog)
 
     #  Configure a single thruster firing, create a message for it
@@ -260,7 +422,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     if thrustNumber == 1:
         ThrustMessage.OnTimeRequest = [duration]
     if thrustNumber == 2:
-        ThrustMessage.OnTimeRequest = [duration, 2.]
+        ThrustMessage.OnTimeRequest = [duration, 2.0]
     thrCmdMsg = messaging.THRArrayOnTimeCmdMsg().write(ThrustMessage)
     thrusterSet.cmdsInMsg.subscribeTo(thrCmdMsg)
 
@@ -278,15 +440,21 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     dataThrustFactor = dataRec.thrustFactor
     plt.figure(1)
     plt.plot(dataRec.times() * macros.NANO2SEC, dataThrustFactor)
-    plt.xlabel('Time [s]')
-    plt.ylabel('Thrust Factor')
+    plt.xlabel("Time [s]")
+    plt.ylabel("Thrust Factor")
     if show_plots:
         plt.show()
 
     # Gather the Force, Torque and Mass Rate results
-    thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceOnBody_B)
-    thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueOnBodyPntB_B)
-    mDot = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+    thrForce = unitTestSupport.addTimeColumn(
+        thrusterSetLog.times(), thrusterSetLog.forceOnBody_B
+    )
+    thrTorque = unitTestSupport.addTimeColumn(
+        thrusterSetLog.times(), thrusterSetLog.torqueOnBodyPntB_B
+    )
+    mDot = unitTestSupport.addTimeColumn(
+        thrusterSetLog.times(), thrusterSetLog.mDotTotal
+    )
 
     # Save the time vector
     timeSec = dataRec.times() * macros.NANO2SEC
@@ -298,58 +466,93 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
     for i in range(np.shape(thrForce)[0]):
         if thrustNumber == 1:
             # Compute the thrust force
-            if duration == 0.:
-                thrustFactor1 = initialConditions * np.exp(- thruster1.cutoffFrequency * timeSec[i])
+            if duration == 0.0:
+                thrustFactor1 = initialConditions * np.exp(
+                    -thruster1.cutoffFrequency * timeSec[i]
+                )
                 force1 = thrustFactor1 * thruster1.MaxThrust * dir1
                 expectedThrustData[0:3, i] = force1
             else:
-                thrustFactor1 = (1.0 + (initialConditions - 1.0) * np.exp(- thruster1.cutoffFrequency * timeSec[i]))
+                thrustFactor1 = 1.0 + (initialConditions - 1.0) * np.exp(
+                    -thruster1.cutoffFrequency * timeSec[i]
+                )
                 force1 = thrustFactor1 * thruster1.MaxThrust * dir1
                 expectedThrustData[0:3, i] = force1
             # Compute the torque
-            expectedTorqueData[0:3, i] = np.cross(loc1, force1) + thrustFactor1 * swirlTorque * dir1
+            expectedTorqueData[0:3, i] = (
+                np.cross(loc1, force1) + thrustFactor1 * swirlTorque * dir1
+            )
             # Compute the mass flow rate
             expectedMDot[0, i] = thruster1.MaxThrust * thrustFactor1 / (g * Isp)
         else:
             # Compute the thrust force
-            if duration == 0.:
-                thrustFactor1 = initialConditions * np.exp(- thruster1.cutoffFrequency * timeSec[i])
-                thrustFactor2 = (1.0 - np.exp(- thruster2.cutoffFrequency * timeSec[i]))
+            if duration == 0.0:
+                thrustFactor1 = initialConditions * np.exp(
+                    -thruster1.cutoffFrequency * timeSec[i]
+                )
+                thrustFactor2 = 1.0 - np.exp(-thruster2.cutoffFrequency * timeSec[i])
                 force1 = thrustFactor1 * thruster1.MaxThrust * dir1
                 force2 = thrustFactor2 * thruster2.MaxThrust * dir2
                 expectedThrustData[0:3, i] = force1 + force2
             else:
-                thrustFactor1 = (1.0 + (initialConditions - 1.0) * np.exp(- thruster1.cutoffFrequency * timeSec[i]))
-                thrustFactor2 = (1.0 - np.exp(- thruster2.cutoffFrequency * timeSec[i]))
+                thrustFactor1 = 1.0 + (initialConditions - 1.0) * np.exp(
+                    -thruster1.cutoffFrequency * timeSec[i]
+                )
+                thrustFactor2 = 1.0 - np.exp(-thruster2.cutoffFrequency * timeSec[i])
                 force1 = thrustFactor1 * thruster1.MaxThrust * dir1
                 force2 = thrustFactor2 * thruster2.MaxThrust * dir2
                 expectedThrustData[0:3, i] = force1 + force2
             # Compute the torque
-            expectedTorqueData[0:3, i] = np.cross(loc1, force1) + thrustFactor1 * swirlTorque * dir1 + np.cross(loc2, force2)
+            expectedTorqueData[0:3, i] = (
+                np.cross(loc1, force1)
+                + thrustFactor1 * swirlTorque * dir1
+                + np.cross(loc2, force2)
+            )
             # Compute the mass flow rate
-            expectedMDot[0, i] = (thruster1.MaxThrust * thrustFactor1 + thruster2.MaxThrust * thrustFactor2) / (g * Isp)
+            expectedMDot[0, i] = (
+                thruster1.MaxThrust * thrustFactor1
+                + thruster2.MaxThrust * thrustFactor2
+            ) / (g * Isp)
 
     # Modify expected values for comparison and define errorTolerance
     TruthForce = np.transpose(expectedThrustData)
     TruthTorque = np.transpose(expectedTorqueData)
     TruthMDot = np.transpose(expectedMDot)
-    ErrTolerance = 1E-3
+    ErrTolerance = 1e-3
 
     # Compare Force values (exclude first element because of python process priority)
     thrForce = np.delete(thrForce, 0, axis=1)  # remove time column
-    testFailCount, testMessages = unitTestSupport.compareArray(TruthForce[1:, :], thrForce[1:, :], ErrTolerance, "Force",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        TruthForce[1:, :],
+        thrForce[1:, :],
+        ErrTolerance,
+        "Force",
+        testFailCount,
+        testMessages,
+    )
 
     # Compare Torque values (exclude first element because of python process priority)
     thrTorque = np.delete(thrTorque, 0, axis=1)  # remove time column
-    testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque[1:, :], thrTorque[1:, :], ErrTolerance, "Torque",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        TruthTorque[1:, :],
+        thrTorque[1:, :],
+        ErrTolerance,
+        "Torque",
+        testFailCount,
+        testMessages,
+    )
 
     # Compare mass flow rate values
     mDot = np.delete(mDot, 0, axis=1)
-    ErrTolerance = 1E-6
-    testFailCount, testMessages = unitTestSupport.compareArray(np.transpose(TruthMDot), np.transpose(mDot), ErrTolerance, "MDot",
-                                                               testFailCount, testMessages)
+    ErrTolerance = 1e-6
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        np.transpose(TruthMDot),
+        np.transpose(mDot),
+        ErrTolerance,
+        "MDot",
+        testFailCount,
+        testMessages,
+    )
 
     if testFailCount == 0:
         print("PASSED")
@@ -360,7 +563,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 class attachedBodyModule(sysModel.SysModel):
@@ -410,4 +613,16 @@ class attachedBodyModule(sysModel.SysModel):
 
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), False, 2, 0., 2.0, 30., 15., [[1.125], [0.5], [2.0]], 0.0, macros.sec2nano(0.01), "ON")
+    unitThrusters(
+        ResultsStore(),
+        False,
+        2,
+        0.0,
+        2.0,
+        30.0,
+        15.0,
+        [[1.125], [0.5], [2.0]],
+        0.0,
+        macros.sec2nano(0.01),
+        "ON",
+    )

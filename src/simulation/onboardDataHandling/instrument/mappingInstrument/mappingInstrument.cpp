@@ -22,9 +22,7 @@
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-MappingInstrument::MappingInstrument()
-{
-}
+MappingInstrument::MappingInstrument() {}
 
 /*! Module Destructor */
 MappingInstrument::~MappingInstrument()
@@ -38,10 +36,11 @@ MappingInstrument::~MappingInstrument()
  @param CurrentSimNanos
 
  */
-void MappingInstrument::Reset(uint64_t CurrentSimNanos)
+void
+MappingInstrument::Reset(uint64_t CurrentSimNanos)
 {
     // check that the baud rate is set
-    if (this->nodeBaudRate < 0.0){
+    if (this->nodeBaudRate < 0.0) {
         bskLogger.bskLog(BSK_ERROR, "MappingInstrument.nodeBaudRate is not set to a positive value.");
     }
 
@@ -52,10 +51,11 @@ void MappingInstrument::Reset(uint64_t CurrentSimNanos)
  @param CurrentSimNanos
 
  */
-void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
+void
+MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
 {
     /* Loop through each access message */
-    for (long unsigned int c=0; c< this->accessInMsgs.size(); c++) {
+    for (long unsigned int c = 0; c < this->accessInMsgs.size(); c++) {
         /* Zero the output message buffer */
         this->dataNodeOutMsgBuffer.at(c) = this->dataNodeOutMsgs.at(c)->zeroMsgPayload;
 
@@ -79,11 +79,12 @@ void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-
 /*! Adds a mapping point (access message and name) to the module
  *
-*/
-void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName){
+ */
+void
+MappingInstrument::addMappingPoint(Message<AccessMsgPayload>* tmpAccessMsg, std::string dataName)
+{
     /* Add the name of the mapping point */
     this->mappingPoints.push_back(dataName);
 
@@ -91,7 +92,7 @@ void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg,
     this->accessInMsgs.push_back(tmpAccessMsg->addSubscriber());
 
     /* Create buffer output messages */
-    Message<DataNodeUsageMsgPayload> *msg;
+    Message<DataNodeUsageMsgPayload>* msg;
     msg = new Message<DataNodeUsageMsgPayload>;
     this->dataNodeOutMsgs.push_back(msg);
 

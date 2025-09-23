@@ -36,4 +36,3 @@ provides information on what this message is used for.
     * - navTransInMsg
       - :ref:`NavTransMsgPayload`
       - translation navigation input message stored inside the ``AggregateTransInput`` structure
-

@@ -24,8 +24,8 @@
 
 /** Use to represent the state of an MJScene in generalized coordinates */
 typedef struct
-//@cond DOXYGEN_IGNORE
-MJSceneStateMsgPayload
+  //@cond DOXYGEN_IGNORE
+  MJSceneStateMsgPayload
 //@endcond
 {
     Eigen::VectorXd qpos; //!< [-] Position of the scene in generalized coordinates

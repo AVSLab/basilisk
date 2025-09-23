@@ -74,5 +74,3 @@ already checks if the input messages are connected (assuming they are all requir
 provides sample code the creates buffer variables for the input and output messages, reads in the input messages,
 and write to the output messages.  The unit test already loads up the module, creates blank input message copies
 that are subscribed to the module, creates recorder modules for each output message, etc.
-
-

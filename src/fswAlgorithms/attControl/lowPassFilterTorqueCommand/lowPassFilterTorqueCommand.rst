@@ -27,5 +27,3 @@ provides information on what this message is used for.
     * - cmdTorqueInMsg
       - :ref:`CmdTorqueBodyMsgPayload`
       - un-filtered commanded torque input message
-
-

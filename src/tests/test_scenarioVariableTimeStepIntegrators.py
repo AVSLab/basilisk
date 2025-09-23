@@ -44,23 +44,29 @@ from Basilisk.utilities import macros
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioVariableTimeStepIntegrators
+
 
 @pytest.mark.scenarioTest
 def test_scenarioIntegrators(show_plots):
     """This function is called by the pytest environment."""
 
     for integratorCase in ["rkf45", "rkf78"]:
-
         # each test method requires a single assert method to be called
-        timeData, posData, velData, figureList = scenarioVariableTimeStepIntegrators.run(show_plots, integratorCase, 1e-8, 1e-12)
+        timeData, posData, velData, figureList = (
+            scenarioVariableTimeStepIntegrators.run(
+                show_plots, integratorCase, 1e-8, 1e-12
+            )
+        )
 
-        analyticalPos = getAnalyticalSolution(posData[0,:], velData[0,:], timeData[-1] * macros.NANO2SEC)
+        analyticalPos = getAnalyticalSolution(
+            posData[0, :], velData[0, :], timeData[-1] * macros.NANO2SEC
+        )
 
         absTolerance = {
             "rkf45": 2000,  # m
-            "rkf78": 100  # m
+            "rkf78": 100,  # m
         }
 
         npt.assert_allclose(
@@ -68,12 +74,13 @@ def test_scenarioIntegrators(show_plots):
             analyticalPos,
             rtol=0,
             atol=absTolerance[integratorCase],
-            err_msg = "r_BN_N Vector, case: " + integratorCase
+            err_msg="r_BN_N Vector, case: " + integratorCase,
         )
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):
         unitTestSupport.saveScenarioFigure(pltName, plt, path)
+
 
 def getAnalyticalSolution(r0, v0, dt):
     mu = simIncludeGravBody.gravBodyFactory().createEarth().mu
@@ -89,6 +96,7 @@ def getAnalyticalSolution(r0, v0, dt):
 
     rF, _ = orbitalMotion.elem2rv(mu, oe)
     return rF
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "--tb=native"])

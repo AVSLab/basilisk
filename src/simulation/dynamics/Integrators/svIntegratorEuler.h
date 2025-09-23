@@ -23,7 +23,8 @@
 #include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
 
 /*! @brief Euler integrator */
-class svIntegratorEuler : public svIntegratorRungeKutta<1> {
+class svIntegratorEuler : public svIntegratorRungeKutta<1>
+{
   public:
     svIntegratorEuler(DynamicObject* dyn); //!< class method
   private:

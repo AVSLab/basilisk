@@ -39,7 +39,9 @@
  *     -----
  *       b*
  */
-template <size_t numberStages> struct RKAdaptiveCoefficients : public RKCoefficients<numberStages> {
+template<size_t numberStages>
+struct RKAdaptiveCoefficients : public RKCoefficients<numberStages>
+{
 
     /** "b*" Coefficients of the Adaptive RK method ("b" coefficients of the higher order method) */
     typename RKCoefficients<numberStages>::StageSizedArray bStarArray = {};
@@ -54,8 +56,9 @@ template <size_t numberStages> struct RKAdaptiveCoefficients : public RKCoeffici
  * and, if it's too large, internally use smaller time steps until the error tolerances
  * are met.
  */
-template <size_t numberStages>
-class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStages> {
+template<size_t numberStages>
+class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStages>
+{
   public:
     /**
      * Constructs the integrator for the given dynamic object and specified Adaptive RK
@@ -143,8 +146,7 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * Sets the relative tolerance for the given DynamicObject
      * and the state identified by the given name.
      */
-    void
-    setRelativeTolerance(const DynamicObject& dynamicObject, std::string stateName, double relTol);
+    void setRelativeTolerance(const DynamicObject& dynamicObject, std::string stateName, double relTol);
 
     /**
      * Returns the relative tolerance for the given DynamicObject
@@ -153,15 +155,13 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * If the relative tolerance for this state and DynamicObject was not set, then
      * returns an empty optional.
      */
-    std::optional<double> getRelativeTolerance(const DynamicObject& dynamicObject,
-                                               std::string stateName);
+    std::optional<double> getRelativeTolerance(const DynamicObject& dynamicObject, std::string stateName);
 
     /**
      * Sets the absolute tolerance for the given DynamicObject
      * and the state identified by the given name.
      */
-    void
-    setAbsoluteTolerance(const DynamicObject& dynamicObject, std::string stateName, double absTol);
+    void setAbsoluteTolerance(const DynamicObject& dynamicObject, std::string stateName, double absTol);
 
     /**
      * Returns the absolute tolerance for he given DynamicObject
@@ -170,8 +170,7 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * If the absolute tolerance for this state and DynamicObject was not set, then
      * returns an empty optional.
      */
-    std::optional<double> getAbsoluteTolerance(const DynamicObject& dynamicObject,
-                                               std::string stateName);
+    std::optional<double> getAbsoluteTolerance(const DynamicObject& dynamicObject, std::string stateName);
 
     /** Maximum relative truncation error allowed.
      *
@@ -213,10 +212,9 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * which is the relation that defines the minimum acceptable
      * time step.
      */
-    double computeMaxRelativeError(
-        double timeStep,
-        const ExtendedStateVector& lowOrderNextState,
-        const ExtendedStateVector& highOrderNextState) const;
+    double computeMaxRelativeError(double timeStep,
+                                   const ExtendedStateVector& lowOrderNextState,
+                                   const ExtendedStateVector& highOrderNextState) const;
 
     /** Finds index of dynamicObject in dynPtrs (vector of pointers to DynamicObject) */
     size_t findDynamicObjectIndex(const DynamicObject& dynamicObject) const;
@@ -227,8 +225,7 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * dynamicObject-state-specific tolerances; only the most specific
      * tolerance is used.
      */
-    double
-    getTolerance(size_t dynamicObjectIndex, const std::string& stateName, double stateNorm) const;
+    double getTolerance(size_t dynamicObjectIndex, const std::string& stateName, double stateNorm) const;
 
     /** The higher order of the two orders used in adaptive RK methods.
      *
@@ -251,30 +248,29 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
     std::unordered_map<ExtendedStateId, double, ExtendedStateIdHash> dynObjectStateSpecificAbsTol;
 };
 
-template <size_t numberStages>
+template<size_t numberStages>
 svIntegratorAdaptiveRungeKutta<numberStages>::svIntegratorAdaptiveRungeKutta(
-    DynamicObject* dynIn,
-    const RKAdaptiveCoefficients<numberStages>& coefficients,
-    const double methodLargestOrder)
-    : svIntegratorRungeKutta<numberStages>::svIntegratorRungeKutta(
-          dynIn,
-          (std::unique_ptr<RKCoefficients<numberStages>>)std::move(
-              std::make_unique<RKAdaptiveCoefficients<numberStages>>(coefficients))),
-      methodLargestOrder(methodLargestOrder)
+  DynamicObject* dynIn,
+  const RKAdaptiveCoefficients<numberStages>& coefficients,
+  const double methodLargestOrder)
+  : svIntegratorRungeKutta<numberStages>::svIntegratorRungeKutta(
+      dynIn,
+      (std::unique_ptr<RKCoefficients<numberStages>>)std::move(
+        std::make_unique<RKAdaptiveCoefficients<numberStages>>(coefficients)))
+  , methodLargestOrder(methodLargestOrder)
 {
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime,
-                                                             double desiredTimeStep)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime, double desiredTimeStep)
 {
     double time = startingTime;
     double timeStep = desiredTimeStep;
     ExtendedStateVector state = ExtendedStateVector::fromStates(this->dynPtrs);
     typename svIntegratorRungeKutta<numberStages>::KCoefficientsValues kValues;
 
-    auto castCoefficients =
-        static_cast<RKAdaptiveCoefficients<numberStages>*>(this->coefficients.get());
+    auto castCoefficients = static_cast<RKAdaptiveCoefficients<numberStages>*>(this->coefficients.get());
 
     // Continue until we are done with the desired time step
     while (time < startingTime + desiredTimeStep) {
@@ -285,17 +281,9 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
         // Now we generate two solutions, one of low order and one of
         // high order by using either the b or b* coefficients
         ExtendedStateVector lowOrderNextStep =
-            this->propagateStateWithKVectors(timeStep,
-                                             state,
-                                             kValues,
-                                             castCoefficients->bArray,
-                                             numberStages);
+          this->propagateStateWithKVectors(timeStep, state, kValues, castCoefficients->bArray, numberStages);
         ExtendedStateVector highOrderNextStep =
-            this->propagateStateWithKVectors(timeStep,
-                                             state,
-                                             kValues,
-                                             castCoefficients->bStarArray,
-                                             numberStages);
+          this->propagateStateWithKVectors(timeStep, state, kValues, castCoefficients->bStarArray, numberStages);
 
         // For the adaptive RK, we also compute the maximum
         // relationship between error and tolerance
@@ -313,12 +301,11 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
         }
 
         // Regardless of accepting or not the step, we compute a new time step
-        double newTimeStep = this->safetyFactorForNextStepSize * timeStep *
-                             std::pow(1.0 / maxRelError, 1.0 / this->methodLargestOrder);
+        double newTimeStep =
+          this->safetyFactorForNextStepSize * timeStep * std::pow(1.0 / maxRelError, 1.0 / this->methodLargestOrder);
         newTimeStep = std::min(newTimeStep, timeStep * this->maximumFactorIncreaseForNextStepSize);
         newTimeStep = std::max(newTimeStep, timeStep * this->minimumFactorDecreaseForNextStepSize);
-        newTimeStep =
-            std::min(newTimeStep, startingTime + desiredTimeStep - time); // Avoid over-stepping
+        newTimeStep = std::min(newTimeStep, startingTime + desiredTimeStep - time); // Avoid over-stepping
         timeStep = newTimeStep;
     }
 
@@ -326,11 +313,12 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
     state.setStates(this->dynPtrs);
 }
 
-template <size_t numberStages>
-double svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
-    double timeStep,
-    const ExtendedStateVector& lowOrderNextStep,
-    const ExtendedStateVector& highOrderNextStep) const
+template<size_t numberStages>
+double
+svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
+  double timeStep,
+  const ExtendedStateVector& lowOrderNextStep,
+  const ExtendedStateVector& highOrderNextStep) const
 {
     // Compute the absolute truncation error for every state
     ExtendedStateVector truncationError = highOrderNextStep - lowOrderNextStep;
@@ -342,51 +330,53 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
     // truncation error and tolerance.
     double maxRelativeError = 0;
     auto maxRelativeErrorRef = std::ref(maxRelativeError);
-    highOrderNextStep.apply([this, &maxRelativeErrorRef, &truncationError](
-                                 const size_t& dynObjIndex,
-                                 const std::string& stateName,
-                                 const Eigen::MatrixXd& thisState) {
-        double thisTruncationError = truncationError.at({dynObjIndex, stateName}).norm();
+    highOrderNextStep.apply([this, &maxRelativeErrorRef, &truncationError](const size_t& dynObjIndex,
+                                                                           const std::string& stateName,
+                                                                           const Eigen::MatrixXd& thisState) {
+        double thisTruncationError = truncationError.at({ dynObjIndex, stateName }).norm();
         double thisErrorTolerance = this->getTolerance(dynObjIndex, stateName, thisState.norm());
-        maxRelativeErrorRef.get() =
-            std::max(maxRelativeErrorRef.get(), thisTruncationError / thisErrorTolerance);
+        maxRelativeErrorRef.get() = std::max(maxRelativeErrorRef.get(), thisTruncationError / thisErrorTolerance);
     });
 
     return maxRelativeError;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(double relTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(double relTol)
 {
     this->relTol = relTol;
 }
 
-template <size_t numberStages>
-double svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance()
+template<size_t numberStages>
+double
+svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance()
 {
     return this->relTol;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(double absTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(double absTol)
 {
     this->absTol = absTol;
 }
 
-template <size_t numberStages>
-double svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance()
+template<size_t numberStages>
+double
+svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance()
 {
     return this->absTol;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string stateName,
-                                                                        double relTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string stateName, double relTol)
 {
     this->stateSpecificRelTol.at(stateName) = relTol;
 }
 
-template <size_t numberStages>
+template<size_t numberStages>
 std::optional<double>
 svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(std::string stateName)
 {
@@ -396,14 +386,14 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(std::string s
     return std::optional<double>();
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string stateName,
-                                                                        double absTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string stateName, double absTol)
 {
     this->stateSpecificAbsTol.at(stateName) = absTol;
 }
 
-template <size_t numberStages>
+template<size_t numberStages>
 std::optional<double>
 svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(std::string stateName)
 {
@@ -413,83 +403,79 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(std::string s
     return std::optional<double>();
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName,
-    double relTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName,
+                                                                   double relTol)
 {
-    this->dynObjectStateSpecificRelTol.at(
-        {this->findDynamicObjectIndex(dynamicObject), stateName}) = relTol;
+    this->dynObjectStateSpecificRelTol.at({ this->findDynamicObjectIndex(dynamicObject), stateName }) = relTol;
 }
 
-template <size_t numberStages>
-inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName)
+template<size_t numberStages>
+inline std::optional<double>
+svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName)
 {
-    const ExtendedStateId key = {this->findDynamicObjectIndex(dynamicObject), stateName};
+    const ExtendedStateId key = { this->findDynamicObjectIndex(dynamicObject), stateName };
     if (this->dynObjectStateSpecificRelTol.count(key) > 0) {
         return std::optional<double>(this->dynObjectStateSpecificRelTol.at(key));
     }
     return std::optional<double>();
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName,
-    double absTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName,
+                                                                   double absTol)
 {
-    this->dynObjectStateSpecificAbsTol.at(
-        {this->findDynamicObjectIndex(dynamicObject), stateName}) = absTol;
+    this->dynObjectStateSpecificAbsTol.at({ this->findDynamicObjectIndex(dynamicObject), stateName }) = absTol;
 }
 
-template <size_t numberStages>
-inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName)
+template<size_t numberStages>
+inline std::optional<double>
+svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName)
 {
-    const ExtendedStateId key = {this->findDynamicObjectIndex(dynamicObject), stateName};
+    const ExtendedStateId key = { this->findDynamicObjectIndex(dynamicObject), stateName };
     if (this->dynObjectStateSpecificAbsTol.count(key) > 0) {
         return std::optional<double>(this->dynObjectStateSpecificAbsTol.at(key));
     }
     return std::optional<double>();
 }
 
-template <size_t numberStages>
-size_t svIntegratorAdaptiveRungeKutta<numberStages>::findDynamicObjectIndex(
-    const DynamicObject& dynamicObject) const
+template<size_t numberStages>
+size_t
+svIntegratorAdaptiveRungeKutta<numberStages>::findDynamicObjectIndex(const DynamicObject& dynamicObject) const
 {
     auto it = std::find(this->dynPtrs.cbegin(), this->dynPtrs.cend(), &dynamicObject);
     if (it == this->dynPtrs.end()) {
-        throw std::invalid_argument(
-            "Given DynamicObject is not integrated by this integrator object");
+        throw std::invalid_argument("Given DynamicObject is not integrated by this integrator object");
     }
     return std::distance(this->dynPtrs.begin(), it);
 }
 
-template <size_t numberStages>
-double svIntegratorAdaptiveRungeKutta<numberStages>::getTolerance(size_t dynamicObjectIndex,
-                                                                  const std::string& stateName,
-                                                                  double stateNorm) const
+template<size_t numberStages>
+double
+svIntegratorAdaptiveRungeKutta<numberStages>::getTolerance(size_t dynamicObjectIndex,
+                                                           const std::string& stateName,
+                                                           double stateNorm) const
 {
-    const ExtendedStateId id{dynamicObjectIndex, stateName};
+    const ExtendedStateId id{ dynamicObjectIndex, stateName };
 
-    double relTol{this->relTol};
-    double absTol{this->absTol};
+    double relTol{ this->relTol };
+    double absTol{ this->absTol };
 
     if (this->dynObjectStateSpecificRelTol.count(id) > 0) {
         relTol = this->dynObjectStateSpecificRelTol.at(id);
-    }
-    else if (this->stateSpecificRelTol.count(stateName) > 0) {
+    } else if (this->stateSpecificRelTol.count(stateName) > 0) {
         relTol = this->stateSpecificRelTol.at(stateName);
     }
 
     if (this->dynObjectStateSpecificAbsTol.count(id) > 0) {
         absTol = this->dynObjectStateSpecificAbsTol.at(id);
-    }
-    else if (this->stateSpecificAbsTol.count(stateName) > 0) {
+    } else if (this->stateSpecificAbsTol.count(stateName) > 0) {
         absTol = this->stateSpecificAbsTol.at(stateName);
     }
 

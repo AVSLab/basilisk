@@ -68,7 +68,7 @@ Solving the system-of-equations by
 The translational equation of motion is not coupled with $\dot{\Omega}$ as seen in the equation below.
 \begin{equation}
 m_{\text{sc}} [I_{3 \times 3}]\ddot{\bm r}_{B/N}
--m_{\text{sc}} [\tilde{\bm{c}}] \dot{\bm\omega}_{\cal B/N} 
+-m_{\text{sc}} [\tilde{\bm{c}}] \dot{\bm\omega}_{\cal B/N}
 = \bm F_{\text{ext}}- 2 m_{\text{sc}} [\tilde{\bm\omega}_{\cal B/N}] \bm c'
 -m_{\text{sc}} [\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c}
 \label{eq:Rbddot35}
@@ -137,7 +137,7 @@ The rotational equation of motion is
 \begin{equation}
 	\begin{split}
 		m_{\text{sc}}[\tilde{\bm c}]\ddot{\bm r}_{B/N} +& [I_{\text{sc},B}]\dot{\bm\omega}_{\cal B/N} +\sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\dot{\Omega}_i
-		\\=& 
+		\\=&
 		\sum\limits_{i=1}^{N}\Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big)\Big]
 		\\&  -[\tilde{\bm\omega}_{\cal B/N}][I_{\text{sc},B}]\bm\omega_{\cal B/N}-  [I_{\text{sc},B}]'\bm\omega_{\cal B/N} + \bm{L}_B
 	\end{split}
@@ -146,9 +146,9 @@ The rotational equation of motion is
 The motor torque equation is (note that $J_{12_i} = J_{23_i} = 0$)
 \begin{multline}
 	\big[m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T\big]\ddot{\bm{r}}_{B/N} + \big[(J_{11_i} + m_{\text{rw}_i} d_i^2)\hat{\bm g}_{\text{s}_i}^T  + J_{13_i}\hat{\bm w}_{3_i}^T -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm r}_{W_i/B}]\big]\dot{\bm\omega}_{\cal B/N} + \big[J_{11_i} + m_{\text{rw}_i} d_i^2\big]\dot{\Omega}_i
-	\\=   - J_{13_i} \omega_{w_{2_i}}\omega_{s_i}  
+	\\=   - J_{13_i} \omega_{w_{2_i}}\omega_{s_i}
 	+ \omega_{w_{2_i}} \omega_{w_{3_i}} (J_{22_i} - J_{33_i} - m_{\text{rw}_i} d_i^2
-	) 
+	)
 	 -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i}
 	\label{eq:motorTorqueFinal}
 \end{multline}
@@ -159,7 +159,7 @@ The motor torque equation is (note that $J_{12_i} = J_{23_i} = 0$)
 Solve motor torque equation for $\dot{\Omega}_i$ in terms of $\ddot{\bm{r}}_{B/N}$ and $\dot{\bm\omega}_{\cal B/N}$
 \begin{multline}
 \dot{\Omega}_i
-= \frac{-m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T }{J_{11_i} + m_{\text{rw}_i} d_i^2}\ddot{\bm{r}}_{B/N} + \frac{-\big[(J_{11_i} + m_{\text{rw}_i} d_i^2)\hat{\bm g}_{\text{s}_i}^T  + J_{13_i}\hat{\bm w}_{3_i}^T -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm r}_{W_i/B}]\big]}{J_{11_i} + m_{\text{rw}_i} d_i^2}\dot{\bm\omega}_{\cal B/N} 
+= \frac{-m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T }{J_{11_i} + m_{\text{rw}_i} d_i^2}\ddot{\bm{r}}_{B/N} + \frac{-\big[(J_{11_i} + m_{\text{rw}_i} d_i^2)\hat{\bm g}_{\text{s}_i}^T  + J_{13_i}\hat{\bm w}_{3_i}^T -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm r}_{W_i/B}]\big]}{J_{11_i} + m_{\text{rw}_i} d_i^2}\dot{\bm\omega}_{\cal B/N}
 \\
 +\frac{1}{J_{11_i} + m_{\text{rw}_i} d_i^2}\left[\omega_{w_{2_i}} \omega_{w_{3_i}} (J_{22_i} - J_{33_i} - m_{\text{rw}_i} d_i^2
 )-J_{13_i} \omega_{w_{2_i}}\omega_{s_i} -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i} \right]
@@ -186,16 +186,16 @@ c_{\Omega_i} = \frac{1}{J_{11_i} + m_{\text{rw}_i} d_i^2}\left[\omega_{w_{2_i}} 
 \end{equation}
 Plugging the equation above into Eq.~\eqref{eq:rBddot} and multiplying both sides by $m_\text{sc}$, (plug $\dot{\Omega}_i$ into translation)
 \begin{multline}
-\left[ [I_{3\times3}] +\frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{a}_{\Omega_i}^T \right] \ddot{\bm r}_{B/N} +\left[ -[\tilde{\bm{c}}] + \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{b}_{\Omega_i}^T \right] \dot{\bm\omega}_{\cal B/N} 
+\left[ [I_{3\times3}] +\frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{a}_{\Omega_i}^T \right] \ddot{\bm r}_{B/N} +\left[ -[\tilde{\bm{c}}] + \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{b}_{\Omega_i}^T \right] \dot{\bm\omega}_{\cal B/N}
 \\= \ddot{\bm r}_{C/N}   - 2[\tilde{\bm\omega}_{\cal B/N}]\bm{c}'-[\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c} + \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\left(\Omega_i^2\hat{\bm{w}}_{2_i}-c_{\Omega_i}\hat{\bm{w}}_{3_i}\right)
 \end{multline}
 Moving on to rotation, (plug $\dot{\Omega}_i$ into rotation)
 \begin{multline}
 \left[ m_{\text{sc}}[\tilde{\bm c}]+ \sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\bm{a}_{\Omega_i}^T \right] \ddot{\bm r}_{B/N}
-\\ 
-+ \left[ [I_{\text{sc},B}] + \sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\bm{b}_{\Omega_i}^T \right] \dot{\bm\omega}_{\cal B/N} 
-\\= 
-\sum\limits_{i=1}^{N}\Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big) \\ 
+\\
++ \left[ [I_{\text{sc},B}] + \sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\bm{b}_{\Omega_i}^T \right] \dot{\bm\omega}_{\cal B/N}
+\\=
+\sum\limits_{i=1}^{N}\Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big) \\
 -\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)c_{\Omega_i}\Big]
 \\  -[\tilde{\bm\omega}_{\cal B/N}][I_{\text{sc},B}]\bm\omega_{\cal B/N}-  [I_{\text{sc},B}]'\bm\omega_{\cal B/N} + \bm{L}_B
 \end{multline}
@@ -224,7 +224,7 @@ Now we have two equations containing $\ddot{\bm{r}}_{B/N}$ and $\dot{\bm\omega}_
 \end{equation}
 
 \begin{multline}
-\bm{v}_\text{rot,contr} = \sum\limits_{i=1}^{N} \Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big) \\ 
+\bm{v}_\text{rot,contr} = \sum\limits_{i=1}^{N} \Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big) \\
 -\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)c_{\Omega_i} \Big]
 \end{multline}
 

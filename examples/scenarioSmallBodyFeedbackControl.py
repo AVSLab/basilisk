@@ -81,13 +81,19 @@ from Basilisk.simulation import radiationPressure
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import simpleNav
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+    vizSupport,
+)
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
 from Basilisk.utilities import unitTestSupport
 
 try:
     from Basilisk.simulation import vizInterface
+
     vizFound = True
 except ImportError:
     vizFound = False
@@ -100,24 +106,24 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 # Plotting functions
 def plot_position(time, r_BO_O_truth, r_BO_O_meas):
     """Plot the relative position result."""
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, r_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, r_BO_O_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, r_BO_O_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(time, r_BO_O_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(time, r_BO_O_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(time, r_BO_O_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, r_BO_O_truth[:, 0], label='${}^Or_{BO_{1}}$')
-    ax[1].plot(time, r_BO_O_truth[:, 1], label='${}^Or_{BO_{2}}$')
-    ax[2].plot(time, r_BO_O_truth[:, 2], label='${}^Or_{BO_{3}}$')
+    ax[0].plot(time, r_BO_O_truth[:, 0], label="${}^Or_{BO_{1}}$")
+    ax[1].plot(time, r_BO_O_truth[:, 1], label="${}^Or_{BO_{2}}$")
+    ax[2].plot(time, r_BO_O_truth[:, 2], label="${}^Or_{BO_{3}}$")
 
-    plt.xlabel('Time [sec]')
-    plt.title('Relative Spacecraft Position')
+    plt.xlabel("Time [sec]")
+    plt.title("Relative Spacecraft Position")
 
-    ax[0].set_ylabel('${}^Or_{BO_1}$ [m]')
-    ax[1].set_ylabel('${}^Or_{BO_2}$ [m]')
-    ax[2].set_ylabel('${}^Or_{BO_3}$ [m]')
+    ax[0].set_ylabel("${}^Or_{BO_1}$ [m]")
+    ax[1].set_ylabel("${}^Or_{BO_2}$ [m]")
+    ax[2].set_ylabel("${}^Or_{BO_3}$ [m]")
 
     ax[0].legend()
 
@@ -127,24 +133,24 @@ def plot_position(time, r_BO_O_truth, r_BO_O_meas):
 def plot_velocity(time, v_BO_O_truth, v_BO_O_meas):
     """Plot the relative velocity result."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, v_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, v_BO_O_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, v_BO_O_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(time, v_BO_O_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(time, v_BO_O_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(time, v_BO_O_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, v_BO_O_truth[:, 0], label='truth')
+    ax[0].plot(time, v_BO_O_truth[:, 0], label="truth")
     ax[1].plot(time, v_BO_O_truth[:, 1])
     ax[2].plot(time, v_BO_O_truth[:, 2])
 
-    plt.xlabel('Time [sec]')
-    plt.title('Relative Spacecraft Velocity')
+    plt.xlabel("Time [sec]")
+    plt.title("Relative Spacecraft Velocity")
 
-    ax[0].set_ylabel('${}^Ov_{BO_1}$ [m/s]')
-    ax[1].set_ylabel('${}^Ov_{BO_2}$ [m/s]')
-    ax[2].set_ylabel('${}^Ov_{BO_3}$ [m/s]')
+    ax[0].set_ylabel("${}^Ov_{BO_1}$ [m/s]")
+    ax[1].set_ylabel("${}^Ov_{BO_2}$ [m/s]")
+    ax[2].set_ylabel("${}^Ov_{BO_3}$ [m/s]")
 
     ax[0].legend()
 
@@ -153,23 +159,23 @@ def plot_velocity(time, v_BO_O_truth, v_BO_O_meas):
 
 def plot_sc_att(time, sigma_BN_truth, sigma_BN_meas):
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, sigma_BN_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, sigma_BN_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, sigma_BN_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(time, sigma_BN_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(time, sigma_BN_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(time, sigma_BN_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, sigma_BN_truth[:, 0], label='truth')
+    ax[0].plot(time, sigma_BN_truth[:, 0], label="truth")
     ax[1].plot(time, sigma_BN_truth[:, 1])
     ax[2].plot(time, sigma_BN_truth[:, 2])
 
-    plt.xlabel('Time [sec]')
+    plt.xlabel("Time [sec]")
 
-    ax[0].set_ylabel(r'$\sigma_{BN_1}$ [rad]')
-    ax[1].set_ylabel(r'$\sigma_{BN_2}$ [rad]')
-    ax[2].set_ylabel(r'$\sigma_{BN_3}$ [rad]')
+    ax[0].set_ylabel(r"$\sigma_{BN_1}$ [rad]")
+    ax[1].set_ylabel(r"$\sigma_{BN_2}$ [rad]")
+    ax[2].set_ylabel(r"$\sigma_{BN_3}$ [rad]")
 
     ax[0].legend()
 
@@ -178,23 +184,23 @@ def plot_sc_att(time, sigma_BN_truth, sigma_BN_meas):
 
 def plot_sc_rate(time, omega_BN_B_truth, omega_BN_B_meas):
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, omega_BN_B_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(time, omega_BN_B_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(time, omega_BN_B_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(time, omega_BN_B_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(time, omega_BN_B_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(time, omega_BN_B_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, omega_BN_B_truth[:, 0], label='truth')
+    ax[0].plot(time, omega_BN_B_truth[:, 0], label="truth")
     ax[1].plot(time, omega_BN_B_truth[:, 1])
     ax[2].plot(time, omega_BN_B_truth[:, 2])
 
-    plt.xlabel('Time [sec]')
+    plt.xlabel("Time [sec]")
 
-    ax[0].set_ylabel(r'${}^B\omega_{BN_{1}}$ [rad/s]')
-    ax[1].set_ylabel(r'${}^B\omega_{BN_{2}}$ [rad/s]')
-    ax[2].set_ylabel(r'${}^B\omega_{BN_{3}}$ [rad/s]')
+    ax[0].set_ylabel(r"${}^B\omega_{BN_{1}}$ [rad/s]")
+    ax[1].set_ylabel(r"${}^B\omega_{BN_{2}}$ [rad/s]")
+    ax[2].set_ylabel(r"${}^B\omega_{BN_{3}}$ [rad/s]")
 
     ax[0].legend()
 
@@ -203,19 +209,19 @@ def plot_sc_rate(time, omega_BN_B_truth, omega_BN_B_meas):
 
 def plot_control(time, u):
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, u[:, 0], 'k-', markersize=1)
-    ax[1].plot(time, u[:, 1], 'k-', markersize=1)
-    ax[2].plot(time, u[:, 2], 'k-', markersize=1)
+    ax[0].plot(time, u[:, 0], "k-", markersize=1)
+    ax[1].plot(time, u[:, 1], "k-", markersize=1)
+    ax[2].plot(time, u[:, 2], "k-", markersize=1)
 
-    plt.xlabel('Time [sec]')
+    plt.xlabel("Time [sec]")
 
-    ax[0].set_ylabel(r'$\hat{\mathbf{b}}_1$ control [N]')
-    ax[1].set_ylabel(r'$\hat{\mathbf{b}}_2$ control [N]')
-    ax[2].set_ylabel(r'$\hat{\mathbf{b}}_3$ control [N]')
+    ax[0].set_ylabel(r"$\hat{\mathbf{b}}_1$ control [N]")
+    ax[1].set_ylabel(r"$\hat{\mathbf{b}}_2$ control [N]")
+    ax[2].set_ylabel(r"$\hat{\mathbf{b}}_3$ control [N]")
 
     return
 
@@ -247,7 +253,7 @@ def run(show_plots):
 
     # Setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.ModelTag = "planetEphemeris"
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
     # specify orbits of gravitational bodies
@@ -260,14 +266,18 @@ def run(show_plots):
     oeAsteroid.Omega = 2.01820 * macros.D2R
     oeAsteroid.omega = 66.304 * macros.D2R
     oeAsteroid.f = 346.32 * macros.D2R
-    r_ON_N, v_ON_N = orbitalMotion.elem2rv(astroConstants.MU_SUN*(1000.**3), oeAsteroid)
+    r_ON_N, v_ON_N = orbitalMotion.elem2rv(
+        astroConstants.MU_SUN * (1000.0**3), oeAsteroid
+    )
 
     # specify celestial object orbit
     gravBodyEphem.planetElements = planetEphemeris.classicElementVector([oeAsteroid])
-    gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([0. * macros.D2R])
-    gravBodyEphem.declination = planetEphemeris.DoubleVector([90. * macros.D2R])
+    gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([0.0 * macros.D2R])
+    gravBodyEphem.declination = planetEphemeris.DoubleVector([90.0 * macros.D2R])
     gravBodyEphem.lst0 = planetEphemeris.DoubleVector([0.0 * macros.D2R])
-    gravBodyEphem.rotRate = planetEphemeris.DoubleVector([360 * macros.D2R / (4.297461 * 3600.)])
+    gravBodyEphem.rotRate = planetEphemeris.DoubleVector(
+        [360 * macros.D2R / (4.297461 * 3600.0)]
+    )
 
     # setup Sun Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -293,8 +303,12 @@ def run(show_plots):
     gravFactory.addBodiesTo(scObject)
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame origin
-    r_BO_N = np.array([-2000., 1500., 1000.]) # Position of the spacecraft relative to the body
-    v_BO_N = np.array([0., 0., 0.])  # Velocity of the spacecraft relative to the body
+    r_BO_N = np.array(
+        [-2000.0, 1500.0, 1000.0]
+    )  # Position of the spacecraft relative to the body
+    v_BO_N = np.array(
+        [0.0, 0.0, 0.0]
+    )  # Velocity of the spacecraft relative to the body
 
     # Create the inertial position and velocity of the s/c
     r_BN_N = np.add(r_BO_N, r_ON_N)
@@ -306,7 +320,7 @@ def run(show_plots):
 
     I = [82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0]
 
-    mass = 330.  # kg
+    mass = 330.0  # kg
     scObject.hub.mHub = mass
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
@@ -318,12 +332,24 @@ def run(show_plots):
     rwFactory = simIncludeRW.rwFactory()
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=100., Omega=100.  # RPM
-                           )
-    RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=100., Omega=200.  # RPM
-                           )
-    RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=100., Omega=300.  # RPM
-                           )
+    RW1 = rwFactory.create(
+        "Honeywell_HR16",
+        [1, 0, 0],
+        maxMomentum=100.0,
+        Omega=100.0,  # RPM
+    )
+    RW2 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 1, 0],
+        maxMomentum=100.0,
+        Omega=200.0,  # RPM
+    )
+    RW3 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 0, 1],
+        maxMomentum=100.0,
+        Omega=300.0,  # RPM
+    )
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
@@ -332,8 +358,10 @@ def run(show_plots):
     rwConfigMsg = rwFactory.getConfigMessage()
 
     # Create an SRP model
-    srp = radiationPressure.RadiationPressure()  # default model is the SRP_CANNONBALL_MODEL
-    srp.area = 1.  # m^3
+    srp = (
+        radiationPressure.RadiationPressure()
+    )  # default model is the SRP_CANNONBALL_MODEL
+    srp.area = 1.0  # m^3
     srp.coefficientReflection = 1.9
     scObject.addDynamicEffector(srp)
     srp.sunEphmInMsg.subscribeTo(sunPlanetStateMsg)
@@ -345,7 +373,7 @@ def run(show_plots):
 
     # Set up simpleNav for s/c "measurements"
     simpleNavMeas = simpleNav.SimpleNav()
-    simpleNavMeas.ModelTag = 'SimpleNav'
+    simpleNavMeas.ModelTag = "SimpleNav"
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     pos_sigma_sc = 30.0
     vel_sigma_sc = 0.01
@@ -353,25 +381,388 @@ def run(show_plots):
     rate_sigma_sc = 0.05 * math.pi / 180.0
     sun_sigma_sc = 0.0
     dv_sigma_sc = 0.0
-    p_matrix_sc = [[pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc]]
-    walk_bounds_sc = [[10.], [10.], [10.], [0.001], [0.001], [0.001], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002], [0.], [0.], [0.], [0.], [0.], [0.]]
+    p_matrix_sc = [
+        [
+            pos_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            pos_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            pos_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            vel_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            vel_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            vel_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            att_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            att_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            att_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            rate_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            rate_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            rate_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            sun_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            sun_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            sun_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            dv_sigma_sc,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            dv_sigma_sc,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            dv_sigma_sc,
+        ],
+    ]
+    walk_bounds_sc = [
+        [10.0],
+        [10.0],
+        [10.0],
+        [0.001],
+        [0.001],
+        [0.001],
+        [0.005],
+        [0.005],
+        [0.005],
+        [0.002],
+        [0.002],
+        [0.002],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+    ]
     simpleNavMeas.PMatrix = p_matrix_sc
     simpleNavMeas.walkBounds = walk_bounds_sc
 
@@ -383,19 +774,34 @@ def run(show_plots):
     vel_sigma_p = 0.0
     att_sigma_p = 2.0 * math.pi / 180.0
     rate_sigma_p = 0.3 * math.pi / 180.0
-    p_matrix_p = [[pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0., 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0.],
-               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p]]
-    walk_bounds_p = [[0.], [0.], [0.], [0.], [0.], [0.], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002]]
+    p_matrix_p = [
+        [pos_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, pos_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, pos_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, vel_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, vel_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, vel_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, att_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, att_sigma_p, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, att_sigma_p, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rate_sigma_p, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rate_sigma_p, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rate_sigma_p],
+    ]
+    walk_bounds_p = [
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.005],
+        [0.005],
+        [0.005],
+        [0.002],
+        [0.002],
+        [0.002],
+    ]
     planetNavMeas.PMatrix = p_matrix_p
     planetNavMeas.walkBounds = walk_bounds_p
 
@@ -423,8 +829,8 @@ def run(show_plots):
     mrpFeedbackControl.vehConfigInMsg.subscribeTo(vcConfigMsg)
     mrpFeedbackControl.K = 7.0
     mrpFeedbackControl.Ki = -1
-    mrpFeedbackControl.P = 30.
-    mrpFeedbackControl.integralLimit = 2. / mrpFeedbackControl.Ki * 0.1
+    mrpFeedbackControl.P = 30.0
+    mrpFeedbackControl.integralLimit = 2.0 / mrpFeedbackControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
@@ -444,11 +850,11 @@ def run(show_plots):
     waypointFeedback.sunEphemerisInMsg.subscribeTo(sunEphemerisMsg)
     waypointFeedback.navAttInMsg.subscribeTo(simpleNavMeas.attOutMsg)
     waypointFeedback.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
-    waypointFeedback.A_sc = 1.  # Surface area of the spacecraft, m^2
+    waypointFeedback.A_sc = 1.0  # Surface area of the spacecraft, m^2
     waypointFeedback.M_sc = mass  # Mass of the spacecraft, kg
     waypointFeedback.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(I)  # sc inertia
     waypointFeedback.mu_ast = mu  # Gravitational constant of the asteroid
-    waypointFeedback.x1_ref = [-2000., 0., 0.]
+    waypointFeedback.x1_ref = [-2000.0, 0.0, 0.0]
     waypointFeedback.x2_ref = [0.0, 0.0, 0.0]
 
     extForceTorqueModule = extForceTorque.ExtForceTorque()
@@ -487,13 +893,18 @@ def run(show_plots):
     scSim.AddModelToTask(simTaskName, requested_control_recorder)
     scSim.AddModelToTask(simTaskName, attitude_error_recorder)
 
-    fileName = 'scenarioSmallBodyFeedbackControl'
+    fileName = "scenarioSmallBodyFeedbackControl"
 
     if vizSupport.vizFound:
-        vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                                # , saveFile=fileName
-                                                                )
-        vizSupport.createStandardCamera(vizInterface, setMode=0, bodyTarget='bennu', setView=0)
+        vizInterface = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # , saveFile=fileName
+        )
+        vizSupport.createStandardCamera(
+            vizInterface, setMode=0, bodyTarget="bennu", setView=0
+        )
 
         # vizInterface.settings.showSpacecraftLabels = 1
         vizInterface.settings.showCSLabels = 1
@@ -505,8 +916,12 @@ def run(show_plots):
 
     simulationTime_1 = macros.sec2nano(15000.0)
 
-    waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d(
+        [5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4]
+    )
+    waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d(
+        [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    )
 
     # configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime_1)
@@ -531,7 +946,9 @@ def run(show_plots):
     r_BO_O_meas = []
     v_BO_O_meas = []
     np.set_printoptions(precision=15)
-    for rd_N, vd_N, rc_N, vc_N, rd_N_meas, vd_N_meas in zip(r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N, r_BN_N_meas, v_BN_N_meas):
+    for rd_N, vd_N, rc_N, vc_N, rd_N_meas, vd_N_meas in zip(
+        r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N, r_BN_N_meas, v_BN_N_meas
+    ):
         # Truth values
         r_BO_O, v_BO_O = orbitalMotion.rv2hill(rc_N, vc_N, rd_N, vd_N)
         r_BO_O_truth.append(r_BO_O)

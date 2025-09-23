@@ -45,5 +45,3 @@ To disable a single task, this is done with the :ref:`SimulationBaseClass` metho
     BSK executed a single simulation step
     BSK_INFORMATION: C Module ID 1 ran Update at 4.000000s
     BSK executed a single simulation step
-
-

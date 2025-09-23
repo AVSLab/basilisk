@@ -34,17 +34,19 @@ GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed)
     this->RNGSeed = newSeed;
     this->numStates = size;
     initializeRNG();
-    this->propMatrix.resize(size,size);
+    this->propMatrix.resize(size, size);
     this->propMatrix.fill(0.0);
-    this->currentState.resize((int64_t) size);
+    this->currentState.resize((int64_t)size);
     this->currentState.fill(0.0);
-    this->noiseMatrix.resize((int64_t) size, (int64_t) size);
+    this->noiseMatrix.resize((int64_t)size, (int64_t)size);
     this->noiseMatrix.fill(0.0);
-    this->stateBounds.resize((int64_t) size);
+    this->stateBounds.resize((int64_t)size);
     this->stateBounds.fill(DEFAULT_BOUND);
 }
 
-void GaussMarkov::initializeRNG() {
+void
+GaussMarkov::initializeRNG()
+{
     //! - Set up standard normal distribution N(0,1) parameters for random number generation
     std::normal_distribution<double>::param_type updatePair(0.0, 1.0);
     this->rGen.seed((unsigned int)this->RNGSeed);
@@ -52,36 +54,33 @@ void GaussMarkov::initializeRNG() {
 }
 
 /*! The destructor is a placeholder for one that might do something*/
-GaussMarkov::~GaussMarkov()
-{
-}
+GaussMarkov::~GaussMarkov() {}
 
 /*! This method performs almost all of the work for the Gauss Markov random
     walk.  It uses the current random walk configuration, propagates the current
     state, and then applies appropriate errors to the states to set the current
     error level.
 */
-void GaussMarkov::computeNextState()
+void
+GaussMarkov::computeNextState()
 {
     Eigen::VectorXd errorVector;
     Eigen::VectorXd ranNums;
 
     //! - Check for consistent sizes
-    if((this->propMatrix.size() != this->noiseMatrix.size()) ||
-       ((uint64_t) this->propMatrix.size() != this->numStates*this->numStates))
-    {
+    if ((this->propMatrix.size() != this->noiseMatrix.size()) ||
+        ((uint64_t)this->propMatrix.size() != this->numStates * this->numStates)) {
         bskLogger.bskLog(BSK_ERROR, "Matrix size mismatch in Gauss Markov model");
         return;
     }
-    if((uint64_t) this->stateBounds.size() != this->numStates)
-    {
+    if ((uint64_t)this->stateBounds.size() != this->numStates) {
         bskLogger.bskLog(BSK_ERROR, "State bounds size mismatch in Gauss Markov model");
         return;
     }
 
     //! - Generate base random numbers
-    ranNums.resize((int64_t) this->numStates);
-    for(size_t i = 0; i < this->numStates; i++) {
+    ranNums.resize((int64_t)this->numStates);
+    for (size_t i = 0; i < this->numStates; i++) {
         ranNums[i] = this->rNum(rGen);
     }
 
@@ -95,9 +94,9 @@ void GaussMarkov::computeNextState()
     this->currentState += errorVector;
 
     //! - Apply bounds if needed
-    for(size_t i = 0; i < this->numStates; i++) {
-        if(this->stateBounds[i] > 0.0) {
-            if(fabs(this->currentState[i]) > this->stateBounds[i]) {
+    for (size_t i = 0; i < this->numStates; i++) {
+        if (this->stateBounds[i] > 0.0) {
+            if (fabs(this->currentState[i]) > this->stateBounds[i]) {
                 this->currentState[i] = copysign(this->stateBounds[i], this->currentState[i]);
             }
         }

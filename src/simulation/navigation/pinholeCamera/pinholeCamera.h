@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef PINHOLE_CAMERA_H
 #define PINHOLE_CAMERA_H
 
@@ -32,8 +31,9 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief Pinhole camera class */
-class PinholeCamera:  public SysModel {
-public:
+class PinholeCamera : public SysModel
+{
+  public:
     PinholeCamera();
     ~PinholeCamera();
     void UpdateState(uint64_t CurrentSimNanos);
@@ -42,51 +42,54 @@ public:
     void writeOutputMessages(uint64_t CurrentClock);
 
     void addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal);
-    void processBatch(Eigen::MatrixXd rBatch_BP_P, Eigen::MatrixXd mrpBatch_BP, Eigen::MatrixXd eBatch_SP_P, bool show_progress);
+    void processBatch(Eigen::MatrixXd rBatch_BP_P,
+                      Eigen::MatrixXd mrpBatch_BP,
+                      Eigen::MatrixXd eBatch_SP_P,
+                      bool show_progress);
 
-private:
+  private:
     void processInputs();
     void loopLandmarks();
     bool checkLighting(Eigen::Vector3d nLmk);
     bool checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::Vector3d nLmk);
     Eigen::Vector2i computePixel(Eigen::Vector3d rLmk);
 
-public:
+  public:
     /* Pinhole camera properties */
-    double f; //!< [m] camera focal length
-    double FOVx; //!< [rad] horizontal field of view
-    double FOVy; //!< [rad] vertical field of view
-    double nxPixel; //!< [-] number of horizontal pixels
-    double nyPixel; //!< [-] number of vertical pixels
-    double wPixel; //!< [m] pixel width
+    double f;               //!< [m] camera focal length
+    double FOVx;            //!< [rad] horizontal field of view
+    double FOVy;            //!< [rad] vertical field of view
+    double nxPixel;         //!< [-] number of horizontal pixels
+    double nyPixel;         //!< [-] number of vertical pixels
+    double wPixel;          //!< [m] pixel width
     Eigen::Matrix3d dcm_CB; //!< [-] dcm from body to camera
 
     /* Module outputs */
     Eigen::VectorXi isvisibleLmk; //!< [-] flag telling if a landmark is visible
-    Eigen::MatrixXi pixelLmk; //!< [-] pixels for landmarks
+    Eigen::MatrixXi pixelLmk;     //!< [-] pixels for landmarks
 
     /* Landmark distribution */
     std::vector<Eigen::Vector3d> r_LP_P; //!< [m] landmark positions in planet frame
-    std::vector<Eigen::Vector3d> nL_P; //!< [-] landmark normals in planet frame
+    std::vector<Eigen::Vector3d> nL_P;   //!< [-] landmark normals in planet frame
 
     double maskSun; //!< [-] minimum slant range for Sun lighting
 
     /* Messages definition */
     ReadFunctor<EphemerisMsgPayload> ephemerisInMsg; //!< planet ephemeris input message
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg; //!< spacecraft state input msg
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;    //!< spacecraft state input msg
 
-    SCStatesMsgPayload spacecraftState; //!< input spacecraft state
-    EphemerisMsgPayload ephemerisPlanet;  //!< input planet ephemeris
+    SCStatesMsgPayload spacecraftState;                        //!< input spacecraft state
+    EphemerisMsgPayload ephemerisPlanet;                       //!< input planet ephemeris
     std::vector<Message<LandmarkMsgPayload>*> landmarkOutMsgs; //!< vector of landmark messages
-    std::vector<LandmarkMsgPayload> landmarkMsgBuffer; //!< buffer of landmark output data
+    std::vector<LandmarkMsgPayload> landmarkMsgBuffer;         //!< buffer of landmark output data
 
-    BSKLogger bskLogger;         //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
     /* Batch variables */
-    Eigen::MatrixXi pixelBatchLmk; //!< [-] batch of landmark pixels
+    Eigen::MatrixXi pixelBatchLmk;     //!< [-] batch of landmark pixels
     Eigen::MatrixXi isvisibleBatchLmk; //!< [-] batch of landmark visibility stauts
 
-private:
+  private:
     int n; //!< [-] number of landmarks
 
     /* Positions */
@@ -99,8 +102,8 @@ private:
 
     /* Unit-vectors */
     Eigen::Vector3d e_SP_P; //!< [-] current unit-vector pointing from planet to Sun in planet frame
-    Eigen::Vector3d eC_C; //!< [-] focal direction unit-vector in camera frame
-    Eigen::Vector3d eC_P; //!< [-] focal direction unit-vector in planet frame
+    Eigen::Vector3d eC_C;   //!< [-] focal direction unit-vector in camera frame
+    Eigen::Vector3d eC_P;   //!< [-] focal direction unit-vector in planet frame
 };
 
 #endif

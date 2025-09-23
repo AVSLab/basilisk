@@ -30,30 +30,36 @@
 #include "cMsgCInterface/DeviceStatusMsg_C.h"
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
-typedef struct {
+typedef struct
+{
     /* User configurable variables */
-    double attErrTolerance; //!< Normalized MRP attitude error tolerance
+    double attErrTolerance;        //!< Normalized MRP attitude error tolerance
     unsigned int useRateTolerance; //!< Flag to enable rate error tolerance
-    double rateErrTolerance; //!< Rate error tolerance in rad/s
-    unsigned int imaged;    //!< Indicator for whether or not the image has already been captured
-    unsigned int controllerStatus;  //!< dictates whether or not the controller should be running
+    double rateErrTolerance;       //!< Rate error tolerance in rad/s
+    unsigned int imaged;           //!< Indicator for whether or not the image has already been captured
+    unsigned int controllerStatus; //!< dictates whether or not the controller should be running
 
     /* declare module IO interfaces */
-    AccessMsg_C locationAccessInMsg;                   //!< Ground location access input message
-    AttGuidMsg_C attGuidInMsg;                         //!< attitude guidance input message
-    DeviceStatusMsg_C deviceStatusInMsg;                     //!< (optional) device status input message
-    DeviceCmdMsg_C deviceCmdOutMsg;              //!< device status output message
+    AccessMsg_C locationAccessInMsg;     //!< Ground location access input message
+    AttGuidMsg_C attGuidInMsg;           //!< attitude guidance input message
+    DeviceStatusMsg_C deviceStatusInMsg; //!< (optional) device status input message
+    DeviceCmdMsg_C deviceCmdOutMsg;      //!< device status output message
 
-    BSKLogger *bskLogger;                              //!< BSK Logging
-}simpleInstrumentControllerConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} simpleInstrumentControllerConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *configData, int64_t moduleID);
-void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID);
-void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID);
+    void Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData,
+                                           uint64_t callTime,
+                                           int64_t moduleID);
+    void Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData,
+                                          uint64_t callTime,
+                                          int64_t moduleID);
 
 #ifdef __cplusplus
 }

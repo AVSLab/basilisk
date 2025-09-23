@@ -32,5 +32,3 @@ provides information on what this message is used for.
     * - rwAvailInMsg
       - :ref:`RWAvailabilityMsgPayload`
       - (optional) RW device availability message
-
-

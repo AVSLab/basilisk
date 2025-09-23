@@ -26,14 +26,18 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioGaussMarkovRandomWalk
+
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 # of the multiple test runs for this test.
-@pytest.mark.parametrize("processNoiseLevel, walkBounds", [
-    (0.5, 3.0),  # Default case matching documentation and example
-])
+@pytest.mark.parametrize(
+    "processNoiseLevel, walkBounds",
+    [
+        (0.5, 3.0),  # Default case matching documentation and example
+    ],
+)
 @pytest.mark.scenarioTest
 def test_scenarioGaussMarkovRandomWalk(show_plots, processNoiseLevel, walkBounds):
     """This function is called by the py.test environment."""
@@ -42,16 +46,20 @@ def test_scenarioGaussMarkovRandomWalk(show_plots, processNoiseLevel, walkBounds
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioGaussMarkovRandomWalk.run(show_plots, processNoiseLevel, walkBounds)
+        figureList = scenarioGaussMarkovRandomWalk.run(
+            show_plots, processNoiseLevel, walkBounds
+        )
 
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
             unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
         # Also save the static layout diagram if it exists
-        if hasattr(scenarioGaussMarkovRandomWalk, 'getStaticDiagram'):
+        if hasattr(scenarioGaussMarkovRandomWalk, "getStaticDiagram"):
             staticFig = scenarioGaussMarkovRandomWalk.getStaticDiagram()
-            unitTestSupport.saveScenarioFigure('test_scenarioGaussMarkovRandomWalk', staticFig, path)
+            unitTestSupport.saveScenarioFigure(
+                "test_scenarioGaussMarkovRandomWalk", staticFig, path
+            )
 
     except OSError as err:
         testFailCount += 1
@@ -69,9 +77,10 @@ def test_scenarioGaussMarkovRandomWalk(show_plots, processNoiseLevel, walkBounds
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
 
+
 if __name__ == "__main__":
     test_scenarioGaussMarkovRandomWalk(
-        False,       # show_plots
-        0.5,        # processNoiseLevel
-        3.0         # walkBounds
+        False,  # show_plots
+        0.5,  # processNoiseLevel
+        3.0,  # walkBounds
     )

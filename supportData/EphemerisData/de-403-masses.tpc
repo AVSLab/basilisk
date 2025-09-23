@@ -6,12 +6,12 @@ the value of the AU to the list of items input to the kernel pool.
 
 Use this at your own risk, for now.
 
-The masses for the sun and barycenter given in this file are 
+The masses for the sun and barycenter given in this file are
 derived from the masses used for the integration of the planetary
 ephemerides DE-403. The value of the AU given in this ephemeris is.
 
     AU = 149597870.693 km
-	 
+
 In the ephemeris the values of the masses are given as ratios to
 of Solar GM to barycenter GM.  These values are given here.
 
@@ -33,7 +33,7 @@ trajectories.
 
 \begindata
 
-AU         =      149597870.693 
+AU         =      149597870.693
 
 BODY1_GM   =          22032.080
 BODY2_GM   =         324858.599
@@ -54,7 +54,7 @@ The masses of the earth and moon are taken from DE-403.
 
 \begindata
 
-BODY199_GM   =         22032.080 
+BODY199_GM   =         22032.080
 BODY299_GM   =         324858.599
 BODY301_GM   =           4902.799
 BODY399_GM   =         398600.436

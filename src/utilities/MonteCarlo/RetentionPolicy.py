@@ -7,7 +7,7 @@ class VariableRetentionParameters:
     Represents a variable's logging parameters.
     """
 
-    def __init__(self, varName, varRate, startIndex=0, stopIndex=0, varType='double'):
+    def __init__(self, varName, varRate, startIndex=0, stopIndex=0, varType="double"):
         self.varName = varName
         self.varRate = varRate
         self.startIndex = startIndex
@@ -34,7 +34,7 @@ class RetentionPolicy:
     array will have the message time prepended as the first column.
     """
 
-    def __init__(self, rate=int(1E10)):
+    def __init__(self, rate=int(1e10)):
         self.logRate = rate
         self.messageLogList = []
         self.varLogList = []
@@ -44,16 +44,25 @@ class RetentionPolicy:
     def addMessageLog(self, name, retainedVars):
         self.messageLogList.append(MessageRetentionParameters(name, retainedVars))
 
-    def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
+    def addVariableLog(
+        self, variableName, startIndex=0, stopIndex=0, varType="double", logRate=None
+    ):
         if logRate is None:
             logRate = self.logRate
-        varContainer = VariableRetentionParameters(variableName, logRate, startIndex, stopIndex, varType)
+        varContainer = VariableRetentionParameters(
+            variableName, logRate, startIndex, stopIndex, varType
+        )
         self.varLogList.append(varContainer)
 
     def addLogsToSim(self, simInstance):
         for variable in self.varLogList:
-            simInstance.AddVariableForLogging(variable.varName, variable.varRate,
-                                              variable.startIndex, variable.stopIndex, variable.varType)
+            simInstance.AddVariableForLogging(
+                variable.varName,
+                variable.varRate,
+                variable.startIndex,
+                variable.stopIndex,
+                variable.varType,
+            )
 
     def addRetentionFunction(self, function):
         self.retentionFunctions.append(function)
@@ -67,7 +76,7 @@ class RetentionPolicy:
 
     @staticmethod
     def addRetentionPoliciesToSim(simInstance, retentionPolicies):
-        """ Adds logs for variables and messages to a simInstance
+        """Adds logs for variables and messages to a simInstance
         Args:
             simInstance: The simulation instance to add logs to.
             retentionPolicies: RetentionPolicy[] list that defines the data to log.
@@ -80,7 +89,7 @@ class RetentionPolicy:
 
     @staticmethod
     def getDataForRetention(simInstance, retentionPolicies):
-        """ Returns the data that should be retained given a simInstance and the retentionPolicies
+        """Returns the data that should be retained given a simInstance and the retentionPolicies
 
         Args:
             simInstance: The simulation instance to retrieve data from
@@ -103,21 +112,24 @@ class RetentionPolicy:
         dataFrames = []
         for retentionPolicy in retentionPolicies:
             for msgParam in retentionPolicy.messageLogList:
-
                 # record the message recording times
                 msgTimes = simInstance.msgRecList[msgParam.msgRecName].times()
 
                 # record the message variables
                 for varName in msgParam.retainedVars:
-                    msgData = getattr(simInstance.msgRecList[msgParam.msgRecName], varName)
+                    msgData = getattr(
+                        simInstance.msgRecList[msgParam.msgRecName], varName
+                    )
                     msgData = unitTestSupport.addTimeColumn(msgTimes, msgData)
                     data["messages"][msgParam.msgRecName + "." + varName] = msgData
 
             for variable in retentionPolicy.varLogList:
-                data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)
+                data["variables"][variable.varName] = simInstance.GetLogVariableData(
+                    variable.varName
+                )
 
             for func in retentionPolicy.retentionFunctions:
                 tmpModuleData = func(simInstance)
-                for (key, value) in tmpModuleData.items():
+                for key, value in tmpModuleData.items():
                     data["custom"][key] = value
         return data

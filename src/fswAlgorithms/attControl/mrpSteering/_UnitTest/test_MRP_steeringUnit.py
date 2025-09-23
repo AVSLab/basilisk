@@ -24,13 +24,14 @@ from Basilisk.fswAlgorithms import mrpSteering  # import the module that is to b
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 @pytest.mark.parametrize("K1", [0.15, 0])
 @pytest.mark.parametrize("K3", [1, 0])
 @pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001 * macros.D2R])
-
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -84,7 +85,6 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     module = mrpSteering.mrpSteering()
     module.ModelTag = "mrpSteering"
 
-
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
@@ -95,7 +95,9 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
-    guidCmdData = messaging.AttGuidMsgPayload()  # Create a structure for the input message
+    guidCmdData = (
+        messaging.AttGuidMsgPayload()
+    )  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -127,19 +129,33 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     accuracy = 1e-12
     for i in range(0, len(omegaAstTrue)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.omega_BastR_B[i], omegaAstTrue[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            dataLog.omega_BastR_B[i], omegaAstTrue[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BastR_B unit test at t="
-                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed omega_BastR_B unit test at t="
+                + str(dataLog.times()[i] * macros.NANO2SEC)
+                + "sec \n"
+            )
 
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0, len(omegaAstPTrue)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(dataLog.omegap_BastR_B[i], omegaAstPTrue[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            dataLog.omegap_BastR_B[i], omegaAstPTrue[i], 3, accuracy
+        ):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed omegap_BastR_B unit test at t="
-                                + str(dataLog.times()[i] * macros.NANO2SEC) + "sec \n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed omegap_BastR_B unit test at t="
+                + str(dataLog.times()[i] * macros.NANO2SEC)
+                + "sec \n"
+            )
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
@@ -152,28 +168,42 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def findTrueValues(guidCmdData, module):
-
     omegaMax = module.omega_max
     sigma = np.asarray(guidCmdData.sigma_BR)
     K1 = np.asarray(module.K1)
     K3 = np.asarray(module.K3)
     Bmat = RigidBodyKinematics.BmatMRP(sigma)
-    omegaAst = []   #np.asarray([0, 0, 0])
+    omegaAst = []  # np.asarray([0, 0, 0])
     omegaAst_P = []
 
     for i in range(len(sigma)):
-        steerRate = -1*(2*omegaMax/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omegaMax))
+        steerRate = (
+            -1
+            * (2 * omegaMax / np.pi)
+            * np.arctan(
+                (K1 * sigma[i] + K3 * sigma[i] * sigma[i] * sigma[i])
+                * np.pi
+                / (2 * omegaMax)
+            )
+        )
         omegaAst.append(steerRate)
 
-
-    if 1:   #module.ignoreOuterLoopFeedforward: #should be "if not"
-        sigmaP = 0.25*Bmat.dot(omegaAst)
+    if 1:  # module.ignoreOuterLoopFeedforward: #should be "if not"
+        sigmaP = 0.25 * Bmat.dot(omegaAst)
         for i in range(len(sigma)):
-            omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]
+            omegaAstRate = (
+                (K1 + 3 * K3 * sigma[i] ** 2)
+                / (
+                    1
+                    + ((K1 * sigma[i] + K3 * sigma[i] ** 3) ** 2)
+                    * (np.pi / (2 * omegaMax)) ** 2
+                )
+                * sigmaP[i]
+            )
             omegaAst_P.append(-omegaAstRate)
     else:
         omegaAst_P = np.asarray([0, 0, 0])

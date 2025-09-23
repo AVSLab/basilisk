@@ -24,18 +24,26 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
 
 
-
-
-def printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, callTime):
+def printResults_eulerRotation(
+    configData, sigma_R0N, omega_R0N_N, domega_R0N_N, callTime
+):
     def computeEuler321_Binv_derivative(angleSet, angleRates):
         theta = angleSet[1]
         phi = angleSet[2]
         thetaDot = angleRates[1]
         phiDot = angleRates[2]
         B_inv_deriv = [
-            [-thetaDot*cos(theta), 0, 0],
-            [phiDot*cos(phi)*cos(theta)-thetaDot*sin(phi)*sin(theta), -phiDot*sin(phi), 0],
-            [-phiDot*sin(phi)*cos(theta)-thetaDot*cos(phi)*cos(theta), -phiDot*cos(phi), 0]
+            [-thetaDot * cos(theta), 0, 0],
+            [
+                phiDot * cos(phi) * cos(theta) - thetaDot * sin(phi) * sin(theta),
+                -phiDot * sin(phi),
+                0,
+            ],
+            [
+                -phiDot * sin(phi) * cos(theta) - thetaDot * cos(phi) * cos(theta),
+                -phiDot * cos(phi),
+                0,
+            ],
         ]
         return B_inv_deriv
 
@@ -64,32 +72,39 @@ def printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N,
 
     # Print results
     def printData():
-        print('callTime = ', callTime)
-        print('eulerAngleSet = ', angleSet)
-        print('B_inv_deriv = ', B_inv_deriv)
-        print('sigma_RN = ', sigma_RN)
-        print('omega_RN_N = ', omega_RN_N)
-        print('domega_RN_N = ', domega_RN_N)
-        print('\n')
+        print("callTime = ", callTime)
+        print("eulerAngleSet = ", angleSet)
+        print("B_inv_deriv = ", B_inv_deriv)
+        print("sigma_RN = ", sigma_RN)
+        print("omega_RN_N = ", omega_RN_N)
+        print("domega_RN_N = ", domega_RN_N)
+        print("\n")
+
     printData()
     return angleSet
 
 
 # Initial Conditions
-sigma_R0N = np.array([ 0.1, 0.2, 0.3 ])
+sigma_R0N = np.array([0.1, 0.2, 0.3])
 omega_R0N_N = np.array([0.1, 0.0, 0.0])
 domega_R0N_N = np.array([0.0, 0.0, 0.0])
 
 dt = 0.5
-angleRates = np.array([0.1, 0., 0.]) * mc.D2R
+angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
 
 angleSet = np.array([0.0, 0.0, 0.0]) * mc.D2R
 configData = (angleSet, angleRates, 0.0)
-angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*0.0)
+angleSet = printResults_eulerRotation(
+    configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt * 0.0
+)
 configData = (angleSet, angleRates, dt)
-angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*1.0)
+angleSet = printResults_eulerRotation(
+    configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt * 1.0
+)
 configData = (angleSet, angleRates, dt)
-angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*2.0)
+angleSet = printResults_eulerRotation(
+    configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt * 2.0
+)
 
 
 # t0 = 0.0
@@ -172,7 +187,3 @@ angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega
 # M3 = rbk.Mi(np.pi, 3)
 # print 'M3 = ', M3
 # print 'sigma = ', rbk.C2MRP(M3)
-
-
-
-

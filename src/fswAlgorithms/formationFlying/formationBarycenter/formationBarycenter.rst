@@ -1,14 +1,14 @@
 Executive Summary
 -----------------
-This module computes the barycenter of a swarm of satellites. The barycenter can either be computed in the regular cartesian way (using a weighted average of the position and velocity vectors) 
-or using the weighted average of the orbital elements. Both output two navigation messages that describe the position and velocity of the barycenter. The output messages contain the same 
+This module computes the barycenter of a swarm of satellites. The barycenter can either be computed in the regular cartesian way (using a weighted average of the position and velocity vectors)
+or using the weighted average of the orbital elements. Both output two navigation messages that describe the position and velocity of the barycenter. The output messages contain the same
 information, although one is a C++ message and the other is a C-wrapped message.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -34,7 +34,7 @@ provides information on what this message is used for.
 Detailed Module Description
 ---------------------------
 
-This module computes the barycenter of a swarm of spacecraft. For the cartesian method, a simple center of mass calculation is made for the position and velocity vectors. 
+This module computes the barycenter of a swarm of spacecraft. For the cartesian method, a simple center of mass calculation is made for the position and velocity vectors.
 Let :math:`\textbf{x}` represent either the position or the velocity vectors. The corresponding weighted average is:
 
 .. math::
@@ -42,15 +42,15 @@ Let :math:`\textbf{x}` represent either the position or the velocity vectors. Th
 
 where :math:`m_{total}=\sum_{i}m_i`.
 
-For the orbital elements averaging, the process is similar. However, the position and velocity vectors of each spacecraft must first be converted to orbital elements. Once 
+For the orbital elements averaging, the process is similar. However, the position and velocity vectors of each spacecraft must first be converted to orbital elements. Once
 that is done, we take the average of each orbital element :math:`oe` as such:
 
 .. math::
     \bar{oe} = \dfrac{1}{m_{total}}\sum_{i}m_ioe_i
 
-This formula is only valid for semi-major axis (a), eccentricity (e) and inclination (i). For the other angular orbital elements, a problem with angle wrapping can occur 
-when the angles are close to zero. For example, if two spacecraft of equal mass have a true anomaly of 10 and 350 degrees, the previous averaging formula would suggest 
-that the mean should be 180 degrees, when in fact it should be 0. To solve this problem, a different formula is used for RAAN (:math:`\Omega`), AoP (:math:`\omega`) 
+This formula is only valid for semi-major axis (a), eccentricity (e) and inclination (i). For the other angular orbital elements, a problem with angle wrapping can occur
+when the angles are close to zero. For example, if two spacecraft of equal mass have a true anomaly of 10 and 350 degrees, the previous averaging formula would suggest
+that the mean should be 180 degrees, when in fact it should be 0. To solve this problem, a different formula is used for RAAN (:math:`\Omega`), AoP (:math:`\omega`)
 and true anomaly (f):
 
 .. math::
@@ -65,7 +65,7 @@ Model Assumptions and Limitations
 
 This code makes the following assumptions:
 
-- **Gravitational parameter is known** 
+- **Gravitational parameter is known**
 
 This code has the following limitations:
 
@@ -124,4 +124,3 @@ No further setup is needed for the cartesian method. If the user wants to use or
 
     barycenterModule.useOrbitalElements = True
     barycenterModule.mu = mu
-

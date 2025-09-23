@@ -6,9 +6,9 @@ to a celestial object center using :ref:`EphemerisMsgPayload`, or a spacecraft l
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. list-table:: Module I/O Messages
@@ -44,7 +44,7 @@ provides information on what this message is used for.
 
 Detailed Module Description
 ---------------------------
-The inertial location of interest is given by :math:`{\bf r}_{L/N}` and can be either extracted from ``locationInMsg`` when 
+The inertial location of interest is given by :math:`{\bf r}_{L/N}` and can be either extracted from ``locationInMsg`` when
 a location on a planet is provided,  ``celBodyInMsg`` when a celestial body's ephemeris location is provided (for pointing
 at the Sun or the Earth), or ``scTargetInMsg`` when pointing at another spacecraft.
 The vector pointing from the satellite location :math:`{\bf r}_{S/N}` to this location is then
@@ -80,8 +80,8 @@ The tracking error rates :math:`{\pmb\omega}_{B/R}` are obtained through numeric
 MRP values.  During the first module ``Update`` evaluation the numerical differencing is not possible and
 this value is thus set to zero.
 
-Using the attitude navigation and guidance messages, this module also computes the reference information in 
-the form of ``attRefOutMsg``. This additional output message is useful when working with modules that need 
+Using the attitude navigation and guidance messages, this module also computes the reference information in
+the form of ``attRefOutMsg``. This additional output message is useful when working with modules that need
 a reference message and cannot accept a guidance message.
 
 .. note::
@@ -96,7 +96,7 @@ User Guide
 The one required variable that must be set is ``pHat_B``.  This is body-fixed unit vector which is to be
 pointed at the desired inertial location.
 
-The user should only connect one location of interest input message, either ``locationInMsg``, ``celBodyInMsg`` or ``scTargetInMsg``. 
+The user should only connect one location of interest input message, either ``locationInMsg``, ``celBodyInMsg`` or ``scTargetInMsg``.
 Connecting both will result in a warning and the module defaults to using the ``locationInMsg`` information.
 
 This 2D attitude control module provides two output messages in the form of :ref:`attGuidMsgPayload` and :ref:`attRefMsgPayload`.
@@ -110,5 +110,5 @@ It is defaulted to zero, but can be set to any desired value in radians.
 
 By default this is a 2D attitude control module in attitude and a 2D rate control.  In particular, the rates about the
 desired heading axis are not damped.  By setting the module variable ``useBoresightRateDamping`` to 1,
-the body rates about about the desired heading 
-angle are added to the rate tracking error yielding a 3D rate control implementation.  
+the body rates about about the desired heading
+angle are added to the rate tracking error yielding a 3D rate control implementation.

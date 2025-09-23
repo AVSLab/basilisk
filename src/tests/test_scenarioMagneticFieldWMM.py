@@ -36,7 +36,7 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioMagneticFieldWMM
 
 
@@ -49,17 +49,15 @@ import scenarioMagneticFieldWMM
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("orbitCase", ['circular', 'elliptical'])
+@pytest.mark.parametrize("orbitCase", ["circular", "elliptical"])
 @pytest.mark.scenarioTest
-
-
 def test_scenarioMagneticField(show_plots, orbitCase):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
 
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     try:
         figureList = scenarioMagneticFieldWMM.run(show_plots, orbitCase)

@@ -29,28 +29,28 @@
 #include "architecture/msgPayloadDefC/BodyHeadingMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-
 /*! @brief planet heading class */
-class PlanetHeading: public SysModel {
-public:
+class PlanetHeading : public SysModel
+{
+  public:
     PlanetHeading();
-    ~PlanetHeading(){};
-    
+    ~PlanetHeading() {};
+
     void UpdateState(uint64_t CurrentSimNanos) override;
     void Reset(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);
     void readMessages();
 
-public:
-    ReadFunctor<SpicePlanetStateMsgPayload> planetPositionInMsg;    //!< planet state input message
-    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
-    Message<BodyHeadingMsgPayload> planetHeadingOutMsg;             //!< body heading output message
+  public:
+    ReadFunctor<SpicePlanetStateMsgPayload> planetPositionInMsg; //!< planet state input message
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;        //!< spacecraft state input message
+    Message<BodyHeadingMsgPayload> planetHeadingOutMsg;          //!< body heading output message
 
-    BSKLogger bskLogger;                        //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-private:
-    Eigen::Vector3d r_PN_N;  //!< [m] planet position
-    Eigen::Vector3d r_BN_N;  //!< [m] s/c position
-    Eigen::Vector3d rHat_PB_B;  //!< [] planet heading in s/c body frame (unit mag)
-    Eigen::MRPd sigma_BN;  //!< [] s/c body att wrt inertial
+  private:
+    Eigen::Vector3d r_PN_N;    //!< [m] planet position
+    Eigen::Vector3d r_BN_N;    //!< [m] s/c position
+    Eigen::Vector3d rHat_PB_B; //!< [] planet heading in s/c body frame (unit mag)
+    Eigen::MRPd sigma_BN;      //!< [] s/c body att wrt inertial
 };

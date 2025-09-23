@@ -49,9 +49,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/../')
-sys.path.append(path + '/../models')
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../")
+sys.path.append(path + "/../models")
+sys.path.append(path + "/../plotting")
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics, BSK_Fsw
 import BSK_Plotting as BSK_plt
@@ -61,7 +61,7 @@ import BSK_Plotting as BSK_plt
 class scenario_AttModes(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_AttModes, self).__init__()
-        self.name = 'scenario_AttModes'
+        self.name = "scenario_AttModes"
 
         # declare additional class variables
         self.msgRecList = {}
@@ -92,13 +92,17 @@ class scenario_AttModes(BSKSim, BSKScenario):
         oe.f = 85.3 * macros.D2R
 
         DynModels = self.get_DynModel()
-        mu = DynModels.gravFactory.gravBodies['earth'].mu
+        mu = DynModels.gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [
+            [0.001],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         FswModel = self.get_FswModel()
@@ -108,7 +112,9 @@ class scenario_AttModes(BSKSim, BSKScenario):
         self.msgRecList[self.attGuidName] = FswModel.attGuidMsg.recorder(samplingTime)
         self.AddModelToTask(DynModel.taskName, self.msgRecList[self.attGuidName])
 
-        self.msgRecList[self.sNavTransName] = DynModel.simpleNavObject.transOutMsg.recorder(samplingTime)
+        self.msgRecList[self.sNavTransName] = (
+            DynModel.simpleNavObject.transOutMsg.recorder(samplingTime)
+        )
         self.AddModelToTask(DynModel.taskName, self.msgRecList[self.sNavTransName])
 
         return
@@ -138,18 +144,19 @@ class scenario_AttModes(BSKSim, BSKScenario):
 
 def runScenario(scenario):
     """method to initialize and execute the scenario"""
-    simulationTime = macros.min2nano(30.)
+    simulationTime = macros.min2nano(30.0)
 
     scenario.InitializeSimulation()
 
-    attitudeModeTime = macros.min2nano(10.)
+    attitudeModeTime = macros.min2nano(10.0)
     attitudeMode = ["hillPoint", "inertial3D"]
 
     currentSimulationTime = 0
     while currentSimulationTime < simulationTime:
-
         # Configure alternating FSW mode
-        scenario.modeRequest = attitudeMode[int((currentSimulationTime / attitudeModeTime) % len(attitudeMode))]
+        scenario.modeRequest = attitudeMode[
+            int((currentSimulationTime / attitudeModeTime) % len(attitudeMode))
+        ]
 
         # Add the attitude mode time to the current simulation time
         currentSimulationTime += attitudeModeTime
@@ -163,16 +170,17 @@ def runScenario(scenario):
 
 def run(showPlots):
     """
-        The scenarios can be run with the followings setups parameters:
+    The scenarios can be run with the followings setups parameters:
 
-        Args:
-            showPlots (bool): Determines if the script should display plots
+    Args:
+        showPlots (bool): Determines if the script should display plots
 
     """
     scenario = scenario_AttModes()
     runScenario(scenario)
     figureList = scenario.pull_outputs(showPlots)
     return figureList
+
 
 if __name__ == "__main__":
     run(True)

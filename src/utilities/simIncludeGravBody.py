@@ -44,7 +44,9 @@ from Basilisk.utilities.deprecated import deprecationWarn
 # this statement is needed to enable Windows to print ANSI codes in the Terminal
 # see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
 import os
+
 os.system("")
+
 
 @dataclass
 class BodyData:
@@ -78,8 +80,8 @@ BODY_DATA = {
         planetName="sun_planet_data",
         displayName="sun",
         modelDictionaryKey="",
-        mu=astroConstants.MU_SUN*1e9,
-        radEquator=astroConstants.REQ_SUN*1e3,
+        mu=astroConstants.MU_SUN * 1e9,
+        radEquator=astroConstants.REQ_SUN * 1e3,
         spicePlanetFrame="IAU_sun",
     ),
     "mercury": BodyData(
@@ -87,8 +89,8 @@ BODY_DATA = {
         planetName="mercury_planet_data",
         displayName="mercury",
         modelDictionaryKey="",
-        mu=astroConstants.MU_MERCURY*1e9,
-        radEquator=astroConstants.REQ_MERCURY*1e3,
+        mu=astroConstants.MU_MERCURY * 1e9,
+        radEquator=astroConstants.REQ_MERCURY * 1e3,
         spicePlanetFrame="IAU_mercury",
     ),
     "venus": BodyData(
@@ -96,8 +98,8 @@ BODY_DATA = {
         planetName="venus_planet_data",
         displayName="venus",
         modelDictionaryKey="",
-        mu=astroConstants.MU_VENUS*1e9,
-        radEquator=astroConstants.REQ_VENUS*1e3,
+        mu=astroConstants.MU_VENUS * 1e9,
+        radEquator=astroConstants.REQ_VENUS * 1e3,
         spicePlanetFrame="IAU_venus",
     ),
     "earth": BodyData(
@@ -105,8 +107,8 @@ BODY_DATA = {
         planetName="earth_planet_data",
         displayName="earth",
         modelDictionaryKey="",
-        mu=astroConstants.MU_EARTH*1e9,
-        radEquator=astroConstants.REQ_EARTH*1e3,
+        mu=astroConstants.MU_EARTH * 1e9,
+        radEquator=astroConstants.REQ_EARTH * 1e3,
         spicePlanetFrame="IAU_earth",
     ),
     "moon": BodyData(
@@ -114,8 +116,8 @@ BODY_DATA = {
         planetName="moon_planet_data",
         displayName="moon",
         modelDictionaryKey="",
-        mu=astroConstants.MU_MOON*1e9,
-        radEquator=astroConstants.REQ_MOON*1e3,
+        mu=astroConstants.MU_MOON * 1e9,
+        radEquator=astroConstants.REQ_MOON * 1e3,
         spicePlanetFrame="IAU_moon",
     ),
     "mars": BodyData(
@@ -123,8 +125,8 @@ BODY_DATA = {
         planetName="mars_planet_data",
         displayName="mars",
         modelDictionaryKey="",
-        mu=astroConstants.MU_MARS*1e9,
-        radEquator=astroConstants.REQ_MARS*1e3,
+        mu=astroConstants.MU_MARS * 1e9,
+        radEquator=astroConstants.REQ_MARS * 1e3,
         spicePlanetFrame="IAU_mars",
     ),
     "mars barycenter": BodyData(
@@ -132,8 +134,8 @@ BODY_DATA = {
         planetName="mars barycenter_planet_data",
         displayName="mars barycenter",
         modelDictionaryKey="",
-        mu=astroConstants.MU_MARS*1e9,
-        radEquator=astroConstants.REQ_MARS*1e3,
+        mu=astroConstants.MU_MARS * 1e9,
+        radEquator=astroConstants.REQ_MARS * 1e3,
         spicePlanetFrame="IAU_mars",
     ),
     "jupiter barycenter": BodyData(
@@ -141,8 +143,8 @@ BODY_DATA = {
         planetName="jupiter barycenter_planet_data",
         displayName="jupiter",
         modelDictionaryKey="",
-        mu=astroConstants.MU_JUPITER*1e9,
-        radEquator=astroConstants.REQ_JUPITER*1e3,
+        mu=astroConstants.MU_JUPITER * 1e9,
+        radEquator=astroConstants.REQ_JUPITER * 1e3,
         spicePlanetFrame="IAU_jupiter",
     ),
     "saturn": BodyData(
@@ -150,8 +152,8 @@ BODY_DATA = {
         planetName="saturn barycenter_planet_data",
         displayName="saturn",
         modelDictionaryKey="",
-        mu=astroConstants.MU_SATURN*1e9,
-        radEquator=astroConstants.REQ_SATURN*1e3,
+        mu=astroConstants.MU_SATURN * 1e9,
+        radEquator=astroConstants.REQ_SATURN * 1e3,
         spicePlanetFrame="IAU_saturn",
     ),
     "uranus": BodyData(
@@ -159,8 +161,8 @@ BODY_DATA = {
         planetName="uranus barycenter_planet_data",
         displayName="uranus",
         modelDictionaryKey="",
-        mu=astroConstants.MU_URANUS*1e9,
-        radEquator=astroConstants.REQ_URANUS*1e3,
+        mu=astroConstants.MU_URANUS * 1e9,
+        radEquator=astroConstants.REQ_URANUS * 1e3,
         spicePlanetFrame="IAU_uranus",
     ),
     "neptune": BodyData(
@@ -168,8 +170,8 @@ BODY_DATA = {
         planetName="neptune barycenter_planet_data",
         displayName="neptune",
         modelDictionaryKey="",
-        mu=astroConstants.MU_NEPTUNE*1e9,
-        radEquator=astroConstants.REQ_NEPTUNE*1e3,
+        mu=astroConstants.MU_NEPTUNE * 1e9,
+        radEquator=astroConstants.REQ_NEPTUNE * 1e3,
         spicePlanetFrame="IAU_neptune",
     ),
 }
@@ -349,11 +351,11 @@ class gravBodyFactory:
         path: str,
         time: str,
         spiceKernelFileNames: Iterable[str] = [
-                                              "de430.bsp",
-                                              "naif0012.tls",
-                                              "de-403-masses.tpc",
-                                              "pck00010.tpc",
-                                              ],
+            "de430.bsp",
+            "naif0012.tls",
+            "de-403-masses.tpc",
+            "pck00010.tpc",
+        ],
         spicePlanetNames: Optional[Sequence[str]] = None,
         spicePlanetFrames: Optional[Sequence[str]] = None,
         epochInMsg: bool = False,
@@ -390,11 +392,11 @@ class gravBodyFactory:
         path: str = "%BSK_PATH%/supportData/EphemerisData/",
         time: str,
         spiceKernelFileNames: Iterable[str] = [
-                                              "de430.bsp",
-                                              "naif0012.tls",
-                                              "de-403-masses.tpc",
-                                              "pck00010.tpc",
-                                              ],
+            "de430.bsp",
+            "naif0012.tls",
+            "de-403-masses.tpc",
+            "pck00010.tpc",
+        ],
         spicePlanetNames: Optional[Sequence[str]] = None,
         spicePlanetFrames: Optional[Sequence[str]] = None,
         epochInMsg: bool = False,
@@ -433,15 +435,15 @@ class gravBodyFactory:
         path: str = "%BSK_PATH%/supportData/EphemerisData/",
         time: str = "",
         spiceKernelFileNames: Iterable[str] = [
-                                              "de430.bsp",
-                                              "naif0012.tls",
-                                              "de-403-masses.tpc",
-                                              "pck00010.tpc",
-                                              ],
+            "de430.bsp",
+            "naif0012.tls",
+            "de-403-masses.tpc",
+            "pck00010.tpc",
+        ],
         spicePlanetNames: Optional[Sequence[str]] = None,
         spicePlanetFrames: Optional[Sequence[str]] = None,
         epochInMsg: bool = False,
-        spiceKernalFileNames = None,
+        spiceKernalFileNames=None,
     ) -> spiceInterface.SpiceInterface:
         if time == "":
             raise ValueError(
@@ -454,7 +456,7 @@ class gravBodyFactory:
                 f"{gravBodyFactory.createSpiceInterface.__qualname__}.spiceKernalFileNames"
                 "2024/11/24",
                 "The argument 'spiceKernalFileNames' is deprecated, as it is a "
-                "misspelling of 'spiceKernelFileNames'"
+                "misspelling of 'spiceKernelFileNames'",
             )
 
         path = path.replace("%BSK_PATH%", list(__path__)[0])
@@ -478,9 +480,11 @@ class gravBodyFactory:
                 # error occured loading spice kernel
                 self.spiceObject.SPICELoaded = False
                 if fileName == "de430.bsp":
-                    print("\033[91mERROR loading the large file de430.bsp:\033[0m  If BSK was "
-                          "installed via a wheel, try running bskLargeData from the console to "
-                          "install the large BSK data files.\n")
+                    print(
+                        "\033[91mERROR loading the large file de430.bsp:\033[0m  If BSK was "
+                        "installed via a wheel, try running bskLargeData from the console to "
+                        "install the large BSK data files.\n"
+                    )
 
         # subscribe Grav Body data to the spice state message
         for c, gravBodyDataItem in enumerate(self.gravBodies.values()):

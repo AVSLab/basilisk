@@ -19,15 +19,14 @@
 
 #include <cstdint>
 
-
 #include "partitionedStorageUnit.h"
 #include "architecture/utilities/bskLogging.h"
-
 
 /*! The constructor creates a partitionedStorageUnit instance with zero stored data
  ;
  */
-PartitionedStorageUnit::PartitionedStorageUnit(){
+PartitionedStorageUnit::PartitionedStorageUnit()
+{
     this->storageCapacity = 0;
     this->storedDataSum = 0;
     return;
@@ -36,7 +35,8 @@ PartitionedStorageUnit::PartitionedStorageUnit(){
 /*! Destructor.
 
  */
-PartitionedStorageUnit::~PartitionedStorageUnit(){
+PartitionedStorageUnit::~PartitionedStorageUnit()
+{
     return;
 }
 
@@ -44,7 +44,9 @@ PartitionedStorageUnit::~PartitionedStorageUnit(){
  @param currentClock
 
  */
-void PartitionedStorageUnit::customReset(uint64_t currentClock){
+void
+PartitionedStorageUnit::customReset(uint64_t currentClock)
+{
     if (this->storageCapacity <= 0) {
         bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
     }
@@ -55,7 +57,9 @@ void PartitionedStorageUnit::customReset(uint64_t currentClock){
  @param dataName
 
  */
-void PartitionedStorageUnit::addPartition(std::string dataName){
+void
+PartitionedStorageUnit::addPartition(std::string dataName)
+{
     dataInstance tmpDataInstance;
     strncpy(tmpDataInstance.dataInstanceName, dataName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
     tmpDataInstance.dataInstanceSum = 0;
@@ -68,10 +72,11 @@ void PartitionedStorageUnit::addPartition(std::string dataName){
  @param data            //Vector of data to be added to each partition in partitionNames
 
  */
-void PartitionedStorageUnit::setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data){
+void
+PartitionedStorageUnit::setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data)
+{
 
-    for (size_t i = 0; i < partitionNames.size(); i++)
-    {
+    for (size_t i = 0; i < partitionNames.size(); i++) {
         PartitionedStorageUnit::DataStorageUnitBase::setDataBuffer(partitionNames[i], data[i]);
     }
 }

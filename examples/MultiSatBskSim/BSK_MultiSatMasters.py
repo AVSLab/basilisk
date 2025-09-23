@@ -23,6 +23,7 @@ import sys
 
 from Basilisk import __path__
 from Basilisk.fswAlgorithms import formationBarycenter
+
 # Import architectural modules
 from Basilisk.utilities import SimulationBaseClass, macros as mc
 
@@ -31,7 +32,7 @@ path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 
 # Import Dynamics and FSW models
-sys.path.append(path + '/models')
+sys.path.append(path + "/models")
 
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
@@ -48,7 +49,15 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
     """
 
-    def __init__(self, numberSpacecraft, relativeNavigation=False, fswRate=0.1, dynRate=0.1, envRate=0.1, relNavRate=0.1):
+    def __init__(
+        self,
+        numberSpacecraft,
+        relativeNavigation=False,
+        fswRate=0.1,
+        dynRate=0.1,
+        envRate=0.1,
+        relNavRate=0.1,
+    ):
         self.dynRate = dynRate
         self.fswRate = fswRate
         self.envRate = envRate
@@ -81,7 +90,9 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
             self.add_relativeNavigation()
 
     def get_EnvModel(self):
-        assert (self.environment_added is True), "It is mandatory to use an environment model as an argument"
+        assert self.environment_added is True, (
+            "It is mandatory to use an environment model as an argument"
+        )
         return self.EnvModel
 
     def set_EnvModel(self, envModel):
@@ -93,7 +104,9 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.EnvModel = envModel.BSKEnvironmentModel(self, self.envRate)
 
     def get_DynModel(self):
-        assert (self.dynamics_added is True), "It is mandatory to use a dynamics model as an argument"
+        assert self.dynamics_added is True, (
+            "It is mandatory to use a dynamics model as an argument"
+        )
         return self.DynModels
 
     def set_DynModel(self, dynModel):
@@ -101,12 +114,20 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
         # Add the dynamics classes
         for spacecraftIndex in range(self.numberSpacecraft):
-            self.DynamicsProcessName.append("DynamicsProcess" + str(spacecraftIndex))  # Create simulation process name
-            self.dynProc.append(self.CreateNewProcess(self.DynamicsProcessName[spacecraftIndex], 200))  # Create process
-            self.DynModels.append(dynModel[spacecraftIndex].BSKDynamicModels(self, self.dynRate, spacecraftIndex))
+            self.DynamicsProcessName.append(
+                "DynamicsProcess" + str(spacecraftIndex)
+            )  # Create simulation process name
+            self.dynProc.append(
+                self.CreateNewProcess(self.DynamicsProcessName[spacecraftIndex], 200)
+            )  # Create process
+            self.DynModels.append(
+                dynModel[spacecraftIndex].BSKDynamicModels(
+                    self, self.dynRate, spacecraftIndex
+                )
+            )
 
     def get_FswModel(self):
-        assert (self.fsw_added is True), "A flight software model has not been added yet"
+        assert self.fsw_added is True, "A flight software model has not been added yet"
         return self.FSWModels
 
     def set_FswModel(self, fswModel):
@@ -114,9 +135,17 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
         # Add the FSW classes
         for spacecraftIndex in range(self.numberSpacecraft):
-            self.FSWProcessName.append("FSWProcess" + str(spacecraftIndex))  # Create simulation process name
-            self.fswProc.append(self.CreateNewProcess(self.FSWProcessName[spacecraftIndex], 100))  # Create process
-            self.FSWModels.append(fswModel[spacecraftIndex].BSKFswModels(self, self.fswRate, spacecraftIndex))
+            self.FSWProcessName.append(
+                "FSWProcess" + str(spacecraftIndex)
+            )  # Create simulation process name
+            self.fswProc.append(
+                self.CreateNewProcess(self.FSWProcessName[spacecraftIndex], 100)
+            )  # Create process
+            self.FSWModels.append(
+                fswModel[spacecraftIndex].BSKFswModels(
+                    self, self.fswRate, spacecraftIndex
+                )
+            )
 
     def add_relativeNavigation(self):
         processName = "RelativeNavigation"
@@ -125,12 +154,18 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
         # Create an independt process for barycenter calculation
         self.relNavProc = self.CreateNewProcess(processName, 150)
-        self.relNavProc.addTask(self.CreateNewTask(self.relativeNavigationTaskName, processTasksTimeStep), 20)
+        self.relNavProc.addTask(
+            self.CreateNewTask(self.relativeNavigationTaskName, processTasksTimeStep),
+            20,
+        )
 
         # Add the formationBarycenter module
         self.relativeNavigationModule = formationBarycenter.FormationBarycenter()
         self.relativeNavigationModule.ModelTag = "RelativeNavigation"
-        self.AddModelToTask(self.relativeNavigationTaskName, self.relativeNavigationModule, 0)
+        self.AddModelToTask(
+            self.relativeNavigationTaskName, self.relativeNavigationModule, 0
+        )
+
 
 class BSKScenario(object):
     def __init__(self):
@@ -138,18 +173,18 @@ class BSKScenario(object):
 
     def configure_initial_conditions(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
 
     def log_outputs(self):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
 
     def pull_outputs(self, showPlots, spacecraftIndex):
         """
-            Developer must override this method in their BSK_Scenario derived subclass.
+        Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass

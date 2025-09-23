@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -14,8 +13,6 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
 
 
 import os
@@ -34,6 +31,7 @@ from Basilisk.utilities import unitTestSupport
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
+
 
 def test_unitSimpleVoltEstimator(show_plots):
     """Module Unit Test"""
@@ -55,13 +53,13 @@ def unitSimpleVoltEstimator(show_plots):
 
     unitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the task and specify the integration update time
-    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+    unitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1e8)))
 
     # Now initialize the modules that we are using
     sVoltObject = simpleVoltEstimator.SimpleVoltEstimator()
     unitTestSim.AddModelToTask(unitTaskName, sVoltObject)
 
-    scPotential = -2000.
+    scPotential = -2000.0
 
     voltMessageData = messaging.VoltMsgPayload()
     voltMessageData.voltage = scPotential
@@ -75,7 +73,7 @@ def unitSimpleVoltEstimator(show_plots):
     voltSigma = 50.0
 
     pMatrix = [voltSigma]
-    errorBounds = [1000.]
+    errorBounds = [1000.0]
 
     sVoltObject.walkBounds = errorBounds
     sVoltObject.PMatrix = pMatrix
@@ -85,13 +83,13 @@ def unitSimpleVoltEstimator(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, dataVoltLog)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))
+    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1e9))
     unitTestSim.ExecuteSimulation()
 
     # pull simulation data
     volt = dataVoltLog.voltage
 
-    countAllow = volt.shape[0] * 0.3 / 100.
+    countAllow = volt.shape[0] * 0.3 / 100.0
 
     # make sure there are not too many error counts (voltage difference exceeding voltage bound)
     voltDiffCount = 0
@@ -115,7 +113,7 @@ def unitSimpleVoltEstimator(show_plots):
     i = 0
     while i < volt.shape[0]:
         voltDiff = volt[i] - scPotential
-        if abs(voltDiff) > voltBound*sigmaThreshold:
+        if abs(voltDiff) > voltBound * sigmaThreshold:
             voltDiffCount += 1
         i += 1
 
@@ -126,38 +124,58 @@ def unitSimpleVoltEstimator(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts - " + str(count))
 
-    plt.close('all')
-    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.plot(dataVoltLog.times() * 1.0E-9, volt[:])
+    plt.close("all")
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor="w", edgecolor="k")
+    plt.plot(dataVoltLog.times() * 1.0e-9, volt[:])
 
-    plt.xlabel('Time (s)')
-    plt.ylabel('Voltage (V)')
-    unitTestSupport.writeFigureLaTeX('SimpleVolt', 'Simple Voltage Estimator Voltage Signal', plt,
-                                     r'height=0.4\textwidth, keepaspectratio', path)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Voltage (V)")
+    unitTestSupport.writeFigureLaTeX(
+        "SimpleVolt",
+        "Simple Voltage Estimator Voltage Signal",
+        plt,
+        r"height=0.4\textwidth, keepaspectratio",
+        path,
+    )
     if show_plots:
         plt.show()
-    plt.close('all')
+    plt.close("all")
 
     with pytest.raises(BasiliskError):
         # check if BSK_ERROR is returned if pMatrix is wrong size
-        pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                    [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
-        stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+        pMatrixBad = [
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        ]
+        stateBoundsBad = [
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+            [0.0],
+        ]
         sVoltObject.walkBounds = stateBoundsBad
         sVoltObject.PMatrix = pMatrixBad
 
         unitTestSim.InitializeSimulation()
-        unitTestSim.ConfigureStopTime(int(1E8))
+        unitTestSim.ConfigureStopTime(int(1e8))
         unitTestSim.ExecuteSimulation()
 
     # print out success message if no error were found
@@ -167,7 +185,8 @@ def unitSimpleVoltEstimator(show_plots):
     assert testFailCount < 1, testMessages
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script

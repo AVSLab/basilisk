@@ -43,4 +43,3 @@ Module Behavior Testing
 -----------------------
 How do we know that the BSK modules are doing what they are supposed to?
 In each BSK module folder there is a ``_UnitTest`` folder which contains python scripts to test the functionality of the given module.  This assures that each module is working as planned.  The ``src/examples`` folder contains many integrated simulation scripts where the modules are assembled into sample spacecraft simulations.  These scripts are also tested to ensure the integrated simulation is working.  Thus, unit tests ensure a module is working individually, and integrated tests ensure that the module connections and interfaces are working properly.  As a result of this integrated testing, developing and enhancing Basilisk can be done readily while being confident that other code has not been broken.
-

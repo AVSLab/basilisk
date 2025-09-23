@@ -17,7 +17,6 @@
 #
 
 
-
 r"""
 Monte Carlo Simulation for Attitude Feedback Scenario
 =====================================================
@@ -88,20 +87,25 @@ fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
 # import general simulation support files
 import sys
 from Basilisk.utilities.MonteCarlo.Controller import Controller
 from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
-                                                       NormalVectorCartDispersion)
+from Basilisk.utilities.MonteCarlo.Dispersions import (
+    UniformEulerAngleMRPDispersion,
+    UniformDispersion,
+    NormalVectorCartDispersion,
+)
 
-sys.path.append(path+"/../BskSim/scenarios/")
+sys.path.append(path + "/../BskSim/scenarios/")
 import scenario_AttFeedback
 
 sNavTransName = "sNavTransMsg"
 attGuidName = "attGuidMsg"
+
 
 def run(show_plots):
     """This function is called by the py.test environment."""
@@ -110,36 +114,67 @@ def run(show_plots):
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
     monteCarlo = Controller()
-    monteCarlo.setSimulationFunction(scenario_AttFeedback.scenario_AttFeedback)  # Required: function that configures the base scenario
-    monteCarlo.setExecutionFunction(scenario_AttFeedback.runScenario)  # Required: function that runs the scenario
+    monteCarlo.setSimulationFunction(
+        scenario_AttFeedback.scenario_AttFeedback
+    )  # Required: function that configures the base scenario
+    monteCarlo.setExecutionFunction(
+        scenario_AttFeedback.runScenario
+    )  # Required: function that runs the scenario
     monteCarlo.setExecutionCount(4)  # Required: Number of MCs to run
 
-    monteCarlo.setArchiveDir(path + "/scenarioBskSimAttFeedbackMC")  # Optional: If/where to save retained data.
-    monteCarlo.setShouldDisperseSeeds(True)  # Optional: Randomize the seed for each module
+    monteCarlo.setArchiveDir(
+        path + "/scenarioBskSimAttFeedbackMC"
+    )  # Optional: If/where to save retained data.
+    monteCarlo.setShouldDisperseSeeds(
+        True
+    )  # Optional: Randomize the seed for each module
     # monteCarlo.setThreadCount(2)  # Optional: Number of processes to spawn MCs on, automatically sizes for personal computer.
     # monteCarlo.setVerbose(True)  # Optional: Produce supplemental text output in console describing status
-    monteCarlo.setVarCast('float')  # Optional: Downcast the retained numbers to float32 to save on storage space
-    monteCarlo.setDispMagnitudeFile(True)  # Optional: Produce a .txt file that shows dispersion in std dev units
+    monteCarlo.setVarCast(
+        "float"
+    )  # Optional: Downcast the retained numbers to float32 to save on storage space
+    monteCarlo.setDispMagnitudeFile(
+        True
+    )  # Optional: Produce a .txt file that shows dispersion in std dev units
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
-    dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
-    dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
-    dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
-    dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    dispInertia = 'hubref.IHubPntBc_B'
+    dispMRPInit = "TaskList[0].TaskModels[0].hub.sigma_BNInit"
+    dispOmegaInit = "TaskList[0].TaskModels[0].hub.omega_BN_BInit"
+    dispMass = "TaskList[0].TaskModels[0].hub.mHub"
+    dispCoMOff = "TaskList[0].TaskModels[0].hub.r_BcB_B"
+    dispInertia = "hubref.IHubPntBc_B"
     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
 
     # Add dispersions with their dispersion type
-    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion('TaskList[0].TaskModels[0].hub.sigma_BNInit'))
-    monteCarlo.addDispersion(NormalVectorCartDispersion('TaskList[0].TaskModels[0].hub.omega_BN_BInit', 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion('TaskList[0].TaskModels[0].hub.mHub', ([750.0 - 0.05*750, 750.0 + 0.05*750])))
-    monteCarlo.addDispersion(NormalVectorCartDispersion('TaskList[0].TaskModels[0].hub.r_BcB_B', [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(
+        UniformEulerAngleMRPDispersion("TaskList[0].TaskModels[0].hub.sigma_BNInit")
+    )
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(
+            "TaskList[0].TaskModels[0].hub.omega_BN_BInit",
+            0.0,
+            0.75 / 3.0 * np.pi / 180,
+        )
+    )
+    monteCarlo.addDispersion(
+        UniformDispersion(
+            "TaskList[0].TaskModels[0].hub.mHub",
+            ([750.0 - 0.05 * 750, 750.0 + 0.05 * 750]),
+        )
+    )
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(
+            "TaskList[0].TaskModels[0].hub.r_BcB_B",
+            [0.0, 0.0, 1.0],
+            [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0],
+        )
+    )
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also can have a callback,
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
-    samplingTime = int(2E9)
+    samplingTime = int(2e9)
     retentionPolicy.addMessageLog(sNavTransName, ["r_BN_N"])
     retentionPolicy.addMessageLog(attGuidName, ["sigma_BR", "omega_BR_B"])
     retentionPolicy.setDataCallback(displayPlots)
@@ -153,14 +188,12 @@ def run(show_plots):
 
     return
 
+
 def displayPlots(data, retentionPolicy):
     states = data["messages"][attGuidName + ".sigma_BR"]
     time = states[:, 0]
     plt.figure(1)
-    plt.plot(time, states[:,1],
-             time, states[:,2],
-             time, states[:,3])
-
+    plt.plot(time, states[:, 1], time, states[:, 2], time, states[:, 3])
 
 
 if __name__ == "__main__":

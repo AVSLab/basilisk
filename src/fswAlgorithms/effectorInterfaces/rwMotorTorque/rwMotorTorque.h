@@ -29,39 +29,40 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* declare module private variables */
-    double   controlAxes_B[3*3];        //!< [-] array of the control unit axes
-    uint32_t numControlAxes;            //!< [-] counter indicating how many orthogonal axes are controlled
-    int      numAvailRW;                //!< [-] number of reaction wheels available
-    RWArrayConfigMsgPayload rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
-    double GsMatrix_B[3*MAX_EFF_CNT];   //!< [-] The RW spin axis matrix in body frame components
+    double controlAxes_B[3 * 3]; //!< [-] array of the control unit axes
+    uint32_t numControlAxes;     //!< [-] counter indicating how many orthogonal axes are controlled
+    int numAvailRW;              //!< [-] number of reaction wheels available
+    RWArrayConfigMsgPayload
+      rwConfigParams;                   //!< [-] struct to store message containing RW config parameters in body B frame
+    double GsMatrix_B[3 * MAX_EFF_CNT]; //!< [-] The RW spin axis matrix in body frame components
     double CGs[3][MAX_EFF_CNT];         //!< [-] Projection matrix that defines the controlled body axes
 
     /* declare module IO interfaces */
-    ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;   //!< RW motor torque output message
-    CmdTorqueBodyMsg_C vehControlInMsg;  //!<  vehicle control (Lr) Input message
+    ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg; //!< RW motor torque output message
+    CmdTorqueBodyMsg_C vehControlInMsg;        //!<  vehicle control (Lr) Input message
 
-    RWArrayConfigMsg_C rwParamsInMsg;    //!<  RW Array input message
-    RWAvailabilityMsg_C rwAvailInMsg;     //!< optional RWs availability input message
+    RWArrayConfigMsg_C rwParamsInMsg; //!<  RW Array input message
+    RWAvailabilityMsg_C rwAvailInMsg; //!< optional RWs availability input message
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
+    BSKLogger* bskLogger; //!< BSK Logging
 
-}rwMotorTorqueConfig;
+} rwMotorTorqueConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID);
-    void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
+    void SelfInit_rwMotorTorque(rwMotorTorqueConfig* configData, int64_t moduleID);
+    void Update_rwMotorTorque(rwMotorTorqueConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_rwMotorTorque(rwMotorTorqueConfig* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

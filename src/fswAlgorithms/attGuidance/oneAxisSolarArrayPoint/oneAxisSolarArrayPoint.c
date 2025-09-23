@@ -17,7 +17,6 @@
 
  */
 
-
 #include "oneAxisSolarArrayPoint.h"
 #include "string.h"
 #include <math.h>
@@ -26,18 +25,18 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-const double epsilon = 1e-12;                           // module tolerance for zero
+const double epsilon = 1e-12; // module tolerance for zero
 
 /*! This method initializes the output messages for this module.
 
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, int64_t moduleID)
+void
+SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, int64_t moduleID)
 {
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -46,7 +45,8 @@ void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, i
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");
@@ -55,35 +55,40 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
     // check how the input body heading is provided
     if (BodyHeadingMsg_C_isLinked(&configData->bodyHeadingInMsg)) {
         configData->bodyAxisInput = inputBodyHeadingMsg;
-    }
-    else if (v3Norm(configData->h1Hat_B) > epsilon) {
-            configData->bodyAxisInput = inputBodyHeadingParameter;
-    }
-    else {
-            _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
+    } else if (v3Norm(configData->h1Hat_B) > epsilon) {
+        configData->bodyAxisInput = inputBodyHeadingParameter;
+    } else {
+        _bskLog(configData->bskLogger,
+                BSK_ERROR,
+                " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
     }
 
     // check how the input inertial heading is provided
     if (InertialHeadingMsg_C_isLinked(&configData->inertialHeadingInMsg)) {
         configData->inertialAxisInput = inputInertialHeadingMsg;
         if (EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
-            _bskLog(configData->bskLogger, BSK_WARNING, " both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg");
+            _bskLog(configData->bskLogger,
+                    BSK_WARNING,
+                    " both oneAxisSolarArrayPoint.inertialHeadingInMsg and oneAxisSolarArrayPoint.ephemerisInMsg were "
+                    "linked. Inertial heading is computed from oneAxisSolarArrayPoint.inertialHeadingInMsg");
         }
-    }
-    else if (EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
+    } else if (EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
         if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg was not.");
-        }
-        else {
+            _bskLog(
+              configData->bskLogger,
+              BSK_ERROR,
+              " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg was not.");
+        } else {
             configData->inertialAxisInput = inputEphemerisMsg;
         }
-    }
-    else {
+    } else {
         if (v3Norm(configData->hHat_N) > epsilon) {
             configData->inertialAxisInput = inputInertialHeadingParameter;
-        }
-        else {
-            _bskLog(configData->bskLogger, BSK_ERROR, " neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor oneAxisSolarArrayPoint.ephemerisInMsg were connected and no inertial heading h_N was specified.");
+        } else {
+            _bskLog(configData->bskLogger,
+                    BSK_ERROR,
+                    " neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor oneAxisSolarArrayPoint.ephemerisInMsg "
+                    "were connected and no inertial heading h_N was specified.");
         }
     }
 
@@ -97,7 +102,8 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! create and zero the output message */
     AttRefMsgPayload attRefOut = AttRefMsg_C_zeroMsgPayload();
@@ -109,12 +115,10 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     double hReqHat_N[3];
     if (configData->inertialAxisInput == inputInertialHeadingParameter) {
         v3Normalize(configData->hHat_N, hReqHat_N);
-    }
-    else if (configData->inertialAxisInput == inputInertialHeadingMsg) {
+    } else if (configData->inertialAxisInput == inputInertialHeadingMsg) {
         InertialHeadingMsgPayload inertialHeadingIn = InertialHeadingMsg_C_read(&configData->inertialHeadingInMsg);
         v3Normalize(inertialHeadingIn.rHat_XN_N, hReqHat_N);
-    }
-    else if (configData->inertialAxisInput == inputEphemerisMsg) {
+    } else if (configData->inertialAxisInput == inputEphemerisMsg) {
         EphemerisMsgPayload ephemerisIn = EphemerisMsg_C_read(&configData->ephemerisInMsg);
         NavTransMsgPayload transNavIn = NavTransMsg_C_read(&configData->transNavInMsg);
         v3Subtract(ephemerisIn.r_BdyZero_N, transNavIn.r_BN_N, hReqHat_N);
@@ -125,8 +129,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     double hRefHat_B[3];
     if (configData->bodyAxisInput == inputBodyHeadingParameter) {
         v3Normalize(configData->h1Hat_B, hRefHat_B);
-    }
-    else if (configData->bodyAxisInput == inputBodyHeadingMsg) {
+    } else if (configData->bodyAxisInput == inputBodyHeadingMsg) {
         BodyHeadingMsgPayload bodyHeadingIn = BodyHeadingMsg_C_read(&configData->bodyHeadingInMsg);
         v3Normalize(bodyHeadingIn.rHat_XB_B, hRefHat_B);
     }
@@ -143,8 +146,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
     double a2Hat_B[3];
     if (v3Norm(configData->a2Hat_B) > epsilon) {
         v3Normalize(configData->a2Hat_B, a2Hat_B);
-    }
-    else {
+    } else {
         v3SetZero(a2Hat_B);
     }
 
@@ -172,7 +174,8 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 
     if (v3Norm(configData->h2Hat_B) > epsilon) {
         // compute second reference frame
-        oasapComputeFinalRotation(configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+        oasapComputeFinalRotation(
+          configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
 
         // compute the relative rotation DCM and Sun direction in relative frame
         m33MultM33t(RN, BN, RB);
@@ -234,8 +237,13 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
         T1Seconds = diffNanoToSec(configData->T1NanoSeconds, callTime);
         T2Seconds = diffNanoToSec(configData->T2NanoSeconds, callTime);
         for (int j = 0; j < 3; j++) {
-            sigmaDot_RN[j] = ((sigma_RN_1[j]*T2Seconds*T2Seconds - sigma_RN_2[j]*T1Seconds*T1Seconds) / (T2Seconds - T1Seconds) - sigma_RN[j] * (T2Seconds + T1Seconds)) / T1Seconds / T2Seconds;
-            sigmaDDot_RN[j] = 2 * ((sigma_RN_1[j]*T2Seconds - sigma_RN_2[j]*T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) / T1Seconds / T2Seconds;
+            sigmaDot_RN[j] = ((sigma_RN_1[j] * T2Seconds * T2Seconds - sigma_RN_2[j] * T1Seconds * T1Seconds) /
+                                (T2Seconds - T1Seconds) -
+                              sigma_RN[j] * (T2Seconds + T1Seconds)) /
+                             T1Seconds / T2Seconds;
+            sigmaDDot_RN[j] =
+              2 * ((sigma_RN_1[j] * T2Seconds - sigma_RN_2[j] * T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) /
+              T1Seconds / T2Seconds;
         }
         // store information for next time step
         configData->T2NanoSeconds = configData->T1NanoSeconds;
@@ -259,18 +267,18 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uin
 }
 
 /*! This helper function computes the first rotation that aligns the body heading with the inertial heading */
-void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3])
+void
+oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3])
 {
     /*! compute principal rotation angle (phi) and vector (e_phi) for the first rotation */
-    double phi = acos( fmin( fmax( v3Dot(hRefHat_B, hReqHat_B), -1 ), 1 ) );
+    double phi = acos(fmin(fmax(v3Dot(hRefHat_B, hReqHat_B), -1), 1));
     double e_phi[3];
     v3Cross(hRefHat_B, hReqHat_B, e_phi);
     // If phi = PI, e_phi can be any vector perpendicular to hRefHat_B
-    if (fabs(phi-M_PI) < epsilon) {
+    if (fabs(phi - M_PI) < epsilon) {
         phi = M_PI;
         v3Perpendicular(hRefHat_B, e_phi);
-    }
-    else if (fabs(phi) < epsilon) {
+    } else if (fabs(phi) < epsilon) {
         phi = 0;
     }
     // normalize e_phi
@@ -282,8 +290,14 @@ void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double 
     PRV2C(PRV_phi, R1B);
 }
 
-/*! This helper function computes the second rotation that achieves the best incidence on the solar arrays maintaining the heading alignment */
-void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], double a1Hat_B[3], double a2Hat_B[3], double R2R1[3][3])
+/*! This helper function computes the second rotation that achieves the best incidence on the solar arrays maintaining
+ * the heading alignment */
+void
+oasapComputeSecondRotation(double hRefHat_B[3],
+                           double rHat_SB_R1[3],
+                           double a1Hat_B[3],
+                           double a2Hat_B[3],
+                           double R2R1[3][3])
 {
     /*! define second rotation vector to coincide with the thrust direction in B coordinates */
     double e_psi[3];
@@ -297,7 +311,8 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
     double C = v3Dot(a1Hat_B, rHat_SB_R1);
     double Delta = B * B - 4 * A * C;
 
-    /*! get the body direction that must be kept close to Sun and compute the coefficients of the quadratic equation E, F and G */
+    /*! get the body direction that must be kept close to Sun and compute the coefficients of the quadratic equation E,
+     * F and G */
     double E = 2 * v3Dot(rHat_SB_R1, e_psi) * v3Dot(e_psi, a2Hat_B) - v3Dot(a2Hat_B, rHat_SB_R1);
     double F = 2 * v3Dot(a2Hat_B, b3);
     double G = v3Dot(a2Hat_B, rHat_SB_R1);
@@ -309,26 +324,23 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
             // zero-th order equation has no solution
             // the solution of the minimum problem is psi = M_PI
             psi = M_PI;
-        }
-        else {
+        } else {
             // first order equation
-            t = - C / B;
-            psi = 2*atan(t);
+            t = -C / B;
+            psi = 2 * atan(t);
         }
-    }
-    else {
+    } else {
         if (Delta < 0) {
             // second order equation has no solution
             // the solution of the minimum problem is found
             if (fabs(B) < epsilon) {
                 t = 0.0;
-            }
-            else {
-                double q = (A-C) / B;
-                t1 = (q + sqrt(q*q + 1));
-                t2 = (q - sqrt(q*q + 1));
-                y1 = (A*t1*t1 + B*t1 + C) / (1 + t1*t1);
-                y2 = (A*t2*t2 + B*t2 + C) / (1 + t2*t2);
+            } else {
+                double q = (A - C) / B;
+                t1 = (q + sqrt(q * q + 1));
+                t2 = (q - sqrt(q * q + 1));
+                y1 = (A * t1 * t1 + B * t1 + C) / (1 + t1 * t1);
+                y2 = (A * t2 * t2 + B * t2 + C) / (1 + t2 * t2);
 
                 // choose which returns a smaller fcn value between t1 and t2
                 t = t1;
@@ -336,28 +348,27 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
                     t = t2;
                 }
             }
-            psi = 2*atan(t);
-            y = (A*t*t + B*t + C) / (1 + t*t);
+            psi = 2 * atan(t);
+            y = (A * t * t + B * t + C) / (1 + t * t);
             // check if the absolute fcn minimum is for psi = M_PI
             if (fabs(A) < fabs(y)) {
                 psi = M_PI;
             }
-        }
-        else {
+        } else {
             // solution of the quadratic equation
-            t1 = (-B + sqrt(Delta)) / (2*A);
-            t2 = (-B - sqrt(Delta)) / (2*A);
+            t1 = (-B + sqrt(Delta)) / (2 * A);
+            t2 = (-B - sqrt(Delta)) / (2 * A);
 
             // choose between t1 and t2 according to a2Hat
             t = t1;
-            if (fabs(v3Dot(hRefHat_B, a2Hat_B)-1) > epsilon) {
-                y1 = (E*t1*t1 + F*t1 + G) / (1 + t1*t1);
-                y2 = (E*t2*t2 + F*t2 + G) / (1 + t2*t2);
+            if (fabs(v3Dot(hRefHat_B, a2Hat_B) - 1) > epsilon) {
+                y1 = (E * t1 * t1 + F * t1 + G) / (1 + t1 * t1);
+                y2 = (E * t2 * t2 + F * t2 + G) / (1 + t2 * t2);
                 if (y2 - y1 > epsilon) {
                     t = t2;
                 }
             }
-            psi = 2*atan(t);
+            psi = 2 * atan(t);
         }
     }
 
@@ -367,8 +378,14 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
     PRV2C(PRV_psi, R2R1);
 }
 
-/*! This helper function computes the third rotation that breaks the heading alignment if needed, to achieve maximum incidence on solar arrays */
-void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3])
+/*! This helper function computes the third rotation that breaks the heading alignment if needed, to achieve maximum
+ * incidence on solar arrays */
+void
+oasapComputeThirdRotation(int alignmentPriority,
+                          double hRefHat_B[3],
+                          double rHat_SB_R2[3],
+                          double a1Hat_B[3],
+                          double R3R2[3][3])
 {
     double PRV_theta[3];
 
@@ -376,26 +393,24 @@ void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], doubl
         for (int i = 0; i < 3; i++) {
             PRV_theta[i] = 0;
         }
-    }
-    else {
+    } else {
         double sTheta = v3Dot(rHat_SB_R2, a1Hat_B);
-        double theta = asin( fmin( fmax( fabs(sTheta), -1 ), 1 ) );
+        double theta = asin(fmin(fmax(fabs(sTheta), -1), 1));
         if (fabs(theta) < epsilon) {
             // if Sun direction and solar array drive are already perpendicular, third rotation is null
             for (int i = 0; i < 3; i++) {
-            PRV_theta[i] = 0;
+                PRV_theta[i] = 0;
             }
-        }
-        else {
-            // if Sun direction and solar array drive are not perpendicular, project solar array drive a1Hat_B onto perpendicular plane (aPHat_B) and compute third rotation
+        } else {
+            // if Sun direction and solar array drive are not perpendicular, project solar array drive a1Hat_B onto
+            // perpendicular plane (aPHat_B) and compute third rotation
             double e_theta[3], aPHat_B[3];
-            if (fabs(fabs(theta)-M_PI/2) > epsilon) {
+            if (fabs(fabs(theta) - M_PI / 2) > epsilon) {
                 for (int i = 0; i < 3; i++) {
                     aPHat_B[i] = (a1Hat_B[i] - sTheta * rHat_SB_R2[i]) / (1 - sTheta * sTheta);
                 }
                 v3Cross(a1Hat_B, aPHat_B, e_theta);
-            }
-            else {
+            } else {
                 // rotate about the axis that minimizes variation in hRefHat_B direction
                 v3Cross(rHat_SB_R2, hRefHat_B, aPHat_B);
                 if (v3Norm(aPHat_B) < epsilon) {
@@ -413,7 +428,15 @@ void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], doubl
 }
 
 /*! This helper function computes the final rotation as a product of the first three DCMs */
-void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
+void
+oasapComputeFinalRotation(int alignmentPriority,
+                          double BN[3][3],
+                          double rHat_SB_B[3],
+                          double hRefHat_B[3],
+                          double hReqHat_B[3],
+                          double a1Hat_B[3],
+                          double a2Hat_B[3],
+                          double RN[3][3])
 {
     /*! compute the first rotation DCM */
     double R1B[3][3];

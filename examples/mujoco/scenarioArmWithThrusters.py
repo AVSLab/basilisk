@@ -101,17 +101,17 @@ XML_PATH = f"{CURRENT_FOLDER}/sat_w_deployable_thruster.xml"
 
 # These are the instant at which each action ends. For example,
 # ARM_3_DEPLOY ends at t=20s. FIRST_THRUST ends at t=52.5 s, etc.
-START = 0 # s
-ARM_1_DEPLOY = 5 # s
-ARM_2_DEPLOY = ARM_1_DEPLOY + 10 # s
-ARM_3_DEPLOY = ARM_2_DEPLOY + 5 # s
-FIRST_THRUST = ARM_3_DEPLOY + 32.5 # s
-FIRST_ROLL = FIRST_THRUST + 10 # s
-SECOND_THRUST = FIRST_ROLL + 30 # s
-SECOND_ROLL = SECOND_THRUST + 5 # s
-ARM_4_DEPLOY = SECOND_ROLL + 5 # s
-THIRD_THRUST = ARM_4_DEPLOY + 30 # s
-END = THIRD_THRUST # s
+START = 0  # s
+ARM_1_DEPLOY = 5  # s
+ARM_2_DEPLOY = ARM_1_DEPLOY + 10  # s
+ARM_3_DEPLOY = ARM_2_DEPLOY + 5  # s
+FIRST_THRUST = ARM_3_DEPLOY + 32.5  # s
+FIRST_ROLL = FIRST_THRUST + 10  # s
+SECOND_THRUST = FIRST_ROLL + 30  # s
+SECOND_ROLL = SECOND_THRUST + 5  # s
+ARM_4_DEPLOY = SECOND_ROLL + 5  # s
+THIRD_THRUST = ARM_4_DEPLOY + 30  # s
+END = THIRD_THRUST  # s
 
 # This dictionary maps the joint name to the body it is attached to.
 BODY_OF_JOINT = {
@@ -174,7 +174,7 @@ def run(showPlots: bool = False, visualize: bool = False):
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
     """
-    dt = 1 # s
+    dt = 1  # s
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -192,7 +192,6 @@ def run(showPlots: bool = False, visualize: bool = False):
     # Creat the thrust interpolators to define the piecewise thrust profile
     modelsActuator = []
     for thrusterName, interpPoint in ACTUATOR_INTERPOLATION_POINTS.items():
-
         act: mujoco.MJSingleActuator = scene.getSingleActuator(thrusterName)
 
         # mujoco.SingleActuatorInterpolator has a single output message,
@@ -218,7 +217,6 @@ def run(showPlots: bool = False, visualize: bool = False):
     # Create the joint interpolators to define the motion of the joints
     modelsJoint = []
     for jointName, interpPoint in JOINT_INTERPOLATION_POINTS.items():
-
         # We can access the joint object by getting the body that
         # the joint is attached to, and then getting the joint object
         joint: mujoco.MJScalarJoint = scene.getBody(
@@ -268,7 +266,6 @@ def run(showPlots: bool = False, visualize: bool = False):
     scSim.ExecuteSimulation()
 
     if showPlots:
-
         # Plot the attitude of the 'hub' body
         plt.figure()
         att = np.squeeze(bodyStateRecorder.sigma_BN)

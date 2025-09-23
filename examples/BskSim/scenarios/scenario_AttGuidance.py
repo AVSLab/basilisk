@@ -84,14 +84,13 @@ Illustration of Simulation Results
 
 """
 
-
-
 # Get current file path
 import inspect
 import os
 import sys
 
 import numpy as np
+
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, vizSupport
 
@@ -99,19 +98,20 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # Import master classes: simulation base class and scenario base class
-sys.path.append(path + '/..')
+sys.path.append(path + "/..")
 from BSK_masters import BSKSim, BSKScenario
 import BSK_Dynamics, BSK_Fsw
 
 # Import plotting files for your scenario
-sys.path.append(path + '/../plotting')
+sys.path.append(path + "/../plotting")
 import BSK_Plotting as BSK_plt
+
 
 # Create your own scenario child class
 class scenario_HillPointing(BSKSim, BSKScenario):
     def __init__(self):
         super(scenario_HillPointing, self).__init__()
-        self.name = 'scenario_AttGuidance'
+        self.name = "scenario_AttGuidance"
 
         # declare additional class variables
         self.attNavRec = None
@@ -128,10 +128,13 @@ class scenario_HillPointing(BSKSim, BSKScenario):
 
         # if this scenario is to interface with the BSK Viz, uncomment the following line
         DynModels = self.get_DynModel()
-        vizSupport.enableUnityVisualization(self, DynModels.taskName, DynModels.scObject
-                                            # , saveFile=__file__
-                                            , rwEffectorList=DynModels.rwStateEffector
-                                            )
+        vizSupport.enableUnityVisualization(
+            self,
+            DynModels.taskName,
+            DynModels.scObject,
+            # , saveFile=__file__
+            rwEffectorList=DynModels.rwStateEffector,
+        )
 
     def configure_initial_conditions(self):
         # Configure Dynamics initial conditions
@@ -144,13 +147,17 @@ class scenario_HillPointing(BSKSim, BSKScenario):
         oe.f = 85.3 * macros.D2R
 
         DynModels = self.get_DynModel()
-        mu = DynModels.gravFactory.gravBodies['earth'].mu
+        mu = DynModels.gravFactory.gravBodies["earth"].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         DynModels.scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
         DynModels.scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
         DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        DynModels.scObject.hub.omega_BN_BInit = [
+            [0.001],
+            [-0.01],
+            [0.03],
+        ]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         FswModel = self.get_FswModel()
@@ -198,21 +205,26 @@ class scenario_HillPointing(BSKSim, BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "orientation", "attitudeGuidance"]
+            figureNames = [
+                "attitudeErrorNorm",
+                "rwMotorTorque",
+                "rateError",
+                "orientation",
+                "attitudeGuidance",
+            ]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
 
+
 def runScenario(TheScenario):
-
-
     # Initialize simulation
     TheScenario.InitializeSimulation()
     # Configure FSW mode
-    TheScenario.modeRequest = 'hillPoint'
+    TheScenario.modeRequest = "hillPoint"
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
     TheScenario.ConfigureStopTime(simulationTime)
 
     TheScenario.ExecuteSimulation()
@@ -220,10 +232,10 @@ def runScenario(TheScenario):
 
 def run(showPlots):
     """
-        The scenarios can be run with the followings setups parameters:
+    The scenarios can be run with the followings setups parameters:
 
-        Args:
-            showPlots (bool): Determines if the script should display plots
+    Args:
+        showPlots (bool): Determines if the script should display plots
 
     """
     # Instantiate base simulation

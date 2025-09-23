@@ -24,30 +24,28 @@
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
 
-
-
-
 /*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
  */
-typedef struct {
-    double sigma_R0N[3];                            //!<  MRP from inertial frame N to corrected reference frame R
-    AttRefMsg_C attRefOutMsg;                    //!< reference attitude output message
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}inertial3DConfig;
+typedef struct
+{
+    double sigma_R0N[3];      //!<  MRP from inertial frame N to corrected reference frame R
+    AttRefMsg_C attRefOutMsg; //!< reference attitude output message
+    BSKLogger* bskLogger;     //!< BSK Logging
+} inertial3DConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-    void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID);
-    void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_inertial3D(inertial3DConfig* configData, int64_t moduleID);
+    void Update_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t moduleID);
 
-    void computeInertialPointingReference(inertial3DConfig *configData, AttRefMsgPayload *attRefOut);
+    void computeInertialPointingReference(inertial3DConfig* configData, AttRefMsgPayload* attRefOut);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

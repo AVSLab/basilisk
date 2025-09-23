@@ -25,7 +25,6 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include <string.h>
 
-
 /*!
  \verbatim embed:rst
     This method initializes the configData for this module.  It creates a single output message of type
@@ -35,11 +34,11 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
+void
+SelfInit_thrMomentumManagement(thrMomentumManagementConfig* configData, int64_t moduleID)
 {
     CmdTorqueBodyMsg_C_init(&configData->deltaHOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -48,7 +47,8 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_thrMomentumManagement(thrMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwConfigDataInMsg)) {
@@ -73,14 +73,15 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_thrMomentumManagement(thrMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    RWSpeedMsgPayload   rwSpeedMsg;         /* Reaction wheel speed estimate message */
-    CmdTorqueBodyMsgPayload controlOutMsg;  /* Control torque output message */
-    double              hs;                 /* net RW cluster angular momentum magnitude */
-    double              hs_B[3];            /* RW angular momentum */
-    double              vec3[3];            /* temp vector */
-    double              Delta_H_B[3];       /* [Nms]  net desired angular momentum change */
+    RWSpeedMsgPayload rwSpeedMsg;          /* Reaction wheel speed estimate message */
+    CmdTorqueBodyMsgPayload controlOutMsg; /* Control torque output message */
+    double hs;                             /* net RW cluster angular momentum magnitude */
+    double hs_B[3];                        /* RW angular momentum */
+    double vec3[3];                        /* temp vector */
+    double Delta_H_B[3];                   /* [Nms]  net desired angular momentum change */
     int i;
 
     /*! - check if a momentum dumping check has been requested */
@@ -91,8 +92,10 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint6
 
         /*! - compute net RW momentum magnitude */
         v3SetZero(hs_B);
-        for (i=0;i<configData->rwConfigParams.numRW;i++) {
-            v3Scale(configData->rwConfigParams.JsList[i]*rwSpeedMsg.wheelSpeeds[i],&configData->rwConfigParams.GsMatrix_B[i*3],vec3);
+        for (i = 0; i < configData->rwConfigParams.numRW; i++) {
+            v3Scale(configData->rwConfigParams.JsList[i] * rwSpeedMsg.wheelSpeeds[i],
+                    &configData->rwConfigParams.GsMatrix_B[i * 3],
+                    vec3);
             v3Add(hs_B, vec3, hs_B);
         }
         hs = v3Norm(hs_B);
@@ -102,17 +105,15 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint6
             /* Momentum dumping not required */
             v3SetZero(Delta_H_B);
         } else {
-            v3Scale(-(hs - configData->hs_min)/hs, hs_B, Delta_H_B);
+            v3Scale(-(hs - configData->hs_min) / hs, hs_B, Delta_H_B);
         }
         configData->initRequest = 0;
-
 
         /*! - write out the output message */
         controlOutMsg = CmdTorqueBodyMsg_C_zeroMsgPayload();
         v3Copy(Delta_H_B, controlOutMsg.torqueRequestBody);
 
         CmdTorqueBodyMsg_C_write(&controlOutMsg, &configData->deltaHOutMsg, moduleID, callTime);
-
     }
 
     return;

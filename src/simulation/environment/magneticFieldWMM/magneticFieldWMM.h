@@ -30,37 +30,36 @@
 #include <ctime>
 
 /*! @brief magnetic field WMM class */
-class MagneticFieldWMM:  public MagneticFieldBase {
-public:
+class MagneticFieldWMM : public MagneticFieldBase
+{
+  public:
     MagneticFieldWMM();
     ~MagneticFieldWMM();
 
-private:
-    void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime);
+  private:
+    void evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, double currentTime);
     void initializeWmm();
     void cleanupEarthMagFieldModel();
     void computeWmmField(double decimalYear, MAGtype_CoordSpherical coord, double B_M[3]);
     void customReset(uint64_t CurrentClock);
     void customSetEpochFromVariable();
-    void decimalYear2Gregorian(double fractionalYear, struct tm *gregorian);
+    void decimalYear2Gregorian(double fractionalYear, struct tm* gregorian);
     double gregorian2DecimalYear(double currentTime);
 
-public:
-    std::string dataPath;                   //!< -- String with the path to the WMM coefficient file
-    double      epochDateFractionalYear;    //!< Specified epoch date as a fractional year
-    BSKLogger bskLogger;                    //!< -- BSK Logging
+  public:
+    std::string dataPath;           //!< -- String with the path to the WMM coefficient file
+    double epochDateFractionalYear; //!< Specified epoch date as a fractional year
+    BSKLogger bskLogger;            //!< -- BSK Logging
 
-private:
-    MAGtype_MagneticModel *magneticModel;
-    MAGtype_MagneticModel *timedMagneticModel;
-    MAGtype_Ellipsoid      ellip;
-    MAGtype_Geoid          geoid;
-    MAGtype_Date           userDate;
+  private:
+    MAGtype_MagneticModel* magneticModel;
+    MAGtype_MagneticModel* timedMagneticModel;
+    MAGtype_Ellipsoid ellip;
+    MAGtype_Geoid geoid;
+    MAGtype_Date userDate;
 
     MAGtype_LegendreFunction* LegendreFunction;
     MAGtype_SphericalHarmonicVariables* SphVariables;
-
 };
-
 
 #endif /* WMM_MAGNETIC_FIELD_H */

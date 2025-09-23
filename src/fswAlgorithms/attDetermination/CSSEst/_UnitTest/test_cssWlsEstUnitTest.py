@@ -32,16 +32,16 @@ import numpy
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import cssWlsEst
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-
-
-
 
 
 # Function that takes a sun pointing vector and array of CSS normal vectors and
@@ -50,7 +50,7 @@ def createCosList(sunPointVec, sensorPointList):
     outList = []
     for sensorPoint in sensorPointList:
         outList.append(numpy.dot(sunPointVec, sensorPoint))
-        if(outList[-1] < 0.0):
+        if outList[-1] < 0.0:
             outList[-1] = 0.0
     return outList
 
@@ -64,18 +64,18 @@ def checkNumActiveAccuracy(measVec, numActiveUse, numActiveFailCriteria, thresh)
     # Iterate through measVec and find all valid signals
     for i in range(0, 32):
         obsVal = measVec.CosValue[i]
-        if (obsVal > thresh):
+        if obsVal > thresh:
             numActivePred += 1
 
     # Iterate through the numActive array and sum up all numActive estimates
-    numActiveTotal = numpy.array([0.])
+    numActiveTotal = numpy.array([0.0])
     j = 0
     while j < numActiveUse.shape[0]:
         numActiveTotal += numActiveUse[j, 1:]
         j += 1
     numActiveTotal /= j  # Mean number of numActive
     # If we violate the test criteria, increment the failure count and alert user
-    if (abs(numActiveTotal[0] - numActivePred) > numActiveFailCriteria):
+    if abs(numActiveTotal[0] - numActivePred) > numActiveFailCriteria:
         testFailCount += 1
         errorString = "Active number failure for count of: "
         errorString += str(numActivePred)
@@ -97,14 +97,14 @@ def checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria, TotalSim):
     sHatTotal /= j  # mean sHat estimate
     # This logic is to protect cases where the dot product numerically breaks acos
     dot_value = numpy.dot(sHatTotal, testVec)
-    if (abs(dot_value > 1.0)):
+    if abs(dot_value > 1.0):
         dot_value -= 2.0 * (dot_value - math.copysign(1.0, dot_value))
 
     # If we violate the failure criteria, increment failure count and alert user
-    if (abs(math.acos(dot_value)) > angleFailCriteria):
+    if abs(math.acos(dot_value)) > angleFailCriteria:
         testFailCount += 1
         errorString = "Angle fail criteria violated for test vector:"
-        errorString += str(testVec).strip('[]') + "\n"
+        errorString += str(testVec).strip("[]") + "\n"
         errorString += "Criteria violation of: "
         errorString += str(abs(math.acos(numpy.dot(sHatTotal, testVec))))
         logging.error(errorString)
@@ -119,11 +119,11 @@ def checkResidAccuracy(testVec, sResids, sThresh, TotalSim):
     testFailCount = 0
     # Sum up all of the sHat estimates from the execution
     while j < sResids.shape[0]:
-        sNormObs = numpy.linalg.norm(sResids[j,1:])
-        if(sNormObs > sThresh):
+        sNormObs = numpy.linalg.norm(sResids[j, 1:])
+        if sNormObs > sThresh:
             testFailCount += 1
             errorString = "Residual error computation failure:"
-            errorString += str(testVec).strip('[]') + "\n"
+            errorString += str(testVec).strip("[]") + "\n"
             errorString += "Criteria violation of: "
             errorString += str(sNormObs)
             logging.error(errorString)
@@ -136,14 +136,15 @@ def checkResidAccuracy(testVec, sResids, sThresh, TotalSim):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 
-@pytest.mark.parametrize("testSunHeading, testRate", [
-     ("True", "False")
-    ,("False", "True")
-])
 
+@pytest.mark.parametrize(
+    "testSunHeading, testRate", [("True", "False"), ("False", "True")]
+)
 
 # provide a unique test method name, starting with test_
-def test_module(show_plots, testSunHeading, testRate):     # update "module" in this function name to reflect the module name
+def test_module(
+    show_plots, testSunHeading, testRate
+):  # update "module" in this function name to reflect the module name
     """Module Unit Test"""
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
@@ -158,17 +159,17 @@ def test_module(show_plots, testSunHeading, testRate):     # update "module" in 
 
 
 def cssWlsEstTestFunction(show_plots):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1e8)))
 
     # Construct algorithm and associated C++ container
     CSSWlsEstFSW = cssWlsEst.cssWlsEst()
@@ -209,9 +210,11 @@ def cssWlsEstTestFunction(show_plots):
     cssDataMsg = messaging.CSSArraySensorMsgPayload()
     cssDataInMsg = messaging.CSSArraySensorMsg().write(cssDataMsg)
 
-    angleFailCriteria = 17.5 * math.pi / 180.0  # Get 95% effective charging in this case
+    angleFailCriteria = (
+        17.5 * math.pi / 180.0
+    )  # Get 95% effective charging in this case
     numActiveFailCriteria = 0.000001  # basically zero
-    residFailCriteria = 1.0E-12  # Essentially numerically "small"
+    residFailCriteria = 1.0e-12  # Essentially numerically "small"
 
     # Log the output message as well as the internal numACtiveCss variables
     navData = CSSWlsEstFSW.navStateOutMsg.recorder()
@@ -226,16 +229,20 @@ def cssWlsEstTestFunction(show_plots):
     CSSWlsEstFSW.cssConfigInMsg.subscribeTo(cssConfigDataInMsg)
 
     # Initial test is all of the principal body axes
-    TestVectors = [[-1.0, 0.0, 0.0],
-                   [0.0, -1.0, 0.0],
-                   [1.0, 0.0, 0.0],
-                   [0.0, 1.0, 0.0],
-                   [0.0, 0.0, -1.0],
-                   [0.0, 0.0, 1.0]]
+    TestVectors = [
+        [-1.0, 0.0, 0.0],
+        [0.0, -1.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, -1.0],
+        [0.0, 0.0, 1.0],
+    ]
 
     # Initialize test and then step through all of the test vectors in a loop
     unitTestSim.InitializeSimulation()
-    CSSWlsEstFSW.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
+    CSSWlsEstFSW.Reset(
+        0
+    )  # this module reset function needs a time input (in NanoSeconds)
 
     stepCount = 0
     logLengthPrev = 0
@@ -252,7 +259,7 @@ def cssWlsEstTestFunction(show_plots):
         cssDataInMsg.write(cssDataMsg)
 
         # Increment the stop time to new termination value
-        unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
+        unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1e9))
         # Execute simulation to current stop time
         unitTestSim.ExecuteSimulation()
         stepCount += 1
@@ -260,19 +267,27 @@ def cssWlsEstTestFunction(show_plots):
         # Pull logged data out into workspace for analysis
         sHatEst = navData.vehSunPntBdy
 
-        numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss) 
+        numActive = unitTestSupport.addTimeColumn(
+            numActiveData.times(), numActiveData.numActiveCss
+        )
         sHatEstUse = sHatEst[logLengthPrev:, :]  # Only data for this subtest
-        numActiveUse = numActive[logLengthPrev + 1:, :]  # Only data for this subtest
+        numActiveUse = numActive[logLengthPrev + 1 :, :]  # Only data for this subtest
 
         # Check failure criteria and add test failures
-        testFailCount += checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria,
-                                           unitTestSim)
-        testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                                numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
+        testFailCount += checksHatAccuracy(
+            testVec, sHatEstUse, angleFailCriteria, unitTestSim
+        )
+        testFailCount += checkNumActiveAccuracy(
+            cssDataMsg,
+            numActiveUse,
+            numActiveFailCriteria,
+            CSSWlsEstFSW.sensorUseThresh,
+        )
 
         filtRes = filterData.postFitRes
-        testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria,
-                                            unitTestSim)
+        testFailCount += checkResidAccuracy(
+            testVec, filtRes, residFailCriteria, unitTestSim
+        )
 
         # Pop truth state onto end of array for plotting purposes
         currentRow = [sHatEstUse[0, 0]]
@@ -286,20 +301,25 @@ def cssWlsEstTestFunction(show_plots):
     # Hand construct case where we get low coverage (2 valid sensors)
     LonVal = 0.0
     LatVal = 40.68 * math.pi / 180.0
-    doubleTestVec = [math.sin(LatVal), math.cos(LatVal) * math.sin(LonVal),
-                     math.cos(LatVal) * math.cos(LonVal)]
+    doubleTestVec = [
+        math.sin(LatVal),
+        math.cos(LatVal) * math.sin(LonVal),
+        math.cos(LatVal) * math.cos(LonVal),
+    ]
     cssDataMsg.CosValue = createCosList(doubleTestVec, CSSOrientationList)
 
     # Write in double coverage conditions and ensure that we get correct outputs
     cssDataInMsg.write(cssDataMsg)
 
-    unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
+    unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1e9))
     unitTestSim.ExecuteSimulation()
     stepCount += 1
     sHatEst = navData.vehSunPntBdy
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
+    numActive = unitTestSupport.addTimeColumn(
+        numActiveData.times(), numActiveData.numActiveCss
+    )
     sHatEstUse = sHatEst[logLengthPrev:, :]
-    numActiveUse = numActive[logLengthPrev + 1:, :]
+    numActiveUse = numActive[logLengthPrev + 1 :, :]
     logLengthPrev = sHatEst.shape[0]
     currentRow = [sHatEstUse[0, 0]]
     currentRow.extend(doubleTestVec)
@@ -309,25 +329,30 @@ def cssWlsEstTestFunction(show_plots):
     truthData.append(currentRow)
 
     # Check test criteria again
-    testFailCount += checksHatAccuracy(doubleTestVec, sHatEstUse, angleFailCriteria,
-                                       unitTestSim)
-    testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
+    testFailCount += checksHatAccuracy(
+        doubleTestVec, sHatEstUse, angleFailCriteria, unitTestSim
+    )
+    testFailCount += checkNumActiveAccuracy(
+        cssDataMsg, numActiveUse, numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh
+    )
 
     # Same test as above, but zero first element to get to a single coverage case
     cssDataMsg.CosValue[0] = 0.0
     cssDataInMsg.write(cssDataMsg)
 
-    unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
+    unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1e9))
     unitTestSim.ExecuteSimulation()
     stepCount += 1
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
-    numActiveUse = numActive[logLengthPrev + 1:, :]
+    numActive = unitTestSupport.addTimeColumn(
+        numActiveData.times(), numActiveData.numActiveCss
+    )
+    numActiveUse = numActive[logLengthPrev + 1 :, :]
     sHatEst = navData.vehSunPntBdy
-    sHatEstUse = sHatEst[logLengthPrev + 1:, :]
+    sHatEstUse = sHatEst[logLengthPrev + 1 :, :]
     logLengthPrev = sHatEst.shape[0]
-    testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
+    testFailCount += checkNumActiveAccuracy(
+        cssDataMsg, numActiveUse, numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh
+    )
     currentRow = [sHatEstUse[0, 0]]
     currentRow.extend(doubleTestVec)
     truthData.append(currentRow)
@@ -340,73 +365,80 @@ def cssWlsEstTestFunction(show_plots):
     cssDataMsg.CosValue[3] = 0.0
     cssDataInMsg.write(cssDataMsg)
 
-    unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
+    unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1e9))
     unitTestSim.ExecuteSimulation()
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
+    numActive = unitTestSupport.addTimeColumn(
+        numActiveData.times(), numActiveData.numActiveCss
+    )
     numActiveUse = numActive[logLengthPrev:, :]
     logLengthPrev = numActive.shape[0]
-    testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh)
+    testFailCount += checkNumActiveAccuracy(
+        cssDataMsg, numActiveUse, numActiveFailCriteria, CSSWlsEstFSW.sensorUseThresh
+    )
 
     # Format data for plotting
     truthData = numpy.array(truthData)
     sHatEst = navData.vehSunPntBdy
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
-
+    numActive = unitTestSupport.addTimeColumn(
+        numActiveData.times(), numActiveData.numActiveCss
+    )
 
     #
     # test the case where all CSS signals are zero
     #
     cssDataMsg.CosValue = numpy.zeros(len(CSSOrientationList))
     cssDataInMsg.write(cssDataMsg)
-    unitTestSim.ConfigureStopTime(int((stepCount + 2) * 1E9))
+    unitTestSim.ConfigureStopTime(int((stepCount + 2) * 1e9))
     unitTestSim.ExecuteSimulation()
     sHatEstZero = navData.vehSunPntBdy
-    sHatEstZeroUse = sHatEstZero[logLengthPrev + 1:, :]
+    sHatEstZeroUse = sHatEstZero[logLengthPrev + 1 :, :]
 
-    trueVector = [[0.0, 0.0, 0.0]]*len(sHatEstZeroUse)
+    trueVector = [[0.0, 0.0, 0.0]] * len(sHatEstZeroUse)
     for i in range(0, len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(sHatEstZeroUse[i], trueVector[i], 3, 1e-12):
             testFailCount += 1
-            testMessages.append("FAILED: " + CSSWlsEstFSW.ModelTag + " Module failed  unit test at t=" +
-                                str(navData.times()[i] * macros.NANO2SEC) + "sec\n")
-
-
+            testMessages.append(
+                "FAILED: "
+                + CSSWlsEstFSW.ModelTag
+                + " Module failed  unit test at t="
+                + str(navData.times()[i] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
     if show_plots:
         plt.figure(1)
-        plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 0], label='x-Sun')
-        plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 1], label='y-Sun')
-        plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 2], label='z-Sun')
-        plt.legend(loc='upper left')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Unit Component (--)')
+        plt.plot(sHatEst[:, 0] * 1.0e-9, sHatEst[:, 0], label="x-Sun")
+        plt.plot(sHatEst[:, 0] * 1.0e-9, sHatEst[:, 1], label="y-Sun")
+        plt.plot(sHatEst[:, 0] * 1.0e-9, sHatEst[:, 2], label="z-Sun")
+        plt.legend(loc="upper left")
+        plt.xlabel("Time (s)")
+        plt.ylabel("Unit Component (--)")
 
         plt.figure(2)
-        plt.plot(numActive[:, 0] * 1.0E-9, numActive[:, 1])
-        plt.xlabel('Time (s)')
-        plt.ylabel('Number Active CSS (--)')
+        plt.plot(numActive[:, 0] * 1.0e-9, numActive[:, 1])
+        plt.xlabel("Time (s)")
+        plt.ylabel("Number Active CSS (--)")
 
         plt.figure(3)
         plt.subplot(3, 1, 1)
-        plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 0], label='Est')
-        plt.plot(truthData[:, 0] * 1.0E-9, truthData[:, 0], 'r--', label='Truth')
-        plt.xlabel('Time (s)')
-        plt.ylabel('X Component (--)')
-        plt.legend(loc='lower right')
+        plt.plot(sHatEst[:, 0] * 1.0e-9, sHatEst[:, 0], label="Est")
+        plt.plot(truthData[:, 0] * 1.0e-9, truthData[:, 0], "r--", label="Truth")
+        plt.xlabel("Time (s)")
+        plt.ylabel("X Component (--)")
+        plt.legend(loc="lower right")
         plt.subplot(3, 1, 2)
-        plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 1], label='Est')
-        plt.plot(truthData[:, 0] * 1.0E-9, truthData[:, 1], 'r--', label='Truth')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Y Component (--)')
+        plt.plot(sHatEst[:, 0] * 1.0e-9, sHatEst[:, 1], label="Est")
+        plt.plot(truthData[:, 0] * 1.0e-9, truthData[:, 1], "r--", label="Truth")
+        plt.xlabel("Time (s)")
+        plt.ylabel("Y Component (--)")
         plt.subplot(3, 1, 3)
-        plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 2], label='Est')
-        plt.plot(truthData[:, 0] * 1.0E-9, truthData[:, 2], 'r--', label='Truth')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Z Component (--)')
+        plt.plot(sHatEst[:, 0] * 1.0e-9, sHatEst[:, 2], label="Est")
+        plt.plot(truthData[:, 0] * 1.0e-9, truthData[:, 2], "r--", label="Truth")
+        plt.xlabel("Time (s)")
+        plt.ylabel("Z Component (--)")
         plt.show()
-        plt.close('all')
+        plt.close("all")
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -414,14 +446,14 @@ def cssWlsEstTestFunction(show_plots):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def cssRateTestFunction(show_plots):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -493,7 +525,7 @@ def cssRateTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # test the module reset function
-    module.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    module.Reset(1)  # this module reset function needs a time input (in NanoSeconds)
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))
     unitTestSim.ExecuteSimulation()
     cssDataMsg.CosValue = createCosList([1.0, 0.0, 0.0], CSSOrientationList)
@@ -509,27 +541,32 @@ def cssRateTestFunction(show_plots):
         [0.0, 0.0, -3.14159265],
         [0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0],
-        [0.0, 0.0, +3.14159265]
+        [0.0, 0.0, +3.14159265],
     ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.omega_BN_B,
-                                                               accuracy, "CSS Rate Vector",
-                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        dataLog.omega_BN_B,
+        accuracy,
+        "CSS Rate Vector",
+        testFailCount,
+        testMessages,
+    )
 
     #   print out success message if no error were found
     snippentName = "passFailRate"
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -538,7 +575,7 @@ def cssRateTestFunction(show_plots):
 #
 if __name__ == "__main__":
     test_module(
-                True,          # show_plots
-                False,          # testSunHeading Flag
-                True            # testRate Flag
+        True,  # show_plots
+        False,  # testSunHeading Flag
+        True,  # testRate Flag
     )

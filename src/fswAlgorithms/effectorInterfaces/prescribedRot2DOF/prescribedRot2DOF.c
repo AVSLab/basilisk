@@ -31,7 +31,8 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t moduleID)
+void
+SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, int64_t moduleID)
 {
     PrescribedRotationMsg_C_init(&configData->prescribedRotationOutMsg);
 }
@@ -44,7 +45,8 @@ void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t mod
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // Check if the required input messages are linked */
     if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyRef1InMsg)) {
@@ -87,7 +89,8 @@ are updated in this routine as a function of time and written to the prescribedM
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // Create buffer messages
     HingedRigidBodyMsgPayload spinningBodyRef1In;
@@ -101,22 +104,20 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
 
     // Read the input messages
     spinningBodyRef1In = HingedRigidBodyMsg_C_zeroMsgPayload();
-    if (HingedRigidBodyMsg_C_isWritten(&configData->spinningBodyRef1InMsg))
-    {
+    if (HingedRigidBodyMsg_C_isWritten(&configData->spinningBodyRef1InMsg)) {
         spinningBodyRef1In = HingedRigidBodyMsg_C_read(&configData->spinningBodyRef1InMsg);
     }
 
     spinningBodyRef2In = HingedRigidBodyMsg_C_zeroMsgPayload();
-    if (HingedRigidBodyMsg_C_isWritten(&configData->spinningBodyRef2InMsg))
-    {
+    if (HingedRigidBodyMsg_C_isWritten(&configData->spinningBodyRef2InMsg)) {
         spinningBodyRef2In = HingedRigidBodyMsg_C_read(&configData->spinningBodyRef2InMsg);
     }
 
     /* This loop is entered when the spinning body attitude converges to the reference attitude. The PRV angle and axis
      reference parameters are updated along with the profiled trajectory parameters. */
-    if ((HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyRef1InMsg) <= callTime
-    || HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyRef2InMsg) <= callTime ) && configData->isManeuverComplete)
-    {
+    if ((HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyRef1InMsg) <= callTime ||
+         HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyRef2InMsg) <= callTime) &&
+        configData->isManeuverComplete) {
         // Define the initial time
         configData->maneuverStartTime = callTime * NANO2SEC;
 
@@ -130,33 +131,35 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
         double theta2Ref = spinningBodyRef2In.theta;
 
         // Convert the reference angles and their associated rotation axes to PRVs
-        double prv_P1M_array[3];                    // 1st PRV representing the intermediate frame relative to the M frame
-        double prv_P2P1_array[3];                   // 2nd PRV representing the final reference frame relative to the intermediate frame
+        double prv_P1M_array[3];  // 1st PRV representing the intermediate frame relative to the M frame
+        double prv_P2P1_array[3]; // 2nd PRV representing the final reference frame relative to the intermediate frame
         v3Normalize(configData->rotAxis1_M, configData->rotAxis1_M);
         v3Normalize(configData->rotAxis2_P1, configData->rotAxis2_P1);
         v3Scale(theta1Ref, configData->rotAxis1_M, prv_P1M_array);
         v3Scale(theta2Ref, configData->rotAxis2_P1, prv_P2P1_array);
 
         // Convert the reference PRVs to DCMs
-        double dcm_P1M[3][3];                       // 1st DCM representing the intermediate frame relative to the M frame
-        double dcm_P2P1[3][3];                      // 2nd DCM representing the final reference frame relative to the intermediate frame
+        double dcm_P1M[3][3];  // 1st DCM representing the intermediate frame relative to the M frame
+        double dcm_P2P1[3][3]; // 2nd DCM representing the final reference frame relative to the intermediate frame
         PRV2C(prv_P1M_array, dcm_P1M);
         PRV2C(prv_P2P1_array, dcm_P2P1);
 
         // Combine the two reference DCMs to a single reference DCM
-        double dcm_P2M[3][3];                       // DCM representing the final reference frame relative to the M frame
+        double dcm_P2M[3][3]; // DCM representing the final reference frame relative to the M frame
         m33MultM33(dcm_P2P1, dcm_P1M, dcm_P2M);
 
         // Convert dcm_P2M to a PRV
-        double prv_P2M_array[3];                    // PRV representing the final reference frame relative to the M frame
+        double prv_P2M_array[3]; // PRV representing the final reference frame relative to the M frame
         C2PRV(dcm_P2M, prv_P2M_array);
 
-        // Determine dcm_P2P. This DCM represents the final reference attitude with respect to the current spinning body body frame
+        // Determine dcm_P2P. This DCM represents the final reference attitude with respect to the current spinning body
+        // body frame
         double dcm_P2P[3][3];
         m33MultM33t(dcm_P2M, dcm_PM, dcm_P2P);
 
         // Convert dcm_P2P to a PRV
-        double prv_P2P_array[3];                    // PRV representing the final reference frame relative to the current spinning body body frame
+        double prv_P2P_array[3]; // PRV representing the final reference frame relative to the current spinning body
+                                 // body frame
         C2PRV(dcm_P2P, prv_P2P_array);
 
         // Compute the single PRV reference angle for the attitude maneuver.
@@ -167,13 +170,18 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
         configData->phiRefAccum = configData->phiAccum;
 
         // Define temporal information
-        double convTime = sqrt(fabs(configData->phiRef) * 4 / configData->phiDDotMax); // Time for the individual attitude maneuver
+        double convTime =
+          sqrt(fabs(configData->phiRef) * 4 / configData->phiDDotMax); // Time for the individual attitude maneuver
         configData->maneuverEndTime = configData->maneuverStartTime + convTime;
         configData->maneuverSwitchTime = convTime / 2 + configData->maneuverStartTime;
 
         // Define the maneuver parabolic constants
-        configData->a = 0.5 * configData->phiRef / ((configData->maneuverSwitchTime - configData->maneuverStartTime) * (configData->maneuverSwitchTime - configData->maneuverStartTime));
-        configData->b = -0.5 * configData->phiRef / ((configData->maneuverSwitchTime - configData->maneuverEndTime) * (configData->maneuverSwitchTime - configData->maneuverEndTime));
+        configData->a = 0.5 * configData->phiRef /
+                        ((configData->maneuverSwitchTime - configData->maneuverStartTime) *
+                         (configData->maneuverSwitchTime - configData->maneuverStartTime));
+        configData->b = -0.5 * configData->phiRef /
+                        ((configData->maneuverSwitchTime - configData->maneuverEndTime) *
+                         (configData->maneuverSwitchTime - configData->maneuverEndTime));
 
         // Set the convergence to false until the attitude maneuver is complete
         configData->isManeuverComplete = false;
@@ -187,19 +195,22 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
     double phiDot;
 
     // Compute the prescribed states at the current time for the profiled trajectory
-    if ((t < configData->maneuverSwitchTime || t == configData->maneuverSwitchTime) && configData->maneuverEndTime != configData->maneuverStartTime) // Entered during the first half of the attitude maneuver
+    if ((t < configData->maneuverSwitchTime || t == configData->maneuverSwitchTime) &&
+        configData->maneuverEndTime !=
+          configData->maneuverStartTime) // Entered during the first half of the attitude maneuver
     {
         phiDDot = configData->phiDDotMax;
         phiDot = phiDDot * (t - configData->maneuverStartTime);
         configData->phi = configData->a * (t - configData->maneuverStartTime) * (t - configData->maneuverStartTime);
-    }
-    else if ( t > configData->maneuverSwitchTime && t <= configData->maneuverEndTime && configData->maneuverEndTime != configData->maneuverStartTime) // Entered during the second half of the attitude maneuver
+    } else if (t > configData->maneuverSwitchTime && t <= configData->maneuverEndTime &&
+               configData->maneuverEndTime !=
+                 configData->maneuverStartTime) // Entered during the second half of the attitude maneuver
     {
         phiDDot = -1 * configData->phiDDotMax;
-        phiDot = phiDDot * (t - configData->maneuverEndTime );
-        configData->phi = configData->b * (t - configData->maneuverEndTime) * (t - configData->maneuverEndTime) + configData->phiRef;
-    }
-    else // Entered if the maneuver is complete
+        phiDot = phiDDot * (t - configData->maneuverEndTime);
+        configData->phi =
+          configData->b * (t - configData->maneuverEndTime) * (t - configData->maneuverEndTime) + configData->phiRef;
+    } else // Entered if the maneuver is complete
     {
         phiDDot = 0.0;
         phiDot = 0.0;

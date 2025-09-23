@@ -32,7 +32,8 @@ LambertSolver::~LambertSolver() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSolver::Reset(uint64_t currentSimNanos)
+void
+LambertSolver::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
@@ -45,7 +46,8 @@ void LambertSolver::Reset(uint64_t currentSimNanos)
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSolver::UpdateState(uint64_t currentSimNanos)
+void
+LambertSolver::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -56,7 +58,7 @@ void LambertSolver::UpdateState(uint64_t currentSimNanos)
 
     // compute velocity vector at initial and final position of Lambert's problem
     this->vvecs = this->computeVelocities(this->X);
-    if (numberOfRevolutions > 0){
+    if (numberOfRevolutions > 0) {
         // if one or more orbits are to be completed, two solutions exist. Compute velocities for second solution
         this->vvecsSol2 = this->computeVelocities(this->XSol2);
     }
@@ -69,21 +71,23 @@ void LambertSolver::UpdateState(uint64_t currentSimNanos)
     this module.
 
 */
-void LambertSolver::readMessages(){
+void
+LambertSolver::readMessages()
+{
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
 
     // check if input parameters are valid
-    if (lambertProblemInMsgBuffer.mu <= 0.0){
+    if (lambertProblemInMsgBuffer.mu <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "lambertSolver: mu must be positive.");
     } else {
         this->mu = lambertProblemInMsgBuffer.mu;
     }
-    if (lambertProblemInMsgBuffer.transferTime <= 0.0){
+    if (lambertProblemInMsgBuffer.transferTime <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "lambertSolver: transferTime must be positive.");
     } else {
         this->transferTime = lambertProblemInMsgBuffer.transferTime;
     }
-    if (lambertProblemInMsgBuffer.numRevolutions < 0){
+    if (lambertProblemInMsgBuffer.numRevolutions < 0) {
         bskLogger.bskLog(BSK_ERROR, "lambertSolver: numberOfRevolutions must be zero or positive.");
     } else {
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
@@ -97,7 +101,9 @@ void LambertSolver::readMessages(){
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSolver::writeMessages(uint64_t currentSimNanos){
+void
+LambertSolver::writeMessages(uint64_t currentSimNanos)
+{
     // Make local copies of messages
     LambertSolutionMsgPayload lambertSolutionOutMsgBuffer;
     LambertPerformanceMsgPayload lambertPerformanceOutMsgBuffer;
@@ -105,15 +111,14 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos){
     lambertSolutionOutMsgBuffer = this->lambertSolutionOutMsg.zeroMsgPayload;
     lambertPerformanceOutMsgBuffer = this->lambertPerformanceOutMsg.zeroMsgPayload;
 
-    if (this->noSolution || (this->numberOfRevolutions > 0 && !this->multiRevSolution)){
+    if (this->noSolution || (this->numberOfRevolutions > 0 && !this->multiRevSolution)) {
         /*  1. if the transfer angle is 180 degrees, the two position vectors do not define a plane, so an infinite
             number of solutions exist. In this case, the module should not return any solutions.
             2. transfer time is too short for multi-revolution solution, zero solutions exist.
             Neither solution is valid */
         lambertSolutionOutMsgBuffer.valid = 0;
         lambertSolutionOutMsgBuffer.validSol2 = 0;
-    }
-    else if (this->numberOfRevolutions == 0){
+    } else if (this->numberOfRevolutions == 0) {
         // if zero orbits are completed, only one solution exists.
         // Only populate information for 1st solution, 2nd solution remains zero message payload
         eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1_N);
@@ -123,8 +128,7 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos){
         lambertPerformanceOutMsgBuffer.x = this->X;
         lambertPerformanceOutMsgBuffer.numIter = this->numIter;
         lambertPerformanceOutMsgBuffer.errX = this->errX;
-    }
-    else{
+    } else {
         // if one or more orbits are completed, and the requested time of flight is long enough, two solutions exist
         eigenVector3d2CArray(this->vvecs.at(0), lambertSolutionOutMsgBuffer.v1_N);
         eigenVector3d2CArray(this->vvecs.at(1), lambertSolutionOutMsgBuffer.v2_N);
@@ -150,17 +154,18 @@ void LambertSolver::writeMessages(uint64_t currentSimNanos){
     The orbit frame is also determined.
 
 */
-void LambertSolver::problemGeometry()
+void
+LambertSolver::problemGeometry()
 {
     double c = (this->r2_N - this->r1_N).norm(); // chord length
     double r1 = this->r1_N.norm();
     double r2 = this->r2_N.norm();
-    double s = 1.0/2.0*(r1+r2+c); // semiperimeter
+    double s = 1.0 / 2.0 * (r1 + r2 + c); // semiperimeter
 
     // lambda parameter
-    this->lambda = sqrt(1.0-c/s);
+    this->lambda = sqrt(1.0 - c / s);
     // non-dimensional time-of-flight
-    this->TOF = sqrt(2.0*this->mu/pow(s,3))*this->transferTime;
+    this->TOF = sqrt(2.0 * this->mu / pow(s, 3)) * this->transferTime;
 
     // compute orbit frame unit vectors
 
@@ -169,7 +174,7 @@ void LambertSolver::problemGeometry()
     Eigen::Vector3d i_r2_N = this->r2_N / r2;
     // check alignment of the two position vectors
     double sinTheta = i_r1_N.cross(i_r2_N).norm();
-    if (abs(sinTheta) < sin(this->alignmentThreshold * M_PI/180.)){
+    if (abs(sinTheta) < sin(this->alignmentThreshold * M_PI / 180.)) {
         bskLogger.bskLog(BSK_WARNING,
                          "lambertSolver: position vectors r1 and r2 are too aligned, that is, the angle between "
                          "them is smaller than the angle alignmentThreshold (default: 1.0 degrees). "
@@ -180,7 +185,7 @@ void LambertSolver::problemGeometry()
     Eigen::Vector3d i_h_N = i_r1_N.cross(i_r2_N) / (i_r1_N.cross(i_r2_N).norm());
 
     double sign = 1.0;
-    if (i_h_N(2) < 0.0){
+    if (i_h_N(2) < 0.0) {
         // Transfer angle is greater than 180 degrees
         this->lambda = -this->lambda;
         sign = -sign;
@@ -189,20 +194,21 @@ void LambertSolver::problemGeometry()
     Eigen::Vector3d i_t1_N = i_h_N.cross(i_r1_N) * sign;
     Eigen::Vector3d i_t2_N = i_h_N.cross(i_r2_N) * sign;
 
-    this->Oframe1 = {i_r1_N, i_t1_N, i_h_N};
-    this->Oframe2 = {i_r2_N, i_t2_N, i_h_N};
+    this->Oframe1 = { i_r1_N, i_t1_N, i_h_N };
+    this->Oframe2 = { i_r2_N, i_t2_N, i_h_N };
 }
 
 /*! This method finds the free variable x that satisfies the requested time of flight TOF.
 
 */
-void LambertSolver::findx()
+void
+LambertSolver::findx()
 {
     // find x that satisfies time-of-flight constraint using numerical root finder
-    if (this->solverMethod == GOODING){
+    if (this->solverMethod == GOODING) {
         // get initial guess for iteration variable x
         std::array<double, 2> x0 = goodingInitialGuess(this->lambda, this->TOF);
-        if (this->numberOfRevolutions > 0 && !this->multiRevSolution){
+        if (this->numberOfRevolutions > 0 && !this->multiRevSolution) {
             // if initial guess function determines that TOF is too short for multi-revolution solution to exist,
             // return no solution
             return;
@@ -213,18 +219,17 @@ void LambertSolver::findx()
         this->numIter = int(solution[1]);
         this->errX = solution[2];
 
-        if (this->numberOfRevolutions > 0){
+        if (this->numberOfRevolutions > 0) {
             // if one or more orbits are to be completed, two solutions exist. Find second solution
             std::array<double, 3> solution_sol2 = halley(this->TOF, x0[1], this->numberOfRevolutions);
             this->XSol2 = solution_sol2[0];
             this->numIterSol2 = int(solution_sol2[1]);
             this->errXSol2 = solution_sol2[2];
         }
-    }
-    else if (this->solverMethod == IZZO){
+    } else if (this->solverMethod == IZZO) {
         // get initial guess for iteration variable x
         std::array<double, 2> x0 = izzoInitialGuess(this->lambda, this->TOF);
-        if (this->numberOfRevolutions > 0 && !this->multiRevSolution){
+        if (this->numberOfRevolutions > 0 && !this->multiRevSolution) {
             // if initial guess function determines that TOF is too short for multi-revolution solution to exist,
             // return no solution
             return;
@@ -235,7 +240,7 @@ void LambertSolver::findx()
         this->numIter = int(solution[1]);
         this->errX = solution[2];
 
-        if (this->numberOfRevolutions > 0){
+        if (this->numberOfRevolutions > 0) {
             // if one or more orbits are to be completed, two solutions exist. Find second solution
             std::array<double, 3> solution_sol2 = householder(this->TOF, x0[1], this->numberOfRevolutions);
             this->XSol2 = solution_sol2[0];
@@ -249,23 +254,24 @@ void LambertSolver::findx()
     @param x free variable of Lambert's problem that satisfies the given time of flight
     @return std::array<Eigen::Vector3d, 2>
 */
-std::array<Eigen::Vector3d, 2> LambertSolver::computeVelocities(double x)
+std::array<Eigen::Vector3d, 2>
+LambertSolver::computeVelocities(double x)
 {
     double c = (this->r2_N - this->r1_N).norm(); // chord length
     double r1 = this->r1_N.norm();
     double r2 = this->r2_N.norm();
-    double s = 1.0/2.0*(r1+r2+c); // semiperimeter
+    double s = 1.0 / 2.0 * (r1 + r2 + c); // semiperimeter
 
-    double y = sqrt(1.0-pow(this->lambda,2)*(1.0-pow(x,2)));
-    double gamma = sqrt(this->mu * s/2);
-    double rho = (r1-r2)/c;
-    double sigma = sqrt(1.0-pow(rho,2));
+    double y = sqrt(1.0 - pow(this->lambda, 2) * (1.0 - pow(x, 2)));
+    double gamma = sqrt(this->mu * s / 2);
+    double rho = (r1 - r2) / c;
+    double sigma = sqrt(1.0 - pow(rho, 2));
 
     // compute velocity components for v1_N and v2_N
-    double Vr1 = gamma*((this->lambda*y - x) - rho*(this->lambda*y+x))/r1;
-    double Vr2 = -gamma*((this->lambda*y - x) + rho*(this->lambda*y+x))/r2;
-    double Vt1 = gamma*sigma*(y+this->lambda*x)/r1;
-    double Vt2 = gamma*sigma*(y+this->lambda*x)/r2;
+    double Vr1 = gamma * ((this->lambda * y - x) - rho * (this->lambda * y + x)) / r1;
+    double Vr2 = -gamma * ((this->lambda * y - x) + rho * (this->lambda * y + x)) / r2;
+    double Vt1 = gamma * sigma * (y + this->lambda * x) / r1;
+    double Vt2 = gamma * sigma * (y + this->lambda * x) / r2;
 
     // get orbit frame unit vectors
     Eigen::Vector3d i_r1_N = this->Oframe1.at(0);
@@ -277,7 +283,7 @@ std::array<Eigen::Vector3d, 2> LambertSolver::computeVelocities(double x)
     Eigen::Vector3d v1_N = Vr1 * i_r1_N + Vt1 * i_t1_N;
     Eigen::Vector3d v2_N = Vr2 * i_r2_N + Vt2 * i_t2_N;
 
-    std::array<Eigen::Vector3d, 2> velocities = {v1_N, v2_N};
+    std::array<Eigen::Vector3d, 2> velocities = { v1_N, v2_N };
     return velocities;
 }
 
@@ -286,7 +292,9 @@ std::array<Eigen::Vector3d, 2> LambertSolver::computeVelocities(double x)
     @param T non-dimensional time-of-flight
     @return std::array<double, 2>
 */
-std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
+std::array<double, 2>
+LambertSolver::goodingInitialGuess(double lam, double T)
+{
     // T for x=0 and zero revolution
     double T00 = acos(lam) + lam * sqrt(1.0 - pow(lam, 2));
     // T for x=0 and M revolutions
@@ -343,7 +351,7 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
             this->multiRevSolution = false;
             bskLogger.bskLog(BSK_WARNING,
                              "lambertSolver: no multi-revolution solution exists for the given time of flight.");
-            std::array<double, 2> x0 = {0.0, 0.0};
+            std::array<double, 2> x0 = { 0.0, 0.0 };
             return x0;
         }
         // if T >= Tmin, two multi-revolution solutions exist for given time of flight T (or one solution if T = Tmin)
@@ -367,9 +375,9 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
                 x0Sol1 = x01_1 - pow(-W, 1.0 / 16.0) * (x01_1 + sqrt(Tdiff / (Tdiff + 1.5 * T0M)));
             } else {
                 double W2 = 4.0 / (4.0 + Tdiff);
-                x0Sol1 = x01_1 * (1.0 + (1.0 + this->numberOfRevolutions + c42 * (theta / (2 * M_PI) - 0.5))
-                                         / (1.0 - c3 * this->numberOfRevolutions) * x01_1 *
-                                         (c1 * W2 - c2 * x01_1 * pow(W2, 1.0 / 2.0)));
+                x0Sol1 = x01_1 * (1.0 + (1.0 + this->numberOfRevolutions + c42 * (theta / (2 * M_PI) - 0.5)) /
+                                          (1.0 - c3 * this->numberOfRevolutions) * x01_1 *
+                                          (c1 * W2 - c2 * x01_1 * pow(W2, 1.0 / 2.0)));
             }
         }
 
@@ -378,12 +386,13 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
         double x01_2 = x_M + sqrt(term2);
         double W = x_M + x01_2;
         W = W * 4.0 / (4.0 + TdiffM) + pow(1.0 - W, 2);
-        x0Sol2 = x01_2 * (1.0 - (1.0 + this->numberOfRevolutions + c41 * (theta / (2 * M_PI) - 0.5))
-                                 / (1.0 - c3 * this->numberOfRevolutions) * x01_2 *
-                                 (c1 * W + c2 * x01_2 * pow(W, 1.0 / 2.0))) - x_M;
+        x0Sol2 =
+          x01_2 * (1.0 - (1.0 + this->numberOfRevolutions + c41 * (theta / (2 * M_PI) - 0.5)) /
+                           (1.0 - c3 * this->numberOfRevolutions) * x01_2 * (c1 * W + c2 * x01_2 * pow(W, 1.0 / 2.0))) -
+          x_M;
     }
 
-    std::array<double, 2> x0 = {x0Sol1, x0Sol2};
+    std::array<double, 2> x0 = { x0Sol1, x0Sol2 };
     return x0;
 }
 
@@ -392,7 +401,9 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T) {
     @param T non-dimensional time-of-flight
     @return std::array<double, 2>
 */
-std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T) {
+std::array<double, 2>
+LambertSolver::izzoInitialGuess(double lam, double T)
+{
     // T for x=0 and zero revolution
     double T00 = acos(lam) + lam * sqrt(1.0 - pow(lam, 2));
     // T forx=1 (parabolic case)
@@ -404,39 +415,36 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T) {
     double x0Sol2 = 0.0; // initial guess for solution 2 (multi-revolutions only)
 
     // initial guess procedure for Izzo algorithm
-    if (this->numberOfRevolutions == 0){
+    if (this->numberOfRevolutions == 0) {
         // zero revolution case
-        if (T >= T00){
+        if (T >= T00) {
             x0Sol1 = pow(T00 / T, 2.0 / 3.0) - 1.0;
-        }
-        else if (T <= T1){
+        } else if (T <= T1) {
             x0Sol1 = 5.0 / 2.0 * T1 * (T1 - T) / (T * (1.0 - pow(lam, 5))) + 1.0;
-        }
-        else{
+        } else {
             x0Sol1 = pow(T00 / T, log(T1 / T00) / log(2.0)) - 1.0;
         }
-    }
-    else{
+    } else {
         // multi-revolution case
         double Tmin = this->getTmin(T0M, this->numberOfRevolutions);
-        if (T < Tmin){
+        if (T < Tmin) {
             // if T < Tmin, no multi-revolution solution exists for the given time of flight T
             this->multiRevSolution = false;
             bskLogger.bskLog(BSK_WARNING,
                              "lambertSolver: no multi-revolution solution exists for the given time of flight.");
-            std::array<double, 2> x0 = {0.0, 0.0};
+            std::array<double, 2> x0 = { 0.0, 0.0 };
             return x0;
         }
         // if T > Tmin, two multi-revolution solutions exist for given time of flight T (or one solution if T = Tmin)
         this->multiRevSolution = true;
 
-        double term1 = pow((this->numberOfRevolutions*M_PI + M_PI)/(8.0*T),(2.0/3.0));
-        double term2 = pow((8.0*T)/(this->numberOfRevolutions*M_PI),(2.0/3.0));
+        double term1 = pow((this->numberOfRevolutions * M_PI + M_PI) / (8.0 * T), (2.0 / 3.0));
+        double term2 = pow((8.0 * T) / (this->numberOfRevolutions * M_PI), (2.0 / 3.0));
         x0Sol1 = (term1 - 1.0) / (term1 + 1.0);
         x0Sol2 = (term2 - 1.0) / (term2 + 1.0);
     }
 
-    std::array<double, 2> x0 = {x0Sol1, x0Sol2};
+    std::array<double, 2> x0 = { x0Sol1, x0Sol2 };
     return x0;
 }
 
@@ -446,46 +454,44 @@ std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T) {
     @param lam lambda parameter that defines the problem geometry
     @return double
 */
-double LambertSolver::x2tof(double x, int N, double lam)
+double
+LambertSolver::x2tof(double x, int N, double lam)
 {
     // if x is close to 1.0 (parabolic case), time-of-flight is computed according to Battin
     double battin = 0.01;
     double dist = abs(x - 1.0);
     double u = 1.0 - pow(x, 2);
-    double y = sqrt(1.0- pow(lam, 2) * u);
+    double y = sqrt(1.0 - pow(lam, 2) * u);
 
     double tof;
-    if (dist < 1e-8){
+    if (dist < 1e-8) {
         // exact time of flight for parabolic case
 
-        tof = 2.0/3.0*(1.0 - pow(lam,3));
-    }
-    else if (dist < battin){
+        tof = 2.0 / 3.0 * (1.0 - pow(lam, 3));
+    } else if (dist < battin) {
         // Use Battin formulation
 
         double eta = y - lam * x;
         double S1 = 0.5 * (1.0 - lam - x * eta);
         double Q = 4.0 / 3.0 * hypergeometricF(S1);
-        tof = (pow(eta,3)*Q + 4.0 * lam * eta) / 2.0 + N * M_PI / (pow(abs(u), 1.5));
-    }
-    else{
+        tof = (pow(eta, 3) * Q + 4.0 * lam * eta) / 2.0 + N * M_PI / (pow(abs(u), 1.5));
+    } else {
         // Use Lancaster formulation
 
         double f = (y - lam * x) * sqrt(abs(u));
-        double g = x*y + lam * u;
+        double g = x * y + lam * u;
         double d;
-        if (u > 0.0){
+        if (u > 0.0) {
             // elliptic case
-            double psi = atan2(f,g);
-            d = psi + N*M_PI;
-        }
-        else{
+            double psi = atan2(f, g);
+            d = psi + N * M_PI;
+        } else {
             // hyperbolic case
-            d = atanh(f/g);
+            d = atanh(f / g);
         }
 
         // non-dimensional time-of-flight
-        tof = (d/sqrt(abs(u)) - x + lam * y) / u;
+        tof = (d / sqrt(abs(u)) - x + lam * y) / u;
     }
 
     return tof;
@@ -497,28 +503,26 @@ double LambertSolver::x2tof(double x, int N, double lam)
     @param lam lambda parameter that defines the problem geometry
     @return std::array<double, 3>
 */
-std::array<double, 3> LambertSolver::dTdx(double x, double T, double lam)
+std::array<double, 3>
+LambertSolver::dTdx(double x, double T, double lam)
 {
-    double DT; // dT/dx
+    double DT;  // dT/dx
     double D2T; // d2T/dx2
     double D3T; // d3T/dx3
-    if (abs(x - 1.0) < 1e-8){
+    if (abs(x - 1.0) < 1e-8) {
         // exact derivative for parabolic case
-        DT = 2.0/5.0*(pow(lam,5) - 1.0);
+        DT = 2.0 / 5.0 * (pow(lam, 5) - 1.0);
         D2T = 0.0;
         D3T = 0.0;
-    }
-    else{
+    } else {
         double u = 1.0 - pow(x, 2);
-        double y = sqrt(1.0- pow(lam, 2) * u);
-        DT = 1.0/u*(3.0*T*x - 2.0 + 2.0 * pow(lam, 3) * x / y);
-        D2T = 1.0/u*(3.0*T + 5.0*x*DT + 2.0 * (1. - pow(lam, 2))
-                * pow(lam, 3) / pow(y, 3));
-        D3T = 1.0/u*(7.0*x*D2T + 8.0*DT - 6.0 * (1. - pow(lam, 2))
-                * pow(lam, 5) * x / pow(y, 5));
+        double y = sqrt(1.0 - pow(lam, 2) * u);
+        DT = 1.0 / u * (3.0 * T * x - 2.0 + 2.0 * pow(lam, 3) * x / y);
+        D2T = 1.0 / u * (3.0 * T + 5.0 * x * DT + 2.0 * (1. - pow(lam, 2)) * pow(lam, 3) / pow(y, 3));
+        D3T = 1.0 / u * (7.0 * x * D2T + 8.0 * DT - 6.0 * (1. - pow(lam, 2)) * pow(lam, 5) * x / pow(y, 5));
     }
 
-    std::array<double, 3> DTs = {DT, D2T, D3T};
+    std::array<double, 3> DTs = { DT, D2T, D3T };
 
     return DTs;
 }
@@ -530,15 +534,16 @@ std::array<double, 3> LambertSolver::dTdx(double x, double T, double lam)
     @param N number of revolutions
     @return std::array<double, 3>
 */
-std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
+std::array<double, 3>
+LambertSolver::householder(double T, double x0, int N)
 {
     double tol = 1e-8;
     int iterMax = 8;
     double xnew = 0.0; // initialize
-    int nIter = 0; // number of iterations
+    int nIter = 0;     // number of iterations
     double err;
 
-    for (int j = 0; j < iterMax; ++j){
+    for (int j = 0; j < iterMax; ++j) {
         // compute non-dimensional time-of-flight T for given x
         double tof = x2tof(x0, N, this->lambda);
         // get derivatives of T
@@ -549,17 +554,17 @@ std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
 
         double delta = tof - T;
         // compute new x using 3rd order householder algorithm
-        xnew = x0 - delta*(pow(DT,2) - delta*D2T/2.0)/(DT*(pow(DT,2) - delta*D2T)
-                                                       + D3T*pow(delta,2)/6.0);
+        xnew =
+          x0 - delta * (pow(DT, 2) - delta * D2T / 2.0) / (DT * (pow(DT, 2) - delta * D2T) + D3T * pow(delta, 2) / 6.0);
 
         err = abs(x0 - xnew);
         x0 = xnew;
         nIter += 1;
-        if (err < tol){
+        if (err < tol) {
             break;
         }
     }
-    std::array<double, 3> sol = {xnew, static_cast<double>(nIter), err};
+    std::array<double, 3> sol = { xnew, static_cast<double>(nIter), err };
 
     return sol;
 }
@@ -571,15 +576,16 @@ std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
     @param N number of revolutions
     @return std::array<double, 3>
 */
-std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
+std::array<double, 3>
+LambertSolver::halley(double T, double x0, int N)
 {
     double tol = 1e-8;
     int iterMax = 8;
     double xnew = 0.0; // initialize
-    int nIter = 0; // number of iterations
+    int nIter = 0;     // number of iterations
     double err;
 
-    for (int j = 0; j < iterMax; ++j){
+    for (int j = 0; j < iterMax; ++j) {
         // compute non-dimensional time-of-flight T for given x
         double tof = x2tof(x0, N, this->lambda);
         // get derivatives of T
@@ -589,16 +595,16 @@ std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
 
         double delta = tof - T;
         // compute new x using halley algorithm
-        xnew = x0 - delta*DT/(pow(DT,2) - delta*D2T/2.0);
+        xnew = x0 - delta * DT / (pow(DT, 2) - delta * D2T / 2.0);
         err = abs(x0 - xnew);
         x0 = xnew;
         nIter += 1;
-        if (err < tol){
+        if (err < tol) {
             break;
         }
     }
 
-    std::array<double, 3> sol = {xnew, static_cast<double>(nIter), err};
+    std::array<double, 3> sol = { xnew, static_cast<double>(nIter), err };
 
     return sol;
 }
@@ -609,7 +615,8 @@ std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
     @param N number of revolutions
     @return double
 */
-double LambertSolver::getTmin(double T0M, int N)
+double
+LambertSolver::getTmin(double T0M, int N)
 {
     double tol = 1e-5;
     double iterMax = 12;
@@ -617,7 +624,7 @@ double LambertSolver::getTmin(double T0M, int N)
     double tof = T0M;
     double x0 = 0.0;
 
-    for (int j = 0; j < iterMax; ++j){
+    for (int j = 0; j < iterMax; ++j) {
         // get derivatives of T
         std::array<double, 3> DTs = dTdx(x0, tof, this->lambda);
         double DT = DTs[0];
@@ -625,10 +632,10 @@ double LambertSolver::getTmin(double T0M, int N)
         double D3T = DTs[2];
 
         // compute new x using halley algorithm
-        xnew = x0 - DT*D2T/(pow(D2T,2) - DT*D3T/2.0);
+        xnew = x0 - DT * D2T / (pow(D2T, 2) - DT * D3T / 2.0);
         double err = abs(x0 - xnew);
         x0 = xnew;
-        if (err < tol){
+        if (err < tol) {
             break;
         }
         // compute non-dimensional time-of-flight T for given x
@@ -643,7 +650,8 @@ double LambertSolver::getTmin(double T0M, int N)
     @param z argument of hypergeometric function
     @return double
 */
-double LambertSolver::hypergeometricF(double z)
+double
+LambertSolver::hypergeometricF(double z)
 {
     double tol = 1e-11;
     double Sj = 1.0;
@@ -655,19 +663,21 @@ double LambertSolver::hypergeometricF(double z)
     double Cj1;
     double Sj1;
     double err;
-    for (int j = 0; j <= 12; ++j){
+    for (int j = 0; j <= 12; ++j) {
         Cj1 = Cj * (a + j) * (b + j) / (c + j) * z / (j + 1);
         Sj1 = Sj + Cj1;
         err = abs(Cj1);
         Sj = Sj1;
         Cj = Cj1;
-        if (err < tol){
+        if (err < tol) {
             break;
         }
     }
     return Sj;
 }
 
-void LambertSolver::setAlignmentThreshold(const double value){
+void
+LambertSolver::setAlignmentThreshold(const double value)
+{
     this->alignmentThreshold = value;
 }

@@ -26,12 +26,12 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
       python3 scenarioIntegratorsComparison.py
 
-For information on how to setup different integrators, see :ref:`scenarioIntegrators` and :ref:`scenarioVariableTimeStepIntegrators`. 
+For information on how to setup different integrators, see :ref:`scenarioIntegrators` and :ref:`scenarioVariableTimeStepIntegrators`.
 
 Currently, Basilisk only supports explicit Runge-Kutta integrators,
 both of the regular and adaptive variations. Non-adaptive Runge-Kutta
 integrators can be controlled solely by the step size: larger step
-sizes means that faster computation, but less accurate results. 
+sizes means that faster computation, but less accurate results.
 
 In contrast, adaptive Runge-Kutta methods are affected both by the step
 size and absolute and relative tolerance. These integrators will try
@@ -39,10 +39,10 @@ to use the user-given step size, but if the error grows too large, a
 smaller time step is used internally for greater accuracy.
 
 When using an adaptive integrator, the Basilisk dynamics task time step
-can be increased without risk of increasing the integration error. However, 
+can be increased without risk of increasing the integration error. However,
 this also means that other modules in the task are updated less often,
 which might be undesirable. Additionally, spacecraft state messages will
-also be updated less frequently. 
+also be updated less frequently.
 
 Finally, each integrator is associated with an order. Greater
 order integrators are more accurate, but more computationally
@@ -54,11 +54,11 @@ Five integrators are compared in this section, two of them adaptive.
 These are the Euler method (order 1), Heun's method (order 2),
 the Runge-Kutta 4 (order 4), the Runge-Kutta-Fehlberg 4(5) (adaptive
 with order 5), and the Runge-Kutta-Fehlberg 7(8) (adaptive with order 8).
-The adaptive integrators are used with two different absolute 
+The adaptive integrators are used with two different absolute
 tolerances: 0.1 and 10.
 
 Each integrator is used to propagate a two-body orbit around the
-Earth. The final position of each propagation is compared to 
+Earth. The final position of each propagation is compared to
 the analytical solution, and a final position error is obtained.
 Moreover, the time that it takes to propagate each orbit is recorded.
 
@@ -93,12 +93,12 @@ similarly to fixed-step RK methods. The main difference occurs
 for the larger time steps in which time adaption takes place.
 Here, a tighter tolerance would translate into higher computational
 costs. However, this is hard to see in the plot given the inherent
-noisiness of performance measuring. 
+noisiness of performance measuring.
 
-Fixed-timestep integrators are helpful when you want your simulation runtime 
-to be consistent as you vary simulation parameters. Since there is no adaptation, 
-runtime will be similar even if the parameters change the stiffness of the system's 
-dynamic equations. Of course, this comes at the cost of accuracy, but can it be 
+Fixed-timestep integrators are helpful when you want your simulation runtime
+to be consistent as you vary simulation parameters. Since there is no adaptation,
+runtime will be similar even if the parameters change the stiffness of the system's
+dynamic equations. Of course, this comes at the cost of accuracy, but can it be
 very useful for hardware-in-the-loop simulations.
 
 One should note that adaptive RK methods are inherently slower than

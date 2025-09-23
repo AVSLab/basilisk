@@ -27,8 +27,6 @@
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "math.h"
 
-
-
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
@@ -36,12 +34,12 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
+void
+SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, int64_t moduleID)
 {
     /*! - Initialize output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -50,18 +48,19 @@ void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *confi
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     int i;
 
-    configData->reset  = BOOL_TRUE;         /* reset the first run flag */
+    configData->reset = BOOL_TRUE; /* reset the first run flag */
 
     // check if the required input message is included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueInMsg)) {
         _bskLog(configData->bskLogger, BSK_ERROR, "Error: lowPassFilterTorqueCommand.cmdTorqueInMsg wasn't connected.");
     }
 
-    for (i=0;i<NUM_LPF;i++) {
+    for (i = 0; i < NUM_LPF; i++) {
         v3SetZero(configData->Lr[i]);
         v3SetZero(configData->LrF[i]);
     }
@@ -74,12 +73,12 @@ void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configDa
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    double      v3[3];                      /*!<      3d vector sub-result */
-    int         i;
-    CmdTorqueBodyMsgPayload controlOut;             /*!< -- Control output message */
+    double v3[3]; /*!<      3d vector sub-result */
+    int i;
+    CmdTorqueBodyMsgPayload controlOut; /*!< -- Control output message */
 
     /* zero the output message */
     controlOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
@@ -93,17 +92,17 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
      */
     if (configData->reset) {
         /* populate the filter history with 1st input */
-        for (i=1;i<NUM_LPF;i++) {
+        for (i = 1; i < NUM_LPF; i++) {
             v3Copy(configData->Lr[0], configData->Lr[i]);
         }
 
         /* zero the history of filtered outputs */
-        for (i=0;i<NUM_LPF;i++) {
+        for (i = 0; i < NUM_LPF; i++) {
             v3SetZero(configData->LrF[i]);
         }
 
         /* compute h times the prewarped critical filter frequency */
-        configData->hw = tan(configData->wc * configData->h / 2.0)*2.0;
+        configData->hw = tan(configData->wc * configData->h / 2.0) * 2.0;
 
         /* determine 1st order low-pass filter coefficients */
         configData->a[0] = 2.0 + configData->hw;
@@ -113,7 +112,6 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
 
         /* turn off first run flag */
         configData->reset = BOOL_FALSE;
-
     }
 
     /*
@@ -121,21 +119,20 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configD
      */
 
     v3SetZero(configData->LrF[0]);
-    for (i=0;i<NUM_LPF;i++) {
+    for (i = 0; i < NUM_LPF; i++) {
         v3Scale(configData->b[i], configData->Lr[i], v3);
         v3Add(v3, configData->LrF[0], configData->LrF[0]);
     }
-    for (i=1;i<NUM_LPF;i++) {
+    for (i = 1; i < NUM_LPF; i++) {
         v3Scale(configData->a[i], configData->LrF[i], v3);
         v3Add(v3, configData->LrF[0], configData->LrF[0]);
     }
-    v3Scale(1.0/configData->a[0], configData->LrF[0], configData->LrF[0]);
-
+    v3Scale(1.0 / configData->a[0], configData->LrF[0], configData->LrF[0]);
 
     /* reset the filter state history */
-    for (i=1;i<NUM_LPF;i++) {
-        v3Copy(configData->Lr[NUM_LPF-1-i],  configData->Lr[NUM_LPF-i]);
-        v3Copy(configData->LrF[NUM_LPF-1-i], configData->LrF[NUM_LPF-i]);
+    for (i = 1; i < NUM_LPF; i++) {
+        v3Copy(configData->Lr[NUM_LPF - 1 - i], configData->Lr[NUM_LPF - i]);
+        v3Copy(configData->LrF[NUM_LPF - 1 - i], configData->LrF[NUM_LPF - i]);
     }
 
     /*

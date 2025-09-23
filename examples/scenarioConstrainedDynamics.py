@@ -67,16 +67,28 @@ import os
 
 # Basilisk imports
 from Basilisk.architecture import messaging
-from Basilisk.utilities import (SimulationBaseClass, orbitalMotion, macros, RigidBodyKinematics)
-from Basilisk.simulation import (spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    orbitalMotion,
+    macros,
+    RigidBodyKinematics,
+)
+from Basilisk.simulation import (
+    spacecraft,
+    constraintDynamicEffector,
+    gravityEffector,
+    svIntegrators,
+)
 import matplotlib.pyplot as plt
 
 # Utility imports
 import numpy as np
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def run(show_plots, env):
     """
@@ -115,16 +127,24 @@ def run(show_plots, env):
     # Define mass properties of the rigid hub of both spacecraft
     scObject1.hub.mHub = 750.0
     scObject1.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject1.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject1.hub.IHubPntBc_B = [
+        [600.0, 0.0, 0.0],
+        [0.0, 600.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
     scObject2.hub.mHub = 750.0
     scObject2.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject2.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject2.hub.IHubPntBc_B = [
+        [600.0, 0.0, 0.0],
+        [0.0, 600.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
 
     # Add Earth gravity to the simulation if requested
-    if env == 'Gravity':
+    if env == "Gravity":
         earthGravBody = gravityEffector.GravBodyData()
         earthGravBody.planetName = "earth_planet_data"
-        earthGravBody.mu = 0.3986004415E+15  # [meters^3/s^2]
+        earthGravBody.mu = 0.3986004415e15  # [meters^3/s^2]
         earthGravBody.isCentralBody = True
         scObject1.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
         scObject2.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
@@ -137,32 +157,34 @@ def run(show_plots, env):
         oe.omega = 15.0 * macros.D2R
         oe.f = 90.0 * macros.D2R
         r_B2N_N_0, rDot_B2N_N = orbitalMotion.elem2rv(earthGravBody.mu, oe)
-    else: # If no gravity requested, place in free-floating space
-        r_B2N_N_0 = np.array([1,1,1])
-        rDot_B2N_N = np.array([1,1,1])
+    else:  # If no gravity requested, place in free-floating space
+        r_B2N_N_0 = np.array([1, 1, 1])
+        rDot_B2N_N = np.array([1, 1, 1])
 
     # With initial attitudes at zero (B1, B2, and N frames all initially aligned)
-    dir = r_B2N_N_0/np.linalg.norm(r_B2N_N_0)
+    dir = r_B2N_N_0 / np.linalg.norm(r_B2N_N_0)
     l = 0.1
-    COMoffset = 0.1 # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
-    r_P1B1_B1 = np.dot(dir,COMoffset)
-    r_P2B2_B2 = np.dot(-dir,COMoffset)
-    r_P2P1_B1Init = np.dot(dir,l)
+    COMoffset = 0.1  # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
+    r_P1B1_B1 = np.dot(dir, COMoffset)
+    r_P2B2_B2 = np.dot(-dir, COMoffset)
+    r_P2P1_B1Init = np.dot(dir, l)
     r_B1N_N_0 = r_B2N_N_0 + r_P2B2_B2 - r_P2P1_B1Init - r_P1B1_B1
     rDot_B1N_N = rDot_B2N_N
 
     # Compute rotational states
     # let C be the frame at the combined COM of the two vehicles
-    r_CN_N = (r_B1N_N_0 * scObject1.hub.mHub + r_B2N_N_0 * scObject2.hub.mHub) / (scObject1.hub.mHub + scObject2.hub.mHub)
+    r_CN_N = (r_B1N_N_0 * scObject1.hub.mHub + r_B2N_N_0 * scObject2.hub.mHub) / (
+        scObject1.hub.mHub + scObject2.hub.mHub
+    )
     r_B1C_N = r_B1N_N_0 - r_CN_N
     r_B2C_N = r_B2N_N_0 - r_CN_N
     # compute relative velocity due to spin and COM offset
-    target_spin = [0.01,0.01,0.01]
+    target_spin = [0.01, 0.01, 0.01]
     omega_CN_N = np.array(target_spin)
     omega_B1N_B1_0 = omega_CN_N
     omega_B2N_B2_0 = omega_CN_N
-    dv_B1C_N = np.cross(omega_CN_N,r_B1C_N)
-    dv_B2C_N = np.cross(omega_CN_N,r_B2C_N)
+    dv_B1C_N = np.cross(omega_CN_N, r_B1C_N)
+    dv_B2C_N = np.cross(omega_CN_N, r_B2C_N)
     rDot_B1N_N_0 = rDot_B1N_N + dv_B1C_N
     rDot_B2N_N_0 = rDot_B2N_N + dv_B2C_N
 
@@ -180,7 +202,7 @@ def run(show_plots, env):
     constraintEffector.setR_P1B1_B1(r_P1B1_B1)
     constraintEffector.setR_P2B2_B2(r_P2B2_B2)
     constraintEffector.setR_P2P1_B1Init(r_P2P1_B1Init)
-    constraintEffector.setAlpha(1E2)
+    constraintEffector.setAlpha(1e2)
     constraintEffector.setBeta(1e3)
     constraintEffector.ModelTag = "constraintEffector"
 
@@ -221,12 +243,14 @@ def run(show_plots, env):
     r_P2B2_B1 = np.empty(r_B1N_N_hist.shape)
     sigma_B2B1 = np.empty(sigma_B1N_hist.shape)
     for i in range(r_B1N_N_hist.shape[0]):
-        dcm_B1N = RigidBodyKinematics.MRP2C(sigma_B1N_hist[i,:])
-        r_B1N_B1[i,:] = dcm_B1N@r_B1N_N_hist[i,:]
-        r_B2N_B1[i,:] = dcm_B1N@r_B2N_N_hist[i,:]
-        dcm_NB2 = np.transpose(RigidBodyKinematics.MRP2C(sigma_B2N_hist[i,:]))
-        r_P2B2_B1[i,:] = dcm_B1N@dcm_NB2@r_P2B2_B2
-        sigma_B2B1[i,:] = RigidBodyKinematics.subMRP(sigma_B2N_hist[i,:],sigma_B1N_hist[i,:])
+        dcm_B1N = RigidBodyKinematics.MRP2C(sigma_B1N_hist[i, :])
+        r_B1N_B1[i, :] = dcm_B1N @ r_B1N_N_hist[i, :]
+        r_B2N_B1[i, :] = dcm_B1N @ r_B2N_N_hist[i, :]
+        dcm_NB2 = np.transpose(RigidBodyKinematics.MRP2C(sigma_B2N_hist[i, :]))
+        r_P2B2_B1[i, :] = dcm_B1N @ dcm_NB2 @ r_P2B2_B2
+        sigma_B2B1[i, :] = RigidBodyKinematics.subMRP(
+            sigma_B2N_hist[i, :], sigma_B1N_hist[i, :]
+        )
     psi_B1 = r_B1N_B1 + r_P1B1_B1 + r_P2P1_B1Init - (r_B2N_B1 + r_P2B2_B1)
 
     #
@@ -239,34 +263,42 @@ def run(show_plots, env):
     plt.clf()
     for i in range(3):
         plt.semilogy(constraintTimeData, np.abs(psi_B1[:, i]))
-    plt.semilogy(constraintTimeData, np.linalg.norm(psi_B1,axis=1))
-    plt.legend([r'$\psi_1$',r'$\psi_2$',r'$\psi_3$',r'$\psi$ magnitude'])
-    plt.xlabel('time (seconds)')
-    plt.ylabel(r'relative connection position: $\psi$ (meters)')
-    plt.title('Direction Constraint Violation Components')
+    plt.semilogy(constraintTimeData, np.linalg.norm(psi_B1, axis=1))
+    plt.legend([r"$\psi_1$", r"$\psi_2$", r"$\psi_3$", r"$\psi$ magnitude"])
+    plt.xlabel("time (seconds)")
+    plt.ylabel(r"relative connection position: $\psi$ (meters)")
+    plt.title("Direction Constraint Violation Components")
     pltName = fileName + "directionConstraint"
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     plt.clf()
     for i in range(3):
-        plt.semilogy(constraintTimeData, np.abs(4*np.arctan(sigma_B2B1[:, i]) * macros.R2D))
-    plt.semilogy(constraintTimeData, np.linalg.norm(4*np.arctan(sigma_B2B1) * macros.R2D,axis=1))
-    plt.legend([r'$\phi_1$',r'$\phi_2$',r'$\phi_3$',r'$\phi$ magnitude'])
-    plt.xlabel('time (seconds)')
-    plt.ylabel(r'relative attitude angle: $\phi$ (deg)')
-    plt.title('Attitude Constraint Violation Components')
+        plt.semilogy(
+            constraintTimeData, np.abs(4 * np.arctan(sigma_B2B1[:, i]) * macros.R2D)
+        )
+    plt.semilogy(
+        constraintTimeData,
+        np.linalg.norm(4 * np.arctan(sigma_B2B1) * macros.R2D, axis=1),
+    )
+    plt.legend([r"$\phi_1$", r"$\phi_2$", r"$\phi_3$", r"$\phi$ magnitude"])
+    plt.xlabel("time (seconds)")
+    plt.ylabel(r"relative attitude angle: $\phi$ (deg)")
+    plt.title("Attitude Constraint Violation Components")
     pltName = fileName + "attitudeConstraint"
     figureList[pltName] = plt.figure(2)
 
     if show_plots:
         plt.show()
-    plt.close("all") # close the plots being saved off to avoid over-writing old and new figures
+    plt.close(
+        "all"
+    )  # close the plots being saved off to avoid over-writing old and new figures
 
     return figureList
 
+
 if __name__ == "__main__":
     run(
-        True,       # show_plots: True or False
-        'Gravity'   # env: either 'Gravity' or 'NoGravity'
+        True,  # show_plots: True or False
+        "Gravity",  # env: either 'Gravity' or 'NoGravity'
     )

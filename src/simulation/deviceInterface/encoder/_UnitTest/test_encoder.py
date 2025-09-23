@@ -32,17 +32,16 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import encoder                    # import the module that is to be tested
-from Basilisk.architecture import messaging                      # import the message definitions
+from Basilisk.simulation import encoder  # import the module that is to be tested
+from Basilisk.architecture import messaging  # import the message definitions
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -50,7 +49,6 @@ from Basilisk.utilities import unitTestSupport
 # Uncomment this line if this test has an expected failure, adjust message as needed.
 # @pytest.mark.xfail(conditionstring)
 @pytest.mark.parametrize("accuracy", [1e-8])
-
 def test_encoder(show_plots, accuracy):
     r"""
     **Validation Test Description**
@@ -123,7 +121,7 @@ def encoderTest(show_plots, accuracy):
     #
 
     wheelSpeedEncoder = encoder.Encoder()
-    wheelSpeedEncoder.ModelTag = 'rwSpeedsEncoder'
+    wheelSpeedEncoder.ModelTag = "rwSpeedsEncoder"
     wheelSpeedEncoder.clicksPerRotation = 2
     wheelSpeedEncoder.numRW = numRW
     wheelSpeedEncoder.rwSpeedInMsg.subscribeTo(speedMsg)
@@ -155,7 +153,7 @@ def encoderTest(show_plots, accuracy):
     numSteps += 1
 
     # update the encoder to be OFF
-    wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_OFF]*numRW
+    wheelSpeedEncoder.rwSignalState = [encoder.SIGNAL_OFF] * numRW
 
     # run the sim
     unitTestSim.TotalSim.SingleStepProcesses()
@@ -191,12 +189,16 @@ def encoderTest(show_plots, accuracy):
     # set the truth vectors
     #
 
-    trueWheelSpeedsEncoded = np.array([[100., 200., 300.],
-                                       [ 97.38937226, 197.92033718, 298.45130209],
-                                       [100.53096491, 201.06192983, 298.45130209],
-                                       [0., 0., 0.],
-                                       [499.51323192, 398.98226701, 298.45130209],
-                                       [499.51323192, 398.98226701, 298.45130209]])
+    trueWheelSpeedsEncoded = np.array(
+        [
+            [100.0, 200.0, 300.0],
+            [97.38937226, 197.92033718, 298.45130209],
+            [100.53096491, 201.06192983, 298.45130209],
+            [0.0, 0.0, 0.0],
+            [499.51323192, 398.98226701, 298.45130209],
+            [499.51323192, 398.98226701, 298.45130209],
+        ]
+    )
 
     #
     # compare the module results to the true values
@@ -205,7 +207,9 @@ def encoderTest(show_plots, accuracy):
     fail = 0
     for i in range(numSteps):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(wheelSpeedsEncoded[i, 0:3], trueWheelSpeedsEncoded[i, :], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(
+            wheelSpeedsEncoded[i, 0:3], trueWheelSpeedsEncoded[i, :], 3, accuracy
+        ):
             fail += 1
 
     if fail > 0:
@@ -218,7 +222,7 @@ def encoderTest(show_plots, accuracy):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -227,5 +231,5 @@ def encoderTest(show_plots, accuracy):
 if __name__ == "__main__":
     test_encoder(
         False,  # show_plots
-        1e-8    # accuracy
+        1e-8,  # accuracy
     )

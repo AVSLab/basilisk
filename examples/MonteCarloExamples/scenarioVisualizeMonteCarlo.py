@@ -130,14 +130,17 @@ if bokeh_available:
     from bokeh.application.handlers.function import FunctionHandler
     from tornado.ioloop import IOLoop
 
+
 def create_document(doc):
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scenarioBskSimAttFeedbackMC")
+    data_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "scenarioBskSimAttFeedbackMC"
+    )
     doc_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
     plot_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saved_plots")
 
     try:
         plotter = MonteCarloPlotter(data_dir, save_plots=True, doc_dir=doc_dir)
-        plotter.load_data(['attGuidMsg.sigma_BR', 'attGuidMsg.omega_BR_B'])
+        plotter.load_data(["attGuidMsg.sigma_BR", "attGuidMsg.omega_BR_B"])
         layout = plotter.show_plots()
 
         doc.add_root(layout)
@@ -148,8 +151,10 @@ def create_document(doc):
         logger.error(error_message)
         doc.add_root(Div(text=error_message))
 
+
 def open_browser():
     webbrowser.open("http://localhost:5006")
+
 
 def run(useBokeh_server=False):
     if not bokeh_available:
@@ -157,14 +162,17 @@ def run(useBokeh_server=False):
         return
 
     if useBokeh_server:
+
         def bk_worker():
             app = Application(FunctionHandler(create_document))
-            server = Server({'/': app}, io_loop=IOLoop(), allow_websocket_origin=["*"])
+            server = Server({"/": app}, io_loop=IOLoop(), allow_websocket_origin=["*"])
             server.start()
             Timer(1, open_browser).start()  # Open browser after 1 second
             server.io_loop.start()
 
-        logger.info("Starting Bokeh server. A browser window should open automatically.")
+        logger.info(
+            "Starting Bokeh server. A browser window should open automatically."
+        )
         bk_worker()
     else:
         # Create a document for the static case
@@ -174,7 +182,9 @@ def run(useBokeh_server=False):
         # Set up the output file
         output_file("monte_carlo_plots.html", title="BSK Monte Carlo Visualization")
 
+
 if __name__ == "__main__":
     import sys
+
     useBokeh_server = "--bokeh-server" in sys.argv
     run(useBokeh_server)

@@ -2,7 +2,7 @@
 
 \section{Model Description}
 
-This module implements a square-root unscented Kalman Filter in order to achieve it's best state estimate of the inertial spacecraft attitude states. The estimated state is the attitude (MRPs) and the spacecraft rotation rate in the body frame. 
+This module implements a square-root unscented Kalman Filter in order to achieve it's best state estimate of the inertial spacecraft attitude states. The estimated state is the attitude (MRPs) and the spacecraft rotation rate in the body frame.
 
 \subsection{Filter Setup} %%%
 
@@ -10,19 +10,19 @@ The equations and algorithm for the square root uKF are given in "inertialUKF$\_
 
 The filter is therefore derived with the states being $\bm X =\begin{bmatrix} \bm \sigma_{\mathcal{B}/\mathcal{N}}& \bm \omega_{\mathcal{B}/\mathcal{N}} \end{bmatrix}^{T}$
 
-The dynamics of the filter are given in Equations \eqref{eq:dynInertial}. $\tau$ is the total torque read in by the wheels. 
+The dynamics of the filter are given in Equations \eqref{eq:dynInertial}. $\tau$ is the total torque read in by the wheels.
 \begin{align}
 \label{eq:dynInertial}
 \dot{\bm \sigma} &= \frac{1}{4} [B] \bm \omega_{\mathcal{B}/\mathcal{N}} \\
 \dot{\bm \omega}_{\mathcal{B}/\mathcal{N}} & = [I]^{-1} \tau
 \end{align}
 
-The following square-root uKF coefficients are used: $\alpha = 0.02$, and $\beta = 2$. 
+The following square-root uKF coefficients are used: $\alpha = 0.02$, and $\beta = 2$.
 
 
 \subsection{Measurements}
 
-The measurement model is given in equation \ref{eq:meas}. Since the input MRP may or may not be in the same "shadow" set as the state estimate, they are assured to be in the same representation. This prevents from getting residuals of 360\dg. 
+The measurement model is given in equation \ref{eq:meas}. Since the input MRP may or may not be in the same "shadow" set as the state estimate, they are assured to be in the same representation. This prevents from getting residuals of 360\dg.
 
 This is done following these steps:
 
@@ -39,7 +39,7 @@ This is done following these steps:
 
 %\subsection{Measurements}
 %
-%The measurement model is given in equation \ref{eq:meas}. Since the input MRP may or may not be in the same "shadow" set as the state estimate, they are assured to be in the same representation. This prevents from getting residuals of 360\dg. 
+%The measurement model is given in equation \ref{eq:meas}. Since the input MRP may or may not be in the same "shadow" set as the state estimate, they are assured to be in the same representation. This prevents from getting residuals of 360\dg.
 %
 %This is done following these steps:
 %

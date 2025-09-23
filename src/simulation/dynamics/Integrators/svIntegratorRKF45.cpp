@@ -20,11 +20,12 @@
 #include "svIntegratorRKF45.h"
 
 svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn)
-    : svIntegratorAdaptiveRungeKutta(dyn, svIntegratorRKF45::getCoefficients(), 5.)
+  : svIntegratorAdaptiveRungeKutta(dyn, svIntegratorRKF45::getCoefficients(), 5.)
 {
 }
 
-RKAdaptiveCoefficients<6> svIntegratorRKF45::getCoefficients()
+RKAdaptiveCoefficients<6>
+svIntegratorRKF45::getCoefficients()
 {
     RKAdaptiveCoefficients<6> coefficients;
 

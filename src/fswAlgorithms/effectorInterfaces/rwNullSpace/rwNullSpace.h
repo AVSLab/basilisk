@@ -28,35 +28,33 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
 /*! @brief The configuration structure for the rwNullSpace module.  */
-typedef struct {
-    ArrayMotorTorqueMsg_C rwMotorTorqueInMsg;       //!< [-] The name of the Input message
-    RWSpeedMsg_C rwSpeedsInMsg;                     //!< [-] The name of the input RW speeds
-    RWSpeedMsg_C rwDesiredSpeedsInMsg;              //!< [-] (optional) The name of the desired RW speeds
-    RWConstellationMsg_C rwConfigInMsg;             //!< [-] The name of the RWA configuration message
-    ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg;      //!< [-] The name of the output message
+typedef struct
+{
+    ArrayMotorTorqueMsg_C rwMotorTorqueInMsg;  //!< [-] The name of the Input message
+    RWSpeedMsg_C rwSpeedsInMsg;                //!< [-] The name of the input RW speeds
+    RWSpeedMsg_C rwDesiredSpeedsInMsg;         //!< [-] (optional) The name of the desired RW speeds
+    RWConstellationMsg_C rwConfigInMsg;        //!< [-] The name of the RWA configuration message
+    ArrayMotorTorqueMsg_C rwMotorTorqueOutMsg; //!< [-] The name of the output message
 
-	double tau[MAX_EFF_CNT * MAX_EFF_CNT];          //!< [-] RW nullspace project matrix
-	double OmegaGain;                               //!< [-] The gain factor applied to the RW speeds
-	uint32_t numWheels;                             //!< [-] The number of reaction wheels we have
+    double tau[MAX_EFF_CNT * MAX_EFF_CNT]; //!< [-] RW nullspace project matrix
+    double OmegaGain;                      //!< [-] The gain factor applied to the RW speeds
+    uint32_t numWheels;                    //!< [-] The number of reaction wheels we have
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}rwNullSpaceConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} rwNullSpaceConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID);
-    void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
-                            int64_t moduleID);
-    
+
+    void SelfInit_rwNullSpace(rwNullSpaceConfig* configData, int64_t moduleID);
+    void Update_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

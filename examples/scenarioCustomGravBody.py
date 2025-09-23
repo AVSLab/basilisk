@@ -84,7 +84,12 @@ import os
 import matplotlib.pyplot as plt
 from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+    vizSupport,
+)
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport
 
@@ -92,7 +97,6 @@ from Basilisk.utilities import unitTestSupport
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
 
 
 def run(show_plots):
@@ -125,7 +129,7 @@ def run(show_plots):
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.ModelTag = "planetEphemeris"
     scSim.AddModelToTask(simTaskName, gravBodyEphem)
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["Itokawa", "earth"]))
 
@@ -133,10 +137,10 @@ def run(show_plots):
     oeAsteroid = planetEphemeris.ClassicElements()
     oeAsteroid.a = 1.3241 * orbitalMotion.AU * 1000  # meters
     oeAsteroid.e = 0.2801
-    oeAsteroid.i = 1.6214*macros.D2R
-    oeAsteroid.Omega = 69.081*macros.D2R
-    oeAsteroid.omega = 162.82*macros.D2R
-    oeAsteroid.f = 90.0*macros.D2R
+    oeAsteroid.i = 1.6214 * macros.D2R
+    oeAsteroid.Omega = 69.081 * macros.D2R
+    oeAsteroid.omega = 162.82 * macros.D2R
+    oeAsteroid.f = 90.0 * macros.D2R
 
     oeEarth = planetEphemeris.ClassicElements()
     oeEarth.a = orbitalMotion.AU * 1000  # meters
@@ -147,27 +151,38 @@ def run(show_plots):
     oeEarth.f = 270.0 * macros.D2R
 
     # specify celestial object orbit
-    gravBodyEphem.planetElements = planetEphemeris.classicElementVector([oeAsteroid, oeEarth])
+    gravBodyEphem.planetElements = planetEphemeris.classicElementVector(
+        [oeAsteroid, oeEarth]
+    )
     # specify celestial object orientation
-    gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
-    gravBodyEphem.declination = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
-    gravBodyEphem.lst0 = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
+    gravBodyEphem.rightAscension = planetEphemeris.DoubleVector(
+        [0.0 * macros.D2R, 0.0 * macros.D2R]
+    )
+    gravBodyEphem.declination = planetEphemeris.DoubleVector(
+        [0.0 * macros.D2R, 0.0 * macros.D2R]
+    )
+    gravBodyEphem.lst0 = planetEphemeris.DoubleVector(
+        [0.0 * macros.D2R, 0.0 * macros.D2R]
+    )
     gravBodyEphem.rotRate = planetEphemeris.DoubleVector(
-        [360 * macros.D2R / (12.132 * 3600.), 360 * macros.D2R / (24. * 3600.)])
+        [360 * macros.D2R / (12.132 * 3600.0), 360 * macros.D2R / (24.0 * 3600.0)]
+    )
 
     # setup Sun gravity body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravFactory.createSun()
 
     # setup asteroid gravity body
-    mu = 2.34268    # meters^3/s^2
+    mu = 2.34268  # meters^3/s^2
     asteroid = gravFactory.createCustomGravObject("Itokawa", mu, radEquator=200)
 
     asteroid.isCentralBody = True  # ensure this is the central gravitational body
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
     # setup Earth gravity Body
-    earth = gravFactory.createCustomGravObject("earth", 0.3986004415E+15, radEquator=6378136.6)
+    earth = gravFactory.createCustomGravObject(
+        "earth", 0.3986004415e15, radEquator=6378136.6
+    )
     earth.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[1])
 
     # create SC object
@@ -194,7 +209,9 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     scRec = scObject.scStateOutMsg.recorder(samplingTime)
     astRec = gravBodyEphem.planetOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scRec)
@@ -205,19 +222,26 @@ def run(show_plots):
     # Note that the gravitational body information is pulled automatically from the spacecraft object(s)
     # Even if custom gravitational bodies are added, this information is pulled by the method below
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  # , saveFile=fileName
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # , saveFile=fileName
+        )
         viz.settings.showSpacecraftLabels = 1
         # load CAD for custom gravity model
-        vizSupport.createCustomModel(viz,
-                                     # Specifying relative model path is useful for sharing scenarios and resources:
-                                     modelPath=os.path.join("..", "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"),
-                                     # Specifying absolute model path is preferable for live-streaming:
-                                     # modelPath=os.path.join(path, "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"),
-                                     shader=1,
-                                     simBodiesToModify=['Itokawa'],
-                                     scale=[962, 962, 962])
+        vizSupport.createCustomModel(
+            viz,
+            # Specifying relative model path is useful for sharing scenarios and resources:
+            modelPath=os.path.join(
+                "..", "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"
+            ),
+            # Specifying absolute model path is preferable for live-streaming:
+            # modelPath=os.path.join(path, "dataForExamples", "Itokawa", "ItokawaHayabusa.obj"),
+            shader=1,
+            simBodiesToModify=["Itokawa"],
+            scale=[962, 962, 962],
+        )
 
     #   initialize Simulation
     scSim.InitializeSimulation()
@@ -237,14 +261,17 @@ def run(show_plots):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(3):
-        plt.plot(timeAxis, posData[:, idx] ,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BI,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [h]')
-    plt.ylabel('Itokawa Relative Position [m]')
+        plt.plot(
+            timeAxis,
+            posData[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BI," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [h]")
+    plt.ylabel("Itokawa Relative Position [m]")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)

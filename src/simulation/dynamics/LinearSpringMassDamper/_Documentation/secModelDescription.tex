@@ -8,7 +8,7 @@
 	\includegraphics[]{Figures/Flex_Slosh_Figure}
 	\caption{Frame and variable definitions used for formulation}
 	\label{fig:Flex_Slosh_Figure}
-\end{figure} 
+\end{figure}
 
 \subsubsection{Rigid Spacecraft Hub Translational Motion}
 
@@ -25,19 +25,19 @@ Ultimately the acceleration of the body frame or point $B$ is desired
 The definition of $\bm{c}$ can be seen in Eq. (\ref{eq:c}).
 \begin{equation}
 	\bm{c} = \frac{1}{m_{\text{sc}}}\Big(m_{\text{\text{hub}}}\bm{r}_{B_{c}/B} + \sum_{j=1}^{N_{P}}m_j\bm{r}_{P_{c,j}/B}\Big)
-	\label{eq:c} 
+	\label{eq:c}
 \end{equation}
 To find the inertial time derivative of $\bm{c}$, it is first necessary to find the time derivative of $\bm{c}$ with respect to the body frame. A time derivative of any vector, $\bm{v}$, with respect to the body frame is denoted by $\bm{v}'$; the inertial time derivative is labeled as $\dot{\bm{v}}$. The first and second body-relative time derivatives of $\bm{c}$ can be seen in Eqs. (\ref{eq:cprime}) and (\ref{eq:cdprime}).
 
 $\bm{r}_{P_{c,j}/B}$ is defined in the following
 \begin{equation}
-	\bm{r}_{P_{c,j}/B} = \bm{r}_{P_{j}/B} + \rho_j \hat{\bm p}_j 
+	\bm{r}_{P_{c,j}/B} = \bm{r}_{P_{j}/B} + \rho_j \hat{\bm p}_j
 \end{equation}
 And, the first and second body time derivatives of $\bm{r}_{P_{c,j}/B}$ are
 \begin{align}
-	\bm{r}'_{P_{c,j}/B} &= \dot{\rho}_j \hat{\bm p}_j 
+	\bm{r}'_{P_{c,j}/B} &= \dot{\rho}_j \hat{\bm p}_j
 	\\
-	\bm{r}''_{P_{c,j}/B} &= \ddot{\rho}_j \hat{\bm p}_j 
+	\bm{r}''_{P_{c,j}/B} &= \ddot{\rho}_j \hat{\bm p}_j
 \end{align}
 $\bm{c}'$ and $\bm{c}''$ are defined in the following equations
 \begin{equation}
@@ -60,7 +60,7 @@ Eq.~\eqref{eq:RcRbacc} is updated to include Eq.~\eqref{eq:cddot}
 \end{equation}
 Substituting Eq.\eqref{eq:cdprime} into Eq.\eqref{eq:Rbddot} results in
 \begin{equation}
-	\ddot{\bm r}_{B/N} = \ddot{\bm r}_{C/N}-\frac{1}{m_{\text{sc}}}\sum_{j=1}^{N_{P}}m_j\ddot{\rho}_j \hat{\bm p}_j = 
+	\ddot{\bm r}_{B/N} = \ddot{\bm r}_{C/N}-\frac{1}{m_{\text{sc}}}\sum_{j=1}^{N_{P}}m_j\ddot{\rho}_j \hat{\bm p}_j =
 	- 2\bm\omega_{\cal B/N}\times\bm c'
 	-\dot{\bm\omega}_{\cal B/N}\times\bm{c}-\bm\omega_{\cal B/N}\times\left(\bm\omega_{\cal B/N}\times\bm{c}\right)
 	\label{eq:Rbddot2}
@@ -130,17 +130,17 @@ Eqs. (\ref{eq:Euler}) and (\ref{eq:Hbdot4}) are equated and yield
 Finally, using tilde matrix and simplifying yields the modified Euler equation, which is the second EOM necessary to describe the motion of the spacecraft.
 \begin{multline}
 	[I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N} = -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} - [I'_{\text{sc},B}] \bm\omega_{\cal B/N}	\\- \sum\limits_{j=1}^{N_P}\biggl(m_j [\tilde{\bm r}_{P_{c,j}/B}]\bm{r}''_{P_{c,j}/B}
-	+ m_j [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm{r}}_{P_{c,j}/B}] \bm{r}'_{P_{c,j}/B}\biggr) 
+	+ m_j [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm{r}}_{P_{c,j}/B}] \bm{r}'_{P_{c,j}/B}\biggr)
 	+ \bm{L}_B - m_{\text{sc}} [\tilde{\bm{c}}] \ddot{\bm r}_{B/N}
 	\label{eq:Final5}
 \end{multline}
 Rearranging Eq.~\eqref{eq:Final5} to be in the same form as the previous sections results in
 \begin{multline}
 	m_{\text{sc}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N}+[I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N} + \sum\limits_{j=1}^{N_P}m_j [\tilde{\bm r}_{P_{c,j}/B}] \hat{\bm p}_j \ddot{\rho}_j = \\
-	-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} 
+	-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N}
 	- [I'_{\text{sc},B}] \bm\omega_{\cal B/N} 	- \sum\limits_{j=1}^{N_P} m_j [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm{r}}_{P_{c,j}/B}] \bm{r}'_{P_{c,j}/B} + \bm{L}_B
 	\label{eq:Final6}
-\end{multline} 
+\end{multline}
 
 \subsubsection{Fuel Slosh Motion}
 Figure~\ref{fig:Flex_Slosh_Figure} shows that a single fuel slosh particle is free to move along its corresponding $\hat{\bm p}_j$ direction and this formulation is generalized to include $N_P$ number of fuel slosh particles. The derivation begins with Newton's law for each fuel slosh particle:
@@ -157,27 +157,27 @@ The inertial acceleration vector $\ddot{\bm{r}}_{P_{c,j}/B}$ is defined in Eq.~\
 	m_j \Big[\ddot{\bm{r}}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  +\bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Big]\\
 	=  \bm F_G + \bm F_C - k_j \rho_j \hat{\bm p}_j - c_j \dot{\rho_j} \hat{\bm p}_j
 	\label{eq:sloshaccel3}
-\end{multline}	
+\end{multline}
 
 Equation~\eqref{eq:sloshaccel3} is the dynamical equation for a fuel slosh particle, however, the constraint force, $\bm F_C$, is undefined. Since the fuel slosh particle is free to move in the $\hat{\bm p_j}$ direction, the component of $\bm F_C$ along the $\hat{\bm p_j}$ direction is zero. Leveraging this insight, Eq.~\eqref{eq:sloshaccel3} is projected into the $\hat{\bm p_j}$ direction by multiplying both sides of the equation by $\hat{\bm p_j}^T$.
 \begin{multline}
 	m_j \Bigl(\hat{\bm p_j}^T \ddot{\bm{r}}_{B/N} + \ddot{\rho}_j  +2 \hat{\bm p_j}^T  \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \hat{\bm p_j}^T \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  + \hat{\bm p_j}^T \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Bigr)\\
 	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j}
 	\label{eq:sloshaccel4}
-\end{multline}	
+\end{multline}
 Moving the second order terms to the left hand side and introducing the tilde matrix notation yields the final equation needed to describe the motion of the spacecraft.
 \begin{multline}
 	m_j \hat{\bm p_j}^T \ddot{\bm{r}}_{B/N} - m_j \hat{\bm p_j}^T [\tilde{\bm{r}}_{P_{c,j}/B}] \dot{\bm\omega}_{\cal B/N} + m_j \ddot{\rho}_j  \\
-	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B} 
+	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B}
 	\label{eq:sloshaccel5}
-\end{multline}	
+\end{multline}
 
 \subsection{Derivation of Equations of Motion - Kane's Method}
 
 The choice of generalized coordinates and their respective generalized speeds are:
 
 \begin{equation}
-	\bm q = 
+	\bm q =
 	\begin{bmatrix}
 		\bm r_{B/N}\\
 		\bm \sigma_{\cal{B/N}}\\
@@ -193,7 +193,7 @@ The choice of generalized coordinates and their respective generalized speeds ar
 		\cdot\\
 		\dot{\rho}_{N_P}
 	\end{bmatrix}
-\end{equation} 
+\end{equation}
 
 The necessary velocities needed to be defined are as follows
 
@@ -220,7 +220,7 @@ Now the following partial velocity table can be created:
 	\caption{Partial Velocity Table}
 	\label{tab:hub}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c | c } % Column formatting,
 		\hline
 		$r$  & $\bm v^{B_c}_{r}$  & $\bm \omega_{\textit{r}}^{\cal{B}}$ & $\bm v^{P_c}_{r}$ \\
 		\hline
@@ -323,10 +323,10 @@ Plugging in some definitions
 Combining like terms results in the same equation seen in Eq.~\eqref{eq:Final6} found using Newtonian mechanics.
 \begin{multline}
 	m_{\text{sc}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N}+[I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N} + \sum\limits_{j=1}^{N_P}m_j [\tilde{\bm r}_{P_{c,j}/B}] \hat{\bm p}_j \ddot{\rho}_j = \\
-	-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} 
+	-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N}
 	- [I'_{\text{sc},B}] \bm\omega_{\cal B/N} 	- \sum\limits_{j=1}^{N_P} m_j [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm{r}}_{P_{c,j}/B}] \bm{r}'_{P_{c,j}/B} + \bm{L}_B
 	\label{eq:Final7}
-\end{multline} 
+\end{multline}
 
 \subsubsection{Fuel Slosh Motion}
 Following the similar pattern for translational and rotational equations the generalized active forces are defined:
@@ -334,7 +334,7 @@ Following the similar pattern for translational and rotational equations the gen
 \begin{equation}
 	\bm F_{7} = \bm v^{P_c}_{r} \cdot (\bm F_G + \bm F_C -k\rho_j \hat{\bm p}_j - c \dot{\rho} \hat{\bm p}_j) = \hat{\bm p_j}^T \bm F_G -k\rho_j - c \dot{\rho}
 \end{equation}
-The generalized inertia forces are defined as: 
+The generalized inertia forces are defined as:
 
 \begin{equation}
 	\bm F^*_{7} = \bm v^{P_c}_{r} \cdot (-m_j \ddot{\bm r}_{P_{c,j}/N}) = \hat{\bm p}_j^T (-m_j \ddot{\bm r}_{P_{c,j}/N})
@@ -343,15 +343,13 @@ Using Kane's equation the following equations of motion are defined:
 
 \begin{multline}
 	\hat{\bm p_j}^T \bm F_G -k\rho_j - c \dot{\rho} - m_j \hat{\bm p}_j^T \Big[\ddot{\bm r}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  \\
-	+\bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Big] = 0 
+	+\bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Big] = 0
 \end{multline}
 Rearranging and combining like terms results in:
 
 \begin{multline}
 	m_j \hat{\bm p_j}^T \ddot{\bm{r}}_{B/N} - m_j \hat{\bm p_j}^T [\tilde{\bm{r}}_{P_{c,j}/B}] \dot{\bm\omega}_{\cal B/N} + m_j \ddot{\rho}_j  \\
-	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B} 
+	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B}
 	\label{eq:sloshaccel6}
-\end{multline}	
+\end{multline}
 Which is identical to Eq.~\eqref{eq:sloshaccel5}!
-
-

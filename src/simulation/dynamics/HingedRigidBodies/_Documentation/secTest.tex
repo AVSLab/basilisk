@@ -2,7 +2,7 @@
 This test is located in \texttt{simulation/dynamics/HingedRigidBodies/UnitTest/\newline
 test\_hingedRigidBodyStateEffector.py}. In this integrated test there are two hinged rigid bodies connected to the spacecraft hub.  Depending on the scenario, there are different success criteria. These are outlined in the following subsections:
 \subsection{Gravity and no damping scenario}
-In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the hinged rigid bodies. The following parameters are being tested. 
+In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the hinged rigid bodies. The following parameters are being tested.
 \begin{itemize}
 	\item Conservation of orbital angular momentum
 	\item Conservation of orbital energy
@@ -34,7 +34,7 @@ In this test, the spacecraft is placed in free space (no gravity) and has dampin
 
 \subsection{Steady State Deflection Verification Scenario}
 
-The BOE calculation for the steady state deflection can be seen in Fig.~\ref{fig:BOEThetaSS}. The resulting steady state deflection does not have a closed form solution so a root solving function must be used to converge on the solution. A Newton-Raphson method was chosen and the success criteria for this test is whether Basilisk gives the same results as this BOE calculation within a certain tolerance. The spacecraft has a constant force applied through the whole simulation with the hinged rigid bodies initially undeflected and they have damping. The force is always applied through the center of mass of the spacecraft and results in no rotation of the spacecraft. 
+The BOE calculation for the steady state deflection can be seen in Fig.~\ref{fig:BOEThetaSS}. The resulting steady state deflection does not have a closed form solution so a root solving function must be used to converge on the solution. A Newton-Raphson method was chosen and the success criteria for this test is whether Basilisk gives the same results as this BOE calculation within a certain tolerance. The spacecraft has a constant force applied through the whole simulation with the hinged rigid bodies initially undeflected and they have damping. The force is always applied through the center of mass of the spacecraft and results in no rotation of the spacecraft.
 
 \begin{figure}[htbp]
 	\centerline{
@@ -65,9 +65,9 @@ m_{\text{sc}} \ddot{\bm r}_{B/N}+\sum_{i}^{N}m_{\text{sp}_i} d_i  \bm{\hat{s}}_{
 \end{equation}
 
 \begin{equation}
-m_{\text{sp}_i} d_i \hat{\bm s}_{i,3}^{T} \ddot{\bm r}_{B/N} 
-+ \left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right) \ddot \theta_i 
-= - k_i \theta_i - c_i \dot\theta_i + \hat{\bm s}_{i,2}^T \bm \tau_{\text{ext},H_i}  
+m_{\text{sp}_i} d_i \hat{\bm s}_{i,3}^{T} \ddot{\bm r}_{B/N}
++ \left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right) \ddot \theta_i
+= - k_i \theta_i - c_i \dot\theta_i + \hat{\bm s}_{i,2}^T \bm \tau_{\text{ext},H_i}
 \label{eq:solar_panel_final9}
 \end{equation}
 Next, assumptions \ref{item:4}-\ref{item:5} are applied:
@@ -77,9 +77,9 @@ m_{\text{sc}} \ddot{\bm r}_{B/N}+\sum_{i}^{N}m_{\text{sp}_i} d_i  \bm{\hat{h}}_{
 \end{equation}
 
 \begin{equation}
-m_{\text{sp}_i} d_i \hat{\bm h}_{i,3}^{T} \ddot{\bm r}_{B/N} 
-+ \left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right) \ddot \theta_i 
-= - k_i \theta_i - c_i \dot\theta_i  
+m_{\text{sp}_i} d_i \hat{\bm h}_{i,3}^{T} \ddot{\bm r}_{B/N}
++ \left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right) \ddot \theta_i
+= - k_i \theta_i - c_i \dot\theta_i
 \label{eq:solar_panel_final10}
 \end{equation}
 Finally, knowing that the force is being directed along the $\hat{\bm b}_2$ axis and that the spacecraft will not rotate, the equations simplify to:
@@ -89,9 +89,9 @@ m_{\text{sc}} \ddot{y}_{B/N}+\sum_{i}^{N}m_{\text{sp}_i} d_i \ddot{\theta}_i = F
 \end{equation}
 
 \begin{equation}
-m_{\text{sp}_i} d_i \ddot{y}_{B/N} 
-+ \left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right) \ddot \theta_i 
-= - k_i \theta_i - c_i \dot\theta_i  
+m_{\text{sp}_i} d_i \ddot{y}_{B/N}
++ \left( I_{s_{i,2}} + m_{\text{sp}_i} d_i^{2} \right) \ddot \theta_i
+= - k_i \theta_i - c_i \dot\theta_i
 \label{eq:solar_panel_final12}
 \end{equation}
 Converting these equations to state space:
@@ -148,7 +148,7 @@ The equivalent dynamics matrix for this coupled system is:
 [\tilde{A}] = [M][A]
 \end{equation}
 
-Finding the eigenvalues of $[\tilde{A}]$ will describe the coupled natural frequencies of the combined system. The integrated test for this scenario ensures that the analytical coupled frequency of oscillation matches the frequency obtained from the simulation. 
+Finding the eigenvalues of $[\tilde{A}]$ will describe the coupled natural frequencies of the combined system. The integrated test for this scenario ensures that the analytical coupled frequency of oscillation matches the frequency obtained from the simulation.
 
 \subsubsection{Max Deflection While Force is Being Applied}
 
@@ -157,7 +157,7 @@ The next BOE calculation that is needed is to find the maximum deflection while 
 \begin{equation}
 \theta_{\textnormal{max}} = 2 \theta_{\textnormal{SS}}
 \end{equation}
-which uses the definition of $\theta_{\textnormal{SS}}$ from Fig.~\ref{fig:BOEThetaSS}. 
+which uses the definition of $\theta_{\textnormal{SS}}$ from Fig.~\ref{fig:BOEThetaSS}.
 
 \subsubsection{Max Deflection While Force is Not Being Applied}
 
@@ -204,7 +204,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Spacecraft Hub Parameters}
 	\label{tab:hub}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -226,7 +226,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Hinged Rigid Body 1 Parameters}
 	\label{tab:panel1}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -260,7 +260,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Hinged Rigid Body 2 Parameters}
 	\label{tab:panel2}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -294,7 +294,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Initial Conditions for Energy Momentum Conservation Scenarios}
 	\label{tab:initial}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
@@ -307,7 +307,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		(Panel 2) thetaDotInit  & (Panel 2) Initial $\dot{\theta}$ & 0.0 & deg \\
 		\hline
 		r\_CN\_NInit & Initial Position of S/C (gravity scenarios) & $\begin{bmatrix}
-		-4020339 &	7490567 & 5248299 
+		-4020339 &	7490567 & 5248299
 		\end{bmatrix}^T$ & m \\
 		\hline
 		v\_CN\_NInit & Initial Velocity of S/C (gravity scenarios) & $\begin{bmatrix}
@@ -315,7 +315,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		\end{bmatrix}^T$ & m/s \\
 		\hline
 		r\_CN\_NInit & Initial Position of S/C (no gravity) & $\begin{bmatrix}
-		0.1 & -0.4 & 0.3 
+		0.1 & -0.4 & 0.3
 		\end{bmatrix}^T$ & m \\
 		\hline
 		v\_CN\_NInit & Initial Velocity of S/C (no gravity) & $\begin{bmatrix}
@@ -337,7 +337,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Error Tolerance - Note: Relative Tolerance is $\textnormal{abs}(\frac{\textnormal{truth} - \textnormal{value}}{\textnormal{truth}}$)}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c |} % Column formatting, 
+	\begin{tabular}{| c | c |} % Column formatting,
 		\hline
 		Test   & Relative Tolerance \\
 		\hline
@@ -352,7 +352,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		Max deflection with force off & 5e-3 \\
 		\hline
 		Lagrangian vs Basilisk comparison & 1e-10 \\
-		\hline	
+		\hline
 	\end{tabular}
 \end{table}
 
@@ -360,7 +360,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \section{Test Results}
 
-The following figures show the conservation of the quantities described in the success criteria for each scenario. The conservation plots are all relative difference plots. All conservation plots show integration error which is the desired result. In the python test these values are automatically checked therefore when the tests pass, these values have all been confirmed to be conserved. 
+The following figures show the conservation of the quantities described in the success criteria for each scenario. The conservation plots are all relative difference plots. All conservation plots show integration error which is the desired result. In the python test these values are automatically checked therefore when the tests pass, these values have all been confirmed to be conserved.
 
 \subsection{Gravity with no damping scenario}
 \input{AutoTex/ChangeInOrbitalAngularMomentumGravity}
@@ -396,7 +396,7 @@ The following figures show the conservation of the quantities described in the s
 	\caption{Frequency and Amplitude Test Results}
 	\label{tab:freqAmpResults}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+	\begin{tabular}{| c | c | c | c |} % Column formatting,
 		\hline
 		\textbf{Name}  & \textbf{BOE Calculation}  & \textbf{Basilisk Results} & \textbf{Relative Error} \\
 		\hline

@@ -99,9 +99,11 @@ def visualize(
     script = os.path.join(bskPath, rf"utilities/mujocoUtils/bin/{script_fn}")
 
     if not os.path.exists(script):
-        raise RuntimeError(f"Couldn't find the visualization tool at '{script}'."
-                            " Did you build Basilisk with the flag "
-                            "'--mujocoReplay True'? If so, did this tool build correctly?")
+        raise RuntimeError(
+            f"Couldn't find the visualization tool at '{script}'."
+            " Did you build Basilisk with the flag "
+            "'--mujocoReplay True'? If so, did this tool build correctly?"
+        )
 
     args = [script, "--model", modelFile, "--state", fqpos.name]
 

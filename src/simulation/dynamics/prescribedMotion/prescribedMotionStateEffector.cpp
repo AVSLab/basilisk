@@ -73,7 +73,8 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 
  @param currentClock [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
+void
+PrescribedMotionStateEffector::Reset(uint64_t currentClock)
 {
 }
 
@@ -81,12 +82,12 @@ void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
 
  @param currentClock [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
+void
+PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
 {
 
     // Write the prescribed translational motion output message if it is linked
-    if (this->prescribedTranslationOutMsg.isLinked())
-    {
+    if (this->prescribedTranslationOutMsg.isLinked()) {
         PrescribedTranslationMsgPayload prescribedTranslationBuffer = this->prescribedTranslationOutMsg.zeroMsgPayload;
         eigenVector3d2CArray(this->r_PM_M, prescribedTranslationBuffer.r_PM_M);
         eigenVector3d2CArray(this->rPrime_PM_M, prescribedTranslationBuffer.rPrime_PM_M);
@@ -95,8 +96,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
     }
 
     // Write the prescribed rotational motion output message if it is linked
-    if (this->prescribedRotationOutMsg.isLinked())
-    {
+    if (this->prescribedRotationOutMsg.isLinked()) {
         PrescribedRotationMsgPayload prescribedRotationBuffer = this->prescribedRotationOutMsg.zeroMsgPayload;
         eigenVector3d2CArray(this->omega_PM_P, prescribedRotationBuffer.omega_PM_P);
         eigenVector3d2CArray(this->omegaPrime_PM_P, prescribedRotationBuffer.omegaPrime_PM_P);
@@ -106,8 +106,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
     }
 
     // Write the config log message if it is linked
-    if (this->prescribedMotionConfigLogOutMsg.isLinked())
-    {
+    if (this->prescribedMotionConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
 
         // Note that the configLogMsg B frame represents the effector body frame (frame P)
@@ -123,7 +122,8 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 
  @param statesIn Pointer to give the state effector access the hub states
 */
-void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
+void
+PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // Get access to the hub states needed for dynamic coupling
     this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
@@ -134,15 +134,16 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
 
  @param states Pointer to give the state effector access the hub states
 */
-void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
+void
+PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 {
-        this->sigma_PMState = states.registerState(3, 1, this->nameOfsigma_PMState);
-        Eigen::Vector3d sigma_PM_loc = eigenMRPd2Vector3d(this->sigma_PM);
-        Eigen::Vector3d sigma_PMInitMatrix;
-        sigma_PMInitMatrix(0) = sigma_PM_loc[0];
-        sigma_PMInitMatrix(1) = sigma_PM_loc[1];
-        sigma_PMInitMatrix(2) = sigma_PM_loc[2];
-        this->sigma_PMState->setState(sigma_PMInitMatrix);
+    this->sigma_PMState = states.registerState(3, 1, this->nameOfsigma_PMState);
+    Eigen::Vector3d sigma_PM_loc = eigenMRPd2Vector3d(this->sigma_PM);
+    Eigen::Vector3d sigma_PMInitMatrix;
+    sigma_PMInitMatrix(0) = sigma_PM_loc[0];
+    sigma_PMInitMatrix(1) = sigma_PM_loc[1];
+    sigma_PMInitMatrix(2) = sigma_PM_loc[2];
+    this->sigma_PMState->setState(sigma_PMInitMatrix);
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
@@ -150,7 +151,8 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
 
  @param integTime [s] Time the method is called
 */
-void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
+void
+PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 {
     // Update the prescribed states
     double dt = integTime - this->currentSimTimeSec;
@@ -203,10 +205,9 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
     // Find the B frame time derivative of IPntPc_B
     Eigen::Matrix3d rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
-    this->effProps.IEffPrimePntB_B = this->omegaTilde_PB_B * this->IPntPc_B
-                                     - this->IPntPc_B * this->omegaTilde_PB_B
-                                     + this->mass * (rPrimeTilde_PcB_B * this->rTilde_PcB_B.transpose()
-                                     + this->rTilde_PcB_B * rPrimeTilde_PcB_B.transpose());
+    this->effProps.IEffPrimePntB_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B +
+                                     this->mass * (rPrimeTilde_PcB_B * this->rTilde_PcB_B.transpose() +
+                                                   this->rTilde_PcB_B * rPrimeTilde_PcB_B.transpose());
 }
 
 /*! This method allows the state effector to give its contributions to the matrices needed for the back-sub.
@@ -219,11 +220,12 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
  components
  @param g_N [m/s^2] Gravitational acceleration in N frame components
 */
-void PrescribedMotionStateEffector::updateContributions(double integTime,
-                                                        BackSubMatrices & backSubContr,
-                                                        Eigen::Vector3d sigma_BN,
-                                                        Eigen::Vector3d omega_BN_B,
-                                                        Eigen::Vector3d g_N)
+void
+PrescribedMotionStateEffector::updateContributions(double integTime,
+                                                   BackSubMatrices& backSubContr,
+                                                   Eigen::Vector3d sigma_BN,
+                                                   Eigen::Vector3d omega_BN_B,
+                                                   Eigen::Vector3d g_N)
 {
     // Compute dcm_BN
     this->sigma_BN = sigma_BN;
@@ -237,17 +239,18 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
     Eigen::Matrix3d omegaPrimeTilde_PB_B = eigenTilde(this->omegaPrime_PB_B);
 
     // Compute rPrimePrime_PcB_B
-    this->rPrimePrime_PcB_B = (omegaPrimeTilde_PB_B + this->omegaTilde_PB_B * this->omegaTilde_PB_B) * this->r_PcP_B + this->rPrimePrime_PM_B;
+    this->rPrimePrime_PcB_B =
+      (omegaPrimeTilde_PB_B + this->omegaTilde_PB_B * this->omegaTilde_PB_B) * this->r_PcP_B + this->rPrimePrime_PM_B;
 
     // Translation contributions
     backSubContr.vecTrans = -this->mass * this->rPrimePrime_PcB_B;
 
     // Rotation contributions
     Eigen::Matrix3d IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B;
-    backSubContr.vecRot = -(this->mass * this->rTilde_PcB_B * this->rPrimePrime_PcB_B)
-                          - (IPrimePntPc_B + this->omegaTilde_BN_B * this->IPntPc_B) * this->omega_PB_B
-                          - this->IPntPc_B * this->omegaPrime_PB_B
-                          - this->mass * this->omegaTilde_BN_B * rTilde_PcB_B * this->rPrime_PcB_B;
+    backSubContr.vecRot = -(this->mass * this->rTilde_PcB_B * this->rPrimePrime_PcB_B) -
+                          (IPrimePntPc_B + this->omegaTilde_BN_B * this->IPntPc_B) * this->omega_PB_B -
+                          this->IPntPc_B * this->omegaPrime_PB_B -
+                          this->mass * this->omegaTilde_BN_B * rTilde_PcB_B * this->rPrime_PcB_B;
 }
 
 /*! This method is for defining the state effector's MRP state derivative
@@ -259,14 +262,15 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
  inertial frame, expressed in B frame components
  @param sigma_BN Current B frame attitude with respect to the inertial frame
 */
-void PrescribedMotionStateEffector::computeDerivatives(double integTime,
-                                                       Eigen::Vector3d rDDot_BN_N,
-                                                       Eigen::Vector3d omegaDot_BN_B,
-                                                       Eigen::Vector3d sigma_BN)
+void
+PrescribedMotionStateEffector::computeDerivatives(double integTime,
+                                                  Eigen::Vector3d rDDot_BN_N,
+                                                  Eigen::Vector3d omegaDot_BN_B,
+                                                  Eigen::Vector3d sigma_BN)
 {
     Eigen::MRPd sigma_PM_loc;
     sigma_PM_loc = (Eigen::Vector3d)this->sigma_PMState->getState();
-    this->sigma_PMState->setDerivative(0.25*sigma_PM_loc.Bmat()*this->omega_PM_P);
+    this->sigma_PMState->setDerivative(0.25 * sigma_PM_loc.Bmat() * this->omega_PM_P);
 }
 
 /*! This method is for calculating the contributions of the effector to the energy and momentum of the spacecraft.
@@ -277,10 +281,11 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
  @param omega_BN_B [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame
  components
 */
-void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime,
-                                                                 Eigen::Vector3d & rotAngMomPntCContr_B,
-                                                                 double & rotEnergyContr,
-                                                                 Eigen::Vector3d omega_BN_B)
+void
+PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime,
+                                                            Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                            double& rotEnergyContr,
+                                                            Eigen::Vector3d omega_BN_B)
 {
     // Update omega_BN_B and omega_PN_B
     this->omega_BN_B = omega_BN_B;
@@ -294,38 +299,39 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
     rotAngMomPntCContr_B = this->IPntPc_B * this->omega_PN_B + this->mass * this->rTilde_PcB_B * this->rDot_PcB_B;
 
     // Find the rotational energy contribution from the hub
-    rotEnergyContr = 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B)
-                     + 0.5 * this->mass * this->rDot_PcB_B.dot(this->rDot_PcB_B);
+    rotEnergyContr = 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B) +
+                     0.5 * this->mass * this->rDot_PcB_B.dot(this->rDot_PcB_B);
 }
 
 /*! This method computes the effector states relative to the inertial frame.
 
 */
-void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
+void
+PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 {
     // Compute the effector's attitude with respect to the inertial frame
     Eigen::Matrix3d dcm_PN = (this->dcm_BP).transpose() * this->dcm_BN;
     this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
 
     // Compute the effector's inertial position vector
-    this->r_PcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_PcB_B;
+    this->r_PcN_N = (Eigen::Vector3d) * this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_PcB_B;
 
     // Compute the effector's inertial velocity vector
-    this->v_PcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_PcB_B;
+    this->v_PcN_N = (Eigen::Vector3d) * this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_PcB_B;
 }
 
 /*! This method updates the effector state at the dynamics frequency.
 
  @param currentSimNanos [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
+void
+PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
 {
     // Store the current simulation time
     this->currentSimTimeSec = currentSimNanos * NANO2SEC;
 
     // Read the translational input message if it is linked and written
-    if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten())
-    {
+    if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten()) {
         PrescribedTranslationMsgPayload incomingPrescribedTransStates = this->prescribedTranslationInMsg();
         this->r_PM_M = cArray2EigenVector3d(incomingPrescribedTransStates.r_PM_M);
         this->rPrime_PM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrime_PM_M);
@@ -337,8 +343,7 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
     }
 
     // Read the rotational input message if it is linked and written
-    if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten())
-    {
+    if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten()) {
         PrescribedRotationMsgPayload incomingPrescribedRotStates = this->prescribedRotationInMsg();
         this->omega_PM_P = cArray2EigenVector3d(incomingPrescribedRotStates.omega_PM_P);
         this->omegaPrime_PM_P = cArray2EigenVector3d(incomingPrescribedRotStates.omegaPrime_PM_P);

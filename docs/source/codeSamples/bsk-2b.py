@@ -34,12 +34,12 @@ def run():
     fswProcess = scSim.CreateNewProcess("fswProcess", 10)
 
     # create the dynamics task and specify the integration update time
-    fswProcess.addTask(scSim.CreateNewTask("fswTask1", macros.sec2nano(1.)))
-    fswProcess.addTask(scSim.CreateNewTask("fswTask2", macros.sec2nano(2.)))
-    fswProcess.addTask(scSim.CreateNewTask("fswTask3", macros.sec2nano(3.)), 10)
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask1", macros.sec2nano(1.)))
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask2", macros.sec2nano(5.)), 10)
-    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask3", macros.sec2nano(10.)))
+    fswProcess.addTask(scSim.CreateNewTask("fswTask1", macros.sec2nano(1.0)))
+    fswProcess.addTask(scSim.CreateNewTask("fswTask2", macros.sec2nano(2.0)))
+    fswProcess.addTask(scSim.CreateNewTask("fswTask3", macros.sec2nano(3.0)), 10)
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask1", macros.sec2nano(1.0)))
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask2", macros.sec2nano(5.0)), 10)
+    dynProcess.addTask(scSim.CreateNewTask("dynamicsTask3", macros.sec2nano(10.0)))
 
     # create modules
     mod1 = cModuleTemplate.cModuleTemplate()

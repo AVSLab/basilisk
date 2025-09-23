@@ -119,16 +119,23 @@ from Basilisk.simulation import magnetometer
 
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+)
 from Basilisk.utilities import simSetPlanetEnvironment
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
 
-#attempt to import vizard
+# attempt to import vizard
 from Basilisk.utilities import vizSupport
+
 fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     """
@@ -156,7 +163,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -172,37 +179,43 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    if planetCase == 'Jupiter':
+    if planetCase == "Jupiter":
         planet = gravFactory.createJupiter()
-        planet.isCentralBody = True           # ensure this is the central gravitational body
-    elif planetCase == 'Earth':
+        planet.isCentralBody = True  # ensure this is the central gravitational body
+    elif planetCase == "Earth":
         planet = gravFactory.createEarth()
-        planet.isCentralBody = True          # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
     mu = planet.mu
     req = planet.radEquator
 
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
 
-    if planetCase == 'Jupiter':
-        magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
+    if planetCase == "Jupiter":
+        magModule = (
+            magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+        )  # default is Earth centered dipole module
         magModule.ModelTag = "CenteredDipole"
         # The following command is a support function that sets up the centered dipole parameters.
         # These parameters can also be setup manually
-        simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'jupiter')
-    elif planetCase == 'Earth':
+        simSetPlanetEnvironment.centeredDipoleMagField(magModule, "jupiter")
+    elif planetCase == "Earth":
         magModule = magneticFieldWMM.MagneticFieldWMM()
         magModule.ModelTag = "WMM"
-        magModule.dataPath = bskPath + '/supportData/MagneticField/'
+        magModule.dataPath = bskPath + "/supportData/MagneticField/"
         # set epoch date/time message
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+            "2019 June 27, 10:23:0.0 (UTC)"
+        )
         magModule.epochInMsg.subscribeTo(epochMsg)
-        if orbitCase == 'elliptical':
-            magModule.envMinReach = 10000 * 1000.
-            magModule.envMaxReach = 20000 * 1000.
+        if orbitCase == "elliptical":
+            magModule.envMinReach = 10000 * 1000.0
+            magModule.envMaxReach = 20000 * 1000.0
 
     # add spacecraft to the magnetic field module so it can read the sc position messages
-    magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
+    magModule.addSpacecraftToModel(
+        scObject.scStateOutMsg
+    )  # this command can be repeated if multiple
 
     # add the magnetic field module to the simulation task stack
     scSim.AddModelToTask(simTaskName, magModule)
@@ -212,7 +225,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     TAM.ModelTag = "TAM_sensor"
     # specify the optional TAM variables
     TAM.scaleFactor = 1.0
-    TAM.senNoiseStd = [100e-9,  100e-9, 100e-9]
+    TAM.senNoiseStd = [100e-9, 100e-9, 100e-9]
     if useBias:
         TAM.senBias = [0, 0, -1e-6]  # Tesla
     if useBounds:
@@ -226,12 +239,12 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rPeriapses = req*1.1     # meters
-    if orbitCase == 'circular':
+    rPeriapses = req * 1.1  # meters
+    if orbitCase == "circular":
         oe.a = rPeriapses
         oe.e = 0.0000
-    elif orbitCase == 'elliptical':
-        rApoapses = req*3.5
+    elif orbitCase == "elliptical":
+        rApoapses = req * 3.5
         oe.a = (rPeriapses + rApoapses) / 2.0
         oe.e = 1.0 - rPeriapses / oe.a
     else:
@@ -254,14 +267,16 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
-    simulationTime = macros.sec2nano(1. * P)
+    P = 2.0 * np.pi / n
+    simulationTime = macros.sec2nano(1.0 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     magLog = magModule.envOutMsgs[0].recorder(samplingTime)
     tamLog = TAM.tamDataOutMsg.recorder(samplingTime)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
@@ -271,9 +286,12 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     TAM.magInMsg.subscribeTo(magModule.envOutMsgs[0])
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     scSim.InitializeSimulation()
 
@@ -301,21 +319,31 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
     rData = []
     timeAxis = dataLog.times()
     for idx in range(len(posData)):
         rMag = np.linalg.norm(posData[idx])
-        rData.append(rMag / 1000.)
-    plt.plot(timeAxis * macros.NANO2SEC / P, rData, color='#aa0000')
-    if orbitCase == 'elliptical':
-        plt.plot(timeAxis * macros.NANO2SEC / P, [magModule.envMinReach / 1000.] * len(rData), color='#007700',
-                 dashes=[5, 5, 5, 5])
-        plt.plot(timeAxis * macros.NANO2SEC / P, [magModule.envMaxReach / 1000.] * len(rData),
-                 color='#007700', dashes=[5, 5, 5, 5])
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Radius [km]')
+        rData.append(rMag / 1000.0)
+    plt.plot(timeAxis * macros.NANO2SEC / P, rData, color="#aa0000")
+    if orbitCase == "elliptical":
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            [magModule.envMinReach / 1000.0] * len(rData),
+            color="#007700",
+            dashes=[5, 5, 5, 5],
+        )
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            [magModule.envMaxReach / 1000.0] * len(rData),
+            color="#007700",
+            dashes=[5, 5, 5, 5],
+        )
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Radius [km]")
     plt.ylim(min(rData) * 0.9, max(rData) * 1.1)
     figureList = {}
     pltName = fileName + "1" + orbitCase + planetCase
@@ -324,15 +352,20 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='sci')
-    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.ticklabel_format(useOffset=False, style="sci")
+    ax.get_yaxis().set_major_formatter(
+        plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x)))
+    )
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2SEC / P, tamData[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$TAM_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Magnetic Field [nT] ')
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            tamData[:, idx] * 1e9,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$TAM_{" + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Magnetic Field [nT] ")
     pltName = fileName + "2" + orbitCase + planetCase
     figureList[pltName] = plt.figure(2)
 
@@ -344,15 +377,16 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
 
     return magData, tamData, figureList, simulationTime
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
     run(
-        True,          # show_plots (True, False)
-        'elliptical',  # orbit Case (circular, elliptical)
-        'Jupiter',    # planet Case (Earth, Jupiter)
-        False,        # useBias
-        False        # useBounds
+        True,  # show_plots (True, False)
+        "elliptical",  # orbit Case (circular, elliptical)
+        "Jupiter",  # planet Case (Earth, Jupiter)
+        False,  # useBias
+        False,  # useBounds
     )

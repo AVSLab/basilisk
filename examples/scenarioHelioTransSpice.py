@@ -90,9 +90,10 @@ path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
+
 def run():
     """
-        Heliocentric mission simulation scenarion.
+    Heliocentric mission simulation scenarion.
     """
     # Create simulation variable names
     simTaskName = "simTask"
@@ -108,7 +109,7 @@ def run():
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # Create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(5 * 60 * 60.)
+    simulationTimeStep = macros.sec2nano(5 * 60 * 60.0)
 
     # Add the dynamics task to the dynamics process
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
@@ -131,7 +132,9 @@ def run():
 
     # Load the custom Spice files using the SpiceInterface class loadSpiceKernel() method
     for file in customSpiceFiles:
-        spiceObject.loadSpiceKernel(file, os.path.join(path, "dataForExamples", "Spice/"))
+        spiceObject.loadSpiceKernel(
+            file, os.path.join(path, "dataForExamples", "Spice/")
+        )
 
     # Add spacecraft name
     scNames = ["-60000"]
@@ -145,11 +148,13 @@ def run():
     scSim.AddModelToTask(simTaskName, scObject)
 
     # define the spacecraft inertia and other parameters
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
@@ -158,15 +163,20 @@ def run():
 
     # Configure Vizard settings
     if vizSupport.vizFound:
-        colorMsgContent = messaging.ColorMsgPayload(colorRGBA=vizSupport.toRGBA255("Yellow"))
+        colorMsgContent = messaging.ColorMsgPayload(
+            colorRGBA=vizSupport.toRGBA255("Yellow")
+        )
 
         colorMsg = messaging.ColorMsg().write(colorMsgContent)
 
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  , oscOrbitColorList=[vizSupport.toRGBA255("Magenta")]
-                                                  , trueOrbitColorInMsgList=colorMsg.addSubscriber()
-                                                  # , saveFile=__file__
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            oscOrbitColorList=[vizSupport.toRGBA255("Magenta")],
+            trueOrbitColorInMsgList=colorMsg.addSubscriber(),
+            # , saveFile=__file__
+        )
         viz.epochInMsg.subscribeTo(gravFactory.epochMsg)
         viz.settings.orbitLinesOn = 1
         viz.settings.spacecraftHelioViewSizeMultiplier = 3

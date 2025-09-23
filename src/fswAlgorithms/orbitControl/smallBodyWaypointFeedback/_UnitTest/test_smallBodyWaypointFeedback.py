@@ -32,6 +32,7 @@ from Basilisk.utilities import unitTestSupport
 #     ,(1, 3)
 # ])
 
+
 def test_smallBodyWaypointFeedback(show_plots):
     r"""
     **Validation Test Description**
@@ -73,14 +74,20 @@ def smallBodyWaypointFeedbackTestFunction1():
     module.ModelTag = "smallBodyWaypointFeedback1"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    module.A_sc = 1.  # Surface area of the spacecraft, m^2
+    module.A_sc = 1.0  # Surface area of the spacecraft, m^2
     module.M_sc = 300  # Mass of the spacecraft, kg
-    module.IHubPntC_B = unitTestSupport.np2EigenMatrix3d([82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0])  # sc inertia
+    module.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(
+        [82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0]
+    )  # sc inertia
     module.mu_ast = 4.892  # Gravitational constant of the asteroid
-    module.x1_ref = [-2000., 0., 0.]
+    module.x1_ref = [-2000.0, 0.0, 0.0]
     module.x2_ref = [0.0, 0.0, 0.0]
-    module.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    module.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    module.K1 = unitTestSupport.np2EigenMatrix3d(
+        [5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4]
+    )
+    module.K2 = unitTestSupport.np2EigenMatrix3d(
+        [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    )
 
     # Set the orbital parameters of the asteroid
     oeAsteroid = orbitalMotion.ClassicElements()
@@ -90,11 +97,17 @@ def smallBodyWaypointFeedbackTestFunction1():
     oeAsteroid.Omega = 2.01820 * macros.D2R
     oeAsteroid.omega = 66.304 * macros.D2R
     oeAsteroid.f = 346.32 * macros.D2R
-    r_ON_N, v_ON_N = orbitalMotion.elem2rv(orbitalMotion.MU_SUN*(1000.**3), oeAsteroid)
+    r_ON_N, v_ON_N = orbitalMotion.elem2rv(
+        orbitalMotion.MU_SUN * (1000.0**3), oeAsteroid
+    )
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame origin
-    r_BO_N = np.array([-2000., 1500., 1000.]) # Position of the spacecraft relative to the body
-    v_BO_N = np.array([0., 0., 0.])  # Velocity of the spacecraft relative to the body
+    r_BO_N = np.array(
+        [-2000.0, 1500.0, 1000.0]
+    )  # Position of the spacecraft relative to the body
+    v_BO_N = np.array(
+        [0.0, 0.0, 0.0]
+    )  # Velocity of the spacecraft relative to the body
 
     # Create the inertial position and velocity of the s/c
     r_BN_N = np.add(r_BO_N, r_ON_N)
@@ -129,13 +142,18 @@ def smallBodyWaypointFeedbackTestFunction1():
     unitTestSim.AddModelToTask(unitTaskName, forceOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))
     unitTestSim.ExecuteSimulation()
 
     if np.linalg.norm(forceOutMsgRec.forceRequestBody) <= 1:
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed "
-                            + "force output" + " unit test")
+        testMessages.append(
+            "FAILED: "
+            + module.ModelTag
+            + " Module failed "
+            + "force output"
+            + " unit test"
+        )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)
@@ -143,6 +161,7 @@ def smallBodyWaypointFeedbackTestFunction1():
         print(testMessages)
 
     return [testFailCount, "".join(testMessages)]
+
 
 def smallBodyWaypointFeedbackTestFunction2():
     """This test checks that the force output is near zero when at the waypoint"""
@@ -161,14 +180,20 @@ def smallBodyWaypointFeedbackTestFunction2():
     module.ModelTag = "smallBodyWaypointFeedback2"
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    module.A_sc = 1.  # Surface area of the spacecraft, m^2
+    module.A_sc = 1.0  # Surface area of the spacecraft, m^2
     module.M_sc = 300  # Mass of the spacecraft, kg
-    module.IHubPntC_B = unitTestSupport.np2EigenMatrix3d([82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0])  # sc inertia
+    module.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(
+        [82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0]
+    )  # sc inertia
     module.mu_ast = 4.892  # Gravitational constant of the asteroid
-    module.x1_ref = [-2000., 0., 0.]
+    module.x1_ref = [-2000.0, 0.0, 0.0]
     module.x2_ref = [0.0, 0.0, 0.0]
-    module.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    module.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    module.K1 = unitTestSupport.np2EigenMatrix3d(
+        [5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4]
+    )
+    module.K2 = unitTestSupport.np2EigenMatrix3d(
+        [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    )
 
     # Set the orbital parameters of the asteroid
     oeAsteroid = orbitalMotion.ClassicElements()
@@ -178,11 +203,17 @@ def smallBodyWaypointFeedbackTestFunction2():
     oeAsteroid.Omega = 2.01820 * macros.D2R
     oeAsteroid.omega = 66.304 * macros.D2R
     oeAsteroid.f = 346.32 * macros.D2R
-    r_ON_N, v_ON_N = orbitalMotion.elem2rv(orbitalMotion.MU_SUN*(1000.**3), oeAsteroid)
+    r_ON_N, v_ON_N = orbitalMotion.elem2rv(
+        orbitalMotion.MU_SUN * (1000.0**3), oeAsteroid
+    )
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame
-    r_BO_H = np.array([-2000., 0., 0.]) # Position of the spacecraft relative to the body
-    v_BO_H = np.array([0., 0., 0.])  # Velocity of the spacecraft relative to the body
+    r_BO_H = np.array(
+        [-2000.0, 0.0, 0.0]
+    )  # Position of the spacecraft relative to the body
+    v_BO_H = np.array(
+        [0.0, 0.0, 0.0]
+    )  # Velocity of the spacecraft relative to the body
 
     r_BN_N, v_BN_N = orbitalMotion.hill2rv(r_ON_N, v_ON_N, r_BO_H, v_BO_H)
 
@@ -215,13 +246,18 @@ def smallBodyWaypointFeedbackTestFunction2():
     unitTestSim.AddModelToTask(unitTaskName, forceOutMsgRec)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))
     unitTestSim.ExecuteSimulation()
 
     if np.linalg.norm(forceOutMsgRec.forceRequestBody) >= 1e-8:
         testFailCount += 1
-        testMessages.append("FAILED: " + module.ModelTag + " Module failed "
-                            + "force output" + " unit test")
+        testMessages.append(
+            "FAILED: "
+            + module.ModelTag
+            + " Module failed "
+            + "force output"
+            + " unit test"
+        )
 
     if testFailCount == 0:
         print("PASSED: " + module.ModelTag)

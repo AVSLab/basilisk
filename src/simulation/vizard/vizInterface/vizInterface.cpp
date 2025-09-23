@@ -27,7 +27,8 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include "architecture/utilities/astroConstants.h"
 
-void message_buffer_deallocate(void *data, void *hint);
+void
+message_buffer_deallocate(void* data, void* hint);
 
 /*! VizInterface Constructor
  */
@@ -37,7 +38,7 @@ VizInterface::VizInterface()
     this->liveStream = false;
     this->broadcastStream = false;
     this->noDisplay = false;
-    this->FrameNumber= -1;
+    this->FrameNumber = -1;
 
     this->lastSettingsSendTime = time(0); // current system time in seconds
     this->broadcastSettingsSendDelay = 2; // real-time seconds
@@ -59,18 +60,18 @@ VizInterface::VizInterface()
  */
 VizInterface::~VizInterface()
 {
-    for (size_t c=0; c<this->opnavImageOutMsgs.size(); c++) {
+    for (size_t c = 0; c < this->opnavImageOutMsgs.size(); c++) {
         delete this->opnavImageOutMsgs.at(c);
     }
 
     return;
 }
 
-
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void VizInterface::Reset(uint64_t CurrentSimNanos)
+void
+VizInterface::Reset(uint64_t CurrentSimNanos)
 {
     if (this->broadcastStream) {
         // Setup ZMQ for broadcast socket
@@ -93,7 +94,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
 
     if (this->liveStream || this->noDisplay) {
         // Reset cameras
-        for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
+        for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
             this->bskImagePtrs[camCounter] = NULL;
         }
         // Setup ZMQ for 2-way socket
@@ -115,21 +116,21 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         memcpy(message, "PING", 4);
         zmq_msg_t request;
 
-        text = "Waiting for Vizard at " + this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
+        text =
+          "Waiting for Vizard at " + this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
         bskLogger.bskLog(BSK_INFORMATION, text.c_str());
 
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, this->requester_socket, 0);
         char buffer[4];
-        zmq_recv (this->requester_socket, buffer, 4, 0);
-        zmq_send (this->requester_socket, "PING", 4, 0);
+        zmq_recv(this->requester_socket, buffer, 4, 0);
+        zmq_send(this->requester_socket, "PING", 4, 0);
         bskLogger.bskLog(BSK_INFORMATION, "Basilisk-Vizard connection made");
         zmq_msg_close(&request);
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;
-    for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
-    {
+    for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++) {
         /* Check spacecraft input message */
         if (scIt->scStateInMsg.isLinked()) {
             scIt->scStateInMsgStatus.dataFresh = false;
@@ -145,8 +146,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             cssStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
             scIt->cssConfLogInMsgStatus.clear();
             scIt->cssInMessage.clear();
-            for (size_t idx = 0; idx < (size_t) scIt->cssInMsgs.size(); idx++)
-            {
+            for (size_t idx = 0; idx < (size_t)scIt->cssInMsgs.size(); idx++) {
                 if (!scIt->cssInMsgs.at(idx).isLinked()) {
                     bskLogger.bskLog(BSK_ERROR, "vizInterface: CSS(%zu) msg not linked.", idx);
                 }
@@ -163,8 +163,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             rwStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
             scIt->rwInMsgStatus.clear();
             scIt->rwInMessage.clear();
-            for (size_t idx = 0; idx < (size_t) scIt->rwInMsgs.size(); idx++)
-            {
+            for (size_t idx = 0; idx < (size_t)scIt->rwInMsgs.size(); idx++) {
                 if (!scIt->rwInMsgs.at(idx).isLinked()) {
                     bskLogger.bskLog(BSK_ERROR, "vizInterface: RW(%zu) msg not linked.", idx);
                 }
@@ -181,7 +180,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             thrStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
             int thrCounter = 0;
 
-            for (thrCounter = 0; thrCounter < (int) scIt->thrInMsgs.size(); thrCounter++) {
+            for (thrCounter = 0; thrCounter < (int)scIt->thrInMsgs.size(); thrCounter++) {
                 if (scIt->thrInMsgs.at(thrCounter).isLinked()) {
                     scIt->thrMsgStatus.push_back(thrStatus);
                     THROutputMsgPayload logMsg;
@@ -191,8 +190,10 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
                 }
             }
             if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
-                bskLogger.bskLog(BSK_ERROR, "vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)"
-                                 , (int) scIt->thrInfo.size(), (int) scIt->thrInMsgs.size());
+                bskLogger.bskLog(BSK_ERROR,
+                                 "vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)",
+                                 (int)scIt->thrInfo.size(),
+                                 (int)scIt->thrInMsgs.size());
             }
         }
     }
@@ -208,11 +209,11 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     /* Check Spice input message */
     {
         MsgCurrStatus spiceStatus;
-        spiceStatus.dataFresh = true;  // this ensures that default planet states are also used
+        spiceStatus.dataFresh = true; // this ensures that default planet states are also used
         spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
         this->spiceInMsgStatus.clear();
         this->spiceMessage.clear();
-        for (long unsigned int c = 0; c<this->gravBodyInformation.size(); c++) {
+        for (long unsigned int c = 0; c < this->gravBodyInformation.size(); c++) {
             /* set default zero translation and rotation states */
             SpicePlanetStateMsgPayload logMsg = {};
             m33SetIdentity(logMsg.J20002Pfix);
@@ -223,21 +224,22 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         }
     }
 
-    this->FrameNumber=-1;
+    this->FrameNumber = -1;
     if (this->saveFile) {
-        this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
+        this->outputStream = new std::ofstream(this->protoFilename, std::ios::out | std::ios::binary);
 
         /* check if file could be opened */
         if (!this->outputStream->is_open()) {
             this->saveFile = false; // turn off save file flag
-            bskLogger.bskLog(BSK_ERROR, "VizInterface: Unable to open file %s for writing.", this->protoFilename.c_str());
+            bskLogger.bskLog(
+              BSK_ERROR, "VizInterface: Unable to open file %s for writing.", this->protoFilename.c_str());
             return;
         } else {
             bskLogger.bskLog(BSK_INFORMATION, "VizInterface: Writing data to %s", this->protoFilename.c_str());
         }
     }
 
-    this->settings.dataFresh = true;        // reset flag to transmit Vizard settings
+    this->settings.dataFresh = true; // reset flag to transmit Vizard settings
 
     this->epochMsgBuffer.year = EPOCH_YEAR;
     this->epochMsgBuffer.month = EPOCH_MONTH;
@@ -252,17 +254,18 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
 
 /*! A method in which the module reads the content of all available bsk messages
  */
-void VizInterface::ReadBSKMessages()
+void
+VizInterface::ReadBSKMessages()
 {
     std::vector<VizSpacecraftData>::iterator scIt;
 
-    for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++)
-    {
+    for (scIt = this->scData.begin(); scIt != this->scData.end(); scIt++) {
         /* Read BSK spacecraft state msg */
-        if (scIt->scStateInMsg.isLinked()){
+        if (scIt->scStateInMsg.isLinked()) {
             SCStatesMsgPayload localSCStateArray;
             localSCStateArray = scIt->scStateInMsg();
-            if(scIt->scStateInMsg.isWritten() && scIt->scStateInMsg.timeWritten() != scIt->scStateInMsgStatus.lastTimeTag){
+            if (scIt->scStateInMsg.isWritten() &&
+                scIt->scStateInMsg.timeWritten() != scIt->scStateInMsgStatus.lastTimeTag) {
                 scIt->scStateInMsgStatus.lastTimeTag = scIt->scStateInMsg.timeWritten();
                 scIt->scStateInMsgStatus.dataFresh = true;
             }
@@ -271,51 +274,51 @@ void VizInterface::ReadBSKMessages()
 
         /* Read BSK RW constellation msg */
         {
-        for (size_t idx=0;idx< (size_t) scIt->rwInMsgs.size(); idx++) {
-            if (scIt->rwInMsgs[idx].isLinked()){
-                RWConfigLogMsgPayload localRWArray;
-                localRWArray = scIt->rwInMsgs.at(idx)();
+            for (size_t idx = 0; idx < (size_t)scIt->rwInMsgs.size(); idx++) {
+                if (scIt->rwInMsgs[idx].isLinked()) {
+                    RWConfigLogMsgPayload localRWArray;
+                    localRWArray = scIt->rwInMsgs.at(idx)();
 
-                if(scIt->rwInMsgs.at(idx).isWritten() &&
-                   scIt->rwInMsgs.at(idx).timeWritten() != scIt->rwInMsgStatus[idx].lastTimeTag) {
-                    scIt->rwInMsgStatus[idx].lastTimeTag = scIt->rwInMsgs.at(idx).timeWritten();
-                    scIt->rwInMsgStatus[idx].dataFresh = true;
-                    scIt->rwInMessage[idx] = localRWArray;
+                    if (scIt->rwInMsgs.at(idx).isWritten() &&
+                        scIt->rwInMsgs.at(idx).timeWritten() != scIt->rwInMsgStatus[idx].lastTimeTag) {
+                        scIt->rwInMsgStatus[idx].lastTimeTag = scIt->rwInMsgs.at(idx).timeWritten();
+                        scIt->rwInMsgStatus[idx].dataFresh = true;
+                        scIt->rwInMessage[idx] = localRWArray;
+                    }
                 }
             }
-        }
         }
 
         /* Read incoming Thruster constellation msg */
         {
-        for (size_t idx=0;idx< (size_t) scIt->thrInMsgs.size(); idx++){
-            if (scIt->thrInMsgs[idx].isLinked()){
-                THROutputMsgPayload localThrusterArray;
-                localThrusterArray = scIt->thrInMsgs.at(idx)();
-                if(scIt->thrInMsgs.at(idx).isWritten() &&
-                   scIt->thrInMsgs.at(idx).timeWritten() != scIt->thrMsgStatus[idx].lastTimeTag){
-                    scIt->thrMsgStatus[idx].lastTimeTag = scIt->thrInMsgs.at(idx).timeWritten();
-                    scIt->thrMsgStatus[idx].dataFresh = true;
-                    scIt->thrOutputMessage[idx] = localThrusterArray;
+            for (size_t idx = 0; idx < (size_t)scIt->thrInMsgs.size(); idx++) {
+                if (scIt->thrInMsgs[idx].isLinked()) {
+                    THROutputMsgPayload localThrusterArray;
+                    localThrusterArray = scIt->thrInMsgs.at(idx)();
+                    if (scIt->thrInMsgs.at(idx).isWritten() &&
+                        scIt->thrInMsgs.at(idx).timeWritten() != scIt->thrMsgStatus[idx].lastTimeTag) {
+                        scIt->thrMsgStatus[idx].lastTimeTag = scIt->thrInMsgs.at(idx).timeWritten();
+                        scIt->thrMsgStatus[idx].dataFresh = true;
+                        scIt->thrOutputMessage[idx] = localThrusterArray;
+                    }
                 }
             }
-        }
         }
 
         /* Read CSS constellation log msg */
         {
-        for (size_t idx=0;idx< (size_t) scIt->cssInMsgs.size(); idx++) {
-            if (scIt->cssInMsgs[idx].isLinked()){
-                CSSConfigLogMsgPayload localCSSMsg;
-                localCSSMsg = scIt->cssInMsgs.at(idx)();
-                if(scIt->cssInMsgs.at(idx).isWritten() &&
-                   scIt->cssInMsgs.at(idx).timeWritten() != scIt->cssConfLogInMsgStatus[idx].lastTimeTag){
-                    scIt->cssConfLogInMsgStatus[idx].lastTimeTag = scIt->cssInMsgs.at(idx).timeWritten();
-                    scIt->cssConfLogInMsgStatus[idx].dataFresh = true;
-                    scIt->cssInMessage[idx] = localCSSMsg;
+            for (size_t idx = 0; idx < (size_t)scIt->cssInMsgs.size(); idx++) {
+                if (scIt->cssInMsgs[idx].isLinked()) {
+                    CSSConfigLogMsgPayload localCSSMsg;
+                    localCSSMsg = scIt->cssInMsgs.at(idx)();
+                    if (scIt->cssInMsgs.at(idx).isWritten() &&
+                        scIt->cssInMsgs.at(idx).timeWritten() != scIt->cssConfLogInMsgStatus[idx].lastTimeTag) {
+                        scIt->cssConfLogInMsgStatus[idx].lastTimeTag = scIt->cssInMsgs.at(idx).timeWritten();
+                        scIt->cssConfLogInMsgStatus[idx].dataFresh = true;
+                        scIt->cssInMessage[idx] = localCSSMsg;
+                    }
                 }
             }
-        }
         }
 
         /* read in true trajectory line color if connected */
@@ -324,7 +327,7 @@ void VizInterface::ReadBSKMessages()
                 ColorMsgPayload colorMsg;
                 colorMsg = scIt->trueTrajectoryLineColorInMsg();
                 scIt->trueTrajectoryLineColor.clear();
-                for (int i=0; i<4; i++) {
+                for (int i = 0; i < 4; i++) {
                     scIt->trueTrajectoryLineColor.push_back(colorMsg.colorRGBA[i]);
                 }
             }
@@ -332,11 +335,11 @@ void VizInterface::ReadBSKMessages()
 
         /* read in generic sensor cmd value */
         {
-            for (size_t idx=0;idx< (size_t) scIt->genericSensorList.size(); idx++) {
-                if (scIt->genericSensorList[idx]->genericSensorCmdInMsg.isLinked()){
+            for (size_t idx = 0; idx < (size_t)scIt->genericSensorList.size(); idx++) {
+                if (scIt->genericSensorList[idx]->genericSensorCmdInMsg.isLinked()) {
                     DeviceCmdMsgPayload deviceCmdMsgBuffer;
                     deviceCmdMsgBuffer = scIt->genericSensorList[idx]->genericSensorCmdInMsg();
-                    if(scIt->genericSensorList[idx]->genericSensorCmdInMsg.isWritten()){
+                    if (scIt->genericSensorList[idx]->genericSensorCmdInMsg.isWritten()) {
                         scIt->genericSensorList[idx]->genericSensorCmd = deviceCmdMsgBuffer.deviceCmd;
                     }
                 }
@@ -345,12 +348,12 @@ void VizInterface::ReadBSKMessages()
 
         /* read in light on/off cmd value */
         {
-            for (size_t idx=0;idx< (size_t) scIt->lightList.size(); idx++) {
-                if (scIt->lightList[idx]->onOffCmdInMsg.isLinked()){
+            for (size_t idx = 0; idx < (size_t)scIt->lightList.size(); idx++) {
+                if (scIt->lightList[idx]->onOffCmdInMsg.isLinked()) {
                     DeviceCmdMsgPayload onOffCmdMsgBuffer;
                     onOffCmdMsgBuffer = scIt->lightList[idx]->onOffCmdInMsg();
-                    if(scIt->lightList[idx]->onOffCmdInMsg.isWritten()){
-                        scIt->lightList[idx]->lightOn = (int) onOffCmdMsgBuffer.deviceCmd;
+                    if (scIt->lightList[idx]->onOffCmdInMsg.isWritten()) {
+                        scIt->lightList[idx]->lightOn = (int)onOffCmdMsgBuffer.deviceCmd;
                     }
                 }
             }
@@ -358,21 +361,24 @@ void VizInterface::ReadBSKMessages()
 
         /* read in transceiver state values */
         {
-            for (size_t idx=0;idx< (size_t) scIt->transceiverList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->transceiverList.size(); idx++) {
                 if (scIt->transceiverList[idx]->transceiverStateInMsgs.size() > 0) {
                     scIt->transceiverList[idx]->transceiverState = 0;
-                    for (size_t idxTr=0; idxTr < (size_t) scIt->transceiverList[idx]->transceiverStateInMsgs.size(); idxTr++) {
-                        if (scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr].isLinked()){
+                    for (size_t idxTr = 0; idxTr < (size_t)scIt->transceiverList[idx]->transceiverStateInMsgs.size();
+                         idxTr++) {
+                        if (scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr].isLinked()) {
                             DataNodeUsageMsgPayload stateMsgBuffer;
                             stateMsgBuffer = scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr]();
-                            if(scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr].isWritten()){
+                            if (scIt->transceiverList[idx]->transceiverStateInMsgs[idxTr].isWritten()) {
                                 /* state 0->off, 1->sending, 2->receiving, 3->sending and receiving */
                                 if (stateMsgBuffer.baudRate < 0.0) {
                                     /* sending data */
-                                    scIt->transceiverList[idx]->transceiverState = scIt->transceiverList[idx]->transceiverState | 1;
+                                    scIt->transceiverList[idx]->transceiverState =
+                                      scIt->transceiverList[idx]->transceiverState | 1;
                                 } else if (stateMsgBuffer.baudRate > 0.0) {
                                     /* receiving data */
-                                    scIt->transceiverList[idx]->transceiverState = scIt->transceiverList[idx]->transceiverState | 2;
+                                    scIt->transceiverList[idx]->transceiverState =
+                                      scIt->transceiverList[idx]->transceiverState | 2;
                                 }
                             }
                         }
@@ -383,30 +389,30 @@ void VizInterface::ReadBSKMessages()
 
         /* read in generic storage state values */
         {
-            for (size_t idx=0;idx< (size_t) scIt->genericStorageList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->genericStorageList.size(); idx++) {
                 /* read in battery device state */
-                if (scIt->genericStorageList[idx]->batteryStateInMsg.isLinked()){
+                if (scIt->genericStorageList[idx]->batteryStateInMsg.isLinked()) {
                     PowerStorageStatusMsgPayload deviceStateMsgBuffer;
                     deviceStateMsgBuffer = scIt->genericStorageList[idx]->batteryStateInMsg();
-                    if(scIt->genericStorageList[idx]->batteryStateInMsg.isWritten()){
+                    if (scIt->genericStorageList[idx]->batteryStateInMsg.isWritten()) {
                         scIt->genericStorageList[idx]->currentValue = deviceStateMsgBuffer.storageLevel;
                         scIt->genericStorageList[idx]->maxValue = deviceStateMsgBuffer.storageCapacity;
                     }
                 }
                 /* read in data storage device state */
-                if (scIt->genericStorageList[idx]->dataStorageStateInMsg.isLinked()){
+                if (scIt->genericStorageList[idx]->dataStorageStateInMsg.isLinked()) {
                     DataStorageStatusMsgPayload deviceStateMsgBuffer;
                     deviceStateMsgBuffer = scIt->genericStorageList[idx]->dataStorageStateInMsg();
-                    if(scIt->genericStorageList[idx]->dataStorageStateInMsg.isWritten()){
+                    if (scIt->genericStorageList[idx]->dataStorageStateInMsg.isWritten()) {
                         scIt->genericStorageList[idx]->currentValue = deviceStateMsgBuffer.storageLevel;
                         scIt->genericStorageList[idx]->maxValue = deviceStateMsgBuffer.storageCapacity;
                     }
                 }
                 /* read in fuel tank device state */
-                if (scIt->genericStorageList[idx]->fuelTankStateInMsg.isLinked()){
+                if (scIt->genericStorageList[idx]->fuelTankStateInMsg.isLinked()) {
                     FuelTankMsgPayload deviceStateMsgBuffer;
                     deviceStateMsgBuffer = scIt->genericStorageList[idx]->fuelTankStateInMsg();
-                    if(scIt->genericStorageList[idx]->fuelTankStateInMsg.isWritten()){
+                    if (scIt->genericStorageList[idx]->fuelTankStateInMsg.isWritten()) {
                         scIt->genericStorageList[idx]->currentValue = deviceStateMsgBuffer.fuelMass;
                         scIt->genericStorageList[idx]->maxValue = deviceStateMsgBuffer.maxFuelMass;
                     }
@@ -417,17 +423,18 @@ void VizInterface::ReadBSKMessages()
         /* read in MSM charge values */
         {
             /* read in MSM charge states */
-            if (scIt->msmInfo.msmChargeInMsg.isLinked()){
-                if(scIt->msmInfo.msmChargeInMsg.isWritten()){
+            if (scIt->msmInfo.msmChargeInMsg.isLinked()) {
+                if (scIt->msmInfo.msmChargeInMsg.isWritten()) {
                     ChargeMsmMsgPayload msmChargeMsgBuffer;
                     msmChargeMsgBuffer = scIt->msmInfo.msmChargeInMsg();
-                    if ((size_t) msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
-                        for (size_t idx=0;idx< (size_t) scIt->msmInfo.msmList.size(); idx++) {
+                    if ((size_t)msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
+                        for (size_t idx = 0; idx < (size_t)scIt->msmInfo.msmList.size(); idx++) {
                             scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
                         }
                     } else {
-                        bskLogger.bskLog(BSK_ERROR, "vizInterface: the number of charged in MSM message and the number of msm vizInterface spheres must be the same.");
-
+                        bskLogger.bskLog(BSK_ERROR,
+                                         "vizInterface: the number of charged in MSM message and the number of msm "
+                                         "vizInterface spheres must be the same.");
                     }
                 }
             }
@@ -437,11 +444,11 @@ void VizInterface::ReadBSKMessages()
 
     /*! Read incoming camera config msg */
     for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
-        if (this->cameraConfInMsgs[camCounter].isLinked()){
+        if (this->cameraConfInMsgs[camCounter].isLinked()) {
             CameraConfigMsgPayload localCameraConfigArray;
             localCameraConfigArray = this->cameraConfInMsgs[camCounter]();
-            if(this->cameraConfInMsgs[camCounter].isWritten() &&
-               this->cameraConfInMsgs[camCounter].timeWritten() != this->cameraConfMsgStatus[camCounter].lastTimeTag){
+            if (this->cameraConfInMsgs[camCounter].isWritten() &&
+                this->cameraConfInMsgs[camCounter].timeWritten() != this->cameraConfMsgStatus[camCounter].lastTimeTag) {
                 this->cameraConfMsgStatus[camCounter].lastTimeTag = this->cameraConfInMsgs[camCounter].timeWritten();
                 this->cameraConfMsgStatus[camCounter].dataFresh = true;
             }
@@ -453,8 +460,7 @@ void VizInterface::ReadBSKMessages()
     if (this->epochInMsg.isLinked()) {
         EpochMsgPayload epochMsg_Buffer;
         epochMsg_Buffer = this->epochInMsg();
-        if(this->epochInMsg.isWritten() &&
-           this->epochInMsg.timeWritten() != this->epochMsgStatus.lastTimeTag){
+        if (this->epochInMsg.isWritten() && this->epochInMsg.timeWritten() != this->epochMsgStatus.lastTimeTag) {
             this->epochMsgStatus.lastTimeTag = this->epochInMsg.timeWritten();
             this->epochMsgStatus.dataFresh = true;
             this->epochMsgBuffer = epochMsg_Buffer;
@@ -463,20 +469,19 @@ void VizInterface::ReadBSKMessages()
 
     /*! Read BSK Spice constellation msg */
     {
-    for(size_t i=0; i < this->spiceInMsgs.size(); i++)
-    {
-        if (this->spiceInMsgs.at(i).isLinked()){
-            // If the spice msg is not linked then the default zero planet emphemeris is used
-            SpicePlanetStateMsgPayload localSpiceArray;
-            localSpiceArray = this->spiceInMsgs.at(i)();
-            if(this->spiceInMsgs.at(i).isWritten() &&
-               this->spiceInMsgs.at(i).timeWritten() != this->spiceInMsgStatus[i].lastTimeTag){
-                this->spiceInMsgStatus[i].lastTimeTag = this->spiceInMsgs.at(i).timeWritten();
-                this->spiceInMsgStatus[i].dataFresh = true;
-                this->spiceMessage[i] = localSpiceArray;
+        for (size_t i = 0; i < this->spiceInMsgs.size(); i++) {
+            if (this->spiceInMsgs.at(i).isLinked()) {
+                // If the spice msg is not linked then the default zero planet emphemeris is used
+                SpicePlanetStateMsgPayload localSpiceArray;
+                localSpiceArray = this->spiceInMsgs.at(i)();
+                if (this->spiceInMsgs.at(i).isWritten() &&
+                    this->spiceInMsgs.at(i).timeWritten() != this->spiceInMsgStatus[i].lastTimeTag) {
+                    this->spiceInMsgStatus[i].lastTimeTag = this->spiceInMsgs.at(i).timeWritten();
+                    this->spiceInMsgStatus[i].dataFresh = true;
+                    this->spiceMessage[i] = localSpiceArray;
+                }
             }
         }
-    }
     }
 
     return;
@@ -485,7 +490,8 @@ void VizInterface::ReadBSKMessages()
 /*! The method in which the vizInterface writes a protobuffer with the information from the simulation.
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
+void
+VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 {
     vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
 
@@ -500,33 +506,47 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         // define the viz ambient light setting
         vizSettings->set_ambient(this->settings.ambient);
-        if (this->settings.ambient > 8.0 ||
-            (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
+        if (this->settings.ambient > 8.0 || (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.",
+              this->settings.ambient);
         }
 
         // define if osculating orbit lines should be shown
         vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
-        if (abs(this->settings.orbitLinesOn)>2) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.", this->settings.orbitLinesOn);
+        if (abs(this->settings.orbitLinesOn) > 2) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.",
+              this->settings.orbitLinesOn);
         }
 
         // define if true orbit lines should be shown
         vizSettings->set_truetrajectorylineson(this->settings.trueTrajectoryLinesOn);
-        if (abs(this->settings.trueTrajectoryLinesOn)>5) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard trueTrajectoryLinesOn flag must be either -1, 0, 1 2, 3, 4 or 5.  A value of %d was received.", this->settings.trueTrajectoryLinesOn);
+        if (abs(this->settings.trueTrajectoryLinesOn) > 5) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard trueTrajectoryLinesOn flag must be either -1, 0, 1 2, 3, 4 or "
+                             "5.  A value of %d was received.",
+                             this->settings.trueTrajectoryLinesOn);
         }
 
         // define if spacecraft axes should be shown
         vizSettings->set_spacecraftcson(this->settings.spacecraftCSon);
-        if (abs(this->settings.spacecraftCSon)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.spacecraftCSon);
+        if (abs(this->settings.spacecraftCSon) > 1) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.",
+              this->settings.spacecraftCSon);
         }
 
         // define if planet axes should be shown
         vizSettings->set_planetcson(this->settings.planetCSon);
-        if (abs(this->settings.planetCSon)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
+        if (abs(this->settings.planetCSon) > 1) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.",
+              this->settings.planetCSon);
         }
 
         // define the skyBox variable
@@ -539,7 +559,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             vizProtobufferMessage::VizMessage::PointLine* pl = vizSettings->add_pointlines();
             pl->set_tobodyname(this->settings.pointLineList[idx].toBodyName);
             pl->set_frombodyname(this->settings.pointLineList[idx].fromBodyName);
-            for (int i=0; i<4; i++){
+            for (int i = 0; i < 4; i++) {
                 pl->add_linecolor(this->settings.pointLineList[idx].lineColor[i]);
             }
         }
@@ -548,15 +568,15 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         for (size_t idx = 0; idx < this->settings.coneList.size(); idx++) {
             vizProtobufferMessage::VizMessage::KeepOutInCone* cone = vizSettings->add_keepoutincones();
             cone->set_iskeepin(this->settings.coneList[idx].isKeepIn);
-            for (int i=0; i<3; i++) {
+            for (int i = 0; i < 3; i++) {
                 cone->add_position(this->settings.coneList[idx].position_B[i]);
                 cone->add_normalvector(this->settings.coneList[idx].normalVector_B[i]);
             }
-            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle*R2D);  // Unity expects degrees
+            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle * R2D); // Unity expects degrees
             cone->set_coneheight(this->settings.coneList[idx].coneHeight);
             cone->set_tobodyname(this->settings.coneList[idx].toBodyName);
             cone->set_frombodyname(this->settings.coneList[idx].fromBodyName);
-            for (int i=0; i<4; i++){
+            for (int i = 0; i < 4; i++) {
                 cone->add_conecolor(this->settings.coneList[idx].coneColor[i]);
             }
             cone->set_conename(this->settings.coneList[idx].coneName);
@@ -564,44 +584,65 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         // define if camera boresight line should be shown
         vizSettings->set_viewcameraboresighthud(this->settings.viewCameraBoresightHUD);
-        if (abs(this->settings.viewCameraBoresightHUD)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraBoresightHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraBoresightHUD);
+        if (abs(this->settings.viewCameraBoresightHUD) > 1) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard viewCameraBoresightHUD flag must be either -1, 0 or 1.  A value "
+                             "of %d was received.",
+                             this->settings.viewCameraBoresightHUD);
         }
 
         // define if camera cone should be shown
         vizSettings->set_viewcameraconehud(this->settings.viewCameraConeHUD);
-        if (abs(this->settings.viewCameraConeHUD)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraConeHUD);
+        if (abs(this->settings.viewCameraConeHUD) > 1) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.",
+              this->settings.viewCameraConeHUD);
         }
 
         // define if coordinate system labels should be shown
         vizSettings->set_showcslabels(this->settings.showCSLabels);
-        if (abs(this->settings.showCSLabels)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCSLabels);
+        if (abs(this->settings.showCSLabels) > 1) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of %d was received.",
+              this->settings.showCSLabels);
         }
 
         // define if celestial body labels should be shown
         vizSettings->set_showcelestialbodylabels(this->settings.showCelestialBodyLabels);
-        if (abs(this->settings.showCelestialBodyLabels)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodyLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodyLabels);
+        if (abs(this->settings.showCelestialBodyLabels) > 1) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard showCelestialBodyLabels flag must be either -1, 0 or 1.  A "
+                             "value of %d was received.",
+                             this->settings.showCelestialBodyLabels);
         }
 
         // define if spacecraft labels should be shown
         vizSettings->set_showspacecraftlabels(this->settings.showSpacecraftLabels);
-        if (abs(this->settings.showSpacecraftLabels)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftLabels);
+        if (abs(this->settings.showSpacecraftLabels) > 1) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard showSpacecraftLabels flag must be either -1, 0 or 1.  A value "
+                             "of %d was received.",
+                             this->settings.showSpacecraftLabels);
         }
 
         // define if camera labels should be shown
         vizSettings->set_showcameralabels(this->settings.showCameraLabels);
-        if (abs(this->settings.showCameraLabels)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCameraLabels flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCameraLabels);
+        if (abs(this->settings.showCameraLabels) > 1) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard showCameraLabels flag must be either -1, 0 or 1.  A value of %d was received.",
+              this->settings.showCameraLabels);
         }
 
         // define the GUI scaling factor
         vizSettings->set_customguireferenceheight(this->settings.customGUIReferenceHeight);
-        if (this->settings.customGUIReferenceHeight<300.0 && abs(this->settings.customGUIReferenceHeight)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard customGUIReferenceHeight flag must be either -1 or > 300.  A value of %d was received.", this->settings.customGUIReferenceHeight);
+        if (this->settings.customGUIReferenceHeight < 300.0 && abs(this->settings.customGUIReferenceHeight) > 1) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard customGUIReferenceHeight flag must be either -1 or > 300.  A "
+                             "value of %d was received.",
+                             this->settings.customGUIReferenceHeight);
         }
 
         // define default spacecraft sprite behavior
@@ -609,35 +650,47 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         // define if spacecraft should be shown as sprites
         vizSettings->set_showspacecraftassprites(this->settings.showSpacecraftAsSprites);
-        if (abs(this->settings.showSpacecraftAsSprites)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showSpacecraftAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showSpacecraftAsSprites);
+        if (abs(this->settings.showSpacecraftAsSprites) > 1) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard showSpacecraftAsSprites flag must be either -1, 0 or 1.  A "
+                             "value of %d was received.",
+                             this->settings.showSpacecraftAsSprites);
         }
 
         // define if celestial objects should be shown as sprites
         vizSettings->set_showcelestialbodiesassprites(this->settings.showCelestialBodiesAsSprites);
-        if (abs(this->settings.showCelestialBodiesAsSprites)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showCelestialBodiesAsSprites);
+        if (abs(this->settings.showCelestialBodiesAsSprites) > 1) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard showCelestialBodiesAsSprites flag must be either -1, 0 or 1.  A "
+                             "value of %d was received.",
+                             this->settings.showCelestialBodiesAsSprites);
         }
 
         // define if the time should be shown using a 24h clock
         vizSettings->set_show24hrclock(this->settings.show24hrClock);
-        if (abs(this->settings.show24hrClock)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.show24hrClock);
+        if (abs(this->settings.show24hrClock) > 1) {
+            bskLogger.bskLog(
+              BSK_WARNING,
+              "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.",
+              this->settings.show24hrClock);
         }
 
         // define if the data frame rate should be shown
         vizSettings->set_showdataratedisplay(this->settings.showDataRateDisplay);
-        if (abs(this->settings.showDataRateDisplay)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard showDataRateDisplay flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.showDataRateDisplay);
+        if (abs(this->settings.showDataRateDisplay) > 1) {
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard showDataRateDisplay flag must be either -1, 0 or 1.  A value of "
+                             "%d was received.",
+                             this->settings.showDataRateDisplay);
         }
 
         // define the keyboard driven camera rates
-        vizSettings->set_keyboardangularrate(this->settings.keyboardAngularRate*R2D);
+        vizSettings->set_keyboardangularrate(this->settings.keyboardAngularRate * R2D);
         vizSettings->set_keyboardzoomrate(this->settings.keyboardZoomRate);
 
         // add default thrust plume color
         if (this->settings.defaultThrusterColor[0] >= 0) {
-            for (int i=0; i<4; i++){
+            for (int i = 0; i < 4; i++) {
                 vizSettings->add_defaultthrustercolor(this->settings.defaultThrusterColor[i]);
             }
         }
@@ -659,7 +712,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showlocationlabels(this->settings.showLocationLabels);
         vizSettings->set_atmospheresoff(this->settings.atmospheresOff);
         vizSettings->set_scviewtoplanetviewboundarymultiplier(this->settings.scViewToPlanetViewBoundaryMultiplier);
-        vizSettings->set_planetviewtohelioviewboundarymultiplier(this->settings.planetViewToHelioViewBoundaryMultiplier);
+        vizSettings->set_planetviewtohelioviewboundarymultiplier(
+          this->settings.planetViewToHelioViewBoundaryMultiplier);
         vizSettings->set_sunintensity(this->settings.sunIntensity);
         vizSettings->set_attenuatesunlightwithdistance(this->settings.attenuateSunLightWithDistance);
         vizSettings->set_showlightlabels(this->settings.showLightLabels);
@@ -701,48 +755,46 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_showmultishapelabels(this->settings.instrumentGuiSettingsList[idx].showMultiShapeLabels);
         }
 
-
         // define scene object custom object shapes
         for (size_t idx = 0; idx < this->settings.customModelList.size(); idx++) {
             vizProtobufferMessage::VizMessage::CustomModel* cm = vizSettings->add_custommodels();
-            CustomModel *cmp = &(this->settings.customModelList[idx]);
+            CustomModel* cmp = &(this->settings.customModelList[idx]);
             cm->set_modelpath(cmp->modelPath);
-            for (size_t i=0; i<cmp->simBodiesToModify.size(); i++) {
+            for (size_t i = 0; i < cmp->simBodiesToModify.size(); i++) {
                 cm->add_simbodiestomodify(cmp->simBodiesToModify[i]);
             }
-            for (size_t i=0; i<3;i++) {
+            for (size_t i = 0; i < 3; i++) {
                 cm->add_offset(cmp->offset[i]);
-                cm->add_rotation(cmp->rotation[i]*R2D);  // Unity expects degrees
+                cm->add_rotation(cmp->rotation[i] * R2D); // Unity expects degrees
                 cm->add_scale(cmp->scale[i]);
             }
             cm->set_customtexturepath(cmp->customTexturePath);
             cm->set_normalmappath(cmp->normalMapPath);
             cm->set_shader(cmp->shader);
-            for (size_t i=0; i<cmp->color.size(); i++) {
+            for (size_t i = 0; i < cmp->color.size(); i++) {
                 cm->add_color(cmp->color[i]);
             }
-
         }
 
         // define camera settings
-        for (size_t idx = 0; idx < this->settings.stdCameraList.size(); idx++){
+        for (size_t idx = 0; idx < this->settings.stdCameraList.size(); idx++) {
             vizProtobufferMessage::VizMessage::StandardCameraSettings* sc = vizSettings->add_standardcamerasettings();
-            StdCameraSettings *scp = &(this->settings.stdCameraList[idx]);
+            StdCameraSettings* scp = &(this->settings.stdCameraList[idx]);
             sc->set_spacecraftname(scp->spacecraftName);
             sc->set_setmode(scp->setMode);
             sc->set_showhudelementsinimage(scp->showHUDElementsInImage);
             if (scp->fieldOfView < 0)
                 sc->set_fieldofview(-1.0);
             else {
-                sc->set_fieldofview(scp->fieldOfView*R2D); // Unity expects degrees
+                sc->set_fieldofview(scp->fieldOfView * R2D); // Unity expects degrees
             }
             sc->set_bodytarget(scp->bodyTarget);
             sc->set_setview(scp->setView);
-            for (size_t i=0; i<3; i++){
+            for (size_t i = 0; i < 3; i++) {
                 sc->add_pointingvector(scp->pointingVector_B[i]);
             }
             if (v3Norm(scp->position_B) > 0.00001) {
-                for (size_t i=0; i<3; i++) {
+                for (size_t i = 0; i < 3; i++) {
                     sc->add_position(scp->position_B[i]);
                 }
             }
@@ -763,7 +815,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizProtobufferMessage::VizMessage::PointLine* pl = liveVizSettings->add_targetlines();
         pl->set_tobodyname(this->liveSettings.targetLineList[idx].toBodyName);
         pl->set_frombodyname(this->liveSettings.targetLineList[idx].fromBodyName);
-        for (int i=0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
             pl->add_linecolor(this->liveSettings.targetLineList[idx].lineColor[i]);
         }
     }
@@ -771,14 +823,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     liveVizSettings->set_terminatevizard(this->liveSettings.terminateVizard);
     message->set_allocated_livesettings(liveVizSettings);
 
-
     // Send dialog panel info to Vizard
-    for(size_t k=0; k<this->vizEventDialogs.size(); k++)
-    {
+    for (size_t k = 0; k < this->vizEventDialogs.size(); k++) {
         vizProtobufferMessage::VizEventDialog* panel = message->add_vizeventdialogs();
         panel->set_eventhandlerid(this->vizEventDialogs.at(k)->eventHandlerID);
         panel->set_displaystring(this->vizEventDialogs.at(k)->displayString);
-        for (size_t idx=0; idx<this->vizEventDialogs.at(k)->userOptions.size(); idx++) {
+        for (size_t idx = 0; idx < this->vizEventDialogs.at(k)->userOptions.size(); idx++) {
             panel->add_useroptions(this->vizEventDialogs.at(k)->userOptions[idx]);
         }
         panel->set_durationofdisplay(this->vizEventDialogs.at(k)->durationOfDisplay);
@@ -786,14 +836,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         panel->set_useconfirmationpanel(this->vizEventDialogs.at(k)->useConfirmationPanel);
         panel->set_hideonselection(this->vizEventDialogs.at(k)->hideOnSelection);
         panel->set_dialogformat(this->vizEventDialogs.at(k)->dialogFormat);
-
     }
     this->vizEventDialogs.clear(); // Panel requests should only send to Vizard once
 
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
     time->set_framenumber(this->FrameNumber);
-    time->set_simtimeelapsed((double) CurrentSimNanos);
+    time->set_simtimeelapsed((double)CurrentSimNanos);
     message->set_allocated_currenttime(time);
 
     /*! write epoch msg */
@@ -810,18 +859,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! write the Locations protobuffer messages */
-    std::vector<LocationPbMsg *>::iterator glIt;
+    std::vector<LocationPbMsg*>::iterator glIt;
     for (glIt = locations.begin(); glIt != locations.end(); glIt++) {
         vizProtobufferMessage::VizMessage::Location* glp = message->add_locations();
         glp->set_stationname((*glIt)->stationName);
         glp->set_parentbodyname((*glIt)->parentBodyName);
-        glp->set_fieldofview((*glIt)->fieldOfView*R2D);
+        glp->set_fieldofview((*glIt)->fieldOfView * R2D);
         glp->set_range((*glIt)->range);
-        for (int i=0; i<3; i++) {
+        for (int i = 0; i < 3; i++) {
             glp->add_r_gp_p((*glIt)->r_GP_P[i]);
             glp->add_ghat_p((*glIt)->gHat_P[i]);
         }
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             glp->add_color((*glIt)->color[i]);
         }
         glp->set_markerscale((*glIt)->markerScale);
@@ -829,15 +878,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     // Write QuadMap messages
-    for (size_t k=0; k<this->quadMaps.size(); k++)
-    {
+    for (size_t k = 0; k < this->quadMaps.size(); k++) {
         vizProtobufferMessage::VizMessage::QuadMap* qm = message->add_quadmaps();
         qm->set_id(this->quadMaps.at(k)->ID);
         qm->set_parentbodyname(this->quadMaps.at(k)->parentBodyName);
-        for (size_t idx=0; idx<this->quadMaps.at(k)->vertices.size(); idx++) {
+        for (size_t idx = 0; idx < this->quadMaps.at(k)->vertices.size(); idx++) {
             qm->add_vertices(this->quadMaps.at(k)->vertices[idx]);
         }
-        for (size_t idx=0; idx<this->quadMaps.at(k)->color.size(); idx++) {
+        for (size_t idx = 0; idx < this->quadMaps.at(k)->color.size(); idx++) {
             qm->add_color(this->quadMaps.at(k)->color[idx]);
         }
         qm->set_ishidden(this->quadMaps.at(k)->isHidden);
@@ -846,67 +894,63 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     this->quadMaps.clear(); // QuadMaps should only send to Vizard once
 
     std::vector<VizSpacecraftData>::iterator scIt;
-    for (scIt = scData.begin(); scIt != scData.end(); scIt++)
-    {
+    for (scIt = scData.begin(); scIt != scData.end(); scIt++) {
         /*! Write spacecraft state output msg */
-        if (scIt->scStateInMsg.isLinked() && scIt->scStateInMsgStatus.dataFresh){
+        if (scIt->scStateInMsg.isLinked() && scIt->scStateInMsgStatus.dataFresh) {
             vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
             scp->set_spacecraftname(scIt->spacecraftName);
             scp->set_parentspacecraftname(scIt->parentSpacecraftName);
-            for (int i=0; i<3; i++){
+            for (int i = 0; i < 3; i++) {
                 scp->add_position(scIt->scStateMsgBuffer.r_BN_N[i]);
                 scp->add_velocity(scIt->scStateMsgBuffer.v_BN_N[i]);
                 scp->add_rotation(scIt->scStateMsgBuffer.sigma_BN[i]);
             }
-//            scIt->scStateInMsgID.dataFresh = false;
+            //            scIt->scStateInMsgID.dataFresh = false;
 
             /* Write the SC sprite string */
             scp->set_spacecraftsprite(scIt->spacecraftSprite);
 
             /*! Write RW output msg */
-            for (size_t idx =0; idx < (size_t) scIt->rwInMsgs.size(); idx++)
-            {
-                if (scIt->rwInMsgs[idx].isLinked() && scIt->rwInMsgStatus[idx].dataFresh){
+            for (size_t idx = 0; idx < (size_t)scIt->rwInMsgs.size(); idx++) {
+                if (scIt->rwInMsgs[idx].isLinked() && scIt->rwInMsgStatus[idx].dataFresh) {
                     vizProtobufferMessage::VizMessage::ReactionWheel* rwheel = scp->add_reactionwheels();
                     rwheel->set_wheelspeed(scIt->rwInMessage[idx].Omega);
                     rwheel->set_maxspeed(scIt->rwInMessage[idx].Omega_max);
                     rwheel->set_wheeltorque(scIt->rwInMessage[idx].u_current);
                     rwheel->set_maxtorque(scIt->rwInMessage[idx].u_max);
-                    for (int i=0; i<3; i++){
+                    for (int i = 0; i < 3; i++) {
                         rwheel->add_position(scIt->rwInMessage[idx].rWB_B[i]);
                         rwheel->add_spinaxisvector(scIt->rwInMessage[idx].gsHat_B[i]);
                     }
-                    //rwInMsgID[idx].dataFresh = false;
+                    // rwInMsgID[idx].dataFresh = false;
                 }
             }
 
             /*! Write Thr output msg */
-            for (size_t idx =0; idx < (size_t) scIt->thrInMsgs.size(); idx++)
-            {
-                if (scIt->thrInMsgs[idx].isLinked() && scIt->thrMsgStatus[idx].dataFresh){
+            for (size_t idx = 0; idx < (size_t)scIt->thrInMsgs.size(); idx++) {
+                if (scIt->thrInMsgs[idx].isLinked() && scIt->thrMsgStatus[idx].dataFresh) {
                     vizProtobufferMessage::VizMessage::Thruster* thr = scp->add_thrusters();
                     thr->set_maxthrust(scIt->thrOutputMessage[idx].maxThrust);
                     thr->set_currentthrust(scIt->thrOutputMessage[idx].thrustForce);
                     thr->set_thrustertag(scIt->thrInfo[idx].thrTag);
                     if (scIt->thrInfo[idx].color[0] >= 0) {
-                        for (int i=0; i<4; i++) {
+                        for (int i = 0; i < 4; i++) {
                             thr->add_color(scIt->thrInfo[idx].color[i]);
                         }
                     }
-                    for (int i=0; i<3; i++){
+                    for (int i = 0; i < 3; i++) {
                         thr->add_position(scIt->thrOutputMessage[idx].thrusterLocation[i]);
                         thr->add_thrustvector(scIt->thrOutputMessage[idx].thrusterDirection[i]);
                     }
-                    //thrMsgID[idx].dataFresh = false;
+                    // thrMsgID[idx].dataFresh = false;
                 }
             }
 
             // Write CSS output msg
-            for (size_t idx =0; idx < (size_t) scIt->cssInMsgs.size(); idx++)
-            {
-                if (scIt->cssInMsgs[idx].isLinked() && scIt->cssConfLogInMsgStatus[idx].dataFresh){
+            for (size_t idx = 0; idx < (size_t)scIt->cssInMsgs.size(); idx++) {
+                if (scIt->cssInMsgs[idx].isLinked() && scIt->cssConfLogInMsgStatus[idx].dataFresh) {
                     vizProtobufferMessage::VizMessage::CoarseSunSensor* css = scp->add_css();
-                    for (int j=0; j<3; j++){
+                    for (int j = 0; j < 3; j++) {
                         css->add_normalvector(scIt->cssInMessage[idx].nHat_B[j]);
                         css->add_position(scIt->cssInMessage[idx].r_B[j]);
                     }
@@ -914,60 +958,60 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     css->set_maxmsmt(scIt->cssInMessage[idx].maxSignal);
                     css->set_minmsmt(scIt->cssInMessage[idx].minSignal);
                     css->set_cssgroupid(scIt->cssInMessage[idx].CSSGroupID);
-                    css->set_fieldofview(scIt->cssInMessage[idx].fov*2*R2D);  /* must be edge to edge fov in degrees */
+                    css->set_fieldofview(scIt->cssInMessage[idx].fov * 2 *
+                                         R2D); /* must be edge to edge fov in degrees */
 
-                    //cssConfLogInMsgId[idx].dataFresh = false;
+                    // cssConfLogInMsgId[idx].dataFresh = false;
                 }
             }
 
             // Write generic sensor messages
-            for (size_t idx =0; idx < (size_t) scIt->genericSensorList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->genericSensorList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::GenericSensor* gs = scp->add_genericsensors();
 
-                for (int j=0; j<3; j++) {
+                for (int j = 0; j < 3; j++) {
                     gs->add_position(scIt->genericSensorList[idx]->r_SB_B[j]);
                     gs->add_normalvector(scIt->genericSensorList[idx]->normalVector[j]);
                 }
-                for (uint64_t j=0; j<scIt->genericSensorList[idx]->fieldOfView.size(); j++) {
-                    gs->add_fieldofview(scIt->genericSensorList[idx]->fieldOfView[j]*R2D);
+                for (uint64_t j = 0; j < scIt->genericSensorList[idx]->fieldOfView.size(); j++) {
+                    gs->add_fieldofview(scIt->genericSensorList[idx]->fieldOfView[j] * R2D);
                 }
                 gs->set_ishidden(scIt->genericSensorList[idx]->isHidden);
                 gs->set_size(scIt->genericSensorList[idx]->size);
                 gs->set_label(scIt->genericSensorList[idx]->label);
-                for (uint64_t j=0; j<scIt->genericSensorList[idx]->color.size(); j++) {
+                for (uint64_t j = 0; j < scIt->genericSensorList[idx]->color.size(); j++) {
                     gs->add_color(scIt->genericSensorList[idx]->color[j]);
                 }
-                gs->set_activitystatus((int) scIt->genericSensorList[idx]->genericSensorCmd);
+                gs->set_activitystatus((int)scIt->genericSensorList[idx]->genericSensorCmd);
             }
 
             // Write Ellipsoid messages
-            for (size_t idx =0; idx < (size_t) scIt->ellipsoidList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->ellipsoidList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::Ellipsoid* el = scp->add_ellipsoids();
                 el->set_ison(scIt->ellipsoidList[idx]->isOn);
                 el->set_usebodyframe(scIt->ellipsoidList[idx]->useBodyFrame);
-                for (int j=0; j<3; j++) {
+                for (int j = 0; j < 3; j++) {
                     el->add_position(scIt->ellipsoidList[idx]->position[j]);
                     el->add_semimajoraxes(scIt->ellipsoidList[idx]->semiMajorAxes[j]);
                 }
-                for (uint64_t j=0; j<scIt->ellipsoidList[idx]->color.size(); j++) {
+                for (uint64_t j = 0; j < scIt->ellipsoidList[idx]->color.size(); j++) {
                     el->add_color(scIt->ellipsoidList[idx]->color[j]);
                 }
                 el->set_showgridlines(scIt->ellipsoidList[idx]->showGridLines);
             }
 
-
             // Write transceiver messages
-            for (size_t idx =0; idx < (size_t) scIt->transceiverList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->transceiverList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::Transceiver* tr = scp->add_transceivers();
 
-                for (int j=0; j<3; j++) {
+                for (int j = 0; j < 3; j++) {
                     tr->add_position(scIt->transceiverList[idx]->r_SB_B[j]);
                     tr->add_normalvector(scIt->transceiverList[idx]->normalVector[j]);
                 }
-                tr->set_fieldofview(scIt->transceiverList[idx]->fieldOfView*R2D);
+                tr->set_fieldofview(scIt->transceiverList[idx]->fieldOfView * R2D);
                 tr->set_ishidden(scIt->transceiverList[idx]->isHidden);
                 tr->set_label(scIt->transceiverList[idx]->label);
-                for (uint64_t j=0; j<scIt->transceiverList[idx]->color.size(); j++) {
+                for (uint64_t j = 0; j < scIt->transceiverList[idx]->color.size(); j++) {
                     tr->add_color(scIt->transceiverList[idx]->color[j]);
                 }
                 tr->set_transmitstatus(scIt->transceiverList[idx]->transceiverState);
@@ -975,28 +1019,27 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
 
             // Write generic storage device messages
-            for (size_t idx =0; idx < (size_t) scIt->genericStorageList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->genericStorageList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::GenericStorage* gsd = scp->add_storagedevices();
 
                 gsd->set_label(scIt->genericStorageList[idx]->label);
                 gsd->set_currentvalue(scIt->genericStorageList[idx]->currentValue);
                 gsd->set_maxvalue(scIt->genericStorageList[idx]->maxValue);
                 gsd->set_units(scIt->genericStorageList[idx]->units);
-                for (uint64_t j=0; j<scIt->genericStorageList[idx]->color.size(); j++) {
+                for (uint64_t j = 0; j < scIt->genericStorageList[idx]->color.size(); j++) {
                     gsd->add_color(scIt->genericStorageList[idx]->color[j]);
                 }
-                for (uint64_t j=0; j<scIt->genericStorageList[idx]->thresholds.size(); j++) {
+                for (uint64_t j = 0; j < scIt->genericStorageList[idx]->thresholds.size(); j++) {
                     gsd->add_thresholds(scIt->genericStorageList[idx]->thresholds[j]);
                 }
-
             }
 
             // Write light device messages
-            for (size_t idx =0; idx < (size_t) scIt->lightList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->lightList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::Light* ld = scp->add_lights();
 
                 ld->set_label(scIt->lightList[idx]->label);
-                for (uint64_t j=0; j<3; j++) {
+                for (uint64_t j = 0; j < 3; j++) {
                     ld->add_position(scIt->lightList[idx]->position[j]);
                     ld->add_normalvector(scIt->lightList[idx]->normalVector[j]);
                 }
@@ -1007,12 +1050,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     scIt->lightList[idx]->lightOn = -1;
                 }
                 ld->set_lighton(scIt->lightList[idx]->lightOn);
-                ld->set_fieldofview(scIt->lightList[idx]->fieldOfView*R2D);
+                ld->set_fieldofview(scIt->lightList[idx]->fieldOfView * R2D);
                 ld->set_range(scIt->lightList[idx]->range);
                 ld->set_intensity(scIt->lightList[idx]->intensity);
                 ld->set_showlightmarker(scIt->lightList[idx]->showLightMarker);
                 ld->set_markerdiameter(scIt->lightList[idx]->markerDiameter);
-                for (uint64_t j=0; j<scIt->lightList[idx]->color.size(); j++) {
+                for (uint64_t j = 0; j < scIt->lightList[idx]->color.size(); j++) {
                     ld->add_color(scIt->lightList[idx]->color[j]);
                 }
                 ld->set_gammasaturation(scIt->lightList[idx]->gammaSaturation);
@@ -1028,75 +1071,77 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             scp->set_logotexture(scIt->logoTexture);
 
             /* set spacecraft osculating orbit line color */
-            for (size_t i=0; i<scIt->oscOrbitLineColor.size(); i++){
+            for (size_t i = 0; i < scIt->oscOrbitLineColor.size(); i++) {
                 scp->add_oscorbitlinecolor(scIt->oscOrbitLineColor[i]);
             }
 
             /* set spacecraft true orbit line color */
-            for (size_t i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
+            for (size_t i = 0; i < scIt->trueTrajectoryLineColor.size(); i++) {
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
             // Write Multi-Shape-Model messages
-            for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
+            for (size_t idx = 0; idx < (size_t)scIt->msmInfo.msmList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::MultiShape* msmp = scp->add_multishapes();
 
                 msmp->set_ison(scIt->msmInfo.msmList[idx]->isOn);
-                for (uint64_t j=0; j<3; j++) {
+                for (uint64_t j = 0; j < 3; j++) {
                     msmp->add_position(scIt->msmInfo.msmList[idx]->position[j]);
                 }
                 msmp->set_radius(scIt->msmInfo.msmList[idx]->radius);
                 msmp->set_currentvalue(scIt->msmInfo.msmList[idx]->currentValue);
                 msmp->set_maxvalue(scIt->msmInfo.msmList[idx]->maxValue);
-                for (uint64_t j=0; j<scIt->msmInfo.msmList[idx]->positiveColor.size(); j++) {
+                for (uint64_t j = 0; j < scIt->msmInfo.msmList[idx]->positiveColor.size(); j++) {
                     msmp->add_positivecolor(scIt->msmInfo.msmList[idx]->positiveColor[j]);
                 }
-                for (uint64_t j=0; j<scIt->msmInfo.msmList[idx]->negativeColor.size(); j++) {
+                for (uint64_t j = 0; j < scIt->msmInfo.msmList[idx]->negativeColor.size(); j++) {
                     msmp->add_negativecolor(scIt->msmInfo.msmList[idx]->negativeColor[j]);
                 }
                 msmp->set_neutralopacity(scIt->msmInfo.msmList[idx]->neutralOpacity);
                 msmp->set_shape(scIt->msmInfo.msmList[idx]->shape);
-                for (int j=0; j<3; j++) {
+                for (int j = 0; j < 3; j++) {
                     msmp->add_dimensions(scIt->msmInfo.msmList[idx]->dimensions[j]);
                 }
-                for (int j=0; j<3; j++) {
+                for (int j = 0; j < 3; j++) {
                     msmp->add_rotation(scIt->msmInfo.msmList[idx]->rotation[j]);
                 }
             }
-
         }
     }
 
     /*! Write camera output msg */
-    for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++){
-        if ((this->cameraConfInMsgs[camCounter].isLinked() && this->cameraConfMsgStatus[camCounter].dataFresh)
-            || this->cameraConfigBuffers[camCounter].cameraID >= 0){
-            /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
+    for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
+        if ((this->cameraConfInMsgs[camCounter].isLinked() && this->cameraConfMsgStatus[camCounter].dataFresh) ||
+            this->cameraConfigBuffers[camCounter].cameraID >= 0) {
+            /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity
+             * has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z
+             * point, x horizontal, y vertical (down) */
             double sigma_CuC[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
-            v3Set(1./3, 1./3, -1./3, sigma_CuC);
+            v3Set(1. / 3, 1. / 3, -1. / 3, sigma_CuC);
             addMRP(this->cameraConfigBuffers[camCounter].sigma_CB, sigma_CuC, unityCameraMRP);
             vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
-            for (int j=0; j<3; j++){
-                if (j < 2){
+            for (int j = 0; j < 3; j++) {
+                if (j < 2) {
                     camera->add_resolution(this->cameraConfigBuffers[camCounter].resolution[j]);
                 }
                 camera->add_cameradir_b(unityCameraMRP[j]);
                 camera->add_camerapos_b(this->cameraConfigBuffers[camCounter].cameraPos_B[j]);
             }
-            camera->set_renderrate(this->cameraConfigBuffers[camCounter].renderRate);        // Unity expects nano-seconds between images
+            camera->set_renderrate(
+              this->cameraConfigBuffers[camCounter].renderRate); // Unity expects nano-seconds between images
             camera->set_cameraid(this->cameraConfigBuffers[camCounter].cameraID);
-            camera->set_fieldofview(this->cameraConfigBuffers[camCounter].fieldOfView*R2D);  // Unity expects degrees
+            camera->set_fieldofview(this->cameraConfigBuffers[camCounter].fieldOfView * R2D); // Unity expects degrees
             camera->set_skybox(this->cameraConfigBuffers[camCounter].skyBox);
             camera->set_parentname(this->cameraConfigBuffers[camCounter].parentName);
             camera->set_postprocessingon(this->cameraConfigBuffers[camCounter].postProcessingOn);
             camera->set_ppfocusdistance(this->cameraConfigBuffers[camCounter].ppFocusDistance);
             camera->set_ppaperture(this->cameraConfigBuffers[camCounter].ppAperture);
-            camera->set_ppfocallength(this->cameraConfigBuffers[camCounter].ppFocalLength*1000.); // Unity expects mm
+            camera->set_ppfocallength(this->cameraConfigBuffers[camCounter].ppFocalLength * 1000.); // Unity expects mm
             camera->set_ppmaxblursize(this->cameraConfigBuffers[camCounter].ppMaxBlurSize);
             camera->set_updatecameraparameters(this->cameraConfigBuffers[camCounter].updateCameraParameters);
             camera->set_rendermode(this->cameraConfigBuffers[camCounter].renderMode);
             if (this->cameraConfigBuffers[camCounter].depthMapClippingPlanes[0] > 0.0) {
-                for (int j=0; j<2; j++) {
+                for (int j = 0; j < 2; j++) {
                     camera->add_depthmapclippingplanes(this->cameraConfigBuffers[camCounter].depthMapClippingPlanes[j]);
                 }
             }
@@ -1105,32 +1150,31 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! Write spice output msgs */
-    for(size_t k=0; k<this->gravBodyInformation.size(); k++)
-    {
-        if (this->spiceInMsgStatus[k].dataFresh){
+    for (size_t k = 0; k < this->gravBodyInformation.size(); k++) {
+        if (this->spiceInMsgStatus[k].dataFresh) {
             vizProtobufferMessage::VizMessage::CelestialBody* spice = message->add_celestialbodies();
             spice->set_bodyname(this->gravBodyInformation.at(k).bodyName);
-            spice->set_mu(this->gravBodyInformation.at(k).mu/1e9);  /* must be in km^3/s^2 */
-            spice->set_radiuseq(this->gravBodyInformation.at(k).radEquator/1000.);  /* must be in km */
+            spice->set_mu(this->gravBodyInformation.at(k).mu / 1e9);                 /* must be in km^3/s^2 */
+            spice->set_radiuseq(this->gravBodyInformation.at(k).radEquator / 1000.); /* must be in km */
             spice->set_radiusratio(this->gravBodyInformation.at(k).radiusRatio);
             spice->set_modeldictionarykey(this->gravBodyInformation.at(k).modelDictionaryKey);
-            for (int i=0; i<3; i++){
+            for (int i = 0; i < 3; i++) {
                 spice->add_position(this->spiceMessage[k].PositionVector[i]);
                 spice->add_velocity(this->spiceMessage[k].VelocityVector[i]);
-                for (int j=0; j<3; j++){
+                for (int j = 0; j < 3; j++) {
                     spice->add_rotation(this->spiceMessage[k].J20002Pfix[i][j]);
                 }
             }
-//                spiceInMsgID[k].dataFresh = false;
+            //                spiceInMsgID[k].dataFresh = false;
         }
     }
 
     {
 
         // Serialize message (as is)
-        uint32_t byteCount = (uint32_t) message->ByteSizeLong();
+        uint32_t byteCount = (uint32_t)message->ByteSizeLong();
         void* serialized_message = malloc(byteCount);
-        message->SerializeToArray(serialized_message, (int) byteCount);
+        message->SerializeToArray(serialized_message, (int)byteCount);
 
         // BROADCAST MODE
         if (this->broadcastStream) {
@@ -1147,8 +1191,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         /* If settings were broadcast, remove from message before saving & sending to 2-way socket to reduce message
            size. Message must be re-serialized here as its contents have changed. */
-        if ((this->liveStream && (this->firstPass != 0) && (this->lastSettingsSendTime == this->now))
-             || this->saveFile) {
+        if ((this->liveStream && (this->firstPass != 0) && (this->lastSettingsSendTime == this->now)) ||
+            this->saveFile) {
             // Zero-out settings to reduce message size if not at first timestep
             if (this->settings.dataFresh == false) {
                 message->set_allocated_settings(nullptr);
@@ -1157,22 +1201,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
             // Re-serialize
             google::protobuf::uint8 varIntBuffer[4];
-            byteCount = (uint32_t) message->ByteSizeLong();
-            google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
-            unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
+            byteCount = (uint32_t)message->ByteSizeLong();
+            google::protobuf::uint8* end =
+              google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
+            unsigned long varIntBytes = (unsigned long)(end - varIntBuffer);
             // Save message to file if saveFile flag is true, and if Vizard is not being terminated
             if (this->saveFile && !this->liveSettings.terminateVizard) {
-                this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), (int) varIntBytes);
+                this->outputStream->write(reinterpret_cast<char*>(varIntBuffer), (int)varIntBytes);
             }
             serialized_message = malloc(byteCount);
-            message->SerializeToArray(serialized_message, (int) byteCount);
+            message->SerializeToArray(serialized_message, (int)byteCount);
         }
 
         // Check whether noDisplay mode should generate imagery from Vizard at this timestep
         bool returnCamImgStatus = false;
         if (this->noDisplay) {
             for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
-                if ((CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 && this->cameraConfigBuffers[camCounter].isOn == 1) ||this->firstPass < 11) {
+                if ((CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                     this->cameraConfigBuffers[camCounter].isOn == 1) ||
+                    this->firstPass < 11) {
                     returnCamImgStatus = true;
                 }
             }
@@ -1180,13 +1227,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         if (this->liveStream || (this->noDisplay && returnCamImgStatus)) {
             // Receive pong
-            // Viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before attempting to go into noDisplay mode
-            if (this->firstPass < 11){
+            // Viz needs 10 images before placing the planets, wait for 11 protobuffers to have been created before
+            // attempting to go into noDisplay mode
+            if (this->firstPass < 11) {
                 this->firstPass++;
             }
             zmq_msg_t receive_buffer;
             zmq_msg_init(&receive_buffer);
-            zmq_msg_recv (&receive_buffer, requester_socket, 0);
+            zmq_msg_recv(&receive_buffer, requester_socket, 0);
             zmq_msg_close(&receive_buffer);
 
             /*! - Normal sim step by sending protobuffers */
@@ -1219,8 +1267,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 this->broadcastStream = false;
                 this->liveStream = false;
                 this->noDisplay = false;
-            }
-            else {
+            } else {
                 zmq_msg_t receiveOK;
                 zmq_msg_init(&receiveOK);
                 int receive_status = zmq_msg_recv(&receiveOK, this->requester_socket, 0);
@@ -1228,14 +1275,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     // Make sure "OK" was received from Vizard
                     void* msgData = zmq_msg_data(&receiveOK);
                     size_t msgSize = zmq_msg_size(&receiveOK);
-                    std::string receiveOKStr (static_cast<char*>(msgData), msgSize);
+                    std::string receiveOKStr(static_cast<char*>(msgData), msgSize);
                     std::string errStatusStr = "OK";
                     if (receiveOKStr.compare(errStatusStr) != 0) {
                         bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [0]: Error processing SIM_UPDATE.");
                         return;
                     }
-                }
-                else {
+                } else {
                     bskLogger.bskLog(BSK_ERROR, "Vizard: Did not return a status (OK) message during SIM_UPDATE.");
                 }
                 zmq_msg_close(&receiveOK);
@@ -1245,11 +1291,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     this->receiveUserInput(CurrentSimNanos);
                 }
 
-                for (size_t camCounter =0; camCounter<this->cameraConfInMsgs.size(); camCounter++) {
+                for (size_t camCounter = 0; camCounter < this->cameraConfInMsgs.size(); camCounter++) {
                     /*! - If the camera is requesting periodic images, request them */
-                    if (CurrentSimNanos%this->cameraConfigBuffers[camCounter].renderRate == 0 &&
-                        this->cameraConfigBuffers[camCounter].isOn == 1)
-                    {
+                    if (CurrentSimNanos % this->cameraConfigBuffers[camCounter].renderRate == 0 &&
+                        this->cameraConfigBuffers[camCounter].isOn == 1) {
                         this->requestImage(camCounter, CurrentSimNanos);
                     }
                 }
@@ -1264,10 +1309,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     return;
                 }
             }
-
         }
         /*!  Write protobuffer to file */
-        if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {
+        if (!this->saveFile || !message->SerializeToOstream(this->outputStream)) {
             return;
         }
         this->outputStream->flush();
@@ -1275,27 +1319,27 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
     delete message;
     google::protobuf::ShutdownProtobufLibrary();
-
 }
 
 /*! Update this module at the task rate
  @param CurrentSimNanos The current sim time
  */
-void VizInterface::UpdateState(uint64_t CurrentSimNanos)
+void
+VizInterface::UpdateState(uint64_t CurrentSimNanos)
 {
 
-    this->FrameNumber+=1;
+    this->FrameNumber += 1;
     ReadBSKMessages();
-    if(CurrentSimNanos > 0) {
+    if (CurrentSimNanos > 0) {
         WriteProtobuffer(CurrentSimNanos);
     }
-
 }
 
 /*! Method to add a Vizard instrument camera module to vizInterface
  @param tmpMsg Camera configuration msg
  */
-void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
+void
+VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload>* tmpMsg)
 {
     /* add the message reader to the vector of input messages */
     this->cameraConfInMsgs.push_back(tmpMsg->addSubscriber());
@@ -1311,21 +1355,22 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
     this->cameraConfigBuffers.push_back(tmpCamConfigMsg);
 
     /* create output message */
-    Message<CameraImageMsgPayload> *msg;
+    Message<CameraImageMsgPayload>* msg;
     msg = new Message<CameraImageMsgPayload>;
     this->opnavImageOutMsgs.push_back(msg);
 
     /* create image pointer */
-    void *imgPtr = NULL;
+    void* imgPtr = NULL;
     this->bskImagePtrs.push_back(imgPtr);
 }
-
 
 /*! During liveStream mode, ask Vizard for any user inputs recorded since the last timestep.
     Parse and package into VizUserInputMsgPayload for handling in Python.
  @param CurrentSimNanos The current sim time
  */
-void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
+void
+VizInterface::receiveUserInput(uint64_t CurrentSimNanos)
+{
 
     // Send "REQUEST_INPUT" to elicit a response from Vizard
     void* request_input_str = malloc(13 * sizeof(char));
@@ -1350,7 +1395,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
     else {
         void* msgData = zmq_msg_data(&viz_response);
         size_t msgSize = zmq_msg_size(&viz_response);
-        std::string receive_status_str (static_cast<char*>(msgData), msgSize);
+        std::string receive_status_str(static_cast<char*>(msgData), msgSize);
         std::string err_status_str = "ERROR";
         if (receive_status_str.compare(err_status_str) == 0) {
             bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [2]: Invalid request string.");
@@ -1388,7 +1433,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         vbss_nc = const_cast<vizProtobufferMessage::VizBroadcastSyncSettings*>(vbss);
 
         // Iterate through VizEventReply objects
-        for (int i=0; i<msgRecv->replies_size(); i++) {
+        for (int i = 0; i < msgRecv->replies_size(); i++) {
             const vizProtobufferMessage::VizEventReply* ver = &(msgRecv->replies(i));
 
             // Remove "const"ness for compatibility with protobuffer access methods
@@ -1410,12 +1455,12 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         }
 
         // Serialize and send BroadcastSyncSettings*/
-        uint32_t syncByteCount = (uint32_t) vbss_nc->ByteSizeLong();
+        uint32_t syncByteCount = (uint32_t)vbss_nc->ByteSizeLong();
 
         // Serialize if in broadcastStream mode
         if (syncByteCount > 0 && this->broadcastStream) {
             void* sync_settings = malloc(syncByteCount);
-            vbss_nc->SerializeToArray(sync_settings, (int) syncByteCount);
+            vbss_nc->SerializeToArray(sync_settings, (int)syncByteCount);
 
             // Send sync settings message to BROADCAST (PUBLISHER) socket */
             int sendStatus = zmq_send(this->publisher_socket, "SYNC_SETTINGS", 13, ZMQ_SNDMORE);
@@ -1431,19 +1476,17 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         this->userInputMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
 
         delete msgRecv;
-    }
-    else {
+    } else {
         bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [2]: Did not return a user input message.");
     }
 
     zmq_msg_close(&viz_response);
-
 }
-
 
 /*! Requests an image from Vizard and stores it in the image output message
  */
-void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
+void
+VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
 {
     char buffer[10];
     zmq_recv(this->requester_socket, buffer, 10, 0);
@@ -1469,18 +1512,18 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     zmq_msg_recv(&length, this->requester_socket, 0);
     zmq_msg_recv(&image, this->requester_socket, 0);
 
-    int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
-    void *imagePoint= zmq_msg_data(&image);
+    int32_t* lengthPoint = (int32_t*)zmq_msg_data(&length);
+    void* imagePoint = zmq_msg_data(&image);
     int32_t length_unswapped = *lengthPoint;
     /*! --  Endianness switch for the length of the buffer */
-    int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
-                                ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
-                                ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
-                                ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
+    int32_t imageBufferLength = ((length_unswapped >> 24) & 0xff) |      // move byte 3 to byte 0
+                                ((length_unswapped << 8) & 0xff0000) |   // move byte 1 to byte 2
+                                ((length_unswapped >> 8) & 0xff00) |     // move byte 2 to byte 1
+                                ((length_unswapped << 24) & 0xff000000); // byte 0 to byte 3
 
     /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
-    this->bskImagePtrs[camCounter] = malloc(imageBufferLength*sizeof(char));
-    memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength*sizeof(char));
+    this->bskImagePtrs[camCounter] = malloc(imageBufferLength * sizeof(char));
+    memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength * sizeof(char));
 
     /*! -- Write out the image information to the Image message */
     CameraImageMsgPayload imageData = {};
@@ -1490,7 +1533,9 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     imageData.imageBufferLength = imageBufferLength;
     imageData.cameraID = this->cameraConfigBuffers[camCounter].cameraID;
     imageData.imageType = 4;
-    if (imageBufferLength>0){imageData.valid = 1;}
+    if (imageBufferLength > 0) {
+        imageData.valid = 1;
+    }
     this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, CurrentSimNanos);
 
     /*! -- Clean the messages to avoid memory leaks */
@@ -1498,13 +1543,12 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     zmq_msg_close(&image);
 }
 
-
-
 /*! A cleaning method to ensure the message buffers are wiped clean.
  @param data The current sim time in nanoseconds
  @param hint
  */
-void message_buffer_deallocate(void *data, void *hint)
+void
+message_buffer_deallocate(void* data, void* hint)
 {
-    free (data);
+    free(data);
 }

@@ -19,4 +19,3 @@ provides information on what this message is used for.
     * - attOutSet
       - :ref:`AttStateMsgPayload`
       - attitude state output message
-

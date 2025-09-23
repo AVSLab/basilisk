@@ -14,18 +14,18 @@ The Spice trajectory of the TDRSS satellite is loaded.  The trajectory is mapped
 
 \section{Test Parameters}
 
-The Spice TDRSS trajectory data is loaded as the truth trajectory.  A 14th order Chebyshev model is then created and uploaded to the BSK module.  
+The Spice TDRSS trajectory data is loaded as the truth trajectory.  A 14th order Chebyshev model is then created and uploaded to the BSK module.
 The unit tests verify that the module output guidance message vectors match expected values.
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
-		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\
 		\hline
-		{\tt r\_BdyZero\_N}        & \input{AutoTeX/tolerancePosValue} m	   \\ 
-		{\tt v\_BdyZero\_N}        & \input{AutoTeX/toleranceVelValue} m/s   \\ 
+		{\tt r\_BdyZero\_N}        & \input{AutoTeX/tolerancePosValue} m	   \\
+		{\tt v\_BdyZero\_N}        & \input{AutoTeX/toleranceVelValue} m/s   \\
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -39,17 +39,12 @@ All of the tests passed:
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c  } % Column formatting, 
+	\begin{tabular}{c | c  } % Column formatting,
 		\hline\hline
-		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\textbf{Check} 						  		&\textbf{Pass/Fail} \\
 		\hline
-	   1	   			& \input{AutoTeX/passFailFalse} \\ 
-	   2	   			& \input{AutoTeX/passFailTrue} \\ 
+	   1	   			& \input{AutoTeX/passFailFalse} \\
+	   2	   			& \input{AutoTeX/passFailTrue} \\
 	   \hline\hline
 	\end{tabular}
 \end{table}
-
-
-
-
-

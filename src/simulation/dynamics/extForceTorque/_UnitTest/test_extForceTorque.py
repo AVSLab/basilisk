@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -30,7 +29,9 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -47,23 +48,24 @@ caseList = []
 for i in range(0, 4):
     for j in range(0, 4):
         for k in range(0, 4):
-            caseList.append([i,j,k])
-@pytest.mark.parametrize("torqueInput, forceNInput, forceBInput", caseList)
+            caseList.append([i, j, k])
 
+
+@pytest.mark.parametrize("torqueInput, forceNInput, forceBInput", caseList)
 
 # provide a unique test method name, starting with test_
 def test_unitDynamicsModes(show_plots, torqueInput, forceNInput, forceBInput):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDynamicsModesTestFunction(
-            show_plots, torqueInput, forceNInput, forceBInput)
+        show_plots, torqueInput, forceNInput, forceBInput
+    )
     assert testResults < 1, testMessage
 
 
-
 def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBInput):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"
     unitProcessName = "testProcess"
 
@@ -80,25 +82,25 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
 
-    if torqueInput==1 or torqueInput==3:
-        extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
-    if torqueInput==2 or torqueInput==3:
+    if torqueInput == 1 or torqueInput == 3:
+        extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
+    if torqueInput == 2 or torqueInput == 3:
         msgData = messaging.CmdTorqueBodyMsgPayload()
         msgData.torqueRequestBody = [-1.0, 1.0, -1.0]
         cmdTorqueMsg = messaging.CmdTorqueBodyMsg().write(msgData)
         extFTObject.cmdTorqueInMsg.subscribeTo(cmdTorqueMsg)
 
-    if forceNInput==1 or forceNInput==3:
-        extFTObject.extForce_N = [[-10.], [-5.], [5.]]
-    if forceNInput==2 or forceNInput==3:
+    if forceNInput == 1 or forceNInput == 3:
+        extFTObject.extForce_N = [[-10.0], [-5.0], [5.0]]
+    if forceNInput == 2 or forceNInput == 3:
         msgData = messaging.CmdForceInertialMsgPayload()
         msgData.forceRequestInertial = [-10.0, -5.0, 5.0]
         cmdForceInertialMsg = messaging.CmdForceInertialMsg().write(msgData)
         extFTObject.cmdForceInertialInMsg.subscribeTo(cmdForceInertialMsg)
 
-    if forceBInput==1 or forceBInput==3:
-        extFTObject.extForce_B = [[10.], [20.], [30.]]
-    if forceBInput==2 or forceBInput==3:
+    if forceBInput == 1 or forceBInput == 3:
+        extFTObject.extForce_B = [[10.0], [20.0], [30.0]]
+    if forceBInput == 2 or forceBInput == 3:
         msgData = messaging.CmdForceBodyMsgPayload()
         msgData.forceRequestBody = [10.0, 20.0, 30.0]
         cmdForceBodyMsg = messaging.CmdForceBodyMsg().write(msgData)
@@ -109,7 +111,9 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     #
     #   Setup data logging
     #
-    extFTObjectLog = extFTObject.logger(["forceExternal_N", "forceExternal_B", "torqueExternalPntB_B"])
+    extFTObjectLog = extFTObject.logger(
+        ["forceExternal_N", "forceExternal_B", "torqueExternalPntB_B"]
+    )
     scSim.AddModelToTask(unitTaskName, extFTObjectLog)
 
     #
@@ -138,76 +142,81 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     #
 
     if torqueInput == 3:
-        trueTorque_B = [
-              [-2., 2., -2.]
-        ]
-    elif torqueInput>0:
-        trueTorque_B = [
-            [-1., 1., -1.]
-        ]
+        trueTorque_B = [[-2.0, 2.0, -2.0]]
+    elif torqueInput > 0:
+        trueTorque_B = [[-1.0, 1.0, -1.0]]
     else:
-        trueTorque_B = [
-            [0, 0, 0]
-        ]
+        trueTorque_B = [[0, 0, 0]]
 
     if forceBInput == 3:
-        trueForceB = [
-            [20, 40, 60]
-        ]
-    elif forceBInput>0:
-        trueForceB = [
-            [10, 20, 30]
-        ]
+        trueForceB = [[20, 40, 60]]
+    elif forceBInput > 0:
+        trueForceB = [[10, 20, 30]]
     else:
-        trueForceB = [
-            [0, 0, 0]
-        ]
+        trueForceB = [[0, 0, 0]]
 
     if forceNInput == 3:
-        trueForceN = [
-            [-20., -10., 10.]
-        ]
+        trueForceN = [[-20.0, -10.0, 10.0]]
     elif forceNInput > 0:
-        trueForceN = [
-            [-10., -5., 5.]
-        ]
+        trueForceN = [[-10.0, -5.0, 5.0]]
     else:
-        trueForceN = [
-            [0, 0, 0]
-        ]
+        trueForceN = [[0, 0, 0]]
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    if (len(trueTorque_B) != len(dataTorque)):
+    if len(trueTorque_B) != len(dataTorque):
         testFailCount += 1
-        testMessages.append("FAILED:  ExtForceTorque failed torque unit test (unequal array sizes)\n")
+        testMessages.append(
+            "FAILED:  ExtForceTorque failed torque unit test (unequal array sizes)\n"
+        )
     else:
-        for i in range(0,len(trueTorque_B)):
+        for i in range(0, len(trueTorque_B)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataTorque[i],trueTorque_B[i],3,accuracy):
+            if not unitTestSupport.isArrayEqual(
+                dataTorque[i], trueTorque_B[i], 3, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED:  ExtForceTorque failed torque unit test at t=" + str(dataTorque[i,0]*macros.NANO2SEC) + "sec\n")
+                testMessages.append(
+                    "FAILED:  ExtForceTorque failed torque unit test at t="
+                    + str(dataTorque[i, 0] * macros.NANO2SEC)
+                    + "sec\n"
+                )
 
-    if (len(trueForceN) != len(dataForceN)):
+    if len(trueForceN) != len(dataForceN):
         testFailCount += 1
-        testMessages.append("FAILED:  ExtForceTorque failed force_N unit test (unequal array sizes)\n")
+        testMessages.append(
+            "FAILED:  ExtForceTorque failed force_N unit test (unequal array sizes)\n"
+        )
     else:
-        for i in range(0,len(trueForceN)):
+        for i in range(0, len(trueForceN)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataForceN[i],trueForceN[i],3,accuracy):
+            if not unitTestSupport.isArrayEqual(
+                dataForceN[i], trueForceN[i], 3, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED:  ExtForceTorque failed force_N unit test at t=" + str(dataForceN[i,0]*macros.NANO2SEC) + "sec\n")
+                testMessages.append(
+                    "FAILED:  ExtForceTorque failed force_N unit test at t="
+                    + str(dataForceN[i, 0] * macros.NANO2SEC)
+                    + "sec\n"
+                )
 
-    if (len(trueForceB) != len(dataForceB)):
+    if len(trueForceB) != len(dataForceB):
         testFailCount += 1
-        testMessages.append("FAILED:  ExtForceTorque failed force_B unit test (unequal array sizes)\n")
+        testMessages.append(
+            "FAILED:  ExtForceTorque failed force_B unit test (unequal array sizes)\n"
+        )
     else:
         for i in range(0, len(trueForceB)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataForceB[i], trueForceB[i], 3, accuracy):
+            if not unitTestSupport.isArrayEqual(
+                dataForceB[i], trueForceB[i], 3, accuracy
+            ):
                 testFailCount += 1
-                testMessages.append("FAILED:  ExtForceTorque failed force_B unit test at t="+str(
-                    dataForceB[i, 0]*macros.NANO2SEC)+"sec\n")
+                testMessages.append(
+                    "FAILED:  ExtForceTorque failed force_B unit test at t="
+                    + str(dataForceB[i, 0] * macros.NANO2SEC)
+                    + "sec\n"
+                )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -215,15 +224,17 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_unitDynamicsModes(False,       # show_plots
-                           1,           # torqueInput
-                           0,           # forceNInput
-                           0            # forceBInput
-                           )
+    test_unitDynamicsModes(
+        False,  # show_plots
+        1,  # torqueInput
+        0,  # forceNInput
+        0,  # forceBInput
+    )

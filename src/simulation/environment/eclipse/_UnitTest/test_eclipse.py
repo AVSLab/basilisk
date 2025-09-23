@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -44,11 +43,22 @@ bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))
 
+
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
-@pytest.mark.parametrize("eclipseCondition, planet", [
-("partial", "earth"), ("full", "earth"), ("none", "earth"), ("annular", "earth"),
-("partial", "mars"), ("full", "mars"), ("none", "mars"), ("annular", "mars")])
+@pytest.mark.parametrize(
+    "eclipseCondition, planet",
+    [
+        ("partial", "earth"),
+        ("full", "earth"),
+        ("none", "earth"),
+        ("annular", "earth"),
+        ("partial", "mars"),
+        ("full", "mars"),
+        ("none", "mars"),
+        ("annular", "mars"),
+    ],
+)
 def test_unitEclipse(show_plots, eclipseCondition, planet):
     """
 **Test Description and Success Criteria**
@@ -154,22 +164,25 @@ def unitEclipse(show_plots, eclipseCondition, planet):
         earth.isCentralBody = True
     elif planet == "mars":
         mars.isCentralBody = True
-    scObject_0.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    scObject_0.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     # setup Spice interface for some solar system bodies
-    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , timeInitString
-                                     # earth and mars must come first as with gravBodies
-                                     , spicePlanetNames=["earth", "mars barycenter", "sun", "venus"]
-                                     )
+    timeInitString = "2021 MAY 04 07:47:48.965 (UTC)"
+    gravFactory.createSpiceInterface(
+        bskPath + "/supportData/EphemerisData/",
+        timeInitString,
+        # earth and mars must come first as with gravBodies
+        spicePlanetNames=["earth", "mars barycenter", "sun", "venus"],
+    )
 
     if planet == "earth":
         if eclipseCondition == "full":
             gravFactory.spiceObject.zeroBase = "earth"
             # set up spacecraft 0 position and velocity for full eclipse
             oe = orbitalMotion.ClassicElements()
-            r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
+            r_0 = 500 + orbitalMotion.REQ_EARTH  # km
             oe.a = r_0
             oe.e = 0.00001
             oe.i = 5.0 * macros.D2R
@@ -183,7 +196,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             gravFactory.spiceObject.zeroBase = "earth"
             # set up spacecraft 0 position and velocity for full eclipse
             oe = orbitalMotion.ClassicElements()
-            r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
+            r_0 = 500 + orbitalMotion.REQ_EARTH  # km
             oe.a = r_0
             oe.e = 0.00001
             oe.i = 5.0 * macros.D2R
@@ -207,15 +220,27 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
         elif eclipseCondition == "annular":
             gravFactory.spiceObject.zeroBase = "earth"
-            scObject_0.hub.r_CN_NInit = [-326716535628.942, -287302983139.247, -124542549301.050]
+            scObject_0.hub.r_CN_NInit = [
+                -326716535628.942,
+                -287302983139.247,
+                -124542549301.050,
+            ]
 
     elif planet == "mars":
         if eclipseCondition == "full":
             gravFactory.spiceObject.zeroBase = "mars barycenter"
-            scObject_0.hub.r_CN_NInit = [-2930233.55919119, 2567609.100747609, 41384.23366372246] # meters
+            scObject_0.hub.r_CN_NInit = [
+                -2930233.55919119,
+                2567609.100747609,
+                41384.23366372246,
+            ]  # meters
         elif eclipseCondition == "partial":
             gravFactory.spiceObject.zeroBase = "mars barycenter"
-            scObject_0.hub.r_CN_NInit = [-6050166.454829555, 2813822.447404055, 571725.5651779658] # meters
+            scObject_0.hub.r_CN_NInit = [
+                -6050166.454829555,
+                2813822.447404055,
+                571725.5651779658,
+            ]  # meters
         elif eclipseCondition == "none":
             oe = orbitalMotion.ClassicElements()
             r_0 = 9959991.68982  # km
@@ -230,16 +255,28 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
         elif eclipseCondition == "annular":
             gravFactory.spiceObject.zeroBase = "mars barycenter"
-            scObject_0.hub.r_CN_NInit = [-427424601171.464, 541312532797.400, 259820030623.064]  # meters
+            scObject_0.hub.r_CN_NInit = [
+                -427424601171.464,
+                541312532797.400,
+                259820030623.064,
+            ]  # meters
 
     unitTestSim.AddModelToTask(testTaskName, gravFactory.spiceObject, -1)
 
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)
-    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[3])   # venus
-    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[1])   # mars
-    eclipseObject.addPlanetToModel(gravFactory.spiceObject.planetStateOutMsgs[0])   # earth
-    eclipseObject.sunInMsg.subscribeTo(gravFactory.spiceObject.planetStateOutMsgs[2])   # sun
+    eclipseObject.addPlanetToModel(
+        gravFactory.spiceObject.planetStateOutMsgs[3]
+    )  # venus
+    eclipseObject.addPlanetToModel(
+        gravFactory.spiceObject.planetStateOutMsgs[1]
+    )  # mars
+    eclipseObject.addPlanetToModel(
+        gravFactory.spiceObject.planetStateOutMsgs[0]
+    )  # earth
+    eclipseObject.sunInMsg.subscribeTo(
+        gravFactory.spiceObject.planetStateOutMsgs[2]
+    )  # sun
 
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
 
@@ -254,52 +291,84 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     eclipseData_0 = dataLog.shadowFactor
     # Obtain body position vectors to check with MATLAB
 
-    errTol = 1E-12
+    errTol = 1e-12
     if planet == "earth":
         if eclipseCondition == "partial":
             truthShadowFactor = 0.62310760206735027
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth partial eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Earth partial eclipse condition"
+                )
 
         elif eclipseCondition == "full":
             truthShadowFactor = 0.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth full eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Earth full eclipse condition"
+                )
 
         elif eclipseCondition == "none":
             truthShadowFactor = 1.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth none eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Earth none eclipse condition"
+                )
         elif eclipseCondition == "annular":
             truthShadowFactor = 1.497253388113018e-04
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Earth annular eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Earth annular eclipse condition"
+                )
 
     elif planet == "mars":
         if eclipseCondition == "partial":
             truthShadowFactor = 0.18745025055615416
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars partial eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Mars partial eclipse condition"
+                )
         elif eclipseCondition == "full":
             truthShadowFactor = 0.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars full eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Mars full eclipse condition"
+                )
         elif eclipseCondition == "none":
             truthShadowFactor = 1.0
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars none eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Mars none eclipse condition"
+                )
         elif eclipseCondition == "annular":
             truthShadowFactor = 4.245137380531894e-05
-            if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
+            if not unitTestSupport.isDoubleEqual(
+                eclipseData_0[-1], truthShadowFactor, errTol
+            ):
                 testFailCount += 1
-                testMessages.append("Shadow Factor failed for Mars annular eclipse condition")
+                testMessages.append(
+                    "Shadow Factor failed for Mars annular eclipse condition"
+                )
 
     if testFailCount == 0:
         print("PASSED: " + planet + "-" + eclipseCondition)
@@ -308,14 +377,15 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     else:
         print(testMessages)
 
-    print('The error tolerance for all tests is ' + str(errTol))
+    print("The error tolerance for all tests is " + str(errTol))
 
     #
     #  unload the SPICE libraries that were loaded by the spiceObject earlier
     #
     gravFactory.unloadSpiceKernels()
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 def unitEclipseCustom(show_plots):
     __tracebackhide__ = True
@@ -340,18 +410,22 @@ def unitEclipseCustom(show_plots):
     # setup Gravity Bodies
     gravFactory = simIncludeGravBody.gravBodyFactory()
     mu_bennu = 4.892
-    custom = gravFactory.createCustomGravObject("custom", mu_bennu) # creates a custom grav object (bennu)
-    scObject_0.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    custom = gravFactory.createCustomGravObject(
+        "custom", mu_bennu
+    )  # creates a custom grav object (bennu)
+    scObject_0.gravField.gravBodies = spacecraft.GravBodyVector(
+        list(gravFactory.gravBodies.values())
+    )
 
     # Create the ephemeris data for the bodies
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.ModelTag = "planetEphemeris"
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["custom"]))
 
     # Specify bennu orbit
     oeAsteroid = planetEphemeris.ClassicElements()
-    oeAsteroid.a = 1.1259 * orbitalMotion.AU * 1000. # m
+    oeAsteroid.a = 1.1259 * orbitalMotion.AU * 1000.0  # m
     oeAsteroid.e = 0.20373
     oeAsteroid.i = 6.0343 * macros.D2R
     oeAsteroid.Omega = 2.01820 * macros.D2R
@@ -375,8 +449,8 @@ def unitEclipseCustom(show_plots):
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addSpacecraftToModel(scObject_0.scStateOutMsg)
     eclipseObject.addPlanetToModel(gravBodyEphem.planetOutMsgs[0])  # custom
-    eclipseObject.sunInMsg.subscribeTo(sunPlanetStateMsg)   # sun
-    eclipseObject.rEqCustom = 282. # m
+    eclipseObject.sunInMsg.subscribeTo(sunPlanetStateMsg)  # sun
+    eclipseObject.rEqCustom = 282.0  # m
 
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
 
@@ -391,7 +465,7 @@ def unitEclipseCustom(show_plots):
     eclipseData_0 = dataLog.shadowFactor
     # Obtain body position vectors to check with MATLAB
 
-    errTol = 1E-12
+    errTol = 1e-12
     truthShadowFactor = 0.0
     if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthShadowFactor, errTol):
         testFailCount += 1
@@ -404,9 +478,10 @@ def unitEclipseCustom(show_plots):
     else:
         print(testMessages)
 
-    print('The error tolerance for all tests is ' + str(errTol))
+    print("The error tolerance for all tests is " + str(errTol))
 
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
+
 
 if __name__ == "__main__":
     unitEclipse(False, "annular", "mars")

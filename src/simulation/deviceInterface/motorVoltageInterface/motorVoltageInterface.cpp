@@ -43,10 +43,10 @@ MotorVoltageInterface::~MotorVoltageInterface()
 /*! Reset the module to original configuration values.
 
  */
-void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
+void
+MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
 {
-    if(!this->motorVoltageInMsg.isLinked())
-    {
+    if (!this->motorVoltageInMsg.isLinked()) {
         bskLogger.bskLog(BSK_WARNING, "motorVoltageInterface.motorVoltageInMsg is not linked.");
         return;
     }
@@ -54,7 +54,8 @@ void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
 
 /*! This method reads the motor voltage input messages
  */
-void MotorVoltageInterface::readInputMessages()
+void
+MotorVoltageInterface::readInputMessages()
 {
 
     // read the incoming array of voltages
@@ -66,11 +67,13 @@ void MotorVoltageInterface::readInputMessages()
 /*! This method evaluates the motor torque output states.
 
  */
-void MotorVoltageInterface::computeMotorTorque()
+void
+MotorVoltageInterface::computeMotorTorque()
 {
     this->outputTorqueBuffer = this->motorTorqueOutMsg.zeroMsgPayload;
-    for (uint64_t i=0; i < MAX_EFF_CNT; i++) {
-        this->outputTorqueBuffer.motorTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
+    for (uint64_t i = 0; i < MAX_EFF_CNT; i++) {
+        this->outputTorqueBuffer.motorTorque[i] =
+          this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
     }
     return;
 }
@@ -78,10 +81,11 @@ void MotorVoltageInterface::computeMotorTorque()
 /*! This method sets (per motor) voltage to torque scale factors (linear proportional error)
 
  */
-void MotorVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
-    for (int i = 0; i < this->scaleFactor.rows(); i++)
-    {
-        if (i < scaleFactors.rows()){
+void
+MotorVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors)
+{
+    for (int i = 0; i < this->scaleFactor.rows(); i++) {
+        if (i < scaleFactors.rows()) {
             this->scaleFactor(i) = scaleFactors(i);
         } else {
             this->scaleFactor(i) = 1.0;
@@ -93,11 +97,11 @@ void MotorVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
 /*! This method sets the list of motor voltage to torque gains.
 
  */
-void MotorVoltageInterface::setGains(Eigen::VectorXd gains)
+void
+MotorVoltageInterface::setGains(Eigen::VectorXd gains)
 {
-    for (int i = 0; i < this->voltage2TorqueGain.rows(); i++)
-    {
-        if (i < gains.rows()){
+    for (int i = 0; i < this->voltage2TorqueGain.rows(); i++) {
+        if (i < gains.rows()) {
             this->voltage2TorqueGain(i) = gains(i);
         } else {
             this->voltage2TorqueGain(i) = 1.0;
@@ -109,11 +113,11 @@ void MotorVoltageInterface::setGains(Eigen::VectorXd gains)
 /*! This method sets the list of voltage to torque biases (per rw)
 
  */
-void MotorVoltageInterface::setBiases(Eigen::VectorXd biases)
+void
+MotorVoltageInterface::setBiases(Eigen::VectorXd biases)
 {
-    for (int i = 0; i < this->bias.rows(); i++)
-    {
-        if (i < biases.rows()){
+    for (int i = 0; i < this->bias.rows(); i++) {
+        if (i < biases.rows()) {
             this->bias(i) = biases(i);
         } else {
             this->bias(i) = 0.0;
@@ -126,7 +130,8 @@ void MotorVoltageInterface::setBiases(Eigen::VectorXd biases)
 
  @param CurrentClock The clock time associated with the model call
  */
-void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
+void
+MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 {
     this->motorTorqueOutMsg.write(&this->outputTorqueBuffer, this->moduleID, CurrentClock);
 
@@ -137,7 +142,8 @@ void MotorVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 
     @param CurrentSimNanos The clock time associated with the model call
 */
-void MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
+void
+MotorVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeMotorTorque();

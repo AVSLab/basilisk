@@ -26,12 +26,17 @@
 
 import pytest
 from Basilisk.architecture import messaging
-from Basilisk.fswAlgorithms import meanOEFeedback  # import the module that is to be tested
+from Basilisk.fswAlgorithms import (
+    meanOEFeedback,
+)  # import the module that is to be tested
+
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -40,13 +45,15 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 
+
 @pytest.mark.parametrize("useClassicElem", [True, False])
 @pytest.mark.parametrize("accuracy", [1e-6])
-
 def test_meanOEFeedback(show_plots, useClassicElem, accuracy):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy)
+    [testResults, testMessage] = meanOEFeedbackTestFunction(
+        show_plots, useClassicElem, accuracy
+    )
     assert testResults < 1, testMessage
 
 
@@ -60,21 +67,55 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     # Create test thread
     testProcessRate = macros.sec2nano(0.1)  # process rate
     testProc = unitTestSim.CreateNewProcess(unitProcessName)  # create new process
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))  # create new task
+    testProc.addTask(
+        unitTestSim.CreateNewTask(unitTaskName, testProcessRate)
+    )  # create new task
     # Construct algorithm and associated C++ container
     module = meanOEFeedback.meanOEFeedback()
     module.ModelTag = "meanOEFeedback"  # update python name of test meanOEFeedback
     module.targetDiffOeMean = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     module.mu = orbitalMotion.MU_EARTH * 1e9  # [m^3/s^2]
     module.req = orbitalMotion.REQ_EARTH * 1e3  # [m]
-    module.J2 = orbitalMotion.J2_EARTH      # []
-    module.K = [1e7, 0.0, 0.0, 0.0, 0.0, 0.0,
-                      0.0, 1e7, 0.0, 0.0, 0.0, 0.0,
-                      0.0, 0.0, 1e7, 0.0, 0.0, 0.0,
-                      0.0, 0.0, 0.0, 1e7, 0.0, 0.0,
-                      0.0, 0.0, 0.0, 0.0, 1e7, 0.0,
-                      0.0, 0.0, 0.0, 0.0, 0.0, 1e7]
-    if(useClassicElem):
+    module.J2 = orbitalMotion.J2_EARTH  # []
+    module.K = [
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1e7,
+    ]
+    if useClassicElem:
         module.oeType = 0  # 0: classic
     else:
         module.oeType = 1  # 1: equinoctial
@@ -92,8 +133,10 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     oe.Omega = 0.3
     oe.omega = 0.4
     oe.f = 0.5
-    (r_BN_N, v_BN_N) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe)
-    chiefNavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
+    (r_BN_N, v_BN_N) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH * 1e9, oe)
+    chiefNavStateOutData = (
+        messaging.NavTransMsgPayload()
+    )  # Create a structure for the input message
     chiefNavStateOutData.timeTag = 0
     chiefNavStateOutData.r_BN_N = r_BN_N
     chiefNavStateOutData.v_BN_N = v_BN_N
@@ -110,8 +153,10 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
     oe2.Omega = 0.0 + 0.0003
     oe2.omega = 0.0 + 0.0002
     oe2.f = 0.0001
-    (r_BN_N2, v_BN_N2) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH*1e9, oe2)
-    deputyNavStateOutData = messaging.NavTransMsgPayload()  # Create a structure for the input message
+    (r_BN_N2, v_BN_N2) = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH * 1e9, oe2)
+    deputyNavStateOutData = (
+        messaging.NavTransMsgPayload()
+    )  # Create a structure for the input message
     deputyNavStateOutData.timeTag = 0
     deputyNavStateOutData.r_BN_N = r_BN_N2
     deputyNavStateOutData.v_BN_N = v_BN_N2
@@ -143,22 +188,36 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
 
     # set the filtered output truth states
     if useClassicElem:
-        trueVector = [[-849.57347406544340628897771239280701,
-                       1849.77641265032843875815160572528839,
-                       136.07817734479317550722043961286545]]
+        trueVector = [
+            [
+                -849.57347406544340628897771239280701,
+                1849.77641265032843875815160572528839,
+                136.07817734479317550722043961286545,
+            ]
+        ]
     else:
-        trueVector = [[-1655.37188207880308254971168935298920,
-                       1788.61776379042521512019447982311249,
-                       52.54814237453938119415397522971034]]
+        trueVector = [
+            [
+                -1655.37188207880308254971168935298920,
+                1788.61776379042521512019447982311249,
+                52.54814237453938119415397522971034,
+            ]
+        ]
 
     # compare the meanOEFeedback results to the truth values
     for i in range(0, len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(forceOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + module.ModelTag + " Module failed "
-                                + ".forceRequestInertial" + " unit test at t="
-                                + str(dataLog.times()[i]*macros.NANO2SEC) + "sec\n")
+            testMessages.append(
+                "FAILED: "
+                + module.ModelTag
+                + " Module failed "
+                + ".forceRequestInertial"
+                + " unit test at t="
+                + str(dataLog.times()[i] * macros.NANO2SEC)
+                + "sec\n"
+            )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -167,7 +226,7 @@ def meanOEFeedbackTestFunction(show_plots, useClassicElem, accuracy):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -178,5 +237,5 @@ if __name__ == "__main__":
     test_meanOEFeedback(
         False,  # show_plots
         True,  # useClassicElem
-        1e-6    # accuracy
+        1e-6,  # accuracy
     )

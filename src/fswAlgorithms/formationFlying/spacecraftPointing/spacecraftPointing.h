@@ -26,36 +26,35 @@
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
 /*! @brief Top level structure for the spacecraft pointing module.*/
-typedef struct {
-    AttRefMsg_C attReferenceOutMsg;                     /*!< The name of the output message */
-    NavTransMsg_C chiefPositionInMsg;                   /*!< The name of the Input message of the chief */
-    NavTransMsg_C deputyPositionInMsg;                  /*!< The name of the Input message of the deputy */
+typedef struct
+{
+    AttRefMsg_C attReferenceOutMsg;    /*!< The name of the output message */
+    NavTransMsg_C chiefPositionInMsg;  /*!< The name of the Input message of the chief */
+    NavTransMsg_C deputyPositionInMsg; /*!< The name of the Input message of the deputy */
 
-    double alignmentVector_B[3];                        /*!< Vector within the B-frame that points to antenna */
-    double sigma_BA[3];                                 /*!< -- MRP of B-frame with respect to A-frame */
-    double old_sigma_RN[3];                             /*!< -- MRP of previous timestep */
-    double old_omega_RN_N[3];                           /*!< -- Omega of previous timestep */
-    int i;                                              /*!< -- Flag used to set incorrect numerical answers to zero */
-    uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
-    AttRefMsgPayload attReferenceOutBuffer;                 //!< output msg copy
-    
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}spacecraftPointingConfig;
+    double alignmentVector_B[3];            /*!< Vector within the B-frame that points to antenna */
+    double sigma_BA[3];                     /*!< -- MRP of B-frame with respect to A-frame */
+    double old_sigma_RN[3];                 /*!< -- MRP of previous timestep */
+    double old_omega_RN_N[3];               /*!< -- Omega of previous timestep */
+    int i;                                  /*!< -- Flag used to set incorrect numerical answers to zero */
+    uint64_t priorTime;                     /*!< [ns] Last time the attitude control is called */
+    AttRefMsgPayload attReferenceOutBuffer; //!< output msg copy
+
+    BSKLogger* bskLogger; //!< BSK Logging
+} spacecraftPointingConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID);
-    void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, int64_t moduleID);
+
+    void SelfInit_spacecraftPointing(spacecraftPointingConfig* configData, int64_t moduleID);
+    void Update_spacecraftPointing(spacecraftPointingConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_spacecraftPointing(spacecraftPointingConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

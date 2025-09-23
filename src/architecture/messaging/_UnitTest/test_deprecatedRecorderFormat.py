@@ -41,6 +41,7 @@ deadline is passed.
 from Basilisk.architecture import messaging
 from Basilisk.utilities import deprecated
 
+
 def test_deprecatedRecorderFormat():
     """test script to ensure any BSK include has access to messaging"""
 
@@ -58,9 +59,12 @@ def test_deprecatedRecorderFormat():
     # ignore the deprecation warning, but trigger it anyway
     # when the deprecation time limit expires, this will turn into a
     # non-ignored error
-    with deprecated.ignore(r"Basilisk\.architecture\.messaging\..*Payload\..*Recorder\.__getattr__"):
+    with deprecated.ignore(
+        r"Basilisk\.architecture\.messaging\..*Payload\..*Recorder\.__getattr__"
+    ):
         result = recorder.accPkts
-        assert isinstance(result[0], dict) # expected, deprecated format
+        assert isinstance(result[0], dict)  # expected, deprecated format
+
 
 if __name__ == "__main__":
     test_deprecatedRecorderFormat()

@@ -31,11 +31,10 @@
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief orbit element converter module class */
-class OrbElemConvert: public SysModel {
-public:
+class OrbElemConvert : public SysModel
+{
+  public:
     OrbElemConvert();
     ~OrbElemConvert();
 
@@ -46,25 +45,23 @@ public:
     void Cartesian2Elements();
     void ReadInputs();
 
-public:
-    double r_N[3];                    //!< m  Current position vector (inertial)
-    double v_N[3];                    //!< m/s Current velocity vector (inertial)
-    double mu;                        //!< -- Current grav param (inertial)
-    ClassicElements CurrentElem;                      //!< -- Current orbital elements
-    SCStatesMsgPayload statesIn;                            //!< -- spacecraft state message
-    SpicePlanetStateMsgPayload planetIn;                        //!< -- planet state message
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg;           //!< -- sc state input message
-    ReadFunctor<SpicePlanetStateMsgPayload> spiceStateInMsg;    //!< -- spice state input message
-    ReadFunctor<ClassicElementsMsgPayload> elemInMsg;           //!< -- orbit element input message
-    Message<SCStatesMsgPayload> scStateOutMsg;              //!< -- sc state output message
-    Message<SpicePlanetStateMsgPayload> spiceStateOutMsg;       //!< -- spice state input message
-    Message<ClassicElementsMsgPayload> elemOutMsg;              //!< -- orbit element output message
+  public:
+    double r_N[3];                                           //!< m  Current position vector (inertial)
+    double v_N[3];                                           //!< m/s Current velocity vector (inertial)
+    double mu;                                               //!< -- Current grav param (inertial)
+    ClassicElements CurrentElem;                             //!< -- Current orbital elements
+    SCStatesMsgPayload statesIn;                             //!< -- spacecraft state message
+    SpicePlanetStateMsgPayload planetIn;                     //!< -- planet state message
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg;            //!< -- sc state input message
+    ReadFunctor<SpicePlanetStateMsgPayload> spiceStateInMsg; //!< -- spice state input message
+    ReadFunctor<ClassicElementsMsgPayload> elemInMsg;        //!< -- orbit element input message
+    Message<SCStatesMsgPayload> scStateOutMsg;               //!< -- sc state output message
+    Message<SpicePlanetStateMsgPayload> spiceStateOutMsg;    //!< -- spice state input message
+    Message<ClassicElementsMsgPayload> elemOutMsg;           //!< -- orbit element output message
 
-private:
-    bool inputsGood;                  //!< -- flag indicating that inputs are good
-    BSKLogger bskLogger;              //!< -- BSK Logging
-
+  private:
+    bool inputsGood;     //!< -- flag indicating that inputs are good
+    BSKLogger bskLogger; //!< -- BSK Logging
 };
-
 
 #endif

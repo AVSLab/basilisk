@@ -22,4 +22,3 @@ provides information on what this message is used for.
     * - attRefOutMsg
       - :ref:`AttRefMsgPayload`
       - attitude reference output message
-

@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -41,6 +40,7 @@ from Basilisk.utilities import unitTestSupport
 
 path = os.path.dirname(os.path.abspath(__file__))
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize(
@@ -51,10 +51,11 @@ path = os.path.dirname(os.path.abspath(__file__))
         ("CSSFAULT_STUCK_MAX", 0.01),
         ("CSSFAULT_STUCK_RAND", 0.05),
         ("CSSFAULT_RAND", 0.15),
-    ])
+    ],
+)
 # provide a unique test method name, starting with test_
 def test_coarseSunSensor(cssFault, errTol):
-    '''This function is called by the py.test environment.'''
+    """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(cssFault, errTol)
     assert testResults < 1, testMessage
@@ -88,16 +89,16 @@ def run(cssFault, errTol):
     # Create dummy spacecraft message
     satelliteStateMsg = messaging.SCStatesMsgPayload()
     satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
-    angle = np.pi/16
-    satelliteStateMsg.sigma_BN = [0., 0., angle]
+    angle = np.pi / 16
+    satelliteStateMsg.sigma_BN = [0.0, 0.0, angle]
     scMsg = messaging.SCStatesMsg().write(satelliteStateMsg)
 
     # Calculate sun distance factor
     CSS = coarseSunSensor.CoarseSunSensor()
 
-    CSS.fov = 80. * macros.D2R         # half-angle field of view value
+    CSS.fov = 80.0 * macros.D2R  # half-angle field of view value
     CSS.scaleFactor = 2.0
-    CSS.nHat_B = np.array([1., 0., 0.])
+    CSS.nHat_B = np.array([1.0, 0.0, 0.0])
     CSS.sunInMsg.subscribeTo(sunMsg)
     CSS.stateInMsg.subscribeTo(scMsg)
     CSS.ModelTag = "CSS"
@@ -144,9 +145,9 @@ def run(cssFault, errTol):
         testFailCount += 1
 
     if testFailCount == 0:
-        return [0, '']
+        return [0, ""]
     else:
-        return [testFailCount, '']
+        return [testFailCount, ""]
 
 
 if __name__ == "__main__":

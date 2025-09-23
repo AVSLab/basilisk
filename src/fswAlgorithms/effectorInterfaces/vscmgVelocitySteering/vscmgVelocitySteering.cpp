@@ -23,7 +23,8 @@
 
 /*! Initialize C-wrapped output messages */
 void
-VscmgVelocitySteering::SelfInit(){
+VscmgVelocitySteering::SelfInit()
+{
     VSCMGRefStatesMsg_C_init(&this->vscmgRefStatesOutMsgC);
 }
 
@@ -80,19 +81,20 @@ VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos)
 void
 VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
 {
-    double omegas;                                          /*![rad/s] projection of body angular velocity onto gsHat axis*/
-    double omegat;                                          /*![rad/s] projection of body angular velocity onto gtHat axis*/
-    double delta;                                           /*![-] proximity to CMG singularity*/
-    double W_si;                                            /*![-] RW mode weight*/
-    Eigen::Vector3d omega_BN_B;                             /*![rad/s] angular velocity of the body frame relative to the inertial frame*/
-    Eigen::Vector3d omega_RN_B;                             /*![rad/s] angular velocity of the reference frame relative to the inertial frame*/
-    Eigen::Vector3d gsHat0_B;                               /*![-] first gimbal unit axis when rotation angle is 0*/
-    Eigen::Vector3d gtHat0_B;                               /*![-] second gimbal unit axis when rotation angle is 0*/
-    Eigen::Vector3d ggHat_B;                                /*![-] third gimbal unit axis*/
-    Eigen::VectorXd etaDot(2 * vscmgConfigParams.numVSCMG); /*![rad/s^2] and [rad/s] desired RW accelerations and gimbal rates*/
-    Eigen::Matrix3d BG0;                                    /*![-] DCM between body frame and gimbal frame when rotation angle is zero */
-    Eigen::Matrix3d GG0;                                    /*![-] DCM between gimbal frame and gimbal frame when rotation angle is zero */
-    Eigen::Matrix3d BG;                                     /*![-] DCM between body frame and gimbal frame */
+    double omegas;              /*![rad/s] projection of body angular velocity onto gsHat axis*/
+    double omegat;              /*![rad/s] projection of body angular velocity onto gtHat axis*/
+    double delta;               /*![-] proximity to CMG singularity*/
+    double W_si;                /*![-] RW mode weight*/
+    Eigen::Vector3d omega_BN_B; /*![rad/s] angular velocity of the body frame relative to the inertial frame*/
+    Eigen::Vector3d omega_RN_B; /*![rad/s] angular velocity of the reference frame relative to the inertial frame*/
+    Eigen::Vector3d gsHat0_B;   /*![-] first gimbal unit axis when rotation angle is 0*/
+    Eigen::Vector3d gtHat0_B;   /*![-] second gimbal unit axis when rotation angle is 0*/
+    Eigen::Vector3d ggHat_B;    /*![-] third gimbal unit axis*/
+    Eigen::VectorXd etaDot(
+      2 * vscmgConfigParams.numVSCMG); /*![rad/s^2] and [rad/s] desired RW accelerations and gimbal rates*/
+    Eigen::Matrix3d BG0;               /*![-] DCM between body frame and gimbal frame when rotation angle is zero */
+    Eigen::Matrix3d GG0;               /*![-] DCM between gimbal frame and gimbal frame when rotation angle is zero */
+    Eigen::Matrix3d BG;                /*![-] DCM between body frame and gimbal frame */
     Eigen::Matrix3d QWQT;
     Eigen::MatrixXd D0(3, vscmgConfigParams.numVSCMG);
     Eigen::MatrixXd D1(3, vscmgConfigParams.numVSCMG);

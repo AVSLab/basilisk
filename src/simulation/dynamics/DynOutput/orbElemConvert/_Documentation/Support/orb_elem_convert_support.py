@@ -28,25 +28,21 @@
 #
 
 
-
-
-
-
-
 import math
 
 import matplotlib.pyplot as plt
+
 # @cond DOXYGEN_IGNORE
 import numpy
 from Basilisk.utilities import macros as mc
 
 a = 10000000.0
 e = 0.99
-i = 33.3*mc.D2R
-AN = 48.2*mc.D2R
-AP = 347.8*mc.D2R
-f = 85.3*mc.D2R
-mu = 0.3986004415E+15
+i = 33.3 * mc.D2R
+AN = 48.2 * mc.D2R
+AP = 347.8 * mc.D2R
+f = 85.3 * mc.D2R
+mu = 0.3986004415e15
 ePlot = []
 aInit = []
 aFin = []
@@ -76,15 +72,33 @@ for g in range(1000):
         theta = AP + f  # true latitude angle
         h = math.sqrt(mu * p)  # orbit ang.momentum mag.
         rTruth = numpy.zeros(3)
-        rTruth[0] = r * (math.cos(AN) * math.cos(theta) - math.sin(AN) * math.sin(theta) * math.cos(i))
-        rTruth[1] = r * (math.sin(AN) * math.cos(theta) + math.cos(AN) * math.sin(theta) * math.cos(i))
+        rTruth[0] = r * (
+            math.cos(AN) * math.cos(theta)
+            - math.sin(AN) * math.sin(theta) * math.cos(i)
+        )
+        rTruth[1] = r * (
+            math.sin(AN) * math.cos(theta)
+            + math.cos(AN) * math.sin(theta) * math.cos(i)
+        )
         rTruth[2] = r * (math.sin(theta) * math.sin(i))
 
         vTruth = numpy.zeros(3)
-        vTruth[0] = -mu / h * (math.cos(AN) * (math.sin(theta) + e * math.sin(AP)) + math.sin(AN) * (math.cos(
-            theta) + e * math.cos(AP)) * math.cos(i))
-        vTruth[1] = -mu / h * (math.sin(AN) * (math.sin(theta) + e * math.sin(AP)) - math.cos(AN) * (math.cos(
-            theta) + e * math.cos(AP)) * math.cos(i))
+        vTruth[0] = (
+            -mu
+            / h
+            * (
+                math.cos(AN) * (math.sin(theta) + e * math.sin(AP))
+                + math.sin(AN) * (math.cos(theta) + e * math.cos(AP)) * math.cos(i)
+            )
+        )
+        vTruth[1] = (
+            -mu
+            / h
+            * (
+                math.sin(AN) * (math.sin(theta) + e * math.sin(AP))
+                - math.cos(AN) * (math.cos(theta) + e * math.cos(AP)) * math.cos(i)
+            )
+        )
         vTruth[2] = -mu / h * (-(math.cos(theta) + e * math.cos(AP)) * math.sin(i))
 
     ######### Calculate rv2elem #########
@@ -111,12 +125,12 @@ for g in range(1000):
 
     # compute semi - major axis
     alpha = 2.0 / r - v * v / mu
-    if (math.fabs(alpha) > epsConv): # elliptic or hyperbolic case
+    if math.fabs(alpha) > epsConv:  # elliptic or hyperbolic case
         aO = 1.0 / alpha
         rApoap = p / (1.0 - eO)
-    else:                        # parabolic case
+    else:  # parabolic case
         rp = p / 2.0
-        aO = -rp # a is not defined for parabola, so -rp is returned instead
+        aO = -rp  # a is not defined for parabola, so -rp is returned instead
         rApoap = -1.0
     ePlot.append(e)
     aInit.append(a)
@@ -125,6 +139,6 @@ for g in range(1000):
 aDiff = numpy.subtract(aInit, aFin)
 plt.figure()
 plt.plot(ePlot, aDiff)
-plt.xlabel('Eccentricity')
-plt.ylabel('Semimajor Axis Discrepancy (km)')
+plt.xlabel("Eccentricity")
+plt.ylabel("Semimajor Axis Discrepancy (km)")
 plt.show()

@@ -34,4 +34,3 @@ provides information on what this message is used for.
     * - desiredAttInMsg
       - :ref:`AttStateMsgPayload`
       - (optional) name of the incoming message containing the desired Euler angle set
-

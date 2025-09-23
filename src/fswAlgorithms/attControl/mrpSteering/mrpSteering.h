@@ -25,38 +25,37 @@
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
 /*! @brief Data structure for the MRP feedback attitude control routine. */
-typedef struct {
+typedef struct
+{
     /* declare module public variables */
-    double K1;                          //!< [rad/sec] Proportional gain applied to MRP errors
-    double K3;                          //!< [rad/sec] Cubic gain applied to MRP error in steering saturation function
-    double omega_max;                   //!< [rad/sec] Maximum rate command of steering control
+    double K1;        //!< [rad/sec] Proportional gain applied to MRP errors
+    double K3;        //!< [rad/sec] Cubic gain applied to MRP error in steering saturation function
+    double omega_max; //!< [rad/sec] Maximum rate command of steering control
 
-    uint32_t ignoreOuterLoopFeedforward;//!< []      Boolean flag indicating if outer feedforward term should be included
-    
+    uint32_t
+      ignoreOuterLoopFeedforward; //!< []      Boolean flag indicating if outer feedforward term should be included
+
     /* declare module IO interfaces */
-    RateCmdMsg_C rateCmdOutMsg;                 //!< rate command output message
-    AttGuidMsg_C guidInMsg;                             //!< attitude guidance input message
+    RateCmdMsg_C rateCmdOutMsg; //!< rate command output message
+    AttGuidMsg_C guidInMsg;     //!< attitude guidance input message
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}mrpSteeringConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} mrpSteeringConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID);
-    void Update_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    void MRPSteeringLaw(mrpSteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+    void SelfInit_mrpSteering(mrpSteeringConfig* configData, int64_t moduleID);
+    void Update_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID);
 
-    
+    void MRPSteeringLaw(mrpSteeringConfig* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

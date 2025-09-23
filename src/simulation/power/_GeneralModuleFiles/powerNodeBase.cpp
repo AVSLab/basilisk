@@ -25,8 +25,8 @@
  */
 PowerNodeBase::PowerNodeBase()
 {
-    this->powerStatus = 1; //! Node defaults to on unless overwritten.
-    this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;  //! Power node message is zero by default.
+    this->powerStatus = 1;                                     //! Node defaults to on unless overwritten.
+    this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload; //! Power node message is zero by default.
     return;
 }
 
@@ -38,11 +38,11 @@ PowerNodeBase::~PowerNodeBase()
     return;
 }
 
-
 /*! This method is used to reset the module. In general, no functionality must be reset.
 
  */
-void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
+void
+PowerNodeBase::Reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
@@ -53,7 +53,8 @@ void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
 /*! This method writes out a message.
 
  */
-void PowerNodeBase::writeMessages(uint64_t CurrentClock)
+void
+PowerNodeBase::writeMessages(uint64_t CurrentClock)
 {
     //! - write power output message
     this->nodePowerOutMsg.write(&this->nodePowerMsg, this->moduleID, CurrentClock);
@@ -64,19 +65,18 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
     return;
 }
 
-
 /*! This method is used to read incoming power status messages.
 
  */
-bool PowerNodeBase::readMessages()
+bool
+PowerNodeBase::readMessages()
 {
     DeviceStatusMsgPayload statusMsg;
 
     //! - read in the power node use/supply messages
     bool powerRead = true;
     bool tmpStatusRead = true;
-    if(this->nodeStatusInMsg.isLinked())
-    {
+    if (this->nodeStatusInMsg.isLinked()) {
         statusMsg = this->nodeStatusInMsg();
         tmpStatusRead = this->nodeStatusInMsg.isWritten();
         this->nodeStatusMsg = statusMsg;
@@ -84,24 +84,21 @@ bool PowerNodeBase::readMessages()
         powerRead = powerRead && tmpStatusRead;
     }
 
-
     //! - call the custom method to perform additional input reading
     bool customRead = this->customReadMessages();
 
-    return(powerRead && customRead);
+    return (powerRead && customRead);
 }
 
 /*! Core compute operation that implements switching logic and computes module-wise power consumption.
  */
 
-void PowerNodeBase::computePowerStatus(double currentTime)
+void
+PowerNodeBase::computePowerStatus(double currentTime)
 {
-    if(this->powerStatus > 0)
-    {
+    if (this->powerStatus > 0) {
         this->evaluatePowerModel(&this->nodePowerMsg);
-    }
-    else
-    {
+    } else {
         this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;
     }
 
@@ -111,13 +108,13 @@ void PowerNodeBase::computePowerStatus(double currentTime)
 /*! Provides logic for running the read / compute / write operation that is the module's function.
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
+void
+PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
 
     //! - Only update the power status if we were able to read in messages.
-    if(this->readMessages())
-    {
-        this->computePowerStatus(CurrentSimNanos*NANO2SEC);
+    if (this->readMessages()) {
+        this->computePowerStatus(CurrentSimNanos * NANO2SEC);
     } else {
         /* if the read was not successful then zero the output message */
         this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;
@@ -128,12 +125,11 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-
-
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void PowerNodeBase::customReset(uint64_t CurrentClock)
+void
+PowerNodeBase::customReset(uint64_t CurrentClock)
 {
     return;
 }
@@ -141,7 +137,8 @@ void PowerNodeBase::customReset(uint64_t CurrentClock)
 /*! custom Write method, similar to customSelfInit.
 
  */
-void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
+void
+PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
 {
     return;
 }
@@ -149,7 +146,8 @@ void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
 /*! Custom read method, similar to customSelfInit; returns `true' by default.
 
  */
-bool PowerNodeBase::customReadMessages()
+bool
+PowerNodeBase::customReadMessages()
 {
     return true;
 }

@@ -27,8 +27,9 @@ from Basilisk.utilities import unitTestSupport
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-sys.path.append(path + '/../../examples')
+sys.path.append(path + "/../../examples")
 import scenarioDragRendezvous as sdr
+
 
 @pytest.mark.scenarioTest
 
@@ -41,12 +42,14 @@ def test_scenarioDragRendezvous(show_plots):
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = sdr.run(False, # show_plots
-                            0.0, #   altitude offset (m)
-                            0.1, #  True anomaly offset (deg)
-                            1, #    Density multiplier (nondimensional)
-                            ctrlType='lqr',
-                            useJ2=False)
+        figureList = sdr.run(
+            False,  # show_plots
+            0.0,  #   altitude offset (m)
+            0.1,  #  True anomaly offset (deg)
+            1,  #    Density multiplier (nondimensional)
+            ctrlType="lqr",
+            useJ2=False,
+        )
 
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
@@ -66,4 +69,3 @@ def test_scenarioDragRendezvous(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
-

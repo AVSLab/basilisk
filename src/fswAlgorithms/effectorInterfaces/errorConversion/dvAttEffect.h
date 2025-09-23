@@ -28,44 +28,41 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
-
-
 #define MAX_NUM_THR_GROUPS 4
 
-
 /*! @brief effective thruster pair structure */
-typedef struct {
-    double onTime;              /*!< s   The requested on time for this thruster*/
-    uint32_t thrustIndex;       /*!< -  The actual thruster index associated with on-time*/
-}effPairs;
-
+typedef struct
+{
+    double onTime;        /*!< s   The requested on time for this thruster*/
+    uint32_t thrustIndex; /*!< -  The actual thruster index associated with on-time*/
+} effPairs;
 
 /*! @brief module configuration message */
-typedef struct {
+typedef struct
+{
     CmdTorqueBodyMsg_C cmdTorqueBodyInMsg; /*!< - The name of the Input message*/
 
-    uint32_t numThrGroups;   /*!< - Count on the number of thrusters groups available*/
+    uint32_t numThrGroups;                         /*!< - Count on the number of thrusters groups available*/
     ThrustGroupData thrGroups[MAX_NUM_THR_GROUPS]; /*!< - Thruster grouping container*/
-    BSKLogger *bskLogger;   //!< BSK Logging
-}dvAttEffectConfig;
+    BSKLogger* bskLogger;                          //!< BSK Logging
+} dvAttEffectConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID);
-    void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
-                           int64_t moduleID);
-    void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
-    void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-                                  CmdTorqueBodyMsgPayload *contrReq, int64_t moduleID);
-    
+
+    void SelfInit_dvAttEffect(dvAttEffectConfig* configData, int64_t moduleID);
+    void Update_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID);
+    void effectorVSort(effPairs* Input, effPairs* Output, size_t dim);
+    void computeSingleThrustBlock(ThrustGroupData* thrData,
+                                  uint64_t callTime,
+                                  CmdTorqueBodyMsgPayload* contrReq,
+                                  int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

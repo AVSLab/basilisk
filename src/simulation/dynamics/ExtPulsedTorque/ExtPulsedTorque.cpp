@@ -35,19 +35,19 @@ ExtPulsedTorque::~ExtPulsedTorque()
     return;
 }
 
-
 /*! link the states */
-void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
+void
+ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
 {
     return;
 }
-
 
 /*! This module does not write any output messages.
  @param currentClock The current time used for time-stamping the message
 
  */
-void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
+void
+ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
 {
     return;
 }
@@ -56,7 +56,8 @@ void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
  associated buffer structure.
 
  */
-void ExtPulsedTorque::readInputMessages()
+void
+ExtPulsedTorque::readInputMessages()
 {
     return;
 }
@@ -66,30 +67,31 @@ void ExtPulsedTorque::readInputMessages()
             matrix represnetations in the body (B) and inerial (N) frame components are treated as 2
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
-void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
+void
+ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
 {
     /* zero the output vector */
     this->torqueExternalPntB_B.fill(0.0);
 
     /* check if the pulse sequence must restart */
-    if (this->c >= this->countOnPulse*2 + this->countOff) {
+    if (this->c >= this->countOnPulse * 2 + this->countOff) {
         this->c = 0;
     }
 
     if (this->c < this->countOnPulse) {
         this->torqueExternalPntB_B += this->pulsedTorqueExternalPntB_B;
-    } else if (this->c < this->countOnPulse*2) {
+    } else if (this->c < this->countOnPulse * 2) {
         this->torqueExternalPntB_B -= this->pulsedTorqueExternalPntB_B;
     }
     this->c++;
-
 
     return;
 }
 
 /*! Module update method
  */
-void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos)
+void
+ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos)
 {
     return;
 }

@@ -116,7 +116,7 @@ class TestPythonModule(sysModel.SysModel):
 
         self.bskLogger.bskLog(
             bskLogging.BSK_INFORMATION,
-            f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s",
+            f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos * 1e-9}s",
         )
 
 

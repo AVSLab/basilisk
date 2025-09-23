@@ -21,4 +21,4 @@ provides information on what this message is used for.
       - attitude reference output message
     * - thrOnTimeOutMsg
       - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - thruster on-time output message 
+      - thruster on-time output message

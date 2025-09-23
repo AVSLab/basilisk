@@ -17,28 +17,23 @@
 
 */
 
-
 #include "simulation/dynamics/MtbEffector/MtbEffector.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
-
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-MtbEffector::MtbEffector()
-{
-}
+MtbEffector::MtbEffector() {}
 
 /*! Module Destructor */
-MtbEffector::~MtbEffector()
-{
-}
+MtbEffector::~MtbEffector() {}
 
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void MtbEffector::Reset(uint64_t CurrentSimNanos)
+void
+MtbEffector::Reset(uint64_t CurrentSimNanos)
 {
     /*
      * Check that required input messages are connected.
@@ -66,7 +61,8 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos)
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
 
 */
-void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
+void
+MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     /*
      * Write to the output message.
@@ -76,11 +72,11 @@ void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-
 /*! This method is used to link the magnetic torque bar effector to the hub attitude.
 
  */
-void MtbEffector::linkInStates(DynParamManager& states)
+void
+MtbEffector::linkInStates(DynParamManager& states)
 {
     /*
      * Link the Body relative to Inertial frame modified modriguez parameter.
@@ -93,7 +89,8 @@ void MtbEffector::linkInStates(DynParamManager& states)
 /*! This method computes the body torque contribution from all magnetic torque bars.
 
 */
-void MtbEffector::computeForceTorque(double integTime, double timeStep)
+void
+MtbEffector::computeForceTorque(double integTime, double timeStep)
 {
     /*
      * Create local variables.
@@ -119,7 +116,6 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
      */
     this->torqueExternalPntB_B.setZero();
 
-
     /*
      * Construct bTilde matrix.
      */
@@ -134,13 +130,13 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
      * Since cArray2EigenMatrixXd expects a column major input, we need to
      * transpose GtMatrix_B.
      */
-    double GtColMajor[3*MAX_EFF_CNT];
+    double GtColMajor[3 * MAX_EFF_CNT];
     mSetZero(GtColMajor, 3, this->mtbConfigParams.numMTB);
     mTranspose(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB, GtColMajor);
     GtMatrix_B = cArray2EigenMatrixXd(GtColMajor, 3, this->mtbConfigParams.numMTB);
 
     /* check if dipole commands are saturating the effector */
-    for (int i=0; i<this->mtbConfigParams.numMTB; i++) {
+    for (int i = 0; i < this->mtbConfigParams.numMTB; i++) {
         if (this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] > this->mtbConfigParams.maxMtbDipoles[i]) {
             this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] = this->mtbConfigParams.maxMtbDipoles[i];
         } else if (this->mtbCmdInMsgBuffer.mtbDipoleCmds[i] < -this->mtbConfigParams.maxMtbDipoles[i]) {
@@ -149,7 +145,7 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
     }
 
     muCmd_T = Eigen::Map<Eigen::VectorXd>(this->mtbCmdInMsgBuffer.mtbDipoleCmds, this->mtbConfigParams.numMTB, 1);
-    mtbTorque_B = - bTilde * GtMatrix_B * muCmd_T;
+    mtbTorque_B = -bTilde * GtMatrix_B * muCmd_T;
     this->torqueExternalPntB_B = mtbTorque_B;
 
     return;
@@ -158,7 +154,8 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
 /*! Write the magnetic torque bar output message.
 
  */
-void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
+void
+MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     /*
      * Initialize output message buffer.

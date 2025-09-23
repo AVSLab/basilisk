@@ -20,7 +20,6 @@
 #ifndef _RATE_SERVO_FULL_NONLINEAR_
 #define _RATE_SERVO_FULL_NONLINEAR_
 
-
 #include "cMsgCInterface/AttGuidMsg_C.h"
 #include "cMsgCInterface/VehicleConfigMsg_C.h"
 #include "cMsgCInterface/RWArrayConfigMsg_C.h"
@@ -32,47 +31,46 @@
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
-typedef struct {
+typedef struct
+{
     /* declare module public variables */
-    double P;                           //!< [N*m*s]   Rate error feedback gain applied
-    double Ki;                          //!< [N*m]     Integration feedback error on rate error
-    double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
-    double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue
+    double P;                    //!< [N*m*s]   Rate error feedback gain applied
+    double Ki;                   //!< [N*m]     Integration feedback error on rate error
+    double knownTorquePntB_B[3]; //!< [N*m]     known external torque in body frame vector components
+    double integralLimit;        //!< [N*m]     Integration limit to avoid wind-up issue
 
     /* declare module private variables */
-    uint64_t priorTime;                 //!< [ns]      Last time the attitude control is called
-    double z[3];                        //!< [rad]     integral state of delta_omega
-    double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
-    RWArrayConfigMsgPayload rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
+    uint64_t priorTime;  //!< [ns]      Last time the attitude control is called
+    double z[3];         //!< [rad]     integral state of delta_omega
+    double ISCPntB_B[9]; //!< [kg m^2] Spacecraft Inertia
+    RWArrayConfigMsgPayload
+      rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module IO interfaces */
-    CmdTorqueBodyMsg_C cmdTorqueOutMsg;             //!< commanded torque output message
-    AttGuidMsg_C guidInMsg;                         //!< attitude guidance input message
-    VehicleConfigMsg_C vehConfigInMsg;              //!< vehicle configuration input message
-    RWSpeedMsg_C rwSpeedsInMsg;                     //!< (optional) RW speed input message
-    RWAvailabilityMsg_C rwAvailInMsg;               //!< (optional) RW availability input message
-    RWArrayConfigMsg_C rwParamsInMsg;               //!< (optional) RW configuration parameter input message
-    RateCmdMsg_C rateSteeringInMsg;                 //!< commanded rate input message
+    CmdTorqueBodyMsg_C cmdTorqueOutMsg; //!< commanded torque output message
+    AttGuidMsg_C guidInMsg;             //!< attitude guidance input message
+    VehicleConfigMsg_C vehConfigInMsg;  //!< vehicle configuration input message
+    RWSpeedMsg_C rwSpeedsInMsg;         //!< (optional) RW speed input message
+    RWAvailabilityMsg_C rwAvailInMsg;   //!< (optional) RW availability input message
+    RWArrayConfigMsg_C rwParamsInMsg;   //!< (optional) RW configuration parameter input message
+    RateCmdMsg_C rateSteeringInMsg;     //!< commanded rate input message
 
-    BSKLogger *bskLogger;                           //!< BSK Logging
+    BSKLogger* bskLogger; //!< BSK Logging
 
-}rateServoFullNonlinearConfig;
+} rateServoFullNonlinearConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID);
-    void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID);
 
-    
+    void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, int64_t moduleID);
+    void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

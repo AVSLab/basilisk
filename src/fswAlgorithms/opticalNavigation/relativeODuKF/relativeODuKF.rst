@@ -30,5 +30,3 @@ provides information on what this message is used for.
     * - opNavInMsg
       - :ref:`OpNavMsgPayload`
       - opnav input message
-
-

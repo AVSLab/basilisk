@@ -27,11 +27,7 @@ from Basilisk.architecture import messaging
 thrList = []
 
 
-def create(
-        rThrust_B,
-        tHatThrust_B,
-        Fmax
-    ):
+def create(rThrust_B, tHatThrust_B, Fmax):
     """
     This function is called to setup a FSW RW device in python, and adds it to the of RW
     devices in rwList[].  This list is accessible from the parent python script that
@@ -80,12 +76,14 @@ def writeConfigMessage():
 
     return thrConfigInMsg
 
+
 def clearSetup():
     global thrList
 
     thrList = []
 
     return
+
 
 def getNumOfDevices():
     return len(thrList)

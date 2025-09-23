@@ -19,48 +19,53 @@
 
 #include "MJActuator.h"
 
-void MJActuatorObject::updateCtrl(mjData* data, double value) { data->ctrl[this->getId()] = value; }
+void
+MJActuatorObject::updateCtrl(mjData* data, double value)
+{
+    data->ctrl[this->getId()] = value;
+}
 
-void MJActuator::configure(const mjModel* model)
+void
+MJActuator::configure(const mjModel* model)
 {
     for (auto&& sub : subActuators)
         sub.configure(model);
 }
 
-void MJActuator::updateCtrl(mjData* data)
+void
+MJActuator::updateCtrl(mjData* data)
 {
     auto values = readControlMessages();
-    for (size_t i = 0; i < this->subActuators.size(); i++)
-    {
+    for (size_t i = 0; i < this->subActuators.size(); i++) {
         this->subActuators.at(i).updateCtrl(data, values.at(i));
     }
 }
 
-std::vector<double> MJSingleActuator::readControlMessages()
+std::vector<double>
+MJSingleActuator::readControlMessages()
 {
-    return actuatorInMsg.isLinked() ? std::vector{actuatorInMsg().input} : std::vector{0.};
+    return actuatorInMsg.isLinked() ? std::vector{ actuatorInMsg().input } : std::vector{ 0. };
 }
 
-std::vector<double> MJForceActuator::readControlMessages()
+std::vector<double>
+MJForceActuator::readControlMessages()
 {
     auto fInMsg = forceInMsg.isLinked() ? forceInMsg() : forceInMsg.zeroMsgPayload;
-    return {fInMsg.force_S[0], fInMsg.force_S[1], fInMsg.force_S[2]};
+    return { fInMsg.force_S[0], fInMsg.force_S[1], fInMsg.force_S[2] };
 }
 
-std::vector<double> MJTorqueActuator::readControlMessages()
+std::vector<double>
+MJTorqueActuator::readControlMessages()
 {
     auto tInMsg = torqueInMsg.isLinked() ? torqueInMsg() : torqueInMsg.zeroMsgPayload;
-    return {tInMsg.torque_S[0], tInMsg.torque_S[1], tInMsg.torque_S[2]};
+    return { tInMsg.torque_S[0], tInMsg.torque_S[1], tInMsg.torque_S[2] };
 }
 
-std::vector<double> MJForceTorqueActuator::readControlMessages()
+std::vector<double>
+MJForceTorqueActuator::readControlMessages()
 {
     auto fInMsg = forceInMsg.isLinked() ? forceInMsg() : forceInMsg.zeroMsgPayload;
     auto tInMsg = torqueInMsg.isLinked() ? torqueInMsg() : torqueInMsg.zeroMsgPayload;
-    return {fInMsg.force_S[0],
-            fInMsg.force_S[1],
-            fInMsg.force_S[2],
-            tInMsg.torque_S[0],
-            tInMsg.torque_S[1],
-            tInMsg.torque_S[2]};
+    return { fInMsg.force_S[0],  fInMsg.force_S[1],  fInMsg.force_S[2],
+             tInMsg.torque_S[0], tInMsg.torque_S[1], tInMsg.torque_S[2] };
 }

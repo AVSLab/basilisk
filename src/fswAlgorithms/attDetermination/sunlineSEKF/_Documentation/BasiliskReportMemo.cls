@@ -118,4 +118,3 @@
 %
 %	Miscellaneous definitions
 %
-

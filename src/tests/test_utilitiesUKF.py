@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -31,13 +30,15 @@ from Basilisk.fswAlgorithms import sunlineSuKF
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("filterModule", [('inertialUKF'), ('sunlineSuKF')])
+
+@pytest.mark.parametrize("filterModule", [("inertialUKF"), ("sunlineSuKF")])
 def test_all_utilities_ukf(show_plots, filterModule):
     """Test the filter utilities"""
     [testResults, testMessage] = utilities_nominal(filterModule)
     assert testResults < 1, testMessage
     [testResults, testMessage] = utilities_fault(filterModule)
     assert testResults < 1, testMessage
+
 
 def utilities_nominal(filterModule):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -49,13 +50,32 @@ def utilities_nominal(filterModule):
     testMessages = []  # create empty list to store test log messages
 
     # Initialize the test module configuration data
-    AMatrix = [0.488894, 0.888396, 0.325191, 0.319207,
-               1.03469, -1.14707, -0.754928, 0.312859,
-               0.726885, -1.06887, 1.3703, -0.86488,
-               -0.303441, -0.809499, -1.71152, -0.0300513,
-               0.293871, -2.94428, -0.102242, -0.164879,
-               -0.787283, 1.43838, -0.241447, 0.627707]
-
+    AMatrix = [
+        0.488894,
+        0.888396,
+        0.325191,
+        0.319207,
+        1.03469,
+        -1.14707,
+        -0.754928,
+        0.312859,
+        0.726885,
+        -1.06887,
+        1.3703,
+        -0.86488,
+        -0.303441,
+        -0.809499,
+        -1.71152,
+        -0.0300513,
+        0.293871,
+        -2.94428,
+        -0.102242,
+        -0.164879,
+        -0.787283,
+        1.43838,
+        -0.241447,
+        0.627707,
+    ]
 
     RVector = inertialUKF.new_doubleArray(len(AMatrix))
     AVector = inertialUKF.new_doubleArray(len(AMatrix))
@@ -76,15 +96,32 @@ def utilities_nominal(filterModule):
     for i in range(r.shape[0]):
         if r[i, i] < 0.0:
             r[i, :] *= -1.0
-    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
+    if numpy.linalg.norm(r - RBaseNumpy) > 1.0e-15:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
 
-    AMatrix = [1.09327, 1.10927, -0.863653, 1.32288,
-               -1.21412, -1.1135, -0.00684933, -2.43508,
-               -0.769666, 0.371379, -0.225584, -1.76492,
-               -1.08906, 0.0325575, 0.552527, -1.6256,
-               1.54421, 0.0859311, -1.49159, 1.59683]
+    AMatrix = [
+        1.09327,
+        1.10927,
+        -0.863653,
+        1.32288,
+        -1.21412,
+        -1.1135,
+        -0.00684933,
+        -2.43508,
+        -0.769666,
+        0.371379,
+        -0.225584,
+        -1.76492,
+        -1.08906,
+        0.0325575,
+        0.552527,
+        -1.6256,
+        1.54421,
+        0.0859311,
+        -1.49159,
+        1.59683,
+    ]
 
     RVector = mod.new_doubleArray(len(AMatrix))
     AVector = mod.new_doubleArray(len(AMatrix))
@@ -102,16 +139,11 @@ def utilities_nominal(filterModule):
     for i in range(r.shape[0]):
         if r[i, i] < 0.0:
             r[i, :] *= -1.0
-    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-14:
+    if numpy.linalg.norm(r - RBaseNumpy) > 1.0e-14:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
 
-    AMatrix = [0.2236, 0,
-               0, 0.2236,
-               -0.2236, 0,
-               0, -0.2236,
-               0.0170, 0,
-               0, 0.0170]
+    AMatrix = [0.2236, 0, 0, 0.2236, -0.2236, 0, 0, -0.2236, 0.0170, 0, 0, 0.0170]
 
     RVector = mod.new_doubleArray(len(AMatrix))
     AVector = mod.new_doubleArray(len(AMatrix))
@@ -130,7 +162,7 @@ def utilities_nominal(filterModule):
         if r[i, i] < 0.0:
             r[i, :] *= -1.0
 
-    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
+    if numpy.linalg.norm(r - RBaseNumpy) > 1.0e-15:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
 
@@ -152,10 +184,10 @@ def utilities_nominal(filterModule):
     for i in range(3):
         currRow = mod.intArray_getitem(intSwapVector, i)
         for j in range(3):
-            if (j < i):
+            if j < i:
                 LMatrix.append(mod.doubleArray_getitem(LVector, i * 3 + j))
                 UMatrix.append(0.0)
-            elif (j > i):
+            elif j > i:
                 LMatrix.append(0.0)
                 UMatrix.append(mod.doubleArray_getitem(LVector, i * 3 + j))
             else:
@@ -172,7 +204,7 @@ def utilities_nominal(filterModule):
         outMat[currRow, :] = outMat[i, :]
     LuSourceArray = numpy.array(LUSourceMat).reshape(3, 3)
 
-    if (numpy.linalg.norm(outMatSwap - LuSourceArray) > 1.0E-14):
+    if numpy.linalg.norm(outMatSwap - LuSourceArray) > 1.0e-14:
         testFailCount += 1
         testMessages.append("LU Decomposition accuracy failure")
 
@@ -196,7 +228,7 @@ def utilities_nominal(filterModule):
     for i in range(3):
         errorVal += abs(mod.doubleArray_getitem(EqnOutVector, i) - expectedSol[i])
 
-    if (errorVal > 1.0E-14):
+    if errorVal > 1.0e-14:
         testFailCount += 1
         testMessages.append("LU Back-Solve accuracy failure")
 
@@ -216,7 +248,7 @@ def utilities_nominal(filterModule):
     InvOut = numpy.array(InvOut).reshape(nRow, nRow)
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(3, 3))
     errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(3))
-    if (errorNorm > 1.0E-14):
+    if errorNorm > 1.0e-14:
         testFailCount += 1
         testMessages.append("LU Matrix Inverse accuracy failure")
 
@@ -235,14 +267,28 @@ def utilities_nominal(filterModule):
     cholOut = numpy.array(cholOut).reshape(nRow, nRow)
     cholComp = numpy.linalg.cholesky(numpy.array(cholTestMat).reshape(nRow, nRow))
     errorNorm = numpy.linalg.norm(cholOut - cholComp)
-    if (errorNorm > 1.0E-14):
+    if errorNorm > 1.0e-14:
         testFailCount += 1
         testMessages.append("Cholesky Matrix Decomposition accuracy failure")
 
-    InvSourceMat = [2.1950926119414667, 0.0, 0.0, 0.0,
-                    1.0974804773131115, 1.9010439702743847, 0.0, 0.0,
-                    0.0, 1.2672359635912551, 1.7923572711881284, 0.0,
-                    1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251]
+    InvSourceMat = [
+        2.1950926119414667,
+        0.0,
+        0.0,
+        0.0,
+        1.0974804773131115,
+        1.9010439702743847,
+        0.0,
+        0.0,
+        0.0,
+        1.2672359635912551,
+        1.7923572711881284,
+        0.0,
+        1.0974804773131113,
+        -0.63357997864171967,
+        1.7920348101787789,
+        0.033997451205364251,
+    ]
 
     SourceVector = mod.new_doubleArray(len(InvSourceMat))
     InvVector = mod.new_doubleArray(len(InvSourceMat))
@@ -259,12 +305,16 @@ def utilities_nominal(filterModule):
     InvOut = numpy.array(InvOut).reshape(nRow, nRow)
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
     errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
-    if (errorNorm > 1.0E-12):
+    if errorNorm > 1.0e-12:
         print(errorNorm)
         testFailCount += 1
         testMessages.append("L Matrix Inverse accuracy failure")
 
-    InvSourceMat = numpy.transpose(numpy.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow * nRow).tolist()
+    InvSourceMat = (
+        numpy.transpose(numpy.array(InvSourceMat).reshape(nRow, nRow))
+        .reshape(nRow * nRow)
+        .tolist()
+    )
     SourceVector = mod.new_doubleArray(len(InvSourceMat))
     InvVector = mod.new_doubleArray(len(InvSourceMat))
     for i in range(len(InvSourceMat)):
@@ -280,18 +330,18 @@ def utilities_nominal(filterModule):
     InvOut = numpy.array(InvOut).reshape(nRow, nRow)
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
     errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
-    if (errorNorm > 1.0E-12):
+    if errorNorm > 1.0e-12:
         print(errorNorm)
         testFailCount += 1
         testMessages.append("U Matrix Inverse accuracy failure")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print("PASSED: " + filterModule +" UKF utilities")
+        print("PASSED: " + filterModule + " UKF utilities")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def utilities_fault(filterModule):
@@ -322,16 +372,17 @@ def utilities_fault(filterModule):
         mod.doubleArray_setitem(LVector, i, 0.0)
 
     exCount = mod.ukfLUD(LUSVector, 3, 4, LVector, intSwapVector)
-    returnBackSolve = mod.ukfLUBckSlv(LVector, 3, 4, intSwapVector, EqnBVector, EqnOutVector)
+    returnBackSolve = mod.ukfLUBckSlv(
+        LVector, 3, 4, intSwapVector, EqnBVector, EqnOutVector
+    )
 
-    if (exCount >= 0 or exCount is None):
+    if exCount >= 0 or exCount is None:
         testFailCount += 1
         testMessages.append("LU Decomposition not square")
 
-    if (returnBackSolve >= 0 or returnBackSolve is None):
+    if returnBackSolve >= 0 or returnBackSolve is None:
         testFailCount += 1
         testMessages.append("LU Back-Solve accuracy failure")
-
 
     for i in range(len(EqnSourceMat)):
         mod.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])
@@ -340,16 +391,17 @@ def utilities_fault(filterModule):
         mod.doubleArray_setitem(LVector, i, 0.0)
 
     exCount = mod.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)
-    returnBackSolve = mod.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)
+    returnBackSolve = mod.ukfLUBckSlv(
+        LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector
+    )
 
-    if (exCount >= 0 or exCount is None):
+    if exCount >= 0 or exCount is None:
         testFailCount += 1
         testMessages.append("LU Back-Solve accuracy failure")
 
-    if (returnBackSolve >= 0 or returnBackSolve is None):
+    if returnBackSolve >= 0 or returnBackSolve is None:
         testFailCount += 1
         testMessages.append("LU Back-Solve accuracy failure")
-
 
     InvSourceMat = [8, 1, 6, 3, 5, 7, 4, 9, 2, 4, 4, 5]
     SourceVector = mod.new_doubleArray(len(InvSourceMat))
@@ -359,7 +411,7 @@ def utilities_fault(filterModule):
         mod.doubleArray_setitem(InvVector, i, 0.0)
     returnInv = mod.ukfMatInv(SourceVector, 3, 4, InvVector)
 
-    if (returnInv >=0 or returnInv is None):
+    if returnInv >= 0 or returnInv is None:
         testFailCount += 1
         testMessages.append("LU Matrix Inverse accuracy failure")
 
@@ -371,7 +423,7 @@ def utilities_fault(filterModule):
         mod.doubleArray_setitem(CholVector, i, 0.0)
     returnChol = mod.ukfCholDecomp(SourceVector, 3, 4, CholVector)
 
-    if (returnChol >=0 or returnChol is None):
+    if returnChol >= 0 or returnChol is None:
         testFailCount += 1
         testMessages.append("Cholesky Matrix Decomposition Size failure")
 
@@ -384,7 +436,7 @@ def utilities_fault(filterModule):
     nRow = int(math.sqrt(len(cholTestMat)))
     returnChol = mod.ukfCholDecomp(SourceVector, nRow, nRow, CholVector)
 
-    if (returnChol >=0 or returnChol is None):
+    if returnChol >= 0 or returnChol is None:
         testFailCount += 1
         testMessages.append("Cholesky Matrix Decomposition Zero Matrix")
 
@@ -399,14 +451,32 @@ def utilities_fault(filterModule):
     nRow = int(math.sqrt(len(rMat)))
     returnDown = mod.ukfCholDownDate(inRMat, inXVec, -100, 3, CholVector)
 
-    if (returnChol >=0 or returnChol is None):
+    if returnChol >= 0 or returnChol is None:
         testFailCount += 1
         testMessages.append("Cholesky Matrix Decomposition Size")
 
-    InvSourceMatRect = [2.1950926119414667, 0.0, 0.0, 0.0, 1.,
-                    1.0974804773131115, 1.9010439702743847, 0.0, 0.0, 1.,
-                    0.0, 1.2672359635912551, 1.7923572711881284, 0.0, 1.,
-                    1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251, 1.]
+    InvSourceMatRect = [
+        2.1950926119414667,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0974804773131115,
+        1.9010439702743847,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.2672359635912551,
+        1.7923572711881284,
+        0.0,
+        1.0,
+        1.0974804773131113,
+        -0.63357997864171967,
+        1.7920348101787789,
+        0.033997451205364251,
+        1.0,
+    ]
 
     SourceVector = mod.new_doubleArray(len(InvSourceMatRect))
     InvVector = mod.new_doubleArray(len(InvSourceMatRect))
@@ -416,14 +486,28 @@ def utilities_fault(filterModule):
     nRow = int(math.sqrt(len(InvSourceMatRect)))
     returnLinv = mod.ukfLInv(SourceVector, nRow, nRow, InvVector)
 
-    if (returnLinv >= 0 or returnLinv is None):
+    if returnLinv >= 0 or returnLinv is None:
         testFailCount += 1
         testMessages.append("L Matrix Inverse didn't catch size error")
 
-    InvSourceMat0 = [0.0, 0.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0, 0.0,]
+    InvSourceMat0 = [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    ]
 
     SourceVector = mod.new_doubleArray(len(InvSourceMat0))
     InvVector = mod.new_doubleArray(len(InvSourceMat0))
@@ -433,7 +517,7 @@ def utilities_fault(filterModule):
     nRow = int(math.sqrt(len(InvSourceMat0)))
     returnLinv = mod.ukfLInv(SourceVector, nRow, nRow, InvVector)
 
-    if (returnLinv >= 0 or returnLinv is None):
+    if returnLinv >= 0 or returnLinv is None:
         testFailCount += 1
         testMessages.append("L Matrix Inverse didn't catch sign error")
 
@@ -445,7 +529,7 @@ def utilities_fault(filterModule):
     nRow = int(math.sqrt(len(InvSourceMat0)))
     returnU = mod.ukfUInv(SourceVector, nRow, nRow, InvVector)
 
-    if (returnU >= 0 or returnU is None):
+    if returnU >= 0 or returnU is None:
         testFailCount += 1
         testMessages.append("U Matrix Inverse didn't catch non square matrix")
 
@@ -457,7 +541,7 @@ def utilities_fault(filterModule):
     nRow = int(math.sqrt(len(InvSourceMat0)))
     returnU = mod.ukfUInv(SourceVector, nRow, nRow, InvVector)
 
-    if (returnU >= 0 or returnU is None):
+    if returnU >= 0 or returnU is None:
         testFailCount += 1
         testMessages.append("U Matrix Inverse didn't catch zero matrix")
 
@@ -467,8 +551,8 @@ def utilities_fault(filterModule):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 if __name__ == "__main__":
-    utilities_fault('inertialUKF')
+    utilities_fault("inertialUKF")

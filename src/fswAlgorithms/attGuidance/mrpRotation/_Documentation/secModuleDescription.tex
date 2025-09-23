@@ -2,7 +2,7 @@
 
 
 \section{Model Description}
-The purpose of this {\tt mrpRotation} module is to add a constant rotation relative to the input frame $\mathcal{R}_{0}$.  The output reference frame is called $\mathcal{R}$.  The initial orientation is specified through an MRP\cite{schaub} set $\bm\sigma_{R/R0}$, while the  $\mathcal{R}$-frame angular velocity vector $\leftexp{R}{\bm\omega}_{R/R0}$ is held constant in this module.  
+The purpose of this {\tt mrpRotation} module is to add a constant rotation relative to the input frame $\mathcal{R}_{0}$.  The output reference frame is called $\mathcal{R}$.  The initial orientation is specified through an MRP\cite{schaub} set $\bm\sigma_{R/R0}$, while the  $\mathcal{R}$-frame angular velocity vector $\leftexp{R}{\bm\omega}_{R/R0}$ is held constant in this module.
 
 Assume that the input reference frame $\mathcal{R}_{0}$ is given through an attitude state input message containing $\bm\sigma_{R_{0}/N}$, $\leftexp{N}{\bm\omega}_{R_{0}/N}$ and $\leftexp{N}{\dot{\bm\omega}}_{R_{0}/N}$ as illustrated in Figure~\ref{fig:moduleIO}.  The MRP set is mapped into the corresponding Direction Cosine Matrix or DCM\cite{schaub} using
 \begin{equation}
@@ -38,8 +38,8 @@ to find the inertial angular velocity of the output reference frame:
 Finally, the inertial angular acceleration of the output reference frame is found using the transport theorem:
 \begin{equation}
 	\label{eq:mRot6}
-	\dot{\bm\omega}_{R/N} = 
-	\frac{\leftexp{R}{\D} {\bm\omega}_{R/R_{0}}}{\D t} 
+	\dot{\bm\omega}_{R/N} =
+	\frac{\leftexp{R}{\D} {\bm\omega}_{R/R_{0}}}{\D t}
 	 + \bm\omega_{R/N} \times {\bm\omega}_{R/R_{0}}
 	+ \dot{\bm\omega}_{R_{0}/N}
 	= \bm\omega_{R_{0}/N} \times {\bm\omega}_{R/R_{0}}
@@ -51,7 +51,3 @@ where $\bm\omega_{R/N} \times {\bm\omega}_{R/R_{0}} = (\bm\omega_{R/R_{0}} +\bm\
 	\leftexp{N}{\dot{\bm\omega}}_{R/N} = \leftexp{N}{\bm\omega}_{R_{0}/N} \times \leftexp{N}{\bm\omega}_{R/R_{0}}
 	+ \leftexp{N}{\dot{\bm\omega}}_{R_{0}/N}
 \end{equation}
-
-
-
-

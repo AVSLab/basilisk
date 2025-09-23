@@ -27,15 +27,33 @@ import pytest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, orbitalMotion, macros, RigidBodyKinematics
-from Basilisk.simulation import spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    unitTestSupport,
+    orbitalMotion,
+    macros,
+    RigidBodyKinematics,
+)
+from Basilisk.simulation import (
+    spacecraft,
+    constraintDynamicEffector,
+    gravityEffector,
+    svIntegrators,
+)
 
 # uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail()
 
-@pytest.mark.parametrize("function", ["constraintEffectorOrbitalConservation", "constraintEffectorRotationalConservation"])
+
+@pytest.mark.parametrize(
+    "function",
+    [
+        "constraintEffectorOrbitalConservation",
+        "constraintEffectorRotationalConservation",
+    ],
+)
 def test_constraintEffector(show_plots, function):
     r"""Module Unit Test
     **Validation Test Description**
@@ -78,7 +96,6 @@ def test_constraintEffector(show_plots, function):
 
 
 def constraintEffectorOrbitalConservation(show_plots):
-
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
@@ -104,15 +121,23 @@ def constraintEffectorOrbitalConservation(show_plots):
     # Define mass properties of the rigid hub of both spacecraft
     scObject1.hub.mHub = 750.0
     scObject1.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject1.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject1.hub.IHubPntBc_B = [
+        [600.0, 0.0, 0.0],
+        [0.0, 600.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
     scObject2.hub.mHub = 750.0
     scObject2.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject2.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject2.hub.IHubPntBc_B = [
+        [600.0, 0.0, 0.0],
+        [0.0, 600.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
 
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415E+15  # [meters^3/s^2]
+    earthGravBody.mu = 0.3986004415e15  # [meters^3/s^2]
     earthGravBody.isCentralBody = True
     scObject1.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
     scObject2.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
@@ -127,27 +152,29 @@ def constraintEffectorOrbitalConservation(show_plots):
     r_B2N_N_0, rDot_B2N_N = orbitalMotion.elem2rv(earthGravBody.mu, oe)
 
     # With initial attitudes at zero (B1, B2, and N frames all initially aligned)
-    dir = r_B2N_N_0/np.linalg.norm(r_B2N_N_0)
+    dir = r_B2N_N_0 / np.linalg.norm(r_B2N_N_0)
     l = 0.1
-    COMoffset = 0.1 # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
-    r_P1B1_B1 = np.dot(dir,COMoffset)
-    r_P2B2_B2 = np.dot(-dir,COMoffset)
-    r_P2P1_B1Init = np.dot(dir,l)
+    COMoffset = 0.1  # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
+    r_P1B1_B1 = np.dot(dir, COMoffset)
+    r_P2B2_B2 = np.dot(-dir, COMoffset)
+    r_P2P1_B1Init = np.dot(dir, l)
     r_B1N_N_0 = r_B2N_N_0 + r_P2B2_B2 - r_P2P1_B1Init - r_P1B1_B1
     rDot_B1N_N = rDot_B2N_N
 
     # Compute rotational states
     # let C be the frame at the combined COM of the two vehicles
-    r_CN_N = (r_B1N_N_0 * scObject1.hub.mHub + r_B2N_N_0 * scObject2.hub.mHub) / (scObject1.hub.mHub + scObject2.hub.mHub)
+    r_CN_N = (r_B1N_N_0 * scObject1.hub.mHub + r_B2N_N_0 * scObject2.hub.mHub) / (
+        scObject1.hub.mHub + scObject2.hub.mHub
+    )
     r_B1C_N = r_B1N_N_0 - r_CN_N
     r_B2C_N = r_B2N_N_0 - r_CN_N
     # compute relative velocity due to spin and COM offset
-    target_spin = [0.01,0.01,0.01]
+    target_spin = [0.01, 0.01, 0.01]
     omega_CN_N = np.array(target_spin)
     omega_B1N_B1_0 = omega_CN_N
     omega_B2N_B2_0 = omega_CN_N
-    dv_B1C_N = np.cross(omega_CN_N,r_B1C_N)
-    dv_B2C_N = np.cross(omega_CN_N,r_B2C_N)
+    dv_B1C_N = np.cross(omega_CN_N, r_B1C_N)
+    dv_B2C_N = np.cross(omega_CN_N, r_B2C_N)
     rDot_B1N_N_0 = rDot_B1N_N + dv_B1C_N
     rDot_B2N_N_0 = rDot_B2N_N + dv_B2C_N
 
@@ -166,7 +193,7 @@ def constraintEffectorOrbitalConservation(show_plots):
     constraintEffector.setR_P1B1_B1(r_P1B1_B1)
     constraintEffector.setR_P2B2_B2(r_P2B2_B2)
     constraintEffector.setR_P2P1_B1Init(r_P2P1_B1Init)
-    constraintEffector.setAlpha(1E3)
+    constraintEffector.setAlpha(1e3)
     constraintEffector.setBeta(1e3)
     # Add constraints to both spacecraft
     scObject1.addDynamicEffector(constraintEffector)
@@ -186,8 +213,8 @@ def constraintEffectorOrbitalConservation(show_plots):
     # Log energy and momentum variables
     conservationData1 = scObject1.logger(["totOrbAngMomPntN_N", "totOrbEnergy"])
     conservationData2 = scObject2.logger(["totOrbAngMomPntN_N", "totOrbEnergy"])
-    unitTestSim.AddModelToTask(unitTaskName,conservationData1)
-    unitTestSim.AddModelToTask(unitTaskName,conservationData2)
+    unitTestSim.AddModelToTask(unitTaskName, conservationData1)
+    unitTestSim.AddModelToTask(unitTaskName, conservationData2)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -217,12 +244,14 @@ def constraintEffectorOrbitalConservation(show_plots):
     r_P2B2_B1 = np.empty(r_B1N_N_hist.shape)
     sigma_B2B1 = np.empty(sigma_B1N_hist.shape)
     for i in range(orbAngMom1_N.shape[0]):
-        dcm_B1N = RigidBodyKinematics.MRP2C(sigma_B1N_hist[i,:])
-        r_B1N_B1[i,:] = dcm_B1N@r_B1N_N_hist[i,:]
-        r_B2N_B1[i,:] = dcm_B1N@r_B2N_N_hist[i,:]
-        dcm_NB2 = np.transpose(RigidBodyKinematics.MRP2C(sigma_B2N_hist[i,:]))
-        r_P2B2_B1[i,:] = dcm_B1N@dcm_NB2@r_P2B2_B2
-        sigma_B2B1[i,:] = RigidBodyKinematics.subMRP(sigma_B2N_hist[i,:],sigma_B1N_hist[i,:])
+        dcm_B1N = RigidBodyKinematics.MRP2C(sigma_B1N_hist[i, :])
+        r_B1N_B1[i, :] = dcm_B1N @ r_B1N_N_hist[i, :]
+        r_B2N_B1[i, :] = dcm_B1N @ r_B2N_N_hist[i, :]
+        dcm_NB2 = np.transpose(RigidBodyKinematics.MRP2C(sigma_B2N_hist[i, :]))
+        r_P2B2_B1[i, :] = dcm_B1N @ dcm_NB2 @ r_P2B2_B2
+        sigma_B2B1[i, :] = RigidBodyKinematics.subMRP(
+            sigma_B2N_hist[i, :], sigma_B1N_hist[i, :]
+        )
     psi_B1 = r_B1N_B1 + r_P1B1_B1 + r_P2P1_B1Init - (r_B2N_B1 + r_P2B2_B1)
 
     # Compute conservation quantities
@@ -235,58 +264,87 @@ def constraintEffectorOrbitalConservation(show_plots):
     plt.clf()
     for i in range(3):
         plt.semilogy(constraintTimeData, np.abs(psi_B1[:, i]))
-    plt.semilogy(constraintTimeData, np.linalg.norm(psi_B1,axis=1))
-    plt.legend([r'$\psi_1$',r'$\psi_2$',r'$\psi_3$',r'$\psi$ magnitude'])
-    plt.xlabel('time (seconds)')
-    plt.ylabel(r'variation from fixed position: $\psi$ (meters)')
-    plt.title('Direction Constraint Violation Components')
+    plt.semilogy(constraintTimeData, np.linalg.norm(psi_B1, axis=1))
+    plt.legend([r"$\psi_1$", r"$\psi_2$", r"$\psi_3$", r"$\psi$ magnitude"])
+    plt.xlabel("time (seconds)")
+    plt.ylabel(r"variation from fixed position: $\psi$ (meters)")
+    plt.title("Direction Constraint Violation Components")
 
     plt.figure()
     plt.clf()
     for i in range(3):
-        plt.semilogy(constraintTimeData, np.abs(4*np.arctan(sigma_B2B1[:, i]) * macros.R2D))
-    plt.semilogy(constraintTimeData, np.linalg.norm(4*np.arctan(sigma_B2B1) * macros.R2D,axis=1))
-    plt.legend([r'$\phi_1$',r'$\phi_2$',r'$\phi_3$',r'$\phi$ magnitude'])
-    plt.xlabel('time (seconds)')
-    plt.ylabel(r'relative attitude angle: $\phi$ (deg)')
-    plt.title('Attitude Constraint Violation Components')
+        plt.semilogy(
+            constraintTimeData, np.abs(4 * np.arctan(sigma_B2B1[:, i]) * macros.R2D)
+        )
+    plt.semilogy(
+        constraintTimeData,
+        np.linalg.norm(4 * np.arctan(sigma_B2B1) * macros.R2D, axis=1),
+    )
+    plt.legend([r"$\phi_1$", r"$\phi_2$", r"$\phi_3$", r"$\phi$ magnitude"])
+    plt.xlabel("time (seconds)")
+    plt.ylabel(r"relative attitude angle: $\phi$ (deg)")
+    plt.title("Attitude Constraint Violation Components")
 
     plt.figure()
     plt.clf()
-    plt.plot(conservationTimeData, (combinedOrbAngMom[:,0] - combinedOrbAngMom[0,0])/combinedOrbAngMom[0,0],
-            conservationTimeData, (combinedOrbAngMom[:,1] - combinedOrbAngMom[0,1])/combinedOrbAngMom[0,1],
-            conservationTimeData, (combinedOrbAngMom[:,2] - combinedOrbAngMom[0,2])/combinedOrbAngMom[0,2])
-    plt.xlabel('time (seconds)')
-    plt.ylabel('Relative Difference')
-    plt.title('Combined Orbital Angular Momentum')
+    plt.plot(
+        conservationTimeData,
+        (combinedOrbAngMom[:, 0] - combinedOrbAngMom[0, 0]) / combinedOrbAngMom[0, 0],
+        conservationTimeData,
+        (combinedOrbAngMom[:, 1] - combinedOrbAngMom[0, 1]) / combinedOrbAngMom[0, 1],
+        conservationTimeData,
+        (combinedOrbAngMom[:, 2] - combinedOrbAngMom[0, 2]) / combinedOrbAngMom[0, 2],
+    )
+    plt.xlabel("time (seconds)")
+    plt.ylabel("Relative Difference")
+    plt.title("Combined Orbital Angular Momentum")
 
     plt.figure()
     plt.clf()
-    plt.plot(conservationTimeData, (combinedOrbEnergy - combinedOrbEnergy[0])/combinedOrbEnergy[0])
-    plt.xlabel('time (seconds)')
-    plt.ylabel('Relative Difference')
-    plt.title('Combined Orbital Energy')
+    plt.plot(
+        conservationTimeData,
+        (combinedOrbEnergy - combinedOrbEnergy[0]) / combinedOrbEnergy[0],
+    )
+    plt.xlabel("time (seconds)")
+    plt.ylabel("Relative Difference")
+    plt.title("Combined Orbital Energy")
 
     if show_plots:
         plt.show()
     plt.close("all")
 
     # Testing setup
-    dirCnstAccuracy = 1E-7
-    attCnstAccuracy = 1E-4
-    accuracy = 1E-12
-    np.testing.assert_allclose(psi_B1, 0, atol=dirCnstAccuracy,
-                               err_msg='direction constraint component magnitude exceeded in orbital conservation test')
-    np.testing.assert_allclose(sigma_B2B1, 0, atol=attCnstAccuracy,
-                               err_msg='attitude constraint component magnitude exceeded in orbital conservation test')
+    dirCnstAccuracy = 1e-7
+    attCnstAccuracy = 1e-4
+    accuracy = 1e-12
+    np.testing.assert_allclose(
+        psi_B1,
+        0,
+        atol=dirCnstAccuracy,
+        err_msg="direction constraint component magnitude exceeded in orbital conservation test",
+    )
+    np.testing.assert_allclose(
+        sigma_B2B1,
+        0,
+        atol=attCnstAccuracy,
+        err_msg="attitude constraint component magnitude exceeded in orbital conservation test",
+    )
     for i in range(3):
-        np.testing.assert_allclose(orbAngMom1_N[:,i]+orbAngMom2_N[:,i], orbAngMom1_N[0,i]+orbAngMom2_N[0,i], atol=accuracy,
-                                   err_msg='orbital angular momentum difference component magnitude exceeded')
-    np.testing.assert_allclose(orbEnergy1+orbEnergy2, orbEnergy1[0]+orbEnergy2[0], atol=accuracy,
-                               err_msg='orbital energy difference magnitude exceeded')
+        np.testing.assert_allclose(
+            orbAngMom1_N[:, i] + orbAngMom2_N[:, i],
+            orbAngMom1_N[0, i] + orbAngMom2_N[0, i],
+            atol=accuracy,
+            err_msg="orbital angular momentum difference component magnitude exceeded",
+        )
+    np.testing.assert_allclose(
+        orbEnergy1 + orbEnergy2,
+        orbEnergy1[0] + orbEnergy2[0],
+        atol=accuracy,
+        err_msg="orbital energy difference magnitude exceeded",
+    )
+
 
 def constraintEffectorRotationalConservation(show_plots):
-
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
@@ -312,35 +370,45 @@ def constraintEffectorRotationalConservation(show_plots):
     # Define mass properties of the rigid hub of both spacecraft
     scObject1.hub.mHub = 750.0
     scObject1.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject1.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject1.hub.IHubPntBc_B = [
+        [600.0, 0.0, 0.0],
+        [0.0, 600.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
     scObject2.hub.mHub = 750.0
     scObject2.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject2.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject2.hub.IHubPntBc_B = [
+        [600.0, 0.0, 0.0],
+        [0.0, 600.0, 0.0],
+        [0.0, 0.0, 600.0],
+    ]
 
     # With initial attitudes at zero (B1, B2, and N frames all initially aligned)
-    r_B2N_N_0 = np.array([1,1,1])
-    rDot_B2N_N = np.array([1,1,1])
-    dir = r_B2N_N_0/np.linalg.norm(r_B2N_N_0)
+    r_B2N_N_0 = np.array([1, 1, 1])
+    rDot_B2N_N = np.array([1, 1, 1])
+    dir = r_B2N_N_0 / np.linalg.norm(r_B2N_N_0)
     l = 0.1
-    COMoffset = 0.1 # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
-    r_P1B1_B1 = np.dot(dir,COMoffset)
-    r_P2B2_B2 = np.dot(-dir,COMoffset)
-    r_P2P1_B1Init = np.dot(dir,l)
+    COMoffset = 0.1  # distance from COM to where the arm connects to the spacecraft hub, same for both spacecraft [meters]
+    r_P1B1_B1 = np.dot(dir, COMoffset)
+    r_P2B2_B2 = np.dot(-dir, COMoffset)
+    r_P2P1_B1Init = np.dot(dir, l)
     r_B1N_N_0 = r_B2N_N_0 + r_P2B2_B2 - r_P2P1_B1Init - r_P1B1_B1
     rDot_B1N_N = rDot_B2N_N
 
     # Compute rotational states
     # let C be the frame at the combined COM of the two vehicles
-    r_CN_N = (r_B1N_N_0 * scObject1.hub.mHub + r_B2N_N_0 * scObject2.hub.mHub) / (scObject1.hub.mHub + scObject2.hub.mHub)
+    r_CN_N = (r_B1N_N_0 * scObject1.hub.mHub + r_B2N_N_0 * scObject2.hub.mHub) / (
+        scObject1.hub.mHub + scObject2.hub.mHub
+    )
     r_B1C_N = r_B1N_N_0 - r_CN_N
     r_B2C_N = r_B2N_N_0 - r_CN_N
     # compute relative velocity due to spin and COM offset
-    target_spin = [0.01,0.01,0.01]
+    target_spin = [0.01, 0.01, 0.01]
     omega_CN_N = np.array(target_spin)
     omega_B1N_B1_0 = omega_CN_N
     omega_B2N_B2_0 = omega_CN_N
-    dv_B1C_N = np.cross(omega_CN_N,r_B1C_N)
-    dv_B2C_N = np.cross(omega_CN_N,r_B2C_N)
+    dv_B1C_N = np.cross(omega_CN_N, r_B1C_N)
+    dv_B2C_N = np.cross(omega_CN_N, r_B2C_N)
     rDot_B1N_N_0 = rDot_B1N_N + dv_B1C_N
     rDot_B2N_N_0 = rDot_B2N_N + dv_B2C_N
 
@@ -359,7 +427,7 @@ def constraintEffectorRotationalConservation(show_plots):
     constraintEffector.setR_P1B1_B1(r_P1B1_B1)
     constraintEffector.setR_P2B2_B2(r_P2B2_B2)
     constraintEffector.setR_P2P1_B1Init(r_P2P1_B1Init)
-    constraintEffector.setAlpha(1E3)
+    constraintEffector.setAlpha(1e3)
     constraintEffector.setBeta(1e3)
     # Add constraints to both spacecraft
     scObject1.addDynamicEffector(constraintEffector)
@@ -379,8 +447,8 @@ def constraintEffectorRotationalConservation(show_plots):
     # Log energy and momentum variables
     conservationData1 = scObject1.logger(["totRotAngMomPntC_N", "totRotEnergy"])
     conservationData2 = scObject2.logger(["totRotAngMomPntC_N", "totRotEnergy"])
-    unitTestSim.AddModelToTask(unitTaskName,conservationData1)
-    unitTestSim.AddModelToTask(unitTaskName,conservationData2)
+    unitTestSim.AddModelToTask(unitTaskName, conservationData1)
+    unitTestSim.AddModelToTask(unitTaskName, conservationData2)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -413,26 +481,40 @@ def constraintEffectorRotationalConservation(show_plots):
     r_B2N_B1 = np.empty(r_B2N_N_hist.shape)
     r_P2B2_B1 = np.empty(r_B1N_N_hist.shape)
     for i in range(rotAngMom1PntC1_N.shape[0]):
-        dcm_B1N = RigidBodyKinematics.MRP2C(sigma_B1N_hist[i,:])
-        r_B1N_B1[i,:] = dcm_B1N@r_B1N_N_hist[i,:]
-        r_B2N_B1[i,:] = dcm_B1N@r_B2N_N_hist[i,:]
-        dcm_NB2 = np.transpose(RigidBodyKinematics.MRP2C(sigma_B2N_hist[i,:]))
-        r_P2B2_B1[i,:] = dcm_B1N@dcm_NB2@r_P2B2_B2
+        dcm_B1N = RigidBodyKinematics.MRP2C(sigma_B1N_hist[i, :])
+        r_B1N_B1[i, :] = dcm_B1N @ r_B1N_N_hist[i, :]
+        r_B2N_B1[i, :] = dcm_B1N @ r_B2N_N_hist[i, :]
+        dcm_NB2 = np.transpose(RigidBodyKinematics.MRP2C(sigma_B2N_hist[i, :]))
+        r_P2B2_B1[i, :] = dcm_B1N @ dcm_NB2 @ r_P2B2_B2
     psi_B1 = r_B1N_B1 + r_P1B1_B1 + r_P2P1_B1Init - (r_B2N_B1 + r_P2B2_B1)
-    sigma_B2B1 = sigma_B2N_hist-sigma_B1N_hist
+    sigma_B2B1 = sigma_B2N_hist - sigma_B1N_hist
 
     # Compute conservation quantities
-    r_CN_N_hist = (r_B1N_N_hist * scObject1.hub.mHub + r_B2N_N_hist * scObject2.hub.mHub)/(scObject1.hub.mHub+scObject2.hub.mHub)
+    r_CN_N_hist = (
+        r_B1N_N_hist * scObject1.hub.mHub + r_B2N_N_hist * scObject2.hub.mHub
+    ) / (scObject1.hub.mHub + scObject2.hub.mHub)
     r_B1C_N_hist = r_B1N_N_hist - r_CN_N_hist
     r_B2C_N_hist = r_B2N_N_hist - r_CN_N_hist
-    rdot_CN_N_hist = (rdot_B1N_N_hist * scObject1.hub.mHub + rdot_B2N_N_hist * scObject2.hub.mHub)/(scObject1.hub.mHub+scObject2.hub.mHub)
+    rdot_CN_N_hist = (
+        rdot_B1N_N_hist * scObject1.hub.mHub + rdot_B2N_N_hist * scObject2.hub.mHub
+    ) / (scObject1.hub.mHub + scObject2.hub.mHub)
     rdot_B1C_N_hist = rdot_B1N_N_hist - rdot_CN_N_hist
     rdot_B2C_N_hist = rdot_B2N_N_hist - rdot_CN_N_hist
     rotAngMom1PntCT_N = np.empty(rotAngMom1PntC1_N.shape)
     rotAngMom2PntCT_N = np.empty(rotAngMom2PntC2_N.shape)
     for i1 in range(rotAngMom1PntC1_N.shape[0]):
-        rotAngMom1PntCT_N[i1,:] = np.cross(r_CN_N_hist[i1,:],scObject1.hub.mHub*rdot_B1C_N_hist[i1,:]) + RigidBodyKinematics.MRP2C(sigma_B1N_hist[i1,:]).transpose()@(scObject1.hub.IHubPntBc_B@omega_B1N_B1_hist[i1,:]) + scObject1.hub.mHub*np.cross(r_B1C_N_hist[i1,:],rdot_B1C_N_hist[i1,:])
-        rotAngMom2PntCT_N[i1,:] = np.cross(r_CN_N_hist[i1,:],scObject2.hub.mHub*rdot_B2C_N_hist[i1,:]) + RigidBodyKinematics.MRP2C(sigma_B2N_hist[i1,:]).transpose()@(scObject2.hub.IHubPntBc_B@omega_B2N_B2_hist[i1,:]) + scObject2.hub.mHub*np.cross(r_B2C_N_hist[i1,:],rdot_B2C_N_hist[i1,:])
+        rotAngMom1PntCT_N[i1, :] = (
+            np.cross(r_CN_N_hist[i1, :], scObject1.hub.mHub * rdot_B1C_N_hist[i1, :])
+            + RigidBodyKinematics.MRP2C(sigma_B1N_hist[i1, :]).transpose()
+            @ (scObject1.hub.IHubPntBc_B @ omega_B1N_B1_hist[i1, :])
+            + scObject1.hub.mHub * np.cross(r_B1C_N_hist[i1, :], rdot_B1C_N_hist[i1, :])
+        )
+        rotAngMom2PntCT_N[i1, :] = (
+            np.cross(r_CN_N_hist[i1, :], scObject2.hub.mHub * rdot_B2C_N_hist[i1, :])
+            + RigidBodyKinematics.MRP2C(sigma_B2N_hist[i1, :]).transpose()
+            @ (scObject2.hub.IHubPntBc_B @ omega_B2N_B2_hist[i1, :])
+            + scObject2.hub.mHub * np.cross(r_B2C_N_hist[i1, :], rdot_B2C_N_hist[i1, :])
+        )
     combinedRotAngMom = rotAngMom1PntCT_N + rotAngMom2PntCT_N
     combinedRotEnergy = rotEnergy1 + rotEnergy2
 
@@ -442,53 +524,83 @@ def constraintEffectorRotationalConservation(show_plots):
     plt.clf()
     for i in range(3):
         plt.semilogy(constraintTimeData, np.abs(psi_B1[:, i]))
-    plt.semilogy(constraintTimeData, np.linalg.norm(psi_B1,axis=1))
-    plt.legend([r'$\psi_1$',r'$\psi_2$',r'$\psi_3$',r'$\psi$ magnitude'])
-    plt.xlabel('time (seconds)')
-    plt.ylabel(r'variation from fixed position: $\psi$ (meters)')
-    plt.title('Direction Constraint Violation Components')
+    plt.semilogy(constraintTimeData, np.linalg.norm(psi_B1, axis=1))
+    plt.legend([r"$\psi_1$", r"$\psi_2$", r"$\psi_3$", r"$\psi$ magnitude"])
+    plt.xlabel("time (seconds)")
+    plt.ylabel(r"variation from fixed position: $\psi$ (meters)")
+    plt.title("Direction Constraint Violation Components")
 
     plt.figure()
     plt.clf()
     for i in range(3):
-        plt.semilogy(constraintTimeData, np.abs(4*np.arctan(sigma_B2B1[:, i]) * macros.R2D))
-    plt.semilogy(constraintTimeData, np.linalg.norm(4*np.arctan(sigma_B2B1) * macros.R2D,axis=1))
-    plt.legend([r'$\phi_1$',r'$\phi_2$',r'$\phi_3$',r'$\phi$ magnitude'])
-    plt.xlabel('time (seconds)')
-    plt.ylabel(r'relative attitude angle: $\phi$ (deg)')
-    plt.title('Attitude Constraint Violation Components')
+        plt.semilogy(
+            constraintTimeData, np.abs(4 * np.arctan(sigma_B2B1[:, i]) * macros.R2D)
+        )
+    plt.semilogy(
+        constraintTimeData,
+        np.linalg.norm(4 * np.arctan(sigma_B2B1) * macros.R2D, axis=1),
+    )
+    plt.legend([r"$\phi_1$", r"$\phi_2$", r"$\phi_3$", r"$\phi$ magnitude"])
+    plt.xlabel("time (seconds)")
+    plt.ylabel(r"relative attitude angle: $\phi$ (deg)")
+    plt.title("Attitude Constraint Violation Components")
 
     plt.figure()
     plt.clf()
-    plt.plot(conservationTimeData, (combinedRotAngMom[:,0] - combinedRotAngMom[0,0])/combinedRotAngMom[0,0],
-             conservationTimeData, (combinedRotAngMom[:,1] - combinedRotAngMom[0,1])/combinedRotAngMom[0,1],
-             conservationTimeData, (combinedRotAngMom[:,2] - combinedRotAngMom[0,2])/combinedRotAngMom[0,2])
-    plt.xlabel('time (seconds)')
-    plt.ylabel('Relative Difference')
-    plt.title('Combined Rotational Angular Momentum')
+    plt.plot(
+        conservationTimeData,
+        (combinedRotAngMom[:, 0] - combinedRotAngMom[0, 0]) / combinedRotAngMom[0, 0],
+        conservationTimeData,
+        (combinedRotAngMom[:, 1] - combinedRotAngMom[0, 1]) / combinedRotAngMom[0, 1],
+        conservationTimeData,
+        (combinedRotAngMom[:, 2] - combinedRotAngMom[0, 2]) / combinedRotAngMom[0, 2],
+    )
+    plt.xlabel("time (seconds)")
+    plt.ylabel("Relative Difference")
+    plt.title("Combined Rotational Angular Momentum")
 
     plt.figure()
     plt.clf()
-    plt.plot(conservationTimeData, (combinedRotEnergy - combinedRotEnergy[0])/combinedRotEnergy[0])
-    plt.xlabel('time (seconds)')
-    plt.ylabel('Relative Difference')
-    plt.title('Combined Rotational Energy')
+    plt.plot(
+        conservationTimeData,
+        (combinedRotEnergy - combinedRotEnergy[0]) / combinedRotEnergy[0],
+    )
+    plt.xlabel("time (seconds)")
+    plt.ylabel("Relative Difference")
+    plt.title("Combined Rotational Energy")
 
     if show_plots:
         plt.show()
     plt.close("all")
 
     # Testing setup
-    accuracy = 1E-12
-    np.testing.assert_allclose(psi_B1, 0, atol=accuracy,
-                               err_msg='direction constraint component magnitude exceeded in rotational conservation test')
-    np.testing.assert_allclose(sigma_B2B1, 0, atol=accuracy,
-                               err_msg='attitude constraint component magnitude exceeded in rotational conservation test')
+    accuracy = 1e-12
+    np.testing.assert_allclose(
+        psi_B1,
+        0,
+        atol=accuracy,
+        err_msg="direction constraint component magnitude exceeded in rotational conservation test",
+    )
+    np.testing.assert_allclose(
+        sigma_B2B1,
+        0,
+        atol=accuracy,
+        err_msg="attitude constraint component magnitude exceeded in rotational conservation test",
+    )
     for i in range(3):
-        np.testing.assert_allclose(rotAngMom1PntCT_N[:,i]+rotAngMom2PntCT_N[:,i], rotAngMom1PntCT_N[0,i]+rotAngMom2PntCT_N[0,i], atol=accuracy,
-                                   err_msg='rotational angular momentum difference component magnitude exceeded')
-    np.testing.assert_allclose(rotEnergy1+rotEnergy2, rotEnergy1[0]+rotEnergy2[0], atol=accuracy,
-                               err_msg='rotational energy difference magnitude exceeded')
+        np.testing.assert_allclose(
+            rotAngMom1PntCT_N[:, i] + rotAngMom2PntCT_N[:, i],
+            rotAngMom1PntCT_N[0, i] + rotAngMom2PntCT_N[0, i],
+            atol=accuracy,
+            err_msg="rotational angular momentum difference component magnitude exceeded",
+        )
+    np.testing.assert_allclose(
+        rotEnergy1 + rotEnergy2,
+        rotEnergy1[0] + rotEnergy2[0],
+        atol=accuracy,
+        err_msg="rotational energy difference magnitude exceeded",
+    )
+
 
 if __name__ == "__main__":
     # constraintEffectorOrbitalConservation(True)

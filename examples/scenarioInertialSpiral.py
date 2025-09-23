@@ -85,7 +85,9 @@ np.set_printoptions(precision=16)
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -109,6 +111,7 @@ from Basilisk.architecture import messaging
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -129,7 +132,7 @@ def run(show_plots):
     scSim = SimulationBaseClass.SimBaseClass()
 
     # Define simulation run time and integration time step
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(10.0)
     simulationTimeStep = macros.sec2nano(0.1)
 
     # Create the simulation process
@@ -140,11 +143,13 @@ def run(show_plots):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
     # define the simulation inertia
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [
+        [0.0],
+        [0.0],
+        [0.0],
+    ]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
@@ -180,7 +185,7 @@ def run(show_plots):
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DObj)
-    inertial3DObj.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
+    inertial3DObj.sigma_R0N = [0.0, 0.0, 0.0]  # set the desired inertial orientation
 
     # we create 2 dynamic attitude reference modules as we want to do a 1-2 Euler angle rotation
     # and the modules provide a 3-2-1 sequence.  Thus, we do a 0-0-1 321-rotation and then a 0-1-0 321-rotation
@@ -211,7 +216,7 @@ def run(show_plots):
     mrpControl.K = 3.5
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.P = 30.0
-    mrpControl.integralLimit = 2. / mrpControl.Ki * 0.1
+    mrpControl.integralLimit = 2.0 / mrpControl.Ki * 0.1
 
     #
     # create simulation messages
@@ -234,7 +239,9 @@ def run(show_plots):
     # Set up data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
     snLog = sNavObject.scStateInMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
@@ -258,8 +265,8 @@ def run(show_plots):
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = rN  # m   - r_CN_N
     scObject.hub.v_CN_NInit = vN  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.], [0.], [0.]]  # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.], [0.], [0.]]  # rad/s - omega_BN_B
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]  # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # rad/s - omega_BN_B
 
     #
     #   initialize Simulation
@@ -291,53 +298,70 @@ def run(show_plots):
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            attErrorLog.sigma_BR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Attitude Error $\sigma_{B/R}$")
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, mrpLog.torqueRequestBody[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [min]')
-    plt.ylabel(r'Control Torque $L_r$ [Nm]')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            mrpLog.torqueRequestBody[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$L_{r," + str(idx) + "}$",
+        )
+    plt.legend(loc="upper right")
+    plt.xlabel("Time [min]")
+    plt.ylabel(r"Control Torque $L_r$ [Nm]")
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2MIN, attErrorLog.omega_BR_B[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+        plt.plot(
+            timeAxis * macros.NANO2MIN,
+            attErrorLog.omega_BR_B[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_{BR," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Rate Tracking Error [rad/s] ")
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
-    plt.plot(timeLineSet, dataEulerAnglesYaw,
-                 color=unitTestSupport.getLineColor(0, 3),label=r'Yaw')
-    plt.plot(timeLineSet, dataEulerAnglesPitch,
-                 color=unitTestSupport.getLineColor(1, 3),label=r'Pitch')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Euler Angles [rad]')
+    plt.plot(
+        timeLineSet,
+        dataEulerAnglesYaw,
+        color=unitTestSupport.getLineColor(0, 3),
+        label=r"Yaw",
+    )
+    plt.plot(
+        timeLineSet,
+        dataEulerAnglesPitch,
+        color=unitTestSupport.getLineColor(1, 3),
+        label=r"Pitch",
+    )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [min]")
+    plt.ylabel("Euler Angles [rad]")
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(4)
 
     plt.figure(5)
     plt.plot(dataEulerAnglesPitch, dataEulerAnglesYaw)
-    plt.xlabel('Pitch [rad]')
-    plt.ylabel('Yaw [rad]')
+    plt.xlabel("Pitch [rad]")
+    plt.ylabel("Yaw [rad]")
     pltName = fileName + "5"
     figureList[pltName] = plt.figure(5)
 
@@ -348,7 +372,6 @@ def run(show_plots):
     plt.close("all")
 
     return figureList
-
 
 
 #

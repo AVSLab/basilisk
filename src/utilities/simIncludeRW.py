@@ -33,6 +33,7 @@ class rwFactory(object):
     """
     Reaction Wheel Factory Class
     """
+
     def __init__(self):
         self.rwList = OrderedDict()
         self.maxMomentum = 0.0
@@ -93,147 +94,153 @@ class rwFactory(object):
         RW = reactionWheelStateEffector.RWConfigPayload()
 
         # process optional input arguments
-        if 'RWModel' in kwargs:
-            varRWModel =  kwargs['RWModel']
+        if "RWModel" in kwargs:
+            varRWModel = kwargs["RWModel"]
             if not isinstance(varRWModel, int):
-                print('ERROR: RWModel must be a INT argument')
+                print("ERROR: RWModel must be a INT argument")
                 exit(1)
         else:
-            varRWModel = messaging.BalancedWheels    # default value
+            varRWModel = messaging.BalancedWheels  # default value
 
-        if 'useRWfriction' in kwargs:
-            varUseRWfriction = kwargs['useRWfriction']
+        if "useRWfriction" in kwargs:
+            varUseRWfriction = kwargs["useRWfriction"]
             if not isinstance(varUseRWfriction, bool):
-                print('ERROR: useRWfriction must be a BOOL argument')
+                print("ERROR: useRWfriction must be a BOOL argument")
                 exit(1)
         else:
-            varUseRWfriction = False            # default value
+            varUseRWfriction = False  # default value
 
-        if 'useMinTorque' in kwargs:
-            varUseMinTorque =  kwargs['useMinTorque']
+        if "useMinTorque" in kwargs:
+            varUseMinTorque = kwargs["useMinTorque"]
             if not isinstance(varUseMinTorque, bool):
-                print('ERROR: useMinTorque must be a BOOL argument')
+                print("ERROR: useMinTorque must be a BOOL argument")
                 exit(1)
         else:
-            varUseMinTorque = False             # default value
+            varUseMinTorque = False  # default value
 
-        if 'useMaxTorque' in kwargs:
-            varUseMaxTorque = kwargs['useMaxTorque']
+        if "useMaxTorque" in kwargs:
+            varUseMaxTorque = kwargs["useMaxTorque"]
             if not isinstance(varUseMaxTorque, bool):
-                print('ERROR: useMaxTorque must be a BOOL argument')
+                print("ERROR: useMaxTorque must be a BOOL argument")
                 exit(1)
         else:
-            varUseMaxTorque = True              # default value
+            varUseMaxTorque = True  # default value
 
-        if 'maxMomentum' in kwargs:
-            varMaxMomentum = kwargs['maxMomentum']
+        if "maxMomentum" in kwargs:
+            varMaxMomentum = kwargs["maxMomentum"]
             if not isinstance(varMaxMomentum, float):
-                print('ERROR: maxMomentum must be a FLOAT argument')
+                print("ERROR: maxMomentum must be a FLOAT argument")
                 exit(1)
         else:
-            varMaxMomentum = 0.0              # default value
+            varMaxMomentum = 0.0  # default value
         self.maxMomentum = varMaxMomentum
 
-        if 'P_max' in kwargs:
-            varMaxPower = kwargs['P_max']
+        if "P_max" in kwargs:
+            varMaxPower = kwargs["P_max"]
             if not isinstance(varMaxPower, float):
-                print('ERROR: P_max must be a FLOAT argument')
+                print("ERROR: P_max must be a FLOAT argument")
                 exit(1)
         else:
-            varMaxPower = -1.0              # default value turns off max power limit
+            varMaxPower = -1.0  # default value turns off max power limit
         RW.P_max = varMaxPower
 
-        if 'betaStatic' in kwargs:
-            varbetaStatic = kwargs['betaStatic']
+        if "betaStatic" in kwargs:
+            varbetaStatic = kwargs["betaStatic"]
             if not isinstance(varbetaStatic, float):
-                print('ERROR: betaStatic must be a FLOAT argument')
+                print("ERROR: betaStatic must be a FLOAT argument")
                 exit(1)
             if varbetaStatic == 0:
-                print('ERROR: betaStatic cannot be set to zero.  Positive turns it on, negative turns it off')
+                print(
+                    "ERROR: betaStatic cannot be set to zero.  Positive turns it on, negative turns it off"
+                )
                 exit(1)
         else:
-            varbetaStatic = -1.0       # default value turns off Stribeck friction model
+            varbetaStatic = -1.0  # default value turns off Stribeck friction model
         RW.betaStatic = varbetaStatic
 
         # set device label name
-        if 'label' in kwargs:
-            varLabel = kwargs['label']
+        if "label" in kwargs:
+            varLabel = kwargs["label"]
             if not isinstance(varLabel, str):
-                print('ERROR: label must be a string')
+                print("ERROR: label must be a string")
                 exit(1)
             if len(varLabel) > 5:
-                print('ERROR: RW label string is longer than 5 characters')
+                print("ERROR: RW label string is longer than 5 characters")
                 exit(1)
         else:
-            varLabel = 'RW' + str(len(self.rwList)+1)        # default device labeling
+            varLabel = "RW" + str(len(self.rwList) + 1)  # default device labeling
         RW.label = varLabel
 
         # populate the RW object with the type specific parameters
         try:
             getattr(self, rwType)(RW)
         except:
-            print('ERROR: RW type ' + rwType + ' is not implemented')
+            print("ERROR: RW type " + rwType + " is not implemented")
             exit(1)
 
-        if 'fCoulomb' in kwargs:
-            RW.fCoulomb = kwargs['fCoulomb']
+        if "fCoulomb" in kwargs:
+            RW.fCoulomb = kwargs["fCoulomb"]
             if not isinstance(RW.fCoulomb, float):
-                print('ERROR: fCoulomb must be a FLOAT argument')
+                print("ERROR: fCoulomb must be a FLOAT argument")
                 exit(1)
 
-        if 'fStatic' in kwargs:
-            RW.fStatic = kwargs['fStatic']
+        if "fStatic" in kwargs:
+            RW.fStatic = kwargs["fStatic"]
             if not isinstance(RW.fStatic, float):
-                print('ERROR: fStatic must be a FLOAT argument')
+                print("ERROR: fStatic must be a FLOAT argument")
                 exit(1)
 
-        if 'cViscous' in kwargs:
-            RW.cViscous =  kwargs['cViscous']
+        if "cViscous" in kwargs:
+            RW.cViscous = kwargs["cViscous"]
             if not isinstance(RW.cViscous, float):
-                print('ERROR: cViscous must be a FLOAT argument')
+                print("ERROR: cViscous must be a FLOAT argument")
                 exit(1)
 
-        if 'u_min' in kwargs:
-            varu_min = kwargs['u_min']
+        if "u_min" in kwargs:
+            varu_min = kwargs["u_min"]
             if not isinstance(varu_min, float):
-                print('ERROR: u_min must be a FLOAT argument')
+                print("ERROR: u_min must be a FLOAT argument")
                 exit(1)
             RW.u_min = varu_min
         if RW.u_min <= 0.0 and varUseMinTorque:
-            print('ERROR: RW is being setup with non-positive u_min value with varUseMinTorque set to True')
+            print(
+                "ERROR: RW is being setup with non-positive u_min value with varUseMinTorque set to True"
+            )
             exit(1)
 
-        if 'u_max' in kwargs:
-            varu_max = kwargs['u_max']
+        if "u_max" in kwargs:
+            varu_max = kwargs["u_max"]
             if not isinstance(varu_max, float):
-                print('ERROR: u_max must be a FLOAT argument')
+                print("ERROR: u_max must be a FLOAT argument")
                 exit(1)
             RW.u_max = varu_max
         if RW.u_max <= 0.0 and varUseMaxTorque:
-            print('ERROR: RW is being setup with non-positive u_max value with varUseMaxTorque set to True')
+            print(
+                "ERROR: RW is being setup with non-positive u_max value with varUseMaxTorque set to True"
+            )
             exit(1)
 
         # set initial RW states
-        if 'Omega_max' in kwargs:
-            varOmega_max = kwargs['Omega_max']
+        if "Omega_max" in kwargs:
+            varOmega_max = kwargs["Omega_max"]
             if not isinstance(varOmega_max, float):
-                print('ERROR: Omega_max must be a FLOAT argument')
+                print("ERROR: Omega_max must be a FLOAT argument")
                 exit(1)
             RW.Omega_max = varOmega_max * macros.RPM
 
         # set RW spin axis inertia
         RW.Js = -1.0
-        if 'Js' in kwargs:
-            varJs = kwargs['Js']
+        if "Js" in kwargs:
+            varJs = kwargs["Js"]
             if not isinstance(varJs, float):
-                print('ERROR: Js must be a FLOAT argument')
+                print("ERROR: Js must be a FLOAT argument")
                 exit(1)
             if varJs > 0.0:
                 RW.Js = varJs
                 RW.Jt = 0.5 * RW.Js
                 RW.Jg = RW.Jt
             else:
-                print('ERROR: Js must be a positive value')
+                print("ERROR: Js must be a positive value")
                 exit(1)
 
         if RW.Omega_max > 0.0 and self.maxMomentum > 0.0:
@@ -243,35 +250,43 @@ class rwFactory(object):
                 RW.Jt = 0.5 * RW.Js
                 RW.Jg = RW.Jt
             else:
-                print('ERROR: rwFactory tried to set Js both directly and through maxMomentum and Omega_max')
+                print(
+                    "ERROR: rwFactory tried to set Js both directly and through maxMomentum and Omega_max"
+                )
                 exit(1)
         if RW.Js < 0.0:
-            print('ERROR: RW Js value not specified direct, nor indirectly using maxMomentum and Omega_max')
+            print(
+                "ERROR: RW Js value not specified direct, nor indirectly using maxMomentum and Omega_max"
+            )
 
         # set RW axes
         self.setGsHat(RW, gsHat_B)
 
         # set RW position vector
-        if 'rWB_B' in kwargs:
-            varrWB_B =  kwargs['rWB_B']
+        if "rWB_B" in kwargs:
+            varrWB_B = kwargs["rWB_B"]
             if not isinstance(varrWB_B, list):
-                print('ERROR: rWB_B must be a 3x1 list argument')
+                print("ERROR: rWB_B must be a 3x1 list argument")
                 exit(1)
             if not len(varrWB_B) == 3:
-                print('ERROR: rWB_B has dimension ' + str(len(varrWB_B)) + ', must be a 3x1 list argument')
+                print(
+                    "ERROR: rWB_B has dimension "
+                    + str(len(varrWB_B))
+                    + ", must be a 3x1 list argument"
+                )
                 exit(1)
         else:
-            varrWB_B = [0., 0., 0.]             # default value
+            varrWB_B = [0.0, 0.0, 0.0]  # default value
         RW.rWB_B = varrWB_B
 
         # set initial RW states
-        if 'Omega' in kwargs:
-            varOmega =  kwargs['Omega']
+        if "Omega" in kwargs:
+            varOmega = kwargs["Omega"]
             if not isinstance(varOmega, (float)):
-                print('ERROR: Omega must be a FLOAT argument')
+                print("ERROR: Omega must be a FLOAT argument")
                 exit(1)
         else:
-            varOmega = 0.0                      # default value
+            varOmega = 0.0  # default value
         RW.Omega = varOmega * macros.RPM
         RW.theta = 0.0 * macros.D2R
 
@@ -302,7 +317,7 @@ class rwFactory(object):
         if norm > 1e-10:
             gsHat_B = gsHat_B / norm
         else:
-            print('Error: RW gsHat input must be non-zero 3x1 vector')
+            print("Error: RW gsHat input must be non-zero 3x1 vector")
             exit(1)
         RW.gsHat_B = [[gsHat_B[0]], [gsHat_B[1]], [gsHat_B[2]]]
 
@@ -321,15 +336,15 @@ class rwFactory(object):
 
     def addToSpacecraft(self, modelTag, rwStateEffector, sc):
         """
-            This function should be called after all RW devices are created with createRW()
-            It creates the C-class container for the array of RW devices, and attaches
-            this container to the spacecraft object
+        This function should be called after all RW devices are created with createRW()
+        It creates the C-class container for the array of RW devices, and attaches
+        this container to the spacecraft object
 
-            Parameters
-            ----------
-            :param modelTag:  string with the model tag
-            :param rwStateEffector:
-            :param sc: spacecraft object
+        Parameters
+        ----------
+        :param modelTag:  string with the model tag
+        :param rwStateEffector:
+        :param sc: spacecraft object
         """
 
         rwStateEffector.ModelTag = modelTag
@@ -343,11 +358,11 @@ class rwFactory(object):
 
     def getNumOfDevices(self):
         """
-            Returns the number of RW devices setup.
+        Returns the number of RW devices setup.
 
-            Returns
-            -------
-            :return: int
+        Returns
+        -------
+        :return: int
         """
         return len(self.rwList)
 
@@ -362,7 +377,6 @@ class rwFactory(object):
         JsList = []
         uMaxList = []
         for rw in self.rwList.values():
-
             flatGsHat = [element for sublist in rw.gsHat_B for element in sublist]
 
             GsMatrix_B.extend(flatGsHat)
@@ -390,9 +404,8 @@ class rwFactory(object):
     #       maxMomentum = 100, 75 or 50
     #
     def Honeywell_HR16(self, RW):
-
         # maximum allowable wheel speed
-        RW.Omega_max = 6000.0*macros.RPM
+        RW.Omega_max = 6000.0 * macros.RPM
         # maximum RW torque [Nm]
         RW.u_max = 0.200
         # minimum RW torque [Nm]
@@ -409,27 +422,40 @@ class rwFactory(object):
 
         if self.maxMomentum == large:
             RW.mass = 12.0
-            RW.U_s = 4.8E-6
-            RW.U_d = 15.4E-7
+            RW.U_s = 4.8e-6
+            RW.U_d = 15.4e-7
         elif self.maxMomentum == medium:
             RW.mass = 10.4
-            RW.U_s = 3.8E-6
-            RW.U_d = 11.5E-7
+            RW.U_s = 3.8e-6
+            RW.U_d = 11.5e-7
         elif self.maxMomentum == small:
             RW.mass = 9.0
-            RW.U_s = 2.8E-6
-            RW.U_d = 7.7E-7
+            RW.U_s = 2.8e-6
+            RW.U_d = 7.7e-7
         else:
             if self.maxMomentum > 0:
-                print('ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm')
+                print(
+                    "ERROR: "
+                    + sys._getframe().f_code.co_name
+                    + "() does not have a correct wheel momentum of "
+                    + str(large)
+                    + ", "
+                    + str(medium)
+                    + " or "
+                    + str(small)
+                    + " Nm. Provided "
+                    + str(self.maxMomentum)
+                    + " Nm"
+                )
             else:
-                print('ERROR: ' + sys._getframe().f_code.co_name \
-                      + '() maxMomentum option must be set prior to calling createRW()')
+                print(
+                    "ERROR: "
+                    + sys._getframe().f_code.co_name
+                    + "() maxMomentum option must be set prior to calling createRW()"
+                )
             exit(1)
 
         return
-
 
     #
     #   Honeywell HR14 (25Nm, 50Nm, 75Nm)
@@ -443,7 +469,7 @@ class rwFactory(object):
     #
     def Honeywell_HR14(self, RW):
         # maximum allowable wheel speed
-        RW.Omega_max = 6000.0*macros.RPM
+        RW.Omega_max = 6000.0 * macros.RPM
         # maximum RW torque [Nm]
         RW.u_max = 0.200
         # minimum RW torque [Nm]
@@ -459,27 +485,40 @@ class rwFactory(object):
         small = 25
         if self.maxMomentum == large:
             RW.mass = 10.6
-            RW.U_s = 4.8E-6
-            RW.U_d = 13.7E-7
+            RW.U_s = 4.8e-6
+            RW.U_d = 13.7e-7
         elif self.maxMomentum == medium:
             RW.mass = 8.5
-            RW.U_s = 3.5E-6
-            RW.U_d = 9.1E-7
+            RW.U_s = 3.5e-6
+            RW.U_d = 9.1e-7
         elif self.maxMomentum == small:
             RW.mass = 7.5
-            RW.U_s = 2.2E-6
-            RW.U_d = 4.6E-7
+            RW.U_s = 2.2e-6
+            RW.U_d = 4.6e-7
         else:
             if self.maxMomentum > 0:
-                print('ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm')
+                print(
+                    "ERROR: "
+                    + sys._getframe().f_code.co_name
+                    + "() does not have a correct wheel momentum of "
+                    + str(large)
+                    + ", "
+                    + str(medium)
+                    + " or "
+                    + str(small)
+                    + " Nm. Provided "
+                    + str(self.maxMomentum)
+                    + " Nm"
+                )
             else:
-                print('ERROR: ' + sys._getframe().f_code.co_name \
-                      + '() maxMomentum option must be set prior to calling createRW()')
+                print(
+                    "ERROR: "
+                    + sys._getframe().f_code.co_name
+                    + "() maxMomentum option must be set prior to calling createRW()"
+                )
             exit(1)
 
         return
-
 
     #
     #   Honeywell HR12 (12Nm, 25Nm, 50Nm)
@@ -492,9 +531,8 @@ class rwFactory(object):
     #       maxMomentum = 12, 25 or 50
     #
     def Honeywell_HR12(self, RW):
-
         # maximum allowable wheel speed
-        RW.Omega_max = 6000.0*macros.RPM
+        RW.Omega_max = 6000.0 * macros.RPM
         # maximum RW torque [Nm]
         RW.u_max = 0.200
         # minimum RW torque [Nm]
@@ -510,27 +548,40 @@ class rwFactory(object):
         small = 12
         if self.maxMomentum == large:
             RW.mass = 9.5
-            RW.U_s = 4.4E-6
-            RW.U_d = 9.1E-7
+            RW.U_s = 4.4e-6
+            RW.U_d = 9.1e-7
         elif self.maxMomentum == medium:
             RW.mass = 7.0
-            RW.U_s = 2.4E-6
-            RW.U_d = 4.6E-7
+            RW.U_s = 2.4e-6
+            RW.U_d = 4.6e-7
         elif self.maxMomentum == small:
             RW.mass = 6.0
-            RW.U_s = 1.5E-6
-            RW.U_d = 2.2E-7
+            RW.U_s = 1.5e-6
+            RW.U_d = 2.2e-7
         else:
             if self.maxMomentum > 0:
-                print('ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm')
+                print(
+                    "ERROR: "
+                    + sys._getframe().f_code.co_name
+                    + "() does not have a correct wheel momentum of "
+                    + str(large)
+                    + ", "
+                    + str(medium)
+                    + " or "
+                    + str(small)
+                    + " Nm. Provided "
+                    + str(self.maxMomentum)
+                    + " Nm"
+                )
             else:
-                print('ERROR: ' + sys._getframe().f_code.co_name \
-                      + '() maxMomentum option must be set prior to calling createRW()')
+                print(
+                    "ERROR: "
+                    + sys._getframe().f_code.co_name
+                    + "() maxMomentum option must be set prior to calling createRW()"
+                )
             exit(1)
 
         return
-
 
     def BCT_RWP015(self, RW):
         """
@@ -546,7 +597,7 @@ class rwFactory(object):
         """
 
         # maximum allowable wheel speed
-        RW.Omega_max = 6000.0*macros.RPM
+        RW.Omega_max = 6000.0 * macros.RPM
         # maximum RW torque [Nm]
         RW.u_max = 0.004
         # minimum RW torque [Nm]
@@ -559,12 +610,14 @@ class rwFactory(object):
         # dynamic RW imbalance [kg*m^2]
 
         if self.maxMomentum > 0.0:
-            print("WARNING: BCT_RWP015 has a fixed maxMomentum value.  Custom value being replaced.")
-        self.maxMomentum = 0.015     # Nms
+            print(
+                "WARNING: BCT_RWP015 has a fixed maxMomentum value.  Custom value being replaced."
+            )
+        self.maxMomentum = 0.015  # Nms
 
         RW.mass = 0.130
-        RW.U_s = 1E-7 # Guestimate
-        RW.U_d = 1E-8 # Guestimate
+        RW.U_s = 1e-7  # Guestimate
+        RW.U_d = 1e-8  # Guestimate
 
         return
 

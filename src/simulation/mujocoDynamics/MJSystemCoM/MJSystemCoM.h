@@ -17,7 +17,6 @@
 
 */
 
-
 #ifndef MJSYSTEMCOM_H
 #define MJSYSTEMCOM_H
 
@@ -29,11 +28,11 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include <Eigen/Dense>
 
-
 /*! @brief This is a C++ module to extract the system CoM position and velocity from Mujoco
  */
-class MJSystemCoM: public SysModel {
-public:
+class MJSystemCoM : public SysModel
+{
+  public:
     MJSystemCoM();
     ~MJSystemCoM() = default;
 
@@ -41,17 +40,13 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-public:
+  public:
+    MJScene* scene{ nullptr }; //!< pointer to the MuJoCo scene
 
-    MJScene* scene{nullptr};  //!< pointer to the MuJoCo scene
+    Message<SCStatesMsgPayload> comStatesOutMsg; //!< spacecraft CoM states C++ output msg
+    SCStatesMsg_C comStatesOutMsgC = {};         //!< spacecraft CoM states C output msg
 
-    Message<SCStatesMsgPayload> comStatesOutMsg;  //!< spacecraft CoM states C++ output msg
-    SCStatesMsg_C               comStatesOutMsgC = {};  //!< spacecraft CoM states C output msg
-
-    BSKLogger bskLogger;              //!< BSK Logging
-
-
+    BSKLogger bskLogger; //!< BSK Logging
 };
-
 
 #endif

@@ -25,7 +25,10 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import orbitalMotion as om
 
 
-@pytest.mark.parametrize("positionFactor, shadowFactor, eclipseMsgName, relTol", [(np.sqrt(2), 0.5, "eclipse_data_0", 1e-8), (np.sqrt(2), 0.5, "", 1e-8)])
+@pytest.mark.parametrize(
+    "positionFactor, shadowFactor, eclipseMsgName, relTol",
+    [(np.sqrt(2), 0.5, "eclipse_data_0", 1e-8), (np.sqrt(2), 0.5, "", 1e-8)],
+)
 def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, relTol):
     """
     **Test Description**
@@ -50,11 +53,11 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     proc.addTask(task)
 
     sunPositionMessage = messaging.SpicePlanetStateMsgPayload()
-    sunPositionMessage.PositionVector = [0., 0., 0.]
+    sunPositionMessage.PositionVector = [0.0, 0.0, 0.0]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunPositionMessage)
 
     scPositionMessage = messaging.SCStatesMsgPayload()
-    scPositionMessage.r_BN_N = [0., 0., om.AU*1000]
+    scPositionMessage.r_BN_N = [0.0, 0.0, om.AU * 1000]
     scMsg = messaging.SCStatesMsg().write(scPositionMessage)
 
     eclipseMessage = messaging.EclipseMsgPayload()
@@ -74,13 +77,15 @@ def test_solarFlux(show_plots, positionFactor, shadowFactor, eclipseMsgName, rel
     sim.TotalSim.SingleStepProcesses()
 
     fluxOutEarth = dataLog.flux
-    scPositionMessage.r_BN_N = [0., 0., positionFactor * om.AU*1000]
+    scPositionMessage.r_BN_N = [0.0, 0.0, positionFactor * om.AU * 1000]
     scMsg.write(scPositionMessage)
 
     sim.TotalSim.SingleStepProcesses()
     fluxOutFurther = dataLog.flux
 
-    assert fluxOutFurther[1] == pytest.approx(fluxOutEarth[0] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol)
+    assert fluxOutFurther[1] == pytest.approx(
+        fluxOutEarth[0] / shadowFactor / (positionFactor**2) * shadowFactor, rel=relTol
+    )
 
 
 if __name__ == "__main__":

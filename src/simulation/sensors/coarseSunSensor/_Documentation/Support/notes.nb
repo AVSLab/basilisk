@@ -21,38 +21,38 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell[BoxData[
- RowBox[{"Plot", "[", 
+ RowBox[{"Plot", "[",
   RowBox[{
-   RowBox[{"{", 
+   RowBox[{"{",
     RowBox[{
-     RowBox[{"Cos", "[", 
-      RowBox[{"x", " ", "Degree"}], "]"}], "\[IndentingNewLine]", ",", 
+     RowBox[{"Cos", "[",
+      RowBox[{"x", " ", "Degree"}], "]"}], "\[IndentingNewLine]", ",",
      RowBox[{
-      RowBox[{"Cos", "[", 
-       RowBox[{"x", " ", "Degree"}], "]"}], 
-      RowBox[{"(", 
-       RowBox[{"1", "-", 
-        RowBox[{"Exp", "[", 
+      RowBox[{"Cos", "[",
+       RowBox[{"x", " ", "Degree"}], "]"}],
+      RowBox[{"(",
+       RowBox[{"1", "-",
+        RowBox[{"Exp", "[",
          RowBox[{
-          RowBox[{"-", 
+          RowBox[{"-",
            RowBox[{
-            RowBox[{"Cos", "[", 
-             RowBox[{"x", " ", "Degree"}], "]"}], "^", "2"}]}], "/", ".1"}], 
-         "]"}]}], ")"}]}]}], "\[IndentingNewLine]", "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"x", ",", " ", 
-     RowBox[{"-", "90"}], ",", "90"}], "}"}], "\[IndentingNewLine]", ",", " ", 
-   RowBox[{"AxesLabel", "\[Rule]", 
-    RowBox[{"{", 
-     RowBox[{"\"\<\[Phi]\>\"", ",", "\"\<Signal\>\""}], "}"}]}]}], 
+            RowBox[{"Cos", "[",
+             RowBox[{"x", " ", "Degree"}], "]"}], "^", "2"}]}], "/", ".1"}],
+         "]"}]}], ")"}]}]}], "\[IndentingNewLine]", "}"}], ",",
+   RowBox[{"{",
+    RowBox[{"x", ",", " ",
+     RowBox[{"-", "90"}], ",", "90"}], "}"}], "\[IndentingNewLine]", ",", " ",
+   RowBox[{"AxesLabel", "\[Rule]",
+    RowBox[{"{",
+     RowBox[{"\"\<\[Phi]\>\"", ",", "\"\<Signal\>\""}], "}"}]}]}],
   "]"}]], "Input",
  CellChangeTimes->{{3.708348070275147*^9, 3.708348140257758*^9}, {
-  3.708348319117258*^9, 3.7083483211430073`*^9}, {3.708349257935976*^9, 
+  3.708348319117258*^9, 3.7083483211430073`*^9}, {3.708349257935976*^9,
   3.7083492996618347`*^9}},ExpressionUUID->"8c8a8fe2-4258-46b1-8049-\
 3fdc92e87df8"],
 
 Cell[BoxData[
- GraphicsBox[{{{}, {}, 
+ GraphicsBox[{{{}, {},
     TagBox[
      {RGBColor[0.368417, 0.506779, 0.709798], AbsoluteThickness[1.6], Opacity[
       1.], LineBox[CompressedData["
@@ -146,7 +146,7 @@ T9Ffm0cj4Wj6QpeNDx397hRmFkedAgl7mqlOIFmva5rmuZxjcGRt3SGFIDpa
 6d9j3BjlB5V/9iWJh9FREOSKJOfsBfHGxUq+cDqa+Pta40WOE/zvfAD9/3zg
 P4GvN7Y=
        "]]},
-     Annotation[#, "Charting`Private`Tag$5978#1"]& ], 
+     Annotation[#, "Charting`Private`Tag$5978#1"]& ],
     TagBox[
      {RGBColor[0.880722, 0.611041, 0.142051], AbsoluteThickness[1.6], Opacity[
       1.], LineBox[CompressedData["
@@ -313,42 +313,42 @@ SA==
   AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
   Axes->{True, True},
   AxesLabel->{
-    FormBox["\"\[Phi]\"", TraditionalForm], 
+    FormBox["\"\[Phi]\"", TraditionalForm],
     FormBox["\"Signal\"", TraditionalForm]},
   AxesOrigin->{0, 0},
   DisplayFunction->Identity,
   Frame->{{False, False}, {False, False}},
   FrameLabel->{{None, None}, {None, None}},
-  FrameTicks->{{Automatic, 
-     Charting`ScaledFrameTicks[{Identity, Identity}]}, {Automatic, 
+  FrameTicks->{{Automatic,
+     Charting`ScaledFrameTicks[{Identity, Identity}]}, {Automatic,
      Charting`ScaledFrameTicks[{Identity, Identity}]}},
   GridLines->{None, None},
   GridLinesStyle->Directive[
     GrayLevel[0.5, 0.4]],
   ImagePadding->All,
   Method->{
-   "DefaultBoundaryStyle" -> Automatic, "DefaultMeshStyle" -> 
-    AbsolutePointSize[6], "ScalingFunctions" -> None, 
+   "DefaultBoundaryStyle" -> Automatic, "DefaultMeshStyle" ->
+    AbsolutePointSize[6], "ScalingFunctions" -> None,
     "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
         (Identity[#]& )[
-         Part[#, 1]], 
+         Part[#, 1]],
         (Identity[#]& )[
          Part[#, 2]]}& ), "CopiedValueFunction" -> ({
         (Identity[#]& )[
-         Part[#, 1]], 
+         Part[#, 1]],
         (Identity[#]& )[
          Part[#, 2]]}& )}},
   PlotRange->{{-90, 90}, {0., 0.9999999707682925}},
   PlotRangeClipping->True,
   PlotRangePadding->{{
-     Scaled[0.02], 
+     Scaled[0.02],
      Scaled[0.02]}, {
-     Scaled[0.05], 
+     Scaled[0.05],
      Scaled[0.05]}},
   Ticks->{Automatic, Automatic}]], "Output",
  CellChangeTimes->{
   3.708348087141313*^9, 3.7083481409081507`*^9, 3.708348327563547*^9, {
-   3.70834927689005*^9, 
+   3.70834927689005*^9,
    3.708349300445147*^9}},ExpressionUUID->"d7089512-c637-488a-a128-\
 88384cb35932"]
 }, Open  ]]
@@ -381,4 +381,3 @@ Cell[1648, 53, 16826, 299, 253, "Output", "ExpressionUUID" -> \
 *)
 
 (* End of internal cache information *)
-

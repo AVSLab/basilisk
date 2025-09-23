@@ -41,9 +41,9 @@
  */
 struct GravitySource
 {
-    std::shared_ptr<GravityModel> model; ///< The gravity model associated with the source.
+    std::shared_ptr<GravityModel> model;                ///< The gravity model associated with the source.
     ReadFunctor<SpicePlanetStateMsgPayload> stateInMsg; ///< Input message providing the state of the source.
-    bool isCentralBody; ///< Flag indicating whether this source is the central body.
+    bool isCentralBody;                                 ///< Flag indicating whether this source is the central body.
 };
 
 /**
@@ -55,7 +55,7 @@ struct GravityTarget
 {
     ReadFunctor<SCMassPropsMsgPayload> massPropertiesInMsg; ///< Input message for the target's mass properties.
     ReadFunctor<SCStatesMsgPayload> centerOfMassStateInMsg; ///< Input message for the target's state.
-    Message<ForceAtSiteMsgPayload> massFixedForceOutMsg; ///< Output message for the computed force.
+    Message<ForceAtSiteMsgPayload> massFixedForceOutMsg;    ///< Output message for the computed force.
 };
 
 /**
@@ -67,7 +67,7 @@ struct GravityTarget
  */
 class NBodyGravity : public SysModel
 {
-public:
+  public:
     /**
      * @brief Resets the N-body gravity simulation.
      *
@@ -179,10 +179,10 @@ public:
      */
     Eigen::Vector3d computeAccelerationOnTarget(GravityTarget& target);
 
-public:
+  public:
     BSKLogger bskLogger; ///< BSK Logging
 
-protected:
+  protected:
     // NOTE: choosing map over unordered_map so that computations
     // are run in a consistent order
 

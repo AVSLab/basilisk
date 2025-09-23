@@ -10,9 +10,9 @@ not every source of uncertainty in the problem is an estimated parameter. Future
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
 .. _ModuleIO_smallBodyNavEKF:
@@ -23,7 +23,7 @@ provides information on what this message is used for.
 
 Note that this C++ FSW module provides both C- and C++-wrapped output messages.  The regular C++ wrapped output
 messages end with the usual ``...OutMsg``.  The C wrapped output messages have the same payload type, but end
-with ``...OutMsgC``.  
+with ``...OutMsgC``.
 
 .. list-table:: Module I/O Messages
     :widths: 25 25 50

@@ -65,7 +65,6 @@ Running this example script will yield the following results.
 """
 
 
-
 #
 # Basilisk Scenario Script and Integrated Test
 #
@@ -78,6 +77,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
@@ -85,10 +85,16 @@ from Basilisk import __path__
 bskPath = __path__[0]
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+)
 from Basilisk.utilities import planetStates
 from numpy import array
 from numpy.linalg import norm
@@ -103,10 +109,10 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def run(show_plots, useCentral):
     """
-        Args:
-            show_plots (bool): Determines if the script should display plots
-            useCentral (bool): Specifies if the planet is the center of the coordinate system
-        """
+    Args:
+        show_plots (bool): Determines if the script should display plots
+        useCentral (bool): Specifies if the planet is the center of the coordinate system
+    """
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -121,7 +127,7 @@ def run(show_plots, useCentral):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -138,13 +144,13 @@ def run(show_plots, useCentral):
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
-    planet.isCentralBody = useCentral          # ensure this is the central gravitational body
+    planet.isCentralBody = useCentral  # ensure this is the central gravitational body
     mu = planet.mu
 
     # set up sun
     gravFactory.createSun()
 
-    #Set up spice with spice time
+    # Set up spice with spice time
     UTCInit = "2012 MAY 1 00:28:30.0"
     spiceObject = gravFactory.createSpiceInterface(time=UTCInit, epochInMsg=True)
     scSim.AddModelToTask(simTaskName, spiceObject)
@@ -157,7 +163,7 @@ def run(show_plots, useCentral):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000      # meters
+    rLEO = 7000.0 * 1000  # meters
     oe.a = rLEO
     oe.e = 0.000001
     oe.i = 0.0 * macros.D2R
@@ -165,9 +171,11 @@ def run(show_plots, useCentral):
     oe.omega = 0.0 * macros.D2R
     oe.f = 0.0 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    truth_r = norm(rN) #for test results
-    truth_v = norm(vN) #for test results
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements wrt ECI frame
+    truth_r = norm(rN)  # for test results
+    truth_v = norm(vN)  # for test results
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements wrt ECI frame
 
     #
     #   initialize Spacecraft States with the initialization variables
@@ -188,10 +196,12 @@ def run(show_plots, useCentral):
         scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
         scObject.hub.v_CN_NInit = vN  # m/s - v_BN_N
     else:
-        #by default planetstates.planetPositionVelocity returns SSB central ICRS coordinates for the planet at the time
+        # by default planetstates.planetPositionVelocity returns SSB central ICRS coordinates for the planet at the time
         # requested. also pck0010.tpc ephemeris file
-        #look in the function for how to use other ephemeris files, reference frames, and observers
-        planetPosition, planetVelocity = planetStates.planetPositionVelocity('EARTH', UTCInit)
+        # look in the function for how to use other ephemeris files, reference frames, and observers
+        planetPosition, planetVelocity = planetStates.planetPositionVelocity(
+            "EARTH", UTCInit
+        )
         scObject.hub.r_CN_NInit = rN + array(planetPosition)
         scObject.hub.v_CN_NInit = vN + array(planetVelocity)
         # In the above call, the first input is the planet to get the states of and the second is the UTC time
@@ -202,26 +212,30 @@ def run(show_plots, useCentral):
         # zero base. Additionally, it is assumed for this script that the Keplerian orbital elements were given relative
         # to the Earth Centered Inertial Frame which is aligned with the spice inertial frame.
 
-
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
-    simulationTime = macros.sec2nano(0.75*P)
+    P = 2.0 * np.pi / n
+    simulationTime = macros.sec2nano(0.75 * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     plLog = spiceObject.planetStateOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
     scSim.AddModelToTask(simTaskName, plLog)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        # , saveFile=fileName
-                                        )
+    vizSupport.enableUnityVisualization(
+        scSim,
+        simTaskName,
+        scObject,
+        # , saveFile=fileName
+    )
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -253,7 +267,7 @@ def run(show_plots, useCentral):
     # Plots found when running this scenario are the same as the basic orbit scenario and are included for visual inspection that the results are
     # roughly the same regardless of the use of a central body.
 
-    #bring the s/c pos, vel back to earth relative coordinates to plot
+    # bring the s/c pos, vel back to earth relative coordinates to plot
     posData[:] -= earthPositionHistory[:]
     velData[:] -= earthVelocityHistory[:]
 
@@ -270,14 +284,17 @@ def run(show_plots, useCentral):
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(3):
-        plt.plot(dataLog.times() * macros.NANO2SEC / P, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            dataLog.times() * macros.NANO2SEC / P,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
     pltName = fileName + "1" + str(int(useCentral))
     figureList[pltName] = plt.figure(1)
@@ -290,7 +307,7 @@ def run(show_plots, useCentral):
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
-    planetColor = '#008800'
+    planetColor = "#008800"
     planetRadius = planet.radEquator / 1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
@@ -300,15 +317,20 @@ def run(show_plots, useCentral):
         oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(posData[:,0] / 1000, posData[:,1] / 1000, color='#aa0000', linewidth=3.0)
+    plt.plot(posData[:, 0] / 1000, posData[:, 1] / 1000, color="#aa0000", linewidth=3.0)
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555')
-    plt.xlabel('$i_e$ Cord. [km]')
-    plt.ylabel('$i_p$ Cord. [km]')
+    plt.plot(
+        rData * np.cos(fData) / 1000,
+        rData * np.sin(fData) / 1000,
+        "--",
+        color="#555555",
+    )
+    plt.xlabel("$i_e$ Cord. [km]")
+    plt.ylabel("$i_p$ Cord. [km]")
     plt.grid()
     pltName = fileName + "2" + str(int(useCentral))
     figureList[pltName] = plt.figure(2)
@@ -321,11 +343,12 @@ def run(show_plots, useCentral):
 
     return out_r, out_v, truth_r, truth_v, figureList
 
+
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
     run(
-        True,        # show_plots
-        False        # useCentral
+        True,  # show_plots
+        False,  # useCentral
     )

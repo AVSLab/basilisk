@@ -102,7 +102,12 @@ from Basilisk.simulation import radiationPressure
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import simpleNav
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+    vizSupport,
+)
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
 from Basilisk.utilities import unitTestSupport
@@ -116,29 +121,29 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 # Plotting functions
 def plot_position(time, meas_time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
     """Plot the relative position result."""
-    #plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    # plt.gcf()
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(meas_time, r_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(meas_time, r_BO_O_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(meas_time, r_BO_O_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, r_BO_O_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(meas_time, r_BO_O_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(meas_time, r_BO_O_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, r_BO_O_truth[:, 0], label=r'${}^Or_{BO_{1}}$')
-    ax[1].plot(time, r_BO_O_truth[:, 1], label=r'${}^Or_{BO_{2}}$')
-    ax[2].plot(time, r_BO_O_truth[:, 2], label=r'${}^Or_{BO_{3}}$')
+    ax[0].plot(time, r_BO_O_truth[:, 0], label=r"${}^Or_{BO_{1}}$")
+    ax[1].plot(time, r_BO_O_truth[:, 1], label=r"${}^Or_{BO_{2}}$")
+    ax[2].plot(time, r_BO_O_truth[:, 2], label=r"${}^Or_{BO_{3}}$")
 
-    ax[0].plot(time, r_BO_O_est[:, 0], label='estimate')
+    ax[0].plot(time, r_BO_O_est[:, 0], label="estimate")
     ax[1].plot(time, r_BO_O_est[:, 1])
     ax[2].plot(time, r_BO_O_est[:, 2])
 
-    plt.xlabel('Time [sec]')
-    plt.title('Relative Spacecraft Position')
+    plt.xlabel("Time [sec]")
+    plt.title("Relative Spacecraft Position")
 
-    ax[0].set_ylabel(r'${}^O r_{BO_{1}}$ [m]')
-    ax[1].set_ylabel(r'${}^O r_{BO_{2}}$ [m]')
-    ax[2].set_ylabel(r'${}^O r_{BO_{3}}$ [m]')
+    ax[0].set_ylabel(r"${}^O r_{BO_{1}}$ [m]")
+    ax[1].set_ylabel(r"${}^O r_{BO_{2}}$ [m]")
+    ax[2].set_ylabel(r"${}^O r_{BO_{3}}$ [m]")
 
     ax[0].legend()
 
@@ -148,28 +153,28 @@ def plot_position(time, meas_time, r_BO_O_truth, r_BO_O_est, r_BO_O_meas):
 def plot_velocity(time, meas_time, v_BO_O_truth, v_BO_O_est, v_BO_O_meas):
     """Plot the relative velocity result."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(meas_time, v_BO_O_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(meas_time, v_BO_O_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(meas_time, v_BO_O_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, v_BO_O_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(meas_time, v_BO_O_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(meas_time, v_BO_O_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, v_BO_O_truth[:, 0], label='truth')
+    ax[0].plot(time, v_BO_O_truth[:, 0], label="truth")
     ax[1].plot(time, v_BO_O_truth[:, 1])
     ax[2].plot(time, v_BO_O_truth[:, 2])
 
-    ax[0].plot(time, v_BO_O_est[:, 0], label='estimate')
+    ax[0].plot(time, v_BO_O_est[:, 0], label="estimate")
     ax[1].plot(time, v_BO_O_est[:, 1])
     ax[2].plot(time, v_BO_O_est[:, 2])
 
-    plt.xlabel('Time [sec]')
-    plt.title('Relative Spacecraft Velocity')
+    plt.xlabel("Time [sec]")
+    plt.title("Relative Spacecraft Velocity")
 
-    ax[0].set_ylabel(r'${}^Ov_{BO_1}$ [m/s]')
-    ax[1].set_ylabel(r'${}^Ov_{BO_2}$ [m/s]')
-    ax[2].set_ylabel(r'${}^Ov_{BO_3}$ [m/s]')
+    ax[0].set_ylabel(r"${}^Ov_{BO_1}$ [m/s]")
+    ax[1].set_ylabel(r"${}^Ov_{BO_2}$ [m/s]")
+    ax[2].set_ylabel(r"${}^Ov_{BO_3}$ [m/s]")
 
     ax[0].legend()
 
@@ -180,28 +185,28 @@ def plot_pos_error(time, r_err, P):
     """Plot the position estimation error and associated covariance."""
     # plt.figure(3)
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, r_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 0, 0]), 'k--', label=r'$2\sigma$')
-    ax[0].plot(time, -2*np.sqrt(P[:, 0, 0]), 'k--')
+    ax[0].plot(time, r_err[:, 0], label="error")
+    ax[0].plot(time, 2 * np.sqrt(P[:, 0, 0]), "k--", label=r"$2\sigma$")
+    ax[0].plot(time, -2 * np.sqrt(P[:, 0, 0]), "k--")
 
     ax[1].plot(time, r_err[:, 1])
-    ax[1].plot(time, 2*np.sqrt(P[:, 1, 1]), 'k--')
-    ax[1].plot(time, -2*np.sqrt(P[:, 1, 1]), 'k--')
+    ax[1].plot(time, 2 * np.sqrt(P[:, 1, 1]), "k--")
+    ax[1].plot(time, -2 * np.sqrt(P[:, 1, 1]), "k--")
 
     ax[2].plot(time, r_err[:, 2])
-    ax[2].plot(time, 2*np.sqrt(P[:, 2, 2]), 'k--')
-    ax[2].plot(time, -2*np.sqrt(P[:, 2, 2]), 'k--')
+    ax[2].plot(time, 2 * np.sqrt(P[:, 2, 2]), "k--")
+    ax[2].plot(time, -2 * np.sqrt(P[:, 2, 2]), "k--")
 
-    plt.xlabel('Time [sec]')
-    plt.title('Position Error and Covariance')
+    plt.xlabel("Time [sec]")
+    plt.title("Position Error and Covariance")
 
-    ax[0].set_ylabel(r'${}^Or_{BO_1}$ Error [m]')
-    ax[1].set_ylabel(r'${}^Or_{BO_2}$ Error [m]')
-    ax[2].set_ylabel(r'${}^Or_{BO_3}$ Error [m]')
+    ax[0].set_ylabel(r"${}^Or_{BO_1}$ Error [m]")
+    ax[1].set_ylabel(r"${}^Or_{BO_2}$ Error [m]")
+    ax[2].set_ylabel(r"${}^Or_{BO_3}$ Error [m]")
 
     ax[0].legend()
 
@@ -212,28 +217,28 @@ def plot_vel_error(time, v_err, P):
     """Plot the position estimation error and associated covariance."""
     # plt.figure(4)
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, v_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 3, 3]), 'k--', label=r'$2\sigma$')
-    ax[0].plot(time, -2*np.sqrt(P[:, 3, 3]), 'k--')
+    ax[0].plot(time, v_err[:, 0], label="error")
+    ax[0].plot(time, 2 * np.sqrt(P[:, 3, 3]), "k--", label=r"$2\sigma$")
+    ax[0].plot(time, -2 * np.sqrt(P[:, 3, 3]), "k--")
 
     ax[1].plot(time, v_err[:, 1])
-    ax[1].plot(time, 2*np.sqrt(P[:, 4, 4]), 'k--')
-    ax[1].plot(time, -2*np.sqrt(P[:, 4, 4]), 'k--')
+    ax[1].plot(time, 2 * np.sqrt(P[:, 4, 4]), "k--")
+    ax[1].plot(time, -2 * np.sqrt(P[:, 4, 4]), "k--")
 
     ax[2].plot(time, v_err[:, 2])
-    ax[2].plot(time, 2*np.sqrt(P[:, 5, 5]), 'k--')
-    ax[2].plot(time, -2*np.sqrt(P[:, 5, 5]), 'k--')
+    ax[2].plot(time, 2 * np.sqrt(P[:, 5, 5]), "k--")
+    ax[2].plot(time, -2 * np.sqrt(P[:, 5, 5]), "k--")
 
-    plt.xlabel('Time [sec]')
-    plt.title('Velocity Error and Covariance')
+    plt.xlabel("Time [sec]")
+    plt.title("Velocity Error and Covariance")
 
-    ax[0].set_ylabel('${}^Ov_{BO_1}$ Error [m/s]')
-    ax[1].set_ylabel('${}^Ov_{BO_2}$ Error [m/s]')
-    ax[2].set_ylabel('${}^Ov_{BO_3}$ Error [m/s]')
+    ax[0].set_ylabel("${}^Ov_{BO_1}$ Error [m/s]")
+    ax[1].set_ylabel("${}^Ov_{BO_2}$ Error [m/s]")
+    ax[2].set_ylabel("${}^Ov_{BO_3}$ Error [m/s]")
 
     ax[0].legend()
 
@@ -242,27 +247,27 @@ def plot_vel_error(time, v_err, P):
 
 def plot_sc_att(time, meas_time, sigma_BN_truth, sigma_BN_est, sigma_BN_meas):
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(meas_time, sigma_BN_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(meas_time, sigma_BN_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(meas_time, sigma_BN_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, sigma_BN_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(meas_time, sigma_BN_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(meas_time, sigma_BN_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, sigma_BN_truth[:, 0], label='truth')
+    ax[0].plot(time, sigma_BN_truth[:, 0], label="truth")
     ax[1].plot(time, sigma_BN_truth[:, 1])
     ax[2].plot(time, sigma_BN_truth[:, 2])
 
-    ax[0].plot(time, sigma_BN_est[:, 0], label='estimate')
+    ax[0].plot(time, sigma_BN_est[:, 0], label="estimate")
     ax[1].plot(time, sigma_BN_est[:, 1])
     ax[2].plot(time, sigma_BN_est[:, 2])
 
-    plt.xlabel('Time [sec]')
+    plt.xlabel("Time [sec]")
 
-    ax[0].set_ylabel(r'$\sigma_{BN_1}$ [rad]')
-    ax[1].set_ylabel(r'$\sigma_{BN_2}$ [rad]')
-    ax[2].set_ylabel(r'$\sigma_{BN_3}$ [rad]')
+    ax[0].set_ylabel(r"$\sigma_{BN_1}$ [rad]")
+    ax[1].set_ylabel(r"$\sigma_{BN_2}$ [rad]")
+    ax[2].set_ylabel(r"$\sigma_{BN_3}$ [rad]")
 
     ax[0].legend()
 
@@ -271,27 +276,29 @@ def plot_sc_att(time, meas_time, sigma_BN_truth, sigma_BN_est, sigma_BN_meas):
 
 def plot_sc_rate(time, meas_time, omega_BN_B_truth, omega_BN_B_est, omega_BN_B_meas):
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(meas_time, omega_BN_B_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(meas_time, omega_BN_B_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(meas_time, omega_BN_B_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(
+        meas_time, omega_BN_B_meas[:, 0], "k*", label="measurement", markersize=1
+    )
+    ax[1].plot(meas_time, omega_BN_B_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(meas_time, omega_BN_B_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, omega_BN_B_truth[:, 0], label='truth')
+    ax[0].plot(time, omega_BN_B_truth[:, 0], label="truth")
     ax[1].plot(time, omega_BN_B_truth[:, 1])
     ax[2].plot(time, omega_BN_B_truth[:, 2])
 
-    ax[0].plot(time, omega_BN_B_est[:, 0], label='estimate')
+    ax[0].plot(time, omega_BN_B_est[:, 0], label="estimate")
     ax[1].plot(time, omega_BN_B_est[:, 1])
     ax[2].plot(time, omega_BN_B_est[:, 2])
 
-    plt.xlabel('Time [sec]')
+    plt.xlabel("Time [sec]")
 
-    ax[0].set_ylabel(r'${}^B\omega_{BN_{1}}$ [rad/s]')
-    ax[1].set_ylabel(r'${}^B\omega_{BN_{2}}$ [rad/s]')
-    ax[2].set_ylabel(r'${}^B\omega_{BN_{3}}$ [rad/s]')
+    ax[0].set_ylabel(r"${}^B\omega_{BN_{1}}$ [rad/s]")
+    ax[1].set_ylabel(r"${}^B\omega_{BN_{2}}$ [rad/s]")
+    ax[2].set_ylabel(r"${}^B\omega_{BN_{3}}$ [rad/s]")
 
     ax[0].legend()
 
@@ -300,27 +307,27 @@ def plot_sc_rate(time, meas_time, omega_BN_B_truth, omega_BN_B_est, omega_BN_B_m
 
 def plot_ast_att(time, meas_time, sigma_AN_truth, sigma_AN_est, sigma_AN_meas):
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, sharey=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(meas_time, sigma_AN_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(meas_time, sigma_AN_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(meas_time, sigma_AN_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(meas_time, sigma_AN_meas[:, 0], "k*", label="measurement", markersize=1)
+    ax[1].plot(meas_time, sigma_AN_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(meas_time, sigma_AN_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, sigma_AN_truth[:, 0], label='truth')
+    ax[0].plot(time, sigma_AN_truth[:, 0], label="truth")
     ax[1].plot(time, sigma_AN_truth[:, 1])
     ax[2].plot(time, sigma_AN_truth[:, 2])
 
-    ax[0].plot(time, sigma_AN_est[:, 0], label='estimate')
+    ax[0].plot(time, sigma_AN_est[:, 0], label="estimate")
     ax[1].plot(time, sigma_AN_est[:, 1])
     ax[2].plot(time, sigma_AN_est[:, 2])
 
-    plt.xlabel('Time [sec]')
+    plt.xlabel("Time [sec]")
 
-    ax[0].set_ylabel(r'$\sigma_{AN_{1}}$ [rad]')
-    ax[1].set_ylabel(r'$\sigma_{AN_{2}}$ [rad]')
-    ax[2].set_ylabel(r'$\sigma_{AN_{3}}$ [rad]')
+    ax[0].set_ylabel(r"$\sigma_{AN_{1}}$ [rad]")
+    ax[1].set_ylabel(r"$\sigma_{AN_{2}}$ [rad]")
+    ax[2].set_ylabel(r"$\sigma_{AN_{3}}$ [rad]")
 
     ax[0].legend()
 
@@ -329,27 +336,29 @@ def plot_ast_att(time, meas_time, sigma_AN_truth, sigma_AN_est, sigma_AN_meas):
 
 def plot_ast_rate(time, meas_time, omega_AN_A_truth, omega_AN_A_est, omega_AN_A_meas):
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(meas_time, omega_AN_A_meas[:, 0], 'k*', label='measurement', markersize=1)
-    ax[1].plot(meas_time, omega_AN_A_meas[:, 1], 'k*', markersize=1)
-    ax[2].plot(meas_time, omega_AN_A_meas[:, 2], 'k*', markersize=1)
+    ax[0].plot(
+        meas_time, omega_AN_A_meas[:, 0], "k*", label="measurement", markersize=1
+    )
+    ax[1].plot(meas_time, omega_AN_A_meas[:, 1], "k*", markersize=1)
+    ax[2].plot(meas_time, omega_AN_A_meas[:, 2], "k*", markersize=1)
 
-    ax[0].plot(time, omega_AN_A_truth[:, 0], label='truth')
+    ax[0].plot(time, omega_AN_A_truth[:, 0], label="truth")
     ax[1].plot(time, omega_AN_A_truth[:, 1])
     ax[2].plot(time, omega_AN_A_truth[:, 2])
 
-    ax[0].plot(time, omega_AN_A_est[:, 0], label='estimate')
+    ax[0].plot(time, omega_AN_A_est[:, 0], label="estimate")
     ax[1].plot(time, omega_AN_A_est[:, 1])
     ax[2].plot(time, omega_AN_A_est[:, 2])
 
-    ax[0].set_ylabel(r'${}^A\omega_{AN_{1}}$ [rad/s]')
-    ax[1].set_ylabel(r'${}^A\omega_{AN_{2}}$ [rad/s]')
-    ax[2].set_ylabel(r'${}^A\omega_{AN_{3}}$ [rad/s]')
+    ax[0].set_ylabel(r"${}^A\omega_{AN_{1}}$ [rad/s]")
+    ax[1].set_ylabel(r"${}^A\omega_{AN_{2}}$ [rad/s]")
+    ax[2].set_ylabel(r"${}^A\omega_{AN_{3}}$ [rad/s]")
 
-    plt.xlabel('Time [sec]')
+    plt.xlabel("Time [sec]")
 
     ax[0].legend()
 
@@ -359,28 +368,28 @@ def plot_ast_rate(time, meas_time, omega_AN_A_truth, omega_AN_A_est, omega_AN_A_
 def plot_ast_attitude_error(time, sigma_err, P):
     """Plot the asteroid attitude estimation error and associated covariance."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, sigma_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 6, 6]), 'k--', label=r'$2\sigma$')
-    ax[0].plot(time, -2*np.sqrt(P[:, 6, 6]), 'k--')
+    ax[0].plot(time, sigma_err[:, 0], label="error")
+    ax[0].plot(time, 2 * np.sqrt(P[:, 6, 6]), "k--", label=r"$2\sigma$")
+    ax[0].plot(time, -2 * np.sqrt(P[:, 6, 6]), "k--")
 
     ax[1].plot(time, sigma_err[:, 1])
-    ax[1].plot(time, 2*np.sqrt(P[:, 7, 7]), 'k--')
-    ax[1].plot(time, -2*np.sqrt(P[:, 7, 7]), 'k--')
+    ax[1].plot(time, 2 * np.sqrt(P[:, 7, 7]), "k--")
+    ax[1].plot(time, -2 * np.sqrt(P[:, 7, 7]), "k--")
 
     ax[2].plot(time, sigma_err[:, 2])
-    ax[2].plot(time, 2*np.sqrt(P[:, 8, 8]), 'k--')
-    ax[2].plot(time, -2*np.sqrt(P[:, 8, 8]), 'k--')
+    ax[2].plot(time, 2 * np.sqrt(P[:, 8, 8]), "k--")
+    ax[2].plot(time, -2 * np.sqrt(P[:, 8, 8]), "k--")
 
-    plt.xlabel('Time [sec]')
-    plt.title('Attitude Error and Covariance')
+    plt.xlabel("Time [sec]")
+    plt.title("Attitude Error and Covariance")
 
-    ax[0].set_ylabel(r'$\sigma_{AN_{1}}$ Error [rad]')
-    ax[1].set_ylabel(r'$\sigma_{AN_{2}}$ Error [rad]')
-    ax[2].set_ylabel(r'$\sigma_{AN_{3}}$ Error [rad]')
+    ax[0].set_ylabel(r"$\sigma_{AN_{1}}$ Error [rad]")
+    ax[1].set_ylabel(r"$\sigma_{AN_{2}}$ Error [rad]")
+    ax[2].set_ylabel(r"$\sigma_{AN_{3}}$ Error [rad]")
 
     ax[0].legend()
 
@@ -390,28 +399,28 @@ def plot_ast_attitude_error(time, sigma_err, P):
 def plot_ast_rate_error(time, omega_err, P):
     """Plot the asteroid rate estimation error and associated covariance."""
     plt.gcf()
-    fig, ax = plt.subplots(3, sharex=True, figsize=(12,6))
+    fig, ax = plt.subplots(3, sharex=True, figsize=(12, 6))
     fig.add_subplot(111, frameon=False)
-    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    plt.tick_params(labelcolor="none", top=False, bottom=False, left=False, right=False)
 
-    ax[0].plot(time, omega_err[:, 0], label='error')
-    ax[0].plot(time, 2*np.sqrt(P[:, 9, 9]), 'k--', label=r'$2\sigma$')
-    ax[0].plot(time, -2*np.sqrt(P[:, 9, 9]), 'k--')
+    ax[0].plot(time, omega_err[:, 0], label="error")
+    ax[0].plot(time, 2 * np.sqrt(P[:, 9, 9]), "k--", label=r"$2\sigma$")
+    ax[0].plot(time, -2 * np.sqrt(P[:, 9, 9]), "k--")
 
     ax[1].plot(time, omega_err[:, 1])
-    ax[1].plot(time, 2*np.sqrt(P[:, 10, 10]), 'k--')
-    ax[1].plot(time, -2*np.sqrt(P[:, 10, 10]), 'k--')
+    ax[1].plot(time, 2 * np.sqrt(P[:, 10, 10]), "k--")
+    ax[1].plot(time, -2 * np.sqrt(P[:, 10, 10]), "k--")
 
     ax[2].plot(time, omega_err[:, 2])
-    ax[2].plot(time, 2*np.sqrt(P[:, 11, 11]), 'k--')
-    ax[2].plot(time, -2*np.sqrt(P[:, 11, 11]), 'k--')
+    ax[2].plot(time, 2 * np.sqrt(P[:, 11, 11]), "k--")
+    ax[2].plot(time, -2 * np.sqrt(P[:, 11, 11]), "k--")
 
-    plt.xlabel('Time [sec]')
-    plt.title('Position Error and Covariance')
+    plt.xlabel("Time [sec]")
+    plt.title("Position Error and Covariance")
 
-    ax[0].set_ylabel(r'${}^A\omega_{AN_{1}}$ Error [rad/s]')
-    ax[1].set_ylabel(r'${}^A\omega_{AN_{2}}$ Error [rad/s]')
-    ax[2].set_ylabel(r'${}^A\omega_{AN_{3}}$ Error [rad/s]')
+    ax[0].set_ylabel(r"${}^A\omega_{AN_{1}}$ Error [rad/s]")
+    ax[1].set_ylabel(r"${}^A\omega_{AN_{2}}$ Error [rad/s]")
+    ax[2].set_ylabel(r"${}^A\omega_{AN_{3}}$ Error [rad/s]")
 
     ax[0].legend()
 
@@ -451,7 +460,7 @@ def run(show_plots):
 
     # setup celestial object ephemeris module
     gravBodyEphem = planetEphemeris.PlanetEphemeris()
-    gravBodyEphem.ModelTag = 'planetEphemeris'
+    gravBodyEphem.ModelTag = "planetEphemeris"
     gravBodyEphem.setPlanetNames(planetEphemeris.StringVector(["bennu"]))
 
     # specify orbits of gravitational bodies
@@ -464,7 +473,9 @@ def run(show_plots):
     oeAsteroid.Omega = 2.01820 * macros.D2R
     oeAsteroid.omega = 66.304 * macros.D2R
     oeAsteroid.f = 346.32 * macros.D2R
-    r_ON_N, v_ON_N = orbitalMotion.elem2rv(orbitalMotion.MU_SUN*(1000.**3), oeAsteroid)
+    r_ON_N, v_ON_N = orbitalMotion.elem2rv(
+        orbitalMotion.MU_SUN * (1000.0**3), oeAsteroid
+    )
 
     # specify celestial object orbit
     gravBodyEphem.planetElements = planetEphemeris.classicElementVector([oeAsteroid])
@@ -472,7 +483,9 @@ def run(show_plots):
     gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([86.6388 * macros.D2R])
     gravBodyEphem.declination = planetEphemeris.DoubleVector([-65.1086 * macros.D2R])
     gravBodyEphem.lst0 = planetEphemeris.DoubleVector([0.0 * macros.D2R])
-    gravBodyEphem.rotRate = planetEphemeris.DoubleVector([360 * macros.D2R / (4.297461 * 3600.)])
+    gravBodyEphem.rotRate = planetEphemeris.DoubleVector(
+        [360 * macros.D2R / (4.297461 * 3600.0)]
+    )
 
     # setup Sun Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -489,10 +502,9 @@ def run(show_plots):
     sunEphemerisMsg.write(sunEphemerisMsgData)
 
     mu = 4.892  # m^3/s^2
-    asteroid = gravFactory.createCustomGravObject("bennu", mu
-                                                  , modelDictionaryKey="Bennu"
-                                                  , radEquator=565. / 2.0
-                                                  )
+    asteroid = gravFactory.createCustomGravObject(
+        "bennu", mu, modelDictionaryKey="Bennu", radEquator=565.0 / 2.0
+    )
     asteroid.planetBodyInMsg.subscribeTo(gravBodyEphem.planetOutMsgs[0])
 
     # create SC object
@@ -501,8 +513,12 @@ def run(show_plots):
     gravFactory.addBodiesTo(scObject)
 
     # Create the position and velocity of states of the s/c wrt the small body hill frame
-    r_BO_N = np.array([2000., 1500., 1000.]) # Position of the spacecraft relative to the body
-    v_BO_N = np.array([1., 1., 1.])  # Velocity of the spacecraft relative to the body
+    r_BO_N = np.array(
+        [2000.0, 1500.0, 1000.0]
+    )  # Position of the spacecraft relative to the body
+    v_BO_N = np.array(
+        [1.0, 1.0, 1.0]
+    )  # Velocity of the spacecraft relative to the body
 
     # Create the inertial position and velocity of the s/c
     r_BN_N = np.add(r_BO_N, r_ON_N)
@@ -514,7 +530,7 @@ def run(show_plots):
 
     I = [82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0]
 
-    mass = 330.  # kg
+    mass = 330.0  # kg
     scObject.hub.mHub = mass
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
@@ -526,12 +542,24 @@ def run(show_plots):
     rwFactory = simIncludeRW.rwFactory()
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
-                           )
-    RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
-                           )
-    RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
-                           )
+    RW1 = rwFactory.create(
+        "Honeywell_HR16",
+        [1, 0, 0],
+        maxMomentum=50.0,
+        Omega=100.0,  # RPM
+    )
+    RW2 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 1, 0],
+        maxMomentum=50.0,
+        Omega=200.0,  # RPM
+    )
+    RW3 = rwFactory.create(
+        "Honeywell_HR16",
+        [0, 0, 1],
+        maxMomentum=50.0,
+        Omega=300.0,  # RPM
+    )
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
@@ -545,8 +573,10 @@ def run(show_plots):
     thrusterMsg.write(thrusterMsgData)
 
     # Create an SRP model
-    srp = radiationPressure.RadiationPressure()  # default model is the SRP_CANNONBALL_MODEL
-    srp.area = 3.  # m^3
+    srp = (
+        radiationPressure.RadiationPressure()
+    )  # default model is the SRP_CANNONBALL_MODEL
+    srp.area = 3.0  # m^3
     srp.coefficientReflection = 0.9
     scObject.addDynamicEffector(srp)
     srp.sunEphmInMsg.subscribeTo(sunPlanetStateMsg)
@@ -558,38 +588,401 @@ def run(show_plots):
 
     # Set up simpleNav for s/c "measurements"
     simpleNavMeas = simpleNav.SimpleNav()
-    simpleNavMeas.ModelTag = 'SimpleNav'
+    simpleNavMeas.ModelTag = "SimpleNav"
     simpleNavMeas.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     pos_sigma_sc = 40.0
     vel_sigma_sc = 0.05
-    att_sigma_sc = 0. * math.pi / 180.0
-    rate_sigma_sc = 0. * math.pi / 180.0
+    att_sigma_sc = 0.0 * math.pi / 180.0
+    rate_sigma_sc = 0.0 * math.pi / 180.0
     sun_sigma_sc = 0.0
     dv_sigma_sc = 0.0
-    p_matrix_sc = [[pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., pos_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., vel_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_sc, 0., 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sun_sigma_sc, 0., 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0., 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc, 0.],
-                   [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dv_sigma_sc]]
-    walk_bounds_sc = [[10.], [10.], [10.], [0.01], [0.01], [0.01], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002], [0.], [0.], [0.], [0.], [0.], [0.]]
+    p_matrix_sc = [
+        [
+            pos_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            pos_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            pos_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            vel_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            vel_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            vel_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            att_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            att_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            att_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            rate_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            rate_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            rate_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            sun_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            sun_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            sun_sigma_sc,
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            dv_sigma_sc,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            dv_sigma_sc,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            dv_sigma_sc,
+        ],
+    ]
+    walk_bounds_sc = [
+        [10.0],
+        [10.0],
+        [10.0],
+        [0.01],
+        [0.01],
+        [0.01],
+        [0.005],
+        [0.005],
+        [0.005],
+        [0.002],
+        [0.002],
+        [0.002],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+    ]
     simpleNavMeas.PMatrix = p_matrix_sc
     simpleNavMeas.walkBounds = walk_bounds_sc
 
     simpleNavMeas2 = simpleNav.SimpleNav()
-    simpleNavMeas2.ModelTag = 'SimpleNav2'
+    simpleNavMeas2.ModelTag = "SimpleNav2"
     simpleNavMeas2.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
     simpleNavMeas2.PMatrix = p_matrix_sc
     simpleNavMeas2.walkBounds = walk_bounds_sc
@@ -602,19 +995,34 @@ def run(show_plots):
     vel_sigma_p = 0.0
     att_sigma_p = 1.0 * math.pi / 180.0
     rate_sigma_p = 0.1 * math.pi / 180.0
-    p_matrix_p = [[pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., pos_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., vel_sigma_p, 0., 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., att_sigma_p, 0., 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0., 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p, 0.],
-                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rate_sigma_p]]
-    walk_bounds_p = [[0.], [0.], [0.], [0.], [0.], [0.], [0.005], [0.005], [0.005], [0.002], [0.002], [0.002]]
+    p_matrix_p = [
+        [pos_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, pos_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, pos_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, vel_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, vel_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, vel_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, att_sigma_p, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, att_sigma_p, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, att_sigma_p, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rate_sigma_p, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rate_sigma_p, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rate_sigma_p],
+    ]
+    walk_bounds_p = [
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.005],
+        [0.005],
+        [0.005],
+        [0.002],
+        [0.002],
+        [0.002],
+    ]
     planetNavMeas.PMatrix = p_matrix_p
     planetNavMeas.walkBounds = walk_bounds_p
 
@@ -637,10 +1045,10 @@ def run(show_plots):
     mrpFeedbackControl.ModelTag = "mrpFeedbackControl"
     mrpFeedbackControl.guidInMsg.subscribeTo(trackingError.attGuidOutMsg)
     mrpFeedbackControl.vehConfigInMsg.subscribeTo(vcConfigMsg)
-    mrpFeedbackControl.K = 7.
+    mrpFeedbackControl.K = 7.0
     mrpFeedbackControl.Ki = -1.0
-    mrpFeedbackControl.P = 35.
-    mrpFeedbackControl.integralLimit = 2. / mrpFeedbackControl.Ki * 0.1
+    mrpFeedbackControl.P = 35.0
+    mrpFeedbackControl.integralLimit = 2.0 / mrpFeedbackControl.Ki * 0.1
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueObj = rwMotorTorque.rwMotorTorque()
@@ -656,11 +1064,11 @@ def run(show_plots):
     waypointFeedback.asteroidEphemerisInMsg.subscribeTo(planetNavMeas.ephemerisOutMsg)
     waypointFeedback.sunEphemerisInMsg.subscribeTo(sunEphemerisMsg)
     waypointFeedback.navAttInMsg.subscribeTo(simpleNavMeas2.attOutMsg)
-    waypointFeedback.A_sc = 1.  # Surface area of the spacecraft, m^2
+    waypointFeedback.A_sc = 1.0  # Surface area of the spacecraft, m^2
     waypointFeedback.M_sc = mass  # Mass of the spacecraft, kg
     waypointFeedback.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(I)  # sc inertia
     waypointFeedback.mu_ast = mu  # Gravitational constant of the asteroid
-    waypointFeedback.x1_ref = [-2000., 0., 0.]
+    waypointFeedback.x1_ref = [-2000.0, 0.0, 0.0]
     waypointFeedback.x2_ref = [0.0, 0.0, 0.0]
 
     extForceTorqueModule = extForceTorque.ExtForceTorque()
@@ -672,35 +1080,35 @@ def run(show_plots):
     smallBodyNav.ModelTag = "smallBodyNavEKF"
 
     # Set the filter parameters (sc area, mass, gravitational constants, etc.)
-    smallBodyNav.A_sc = 1.  # Surface area of the spacecraft, m^2
+    smallBodyNav.A_sc = 1.0  # Surface area of the spacecraft, m^2
     smallBodyNav.M_sc = mass  # Mass of the spacecraft, kg
     smallBodyNav.mu_ast = mu  # Gravitational constant of the asteroid
 
     # Set the process noise
-    Q = np.zeros((12,12))
-    Q[0,0] = Q[1,1] = Q[2,2] = 0.0000001
-    Q[3,3] = Q[4,4] = Q[5,5] = 0.000001
-    Q[6,6] = Q[7,7] = Q[8,8] = 0.000001
-    Q[9,9] = Q[10,10] = Q[11,11] = 0.0000001
+    Q = np.zeros((12, 12))
+    Q[0, 0] = Q[1, 1] = Q[2, 2] = 0.0000001
+    Q[3, 3] = Q[4, 4] = Q[5, 5] = 0.000001
+    Q[6, 6] = Q[7, 7] = Q[8, 8] = 0.000001
+    Q[9, 9] = Q[10, 10] = Q[11, 11] = 0.0000001
     smallBodyNav.Q = Q.tolist()
 
     # Set the measurement noise
-    R = np.zeros((12,12))
-    R[0,0] = R[1,1] = R[2,2] = pos_sigma_sc  # position sigmas
-    R[3,3] = R[4,4] = R[5,5] = vel_sigma_sc   # velocity sigmas
-    R[6,6] = R[7,7] = R[8,8] = att_sigma_p
-    R[9,9] = R[10,10] = R[11,11] = rate_sigma_p
+    R = np.zeros((12, 12))
+    R[0, 0] = R[1, 1] = R[2, 2] = pos_sigma_sc  # position sigmas
+    R[3, 3] = R[4, 4] = R[5, 5] = vel_sigma_sc  # velocity sigmas
+    R[6, 6] = R[7, 7] = R[8, 8] = att_sigma_p
+    R[9, 9] = R[10, 10] = R[11, 11] = rate_sigma_p
     smallBodyNav.R = np.multiply(R, R).tolist()  # Measurement Noise
 
     # Set the initial guess, x_0
     x_0 = np.zeros(18)
-    x_0[0:3] = np.array([2458., -704.08, 844.275])
+    x_0[0:3] = np.array([2458.0, -704.08, 844.275])
     x_0[3:6] = np.array([1.475, -0.176, 0.894])
     x_0[6:9] = np.array([-0.58, 0.615, 0.125])
     x_0[11] = 0.0004
     smallBodyNav.x_hat_k = x_0
     # Set the covariance to something large
-    smallBodyNav.P_k = (0.1*np.identity(12)).tolist()
+    smallBodyNav.P_k = (0.1 * np.identity(12)).tolist()
 
     # Connect the relevant modules to the smallBodyEKF input messages
     smallBodyNav.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
@@ -716,8 +1124,12 @@ def run(show_plots):
     waypointFeedback.navTransInMsg.subscribeTo(smallBodyNav.navTransOutMsg)
 
     # Set the waypoint feedback gains
-    waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d(
+        [5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4]
+    )
+    waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d(
+        [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    )
 
     # Add all models to the task
     scSim.AddModelToTask(simTaskName, scObject, 100)
@@ -755,9 +1167,12 @@ def run(show_plots):
     scSim.AddModelToTask(measTaskName, ast_ephemeris_meas_recorder)
 
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  # , saveFile=fileName
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            # , saveFile=fileName
+        )
         viz.settings.showSpacecraftLabels = 1
 
     #   initialize Simulation
@@ -768,19 +1183,19 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(1000.))
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(1000.0))
     scSim.disableTask(measTaskName)
     scSim.ExecuteSimulation()
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(2000.))
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(2000.0))
     scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(3000.))
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(3000.0))
     scSim.disableTask(measTaskName)
     scSim.ExecuteSimulation()
 
-    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(4000.))
+    scSim.ConfigureStopTime(simulationTime + macros.sec2nano(4000.0))
     scSim.enableTask(measTaskName)
     scSim.ExecuteSimulation()
 
@@ -809,8 +1224,8 @@ def run(show_plots):
     for rd_N, vd_N, rc_N, vc_N in zip(r_BN_N_truth, v_BN_N_truth, r_AN_N, v_AN_N):
         dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
 
-        r_BO_O_truth.append(np.matmul(dcm_ON, rd_N-rc_N))
-        v_BO_O_truth.append(np.matmul(dcm_ON, vd_N-vc_N))
+        r_BO_O_truth.append(np.matmul(dcm_ON, rd_N - rc_N))
+        v_BO_O_truth.append(np.matmul(dcm_ON, vd_N - vc_N))
 
     for idx, t in enumerate(meas_time):
         truth_idx = np.where(time == t)[0][0]
@@ -822,42 +1237,58 @@ def run(show_plots):
 
         dcm_ON = orbitalMotion.hillFrame(rc_N, vc_N)
 
-        r_BO_O_meas.append(np.matmul(dcm_ON, rd_N_meas-rc_N))
-        v_BO_O_meas.append(np.matmul(dcm_ON, vd_N_meas-vc_N))
+        r_BO_O_meas.append(np.matmul(dcm_ON, rd_N_meas - rc_N))
+        v_BO_O_meas.append(np.matmul(dcm_ON, vd_N_meas - vc_N))
 
     #
     #   plot the results
     #
-    plot_position(time, meas_time, np.array(r_BO_O_truth), x_hat[:,0:3], np.array(r_BO_O_meas))
+    plot_position(
+        time, meas_time, np.array(r_BO_O_truth), x_hat[:, 0:3], np.array(r_BO_O_meas)
+    )
     figureList = {}
     pltName = fileName + "1"
     figureList[pltName] = plt.figure(1)
 
-    plot_velocity(time, meas_time, np.array(v_BO_O_truth), x_hat[:,3:6], np.array(v_BO_O_meas))
+    plot_velocity(
+        time, meas_time, np.array(v_BO_O_truth), x_hat[:, 3:6], np.array(v_BO_O_meas)
+    )
     pltName = fileName + "2"
     figureList[pltName] = plt.figure(2)
 
-    plot_pos_error(time, np.subtract(r_BO_O_truth, x_hat[:,0:3]), P)
+    plot_pos_error(time, np.subtract(r_BO_O_truth, x_hat[:, 0:3]), P)
     pltName = fileName + "3"
     figureList[pltName] = plt.figure(3)
 
-    plot_vel_error(time, np.subtract(v_BO_O_truth,x_hat[:,3:6]), P)
+    plot_vel_error(time, np.subtract(v_BO_O_truth, x_hat[:, 3:6]), P)
     pltName = fileName + "4"
     figureList[pltName] = plt.figure(4)
 
-    plot_ast_att(time, meas_time, np.array(sigma_AN_truth), x_hat[:,6:9], np.array(sigma_AN_meas))
+    plot_ast_att(
+        time,
+        meas_time,
+        np.array(sigma_AN_truth),
+        x_hat[:, 6:9],
+        np.array(sigma_AN_meas),
+    )
     pltName = fileName + "5"
     figureList[pltName] = plt.figure(5)
 
-    plot_ast_rate(time, meas_time, np.array(omega_AN_A_truth), x_hat[:,9:12], np.array(omega_AN_A_meas))
+    plot_ast_rate(
+        time,
+        meas_time,
+        np.array(omega_AN_A_truth),
+        x_hat[:, 9:12],
+        np.array(omega_AN_A_meas),
+    )
     pltName = fileName + "6"
     figureList[pltName] = plt.figure(6)
 
-    plot_ast_attitude_error(time, np.subtract(sigma_AN_truth, x_hat[:,6:9]), P)
+    plot_ast_attitude_error(time, np.subtract(sigma_AN_truth, x_hat[:, 6:9]), P)
     pltName = fileName + "7"
     figureList[pltName] = plt.figure(7)
 
-    plot_ast_rate_error(time, np.subtract(omega_AN_A_truth, x_hat[:,9:12]), P)
+    plot_ast_rate_error(time, np.subtract(omega_AN_A_truth, x_hat[:, 9:12]), P)
     pltName = fileName + "8"
     figureList[pltName] = plt.figure(8)
 

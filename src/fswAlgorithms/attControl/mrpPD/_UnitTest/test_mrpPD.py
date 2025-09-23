@@ -25,13 +25,10 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-
-
-
-
-
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import mrpPD  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
@@ -42,8 +39,8 @@ from Basilisk.architecture import messaging
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("setExtTorque", [False, True])
 
+@pytest.mark.parametrize("setExtTorque", [False, True])
 def test_mrp_PD_tracking(show_plots, setExtTorque):
     r"""
     **Validation Test Description**
@@ -111,9 +108,7 @@ def mrp_PD_tracking(show_plots, setExtTorque):
 
     # vehicleConfig FSW Message:
     vehicleConfigIn = messaging.VehicleConfigMsgPayload()
-    vehicleConfigIn.ISCPntB_B = [1000., 0., 0.,
-                                  0., 800., 0.,
-                                  0., 0., 800.]
+    vehicleConfigIn.ISCPntB_B = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800.0]
     vcInMsg = messaging.VehicleConfigMsg().write(vehicleConfigIn)
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -131,29 +126,35 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn)]*3
+    trueVector = [findTrueTorques(module, guidCmdData, vehicleConfigIn)] * 3
     # print trueVector
 
     # compare the module results to the truth values
     accuracy = 1e-12
     print("accuracy = " + str(accuracy))
 
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.torqueRequestBody, accuracy,
-                                                               "torqueRequestBody", testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(
+        trueVector,
+        dataLog.torqueRequestBody,
+        accuracy,
+        "torqueRequestBody",
+        testFailCount,
+        testMessages,
+    )
 
     snippentName = "passFail" + str(setExtTorque)
     if testFailCount == 0:
-        colorText = 'ForestGreen'
+        colorText = "ForestGreen"
         print("PASSED: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "PASSED" + "}"
     else:
-        colorText = 'Red'
+        colorText = "Red"
         print("Failed: " + module.ModelTag)
-        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessages)]
+    return [testFailCount, "".join(testMessages)]
 
 
 def findTrueTorques(module, guidCmdData, vehicleConfigOut):
@@ -180,7 +181,6 @@ def findTrueTorques(module, guidCmdData, vehicleConfigOut):
     Lr *= -1.0
 
     return Lr
-
 
 
 if __name__ == "__main__":

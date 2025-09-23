@@ -27,4 +27,3 @@ provides information on what this message is used for.
 User Guide
 ----------
 The only variable that must be set is the DCM from the platform frame P to the body frame B, ``dcm_BP``.
-

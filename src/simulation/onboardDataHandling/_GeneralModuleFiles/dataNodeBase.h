@@ -30,34 +30,36 @@
 #include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-
 /*! @brief data node base class */
-class DataNodeBase: public SysModel {
-public:
+class DataNodeBase : public SysModel
+{
+  public:
     DataNodeBase();
     ~DataNodeBase();
     void Reset(uint64_t CurrentSimNanos);
     void computeDataStatus(double currentTime);
     void UpdateState(uint64_t CurrentSimNanos);
 
-protected:
+  protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
-    virtual void evaluateDataModel(DataNodeUsageMsgPayload *dataUsageMsg, double currentTime)=0; //!< Virtual void method used to compute module-wise data usage/generation.
-    virtual void customReset(uint64_t CurrentClock); //!< Custom Reset method, similar to customSelfInit.
-    virtual void customWriteMessages(uint64_t CurrentClock);//!< custom Write method, similar to customSelfInit.
+    virtual void evaluateDataModel(
+      DataNodeUsageMsgPayload* dataUsageMsg,
+      double currentTime) = 0; //!< Virtual void method used to compute module-wise data usage/generation.
+    virtual void customReset(uint64_t CurrentClock);         //!< Custom Reset method, similar to customSelfInit.
+    virtual void customWriteMessages(uint64_t CurrentClock); //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
-public:
-    Message<DataNodeUsageMsgPayload> nodeDataOutMsg; //!< Message name for the node's output message
+  public:
+    Message<DataNodeUsageMsgPayload> nodeDataOutMsg;  //!< Message name for the node's output message
     ReadFunctor<DeviceCmdMsgPayload> nodeStatusInMsg; //!< String for the message name that tells the node it's status
-    double nodeBaudRate; //!< [baud] Data provided (+) or consumed (-).
-    char nodeDataName[128]; //!< Name of the data node consuming or generating data.
+    double nodeBaudRate;                              //!< [baud] Data provided (+) or consumed (-).
+    char nodeDataName[128];                           //!< Name of the data node consuming or generating data.
     uint64_t dataStatus; //!< Device data mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
-protected:
-    DataNodeUsageMsgPayload nodeDataMsg;    //!< class variable
+  protected:
+    DataNodeUsageMsgPayload nodeDataMsg; //!< class variable
     DeviceCmdMsgPayload nodeStatusMsg;   //!< class variable
 };
 
-#endif //BASILISK_DATANODEBASE_H
+#endif // BASILISK_DATANODEBASE_H

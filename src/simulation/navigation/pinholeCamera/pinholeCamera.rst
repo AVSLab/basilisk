@@ -4,7 +4,7 @@ Executive Summary
 This module simulates a camera pinhole model that computes landmark pixels as seen by a spacecraft.
 It reads the planet's ephemeris and spacecraft state messages as inputs. It outputs a vector of landmark messages.
 
-The module can also account for Sun's lighting constraint by setting a mask angle. 
+The module can also account for Sun's lighting constraint by setting a mask angle.
 
 
 

@@ -22,10 +22,10 @@
 
 /*! @brief Structure used to define the output of the sub-module.  This is the same
     output message that is used by all sub-modules in the module folder. */
-typedef struct{
-    double state[9];     //!< [units] state
-    double covar[9][9];  //!< [units] covariance
-}SmallBodyNavUKFMsgPayload;
-
+typedef struct
+{
+    double state[9];    //!< [units] state
+    double covar[9][9]; //!< [units] covariance
+} SmallBodyNavUKFMsgPayload;
 
 #endif

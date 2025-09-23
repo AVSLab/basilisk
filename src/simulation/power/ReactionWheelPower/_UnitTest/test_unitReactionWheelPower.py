@@ -30,12 +30,14 @@ import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import (
+    unitTestSupport,
+)  # general support file with common unit test functions
 from Basilisk.simulation import ReactionWheelPower
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
@@ -49,9 +51,16 @@ from Basilisk.architecture import bskLogging
 @pytest.mark.parametrize("OmegaValue", [100.0, -100.0])
 @pytest.mark.parametrize("setDeviceStatusMsg", [0, 1, 2])
 
-
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy):
+def test_module(
+    show_plots,
+    setRwMsg,
+    setDeviceStatusMsg,
+    setEta_e2m,
+    OmegaValue,
+    setEta_m2c,
+    accuracy,
+):
     """
     **Validation Test Description**
 
@@ -93,32 +102,48 @@ def test_module(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue
     """
 
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy)
-    assert testResults < 1, testMessage\
+    [testResults, testMessage] = powerRW(
+        show_plots,
+        setRwMsg,
+        setDeviceStatusMsg,
+        setEta_e2m,
+        OmegaValue,
+        setEta_m2c,
+        accuracy,
+    )
+    assert testResults < 1, testMessage
 
 
-def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy):
+def powerRW(
+    show_plots,
+    setRwMsg,
+    setDeviceStatusMsg,
+    setEta_e2m,
+    OmegaValue,
+    setEta_m2c,
+    accuracy,
+):
     if not setRwMsg:
         bskLogging.setDefaultLogLevel(bskLogging.BSK_ERROR)
 
     """Module Unit Test"""
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"               # arbitrary name (don't change)
-    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # create the rw power test module
     testModule = ReactionWheelPower.ReactionWheelPower()
     testModule.ModelTag = "bskSat"
-    testModule.basePowerNeed = 10.   # baseline power draw, Watts
+    testModule.basePowerNeed = 10.0  # baseline power draw, Watts
     rwMsg = messaging.RWConfigLogMsg()
     testModule.rwStateInMsg.subscribeTo(rwMsg)
 
@@ -128,7 +153,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     else:
         eta_e2m = 1.0
     if setEta_m2c:
-        testModule.mechToElecEfficiency = (setEta_m2c - 1.0)/2.0
+        testModule.mechToElecEfficiency = (setEta_m2c - 1.0) / 2.0
         eta_m2e = testModule.mechToElecEfficiency
     else:
         eta_m2e = -1
@@ -136,11 +161,11 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # set the RW status input message
-    OmegaValue = OmegaValue * macros.RPM        # convert to rad/sec
+    OmegaValue = OmegaValue * macros.RPM  # convert to rad/sec
     if setRwMsg:
         rwStatusMsg = messaging.RWConfigLogMsgPayload()
-        rwStatusMsg.Omega = OmegaValue          # rad/sec
-        rwStatusMsg.u_current = 0.010           # Nm
+        rwStatusMsg.Omega = OmegaValue  # rad/sec
+        rwStatusMsg.u_current = 0.010  # Nm
         rwMsg.write(rwStatusMsg)
 
     # set device status message
@@ -154,7 +179,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -168,7 +193,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
         wheelPower = OmegaValue * rwStatusMsg.u_current
         truePower = testModule.basePowerNeed
         if wheelPower > 0.0 or eta_m2e < 0.0:
-            truePower += abs(wheelPower)/eta_e2m
+            truePower += abs(wheelPower) / eta_e2m
         else:
             print(eta_m2e)
             truePower += eta_m2e * wheelPower
@@ -176,10 +201,10 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
     else:
         truePower = 0.0
 
-    print([truePower]*3)
+    print([truePower] * 3)
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        [truePower]*3, drawData, accuracy, "powerRW",
-        testFailCount, testMessages)
+        [truePower] * 3, drawData, accuracy, "powerRW", testFailCount, testMessages
+    )
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -189,8 +214,7 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
+    return [testFailCount, "".join(testMessages)]
 
 
 #
@@ -199,11 +223,11 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
 #
 if __name__ == "__main__":
     powerRW(
-        False,      # showplots, not used in this test
-        False,      # setRwMsg
-        0,          # setDeviceStatusMsg (0 - don't set msg, 1 - set msg to OFF, 2 - set msg to ON
-        True,      # setEta_e2m
-        100.0,      # OmegaValue
-        0,       # m2cCase (0 - use default (off), 1 - use 0.0, 2 - use 0.5
-        1e-12       # accuracy
+        False,  # showplots, not used in this test
+        False,  # setRwMsg
+        0,  # setDeviceStatusMsg (0 - don't set msg, 1 - set msg to OFF, 2 - set msg to ON
+        True,  # setEta_e2m
+        100.0,  # OmegaValue
+        0,  # m2cCase (0 - use default (off), 1 - use 0.0, 2 - use 0.5
+        1e-12,  # accuracy
     )

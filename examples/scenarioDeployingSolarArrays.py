@@ -129,6 +129,7 @@ from Basilisk.utilities import vizSupport
 filename = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
+
 def run(show_plots):
     """
     The scenario can be run with the followings set up parameter:
@@ -166,14 +167,22 @@ def run(show_plots):
     lengthHub = 4.0  # [m]
     widthHub = 2.0  # [m]
     depthHub = 2.0  # [m]
-    IHub_11 = (1/12) * massHub * (lengthHub * lengthHub + depthHub * depthHub)  # [kg m^2]
-    IHub_22 = (1/12) * massHub * (lengthHub * lengthHub + widthHub * widthHub)  # [kg m^2]
-    IHub_33 = (1/12) * massHub * (widthHub * widthHub + depthHub * depthHub)  # [kg m^2]
+    IHub_11 = (
+        (1 / 12) * massHub * (lengthHub * lengthHub + depthHub * depthHub)
+    )  # [kg m^2]
+    IHub_22 = (
+        (1 / 12) * massHub * (lengthHub * lengthHub + widthHub * widthHub)
+    )  # [kg m^2]
+    IHub_33 = (
+        (1 / 12) * massHub * (widthHub * widthHub + depthHub * depthHub)
+    )  # [kg m^2]
     scObject.hub.mHub = massHub  # kg
     scObject.hub.r_BcB_B = [0.0, 0.0, 0.0]  # [m]
-    scObject.hub.IHubPntBc_B = [[IHub_11, 0.0, 0.0],
-                                [0.0, IHub_22, 0.0],
-                                [0.0, 0.0, IHub_33]]  # [kg m^2] (Hub approximated as rectangular prism)
+    scObject.hub.IHubPntBc_B = [
+        [IHub_11, 0.0, 0.0],
+        [0.0, IHub_22, 0.0],
+        [0.0, 0.0, IHub_33],
+    ]  # [kg m^2] (Hub approximated as rectangular prism)
 
     # Set the initial inertial hub states
     scObject.hub.r_CN_NInit = [0.0, 0.0, 0.0]
@@ -192,8 +201,8 @@ def run(show_plots):
 
     # Position vector of solar array frame origin points with respect to hub frame origin point B
     # expressed in B frame components
-    rArray1SB_B = np.array([2.0, 0.0, 0.0])   # [m]
-    rArray2SB_B = np.array([-2.0, 0.0, 0.0])   # [m]
+    rArray1SB_B = np.array([2.0, 0.0, 0.0])  # [m]
+    rArray2SB_B = np.array([-2.0, 0.0, 0.0])  # [m]
 
     # Position vector of mount frame origin points with respect to hub frame origin point B
     r_M1B_B = r_M1S1_B + rArray1SB_B  # [m]
@@ -202,20 +211,33 @@ def run(show_plots):
     # Array element geometric parameters
     num_elements = 10
     mass_element = 5.0  # [kg]
-    rot_hat_M = np.array([0.0, 1.0, 0.0])  # Array articulation axis in mount frame components
+    rot_hat_M = np.array(
+        [0.0, 1.0, 0.0]
+    )  # Array articulation axis in mount frame components
     radius_array = 4.0  # [m]
     length_element = radius_array  # [m]
     width_element = 2 * radius_array * np.cos(72 * macros.D2R)  # [m]
     thickness_element = 0.01  # [m]
-    I_element_11 = (1/12) * mass_element * (length_element * length_element
-                                            + thickness_element * thickness_element)  # [kg m^2]
-    I_element_22 = (1/12) * mass_element * (length_element * length_element
-                                            + width_element * width_element)  # [kg m^2]
-    I_element_33 = (1/12) * mass_element * (width_element * width_element
-                                            + thickness_element * thickness_element)  # [kg m^2]
-    IElement_PntPc_P = [[I_element_11, 0.0, 0.0],
-                        [0.0, I_element_22, 0.0],
-                        [0.0, 0.0, I_element_33]]  # [kg m^2] (Elements approximated as rectangular prisms)
+    I_element_11 = (
+        (1 / 12)
+        * mass_element
+        * (length_element * length_element + thickness_element * thickness_element)
+    )  # [kg m^2]
+    I_element_22 = (
+        (1 / 12)
+        * mass_element
+        * (length_element * length_element + width_element * width_element)
+    )  # [kg m^2]
+    I_element_33 = (
+        (1 / 12)
+        * mass_element
+        * (width_element * width_element + thickness_element * thickness_element)
+    )  # [kg m^2]
+    IElement_PntPc_P = [
+        [I_element_11, 0.0, 0.0],
+        [0.0, I_element_22, 0.0],
+        [0.0, 0.0, I_element_33],
+    ]  # [kg m^2] (Elements approximated as rectangular prisms)
 
     # Deployment temporal information
     ramp_duration = 2.0  # [s]
@@ -248,8 +270,12 @@ def run(show_plots):
     array1ElementList = list()
     array2ElementList = list()
     for i in range(num_elements):
-        array1ElementList.append(prescribedMotionStateEffector.PrescribedMotionStateEffector())
-        array2ElementList.append(prescribedMotionStateEffector.PrescribedMotionStateEffector())
+        array1ElementList.append(
+            prescribedMotionStateEffector.PrescribedMotionStateEffector()
+        )
+        array2ElementList.append(
+            prescribedMotionStateEffector.PrescribedMotionStateEffector()
+        )
         array1ElementList[i].ModelTag = "array1Element" + str(i + 1)
         array2ElementList[i].ModelTag = "array2Element" + str(i + 1)
         array1ElementList[i].mass = mass_element  # [kg]
@@ -258,12 +284,16 @@ def run(show_plots):
         array2ElementList[i].IPntPc_P = IElement_PntPc_P  # [kg m^2]
         array1ElementList[i].r_MB_B = r_M1B_B  # [m]
         array2ElementList[i].r_MB_B = r_M2B_B  # [m]
-        array1ElementList[i].r_PcP_P = [- radius_array * np.cos(72 * macros.D2R),
-                                        0.0,
-                                        (1/3) * radius_array * np.sin(72 * macros.D2R)]  # [m] For triangular wedge
-        array2ElementList[i].r_PcP_P = [radius_array * np.cos(72 * macros.D2R),
-                                        0.0,
-                                        (1/3) * radius_array * np.sin(72 * macros.D2R)]  # [m] For triangular wedge
+        array1ElementList[i].r_PcP_P = [
+            -radius_array * np.cos(72 * macros.D2R),
+            0.0,
+            (1 / 3) * radius_array * np.sin(72 * macros.D2R),
+        ]  # [m] For triangular wedge
+        array2ElementList[i].r_PcP_P = [
+            radius_array * np.cos(72 * macros.D2R),
+            0.0,
+            (1 / 3) * radius_array * np.sin(72 * macros.D2R),
+        ]  # [m] For triangular wedge
         array1ElementList[i].r_PM_M = r_PM1_M1Init1  # [m]
         array2ElementList[i].r_PM_M = r_PM2_M2Init1  # [m]
         array1ElementList[i].rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
@@ -298,8 +328,12 @@ def run(show_plots):
         array2ElementMessageData.theta = array2ThetaInit1  # [rad]
         array1ElementMessageData.thetaDot = 0.0  # [rad/s]
         array2ElementMessageData.thetaDot = 0.0  # [rad/s]
-        array1ElementRefMsgList1.append(messaging.HingedRigidBodyMsg().write(array1ElementMessageData))
-        array2ElementRefMsgList1.append(messaging.HingedRigidBodyMsg().write(array2ElementMessageData))
+        array1ElementRefMsgList1.append(
+            messaging.HingedRigidBodyMsg().write(array1ElementMessageData)
+        )
+        array2ElementRefMsgList1.append(
+            messaging.HingedRigidBodyMsg().write(array2ElementMessageData)
+        )
 
     # Create stand-alone element translational state messages
     array1ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
@@ -308,10 +342,18 @@ def run(show_plots):
     array2ElementTranslationMessageData.r_PM_M = r_PM2_M2Init1  # [m]
     array1ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
     array2ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array1ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
-    array2ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
-    array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array1ElementTranslationMessageData)
-    array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array2ElementTranslationMessageData)
+    array1ElementTranslationMessageData.rPrimePrime_PM_M = np.array(
+        [0.0, 0.0, 0.0]
+    )  # [m/s^2]
+    array2ElementTranslationMessageData.rPrimePrime_PM_M = np.array(
+        [0.0, 0.0, 0.0]
+    )  # [m/s^2]
+    array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(
+        array1ElementTranslationMessageData
+    )
+    array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(
+        array2ElementTranslationMessageData
+    )
 
     # Initialize the prescribedRotation1DOF module configuration data
     array1MaxRotAccelList1 = []
@@ -321,14 +363,18 @@ def run(show_plots):
             if j == 0:
                 thetaInit = array1ThetaInit1  # [rad]
                 thetaRef = array1ThetaInit2  # [rad]
-                thetaDDotMax = np.abs(thetaRef - thetaInit) / ((init_coast_duration * ramp_duration)
-                                                               + (ramp_duration * ramp_duration))
+                thetaDDotMax = np.abs(thetaRef - thetaInit) / (
+                    (init_coast_duration * ramp_duration)
+                    + (ramp_duration * ramp_duration)
+                )
                 array1MaxRotAccelList1.append(thetaDDotMax)
             else:
                 thetaInit = array2ThetaInit1  # [rad]
                 thetaRef = array2ThetaInit1  # [rad]
-                thetaDDotMax = np.abs(thetaRef - thetaInit) / ((init_coast_duration * ramp_duration)
-                                                               + (ramp_duration * ramp_duration))
+                thetaDDotMax = np.abs(thetaRef - thetaInit) / (
+                    (init_coast_duration * ramp_duration)
+                    + (ramp_duration * ramp_duration)
+                )
                 array2MaxRotAccelList1.append(thetaDDotMax)
 
     array1RotProfilerList = list()
@@ -336,8 +382,12 @@ def run(show_plots):
     for i in range(num_elements):
         array1RotProfilerList.append(prescribedRotation1DOF.PrescribedRotation1DOF())
         array2RotProfilerList.append(prescribedRotation1DOF.PrescribedRotation1DOF())
-        array1RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray1Element" + str(i + 1)
-        array2RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray2Element" + str(i + 1)
+        array1RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray1Element" + str(
+            i + 1
+        )
+        array2RotProfilerList[i].ModelTag = "prescribedRotation1DOFArray2Element" + str(
+            i + 1
+        )
         array1RotProfilerList[i].setCoastOptionBangDuration(ramp_duration)  # [s]
         array2RotProfilerList[i].setCoastOptionBangDuration(ramp_duration)  # [s]
         array1RotProfilerList[i].setRotHat_M(rot_hat_M)
@@ -349,35 +399,87 @@ def run(show_plots):
 
         scSim.AddModelToTask(fswTaskName, array1RotProfilerList[i])
         scSim.AddModelToTask(fswTaskName, array2RotProfilerList[i])
-        array1RotProfilerList[i].spinningBodyInMsg.subscribeTo(array1ElementRefMsgList1[i])
-        array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(array2ElementRefMsgList1[i])
-        array1ElementList[i].prescribedRotationInMsg.subscribeTo(array1RotProfilerList[i].prescribedRotationOutMsg)
-        array2ElementList[i].prescribedRotationInMsg.subscribeTo(array2RotProfilerList[i].prescribedRotationOutMsg)
-        array1ElementList[i].prescribedTranslationInMsg.subscribeTo(array1ElementTranslationMessage)
-        array2ElementList[i].prescribedTranslationInMsg.subscribeTo(array2ElementTranslationMessage)
+        array1RotProfilerList[i].spinningBodyInMsg.subscribeTo(
+            array1ElementRefMsgList1[i]
+        )
+        array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(
+            array2ElementRefMsgList1[i]
+        )
+        array1ElementList[i].prescribedRotationInMsg.subscribeTo(
+            array1RotProfilerList[i].prescribedRotationOutMsg
+        )
+        array2ElementList[i].prescribedRotationInMsg.subscribeTo(
+            array2RotProfilerList[i].prescribedRotationOutMsg
+        )
+        array1ElementList[i].prescribedTranslationInMsg.subscribeTo(
+            array1ElementTranslationMessage
+        )
+        array2ElementList[i].prescribedTranslationInMsg.subscribeTo(
+            array2ElementTranslationMessage
+        )
 
     # Set up data logging
     scStateData = scObject.scStateOutMsg.recorder(dataRecRate)
-    array1Element1PrescribedDataLog = array1RotProfilerList[0].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element2PrescribedDataLog = array1RotProfilerList[1].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element3PrescribedDataLog = array1RotProfilerList[2].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element4PrescribedDataLog = array1RotProfilerList[3].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element5PrescribedDataLog = array1RotProfilerList[4].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element6PrescribedDataLog = array1RotProfilerList[5].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element7PrescribedDataLog = array1RotProfilerList[6].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element8PrescribedDataLog = array1RotProfilerList[7].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element9PrescribedDataLog = array1RotProfilerList[8].spinningBodyOutMsg.recorder(dataRecRate)
-    array1Element10PrescribedDataLog = array1RotProfilerList[9].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element1PrescribedDataLog = array2RotProfilerList[0].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element2PrescribedDataLog = array2RotProfilerList[1].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element3PrescribedDataLog = array2RotProfilerList[2].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element4PrescribedDataLog = array2RotProfilerList[3].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element5PrescribedDataLog = array2RotProfilerList[4].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element6PrescribedDataLog = array2RotProfilerList[5].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element7PrescribedDataLog = array2RotProfilerList[6].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element8PrescribedDataLog = array2RotProfilerList[7].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element9PrescribedDataLog = array2RotProfilerList[8].spinningBodyOutMsg.recorder(dataRecRate)
-    array2Element10PrescribedDataLog = array2RotProfilerList[9].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element1PrescribedDataLog = array1RotProfilerList[
+        0
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element2PrescribedDataLog = array1RotProfilerList[
+        1
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element3PrescribedDataLog = array1RotProfilerList[
+        2
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element4PrescribedDataLog = array1RotProfilerList[
+        3
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element5PrescribedDataLog = array1RotProfilerList[
+        4
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element6PrescribedDataLog = array1RotProfilerList[
+        5
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element7PrescribedDataLog = array1RotProfilerList[
+        6
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element8PrescribedDataLog = array1RotProfilerList[
+        7
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element9PrescribedDataLog = array1RotProfilerList[
+        8
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array1Element10PrescribedDataLog = array1RotProfilerList[
+        9
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element1PrescribedDataLog = array2RotProfilerList[
+        0
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element2PrescribedDataLog = array2RotProfilerList[
+        1
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element3PrescribedDataLog = array2RotProfilerList[
+        2
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element4PrescribedDataLog = array2RotProfilerList[
+        3
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element5PrescribedDataLog = array2RotProfilerList[
+        4
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element6PrescribedDataLog = array2RotProfilerList[
+        5
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element7PrescribedDataLog = array2RotProfilerList[
+        6
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element8PrescribedDataLog = array2RotProfilerList[
+        7
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element9PrescribedDataLog = array2RotProfilerList[
+        8
+    ].spinningBodyOutMsg.recorder(dataRecRate)
+    array2Element10PrescribedDataLog = array2RotProfilerList[
+        9
+    ].spinningBodyOutMsg.recorder(dataRecRate)
 
     scSim.AddModelToTask(fswTaskName, scStateData)
     scSim.AddModelToTask(fswTaskName, array1Element1PrescribedDataLog)
@@ -405,38 +507,57 @@ def run(show_plots):
     if vizSupport.vizFound:
         scBodyList = [scObject]
         for i in range(num_elements):
-            scBodyList.append(["Array1Element" + str(i+1), array1ElementList[i].prescribedMotionConfigLogOutMsg])
-            scBodyList.append(["Array2Element" + str(i+1), array2ElementList[i].prescribedMotionConfigLogOutMsg])
+            scBodyList.append(
+                [
+                    "Array1Element" + str(i + 1),
+                    array1ElementList[i].prescribedMotionConfigLogOutMsg,
+                ]
+            )
+            scBodyList.append(
+                [
+                    "Array2Element" + str(i + 1),
+                    array2ElementList[i].prescribedMotionConfigLogOutMsg,
+                ]
+            )
 
-        viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, scBodyList,
-                                                  # saveFile=filename
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            dynTaskName,
+            scBodyList,
+            # saveFile=filename
+        )
         viz.settings.showSpacecraftAsSprites = -1
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[scObject.ModelTag]
-                                     , modelPath="CYLINDER"
-                                     , scale=[widthHub, depthHub, lengthHub]
-                                     , color=vizSupport.toRGBA255("gray"))
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[scObject.ModelTag],
+            modelPath="CYLINDER",
+            scale=[widthHub, depthHub, lengthHub],
+            color=vizSupport.toRGBA255("gray"),
+        )
 
         for i in range(num_elements):
-            vizSupport.createCustomModel(viz,
-                                         simBodiesToModify=["Array1Element" + str(i+1)],
-                                         # Specifying relative model path is useful for sharing scenarios and resources:
-                                         modelPath=os.path.join("..", "dataForExamples", "triangularPanel.obj"),
-                                         # Specifying absolute model path is preferable for live-streaming:
-                                         # modelPath=os.path.join(path, "dataForExamples", "triangularPanel.obj"),
-                                         rotation=[-np.pi/2, 0, np.pi/2],
-                                         scale=[1.3, 1.3, 1.3],
-                                         color=vizSupport.toRGBA255("green"))
-            vizSupport.createCustomModel(viz,
-                                         simBodiesToModify=["Array2Element" + str(i+1)],
-                                         # Specifying relative model path is useful for sharing scenarios and resources:
-                                         modelPath=os.path.join("..", "dataForExamples", "triangularPanel.obj"),
-                                         # Specifying absolute model path is preferable for live-streaming:
-                                         # modelPath=os.path.join(path, "dataForExamples", "triangularPanel.obj"),
-                                         rotation=[-np.pi/2, 0, np.pi/2],
-                                         scale=[1.3, 1.3, 1.3],
-                                         color=vizSupport.toRGBA255("blue"))
+            vizSupport.createCustomModel(
+                viz,
+                simBodiesToModify=["Array1Element" + str(i + 1)],
+                # Specifying relative model path is useful for sharing scenarios and resources:
+                modelPath=os.path.join("..", "dataForExamples", "triangularPanel.obj"),
+                # Specifying absolute model path is preferable for live-streaming:
+                # modelPath=os.path.join(path, "dataForExamples", "triangularPanel.obj"),
+                rotation=[-np.pi / 2, 0, np.pi / 2],
+                scale=[1.3, 1.3, 1.3],
+                color=vizSupport.toRGBA255("green"),
+            )
+            vizSupport.createCustomModel(
+                viz,
+                simBodiesToModify=["Array2Element" + str(i + 1)],
+                # Specifying relative model path is useful for sharing scenarios and resources:
+                modelPath=os.path.join("..", "dataForExamples", "triangularPanel.obj"),
+                # Specifying absolute model path is preferable for live-streaming:
+                # modelPath=os.path.join(path, "dataForExamples", "triangularPanel.obj"),
+                rotation=[-np.pi / 2, 0, np.pi / 2],
+                scale=[1.3, 1.3, 1.3],
+                color=vizSupport.toRGBA255("blue"),
+            )
 
     scSim.InitializeSimulation()
     simTime1 = init_deploy_duration + 10  # [s]
@@ -448,22 +569,31 @@ def run(show_plots):
     for i in range(num_elements):
         thetaInit = array1ThetaInit2  # [rad]
         thetaRef = (36 * i * macros.D2R) + array1ThetaInit2  # [rad]
-        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((main_coast_duration * ramp_duration)
-                                                       + (ramp_duration * ramp_duration))  # [rad/s^2]
+        thetaDDotMax = np.abs(thetaRef - thetaInit) / (
+            (main_coast_duration * ramp_duration) + (ramp_duration * ramp_duration)
+        )  # [rad/s^2]
         array1MaxRotAccelList2.append(thetaDDotMax)
 
     # Update the array 1 stand-alone element translational state messages
     array1ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload(
-        r_PM_M=r_PM1_M1Init2,   # [m]
+        r_PM_M=r_PM1_M1Init2,  # [m]
         rPrime_PM_M=np.array([0.0, 0.0, 0.0]),  # [m/s]
         rPrimePrime_PM_M=np.array([0.0, 0.0, 0.0]),  # [m/s^2]
     )
-    array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array1ElementTranslationMessageData)
+    array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(
+        array1ElementTranslationMessageData
+    )
 
     array1ElementRefMsgList2 = list()
     for i in range(num_elements):
-        array1ElementList[i].prescribedTranslationInMsg.subscribeTo(array1ElementTranslationMessage)
-        array1ElementList[i].r_PcP_P = [0.0, 0.0, - (2/3) * radius_array * np.sin(72 * macros.D2R)]
+        array1ElementList[i].prescribedTranslationInMsg.subscribeTo(
+            array1ElementTranslationMessage
+        )
+        array1ElementList[i].r_PcP_P = [
+            0.0,
+            0.0,
+            -(2 / 3) * radius_array * np.sin(72 * macros.D2R),
+        ]
         array1ElementList[i].r_PM_M = r_PM1_M1Init2  # [m]
         array1ElementList[i].sigma_PM = sigma_PM1Init2
 
@@ -474,9 +604,13 @@ def run(show_plots):
             theta=(36 * i * macros.D2R) + array1ThetaInit2,  # [rad]
             thetaDot=0.0,  # [rad/s]
         )
-        array1ElementRefMsgList2.append(messaging.HingedRigidBodyMsg().write(array1ElementMessageData))
+        array1ElementRefMsgList2.append(
+            messaging.HingedRigidBodyMsg().write(array1ElementMessageData)
+        )
 
-        array1RotProfilerList[i].spinningBodyInMsg.subscribeTo(array1ElementRefMsgList2[i])
+        array1RotProfilerList[i].spinningBodyInMsg.subscribeTo(
+            array1ElementRefMsgList2[i]
+        )
 
     simTime2 = main_deploy_duration + 10  # [s]
     scSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2))
@@ -487,8 +621,9 @@ def run(show_plots):
     for i in range(num_elements):
         thetaInit = array2ThetaInit1  # [rad]
         thetaRef = array2ThetaInit2  # [rad]
-        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((init_coast_duration * ramp_duration)
-                                                       + (ramp_duration * ramp_duration))  # [rad/s^2]
+        thetaDDotMax = np.abs(thetaRef - thetaInit) / (
+            (init_coast_duration * ramp_duration) + (ramp_duration * ramp_duration)
+        )  # [rad/s^2]
         array2MaxRotAccelList2.append(thetaDDotMax)
 
     array2ElementRefMsgList2 = list()
@@ -497,11 +632,15 @@ def run(show_plots):
 
         array2ElementMessageData = messaging.HingedRigidBodyMsgPayload(
             theta=array2ThetaInit2,  # [rad]
-            thetaDot=0.0,   # [rad/s]
+            thetaDot=0.0,  # [rad/s]
         )
-        array2ElementRefMsgList2.append(messaging.HingedRigidBodyMsg().write(array2ElementMessageData))
+        array2ElementRefMsgList2.append(
+            messaging.HingedRigidBodyMsg().write(array2ElementMessageData)
+        )
 
-        array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(array2ElementRefMsgList2[i])
+        array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(
+            array2ElementRefMsgList2[i]
+        )
 
     simTime3 = init_deploy_duration + 10  # [s]
     scSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2 + simTime3))
@@ -512,22 +651,31 @@ def run(show_plots):
     for i in range(num_elements):
         thetaInit = array2ThetaInit2  # [rad]
         thetaRef = (36 * i * macros.D2R) + array2ThetaInit2  # [rad]
-        thetaDDotMax = np.abs(thetaRef - thetaInit) / ((main_coast_duration * ramp_duration)
-                                                       + (ramp_duration * ramp_duration))  # [rad/s^2]
+        thetaDDotMax = np.abs(thetaRef - thetaInit) / (
+            (main_coast_duration * ramp_duration) + (ramp_duration * ramp_duration)
+        )  # [rad/s^2]
         array2MaxRotAccelList3.append(thetaDDotMax)
 
     # Update the array 2 stand-alone element translational state messages
     array2ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload(
-        r_PM_M=r_PM2_M2Init2,   # [m]
-        rPrime_PM_M=np.array([0.0, 0.0, 0.0]),   # [m/s]
-        rPrimePrime_PM_M=np.array([0.0, 0.0, 0.0]),   # [m/s^2]
+        r_PM_M=r_PM2_M2Init2,  # [m]
+        rPrime_PM_M=np.array([0.0, 0.0, 0.0]),  # [m/s]
+        rPrimePrime_PM_M=np.array([0.0, 0.0, 0.0]),  # [m/s^2]
     )
-    array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array2ElementTranslationMessageData)
+    array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(
+        array2ElementTranslationMessageData
+    )
 
     array2ElementRefMsgList3 = list()
     for i in range(num_elements):
-        array2ElementList[i].prescribedTranslationInMsg.subscribeTo(array2ElementTranslationMessage)
-        array2ElementList[i].r_PcP_P = [0.0, 0.0, - (2/3) * radius_array * np.sin(72 * macros.D2R)]
+        array2ElementList[i].prescribedTranslationInMsg.subscribeTo(
+            array2ElementTranslationMessage
+        )
+        array2ElementList[i].r_PcP_P = [
+            0.0,
+            0.0,
+            -(2 / 3) * radius_array * np.sin(72 * macros.D2R),
+        ]
         array2ElementList[i].r_PM_M = r_PM2_M2Init2  # [m]
         array2ElementList[i].sigma_PM = sigma_PM2Init2
 
@@ -535,12 +683,16 @@ def run(show_plots):
         array2RotProfilerList[i].setThetaDDotMax(array2MaxRotAccelList3[i])  # [rad/s^2]
 
         array2ElementMessageData = messaging.HingedRigidBodyMsgPayload(
-            theta=(36 * i * macros.D2R) + array2ThetaInit2,   # [rad]
-            thetaDot=0.0,   # [rad/s]
+            theta=(36 * i * macros.D2R) + array2ThetaInit2,  # [rad]
+            thetaDot=0.0,  # [rad/s]
         )
-        array2ElementRefMsgList3.append(messaging.HingedRigidBodyMsg().write(array2ElementMessageData))
+        array2ElementRefMsgList3.append(
+            messaging.HingedRigidBodyMsg().write(array2ElementMessageData)
+        )
 
-        array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(array2ElementRefMsgList3[i])
+        array2RotProfilerList[i].spinningBodyInMsg.subscribeTo(
+            array2ElementRefMsgList3[i]
+        )
 
     simTime4 = main_deploy_duration + 10  # [s]
     scSim.ConfigureStopTime(macros.sec2nano(simTime1 + simTime2 + simTime3 + simTime4))
@@ -571,26 +723,66 @@ def run(show_plots):
     theta_array2Element8 = array2Element8PrescribedDataLog.theta * macros.R2D  # [deg]
     theta_array2Element9 = array2Element9PrescribedDataLog.theta * macros.R2D  # [deg]
     theta_array2Element10 = array2Element10PrescribedDataLog.theta * macros.R2D  # [deg]
-    thetaDot_array1Element1 = array1Element1PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element2 = array1Element2PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element3 = array1Element3PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element4 = array1Element4PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element5 = array1Element5PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element6 = array1Element6PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element7 = array1Element7PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element8 = array1Element8PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element9 = array1Element9PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array1Element10 = array1Element10PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element1 = array2Element1PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element2 = array2Element2PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element3 = array2Element3PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element4 = array2Element4PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element5 = array2Element5PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element6 = array2Element6PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element7 = array2Element7PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element8 = array2Element8PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element9 = array2Element9PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
-    thetaDot_array2Element10 = array2Element10PrescribedDataLog.thetaDot * macros.R2D  # [deg/s]
+    thetaDot_array1Element1 = (
+        array1Element1PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element2 = (
+        array1Element2PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element3 = (
+        array1Element3PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element4 = (
+        array1Element4PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element5 = (
+        array1Element5PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element6 = (
+        array1Element6PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element7 = (
+        array1Element7PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element8 = (
+        array1Element8PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element9 = (
+        array1Element9PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array1Element10 = (
+        array1Element10PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element1 = (
+        array2Element1PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element2 = (
+        array2Element2PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element3 = (
+        array2Element3PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element4 = (
+        array2Element4PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element5 = (
+        array2Element5PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element6 = (
+        array2Element6PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element7 = (
+        array2Element7PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element8 = (
+        array2Element8PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element9 = (
+        array2Element9PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
+    thetaDot_array2Element10 = (
+        array2Element10PrescribedDataLog.thetaDot * macros.R2D
+    )  # [deg/s]
 
     # Plot the results
     figureList = {}
@@ -599,20 +791,20 @@ def run(show_plots):
     # Plot array 1 element angles
     plt.figure(1)
     plt.clf()
-    plt.plot(timespan, theta_array1Element1, label=r'$\theta_1$')
-    plt.plot(timespan, theta_array1Element2, label=r'$\theta_2$')
-    plt.plot(timespan, theta_array1Element3, label=r'$\theta_3$')
-    plt.plot(timespan, theta_array1Element4, label=r'$\theta_4$')
-    plt.plot(timespan, theta_array1Element5, label=r'$\theta_5$')
-    plt.plot(timespan, theta_array1Element6, label=r'$\theta_6$')
-    plt.plot(timespan, theta_array1Element7, label=r'$\theta_7$')
-    plt.plot(timespan, theta_array1Element8, label=r'$\theta_8$')
-    plt.plot(timespan, theta_array1Element9, label=r'$\theta_9$')
-    plt.plot(timespan, theta_array1Element10, label=r'$\theta_{10}$')
-    plt.title(r'Array 1 Element Angles', fontsize=16)
-    plt.ylabel('(deg)', fontsize=14)
-    plt.xlabel('Time (min)', fontsize=14)
-    plt.legend(bbox_to_anchor=(1.25, 0.5), loc='center right', prop={'size': 8})
+    plt.plot(timespan, theta_array1Element1, label=r"$\theta_1$")
+    plt.plot(timespan, theta_array1Element2, label=r"$\theta_2$")
+    plt.plot(timespan, theta_array1Element3, label=r"$\theta_3$")
+    plt.plot(timespan, theta_array1Element4, label=r"$\theta_4$")
+    plt.plot(timespan, theta_array1Element5, label=r"$\theta_5$")
+    plt.plot(timespan, theta_array1Element6, label=r"$\theta_6$")
+    plt.plot(timespan, theta_array1Element7, label=r"$\theta_7$")
+    plt.plot(timespan, theta_array1Element8, label=r"$\theta_8$")
+    plt.plot(timespan, theta_array1Element9, label=r"$\theta_9$")
+    plt.plot(timespan, theta_array1Element10, label=r"$\theta_{10}$")
+    plt.title(r"Array 1 Element Angles", fontsize=16)
+    plt.ylabel("(deg)", fontsize=14)
+    plt.xlabel("Time (min)", fontsize=14)
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center right", prop={"size": 8})
     plt.grid(True)
     pltName = filename + "_Array1ElementTheta"
     figureList[pltName] = plt.figure(1)
@@ -620,20 +812,20 @@ def run(show_plots):
     # Plot array 2 element angles
     plt.figure(2)
     plt.clf()
-    plt.plot(timespan, theta_array2Element1, label=r'$\theta_1$')
-    plt.plot(timespan, theta_array2Element2, label=r'$\theta_2$')
-    plt.plot(timespan, theta_array2Element3, label=r'$\theta_3$')
-    plt.plot(timespan, theta_array2Element4, label=r'$\theta_4$')
-    plt.plot(timespan, theta_array2Element5, label=r'$\theta_5$')
-    plt.plot(timespan, theta_array2Element6, label=r'$\theta_6$')
-    plt.plot(timespan, theta_array2Element7, label=r'$\theta_7$')
-    plt.plot(timespan, theta_array2Element8, label=r'$\theta_8$')
-    plt.plot(timespan, theta_array2Element9, label=r'$\theta_9$')
-    plt.plot(timespan, theta_array2Element10, label=r'$\theta_{10}$')
-    plt.title(r'Array 2 Element Angles', fontsize=16)
-    plt.ylabel('(deg)', fontsize=14)
-    plt.xlabel('Time (min)', fontsize=14)
-    plt.legend(bbox_to_anchor=(1.25, 0.5), loc='center right', prop={'size': 8})
+    plt.plot(timespan, theta_array2Element1, label=r"$\theta_1$")
+    plt.plot(timespan, theta_array2Element2, label=r"$\theta_2$")
+    plt.plot(timespan, theta_array2Element3, label=r"$\theta_3$")
+    plt.plot(timespan, theta_array2Element4, label=r"$\theta_4$")
+    plt.plot(timespan, theta_array2Element5, label=r"$\theta_5$")
+    plt.plot(timespan, theta_array2Element6, label=r"$\theta_6$")
+    plt.plot(timespan, theta_array2Element7, label=r"$\theta_7$")
+    plt.plot(timespan, theta_array2Element8, label=r"$\theta_8$")
+    plt.plot(timespan, theta_array2Element9, label=r"$\theta_9$")
+    plt.plot(timespan, theta_array2Element10, label=r"$\theta_{10}$")
+    plt.title(r"Array 2 Element Angles", fontsize=16)
+    plt.ylabel("(deg)", fontsize=14)
+    plt.xlabel("Time (min)", fontsize=14)
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center right", prop={"size": 8})
     plt.grid(True)
     pltName = filename + "_Array2ElementTheta"
     figureList[pltName] = plt.figure(2)
@@ -641,20 +833,20 @@ def run(show_plots):
     # Plot array 1 element angle rates
     plt.figure(3)
     plt.clf()
-    plt.plot(timespan, thetaDot_array1Element1, label=r'$\dot{\theta}_1$')
-    plt.plot(timespan, thetaDot_array1Element2, label=r'$\dot{\theta}_2$')
-    plt.plot(timespan, thetaDot_array1Element3, label=r'$\dot{\theta}_3$')
-    plt.plot(timespan, thetaDot_array1Element4, label=r'$\dot{\theta}_4$')
-    plt.plot(timespan, thetaDot_array1Element5, label=r'$\dot{\theta}_5$')
-    plt.plot(timespan, thetaDot_array1Element6, label=r'$\dot{\theta}_6$')
-    plt.plot(timespan, thetaDot_array1Element7, label=r'$\dot{\theta}_7$')
-    plt.plot(timespan, thetaDot_array1Element8, label=r'$\dot{\theta}_8$')
-    plt.plot(timespan, thetaDot_array1Element9, label=r'$\dot{\theta}_9$')
-    plt.plot(timespan, thetaDot_array1Element10, label=r'$\dot{\theta}_{10}$')
-    plt.title(r'Array 1 Element Angle Rates', fontsize=16)
-    plt.ylabel('(deg/s)', fontsize=14)
-    plt.xlabel('Time (min)', fontsize=14)
-    plt.legend(bbox_to_anchor=(1.25, 0.5), loc='center right', prop={'size': 8})
+    plt.plot(timespan, thetaDot_array1Element1, label=r"$\dot{\theta}_1$")
+    plt.plot(timespan, thetaDot_array1Element2, label=r"$\dot{\theta}_2$")
+    plt.plot(timespan, thetaDot_array1Element3, label=r"$\dot{\theta}_3$")
+    plt.plot(timespan, thetaDot_array1Element4, label=r"$\dot{\theta}_4$")
+    plt.plot(timespan, thetaDot_array1Element5, label=r"$\dot{\theta}_5$")
+    plt.plot(timespan, thetaDot_array1Element6, label=r"$\dot{\theta}_6$")
+    plt.plot(timespan, thetaDot_array1Element7, label=r"$\dot{\theta}_7$")
+    plt.plot(timespan, thetaDot_array1Element8, label=r"$\dot{\theta}_8$")
+    plt.plot(timespan, thetaDot_array1Element9, label=r"$\dot{\theta}_9$")
+    plt.plot(timespan, thetaDot_array1Element10, label=r"$\dot{\theta}_{10}$")
+    plt.title(r"Array 1 Element Angle Rates", fontsize=16)
+    plt.ylabel("(deg/s)", fontsize=14)
+    plt.xlabel("Time (min)", fontsize=14)
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center right", prop={"size": 8})
     plt.grid(True)
     pltName = filename + "_Array1ElementThetaDot"
     figureList[pltName] = plt.figure(3)
@@ -662,20 +854,20 @@ def run(show_plots):
     # Plot array 2 element angle rates
     plt.figure(4)
     plt.clf()
-    plt.plot(timespan, thetaDot_array2Element1, label=r'$\dot{\theta}_1$')
-    plt.plot(timespan, thetaDot_array2Element2, label=r'$\dot{\theta}_2$')
-    plt.plot(timespan, thetaDot_array2Element3, label=r'$\dot{\theta}_3$')
-    plt.plot(timespan, thetaDot_array2Element4, label=r'$\dot{\theta}_4$')
-    plt.plot(timespan, thetaDot_array2Element5, label=r'$\dot{\theta}_5$')
-    plt.plot(timespan, thetaDot_array2Element6, label=r'$\dot{\theta}_6$')
-    plt.plot(timespan, thetaDot_array2Element7, label=r'$\dot{\theta}_7$')
-    plt.plot(timespan, thetaDot_array2Element8, label=r'$\dot{\theta}_8$')
-    plt.plot(timespan, thetaDot_array2Element9, label=r'$\dot{\theta}_9$')
-    plt.plot(timespan, thetaDot_array2Element10, label=r'$\dot{\theta}_{10}$')
-    plt.title(r'Array 2 Element Angle Rates', fontsize=16)
-    plt.ylabel('(deg/s)', fontsize=14)
-    plt.xlabel('Time (min)', fontsize=14)
-    plt.legend(bbox_to_anchor=(1.25, 0.5), loc='center right', prop={'size': 8})
+    plt.plot(timespan, thetaDot_array2Element1, label=r"$\dot{\theta}_1$")
+    plt.plot(timespan, thetaDot_array2Element2, label=r"$\dot{\theta}_2$")
+    plt.plot(timespan, thetaDot_array2Element3, label=r"$\dot{\theta}_3$")
+    plt.plot(timespan, thetaDot_array2Element4, label=r"$\dot{\theta}_4$")
+    plt.plot(timespan, thetaDot_array2Element5, label=r"$\dot{\theta}_5$")
+    plt.plot(timespan, thetaDot_array2Element6, label=r"$\dot{\theta}_6$")
+    plt.plot(timespan, thetaDot_array2Element7, label=r"$\dot{\theta}_7$")
+    plt.plot(timespan, thetaDot_array2Element8, label=r"$\dot{\theta}_8$")
+    plt.plot(timespan, thetaDot_array2Element9, label=r"$\dot{\theta}_9$")
+    plt.plot(timespan, thetaDot_array2Element10, label=r"$\dot{\theta}_{10}$")
+    plt.title(r"Array 2 Element Angle Rates", fontsize=16)
+    plt.ylabel("(deg/s)", fontsize=14)
+    plt.xlabel("Time (min)", fontsize=14)
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center right", prop={"size": 8})
     plt.grid(True)
     pltName = filename + "_Array2ElementThetaDot"
     figureList[pltName] = plt.figure(4)
@@ -683,13 +875,16 @@ def run(show_plots):
     # Plot r_BN_N
     plt.figure(5)
     plt.clf()
-    plt.plot(timespan, r_BN_N[:, 0], label=r'$r_{1}$')
-    plt.plot(timespan, r_BN_N[:, 1], label=r'$r_{2}$')
-    plt.plot(timespan, r_BN_N[:, 2], label=r'$r_{3}$')
-    plt.title(r'${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory', fontsize=16)
-    plt.ylabel('(m)', fontsize=14)
-    plt.xlabel('Time (min)', fontsize=14)
-    plt.legend(bbox_to_anchor=(1.25, 0.5), loc='center right', prop={'size': 12})
+    plt.plot(timespan, r_BN_N[:, 0], label=r"$r_{1}$")
+    plt.plot(timespan, r_BN_N[:, 1], label=r"$r_{2}$")
+    plt.plot(timespan, r_BN_N[:, 2], label=r"$r_{3}$")
+    plt.title(
+        r"${}^\mathcal{N} r_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial Trajectory",
+        fontsize=16,
+    )
+    plt.ylabel("(m)", fontsize=14)
+    plt.xlabel("Time (min)", fontsize=14)
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center right", prop={"size": 12})
     plt.grid(True)
     pltName = filename + "_HubInertialPosition"
     figureList[pltName] = plt.figure(5)
@@ -697,13 +892,16 @@ def run(show_plots):
     # Plot sigma_BN
     plt.figure(6)
     plt.clf()
-    plt.plot(timespan, sigma_BN[:, 0], label=r'$\sigma_{1}$')
-    plt.plot(timespan, sigma_BN[:, 1], label=r'$\sigma_{2}$')
-    plt.plot(timespan, sigma_BN[:, 2], label=r'$\sigma_{3}$')
-    plt.title(r'$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude', fontsize=16)
-    plt.ylabel('', fontsize=14)
-    plt.xlabel('Time (min)', fontsize=14)
-    plt.legend(bbox_to_anchor=(1.25, 0.5), loc='center right', prop={'size': 12})
+    plt.plot(timespan, sigma_BN[:, 0], label=r"$\sigma_{1}$")
+    plt.plot(timespan, sigma_BN[:, 1], label=r"$\sigma_{2}$")
+    plt.plot(timespan, sigma_BN[:, 2], label=r"$\sigma_{3}$")
+    plt.title(
+        r"$\sigma_{\mathcal{B}/\mathcal{N}}$ Spacecraft Inertial MRP Attitude",
+        fontsize=16,
+    )
+    plt.ylabel("", fontsize=14)
+    plt.xlabel("Time (min)", fontsize=14)
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center right", prop={"size": 12})
     plt.grid(True)
     pltName = filename + "_HubInertialMRPAttitude"
     figureList[pltName] = plt.figure(6)
@@ -711,13 +909,16 @@ def run(show_plots):
     # Plot omega_BN_B
     plt.figure(7)
     plt.clf()
-    plt.plot(timespan, omega_BN_B[:, 0], label=r'$\omega_{1}$')
-    plt.plot(timespan, omega_BN_B[:, 1], label=r'$\omega_{2}$')
-    plt.plot(timespan, omega_BN_B[:, 2], label=r'$\omega_{3}$')
-    plt.title(r'Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$', fontsize=16)
-    plt.xlabel('Time (min)', fontsize=14)
-    plt.ylabel('(deg/s)', fontsize=14)
-    plt.legend(bbox_to_anchor=(1.25, 0.5), loc='center right', prop={'size': 12})
+    plt.plot(timespan, omega_BN_B[:, 0], label=r"$\omega_{1}$")
+    plt.plot(timespan, omega_BN_B[:, 1], label=r"$\omega_{2}$")
+    plt.plot(timespan, omega_BN_B[:, 2], label=r"$\omega_{3}$")
+    plt.title(
+        r"Spacecraft Hub Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$",
+        fontsize=16,
+    )
+    plt.xlabel("Time (min)", fontsize=14)
+    plt.ylabel("(deg/s)", fontsize=14)
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center right", prop={"size": 12})
     plt.grid(True)
     pltName = filename + "_HubInertialAngularVelocity"
     figureList[pltName] = plt.figure(7)
@@ -727,9 +928,12 @@ def run(show_plots):
     plt.figure(8)
     plt.clf()
     plt.plot(timespan, omega_BN_BNorm)
-    plt.title(r'Hub Angular Velocity Norm $|{}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}|$', fontsize=16)
-    plt.ylabel(r'(deg/s)', fontsize=14)
-    plt.xlabel(r'(min)', fontsize=14)
+    plt.title(
+        r"Hub Angular Velocity Norm $|{}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}|$",
+        fontsize=16,
+    )
+    plt.ylabel(r"(deg/s)", fontsize=14)
+    plt.xlabel(r"(min)", fontsize=14)
     plt.grid(True)
     pltName = filename + "_HubInertialAngularVelocityNorm"
     figureList[pltName] = plt.figure(8)
@@ -740,7 +944,8 @@ def run(show_plots):
 
     return figureList
 
+
 if __name__ == "__main__":
     run(
-        True,   # show_plots
+        True,  # show_plots
     )

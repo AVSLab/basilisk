@@ -144,8 +144,8 @@ def run(showPlots: bool = False, visualize: bool = False):
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
     """
-    dt = 1 # s
-    tf = 60 # s
+    dt = 1  # s
+    tf = 60  # s
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -168,7 +168,7 @@ def run(showPlots: bool = False, visualize: bool = False):
     # actuators' are those actuators that apply a single scalar
     # input to the system. In this case, the actuator is a motor
     # that applies a torque to the 'wheel_1' joint.
-    torque = 2 # N*m
+    torque = 2  # N*m
     torqueMsg = messaging.SingleActuatorMsg()
     torqueMsg.write(messaging.SingleActuatorMsgPayload(input=torque))
 

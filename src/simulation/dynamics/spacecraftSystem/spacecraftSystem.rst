@@ -1,7 +1,7 @@
 
 .. warning::
     This module allows for multiple spacecraft units (mother craft and a docked daughter craft, etc.) to be simulated as an integrated dynamical system.  See `Dr. Cody Allard's dissertation <http://hanspeterschaub.info/Papers/grads/CodyAllard.pdf>`__ for more information.  However, this is still work in progress and not all effectors are compatible with this manner of doing the dynamics.  Use :ref:`spacecraft` to create a spacecraft simulation object unless you are familiar what this expanded spacecraft dynamics module provides.
-    
+
 Executive Summary
 -----------------
 
@@ -41,6 +41,3 @@ provides information on what this message is used for.
     * - scEnergyMomentumOutMsg
       - :ref:`SCEnergyMomentumMsgPayload`
       - spacecraft element energy and momentum output message
-
-
-
