@@ -982,7 +982,7 @@ def enableUnityVisualization(
     lightList=None,
     genericStorageList=None,
     transceiverList=None,
-    spritList=None,
+    spriteList=None,
     modelDictionaryKeyList=None,
     logoTextureList=None,
     oscOrbitColorList=None,
@@ -1114,8 +1114,8 @@ def enableUnityVisualization(
         transceiverList = ensure_correct_len_list(
             transceiverList, scListLength, depth=2
         )
-    if spritList is not None:
-        spritList = ensure_correct_len_list(spritList, scListLength)
+    if spriteList is not None:
+        spriteList = ensure_correct_len_list(spriteList, scListLength)
     if modelDictionaryKeyList is not None:
         modelDictionaryKeyList = ensure_correct_len_list(
             modelDictionaryKeyList, scListLength
@@ -1292,9 +1292,9 @@ def enableUnityVisualization(
                 scData.transceiverList = vizInterface.TransceiverVector(tcList)
 
         # process sprite information
-        if spritList:
-            if spritList[c] is not None:
-                scData.spacecraftSprite = spritList[c]
+        if spriteList:
+            if spriteList[c] is not None:
+                scData.spacecraftSprite = spriteList[c]
         # process modelDictionaryKey information
         if modelDictionaryKeyList:
             if modelDictionaryKeyList[c] is not None:
