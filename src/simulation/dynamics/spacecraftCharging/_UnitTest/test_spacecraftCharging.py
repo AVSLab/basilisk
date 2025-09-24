@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraftCharging
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+import numpy as np
 
 def test_spacecraft_charging(show_plots):
     r"""
@@ -36,15 +37,15 @@ def test_spacecraft_charging(show_plots):
     task_name = "unitTask"
     process_name = "TestProcess"
     test_sim = SimulationBaseClass.SimBaseClass()
-    test_time_step_sec = 0.001
+    test_time_step_sec = 1e-6
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = test_sim.CreateNewProcess(process_name)
     test_process.addTask(test_sim.CreateNewTask(task_name, test_process_rate))
 
     # Charging parameters
     beam_current = 250e-6  # [Amps] (Don't set above 1)
-    beam_energy = 10.0  # [keV]
-    capacitance = 1e-10  # [farads]
+    beam_energy = 10000.0  # [eV]
+    capacitance = 1e-9  # [farads]  1e-9 more realistic
 
     # Create the spacecraft charging module
     spacecraft_charging = spacecraftCharging.SpacecraftCharging()
@@ -60,7 +61,7 @@ def test_spacecraft_charging(show_plots):
 
     # Run the simulation
     test_sim.InitializeSimulation()
-    sim_time = 10.0  # [s]
+    sim_time = 0.06  # [s]
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time))
     test_sim.ExecuteSimulation()
 
@@ -68,19 +69,43 @@ def test_spacecraft_charging(show_plots):
     timespan = macros.NANO2SEC * spacecraft_potential_data_log.times()  # [s]
     sc_voltage = spacecraft_potential_data_log.voltage  # [Volts]
 
+    sc_potential_init = 0.0
+    x = [sc_potential_init]
+    for idx in range(len(timespan) - 1):
+        t = timespan[idx]
+        x_current = x[idx]
+
+        k_1 = charging_eom(t, x_current, beam_current, beam_energy, capacitance)
+        k_2 = charging_eom(t + (test_time_step_sec/2), x_current + ((test_time_step_sec * k_1) / 2), beam_current, beam_energy, capacitance)
+        k_3 = charging_eom(t + (test_time_step_sec/2), x_current + ((test_time_step_sec * k_2) / 2), beam_current, beam_energy, capacitance)
+        k_4 = charging_eom(t + test_time_step_sec, x_current + test_time_step_sec * k_3, beam_current, beam_energy, capacitance)
+
+        x = np.append(x, x_current + (test_time_step_sec / 6) * (k_1 + 2 * k_2 + 2 * k_3 + k_4))
+
     if show_plots:
         # Plot spacecraft potential
+        beam_energy_plotting = np.ones(len(timespan)) * beam_energy
         plt.figure()
         plt.clf()
-        plt.plot(timespan, sc_voltage, label=r"$\phi$")
-        plt.title(r'Spacecraft Potential', fontsize=14)
-        plt.ylabel('(Volts)', fontsize=14)
-        plt.xlabel('Time (s)', fontsize=14)
-        plt.legend(loc='upper right', prop={'size': 12})
+        plt.plot(timespan*1000, beam_energy_plotting, '--', label=r"$E_{\text{EB}}$ (keV)", color="blue")
+        plt.plot(timespan*1000, x, label=r"$\phi_{\text{truth}}$", color="teal")
+        plt.plot(timespan*1000, sc_voltage, label=r"$\phi_{\text{sim}}$", color="darkviolet")
+        plt.suptitle(r'Single Spacecraft with Electron Beam', fontsize=16)
+        plt.title(r'$C = 10^{-9} F, \ I_{\text{EB}} = 250e^{-6} A$', fontsize=14)
+        plt.ylabel('(Volts)', fontsize=16)
+        plt.xlabel('Time (ms)', fontsize=16)
+        plt.legend(loc='center right', prop={'size': 16})
         plt.grid(True)
         plt.show()
+
     plt.close("all")
 
+def charging_eom(t, x, beam_current, beam_energy, capacitance):
+    x_dot = 0.0
+    if (beam_energy > x):
+        x_dot = beam_current / capacitance
+
+    return x_dot
 
 if __name__ == "__main__":
     test_spacecraft_charging(
