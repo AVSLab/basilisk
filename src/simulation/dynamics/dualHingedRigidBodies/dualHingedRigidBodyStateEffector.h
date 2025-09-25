@@ -22,6 +22,7 @@
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
@@ -37,32 +38,35 @@
 
 
 
+
 /*! @brief dual hinged rigid body state effector */
 class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
-    void registerStates(DynParamManager& statesIn);     //!< class method
-    void linkInStates(DynParamManager& states);         //!< class method
-    void updateEffectorMassProps(double integTime);     //!< class method
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;  //!< -- Method for adding attached dynamic effector
+    void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the SB inertial properties
+    void registerStates(DynParamManager& statesIn) override;     //!< class method
+    void linkInStates(DynParamManager& states) override;         //!< class method
+    void updateEffectorMassProps(double integTime) override;     //!< class method
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
-    void writeOutputStateMessages(uint64_t CurrentClock);
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< -- Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN) override;  //!< -- Method for each stateEffector to calculate derivatives
+    void Reset(uint64_t CurrentSimNanos) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
+    void writeOutputStateMessages(uint64_t CurrentClock) override;
 
 private:
     void computePanelInertialStates();
-    void prependSpacecraftNameToStates(); //!< class method
+    void prependSpacecraftNameToStates() override; //!< class method used for multiple spacecraft
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body
     double mass2;                     //!< [kg] mass of 2nd hinged rigid body
     double d1;                        //!< [m] distance from hinge point H1 to hinged rigid body center of mass S1
     double d2;                        //!< [m] distance from hinge point H2 to hinged rigid body center of mass S2
-    double l1;                        //!< [m] distance from hinge point H1 to hinged point H2
+    double l1;                        //!< [m] distance from hinge point H1 to hinged point H2 (s1 frame)
     double k1;                        //!< [N-m/rad] torsional spring constant of hinge
     double k2;                        //!< [N-m/rad] torsional spring constant of hinge
     double c1;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
@@ -80,10 +84,19 @@ public:
     std::string nameOfTheta1DotState; //!< [-] Identifier for the thetaDot state data container
     std::string nameOfTheta2State;    //!< [-] Identifier for the theta state data container
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
+    std::string nameOfInertialPositionProperty1;      //!< -- identifier for the lower spinning body inertial position property
+    std::string nameOfInertialVelocityProperty1;      //!< -- identifier for the lower spinning body inertial velocity property
+    std::string nameOfInertialAttitudeProperty1;      //!< -- identifier for the lower spinning body inertial attitude property
+    std::string nameOfInertialAngVelocityProperty1;   //!< -- identifier for the lower spinning body inertial angular velocity property
+    std::string nameOfInertialPositionProperty2;      //!< -- identifier for the upper spinning body inertial position property
+    std::string nameOfInertialVelocityProperty2;      //!< -- identifier for the upper spinning body inertial velocity property
+    std::string nameOfInertialAttitudeProperty2;      //!< -- identifier for the upper spinning body inertial attitude property
+    std::string nameOfInertialAngVelocityProperty2;   //!< -- identifier for the upper spinning body inertial angular velocity property
     BSKLogger bskLogger;                      //!< -- BSK Logging
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message
     std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< -- state output message vector for all panels
     std::vector<Message<SCStatesMsgPayload>*> dualHingedRigidBodyConfigLogOutMsgs; //!< panel state config log message vector for all panels
+    std::vector<DynamicEffector*> dynEffectors;           //!< Vector of dynamic effectors attached
 
 private:
     static uint64_t effectorID;        //!< [] ID number of this panel
@@ -127,16 +140,33 @@ private:
     StateData *theta1DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
-    Eigen::Vector3d r_SN_N[2];        //!< [m] position vector of hinge CM S relative to inertial frame
-    Eigen::Vector3d v_SN_N[2];        //!< [m/s] inertial velocity vector of S relative to inertial frame
-    Eigen::Vector3d sigma_SN[2];      //!< -- MRP attitude of panel frame S relative to inertial frame
-    Eigen::Vector3d omega_SN_S[2];    //!< [rad/s] inertial panel frame angular velocity vector
+    std::vector<Eigen::MatrixXd*> r_SN_N;     //!< [m] position vector of hinge CM S relative to inertial frame
+    std::vector<Eigen::MatrixXd*> v_SN_N;     //!< [m/s] inertial velocity vector of S relative to inertial frame
+    std::vector<Eigen::MatrixXd*> sigma_SN;   //!< -- MRP attitude of panel frame S relative to inertial frame
+    std::vector<Eigen::MatrixXd*> omega_SN_S; //!< [rad/s] inertial panel frame angular velocity vector
     Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};        //!< Hub/Inertial attitude represented by MRP of body relative to inertial frame
     Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};  //!< Hub/Inertial angular velocity vector in B frame components
     StateData *v_BN_NState;           //!< Hub/Inertial velocity vector in inertial frame components
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector, int segment) {
+        if (segment == 1) {
+            effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty1);
+            effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty1);
+            effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty1);
+            effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty1);
+        }
+        else if (segment == 2) {
+            effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty2);
+            effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty2);
+            effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty2);
+            effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty2);
+        }
+    };
 
 };
 
