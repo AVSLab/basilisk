@@ -448,7 +448,7 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     Eigen::Vector3d omega_PN_P;
     omega_PN_P = this->omega_BN_B;
     this->omega_SN_S[0] = this->dcm_S1P * ( omega_PN_P + this->theta1Dot*this->sHat12_P);
-    this->omega_SN_S[1] = this->dcm_S1P * ( omega_PN_P + this->theta2Dot*this->sHat22_P);
+    this->omega_SN_S[1] = this->dcm_S2P * ( omega_PN_P + this->theta1Dot*this->sHat12_P + this->theta2Dot*this->sHat22_P);
 
     // inertial position vectors
     Eigen::Vector3d r_PN_N;
