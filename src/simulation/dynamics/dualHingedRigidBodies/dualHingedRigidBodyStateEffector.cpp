@@ -154,7 +154,23 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     registerProperties(states);
 }
 
-/*! This method registers the panel inertial properties with the dynamic parameter manager  */
+/*! This method attaches a dynamicEffector to one of the two panels
+ @param newDynamicEffector the dynamic effector to be attached
+ @param segment the panel to attach to, either 1 or 2 */
+void DualHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    if (segment != 1 && segment != 2) {
+        bskLogger.bskError("DualHingedRigidBodyStateEffector: segment must be either 1 or 2.");
+    }
+
+    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector, segment);
+
+    this->dynEffectors.push_back(newDynamicEffector);
+    this->dynEffectorSegments.push_back(segment);
+}
+
+/*! This method registers the panel inertial properties with the dynamic parameter manager and links
+ them into dependent dynamic effectors  */
 void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
@@ -174,6 +190,12 @@ void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& state
     this->sigma_SN[1] = states.createProperty(this->nameOfInertialAttitudeProperty2, stateInit);
     this->omega_SN_S[0] = states.createProperty(this->nameOfInertialAngVelocityProperty1, stateInit);
     this->omega_SN_S[1] = states.createProperty(this->nameOfInertialAngVelocityProperty2, stateInit);
+
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->linkInProperties(states);
+    }
 }
 
 void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])

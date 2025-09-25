@@ -21,6 +21,7 @@
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
@@ -38,6 +39,7 @@ class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;  //!< -- Method for adding attached dynamic effector
     void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the panel inertial properties
     void registerStates(DynParamManager& statesIn) override;     //!< class method
     void linkInStates(DynParamManager& states) override;         //!< class method
@@ -89,6 +91,8 @@ public:
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message
     std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< -- state output message vector for all panels
     std::vector<Message<SCStatesMsgPayload>*> dualHingedRigidBodyConfigLogOutMsgs; //!< panel state config log message vector for all panels
+    std::vector<DynamicEffector*> dynEffectors;           //!< Vector of dynamic effectors attached
+    std::vector<int> dynEffectorSegments;                 //!< Segment index for each attached dynamic effector
 
 private:
     static uint64_t effectorID;        //!< [] ID number of this panel
@@ -146,6 +150,23 @@ private:
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     Eigen::MatrixXd *g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector, int segment) {
+        if (segment == 1) {
+            effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty1);
+            effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty1);
+            effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty1);
+            effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty1);
+        }
+        else if (segment == 2) {
+            effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty2);
+            effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty2);
+            effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty2);
+            effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty2);
+        }
+    };
 
 };
 
