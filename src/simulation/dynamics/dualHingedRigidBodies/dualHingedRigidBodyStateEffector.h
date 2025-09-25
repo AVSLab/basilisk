@@ -84,6 +84,7 @@ public:
 private:
     static uint64_t effectorID;        //!< [] ID number of this panel
     Eigen::Vector3d r_H1P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a single spacecraft body is modeled than P is the same as B
+    Eigen::Vector3d r_H2P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 2 location
     Eigen::Matrix3d dcm_H1P;          //!< -- DCM from primary body frame to hinge 1 frame
     double u1;                        //!< [N-m] motor torques on panel 1
     double u2;                        //!< [N-m] motor torques on panel 2
@@ -123,10 +124,12 @@ private:
     StateData *theta1DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
-    Eigen::Vector3d r_SN_N[2];        //!< [m] position vector of hinge CM S relative to inertial frame
-    Eigen::Vector3d v_SN_N[2];        //!< [m/s] inertial velocity vector of S relative to inertial frame
-    Eigen::MRPd sigma_SN[2];          //!< -- MRP attitude of panel frame S relative to inertial frame
-    Eigen::Vector3d omega_SN_S[2];    //!< [rad/s] inertial panel frame angular velocity vector
+    std::vector<Eigen::Vector3d> r_SN_N;      //!< [m] position vector of hinge CM S relative to inertial frame
+    std::vector<Eigen::Vector3d> v_SN_N;      //!< [m/s] inertial velocity vector of S relative to inertial frame
+    std::vector<Eigen::MatrixXd*> r_HN_N;     //!< [m] position vector of hinge point H relative to inertial frame
+    std::vector<Eigen::MatrixXd*> v_HN_N;     //!< [m/s] inertial velocity vector of H relative to inertial frame
+    std::vector<Eigen::MatrixXd*> sigma_SN;   //!< -- MRP attitude of panel frame S relative to inertial frame
+    std::vector<Eigen::MatrixXd*> omega_SN_S; //!< [rad/s] inertial panel frame angular velocity vector
     Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};        //!< Hub/Inertial attitude represented by MRP of body relative to inertial frame
     Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};  //!< Hub/Inertial angular velocity vector in B frame components
     StateData *v_BN_NState;           //!< Hub/Inertial velocity vector in inertial frame components
