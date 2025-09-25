@@ -178,6 +178,7 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime 
     this->sHat21_P = this->dcm_S2P.row(0);
     this->sHat22_P = this->dcm_S2P.row(1);
     this->sHat23_P = this->dcm_S2P.row(2);
+    this->r_H2P_P = this->r_H1P_P - this->l1 * this->sHat11_P;
     this->r_S1P_P = this->r_H1P_P - this->d1*this->sHat11_P;
     this->r_S2P_P = this->r_H1P_P - this->l1*this->sHat11_P - this->d2*this->sHat21_P;
     this->effProps.rEff_CB_B = 1.0/this->effProps.mEff*(this->mass1*this->r_S1P_P + this->mass2*this->r_S2P_P);
@@ -400,8 +401,8 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
         configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload;
         eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
-        eigenMRPd2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
+        eigenMatrixXd2CArray(*this->sigma_SN[i], configLogMsg.sigma_BN);
+        eigenMatrixXd2CArray(*this->omega_SN_S[i], configLogMsg.omega_BN_B);
         this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
 }
@@ -437,20 +438,25 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     }
     Eigen::MRPd sigmaPN = this->sigma_BN;
     Eigen::Matrix3d dcm_NP = sigmaPN.toRotationMatrix();
-    this->sigma_SN[0] = eigenC2MRP(this->dcm_S1P*dcm_NP.transpose());
-    this->sigma_SN[1] = eigenC2MRP(this->dcm_S2P*dcm_NP.transpose());
+    const Eigen::MRPd sigma_S1N = eigenC2MRP(this->dcm_S1P*dcm_NP.transpose());
+    const Eigen::MRPd sigma_S2N = eigenC2MRP(this->dcm_S2P*dcm_NP.transpose());
+    *this->sigma_SN[0] = sigma_S1N.coeffs();
+    *this->sigma_SN[1] = sigma_S2N.coeffs();
 
     // inertial angular velocities
     Eigen::Vector3d omega_PN_P;
     omega_PN_P = this->omega_BN_B;
-    this->omega_SN_S[0] = this->dcm_S1P * ( omega_PN_P + this->theta1Dot*this->sHat12_P);
-    this->omega_SN_S[1] = this->dcm_S2P * ( omega_PN_P + this->theta1Dot*this->sHat12_P + this->theta2Dot*this->sHat22_P);
+    *this->omega_SN_S[0] = this->dcm_S1P * (omega_PN_P + this->theta1Dot*this->sHat12_P);
+    *this->omega_SN_S[1] = this->dcm_S2P * (omega_PN_P + this->theta1Dot*this->sHat12_P + this->theta2Dot*this->sHat22_P);
 
     // inertial position vectors
     Eigen::Vector3d r_PN_N;
     r_PN_N = (Eigen::Vector3d)(*this->inertialPositionProperty);
-    this->r_SN_N[0] = (dcm_NP * this->r_S1P_P) + r_PN_N;
-    this->r_SN_N[1] = (dcm_NP * this->r_S2P_P) + r_PN_N;
+    this->r_SN_N[0] = Eigen::Vector3d(dcm_NP * this->r_S1P_P) + r_PN_N;
+    this->r_SN_N[1] = Eigen::Vector3d(dcm_NP * this->r_S2P_P) + r_PN_N;
+
+    *this->r_HN_N[0] = Eigen::Vector3d(dcm_NP * this->r_H1P_P) + r_PN_N;
+    *this->r_HN_N[1] = Eigen::Vector3d(dcm_NP * this->r_H2P_P) + r_PN_N;
 
     // inertial velocity vectors
     Eigen::Vector3d v_PN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty);
@@ -463,6 +469,9 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
                     + omega_S1N_P.cross( -this->d1 * this->sHat11_P)));
     this->v_SN_N[1] = v_PN_N + Eigen::Vector3d(dcm_NP * (rDot_H2P_P
                     + omega_S2N_P.cross( -this->d2 * this->sHat21_P)));
+
+    *this->v_HN_N[0] = v_PN_N + Eigen::Vector3d(dcm_NP * rDot_H1P_P);
+    *this->v_HN_N[1] = v_PN_N + Eigen::Vector3d(dcm_NP * rDot_H2P_P);
 
     return;
 }
