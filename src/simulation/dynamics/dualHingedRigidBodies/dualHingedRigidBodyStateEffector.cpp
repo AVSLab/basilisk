@@ -59,6 +59,14 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->nameOfTheta1DotState = "DualHingedRigidBodyStateEffectorTheta1Dot" + std::to_string(this->effectorID);
     this->nameOfTheta2State = "DualHingedRigidBodyStateEffectorTheta2" + std::to_string(this->effectorID);
     this->nameOfTheta2DotState = "DualHingedRigidBodyStateEffectorTheta2Dot" + std::to_string(this->effectorID);
+    this->nameOfInertialPositionProperty1 = "DualHingedRigidBodyStateEffectorInertialPosition1" + std::to_string(this->effectorID);
+    this->nameOfInertialVelocityProperty1 = "DualHingedRigidBodyStateEffectorInertialVelocity1" + std::to_string(this->effectorID);
+    this->nameOfInertialAttitudeProperty1 = "DualHingedRigidBodyStateEffectorInertialAttitude1" + std::to_string(this->effectorID);
+    this->nameOfInertialAngVelocityProperty1 = "DualHingedRigidBodyStateEffectorInertialAngVelocity1" + std::to_string(this->effectorID);
+    this->nameOfInertialPositionProperty2 = "DualHingedRigidBodyStateEffectorInertialPosition2" + std::to_string(this->effectorID);
+    this->nameOfInertialVelocityProperty2 = "DualHingedRigidBodyStateEffectorInertialVelocity2" + std::to_string(this->effectorID);
+    this->nameOfInertialAttitudeProperty2 = "DualHingedRigidBodyStateEffectorInertialAttitude2" + std::to_string(this->effectorID);
+    this->nameOfInertialAngVelocityProperty2 = "DualHingedRigidBodyStateEffectorInertialAngVelocity2" + std::to_string(this->effectorID);
     this->effectorID++;
 
     Message<HingedRigidBodyMsgPayload> *panelMsg;
@@ -143,7 +151,29 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     theta2DotInitMatrix(0,0) = this->theta2DotInit;
     this->theta2DotState->setState(theta2DotInitMatrix);
 
-    return;
+    registerProperties(states);
+}
+
+/*! This method registers the panel inertial properties with the dynamic parameter manager  */
+void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
+{
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+
+    this->r_SN_N.resize(2, Eigen::Vector3d::Zero());
+    this->v_SN_N.resize(2, Eigen::Vector3d::Zero());
+    this->r_HN_N.resize(2, nullptr);
+    this->v_HN_N.resize(2, nullptr);
+    this->sigma_SN.resize(2);
+    this->omega_SN_S.resize(2);
+
+    this->r_HN_N[0] = states.createProperty(this->nameOfInertialPositionProperty1, stateInit);
+    this->r_HN_N[1] = states.createProperty(this->nameOfInertialPositionProperty2, stateInit);
+    this->v_HN_N[0] = states.createProperty(this->nameOfInertialVelocityProperty1, stateInit);
+    this->v_HN_N[1] = states.createProperty(this->nameOfInertialVelocityProperty2, stateInit);
+    this->sigma_SN[0] = states.createProperty(this->nameOfInertialAttitudeProperty1, stateInit);
+    this->sigma_SN[1] = states.createProperty(this->nameOfInertialAttitudeProperty2, stateInit);
+    this->omega_SN_S[0] = states.createProperty(this->nameOfInertialAngVelocityProperty1, stateInit);
+    this->omega_SN_S[1] = states.createProperty(this->nameOfInertialAngVelocityProperty2, stateInit);
 }
 
 void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])

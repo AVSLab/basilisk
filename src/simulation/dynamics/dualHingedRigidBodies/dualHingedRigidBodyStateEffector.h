@@ -38,6 +38,7 @@ class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
+    void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the panel inertial properties
     void registerStates(DynParamManager& statesIn) override;     //!< class method
     void linkInStates(DynParamManager& states) override;         //!< class method
     void updateEffectorMassProps(double integTime) override;     //!< class method
@@ -76,6 +77,14 @@ public:
     std::string nameOfTheta1DotState; //!< [-] Identifier for the thetaDot state data container
     std::string nameOfTheta2State;    //!< [-] Identifier for the theta state data container
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
+    std::string nameOfInertialPositionProperty1;      //!< -- identifier for the panel 1 inertial position property
+    std::string nameOfInertialVelocityProperty1;      //!< -- identifier for the panel 1 inertial velocity property
+    std::string nameOfInertialAttitudeProperty1;      //!< -- identifier for the panel 1 inertial attitude property
+    std::string nameOfInertialAngVelocityProperty1;   //!< -- identifier for the panel 1 inertial angular velocity property
+    std::string nameOfInertialPositionProperty2;      //!< -- identifier for the panel 2 inertial position property
+    std::string nameOfInertialVelocityProperty2;      //!< -- identifier for the panel 2 inertial velocity property
+    std::string nameOfInertialAttitudeProperty2;      //!< -- identifier for the panel 2 inertial attitude property
+    std::string nameOfInertialAngVelocityProperty2;   //!< -- identifier for the panel 2 inertial angular velocity property
     BSKLogger bskLogger;                      //!< -- BSK Logging
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message
     std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< -- state output message vector for all panels
