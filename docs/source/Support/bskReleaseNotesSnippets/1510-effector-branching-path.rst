@@ -1,3 +1,4 @@
 - Fixed the :ref:`hingedRigidBodyStateEffector` panel and hinge velocity outputs, which were wrong for a rotated spacecraft hub.
 - Fixed the :ref:`hingedRigidBodyStateEffector` published panel kinematics, which were built on a hub angular velocity a step old.
 - Fixed the :ref:`dualHingedRigidBodyStateEffector` panel velocity outputs, which were wrong for a rotated spacecraft hub.
+- Fixed the :ref:`dualHingedRigidBodyStateEffector` panel 2 angular velocity output, which used panel 1's attitude and omitted the first hinge rate.

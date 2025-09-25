@@ -10,6 +10,8 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- The :ref:`dualHingedRigidBodyStateEffector` computed panel 2's inertial angular velocity with
+  panel 1's attitude and omitted the first hinge rate. This is fixed in the current version.
 - The :ref:`dualHingedRigidBodyStateEffector` wrote its panel center-of-mass velocities into the panel
   configuration log without rotating the hub-relative terms into inertial components, so the logged panel
   velocities were wrong for any non-identity hub attitude. This is fixed in the current version.
