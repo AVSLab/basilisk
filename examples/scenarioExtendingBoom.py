@@ -131,12 +131,12 @@ def run(show_plots):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]
 
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
     scObject.addStateEffector(translatingBodyEffector)
     scSim.AddModelToTask(dynTaskName, translatingBodyEffector)
 
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(100)
     translatingBody1.setIPntFc_F([[translatingBody1.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],
                                [0.0, translatingBody1.getMass() / 12 * (scGeometry.diameterArm / 2) ** 2, 0.0],
@@ -151,7 +151,7 @@ def run(show_plots):
     translatingBody1.setK(100.0)
     translatingBodyEffector.addTranslatingBody(translatingBody1)
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(100)
     translatingBody2.setIPntFc_F([[translatingBody2.getMass() / 12 * (3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],
                                   [0.0, translatingBody2.getMass() / 12 * (scGeometry.diameterArm / 2) ** 2, 0.0],
@@ -182,7 +182,7 @@ def run(show_plots):
     translatingRigidBodyMsg2 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
     profiler2.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg2)
 
-    translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(100)
     translatingBody3.setIPntFc_F([[translatingBody3.getMass() / 12 * (
                 3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],
@@ -214,7 +214,7 @@ def run(show_plots):
     translatingRigidBodyMsg3 = messaging.LinearTranslationRigidBodyMsg().write(translatingRigidBodyMsgData)
     profiler3.linearTranslationRigidBodyInMsg.subscribeTo(translatingRigidBodyMsg3)
 
-    translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(100)
     translatingBody4.setIPntFc_F([[translatingBody4.getMass() / 12 * (
                 3 * (scGeometry.diameterArm / 2) ** 2 + scGeometry.heightArm ** 2), 0.0, 0.0],

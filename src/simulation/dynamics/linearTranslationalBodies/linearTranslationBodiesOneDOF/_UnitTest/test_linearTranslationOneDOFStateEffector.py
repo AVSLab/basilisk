@@ -119,7 +119,7 @@ def translatingBodyNoInput(show_plots):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0
@@ -298,7 +298,7 @@ def translatingBodyLockFlag(show_plots):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0
@@ -483,7 +483,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0
@@ -657,7 +657,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0

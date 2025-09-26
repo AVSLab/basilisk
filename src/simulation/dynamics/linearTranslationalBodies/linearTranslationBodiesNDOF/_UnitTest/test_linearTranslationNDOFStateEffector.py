@@ -97,11 +97,11 @@ def translatingBodyNoInput(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
     translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -119,7 +119,7 @@ def translatingBodyNoInput(show_plots):
     translatingBody1.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody1)
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
     translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -137,7 +137,7 @@ def translatingBodyNoInput(show_plots):
     translatingBody2.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody2)
 
-    translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
     translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -155,7 +155,7 @@ def translatingBodyNoInput(show_plots):
     translatingBody3.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody3)
 
-    translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
     translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -339,11 +339,11 @@ def translatingBodyLockAxis(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
     translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -361,7 +361,7 @@ def translatingBodyLockAxis(show_plots):
     translatingBody1.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody1)
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
     translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -379,7 +379,7 @@ def translatingBodyLockAxis(show_plots):
     translatingBody2.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody2)
 
-    translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
     translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -397,7 +397,7 @@ def translatingBodyLockAxis(show_plots):
     translatingBody3.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody3)
 
-    translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
     translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -588,11 +588,11 @@ def translatingBodyCommandedForce(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create four translating rigid bodies
-    translatingBodyEffector = linearTranslationNDOFStateEffector.linearTranslationNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     translatingBodyEffector.ModelTag = "translatingBodyEffector"
 
     # define properties
-    translatingBody1 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
     translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -610,7 +610,7 @@ def translatingBodyCommandedForce(show_plots):
     translatingBody1.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody1)
 
-    translatingBody2 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
     translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -628,7 +628,7 @@ def translatingBodyCommandedForce(show_plots):
     translatingBody2.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody2)
 
-    translatingBody3 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
     translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],
@@ -646,7 +646,7 @@ def translatingBodyCommandedForce(show_plots):
     translatingBody3.setK(np.random.random())
     translatingBodyEffector.addTranslatingBody(translatingBody3)
 
-    translatingBody4 = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
     translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
                                   [0.0, np.random.uniform(5.0, 100.0), 0.0],

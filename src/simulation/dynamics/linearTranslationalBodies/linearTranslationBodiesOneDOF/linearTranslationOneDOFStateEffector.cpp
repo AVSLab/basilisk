@@ -20,7 +20,7 @@
 #include "linearTranslationOneDOFStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
 
-linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector()
+LinearTranslationOneDOFStateEffector::LinearTranslationOneDOFStateEffector()
 {
 	this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B.setZero();
@@ -28,22 +28,22 @@ linearTranslationOneDOFStateEffector::linearTranslationOneDOFStateEffector()
 	this->effProps.rEffPrime_CB_B.setZero();
 	this->effProps.IEffPrimePntB_B.setZero();
 
-	this->nameOfRhoState = "linearTranslationRho" + std::to_string(linearTranslationOneDOFStateEffector::effectorID);
-	this->nameOfRhoDotState = "linearTranslationRhoDot" + std::to_string(linearTranslationOneDOFStateEffector::effectorID);
-    linearTranslationOneDOFStateEffector::effectorID++;
+	this->nameOfRhoState = "linearTranslationRho" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
+	this->nameOfRhoDotState = "linearTranslationRhoDot" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
+    LinearTranslationOneDOFStateEffector::effectorID++;
 }
 
-uint64_t linearTranslationOneDOFStateEffector::effectorID = 1;
+uint64_t LinearTranslationOneDOFStateEffector::effectorID = 1;
 
-linearTranslationOneDOFStateEffector::~linearTranslationOneDOFStateEffector()
+LinearTranslationOneDOFStateEffector::~LinearTranslationOneDOFStateEffector()
 {
-    linearTranslationOneDOFStateEffector::effectorID = 1;
+    LinearTranslationOneDOFStateEffector::effectorID = 1;
 }
 
-void linearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock) {
+void LinearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock) {
 }
 
-void linearTranslationOneDOFStateEffector::setMass(double mass) {
+void LinearTranslationOneDOFStateEffector::setMass(double mass) {
     if (mass > 0.0)
         this->mass = mass;
     else {
@@ -51,7 +51,7 @@ void linearTranslationOneDOFStateEffector::setMass(double mass) {
     }
 }
 
-void linearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
+void LinearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
     if (fHat_B.norm() > 0.01) {
         this->fHat_B = fHat_B.normalized();
     }
@@ -60,7 +60,7 @@ void linearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
     }
 }
 
-void linearTranslationOneDOFStateEffector::setK(double k) {
+void LinearTranslationOneDOFStateEffector::setK(double k) {
     if (k >= 0.0)
         this->k = k;
     else {
@@ -68,7 +68,7 @@ void linearTranslationOneDOFStateEffector::setK(double k) {
     }
 }
 
-void linearTranslationOneDOFStateEffector::setC(double c) {
+void LinearTranslationOneDOFStateEffector::setC(double c) {
     if (c >= 0.0)
         this->c = c;
     else {
@@ -76,14 +76,14 @@ void linearTranslationOneDOFStateEffector::setC(double c) {
     }
 }
 
-void linearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
+void LinearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
     this->g_N = statesIn.getPropertyReference("g_N");
 }
 
-void linearTranslationOneDOFStateEffector::registerStates(DynParamManager& states)
+void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& states)
 {
 	this->rhoState = states.registerState(1, 1, nameOfRhoState);
     Eigen::MatrixXd rhoInitMatrix(1,1);
@@ -96,7 +96,7 @@ void linearTranslationOneDOFStateEffector::registerStates(DynParamManager& state
     this->rhoDotState->setState(rhoDotInitMatrix);
 }
 
-void linearTranslationOneDOFStateEffector::readInputMessages()
+void LinearTranslationOneDOFStateEffector::readInputMessages()
 {
     if (this->motorForceInMsg.isLinked() && this->motorForceInMsg.isWritten()) {
         ArrayMotorForceMsgPayload incomingCmdBuffer;
@@ -118,7 +118,7 @@ void linearTranslationOneDOFStateEffector::readInputMessages()
     }
 }
 
-void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t currentSimNanos)
+void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t currentSimNanos)
 {
     if (this->translatingBodyOutMsg.isLinked()) {
         LinearTranslationRigidBodyMsgPayload translatingBodyBuffer;
@@ -141,7 +141,7 @@ void linearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
     }
 }
 
-void linearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime)
+void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime)
 {
 	this->rho = this->rhoState->getState()(0,0);
     this->rhoDot = this->rhoDotState->getState()(0, 0);
@@ -167,7 +167,7 @@ void linearTranslationOneDOFStateEffector::updateEffectorMassProps(double integT
             + this->rTilde_FcB_B * this->rPrimeTilde_FcB_B);
 }
 
-void linearTranslationOneDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr,
+void LinearTranslationOneDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr,
                                                                Eigen::Vector3d sigma_BN,
                                                                Eigen::Vector3d omega_BN_B,
                                                                Eigen::Vector3d g_N)
@@ -185,7 +185,7 @@ void linearTranslationOneDOFStateEffector::updateContributions(double integTime,
     computeBackSubContributions(backSubContr, F_g);
 }
 
-void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMatrices & backSubContr,
+void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMatrices & backSubContr,
                                                                        const Eigen::Vector3d& F_g)
 {
     // There are no contributions if the effector is locked
@@ -214,7 +214,7 @@ void linearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
             - this->mass * this->cRho * this->rTilde_FcB_B * this->fHat_B;
 }
 
-void linearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
+void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
                                                               Eigen::Vector3d rDDot_BN_N,
                                                               Eigen::Vector3d omegaDot_BN_B,
                                                               Eigen::Vector3d sigma_BN)
@@ -230,7 +230,7 @@ void linearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
     this->rhoState->setDerivative(this->rhoDotState->getState());
 }
 
-void linearTranslationOneDOFStateEffector::updateEnergyMomContributions(double integTime,
+void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double integTime,
                                                                         Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                         double & rotEnergyContr,
                                                                         Eigen::Vector3d omega_BN_B)
@@ -246,7 +246,7 @@ void linearTranslationOneDOFStateEffector::updateEnergyMomContributions(double i
             + 1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
 }
 
-void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates()
+void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates()
 {
     Eigen::Matrix3d dcm_FN = this->dcm_FB * this->dcm_BN;
     this->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
@@ -257,7 +257,7 @@ void linearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
     this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
 }
 
-void linearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)
+void LinearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
     this->computeTranslatingBodyInertialStates();
