@@ -17,7 +17,7 @@ jobs:
 
   build-linux:
     runs-on: ubuntu-22.04
-    timeout-minutes: 90
+    timeout-minutes: 120
     needs: pre-commit
     strategy:
       fail-fast: false
@@ -42,7 +42,7 @@ jobs:
 
   build-windows:
     runs-on: windows-2025
-    timeout-minutes: 90
+    timeout-minutes: 120
     needs: pre-commit
     strategy:
       fail-fast: false
@@ -74,7 +74,7 @@ jobs:
 
   build-macos:
     runs-on: macos-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     needs: pre-commit
     strategy:
       fail-fast: false
