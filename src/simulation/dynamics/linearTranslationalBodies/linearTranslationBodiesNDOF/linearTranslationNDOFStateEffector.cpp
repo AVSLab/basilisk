@@ -108,6 +108,13 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
     this->CRho.conservativeResize(this->CRho.rows()+1);
 }
 
+/*! This method is used to get a translating body. */
+std::shared_ptr<TranslatingBody> LinearTranslationNDOFStateEffector::getTranslatingBody(uint64_t index) {
+    assert(("Index can't be greater than the number of degrees of freedom of the effector", index <= this->numberOfDegreesOfFreedom));
+
+    return this->translatingBodyVec.at(index);
+}
+
 /*! This method reads motor force, lock flag, and reference state messages. */
 void LinearTranslationNDOFStateEffector::readInputMessages()
 {

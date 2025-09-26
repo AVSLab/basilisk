@@ -149,6 +149,8 @@ public:
 
     /** method for adding a new translating body */
     void addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody);
+    /** method for getting an indexed translating body */
+    std::shared_ptr<TranslatingBody> getTranslatingBody(uint64_t index);
     /** setter for `nameOfRhoState` property */
     void setNameOfRhoState(const std::string& nameOfRhoState) { this->nameOfRhoState = nameOfRhoState; };
     /** setter for `nameOfRhoDotState` property */
