@@ -148,7 +148,7 @@ public:
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;          //!< -- (optional) motor lock input message name
 
     /** method for adding a new translating body */
-    void addTranslatingBody(TranslatingBody const& newBody);
+    void addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody);
     /** setter for `nameOfRhoState` property */
     void setNameOfRhoState(const std::string& nameOfRhoState) { this->nameOfRhoState = nameOfRhoState; };
     /** setter for `nameOfRhoDotState` property */
@@ -161,7 +161,7 @@ public:
 private:
     static uint64_t effectorID;    //!< [] ID number of this effector
     int N = 0;    //!< -- number of translating body axes defined in the system
-    std::vector<TranslatingBody> translatingBodyVec; //!< -- vector of TB effector structs
+    std::vector<std::shared_ptr<TranslatingBody>> translatingBodyVec; //!< -- vector of TB effector structs
 
     // Terms needed for back substitution
     Eigen::MatrixXd ARho;     //!< -- rDDot_BN term for back substitution
