@@ -143,7 +143,7 @@ public:
     ~SpinningBodyNDOFStateEffector() override;  //!< Destructor
 
     /** method for adding a new spinning body */
-    void addSpinningBody(SpinningBody const& newBody);
+    void addSpinningBody(const std::shared_ptr<SpinningBody> newBody);
     /** setter for `nameOfThetaState` property */
     void setNameOfThetaState(const std::string& nameOfThetaState) {this->nameOfThetaState = nameOfThetaState;};
     /** setter for `nameOfThetaDotState` property */
@@ -157,7 +157,7 @@ private:
     static uint64_t effectorID;
 
     int numberOfDegreesOfFreedom = 0;
-    std::vector<SpinningBody> spinningBodyVec;
+    std::vector<std::shared_ptr<SpinningBody>> spinningBodyVec;
 
     Eigen::MatrixXd ATheta;
     Eigen::MatrixXd BTheta;
@@ -199,11 +199,11 @@ private:
 
     void readInputMessages();
     void computeSpinningBodyInertialStates();
-    void computeAttitudeProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computeAngularVelocityProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computePositionProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computeVelocityProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computeInertiaProperties(SpinningBody& spinningBody) const;
+    void computeAttitudeProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computeAngularVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computePositionProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computeVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computeInertiaProperties(std::shared_ptr<SpinningBody> spinningBody) const;
     void computeMTheta(Eigen::MatrixXd& MTheta);
     void computeAThetaStar(Eigen::MatrixXd& AThetaStar);
     void computeBThetaStar(Eigen::MatrixXd& BThetaStar);
