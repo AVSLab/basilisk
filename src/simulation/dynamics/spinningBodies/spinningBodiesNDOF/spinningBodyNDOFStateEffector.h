@@ -65,7 +65,7 @@ public:
     /** getter for `r_ScS_S` property */
     Eigen::Vector3d getR_ScS_S() const {return this->r_ScS_S;};
     /** getter for `ISPntSc_S` property */
-    Eigen::Matrix3d setISPntSc_S() const {return this->ISPntSc_S;};
+    Eigen::Matrix3d getISPntSc_S() const {return this->ISPntSc_S;};
     /** getter for `sHat_S` property */
     Eigen::Vector3d getSHat_S() const {return this->sHat_S;};
     /** getter for `dcm_S0P` property */
