@@ -1,0 +1,95 @@
+Metadata-Version: 2.1
+Name: Basilisk
+Version: 2.5.8
+Summary: Basilisk: an Astrodynamics Simulation Framework
+License:
+         ISC License
+
+         Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+         Permission to use, copy, modify, and/or distribute this software for any
+         purpose with or without fee is hereby granted, provided that the above
+         copyright notice and this permission notice appear in all copies.
+
+         THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+         WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+         MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+         ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+         WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+         ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+         OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+
+Project-URL: homepage, https://hanspeterschaub.info/basilisk/
+Requires-Python: <3.12,>=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: numpy
+Requires-Dist: colorama
+Requires-Dist: tqdm
+Requires-Dist: Pillow
+Requires-Dist: pytest
+Requires-Dist: pytest-html
+Requires-Dist: pytest-xdist
+Provides-Extra: optional
+Requires-Dist: breathe; extra == "optional"
+Requires-Dist: docutils; extra == "optional"
+Requires-Dist: recommonmark; extra == "optional"
+Requires-Dist: sphinx<8.0.0,>7.0.0; extra == "optional"
+Requires-Dist: sphinx_rtd_theme==2.0.0; extra == "optional"
+Requires-Dist: pre-commit; extra == "optional"
+Requires-Dist: clang-format; extra == "optional"
+
+# README
+
+### Basilisk
+
+* [Summary of Basilisk](docs/source/index.rst)
+* [Release Notes](docs/source/Support/bskReleaseNotes.rst)
+
+### How do I get set up?
+The following links contain installation instructions for the supported platforms:
+
+- [Setup a macOS Development Environment](docs/source/Install/installOnMacOS.rst)
+
+- [Setup a Linux Development Environment](docs/source/Install/installOnLinux.rst)
+
+- [Setup a Windows Development Environment](docs/source/Install/installOnWindows.rst)
+
+
+
+### Basilisk Development guidelines
+
+* [Contributing](CONTRIBUTING.md)
+* [Coding Guidelines](docs/source/Support/Developer/CodingGuidlines.rst)
+
+
+### Getting Started
+To get started with Basilisk (BSK), several tutorial python files are provided in the installed package.  Within this
+web page documentation site, they are listed and discussed in the [integrated example script](docs/source/examples/index.rst)
+page.  The
+documentation lists the scenarios in an order that facilitates learning basic BSK features. The python scripts
+are stored under `basilisk/examples`. A good start would be to run `scenarioBasicOrbit.py`.
+
+To play with the tutorials, it is suggested the user makes a copy of these tutorial files, and use the copies in order
+to learn, test and experiment. Copy the folder `basilisk/examples` into a
+new folder, and change to that directory.
+To run the default scenario of `scenarioBasicOrbit`, in the directory of the
+copied tutorials, execute the python script: `python scenarioBasicOrbit.py`
+
+Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
+
+Any new BSK module development should not occur within the BSK folder as this will be updated rapidly.  Rather,
+new FSW algorithm or simulation code modules should be created in a custom folder outside of the BSK directory.
+See the [building custom modules](docs/source/Install/buildExtModules.rst) web page
+for more information.
+
+To use the standalone 3D Visualization, download the [Vizard](docs/source/Vizard/VizardDownload.rst).
+This is in development, but does provide a 3D view of many of the simulation states.
+
+
+### Who do I talk to?
+
+Questions and answers are fielded in the project's [Github Discussions](https://github.com/AVSLab/basilisk/discussions).
