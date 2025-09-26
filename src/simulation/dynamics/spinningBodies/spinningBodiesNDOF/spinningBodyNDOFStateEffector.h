@@ -144,6 +144,8 @@ public:
 
     /** method for adding a new spinning body */
     void addSpinningBody(const std::shared_ptr<SpinningBody> newBody);
+    /** method for getting an indexed spinning body */
+    std::shared_ptr<SpinningBody> getSpinningBody(uint64_t index);
     /** setter for `nameOfThetaState` property */
     void setNameOfThetaState(const std::string& nameOfThetaState) {this->nameOfThetaState = nameOfThetaState;};
     /** setter for `nameOfThetaDotState` property */

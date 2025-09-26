@@ -95,6 +95,12 @@ void SpinningBodyNDOFStateEffector::addSpinningBody(const std::shared_ptr<Spinni
     this->CTheta.conservativeResize(this->CTheta.rows()+1);
 }
 
+std::shared_ptr<SpinningBody> SpinningBodyNDOFStateEffector::getSpinningBody(uint64_t index) {
+    assert(("Index can't be greater than the number of degrees of freedom of the effector", index <= this->numberOfDegreesOfFreedom));
+
+    return this->spinningBodyVec.at(index);
+}
+
 void SpinningBodyNDOFStateEffector::readInputMessages()
 {
     if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {
