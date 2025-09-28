@@ -53,6 +53,8 @@ public:
     void setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1);
     /** setter for `r_P2B2_B2` connection point position on spacecraft 2 */
     void setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2);
+    /** setter for `sigma_B2B1_Init` initial spacecraft relative attitude */
+    void setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init);
     /** setter for `alpha` gain tuning parameter */
     void setAlpha(double alpha);
     /** setter for `beta` gain tuning parameter */
@@ -100,7 +102,10 @@ private:
     // Constraint length and direction
     Eigen::Vector3d r_P1B1_B1 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 1 hub to its connection point P1
     Eigen::Vector3d r_P2B2_B2 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 2 hub to its connection point P2
-    Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] precribed position vector from spacecraft 1 connection point to spacecraft 2 connection point
+    Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] prescribed position vector from spacecraft 1 connection point to spacecraft 2 connection point
+
+    // Constraint attitude
+    Eigen::Matrix3d dcm_B2B1Init = Eigen::Matrix3d::Identity(); //!< attitude constraint violation
 
     // Gains for PD controller
     double alpha = 0.0; //!< Baumgarte stabilization gain tuning variable
@@ -145,7 +150,7 @@ private:
     // Constraint violations
     Eigen::Vector3d psi_N = Eigen::Vector3d::Zero(); //!< [m] direction constraint violation in inertial frame
     Eigen::Vector3d psiPrime_N = Eigen::Vector3d::Zero(); //!< [m/s] direction rate constraint violation in inertial frame
-    Eigen::MRPd sigma_B2B1 = Eigen::MRPd::Identity(); //!< attitude constraint violation
+    Eigen::MRPd phi = Eigen::MRPd::Identity(); //!< attitude constraint violation
     Eigen::Vector3d omega_B2B1_B2 = Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity constraint violation in spacecraft 2 body frame
 
     // Force and torque quantities stored to be assigned on the alternating call of computeForceTorque

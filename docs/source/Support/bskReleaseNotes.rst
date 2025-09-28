@@ -36,6 +36,7 @@ Version |release|
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
 - Fixed bug with recording message payload entries that are 2D arrays. This bug was introduced with the faster recording
   strategy added in version 2.78.0.
+- Add a desired relative attitude between spacecraft in :ref:`constraintDynamicEffector`.
 
 
 Version 2.78.0 (August 30, 2025)
