@@ -35,12 +35,12 @@ Version |release|
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
 - Fixed bug with recording message payload entries that are 2D arrays. This bug was introduced with the faster recording
-  strategy added in version 2.78.0.
+  strategy added in version 2.8.0.
 - Add a desired relative attitude between spacecraft in :ref:`constraintDynamicEffector`.
 
 
-Version 2.78.0 (August 30, 2025)
---------------------------------
+Version 2.8.0 (August 30, 2025)
+-------------------------------
 - Marked the use of python 3.8 as deprecated
 - Support for ``opNavMode`` flag within vizSupport was removed, as its deprecation period ended
 - Demo video was added to :ref:`scenarioQuadMaps` documentation
