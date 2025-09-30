@@ -279,7 +279,7 @@ message VizMessage{
         repeated PointLine pointLines = 5;
         repeated KeepOutInCone keepOutInCones = 6;
         repeated StandardCameraSettings standardCameraSettings = 7;
-//        CameraTwoSettings cameraTwo = 8;
+        int32 viewCameraViewHUD = 8;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         //        PlanetCameraSettings planetCamera = 9;
         repeated InstrumentSettings instrumentSettings = 9;
         repeated ActuatorSettings actuatorSettings = 10;

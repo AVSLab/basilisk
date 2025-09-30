@@ -573,6 +573,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         if (abs(this->settings.viewCameraConeHUD)>1) {
             bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraConeHUD);
         }
+        // define if camera HUD should be shown
+        vizSettings->set_viewcameraviewhud(this->settings.viewCameraViewHUD);
+        if (abs(this->settings.viewCameraViewHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraViewHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraViewHUD);
+        }
 
         // define if coordinate system labels should be shown
         vizSettings->set_showcslabels(this->settings.showCSLabels);

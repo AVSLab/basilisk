@@ -402,6 +402,7 @@ VizSettings
     bool        dataFresh;                         //!< flag indicating if the settings have been transmitted,
     int32_t viewCameraBoresightHUD = 0;            //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t viewCameraConeHUD = 0;                 //!< Value of 0 to use viz default, -1 for false, 1 for true
+    int32_t viewCameraViewHUD = 0;                 //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCSLabels = 0;                      //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showCelestialBodyLabels = 0;           //!< Value of 0 to use viz default, -1 for false, 1 for true
     int32_t showSpacecraftLabels = 0;              //!< Value of 0 to use viz default, -1 for false, 1 for true

@@ -153,6 +153,9 @@ default setting for that behavior.
     * - ``viewCameraConeHUD``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) the camera cone. Value of 0 (protobuffer default) to use viz default.
+    * - ``viewCameraViewHUD``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the camera image in HUD. Value of 0 (protobuffer default) to use viz default.
     * - ``defaultThrusterColor``
       - int(4)
       - RGBA color values between (0,255).  Default values of -1 makes Vizard use the default thruster plume color

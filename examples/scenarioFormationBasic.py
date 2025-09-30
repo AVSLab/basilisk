@@ -464,6 +464,8 @@ def run(show_plots):
                                          )
         viz.settings.trueTrajectoryLinesOn = 1
         viz.settings.orbitLinesOn = 2
+        viz.settings.viewCameraConeHUD = 1
+        viz.settings.viewCameraViewHUD = 1
         viz.settings.messageBufferSize = -1 # force the full file to be read in at once
 
     #
