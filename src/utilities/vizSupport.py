@@ -1033,7 +1033,7 @@ def createCameraConfigMsg(
     # the function makes vizInterface subscribe to the pointer to this Msg object
     viz.addCamMsgToModule(cameraConfigMsg)
 
-    return cameraConfigMsgPayload
+    return cameraConfigMsgPayload, cameraConfigMsg
 
 
 def ensure_correct_len_list(input, length, depth=1):

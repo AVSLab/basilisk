@@ -457,7 +457,7 @@ def run(show_plots):
                                                   # , saveFile=fileName,
                                                   )
         # setup one-way instrument camera by having frameRate be 0
-        vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
+        msgPayload, msg = vizSupport.createCameraConfigMsg(viz, parentName=scObject.ModelTag,
                                          cameraID=1, fieldOfView=40 * macros.D2R,
                                          resolution=[1024, 1024], renderRate=0.,
                                          cameraPos_B=[0., 0., 2.0], sigma_CB=[0., 0., 0.]
