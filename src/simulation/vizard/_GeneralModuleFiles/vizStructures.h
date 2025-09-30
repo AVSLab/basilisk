@@ -178,6 +178,7 @@ LocationPbMsg
     double range = 0;                   //!< [m] range of the ground location, use 0 (protobuffer default) to use viz default
     double markerScale = 0;             //!< (Optional) Value will be multiplied by default marker scale, value less than 1.0 will decrease size, greater will increase size
     bool isHidden = false;              //!< (Optional) True to hide Location, false to show (vizDefault)
+    std::string label = "";             //!< (Optional) string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
 }LocationPbMsg;
 
 

@@ -363,6 +363,7 @@ message VizMessage{
         double range = 7;            // [m] Value of 0 (protobuffer default) to use viz default
         double markerScale = 8;      // (optional) Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase
         bool isHidden = 9;           // (optional) True to hide Location, false to show (vizDefault)
+        string label = 10;           // (optional) Send string to display in label instead of stationName, send "NOLABEL" to delete label
     }
 
     message Ellipsoid{ //ONLY NEEDED IF ELLIPSOID DESIRED

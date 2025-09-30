@@ -1081,6 +1081,11 @@ The following table lists all required and optional arguments that can be provid
       -
       - No
       - True to hide Location, false to show (vizDefault)
+    * - ``label``
+      - string
+      -
+      - No
+      - string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
 
 To change the location information on the fly use the ``changeLocation()`` method also defined in ``vizSupport.py``.
 This method accepts the same arguments as ``addLocation()`` shown in the table above.

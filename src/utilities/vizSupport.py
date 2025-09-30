@@ -216,6 +216,7 @@ def addLocation(
     range=None,
     markerScale=None,
     isHidden=None,
+    label=None
 ):
     """
     This method creates a Location instance on a parent body.
@@ -247,6 +248,8 @@ def addLocation(
         Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.
     isHidden: bool
         True to hide Location, false to show (vizDefault)
+    label: string
+        string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
     """
     vizElement = vizInterface.LocationPbMsg()
 
@@ -293,6 +296,8 @@ def addLocation(
                 f"fieldOfView must be a value between 0 and Pi, not {fieldOfView}"
             )
         vizElement.fieldOfView = fieldOfView
+    if label is not None:
+        vizElement.label = label
 
     # Pass to Vizard
     locationDict[vizElement.stationName] = vizElement
@@ -313,6 +318,7 @@ def changeLocation(
         range: Optional[float] = None,
         markerScale: Optional[float] = None,
         isHidden: Optional[bool] = None,
+        label: Optional[str] = None
 ):
     """
     This method changes the information of a Location instance.
@@ -345,6 +351,8 @@ def changeLocation(
         Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.
     isHidden: bool
         True to hide Location, false to show (vizDefault)
+    label: string
+        string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
     """
 
     vizElement = locationDict[stationName]

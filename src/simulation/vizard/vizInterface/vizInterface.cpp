@@ -829,6 +829,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
         glp->set_markerscale(glIt->markerScale);
         glp->set_ishidden(glIt->isHidden);
+        glp->set_label(glIt->label);
     }
     this->locations.clear(); // Locations should only send to Vizard once
 

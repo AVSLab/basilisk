@@ -230,6 +230,7 @@ def run(show_plots):
                                , fieldOfView=np.radians(160.)
                                , color='pink'
                                , range=1000.0*1000  # meters
+                               , label="Boulder Pink"
                                )
         viz.settings.spacecraftSizeMultiplier = 1.5
         viz.settings.showLocationCommLines = 1
@@ -249,7 +250,9 @@ def run(show_plots):
     scenarioSim.ConfigureStopTime(macros.hour2nano(24))
     if vizSupport.vizFound:
         vizSupport.changeLocation(viz, stationName="Boulder Station"
-                                  , color="blue")
+                                  , color="blue"
+                                  , label="Boulder Blue"
+                                  )
     scenarioSim.ExecuteSimulation()
 
     # Grabbed logged data for plotting
