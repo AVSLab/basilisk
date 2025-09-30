@@ -995,7 +995,7 @@ def createCameraConfigMsg(
     cameraConfigMsgPayload.postProcessingOn = assert_trinary(
         postProcessingOn, default=0
     )
-    cameraConfigMsgPayload.cameraID = int(updateCameraParameters)
+    cameraConfigMsgPayload.updateCameraParameters = int(updateCameraParameters)
     cameraConfigMsgPayload.renderMode = int(renderMode)
     cameraConfigMsgPayload.showHUDElementsInImage = assert_trinary(
         showHUDElementsInImage, default=0
