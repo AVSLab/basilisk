@@ -1172,10 +1172,10 @@ def enableUnityVisualization(
     global firstSpacecraftName
 
     # set up the Vizard interface module
-    vizMessenger = vizInterface.VizInterface()
-    vizMessenger.settings = vizInterface.VizSettings()
-    vizMessenger.ModelTag = "vizMessenger"
-    scSim.AddModelToTask(simTaskName, vizMessenger)
+    scSim.vizMessenger = vizInterface.VizInterface()
+    scSim.vizMessenger.settings = vizInterface.VizSettings()
+    scSim.vizMessenger.ModelTag = "vizMessenger"
+    scSim.AddModelToTask(simTaskName, scSim.vizMessenger)
 
     # ensure the spacecraft object list is a list
     if not isinstance(scList, list):
@@ -1237,7 +1237,7 @@ def enableUnityVisualization(
     planetNameList = []
     planetInfoList = []
     spiceMsgList = []
-    vizMessenger.scData.clear()
+    scSim.vizMessenger.scData.clear()
     c = 0
     spacecraftParentName = ""
 
@@ -1253,21 +1253,28 @@ def enableUnityVisualization(
             scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
 
             # link to celestial bodies information
-            for gravBody in sc.gravField.gravBodies:
-                # check if the celestial object has already been added
-                if gravBody.planetName not in planetNameList:
-                    planetNameList.append(gravBody.planetName)
-                    planetInfo = vizInterface.GravBodyInfo()
-                    if gravBody.displayName == "":
-                        planetInfo.bodyName = gravBody.planetName
-                    else:
-                        planetInfo.bodyName = gravBody.displayName
-                    planetInfo.mu = gravBody.mu
-                    planetInfo.radEquator = gravBody.radEquator
-                    planetInfo.radiusRatio = gravBody.radiusRatio
-                    planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
-                    planetInfoList.append(planetInfo)
-                    spiceMsgList.append(gravBody.planetBodyInMsg)
+            bodies = list(getattr(getattr(sc, "gravField", None), "gravBodies", []))
+            if bodies:  # only runs if gravField exists and has bodies
+                # get the existing dict of kept wrappers, or start fresh
+                kept = getattr(scSim, "_kept_grav_bodies", {})
+
+                for gravBody in bodies:
+                    # use planetName as a unique key; you could also key by id(gravBody) if needed
+                    if gravBody.planetName not in kept:
+                        kept[gravBody.planetName] = gravBody
+
+                        planetNameList.append(gravBody.planetName)
+                        planetInfo = vizInterface.GravBodyInfo()
+                        planetInfo.bodyName = getattr(gravBody, "displayName", "") or gravBody.planetName
+                        planetInfo.mu = gravBody.mu
+                        planetInfo.radEquator = gravBody.radEquator
+                        planetInfo.radiusRatio = gravBody.radiusRatio
+                        planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
+                        planetInfoList.append(planetInfo)
+                        spiceMsgList.append(gravBody.planetBodyInMsg)
+
+                # update the dict back onto scSim
+                scSim._kept_grav_bodies = kept
         else:
             # the scList object is an effector belonging to the parent spacecraft
             scData.parentSpacecraftName = spacecraftParentName
@@ -1419,17 +1426,17 @@ def enableUnityVisualization(
             if msmInfoList[c] is not None:  # MSM have been added to this spacecraft
                 scData.msmInfo = msmInfoList[c]
 
-        vizMessenger.scData.push_back(scData)
+        scSim.vizMessenger.scData.push_back(scData)
 
         c += 1
 
-    vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
-    vizMessenger.spiceInMsgs = messaging.SpicePlanetStateMsgInMsgsVector(spiceMsgList)
+    scSim.vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
+    scSim.vizMessenger.spiceInMsgs = messaging.SpicePlanetStateMsgInMsgsVector(spiceMsgList)
 
     # note that the following logic can receive a single python file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
     # If a "*.bin" file is provided, then the provided path and name are used to store the data.
-    vizMessenger.saveFile = False
+    scSim.vizMessenger.saveFile = False
     if saveFile is not None:
         if os.path.splitext(os.path.basename(saveFile))[1].lower() == ".bin":
             # here the provide file path, file name and file extension are used explicitly
@@ -1445,15 +1452,15 @@ def enableUnityVisualization(
             if not os.path.isdir(filePath + "/_VizFiles"):
                 os.mkdir(filePath + "/_VizFiles")
             vizFileNamePath = filePath + "/_VizFiles/" + fileName + "_UnityViz.bin"
-        vizMessenger.saveFile = True
-        vizMessenger.protoFilename = vizFileNamePath
+        scSim.vizMessenger.saveFile = True
+        scSim.vizMessenger.protoFilename = vizFileNamePath
 
     if (liveStream or broadcastStream) and noDisplay:
         raise ValueError(
             "noDisplay mode cannot be used with liveStream or broadcastStream."
         )
-    vizMessenger.liveStream = liveStream
-    vizMessenger.broadcastStream = broadcastStream
-    vizMessenger.noDisplay = noDisplay
+    scSim.vizMessenger.liveStream = liveStream
+    scSim.vizMessenger.broadcastStream = broadcastStream
+    scSim.vizMessenger.noDisplay = noDisplay
 
-    return vizMessenger
+    return scSim.vizMessenger
