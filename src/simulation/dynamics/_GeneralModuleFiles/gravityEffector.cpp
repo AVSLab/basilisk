@@ -283,7 +283,7 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double& 
             // relative potential energy solution
             orbPotEnergyContr += body->gravityModel->computePotentialEnergy(r_PN_N - r_CN_N);
         }
-        orbPotEnergyContr = body->gravityModel->computePotentialEnergy(
+        orbPotEnergyContr += body->gravityModel->computePotentialEnergy(
             r_cP_N); // Potential w/in current planet field
     }
 }

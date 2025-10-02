@@ -11,7 +11,8 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- text here
+- :ref:`gravityEffector` had a typo where the total gravity potential contribution of the celestial bodies
+  was not being computed properly. Fixed now.
 
 
 Version 2.8.0

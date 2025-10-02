@@ -29,6 +29,7 @@ Version |release|
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
   Users should be astrodynamics constants from ``Basilisk.architecture.astroConstants``.
 - Made statistical unit tests more robust
+- Fix typo in how :ref:`gravityEffector` compute the planets gravity potential contributions
 - Added fault modeling capability to :ref:`magnetometer` module.
 - Added new module :ref:`MJSystemCoM` to extract the system center of mass position and velocity from a MuJoCo simulation.
 - Refactored the CI build system scripts
