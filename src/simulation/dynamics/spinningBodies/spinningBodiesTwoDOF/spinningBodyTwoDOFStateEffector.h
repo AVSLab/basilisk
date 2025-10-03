@@ -89,6 +89,7 @@ public:
     void linkInStates(DynParamManager& states) override;             //!< -- Method for getting access to other states
     void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;  //!< -- Method for adding attached dynamic effector
     void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the SB inertial properties
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;         //!< -- Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
@@ -105,6 +106,7 @@ public:
                                       Eigen::Vector3d omega_BN_B) override;       //!< -- Method for computing energy and momentum for SBs
     void prependSpacecraftNameToStates() override;                   //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;  //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
 private:
     static uint64_t effectorID;     //!< [] ID number of this panel
@@ -208,6 +210,9 @@ private:
     StateData* theta1DotState = nullptr; //!< -- state manager of theta1Dot for spinning body
     StateData* theta2State = nullptr;    //!< -- state manager of theta2 for spinning body
     StateData* theta2DotState = nullptr; //!< -- state manager of theta2Dot for spinning body
+
+    // Properties required for prescribed motion branching/attachment
+    StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
 };
 
 #endif /* SPINNING_BODY_TWO_DOF_STATE_EFFECTOR_H */
