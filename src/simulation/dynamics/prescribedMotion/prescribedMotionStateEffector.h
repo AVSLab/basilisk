@@ -40,6 +40,7 @@ public:
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
     void registerStates(DynParamManager& statesIn) override;         //!< Method for registering the effector's states
     void linkInStates(DynParamManager& states) override;             //!< Method for giving the effector access to hub states
+    void registerProperties(DynParamManager& states) override;       //!< Method for registering the prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices & backSubContr,
                              Eigen::Vector3d sigma_BN,
@@ -55,6 +56,7 @@ public:
                                       double & rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
+    void addStateEffector(StateEffector *newStateEffector);          //!< Method to attach a state effector to prescribed motion
 
     double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                        //!< [kg] Effector mass
@@ -83,7 +85,6 @@ private:
 
     // Given quantities from user in python
     Eigen::Matrix3d IPntPc_B;                           //!< [kg-m^2] Inertia of the effector about its center of mass in B frame components
-    Eigen::Vector3d r_PB_B;                             //!< [m] Position of point P relative to point B in B frame components
     Eigen::Vector3d r_PcP_B;                            //!< [m] Position of the effector center of mass relative to point P in B frame components
 
     // Prescribed parameters in body frame components
@@ -120,8 +121,10 @@ private:
     // Effector properties relative to the inertial frame
     Eigen::Vector3d r_PcN_N;                            //!< [m] Position of frame P center of mass relative to the inertial frame in inertial frame components
     Eigen::Vector3d v_PcN_N;                            //!< [m/s] Inertial velocity of frame P center of mass relative to the inertial frame in inertial frame components
-    Eigen::Vector3d sigma_PN;                           //!< MRP attitude of frame P relative to the inertial frame
-    Eigen::Vector3d omega_PN_P;                         //!< [rad/s] Angular velocity of frame P relative to the inertial frame in P frame components
+    Eigen::MatrixXd* r_PN_N;                            //!< [m] Position of frame P relative to the inertial frame in inertial frame components
+    Eigen::MatrixXd* v_PN_N;                            //!< [m/s] Inertial velocity of frame P relative to the inertial frame in inertial frame components
+    Eigen::MatrixXd* sigma_PN;                          //!< MRP attitude of frame P relative to the inertial frame
+    Eigen::MatrixXd* omega_PN_P;                        //!< [rad/s] Angular velocity of frame P relative to the inertial frame in P frame components
 
     // Hub states
     Eigen::MatrixXd* inertialPositionProperty;          //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
@@ -133,6 +136,42 @@ private:
     Eigen::Vector3d omegaEpoch_PM_P;                    //!< [rad/s] Angular velocity of frame P relative to frame M in P frame components
     StateData *sigma_PMState;                           //!< MRP attitude of frame P relative to frame M
 
+    // Parameters required for effector branching
+    std::string spacecraftName;                         //!< Name of prescribed object used for effector branching
+    std::vector<StateEffector*> stateEffectors;         //!< Vector of attached state effectors
+
+    Eigen::MatrixXd* r_PB_B;                            //!< [m] Position of point P relative to point B in B frame components
+    Eigen::MatrixXd* rPrime_PB_B;                       //!< [m/s] B frame time derivative of r_PB_B in B frame components
+    Eigen::MatrixXd* rPrimePrime_PB_B;                  //!< [m/s^2] B frame time derivative of rPrime_PB_B in B frame components
+    Eigen::MatrixXd* sigma_PB;                          //!< MRP attitude of frame P relative to frame B
+    Eigen::MatrixXd* omega_PB_P;                        //!< [rad/s] Angular velocity of frame P relative to frame B in P frame components
+    Eigen::MatrixXd* omegaPrime_PB_P;                   //!< [rad/s] B frame time derivative of omega_PB_P in P frame components
+
+    std::string nameOfPrescribedPositionProperty;         //!< Identifier for prescribed position r_PB_B
+    std::string nameOfPrescribedVelocityProperty;         //!< Identifier for prescribed velocity rPrime_PB_B
+    std::string nameOfPrescribedAccelerationProperty;     //!< Identifier for prescribed acceleration rPrimePrime_PB_B
+    std::string nameOfPrescribedAttitudeProperty;         //!< Identifier for prescribed attitude sigma_PB
+    std::string nameOfPrescribedAngVelocityProperty;      //!< Identifier for prescribed angular velocity omega_PB_P
+    std::string nameOfPrescribedAngAccelerationProperty;  //!< Identifier for prescribed angular acceleration omegaPrime_PB_P
+
+    std::string nameOfInertialPositionProperty;           //!< Identifier for prescribed motion inertial position r_PN_N
+    std::string nameOfInertialVelocityProperty;           //!< Identifier for prescribed motion inertial velocity property v_PN_N
+    std::string nameOfInertialAttitudeProperty;           //!< Identifier for the prescribed motion inertial attitude property sigma_PN
+    std::string nameOfInertialAngVelocityProperty;        //!< Identifier for the prescribed motion inertial angular velocity property omega_PN_P
+
+    template <typename Type>
+    /** Assign the state engine parameter names to attached effectors*/
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+
+        effector->setPropName_prescribedPosition(this->nameOfPrescribedPositionProperty);
+        effector->setPropName_prescribedVelocity(this->nameOfPrescribedVelocityProperty);
+        effector->setPropName_prescribedAcceleration(this->nameOfPrescribedAccelerationProperty);
+        effector->setPropName_prescribedAttitude(this->nameOfPrescribedAttitudeProperty);
+        effector->setPropName_prescribedAngVelocity(this->nameOfPrescribedAngVelocityProperty);
+        effector->setPropName_prescribedAngAcceleration(this->nameOfPrescribedAngAccelerationProperty);
+    };
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */
