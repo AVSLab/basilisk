@@ -952,11 +952,20 @@ def createCameraConfigMsg(
 
 
 def ensure_correct_len_list(input, length, depth=1):
+    # Allow lists of all None to pass through as long as they are the correct length
+    if (
+        isinstance(input, list)
+        and all([i is None for i in input])
+        and len(input) == length
+    ):
+        return input
+
     current_depth = 0
     level = input
     while isinstance(level, list):
         current_depth += 1
-        level = level[0]
+        # Skip over Nones when checking shapes at a given level
+        level = next((item for item in level if item is not None), None)
 
     for _ in range(current_depth, depth):
         input = [input]
