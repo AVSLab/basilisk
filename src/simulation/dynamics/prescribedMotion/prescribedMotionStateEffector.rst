@@ -99,17 +99,17 @@ This section is to outline the steps needed to setup a Prescribed Motion State E
 
 #. Define the state effector module parameters::
 
-    platform.mass = 100.0
-    platform.IPntPc_P = [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    platform.r_MB_B = np.array([0.0, 0.0, 0.0])
-    platform.r_PcP_P = np.array([0.0, 0.0, 0.0])
-    platform.r_PM_M = np.array([1.0, 0.0, 0.0])
-    platform.rPrime_PM_M = np.array([0.0, 0.0, 0.0])
-    platform.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])
-    platform.omega_PM_P = np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])
-    platform.sigma_PM = np.array([0.0, 0.0, 0.0])
-    platform.sigma_MB = np.array([0.0, 0.0, 0.0])
+    platform.setMass(100.0)
+    platform.setIPntPc_P([[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]])
+    platform.setR_MB_B(np.array([0.0, 0.0, 0.0]))
+    platform.setR_PcP_P(np.array([0.0, 0.0, 0.0]))
+    platform.setR_PM_M(np.array([1.0, 0.0, 0.0]))
+    platform.setRPrime_PM_M(np.array([0.0, 0.0, 0.0]))
+    platform.setRPrimePrime_PM_M(np.array([0.0, 0.0, 0.0]))
+    platform.setOmega_PM_P(np.array([0.0, 0.0, 0.0]))
+    platform.setOmegaPrime_PM_P(np.array([0.0, 0.0, 0.0]))
+    platform.setSigma_PM(np.array([0.0, 0.0, 0.0]))
+    platform.setSigma_MB(np.array([0.0, 0.0, 0.0]))
     platform.ModelTag = "Platform"
 
 Do this for all of the public parameters in the prescribed motion state effector module. Note that if these parameters

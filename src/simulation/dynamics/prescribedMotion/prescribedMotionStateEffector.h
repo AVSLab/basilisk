@@ -35,6 +35,30 @@ class PrescribedMotionStateEffector: public StateEffector, public SysModel {
 public:
     PrescribedMotionStateEffector();
     ~PrescribedMotionStateEffector();
+    void setMass(const double mass);    //!< Setter method for the effector mass
+    void setIPntPc_P(const Eigen::Matrix3d IPntPc_P);    //!< Setter method for IPntPc_P
+    void setR_PcP_P(const Eigen::Vector3d r_PcP_P);    //!< Setter method for r_PcP_P
+    void setR_PM_M(const Eigen::Vector3d r_PM_M);    //!< Setter method for r_PM_M
+    void setRPrime_PM_M(const Eigen::Vector3d rPrime_PM_M);    //!< Setter method for rPrime_PM_M
+    void setRPrimePrime_PM_M(const Eigen::Vector3d rPrimePrime_PM_M);    //!< Setter method for rPrimePrime_PM_M
+    void setOmega_PM_P(const Eigen::Vector3d omega_PM_P);    //!< Setter method for omega_PM_P
+    void setOmegaPrime_PM_P(const Eigen::Vector3d omegaPrime_PM_P);    //!< Setter method for omegaPrime_PM_P
+    void setSigma_PM(const Eigen::MRPd sigma_PM);    //!< Setter method for sigma_PM
+    void setR_MB_B(const Eigen::Vector3d r_MB_B);    //!< Setter method for r_MB_B
+    void setSigma_MB(const Eigen::MRPd sigma_MB);    //!< Setter method for sigma_MB
+
+    double getMass() const;    //!< Getter method for the effector mass
+    const Eigen::Matrix3d getIPntPc_P() const;    //!< Getter method for IPntPc_P
+    const Eigen::Vector3d getR_PcP_P() const;    //!< Getter method for r_PcP_P
+    const Eigen::Vector3d getR_PM_M() const;    //!< Getter method for r_PM_M
+    const Eigen::Vector3d getRPrime_PM_M() const;    //!< Getter method for rPrime_PM_M
+    const Eigen::Vector3d getRPrimePrime_PM_M() const;    //!< Getter method for rPrimePrime_PM_M
+    const Eigen::Vector3d getOmega_PM_P() const;    //!< Getter method for omega_PM_P
+    const Eigen::Vector3d getOmegaPrime_PM_P() const;    //!< Getter method for omegaPrime_PM_P
+    const Eigen::MRPd getSigma_PM() const;    //!< Getter method for sigma_PM
+    const Eigen::Vector3d getR_MB_B() const;    //!< Getter method for r_MB_B
+    const Eigen::MRPd getSigma_MB() const;    //!< Getter method for sigma_MB
+
     void Reset(uint64_t currentClock) override;                      //!< Method for reset
     void writeOutputStateMessages(uint64_t currentClock) override;   //!< Method for writing the output messages
 	void UpdateState(uint64_t currentSimNanos) override;             //!< Method for updating the effector states
@@ -58,6 +82,13 @@ public:
     void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
     void addStateEffector(StateEffector *newStateEffector);          //!< Method to attach a state effector to prescribed motion
 
+    ReadFunctor<PrescribedTranslationMsgPayload> prescribedTranslationInMsg;      //!< Input message for the effector's translational prescribed states
+    ReadFunctor<PrescribedRotationMsgPayload> prescribedRotationInMsg;            //!< Input message for the effector's rotational prescribed states
+    Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;         //!< Output message for the effector's translational prescribed states
+    Message<PrescribedRotationMsgPayload> prescribedRotationOutMsg;               //!< Output message for the effector's rotational prescribed states
+    Message<SCStatesMsgPayload> prescribedMotionConfigLogOutMsg;                  //!< Output config log message for the effector's states
+
+private:
     double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                        //!< [kg] Effector mass
     Eigen::Matrix3d IPntPc_P;                           //!< [kg-m^2] Inertia of the effector about its center of mass in P frame components
@@ -74,13 +105,6 @@ public:
     Eigen::MRPd sigma_PM;                               //!< MRP attitude of frame P relative to frame M
     std::string nameOfsigma_PMState;                    //!< Identifier for the sigma_PM state data container
 
-    ReadFunctor<PrescribedTranslationMsgPayload> prescribedTranslationInMsg;      //!< Input message for the effector's translational prescribed states
-    ReadFunctor<PrescribedRotationMsgPayload> prescribedRotationInMsg;            //!< Input message for the effector's rotational prescribed states
-    Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;         //!< Output message for the effector's translational prescribed states
-    Message<PrescribedRotationMsgPayload> prescribedRotationOutMsg;               //!< Output message for the effector's rotational prescribed states
-    Message<SCStatesMsgPayload> prescribedMotionConfigLogOutMsg;                  //!< Output config log message for the effector's states
-
-private:
     static uint64_t effectorID;                                         //!< ID number of this panel
 
     // Given quantities from user in python

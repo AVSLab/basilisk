@@ -150,17 +150,17 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     prvInit_PM = thetaInit * rotAxis_M
     sigma_PM = rbk.PRV2MRP(prvInit_PM)
 
-    platform.mass = 100.0
-    platform.IPntPc_P= [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    platform.r_MB_B = [0.0, 0.0, 0.0]
-    platform.r_PcP_P= [0.0, 0.0, 0.0]
-    platform.r_PM_M = r_PM_M
-    platform.rPrime_PM_M = np.array([0.0, 0.0, 0.0])
-    platform.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])
-    platform.omega_PM_P= np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_PM_P= np.array([0.0, 0.0, 0.0])
-    platform.sigma_PM = sigma_PM
-    platform.sigma_MB = [0.0, 0.0, 0.0]
+    platform.setMass(100.0)
+    platform.setIPntPc_P([[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]])
+    platform.setR_MB_B([0.0, 0.0, 0.0])
+    platform.setR_PcP_P([0.0, 0.0, 0.0])
+    platform.setR_PM_M(r_PM_M)
+    platform.setRPrime_PM_M(np.array([0.0, 0.0, 0.0]))
+    platform.setRPrimePrime_PM_M(np.array([0.0, 0.0, 0.0]))
+    platform.setOmega_PM_P(np.array([0.0, 0.0, 0.0]))
+    platform.setOmegaPrime_PM_P(np.array([0.0, 0.0, 0.0]))
+    platform.setSigma_PM(sigma_PM)
+    platform.setSigma_MB([0.0, 0.0, 0.0])
     platform.ModelTag = "Platform"
 
     # Add platform to spacecraft
