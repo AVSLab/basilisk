@@ -61,8 +61,6 @@ public:
     Eigen::Matrix3d IPntPc_P;                           //!< [kg-m^2] Inertia of the effector about its center of mass in P frame components
     Eigen::Vector3d r_MB_B;                             //!< [m] Position of point M relative to point B in B frame components
     Eigen::Vector3d r_PcP_P;                            //!< [m] Position of the effector center of mass relative to point P in P frame components
-    Eigen::Vector3d omega_MB_B;                         //!< [rad/s] Angular velocity of frame M with respect to frame B in B frame components
-    Eigen::Vector3d omegaPrime_MB_B;                    //!< [rad/s^2] B frame time derivative of omega_MB_B in B frame components
     Eigen::MRPd sigma_MB;                               //!< MRP attitude of frame M relative to frame B
 
     // Prescribed parameters

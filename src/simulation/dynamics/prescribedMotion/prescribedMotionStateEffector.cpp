@@ -45,8 +45,6 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->IPntPc_P.setIdentity();
     this->r_MB_B.setZero();
     this->r_PcP_P.setZero();
-    this->omega_MB_B.setZero();
-    this->omegaPrime_MB_B.setZero();
     this->sigma_MB.setIdentity();
     this->currentSimTimeSec = 0.0;
 
@@ -173,7 +171,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
     // Compute omega_PB_B given the user inputs omega_MB_M and omega_PM_P
     this->omega_PM_B = this->dcm_BP * this->omega_PM_P;
-    this->omega_PB_B = this->omega_PM_B + this->omega_MB_B;
+    this->omega_PB_B = this->omega_PM_B;
 
     // Compute omegaPrime_PB_B given the user inputs
     this->omegaTilde_PB_B = eigenTilde(this->omega_PB_B);
