@@ -579,33 +579,28 @@ void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffe
 }
 
 /*! Setter method for the effector mass.
- @return void
  @param mass [kg] Effector mass
 */
 void PrescribedMotionStateEffector::setMass(const double mass) { this->mass = mass; }
 
 /*! Setter method for IPntPc_P.
- @return void
  @param IPntPc_P [kg-m^2] Effector's inertia matrix about its center of mass point Pc expressed in P frame components
 */
 void PrescribedMotionStateEffector::setIPntPc_P(const Eigen::Matrix3d IPntPc_P) { this->IPntPc_P = IPntPc_P; }
 
 /*! Setter method for r_PcP_P.
- @return void
  @param r_PcP_P [m] Position vector of the effector's center of mass point Pc relative to the effector's body frame
  origin point P expressed in P frame components
 */
 void PrescribedMotionStateEffector::setR_PcP_P(const Eigen::Vector3d r_PcP_P) { this->r_PcP_P = r_PcP_P; }
 
 /*! Setter method for r_PM_M.
- @return void
  @param r_PM_M [m] Position vector of the effector's body frame origin point P relative to the hub-fixed mount frame
  origin point M expressed in M frame components
 */
 void PrescribedMotionStateEffector::setR_PM_M(const Eigen::Vector3d r_PM_M) { this->r_PM_M = r_PM_M; }
 
 /*! Setter method for rPrime_PM_M.
- @return void
  @param rPrime_PM_M [m/s] B frame time derivative of r_PM_M expressed in M frame components
 */
 void PrescribedMotionStateEffector::setRPrime_PM_M(const Eigen::Vector3d rPrime_PM_M) {
@@ -613,7 +608,6 @@ void PrescribedMotionStateEffector::setRPrime_PM_M(const Eigen::Vector3d rPrime_
 }
 
 /*! Setter method for rPrimePrime_PM_M.
- @return void
  @param rPrimePrime_PM_M [m/s^2] B frame time derivative of rPrime_PM_M expressed in M frame components
 */
 void PrescribedMotionStateEffector::setRPrimePrime_PM_M(const Eigen::Vector3d rPrimePrime_PM_M) {
@@ -621,14 +615,12 @@ void PrescribedMotionStateEffector::setRPrimePrime_PM_M(const Eigen::Vector3d rP
 }
 
 /*! Setter method for omega_PM_P.
- @return void
  @param omega_PM_P [rad/s] Angular velocity of the effector body frame P relative to the hub-fixed mount frame M
  expressed in P frame components
 */
 void PrescribedMotionStateEffector::setOmega_PM_P(const Eigen::Vector3d omega_PM_P) { this->omega_PM_P = omega_PM_P; }
 
 /*! Setter method for omegaPrime_PM_P.
- @return void
  @param omegaPrime_PM_P [rad/s^2] Angular acceleration of the effector body frame P relative to the hub-fixed mount
  frame M expressed in P frame components
 */
@@ -637,20 +629,17 @@ void PrescribedMotionStateEffector::setOmegaPrime_PM_P(const Eigen::Vector3d ome
 }
 
 /*! Setter method for sigma_PM.
- @return void
  @param sigma_PM MRP attitude of the effector's body frame P relative to the hub-fixed mount frame M
 */
 void PrescribedMotionStateEffector::setSigma_PM(const Eigen::MRPd sigma_PM) { this->sigma_PM = sigma_PM; }
 
 /*! Setter method for r_MB_B.
- @return void
  @param r_MB_B [m] Position vector describing the hub-fixed mount frame origin point M location relative to the hub
  frame origin point B expressed in B frame components
 */
 void PrescribedMotionStateEffector::setR_MB_B(const Eigen::Vector3d r_MB_B) { this->r_MB_B = r_MB_B; }
 
 /*! Setter method for sigma_MB.
- @return void
  @param sigma_MB MRP attitude of the hub-fixed frame M relative to the hub body frame B
 */
 void PrescribedMotionStateEffector::setSigma_MB(const Eigen::MRPd sigma_MB) { this->sigma_MB = sigma_MB; }
