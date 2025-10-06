@@ -276,10 +276,6 @@ def run(show_plots):
         array2ElementList[i].omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])  # [rad/s^2]
         array1ElementList[i].sigma_PM = sigma_PM1Init1
         array2ElementList[i].sigma_PM = sigma_PM2Init1
-        array1ElementList[i].omega_MB_B = [0.0, 0.0, 0.0]  # [rad/s]
-        array2ElementList[i].omega_MB_B = [0.0, 0.0, 0.0]  # [rad/s]
-        array1ElementList[i].omegaPrime_MB_B = [0.0, 0.0, 0.0]  # [rad/s^2]
-        array2ElementList[i].omegaPrime_MB_B = [0.0, 0.0, 0.0]  # [rad/s^2]
         array1ElementList[i].sigma_MB = [0.0, 0.0, 0.0]
         array2ElementList[i].sigma_MB = [0.0, 0.0, 0.0]
 

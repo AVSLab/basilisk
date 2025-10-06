@@ -109,8 +109,6 @@ This section is to outline the steps needed to setup a Prescribed Motion State E
     platform.omega_PM_P = np.array([0.0, 0.0, 0.0])
     platform.omegaPrime_PM_P = np.array([0.0, 0.0, 0.0])
     platform.sigma_PM = np.array([0.0, 0.0, 0.0])
-    platform.omega_MB_B = np.array([0.0, 0.0, 0.0])
-    platform.omegaPrime_MB_B = np.array([0.0, 0.0, 0.0])
     platform.sigma_MB = np.array([0.0, 0.0, 0.0])
     platform.ModelTag = "Platform"
 

@@ -160,8 +160,6 @@ def PrescribedMotionTestFunction(show_plots, rotTest, thetaInit, theta_Ref, posI
     platform.omega_PM_P= np.array([0.0, 0.0, 0.0])
     platform.omegaPrime_PM_P= np.array([0.0, 0.0, 0.0])
     platform.sigma_PM = sigma_PM
-    platform.omega_MB_B = [0.0, 0.0, 0.0]
-    platform.omegaPrime_MB_B = [0.0, 0.0, 0.0]
     platform.sigma_MB = [0.0, 0.0, 0.0]
     platform.ModelTag = "Platform"
 
