@@ -259,134 +259,58 @@ def run(show_plots):
     I_panel_33 = (1 / 12) * mass_panel * (width_prescribed * width_prescribed + depth_panel * depth_panel)  # [kg m^2]
     I_panel_ScS = [[I_panel_11, 0.0, 0.0], [0.0, I_panel_22, 0.0], [0.0, 0.0, I_panel_33]]  # [kg m^2]
     r_ScS_S = [[0.0], [0.0], [15.0]]
-    r_S1B_B = [[50.0], [0.0], [2.0]]  # [m[ r_S1P_P
-    r_S2B_B = [[35.0], [0.0], [2.0]]  # [m[ r_S2P_P
-    r_S3B_B = [[50.0], [0.0], [-2.0]]  # [m[ r_S3P_P
-    r_S4B_B = [[35.0], [0.0], [-2.0]]  # [m[ r_S4P_P
-    r_S5B_B = [[35.0], [0.0], [-2.0]]  # [m[ r_S5P_P
-    r_S6B_B = [[50.0], [0.0], [-2.0]]  # [m[ r_S6P_P
-    r_S7B_B = [[35.0], [0.0], [2.0]]  # [m[ r_S7P_P
-    r_S8B_B = [[50.0], [0.0], [2.0]]  # [m[ r_S8P_P
     panel_s_hat_S = [[1], [0], [0]]
     k = 700000.0
     c = 50000.0
-    dcm_S01B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]  # dcm_S01P
-    dcm_S02B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]  # dcm_S02P
-    dcm_S03B = [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, -1.0]]  # dcm_S03P
-    dcm_S04B = [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, -1.0]]  # dcm_S04P
-    dcm_S05B = [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, -1.0]]  # dcm_S05P
-    dcm_S06B = [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, -1.0]]  # dcm_S06P
-    dcm_S07B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]  # dcm_S07P
-    dcm_S08B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]  # dcm_S08P
+
+    r_S1B_B = [[50.0], [0.0], [2.0]]  # [m] r_S1P_P
+    r_S2B_B = [[35.0], [0.0], [2.0]]  # [m] r_S2P_P
+    r_S3B_B = [[50.0], [0.0], [-2.0]]  # [m] r_S3P_P
+    r_S4B_B = [[35.0], [0.0], [-2.0]]  # [m] r_S4P_P
+    r_S5B_B = [[35.0], [0.0], [-2.0]]  # [m] r_S5P_P
+    r_S6B_B = [[50.0], [0.0], [-2.0]]  # [m] r_S6P_P
+    r_S7B_B = [[35.0], [0.0], [2.0]]  # [m] r_S7P_P
+    r_S8B_B = [[50.0], [0.0], [2.0]]  # [m] r_S8P_P
 
     # Create the spinning bodies
-    spinning_panel_1 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-    spinning_panel_2 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-    spinning_panel_3 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-    spinning_panel_4 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-    spinning_panel_5 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-    spinning_panel_6 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-    spinning_panel_7 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
-    spinning_panel_8 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+    num_panels = 8
+    spinning_panel_list = list()
+    for idx in range(num_panels):
+        panel_num = idx + 1
+        spinning_panel_list.append(spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector())
+        spinning_panel_list[idx].ModelTag = "spinningBody" + str(panel_num)
+        spinning_panel_list[idx].mass = mass_panel
+        spinning_panel_list[idx].IPntSc_S = I_panel_ScS
+        spinning_panel_list[idx].r_ScS_S = r_ScS_S
+        spinning_panel_list[idx].sHat_S = panel_s_hat_S
+        spinning_panel_list[idx].k = k
+        spinning_panel_list[idx].c = c
 
-    spinning_panel_1.ModelTag = "spinningBody1"
-    spinning_panel_2.ModelTag = "spinningBody2"
-    spinning_panel_3.ModelTag = "spinningBody3"
-    spinning_panel_4.ModelTag = "spinningBody4"
-    spinning_panel_5.ModelTag = "spinningBody5"
-    spinning_panel_6.ModelTag = "spinningBody6"
-    spinning_panel_7.ModelTag = "spinningBody7"
-    spinning_panel_8.ModelTag = "spinningBody8"
+        if panel_num == 1 or panel_num == 2 or panel_num == 7 or panel_num == 8:
+            spinning_panel_list[idx].dcm_S0B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+        else:
+            spinning_panel_list[idx].dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, -1.0]]
 
-    spinning_panel_1.mass = mass_panel
-    spinning_panel_2.mass = mass_panel
-    spinning_panel_3.mass = mass_panel
-    spinning_panel_4.mass = mass_panel
-    spinning_panel_5.mass = mass_panel
-    spinning_panel_6.mass = mass_panel
-    spinning_panel_7.mass = mass_panel
-    spinning_panel_8.mass = mass_panel
+        sc_sim.AddModelToTask(dyn_task_name, spinning_panel_list[idx])
 
-    spinning_panel_1.IPntSc_S = I_panel_ScS
-    spinning_panel_2.IPntSc_S = I_panel_ScS
-    spinning_panel_3.IPntSc_S = I_panel_ScS
-    spinning_panel_4.IPntSc_S = I_panel_ScS
-    spinning_panel_5.IPntSc_S = I_panel_ScS
-    spinning_panel_6.IPntSc_S = I_panel_ScS
-    spinning_panel_7.IPntSc_S = I_panel_ScS
-    spinning_panel_8.IPntSc_S = I_panel_ScS
-
-    spinning_panel_1.dcm_S0B = dcm_S01B
-    spinning_panel_2.dcm_S0B = dcm_S02B
-    spinning_panel_3.dcm_S0B = dcm_S03B
-    spinning_panel_4.dcm_S0B = dcm_S04B
-    spinning_panel_5.dcm_S0B = dcm_S05B
-    spinning_panel_6.dcm_S0B = dcm_S06B
-    spinning_panel_7.dcm_S0B = dcm_S07B
-    spinning_panel_8.dcm_S0B = dcm_S08B
-
-    spinning_panel_1.r_ScS_S = r_ScS_S
-    spinning_panel_2.r_ScS_S = r_ScS_S
-    spinning_panel_3.r_ScS_S = r_ScS_S
-    spinning_panel_4.r_ScS_S = r_ScS_S
-    spinning_panel_5.r_ScS_S = r_ScS_S
-    spinning_panel_6.r_ScS_S = r_ScS_S
-    spinning_panel_7.r_ScS_S = r_ScS_S
-    spinning_panel_8.r_ScS_S = r_ScS_S
-
-    spinning_panel_1.r_SB_B = r_S1B_B
-    spinning_panel_2.r_SB_B = r_S2B_B
-    spinning_panel_3.r_SB_B = r_S3B_B
-    spinning_panel_4.r_SB_B = r_S4B_B
-    spinning_panel_5.r_SB_B = r_S5B_B
-    spinning_panel_6.r_SB_B = r_S6B_B
-    spinning_panel_7.r_SB_B = r_S7B_B
-    spinning_panel_8.r_SB_B = r_S8B_B
-
-    spinning_panel_1.sHat_S = panel_s_hat_S
-    spinning_panel_2.sHat_S = panel_s_hat_S
-    spinning_panel_3.sHat_S = panel_s_hat_S
-    spinning_panel_4.sHat_S = panel_s_hat_S
-    spinning_panel_5.sHat_S = panel_s_hat_S
-    spinning_panel_6.sHat_S = panel_s_hat_S
-    spinning_panel_7.sHat_S = panel_s_hat_S
-    spinning_panel_8.sHat_S = panel_s_hat_S
-
-    spinning_panel_1.k = k
-    spinning_panel_2.k = k
-    spinning_panel_3.k = k
-    spinning_panel_4.k = k
-    spinning_panel_5.k = k
-    spinning_panel_6.k = k
-    spinning_panel_7.k = k
-    spinning_panel_8.k = k
-    spinning_panel_1.c = c
-    spinning_panel_2.c = c
-    spinning_panel_3.c = c
-    spinning_panel_4.c = c
-    spinning_panel_5.c = c
-    spinning_panel_6.c = c
-    spinning_panel_7.c = c
-    spinning_panel_8.c = c
-
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_1)
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_2)
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_3)
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_4)
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_5)
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_6)
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_7)
-    sc_sim.AddModelToTask(dyn_task_name, spinning_panel_8)
+    spinning_panel_list[0].r_SB_B = r_S1B_B
+    spinning_panel_list[1].r_SB_B = r_S2B_B
+    spinning_panel_list[2].r_SB_B = r_S3B_B
+    spinning_panel_list[3].r_SB_B = r_S4B_B
+    spinning_panel_list[4].r_SB_B = r_S5B_B
+    spinning_panel_list[5].r_SB_B = r_S6B_B
+    spinning_panel_list[6].r_SB_B = r_S7B_B
+    spinning_panel_list[7].r_SB_B = r_S8B_B
 
     # Connect the solar panels to the correct prescribed truss
-    prescribed_truss_1.addStateEffector(spinning_panel_1)
-    prescribed_truss_1.addStateEffector(spinning_panel_2)
-    prescribed_truss_1.addStateEffector(spinning_panel_3)
-    prescribed_truss_1.addStateEffector(spinning_panel_4)
-    prescribed_truss_2.addStateEffector(spinning_panel_5)
-    prescribed_truss_2.addStateEffector(spinning_panel_6)
-    prescribed_truss_2.addStateEffector(spinning_panel_7)
-    prescribed_truss_2.addStateEffector(spinning_panel_8)
+    prescribed_truss_1.addStateEffector(spinning_panel_list[0])
+    prescribed_truss_1.addStateEffector(spinning_panel_list[1])
+    prescribed_truss_1.addStateEffector(spinning_panel_list[2])
+    prescribed_truss_1.addStateEffector(spinning_panel_list[3])
+    prescribed_truss_2.addStateEffector(spinning_panel_list[4])
+    prescribed_truss_2.addStateEffector(spinning_panel_list[5])
+    prescribed_truss_2.addStateEffector(spinning_panel_list[6])
+    prescribed_truss_2.addStateEffector(spinning_panel_list[7])
 
     # Set up data logging
     sc_state_data_log = sc_object.scStateOutMsg.recorder()
@@ -394,8 +318,8 @@ def run(show_plots):
     one_dof_rotation_profiler_2_data_log = one_dof_rotation_profiler_2.spinningBodyOutMsg.recorder()
     prescribed_rotation_1_data_log = prescribed_truss_1.prescribedRotationOutMsg.recorder()
     prescribed_rotation_2_data_log = prescribed_truss_2.prescribedRotationOutMsg.recorder()
-    spinning_panel_1_data_log = spinning_panel_1.spinningBodyOutMsg.recorder()
-    spinning_panel_3_data_log = spinning_panel_3.spinningBodyOutMsg.recorder()
+    spinning_panel_1_data_log = spinning_panel_list[0].spinningBodyOutMsg.recorder()
+    spinning_panel_3_data_log = spinning_panel_list[2].spinningBodyOutMsg.recorder()
     sc_sim.AddModelToTask(data_rec_task_name, sc_state_data_log)
     sc_sim.AddModelToTask(data_rec_task_name, one_dof_rotation_profiler_1_data_log)
     sc_sim.AddModelToTask(data_rec_task_name, one_dof_rotation_profiler_2_data_log)
@@ -407,21 +331,14 @@ def run(show_plots):
     # Add Vizard
     sc_body_list = [sc_object]
     sc_body_list.append(["prescribedTruss1", prescribed_truss_1.prescribedMotionConfigLogOutMsg])
-    sc_body_list.append(["prescribedTruss1", prescribed_truss_2.prescribedMotionConfigLogOutMsg])
-    sc_body_list.append(["spinningBody1", spinning_panel_1.spinningBodyConfigLogOutMsg])
-    sc_body_list.append(["spinningBody2", spinning_panel_2.spinningBodyConfigLogOutMsg])
-    sc_body_list.append(["spinningBody3", spinning_panel_3.spinningBodyConfigLogOutMsg])
-    sc_body_list.append(["spinningBody4", spinning_panel_4.spinningBodyConfigLogOutMsg])
-    sc_body_list.append(["spinningBody5", spinning_panel_5.spinningBodyConfigLogOutMsg])
-    sc_body_list.append(["spinningBody6", spinning_panel_6.spinningBodyConfigLogOutMsg])
-    sc_body_list.append(["spinningBody7", spinning_panel_7.spinningBodyConfigLogOutMsg])
-    sc_body_list.append(["spinningBody8", spinning_panel_8.spinningBodyConfigLogOutMsg])
+    sc_body_list.append(["prescribedTruss2", prescribed_truss_2.prescribedMotionConfigLogOutMsg])
+    for idx in range(num_panels):
+        sc_body_list.append(["spinningBody" + str(idx + 1), spinning_panel_list[idx].spinningBodyConfigLogOutMsg])
 
     if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(sc_sim, data_rec_task_name, sc_body_list,
                                                   saveFile=filename
                                                   )
-
         vizSupport.createCustomModel(viz
                                      , simBodiesToModify=[sc_object.ModelTag]
                                      , modelPath="CUBE"
@@ -437,48 +354,13 @@ def run(show_plots):
                                      , modelPath="CUBE"
                                      , scale=[length_prescribed, width_prescribed, depth_prescribed]
                                      , color=vizSupport.toRGBA255("green"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody1"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody2"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody3"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody4"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody5"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody6"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody7"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["spinningBody8"]
-                                     , modelPath="CUBE"
-                                     , scale=[length_panel, width_panel, depth_panel]
-                                     , color=vizSupport.toRGBA255("blue"))
+        for idx in range(num_panels):
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["spinningBody" + str(idx + 1)]
+                                         , modelPath="CUBE"
+                                         , scale=[length_panel, width_panel, depth_panel]
+                                         , color=vizSupport.toRGBA255("blue"))
         viz.settings.orbitLinesOn = -1
-
 
     # Run the simulation
     sc_sim.InitializeSimulation()
