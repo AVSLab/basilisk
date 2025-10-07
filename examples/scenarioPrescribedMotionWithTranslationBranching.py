@@ -221,48 +221,6 @@ def run(show_plots):
     r_FcF_F = np.array([0.5 * depth_teles, 0.0, 0.0])
     telescoping_cant_angle = 60 * macros.D2R
 
-    # Compute dcm_FP for telescoping body 1
-    theta_F1IntP = 30 * macros.D2R
-    dcm_F1IntP = np.array([[np.cos(theta_F1IntP), np.sin(theta_F1IntP), 0.0],
-                   [-np.sin(theta_F1IntP), np.cos(theta_F1IntP), 0.0],
-                   [0.0, 0.0, 1.0]])
-    theta_F1F1Int = telescoping_cant_angle
-    dcm_F1F1Int = np.array([[np.cos(theta_F1F1Int), 0.0, -np.sin(theta_F1F1Int)],
-                  [0.0, 1.0, 0.0],
-                  [np.sin(theta_F1F1Int), 0.0, np.cos(theta_F1F1Int)]])
-    dcm_F1P = dcm_F1F1Int @ dcm_F1IntP
-    dcm_PF1 = dcm_F1P.T
-
-    # Compute dcm_FP for telescoping body 2
-    theta_F2IntP = -90 * macros.D2R
-    dcm_F2IntP = np.array([[np.cos(theta_F2IntP), np.sin(theta_F2IntP), 0.0],
-                   [-np.sin(theta_F2IntP), np.cos(theta_F2IntP), 0.0],
-                   [0.0, 0.0, 1.0]])
-    theta_F2F2Int = telescoping_cant_angle
-    dcm_F2F2Int = np.array([[np.cos(theta_F2F2Int), 0.0, -np.sin(theta_F2F2Int)],
-                  [0.0, 1.0, 0.0],
-                  [np.sin(theta_F2F2Int), 0.0, np.cos(theta_F2F2Int)]])
-    dcm_F2P = dcm_F2F2Int @ dcm_F2IntP
-    dcm_PF2 = dcm_F2P.T
-
-    # Compute dcm_FP for telescoping body 3
-    theta_F3IntP = 150 * macros.D2R
-    dcm_F3IntP = np.array([[np.cos(theta_F3IntP), np.sin(theta_F3IntP), 0.0],
-                   [-np.sin(theta_F3IntP), np.cos(theta_F3IntP), 0.0],
-                   [0.0, 0.0, 1.0]])
-    theta_F3F3Int = telescoping_cant_angle
-    dcm_F3F3Int = np.array([[np.cos(theta_F3F3Int), 0.0, -np.sin(theta_F3F3Int)],
-                  [0.0, 1.0, 0.0],
-                  [np.sin(theta_F3F3Int), 0.0, np.cos(theta_F3F3Int)]])
-    dcm_F3P = dcm_F3F3Int @ dcm_F3IntP
-    dcm_PF3 = dcm_F3P.T
-
-    # Compute axis of translation for each telescoping body
-    f_hat_F = np.array([1.0, 0.0, 0.0])
-    f1_hat_P = dcm_PF1 @ f_hat_F
-    f2_hat_P = dcm_PF2 @ f_hat_F
-    f3_hat_P = dcm_PF3 @ f_hat_F
-
     # Compute r_FP_P for each telescoping body
     spacing_distance = 0.25
     l = spacing_distance - 0.5 * width_teles * np.cos(telescoping_cant_angle)
@@ -276,72 +234,87 @@ def run(show_plots):
                          l * np.sin(30 * macros.D2R),
                          -(0.5 * width_teles * np.sin(telescoping_cant_angle))])
 
+    # Compute dcm_FP for telescoping body 1
+    theta_F1IntP = 30 * macros.D2R
+    dcm_F1IntP = np.array([[np.cos(theta_F1IntP), np.sin(theta_F1IntP), 0.0],
+                           [-np.sin(theta_F1IntP), np.cos(theta_F1IntP), 0.0],
+                           [0.0, 0.0, 1.0]])
+    theta_F1F1Int = telescoping_cant_angle
+    dcm_F1F1Int = np.array([[np.cos(theta_F1F1Int), 0.0, -np.sin(theta_F1F1Int)],
+                            [0.0, 1.0, 0.0],
+                            [np.sin(theta_F1F1Int), 0.0, np.cos(theta_F1F1Int)]])
+    dcm_F1P = dcm_F1F1Int @ dcm_F1IntP
+    dcm_PF1 = dcm_F1P.T
+
+    # Compute dcm_FP for telescoping body 2
+    theta_F2IntP = -90 * macros.D2R
+    dcm_F2IntP = np.array([[np.cos(theta_F2IntP), np.sin(theta_F2IntP), 0.0],
+                           [-np.sin(theta_F2IntP), np.cos(theta_F2IntP), 0.0],
+                           [0.0, 0.0, 1.0]])
+    theta_F2F2Int = telescoping_cant_angle
+    dcm_F2F2Int = np.array([[np.cos(theta_F2F2Int), 0.0, -np.sin(theta_F2F2Int)],
+                            [0.0, 1.0, 0.0],
+                            [np.sin(theta_F2F2Int), 0.0, np.cos(theta_F2F2Int)]])
+    dcm_F2P = dcm_F2F2Int @ dcm_F2IntP
+    dcm_PF2 = dcm_F2P.T
+
+    # Compute dcm_FP for telescoping body 3
+    theta_F3IntP = 150 * macros.D2R
+    dcm_F3IntP = np.array([[np.cos(theta_F3IntP), np.sin(theta_F3IntP), 0.0],
+                           [-np.sin(theta_F3IntP), np.cos(theta_F3IntP), 0.0],
+                           [0.0, 0.0, 1.0]])
+    theta_F3F3Int = telescoping_cant_angle
+    dcm_F3F3Int = np.array([[np.cos(theta_F3F3Int), 0.0, -np.sin(theta_F3F3Int)],
+                            [0.0, 1.0, 0.0],
+                            [np.sin(theta_F3F3Int), 0.0, np.cos(theta_F3F3Int)]])
+    dcm_F3P = dcm_F3F3Int @ dcm_F3IntP
+    dcm_PF3 = dcm_F3P.T
+
+    # Compute axis of translation for each telescoping body
+    f_hat_F = np.array([1.0, 0.0, 0.0])
+    f1_hat_P = dcm_PF1 @ f_hat_F
+    f2_hat_P = dcm_PF2 @ f_hat_F
+    f3_hat_P = dcm_PF3 @ f_hat_F
+
     # Create the translating bodies
-    teles_strut_1 = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
-    teles_strut_2 = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
-    teles_strut_3 = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    num_teles_struts = 3
+    teles_strut_list = list()
+    for idx in range(num_teles_struts):
+        strut_num = idx + 1
+        teles_strut_list.append(linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector())
+        teles_strut_list[idx].ModelTag = "translatingBody" + str(strut_num)
+        teles_strut_list[idx].setMass(mass_teles)
+        teles_strut_list[idx].setK(8)
+        teles_strut_list[idx].setC(8)
+        teles_strut_list[idx].setRhoInit(teles_rho_init)
+        teles_strut_list[idx].setRhoDotInit(teles_rho_dot_init)
+        teles_strut_list[idx].setR_FcF_F(r_FcF_F)
+        teles_strut_list[idx].setIPntFc_F(I_teles_FcF)
+        sc_sim.AddModelToTask(dyn_task_name, teles_strut_list[idx])
 
-    teles_strut_1.ModelTag = "translatingBody1"
-    teles_strut_2.ModelTag = "translatingBody2"
-    teles_strut_3.ModelTag = "translatingBody3"
+        # Connect the trusses to the prescribed platform
+        prescribed_platform.addStateEffector(teles_strut_list[idx])
 
-    teles_strut_1.setMass(mass_teles)
-    teles_strut_2.setMass(mass_teles)
-    teles_strut_3.setMass(mass_teles)
+    teles_strut_list[0].setFHat_B(f1_hat_P)
+    teles_strut_list[1].setFHat_B(f2_hat_P)
+    teles_strut_list[2].setFHat_B(f3_hat_P)
 
-    teles_strut_1.setK(8)
-    teles_strut_2.setK(8)
-    teles_strut_3.setK(8)
+    teles_strut_list[0].setR_F0B_B(r_F01P_P)
+    teles_strut_list[1].setR_F0B_B(r_F02P_P)
+    teles_strut_list[2].setR_F0B_B(r_F03P_P)
 
-    teles_strut_1.setC(8)
-    teles_strut_2.setC(8)
-    teles_strut_3.setC(8)
-
-    teles_strut_1.setRhoInit(teles_rho_init)
-    teles_strut_2.setRhoInit(teles_rho_init)
-    teles_strut_3.setRhoInit(teles_rho_init)
-
-    teles_strut_1.setRhoDotInit(teles_rho_dot_init)
-    teles_strut_2.setRhoDotInit(teles_rho_dot_init)
-    teles_strut_3.setRhoDotInit(teles_rho_dot_init)
-
-    teles_strut_1.setFHat_B(f1_hat_P)
-    teles_strut_2.setFHat_B(f2_hat_P)
-    teles_strut_3.setFHat_B(f3_hat_P)
-
-    teles_strut_1.setR_FcF_F(r_FcF_F)
-    teles_strut_2.setR_FcF_F(r_FcF_F)
-    teles_strut_3.setR_FcF_F(r_FcF_F)
-
-    teles_strut_1.setR_F0B_B(r_F01P_P)
-    teles_strut_2.setR_F0B_B(r_F02P_P)
-    teles_strut_3.setR_F0B_B(r_F03P_P)
-
-    teles_strut_1.setIPntFc_F(I_teles_FcF)
-    teles_strut_2.setIPntFc_F(I_teles_FcF)
-    teles_strut_3.setIPntFc_F(I_teles_FcF)
-
-    teles_strut_1.setDCM_FB(dcm_F1P)
-    teles_strut_2.setDCM_FB(dcm_F2P)
-    teles_strut_3.setDCM_FB(dcm_F3P)
-
-    sc_sim.AddModelToTask(dyn_task_name, teles_strut_1)
-    sc_sim.AddModelToTask(dyn_task_name, teles_strut_2)
-    sc_sim.AddModelToTask(dyn_task_name, teles_strut_3)
-
-    # Connect the trusses to the prescribed platform
-    prescribed_platform.addStateEffector(teles_strut_1)
-    prescribed_platform.addStateEffector(teles_strut_2)
-    prescribed_platform.addStateEffector(teles_strut_3)
+    teles_strut_list[0].setDCM_FB(dcm_F1P)
+    teles_strut_list[1].setDCM_FB(dcm_F2P)
+    teles_strut_list[2].setDCM_FB(dcm_F3P)
 
     # Set up data logging
     sc_state_data_log = sc_object.scStateOutMsg.recorder()
     prescribed_translation_data_log = prescribed_platform.prescribedTranslationOutMsg.recorder()
     prescribed_rotation_data_log = prescribed_platform.prescribedRotationOutMsg.recorder()
     one_dof_rotation_profiler_data_log = one_dof_rotation_profiler.spinningBodyOutMsg.recorder()
-    teles_strut_1_data_log = teles_strut_1.translatingBodyOutMsg.recorder()
-    teles_strut_2_data_log = teles_strut_2.translatingBodyOutMsg.recorder()
-    teles_strut_3_data_log = teles_strut_3.translatingBodyOutMsg.recorder()
+    teles_strut_1_data_log = teles_strut_list[0].translatingBodyOutMsg.recorder()
+    teles_strut_2_data_log = teles_strut_list[1].translatingBodyOutMsg.recorder()
+    teles_strut_3_data_log = teles_strut_list[2].translatingBodyOutMsg.recorder()
     sc_sim.AddModelToTask(dyn_task_name, sc_state_data_log)
     sc_sim.AddModelToTask(dyn_task_name, prescribed_translation_data_log)
     sc_sim.AddModelToTask(dyn_task_name, prescribed_rotation_data_log)
@@ -353,15 +326,13 @@ def run(show_plots):
     # Add Vizard
     sc_body_list = [sc_object]
     sc_body_list.append(["prescribedPlatform", prescribed_platform.prescribedMotionConfigLogOutMsg])
-    sc_body_list.append(["translatingBody1", teles_strut_1.translatingBodyConfigLogOutMsg])
-    sc_body_list.append(["translatingBody2", teles_strut_2.translatingBodyConfigLogOutMsg])
-    sc_body_list.append(["translatingBody3", teles_strut_3.translatingBodyConfigLogOutMsg])
+    for idx in range(num_teles_struts):
+        sc_body_list.append(["translatingBody" + str(idx + 1), teles_strut_list[idx].translatingBodyConfigLogOutMsg])
 
     if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(sc_sim, data_rec_task_name, sc_body_list,
                                                   saveFile=filename
                                                   )
-
         vizSupport.createCustomModel(viz
                                      , simBodiesToModify=[sc_object.ModelTag]
                                      , modelPath="CUBE"
@@ -372,23 +343,12 @@ def run(show_plots):
                                      , modelPath="CUBE"
                                      , scale=[width_prescribed, length_prescribed, depth_prescribed]
                                      , color=vizSupport.toRGBA255("green"))
-
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["translatingBody1"]
-                                     , modelPath="CUBE"
-                                     , scale=[depth_teles, length_teles, width_teles]
-                                     , color=vizSupport.toRGBA255("purple"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["translatingBody2"]
-                                     , modelPath="CUBE"
-                                     , scale=[depth_teles, length_teles, width_teles]
-                                     , color=vizSupport.toRGBA255("purple"))
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=["translatingBody3"]
-                                     , modelPath="CUBE"
-                                     , scale=[depth_teles, length_teles, width_teles]
-                                     , color=vizSupport.toRGBA255("purple"))
-
+        for idx in range(num_teles_struts):
+            vizSupport.createCustomModel(viz
+                                         , simBodiesToModify=["translatingBody" + str(idx + 1)]
+                                         , modelPath="CUBE"
+                                         , scale=[depth_teles, length_teles, width_teles]
+                                         , color=vizSupport.toRGBA255("purple"))
         viz.settings.orbitLinesOn = -1
 
     # Run the simulation (chunk 1 is only prescribed motion)
@@ -403,7 +363,7 @@ def run(show_plots):
     linear_translation_1_msg_data.rho = strut_1_rho_ref
     linear_translation_1_msg_data.rhoDot = 0.0
     linear_translation_1_msg = messaging.LinearTranslationRigidBodyMsg().write(linear_translation_1_msg_data, macros.sec2nano(sim_time_1))
-    teles_strut_1.translatingBodyRefInMsg.subscribeTo(linear_translation_1_msg)
+    teles_strut_list[0].translatingBodyRefInMsg.subscribeTo(linear_translation_1_msg)
 
     # Create telescoping strut 2 reference message
     strut_2_rho_ref = 0.1  # [m]
@@ -411,7 +371,7 @@ def run(show_plots):
     linear_translation_2_msg_data.rho = strut_2_rho_ref
     linear_translation_2_msg_data.rhoDot = 0.0
     linear_translation_2_msg = messaging.LinearTranslationRigidBodyMsg().write(linear_translation_2_msg_data, macros.sec2nano(sim_time_1))
-    teles_strut_2.translatingBodyRefInMsg.subscribeTo(linear_translation_2_msg)
+    teles_strut_list[1].translatingBodyRefInMsg.subscribeTo(linear_translation_2_msg)
 
     # Create telescoping strut 3 reference message
     strut_3_rho_ref = 0.15  # [m]
@@ -419,7 +379,7 @@ def run(show_plots):
     linear_translation_3_msg_data.rho = strut_3_rho_ref
     linear_translation_3_msg_data.rhoDot = 0.0
     linear_translation_3_msg = messaging.LinearTranslationRigidBodyMsg().write(linear_translation_3_msg_data, macros.sec2nano(sim_time_1))
-    teles_strut_3.translatingBodyRefInMsg.subscribeTo(linear_translation_3_msg)
+    teles_strut_list[2].translatingBodyRefInMsg.subscribeTo(linear_translation_3_msg)
 
     # Run the simulation (chunk 2 is the translating body motion only)
     sim_time_2 = 60.0  # [s]
