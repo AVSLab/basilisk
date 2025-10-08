@@ -39,6 +39,9 @@ Version |release|
 - Fixed bug with recording message payload entries that are 2D arrays. This bug was introduced with the faster recording
   strategy added in version 2.8.0.
 - Add a desired relative attitude between spacecraft in :ref:`constraintDynamicEffector`.
+- Added new example scenarios demonstrating extended use of :ref:`constraintDynamicEffector`:
+  :ref:`scenarioConstrainedDynamicsManeuverAnalysis`, :ref:`scenarioConstrainedDynamicsComponentAnalysis`,
+  and :ref:`scenarioConstrainedDynamicsFrequencyAnalysis`.
 - Added a new stepper motor simulation module :ref:`stepperMotor`. This kinematic profiler module is useful to
   simulate the actuation of motor-driven prescribed spacecraft components.
 - Made individual structures for each degree of freedom in :ref:`spinningBodyNDOFStateEffector` and
