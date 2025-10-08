@@ -48,7 +48,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
         env:
-          CONAN_ARGS: "--opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True"
+          CONAN_ARGS: "--opNav True --mujoco True --mujocoReplay True"
           CIBW_TEST_REQUIRES_WINDOWS: "numpy>=2.1"
 
       - name: Upload wheels

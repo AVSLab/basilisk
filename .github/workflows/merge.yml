@@ -56,7 +56,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.13
-          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True --recorderPropertyRollback True
+          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
       - name: Build docs
         uses: ./.github/actions/docs
       - name: Deploy
