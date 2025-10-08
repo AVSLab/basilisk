@@ -200,8 +200,10 @@ Related Publications
 .. toctree::
    :maxdepth: 1
    :caption: Basilisk:
+   :includehidden:
 
    Install
+   Build
    Learn
    Support
    Documentation/index

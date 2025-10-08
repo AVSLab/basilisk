@@ -39,7 +39,7 @@ Now, when you want to use a tutorial, navigate inside that folder, and edit and 
 
 Any new BSK module development should not occur within the BSK folder as this will be updated rapidly.  Rather,
 new FSW algorithm or simulation code modules should be created in a custom folder outside of the BSK directory.
-See the [building custom modules](docs/source/Install/buildExtModules.rst) web page
+See the [building custom modules](docs/source/Build/buildExtModules.rst) web page
 for more information.
 
 To use the standalone 3D Visualization, download the [Vizard](docs/source/Vizard/VizardDownload.rst).
