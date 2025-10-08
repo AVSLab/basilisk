@@ -35,6 +35,15 @@ inline Eigen::Matrix3d M1(double q) {
 inline Eigen::Matrix3d M2(double q) {
     const double c = std::cos(q), s = std::sin(q);
     Eigen::Matrix3d R;
+    R <<  c, s,  0,
+          -s, c,  0,
+          0, 0,  1;
+    return R;
+}
+
+inline Eigen::Matrix3d M3(double q) {
+    const double c = std::cos(q), s = std::sin(q);
+    Eigen::Matrix3d R;
     R <<  c, 0,  -s,
           0, 1,  0,
           s, 0,  c;
@@ -155,12 +164,12 @@ void ArmThrForceTorqueMapping::UpdateState(uint64_t CurrentSimNanos)
     // calculate all DCMs
     dcm_J1B = M1(jointStates.thetas[0])*this->dcm_H1B;
     dcm_J2B = M2(jointStates.thetas[1])*dcm_J1B;
-    dcm_J3B = M1(jointStates.thetas[2])*dcm_J2B;
+    dcm_J3B = M3(jointStates.thetas[2])*dcm_J2B;
     dcm_J4B = M2(jointStates.thetas[3])*dcm_J3B;
     dcm_T1B = dcm_J4B;
     dcm_J5B = M1(jointStates.thetas[4])*this->dcm_H2B;
     dcm_J6B = M2(jointStates.thetas[5])*dcm_J5B;
-    dcm_J7B = M1(jointStates.thetas[6])*dcm_J6B;
+    dcm_J7B = M3(jointStates.thetas[6])*dcm_J6B;
     dcm_J8B = M2(jointStates.thetas[7])*dcm_J7B;
     dcm_T2B = dcm_J8B;
 
