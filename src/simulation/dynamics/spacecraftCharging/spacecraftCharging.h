@@ -20,6 +20,7 @@
 #ifndef SPACECRAFT_CHARGING_H
 #define SPACECRAFT_CHARGING_H
 
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
@@ -31,8 +32,10 @@ class SpacecraftCharging : public DynamicObject{
 public:
     SpacecraftCharging();
     ~SpacecraftCharging() = default;
+    void initializeDynamics();
     void Reset(uint64_t CurrentSimNanos);
-	void writeOutputStateMessages(uint64_t clockTime);
+    void registerStates(DynParamManager& states);
+    void writeOutputStateMessages(uint64_t clockTime);
     void UpdateState(uint64_t CurrentSimNanos);
     void equationsOfMotion(double integTimeSeconds, double timeStep);
     void preIntegration(uint64_t callTimeNanos) final;
@@ -49,6 +52,11 @@ private:
     double E_eBeam;  //!< [keV] Electron beam energy
     double I_eBeam;  //!< [Amps] Electron beam current
     double scCapacitance;  //!< [farads] Spacecraft capacitance
+
+    std::string nameOfScPotentialState;
+    double scPotentialInit{};  //!< [Volts] Initial spacecraft potential
+    double scPotential{};  //!< [Volts] Spacecraft potential
+    StateData *scPotentialState = nullptr;  //!< State data container for spacecraft potential
 };
 
 

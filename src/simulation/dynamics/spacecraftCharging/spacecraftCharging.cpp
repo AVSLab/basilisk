@@ -20,19 +20,40 @@
 #include "spacecraftCharging.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! Class constructor. */
 SpacecraftCharging::SpacecraftCharging() {
+    this->nameOfScPotentialState = "scPotential";
+
     // Set integrator as RK4
     this->integrator = new svIntegratorRK4(this);
 }
 
 /*! Reset method. */
 void SpacecraftCharging::Reset(uint64_t CurrentSimNanos) {
+    this->initializeDynamics();
+    this->writeOutputStateMessages(CurrentSimNanos);
+    this->timeBefore = CurrentSimNanos * NANO2SEC;
+    this->timeBeforeNanos = CurrentSimNanos;
+}
+
+void SpacecraftCharging::initializeDynamics() {
+    this->registerStates(this->dynManager);
+}
+
+void SpacecraftCharging::registerStates(DynParamManager& states) {
+    this->scPotentialState = states.registerState(1, 1, this->nameOfScPotentialState);
+    Eigen::MatrixXd scPotentialInitMatrix(1, 1);
+    scPotentialInitMatrix(0, 0) = this->scPotentialInit;
+    this->scPotentialState->setState(scPotentialInitMatrix);
 }
 
 /*! Module update method. */
 void SpacecraftCharging::UpdateState(uint64_t CurrentSimNanos) {
+    // Integrate the state forward in time
+    this->integrateState(CurrentSimNanos);
+
     // Write the module output messages
     this->writeOutputStateMessages(CurrentSimNanos);
 }
@@ -43,18 +64,32 @@ void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
 
 /*! Method for charging equations of motion */
 void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeStep) {
+    this->scPotential = this->scPotentialState->getState()(0, 0);
+
+    double beam_current{};
+    if (this->E_eBeam > this->scPotential) {
+        beam_current = this->I_eBeam;
+    }
+
+    Eigen::MatrixXd scPotentialRate(1, 1);
+    scPotentialRate(0, 0) = beam_current / this->scCapacitance;
+    this->scPotentialState->setDerivative(scPotentialRate);
 }
 
 /*! Method for pre-integration steps.
  @param integrateToThisTimeNanos Time to integrate to
  */
 void SpacecraftCharging::preIntegration(uint64_t integrateToThisTimeNanos) {
+    this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos);
 }
 
 /*! Method for post-integration steps.
  @param integrateToThisTimeNanos Time to integrate to
  */
 void SpacecraftCharging::postIntegration(uint64_t integrateToThisTimeNanos) {
+
+    this->timeBeforeNanos = integrateToThisTimeNanos;
+    this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
 }
 
 /*! Setter for the electron beam current.
