@@ -203,7 +203,7 @@ Related Publications
    :includehidden:
 
    Install
-   Build
+   Building from Source <Build>
    Learn
    Support
    Documentation/index

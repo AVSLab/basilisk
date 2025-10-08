@@ -49,22 +49,15 @@ After installing
 Building Basilisk ``wheel`` File
 --------------------------------
 
-On its own, there is no significant benefit to installing Basilisk in this way. However, supporting standard Python
-packaging tools means that Basilisk can now be built into a pre-compiled `"wheel" (.whl) file
-<https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#wheels>`_ that can be shared
-and installed on other compatible machines.
-
-Using ``pip``, the command below will generate a ``Basilisk-*.whl`` file in the current directory::
+Using ``pip``, the command below will generate a ``bsk-*.whl`` file in the current directory::
 
     pip wheel --no-deps -v .
 
 The resulting wheel file can then be installed using ``pip``::
 
-    pip install Basilisk-*.whl
+    pip install bsk-*.whl
 
-The main benefit of this approach will come in the future, when a set of pre-compiled wheels will be made available,
-allowing most users to easily ``pip install Basilisk`` without compilation, in the same way that packages like
-``numpy``, ``scipy``, and ``pandas`` are available.
+This allows the user to create a custom Basilisk wheel to distribute within their organization.
 
 To keep the wheel size smaller, the BSK data files are not installed by default.  If the user
 wants to use script that assumes they are included into the Basilisk python package, then go to the
@@ -83,7 +76,7 @@ directly downloads the missing BSK data files and put them into a local pooch ca
     If the computer does not have local internet access and the ``pip install`` is done via
     a local wheel, then these missing Spice ``*.bsp`` data files can be manually added to::
 
-        .../.venv/lib/python3.11/site-packages/Basilisk/supportData/EphemerisData
+        .venv/lib/python3.11/site-packages/Basilisk/supportData/EphemerisData
 
 If installing Basilisk via a wheel the user does not have direct access to the full Basilisk source
 folder which contains the ``examples`` folder.  The Terminal command ``bskExamples``
