@@ -21,6 +21,7 @@
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <iostream>
 
 /*! Class constructor. */
 SpacecraftCharging::SpacecraftCharging() {
@@ -73,9 +74,10 @@ void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
 void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeStep) {
     this->scPotential = this->scPotentialState->getState()(0, 0);
 
-    double beam_current{};
-    if (this->E_eBeam > this->scPotential) {
-        beam_current = this->I_eBeam;
+    // Set the beam current to zero if the sc potential is greater or equal to the beam energy
+    double beam_current = this->I_eBeam;
+    if (this->scPotential >= this->E_eBeam) {
+        beam_current = 0.0;
     }
 
     Eigen::MatrixXd scPotentialRate(1, 1);
@@ -94,9 +96,18 @@ void SpacecraftCharging::preIntegration(uint64_t integrateToThisTimeNanos) {
  @param integrateToThisTimeNanos Time to integrate to
  */
 void SpacecraftCharging::postIntegration(uint64_t integrateToThisTimeNanos) {
-
     this->timeBeforeNanos = integrateToThisTimeNanos;
     this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
+
+    this->scPotential = this->scPotentialState->getState()(0, 0);
+    if (this->scPotential >= this->E_eBeam) {
+        this->scPotential = this->E_eBeam;
+        std::cout << "adjusting sc potential" << std::endl;
+    }
+
+    Eigen::MatrixXd scPotentialMatrix(1, 1);
+    scPotentialMatrix(0, 0) = this->scPotential;
+    this->scPotentialState->setState(scPotentialMatrix);
 }
 
 /*! Setter for the electron beam current.
