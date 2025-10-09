@@ -56,7 +56,7 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python }}
-          conan-args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True
+          conan-args: --opNav True --mujoco True --mujocoReplay True
       - name: Pytest
         shell: pwsh
         working-directory: src
@@ -83,15 +83,12 @@ jobs:
         python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
         pytest_flags:
           ['-n auto -m "not ciSkip" -rs --error-for-skips --dist=loadscope -v']
-        conan_args:
-          [
-            "--opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True",
-          ]
+        conan_args: ["--opNav True --mujoco True --mujocoReplay True"]
         include:
           # An extra Basilisk build to test building without visualization enabled
           - python: "3.13"
             pytest_flags: -n auto -m "not ciSkip" -rs --dist=loadscope -v
-            conan_args: --opNav True --mujoco True --mujocoReplay True --recorderPropertyRollback True --vizInterface False
+            conan_args: --opNav True --mujoco True --mujocoReplay True --vizInterface False
             job_suffix: "--vizInterface False"
           # Python 3.8 cannot run all tests.
           # TODO: Once Python 3.8 support is dropped, delete this include and exclude and remove 3.8 from the python
@@ -128,6 +125,6 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.13
-          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True --recorderPropertyRollback True
+          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
       - name: Build docs
         uses: ./.github/actions/docs
