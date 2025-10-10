@@ -33,16 +33,15 @@ FanInStates::SelfInit(){
     values and initializes the various parts of the model */
 FanInStates::FanInStates()
 {
-    if (!scene) {
-        bskLogger.bskLog(BSK_ERROR, "FanInStates: scene pointer not set!");
-    }
 }
 
 /*! This method is used to reset the module and checks that required input messages are connect.
 */
 void FanInStates::Reset(uint64_t CurrentSimNanos)
 {
-    // check that required input messages are connected
+    if (!scene) {
+        bskLogger.bskLog(BSK_ERROR, "FanInStates: scene pointer not set!");
+    }
 
 }
 
