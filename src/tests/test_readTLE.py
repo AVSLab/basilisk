@@ -1,3 +1,5 @@
+import os
+import pathlib
 import pytest
 import numpy as np
 import Basilisk.utilities.tleHandling as tleHandling
@@ -5,6 +7,7 @@ import Basilisk.utilities.orbitalMotion as om
 from datetime import datetime, timedelta, timezone
 
 A_TOL = 1e-14 #[-]
+DATA_DIR = pathlib.Path(__file__).parent / 'data'
 
 ###################################################################
 # Expected orbital elements for oneWeb (if testing multiple satellites)
@@ -73,124 +76,115 @@ EXPECTED_OE_2LE = {
 }
 
 # Values to generate TLE for HYPSO 1
-oe_hypso1 = om.ClassicElements()
-oe_hypso1.i = np.deg2rad(97.3197)
-oe_hypso1.e = 0.0004257 # [-]
-oe_hypso1.a = (om.RP_EARTH + 445.195971181338)*1e3 # [m]
-oe_hypso1.Omega = np.deg2rad(349.0390) # [rad]
-oe_hypso1.omega = np.deg2rad(136.0807) # [rad]
-oe_hypso1.f = np.deg2rad(224.04427854247686) # [rad]
-hypso_1_Norad_Id = 51053 # [-]
-hypso_1_launchDate = datetime(2022, 1, 13, 0, 0, 0) # [UTC]
-hypso_1_tleEpoch = datetime(2025, 1, 1, tzinfo=timezone.utc) + timedelta(days=279.47924866 - 1) # [UTC]
-hypso1_nDot = 0.00028852 # [rev/day^2]
-hypso1_bStar = 0.00056053 # [1/Earth radii]
+oeHypso1 = om.ClassicElements()
+oeHypso1.i = np.deg2rad(97.3197)
+oeHypso1.e = 0.0004257 # [-]
+oeHypso1.a = (om.RP_EARTH + 445.195971181338)*1e3 # [m]
+oeHypso1.Omega = np.deg2rad(349.0390) # [rad]
+oeHypso1.omega = np.deg2rad(136.0807) # [rad]
+oeHypso1.f = np.deg2rad(224.04427854247686) # [rad]
+hypso1noradId = 51053 # [-]
+hypso1launch = datetime(2022, 1, 13, 0, 0, 0) # [UTC]
+hypso1tleEpoch = datetime(2025, 1, 1, tzinfo=timezone.utc) + timedelta(days=279.47924866 - 1) # [UTC]
+hypso1nDot = 0.00028852 # [rev/day^2]
+hypso1bStar = 0.00056053 # [1/Earth radii]
 
 # Expected orbital elements for Hypso1
 EXPECTED_OE_HYPSO = {
-    'a': [oe_hypso1.a],
-    'e': [oe_hypso1.e],
-    'i': [oe_hypso1.i],
-    'f': [oe_hypso1.f],
-    'Omega': [oe_hypso1.Omega],
-    'omega': [oe_hypso1.omega]
+    'a': [oeHypso1.a],
+    'e': [oeHypso1.e],
+    'i': [oeHypso1.i],
+    'f': [oeHypso1.f],
+    'Omega': [oeHypso1.Omega],
+    'omega': [oeHypso1.omega]
 }
 
 ###################################################################
-def _equal_check(v1, v2, fieldName):
+def _equalCheck(v1, v2, fieldName):
     """Compare two values within tolerance"""
     if abs(v1 - v2) < A_TOL:
         return 0
     print(f'{fieldName} failed: expected {v2}, got {v1}')
     return 1
 
-@pytest.mark.parametrize("tle_path, expected_dict", [
-    ("src/tests/data/hypso1.tle", EXPECTED_OE_HYPSO),
-    ("src/tests/data/oneWeb25.tle", EXPECTED_OE_ONE_WEB),
-    ("src/tests/data/spacestations.2le", EXPECTED_OE_2LE),
+@pytest.mark.parametrize("tlePath, expectedDict", [
+    (DATA_DIR / "hypso1.tle", EXPECTED_OE_HYPSO),
+    (DATA_DIR / "oneWeb25.tle", EXPECTED_OE_ONE_WEB),
+    (DATA_DIR / "spacestations.2le", EXPECTED_OE_2LE),
 ])
 def test_read_tle(tlePath, expectedDict):
-    e_count_tle = 0
+    eCountTle = 0
 
     # Read TLE file from data folder
-    orbElem, _ = tleHandling.sat_tle2elem(tlePath)
+    tleDataList = tleHandling.satTle2elem(tlePath)
 
     # Check each orbital element
-    for idx, _ in enumerate(orbElem):
+    for idx, _ in enumerate(tleDataList):
         for key in expectedDict:
-            actual_value = getattr(orbElem[idx], key)
-            e_count_tle += _equal_check(actual_value, expectedDict[key][idx], f'{tlePath}_{key}')
+            actualValue = getattr(tleDataList[idx].oe, key)
+            eCountTle += _equalCheck(actualValue, expectedDict[key][idx], f'{tlePath}_{key}')
 
-    assert e_count_tle < 1, f"{e_count_tle} functions failed in tleHandling.py script, satTLE2Elem() method"
+    assert eCountTle < 1, f"{eCountTle} functions failed in tleHandling.py script, satTLE2Elem() method"
 
-@pytest.mark.parametrize("satName, orbitalElements, noradID, launchDate, launch_Noyear, PoL, TLE_epoch, n_dot, bStar, expectedTlePath", [
-    ('HYPSO 1', oe_hypso1, hypso_1_Norad_Id, hypso_1_launchDate, 2, 'BX', hypso_1_tleEpoch, hypso1_nDot, hypso1_bStar, "src/tests/data/hypso1.tle"),
+@pytest.mark.parametrize("satName, orbitalElements, noradID, launchDate, launch_Noyear, PoL, tleEpoch, nDot, bStar, expectedTlePath", [
+    ('HYPSO 1', oeHypso1, hypso1noradId, hypso1launch, 2, 'BX', hypso1tleEpoch, hypso1nDot, hypso1bStar, DATA_DIR / "hypso1.tle"),
 ])
-def test_write_tle(satName, orbitalElements, noradID, launchDate, launch_Noyear, PoL, TLE_epoch, n_dot, bStar, expectedTlePath):
-    e_count_tle = 0
-    generatedTle = tleHandling.generateTleDataString(orbitalElements,
-                                                      satelliteName=satName,
-                                                      NORAD_ID=noradID,
-                                                      launchYear_dt=launchDate,
-                                                      launch_Noyear=launch_Noyear,
-                                                      PoL=PoL,
-                                                      tle_epoch=TLE_epoch,
-                                                      n_dot=n_dot,
-                                                      n_dotdot=0.0,
-                                                      BStar=bStar)
+def test_write_tle(satName, orbitalElements, noradID, launchDate, launch_Noyear, PoL, tleEpoch, nDot, bStar, expectedTlePath):
+    eCountTle = 0
+
+    # Make the data class
+    tleData = tleHandling.TleData(oe = orbitalElements, tleEpoch = tleEpoch)
+    # fill in optional data
+    tleData.satName = satName
+    tleData.noradID = noradID
+    tleData.launchDate = launchDate
+    tleData.launchNo = launch_Noyear
+    tleData.pol = PoL
+    tleData.nDot = nDot
+    tleData.nDotDot = 0.0
+    tleData.bStar = bStar
+    generatedTle = tleHandling.generateTle(tleData)
 
     # Read the actual TLE file
     with open(expectedTlePath, 'r') as file:
         expectedTLE = file.read()
     # String compaire (line 0)
-    e_count_tle += int((generatedTle.splitlines()[0] != expectedTLE.splitlines()[0]))
+    eCountTle += int((generatedTle.splitlines()[0] != expectedTLE.splitlines()[0]))
     # String compaire (line 1)
-    e_count_tle += int((generatedTle.splitlines()[1] != expectedTLE.splitlines()[1]))
+    eCountTle += int((generatedTle.splitlines()[1] != expectedTLE.splitlines()[1]))
     # String compaire (line 2)
-    e_count_tle += int((generatedTle.splitlines()[2][0:63] != expectedTLE.splitlines()[2][0:63])) # Ignore revolutions count and checksum
-    assert e_count_tle < 1, f"{e_count_tle} functions failed in tleHandling.py script, generateTleDataString() method"
+    eCountTle += int((generatedTle.splitlines()[2][0:63] != expectedTLE.splitlines()[2][0:63])) # Ignore revolutions count and checksum
+    assert eCountTle < 1, f"{eCountTle} functions failed in tleHandling.py script, generateTleDataString() method"
 
-@pytest.mark.parametrize("tle_path", [
-    "src/tests/data/hypso1.tle",
+@pytest.mark.parametrize("tlePath", [
+    (DATA_DIR / "hypso1.tle"),
 ])
 def test_read_write_tle(tlePath):
-    e_count_tle = 0
+    eCountTle = 0
     # Read TLE file
-    orbElem, metaData = tleHandling.satTLE2Elem(tlePath)
+    satTle2elem = tleHandling.satTle2elem(tlePath)
 
-    generatedTle = tleHandling.generateTleDataString(orbElem[0],
-                                                      satelliteName=metaData[0]['satName'],
-                                                      launchYear_dt=metaData[0]['launchYear'],
-                                                      launch_Noyear=metaData[0]['launchNo'],
-                                                      NORAD_ID=metaData[0]['Norad_ID'],
-                                                      classification={'Unclassified': 'U', 'Classified': 'C', 'Secret': 'S'}.get(metaData[0]['classification'], 'U'),
-                                                      PoL=metaData[0]['PoL'],
-                                                      tle_epoch=metaData[0]['tle_epoch'],
-                                                      element_set_no=metaData[0]['elemSetNo'],
-                                                      n_dot=metaData[0]['n_dot'],
-                                                      n_dotdot=metaData[0]['n_dotdot'],
-                                                      BStar=metaData[0]['bStar'])
-
+    generatedTle = tleHandling.generateTle(satTle2elem[0])
     # Read the actual TLE file
     with open(tlePath, 'r') as file:
         tleToBeTested = file.read()
 
     # String compaire (line 0)
-    e_count_tle += int((generatedTle.splitlines()[0] != tleToBeTested.splitlines()[0]))
+    eCountTle += int((generatedTle.splitlines()[0] != tleToBeTested.splitlines()[0]))
     # String compaire (line 1)
-    e_count_tle += int((generatedTle.splitlines()[1] != tleToBeTested.splitlines()[1]))
+    eCountTle += int((generatedTle.splitlines()[1] != tleToBeTested.splitlines()[1]))
     # String compaire (line 2)
-    e_count_tle += int((generatedTle.splitlines()[2][0:63] != tleToBeTested.splitlines()[2][0:63])) # Ignore revolutions count and checksum
-    assert e_count_tle < 1, f"{e_count_tle} functions failed in tleHandling.py script, generateTleDataString() method"
+    eCountTle += int((generatedTle.splitlines()[2][0:63] != tleToBeTested.splitlines()[2][0:63])) # Ignore revolutions count and checksum
+    assert eCountTle < 1, f"{eCountTle} functions failed in tleHandling.py script, generateTleDataString() method"
 
 if __name__ == "__main__":
     # Reading TLE
-    test_read_tle("src/tests/data/hypso1.tle", EXPECTED_OE_HYPSO)
-    test_read_tle("src/tests/data/oneWeb25.tle", EXPECTED_OE_ONE_WEB)
-    test_read_tle("src/tests/data/spacestations.2le", EXPECTED_OE_2LE)
+    test_read_tle(os.path.join(DATA_DIR, "hypso1.tle"), EXPECTED_OE_HYPSO)
+    test_read_tle(DATA_DIR / "oneWeb25.tle", EXPECTED_OE_ONE_WEB)
+    test_read_tle(DATA_DIR / "spacestations.2le", EXPECTED_OE_2LE)
 
     # Writing TLE
-    test_write_tle('HYPSO 1', oe_hypso1, hypso_1_Norad_Id, hypso_1_launchDate, launch_Noyear=2, PoL='BX', TLE_epoch=hypso_1_tleEpoch, n_dot=hypso1_nDot, bStar=hypso1_bStar, expectedTlePath="src/tests/data/hypso1.tle")
+    test_write_tle('HYPSO 1', oeHypso1, hypso1noradId, hypso1launch, launch_Noyear=2, PoL='BX', tleEpoch=hypso1tleEpoch, nDot=hypso1nDot, bStar=hypso1bStar, expectedTlePath=DATA_DIR / "hypso1.tle")
 
     # Take TLE, generate orbital elements, then generate TLE again and compare to original
-    test_read_write_tle("src/tests/data/hypso1.tle")
+    test_read_write_tle(DATA_DIR / "hypso1.tle")
