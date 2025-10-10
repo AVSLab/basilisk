@@ -35,6 +35,7 @@ Version |release|
 - Refactored the CI build system scripts
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
+- Added documentation to :ref:`constraintDynamicEffector` explaining the required execution order
 - Fixed bug with recording message payload entries that are 2D arrays. This bug was introduced with the faster recording
   strategy added in version 2.8.0.
 - Add a desired relative attitude between spacecraft in :ref:`constraintDynamicEffector`.
