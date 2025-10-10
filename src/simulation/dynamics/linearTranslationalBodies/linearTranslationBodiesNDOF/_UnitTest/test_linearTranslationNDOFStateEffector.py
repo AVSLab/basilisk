@@ -308,7 +308,7 @@ def translatingBodyNoInput(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
     np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy,
@@ -556,7 +556,7 @@ def translatingBodyLockAxis(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy,
                                err_msg="Orbital energy is not constant.")
@@ -797,7 +797,7 @@ def translatingBodyCommandedForce(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy,
                                err_msg="Orbital energy is not constant.")
