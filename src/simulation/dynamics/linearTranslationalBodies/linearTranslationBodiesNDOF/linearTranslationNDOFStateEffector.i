@@ -35,6 +35,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
+%include "swig_deprecated.i"
 
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
@@ -52,5 +53,22 @@ struct LinearTranslationRigidBodyMsg_C;
 
 %pythoncode %{
 import sys
+
+mod = sys.modules[__name__]
+
+mod.linearTranslationNDOFStateEffector = _DeprecatedWrapper(
+        mod.LinearTranslationNDOFStateEffector,
+        aliasName="linearTranslationNDOFStateEffector",
+        targetName="LinearTranslationNDOFStateEffector",
+        removalDate="2026/10/15"
+)
+
+mod.translatingBody = _DeprecatedWrapper(
+        mod.TranslatingBody,
+        aliasName="translatingBody",
+        targetName="TranslatingBody",
+        removalDate="2026/10/15"
+)
+
 protectAllClasses(sys.modules[__name__])
 %}
