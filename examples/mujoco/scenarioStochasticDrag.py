@@ -194,7 +194,7 @@ def run(showPlots: bool = False):
 
     stochasticAtmo = StochasticAtmosphere(
         densityCorrectionStandardDeviation=0.15,
-        densityCorrectionTheta=.01
+        densityCorrectionTimeConstant=1.8 * 1 * 60 # s
     )
     stochasticAtmo.ModelTag = "StochasticExpAtmo"
 
@@ -350,12 +350,16 @@ class StochasticAtmosphere(StatefulSysModel.StatefulSysModel):
         d(densityCorrection) = -theta*densityCorrection*dt + sigma*dW
 
     where ``theta`` and ``sigma`` are the terms that characterize the OU
-    process. In the constructor of this class, ``theta`` is set through
-    ``densityCorrectionTheta``, while ``sigma`` is computed from
-    the constructor input ``densityCorrectionStandardDeviation``.
+    process. Alternatively, one can express the process as:
+
+        d(densityCorrection) = -densityCorrection/tau*dt + sqrt(2/tau)*sigma_st*dW
+
+    where ``tau`` represents the time constant of the process, and ``sigma_st``
+    is its stationary standard deviation. These parameters are set in the constructor
+    of this class.
     """
 
-    def __init__(self, densityCorrectionStandardDeviation: float, densityCorrectionTheta: float):
+    def __init__(self, densityCorrectionStandardDeviation: float, densityCorrectionTimeConstant: float):
         """
         Initialize the StochasticAtmosphere model.
 
@@ -363,15 +367,26 @@ class StochasticAtmosphere(StatefulSysModel.StatefulSysModel):
             densityCorrectionStandardDeviation (float): Stationary standard deviation
                 of the Ornstein-Uhlenbeck process that drives the relative atmospheric density
                 correction.
-            densityCorrectionTheta (float): ``theta`` term of the
+            densityCorrectionTimeConstant (float): time constant of the
                 Ornstein-Uhlenbeck process that drives the relative atmospheric density correction.
         """
         super().__init__()
         self.densityCorrectionStandardDeviation = densityCorrectionStandardDeviation
-        self.densityCorrectionTheta = densityCorrectionTheta
+        self.densityCorrectionTimeConstant = densityCorrectionTimeConstant
 
         self.atmoDensInMsg = messaging.AtmoPropsMsgReader()
         self.atmoDensOutMsg = messaging.AtmoPropsMsg()
+
+    @property
+    def densityCorrectionTheta(self):
+        """
+        Compute the ``theta`` term of the Ornstein-Uhlenbeck process that
+        drives the atmospheric density correction.
+
+        Returns:
+            float: The theta value for the OU process.
+        """
+        return 1/self.densityCorrectionTimeConstant
 
     @property
     def densityCorrectionSigma(self):
@@ -382,7 +397,7 @@ class StochasticAtmosphere(StatefulSysModel.StatefulSysModel):
         Returns:
             float: The sigma value for the OU process.
         """
-        return self.densityCorrectionStandardDeviation * np.sqrt(2*self.densityCorrectionTheta)
+        return self.densityCorrectionStandardDeviation * np.sqrt(2/self.densityCorrectionTimeConstant)
 
     def registerStates(self, registerer: StatefulSysModel.DynParamRegisterer):
         """
