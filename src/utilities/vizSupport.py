@@ -28,6 +28,7 @@ from Basilisk.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 from typing import Optional, Sequence
+from Basilisk.utilities import deprecated
 
 try:
     from Basilisk.simulation import vizInterface
@@ -694,6 +695,7 @@ def setInstrumentGuiSetting(
     showCSSLabels=0,
     showGenericSensorLabels=0,
     showTransceiverLabels=0,
+    showTransceiverFrustum=0,
     showTransceiverFrustrum=0,
     showGenericStoragePanel=0,
     showMultiShapeLabels=0,
@@ -728,7 +730,7 @@ def setInstrumentGuiSetting(
     showTransceiverLabels: int
         flag if the generic sensor labels should be shown (1) or hidden (-1)
         Default: 0 - if not provided, then the Vizard default settings are used
-    showTransceiverFrustrum: int
+    showTransceiverFrustum: int
         flag if the generic sensor labels should be shown (1) or hidden (-1)
         Default: 0 - if not provided, then the Vizard default settings are used
     showGenericStoragePanel: int
@@ -753,9 +755,11 @@ def setInstrumentGuiSetting(
         showGenericSensorLabels, default=0
     )
     vizElement.showTransceiverLabels = assert_trinary(showTransceiverLabels, default=0)
-    vizElement.showTransceiverFrustrum = assert_trinary(
-        showTransceiverFrustrum, default=0
+    vizElement.showTransceiverFrustum = assert_trinary(
+        showTransceiverFrustum, default=0
     )
+    if showTransceiverFrustrum:
+        transceiverFrustrum(vizElement, showTransceiverFrustrum)
     vizElement.showGenericStoragePanel = assert_trinary(
         showGenericStoragePanel, default=0
     )
@@ -769,6 +773,11 @@ def setInstrumentGuiSetting(
     )
     return
 
+@deprecated.deprecated("2026/10/11", "Use showTransceiverFrustum instead of showTransceiverFrustrum")
+def transceiverFrustrum(vizElement, showTransceiverFrustrum):
+    vizElement.showTransceiverFrustum = assert_trinary(
+        showTransceiverFrustrum, default=0
+    )
 
 coneInOutList = []
 

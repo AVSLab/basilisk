@@ -137,7 +137,7 @@ InstrumentGuiSettings
     int showCSSLabels=0;            //!< [int] should CSS panel labels be shown, -1 (off), 0 (default), 1 (on)
     int showGenericSensorLabels=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showTransceiverLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-    int showTransceiverFrustrum=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTransceiverFrustum=0;   //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showGenericStoragePanel=0;  //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     int showMultiShapeLabels=0;    //!< [int] Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }InstrumentGuiSettings;

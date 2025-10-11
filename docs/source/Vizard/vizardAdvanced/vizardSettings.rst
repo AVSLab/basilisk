@@ -431,7 +431,7 @@ The following table includes the keyword options for this method.
       - (-1,0,1)
       - No
       - Show (1) or hide (-1) transceiver labels. Value of 0 (protobuffer default) to use viz default.
-    * - ``showTransceiverFrustrum``
+    * - ``showTransceiverFrustum``
       - (-1,0,1)
       - No
       - Show (1) or hide (-1) transceiver frustums. Value of 0 (protobuffer default) to use viz default.

@@ -22,6 +22,9 @@ Version |release|
 - The support file :ref:`vizSupport` is updated to only have ``enableUnityVisualization()`` check
   if :ref:`vizInterface` has been built or not.  It is recommended that user scripts safe-guard
   their simulation usage of :ref:`vizSupport` function by checking that ``vizSupport.vizFound`` is true.
+- In :ref:`vizSupport`, in the method ``setInstrumentGuiSetting()``, corrected the spelling of
+  ``showTransceiverFrustrum`` to be ``showTransceiverFrustum``.  The prior argument name has
+  been deprecated and will be removed after October 11, 2026.
 
 
 Version 2.8.0

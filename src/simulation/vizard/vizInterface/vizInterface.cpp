@@ -704,7 +704,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
             il->set_showgenericsensorlabels(this->settings.instrumentGuiSettingsList[idx].showGenericSensorLabels);
             il->set_showtransceiverlabels(this->settings.instrumentGuiSettingsList[idx].showTransceiverLabels);
-            il->set_showtransceiverfrustrum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustrum);
+            il->set_showtransceiverfrustum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustum);
             il->set_showgenericstoragepanel(this->settings.instrumentGuiSettingsList[idx].showGenericStoragePanel);
             il->set_showmultishapelabels(this->settings.instrumentGuiSettingsList[idx].showMultiShapeLabels);
         }
