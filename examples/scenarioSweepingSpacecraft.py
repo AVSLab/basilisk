@@ -340,7 +340,7 @@ def run (show_plots, useAltBodyFrame, angle_rate_command, time_command):
                                          resolution=[1024, 1024], renderRate=0.,
                                          cameraPos_B=[1., 0., .0], sigma_CB=[0., np.tan(np.pi/2/4), 0.]
                                          )
-        viz.settings.viewCameraConeHUD = 1
+        viz.settings.viewCameraFrustumHUD = 1
 
     #
     # Initialize Simulation

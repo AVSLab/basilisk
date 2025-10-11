@@ -286,7 +286,7 @@ message VizMessage{
         string skybox = 11;                                 // '' provides default NASA SVS Starmap, "ESO" use ESO Milky Way skybox, "black" provides a black background, or provide a filepath to custom background
         repeated CustomModel customModels = 12;
         int32 viewCameraBoresightHUD = 13;                  // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-        int32 viewCameraConeHUD = 14;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 viewCameraFrustumHUD = 14;                       // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showCSLabels = 15;                            // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showCelestialBodyLabels = 16;                 // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
         int32 showSpacecraftLabels = 17;                    // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true

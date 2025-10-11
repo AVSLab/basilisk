@@ -569,9 +569,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define if camera cone should be shown
-        vizSettings->set_viewcameraconehud(this->settings.viewCameraConeHUD);
-        if (abs(this->settings.viewCameraConeHUD)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraConeHUD);
+        vizSettings->set_viewcamerafrustumhud(this->settings.viewCameraFrustumHUD);
+        if (abs(this->settings.viewCameraFrustumHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraFrustumHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraFrustumHUD);
         }
         // define if camera HUD should be shown
         vizSettings->set_viewcameraviewhud(this->settings.viewCameraViewHUD);

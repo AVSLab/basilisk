@@ -342,7 +342,7 @@ def run(show_plots, missionType, saveVizardFile):
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
                                                   saveFile=fileNamePath)
         viz.addCamMsgToModule(camMsg)
-        viz.settings.viewCameraConeHUD = 1
+        viz.settings.viewCameraFrustumHUD = 1
     scSim.InitializeSimulation()
 
     #

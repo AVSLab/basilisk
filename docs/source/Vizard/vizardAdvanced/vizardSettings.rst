@@ -150,7 +150,7 @@ default setting for that behavior.
     * - ``viewCameraBoresightHUD``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) the camera boresight line. Value of 0 (protobuffer default) to use viz default.
-    * - ``viewCameraConeHUD``
+    * - ``viewCameraFrustumHUD``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) the camera cone. Value of 0 (protobuffer default) to use viz default.
     * - ``viewCameraViewHUD``

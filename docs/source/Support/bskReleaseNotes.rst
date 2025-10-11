@@ -58,6 +58,7 @@ Version |release|
 - In :ref:`vizSupport`, in the method ``setInstrumentGuiSetting()``, corrected the spelling of
   ``showTransceiverFrustrum`` to be ``showTransceiverFrustum``.  The prior argument name has
   been deprecated.
+- For :ref:`vizInterface`.settings, changed the name of ``viewCameraConeHUD`` to ``viewCameraFrustrumHUD``
 
 
 Version 2.8.0 (August 30, 2025)
