@@ -81,6 +81,7 @@ class EventHandlerClass:
         eventActive=False,
         conditionFunction=None,
         actionFunction=None,
+        conditionTime=None,
         conditionList=None,
         actionList=None,
         terminal=False,
@@ -91,6 +92,16 @@ class EventHandlerClass:
         self.occurCounter = 0
         self.prevCheckTime = None
         self.terminal = terminal
+
+        self.conditionTime = conditionTime
+        if conditionTime is not None:
+            if conditionFunction is not None:
+                raise ValueError(
+                    "Only specify a conditionFunction or a conditionTime, not both"
+                )
+            conditionFunction = (
+                lambda sim: sim.TotalSim.CurrentNanos >= self.conditionTime
+            )
 
         self.conditionFunction = conditionFunction or (lambda _: False)
         self.actionFunction = actionFunction or (lambda _: None)
@@ -113,9 +124,13 @@ class EventHandlerClass:
 
     def shouldBeChecked(self, currentTime):
         """Check events if active and never checked or rate matches current time"""
-        return self.eventActive and (
-            self.prevCheckTime is None or currentTime % self.eventRate == 0
-        )
+        if not self.eventActive:
+            return False
+
+        if self.conditionTime is not None:
+            return currentTime >= self.conditionTime
+
+        return self.prevCheckTime is None or currentTime % self.eventRate == 0
 
     def checkEvent(self, parentSim):
         if self.conditionFunction(parentSim):
@@ -127,6 +142,8 @@ class EventHandlerClass:
         self.prevCheckTime = parentSim.TotalSim.CurrentNanos
 
     def nextCheckTime(self, currentTime):
+        if self.conditionTime is not None:
+            return self.conditionTime
         return (currentTime // self.eventRate + 1) * self.eventRate
 
 
@@ -549,6 +566,7 @@ class SimBaseClass:
         eventActive=False,
         conditionList=None,
         actionList=None,
+        conditionTime=None,
         terminal=False,
         conditionFunction=None,
         actionFunction=None,
@@ -564,6 +582,8 @@ class SimBaseClass:
                 expressed as strings of code to execute within the class.
             actionList (list): List of actions to perform when the event occurs,
                 expressed as strings of code to execute within the class.
+            conditionTime (int): Alternative to conditionList, a time in nanoseconds to trigger
+                the event. Does not depend on eventRate for checking.
             terminal (bool): Whether this event should terminate the simulation when it occurs
             conditionFunction (function): Function to check if the event should occur. The
                 function should take the simulation object as an argument and return a boolean.
@@ -586,6 +606,7 @@ class SimBaseClass:
             conditionList=conditionList,
             actionList=actionList,
             terminal=terminal,
+            conditionTime=conditionTime,
         )
         self.eventMap[eventName] = newEvent
 
