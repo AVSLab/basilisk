@@ -65,7 +65,7 @@ public:
     /** getter for `r_ScS_S` property */
     Eigen::Vector3d getR_ScS_S() const {return this->r_ScS_S;};
     /** getter for `ISPntSc_S` property */
-    Eigen::Matrix3d setISPntSc_S() const {return this->ISPntSc_S;};
+    Eigen::Matrix3d getISPntSc_S() const {return this->ISPntSc_S;};
     /** getter for `sHat_S` property */
     Eigen::Vector3d getSHat_S() const {return this->sHat_S;};
     /** getter for `dcm_S0P` property */
@@ -143,7 +143,9 @@ public:
     ~SpinningBodyNDOFStateEffector() override;  //!< Destructor
 
     /** method for adding a new spinning body */
-    void addSpinningBody(SpinningBody const& newBody);
+    void addSpinningBody(const std::shared_ptr<SpinningBody> newBody);
+    /** method for getting an indexed spinning body */
+    std::shared_ptr<SpinningBody> getSpinningBody(uint64_t index);
     /** setter for `nameOfThetaState` property */
     void setNameOfThetaState(const std::string& nameOfThetaState) {this->nameOfThetaState = nameOfThetaState;};
     /** setter for `nameOfThetaDotState` property */
@@ -157,7 +159,7 @@ private:
     static uint64_t effectorID;
 
     int numberOfDegreesOfFreedom = 0;
-    std::vector<SpinningBody> spinningBodyVec;
+    std::vector<std::shared_ptr<SpinningBody>> spinningBodyVec;
 
     Eigen::MatrixXd ATheta;
     Eigen::MatrixXd BTheta;
@@ -199,11 +201,11 @@ private:
 
     void readInputMessages();
     void computeSpinningBodyInertialStates();
-    void computeAttitudeProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computeAngularVelocityProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computePositionProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computeVelocityProperties(SpinningBody& spinningBody, int spinningBodyIndex) const;
-    void computeInertiaProperties(SpinningBody& spinningBody) const;
+    void computeAttitudeProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computeAngularVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computePositionProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computeVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computeInertiaProperties(std::shared_ptr<SpinningBody> spinningBody) const;
     void computeMTheta(Eigen::MatrixXd& MTheta);
     void computeAThetaStar(Eigen::MatrixXd& AThetaStar);
     void computeBThetaStar(Eigen::MatrixXd& BThetaStar);

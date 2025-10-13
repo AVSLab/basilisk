@@ -33,7 +33,7 @@
 #include "architecture/messaging/messaging.h"
 
 /*! @brief linear spring mass damper state effector class */
-class linearTranslationOneDOFStateEffector :
+class LinearTranslationOneDOFStateEffector :
 	public StateEffector, public SysModel
 {
 public:
@@ -43,15 +43,15 @@ public:
     ReadFunctor<LinearTranslationRigidBodyMsgPayload> translatingBodyRefInMsg;  //!< (optional) reference state input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;                    //!< (optional) lock flag input message
 
-    linearTranslationOneDOFStateEffector();           //!< Constructor
-	~linearTranslationOneDOFStateEffector();          //!< Destructor
+    LinearTranslationOneDOFStateEffector();           //!< Constructor
+	~LinearTranslationOneDOFStateEffector();          //!< Destructor
 
     /** setter for `mass` property */
     void setMass(double mass);
     /** setter for `k` property */
     void setK(double k);
     /** setter for `c` property */
-    void setC(double c);                
+    void setC(double c);
     /** setter for `rhoInit` property */
     void setRhoInit(double rhoInit) {this->rhoInit = rhoInit;};
     /** setter for `rhoDotInit` property */

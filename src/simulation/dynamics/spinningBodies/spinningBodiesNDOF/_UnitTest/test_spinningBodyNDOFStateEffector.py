@@ -319,7 +319,7 @@ def spinningBodyNoInput(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy)
     np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy)
@@ -578,7 +578,7 @@ def spinningBodyLockAxis(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy)
     np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy)
@@ -836,7 +836,7 @@ def spinningBodyCommandedTorque(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy)
     for i in range(3):

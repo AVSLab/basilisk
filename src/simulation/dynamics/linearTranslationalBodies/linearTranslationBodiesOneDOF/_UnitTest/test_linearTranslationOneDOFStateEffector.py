@@ -99,7 +99,7 @@ def translatingBodyNoInput(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -119,7 +119,7 @@ def translatingBodyNoInput(show_plots):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0
@@ -255,7 +255,7 @@ def translatingBodyNoInput(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
     np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy, err_msg="Rotational energy is not constant.")
@@ -278,7 +278,7 @@ def translatingBodyLockFlag(show_plots):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -298,7 +298,7 @@ def translatingBodyLockFlag(show_plots):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0
@@ -440,7 +440,7 @@ def translatingBodyLockFlag(show_plots):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
     np.testing.assert_allclose(finalRotEnergy, initialRotEnergy, rtol=accuracy, err_msg="Rotational energy is not constant.")
@@ -463,7 +463,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -483,7 +483,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0
@@ -615,7 +615,7 @@ def translatingBodyCommandedForce(show_plots, cmdForce):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
     for i in range(3):
@@ -637,7 +637,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -657,7 +657,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Create a linear translating effector
-    translatingBody = linearTranslationOneDOFStateEffector.linearTranslationOneDOFStateEffector()
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
     mass = 20.0
@@ -726,7 +726,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     unitTestSim.AddModelToTask(unitTaskName, rhoData)
 
     # Setup and run the simulation
-    stopTime = 25000 * testProcessRate
+    stopTime = 30000 * testProcessRate  # needs a little more time to settle to the correct angle
     unitTestSim.ConfigureStopTime(stopTime)
     unitTestSim.ExecuteSimulation()
 
@@ -791,7 +791,7 @@ def translatingBodyRhoReference(show_plots, rhoRef):
     plt.close("all")
 
     # Testing setup
-    accuracy = 1e-12
+    accuracy = 1e-13
 
     np.testing.assert_allclose(finalAngle, rhoRef, atol=0.01, err_msg="Angle doesn't settle to reference angle.")
     np.testing.assert_allclose(finalOrbEnergy, initialOrbEnergy, rtol=accuracy, err_msg="Orbital energy is not constant.")
