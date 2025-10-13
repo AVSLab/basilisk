@@ -41,6 +41,9 @@ Version |release|
 - Add a desired relative attitude between spacecraft in :ref:`constraintDynamicEffector`.
 - Added a new stepper motor simulation module :ref:`stepperMotor`. This kinematic profiler module is useful to
   simulate the actuation of motor-driven prescribed spacecraft components.
+- Made individual structures for each degree of freedom in :ref:`spinningBodyNDOFStateEffector` and
+  :ref:`linearTranslationNDOFStateEffector`.
+- Capitalized all structures in :ref:`linearTranslationOneDOFStateEffector` and :ref:`linearTranslationNDOFStateEffector`.
 
 
 Version 2.8.0 (August 30, 2025)
