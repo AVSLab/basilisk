@@ -89,7 +89,7 @@ class EventHandlerClass:
         self.eventActive = eventActive
         self.eventRate = eventRate
         self.occurCounter = 0
-        self.prevTime = -1
+        self.prevCheckTime = None
         self.terminal = terminal
 
         self.conditionFunction = conditionFunction or (lambda _: False)
@@ -111,22 +111,23 @@ class EventHandlerClass:
             else:
                 self.actionFunction = methodizeAction(actionList)
 
+    def shouldBeChecked(self, currentTime):
+        """Check events if active and never checked or rate matches current time"""
+        return self.eventActive and (
+            self.prevCheckTime is None or currentTime % self.eventRate == 0
+        )
+
     def checkEvent(self, parentSim):
-        nextTime = int(-1)
-        if not self.eventActive:
-            return nextTime
-        nextTime = self.prevTime + self.eventRate - (self.prevTime % self.eventRate)
-        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos % self.eventRate == 0):
-            nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
-            eventOccurred = self.conditionFunction(parentSim)
-            self.prevTime = parentSim.TotalSim.CurrentNanos
-            if eventOccurred:
-                self.eventActive = False
-                self.actionFunction(parentSim)
-                self.occurCounter += 1
-                if self.terminal:
-                    parentSim.terminate = True
-        return nextTime
+        if self.conditionFunction(parentSim):
+            self.eventActive = False
+            self.actionFunction(parentSim)
+            self.occurCounter += 1
+            if self.terminal:
+                parentSim.terminate = True
+        self.prevCheckTime = parentSim.TotalSim.CurrentNanos
+
+    def nextCheckTime(self, currentTime):
+        return (currentTime // self.eventRate + 1) * self.eventRate
 
 
 class StructDocData:
@@ -476,33 +477,38 @@ class SimBaseClass:
         """
         run the simulation until the prescribed stop time or termination.
         """
-        self.initializeEventChecks()
 
-        nextStopTime = self.TotalSim.NextTaskTime
-        nextPriority = -1
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
         while self.TotalSim.NextTaskTime <= self.StopTime and not self.terminate:
-            if self.TotalSim.CurrentNanos >= self.nextEventTime >= 0:
-                self.nextEventTime = self.checkEvents()
-                self.nextEventTime = (
-                    self.nextEventTime
-                    if self.nextEventTime >= self.TotalSim.NextTaskTime
-                    else self.TotalSim.NextTaskTime
-                )
-            if 0 <= self.nextEventTime < nextStopTime:
-                nextStopTime = self.nextEventTime
-                nextPriority = -1
+            # Check events
+            for event in self.activeEvents():
+                if event.shouldBeChecked(self.TotalSim.CurrentNanos):
+                    event.checkEvent(self)
+
             if self.terminate:
                 break
-            self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
-            progressBar.update(self.TotalSim.NextTaskTime)
+
+            # Find the next time to stop the sim
+            eventCheckTimes = [
+                event.nextCheckTime(self.TotalSim.CurrentNanos)
+                for event in self.activeEvents()
+            ]
+            if len(eventCheckTimes) > 0:
+                # Stop at next event, if any
+                nextStopTime = min(eventCheckTimes)
+                # But must at least reach the next task
+                nextStopTime = max(nextStopTime, self.TotalSim.NextTaskTime)
+                # But don't pass stop
+                nextStopTime = min(nextStopTime, self.StopTime)
+            else:
+                nextStopTime = self.StopTime  # Otherwise stop at the stop time
+            # Must at least step to the next task time
+            nextStopTime = max(nextStopTime, self.TotalSim.NextTaskTime)
+
+            # Execute the sim
             nextPriority = -1
-            nextStopTime = self.StopTime
-            nextStopTime = (
-                nextStopTime
-                if nextStopTime >= self.TotalSim.NextTaskTime
-                else self.TotalSim.NextTaskTime
-            )
+            self.TotalSim.StepUntilStop(int(nextStopTime), nextPriority)
+            progressBar.update(self.TotalSim.NextTaskTime)
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
@@ -583,17 +589,8 @@ class SimBaseClass:
         )
         self.eventMap[eventName] = newEvent
 
-    def initializeEventChecks(self):
-        self.eventList = list(self.eventMap.values())
-        self.nextEventTime = 0
-
-    def checkEvents(self):
-        nextTime = -1
-        for localEvent in self.eventList:
-            localNextTime = localEvent.checkEvent(self)
-            if localNextTime >= 0 and (localNextTime < nextTime or nextTime < 0):
-                nextTime = localNextTime
-        return nextTime
+    def activeEvents(self):
+        return (event for event in self.eventMap.values() if event.eventActive)
 
     def setEventActivity(self, eventName, activityCommand):
         if eventName not in list(self.eventMap.keys()):
