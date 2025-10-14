@@ -74,7 +74,7 @@ from Basilisk.architecture import messaging
 # Note: effectors commented out as True are expected to be added in the future, effectors
 #       commented out as False are not expected to be added in the future
 @pytest.mark.parametrize("stateEffector, isParent", [
-    # ("hingedRigidBodies",               True),
+    ("hingedRigidBodies",             True),
     # ("dualHingedRigidBodies",           True),
     # ("nHingedRigidBodies",              True),
     ("spinningBodiesOneDOF",          True),
@@ -122,6 +122,7 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     - :ref:`spinningBodyOneDOFStateEffector`
     - :ref:`spinningBodyTwoDOFStateEffector`
     - :ref:`spinningBodyNDOFStateEffector`
+    - :ref:`hingedRigidBodyStateEffector`
 
     Dynamic effectors that are expected to be able to attach to state effectors (isChild) include:
 
@@ -259,6 +260,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "spinningBodiesNDOF":
         stateEff, stateEffProps = setup_spinningBodiesNDOF()
         segment = 4
+    elif stateEffector == "hingedRigidBodies":
+        stateEff, stateEffProps = setup_hingedRigidBodyStateEffector()
+        segment = 1
     elif stateEffector == "linearSpringMassDamper":
         stateEff, stateEffProps = setup_linearSpringMassDamper()
         segment = 1
@@ -362,8 +366,17 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     rotAngMom_N = scObjectLog.totRotAngMomPntC_N  # total rotational angular momentum about the total vehicle COM
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
 
-    # Grab effector's inertial position and attitude properties
-    r_ScN_N_log = inertialPropLog.r_BN_N
+    # Grab effector's inertial position
+    if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
+        r_ScN_N_log = np.zeros_like(inertialPropLog.r_BN_N)
+        for i in range(len(inertialPropLog.sigma_BN)):
+            sigmai_SN = inertialPropLog.sigma_BN[i, :] # MRP at timestep i and S is the parent frame not B
+            dcm_NS = np.transpose(rbk.MRP2C(sigmai_SN))
+            r_ScN_N_log[i, :] = inertialPropLog.r_BN_N[i, :] + (dcm_NS @ stateEffProps.r_PcP_P).flatten()
+    else:
+        r_ScN_N_log = inertialPropLog.r_BN_N 
+
+    # Grab effector's attitude properties
     sigma_SN_log = inertialPropLog.sigma_BN
 
     # Compute conservation quantities using the state and dynamic effector's logged properties
@@ -738,6 +751,36 @@ def setup_spinningBodiesNDOF():
 
     return(spinningBodyEffector, stateEffProps)
 
+def setup_hingedRigidBodyStateEffector():
+    hingedBody = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define properties of HRB
+    hingedBody.mass = 50.0
+    hingedBody.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    hingedBody.d = 1.0
+    hingedBody.k = 100.0
+    hingedBody.c = 50.0
+    hingedBody.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    hingedBody.r_HB_B = [[0.5], [-1.5], [-0.5]]
+    hingedBody.thetaInit = 5 * macros.D2R
+    hingedBody.thetaDotInit = -1 * macros.D2R
+    hingedBody.ModelTag = "HingedRigidBody"
+
+    # Compute COM offset contribution, to be divided by the hub mass
+    dcm_SH = rbk.euler2(hingedBody.thetaInit)
+    s1_hat = np.array([[-1.0],[0.0],[0.0]])
+    mr_ScB_B = -(hingedBody.r_HB_B + np.transpose(hingedBody.dcm_HB) @
+                 (np.transpose(dcm_SH) @ (hingedBody.d * s1_hat))) * hingedBody.mass
+
+    stateEffProps = stateEfectorProperties()
+    stateEffProps.totalMass = hingedBody.mass
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = hingedBody.r_HB_B
+    stateEffProps.r_PcP_P = hingedBody.d * s1_hat
+    stateEffProps.inertialPropLogName = "hingedRigidBodyConfigLogOutMsg"
+
+    return(hingedBody, stateEffProps)
+
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
     linearSpring.massInit = 50.0
@@ -769,4 +812,4 @@ class stateEfectorProperties:
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "spinningBodiesOneDOF", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
