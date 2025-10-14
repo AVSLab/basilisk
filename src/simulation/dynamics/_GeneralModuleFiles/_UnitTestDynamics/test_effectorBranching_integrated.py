@@ -74,7 +74,7 @@ from Basilisk.architecture import messaging
 # Note: effectors commented out as True are expected to be added in the future, effectors
 #       commented out as False are not expected to be added in the future
 @pytest.mark.parametrize("stateEffector, isParent", [
-    # ("hingedRigidBodies",               True),
+    ("hingedRigidBodies",             True),
     # ("dualHingedRigidBodies",           True),
     # ("nHingedRigidBodies",              True),
     ("spinningBodiesOneDOF",          True),
@@ -255,6 +255,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "spinningBodiesTwoDOF":
         stateEff, stateEffProps = setup_spinningBodiesTwoDOF()
         segment = 2
+    elif stateEffector == "hingedRigidBodies":
+        stateEff, stateEffProps = setup_hingedRigidBodyStateEffector()
+        segment = 1
     elif stateEffector == "linearSpringMassDamper":
         stateEff, stateEffProps = setup_linearSpringMassDamper()
         segment = 1
@@ -659,6 +662,34 @@ def setup_spinningBodiesTwoDOF():
 
     return(spinningBody, stateEffProps)
 
+def setup_hingedRigidBodyStateEffector():
+    hingedBody = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define properties of HRB
+    hingedBody.mass = 200
+    hingedBody.d = 16
+    hingedBody.k = 20
+    hingedBody.c = 0
+    hingedBody.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    hingedBody.r_HB_B = [[0.5], [-1.5], [-0.5]]
+
+    hingedBody.thetaInit = 0
+    hingedBody.thetaDotInit = 0
+    hingedBody.ModelTag = "Hinged Rigid Body"
+
+    # Compute COM offset contribution, to be divided by the hub mass
+    mr_ScB_B = -(hingedBody.r_HB_B + np.transpose(hingedBody.dcm_HB) @
+                 (hingedBody.d * np.array([[-1.0],[0.0],[0.0]]))) * hingedBody.mass
+
+    stateEffProps = stateEfectorProperties()
+    stateEffProps.totalMass = hingedBody.mass
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = hingedBody.r_HB_B
+    stateEffProps.r_PcP_P = hingedBody.d * np.array([[-1.0],[0.0],[0.0]])
+    stateEffProps.inertialPropLogName = "hingedRigidBodyConfigLogOutMsg"
+
+    return(hingedBody, stateEffProps)
+
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
     linearSpring.massInit = 50.0
@@ -690,4 +721,4 @@ class stateEfectorProperties:
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "spinningBodiesOneDOF", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
