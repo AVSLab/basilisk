@@ -215,6 +215,17 @@ It's recommended to study the first 6 scenarios in order:
   Docking between Two CubeSats <mujoco/scenarioSimpleDocking>
   Branching Panel Deployment with Locking Mechanisms <mujoco/scenarioBranchingPanels>
 
+Constrained Spacecraft Dynamics Simulations
+-------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   Two Spacecraft Connected Using Holonomic Constraints <scenarioConstrainedDynamics>
+   Constraint Gain Tuning Analysis With Maneuvers <scenarioConstrainedDynamicsManeuverAnalysis>
+   Constrained Motion Component Analysis Using a Truth Model <scenarioConstrainedDynamicsComponentAnalysis>
+   Frequency Analysis of Solar Panel Resonance Using the Constraint Effector   <scenarioConstrainedDynamicsFrequencyAnalysis>
+
 Complex Spacecraft Dynamics Simulations
 ---------------------------------------
 
@@ -231,7 +242,6 @@ Complex Spacecraft Dynamics Simulations
    Spacecraft with 1- or 2-DOF Panel using single effector <scenarioSpinningBodiesTwoDOF>
    Prescribed Motion Rotational Solar Array Deployment <scenarioDeployingSolarArrays>
    Robotic Arm Effector with Profiler <scenarioRoboticArm>
-   Two Spacecraft Connected Using Holonomic Constraints <scenarioConstrainedDynamics>
    Spacecraft with an multi-link extending component <scenarioExtendingBoom>
 
 Mission Simulations
