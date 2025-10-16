@@ -20,6 +20,7 @@ import os
 import warnings
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -484,11 +485,27 @@ class SimBaseClass:
         self.TotalSim.resetInitSimulation()
         self.simulationInitialized = True
 
-    def ConfigureStopTime(self, TimeStop):
+    def ConfigureStopTime(self, TimeStop, StopCondition: Literal["<=", ">="] = "<="):
         """
         Set the simulation stop time in nano-seconds.
+
+        If StopCondition is "<=", the simulation will run as far as it can such that the
+           StopTime is not exceeded, but met if possible.
+        If StopCondition is ">=", the simulation will run as far as it can such that the
+           StopTime is minimally exceeded, but met if possible.
         """
         self.StopTime = TimeStop
+        assert StopCondition in ("<=", ">="), "StopCondition must be '<=' or '>='"
+        self.StopCondition = StopCondition
+
+    def CheckStopCondition(self):
+        if self.StopCondition == "<=":
+            return self.TotalSim.NextTaskTime <= self.StopTime
+        elif self.StopCondition == ">=":
+            return (
+                self.TotalSim.CurrentNanos < self.StopTime
+                or self.TotalSim.NextTaskTime == self.StopTime
+            )
 
     def ExecuteSimulation(self):
         """
@@ -496,7 +513,7 @@ class SimBaseClass:
         """
 
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while self.TotalSim.NextTaskTime <= self.StopTime and not self.terminate:
+        while self.CheckStopCondition():
             # Check events
             for event in self.activeEvents():
                 if event.shouldBeChecked(self.TotalSim.CurrentNanos):
@@ -519,8 +536,10 @@ class SimBaseClass:
                 nextStopTime = min(nextStopTime, self.StopTime)
             else:
                 nextStopTime = self.StopTime  # Otherwise stop at the stop time
-            # Must at least step to the next task time
-            nextStopTime = max(nextStopTime, self.TotalSim.NextTaskTime)
+
+            # Must at least step to the next task time if StopCondition is ">="
+            if self.StopCondition == ">=":
+                nextStopTime = max(nextStopTime, self.TotalSim.NextTaskTime)
 
             # Execute the sim
             nextPriority = -1
