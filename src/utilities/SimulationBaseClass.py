@@ -86,6 +86,7 @@ class EventHandlerClass:
         conditionList=None,
         actionList=None,
         terminal=False,
+        exactRateMatch=True,
     ):
         self.eventName = eventName
         self.eventActive = eventActive
@@ -93,6 +94,7 @@ class EventHandlerClass:
         self.occurCounter = 0
         self.prevCheckTime = None
         self.terminal = terminal
+        self.exactRateMatch = exactRateMatch
 
         self.conditionTime = conditionTime
         if conditionTime is not None:
@@ -131,7 +133,13 @@ class EventHandlerClass:
         if self.conditionTime is not None:
             return currentTime >= self.conditionTime
 
-        return self.prevCheckTime is None or currentTime % self.eventRate == 0
+        if self.exactRateMatch:
+            return currentTime % self.eventRate == 0
+        else:
+            return (
+                self.prevCheckTime is None
+                or currentTime >= self.prevCheckTime + self.eventRate
+            )
 
     def checkEvent(self, parentSim):
         if self.conditionFunction(parentSim):
@@ -145,7 +153,14 @@ class EventHandlerClass:
     def nextCheckTime(self, currentTime):
         if self.conditionTime is not None:
             return self.conditionTime
-        return (currentTime // self.eventRate + 1) * self.eventRate
+        if self.exactRateMatch:
+            return (currentTime // self.eventRate + 1) * self.eventRate
+        else:
+            return (
+                self.prevCheckTime + self.eventRate
+                if self.prevCheckTime is not None
+                else currentTime
+            )
 
 
 class StructDocData:
@@ -589,6 +604,7 @@ class SimBaseClass:
         terminal=False,
         conditionFunction=None,
         actionFunction=None,
+        exactRateMatch=True,
     ):
         """
         Create an event sequence that contains a series of tasks to be executed.
@@ -612,6 +628,9 @@ class SimBaseClass:
                 function should take the simulation object as an argument.
                 This is the preferred manner to set conditions as it enables the use of arbitrary
                 packages and objects in events and allows for event code to be parsed by IDE tools.
+            exactRateMatch (bool): If True, the event is checked only when the current time is an
+                exact multiple of the eventRate. If False, the event is checked whenever the
+                eventRate has elapsed since the last check.
         """
         if eventName in list(self.eventMap.keys()):
             warnings.warn(f"Skipping event creation since {eventName} already exists.")
@@ -626,6 +645,7 @@ class SimBaseClass:
             actionList=actionList,
             terminal=terminal,
             conditionTime=conditionTime,
+            exactRateMatch=exactRateMatch,
         )
         self.eventMap[eventName] = newEvent
 
