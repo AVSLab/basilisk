@@ -59,6 +59,7 @@ Version |release|
   ``showTransceiverFrustrum`` to be ``showTransceiverFrustum``.  The prior argument name has
   been deprecated.
 - For :ref:`vizInterface`.settings, changed the name of ``viewCameraConeHUD`` to ``viewCameraFrustrumHUD``
+- Added support for Vizard 2.3.1 features
 
 
 Version 2.8.0 (August 30, 2025)
