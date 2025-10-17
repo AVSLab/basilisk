@@ -568,6 +568,41 @@ class rwFactory(object):
 
         return
 
+    def NanoAvionics_RW0(self, RW):
+        """
+        NanoAvionics RW0
+
+        RW Information Source:
+        https://nanoavionics.com/cubesat-components/cubesat-reaction-wheels-control-system-satbus-4rw/?utm_source=chatgpt.com
+
+        Not complete; fields not listed are estimates.
+
+        :param RW: reaction wheel configuration message
+        :return:
+        """
+        # maximum allowable wheel speed
+        RW.Omega_max = 6500.0*macros.RPM
+        # maximum RW torque [Nm]
+        RW.u_max = 3.2e-3
+        # minimum RW torque [Nm]
+        RW.u_min = 0.04923e-3 # Derived as "u_max * Omega_min (100 RPM) / Omega_max (6500 RPM)"
+        # static friction torque [Nm]
+        RW.fCoulomb = 0.00005 # Guestimate
+        # RW rotor mass [kg]
+        # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
+        # static RW imbalance [kg*m]
+        # dynamic RW imbalance [kg*m^2]
+
+        if self.maxMomentum > 0.0:
+            print("WARNING: NanoAvionics_RW0 has a fixed maxMomentum value. Custom value being replaced.")
+        self.maxMomentum = 20.0e-3     # Nms
+
+        RW.mass = 0.127 # Based on disk diameter of 43cm, NOTE: complete reaction wheel weight (incl housing) is 0.137kg
+        RW.U_s = 1E-7 # Guestimate
+        RW.U_d = 1E-8 # Guestimate
+
+        return
+
     def custom(self, RW):
         """
         Creates an empty reaction wheel configuration message.  This assumes the user provided the
