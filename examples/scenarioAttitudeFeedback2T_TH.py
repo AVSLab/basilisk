@@ -653,12 +653,13 @@ def run(show_plots, useDVThrusters):
     thrusterSet.cmdsInMsg.subscribeTo(thrFiringSchmittObj.onTimeOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    viz = vizSupport.enableUnityVisualization(scSim, dynTaskName,  scObject
-                                              # , saveFile=fileName
-                                              , thrEffectorList=thrusterSet
-                                              , thrColors=vizSupport.toRGBA255("red")
-                                              )
-    vizSupport.setActuatorGuiSetting(viz, showThrusterLabels=True)
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, dynTaskName,  scObject
+                                                  # , saveFile=fileName
+                                                  , thrEffectorList=thrusterSet
+                                                  , thrColors=vizSupport.toRGBA255("red")
+                                                  )
+        vizSupport.setActuatorGuiSetting(viz, showThrusterLabels=True)
 
     #
     #   initialize Simulation

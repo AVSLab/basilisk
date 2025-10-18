@@ -335,13 +335,14 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
         scSim.AddModelToTask(simTaskName, css3Log)
 
     # optional saving off to Vizard compatible file
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__,
-                                              # liveStream=True,
-                                              cssList=[cssList]
-                                              )
-    vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True,
-                                       viewCSSBoresight=True, showCSSLabels=True)
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
+                                                  # saveFile=__file__,
+                                                  # liveStream=True,
+                                                  cssList=[cssList]
+                                                  )
+        vizSupport.setInstrumentGuiSetting(viz, viewCSSPanel=True, viewCSSCoverage=True,
+                                           viewCSSBoresight=True, showCSSLabels=True)
 
     #
     #   initialize Simulation

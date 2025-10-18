@@ -569,9 +569,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
 
         // define if camera cone should be shown
-        vizSettings->set_viewcameraconehud(this->settings.viewCameraConeHUD);
-        if (abs(this->settings.viewCameraConeHUD)>1) {
-            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraConeHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraConeHUD);
+        vizSettings->set_viewcamerafrustumhud(this->settings.viewCameraFrustumHUD);
+        if (abs(this->settings.viewCameraFrustumHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraFrustumHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraFrustumHUD);
+        }
+        // define if camera HUD should be shown
+        vizSettings->set_viewcameraviewhud(this->settings.viewCameraViewHUD);
+        if (abs(this->settings.viewCameraViewHUD)>1) {
+            bskLogger.bskLog(BSK_WARNING, "vizInterface: The Vizard viewCameraViewHUD flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.viewCameraViewHUD);
         }
 
         // define if coordinate system labels should be shown
@@ -673,6 +678,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_showquadmaplabels(this->settings.showQuadMapLabels);
         vizSettings->set_spacecraftorbitlinewidth(this->settings.spacecraftOrbitLineWidth);
         vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
+        vizSettings->set_linesandframeslinewidth(this->settings.linesAndFramesLineWidth);
+        vizSettings->set_uselinerenderersfortargetlinesandframes(this->settings.useLineRenderersForTargetLinesAndFrames);
+
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -696,7 +704,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             il->set_showcsslabels(this->settings.instrumentGuiSettingsList[idx].showCSSLabels);
             il->set_showgenericsensorlabels(this->settings.instrumentGuiSettingsList[idx].showGenericSensorLabels);
             il->set_showtransceiverlabels(this->settings.instrumentGuiSettingsList[idx].showTransceiverLabels);
-            il->set_showtransceiverfrustrum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustrum);
+            il->set_showtransceiverfrustum(this->settings.instrumentGuiSettingsList[idx].showTransceiverFrustum);
             il->set_showgenericstoragepanel(this->settings.instrumentGuiSettingsList[idx].showGenericStoragePanel);
             il->set_showmultishapelabels(this->settings.instrumentGuiSettingsList[idx].showMultiShapeLabels);
         }
@@ -810,23 +818,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
 
     /*! write the Locations protobuffer messages */
-    std::vector<LocationPbMsg *>::iterator glIt;
-    for (glIt = locations.begin(); glIt != locations.end(); glIt++) {
+    std::vector<LocationPbMsg>::iterator glIt;
+    for (glIt = this->locations.begin(); glIt != this->locations.end(); glIt++) {
         vizProtobufferMessage::VizMessage::Location* glp = message->add_locations();
-        glp->set_stationname((*glIt)->stationName);
-        glp->set_parentbodyname((*glIt)->parentBodyName);
-        glp->set_fieldofview((*glIt)->fieldOfView*R2D);
-        glp->set_range((*glIt)->range);
+        glp->set_stationname(glIt->stationName);
+        glp->set_parentbodyname(glIt->parentBodyName);
+        glp->set_fieldofview(glIt->fieldOfView*R2D);
+        glp->set_range(glIt->range);
         for (int i=0; i<3; i++) {
-            glp->add_r_gp_p((*glIt)->r_GP_P[i]);
-            glp->add_ghat_p((*glIt)->gHat_P[i]);
+            glp->add_r_gp_p(glIt->r_GP_P[i]);
+            glp->add_ghat_p(glIt->gHat_P[i]);
         }
         for (int i=0; i<4; i++) {
-            glp->add_color((*glIt)->color[i]);
+            glp->add_color(glIt->color[i]);
         }
-        glp->set_markerscale((*glIt)->markerScale);
-        glp->set_ishidden((*glIt)->isHidden);
+        glp->set_markerscale(glIt->markerScale);
+        glp->set_ishidden(glIt->isHidden);
+        glp->set_label(glIt->label);
     }
+    this->locations.clear(); // Locations should only send to Vizard once
 
     // Write QuadMap messages
     for (size_t k=0; k<this->quadMaps.size(); k++)

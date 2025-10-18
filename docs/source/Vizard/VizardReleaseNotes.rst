@@ -20,6 +20,42 @@ Release Notes
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
 
 
+**Version 2.3.1 (Oct. 17, 2025)**
+
+- Added persistent settings for all Settings panels settings (can be reset to Vizard default) so that
+  once a user customizes a setting it will be applied for any future runs unless overridden by a
+  setting in the current playback file
+- Added option to display the view from an Instrument Camera or Standard Camera inside the
+  frustum HUD instead of only on panel, added VizSetting field and toggle to Camera menu to ``ViewCameraViewHUD``
+- Added frame around base of camera frustum HUD
+- Made Location updates on-demand instead of requiring all Locations to be updated every frame
+- Added goToMsg input/display and +/- buttons on ``VizMessageDisplay`` panel
+- Fixed bug with main camera jitter while following spacecraft in Hill Frame at slower playback speeds
+- Improved lock-out of main camera movement/target selection when interacting with UI elements
+- Fixed bug with settings panel sun intensity not affecting light brightness
+- Fixed bug with celestial body orbit lines when effector was selected as camera target
+- Added line renderer width setting and on/off setting for coordinate frames, target lines, and
+  pointing vectors to ``VizSettingsPb`` and Settings panel
+- Added line renderers to Pointing Vectors
+- Added line renderers to Coordinate Frames
+- Added line renderers to TargetLines
+- Fixed bug when adding Pointing Vectors from messages that caused lines to fail
+- Fixed orbit line line renderer artifact
+- Improved setting of line renderer thickness for HUD elements (particularly for small sats)
+- Fixed issue with QuadMap labels on spacecraft not checking for visibility correctly
+- Fixed bug when canceling out of file browser that allowed user to try and load an empty string
+- Fixed bug with Location MarkerScale not being applied correctly during initialization of Location
+- Added check to disable atmosphere shader for supported celestial bodies when radiusRatio set too low
+  for shader to work properly
+- Increased pixel width of transceiver communication HUD rings for better visibility
+- Improved appearance of dropdown menu scrollbars
+- Added call to clear current thruster particle plumes onscreen when thruster settings are changed
+- Reset to default message buffer size when loading a new playback file
+- Migrated Vizard to Unity 6000.0.58f2 to ensure patch for security vulnerability will be included in
+  Vizard 2.3.1 release
+- fixed memory leak when saving camera images to file
+
+
 **Version 2.3.0 (July 11, 2025)**
 
 - added ``terminateVizard`` to Vizard Live Settings to allow for clean shut-down

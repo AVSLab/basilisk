@@ -251,10 +251,13 @@ def run(show_plots):
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                        , modelDictionaryKeyList="6USat"
-                                        # , saveFile=fileName
-                                        )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                  , modelDictionaryKeyList="6USat"
+                                                  # , saveFile=fileName
+                                                  )
+        viz.settings.linesAndFramesLineWidth = 2
+        viz.settings.spacecraftCSon = True
 
     #
     #   initialize Simulation

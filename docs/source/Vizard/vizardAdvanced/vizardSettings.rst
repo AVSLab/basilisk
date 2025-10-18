@@ -85,7 +85,8 @@ default setting for that behavior.
       - Flag to show (1) or hide (-1) the celestial body labels. Value of 0 (protobuffer default) to use viz default.
     * - ``showLocationLabels``
       - (-1,0,1)
-      - Flag to show (1) or hide (-1) labels for a celestial body or spacecraft location. Value of 0 (protobuffer default) to use viz default.
+      - Flag to show (1) or hide (-1) labels for a celestial body or spacecraft location. Value of 0
+        (protobuffer default) to use viz default.
     * - ``showQuadMapLabels``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) labels for QuadMap regions. Value of 0 (protobuffer default) to use viz default.
@@ -94,16 +95,19 @@ default setting for that behavior.
       -
     * - ``spacecraftCSon``
       - (-1,0,1)
-      - Flag to show (1) or hide (-1) the spacecraft coordinate axes. Value of 0 (protobuffer default) to use viz default.
+      - Flag to show (1) or hide (-1) the spacecraft coordinate axes. Value of 0 (protobuffer default) to use
+        viz default.
     * - ``planetCSon``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) the planet coordinate axes. Value of 0 (protobuffer default) to use viz default.
     * - ``showHillFrame``
       - (-1,0,1)
-      - Flag to show (1) or hide (-1) the orbit Hill frame of the spacecraft camera target. Value of 0 (protobuffer default) to use viz default.
+      - Flag to show (1) or hide (-1) the orbit Hill frame of the spacecraft camera target. Value of 0
+        (protobuffer default) to use viz default.
     * - ``showVelocityFrame``
       - (-1,0,1)
-      - Flag to show (1) or hide (-1) the orbit velocity frame of the spacecraft camera target. Value of 0 (protobuffer default) to use viz default.
+      - Flag to show (1) or hide (-1) the orbit velocity frame of the spacecraft camera target. Value of 0
+        (protobuffer default) to use viz default.
     * - **Orbit Line Settings**
       -
       -
@@ -121,28 +125,37 @@ default setting for that behavior.
         viz default or any value greater than or equal to 1.
     * - ``relativeOrbitFrame``
       - (0,1,2)
-      - Flag to set with respect to which frame the spacecraft relative orbit trajectory is drawn. Value of 0 (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame.
+      - Flag to set with respect to which frame the spacecraft relative orbit trajectory is drawn. Value of 0
+        (protobuffer default) or 1 to use Hill Frame, 2 to use Velocity Frame.
     * - ``trueTrajectoryLinesOn``
       - (-1,0,1,2,3,4,5)
-      - Toggle to show true orbit lines. Value of 0 (protobuffer default) to use viz default, -1 for false, 1 to use inertial positions, 2 for relative to chief spacecraft body, 3 for relative to a celestial body, 4 for rotating frame of two celestial bodies, 5 for fixed frame of spacecraft or celestial body.
+      - Toggle to show true orbit lines. Value of 0 (protobuffer default) to use viz default, -1 for false,
+        1 to use inertial positions, 2 for relative to chief spacecraft body, 3 for relative to a celestial body,
+        4 for rotating frame of two celestial bodies, 5 for fixed frame of spacecraft or celestial body.
     * - ``truePathRelativeBody``
       - string
-      - String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the spacecraft's primary body.
+      - String of the celestial body name to plot the true path trajectory line[s] against, empty string to use the
+        spacecraft's primary body.
     * - ``truePathRotatingFrame``
       - string
-      - String must contain the names of two distinct celestial bodies, separated by a space, to define the desired rotating frame for plotting true path trajectories.
+      - String must contain the names of two distinct celestial bodies, separated by a space, to define the desired
+        rotating frame for plotting true path trajectories.
     * - ``truePathFixedFrame``
       - string
-      - String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the true path trajectory against.
+      - String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the
+        true path trajectory against.
     * - **Spacecraft Settings**
       -
       -
     * - ``viewCameraBoresightHUD``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) the camera boresight line. Value of 0 (protobuffer default) to use viz default.
-    * - ``viewCameraConeHUD``
+    * - ``viewCameraFrustumHUD``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) the camera cone. Value of 0 (protobuffer default) to use viz default.
+    * - ``viewCameraViewHUD``
+      - (-1,0,1)
+      - Flag to show (1) or hide (-1) the camera image in HUD. Value of 0 (protobuffer default) to use viz default.
     * - ``defaultThrusterColor``
       - int(4)
       - RGBA color values between (0,255).  Default values of -1 makes Vizard use the default thruster plume color
@@ -162,22 +175,30 @@ default setting for that behavior.
         To set this in python, use the helper function ``vizSupport.setSprite("STAR", color="red")``.
     * - ``showSpacecraftAsSprites``
       - (-1,0,1)
-      - Flag to show spacecraft as sprites if their visual size gets too small (1). Value of -1 or 0 (protobuffer default) to use viz default.
+      - Flag to show spacecraft as sprites if their visual size gets too small (1). Value of -1 or 0
+        (protobuffer default) to use viz default.
     * - ``showCelestialBodiesAsSprites``
       - (-1,0,1)
-      - Flag to show celestial bodies as sprites if their visual size gets too small (1). Value of -1 or 0 (protobuffer default) to use viz default.
+      - Flag to show celestial bodies as sprites if their visual size gets too small (1). Value of -1 or 0
+        (protobuffer default) to use viz default.
     * - **Location Settings**
       -
       -
     * - ``showLocationCones``
       - (-1,0,1)
-      - Flag to show (1) or hide (-1) a cone protruding from a celestial body or spacecraft location. Value of 0 (protobuffer default) to use viz default.
+      - Flag to show (1) or hide (-1) a cone protruding from a celestial body or spacecraft location. Value of 0
+        (protobuffer default) to use viz default.
     * - ``showLocationCommLines``
       - (-1,0,1)
-      - Flag to show (1) or hide (-1) a line when a spacecraft enters the FOV of a ground station or another spacecraft. Value of 0 (protobuffer default) to use viz default. These can become computationally expensive because they perform ray casting, so if obstruction detection is not necessary it would be easier to use target lines (see live settings table).
+      - Flag to show (1) or hide (-1) a line when a spacecraft enters the FOV of a ground station or another
+        spacecraft. Value of 0 (protobuffer default) to use viz default. These can become computationally
+        expensive because they perform ray casting, so if obstruction detection is not necessary it would be
+        easier to use target lines (see live settings table).
     * - ``useSimpleLocationMarkers``
       - (-1,0,1)
-      - Flag to use simplified Location markers (no cones, range, or communication lines) when the number of locations is greater than 100 (1), or force use of full-featured Location (-1). Value of 0 (protobuffer default) to use viz default.
+      - Flag to use simplified Location markers (no cones, range, or communication lines) when the number of
+        locations is greater than 100 (1), or force use of full-featured Location (-1). Value of 0 (protobuffer
+        default) to use viz default.
     * - **View Settings**
       -
       -
@@ -188,10 +209,12 @@ default setting for that behavior.
         filepath to custom background image file.
     * - ``atmospheresOff``
       - (-1,0,1)
-      - Flag to disable the atmosphere effect on celestial bodies (1). Value of -1 or 0 (protobuffer default) to use viz default.
+      - Flag to disable the atmosphere effect on celestial bodies (1). Value of -1 or 0 (protobuffer default) to use
+        viz default.
     * - ``forceStartAtSpacecraftLocalView``
       - (-1,0,1)
-      - Flag to force Vizard to initialize in spacecraft-view on start up (1). Value of -1 or 0 (protobuffer default) to use viz default.
+      - Flag to force Vizard to initialize in spacecraft-view on start up (1). Value of -1 or 0 (protobuffer default)
+        to use viz default.
     * - ``spacecraftSizeMultiplier``
       - double
       - Control the display size of spacecraft in the Planet View, values greater than 0,
@@ -217,7 +240,14 @@ default setting for that behavior.
       - Values greater than 0 to scale spacecraft orbit line width, value of 0 (protobuffer default) to use viz default.
     * - ``celestialBodyOrbitLineWidth``
       - double
-      - Values greater than 0 to scale celestial body orbit line width, value of 0 (protobuffer default) to use viz default.
+      - Values greater than 0 to scale celestial body orbit line width, value of 0 (protobuffer default) to use
+        viz default.
+    * - ``linesAndFramesLineWidth``
+      - double
+      - Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
+    * - ``useLineRenderersForTargetLinesAndFrames``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - **Lighting Settings**
       -
       -
@@ -230,10 +260,12 @@ default setting for that behavior.
         to use viz default.
     * - ``sunIntensity``
       - double
-      - Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use viz default.
+      - Multiplier for the intensity of the light being used as the main light source or sun, value of 0 to use
+        viz default.
     * - ``attenuateSunLightWithDistance``
       - (-1,0,1)
-      - Flag to reduce brightness of sun lighting with the square of the distance from the sun (1). Value of -1 or 0 (protobuffer default) to use viz default.
+      - Flag to reduce brightness of sun lighting with the square of the distance from the sun (1). Value of -1 or
+        0 (protobuffer default) to use viz default.
     * - **Main Camera Settings**
       -
       -
@@ -262,7 +294,8 @@ default setting for that behavior.
       - [pixels] GUI height in pixels, must be > 300. Use 0 or -1 for viz default.
     * - ``show24hrClock``
       - (-1,0,1)
-      - Flag to make mission date/time use a 24h clock instead of a 12h clock with AM/PM (1). Value of -1 or 0 (protobuffer default) to use viz default.
+      - Flag to make mission date/time use a 24h clock instead of a 12h clock with AM/PM (1). Value of -1 or 0
+        (protobuffer default) to use viz default.
     * - ``showDataRateDisplay``
       - (-1,0,1)
       - Flag to show (1) or hide (-1) the data rate. Value of 0 (protobuffer default) to use viz default.
@@ -398,7 +431,7 @@ The following table includes the keyword options for this method.
       - (-1,0,1)
       - No
       - Show (1) or hide (-1) transceiver labels. Value of 0 (protobuffer default) to use viz default.
-    * - ``showTransceiverFrustrum``
+    * - ``showTransceiverFrustum``
       - (-1,0,1)
       - No
       - Show (1) or hide (-1) transceiver frustums. Value of 0 (protobuffer default) to use viz default.
@@ -988,6 +1021,7 @@ field of view of this location.  Vizard can illustrate this ground location usin
 
 If you used the gravity factor to generate the planet states, you can pull the planet name
 by using ``earth.displayName`` as shown in :ref:`scenarioAttLocPoint`.
+Note, the ``stationName`` variable must be unique.
 
 The following table lists all required and optional arguments that can be provided to ``addLocation``:
 
@@ -1050,6 +1084,14 @@ The following table lists all required and optional arguments that can be provid
       -
       - No
       - True to hide Location, false to show (vizDefault)
+    * - ``label``
+      - string
+      -
+      - No
+      - string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
+
+To change the location information on the fly use the ``changeLocation()`` method also defined in ``vizSupport.py``.
+This method accepts the same arguments as ``addLocation()`` shown in the table above.
 
 
 Adding Generic Sensor Visualization

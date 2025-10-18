@@ -27,6 +27,8 @@ from Basilisk.utilities import quadMapSupport as qms
 from Basilisk.utilities import unitTestSupport
 from matplotlib import colors
 from matplotlib.colors import is_color_like
+from typing import Optional, Sequence
+from Basilisk.utilities import deprecated
 
 try:
     from Basilisk.simulation import vizInterface
@@ -43,14 +45,6 @@ bskPath = __path__[0]
 firstSpacecraftName = ""
 
 
-def requires_viz(func):
-    def wrapper(*args, **kwargs):
-        if not vizFound:
-            print("vizFound is false. Skipping this method.")
-            return
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 def assert_option(value, low, high, default=None):
@@ -208,14 +202,13 @@ def fixedframe2lla(r_GP_P, radEquator, radRatio):
     return lla_GP
 
 
-locationList = []
+locationDict = {}
 
 
-@requires_viz
 def addLocation(
     viz,
-    stationName,
-    parentBodyName,
+    stationName: str,
+    parentBodyName: str,
     r_GP_P=None,
     lla_GP=None,
     gHat_P=None,
@@ -224,6 +217,7 @@ def addLocation(
     range=None,
     markerScale=None,
     isHidden=None,
+    label=None
 ):
     """
     This method creates a Location instance on a parent body.
@@ -255,6 +249,8 @@ def addLocation(
         Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.
     isHidden: bool
         True to hide Location, false to show (vizDefault)
+    label: string
+        string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
     """
     vizElement = vizInterface.LocationPbMsg()
 
@@ -301,17 +297,115 @@ def addLocation(
                 f"fieldOfView must be a value between 0 and Pi, not {fieldOfView}"
             )
         vizElement.fieldOfView = fieldOfView
+    if label is not None:
+        vizElement.label = label
 
     # Pass to Vizard
-    locationList.append(vizElement)
-    del viz.locations[:]  # clear settings list to replace it with updated list
-    viz.locations = vizInterface.LocationConfig(locationList)
+    locationDict[vizElement.stationName] = vizElement
+    viz.locations.append(vizElement)
+
+    return
+
+
+def changeLocation(
+        viz,
+        stationName: str,
+        parentBodyName: Optional[str] = None,
+        r_GP_P: Optional[Sequence[float]] = None,
+        lla_GP: Optional[Sequence[float]] = None,
+        gHat_P: Optional[Sequence[float]] = None,
+        fieldOfView: Optional[Sequence[float]] = None,
+        color: Optional[Sequence[float]] = None,
+        range: Optional[float] = None,
+        markerScale: Optional[float] = None,
+        isHidden: Optional[bool] = None,
+        label: Optional[str] = None
+):
+    """
+    This method changes the information of a Location instance.
+
+    :param viz: copy of the vizInterface module
+    :return: void
+
+    Keyword Args
+    ------------
+    stationName: str
+        Location text label
+        Required
+    parentBodyName: str
+        Name of the parent body P (spacecraft or planet) on which the location G is positioned.
+    r_GP_P: 3-element double-list
+        Position of G relative to parent body frame P.
+        Required, if lla_GP not provided
+    lla_GP: 3-element double-list
+        Position of G relative to parent body in lat/lon/alt coordinates.
+        Required, if r_GP_P not provided
+    gHat_P: 3-element double-list
+        Location normal relative to parent body frame.
+    fieldOfView: double
+        [rad] FOV angle measured edge-to-edge.
+    color: int-list
+        Color of the Location.  Can be 4 RGBA integer value (0-255) or a color string.
+    range: double
+        [m] Range of the ground Location.
+    markerScale: double
+        Value will be multiplied by default marker scale, values less than 1.0 will decrease size, greater will increase.
+    isHidden: bool
+        True to hide Location, false to show (vizDefault)
+    label: string
+        string to display on location label, if empty, then stationName is used. Send "NOLABEL" to delete label
+    """
+
+    vizElement = locationDict[stationName]
+
+    # Set location
+    if r_GP_P is not None:
+        try:
+            vizElement.r_GP_P = r_GP_P
+        except TypeError:
+            vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
+    if lla_GP is not None:
+        # find gravity body
+        gravBody = next(
+            (s for s in viz.gravBodyInformation if s.bodyName == parentBodyName), None
+        )
+        if gravBody is None:
+            raise ValueError(f"Cannot use LLA to set location for {parentBodyName}")
+
+        # convert lat/lon/altitude to fixed frame
+        r_GP_P = lla2fixedframe(lla_GP, gravBody.radEquator, gravBody.radiusRatio)
+        vizElement.r_GP_P = r_GP_P
+
+    if parentBodyName is not None:
+        vizElement.parentBodyName = parentBodyName
+    if gHat_P is not None:
+        vizElement.gHat_P = gHat_P
+
+    if color is not None:
+        vizElement.color = toRGBA255(color)
+    if range is not None:
+        vizElement.range = range
+    if markerScale is not None:
+        if markerScale < 0.0:
+            raise ValueError("markerScale must be a positive float")
+        vizElement.markerScale = markerScale
+    if isHidden is not None:
+        vizElement.isHidden = isHidden
+    if fieldOfView is not None:
+        if fieldOfView > np.pi or fieldOfView < 0.0:
+            raise ValueError(
+                f"fieldOfView must be a value between 0 and Pi, not {fieldOfView}"
+            )
+        vizElement.fieldOfView = fieldOfView
+
+    # add this location structure to the vector of locations to be transmitted to Vizard
+    locationDict[stationName] = vizElement
+    viz.locations.append(vizElement)
 
 
 quadMapList = []
 
 
-@requires_viz
 def addQuadMap(viz, ID, parentBodyName, vertices, color, isHidden=None, label=None):
     """
     This method creates a QuadMap element for displaying shaded regions in Vizard.
@@ -358,7 +452,6 @@ def addQuadMap(viz, ID, parentBodyName, vertices, color, isHidden=None, label=No
 pointLineList = []
 
 
-@requires_viz
 def createPointLine(viz, toBodyName, lineColor, fromBodyName=None):
     """
     This method creates a PointLine between two bodies.
@@ -396,7 +489,6 @@ def createPointLine(viz, toBodyName, lineColor, fromBodyName=None):
 targetLineList = []
 
 
-@requires_viz
 def createTargetLine(viz, toBodyName, lineColor, fromBodyName=None):
     """
     This method creates a TargetLine between two bodies.
@@ -439,7 +531,6 @@ def updateTargetLineList(viz):
 customModelList = []
 
 
-@requires_viz
 def createCustomModel(
     viz,
     modelPath,
@@ -520,7 +611,6 @@ def createCustomModel(
 actuatorGuiSettingList = []
 
 
-@requires_viz
 def setActuatorGuiSetting(
     viz,
     spacecraftName=None,
@@ -596,7 +686,6 @@ def setActuatorGuiSetting(
 instrumentGuiSettingList = []
 
 
-@requires_viz
 def setInstrumentGuiSetting(
     viz,
     spacecraftName=None,
@@ -606,6 +695,7 @@ def setInstrumentGuiSetting(
     showCSSLabels=0,
     showGenericSensorLabels=0,
     showTransceiverLabels=0,
+    showTransceiverFrustum=0,
     showTransceiverFrustrum=0,
     showGenericStoragePanel=0,
     showMultiShapeLabels=0,
@@ -640,7 +730,7 @@ def setInstrumentGuiSetting(
     showTransceiverLabels: int
         flag if the generic sensor labels should be shown (1) or hidden (-1)
         Default: 0 - if not provided, then the Vizard default settings are used
-    showTransceiverFrustrum: int
+    showTransceiverFrustum: int
         flag if the generic sensor labels should be shown (1) or hidden (-1)
         Default: 0 - if not provided, then the Vizard default settings are used
     showGenericStoragePanel: int
@@ -665,9 +755,11 @@ def setInstrumentGuiSetting(
         showGenericSensorLabels, default=0
     )
     vizElement.showTransceiverLabels = assert_trinary(showTransceiverLabels, default=0)
-    vizElement.showTransceiverFrustrum = assert_trinary(
-        showTransceiverFrustrum, default=0
+    vizElement.showTransceiverFrustum = assert_trinary(
+        showTransceiverFrustum, default=0
     )
+    if showTransceiverFrustrum:
+        transceiverFrustrum(vizElement, showTransceiverFrustrum)
     vizElement.showGenericStoragePanel = assert_trinary(
         showGenericStoragePanel, default=0
     )
@@ -681,11 +773,15 @@ def setInstrumentGuiSetting(
     )
     return
 
+@deprecated.deprecated("2026/10/11", "Use showTransceiverFrustum instead of showTransceiverFrustrum")
+def transceiverFrustrum(vizElement, showTransceiverFrustrum):
+    vizElement.showTransceiverFrustum = assert_trinary(
+        showTransceiverFrustrum, default=0
+    )
 
 coneInOutList = []
 
 
-@requires_viz
 def createConeInOut(
     viz,
     toBodyName,
@@ -754,7 +850,6 @@ def createConeInOut(
 stdCameraList = []
 
 
-@requires_viz
 def createStandardCamera(
     viz,
     spacecraftName=None,
@@ -829,7 +924,6 @@ def createStandardCamera(
     return cam
 
 
-@requires_viz
 def createCameraConfigMsg(
     viz,
     cameraID,
@@ -910,7 +1004,7 @@ def createCameraConfigMsg(
     cameraConfigMsgPayload.postProcessingOn = assert_trinary(
         postProcessingOn, default=0
     )
-    cameraConfigMsgPayload.cameraID = int(updateCameraParameters)
+    cameraConfigMsgPayload.updateCameraParameters = int(updateCameraParameters)
     cameraConfigMsgPayload.renderMode = int(renderMode)
     cameraConfigMsgPayload.showHUDElementsInImage = assert_trinary(
         showHUDElementsInImage, default=0
@@ -948,7 +1042,7 @@ def createCameraConfigMsg(
     # the function makes vizInterface subscribe to the pointer to this Msg object
     viz.addCamMsgToModule(cameraConfigMsg)
 
-    return cameraConfigMsgPayload
+    return cameraConfigMsgPayload, cameraConfigMsg
 
 
 def ensure_correct_len_list(input, length, depth=1):
@@ -976,7 +1070,6 @@ def ensure_correct_len_list(input, length, depth=1):
     return input
 
 
-@requires_viz
 def enableUnityVisualization(
     scSim,
     simTaskName,
@@ -1045,7 +1138,7 @@ def enableUnityVisualization(
     genericStorageList:
         list of lists of ``GenericStorage`` structures.  The outer list length must match ``scList``.
     transceiverList:
-        list of lists of :ref:`Transceiver` objects.  The outer list length must match ``scList``.
+        list of lists of ``Transceiver`` objects.  The outer list length must match ``scList``.
     spriteList:
         list of sprite information for each spacecraft.  The outer list length must match ``scList``.
     modelDictionaryKeyList:
@@ -1077,6 +1170,9 @@ def enableUnityVisualization(
         copy of the vizInterface instance
 
     """
+    if not vizFound:
+        print("BSK is built without vizInterface support.")
+        return
 
     # clear the list of point line elements
     del pointLineList[:]
@@ -1085,10 +1181,10 @@ def enableUnityVisualization(
     global firstSpacecraftName
 
     # set up the Vizard interface module
-    vizMessenger = vizInterface.VizInterface()
-    vizMessenger.settings = vizInterface.VizSettings()
-    vizMessenger.ModelTag = "vizMessenger"
-    scSim.AddModelToTask(simTaskName, vizMessenger)
+    scSim.vizMessenger = vizInterface.VizInterface()
+    scSim.vizMessenger.settings = vizInterface.VizSettings()
+    scSim.vizMessenger.ModelTag = "vizMessenger"
+    scSim.AddModelToTask(simTaskName, scSim.vizMessenger)
 
     # ensure the spacecraft object list is a list
     if not isinstance(scList, list):
@@ -1150,7 +1246,7 @@ def enableUnityVisualization(
     planetNameList = []
     planetInfoList = []
     spiceMsgList = []
-    vizMessenger.scData.clear()
+    scSim.vizMessenger.scData.clear()
     c = 0
     spacecraftParentName = ""
 
@@ -1166,21 +1262,28 @@ def enableUnityVisualization(
             scData.scStateInMsg.subscribeTo(sc.scStateOutMsg)
 
             # link to celestial bodies information
-            for gravBody in sc.gravField.gravBodies:
-                # check if the celestial object has already been added
-                if gravBody.planetName not in planetNameList:
-                    planetNameList.append(gravBody.planetName)
-                    planetInfo = vizInterface.GravBodyInfo()
-                    if gravBody.displayName == "":
-                        planetInfo.bodyName = gravBody.planetName
-                    else:
-                        planetInfo.bodyName = gravBody.displayName
-                    planetInfo.mu = gravBody.mu
-                    planetInfo.radEquator = gravBody.radEquator
-                    planetInfo.radiusRatio = gravBody.radiusRatio
-                    planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
-                    planetInfoList.append(planetInfo)
-                    spiceMsgList.append(gravBody.planetBodyInMsg)
+            bodies = list(getattr(getattr(sc, "gravField", None), "gravBodies", []))
+            if bodies:  # only runs if gravField exists and has bodies
+                # get the existing dict of kept wrappers, or start fresh
+                kept = getattr(scSim, "_kept_grav_bodies", {})
+
+                for gravBody in bodies:
+                    # use planetName as a unique key; you could also key by id(gravBody) if needed
+                    if gravBody.planetName not in kept:
+                        kept[gravBody.planetName] = gravBody
+
+                        planetNameList.append(gravBody.planetName)
+                        planetInfo = vizInterface.GravBodyInfo()
+                        planetInfo.bodyName = getattr(gravBody, "displayName", "") or gravBody.planetName
+                        planetInfo.mu = gravBody.mu
+                        planetInfo.radEquator = gravBody.radEquator
+                        planetInfo.radiusRatio = gravBody.radiusRatio
+                        planetInfo.modelDictionaryKey = gravBody.modelDictionaryKey
+                        planetInfoList.append(planetInfo)
+                        spiceMsgList.append(gravBody.planetBodyInMsg)
+
+                # update the dict back onto scSim
+                scSim._kept_grav_bodies = kept
         else:
             # the scList object is an effector belonging to the parent spacecraft
             scData.parentSpacecraftName = spacecraftParentName
@@ -1332,17 +1435,17 @@ def enableUnityVisualization(
             if msmInfoList[c] is not None:  # MSM have been added to this spacecraft
                 scData.msmInfo = msmInfoList[c]
 
-        vizMessenger.scData.push_back(scData)
+        scSim.vizMessenger.scData.push_back(scData)
 
         c += 1
 
-    vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
-    vizMessenger.spiceInMsgs = messaging.SpicePlanetStateMsgInMsgsVector(spiceMsgList)
+    scSim.vizMessenger.gravBodyInformation = vizInterface.GravBodyInfoVector(planetInfoList)
+    scSim.vizMessenger.spiceInMsgs = messaging.SpicePlanetStateMsgInMsgsVector(spiceMsgList)
 
     # note that the following logic can receive a single python file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
     # If a "*.bin" file is provided, then the provided path and name are used to store the data.
-    vizMessenger.saveFile = False
+    scSim.vizMessenger.saveFile = False
     if saveFile is not None:
         if os.path.splitext(os.path.basename(saveFile))[1].lower() == ".bin":
             # here the provide file path, file name and file extension are used explicitly
@@ -1358,15 +1461,15 @@ def enableUnityVisualization(
             if not os.path.isdir(filePath + "/_VizFiles"):
                 os.mkdir(filePath + "/_VizFiles")
             vizFileNamePath = filePath + "/_VizFiles/" + fileName + "_UnityViz.bin"
-        vizMessenger.saveFile = True
-        vizMessenger.protoFilename = vizFileNamePath
+        scSim.vizMessenger.saveFile = True
+        scSim.vizMessenger.protoFilename = vizFileNamePath
 
     if (liveStream or broadcastStream) and noDisplay:
         raise ValueError(
             "noDisplay mode cannot be used with liveStream or broadcastStream."
         )
-    vizMessenger.liveStream = liveStream
-    vizMessenger.broadcastStream = broadcastStream
-    vizMessenger.noDisplay = noDisplay
+    scSim.vizMessenger.liveStream = liveStream
+    scSim.vizMessenger.broadcastStream = broadcastStream
+    scSim.vizMessenger.noDisplay = noDisplay
 
-    return vizMessenger
+    return scSim.vizMessenger

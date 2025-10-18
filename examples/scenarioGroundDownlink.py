@@ -84,6 +84,14 @@ bskPath = __path__[0]
 path = os.path.dirname(os.path.abspath(__file__))
 
 def run(show_plots):
+    """
+    The scenarios can be run with the followings setups parameters:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots.  This script has no plots to show.
+
+    """
+
     taskName = "unitTask"               # arbitrary name (don't change)
     processname = "TestProcess"         # arbitrary name (don't change)
 
@@ -217,11 +225,12 @@ def run(show_plots):
                                                   # , saveFile=__file__
                                                   )
         vizSupport.addLocation(viz, stationName="Boulder Station"
-                               , parentBodyName=planet.planetName
+                               , parentBodyName=planet.displayName
                                , r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init)
                                , fieldOfView=np.radians(160.)
                                , color='pink'
                                , range=1000.0*1000  # meters
+                               , label="Boulder Pink"
                                )
         viz.settings.spacecraftSizeMultiplier = 1.5
         viz.settings.showLocationCommLines = 1
@@ -235,9 +244,15 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.hour2nano(24))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.hour2nano(12))        # seconds to stop simulation
+    scenarioSim.ExecuteSimulation()
 
-    # Begin the simulation time run set above
+    scenarioSim.ConfigureStopTime(macros.hour2nano(24))
+    if vizSupport.vizFound:
+        vizSupport.changeLocation(viz, stationName="Boulder Station"
+                                  , color="blue"
+                                  , label="Boulder Blue"
+                                  )
     scenarioSim.ExecuteSimulation()
 
     # Grabbed logged data for plotting
