@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -16,13 +15,12 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-
-
 # Import some architectural stuff that we will probably always use
 import os
 import warnings
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,10 +33,11 @@ from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 
 
 # define ASCI color codes
-processColor = '\u001b[32m'
-taskColor = '\u001b[33m'
-moduleColor = '\u001b[36m'
-endColor = '\u001b[0m'
+processColor = "\u001b[32m"
+taskColor = "\u001b[33m"
+moduleColor = "\u001b[36m"
+endColor = "\u001b[0m"
+
 
 def methodizeCondition(conditionList):
     """Methodize a condition list to a function"""
@@ -74,7 +73,52 @@ def methodizeAction(actionList):
 
 
 class EventHandlerClass:
-    """Event Handler Class"""
+    """
+    Class for defining event checking behavior, conditions, and actions.
+
+    Three checking strategies are supported:
+
+        1. **Exact Interval Checking**: (default) The event is checked only when the
+           current time is an exact multiple of the ``eventRate``. This behavior is similar
+           to how tasks are scheduled in Basilisk. Note that if no task leads to a timestep
+           at a checking time, the event will not be checked.
+        2. **Elapsed Interval Checking**: The event is checked whenever the ``eventRate``
+           has elapsed since the last check. This is enabled by setting ``exactRateMatch``
+           to ``False``. This behavior is similar to how Basilisk loggers operate.
+        3. **Condition Time Checking**: An alternative to interval-based checking when
+           an event should occur at a specific time. This is enabled by setting
+           ``conditionTime``, and will lead to the event being triggered at the first
+           timestep at or after the specified time.
+
+    When an event is checked, the ``conditionFunction`` is called to determine if the
+    event should occur. If the condition returns ``True``, the ``actionFunction`` is executed.
+    and the event is deactivated. To continue checking the event, it must be reactivated.
+    If the event is marked as ``terminal``, the simulation will be instructed to terminate
+    when the event condition occurs.
+
+    Args:
+        eventName (str): Name of the event
+        eventRate (int): Rate at which the event is checked in nanoseconds
+        eventActive (bool): Whether the event is active or not
+        terminal (bool): Whether this event should terminate the simulation when it occurs
+        conditionFunction (function): Function to check if the event should occur. The
+            function should take the simulation object as an argument and return a boolean.
+            This is the preferred manner to set conditions as it enables the use of arbitrary
+            packages and objects in events and allows for event code to be parsed by IDE tools.
+        conditionTime (int): Alternative to conditionFunction, a time in nanoseconds to trigger
+            the event. Does not depend on eventRate for checking.
+        actionFunction (function): Function to execute when the event occurs. The
+            function should take the simulation object as an argument.
+            This is the preferred manner to set conditions as it enables the use of arbitrary
+            packages and objects in events and allows for event code to be parsed by IDE tools.
+        exactRateMatch (bool): If True, the event is checked only when the current time is an
+            exact multiple of the eventRate. If False, the event is checked whenever the
+            ``eventRate`` has elapsed since the last check.
+        conditionList (list): (deprecated) List of conditions to check for the event,
+            expressed as strings of code to execute within the class.
+        actionList (list): (deprecated) List of actions to perform when the event occurs,
+            expressed as strings of code to execute within the class.
+    """
 
     def __init__(
         self,
@@ -83,16 +127,29 @@ class EventHandlerClass:
         eventActive=False,
         conditionFunction=None,
         actionFunction=None,
+        conditionTime=None,
         conditionList=None,
         actionList=None,
         terminal=False,
+        exactRateMatch=True,
     ):
         self.eventName = eventName
         self.eventActive = eventActive
         self.eventRate = eventRate
         self.occurCounter = 0
-        self.prevTime = -1
+        self.prevCheckTime = None
         self.terminal = terminal
+        self.exactRateMatch = exactRateMatch
+
+        self.conditionTime = conditionTime
+        if conditionTime is not None:
+            if conditionFunction is not None:
+                raise ValueError(
+                    "Only specify a conditionFunction or a conditionTime, not both"
+                )
+            conditionFunction = (
+                lambda sim: sim.TotalSim.CurrentNanos >= self.conditionTime
+            )
 
         self.conditionFunction = conditionFunction or (lambda _: False)
         self.actionFunction = actionFunction or (lambda _: None)
@@ -113,30 +170,51 @@ class EventHandlerClass:
             else:
                 self.actionFunction = methodizeAction(actionList)
 
+    def shouldBeChecked(self, currentTime):
+        """See if the event should be checked at the current time."""
+        if not self.eventActive:
+            return False
 
+        if self.conditionTime is not None:
+            return currentTime >= self.conditionTime
+
+        if self.exactRateMatch:
+            return currentTime % self.eventRate == 0
+        else:
+            return (
+                self.prevCheckTime is None
+                or currentTime >= self.prevCheckTime + self.eventRate
+            )
 
     def checkEvent(self, parentSim):
-        nextTime = int(-1)
-        if not self.eventActive:
-            return(nextTime)
-        nextTime = self.prevTime + self.eventRate - (self.prevTime%self.eventRate)
-        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
-            nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
-            eventOccurred = self.conditionFunction(parentSim)
-            self.prevTime = parentSim.TotalSim.CurrentNanos
-            if eventOccurred:
-                self.eventActive = False
-                self.actionFunction(parentSim)
-                self.occurCounter += 1
-                if self.terminal:
-                    parentSim.terminate = True
-        return(nextTime)
+        """Check the condition and execute the action if condition is met."""
+        if self.conditionFunction(parentSim):
+            self.eventActive = False
+            self.actionFunction(parentSim)
+            self.occurCounter += 1
+            if self.terminal:
+                parentSim.terminate = True
+        self.prevCheckTime = parentSim.TotalSim.CurrentNanos
+
+    def nextCheckTime(self, currentTime):
+        """Get the earliest upcoming time this event should be checked."""
+        if self.conditionTime is not None:
+            return self.conditionTime
+        if self.exactRateMatch:
+            return (currentTime // self.eventRate + 1) * self.eventRate
+        else:
+            return (
+                self.prevCheckTime + self.eventRate
+                if self.prevCheckTime is not None
+                else currentTime
+            )
 
 
 class StructDocData:
     """Structure data documentation class"""
+
     class StructElementDef:
-        def __init__(self, type, name, argstring, desc=''):
+        def __init__(self, type, name, argstring, desc=""):
             self.type = type
             self.name = name
             self.argstring = argstring
@@ -154,7 +232,7 @@ class StructDocData:
     def populateElem(self, xmlSearchPath):
         if self.structPopulated == True:
             return
-        xmlFileUse = xmlSearchPath + '/' + self.strName + '.xml'
+        xmlFileUse = xmlSearchPath + "/" + self.strName + ".xml"
         try:
             xmlData = ET.parse(xmlFileUse)
         except:
@@ -164,31 +242,47 @@ class StructDocData:
         root = xmlData.getroot()
         validElement = root.find("./compounddef[@id='" + self.strName + "']")
         for newVariable in validElement.findall(".//memberdef[@kind='variable']"):
-            typeUse = newVariable.find('type').text if newVariable.find('type') is not None else \
-                None
-            nameUse = newVariable.find('name').text if newVariable.find('type') is not None else \
-                None
-            argstringUse = newVariable.find('argsstring').text if newVariable.find('argsstring') is not None else \
-                None
-            descUse = newVariable.find('./detaileddescription/para').text if newVariable.find(
-                './detaileddescription/para') is not None else \
-                None
+            typeUse = (
+                newVariable.find("type").text
+                if newVariable.find("type") is not None
+                else None
+            )
+            nameUse = (
+                newVariable.find("name").text
+                if newVariable.find("type") is not None
+                else None
+            )
+            argstringUse = (
+                newVariable.find("argsstring").text
+                if newVariable.find("argsstring") is not None
+                else None
+            )
+            descUse = (
+                newVariable.find("./detaileddescription/para").text
+                if newVariable.find("./detaileddescription/para") is not None
+                else None
+            )
             if descUse == None:
-                descUse = newVariable.find('./briefdescription/para').text if newVariable.find(
-                    './briefdescription/para') is not None else \
-                    None
-            newElement = StructDocData.StructElementDef(typeUse, nameUse, argstringUse, descUse)
+                descUse = (
+                    newVariable.find("./briefdescription/para").text
+                    if newVariable.find("./briefdescription/para") is not None
+                    else None
+                )
+            newElement = StructDocData.StructElementDef(
+                typeUse, nameUse, argstringUse, descUse
+            )
             self.structElements.update({nameUse: newElement})
             self.structPopulated = True
 
     def printElem(self):
         print("    " + self.strName + " Structure Elements:")
         for key, value in self.structElements.items():
-            outputString = ''
+            outputString = ""
             outputString += value.type + " " + value.name
-            outputString += value.argstring if value.argstring is not None else ''
-            outputString += ': ' + value.desc if value.desc is not None else ''
+            outputString += value.argstring if value.argstring is not None else ""
+            outputString += ": " + value.desc if value.desc is not None else ""
         print("      " + outputString)
+
 
 class DataPairClass:
     def __init__(self):
@@ -197,8 +291,10 @@ class DataPairClass:
         self.name = ""
         self.outputDict = {}
 
+
 class SimBaseClass:
     """Simulation Base Class"""
+
     def __init__(self):
         self.TotalSim = sim_model.SimModel()
         self.TaskList = []
@@ -207,8 +303,8 @@ class SimBaseClass:
         self.nextEventTime = 0
         self.terminate = False
         self.eventMap = {}
-        self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
-        self.dataStructIndex = self.simBasePath + '/xml/index.xml'
+        self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + "/../"
+        self.dataStructIndex = self.simBasePath + "/xml/index.xml"
         self.indexParsed = False
         self.simulationInitialized = False
         self.simulationFinished = False
@@ -227,83 +323,133 @@ class SimBaseClass:
         Shows in what order the Basilisk processes, task lists and modules are executed
         """
 
-        for processData in self. TotalSim.processList:
-            print(f"{processColor}Process Name: {endColor}" + processData.processName +
-                  " , " + processColor + "priority: " + endColor + str(processData.processPriority))
+        for processData in self.TotalSim.processList:
+            print(
+                f"{processColor}Process Name: {endColor}{processData.processName}, "
+                f"{processColor}priority: {endColor}{processData.processPriority}"
+            )
             for task in processData.processTasks:
-                print(f"{taskColor}Task Name: {endColor}" + task.TaskPtr.TaskName +
-                      ", " + taskColor + "priority: " + endColor + str(task.taskPriority) +
-                      ", " + taskColor + "TaskPeriod: " + endColor + str(task.TaskPtr.TaskPeriod/1.0e9) + "s")
+                print(
+                    f"{taskColor}Task Name: {endColor}{task.TaskPtr.TaskName}, "
+                    f"{taskColor}priority: {endColor}{task.taskPriority}, "
+                    f"{taskColor}TaskPeriod: {endColor}{task.TaskPtr.TaskPeriod / 1.0e9}s"
+                )
                 for module in task.TaskPtr.TaskModels:
-                    print(moduleColor + "ModuleTag: " + endColor + module.ModelPtr.ModelTag +
-                          ", " + moduleColor + "priority: " + endColor + str(module.CurrentModelPriority))
-            print("")
-
+                    print(
+                        f"{moduleColor}ModuleTag: {endColor}{module.ModelPtr.ModelTag}, "
+                        f"{moduleColor}priority: {endColor}{module.CurrentModelPriority}"
+                    )
+            print()
 
     def ShowExecutionFigure(self, show_plots=False):
         """
         Shows in what order the Basilisk processes, task lists and modules are executed
         """
         processList = OrderedDict()
-        for processData in self. TotalSim.processList:
+        for processData in self.TotalSim.processList:
             taskList = OrderedDict()
             for task in processData.processTasks:
                 moduleList = []
                 for module in task.TaskPtr.TaskModels:
-                    moduleList.append(module.ModelPtr.ModelTag + " (" + str(module.CurrentModelPriority) + ")")
-                taskList[task.TaskPtr.TaskName + " (" + str(task.taskPriority) + ", " + str(task.TaskPtr.TaskPeriod/1.0e9) + "s)"] = moduleList
-            processList[processData.processName + " (" + str(processData.processPriority) + ")"] = taskList
+                    moduleList.append(
+                        f"{module.ModelPtr.ModelTag} ({module.CurrentModelPriority})"
+                    )
+                taskList[
+                    f"{task.TaskPtr.TaskName} ({task.taskPriority}, {task.TaskPtr.TaskPeriod / 1.0e9}s)"
+                ] = moduleList
+            processList[
+                processData.processName + " (" + str(processData.processPriority) + ")"
+            ] = taskList
 
         fig = plt.figure()
-        plt.rcParams.update({'font.size': 8})
-        plt.axis('off')
+        plt.rcParams.update({"font.size": 8})
+        plt.axis("off")
 
         processNo = 0
         processWidth = 6
         lineHeight = 0.5
-        textBuffer = lineHeight*0.75
-        textIndent = lineHeight*0.25
+        textBuffer = lineHeight * 0.75
+        textIndent = lineHeight * 0.25
         processGap = 0.5
         for process in processList:
             # Draw process box + priority
-            rectangle = plt.Rectangle(((processWidth+processGap)*processNo, 0), processWidth, -lineHeight, ec='g', fc='g')
+            rectangle = plt.Rectangle(
+                ((processWidth + processGap) * processNo, 0),
+                processWidth,
+                -lineHeight,
+                ec="g",
+                fc="g",
+            )
             plt.gca().add_patch(rectangle)
-            plt.text((processWidth+processGap)*processNo + textIndent, -textBuffer, process, color='w')
+            plt.text(
+                (processWidth + processGap) * processNo + textIndent,
+                -textBuffer,
+                process,
+                color="w",
+            )
 
             taskNo = 0
             currentLine = -lineHeight - textIndent
             for task in processList[process]:
                 # Draw task box + priority + task rate
-                rectangle = plt.Rectangle(((processWidth + processGap) * processNo + textIndent, currentLine)
-                                          , processWidth - 2 * textIndent
-                                          , - (1+len(processList[process][task])) * (lineHeight + textIndent),
-                                          ec='y', fc=(1,1,1,0))
+                rectangle = plt.Rectangle(
+                    ((processWidth + processGap) * processNo + textIndent, currentLine),
+                    processWidth - 2 * textIndent,
+                    -(1 + len(processList[process][task])) * (lineHeight + textIndent),
+                    ec="y",
+                    fc=(1, 1, 1, 0),
+                )
                 plt.gca().add_patch(rectangle)
-                rectangle = plt.Rectangle(((processWidth + processGap) * processNo + textIndent, currentLine)
-                                          , processWidth - 2 * textIndent, -lineHeight,
-                                          ec='y', fc='y')
+                rectangle = plt.Rectangle(
+                    ((processWidth + processGap) * processNo + textIndent, currentLine),
+                    processWidth - 2 * textIndent,
+                    -lineHeight,
+                    ec="y",
+                    fc="y",
+                )
                 plt.gca().add_patch(rectangle)
-                plt.text((processWidth + processGap) * processNo + 2*textIndent,
-                         currentLine-textBuffer, task, color='black')
+                plt.text(
+                    (processWidth + processGap) * processNo + 2 * textIndent,
+                    currentLine - textBuffer,
+                    task,
+                    color="black",
+                )
 
                 for module in processList[process][task]:
                     # Draw modules + priority
                     currentLine -= lineHeight + textIndent
-                    rectangle = plt.Rectangle(((processWidth + processGap) * processNo + 2*textIndent, currentLine)
-                                              , processWidth - 4 * textIndent, -lineHeight,
-                                              ec='c', fc=(1,1,1,0))
+                    rectangle = plt.Rectangle(
+                        (
+                            (processWidth + processGap) * processNo + 2 * textIndent,
+                            currentLine,
+                        ),
+                        processWidth - 4 * textIndent,
+                        -lineHeight,
+                        ec="c",
+                        fc=(1, 1, 1, 0),
+                    )
                     plt.gca().add_patch(rectangle)
-                    plt.text((processWidth + processGap) * processNo + 3*textIndent,
-                             currentLine-textBuffer, module, color='black')
+                    plt.text(
+                        (processWidth + processGap) * processNo + 3 * textIndent,
+                        currentLine - textBuffer,
+                        module,
+                        color="black",
+                    )
 
                 taskNo += 1
-                currentLine -=  lineHeight + 2 * textIndent
+                currentLine -= lineHeight + 2 * textIndent
 
-            rectangle = plt.Rectangle(((processWidth+processGap)*processNo, 0), processWidth, currentLine, ec='g', fc=(1,1,1,0))
+            rectangle = plt.Rectangle(
+                ((processWidth + processGap) * processNo, 0),
+                processWidth,
+                currentLine,
+                ec="g",
+                fc=(1, 1, 1, 0),
+            )
             plt.gca().add_patch(rectangle)
             processNo += 1
 
-        plt.axis('scaled')
+        plt.axis("scaled")
 
         if show_plots:
             plt.show()
@@ -345,7 +491,7 @@ class SimBaseClass:
                 return
         raise ValueError(f"Could not find a Task with name: {TaskName}")
 
-    def CreateNewProcess(self, procName, priority = -1):
+    def CreateNewProcess(self, procName, priority=-1):
         """
         Creates a process and adds it to the sim
 
@@ -357,7 +503,6 @@ class SimBaseClass:
         self.procList.append(proc)
         self.TotalSim.addNewProcess(proc.processData)
         return proc
-
 
     def CreateNewTask(self, TaskName, TaskRate, InputDelay=None, FirstStart=0):
         """
@@ -375,8 +520,11 @@ class SimBaseClass:
         """
 
         if InputDelay is not self.CreateNewTask.__defaults__[0]:
-            deprecated.deprecationWarn("InputDelay", "2024/12/13",
-                                       "This input variable is non-functional and now depreciated.")
+            deprecated.deprecationWarn(
+                "InputDelay",
+                "2024/12/13",
+                "This input variable is non-functional and now depreciated.",
+            )
 
         Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, FirstStart)
         self.TaskList.append(Task)
@@ -391,7 +539,7 @@ class SimBaseClass:
         """
         Initialize the BSK simulation.  This runs the SelfInit() and Reset() methods on each module.
         """
-        if(self.simulationInitialized):
+        if self.simulationInitialized:
             self.TotalSim.resetThreads(self.TotalSim.getThreadCount())
         self.TotalSim.assignRemainingProcs()
         self.TotalSim.ResetSimulation()
@@ -399,36 +547,71 @@ class SimBaseClass:
         self.TotalSim.resetInitSimulation()
         self.simulationInitialized = True
 
-
-    def ConfigureStopTime(self, TimeStop):
+    def ConfigureStopTime(self, TimeStop, StopCondition: Literal["<=", ">="] = "<="):
         """
         Set the simulation stop time in nano-seconds.
+
+        Args:
+            TimeStop (int): Time to stop the simulation in nanoseconds
+            StopCondition (str): Condition for meeting the stop time. Two behaviors
+                are supported:
+
+                * ``<=``: (default) The simulation will run as far as it can such that the
+                  ``StopTime`` is met if possible, but not exceeded.
+                * ``>=``: The simulation will run as far as it can such that the
+                  ``StopTime`` is minimally exceeded, but met if possible.
         """
         self.StopTime = TimeStop
+        assert StopCondition in ("<=", ">="), "StopCondition must be '<=' or '>='"
+        self.StopCondition = StopCondition
+
+    def CheckStopCondition(self):
+        if self.StopCondition == "<=":
+            return self.TotalSim.NextTaskTime <= self.StopTime
+        elif self.StopCondition == ">=":
+            return (
+                self.TotalSim.CurrentNanos < self.StopTime
+                or self.TotalSim.NextTaskTime == self.StopTime
+            )
 
     def ExecuteSimulation(self):
         """
         run the simulation until the prescribed stop time or termination.
         """
-        self.initializeEventChecks()
 
-        nextStopTime = self.TotalSim.NextTaskTime
-        nextPriority = -1
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
-        while self.TotalSim.NextTaskTime <= self.StopTime and not self.terminate:
-            if self.TotalSim.CurrentNanos >= self.nextEventTime >= 0:
-                self.nextEventTime = self.checkEvents()
-                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
-            if 0 <= self.nextEventTime < nextStopTime:
-                nextStopTime = self.nextEventTime
-                nextPriority = -1
+        while self.CheckStopCondition():
+            # Check events
+            for event in self.activeEvents():
+                if event.shouldBeChecked(self.TotalSim.CurrentNanos):
+                    event.checkEvent(self)
+
             if self.terminate:
                 break
-            self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
-            progressBar.update(self.TotalSim.NextTaskTime)
+
+            # Find the next time to stop the sim
+            eventCheckTimes = [
+                event.nextCheckTime(self.TotalSim.CurrentNanos)
+                for event in self.activeEvents()
+            ]
+            if len(eventCheckTimes) > 0:
+                # Stop at next event, if any
+                nextStopTime = min(eventCheckTimes)
+                # But must at least reach the next task
+                nextStopTime = max(nextStopTime, self.TotalSim.NextTaskTime)
+                # But don't pass stop
+                nextStopTime = min(nextStopTime, self.StopTime)
+            else:
+                nextStopTime = self.StopTime  # Otherwise stop at the stop time
+
+            # Must at least step to the next task time if StopCondition is ">="
+            if self.StopCondition == ">=":
+                nextStopTime = max(nextStopTime, self.TotalSim.NextTaskTime)
+
+            # Execute the sim
             nextPriority = -1
-            nextStopTime = self.StopTime
-            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+            self.TotalSim.StepUntilStop(int(nextStopTime), nextPriority)
+            progressBar.update(self.TotalSim.NextTaskTime)
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
@@ -458,69 +641,27 @@ class SimBaseClass:
             return
         root = xmlData.getroot()
         for child in root:
-            newStruct = StructDocData(child.attrib['refid'])
-            self.dataStructureDictionary.update({child.find('name').text:
-                                                     newStruct})
+            newStruct = StructDocData(child.attrib["refid"])
+            self.dataStructureDictionary.update({child.find("name").text: newStruct})
         self.indexParsed = True
 
-    def createNewEvent(
-        self,
-        eventName,
-        eventRate=int(1e9),
-        eventActive=False,
-        conditionList=None,
-        actionList=None,
-        terminal=False,
-        conditionFunction=None,
-        actionFunction=None,
-    ):
+    def createNewEvent(self, eventName, *args, **kwargs):
         """
         Create an event sequence that contains a series of tasks to be executed.
 
         Args:
             eventName (str): Name of the event
-            eventRate (int): Rate at which the event is checked in nanoseconds
-            eventActive (bool): Whether the event is active or not
-            conditionList (list): List of conditions to check for the event,
-                expressed as strings of code to execute within the class.
-            actionList (list): List of actions to perform when the event occurs,
-                expressed as strings of code to execute within the class.
-            terminal (bool): Whether this event should terminate the simulation when it occurs
-            conditionFunction (function): Function to check if the event should occur. The
-                function should take the simulation object as an argument and return a boolean.
-                This is the preferred manner to set conditions as it enables the use of arbitrary
-                packages and objects in events and allows for event code to be parsed by IDE tools.
-            actionFunction (function): Function to execute when the event occurs. The
-                function should take the simulation object as an argument.
-                This is the preferred manner to set conditions as it enables the use of arbitrary
-                packages and objects in events and allows for event code to be parsed by IDE tools.
+            *args: Arguments to pass to the :class:`EventHandlerClass` constructor
+            **kwargs: Keyword arguments to pass to the :class:`EventHandlerClass` constructor
         """
-        if (eventName in list(self.eventMap.keys())):
+        if eventName in list(self.eventMap.keys()):
             warnings.warn(f"Skipping event creation since {eventName} already exists.")
             return
-        newEvent = EventHandlerClass(
-            eventName,
-            eventRate,
-            eventActive,
-            conditionFunction=conditionFunction,
-            actionFunction=actionFunction,
-            conditionList=conditionList,
-            actionList=actionList,
-            terminal=terminal,
-        )
+        newEvent = EventHandlerClass(eventName, *args, **kwargs)
         self.eventMap[eventName] = newEvent
 
-    def initializeEventChecks(self):
-        self.eventList = list(self.eventMap.values())
-        self.nextEventTime = 0
-
-    def checkEvents(self):
-        nextTime = -1
-        for localEvent in self.eventList:
-            localNextTime = localEvent.checkEvent(self)
-            if(localNextTime >= 0 and (localNextTime < nextTime or nextTime <0)):
-                nextTime = localNextTime
-        return nextTime
+    def activeEvents(self):
+        return (event for event in self.eventMap.values() if event.eventActive)
 
     def setEventActivity(self, eventName, activityCommand):
         if eventName not in list(self.eventMap.keys()):
@@ -528,79 +669,100 @@ class SimBaseClass:
             return
         self.eventMap[eventName].eventActive = activityCommand
 
-    def setAllButCurrentEventActivity(self, currentEventName, activityCommand, useIndex=False):
+    def setAllButCurrentEventActivity(
+        self, currentEventName, activityCommand, useIndex=False
+    ):
         """Set all event activity variables except for the currentEventName event. The ``useIndex`` flag can be used to
         prevent enabling or disabling every task, and instead only alter the ones that belong to the same group (for
         example, the same spacecraft). The distinction is made through an index set after the ``_`` symbol in the event
         name. All events of the same group must have the same index."""
 
         if useIndex:
-            index = currentEventName.partition('_')[2]  # save the current event's index
+            index = currentEventName.partition("_")[2]  # save the current event's index
 
         for eventName in list(self.eventMap.keys()):
             if currentEventName != eventName:
                 if useIndex:
-                    if eventName.partition('_')[2] == index:
+                    if eventName.partition("_")[2] == index:
                         self.eventMap[eventName].eventActive = activityCommand
                 else:
                     self.eventMap[eventName].eventActive = activityCommand
 
+
 def SetCArray(InputList, VarType, ArrayPointer):
-    if(isinstance(ArrayPointer, (list, tuple))):
-        raise TypeError('Cannot set a C array if it is actually a python list.  Just assign the variable to the list directly.')
-    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
+    if isinstance(ArrayPointer, (list, tuple)):
+        raise TypeError(
+            "Cannot set a C array if it is actually a python list.  Just assign the variable to the list directly."
+        )
+    CmdString = (
+        "sim_model." + VarType + "Array_setitem(ArrayPointer, CurrIndex, CurrElem)"
+    )
     CurrIndex = 0
     for CurrElem in InputList:
-        exec (CmdString)
+        exec(CmdString)
         CurrIndex += 1
 
+
 def getCArray(varType, arrayPointer, arraySize):
-    CmdString = 'outputList.append(sim_model.' + varType + 'Array_getitem(arrayPointer, currIndex))'
+    CmdString = (
+        "outputList.append(sim_model."
+        + varType
+        + "Array_getitem(arrayPointer, currIndex))"
+    )
     outputList = []
     currIndex = 0
     for currIndex in range(arraySize):
-        exec (CmdString)
+        exec(CmdString)
         currIndex += 1
     return outputList
+
 
 def synchronizeTimeHistories(arrayList):
     returnArrayList = arrayList
     timeCounter = 0
     for i in range(len(returnArrayList)):
-        while returnArrayList[i][0,0] > returnArrayList[0][timeCounter,0]:
+        while returnArrayList[i][0, 0] > returnArrayList[0][timeCounter, 0]:
             timeCounter += 1
     for i in range(len(returnArrayList)):
-        while(returnArrayList[i][1,0] < returnArrayList[0][timeCounter,0]):
+        while returnArrayList[i][1, 0] < returnArrayList[0][timeCounter, 0]:
             returnArrayList[i] = np.delete(returnArrayList[i], 0, 0)
 
     timeCounter = -1
     for i in range(len(returnArrayList)):
-        while returnArrayList[i][-1,0] < returnArrayList[0][timeCounter,0]:
-                timeCounter -= 1
+        while returnArrayList[i][-1, 0] < returnArrayList[0][timeCounter, 0]:
+            timeCounter -= 1
     for i in range(len(returnArrayList)):
-        while(returnArrayList[i][-2,0] > returnArrayList[0][timeCounter,0]):
+        while returnArrayList[i][-2, 0] > returnArrayList[0][timeCounter, 0]:
             returnArrayList[i] = np.delete(returnArrayList[i], -1, 0)
 
-    timeNow = returnArrayList[0][0,0] #Desirement is to have synched arrays match primary time
+    timeNow = returnArrayList[0][
+        0, 0
+    ]  # Desirement is to have synched arrays match primary time
     outputArrayList = []
-    indexPrev = [0]*len(returnArrayList)
-    outputArrayList = [[]]*len(returnArrayList)
-    timeNow = returnArrayList[0][0,0]
+    indexPrev = [0] * len(returnArrayList)
+    outputArrayList = [[]] * len(returnArrayList)
+    timeNow = returnArrayList[0][0, 0]
 
     outputArrayList[0] = returnArrayList[0][0:-2, :]
-    for i in range(1, returnArrayList[0].shape[0]-1):
+    for i in range(1, returnArrayList[0].shape[0] - 1):
         for j in range(1, len(returnArrayList)):
-            while(returnArrayList[j][indexPrev[j]+1,0] < returnArrayList[0][i,0]):
+            while returnArrayList[j][indexPrev[j] + 1, 0] < returnArrayList[0][i, 0]:
                 indexPrev[j] += 1
 
-            dataProp = returnArrayList[j][indexPrev[j]+1,1:] - returnArrayList[j][indexPrev[j],1:]
-            dataProp *= (timeNow - returnArrayList[j][indexPrev[j],0])/(returnArrayList[j][indexPrev[j]+1,0] - returnArrayList[j][indexPrev[j],0])
-            dataProp += returnArrayList[j][indexPrev[j],1:]
+            dataProp = (
+                returnArrayList[j][indexPrev[j] + 1, 1:]
+                - returnArrayList[j][indexPrev[j], 1:]
+            )
+            dataProp *= (timeNow - returnArrayList[j][indexPrev[j], 0]) / (
+                returnArrayList[j][indexPrev[j] + 1, 0]
+                - returnArrayList[j][indexPrev[j], 0]
+            )
+            dataProp += returnArrayList[j][indexPrev[j], 1:]
             dataRow = [timeNow]
             dataRow.extend(dataProp.tolist())
             outputArrayList[j].append(dataRow)
         timePrevious = timeNow
-        timeNow = returnArrayList[0][i,0]
+        timeNow = returnArrayList[0][i, 0]
     for j in range(1, len(returnArrayList)):
         outputArrayList[j] = np.array(outputArrayList[j])
 

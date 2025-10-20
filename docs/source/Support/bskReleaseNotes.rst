@@ -60,6 +60,14 @@ Version |release|
   been deprecated.
 - For :ref:`vizInterface`.settings, changed the name of ``viewCameraConeHUD`` to ``viewCameraFrustrumHUD``
 - Added support for Vizard 2.3.1 features
+- Refactor and optimize Event checking in ``SimulationBaseClass``. Time-based events can be specified by a more efficient
+  ``conditionTime`` instead of a ``conditionFunction``.  This is especially useful for large numbers of events.
+- Added option for ``exactRateMatch=False`` when creating events which causes events to be checked whenever the
+  ``eventRate`` has elapsed since the last check (as opposed to only when the current time is an exact multiple of the
+  ``eventRate``).
+- ``ConfigureStopTime`` now supports specifying the stop condition as ``<=`` (default, prior behavior) or ``>=`` (new).
+  The new option is useful when the user wants to ensure that the simulation runs for at least the specified time,
+  instead of at most the specified time.
 
 
 Version 2.8.0 (August 30, 2025)
