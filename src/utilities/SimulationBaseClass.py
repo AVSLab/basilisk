@@ -73,7 +73,52 @@ def methodizeAction(actionList):
 
 
 class EventHandlerClass:
-    """Event Handler Class"""
+    """
+    Class for defining event checking behavior, conditions, and actions.
+
+    Three checking strategies are supported:
+
+        1. **Exact Interval Checking**: (default) The event is checked only when the
+           current time is an exact multiple of the ``eventRate``. This behavior is similar
+           to how tasks are scheduled in Basilisk. Note that if no task leads to a timestep
+           at a checking time, the event will not be checked.
+        2. **Elapsed Interval Checking**: The event is checked whenever the ``eventRate``
+           has elapsed since the last check. This is enabled by setting ``exactRateMatch``
+           to ``False``. This behavior is similar to how Basilisk loggers operate.
+        3. **Condition Time Checking**: An alternative to interval-based checking when
+           an event should occur at a specific time. This is enabled by setting
+           ``conditionTime``, and will lead to the event being triggered at the first
+           timestep at or after the specified time.
+
+    When an event is checked, the ``conditionFunction`` is called to determine if the
+    event should occur. If the condition returns ``True``, the ``actionFunction`` is executed.
+    and the event is deactivated. To continue checking the event, it must be reactivated.
+    If the event is marked as ``terminal``, the simulation will be instructed to terminate
+    when the event condition occurs.
+
+    Args:
+        eventName (str): Name of the event
+        eventRate (int): Rate at which the event is checked in nanoseconds
+        eventActive (bool): Whether the event is active or not
+        terminal (bool): Whether this event should terminate the simulation when it occurs
+        conditionFunction (function): Function to check if the event should occur. The
+            function should take the simulation object as an argument and return a boolean.
+            This is the preferred manner to set conditions as it enables the use of arbitrary
+            packages and objects in events and allows for event code to be parsed by IDE tools.
+        conditionTime (int): Alternative to conditionFunction, a time in nanoseconds to trigger
+            the event. Does not depend on eventRate for checking.
+        actionFunction (function): Function to execute when the event occurs. The
+            function should take the simulation object as an argument.
+            This is the preferred manner to set conditions as it enables the use of arbitrary
+            packages and objects in events and allows for event code to be parsed by IDE tools.
+        exactRateMatch (bool): If True, the event is checked only when the current time is an
+            exact multiple of the eventRate. If False, the event is checked whenever the
+            ``eventRate`` has elapsed since the last check.
+        conditionList (list): (deprecated) List of conditions to check for the event,
+            expressed as strings of code to execute within the class.
+        actionList (list): (deprecated) List of actions to perform when the event occurs,
+            expressed as strings of code to execute within the class.
+    """
 
     def __init__(
         self,
@@ -126,7 +171,7 @@ class EventHandlerClass:
                 self.actionFunction = methodizeAction(actionList)
 
     def shouldBeChecked(self, currentTime):
-        """Check events if active and never checked or rate matches current time"""
+        """See if the event should be checked at the current time."""
         if not self.eventActive:
             return False
 
@@ -142,6 +187,7 @@ class EventHandlerClass:
             )
 
     def checkEvent(self, parentSim):
+        """Check the condition and execute the action if condition is met."""
         if self.conditionFunction(parentSim):
             self.eventActive = False
             self.actionFunction(parentSim)
@@ -151,6 +197,7 @@ class EventHandlerClass:
         self.prevCheckTime = parentSim.TotalSim.CurrentNanos
 
     def nextCheckTime(self, currentTime):
+        """Get the earliest upcoming time this event should be checked."""
         if self.conditionTime is not None:
             return self.conditionTime
         if self.exactRateMatch:
@@ -504,10 +551,15 @@ class SimBaseClass:
         """
         Set the simulation stop time in nano-seconds.
 
-        If StopCondition is "<=", the simulation will run as far as it can such that the
-           StopTime is not exceeded, but met if possible.
-        If StopCondition is ">=", the simulation will run as far as it can such that the
-           StopTime is minimally exceeded, but met if possible.
+        Args:
+            TimeStop (int): Time to stop the simulation in nanoseconds
+            StopCondition (str): Condition for meeting the stop time. Two behaviors
+                are supported:
+
+                * ``<=``: (default) The simulation will run as far as it can such that the
+                  ``StopTime`` is met if possible, but not exceeded.
+                * ``>=``: The simulation will run as far as it can such that the
+                  ``StopTime`` is minimally exceeded, but met if possible.
         """
         self.StopTime = TimeStop
         assert StopCondition in ("<=", ">="), "StopCondition must be '<=' or '>='"
@@ -593,60 +645,19 @@ class SimBaseClass:
             self.dataStructureDictionary.update({child.find("name").text: newStruct})
         self.indexParsed = True
 
-    def createNewEvent(
-        self,
-        eventName,
-        eventRate=int(1e9),
-        eventActive=False,
-        conditionList=None,
-        actionList=None,
-        conditionTime=None,
-        terminal=False,
-        conditionFunction=None,
-        actionFunction=None,
-        exactRateMatch=True,
-    ):
+    def createNewEvent(self, eventName, *args, **kwargs):
         """
         Create an event sequence that contains a series of tasks to be executed.
 
         Args:
             eventName (str): Name of the event
-            eventRate (int): Rate at which the event is checked in nanoseconds
-            eventActive (bool): Whether the event is active or not
-            conditionList (list): List of conditions to check for the event,
-                expressed as strings of code to execute within the class.
-            actionList (list): List of actions to perform when the event occurs,
-                expressed as strings of code to execute within the class.
-            conditionTime (int): Alternative to conditionList, a time in nanoseconds to trigger
-                the event. Does not depend on eventRate for checking.
-            terminal (bool): Whether this event should terminate the simulation when it occurs
-            conditionFunction (function): Function to check if the event should occur. The
-                function should take the simulation object as an argument and return a boolean.
-                This is the preferred manner to set conditions as it enables the use of arbitrary
-                packages and objects in events and allows for event code to be parsed by IDE tools.
-            actionFunction (function): Function to execute when the event occurs. The
-                function should take the simulation object as an argument.
-                This is the preferred manner to set conditions as it enables the use of arbitrary
-                packages and objects in events and allows for event code to be parsed by IDE tools.
-            exactRateMatch (bool): If True, the event is checked only when the current time is an
-                exact multiple of the eventRate. If False, the event is checked whenever the
-                eventRate has elapsed since the last check.
+            *args: Arguments to pass to the :class:`EventHandlerClass` constructor
+            **kwargs: Keyword arguments to pass to the :class:`EventHandlerClass` constructor
         """
         if eventName in list(self.eventMap.keys()):
             warnings.warn(f"Skipping event creation since {eventName} already exists.")
             return
-        newEvent = EventHandlerClass(
-            eventName,
-            eventRate,
-            eventActive,
-            conditionFunction=conditionFunction,
-            actionFunction=actionFunction,
-            conditionList=conditionList,
-            actionList=actionList,
-            terminal=terminal,
-            conditionTime=conditionTime,
-            exactRateMatch=exactRateMatch,
-        )
+        newEvent = EventHandlerClass(eventName, *args, **kwargs)
         self.eventMap[eventName] = newEvent
 
     def activeEvents(self):
