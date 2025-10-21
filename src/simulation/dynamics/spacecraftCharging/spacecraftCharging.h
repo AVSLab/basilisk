@@ -44,22 +44,22 @@ public:
 
     void setEBeamCurrent(const double I_eBeam);  //!< Setter for the electron beam current
     void setEBeamEnergy(const double E_eBeam);  //!< Setter for the electron beam energy
-    void setScCapacitance(const double capacitance);  //!< Setter for the spacecraft capacitance
+    void setServicerCapacitance(const double capacitance);  //!< Setter for the servicer spacecraft capacitance
     double getEBeamCurrent() const;  //!< Getter for the electron beam current
     double getEBeamEnergy() const;  //!< Getter for the electron beam energy
-    double getScCapacitance() const;  //!< Getter for the spacecraft capacitance
+    double getServicerCapacitance() const;  //!< Getter for the servicer spacecraft capacitance
 
-    Message<VoltMsgPayload> scPotentialOutMsg;     //!< Spacecraft potential (voltage) output message
+    Message<VoltMsgPayload> servicerPotentialOutMsg;     //!< Servicer spacecraft potential (voltage) output message
 
 private:
     double E_eBeam;  //!< [keV] Electron beam energy
     double I_eBeam;  //!< [Amps] Electron beam current
-    double scCapacitance;  //!< [farads] Spacecraft capacitance
+    double servicerCapacitance;  //!< [farads] Spacecraft capacitance
 
-    std::string nameOfScPotentialState;
-    double scPotentialInit{};  //!< [Volts] Initial spacecraft potential
-    double scPotential{};  //!< [Volts] Spacecraft potential
-    StateData *scPotentialState = nullptr;  //!< State data container for spacecraft potential
+    std::string nameOfServicerPotentialState;
+    double servicerPotentialInit{};  //!< [Volts] Initial spacecraft potential
+    double servicerPotential{};  //!< [Volts] Spacecraft potential
+    StateData *servicerPotentialState = nullptr;  //!< State data container for servicer spacecraft potential
 };
 
 

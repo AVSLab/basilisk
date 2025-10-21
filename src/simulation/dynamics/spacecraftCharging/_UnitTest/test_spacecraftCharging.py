@@ -52,11 +52,11 @@ def test_spacecraft_charging(show_plots):
     spacecraft_charging.ModelTag = "SpacecraftCharging"
     spacecraft_charging.setEBeamCurrent(beam_current)
     spacecraft_charging.setEBeamEnergy(beam_energy)
-    spacecraft_charging.setScCapacitance(capacitance)
+    spacecraft_charging.setServicerCapacitance(capacitance)
     test_sim.AddModelToTask(task_name, spacecraft_charging)
 
     # Set up data logging
-    spacecraft_potential_data_log = spacecraft_charging.scPotentialOutMsg.recorder()
+    spacecraft_potential_data_log = spacecraft_charging.servicerPotentialOutMsg.recorder()
     test_sim.AddModelToTask(task_name, spacecraft_potential_data_log)
 
     # Run the simulation
