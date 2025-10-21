@@ -17,9 +17,11 @@
 
 */
 
+#ifndef SCCHARGING_H
+#define SCCHARGING_H
 
-#ifndef SCCHARGINIG_H
-#define SCCHARGINIG_H
+#include <string>
+#include <functional>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
@@ -47,7 +49,7 @@ public:
     // Constructor And Destructor
     ScCharging();
     ~ScCharging();
-    
+
     // Methods
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
@@ -77,11 +79,11 @@ private:
 public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
     ReadFunctor<PlasmaFluxMsgPayload> plasmaFluxInMsg;          //!< plasma flux input message
-    
+
     std::vector<Message<VoltMsgPayload>*> voltOutMsgs;          //!< vector of voltage output messages
-    
+
     BSKLogger bskLogger;                                        //!< -- BSK Logging
-    
+
     Eigen::VectorXd yieldSEEelectron;                           //! < SEE yield (electron)
     Eigen::VectorXd yieldSEEion;                                //! < SEE yield (ion)
     Eigen::VectorXd yieldBackscattered;                         //! < SEE yield (backscatter)
@@ -94,7 +96,7 @@ private:
     Eigen::VectorXd electronFlux;                               //!< [cm^-2 s^-1 sr^-2 eV^-1] electron flux
     Eigen::VectorXd ionFlux;                                    //!< [cm^-2 s^-1 sr^-2 eV^-1] ion flux
     unsigned int numSat;
-    
+
 };
 
 
