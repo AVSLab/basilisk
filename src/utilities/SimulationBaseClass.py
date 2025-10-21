@@ -125,11 +125,11 @@ class EventHandlerClass:
         eventName,
         eventRate=int(1e9),
         eventActive=False,
+        conditionList=None,
+        actionList=None,
         conditionFunction=None,
         actionFunction=None,
         conditionTime=None,
-        conditionList=None,
-        actionList=None,
         terminal=False,
         exactRateMatch=True,
     ):
