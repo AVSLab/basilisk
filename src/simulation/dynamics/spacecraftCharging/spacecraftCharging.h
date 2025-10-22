@@ -45,21 +45,30 @@ public:
     void setEBeamCurrent(const double I_eBeam);  //!< Setter for the electron beam current
     void setEBeamEnergy(const double E_eBeam);  //!< Setter for the electron beam energy
     void setServicerCapacitance(const double capacitance);  //!< Setter for the servicer spacecraft capacitance
+    void setTargetCapacitance(const double capacitance);  //!< Setter for the target spacecraft capacitance
     double getEBeamCurrent() const;  //!< Getter for the electron beam current
     double getEBeamEnergy() const;  //!< Getter for the electron beam energy
     double getServicerCapacitance() const;  //!< Getter for the servicer spacecraft capacitance
+    double getTargetCapacitance() const;  //!< Getter for the target spacecraft capacitance
 
     Message<VoltMsgPayload> servicerPotentialOutMsg;     //!< Servicer spacecraft potential (voltage) output message
+    Message<VoltMsgPayload> targetPotentialOutMsg;     //!< Target spacecraft potential (voltage) output message
 
 private:
     double E_eBeam;  //!< [keV] Electron beam energy
     double I_eBeam;  //!< [Amps] Electron beam current
-    double servicerCapacitance;  //!< [farads] Spacecraft capacitance
 
+    double servicerCapacitance;  //!< [farads] Servicer spacecraft capacitance
     std::string nameOfServicerPotentialState;
-    double servicerPotentialInit{};  //!< [Volts] Initial spacecraft potential
-    double servicerPotential{};  //!< [Volts] Spacecraft potential
+    double servicerPotentialInit{};  //!< [Volts] Initial servicer spacecraft potential
+    double servicerPotential{};  //!< [Volts] Servicer spacecraft potential
     StateData *servicerPotentialState = nullptr;  //!< State data container for servicer spacecraft potential
+
+    double targetCapacitance{};  //!< [farads] Target spacecraft capacitance
+    std::string nameOfTargetPotentialState;
+    double targetPotentialInit{};  //!< [Volts] Initial target spacecraft potential
+    double targetPotential{};  //!< [Volts] Target spacecraft potential
+    StateData *targetPotentialState = nullptr;  //!< State data container for target spacecraft potential
 };
 
 

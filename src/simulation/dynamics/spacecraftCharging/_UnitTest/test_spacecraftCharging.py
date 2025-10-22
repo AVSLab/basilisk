@@ -53,11 +53,14 @@ def test_spacecraft_charging(show_plots):
     spacecraft_charging.setEBeamCurrent(beam_current)
     spacecraft_charging.setEBeamEnergy(beam_energy)
     spacecraft_charging.setServicerCapacitance(capacitance)
+    spacecraft_charging.setTargetCapacitance(capacitance)
     test_sim.AddModelToTask(task_name, spacecraft_charging)
 
     # Set up data logging
-    spacecraft_potential_data_log = spacecraft_charging.servicerPotentialOutMsg.recorder()
-    test_sim.AddModelToTask(task_name, spacecraft_potential_data_log)
+    servicer_potential_data_log = spacecraft_charging.servicerPotentialOutMsg.recorder()
+    target_potential_data_log = spacecraft_charging.targetPotentialOutMsg.recorder()
+    test_sim.AddModelToTask(task_name, servicer_potential_data_log)
+    test_sim.AddModelToTask(task_name, target_potential_data_log)
 
     # Run the simulation
     test_sim.InitializeSimulation()
@@ -66,25 +69,27 @@ def test_spacecraft_charging(show_plots):
     test_sim.ExecuteSimulation()
 
     # Extract the logged data for plotting and data comparison
-    timespan = macros.NANO2SEC * spacecraft_potential_data_log.times()  # [s]
-    sc_potential_sim = spacecraft_potential_data_log.voltage  # [Volts]
+    timespan = macros.NANO2SEC * servicer_potential_data_log.times()  # [s]
+    servicer_potential_sim = servicer_potential_data_log.voltage  # [Volts]
+    target_potential_sim = target_potential_data_log.voltage  # [Volts]
 
-    # Compute the true spacecraft potential for the unit test check
-    sc_potential_truth = compute_sc_potential_truth(timespan,
-                                                    test_time_step_sec,
-                                                    beam_current,
-                                                    beam_energy,
-                                                    capacitance)
+    # Compute the true servicer spacecraft potential for the unit test check
+    servicer_potential_truth = compute_servicer_potential_truth(timespan,
+                                                                test_time_step_sec,
+                                                                beam_current,
+                                                                beam_energy,
+                                                                capacitance)
 
     if show_plots:
-        # Plot spacecraft potential
+        # Plot servicer spacecraft potential
         beam_energy_plotting = np.ones(len(timespan)) * beam_energy
         plt.figure(1)
         plt.clf()
-        plt.plot(timespan*1000, beam_energy_plotting, '--', label=r"$E_{\text{EB}}$ (keV)", color="blue")
-        plt.plot(timespan*1000, sc_potential_truth, label=r"$\phi_{\text{truth}}$", color="teal")
-        plt.plot(timespan*1000, sc_potential_sim, label=r"$\phi_{\text{sim}}$", color="darkviolet")
-        plt.suptitle(r'Single Spacecraft with Electron Beam', fontsize=16)
+        plt.plot(timespan*1000, beam_energy_plotting, '--', label=r"$E_{\text{EB}}$ (keV)", color="teal")
+        # plt.plot(timespan*1000, servicer_potential_truth, label=r"$\phi_{\text{S, truth}}$", color="teal")
+        plt.plot(timespan*1000, servicer_potential_sim, label=r"$\phi_{\text{S, sim}}$", color="darkviolet")
+        plt.plot(timespan*1000, target_potential_sim, label=r"$\phi_{\text{T, sim}}$", color="blue")
+        plt.suptitle(r'Servicer and Target Spacecraft Potentials with Electron Beam', fontsize=16)
         plt.title(r'$C = 10^{-9} F, \ I_{\text{EB}} = 250e^{-6} A$', fontsize=14)
         plt.ylabel('(Volts)', fontsize=16)
         plt.xlabel('Time (ms)', fontsize=16)
@@ -94,7 +99,7 @@ def test_spacecraft_charging(show_plots):
         # Plot difference between truth and simulated sc potential
         plt.figure(2)
         plt.clf()
-        plt.plot(timespan*1000, np.abs(sc_potential_truth - sc_potential_sim), color="darkviolet")
+        plt.plot(timespan*1000, np.abs(servicer_potential_truth - servicer_potential_sim), color="darkviolet")
         plt.title(r'Difference Between Truth and Simulated Potentials', fontsize=16)
         plt.ylabel('(Volts)', fontsize=16)
         plt.xlabel('Time (ms)', fontsize=16)
@@ -104,64 +109,64 @@ def test_spacecraft_charging(show_plots):
     plt.close("all")
 
     # Test check verification
-    np.testing.assert_allclose(sc_potential_truth,
-                               sc_potential_sim,
+    np.testing.assert_allclose(servicer_potential_truth,
+                               servicer_potential_sim,
                                atol=1e-3,
                                verbose=True)
 
 
-def compute_sc_potential_truth(timespan,
+def compute_servicer_potential_truth(timespan,
                                test_time_step_sec,
                                beam_current,
                                beam_energy,
                                capacitance):
-    sc_potential_init = 0.0
-    sc_potential = [sc_potential_init]
+    servicer_potential_init = 0.0
+    servicer_potential = [servicer_potential_init]
     for idx in range(len(timespan) - 1):
         t = timespan[idx]
-        sc_potential_current = sc_potential[idx]
+        servicer_potential_current = servicer_potential[idx]
 
         k_1 = charging_eom(t,
-                           sc_potential_current,
+                           servicer_potential_current,
                            beam_current,
                            beam_energy,
                            capacitance)
         k_2 = charging_eom(t + (test_time_step_sec/2),
-                           sc_potential_current + ((test_time_step_sec * k_1) / 2),
+                           servicer_potential_current + ((test_time_step_sec * k_1) / 2),
                            beam_current,
                            beam_energy,
                            capacitance)
         k_3 = charging_eom(t + (test_time_step_sec/2),
-                           sc_potential_current + ((test_time_step_sec * k_2) / 2),
+                           servicer_potential_current + ((test_time_step_sec * k_2) / 2),
                            beam_current,
                            beam_energy,
                            capacitance)
         k_4 = charging_eom(t + test_time_step_sec,
-                           sc_potential_current + test_time_step_sec * k_3,
+                           servicer_potential_current + test_time_step_sec * k_3,
                            beam_current,
                            beam_energy,
                            capacitance)
 
 
-        sc_potential_next = sc_potential_current + (test_time_step_sec / 6) * (k_1 + 2 * k_2 + 2 * k_3 + k_4)
+        servicer_potential_next = servicer_potential_current + (test_time_step_sec / 6) * (k_1 + 2 * k_2 + 2 * k_3 + k_4)
 
-        if sc_potential_next >= beam_energy:
-            sc_potential_next = beam_energy
+        if servicer_potential_next >= beam_energy:
+            servicer_potential_next = beam_energy
 
-        sc_potential = np.append(sc_potential, sc_potential_next)
-
-
-
-    return sc_potential
+        servicer_potential = np.append(servicer_potential, servicer_potential_next)
 
 
-def charging_eom(t, sc_potential, beam_current, beam_energy, capacitance):
+
+    return servicer_potential
+
+
+def charging_eom(t, servicer_potential, beam_current, beam_energy, capacitance):
     # Set the beam current to zero if the sc potential is greater or equal to the beam energy
-    if (sc_potential >= beam_energy):
+    if (servicer_potential >= beam_energy):
         beam_current = 0.0
 
-    sc_potential_dot = beam_current / capacitance
-    return sc_potential_dot
+    servicer_potential_dot = beam_current / capacitance
+    return servicer_potential_dot
 
 
 if __name__ == "__main__":

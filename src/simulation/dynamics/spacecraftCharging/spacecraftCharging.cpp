@@ -22,10 +22,12 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <iostream>
+#include <cmath>
 
 /*! Class constructor. */
 SpacecraftCharging::SpacecraftCharging() {
     this->nameOfServicerPotentialState = "servicerPotential";
+    this->nameOfTargetPotentialState = "targetPotential";
 
     // Set integrator as RK4
     this->integrator = new svIntegratorRK4(this);
@@ -48,6 +50,11 @@ void SpacecraftCharging::registerStates(DynParamManager& states) {
     Eigen::MatrixXd servicerPotentialInitMatrix(1, 1);
     servicerPotentialInitMatrix(0, 0) = this->servicerPotentialInit;
     this->servicerPotentialState->setState(servicerPotentialInitMatrix);
+
+    this->targetPotentialState = states.registerState(1, 1, this->nameOfTargetPotentialState);
+    Eigen::MatrixXd targetPotentialInitMatrix(1, 1);
+    targetPotentialInitMatrix(0, 0) = this->targetPotentialInit;
+    this->targetPotentialState->setState(targetPotentialInitMatrix);
 }
 
 /*! Module update method. */
@@ -62,27 +69,44 @@ void SpacecraftCharging::UpdateState(uint64_t CurrentSimNanos) {
 /*! Method to write module output messages. */
 void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
     this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
+    this->targetPotential = this->targetPotentialState->getState()(0, 0);
 
-    // Write out the spinning body output messages
+    // Write out the servicer output message
     VoltMsgPayload servicerVoltageMsgBuffer;
     servicerVoltageMsgBuffer = this->servicerPotentialOutMsg.zeroMsgPayload;
     servicerVoltageMsgBuffer.voltage = this->servicerPotential;
     this->servicerPotentialOutMsg.write(&servicerVoltageMsgBuffer, this->moduleID, clockTime);
+
+    // Write out the target output message
+    VoltMsgPayload targetVoltageMsgBuffer;
+    targetVoltageMsgBuffer = this->targetPotentialOutMsg.zeroMsgPayload;
+    targetVoltageMsgBuffer.voltage = this->targetPotential;
+    this->targetPotentialOutMsg.write(&targetVoltageMsgBuffer, this->moduleID, clockTime);
 }
 
 /*! Method for charging equations of motion */
 void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeStep) {
     this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
+    this->targetPotential = this->targetPotentialState->getState()(0, 0);
 
-    // Set the beam current to zero if the sc potential is greater or equal to the beam energy
-    double beam_current = this->I_eBeam;
-    if (this->servicerPotential >= this->E_eBeam) {
-        beam_current = 0.0;
+    // Solve for the beam current on the target and servicer
+    double beam_current_servicer{};
+    double beam_current_target{};
+    if (this->E_eBeam > (this->servicerPotential - this->targetPotential)) {
+        double intermediateTerm = -1 * (this->E_eBeam - this->servicerPotential + this->targetPotential) / 20.0;
+        beam_current_servicer = this->I_eBeam * (1 - exp(intermediateTerm));
+        beam_current_target = - this->I_eBeam * (1 - exp(intermediateTerm));
     }
 
+    // Set the servicer potential derivative
     Eigen::MatrixXd servicerPotentialRate(1, 1);
-    servicerPotentialRate(0, 0) = beam_current / this->servicerCapacitance;
+    servicerPotentialRate(0, 0) = beam_current_servicer / this->servicerCapacitance;
     this->servicerPotentialState->setDerivative(servicerPotentialRate);
+
+    // Set the target potential derivative
+    Eigen::MatrixXd targetPotentialRate(1, 1);
+    targetPotentialRate(0, 0) = beam_current_target / this->targetCapacitance;
+    this->targetPotentialState->setDerivative(targetPotentialRate);
 }
 
 /*! Method for pre-integration steps.
@@ -99,15 +123,15 @@ void SpacecraftCharging::postIntegration(uint64_t integrateToThisTimeNanos) {
     this->timeBeforeNanos = integrateToThisTimeNanos;
     this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
 
-    this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
-    if (this->servicerPotential >= this->E_eBeam) {
-        this->servicerPotential = this->E_eBeam;
-        std::cout << "adjusting sc potential" << std::endl;
-    }
-
-    Eigen::MatrixXd servicerPotentialMatrix(1, 1);
-    servicerPotentialMatrix(0, 0) = this->servicerPotential;
-    this->servicerPotentialState->setState(servicerPotentialMatrix);
+//    this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
+//    this->targetPotential = this->targetPotentialState->getState()(0, 0);
+//    if (this->servicerPotential >= this->E_eBeam) {
+//        this->servicerPotential = this->E_eBeam;
+//    }
+//
+//    Eigen::MatrixXd servicerPotentialMatrix(1, 1);
+//    servicerPotentialMatrix(0, 0) = this->servicerPotential;
+//    this->servicerPotentialState->setState(servicerPotentialMatrix);
 }
 
 /*! Setter for the electron beam current.
@@ -133,6 +157,14 @@ void SpacecraftCharging::setServicerCapacitance(const double capacitance) {
     this->servicerCapacitance = std::abs(capacitance);
 }
 
+/*! Setter for the target spacecraft capacitance.
+ @param capacitance [farad] Target spacecraft capacitance
+ */
+void SpacecraftCharging::setTargetCapacitance(const double capacitance) {
+    assert(capacitance > 0.0);
+    this->targetCapacitance = std::abs(capacitance);
+}
+
 /*! Getter for the electron beam current.
  @return double
 */
@@ -152,4 +184,11 @@ double SpacecraftCharging::getEBeamEnergy() const {
 */
 double SpacecraftCharging::getServicerCapacitance() const {
     return this->servicerCapacitance;
+}
+
+/*! Getter for the target spacecraft capacitance.
+ @return double
+*/
+double SpacecraftCharging::getTargetCapacitance() const {
+    return this->targetCapacitance;
 }
