@@ -27,6 +27,12 @@
 #include <math.h>
 #include <algorithm>
 #include <string>
+#include "architecture/utilities/avsEigenSupport.h"
+#include <vector>
+#include <cmath>
+using ::bisectionSolve;
+
+
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -54,13 +60,13 @@ void ScCharging::Reset(uint64_t CurrentSimNanos)
     {
         bskLogger.bskLog(BSK_ERROR, "ScCharging.plasmaFluxInMsg was not linked.");
     }
-    
+
     for (long unsigned int c=0; c < this->scStateInMsgs.size(); c++ ){
         if (!this->scStateInMsgs.at(c).isLinked()) {
             bskLogger.bskLog(BSK_ERROR, "ScCharging.scStateInMsgs[%d] was not linked.", c);
         }
     }
-    
+
     // check for other requirements for this module
     this->numSat = (uint32_t) this->scStateInMsgs.size();
     if (this->numSat < 1) {
@@ -76,14 +82,13 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
 {
     // read the input messages
     this->readMessages();
-    
+
     // define area and interval
     double a = 12.566370614359172;
-    double interval [2] = {-1e8, 1e8};
-    
+
     /* Create and populate all instances of chargedSpaceCraft objects */
-    chargedSpaceCraft spaceCrafts[this->numSat];
-    
+    std::vector<chargedSpaceCraft> spaceCrafts(this->numSat);
+
     // define spacecraft member values (user inputs)
     std::string names[] = {"target", "servicer"}; //!< all craft names
     std::string electronGunCrafts[] = {"servicer"};   //!< names off all e- gun equipped craft
@@ -94,37 +99,37 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     int priorities[] = {1, 2};
     double Avec[] = {a, a*10};
     double A_sunlitVec[] = {a/2, a};
-    
+
     // populate object members
     for (int w = 0; w < this->numSat; w++) {
         // assign each object an ID
         spaceCrafts[w].setID("ID", w);
-        
+
         // give object members values as defined by user
         spaceCrafts[w].name = names[w];
         spaceCrafts[w].priority = priorities[w];
         spaceCrafts[w].A = Avec[w];
         spaceCrafts[w].A_sunlit = A_sunlitVec[w];
-        
-        // fill out electron gun values for objects that emit EB
-        for (int p = 0; p < (sizeof(electronGunCrafts) / sizeof(electronGunCrafts[0])); p++) {
-            // populates EB values if has electron gun, otherwise sets all values to NAN
+
+        // defaults (no gun)
+        spaceCrafts[w].emitsEB               = false;
+        spaceCrafts[w].electronGun.alphaEB   = NAN;
+        spaceCrafts[w].electronGun.currentEB = NAN;
+        spaceCrafts[w].electronGun.energyEB  = NAN;
+
+        // fill EB values if this craft is an EB craft
+        for (int p = 0; p < int(sizeof(electronGunCrafts)/sizeof(electronGunCrafts[0])); ++p) {
             if (names[w] == electronGunCrafts[p]) {
-                spaceCrafts[w].setID("electronGunID", spaceCrafts[w].getID("ID"));
-                spaceCrafts[w].emitsEB = true;
-                spaceCrafts[w].electronGun.alphaEB = electronGunParameters[w][0];
-                spaceCrafts[w].electronGun.currentEB = electronGunParameters[w][1];
-                spaceCrafts[w].electronGun.energyEB = electronGunParameters[w][2];
-            } else {
-                spaceCrafts[w].emitsEB = false;
-                spaceCrafts[w].electronGun.alphaEB = NAN;
-                spaceCrafts[w].electronGun.currentEB = NAN;
-                spaceCrafts[w].electronGun.energyEB = NAN;
+                spaceCrafts[w].emitsEB               = true;
+                spaceCrafts[w].electronGun.alphaEB   = electronGunParameters[p][0];
+                spaceCrafts[w].electronGun.currentEB = electronGunParameters[p][1];
+                spaceCrafts[w].electronGun.energyEB  = electronGunParameters[p][2];
+                break;
             }
         }
-    };
+        }
 
-    int orderByPriority[this->numSat];      //!< unsorted array of spacecraft ID's
+    std::vector<int> orderByPriority(this->numSat);      //!< unsorted array of spacecraft ID's
     for (int n = 0; n < this->numSat; n++) {
         orderByPriority[n] = spaceCrafts[n].getID("ID");
     }
@@ -149,13 +154,13 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
         bskLogger.bskLog(BSK_ERROR, "ScCharging.Reset: More craft equipped with electron gun than total craft");
     }
     // notifies user that input priority settings are incorrect
-    for (int z = 0; z < this->numSat; z++) {
+    for (int z = 0; z + 1 < this->numSat; z++) {
         if ((spaceCrafts[z].priority > spaceCrafts[z + 1].priority) && (!spaceCrafts[z].emitsEB) && (spaceCrafts[z + 1].priority)) {
             bskLogger.bskLog(BSK_ERROR, "ScCharging.Reset: One or more target crafts designated higher priority than servicer craft");
         }
     }
-    
-    double equilibriums[this->numSat];  //!< equilibriums for each craft [eV]
+
+    std::vector<double> equilibriums(this->numSat);  //!< equilibriums for each craft [eV]
     VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
 
     // loop over all satellites
@@ -163,29 +168,102 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
         // store voltage of each spacecraft
         voltMsgBuffer.voltage = -1000;
         this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
-        
+
         // index of craft based on priority
         int ID = orderByPriority[c];
-        
+
         // values required for sumCurrents
         double A = spaceCrafts[ID].A;
         double A_sunlit = spaceCrafts[ID].A_sunlit;
-        
+
         // function that sums all calculated currents to be fed to bisectionSolve
         std::function<double(double)> sumCurrents = [&](double phi)-> double
         {
             if (spaceCrafts[ID].emitsEB) {
             return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit);
             } else if (!spaceCrafts[ID].emitsEB) {
-                return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit) + SEEelectronBeamCurrent(equilibriums[0], 0, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB) + electronBeamBackscattering(equilibriums[0], 0, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB);
+                return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit) + SEEelectronBeamCurrent(equilibriums[0], phi, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB) + electronBeamBackscattering(equilibriums[0], phi, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB);
             } else {
                 bskLogger.bskLog(BSK_ERROR, "ScCharging.UpdateState: EB emission boolean not specified");
                 return NAN;
             }
         };
-        // find equilibrium
-        equilibriums[c] = bisectionSolve(interval, 1e-8, sumCurrents);
+
+        // small, physics-sensible grid (negative to positive potentials)
+        static const double grid[] = {
+            -1e4, -3e3, -1e3, -3e2, -1e2, -30, -10, -3, 0, 3, 10, 30, 100, 300, 1e3, 3e3, 1e4
+        };
+
+        bool got = false;
+        double left = grid[0], right = grid[1];
+        double fl = sumCurrents(left), fr = sumCurrents(right);
+        for (double v : {-1000, -100, -10, 0, 10, 100}) {
+            std::cout << spaceCrafts[ID].name << " I(" << v << ") = " << sumCurrents(v) << "\n";
+        }
+
+
+        // scan for a sign change
+        for (size_t i = 0; i + 1 < sizeof(grid)/sizeof(grid[0]); ++i) {
+            left  = grid[i];    fl = sumCurrents(left);
+            right = grid[i+1];  fr = sumCurrents(right);
+            // handle exact zeros immediately
+            if (std::isfinite(fl) && fl == 0.0) {
+                equilibriums[c] = left;
+                std::cout << spaceCrafts[ID].name << " equilibrium (exact bound): " << equilibriums[c] << std::endl;
+                goto wrote_eq;
+            }
+            if (std::isfinite(fr) && fr == 0.0) {
+                equilibriums[c] = right;
+                std::cout << spaceCrafts[ID].name << " equilibrium (exact bound): " << equilibriums[c] << std::endl;
+                goto wrote_eq;
+            }
+            // strictly opposite signs only
+            if (std::isfinite(fl) && std::isfinite(fr) && (fl * fr < 0.0)) { got = true; break; }
+        }
+
+        // fallback: expand symmetrically if needed
+        if (!got) {
+            left = -1.0; right = 1.0; fl = sumCurrents(left); fr = sumCurrents(right);
+            // quick zero checks
+            if (std::isfinite(fl) && fl == 0.0) { equilibriums[c] = left;  goto wrote_eq; }
+            if (std::isfinite(fr) && fr == 0.0) { equilibriums[c] = right; goto wrote_eq; }
+
+            for (int k = 0; k < 22 && (!std::isfinite(fl) || !std::isfinite(fr) || fl*fr >= 0.0); ++k) {
+                left *= 2.0;  right *= 2.0;
+                fl = sumCurrents(left); fr = sumCurrents(right);
+                if (std::isfinite(fl) && fl == 0.0) { equilibriums[c] = left;  goto wrote_eq; }
+                if (std::isfinite(fr) && fr == 0.0) { equilibriums[c] = right; goto wrote_eq; }
+                if (std::isfinite(fl) && std::isfinite(fr) && (fl*fr < 0.0)) { got = true; break; }
+            }
+        }
+
+        if (got) {
+            // re-evaluate at chosen endpoints
+            double fa = sumCurrents(left), fb = sumCurrents(right);
+
+            // accept exact zeros immediately
+            if (std::isfinite(fa) && fa == 0.0) { equilibriums[c] = left;  goto wrote_eq; }
+            if (std::isfinite(fb) && fb == 0.0) { equilibriums[c] = right; goto wrote_eq; }
+
+            // strictly opposite signs only
+            if (!std::isfinite(fa) || !std::isfinite(fb) || fa * fb >= 0.0) {
+                bskLogger.bskLog(BSK_WARNING, "scCharging: invalid bracket at call; using midpoint");
+                equilibriums[c] = 0.5 * (left + right);
+                goto wrote_eq;
+            }
+
+            double interval[2] = {left, right};
+            double Veq = bisectionSolve(interval, 1e-6, sumCurrents);
+            equilibriums[c] = Veq;
+        } else {
+            bskLogger.bskLog(BSK_WARNING, "scCharging: could not bracket root; returning midpoint");
+            equilibriums[c] = 0.5*(left + right);
+        }
+
+
+        wrote_eq:
         std::cout << spaceCrafts[ID].name << " equilibrium: " << equilibriums[c] << std::endl;
+
     }
 }
 
@@ -197,14 +275,14 @@ void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
 {
     /* add the message reader to the vector of input spacecraft state messages */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
-    
+
     Eigen::Vector3d zero;
     zero << 0.0, 0.0, 0.0;
     this->r_BN_NList.push_back(zero);
     Eigen::MRPd zeroMRP;
     zeroMRP = zero;
     this->sigma_BNList.push_back(zeroMRP);
-    
+
     /* create output message objects */
     Message<VoltMsgPayload> *msgVolt;
     msgVolt = new Message<VoltMsgPayload>;
@@ -219,12 +297,12 @@ void ScCharging::readMessages()
     PlasmaFluxMsgPayload PlasmaFluxInMsgBuffer; //!< local copy of plasma flux input message buffer
     SCStatesMsgPayload scStateInMsgsBuffer;     //!< local copy of spacecraft state input message buffer
     long unsigned int c;                        //!< spacecraft loop counter
-        
+
     PlasmaFluxInMsgBuffer = this->plasmaFluxInMsg();
     this->energies = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.energies,MAX_PLASMA_FLUX_SIZE,1);
     this->electronFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanElectronFlux,MAX_PLASMA_FLUX_SIZE,1);
     this->ionFlux = cArray2EigenMatrixXd(PlasmaFluxInMsgBuffer.meanIonFlux,MAX_PLASMA_FLUX_SIZE,1);
-    
+
     for (c = 0; c < this->numSat; c++) {
         scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
         this->r_BN_NList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
@@ -240,10 +318,10 @@ void ScCharging::readMessages()
 double ScCharging::electronCurrent(double phi, double A)
 {
     double constant = -Q0 * A; // constant multiplier for integral
-    
+
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return (E/(E - phi)) * getFlux(E - phi, "electron");};
-    
+
     // integral bounds
     double lowerBound;
     double upperBound;
@@ -254,10 +332,10 @@ double ScCharging::electronCurrent(double phi, double A)
         lowerBound = 0.1 + abs(phi);
         upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
-    
+
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
-    
+
     double Ie = constant * integral;
     return Ie;
 }
@@ -273,7 +351,7 @@ double ScCharging::ionCurrent(double phi, double A)
 
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return (E/(E + phi)) * getFlux(E + phi, "ion");};
-    
+
     // integral bounds
     double lowerBound;
     double upperBound;
@@ -284,10 +362,10 @@ double ScCharging::ionCurrent(double phi, double A)
         lowerBound = 0.1 + abs(phi);
         upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
-    
+
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
-    
+
     double Ii = constant * integral;
     return Ii;
 }
@@ -300,10 +378,10 @@ double ScCharging::ionCurrent(double phi, double A)
 double ScCharging::SEEelectronCurrent(double phi, double A)
 {
     double constant = Q0 * A; // constant multiplier for integral
-    
+
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return getYield(E, "electron") * (E/(E - phi)) * getFlux(E - phi, "electron");};
-    
+
     // integral bounds
     double lowerBound;
     double upperBound;
@@ -314,13 +392,13 @@ double ScCharging::SEEelectronCurrent(double phi, double A)
         lowerBound = 0.1 + abs(phi);
         upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
-    
+
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
-    
+
     // current before debris charge taken into account
     double ISEEe = constant * integral;
-    
+
     // check how debris potential affects ISEEe
     if (phi <= 0.){
         return ISEEe;
@@ -343,7 +421,7 @@ double ScCharging::SEEionCurrent(double phi, double A)
 
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return getYield(E, "ion") * (E/(E + phi)) * getFlux(E + phi, "ion");};
-    
+
     // integral bounds
     double lowerBound;
     double upperBound;
@@ -354,13 +432,13 @@ double ScCharging::SEEionCurrent(double phi, double A)
         lowerBound = 0.1 + abs(phi);
         upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
-    
+
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
-    
+
     // current before debris charge taken into account
     double ISEEi = constant * integral;
-    
+
     // check how debris potential affects ISEEi
     if (phi <= 0.){
         return ISEEi;
@@ -380,10 +458,10 @@ double ScCharging::SEEionCurrent(double phi, double A)
 double ScCharging::backscatteringCurrent(double phi, double A)
 {
     double constant = Q0 * A; // constant multiplier for integral
-    
+
     // term to be integrated by trapz
     std::function<double(double)> integrand = [&](double E){return getYield(E, "backscattered") * (E/(E - phi)) * getFlux(E - phi, "electron");};
-    
+
     // integral bounds
     double lowerBound;
     double upperBound;
@@ -394,10 +472,10 @@ double ScCharging::backscatteringCurrent(double phi, double A)
         lowerBound = 0.1 + abs(phi);
         upperBound = energies[MAX_PLASMA_FLUX_SIZE - 1] + abs(phi);
     }
-    
+
     // integral calculated with trapz
     double integral = trapz(integrand, lowerBound, upperBound, TRAPZN);
-    
+
     // current before debris charge taken into account
     double Ibs = constant * integral;
 
@@ -501,14 +579,14 @@ double ScCharging::interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, do
         // increase index by one as idx0 = idx1 - 1.
         idx1 = 1;
     }
-    
+
     // y vector indices and their corresponding y values
     int indX0 = idx1 - 1, indX1 = idx1;
     double y0 = yVector[indX0], y1 = yVector[indX1];
-    
+
     // linear interpolation formula
     double y = y0 + ((y1-y0)/(xVector[indX1] - xVector[indX0])) * (x - xVector[indX0]);
-    
+
     return y;
 }
 
@@ -519,18 +597,21 @@ double ScCharging::interp(Eigen::VectorXd& xVector, Eigen::VectorXd& yVector, do
  @param b upper limit of integration
  @param N number of trapezoids to use
  */
-double ScCharging::trapz(std::function< double(double) >& f, double a, double b, int N)
+double ScCharging::trapz(std::function<double(double)>& f, double a, double b, int N)
 {
-    double h = (b-a)/N;    // trapezoid width
-    double sum = 0;
-    
-    for (int i=1; i < N; i++){
-        sum += f(i*h);
+    if (!std::isfinite(a) || !std::isfinite(b) || N <= 0 || b == a) {
+        return 0.0;
     }
+    const double h = (b - a) / static_cast<double>(N);
+    double sum = 0.0;
 
-    double integral = h * (sum + (f(a)+f(b))/2.0);
-    return integral;
+    for (int i = 1; i < N; ++i) {
+        sum += f(a + i * h);          // <-- shift by 'a'
+    }
+    // trapezoid rule: h * [ 0.5*f(a) + sum + 0.5*f(b) ]
+    return h * (0.5 * f(a) + sum + 0.5 * f(b));
 }
+
 
 /*!  This function returns the flux type for a given energy and impacting particle type
  @return double
