@@ -16,6 +16,7 @@
 #include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include <vector>
+#include <string>
 #include <Eigen/Dense>
 
 /*! @brief This class holds values for a charged spacecraft
@@ -33,7 +34,7 @@ private:
 public:
     std::string name;                       //! < spacecraft name
     int priority;                           //! < value assigning order in which spacecraft equilibrium potential is calculated
-    
+
     std::string electronGunScName;          //! name of the spacecraft that emits an electron beam
     bool emitsEB;                           //! boolean that tells whether or not the craft emits an electron beam
     struct {
@@ -41,7 +42,7 @@ public:
         double currentEB;
         double energyEB;
     } electronGun;
-    
+
     double A;                               //! < surface area of spacecraft
     double A_sunlit;                        //! < surface area of spacecraft used in photoelectric current
 

@@ -34,6 +34,6 @@ int chargedSpaceCraft::getID(std::string IDtype)
         return electronGunScID;
     } else {
 //        bskLogger.bskLog(BSK_ERROR, "chargedSpaceCraft.getID: Invalid IDtype. Must specify 'ID' or 'electronGunID'");
-        return NAN;
-    }
+    return -1;
+}
 }
