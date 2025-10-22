@@ -152,14 +152,14 @@ void ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k){
 
 */
 void ConstraintDynamicEffector::readInputMessage(){
-     if(this->effectorStatusInMsg.isLinked()){
+    if(this->effectorStatusInMsg.isLinked()){
         DeviceStatusMsgPayload statusMsg;
         statusMsg = this->effectorStatusInMsg();
         this->effectorStatus = statusMsg.deviceStatus;
-     }
-     else{
+    }
+    else{
         this->effectorStatus = 1;
-     }
+    }
 }
 
 /*! This method allows the constraint effector to have access to the parent states
@@ -295,7 +295,6 @@ void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
  */
 void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
 {
-
     double F_t[3];
     eigenVector3d2CArray(this->Fc_N,F_t);
     this->F_mag_t = std::sqrt(pow(F_t[0],2)+pow(F_t[1],2)+pow(F_t[2],2));
@@ -314,22 +313,22 @@ void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
  */
 void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock)
 {
-        double T_t1[3];
-        eigenVector3d2CArray(this->T_B1,T_t1);
-        this->T1_mag_t = std::sqrt(pow(T_t1[0],2)+pow(T_t1[1],2)+pow(T_t1[2],2));
-        this->T1_filtered_mag_t = this->a*this->T1_filtered_mag_tminus1 +
-        this->b*this->T1_filtered_mag_tminus2+this->c*this->T1_mag_t+
-        this->d*this->T1_mag_tminus1+this->e*this->T1_mag_tminus2;
-        this->T1_filtered_mag_tminus2 = this->T1_filtered_mag_tminus1;
-        this->T1_filtered_mag_tminus1 = this->T1_filtered_mag_t;
-        this->T1_mag_tminus2 = this->T1_mag_tminus1;
-        this->T1_mag_tminus1 = this->T1_mag_t;
-        double T_t2[3];
-        eigenVector3d2CArray(this->T_B2,T_t2);
-        this->T2_mag_t = std::sqrt(pow(T_t2[0],2)+pow(T_t2[1],2)+pow(T_t2[2],2));
-        this->T2_filtered_mag_t = this->a*this->T2_filtered_mag_tminus1 + this->b*this->T2_filtered_mag_tminus2+this->c*this->T2_mag_t+this->d*this->T2_mag_tminus1+this->e*this->T2_mag_tminus2;
-        this->T2_filtered_mag_tminus2 = this->T2_filtered_mag_tminus1;
-        this->T2_filtered_mag_tminus1 = this->T2_filtered_mag_t;
-        this->T2_mag_tminus2 = this->T2_mag_tminus1;
-        this->T2_mag_tminus1 = this->T2_mag_t;
+    double T_t1[3];
+    eigenVector3d2CArray(this->T_B1,T_t1);
+    this->T1_mag_t = std::sqrt(pow(T_t1[0],2)+pow(T_t1[1],2)+pow(T_t1[2],2));
+    this->T1_filtered_mag_t = this->a*this->T1_filtered_mag_tminus1 +
+    this->b*this->T1_filtered_mag_tminus2+this->c*this->T1_mag_t+
+    this->d*this->T1_mag_tminus1+this->e*this->T1_mag_tminus2;
+    this->T1_filtered_mag_tminus2 = this->T1_filtered_mag_tminus1;
+    this->T1_filtered_mag_tminus1 = this->T1_filtered_mag_t;
+    this->T1_mag_tminus2 = this->T1_mag_tminus1;
+    this->T1_mag_tminus1 = this->T1_mag_t;
+    double T_t2[3];
+    eigenVector3d2CArray(this->T_B2,T_t2);
+    this->T2_mag_t = std::sqrt(pow(T_t2[0],2)+pow(T_t2[1],2)+pow(T_t2[2],2));
+    this->T2_filtered_mag_t = this->a*this->T2_filtered_mag_tminus1 + this->b*this->T2_filtered_mag_tminus2+this->c*this->T2_mag_t+this->d*this->T2_mag_tminus1+this->e*this->T2_mag_tminus2;
+    this->T2_filtered_mag_tminus2 = this->T2_filtered_mag_tminus1;
+    this->T2_filtered_mag_tminus1 = this->T2_filtered_mag_t;
+    this->T2_mag_tminus2 = this->T2_mag_tminus1;
+    this->T2_mag_tminus1 = this->T2_mag_t;
 }
