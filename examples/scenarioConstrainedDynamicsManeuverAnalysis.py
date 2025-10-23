@@ -376,11 +376,21 @@ def log_data(scSim):
 
 
 def set_up_vizard(scSim):
-    return vizSupport.enableUnityVisualization(scSim, scSim.simTaskName,
-                                               [scSim.scObject1, scSim.scObject2],
-                                               # saveFile=__file__
-                                               )
-
+    viz = vizSupport.enableUnityVisualization(scSim, scSim.simTaskName,
+                                              [scSim.scObject1, scSim.scObject2],
+                                            #   saveFile=__file__
+                                              )
+    vizSupport.createCustomModel(viz,
+                                 simBodiesToModify=[scSim.scObject1.ModelTag],
+                                 modelPath='bskSat',
+                                 rotation=(np.pi/2,0,0))
+    vizSupport.createCustomModel(viz,
+                                 simBodiesToModify=[scSim.scObject2.ModelTag],
+                                 modelPath='bskSat',
+                                 rotation=(-np.pi/2,np.pi,0),
+                                 offset=(0.6, -0.5, 0.3))
+    viz.settings.orbitLinesOn = -1
+    viz.settings.showSpacecraftLabels = 1
 
 def run_simulation(scSim, maneuver_config):
     t = time.time()
