@@ -88,10 +88,10 @@ private:
     Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};       //!< Hub/Inertial attitude represented by MRP
 
     // Hinged rigid body properties
-    Eigen::Vector3d r_SN_N;          //!< [m] position vector of hinge CM S relative to inertial frame
-    Eigen::Vector3d v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame
-    Eigen::Vector3d sigma_SN;        //!< -- MRP attitude of panel frame S relative to inertial frame
-    Eigen::Vector3d omega_SN_S;      //!< [rad/s] inertial panel frame angular velocity vector
+    Eigen::MatrixXd* r_SN_N;          //!< [m] position vector of hinge CM S relative to inertial frame N
+    Eigen::MatrixXd* v_SN_N;          //!< [m/s] inertial velocity vector of S relative to inertial frame N
+    Eigen::MatrixXd* sigma_SN;        //!< -- MRP attitude of panel frame S relative to inertial frame
+    Eigen::MatrixXd* omega_SN_S;      //!< [rad/s] inertial panel frame angular velocity vector
 
     // Hub properties
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
