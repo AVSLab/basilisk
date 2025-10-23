@@ -81,10 +81,10 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->hingedRigidBodyConfigLogOutMsg.zeroMsgPayload;
         // Note, logging the hinge frame S is the body frame B of that object
-        eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+        eigenMatrixXd2CArray(*this->r_SN_N, configLogMsg.r_BN_N);
+        eigenMatrixXd2CArray(*this->v_SN_N, configLogMsg.v_BN_N);
+        eigenMatrixXd2CArray(*this->sigma_SN, configLogMsg.sigma_BN);
+        eigenMatrixXd2CArray(*this->omega_SN_S, configLogMsg.omega_BN_B);
         this->hingedRigidBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
@@ -373,19 +373,19 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();
-    this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    *this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
 
 
     // inertial angular velocity
     Eigen::Vector3d omega_BN_B;
     omega_BN_B = this->omega_BN_B;
-    this->omega_SN_S = this->dcm_SP * ( omega_BN_B + this->thetaDot*this->sHat2_P);
+    *this->omega_SN_S = this->dcm_SP * ( omega_BN_B + this->thetaDot*this->sHat2_P);
 
     // inertial position vector
-    this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)(*this->inertialPositionProperty);
+    *this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)(*this->inertialPositionProperty);
 
     // inertial velocity vector
-    this->v_SN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
+    *this->v_SN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
                   + this->d * this->thetaDot * this->sHat3_P - this->d * (omega_BN_B.cross(this->sHat1_P))
                   + omega_BN_B.cross(this->r_HP_P);
 
