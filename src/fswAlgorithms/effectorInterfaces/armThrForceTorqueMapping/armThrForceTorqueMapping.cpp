@@ -35,18 +35,18 @@ inline Eigen::Matrix3d M1(double q) {
 inline Eigen::Matrix3d M2(double q) {
     const double c = std::cos(q), s = std::sin(q);
     Eigen::Matrix3d R;
-    R <<  c, s,  0,
-          -s, c,  0,
-          0, 0,  1;
+    R <<  c, 0,  -s,
+          0, 1,  0,
+          s, 0,  c;
     return R;
 }
 
 inline Eigen::Matrix3d M3(double q) {
     const double c = std::cos(q), s = std::sin(q);
     Eigen::Matrix3d R;
-    R <<  c, 0,  -s,
-          0, 1,  0,
-          s, 0,  c;
+    R <<  c, s,  0,
+          -s, c,  0,
+          0, 0,  1;
     return R;
 }
 
@@ -113,16 +113,16 @@ void ArmThrForceTorqueMapping::UpdateState(uint64_t CurrentSimNanos)
     Eigen::Vector3d s7_B;         //< [-] seventh joint spin axis in body frame
     Eigen::Vector3d s8_B;         //< [-] eighth joint spin axis in body frame
     Eigen::VectorXd jointTorques(8);   //< [Nm] joint torques
-    Eigen::Matrix3d dcm_J1B;      //< [-] DCM from joint 1 frame to body frame
-    Eigen::Matrix3d dcm_J2B;      //< [-] DCM from joint 2 frame to body frame
-    Eigen::Matrix3d dcm_J3B;      //< [-] DCM from joint 3 frame to body frame
-    Eigen::Matrix3d dcm_J4B;      //< [-] DCM from joint 4 frame to body frame
-    Eigen::Matrix3d dcm_J5B;      //< [-] DCM from joint 5 frame to body frame
-    Eigen::Matrix3d dcm_J6B;      //< [-] DCM from joint 6 frame to body frame
-    Eigen::Matrix3d dcm_J7B;      //< [-] DCM from joint 7 frame to body frame
-    Eigen::Matrix3d dcm_J8B;      //< [-] DCM from joint 8 frame to body frame
-    Eigen::Matrix3d dcm_T1B;      //< [-] DCM from thruster 1 frame to body frame
-    Eigen::Matrix3d dcm_T2B;      //< [-] DCM from thruster 2 frame to body frame
+    Eigen::Matrix3d dcm_J1B;      //< [-] DCM from body frame to joint 1 frame
+    Eigen::Matrix3d dcm_J2B;      //< [-] DCM from body frame to joint 2 frame
+    Eigen::Matrix3d dcm_J3B;      //< [-] DCM from body frame to joint 3 frame
+    Eigen::Matrix3d dcm_J4B;      //< [-] DCM from body frame to joint 4 frame
+    Eigen::Matrix3d dcm_J5B;      //< [-] DCM from body frame to joint 5 frame
+    Eigen::Matrix3d dcm_J6B;      //< [-] DCM from body frame to joint 6 frame
+    Eigen::Matrix3d dcm_J7B;      //< [-] DCM from body frame to joint 7 frame
+    Eigen::Matrix3d dcm_J8B;      //< [-] DCM from body frame to joint 8 frame
+    Eigen::Matrix3d dcm_T1B;      //< [-] DCM from body frame to thruster 1 frame
+    Eigen::Matrix3d dcm_T2B;      //< [-] DCM from body frame to thruster 2 frame
     Eigen::Matrix<double,3,2> thr_F_B;       //< [N] thruster force vectors in body frame
     Eigen::Matrix<double,3,2> thr_Hub_T_B;       //< [Nm] thruster hub torques in body frame
     Eigen::Matrix<double,3,10> r_SB_B;       //< [m] position vectors of each site relative to hub CoM in body frame
@@ -188,11 +188,11 @@ void ArmThrForceTorqueMapping::UpdateState(uint64_t CurrentSimNanos)
     // calculate all the spin axes in body frame
     s1_B = dcm_J1B.transpose() * Eigen::Vector3d(1,0,0);
     s2_B = dcm_J2B.transpose() * Eigen::Vector3d(0,1,0);
-    s3_B = dcm_J3B.transpose() * Eigen::Vector3d(1,0,0);
+    s3_B = dcm_J3B.transpose() * Eigen::Vector3d(0,0,1);
     s4_B = dcm_J4B.transpose() * Eigen::Vector3d(0,1,0);
     s5_B = dcm_J5B.transpose() * Eigen::Vector3d(1,0,0);
     s6_B = dcm_J6B.transpose() * Eigen::Vector3d(0,1,0);
-    s7_B = dcm_J7B.transpose() * Eigen::Vector3d(1,0,0);
+    s7_B = dcm_J7B.transpose() * Eigen::Vector3d(0,0,1);
     s8_B = dcm_J8B.transpose() * Eigen::Vector3d(0,1,0);
 
     // calculate all the thruster force vectors in body frame
@@ -221,6 +221,14 @@ void ArmThrForceTorqueMapping::UpdateState(uint64_t CurrentSimNanos)
     for (int i=0; i<8; i++) {
         jointTorqueOut.motorTorque[i] = jointTorques(i);
     }
+
+
+    // std::cout<< "Body Force: " << bodyForceOut.forceRequestBody[0] << " "
+    //          << bodyForceOut.forceRequestBody[1] << " "
+    //          << bodyForceOut.forceRequestBody[2] << std::endl;
+    // std::cout<< "Body Torque: " << bodyTorqueOut.torqueRequestBody[0] << " "
+    //          << bodyTorqueOut.torqueRequestBody[1] << " "
+    //          << bodyTorqueOut.torqueRequestBody[2] << std::endl;
 
     // write to the output messages
     this->bodyForceOutMsg.write(&bodyForceOut, this->moduleID, CurrentSimNanos);
