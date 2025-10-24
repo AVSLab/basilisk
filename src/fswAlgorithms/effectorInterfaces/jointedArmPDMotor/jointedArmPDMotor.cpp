@@ -23,23 +23,23 @@
 #include <cstring>
 #include <algorithm>
 
-namespace {
-inline double wrapToPi(double a) {
-    // returns angle in (-pi, pi]
-    return std::atan2(std::sin(a), std::cos(a));
-}
-template<typename DerivedA, typename DerivedB>
-inline void shortestAngleError(const Eigen::MatrixBase<DerivedA>& theta,
-                               const Eigen::MatrixBase<DerivedB>& thetaDes,
-                               Eigen::VectorXd& deltaOut) {
-    const int n = static_cast<int>(theta.size());
-    deltaOut.resize(n);
-    for (int i = 0; i < n; ++i) {
-        const double e = theta(i) - thetaDes(i);
-        deltaOut(i) = wrapToPi(e);
-    }
-}
-}
+// namespace {
+// inline double wrapToPi(double a) {
+//     // returns angle in (-pi, pi]
+//     return std::atan2(std::sin(a), std::cos(a));
+// }
+// template<typename DerivedA, typename DerivedB>
+// inline void shortestAngleError(const Eigen::MatrixBase<DerivedA>& theta,
+//                                const Eigen::MatrixBase<DerivedB>& thetaDes,
+//                                Eigen::VectorXd& deltaOut) {
+//     const int n = static_cast<int>(theta.size());
+//     deltaOut.resize(n);
+//     for (int i = 0; i < n; ++i) {
+//         const double e = theta(i) - thetaDes(i);
+//         deltaOut(i) = wrapToPi(e);
+//     }
+// }
+// }
 
 /*! Initialize C-wrapped output messages */
 void
@@ -123,9 +123,24 @@ void JointedArmPDMotor::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // Find the shortest angle error
-    shortestAngleError(theta, thetaDes, deltaTheta);
-    deltaThetaDot = thetaDot - thetaDotDes;
-    theta_ddot_des = -Ktheta.topLeftCorner(nj, nj) * deltaTheta - Ptheta.topLeftCorner(nj, nj) * deltaThetaDot;
+    // shortestAngleError(theta, thetaDes, deltaTheta);
+    // deltaThetaDot = thetaDot - thetaDotDes;
+    // theta_ddot_des = -Ktheta.topLeftCorner(nj, nj) * deltaTheta - Ptheta.topLeftCorner(nj, nj) * deltaThetaDot;
+
+    auto wrap = [](double a){ return std::atan2(std::sin(a), std::cos(a)); };
+
+    Eigen::VectorXd e(nj);
+    for (int i = 0; i < nj; ++i)
+        e(i) = wrap(theta(i) - thetaDes(i));   // desired - measured, wrapped
+    theta_ddot_des = - Ktheta.topLeftCorner(nj,nj) * e
+                - Ptheta.topLeftCorner(nj,nj) * thetaDot;
+
+    // if (CurrentSimNanos*1e-9 > 99.9 and CurrentSimNanos*1e-9 < 100.05) {
+    //     // std::cout << "desired joint 6 accelerations at time t= " <<CurrentSimNanos*1e-9<< "s:" << theta_ddot_des(5) << std::endl;
+    //     // std::cout << "desired joint 8 accelerations at time t= " <<CurrentSimNanos*1e-9<< "s:" << theta_ddot_des(7) << std::endl;
+    //     std::cout << "desired joint accelerations at time t= " <<CurrentSimNanos*1e-9<< "s:" << theta_ddot_des.transpose() << std::endl;
+    // }
+
 
     // Find joint torques if using a fixed base
     if (nbase == 0){
@@ -183,11 +198,36 @@ void JointedArmPDMotor::UpdateState(uint64_t CurrentSimNanos)
             jointBias(i) = nonActForce.jointForces[i];
         }
 
-        rhs = Mtth*theta_ddot_des + baseTransBias;
+        // Eigen::LDLT<Eigen::Matrix3d> ldlt(Mtt);
+        // Eigen::MatrixXd MttInvMtth = ldlt.solve(Mtth);
+        // Eigen::Vector3d MttInv_Ct = ldlt.solve(-baseTransBias);
+
+        // Eigen::MatrixXd Mbar = Mthth - Mtht * MttInvMtth;
+        // Eigen::VectorXd Cbar = -jointBias - Mtht * MttInv_Ct;
+
+        // u_H = Mbar * theta_ddot_des + Cbar;
+
+        rhs = -Mtth*theta_ddot_des + baseTransBias;
         Eigen::LDLT<Eigen::Matrix3d> ldlt(Mtt);
         temp1 = ldlt.solve(rhs);
 
-        u_H = (Mthth * theta_ddot_des) - (Mtht*temp1) + jointBias;
+        u_H = (Mthth * theta_ddot_des) + (Mtht*temp1) - jointBias;
+
+        // Eigen::VectorXd check1(nj);
+        // Eigen::VectorXd check2(nj);
+        // check1 = Mthth*theta_ddot_des;
+        // check2 = Mtht*temp1;
+
+        // if (CurrentSimNanos*1e-9 > 99.9 and CurrentSimNanos*1e-9 < 100.05) {
+        //     // std::cout << "joint 8 Mthth*theta_ddot_des at time t= " <<CurrentSimNanos*1e-9<< "s:" << check1(7) << std::endl;
+        //     // std::cout << "joint 8 Mtht*temp1 at time t= " <<CurrentSimNanos*1e-9<< "s:" << check2(7) << std::endl;
+        //     // std::cout << "joint 8 bias at time t= " <<CurrentSimNanos*1e-9<< "s:" << jointBias(7) << std::endl;
+        //     // for (int k=0; k<nj; ++k) {
+        //     //     double contrib = Mthth(7,k) * theta_ddot_des(k);
+        //     //     std::cout << "k="<<k<<" : M(8,"<<k+1<<")*ddot(k) = "<< contrib << "\n";
+        //     // }
+        //     std::cout << "joint 8 torque at time t= " <<CurrentSimNanos*1e-9<< "s:" << u_H(7) << std::endl;
+        // }
     }
 
     for (int i = 0; i < nj; i++) {
@@ -198,6 +238,12 @@ void JointedArmPDMotor::UpdateState(uint64_t CurrentSimNanos)
         }
         TorqueOut.motorTorque[i] = u_H(i);
     }
+
+    // if (CurrentSimNanos*1e-9 > 99.9 and CurrentSimNanos*1e-9 < 100.05) {
+    //     // std::cout << "joint 6 torque at time t= " <<CurrentSimNanos*1e-9<< "s:" << u_H(5) << std::endl;
+    //     // std::cout << "joint 8 torque at time t= " <<CurrentSimNanos*1e-9<< "s:" << u_H(7) << std::endl;
+    //     std::cout << "joint torques at time t= " <<CurrentSimNanos*1e-9<< "s:" << u_H.transpose() << std::endl;
+    // }
 
     // write to the output messages
     this->jointTorqueOutMsg.write(&TorqueOut, this->moduleID, CurrentSimNanos);
