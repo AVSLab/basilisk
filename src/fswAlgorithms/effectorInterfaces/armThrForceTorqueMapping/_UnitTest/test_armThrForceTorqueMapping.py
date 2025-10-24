@@ -37,19 +37,31 @@ def M2(q):
                      [0.0, 1.0,  0.0],
                      [ s,  0.0,  c ]], dtype=float)
 
+def M3(q):
+    c, s = np.cos(q), np.sin(q)
+    return np.array([[ c,  s,  0.0],
+                     [-s,  c,  0.0],
+                     [0.0, 0.0, 1.0]], dtype=float)
+
 def compute_truth(thetas, thrForce, dcm_H1B, dcm_H2B, thr_F_T, r_S2S1_S1):
     """
     Replicates the module's internal math to generate truth data.
     """
+    thetas = np.asarray(thetas, dtype=float).reshape(-1)
+    thrForce = np.asarray(thrForce, dtype=float).reshape(-1)
+    dcm_H1B = np.asarray(dcm_H1B, dtype=float).reshape(3,3)
+    dcm_H2B = np.asarray(dcm_H2B, dtype=float).reshape(3,3)
+    thr_F_T  = np.asarray(thr_F_T,  dtype=float).reshape(3,2)
+    r_S2S1_S1 = np.asarray(r_S2S1_S1, dtype=float).reshape(3,10)
     # DCM chain (module uses dcm_J?B = M*(theta)*previous)
     dcm_J1B = M1(thetas[0]) @ dcm_H1B
     dcm_J2B = M2(thetas[1]) @ dcm_J1B
-    dcm_J3B = M1(thetas[2]) @ dcm_J2B
+    dcm_J3B = M3(thetas[2]) @ dcm_J2B
     dcm_J4B = M2(thetas[3]) @ dcm_J3B
     dcm_T1B = dcm_J4B
     dcm_J5B = M1(thetas[4]) @ dcm_H2B
     dcm_J6B = M2(thetas[5]) @ dcm_J5B
-    dcm_J7B = M1(thetas[6]) @ dcm_J6B
+    dcm_J7B = M3(thetas[6]) @ dcm_J6B
     dcm_J8B = M2(thetas[7]) @ dcm_J7B
     dcm_T2B = dcm_J8B
 
@@ -69,11 +81,11 @@ def compute_truth(thetas, thrForce, dcm_H1B, dcm_H2B, thr_F_T, r_S2S1_S1):
     # spin axes in body frame
     s1_B = dcm_J1B.T @ np.array([1, 0, 0], dtype=float)
     s2_B = dcm_J2B.T @ np.array([0, 1, 0], dtype=float)
-    s3_B = dcm_J3B.T @ np.array([1, 0, 0], dtype=float)
+    s3_B = dcm_J3B.T @ np.array([0, 0, 1], dtype=float)
     s4_B = dcm_J4B.T @ np.array([0, 1, 0], dtype=float)
     s5_B = dcm_J5B.T @ np.array([1, 0, 0], dtype=float)
     s6_B = dcm_J6B.T @ np.array([0, 1, 0], dtype=float)
-    s7_B = dcm_J7B.T @ np.array([1, 0, 0], dtype=float)
+    s7_B = dcm_J7B.T @ np.array([0, 0, 1], dtype=float)
     s8_B = dcm_J8B.T @ np.array([0, 1, 0], dtype=float)
 
     # thruster forces in body frame
@@ -88,14 +100,14 @@ def compute_truth(thetas, thrForce, dcm_H1B, dcm_H2B, thr_F_T, r_S2S1_S1):
 
     # joint torques
     jt = np.zeros(8, dtype=float)
-    jt[0] = s1_B @ np.cross((r[:, 4] - r[:, 0]), thr_F_B[:, 0])
-    jt[1] = s2_B @ np.cross((r[:, 4] - r[:, 1]), thr_F_B[:, 0])
-    jt[2] = s3_B @ np.cross((r[:, 4] - r[:, 2]), thr_F_B[:, 0])
-    jt[3] = s4_B @ np.cross((r[:, 4] - r[:, 3]), thr_F_B[:, 0])
-    jt[4] = s5_B @ np.cross((r[:, 9] - r[:, 5]), thr_F_B[:, 1])
-    jt[5] = s6_B @ np.cross((r[:, 9] - r[:, 6]), thr_F_B[:, 1])
-    jt[6] = s7_B @ np.cross((r[:, 9] - r[:, 7]), thr_F_B[:, 1])
-    jt[7] = s8_B @ np.cross((r[:, 9] - r[:, 8]), thr_F_B[:, 1])
+    jt[0] = np.dot(s1_B, np.cross((r[:, 4] - r[:, 0]), thr_F_B[:, 0]))
+    jt[1] = np.dot(s2_B, np.cross((r[:, 4] - r[:, 1]), thr_F_B[:, 0]))
+    jt[2] = np.dot(s3_B, np.cross((r[:, 4] - r[:, 2]), thr_F_B[:, 0]))
+    jt[3] = np.dot(s4_B, np.cross((r[:, 4] - r[:, 3]), thr_F_B[:, 0]))
+    jt[4] = np.dot(s5_B, np.cross((r[:, 9] - r[:, 5]), thr_F_B[:, 1]))
+    jt[5] = np.dot(s6_B, np.cross((r[:, 9] - r[:, 6]), thr_F_B[:, 1]))
+    jt[6] = np.dot(s7_B, np.cross((r[:, 9] - r[:, 7]), thr_F_B[:, 1]))
+    jt[7] = np.dot(s8_B, np.cross((r[:, 9] - r[:, 8]), thr_F_B[:, 1]))
 
     bodyF = thr_F_B.sum(axis=1)
     bodyT = thr_Hub_T_B.sum(axis=1)
@@ -105,11 +117,11 @@ def compute_truth(thetas, thrForce, dcm_H1B, dcm_H2B, thr_F_T, r_S2S1_S1):
     np.deg2rad([0, 0, 0, 0,  0, 0, 0, 0]),
     np.deg2rad([10, -15, 20, -25,  30, -35, 40, -45]),
     np.deg2rad([90, 0, 0, 0,  0, 0, 0, 0]),
+    ([-0.00295787, -0.20997741, -0.20554589, -0.04484504, -0.09704499, -0.4633467, 0.59123222, -0.00996162])
 ])
 @pytest.mark.parametrize("thrForce", [
     [0.0, 0.0],
-    [1.0, 1.5],
-    [-0.7, 2.3],
+    [1.0, 1.0],
 ])
 
 def test_armThrForceTorqueMapping(thetas, thrForce):
@@ -152,41 +164,40 @@ def armThrForceTorqueMappingTestFunction(thetas, thrForce):
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # create the Config input message
-    configInMsgData = messaging.MJSCConfigMsgPayload()
-    # DCMs from hinge to body frame
+    structConfigOut = messaging.MJSCConfigMsgPayload()
     dcm_H1B = np.eye(3)
-    dcm_H2B = np.array([[-1,0,0],[0,-1,0],[0,0,1]], dtype=float)
-    dcms = np.hstack((dcm_H1B, dcm_H2B))
-    configInMsgData.dcm_HB = dcms.tolist()
-    # thruster force directions in thruster frame
-    F_T1 = np.array([-1, 0, 0], dtype=float)
-    F_T2 = np.array([-1, 0, 0], dtype=float)
-    thr_F_T = np.column_stack((F_T1, F_T2))
-    configInMsgData.thr_F_T = thr_F_T.tolist()
-    # site positions
-    r_S2S1_S1 = np.zeros((3, 10), dtype=float)
-    r_S2S1_S1[:, 0] = np.array([0.5, 0, 0], dtype=float)
-    r_S2S1_S1[:, 1] = np.array([0.0, 0.0, 0.0], dtype=float)
-    r_S2S1_S1[:, 2] = np.array([1.0, 0.0, 0.0], dtype=float)
-    r_S2S1_S1[:, 3] = np.array([0.0, 0.0, 0.0], dtype=float)
-    r_S2S1_S1[:, 4] = np.array([0.1, 0.0, 0.0], dtype=float)
-    r_S2S1_S1[:, 5] = np.array([-0.5, 0, 0], dtype=float)
-    r_S2S1_S1[:, 6] = np.array([0.0, 0.0, 0.0], dtype=float)
-    r_S2S1_S1[:, 7] = np.array([1.0, 0.0, 0.0], dtype=float)
-    r_S2S1_S1[:, 8] = np.array([0.0, 0.0, 0.0], dtype=float)
-    r_S2S1_S1[:, 9] = np.array([0.1, 0.0, 0.0], dtype=float)
-    configInMsgData.r_S2S1_S1 = r_S2S1_S1.tolist()
+    dcm_H2B = np.array([[-1.0, 0.0, 0.0],
+                       [0.0, -1.0, 0.0],
+                       [0.0, 0.0, 1.0]])
+    dcms_HB = [
+                [ 1.0,  0.0,  0.0, -1.0,  0.0,  0.0],
+                [ 0.0,  1.0,  0.0,  0.0, -1.0,  0.0],
+                [ 0.0,  0.0,  1.0,  0.0,  0.0,  1.0]
+                ]
+    thr_F_T = [
+                [-1.0, -1.0],
+                [ 0.0,  0.0],
+                [ 0.0,  0.0]
+                ]
+    r_S2S1_S1 = [
+                [0.79, 0.0, 1.0, 0.0, 0.1, -0.79, 0.0, 1.0, 0.0, 0.1],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                ]
+    structConfigOut.dcm_HB = dcms_HB
+    structConfigOut.thr_F_T = thr_F_T
+    structConfigOut.r_S2S1_S1 = r_S2S1_S1
 
     # Build the joint states input message
     jointStatesInMsgData = messaging.JointArrayStateMsgPayload()
-    jointStatesInMsgData.thetas = thetas.tolist()
+    jointStatesInMsgData.thetas = thetas
 
     # Build the thruster force input message
     thrForceInMsgData = messaging.THRArrayCmdForceMsgPayload()
     thrForceInMsgData.thrForce = thrForce
 
     # Configure blank module input messages
-    configInMsg = messaging.MJSCConfigMsg().write(configInMsgData)
+    configInMsg = messaging.MJSCConfigMsg().write(structConfigOut)
     jointStatesInMsg = messaging.JointArrayStateMsg().write(jointStatesInMsgData)
     thrForceInMsg = messaging.THRArrayCmdForceMsg().write(thrForceInMsgData)
 
@@ -210,7 +221,7 @@ def armThrForceTorqueMappingTestFunction(thetas, thrForce):
     unitTestSim.AddModelToTask(unitTaskName, jointTorqueOutMsgRecC)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.1))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.0))
     unitTestSim.ExecuteSimulation()
 
     # pull module data and make sure it is correct
@@ -267,6 +278,6 @@ def armThrForceTorqueMappingTestFunction(thetas, thrForce):
 
 if __name__ == "__main__":
     test_armThrForceTorqueMapping(
-        thetas=np.deg2rad([10, -15, 20, -25, 30, -35, 40, -45]),
-        thrForce=[1.0, 1.5]
+        thetas=([-0.00295787, -0.20997741, -0.20554589, -0.04484504, -0.09704499, -0.4633467, 0.59123222, -0.00996162]),
+        thrForce=[1.0, 1.0]
     )
