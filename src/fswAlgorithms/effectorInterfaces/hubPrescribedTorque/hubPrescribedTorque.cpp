@@ -147,9 +147,40 @@ void HubPrescribedTorque::UpdateState(uint64_t CurrentSimNanos)
         temp2 = ldltMtt.solve(Mtth);
         temp3 = Mthth - Mtht*temp2;
         theta_ddot = temp3.ldlt().solve(jointBias + u_H - Mtht*temp1);
+        // if (CurrentSimNanos*1e-9 > 99.9 and CurrentSimNanos*1e-9 < 100.05) {
+        //     std::cout << "joint calculated accelerations at time t= " <<CurrentSimNanos*1e-9<< "s:" << theta_ddot.transpose() << std::endl;
+        // }
         r_ddot = temp1 - temp2*theta_ddot;
 
         tau_prescribed = -baseRotBias + Mrt*r_ddot + Mrth*theta_ddot;
+
+        // if (CurrentSimNanos*1e-9 > 99.9 and CurrentSimNanos*1e-9 < 100.02) {
+        //     Eigen::Vector3d check1;
+        //     Eigen::Vector3d check2;
+        //     check1 = Mrt*r_ddot;
+        //     check2 = Mrth*theta_ddot;
+        //     std::cout << "base rotational bias at time t= " <<CurrentSimNanos*1e-9<< "s:" << baseRotBias.transpose() << std::endl;
+        //     std::cout << "Mrt*r_ddot at time t= " <<CurrentSimNanos*1e-9<< "s:" << check1.transpose() << std::endl;
+        //     std::cout << "Mrth*theta_ddot at time t= " <<CurrentSimNanos*1e-9<< "s:" << check2.transpose() << std::endl;
+        //     std::cout << "Mrth matrix at time t= " <<CurrentSimNanos*1e-9<< "s:\n" << Mrth << std::endl;
+        //     std::cout << "theta_ddot at time t= " <<CurrentSimNanos*1e-9<< "s:" << theta_ddot.transpose() << std::endl;
+        //     std::cout << "sum at time t= " <<CurrentSimNanos*1e-9<< "s:" << (check1 + check2).transpose() << std::endl;
+        //     std::cout << "----------------------------------------" << std::endl;
+        // }
+
+        // if (CurrentSimNanos*1e-9 > 139.9 and CurrentSimNanos*1e-9 < 140.02) {
+        //     Eigen::Vector3d check1;
+        //     Eigen::Vector3d check2;
+        //     check1 = Mrt*r_ddot;
+        //     check2 = Mrth*theta_ddot;
+        //     std::cout << "base rotational bias at time t= " <<CurrentSimNanos*1e-9<< "s:" << baseRotBias.transpose() << std::endl;
+        //     std::cout << "Mrt*r_ddot at time t= " <<CurrentSimNanos*1e-9<< "s:" << check1.transpose() << std::endl;
+        //     std::cout << "Mrth*theta_ddot at time t= " <<CurrentSimNanos*1e-9<< "s:" << check2.transpose() << std::endl;
+        //     std::cout << "Mrth matrix at time t= " <<CurrentSimNanos*1e-9<< "s:\n" << Mrth << std::endl;
+        //     std::cout << "theta_ddot at time t= " <<CurrentSimNanos*1e-9<< "s:" << theta_ddot.transpose() << std::endl;
+        //     std::cout << "sum at time t= " <<CurrentSimNanos*1e-9<< "s:" << (check1 + check2).transpose() << std::endl;
+        //     std::cout << "----------------------------------------" << std::endl;
+        // }
 
         cmdTorque.torqueRequestBody[0] = tau_prescribed(0);
         cmdTorque.torqueRequestBody[1] = tau_prescribed(1);
