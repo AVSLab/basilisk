@@ -16,6 +16,11 @@
 #
 
 r"""
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/vil0QEt_zk4?si=nyoDEPPmgdrb1lhJ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 Overview
 --------
 
@@ -144,7 +149,8 @@ def run(show_plots, gain_list, relpos_config, orbit_config, maneuver_config, sc_
         set_up_maneuver(scSim, maneuver_config)
         log_data(scSim)
 
-        set_up_vizard(scSim)
+        if vizSupport.vizFound:
+            set_up_vizard(scSim)
         run_simulation(scSim, maneuver_config)
         process_data(scSim)
 
@@ -376,11 +382,21 @@ def log_data(scSim):
 
 
 def set_up_vizard(scSim):
-    return vizSupport.enableUnityVisualization(scSim, scSim.simTaskName,
-                                               [scSim.scObject1, scSim.scObject2],
-                                               # saveFile=__file__
-                                               )
-
+    viz = vizSupport.enableUnityVisualization(scSim, scSim.simTaskName,
+                                              [scSim.scObject1, scSim.scObject2],
+                                            #   saveFile=__file__
+                                              )
+    vizSupport.createCustomModel(viz,
+                                 simBodiesToModify=[scSim.scObject1.ModelTag],
+                                 modelPath='bskSat',
+                                 rotation=(np.pi/2,0,0))
+    vizSupport.createCustomModel(viz,
+                                 simBodiesToModify=[scSim.scObject2.ModelTag],
+                                 modelPath='bskSat',
+                                 rotation=(-np.pi/2,np.pi,0),
+                                 offset=(0.6, -0.5, 0.3))
+    viz.settings.orbitLinesOn = -1
+    viz.settings.showSpacecraftLabels = 1
 
 def run_simulation(scSim, maneuver_config):
     t = time.time()
