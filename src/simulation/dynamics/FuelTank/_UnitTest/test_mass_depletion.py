@@ -194,5 +194,52 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
                                err_msg="Thruster mass depletion not ramped up")
     np.testing.assert_allclose(fuelMassDot[-1],0, rtol=1e-12, err_msg="Thruster mass depletion not ramped down")
 
+def test_leakyTank():
+    """Module Unit Test"""
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Make Fuel Tank
+    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
+    tankModel.propMassInit = 40.0
+
+    # Add tank
+    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+
+    # Make the tank leaky
+    leakRate = 1e-5  # kg/s
+    unitTestSim.fuelTankStateEffector.fuelLeakRate = leakRate # kg/s
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 1000.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    fuelMass = fuelLog.fuelMass
+    fuelMassDot = fuelLog.fuelMassDot
+
+    assert np.allclose(fuelMassDot, -leakRate, rtol=1e-6)
+    assert np.isclose(fuelMass[-1], 40.0 - stopTime * leakRate, rtol=1e-6)
+
+
 if __name__ == "__main__":
     test_massDepletionTest(True, thrusterDynamicEffector.ThrusterDynamicEffector)
