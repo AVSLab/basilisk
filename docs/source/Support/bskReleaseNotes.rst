@@ -68,6 +68,8 @@ Version |release|
 - ``ConfigureStopTime`` now supports specifying the stop condition as ``<=`` (default, prior behavior) or ``>=`` (new).
   The new option is useful when the user wants to ensure that the simulation runs for at least the specified time,
   instead of at most the specified time.
+- Add the ``fuelLeakRate`` parameter to the :ref:`FuelTank` module to simulate fuel leaks that cause a loss of fuel mass
+  without imparting momentum.
 
 
 Version 2.8.0 (August 30, 2025)
