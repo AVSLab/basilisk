@@ -11,6 +11,11 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
+  if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
+  SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
+  definition macros which are not present when targeting older ``abi3`` compatibility. As such, when building
+  Basilisk with Python 3.13 or above, we automatically default to using the newer cp313 ABI.
 - :ref:`gravityEffector` had a typo where the total gravity potential contribution of the celestial bodies
   was not being computed properly. Fixed now.
 - The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
