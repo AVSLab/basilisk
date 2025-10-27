@@ -47,6 +47,10 @@ public:
     double thetaDotRef;               //!< [rad/s] hinged rigid body reference angle rate
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
+    std::string nameOfInertialPositionProperty;     //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;     //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;     //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;  //!< -- identifier for the inertial angular velocity property
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
@@ -61,6 +65,15 @@ public:
 private:
     static uint64_t effectorID;        //!< [] ID number of this panel
     double u;                        //!< [N-m] optional motor torque
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    };
 
     // Terms needed for back substitution
     Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
@@ -116,6 +129,7 @@ public:
     void registerStates(DynParamManager& statesIn) override;  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states) override;  //!< -- Method for getting access to other states
     void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment = 1) override;  //!< -- Method for adding attached dynamic effector
+    void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the HRB inertial properties
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Method for back-sub contributions
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN) override;  //!< -- Method for HRB to compute its derivatives
     void updateEffectorMassProps(double integTime) override;  //!< -- Method for giving the s/c the HRB mass props and prop rates
