@@ -1,6 +1,5 @@
 import argparse
 import os
-import platform
 import json
 import shutil
 import subprocess
@@ -8,6 +7,8 @@ import sys
 from datetime import datetime
 from typing import Optional, Callable
 from glob import glob
+from pathlib import Path
+from typing import Optional
 
 import importlib.metadata
 from packaging.requirements import Requirement
@@ -64,6 +65,15 @@ def is_running_virtual_env():
     return sys.prefix != sys.base_prefix
 
 required_conan_version = ">=2.0.5"
+
+PY_LIMITED_API_PY38  = "0x03080000"  # cp38-abi3
+PY_LIMITED_API_PY313 = "0x030D0000"  # cp313-abi3
+
+def resolve_py_limited_api(opt_value: Optional[str]) -> str:
+    """Use explicit --pyLimitedAPI if provided, else cp313 on 3.13, else cp38."""
+    if opt_value:
+        return opt_value
+    return PY_LIMITED_API_PY313 if sys.version_info >= (3, 13) else PY_LIMITED_API_PY38
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
@@ -318,8 +328,10 @@ class BasiliskConan(ConanFile):
         # Set the minimum buildable MacOS version.
         # tc.cache_variables["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.13"
         tc.parallel = True
-        if self.options.get_safe("pyLimitedAPI"):
-            tc.cache_variables["PY_LIMITED_API"] = str(self.options.pyLimitedAPI)
+
+        py_limited = resolve_py_limited_api(self.options.get_safe("pyLimitedAPI"))
+        tc.cache_variables["PY_LIMITED_API"] = py_limited
+        print(f"{statusColor}PY_LIMITED_API={py_limited}{endColor}")
 
         # Generate!
         tc.generate()
