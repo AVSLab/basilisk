@@ -26,6 +26,9 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Deploy both release docs at https://avslab.github.io/basilisk and developer beta
+  docs at https://avslab.github.io/basilisk/developer.
+- Added :ref:`releaseGuide` on releasing a new version of Basilisk.
 - Updated merge workflow to deploy develop branch documentation to https://avslab.github.io/basilisk/develop and master
   branch documentation to https://avslab.github.io/basilisk.
 - Migrated supportData handling to a Pooch-based fetch system.
@@ -44,6 +47,7 @@ Version |release|
   and :ref:`thrusterDynamicEffector` attachable to :ref:`spinningBodyOneDOFStateEffector`,
   :ref:`spinningBodyTwoDOFStateEffector`, and :ref:`spinningBodyNDOFStateEffector`.
 - Added support for :ref:`linearTranslationOneDOFStateEffector` to attach dependent effectors.
+- Improved documentation structure by separating build-from-source instructions from ``pip`` installation instructions.
 - Added custom reaction wheel: "NanoAvionics RW0" to ``src/utilities/simIncludeRW.py``
 - Added TLE handling utilities in :ref:`tleHandling` to parse TLE files and convert to orbital elements
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
