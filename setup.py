@@ -78,10 +78,16 @@ class BuildConanExtCommand(Command, SubCommand):
         # See https://docs.python.org/3/c-api/stable.html
         # NOTE: Swig 4.2.1 or higher is required, see https://github.com/swig/swig/pull/2727
         min_version = next(self.distribution.python_requires.filter([f"3.{i}" for i in range(2, 100)])).replace(".", "")
-        bdist_wheel = self.reinitialize_command("bdist_wheel", py_limited_api=f"cp{min_version}")
+        wheel_py_limited = "cp313" if sys.version_info >= (3, 13) else f"cp{min_version}"
+        bdist_wheel = self.reinitialize_command("bdist_wheel", py_limited_api=wheel_py_limited)
         bdist_wheel.ensure_finalized()
+        if sys.version_info >= (3, 13):
+            conan_py_limited = "0x030D0000"
+        else:
+            conan_py_limited = f"0x03{min_version[1]:>02}0000"
+
         for ext in self.conan_extensions:
-            ext.args += ["--pyLimitedAPI", f"0x{min_version[0]:>02}{min_version[1]:>02}00f0"]
+            ext.args += ["--pyLimitedAPI", conan_py_limited]
 
     def get_source_files(self) -> list[str]:
         # NOTE: This is necessary for building sdists, and is populated
