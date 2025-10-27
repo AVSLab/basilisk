@@ -95,6 +95,18 @@ void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
     return;
 }
 
+/*! This method allows the effector to register its properties */
+void StateEffector::registerProperties(DynParamManager& states)
+{
+    return;
+}
+
+/*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */
+void StateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    bskLogger.bskLog(BSK_ERROR, "StateEffector: This effector is not compatable with attached effectors");
+}
+
 /*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */
 void StateEffector::prependSpacecraftNameToStates()
 {

@@ -33,15 +33,22 @@
 #include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
+/*! Struct containing parent classification variables. */
+struct parentID{
+    int idx;  //!< index of effector's parent within parent type (ex. hub #1 or state eff #2)
+    std::string parentType;  //!< type of parent attached to (hub or state effector)
+};
+
 /*! @brief constraint dynamic effector class */
 class ConstraintDynamicEffector: public SysModel, public DynamicEffector {
 public:
     ConstraintDynamicEffector();
     ~ConstraintDynamicEffector();
-    void Reset(uint64_t CurrentSimNanos);
-    void linkInStates(DynParamManager& states);
-    void computeForceTorque(double integTime, double timeStep);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void Reset(uint64_t CurrentSimNanos) override;
+    void linkInStates(DynParamManager& states) override;
+    void linkInProperties(DynParamManager& properties) override;
+    void computeForceTorque(double integTime, double timeStep) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
     void writeOutputStateMessage(uint64_t CurrentClock);
     void computeFilteredForce(uint64_t CurrentClock);
     void computeFilteredTorque(uint64_t CurrentClock);
@@ -69,6 +76,30 @@ public:
     void setC_a(double c_a);
     /** setter for `a,b,s,c,d,e` coefficients of low pass filter */
     void setFilter_Data(double wc,double h, double k);
+    /** setter for `stateNameOfPosition` property */
+    void setStateNameOfPosition(std::string value) override;
+    /** setter for `stateNameOfVelocity` property */
+    void setStateNameOfVelocity(std::string value) override;
+    /** setter for `stateNameOfSigma` property */
+    void setStateNameOfSigma(std::string value) override;
+    /** setter for `stateNameOfOmega` property */
+    void setStateNameOfOmega(std::string value) override;
+    /** setter for `propName_inertialPosition` property */
+    void setPropName_inertialPosition(std::string value) override;
+    /** getter for `propName_inertialPosition` property */
+    const std::vector<std::string> getPropName_inertialPosition() const { return this->propName_inertialPosition; }
+    /** setter for `propName_inertialVelocity` property */
+    void setPropName_inertialVelocity(std::string value) override;
+    /** getter for `propName_inertialVelocity` property */
+    const std::vector<std::string> getPropName_inertialVelocity() const { return this->propName_inertialVelocity; }
+    /** setter for `propName_inertialAttitude` property */
+    void setPropName_inertialAttitude(std::string value) override;
+    /** getter for `propName_inertialAttitude` property */
+    const std::vector<std::string> getPropName_inertialAttitude() const { return this->propName_inertialAttitude; }
+    /** setter for `propName_inertialAngVelocity` property */
+    void setPropName_inertialAngVelocity(std::string value) override;
+    /** getter for `propName_inertialAngVelocity` property */
+    const std::vector<std::string> getPropName_inertialAngVelocity() const { return this->propName_inertialAngVelocity; }
 
     /** getter for `r_P2P1_B1Init` initial spacecraft separation */
     Eigen::Vector3d getR_P2P1_B1Init() const {return this->r_P2P1_B1Init;};
@@ -97,7 +128,10 @@ private:
 
     // Counters and flags
     int scInitCounter = 0; //!< counter to kill simulation if more than two spacecraft initialized
-    int scID = 1; //!< 0,1 alternating spacecraft tracker to output appropriate force/torque
+    int scID = 1; //!< 0,1 alternating spacecraft toggle to output appropriate force/torque
+    parentID parent1, parent2;
+    int hubCounter = 0;
+    int effectorCounter = 0;
 
     // Constraint length and direction
     Eigen::Vector3d r_P1B1_B1 = Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 1 hub to its connection point P1
@@ -142,10 +176,24 @@ private:
     double T2_filtered_mag_tminus2 = 0.0; //!< Magnitude of filtered constraint torque on s/c 2 at t-2 time step
 
     // Simulation variable pointers
+    std::vector<std::string> stateNameOfPosition;            //!< state engine name of the parent rigid body inertial position vector
+    std::vector<std::string> stateNameOfVelocity;            //!< state engine name of the parent rigid body inertial velocity vector
+    std::vector<std::string> stateNameOfSigma;               //!< state engine name of the parent rigid body inertial attitude
+    std::vector<std::string> stateNameOfOmega;               //!< state engine name of the parent rigid body inertial angular velocity vector
     std::vector<StateData*> hubPosition;    //!< [m] parent inertial position vector
     std::vector<StateData*> hubVelocity;    //!< [m/s] parent inertial velocity vector
     std::vector<StateData*> hubSigma;       //!< parent attitude Modified Rodrigues Parameters (MRPs)
     std::vector<StateData*> hubOmega;       //!< [rad/s] parent inertial angular velocity vector
+
+    // Parent body inertial properties
+    std::vector<std::string> propName_inertialPosition;      //!< property name of inertialPosition
+    std::vector<std::string> propName_inertialVelocity;      //!< property name of inertialVelocity
+    std::vector<std::string> propName_inertialAttitude;      //!< property name of inertialAttitude
+    std::vector<std::string> propName_inertialAngVelocity;   //!< property name of inertialAngVelocity
+    std::vector<Eigen::MatrixXd*> inertialPositionProperty;  //!< [m] position relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialVelocityProperty;  //!< [m/s] velocity relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialAttitudeProperty;  //!< attitude relative to inertial frame
+    std::vector<Eigen::MatrixXd*> inertialAngVelocityProperty;  //!< [rad/s] inertial angular velocity relative to inertial frame
 
     // Constraint violations
     Eigen::Vector3d psi_N = Eigen::Vector3d::Zero(); //!< [m] direction constraint violation in inertial frame

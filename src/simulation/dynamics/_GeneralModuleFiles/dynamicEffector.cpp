@@ -43,6 +43,15 @@ void DynamicEffector::computeStateContribution(double integTime)
     return;
 }
 
+/*! This method is used to link in properties from a parent body that isn't the hub */
+void DynamicEffector::linkInProperties(DynParamManager& properties)
+{
+    // check that this effector can be attached to a state effector
+    if (!this->isAttachableToStateEffector) {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: This effector cannot be attached to a state effector.");
+    }
+}
+
 void DynamicEffector::setStateNameOfPosition(std::string value)
 {
     // check that value is acceptable
@@ -170,6 +179,26 @@ void DynamicEffector::setPropName_inertialVelocity(std::string value)
         this->propName_inertialVelocity = value;
     } else {
         bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertialVelocity variable must be a non-empty string");
+    }
+}
+
+void DynamicEffector::setPropName_inertialAttitude(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialAttitude = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertialAttitude variable must be a non-empty string");
+    }
+}
+
+void DynamicEffector::setPropName_inertialAngVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_inertialAngVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "DynamicEffector: propName_inertialAngVelocity variable must be a non-empty string");
     }
 }
 
