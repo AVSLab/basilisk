@@ -44,8 +44,13 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->IPntS_S.Identity();
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
+
     this->nameOfThetaState = "hingedRigidBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot" + std::to_string(this->effectorID);
+    this->nameOfInertialPositionProperty = "hingedRigidBodyInertialPosition" + std::to_string(this->effectorID);
+    this->nameOfInertialVelocityProperty = "hingedRigidBodyInertialVelocity" + std::to_string(this->effectorID);
+    this->nameOfInertialAttitudeProperty = "hingedRigidBodyInertialAttitude" + std::to_string(this->effectorID);
+    this->nameOfInertialAngVelocityProperty = "hingedRigidBodyInertialAngVelocity" + std::to_string(this->effectorID);
     this->effectorID++;
 
     return;
@@ -138,7 +143,24 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
 
+    registerProperties(states);
+
     return;
+}
+
+void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
+{
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_SN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
+    this->v_SN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
+    this->sigma_SN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
+    this->omega_SN_S = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->linkInProperties(states);
+    }
 }
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
