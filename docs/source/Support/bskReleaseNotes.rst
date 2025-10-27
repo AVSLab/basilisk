@@ -26,6 +26,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Added cp313 wheel builds for Python 3.13 and newer to support updated SWIG and ABI changes.
 - Added custom reaction wheel: "NanoAvionics RW0" to ``src/utilities/simIncludeRW.py``
 - Added TLE handling utilities in :ref:`tleHandling` to parse TLE files and convert to orbital elements
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
