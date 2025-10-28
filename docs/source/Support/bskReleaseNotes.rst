@@ -74,6 +74,7 @@ Version |release|
   The new option is useful when the user wants to ensure that the simulation runs for at least the specified time,
   instead of at most the specified time.
 - Fixed documentation quote typos that caused documentation build errors with doxygen version 1.15 and newer.
+- Added support for :ref:`hingedRigidBodyStateEffector` to be the parent for Dynamic Effectors.
 
 
 Version 2.8.0 (August 30, 2025)
