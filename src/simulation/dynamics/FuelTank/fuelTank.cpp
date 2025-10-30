@@ -106,6 +106,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 
     // Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
+    this->fuelConsumption += this->fuelLeakRate;
     for (auto &dynEffector: this->thrDynEffectors) {
         dynEffector->computeStateContribution(integTime);
         this->fuelConsumption += dynEffector->stateDerivContribution(0);

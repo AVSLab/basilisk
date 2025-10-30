@@ -270,6 +270,7 @@ public:
     bool updateOnly = true;                             //!< -- Sets whether to use update only mass depletion
     Message<FuelTankMsgPayload> fuelTankOutMsg{};       //!< -- fuel tank output message name
     FuelTankMsgPayload fuelTankMassPropMsg{};           //!< instance of messaging system message struct
+    double fuelLeakRate{};                              //!< [kg/s] rate of fuel leaking from tank; does not produce force
 
 private:
     StateData *omegaState{};                            //!< -- state data for omega_BN of the hub
