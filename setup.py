@@ -84,7 +84,7 @@ class BuildConanExtCommand(Command, SubCommand):
         if sys.version_info >= (3, 13):
             conan_py_limited = "0x030D0000"
         else:
-            conan_py_limited = f"0x03{min_version[1]:>02}0000"
+            conan_py_limited = f"0x03{int(min_version[1:]):>02x}0000"
 
         for ext in self.conan_extensions:
             ext.args += ["--pyLimitedAPI", conan_py_limited]
