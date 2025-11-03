@@ -36,13 +36,6 @@ jobs:
           git commit -a -m "[AUTO] Bump version number" || echo "No changes"
           git push || true
 
-      - name: Create tag
-        if: ${{ steps.bump.outputs.updated_version != '' }}
-        run: |
-          git tag -a "v${{ steps.bump.outputs.updated_version }}" \
-            -m "Release v${{ steps.bump.outputs.updated_version }}"
-          git push --tags
-
   build_documentation:
     name: macOS Docs Deployment
     needs: bump_version
