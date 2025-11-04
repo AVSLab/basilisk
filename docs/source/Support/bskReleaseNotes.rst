@@ -87,7 +87,8 @@ Version |release|
   :ref:`scenarioPrescribedMotionWithTranslationBranching` and :ref:`scenarioPrescribedMotionWithRotationBranching`.
 - Fixed a bug where :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`
   both registered their states under the same name, resulting in overwriting and a ``BSK_ERROR``.
-- Added support for :ref:`hingedRigidBodyStateEffector` to be the parent for Dynamic Effectors.
+- Added support for :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector`
+  to be the parent for dynamic effectors.
 - Added SWIG Eigen typemaps for passing Eigen products or returning Eigen products to/from director methods.
 - Added a required time duration that must be satisfied for the imaging to be considered successful in :ref:`simpleInstrumentController` module.
 - Added a new scenario that simulates a debris strike on a flexible solar array :ref:`scenarioImpact`.
