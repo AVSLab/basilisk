@@ -73,7 +73,8 @@ Version |release|
 - ``ConfigureStopTime`` now supports specifying the stop condition as ``<=`` (default, prior behavior) or ``>=`` (new).
   The new option is useful when the user wants to ensure that the simulation runs for at least the specified time,
   instead of at most the specified time.
-- Added support for :ref:`hingedRigidBodyStateEffector` to be the parent for Dynamic Effectors.
+- Added support for :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector`
+  to be the parent for dynamic effectors.
 
 
 Version 2.8.0 (August 30, 2025)
