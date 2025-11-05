@@ -75,7 +75,7 @@ from Basilisk.architecture import messaging
 #       commented out as False are not expected to be added in the future
 @pytest.mark.parametrize("stateEffector, isParent", [
     ("hingedRigidBodies",             True),
-    # ("dualHingedRigidBodies",           True),
+    ("dualHingedRigidBodies",           True),
     # ("nHingedRigidBodies",              True),
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
@@ -253,6 +253,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "hingedRigidBodies":
         stateEff, stateEffProps = setup_hingedRigidBodyStateEffector()
         segment = 1
+    elif stateEffector == "dualHingedRigidBodies":
+        stateEff, stateEffProps = setup_dualHingedRigidBodies()
+        segment = 2
     elif stateEffector == "linearTranslationBodiesOneDOF":
         stateEff, stateEffProps = setup_translatingBodiesOneDOF()
         segment = 1
@@ -328,6 +331,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
 
     try:
         unitTestSim.InitializeSimulation()
+        print("here 2")
     except BasiliskError:
         # check if error was meant to happen
         assert not isChild, "FAILED: attempted to attach a compatible dynamic effector, but errored"
@@ -335,7 +339,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     else:
         # check if error wasn't meant to happen
         assert isChild, "FAILED: attached an incompatible dynamic effector without erroring"
-
+    print("here 2.2")
     # Check that properties are being handed correctly from state effector to dynamic effector
     if (stateEffector == "spinningBodiesNDOF" or stateEffector == "linearTranslationBodiesOneDOF"
         or stateEffector == "linearTranslationBodiesNDOF"):
@@ -360,10 +364,12 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == angvelocityName, (
         "FAILED: inertialAngVelocityProperty not handed correctly between state and dynamic effectors")
 
+
     # Run the sim for a few timesteps to confirm execution without error
     stopTime = 1
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
+    print("here3")
 
     # Continue to check state effector EOMs using pure force & torque
     if dynamicEffector != "extForceTorque":
@@ -373,15 +379,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     rotAngMom_N = scObjectLog.totRotAngMomPntC_N  # total rotational angular momentum about the total vehicle COM
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
 
-    # Grab effector's inertial position
-    if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
-        r_ScN_N_log = np.zeros_like(inertialPropLog.r_BN_N)
-        for i in range(len(inertialPropLog.sigma_BN)):
-            sigmai_SN = inertialPropLog.sigma_BN[i, :] # MRP at timestep i and S is the parent frame not B
-            dcm_NS = np.transpose(rbk.MRP2C(sigmai_SN))
-            r_ScN_N_log[i, :] = inertialPropLog.r_BN_N[i, :] + (dcm_NS @ stateEffProps.r_PcP_P).flatten()
-    else:
-        r_ScN_N_log = inertialPropLog.r_BN_N
+    r_ScN_N_log = inertialPropLog.r_BN_N
 
     # Grab effector's attitude properties
     sigma_SN_log = inertialPropLog.sigma_BN
@@ -811,6 +809,50 @@ def setup_hingedRigidBodyStateEffector():
 
     return(hingedBody, stateEffProps)
 
+def setup_dualHingedRigidBodies():
+    hingedBody = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+
+    # Define properties of HRB
+    hingedBody.mass1 = 200
+    hingedBody.IPntS1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    hingedBody.d1 = 0.75
+    hingedBody.l1 = 1.5
+    hingedBody.k1 = 100
+    hingedBody.c1 = 50
+    hingedBody.dcm_H1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    hingedBody.r_H1B_B = [[0.5], [-1.5], [-0.5]]
+    hingedBody.theta1Init = 5 * macros.D2R
+    hingedBody.theta1DotInit = -1 * macros.D2R
+    hingedBody.mass2 = 200
+    hingedBody.IPntS2_S2 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    hingedBody.d2 = 1
+    hingedBody.k2 = 100
+    hingedBody.c2 = 50
+    hingedBody.theta2Init = -2 * macros.D2R
+    hingedBody.theta2DotInit = 0.0
+    hingedBody.ModelTag = "HingedRigidBody2DOF"
+
+    # Compute COM offset contribution, to be divided by the hub mass
+    dcm_S1H1 = rbk.euler2(hingedBody.theta1Init)
+    dcm_S2H1 = rbk.euler2(hingedBody.theta2Init) @ dcm_S1H1
+    s1_hat = np.array([[-1.0],[0.0],[0.0]])
+    mr_ScB_B = -((hingedBody.r_H1B_B + np.transpose(hingedBody.dcm_H1B) @
+                np.transpose(dcm_S1H1) @ (hingedBody.d1 * s1_hat)) * hingedBody.mass1 +
+                (hingedBody.r_H1B_B + np.transpose(hingedBody.dcm_H1B) @ (hingedBody.l1 *
+                s1_hat + np.transpose(dcm_S2H1) @ (hingedBody.d2 * s1_hat))) * hingedBody.mass2)
+
+    stateEffProps = stateEffectorProperties()
+    stateEffProps.totalMass = hingedBody.mass1 + hingedBody.mass2
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = (hingedBody.r_H1B_B
+                            + np.transpose(hingedBody.dcm_H1B)
+                            @ np.transpose(dcm_S1H1)
+                            @ (hingedBody.l1 * s1_hat))
+    stateEffProps.r_PcP_P = hingedBody.d2 * s1_hat
+    stateEffProps.inertialPropLogName = "dualHingedRigidBodyConfigLogOutMsgs"
+
+    return(hingedBody, stateEffProps)
+
 def setup_translatingBodiesOneDOF():
     translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
@@ -875,4 +917,4 @@ class stateEffectorProperties:
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "dualHingedRigidBodies", True, "extForceTorque", True)
