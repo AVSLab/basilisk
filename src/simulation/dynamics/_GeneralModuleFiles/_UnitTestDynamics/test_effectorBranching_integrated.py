@@ -364,6 +364,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     # Grab conservation quantities to compare against
     rotAngMom_N = scObjectLog.totRotAngMomPntC_N  # total rotational angular momentum about the total vehicle COM
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
+    print("when everything is working, this vector should be zero: ", datLog.r_BN_N[0,:]-datLog.r_CN_N[0,:])
 
     # Grab effector's inertial position
     if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
