@@ -59,6 +59,21 @@ void SpacecraftCharging::registerStates(DynParamManager& states) {
 
 /*! Module update method. */
 void SpacecraftCharging::UpdateState(uint64_t CurrentSimNanos) {
+
+    // Read the servicer sunlit facet area input message if it is linked and written
+    if (this->servicerSunlitAreaInMsg.isLinked() && this->servicerSunlitAreaInMsg.isWritten())
+    {
+        SCSunlitFacetAreaMsgPayload servicerSunlitFacetAreaInMsgBuffer = this->servicerSunlitAreaInMsg();
+        this->servicerSunlitArea = servicerSunlitFacetAreaInMsgBuffer.area;
+    }
+
+    // Read the target sunlit facet area input message if it is linked and written
+    if (this->targetSunlitAreaInMsg.isLinked() && this->targetSunlitAreaInMsg.isWritten())
+    {
+        SCSunlitFacetAreaMsgPayload targetSunlitFacetAreaInMsgBuffer = this->targetSunlitAreaInMsg();
+        this->targetSunlitArea = targetSunlitFacetAreaInMsgBuffer.area;
+    }
+
     // Integrate the state forward in time
     this->integrateState(CurrentSimNanos);
 
