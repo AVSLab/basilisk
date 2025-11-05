@@ -191,13 +191,13 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
 
         // small, physics-sensible grid (negative to positive potentials)
         static const double grid[] = {
-            -1e4, -3e3, -1e3, -3e2, -1e2, -30, -10, -3, 0, 3, 10, 30, 100, 300, 1e3, 3e3, 1e4
+            -1e4, -3e3, -1e3, -3e2, -1e2, -30, -10, -3, 0, 3, 10, 30, 100, 300, 1e3, 3e3, 1e4, 1e5
         };
 
         bool got = false;
         double left = grid[0], right = grid[1];
         double fl = sumCurrents(left), fr = sumCurrents(right);
-        for (double v : {-1000, -100, -10, 0, 10, 100}) {
+        for (double v : {-100000, -10000, -1000, -100, -10, 0, 10, 100, 1000, 10000, 100000}) {
             std::cout << spaceCrafts[ID].name << " I(" << v << ") = " << sumCurrents(v) << "\n";
         }
 
