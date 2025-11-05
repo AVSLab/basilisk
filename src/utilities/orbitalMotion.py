@@ -303,12 +303,12 @@ def N2H(N, e):
         return H1
     raise ValueError('Error: N2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
-def elem2rv_parab(mu, elements):
+def elem2rv_parab(mu: float, elements: ClassicElements) -> tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -392,12 +392,12 @@ def elem2rv_parab(mu, elements):
 
     return rVec, vVec
 
-def elem2rv(mu, elements):
+def elem2rv(mu: float, elements: ClassicElements) -> tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -451,14 +451,14 @@ def elem2rv(mu, elements):
 
     return rVec, vVec
 
-def rv2elem_parab(mu, rVec, vVec):
+def rv2elem_parab(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     """
     Translates the orbit elements inertial Cartesian position
     vector rVec and velocity vector vVec into the corresponding
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis             km
+    a   semi-major axis             m
     e   eccentricity
     i   inclination                 rad
     AN  ascending node              rad
@@ -591,14 +591,14 @@ def rv2elem_parab(mu, rVec, vVec):
 
     return elements
 
-def rv2elem(mu, rVec, vVec):
+def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     """
     Translates the orbit elements inertial Cartesian position
     vector rVec and velocity vector vVec into the corresponding
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -720,7 +720,7 @@ def rv2elem(mu, rVec, vVec):
     return elements
 
 
-def atmosphericDensity(alt):
+def atmosphericDensity(alt: float) -> float:
     """
     This program computes the atmospheric density based on altitude
     supplied by user.  This function uses a curve fit based on
@@ -751,7 +751,7 @@ def atmosphericDensity(alt):
     return density
 
 
-def debyeLength(alt):
+def debyeLength(alt: float) -> float:
     """
     This program computes the debyeLength length for a given
     altitude and is valid for altitudes ranging
@@ -1112,7 +1112,7 @@ def clMeanOscMap(req, J2, oe, oep, sign):
     return
 
 
-def clElem2eqElem(elements_cl, elements_eq):
+def clElem2eqElem(elements_cl: ClassicElements, elements_eq: EquinoctialElements):
     """
     conversion
     from classical orbital elements (a,e,i,Omega,omega,f)
