@@ -73,8 +73,8 @@ public:
      *      - [planetName].mu
      *      - [planetName].J20002Pfix
      *      - [planetName].J20002Pfix_dot
-     * vr_PN_N`, `v_PN_N`, and `mu` are initialized to zero, while `J20002Pfix` and `J20002Pfix_dot`
      *
+     * `vr_PN_N`, `v_PN_N`, and `mu` are initialized to zero, while `J20002Pfix` and `J20002Pfix_dot`
      * are initialized to the values stored in `this->localPlanet`. This usually means that
      * `J20002Pfix` is initialized to the identity matrix and `J20002Pfix_dot` to zero.
      */

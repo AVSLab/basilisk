@@ -141,7 +141,7 @@ void DataNodeBase::customWriteMessages(uint64_t CurrentClock)
     return;
 }
 
-/*! Custom read method, similar to customSelfInit; returns `true' by default.
+/*! Custom read method, similar to customSelfInit; returns `true` by default.
 
  */
 bool DataNodeBase::customReadMessages()
