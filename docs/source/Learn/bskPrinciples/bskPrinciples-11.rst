@@ -206,8 +206,8 @@ special case of prescribed effector branching explained in :ref:`prescribedMotio
         </tr>
         <tr>
           <td class="label">Hinged Rigid Bodies</td>
-          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
           <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
         </tr>
