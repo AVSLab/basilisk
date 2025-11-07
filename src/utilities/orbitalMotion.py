@@ -24,6 +24,7 @@ import math
 import numpy as np
 from numpy import linalg as la
 
+from typing import Tuple
 
 class ClassicElements(object):
     a = None
@@ -303,7 +304,7 @@ def N2H(N, e):
         return H1
     raise ValueError('Error: N2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
-def elem2rv_parab(mu: float, elements: ClassicElements) -> tuple[np.ndarray, np.ndarray]:
+def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
@@ -392,7 +393,7 @@ def elem2rv_parab(mu: float, elements: ClassicElements) -> tuple[np.ndarray, np.
 
     return rVec, vVec
 
-def elem2rv(mu: float, elements: ClassicElements) -> tuple[np.ndarray, np.ndarray]:
+def elem2rv(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
