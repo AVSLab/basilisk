@@ -1147,10 +1147,10 @@ def enableUnityVisualization(
     logoTextureList:
         list of the spacecraft logo texture file paths.  The outer list length must match ``scList``.
     oscOrbitColorList:
-        list of spacecraft osculating orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
+        list of spacecraft osculating orbit colors.  Can be 4 RGBA integer value (0-255) or
         ``None`` if default values should be used.  The array must be of the length of the spacecraft list
     trueOrbitColorList:
-        list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255), a color string, or
+        list of spacecraft true or actual orbit colors.  Can be 4 RGBA integer value (0-255) or
         ``None`` if default values should be used.  The array must be of the length of the spacecraft list
     trueOrbitColorInMsgList:
         list of color messages to read and provide the true orbit color at each time step.  This overwrites
