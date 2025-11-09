@@ -52,7 +52,7 @@ message VizMessage{
     message Spacecraft{
         //FIELDS 1-4 EVERY TIMESTEP,
         //FIELDS 5-8, 10-12, 17-18 EVERY TIMESTEP IF THESE COMPONENTS ARE PRESENT IN SIM
-        //FIELDS 9, 13, 16, 19 NEED ONLY BE SENT IN FIRST MESSAGE
+        //FIELDS 9, 13, 16, 19, 20 NEED ONLY BE SENT IN FIRST MESSAGE
         //FIELDS 14-15 OPTIONAL FIELDS THAT CAN BE UPDATED EVERY TIMESTEP IF DESIRED, BUT NEED NEVER BE INCLUDED
         string spacecraftName = 1;
         repeated double position = 2;                 // [m] SCStatesMsg.r_BN_N
@@ -73,6 +73,7 @@ message VizMessage{
         repeated MultiShape multiShapes = 17;         // (Optional) Multi-Shape-Model (MSM)
         repeated Ellipsoid ellipsoids = 18;           // (Optional) Ellipsoid Heads Up Displays
         string parentSpacecraftName = 19;             // Name of the main spacecraft body that this spacecraft object should be considered a component of. Required if this spacecraft object is a subcomponent of a larger craft (i.e. deployable solar panel)
+        repeated int32 groundTrackLineColor = 20;     // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     }
 
     message ReactionWheel{ //ONLY REQUIRED IF RW HUD/PANEL DESIRED

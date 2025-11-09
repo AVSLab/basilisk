@@ -1089,6 +1089,7 @@ def enableUnityVisualization(
     logoTextureList=None,
     oscOrbitColorList=None,
     trueOrbitColorList=None,
+    groundTrackColorList=None,
     msmInfoList=None,
     trueOrbitColorInMsgList=None,
     liveStream=False,
@@ -1154,6 +1155,9 @@ def enableUnityVisualization(
     trueOrbitColorInMsgList:
         list of color messages to read and provide the true orbit color at each time step.  This overwrites
         the values set with trueOrbitColorList.
+    groundTrackColorList:
+        list of spacecraft ground track colors.  Can be 4 RGBA integer value (0-255) or
+        ``None`` if default values should be used.  The array must be of the length of the spacecraft list
     msmInfoList:
         list of MSM configuration messages
 
@@ -1238,6 +1242,10 @@ def enableUnityVisualization(
     if trueOrbitColorInMsgList is not None:
         trueOrbitColorInMsgList = ensure_correct_len_list(
             trueOrbitColorInMsgList, scListLength
+        )
+    if groundTrackColorList is not None:
+        groundTrackColorList = ensure_correct_len_list(
+            groundTrackColorList,scListLength, depth=2
         )
     if msmInfoList is not None:
         msmInfoList = ensure_correct_len_list(msmInfoList, scListLength)
@@ -1429,6 +1437,10 @@ def enableUnityVisualization(
         if trueOrbitColorInMsgList:
             if trueOrbitColorInMsgList[c] is not None:
                 scData.trueTrajectoryLineColorInMsg = trueOrbitColorInMsgList[c]
+
+        if groundTrackColorList:
+            if groundTrackColorList[c] is not None:
+                scData.groundTrackLineColor = vizInterface.IntVector(groundTrackColorList[c])
 
         # process MSM information
         if msmInfoList:

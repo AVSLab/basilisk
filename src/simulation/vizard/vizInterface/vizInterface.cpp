@@ -1047,6 +1047,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
 
+            /* set spacecraft ground track line color */
+            for (size_t i=0; i<scIt->groundTrackLineColor.size(); i++){
+                scp->add_groundtracklinecolor(scIt->groundTrackLineColor[i]);
+            }
+
             // Write Multi-Shape-Model messages
             for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::MultiShape* msmp = scp->add_multishapes();
