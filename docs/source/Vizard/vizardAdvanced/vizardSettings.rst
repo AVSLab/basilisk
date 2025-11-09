@@ -1715,13 +1715,13 @@ The spacecraft Vizard data supports the use of ``oscOrbitColorList`` to override
 orbit line color and specify a custom color.  This is done using::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , oscOrbitColorList=vizSupport.toRGB255("red"))
+                                              , oscOrbitColorList=vizSupport.toRGBA255("red"))
 
 If you have multiple spacecraft, then this argument must be a list with the length being the number of
 spacecraft::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
-                                              , oscOrbitColorList=[vizSupport.toRGB255("red"), None])
+                                              , oscOrbitColorList=[vizSupport.toRGBA255("red"), None])
 
 The argument None is used to specify the Vizard default shape to be used.
 
