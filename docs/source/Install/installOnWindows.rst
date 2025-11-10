@@ -17,7 +17,6 @@ In order to run Basilisk, the following software will be necessary:
    Version 3.8 is deprecated and will be removed April 2026.
 -  `pip <https://pip.pypa.io/en/stable/installing/>`__
 -  Default compiler is Visual Studios 17 2022
--  `Swig <http://www.swig.org/download.html>`__ version 4.X
 -  (Optional) A GiT GUI application such as `GitKraken <https://www.gitkraken.com>`__
    to manage your copy of the Basilisk repository
 
@@ -51,23 +50,16 @@ required to place accurate breakpoints/attach a debugger to C/C++ code.
       :align: center
       :scale: 75%
 
-Install Swig
-~~~~~~~~~~~~
-The standard windows swig version 4 is suitable for Basilisk (see `Configuration
-Instructions <http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe>`__).
-Download the swig zip file, which includes ``swig.exe`` file, and unzip it into somewhere like ``C:/Program Files/Swig``
 
 
 Configuring User Variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-Add SWIG and Basilisk paths into environment variables using the following steps:
+Add Basilisk paths into environment variables using the following steps:
 
   - Right-click on My Computer, Select Properties
   - Under the Advanced tab, Select Environment Variables
   - Under the User (or System, depending on your setup) Variables panel, Select Path, and Click Edit
 
-    - Add the ``swig.exe`` directory to your path.  See this `site <https://stackoverflow.com/questions/48382254/cmake-error-could-not-find-swig-missing-swig-dir>`__
-      for more info on setting paths for swig.
     - Add the Basilisk library directory (``path2bsk/dist3/Basilisk``) to your path. Here,
       ``path2bsk`` is replaced with the actual path to the Basilisk folder.  Note, the ``dist3`` folder does not
       exist to begin with, but is created automatically when configuring Basilisk with ``python conanfile.py``
@@ -82,7 +74,7 @@ Example added path formats::
 
 .. note::
 
-    If any environment variables have been modified (``swig``, ``path2bsk`` paths),
+    If any environment variables have been modified (``path2bsk`` paths),
     Command Prompt needs
     to be closed and rebooted (and a machine reboot MAY be needed) for the change to take effect.
 
