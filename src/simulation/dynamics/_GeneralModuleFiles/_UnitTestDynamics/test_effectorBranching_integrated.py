@@ -336,13 +336,13 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         assert isChild, "FAILED: attached an incompatible dynamic effector without erroring"
 
     # Check that properties are being handed correctly from state effector to dynamic effector
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position") == getStateEffInertialPropName(segment, stateEff, "Position"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position") == getStateEffInertialPropName(scObject, segment, stateEff, "Position"), (
         "FAILED: inertialPositionProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity") == getStateEffInertialPropName(segment, stateEff, "Velocity"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity") == getStateEffInertialPropName(scObject, segment, stateEff, "Velocity"), (
         "FAILED: inertialVelocityProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude") == getStateEffInertialPropName(segment, stateEff, "Attitude"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude") == getStateEffInertialPropName(scObject, segment, stateEff, "Attitude"), (
         "FAILED: inertialAttitudeProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == getStateEffInertialPropName(segment, stateEff, "AngVelocity"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == getStateEffInertialPropName(scObject, segment, stateEff, "AngVelocity"), (
         "FAILED: inertialAngVelocityProperty not handed correctly between state and dynamic effectors")
 
     # Run the sim for a few timesteps to confirm execution without error
@@ -452,11 +452,18 @@ def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
     else:
         return getattr(dynamicEff, f"getPropName_inertial{propType}")()
 
-def getStateEffInertialPropName(segment, stateEff, propType):
+def getStateEffInertialPropName(scObject, segment, stateEff, propType):
     if segment == 1:
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
+    elif segment == 4:
+        try:
+            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
+            scObject.dynManager.getPropertyReference(propName)
+        except BasiliskError:
+            return "notHandedCorrectly"
+        return propName
 
 def setup_extForceTorque():
     extFT = extForceTorque.ExtForceTorque()
