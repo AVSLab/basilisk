@@ -116,6 +116,8 @@ private:
     Eigen::Vector3d omega_SP_B = Eigen::Vector3d::Zero();        //!< [rad/s] angular velocity of the S frame wrt the P frame in B frame components
     Eigen::Vector3d omega_SB_B = Eigen::Vector3d::Zero();        //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components
     Eigen::Vector3d omega_SN_B = Eigen::Vector3d::Zero();        //!< [rad/s] angular velocity of the S frame wrt the N frame in B frame components
+    Eigen::Vector3d extForce_S = Eigen::Vector3d::Zero();        //!< [N] external force acting on the spinning body in S frame components
+    Eigen::Vector3d extTorquePntS_S = Eigen::Vector3d::Zero();       //!< [N-m] external torque acting on the spinning body about point Sc in S frame components
 
     Eigen::Matrix3d ISPntSc_B = Eigen::Matrix3d::Identity();     //!< [kg-m^2] inertia of spinning body about point Sc in S frame components
     Eigen::Matrix3d IPrimeSPntSc_B = Eigen::Matrix3d::Zero();    //!< [kg-m^2] body frame derivative of the inertia of spinning body about point Sc in S frame components
@@ -206,6 +208,7 @@ private:
     void linkInStates(DynParamManager& states) override;
     void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;
     void registerProperties(DynParamManager& states) override;
+    void computeDependentEffectors(BackSubMatrices& backSubContr, double integTime);
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
