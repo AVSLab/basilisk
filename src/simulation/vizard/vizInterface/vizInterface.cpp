@@ -680,7 +680,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
         vizSettings->set_linesandframeslinewidth(this->settings.linesAndFramesLineWidth);
         vizSettings->set_uselinerenderersfortargetlinesandframes(this->settings.useLineRenderersForTargetLinesAndFrames);
-
+        for (size_t i=0; i<settings.osculatingOrbitLineRange.size(); i++){
+            vizSettings->add_osculatingorbitlinerange(this->settings.osculatingOrbitLineRange[i]*R2D);
+        }
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {

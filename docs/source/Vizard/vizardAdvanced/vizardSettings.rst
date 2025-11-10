@@ -144,6 +144,9 @@ default setting for that behavior.
       - string
       - String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the
         true path trajectory against.
+    * - ``osculatingOrbitLineRange``
+      - float(2)
+      - Minimum and maximum angles to draw the osculating orbit lines
     * - **Spacecraft Settings**
       -
       -

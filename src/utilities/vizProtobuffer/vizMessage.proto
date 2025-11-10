@@ -335,6 +335,7 @@ message VizMessage{
         double celestialBodyOrbitLineWidth = 59;            // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
         double linesAndFramesLineWidth = 60;                // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
         int32 useLineRenderersForTargetLinesAndFrames = 61; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated int32 osculatingOrbitLineRange = 62;       // [deg] Empty array to use viz default, otherwise provide min and max values, negative value indicates prior to current orbit true anomaly, min must be less than max
     }
 
     message MultiShape{ //ONLY NEEDED IF MSM DESIRED
