@@ -147,6 +147,9 @@ default setting for that behavior.
     * - ``osculatingOrbitLineRange``
       - float(2)
       - Minimum and maximum angles to draw the osculating orbit lines
+    * - ``osculatingGroundTrackRange``
+      - float(2)
+      - Minimum and maximum angles to draw the osculating ground track lines
     * - **Spacecraft Settings**
       -
       -
