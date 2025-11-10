@@ -19,7 +19,7 @@ The following python package dependencies are automatically checked and installe
     If you are running a new Apple computer with the M-series ARM64 processor, be sure to download a
     version of Python that is compatible with M-series processor.  The
     `Python.org <https://python.org>`__ web site contains Universal binaries for Python 3.9 and
-    onward.  Regarding the python packages via ``pip`` and ``brew``, the required packages
+    onward.  Regarding the python packages via ``pip``, the required packages
     can all be installed readily in a native form using the standard installation instructions below.
 
 
@@ -50,16 +50,6 @@ To install Python 3 on macOS there are two common options:
    your macOS environment for Python 3 and can readily be upgraded by downloaded a newer installer package.
 #. Install python 3 through the `HomeBrew <http://brew.sh>`__ package management system. The site has the
    command line to install homebrew from a terminal window using ``brew install python3``.
-
-Install HomeBrew Support Packages
----------------------------------
-
-#. Install `HomeBrew <http://brew.sh>`__ using a Terminal window and
-   pasting the install script from the HomeBrew web site.
-
-#. SWIG version 4.X is compatible with Basilisk. Install the SWIG software package using::
-
-   $ brew install swig
 
 Using A Python Virtual Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,10 +165,6 @@ FAQs
 #. Q: Experiencing problems when trying to change the directory in which to clone the url
 
    -  A: clone it in the default directory, and copy it into the preferred one after it is done cloning.
-
-#. Q : Permission denied when using brew
-
-   -  A: Add sudo to the start of the command. If you do not have superuser access, get superuser access.
 
 #. Q : I updated my macOS system to the latest released, and I can no longer run CMake or build with Xcode.
 

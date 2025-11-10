@@ -13,7 +13,6 @@ Software setup
 In order to run Basilisk, the following software will be necessary. This document outline how to install this support software.
 
 -  `Python <https://www.python.org/>`__ 3.8 to 3.13.  Version 3.8 is deprecated and will be removed April 2026.
--  `SWIG <http://www.swig.org/>`__ (version 4.x)
 -  `GCC <https://gcc.gnu.org/>`__
 -  (Optional) Get the `GitKraken <https://www.gitkraken.com>`__
    application to be able to pull and manage a copy of Basilisk
@@ -75,10 +74,6 @@ Basilisk development mainly occurs in Debian-based systems. Other distributions 
        #Python virtual environment with same version as Python. For example, python3.7-venv for python3.7.x
        $apt-get install python3.x-venv
 
-#. SWIG: Available using::
-
-    $ apt-get install swig
-
 #. A C/C++ Compiler: This is included by default with most Linux systems (``gcc``), but is necessary to build Basilisk.
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
@@ -125,10 +120,6 @@ Fedora
 
     #Check python version installed
     $ python3.xx --version
-
-#. SWIG: Available using::
-
-    $ dnf install swig
 
 #. A C/C++ Compiler: This is included by default with most Linux systems (``gcc``), but is necessary to build Basilisk.
 
