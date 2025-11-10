@@ -33,6 +33,7 @@ SpinningBodyNDOFStateEffector::SpinningBodyNDOFStateEffector()
 
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
+    this->propertyNameIndex = std::to_string(SpinningBodyNDOFStateEffector::effectorID); // preserves effectorID for later adding bodies
     SpinningBodyNDOFStateEffector::effectorID++;
 }
 
@@ -93,6 +94,11 @@ void SpinningBodyNDOFStateEffector::addSpinningBody(const std::shared_ptr<Spinni
     this->ATheta.conservativeResize(this->ATheta.rows()+1, 3);
     this->BTheta.conservativeResize(this->BTheta.rows()+1, 3);
     this->CTheta.conservativeResize(this->CTheta.rows()+1);
+
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialPositionProperty = "spinningBodyInertialPosition" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialVelocityProperty = "spinningBodyInertialVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialAttitudeProperty = "spinningBodyInertialAttitude" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialAngVelocityProperty = "spinningBodyInertialAngVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
 }
 
 std::shared_ptr<SpinningBody> SpinningBodyNDOFStateEffector::getSpinningBody(uint64_t index) {
@@ -188,6 +194,23 @@ void SpinningBodyNDOFStateEffector::registerStates(DynParamManager& states)
     }
     this->thetaState->setState(thetaInitMatrix);
     this->thetaDotState->setState(thetaDotInitMatrix);
+
+    registerProperties(states);
+}
+
+void SpinningBodyNDOFStateEffector::registerProperties(DynParamManager& states)
+{
+    for(auto& spinningBody: this->spinningBodyVec) {
+        Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+        spinningBody->r_SN_N = states.createProperty(spinningBody->nameOfInertialPositionProperty, stateInit);
+        spinningBody->v_SN_N = states.createProperty(spinningBody->nameOfInertialVelocityProperty, stateInit);
+        spinningBody->sigma_SN = states.createProperty(spinningBody->nameOfInertialAttitudeProperty, stateInit);
+        spinningBody->omega_SN_S = states.createProperty(spinningBody->nameOfInertialAngVelocityProperty, stateInit);
+
+        for(auto& dynEffector: spinningBody->dynEffectors) {
+            dynEffector->linkInProperties(states);
+        }
+    }
 }
 
 void SpinningBodyNDOFStateEffector::updateEffectorMassProps(double integTime)

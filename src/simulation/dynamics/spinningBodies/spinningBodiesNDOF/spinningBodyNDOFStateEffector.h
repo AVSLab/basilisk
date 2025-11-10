@@ -122,6 +122,11 @@ private:
     Eigen::Matrix3d omegaTilde_SP_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SP_B
     Eigen::Matrix3d omegaTilde_SB_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SB_B
 
+    std::string nameOfInertialPositionProperty;     //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;     //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;     //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;  //!< -- identifier for the inertial angular velocity property
+
     Eigen::Vector3d r_ScN_N;                        //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
     Eigen::Vector3d v_ScN_N;                        //!< [m/s] inertial velocity vector of Sc relative to inertial frame
     Eigen::MatrixXd* r_SN_N;                        //!< [m] position vector of the spinning body frame origin S relative to the inertial frame origin N
@@ -179,12 +184,14 @@ private:
 
     std::string nameOfThetaState{};
     std::string nameOfThetaDotState{};
+    std::string propertyNameIndex{};
 
     void Reset(uint64_t CurrentClock) override;
     void writeOutputStateMessages(uint64_t CurrentClock) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override;
     void linkInStates(DynParamManager& states) override;
+    void registerProperties(DynParamManager& states) override;
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,
