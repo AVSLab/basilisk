@@ -22,6 +22,7 @@
 
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -122,6 +123,8 @@ private:
     Eigen::Matrix3d omegaTilde_SP_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SP_B
     Eigen::Matrix3d omegaTilde_SB_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SB_B
 
+    std::vector<DynamicEffector*> dynEffectors;     //!< -- Vector of dynamic effectors attached
+
     std::string nameOfInertialPositionProperty;     //!< -- identifier for the inertial position property
     std::string nameOfInertialVelocityProperty;     //!< -- identifier for the inertial velocity property
     std::string nameOfInertialAttitudeProperty;     //!< -- identifier for the inertial attitude property
@@ -133,6 +136,15 @@ private:
     Eigen::MatrixXd* v_SN_N;                        //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::MatrixXd* sigma_SN;                      //!< MRP attitude of frame S relative to inertial frame
     Eigen::MatrixXd* omega_SN_S;                    //!< [rad/s] inertial spinning body frame angular velocity vector
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    }
 
     BSKLogger bskLogger;
 };
@@ -191,6 +203,7 @@ private:
     void UpdateState(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override;
     void linkInStates(DynParamManager& states) override;
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;
     void registerProperties(DynParamManager& states) override;
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,

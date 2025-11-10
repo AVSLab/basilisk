@@ -198,6 +198,16 @@ void SpinningBodyNDOFStateEffector::registerStates(DynParamManager& states)
     registerProperties(states);
 }
 
+void SpinningBodyNDOFStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    if (segment <= 0 || segment > this->numberOfDegreesOfFreedom) {
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent spinning bodies linkage.");
+    } else {
+        this->spinningBodyVec[segment-1]->assignStateParamNames(newDynamicEffector);
+        this->spinningBodyVec[segment-1]->dynEffectors.push_back(newDynamicEffector);
+    }
+}
+
 void SpinningBodyNDOFStateEffector::registerProperties(DynParamManager& states)
 {
     for(auto& spinningBody: this->spinningBodyVec) {
