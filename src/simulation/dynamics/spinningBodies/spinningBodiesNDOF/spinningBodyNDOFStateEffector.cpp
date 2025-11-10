@@ -340,6 +340,8 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
     Eigen::MatrixXd BThetaStar = Eigen::MatrixXd::Zero(this->numberOfDegreesOfFreedom, 3);
     Eigen::VectorXd CThetaStar = Eigen::VectorXd::Zero(this->numberOfDegreesOfFreedom);
 
+    this->computeDependentEffectors(backSubContr, integTime);
+
     this->computeMTheta(MTheta);
     this->computeAThetaStar(AThetaStar);
     this->computeBThetaStar(BThetaStar);
@@ -351,6 +353,30 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
 
     this->computeBackSubMatrices(backSubContr);
     this->computeBackSubVectors(backSubContr);
+}
+
+void SpinningBodyNDOFStateEffector::computeDependentEffectors(BackSubMatrices& backSubContr, double integTime)
+{
+    Eigen::Vector3d force_S = Eigen::Vector3d::Zero();
+    Eigen::Vector3d torquePntS_S = Eigen::Vector3d::Zero();
+    for (auto it = spinningBodyVec.rbegin(); it != spinningBodyVec.rend(); ++it) {
+        auto& spinningBody = *it;
+        for (auto& dynEffector : spinningBody->dynEffectors) {
+            dynEffector->computeForceTorque(integTime, double(0.0));
+            force_S += dynEffector->forceExternal_B;
+            torquePntS_S += dynEffector->torqueExternalPntB_B;
+        }
+        spinningBody->extForce_S = force_S;
+        spinningBody->extTorquePntS_S = torquePntS_S;
+
+        // Rotate external forces/torques into the parent body's frame P (new S frame for next loop)
+        Eigen::Matrix3d dcm_PS = spinningBody->dcm_S0P.transpose() * spinningBody->dcm_S0S;
+        force_S = dcm_PS * force_S;
+        torquePntS_S = dcm_PS * torquePntS_S + spinningBody->r_SP_P.cross(force_S);
+    }
+    // Base body rotated into the hub body frame, added as cumulated force/torque here
+    backSubContr.vecTrans += force_S;
+    backSubContr.vecRot += torquePntS_S;
 }
 
 void SpinningBodyNDOFStateEffector::computeMTheta(Eigen::MatrixXd& MTheta)
@@ -422,7 +448,8 @@ void SpinningBodyNDOFStateEffector::computeCThetaStar(Eigen::VectorXd& CThetaSta
 
         CThetaStar(n) += this->spinningBodyVec[n]->u
                 - this->spinningBodyVec[n]->k * (this->spinningBodyVec[n]->theta - this->spinningBodyVec[n]->thetaRef)
-                - this->spinningBodyVec[n]->c * (this->spinningBodyVec[n]->thetaDot - this->spinningBodyVec[n]->thetaDotRef);
+                - this->spinningBodyVec[n]->c * (this->spinningBodyVec[n]->thetaDot - this->spinningBodyVec[n]->thetaDotRef)
+                + this->spinningBodyVec[n]->extTorquePntS_S.dot(this->spinningBodyVec[n]->sHat_S);
 
         for (int i = n; i<this->numberOfDegreesOfFreedom; i++) {
             Eigen::Vector3d r_SciSn_B = this->spinningBodyVec[i]->r_ScB_B - this->spinningBodyVec[n]->r_SB_B;
@@ -509,6 +536,9 @@ void SpinningBodyNDOFStateEffector::computeBackSubVectors(BackSubMatrices &backS
                                     - this->spinningBodyVec[j]->mass * rTilde_ScjB * rTilde_ScjSi)
                                    * this->spinningBodyVec[i]->sHat_B * this->CTheta.row(i);
         }
+
+        // note: external forces and torques contributed by attached effectors are added to vecTrans
+        //       and vecRot in the computeDependentEffectors(backSubContr) method.
     }
 }
 
