@@ -165,9 +165,6 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
 
     // loop over all satellites
     for (long unsigned int c = 0; c < this->numSat; c++) {
-        // store voltage of each spacecraft
-        voltMsgBuffer.voltage = -1000;
-        this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
 
         // index of craft based on priority
         int ID = orderByPriority[c];
@@ -261,8 +258,15 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
         }
 
 
+        // after the bisection / root finding finishes and equilibriums[c] is set:
         wrote_eq:
-        std::cout << spaceCrafts[ID].name << " equilibrium: " << equilibriums[c] << std::endl;
+            std::cout << spaceCrafts[ID].name
+                      << " equilibrium: " << equilibriums[c] << std::endl;
+
+            // Now publish that equilibrium to the message
+            VoltMsgPayload voltMsgBuffer;
+            voltMsgBuffer.voltage = equilibriums[c];
+            this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
 
     }
 }

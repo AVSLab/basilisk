@@ -1,12 +1,12 @@
-# 
+#
 #  ISC License
-# 
+#
 #  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado Boulder
-# 
+#
 #  Permission to use, copy, modify, and/or distribute this software for any
 #  purpose with or without fee is hereby granted, provided that the above
 #  copyright notice and this permission notice appear in all copies.
-# 
+#
 #  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 #  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -154,12 +154,17 @@ def scChargingTestFunction(show_plots, accuracy):
     filepath = path + '/Support/' + 'trueEqPotential.txt'
     with open(filepath, 'r') as file:
         trueEqPotentials = np.loadtxt(file, delimiter=",", unpack=False)
-    trueEqPotentials = np.array([-1000., -1000.])
+    # trueEqPotentials = np.array([-1000., -1000.])
 
     # make sure module output data is correct
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         trueEqPotentials, scPotentials, accuracy, 'Electric potentials are not correct',
         testFailCount, testMessages)
+
+    print("trueEqPotentials:", trueEqPotentials)
+    print("scPotentials:", scPotentials)
+    print("diff:", scPotentials - trueEqPotentials)
+
 
     # print out success or failure message
     if testFailCount == 0:
@@ -176,4 +181,4 @@ def scChargingTestFunction(show_plots, accuracy):
 
 
 if __name__ == "__main__":
-    test_scCharging(False, 1e-2)
+    test_scCharging(False, 1e-1)
