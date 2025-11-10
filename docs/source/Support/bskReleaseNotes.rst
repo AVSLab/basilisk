@@ -31,7 +31,8 @@ Version |release|
 - Updated CI to no longer automatically publish git tags and publish wheels to PyPI. This process will be handled manually.
 - Added cp313 wheel builds for Python 3.13 and newer to support updated SWIG and ABI changes.
 - Added :ref:`bskPrinciples-11` capability. Now enabled for :ref:`extForceTorque`, :ref:`constraintDynamicEffector`,
-  and :ref:`thrusterDynamicEffector` attachable to :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyTwoDOFStateEffector`.
+  and :ref:`thrusterDynamicEffector` attachable to :ref:`spinningBodyOneDOFStateEffector`,
+  :ref:`spinningBodyTwoDOFStateEffector`, and :ref:`spinningBodyNDOFStateEffector`.
 - Added custom reaction wheel: "NanoAvionics RW0" to ``src/utilities/simIncludeRW.py``
 - Added TLE handling utilities in :ref:`tleHandling` to parse TLE files and convert to orbital elements
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
