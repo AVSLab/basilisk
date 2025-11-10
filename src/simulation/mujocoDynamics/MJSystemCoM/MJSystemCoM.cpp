@@ -81,8 +81,6 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
 
         Eigen::Map<const Eigen::VectorXd> qv(data->qvel, model->nv);
 
-        Eigen::Vector3d vSum = Eigen::Vector3d::Zero();
-
         for (int i = 1; i < model->nbody; ++i) {
             const double mi = model->body_mass[i];
             if (mi <= 0.0) continue;
