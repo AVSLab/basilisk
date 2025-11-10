@@ -395,10 +395,11 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # Vizard and played back after running the BSK simulation.
     # To enable this, uncomment this line:
 
-    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
-                                              # saveFile=__file__
-                                              # liveStream=True
-                                              )
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject,
+                                                  # saveFile=__file__
+                                                  # liveStream=True
+                                                  )
 
     # The vizInterface module must be built into BSK.  This is done if the correct CMake options are selected.
     # The default CMake will include this vizInterface module in the BSK build.  See the BSK HTML documentation on
