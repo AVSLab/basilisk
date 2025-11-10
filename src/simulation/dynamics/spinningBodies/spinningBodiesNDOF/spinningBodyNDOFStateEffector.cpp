@@ -270,10 +270,11 @@ void SpinningBodyNDOFStateEffector::computeAttitudeProperties(std::shared_ptr<Sp
     Eigen::Vector3d prv_S0S = - spinningBody->theta * spinningBody->sHat_S;
     eigenVector3d2CArray(prv_S0S, prv_S0S_array);
     PRV2C(prv_S0S_array, dcm_S0S);
+    spinningBody->dcm_S0S = c2DArray2EigenMatrix3d(dcm_S0S);
     if (spinningBodyIndex == 0) {
-        spinningBody->dcm_BS = spinningBody->dcm_S0P.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+        spinningBody->dcm_BS = spinningBody->dcm_S0P.transpose() * spinningBody->dcm_S0S;
     } else {
-        spinningBody->dcm_BS = this->spinningBodyVec[spinningBodyIndex-1]->dcm_BS * spinningBody->dcm_S0P.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+        spinningBody->dcm_BS = this->spinningBodyVec[spinningBodyIndex-1]->dcm_BS * spinningBody->dcm_S0P.transpose() * spinningBody->dcm_S0S;
     }
     spinningBody->sHat_B = spinningBody->dcm_BS * spinningBody->sHat_S;
 }

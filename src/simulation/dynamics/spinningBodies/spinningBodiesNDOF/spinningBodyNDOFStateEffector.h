@@ -91,7 +91,8 @@ private:
     double mass = 1.0;                //!< [kg] spinning body mass
     Eigen::Vector3d r_SP_P = Eigen::Vector3d::Zero();            //!< [m] vector pointing from parent frame P origin to spinning frame S origin in P frame components
     Eigen::Vector3d r_ScS_S = Eigen::Vector3d::Zero();           //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Vector3d sHat_S = {1.0, 0.0, 0.0};           //!< spinning axis in S frame components
+    Eigen::Vector3d sHat_S = {1.0, 0.0, 0.0};                    //!< spinning axis in S frame components
+    Eigen::Matrix3d dcm_S0S = Eigen::Matrix3d::Identity();       //!< DCM from the S0 frame to S frame (rotated by theta)
     Eigen::Matrix3d dcm_S0P = Eigen::Matrix3d::Identity();       //!< DCM from the parent frame to the S0 frame (S frame for theta=0)
     Eigen::Matrix3d ISPntSc_S = Eigen::Matrix3d::Identity();     //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
 
