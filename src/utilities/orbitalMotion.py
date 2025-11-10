@@ -309,7 +309,7 @@ def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           m*
+    a   semi-major axis           m\*
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -399,7 +399,7 @@ def elem2rv(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarra
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           m*
+    a   semi-major axis           m\*
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -461,7 +461,7 @@ def rv2elem_parab(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicEleme
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis             m*
+    a   semi-major axis             m\*
     e   eccentricity
     i   inclination                 rad
     AN  ascending node              rad
@@ -602,7 +602,7 @@ def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis           m*
+    a   semi-major axis           m\*
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
