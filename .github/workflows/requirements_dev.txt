@@ -4,6 +4,9 @@ conan
 packaging
 setuptools
 setuptools-scm
+# TODO: The SWIG 4.4.X is incompatible with Basilisk. Pin to SWIG 4.3.1 until
+# Basilisk is updated to support SWIG 4.4.X
+swig<=4.3.1,>=4.2.1
 
 pytest
 pytest-html
