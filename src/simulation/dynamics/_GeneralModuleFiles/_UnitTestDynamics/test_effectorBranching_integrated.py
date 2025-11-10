@@ -79,7 +79,7 @@ from Basilisk.architecture import messaging
     # ("nHingedRigidBodies",              True),
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
-    # ("spinningBodiesNDOF",              True),
+    ("spinningBodiesNDOF",            True),
     # ("linearTranslationBodiesOneDOF",   True),
     # ("linearTranslationBodiesNDOF",     True),
     ("linearSpringMassDamper",          False),
@@ -121,6 +121,7 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
 
     - :ref:`spinningBodyOneDOFStateEffector`
     - :ref:`spinningBodyTwoDOFStateEffector`
+    - :ref:`spinningBodyNDOFStateEffector`
 
     Dynamic effectors that are expected to be able to attach to state effectors (isChild) include:
 
@@ -255,6 +256,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "spinningBodiesTwoDOF":
         stateEff, stateEffProps = setup_spinningBodiesTwoDOF()
         segment = 2
+    elif stateEffector == "spinningBodiesNDOF":
+        stateEff, stateEffProps = setup_spinningBodiesNDOF()
+        segment = 4
     elif stateEffector == "linearSpringMassDamper":
         stateEff, stateEffProps = setup_linearSpringMassDamper()
         segment = 1
@@ -665,6 +669,74 @@ def setup_spinningBodiesTwoDOF():
     stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsgs"
 
     return(spinningBody, stateEffProps)
+
+def setup_spinningBodiesNDOF():
+    spinningBodyEffector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+    numberOfSegments = 3 # 3 segments of 2DOF joints is really 6 spinning bodies here
+    massSubPanel = 100.0 / numberOfSegments
+    lengthSubPanel = 18.0 / numberOfSegments
+    widthSubPanel =  3.0
+    thicknessSubPanel = 0.3
+    r_ScB_B = np.array([[0.0], [0.0], [0.0]])
+    dcm_SB = np.array([[1.0, 0.0, 0.0],
+                       [0.0, 1.0, 0.0],
+                       [0.0, 0.0, 1.0]])
+    mr_ScB_B = 0.0
+
+    for idx in range(numberOfSegments):
+        spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
+        spinningBody.setMass(0.0)
+        spinningBody.setISPntSc_S([[0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0]])
+        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
+                                 [0.0, 1.0, 0.0],
+                                 [0.0, 0.0, 1.0]])
+        spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
+        if idx == 0:
+            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]])
+        else:
+            spinningBody.setR_SP_P([[0.0], [lengthSubPanel], 0.0])
+        spinningBody.setSHat_S([[1], [0], [0]])
+        spinningBody.setThetaInit(2.0 * macros.D2R)
+        spinningBody.setThetaDotInit(-0.5 * macros.D2R)
+        spinningBody.setK(10)
+        spinningBody.setC(8)
+        spinningBodyEffector.addSpinningBody(spinningBody)
+        r_ScB_B += dcm_SB.transpose() @ spinningBody.getR_SP_P()
+        dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
+
+        spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
+        spinningBody.setMass(massSubPanel)
+        spinningBody.setISPntSc_S([[massSubPanel / 12 * (lengthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0, 0.0],
+                                   [0.0, massSubPanel / 12 * (widthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0],
+                                   [0.0, 0.0, massSubPanel / 12 * (widthSubPanel ** 2 + lengthSubPanel ** 2)]])
+        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
+                                 [0.0, 1.0, 0.0],
+                                 [0.0, 0.0, 1.0]])
+        spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
+        spinningBody.setR_SP_P([[0.0], [0.0], [0.0]])
+        spinningBody.setSHat_S([[0], [1], [0]])
+        spinningBody.setThetaInit(2.0 * macros.D2R)
+        spinningBody.setThetaDotInit(-0.5 * macros.D2R)
+        spinningBody.setK(1)
+        spinningBody.setC(0.8)
+        spinningBodyEffector.addSpinningBody(spinningBody)
+        dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
+
+        # Compute COM offset contribution, to be divided by the hub mass
+        mr_ScB_B -= spinningBody.getMass() * (r_ScB_B + dcm_SB.transpose() @ spinningBody.getR_ScS_S())
+
+    spinningBodyEffector.ModelTag = "spinningBody"
+
+    stateEffProps = stateEfectorProperties()
+    stateEffProps.totalMass = massSubPanel * numberOfSegments
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = r_ScB_B - dcm_SB.transpose() @ spinningBody.getR_ScS_S()
+    stateEffProps.r_PcP_P = spinningBody.getR_ScS_S()
+    stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsgs"
+
+    return(spinningBodyEffector, stateEffProps)
 
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
