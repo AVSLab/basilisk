@@ -67,13 +67,12 @@ def is_running_virtual_env():
 required_conan_version = ">=2.0.5"
 
 PY_LIMITED_API_PY38  = "0x03080000"  # cp38-abi3
-PY_LIMITED_API_PY313 = "0x030D0000"  # cp313-abi3
 
 def resolve_py_limited_api(opt_value: Optional[str]) -> str:
-    """Use explicit --pyLimitedAPI if provided, else cp313 on 3.13, else cp38."""
+    """Use explicit --pyLimitedAPI if provided, else cp38."""
     if opt_value:
         return opt_value
-    return PY_LIMITED_API_PY313 if sys.version_info >= (3, 13) else PY_LIMITED_API_PY38
+    return PY_LIMITED_API_PY38
 
 class BasiliskConan(ConanFile):
     name = "Basilisk"
