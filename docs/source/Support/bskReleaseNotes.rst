@@ -26,6 +26,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Added SWIG as a python package dependency in ``requirements_dev.txt`` and updated installation instructions.
 - Updated CI to no longer automatically publish git tags and publish wheels to PyPI. This process will be handled manually.
 - Added cp313 wheel builds for Python 3.13 and newer to support updated SWIG and ABI changes.
 - Added :ref:`bskPrinciples-11` capability. Now enabled for :ref:`extForceTorque`, :ref:`constraintDynamicEffector`,
