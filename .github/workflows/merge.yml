@@ -14,31 +14,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  bump_version:
-    name: Bump version (skip if already bumped)
-    runs-on: ubuntu-latest
-    if: ${{ github.actor != 'AVSlabBot' }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: develop
-          fetch-depth: 0
-          token: ${{ secrets.BOT_ACCESS_TOKEN }}
-
-      - name: Bump version
-        id: bump
-        run: ./.github/workflows/version-bumper.sh ./docs/source/bskVersion.txt
-
-      - name: Commit and push
-        run: |
-          git config user.name "AVSlabBot"
-          git config user.email "cuavslab@gmail.com"
-          git commit -a -m "[AUTO] Bump version number" || echo "No changes"
-          git push || true
-
   build_documentation:
     name: macOS Docs Deployment
-    needs: bump_version
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
