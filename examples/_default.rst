@@ -244,6 +244,15 @@ Complex Spacecraft Dynamics Simulations
    Robotic Arm Effector with Profiler <scenarioRoboticArm>
    Spacecraft with an multi-link extending component <scenarioExtendingBoom>
 
+Multi-Body Dynamics Simulations with Prescribed Motion Branching
+----------------------------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   Prescribed Motion with Translating Effector Branching <scenarioPrescribedMotionWithTranslationBranching>
+   Prescribed Motion with Rotating Effector Branching <scenarioPrescribedMotionWithRotationBranching>
+
 Mission Simulations
 ---------------------------------------
 

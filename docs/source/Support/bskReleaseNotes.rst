@@ -74,6 +74,12 @@ Version |release|
   The new option is useful when the user wants to ensure that the simulation runs for at least the specified time,
   instead of at most the specified time.
 - Fixed documentation quote typos that caused documentation build errors with doxygen version 1.15 and newer.
+- Configured the :ref:`prescribedMotionStateEffector` module for attachment of other state effectors to it
+  rather than the spacecraft hub.
+- Configured the :ref:`spinningBodyOneDOFStateEffector`, :ref:`spinningBodyTwoDOFStateEffector`, and
+  :ref:`linearTranslationOneDOFStateEffector` modules for optional attachment to the prescribed motion state effector.
+- Added two example branching scenarios to illustrate the prescribed motion branching capability. See
+  :ref:`scenarioPrescribedMotionWithTranslationBranching` and :ref:`scenarioPrescribedMotionWithRotationBranching`.
 
 
 Version 2.8.0 (August 30, 2025)

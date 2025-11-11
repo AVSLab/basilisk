@@ -117,6 +117,30 @@ public:
     void setPropName_vehicleGravity(std::string value);
     /** getter for `propName_vehicleGravity` property */
     const std::string getPropName_vehicleGravity() const { return this->propName_vehicleGravity; }
+    /** setter for `propName_prescribedPosition` property */
+    void setPropName_prescribedPosition(std::string value);
+    /** getter for `propName_prescribedPosition` property */
+    const std::string getPropName_prescribedPosition() const { return this->propName_prescribedPosition; }
+    /** setter for `propName_prescribedVelocity` property */
+    void setPropName_prescribedVelocity(std::string value);
+    /** getter for `propName_prescribedVelocity` property */
+    const std::string getPropName_prescribedVelocity() const { return this->propName_prescribedVelocity; }
+    /** setter for `propName_prescribedAcceleration` property */
+    void setPropName_prescribedAcceleration(std::string value);
+    /** getter for `propName_prescribedAcceleration` property */
+    const std::string getPropName_prescribedAcceleration() const { return this->propName_prescribedAcceleration; }
+    /** setter for `propName_prescribedAttitude` property */
+    void setPropName_prescribedAttitude(std::string value);
+    /** getter for `propName_prescribedAttitude` property */
+    const std::string getPropName_prescribedAttitude() const { return this->propName_prescribedAttitude; }
+    /** setter for `propName_prescribedAngVelocity` property */
+    void setPropName_prescribedAngVelocity(std::string value);
+    /** getter for `propName_prescribedAngVelocity` property */
+    const std::string getPropName_prescribedAngVelocity() const { return this->propName_prescribedAngVelocity; }
+    /** setter for `propName_prescribedAngAcceleration` property */
+    void setPropName_prescribedAngAcceleration(std::string value);
+    /** getter for `propName_prescribedAngAcceleration` property */
+    const std::string getPropName_prescribedAngAcceleration() const { return this->propName_prescribedAngAcceleration; }
 
     BSKLogger bskLogger;                   //!< BSK Logging
 
@@ -125,6 +149,7 @@ public:
     virtual ~StateEffector();              //!< Destructor
     virtual void updateEffectorMassProps(double integTime);  //!< Method for stateEffector to give mass contributions
     virtual void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Back-sub contributions
+    virtual void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr);  //!< Method for adding coupling contributions for state effector branching on prescribed motion
     virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< Energy and momentum calculations
     virtual void modifyStates(double integTime); //!< Modify state values after integration
@@ -134,6 +159,7 @@ public:
     virtual void registerProperties(DynParamManager& states);  //!< Method for stateEffectors to register properties
     virtual void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment);  //!< Method to attach a dynamic effector
     virtual void linkInStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to get other states
+    virtual void linkInPrescribedMotionProperties(DynParamManager& properties);  //!< Method for stateEffectors to access prescribed motion properties
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates();
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP); //!< class method
@@ -155,6 +181,19 @@ protected:
     std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
     std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
 
+    std::string propName_prescribedPosition = "";                   //!< property name of prescribedPosition
+    std::string propName_prescribedVelocity = "";                   //!< property name of prescribedVelocity
+    std::string propName_prescribedAcceleration = "";               //!< property name of prescribedAcceleration
+    std::string propName_prescribedAttitude = "";                   //!< property name of prescribedAttitude
+    std::string propName_prescribedAngVelocity = "";                //!< property name of prescribedAngVelocity
+    std::string propName_prescribedAngAcceleration = "";            //!< property name of prescribedAngAcceleration
+
+    Eigen::MatrixXd* prescribedPositionProperty = nullptr;         //!< [m] r_PB_B prescribed position relative to hub
+    Eigen::MatrixXd* prescribedVelocityProperty = nullptr;         //!< [m/s] rPrime_PB_B prescribed velocity relative to hub
+    Eigen::MatrixXd* prescribedAccelerationProperty = nullptr;     //!< [m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub
+    Eigen::MatrixXd* prescribedAttitudeProperty = nullptr;         //!< sigma_PB prescribed MRP attitude relative to hub
+    Eigen::MatrixXd* prescribedAngVelocityProperty = nullptr;      //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
+    Eigen::MatrixXd* prescribedAngAccelerationProperty = nullptr;  //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
 };
 
 

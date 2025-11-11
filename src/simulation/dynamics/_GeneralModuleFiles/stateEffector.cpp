@@ -68,6 +68,16 @@ void StateEffector::updateContributions(double integTime, BackSubMatrices & back
     return;
 }
 
+/*! This method must be implemented to attach a state effector to a prescribed motion state effector. The additional
+ coupling terms required to attach the state effector to the prescribed component are computed in this method. Similar
+ to how the spacecraft module calls updateContributions for all its attached effectors, the prescribed motion module
+ calls this method for all its attached state effectors.
+ */
+void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
+{
+    return;
+}
+
 /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the dynamicObject.
  The analytical devlopement of these contributions can be seen in
  Basilisk/simulation/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf*/
@@ -104,7 +114,14 @@ void StateEffector::registerProperties(DynParamManager& states)
 /*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */
 void StateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
-    bskLogger.bskLog(BSK_ERROR, "StateEffector: This effector is not compatable with attached effectors");
+    bskLogger.bskLog(BSK_ERROR, "StateEffector: This effector is not compatible with attached effectors");
+}
+
+/*! This method allows the state effector to link in prescribed motion properties */
+void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
+{
+    bskLogger.bskLog(BSK_ERROR, "StateEffector: This effector is not compatible for attachment to prescribed motion.");
+    return;
 }
 
 /*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */
@@ -250,5 +267,65 @@ void StateEffector::setPropName_vehicleGravity(std::string value)
         this->propName_vehicleGravity = value;
     } else {
         bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_vehicleGravity variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedPosition(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedPosition = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedPosition variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedVelocity variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAcceleration(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAcceleration = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAcceleration variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAttitude(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAttitude = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAttitude variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAngVelocity(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAngVelocity = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAngVelocity variable must be a non-empty string");
+    }
+}
+
+void StateEffector::setPropName_prescribedAngAcceleration(std::string value)
+{
+    // check that value is acceptable
+    if (!value.empty()) {
+        this->propName_prescribedAngAcceleration = value;
+    } else {
+        bskLogger.bskLog(BSK_ERROR, "StateEffector: propName_prescribedAngAcceleration variable must be a non-empty string");
     }
 }
