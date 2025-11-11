@@ -78,9 +78,23 @@ void LinearTranslationOneDOFStateEffector::setC(double c) {
 
 void LinearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    // Get access to the hub's states needed for dynamic coupling
+    this->hubOmega = statesIn.getStateObject("hubOmega");
+
+    // Get access to properties needed for dynamic coupling (Hub or prescribed)
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
     this->g_N = statesIn.getPropertyReference("g_N");
+}
+
+void LinearTranslationOneDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
+{
+    this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
+    this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
+    this->prescribedAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAcceleration);
+    this->prescribedAttitudeProperty = properties.getPropertyReference(this->propName_prescribedAttitude);
+    this->prescribedAngVelocityProperty = properties.getPropertyReference(this->propName_prescribedAngVelocity);
+    this->prescribedAngAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAngAcceleration);
 }
 
 void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& states)
@@ -198,20 +212,89 @@ void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
         return;
     }
 
-    this->aRho = - this->fHat_B.transpose();
+    this->aRho = -this->fHat_B.transpose();
     this->bRho = this->fHat_B.transpose() * this->rTilde_FcB_B;
     this->cRho = 1.0 / this->mass * (this->motorForce - this->k * (this->rho - this->rhoRef)
-            - this->c * (this->rhoDot - this->rhoDotRef)
-                 + this->fHat_B.transpose() * (F_g - this->mass * (2 * this->omegaTilde_BN_B * this->rPrime_FcB_B
-                 + this->omegaTilde_BN_B*this->omegaTilde_BN_B*this->r_FcB_B)));
+                                     - this->c * (this->rhoDot - this->rhoDotRef)
+                                     + this->fHat_B.transpose() *
+                                       (F_g - this->mass * (2 * this->omegaTilde_BN_B * this->rPrime_FcB_B
+                                                            + this->omegaTilde_BN_B * this->omegaTilde_BN_B *
+                                                              this->r_FcB_B)));
 
-	backSubContr.matrixA = this->mass * this->fHat_B * this->aRho.transpose();
+    backSubContr.matrixA = this->mass * this->fHat_B * this->aRho.transpose();
     backSubContr.matrixB = this->mass * this->fHat_B * this->bRho.transpose();
     backSubContr.matrixC = this->mass * this->rTilde_FcB_B * this->fHat_B * this->aRho.transpose();
-	backSubContr.matrixD = this->mass * this->rTilde_FcB_B * this->fHat_B * this->bRho.transpose();
-	backSubContr.vecTrans = - this->mass * this->cRho * this->fHat_B;
-	backSubContr.vecRot = - this->mass * this->omegaTilde_BN_B * this->rTilde_FcB_B * this->rPrime_FcB_B
-            - this->mass * this->cRho * this->rTilde_FcB_B * this->fHat_B;
+    backSubContr.matrixD = this->mass * this->rTilde_FcB_B * this->fHat_B * this->bRho.transpose();
+    backSubContr.vecTrans = -this->mass * this->cRho * this->fHat_B;
+    backSubContr.vecRot = -this->mass * this->omegaTilde_BN_B * this->rTilde_FcB_B * this->rPrime_FcB_B
+                          - this->mass * this->cRho * this->rTilde_FcB_B * this->fHat_B;
+}
+
+void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices & backSubContr) {
+
+    // Access prescribed motion properties
+    Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
+    Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
+    Eigen::Vector3d rPrimePrime_PB_B = (Eigen::Vector3d)*this->prescribedAccelerationProperty;
+    Eigen::MRPd sigma_PB;
+    sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
+    Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
+    Eigen::Vector3d omegaPrime_PB_P = (Eigen::Vector3d)*this->prescribedAngAccelerationProperty;
+    Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
+
+    // Collect hub states
+    Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
+    Eigen::Vector3d omega_BN_P = dcm_PB * omega_BN_B;
+
+    // Prescribed motion translation coupling contributions
+    Eigen::Vector3d fHat_P = this->fHat_B;
+    Eigen::Vector3d r_PB_P = dcm_PB * r_PB_B;
+    Eigen::Matrix3d rTilde_PB_P = eigenTilde(r_PB_P);
+    backSubContr.matrixB += - this->mass * fHat_P * this->aRho.transpose() * rTilde_PB_P;
+
+    Eigen::Matrix3d omegaTilde_PB_P = eigenTilde(omega_PB_P);
+    Eigen::Vector3d rPPrime_FcP_P = this->rPrime_FcB_B;
+    Eigen::Matrix3d omegaPrimeTilde_PB_P = eigenTilde(omegaPrime_PB_P);
+    Eigen::Vector3d r_FcP_P = this->r_FcB_B;
+    Eigen::Vector3d rPrimePrime_PB_P = dcm_PB * rPrimePrime_PB_B;
+    Eigen::Matrix3d omegaTilde_BN_P = eigenTilde(omega_BN_P);
+    Eigen::Vector3d rPrime_PB_P = dcm_PB * rPrime_PB_B;
+    Eigen::Vector3d term1 = 2.0 * omegaTilde_PB_P * rPPrime_FcP_P
+                            + omegaPrimeTilde_PB_P * r_FcP_P
+                            + omegaTilde_PB_P * omegaTilde_PB_P * r_FcP_P
+                            + rPrimePrime_PB_P;
+    Eigen::Vector3d term2 = rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P
+                            + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P;
+    Eigen::Vector3d term3 = omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P;
+    backSubContr.vecTrans += - this->mass * term1
+                             - this->mass * this->aRho.transpose() * term2 * fHat_P
+                             - this->mass * this->bRho.transpose() * term3 * fHat_P;
+
+    // Prescribed motion rotation coupling contributions
+    backSubContr.matrixC += this->mass * rTilde_PB_P * fHat_P * this->aRho.transpose();
+
+    Eigen::Vector3d r_FcB_P = r_FcP_P + r_PB_P;
+    Eigen::Matrix3d rTilde_FcB_P = eigenTilde(r_FcB_P);
+    backSubContr.matrixD += + this->mass * rTilde_PB_P * fHat_P * this->bRho.transpose()
+                            - this->mass * rTilde_FcB_P * fHat_P * this->aRho.transpose() * rTilde_PB_P;
+
+    Eigen::Matrix3d IPntFc_P = this->IPntFc_B;
+    Eigen::Vector3d omega_PN_P = omega_PB_P + omega_BN_P;
+    Eigen::Matrix3d omegaTilde_PN_P = eigenTilde(omega_PN_P);
+    Eigen::Matrix3d rTilde_FcP_P = eigenTilde(r_FcP_P);
+
+    Eigen::Vector3d vecRotTerm1 = - IPntFc_P * omegaPrime_PB_P - omegaTilde_PN_P * IPntFc_P * omega_PB_P;
+    Eigen::Vector3d vecRotTerm2 = - this->mass * rTilde_FcB_P * term1;
+    Eigen::Vector3d vecRotTerm3 = - this->mass * (omegaTilde_BN_P * rTilde_PB_P - omegaTilde_PB_P * rTilde_FcP_P) * rPPrime_FcP_P;
+                                  - this->mass * omegaTilde_BN_P * rTilde_FcB_P * (omegaTilde_PB_P * r_FcP_P + rPrime_PB_P);
+    Eigen::Vector3d vecRotTerm4 = - this->mass * this->cRho * rTilde_PB_P * fHat_P;
+    Eigen::Vector3d vecRotTerm5 = - this->mass * rTilde_FcB_P * fHat_P * (this->aRho.transpose() * term2)
+            - this->mass * rTilde_FcB_P * fHat_P * (this->bRho.transpose() * term3);
+    backSubContr.vecRot += vecRotTerm1
+            + vecRotTerm2
+            + vecRotTerm3
+            + vecRotTerm4
+            + vecRotTerm5;
 }
 
 void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
@@ -235,15 +318,21 @@ void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double i
                                                                         double & rotEnergyContr,
                                                                         Eigen::Vector3d omega_BN_B)
 {
+    // Update omega_BN_B and omega_FN_B
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     Eigen::Vector3d omega_FN_B = this->omega_BN_B;
 
-    Eigen::Vector3d rDotFcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
-    rotAngMomPntCContr_B = this->IPntFc_B * omega_FN_B + this->mass * this->r_FcB_B.cross(rDotFcB_B);
+    // Compute rDot_FcB_B
+    Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
+
+    // Find rotational angular momentum contribution
+    rotAngMomPntCContr_B = this->IPntFc_B * omega_FN_B + this->mass * this->r_FcB_B.cross(rDot_FcB_B);
+
+    // Find rotational energy contribution
     rotEnergyContr = 1.0 / 2.0 * omega_FN_B.dot(this->IPntFc_B * omega_FN_B)
-            + 1.0 / 2.0 * this->mass * rDotFcB_B.dot(rDotFcB_B)
-            + 1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
+                     + 1.0 / 2.0 * this->mass * rDot_FcB_B.dot(rDot_FcB_B)
+                     + 1.0 / 2.0 * this->k * (this->rho - this->rhoRef) * (this->rho - this->rhoRef);
 }
 
 void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates()

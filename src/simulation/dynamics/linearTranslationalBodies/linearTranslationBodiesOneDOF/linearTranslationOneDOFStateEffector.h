@@ -140,6 +140,7 @@ private:
     void Reset(uint64_t CurrentClock) override;
 	void registerStates(DynParamManager& states) override;
 	void linkInStates(DynParamManager& states) override;
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;
     void writeOutputStateMessages(uint64_t CurrentSimNanos) override;
     void updateEffectorMassProps(double integTime) override;
     void updateContributions(double integTime,
@@ -156,6 +157,10 @@ private:
     void computeTranslatingBodyInertialStates();
     void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g);
     void readInputMessages();
+    void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;  //!< Method for adding coupling contributions for state effector branching on prescribed motion
+
+    // Properties required for prescribed motion branching/attachment
+    StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
 };
 
 #endif /* LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H */
