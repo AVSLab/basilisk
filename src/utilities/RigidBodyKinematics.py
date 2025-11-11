@@ -2345,35 +2345,41 @@ def MRPswitch(q, s2):
 
 def PRV2C(q):
     """
-    PRV2C
+    Convert a principal rotation vector to a direction cosine matrix.
 
-    	C = PRV2C(Q) returns the direction cosine
-    	matrix in terms of the 3x1 principal rotation vector
-    	Q.
+    Parameters
+    ----------
+    q : array_like, shape (3,)
+        Principal rotation vector. The magnitude equals the rotation angle (rad)
+        and the direction is the rotation axis.
+
+    Returns
+    -------
+    C : ndarray, shape (3, 3)
+        Direction cosine (rotation) matrix.
     """
 
-    q0 = np.linalg.norm(q)
-    if q0 == 0.0:
-        q1 = q[0]
-        q2 = q[1]
-        q3 = q[2]
-    else:
-        q1 = q[0] / q0
-        q2 = q[1] / q0
-        q3 = q[2] / q0
-    cp = np.cos(q0)
-    sp = np.sin(q0)
+    q = np.asarray(q, dtype=float).reshape(3)
+    angle = np.linalg.norm(q)
+
+    if np.isclose(angle, 0.0):
+        # No rotation -> identity matrix
+        return np.eye(3)
+
+    # Normalize principal axis
+    e = q / angle
+    q1, q2, q3 = e
+
+    cp = np.cos(angle)
+    sp = np.sin(angle)
     d1 = 1 - cp
-    C = np.zeros((3, 3))
-    C[0, 0] = q1 * q1 * d1 + cp
-    C[0, 1] = q1 * q2 * d1 + q3 * sp
-    C[0, 2] = q1 * q3 * d1 - q2 * sp
-    C[1, 0] = q2 * q1 * d1 - q3 * sp
-    C[1, 1] = q2 * q2 * d1 + cp
-    C[1, 2] = q2 * q3 * d1 + q1 * sp
-    C[2, 0] = q3 * q1 * d1 + q2 * sp
-    C[2, 1] = q3 * q2 * d1 - q1 * sp
-    C[2, 2] = q3 * q3 * d1 + cp
+
+    C = np.array([
+        [q1*q1*d1 + cp,     q1*q2*d1 + q3*sp, q1*q3*d1 - q2*sp],
+        [q2*q1*d1 - q3*sp, q2*q2*d1 + cp,     q2*q3*d1 + q1*sp],
+        [q3*q1*d1 + q2*sp, q3*q2*d1 - q1*sp, q3*q3*d1 + cp    ]
+    ])
+
     return C
 
 
