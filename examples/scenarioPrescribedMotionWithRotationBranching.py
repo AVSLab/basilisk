@@ -37,6 +37,10 @@ To demonstrate the impact of the prescribed truss motion on the solar panel dyna
 given zero initial deflections. The trusses are profiled to symmetrically rotate 45 degrees from their
 initial configurations using a smoothed bang-coast-bang acceleration profile.
 
+The script is found in the folder ``basilisk/examples`` and executed by using::
+
+    python3 scenarioPrescribedMotionWithRotationBranching.py
+
 The prescribed truss motion, solar panel deflections and their rates, and the hub response to the panel deflections
 is plotted in this scenario.
 
@@ -92,6 +96,13 @@ filename = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
 def run(show_plots):
+    """
+    The scenario can be run with the followings set up parameter:
+
+    Args:
+        show_plots (bool): Determines if the script should display plots
+
+    """
 
     # Set up the simulation
     sc_sim = SimulationBaseClass.SimBaseClass()
