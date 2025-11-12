@@ -44,6 +44,10 @@ actuating, the three landing struts are each commanded to deploy away from the p
 axes. Similarly, the struts are given arbitrary reference displacements of 0.2, 0.1, and 0.15 meters relative
 to the platform.
 
+The script is found in the folder ``basilisk/examples`` and executed by using::
+
+    python3 scenarioPrescribedMotionWithTranslationBranching.py
+
 The prescribed platform motion, landing strut displacements and their rates, and the hub response to the lander
 deployment is plotted in this scenario.
 
