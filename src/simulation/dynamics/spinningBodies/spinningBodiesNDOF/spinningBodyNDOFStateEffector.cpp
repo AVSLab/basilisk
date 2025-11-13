@@ -33,6 +33,7 @@ SpinningBodyNDOFStateEffector::SpinningBodyNDOFStateEffector()
 
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
+    this->propertyNameIndex = std::to_string(SpinningBodyNDOFStateEffector::effectorID); // preserves effectorID for later adding bodies
     SpinningBodyNDOFStateEffector::effectorID++;
 }
 
@@ -93,6 +94,11 @@ void SpinningBodyNDOFStateEffector::addSpinningBody(const std::shared_ptr<Spinni
     this->ATheta.conservativeResize(this->ATheta.rows()+1, 3);
     this->BTheta.conservativeResize(this->BTheta.rows()+1, 3);
     this->CTheta.conservativeResize(this->CTheta.rows()+1);
+
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialPositionProperty = "spinningBodyInertialPosition" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialVelocityProperty = "spinningBodyInertialVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialAttitudeProperty = "spinningBodyInertialAttitude" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    spinningBodyVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialAngVelocityProperty = "spinningBodyInertialAngVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
 }
 
 std::shared_ptr<SpinningBody> SpinningBodyNDOFStateEffector::getSpinningBody(uint64_t index) {
@@ -153,8 +159,8 @@ void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
             // Logging the S frame is the body frame B of that object
             eigenVector3d2CArray(spinningBody->r_ScN_N, configLogMsg.r_BN_N);
             eigenVector3d2CArray(spinningBody->v_ScN_N, configLogMsg.v_BN_N);
-            eigenVector3d2CArray(spinningBody->sigma_SN, configLogMsg.sigma_BN);
-            eigenVector3d2CArray(spinningBody->omega_SN_S, configLogMsg.omega_BN_B);
+            eigenMatrixXd2CArray(*spinningBody->sigma_SN, configLogMsg.sigma_BN);
+            eigenMatrixXd2CArray(*spinningBody->omega_SN_S, configLogMsg.omega_BN_B);
             this->spinningBodyConfigLogOutMsgs[spinningBodyIndex]->write(&configLogMsg, this->moduleID, CurrentClock);
         }
         spinningBodyIndex++;
@@ -188,6 +194,33 @@ void SpinningBodyNDOFStateEffector::registerStates(DynParamManager& states)
     }
     this->thetaState->setState(thetaInitMatrix);
     this->thetaDotState->setState(thetaDotInitMatrix);
+
+    registerProperties(states);
+}
+
+void SpinningBodyNDOFStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    if (segment <= 0 || segment > this->numberOfDegreesOfFreedom) {
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent spinning bodies linkage.");
+    } else {
+        this->spinningBodyVec[segment-1]->assignStateParamNames(newDynamicEffector);
+        this->spinningBodyVec[segment-1]->dynEffectors.push_back(newDynamicEffector);
+    }
+}
+
+void SpinningBodyNDOFStateEffector::registerProperties(DynParamManager& states)
+{
+    for(auto& spinningBody: this->spinningBodyVec) {
+        Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+        spinningBody->r_SN_N = states.createProperty(spinningBody->nameOfInertialPositionProperty, stateInit);
+        spinningBody->v_SN_N = states.createProperty(spinningBody->nameOfInertialVelocityProperty, stateInit);
+        spinningBody->sigma_SN = states.createProperty(spinningBody->nameOfInertialAttitudeProperty, stateInit);
+        spinningBody->omega_SN_S = states.createProperty(spinningBody->nameOfInertialAngVelocityProperty, stateInit);
+
+        for(auto& dynEffector: spinningBody->dynEffectors) {
+            dynEffector->linkInProperties(states);
+        }
+    }
 }
 
 void SpinningBodyNDOFStateEffector::updateEffectorMassProps(double integTime)
@@ -237,10 +270,11 @@ void SpinningBodyNDOFStateEffector::computeAttitudeProperties(std::shared_ptr<Sp
     Eigen::Vector3d prv_S0S = - spinningBody->theta * spinningBody->sHat_S;
     eigenVector3d2CArray(prv_S0S, prv_S0S_array);
     PRV2C(prv_S0S_array, dcm_S0S);
+    spinningBody->dcm_S0S = c2DArray2EigenMatrix3d(dcm_S0S);
     if (spinningBodyIndex == 0) {
-        spinningBody->dcm_BS = spinningBody->dcm_S0P.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+        spinningBody->dcm_BS = spinningBody->dcm_S0P.transpose() * spinningBody->dcm_S0S;
     } else {
-        spinningBody->dcm_BS = this->spinningBodyVec[spinningBodyIndex-1]->dcm_BS * spinningBody->dcm_S0P.transpose() * c2DArray2EigenMatrix3d(dcm_S0S);
+        spinningBody->dcm_BS = this->spinningBodyVec[spinningBodyIndex-1]->dcm_BS * spinningBody->dcm_S0P.transpose() * spinningBody->dcm_S0S;
     }
     spinningBody->sHat_B = spinningBody->dcm_BS * spinningBody->sHat_S;
 }
@@ -306,6 +340,8 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
     Eigen::MatrixXd BThetaStar = Eigen::MatrixXd::Zero(this->numberOfDegreesOfFreedom, 3);
     Eigen::VectorXd CThetaStar = Eigen::VectorXd::Zero(this->numberOfDegreesOfFreedom);
 
+    this->computeDependentEffectors(backSubContr, integTime);
+
     this->computeMTheta(MTheta);
     this->computeAThetaStar(AThetaStar);
     this->computeBThetaStar(BThetaStar);
@@ -317,6 +353,30 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
 
     this->computeBackSubMatrices(backSubContr);
     this->computeBackSubVectors(backSubContr);
+}
+
+void SpinningBodyNDOFStateEffector::computeDependentEffectors(BackSubMatrices& backSubContr, double integTime)
+{
+    Eigen::Vector3d force_S = Eigen::Vector3d::Zero();
+    Eigen::Vector3d torquePntS_S = Eigen::Vector3d::Zero();
+    for (auto it = spinningBodyVec.rbegin(); it != spinningBodyVec.rend(); ++it) {
+        auto& spinningBody = *it;
+        for (auto& dynEffector : spinningBody->dynEffectors) {
+            dynEffector->computeForceTorque(integTime, double(0.0));
+            force_S += dynEffector->forceExternal_B;
+            torquePntS_S += dynEffector->torqueExternalPntB_B;
+        }
+        spinningBody->extForce_S = force_S;
+        spinningBody->extTorquePntS_S = torquePntS_S;
+
+        // Rotate external forces/torques into the parent body's frame P (new S frame for next loop)
+        Eigen::Matrix3d dcm_PS = spinningBody->dcm_S0P.transpose() * spinningBody->dcm_S0S;
+        force_S = dcm_PS * force_S;
+        torquePntS_S = dcm_PS * torquePntS_S + spinningBody->r_SP_P.cross(force_S);
+    }
+    // Base body rotated into the hub body frame, added as cumulated force/torque here
+    backSubContr.vecTrans += force_S;
+    backSubContr.vecRot += torquePntS_S;
 }
 
 void SpinningBodyNDOFStateEffector::computeMTheta(Eigen::MatrixXd& MTheta)
@@ -388,7 +448,8 @@ void SpinningBodyNDOFStateEffector::computeCThetaStar(Eigen::VectorXd& CThetaSta
 
         CThetaStar(n) += this->spinningBodyVec[n]->u
                 - this->spinningBodyVec[n]->k * (this->spinningBodyVec[n]->theta - this->spinningBodyVec[n]->thetaRef)
-                - this->spinningBodyVec[n]->c * (this->spinningBodyVec[n]->thetaDot - this->spinningBodyVec[n]->thetaDotRef);
+                - this->spinningBodyVec[n]->c * (this->spinningBodyVec[n]->thetaDot - this->spinningBodyVec[n]->thetaDotRef)
+                + this->spinningBodyVec[n]->extTorquePntS_S.dot(this->spinningBodyVec[n]->sHat_S);
 
         for (int i = n; i<this->numberOfDegreesOfFreedom; i++) {
             Eigen::Vector3d r_SciSn_B = this->spinningBodyVec[i]->r_ScB_B - this->spinningBodyVec[n]->r_SB_B;
@@ -475,6 +536,9 @@ void SpinningBodyNDOFStateEffector::computeBackSubVectors(BackSubMatrices &backS
                                     - this->spinningBodyVec[j]->mass * rTilde_ScjB * rTilde_ScjSi)
                                    * this->spinningBodyVec[i]->sHat_B * this->CTheta.row(i);
         }
+
+        // note: external forces and torques contributed by attached effectors are added to vecTrans
+        //       and vecRot in the computeDependentEffectors(backSubContr) method.
     }
 }
 
@@ -511,12 +575,16 @@ void SpinningBodyNDOFStateEffector::computeSpinningBodyInertialStates()
     for(auto& spinningBody: this->spinningBodyVec) {
         // Compute the rotational properties
         Eigen::Matrix3d dcm_SN = spinningBody->dcm_BS.transpose() * this->dcm_BN;
-        spinningBody->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
-        spinningBody->omega_SN_S = spinningBody->dcm_BS.transpose() * spinningBody->omega_SN_B;
+        *spinningBody->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+        *spinningBody->omega_SN_S = spinningBody->dcm_BS.transpose() * spinningBody->omega_SN_B;
 
         // Compute the translation properties
         spinningBody->r_ScN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * spinningBody->r_ScB_B;
         spinningBody->v_ScN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * spinningBody->rDot_ScB_B;
+        *spinningBody->r_SN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * spinningBody->r_SB_B;
+        *spinningBody->v_SN_N = (Eigen::Vector3d)*this->inertialVelocityProperty +
+                                this->dcm_BN.transpose() * (spinningBody->rDot_ScB_B -
+                                eigenTilde(spinningBody->omega_SN_B) * spinningBody->r_ScS_B);
     }
 }
 

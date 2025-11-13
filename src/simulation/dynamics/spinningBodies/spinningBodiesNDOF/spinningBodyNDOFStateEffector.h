@@ -22,6 +22,7 @@
 
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -90,7 +91,8 @@ private:
     double mass = 1.0;                //!< [kg] spinning body mass
     Eigen::Vector3d r_SP_P = Eigen::Vector3d::Zero();            //!< [m] vector pointing from parent frame P origin to spinning frame S origin in P frame components
     Eigen::Vector3d r_ScS_S = Eigen::Vector3d::Zero();           //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Vector3d sHat_S = {1.0, 0.0, 0.0};           //!< spinning axis in S frame components
+    Eigen::Vector3d sHat_S = {1.0, 0.0, 0.0};                    //!< spinning axis in S frame components
+    Eigen::Matrix3d dcm_S0S = Eigen::Matrix3d::Identity();       //!< DCM from the S0 frame to S frame (rotated by theta)
     Eigen::Matrix3d dcm_S0P = Eigen::Matrix3d::Identity();       //!< DCM from the parent frame to the S0 frame (S frame for theta=0)
     Eigen::Matrix3d ISPntSc_S = Eigen::Matrix3d::Identity();     //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
 
@@ -114,6 +116,8 @@ private:
     Eigen::Vector3d omega_SP_B = Eigen::Vector3d::Zero();        //!< [rad/s] angular velocity of the S frame wrt the P frame in B frame components
     Eigen::Vector3d omega_SB_B = Eigen::Vector3d::Zero();        //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components
     Eigen::Vector3d omega_SN_B = Eigen::Vector3d::Zero();        //!< [rad/s] angular velocity of the S frame wrt the N frame in B frame components
+    Eigen::Vector3d extForce_S = Eigen::Vector3d::Zero();        //!< [N] external force acting on the spinning body in S frame components
+    Eigen::Vector3d extTorquePntS_S = Eigen::Vector3d::Zero();       //!< [N-m] external torque acting on the spinning body about point Sc in S frame components
 
     Eigen::Matrix3d ISPntSc_B = Eigen::Matrix3d::Identity();     //!< [kg-m^2] inertia of spinning body about point Sc in S frame components
     Eigen::Matrix3d IPrimeSPntSc_B = Eigen::Matrix3d::Zero();    //!< [kg-m^2] body frame derivative of the inertia of spinning body about point Sc in S frame components
@@ -122,10 +126,28 @@ private:
     Eigen::Matrix3d omegaTilde_SP_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SP_B
     Eigen::Matrix3d omegaTilde_SB_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SB_B
 
-    Eigen::Vector3d r_ScN_N = Eigen::Vector3d::Zero();           //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
-    Eigen::Vector3d v_ScN_N = Eigen::Vector3d::Zero();           //!< [m/s] inertial velocity vector of Sc relative to inertial frame
-    Eigen::Vector3d sigma_SN = Eigen::Vector3d::Zero();          //!< MRP attitude of frame S relative to inertial frame
-    Eigen::Vector3d omega_SN_S = Eigen::Vector3d::Zero();        //!< [rad/s] inertial spinning body frame angular velocity vector
+    std::vector<DynamicEffector*> dynEffectors;     //!< -- Vector of dynamic effectors attached
+
+    std::string nameOfInertialPositionProperty;     //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;     //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;     //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;  //!< -- identifier for the inertial angular velocity property
+
+    Eigen::Vector3d r_ScN_N;                        //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
+    Eigen::Vector3d v_ScN_N;                        //!< [m/s] inertial velocity vector of Sc relative to inertial frame
+    Eigen::MatrixXd* r_SN_N;                        //!< [m] position vector of the spinning body frame origin S relative to the inertial frame origin N
+    Eigen::MatrixXd* v_SN_N;                        //!< [m/s] inertial velocity vector of S relative to inertial frame
+    Eigen::MatrixXd* sigma_SN;                      //!< MRP attitude of frame S relative to inertial frame
+    Eigen::MatrixXd* omega_SN_S;                    //!< [rad/s] inertial spinning body frame angular velocity vector
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    }
 
     BSKLogger bskLogger;
 };
@@ -177,12 +199,16 @@ private:
 
     std::string nameOfThetaState{};
     std::string nameOfThetaDotState{};
+    std::string propertyNameIndex{};
 
     void Reset(uint64_t CurrentClock) override;
     void writeOutputStateMessages(uint64_t CurrentClock) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override;
     void linkInStates(DynParamManager& states) override;
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;
+    void registerProperties(DynParamManager& states) override;
+    void computeDependentEffectors(BackSubMatrices& backSubContr, double integTime);
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::Vector3d sigma_BN,

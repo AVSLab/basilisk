@@ -79,7 +79,7 @@ from Basilisk.architecture import messaging
     # ("nHingedRigidBodies",              True),
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
-    # ("spinningBodiesNDOF",              True),
+    ("spinningBodiesNDOF",            True),
     # ("linearTranslationBodiesOneDOF",   True),
     # ("linearTranslationBodiesNDOF",     True),
     ("linearSpringMassDamper",          False),
@@ -121,6 +121,7 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
 
     - :ref:`spinningBodyOneDOFStateEffector`
     - :ref:`spinningBodyTwoDOFStateEffector`
+    - :ref:`spinningBodyNDOFStateEffector`
 
     Dynamic effectors that are expected to be able to attach to state effectors (isChild) include:
 
@@ -255,6 +256,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "spinningBodiesTwoDOF":
         stateEff, stateEffProps = setup_spinningBodiesTwoDOF()
         segment = 2
+    elif stateEffector == "spinningBodiesNDOF":
+        stateEff, stateEffProps = setup_spinningBodiesNDOF()
+        segment = 4
     elif stateEffector == "linearSpringMassDamper":
         stateEff, stateEffProps = setup_linearSpringMassDamper()
         segment = 1
@@ -336,13 +340,13 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         assert isChild, "FAILED: attached an incompatible dynamic effector without erroring"
 
     # Check that properties are being handed correctly from state effector to dynamic effector
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position") == getStateEffInertialPropName(segment, stateEff, "Position"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position") == getStateEffInertialPropName(scObject, segment, stateEff, "Position"), (
         "FAILED: inertialPositionProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity") == getStateEffInertialPropName(segment, stateEff, "Velocity"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity") == getStateEffInertialPropName(scObject, segment, stateEff, "Velocity"), (
         "FAILED: inertialVelocityProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude") == getStateEffInertialPropName(segment, stateEff, "Attitude"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude") == getStateEffInertialPropName(scObject, segment, stateEff, "Attitude"), (
         "FAILED: inertialAttitudeProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == getStateEffInertialPropName(segment, stateEff, "AngVelocity"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == getStateEffInertialPropName(scObject, segment, stateEff, "AngVelocity"), (
         "FAILED: inertialAngVelocityProperty not handed correctly between state and dynamic effectors")
 
     # Run the sim for a few timesteps to confirm execution without error
@@ -452,11 +456,18 @@ def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
     else:
         return getattr(dynamicEff, f"getPropName_inertial{propType}")()
 
-def getStateEffInertialPropName(segment, stateEff, propType):
+def getStateEffInertialPropName(scObject, segment, stateEff, propType):
     if segment == 1:
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
+    elif segment == 4:
+        try:
+            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
+            scObject.dynManager.getPropertyReference(propName)
+        except BasiliskError:
+            return "notHandedCorrectly"
+        return propName
 
 def setup_extForceTorque():
     extFT = extForceTorque.ExtForceTorque()
@@ -658,6 +669,74 @@ def setup_spinningBodiesTwoDOF():
     stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsgs"
 
     return(spinningBody, stateEffProps)
+
+def setup_spinningBodiesNDOF():
+    spinningBodyEffector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+    numberOfSegments = 3 # 3 segments of 2DOF joints is really 6 spinning bodies here
+    massSubPanel = 100.0 / numberOfSegments
+    lengthSubPanel = 18.0 / numberOfSegments
+    widthSubPanel =  3.0
+    thicknessSubPanel = 0.3
+    r_ScB_B = np.array([[0.0], [0.0], [0.0]])
+    dcm_SB = np.array([[1.0, 0.0, 0.0],
+                       [0.0, 1.0, 0.0],
+                       [0.0, 0.0, 1.0]])
+    mr_ScB_B = 0.0
+
+    for idx in range(numberOfSegments):
+        spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
+        spinningBody.setMass(0.0)
+        spinningBody.setISPntSc_S([[0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0],
+                                   [0.0, 0.0, 0.0]])
+        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
+                                 [0.0, 1.0, 0.0],
+                                 [0.0, 0.0, 1.0]])
+        spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
+        if idx == 0:
+            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]])
+        else:
+            spinningBody.setR_SP_P([[0.0], [lengthSubPanel], 0.0])
+        spinningBody.setSHat_S([[1], [0], [0]])
+        spinningBody.setThetaInit(2.0 * macros.D2R)
+        spinningBody.setThetaDotInit(-0.5 * macros.D2R)
+        spinningBody.setK(10)
+        spinningBody.setC(8)
+        spinningBodyEffector.addSpinningBody(spinningBody)
+        r_ScB_B += dcm_SB.transpose() @ spinningBody.getR_SP_P()
+        dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
+
+        spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
+        spinningBody.setMass(massSubPanel)
+        spinningBody.setISPntSc_S([[massSubPanel / 12 * (lengthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0, 0.0],
+                                   [0.0, massSubPanel / 12 * (widthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0],
+                                   [0.0, 0.0, massSubPanel / 12 * (widthSubPanel ** 2 + lengthSubPanel ** 2)]])
+        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
+                                 [0.0, 1.0, 0.0],
+                                 [0.0, 0.0, 1.0]])
+        spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
+        spinningBody.setR_SP_P([[0.0], [0.0], [0.0]])
+        spinningBody.setSHat_S([[0], [1], [0]])
+        spinningBody.setThetaInit(2.0 * macros.D2R)
+        spinningBody.setThetaDotInit(-0.5 * macros.D2R)
+        spinningBody.setK(1)
+        spinningBody.setC(0.8)
+        spinningBodyEffector.addSpinningBody(spinningBody)
+        dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
+
+        # Compute COM offset contribution, to be divided by the hub mass
+        mr_ScB_B -= spinningBody.getMass() * (r_ScB_B + dcm_SB.transpose() @ spinningBody.getR_ScS_S())
+
+    spinningBodyEffector.ModelTag = "spinningBody"
+
+    stateEffProps = stateEfectorProperties()
+    stateEffProps.totalMass = massSubPanel * numberOfSegments
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = r_ScB_B - dcm_SB.transpose() @ spinningBody.getR_ScS_S()
+    stateEffProps.r_PcP_P = spinningBody.getR_ScS_S()
+    stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsgs"
+
+    return(spinningBodyEffector, stateEffProps)
 
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
