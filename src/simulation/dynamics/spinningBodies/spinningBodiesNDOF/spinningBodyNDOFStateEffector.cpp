@@ -31,8 +31,8 @@ SpinningBodyNDOFStateEffector::SpinningBodyNDOFStateEffector()
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
-    this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
-    this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
+    this->nameOfThetaState = "spinningBodyNDOFTheta" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
+    this->nameOfThetaDotState = "spinningBodyNDOFThetaDot" + std::to_string(SpinningBodyNDOFStateEffector::effectorID);
     this->propertyNameIndex = std::to_string(SpinningBodyNDOFStateEffector::effectorID); // preserves effectorID for later adding bodies
     SpinningBodyNDOFStateEffector::effectorID++;
 }
