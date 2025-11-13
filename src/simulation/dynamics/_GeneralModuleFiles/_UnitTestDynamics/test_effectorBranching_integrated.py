@@ -374,7 +374,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
             dcm_NS = np.transpose(rbk.MRP2C(sigmai_SN))
             r_ScN_N_log[i, :] = inertialPropLog.r_BN_N[i, :] + (dcm_NS @ stateEffProps.r_PcP_P).flatten()
     else:
-        r_ScN_N_log = inertialPropLog.r_BN_N 
+        r_ScN_N_log = inertialPropLog.r_BN_N
 
     # Grab effector's attitude properties
     sigma_SN_log = inertialPropLog.sigma_BN
