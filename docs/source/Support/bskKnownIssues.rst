@@ -34,6 +34,9 @@ Version |release|
   Using the old settings name results in the setting not being applied.
 - When building the Basilisk documentation with doxygen 1.15 or newer, warnings associated with
   unclosed quotes are treated as errors and cause the build to fail. Quotes are fixed now.
+- :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector` both registered
+  their state variables under the same names, resulting in one overwriting the other when both are
+  added to the same simulation and producing a ``BSK_ERROR``. State names are now made unique.
 
 
 Version 2.8.0

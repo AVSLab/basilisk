@@ -83,6 +83,8 @@ Version |release|
   :ref:`linearTranslationOneDOFStateEffector` modules for optional attachment to the prescribed motion state effector.
 - Added two example branching scenarios to illustrate the prescribed motion branching capability. See
   :ref:`scenarioPrescribedMotionWithTranslationBranching` and :ref:`scenarioPrescribedMotionWithRotationBranching`.
+- Fixed a bug where :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`
+  both registered their states under the same name, resulting in overwriting and a ``BSK_ERROR``.
 
 
 Version 2.8.0 (August 30, 2025)
