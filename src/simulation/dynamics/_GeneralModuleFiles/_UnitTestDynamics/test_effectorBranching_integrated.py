@@ -117,17 +117,8 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     addDynamicEffector() method is called. The dynamic effector compatibility is checked at
     simulation initialization when linkInProperties() is called.
 
-    State effectors that are expected to be able to host dynamic effectors (isParent) include:
-
-    - :ref:`spinningBodyOneDOFStateEffector`
-    - :ref:`spinningBodyTwoDOFStateEffector`
-    - :ref:`spinningBodyNDOFStateEffector`
-
-    Dynamic effectors that are expected to be able to attach to state effectors (isChild) include:
-
-    - :ref:`extForceTorque`
-    - :ref:`thrusterDynamicEffector`
-    - :ref:`constraintDynamicEffector`
+    A summary of which state effectors and dynamic effectors are expected to be able to act as a
+    parent or child effector to another is summarized in :ref:`bskPrinciples-11`.
 
     Note that the constraint effector is tested in two configurations: once where one vehicle's
     state effector is attached to the hub on another vehicle (``constraintEffectorOneHub``), and
