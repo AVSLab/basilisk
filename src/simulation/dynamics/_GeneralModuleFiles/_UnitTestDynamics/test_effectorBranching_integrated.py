@@ -80,7 +80,7 @@ from Basilisk.architecture import messaging
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
     ("spinningBodiesNDOF",            True),
-    # ("linearTranslationBodiesOneDOF",   True),
+    ("linearTranslationBodiesOneDOF", True),
     # ("linearTranslationBodiesNDOF",     True),
     ("linearSpringMassDamper",          False),
     # ("sphericalPendulum",               False),
@@ -250,6 +250,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "spinningBodiesNDOF":
         stateEff, stateEffProps = setup_spinningBodiesNDOF()
         segment = 4
+    elif stateEffector == "linearTranslationBodiesOneDOF":
+        stateEff, stateEffProps = setup_translatingBodiesOneDOF()
+        segment = 1
     elif stateEffector == "linearSpringMassDamper":
         stateEff, stateEffProps = setup_linearSpringMassDamper()
         segment = 1
@@ -331,13 +334,27 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         assert isChild, "FAILED: attached an incompatible dynamic effector without erroring"
 
     # Check that properties are being handed correctly from state effector to dynamic effector
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position") == getStateEffInertialPropName(scObject, segment, stateEff, "Position"), (
+    if (stateEffector == "spinningBodiesNDOF" or stateEffector == "linearTranslationBodiesOneDOF"
+        or stateEffector == "linearTranslationBodiesNDOF"):
+        # Newer effector classes keep all variables private and so we check with the dynParamManager
+        positionName = getModernStateEffInertialPropName(scObject, segment, stateEff, "Position")
+        velocityName = getModernStateEffInertialPropName(scObject, segment, stateEff, "Velocity")
+        attitudeName = getModernStateEffInertialPropName(scObject, segment, stateEff, "Attitude")
+        angvelocityName = getModernStateEffInertialPropName(scObject, segment, stateEff, "AngVelocity")
+    else:
+        # older effector classes have public variable names that are simply checked directly
+        positionName = getStateEffInertialPropName(segment, stateEff, "Position")
+        velocityName = getStateEffInertialPropName(segment, stateEff, "Velocity")
+        attitudeName = getStateEffInertialPropName(segment, stateEff, "Attitude")
+        angvelocityName = getStateEffInertialPropName(segment, stateEff, "AngVelocity")
+
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position") == positionName, (
         "FAILED: inertialPositionProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity") == getStateEffInertialPropName(scObject, segment, stateEff, "Velocity"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity") == velocityName, (
         "FAILED: inertialVelocityProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude") == getStateEffInertialPropName(scObject, segment, stateEff, "Attitude"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude") == attitudeName, (
         "FAILED: inertialAttitudeProperty not handed correctly between state and dynamic effectors")
-    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == getStateEffInertialPropName(scObject, segment, stateEff, "AngVelocity"), (
+    assert getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity") == angvelocityName, (
         "FAILED: inertialAngVelocityProperty not handed correctly between state and dynamic effectors")
 
     # Run the sim for a few timesteps to confirm execution without error
@@ -370,11 +387,18 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
             dV[idx,:] = (dV[idx-1,:] + (dcm_NS @ np.array(dynamicEff.extForce_B).flatten())
                        / (scObject.hub.mHub + stateEffProps.totalMass) * timestep)
         # Compute the total external torque on the vehicle
-        extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
-                             + np.cross(r_ScN_N_log[idx+1,:] - dcm_NS
-                             @ np.array(stateEffProps.r_PcP_P).flatten()
-                             - datLog.r_CN_N[idx,:], dcm_NS
-                             @ np.array(dynamicEff.extForce_B).flatten()))
+        if stateEffector == "linearTranslationBodiesOneDOF" or stateEffector == "linearTranslationBodiesNDOF":
+            extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
+                                + np.cross(r_ScN_N_log[idx+1,:] - dcm_NS
+                                @ np.array(stateEffProps.r_PcP_P).flatten()
+                                - datLog.r_CN_N[idx,:], dcm_NS
+                                @ np.array(dynamicEff.extForce_B).flatten()))
+        else:
+            extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
+                                + np.cross(r_ScN_N_log[idx+1,:] - dcm_NS
+                                @ np.array(stateEffProps.r_PcP_P).flatten()
+                                - datLog.r_CN_N[idx,:], dcm_NS
+                                @ np.array(dynamicEff.extForce_B).flatten()))
 
     # Integrate the torque to find accumulated change in angular momentum
     dx = np.ones(n-1)*timestep
@@ -428,12 +452,16 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
 
     # Check angular momentum difference against sim truth
     angMom_accuracy = 1e-3
-    np.testing.assert_allclose(rotAngMom_N[:-1,:]-rotAngMom_N[0,:] - dH, 0, atol=angMom_accuracy,
+    # np.testing.assert_allclose(np.linalg.norm(rotAngMom_N[:-1,:]-rotAngMom_N[0,:] - dH, axis=1), 0, atol=angMom_accuracy,
+    #                            err_msg="angular momentum difference beyond accuracy limits")
+    np.testing.assert_allclose(rotAngMom_N[:-1,:]-rotAngMom_N[0,:], dH, atol=angMom_accuracy,
                                err_msg="angular momentum difference beyond accuracy limits")
 
     # Check deltaV difference against sim truth
     deltaV_accuracy = 1e-6
-    np.testing.assert_allclose(totAccumDV_N[:-1,:] - dV, 0, atol=deltaV_accuracy,
+    # np.testing.assert_allclose(np.linalg.norm(totAccumDV_N[:-1,:] - dV, axis=1), 0, atol=deltaV_accuracy,
+    #                            err_msg="deltaV difference beyond accuracy limits")
+    np.testing.assert_allclose(totAccumDV_N[:-1,:], dV, 0, atol=deltaV_accuracy,
                                err_msg="deltaV difference beyond accuracy limits")
 
     return
@@ -447,7 +475,7 @@ def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
     else:
         return getattr(dynamicEff, f"getPropName_inertial{propType}")()
 
-def getStateEffInertialPropName(scObject, segment, stateEff, propType):
+def getStateEffInertialPropName(segment, stateEff, propType):
     if segment == 1:
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
@@ -459,6 +487,18 @@ def getStateEffInertialPropName(scObject, segment, stateEff, propType):
         except BasiliskError:
             return "notHandedCorrectly"
         return propName
+
+def getModernStateEffInertialPropName(scObject, segment, stateEff, propType):
+    try:
+        if segment == 1:
+            propName = stateEff.ModelTag + "Inertial" + propType + "1"
+            scObject.dynManager.getPropertyReference(propName)
+        elif segment == 4:
+            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
+            scObject.dynManager.getPropertyReference(propName)
+    except BasiliskError:
+        return "notHandedCorrectly"
+    return propName
 
 def setup_extForceTorque():
     extFT = extForceTorque.ExtForceTorque()
@@ -631,10 +671,10 @@ def setup_spinningBodiesTwoDOF():
     spinningBody.IS2PntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
     spinningBody.dcm_S10B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     spinningBody.dcm_S20S1 = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
-    spinningBody.r_Sc1S1_S1 = [[2.0], [-0.5], [0.0]]
+    spinningBody.r_Sc1S1_S1 = [[1.0], [-0.5], [0.0]]
     spinningBody.r_Sc2S2_S2 = [[1.0], [0.0], [-1.0]]
-    spinningBody.r_S1B_B = [[-2.0], [0.5], [-1.0]]
-    spinningBody.r_S2S1_S1 = [[0.5], [-1.5], [-0.5]]
+    spinningBody.r_S1B_B = [[-1.0], [0.5], [-1.0]]
+    spinningBody.r_S2S1_S1 = [[0.5], [-0.5], [-0.5]]
     spinningBody.s1Hat_S1 = [[0], [0], [1]]
     spinningBody.s2Hat_S2 = [[0], [-1], [0]]
     spinningBody.theta1DotInit = 1.0 * macros.D2R
@@ -729,6 +769,39 @@ def setup_spinningBodiesNDOF():
 
     return(spinningBodyEffector, stateEffProps)
 
+def setup_translatingBodiesOneDOF():
+    translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+
+    # Define properties of translating body
+    translatingBody.setMass(20.0)
+    translatingBody.setK(100.0)
+    translatingBody.setC(50.0)
+    translatingBody.setRhoInit(1.0)
+    translatingBody.setRhoDotInit(0.05)
+    translatingBody.setFHat_B([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
+    translatingBody.setR_FcF_F([[-1.0], [1.0], [0.0]])
+    translatingBody.setR_F0B_B([[-1.0], [1.0], [0.0]])
+    translatingBody.setIPntFc_F([[50.0, 0.0, 0.0],
+                                 [0.0, 80.0, 0.0],
+                                 [0.0, 0.0, 60.0]])
+    translatingBody.setDCM_FB([[0.0, -1.0, 0.0],
+                               [0.0, 0.0, -1.0],
+                               [1.0, 0.0, 0.0]])
+    translatingBody.ModelTag = "linearTranslation"
+
+    mr_ScB_B = -(translatingBody.getR_F0B_B() + np.transpose(translatingBody.getDCM_FB()) @
+                 (translatingBody.getR_FcF_F() + translatingBody.getRhoInit() *
+                  np.array(translatingBody.getFHat_B()))) * translatingBody.getMass()
+
+    stateEffProps = stateEffectorProperties()
+    stateEffProps.totalMass = translatingBody.getMass()
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = translatingBody.getR_F0B_B()
+    stateEffProps.r_PcP_P = translatingBody.getR_FcF_F()
+    stateEffProps.inertialPropLogName = "translatingBodyConfigLogOutMsg"
+
+    return(translatingBody, stateEffProps)
+
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
     linearSpring.massInit = 50.0
@@ -760,4 +833,4 @@ class stateEffectorProperties:
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "spinningBodiesOneDOF", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "linearTranslationBodiesOneDOF", True, "extForceTorque", True)
