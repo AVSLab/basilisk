@@ -621,7 +621,7 @@ def setup_spinningBodiesOneDOF():
     # Compute COM offset contribution, to be divided by the hub mass
     mr_ScB_B = -(spinningBody.r_SB_B + np.transpose(spinningBody.dcm_S0B) @ spinningBody.r_ScS_S) * spinningBody.mass
 
-    stateEffProps = stateEfectorProperties()
+    stateEffProps = stateEffectorProperties()
     stateEffProps.totalMass = spinningBody.mass
     stateEffProps.mr_PcB_B = mr_ScB_B
     stateEffProps.r_PB_B = spinningBody.r_SB_B
@@ -661,7 +661,7 @@ def setup_spinningBodiesTwoDOF():
                    np.transpose(spinningBody.dcm_S20S1) @ spinningBody.r_Sc2S2_S2) )
                    * spinningBody.mass2)
 
-    stateEffProps = stateEfectorProperties()
+    stateEffProps = stateEffectorProperties()
     stateEffProps.totalMass = spinningBody.mass1 + spinningBody.mass2
     stateEffProps.mr_PcB_B = mr_ScB_B
     stateEffProps.r_PB_B = spinningBody.r_S1B_B + np.transpose(spinningBody.dcm_S10B) @ spinningBody.r_S2S1_S1
@@ -729,7 +729,7 @@ def setup_spinningBodiesNDOF():
 
     spinningBodyEffector.ModelTag = "spinningBody"
 
-    stateEffProps = stateEfectorProperties()
+    stateEffProps = stateEffectorProperties()
     stateEffProps.totalMass = massSubPanel * numberOfSegments
     stateEffProps.mr_PcB_B = mr_ScB_B
     stateEffProps.r_PB_B = r_ScB_B - dcm_SB.transpose() @ spinningBody.getR_ScS_S()
@@ -752,14 +752,14 @@ def setup_linearSpringMassDamper():
     # Compute COM offset contribution, to be divided by the hub mass
     mr_ScB_B = -(linearSpring.r_PB_B + linearSpring.rhoInit * np.array(linearSpring.pHat_B)) * linearSpring.massInit
 
-    stateEffProps = stateEfectorProperties()
+    stateEffProps = stateEffectorProperties()
     stateEffProps.totalMass = linearSpring.massInit
     stateEffProps.mr_PcB_B = mr_ScB_B
     stateEffProps.r_PB_B = linearSpring.r_PB_B
 
     return(linearSpring, stateEffProps)
 
-class stateEfectorProperties:
+class stateEffectorProperties:
     # to be used in joint COM calculation
     totalMass = 0.0 # total mass of the effector (sum of all linkages)
     mr_PcB_B = [[0.0], [0.0], [0.0]] # sum(m_i * r_SiB_B) for i linkages, see rst documentation
