@@ -42,6 +42,7 @@ Version |release|
 - Added fault modeling capability to :ref:`magnetometer` module.
 - Added new module :ref:`MJSystemCoM` to extract the system center of mass position and velocity from a MuJoCo simulation.
 - Added new module :ref:`MJSystemMassMatrix` to extract the system mass matrix from a MuJoCo simulation.
+- Added new module :ref:`MJJointReactionForces` to extract the reaction forces and torques acting on the joints from a MuJoCo simulation.
 - Refactored the CI build system scripts
 - Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
   Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
