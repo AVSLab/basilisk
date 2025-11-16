@@ -686,6 +686,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         for (size_t i=0; i<settings.osculatingGroundTrackRange.size(); i++){
             vizSettings->add_osculatinggroundtrackrange(this->settings.osculatingGroundTrackRange[i]*R2D);
         }
+        vizSettings->set_showosculatinggroundtracklines(this->settings.showOsculatingGroundTrackLines);
+        vizSettings->set_showtruepathgroundtracklines(this->settings.showTruePathGroundTrackLines);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {

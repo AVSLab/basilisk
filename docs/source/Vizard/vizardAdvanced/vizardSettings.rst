@@ -255,6 +255,12 @@ default setting for that behavior.
     * - ``useLineRenderersForTargetLinesAndFrames``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showOsculatingGroundTrackLines``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showTruePathGroundTrackLines``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - **Lighting Settings**
       -
       -

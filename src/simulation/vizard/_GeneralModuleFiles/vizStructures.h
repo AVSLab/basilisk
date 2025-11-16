@@ -454,6 +454,8 @@ VizSettings
     int useLineRenderersForTargetLinesAndFrames = 0;      //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     std::vector<double> osculatingOrbitLineRange = {};    //!< (Optional) [rad] Provide the minimum and maximum angle range for osculating orbit lines
     std::vector<double> osculatingGroundTrackRange = {};  //!< (Optional) [rad] Provide the minimum and maximum angle range for osculating ground track lines
+    int showOsculatingGroundTrackLines = 0;               //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTruePathGroundTrackLines = 0;               //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 
