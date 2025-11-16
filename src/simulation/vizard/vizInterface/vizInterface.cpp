@@ -1057,6 +1057,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 scp->add_groundtracklinecolor(scIt->groundTrackLineColor[i]);
             }
 
+            /* set spacecraft celestialbody on which to draw a ground track */
+            scp->set_groundtrackbodyname(scIt->groundTrackBodyName);
+
             // Write Multi-Shape-Model messages
             for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {
                 vizProtobufferMessage::VizMessage::MultiShape* msmp = scp->add_multishapes();
