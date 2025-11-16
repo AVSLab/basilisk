@@ -117,8 +117,9 @@ default setting for that behavior.
         -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body.
     * - ``orbitLineSegments``
       - int
-      - Number of line segments to use when drawing an osculating trajectory. Value of 0 (protobuffer default)
-        to use viz default or any value greater than or equal to 4.
+      - Number of line segments to use when drawing an osculating orbit lines or
+        osculating ground track lines.
+        Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4.
     * - ``relativeOrbitRange``
       - int
       - +/- Angular range in degrees of the osculating trajectory to show. Value of 0 (protobuffer default) to use
