@@ -30,6 +30,7 @@
 void PrescribedRotation1DOF::SelfInit() {
     HingedRigidBodyMsg_C_init(&this->spinningBodyOutMsgC);
     PrescribedRotationMsg_C_init(&this->prescribedRotationOutMsgC);
+    PrescribedTranslationMsg_C_init(&this->prescribedTranslationOutMsgC);
 }
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
@@ -663,6 +664,18 @@ void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime) {
     this->prescribedRotationOutMsg.write(&prescribedRotationOut, moduleID, callTime);
     HingedRigidBodyMsg_C_write(&spinningBodyOut, &spinningBodyOutMsgC, this->moduleID, callTime);
     PrescribedRotationMsg_C_write(&prescribedRotationOut, &prescribedRotationOutMsgC, this->moduleID, callTime);
+
+    if (this->c_screw != 0.0) {
+        // Write the prescribed translation output message if screw motion is configured
+        PrescribedTranslationMsgPayload prescribedTranslationOut{};
+        Eigen::Vector3d r_PM_M = (this->rhoInit + this->c_screw * this->theta) * this->rotHat_M;
+        Eigen::Vector3d rPrime_PM_M = this->c_screw * this->thetaDot * this->rotHat_M;
+        Eigen::Vector3d rPrimePrime_PM_M = this->c_screw * this->thetaDDot * this->rotHat_M;
+        eigenVector3d2CArray(r_PM_M, prescribedTranslationOut.r_PM_M);
+        eigenVector3d2CArray(rPrime_PM_M, prescribedTranslationOut.rPrime_PM_M);
+        eigenVector3d2CArray(rPrimePrime_PM_M, prescribedTranslationOut.rPrimePrime_PM_M);
+        this->prescribedTranslationOutMsg.write(&prescribedTranslationOut, moduleID, callTime);
+    }
 }
 
 /*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_PM
@@ -767,4 +780,34 @@ double PrescribedRotation1DOF::getThetaDDotMax() const {
 */
 double PrescribedRotation1DOF::getThetaInit() const {
     return this->thetaInit;
+}
+
+/*! Setter method for the initial linear displacement if screw motion is selected.
+
+ @param initDisplacement Initial linear displacement
+*/
+void PrescribedRotation1DOF::setInitDisplacement(const double initDisplacement) {
+    this->rhoInit = initDisplacement;
+}
+
+/*! Setter method for the screw constant for modeling prescribed screw motion.
+
+ @param screwConstant Screw slope constant
+*/
+void PrescribedRotation1DOF::setScrewConstant(const double screwConstant) {
+    this->c_screw = screwConstant;
+}
+
+/*! Getter method for the initial linear displacement if screw motion is selected.
+ @return double
+*/
+double PrescribedRotation1DOF::getInitDisplacement() const {
+    return this->rhoInit;
+}
+
+/*! Getter method for the screw constant.
+ @return double
+*/
+double PrescribedRotation1DOF::getScrewConstant() const {
+    return this->c_screw;
 }

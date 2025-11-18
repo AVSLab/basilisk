@@ -24,6 +24,7 @@
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
 #include "cMsgCInterface/PrescribedRotationMsg_C.h"
+#include "cMsgCInterface/PrescribedTranslationMsg_C.h"
 #include <Eigen/Dense>
 #include <cstdint>
 
@@ -47,11 +48,19 @@ public:
     double getThetaDDotMax() const;                                        //!< Getter for the bang segment scalar angular acceleration
     double getThetaInit() const;                                           //!< Getter for the initial spinning body angle
 
+    // Method for optional prescribed screw motion
+    void setInitDisplacement(const double initDisplacement);               //!< Setter for the initial linear displacement
+    void setScrewConstant(const double screwConstant);                     //!< Setter for the screw motion constant
+    double getScrewConstant() const;                                       //!< Getter for the screw motion constant
+    double getInitDisplacement() const;                                    //!< Getter for the initial linear displacement
+
     ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyInMsg;              //!< Input msg for the spinning body reference angle and angle rate
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;                 //!< Output msg for the spinning body angle and angle rate
     Message<PrescribedRotationMsgPayload> prescribedRotationOutMsg;        //!< Output msg for the spinning body prescribed rotational states
+    Message<PrescribedTranslationMsgPayload> prescribedTranslationOutMsg;  //!< Output msg for the prescribed translational states if screw motion is configured
     HingedRigidBodyMsg_C spinningBodyOutMsgC = {};                         //!< C-wrapped output msg for the spinning body angle and angle rate
     PrescribedRotationMsg_C prescribedRotationOutMsgC = {};                //!< C-wrapped output msg for the spinning body prescribed rotational states
+    PrescribedTranslationMsg_C prescribedTranslationOutMsgC = {};          //!< C-wrapped output msg for the prescribed translational  states if screw motion is configured
 
     BSKLogger *bskLogger;                                                  //!< BSK Logging
 
@@ -85,10 +94,12 @@ private:
     Eigen::Vector3d computeSigma_PM();                                     //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_PM
 
     /* User-configurable variables */
+    double rhoInit{};                                                      //!< [m] Initial displacement from frame M to frame P along rotHat_M
     double coastOptionBangDuration;                                        //!< [s] Time used for the coast option bang segment
     double smoothingDuration;                                              //!< [s] Time the acceleration is smoothed to the given maximum acceleration value
     double thetaDDotMax;                                                   //!< [rad/s^2] Maximum angular acceleration of spinning body used in the bang segments
     Eigen::Vector3d rotHat_M;                                              //!< Spinning body rotation axis in M frame components
+    double c_screw{};                                                      //!< Screw slope constant for modeling prescribed screw motion (1-DOF rotation with coupled translation)
 
     /* Scalar rotational states */
     double thetaInit;                                                      //!< [rad] Initial spinning body angle from frame M to frame P about rotHat_M
