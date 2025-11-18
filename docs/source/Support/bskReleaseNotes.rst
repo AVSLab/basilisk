@@ -33,6 +33,7 @@ Version |release|
 - Added :ref:`bskPrinciples-11` capability. Now enabled for :ref:`extForceTorque`, :ref:`constraintDynamicEffector`,
   and :ref:`thrusterDynamicEffector` attachable to :ref:`spinningBodyOneDOFStateEffector`,
   :ref:`spinningBodyTwoDOFStateEffector`, and :ref:`spinningBodyNDOFStateEffector`.
+- Added support for :ref:`linearTranslationOneDOFStateEffector` to attach dependent effectors.
 - Added custom reaction wheel: "NanoAvionics RW0" to ``src/utilities/simIncludeRW.py``
 - Added TLE handling utilities in :ref:`tleHandling` to parse TLE files and convert to orbital elements
 - Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.

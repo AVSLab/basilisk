@@ -317,7 +317,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 rDot_B1N_N = this->hubVelocity[parent1.idx]->getState();
                 omega_B1N_B1 = this->hubOmega[parent1.idx]->getState();
                 sigma_B1N = (Eigen::Vector3d)this->hubSigma[parent1.idx]->getState();
-            } else if (this->parent2.parentType == "effector") {
+            } else if (this->parent1.parentType == "effector") {
                 // - Collect properties from parent effector
                 r_B1N_N = *this->inertialPositionProperty[parent1.idx];
                 rDot_B1N_N = *this->inertialVelocityProperty[parent1.idx];

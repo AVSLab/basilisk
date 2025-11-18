@@ -22,6 +22,7 @@
 #define LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
@@ -45,6 +46,7 @@ public:
 
     LinearTranslationOneDOFStateEffector();           //!< Constructor
 	~LinearTranslationOneDOFStateEffector();          //!< Destructor
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment = 1) override;
 
     /** setter for `mass` property */
     void setMass(double mass);
@@ -101,6 +103,11 @@ private:
     Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();     //!< DCM from the F frame to the body frame
     std::string nameOfRhoState{};     //!< Identifier for the rho state data container
     std::string nameOfRhoDotState{};  //!< Identifier for the rhoDot state data container
+    std::string nameOfInertialPositionProperty;                      //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;                      //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
+    std::vector<DynamicEffector*> dynEffectors;                      //!< Vector of dynamic effectors attached
 
     bool isAxisLocked = false;    //!< flag for locking the translation axis
     double rho = 0.0;             //!< [m] displacement from equilibrium
@@ -134,12 +141,15 @@ private:
 
     Eigen::Vector3d r_FcN_N = Eigen::Vector3d::Zero();            //!< [m] position vector of translating body's center of mass Fc relative to the inertial frame origin N
     Eigen::Vector3d v_FcN_N = Eigen::Vector3d::Zero();            //!< [m/s] inertial velocity vector of Fc relative to inertial frame
-    Eigen::Vector3d sigma_FN = Eigen::Vector3d::Zero();           //!< MRP attitude of frame F relative to inertial frame
-    Eigen::Vector3d omega_FN_F = Eigen::Vector3d::Zero();         //!< [rad/s] inertial translating body frame angular velocity vector
+    Eigen::MatrixXd* r_FN_N = nullptr;                            //!< [m] position vector of translating body's frame origin F relative to the inertial frame origin N
+    Eigen::MatrixXd* v_FN_N = nullptr;                            //!< [m/s] inertial velocity vector of F relative to inertial frame
+    Eigen::MatrixXd* sigma_FN = nullptr;                          //!< MRP attitude of frame F relative to inertial frame
+    Eigen::MatrixXd* omega_FN_F = nullptr;                        //!< [rad/s] inertial translating body frame angular velocity vector
 
     void Reset(uint64_t CurrentClock) override;
 	void registerStates(DynParamManager& states) override;
 	void linkInStates(DynParamManager& states) override;
+    void registerProperties(DynParamManager& states) override;
     void linkInPrescribedMotionProperties(DynParamManager& states) override;
     void writeOutputStateMessages(uint64_t CurrentSimNanos) override;
     void updateEffectorMassProps(double integTime) override;
@@ -155,12 +165,21 @@ private:
     void UpdateState(uint64_t CurrentSimNanos) override;
 
     void computeTranslatingBodyInertialStates();
-    void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g);
+    void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g, double integTime);
     void readInputMessages();
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;  //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
     // Properties required for prescribed motion branching/attachment
     StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    };
 };
 
 #endif /* LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H */
