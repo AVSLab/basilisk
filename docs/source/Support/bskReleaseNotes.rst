@@ -87,6 +87,7 @@ Version |release|
   :ref:`scenarioPrescribedMotionWithTranslationBranching` and :ref:`scenarioPrescribedMotionWithRotationBranching`.
 - Fixed a bug where :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`
   both registered their states under the same name, resulting in overwriting and a ``BSK_ERROR``.
+- Prevent the same SPICE kernel from being loaded multiple times in :ref:`spiceInterface`.
 
 
 Version 2.8.0 (August 30, 2025)
