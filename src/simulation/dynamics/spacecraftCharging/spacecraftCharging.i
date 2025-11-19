@@ -39,6 +39,8 @@ from Basilisk.architecture.swig_common_model import *
 struct VoltMsg_C;
 %include "architecture/msgPayloadDefC/SCSunlitFacetAreaMsgPayload.h"
 struct SCSunlitFacetAreaMsg_C;
+%include "architecture/msgPayloadDefC/CurrentMsgPayload.h"
+struct CurrentMsg_C;
 
 %pythoncode %{
 import sys

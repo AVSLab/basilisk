@@ -28,6 +28,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCSunlitFacetAreaMsgPayload.h"
+#include "architecture/msgPayloadDefC/CurrentMsgPayload.h"
 
 /*! @brief spacecraft charging module */
 class SpacecraftCharging : public DynamicObject{
@@ -56,7 +57,8 @@ public:
     ReadFunctor<SCSunlitFacetAreaMsgPayload> targetSunlitAreaInMsg;  //!< Total target sunlit facet area input message
     Message<VoltMsgPayload> servicerPotentialOutMsg;     //!< Servicer spacecraft potential (voltage) output message
     Message<VoltMsgPayload> targetPotentialOutMsg;     //!< Target spacecraft potential (voltage) output message
-
+    Message<CurrentMsgPayload> servicerPhotoElectricCurrentOutMsg;
+    Message<CurrentMsgPayload> targetPhotoElectricCurrentOutMsg;
 private:
     double E_eBeam;  //!< [keV] Electron beam energy
     double I_eBeam;  //!< [Amps] Electron beam current
@@ -67,6 +69,7 @@ private:
     double servicerPotentialInit{};  //!< [Volts] Initial servicer spacecraft potential
     double servicerPotential{};  //!< [Volts] Servicer spacecraft potential
     StateData *servicerPotentialState = nullptr;  //!< State data container for servicer spacecraft potential
+    double servicerPhotoElectricCurrent;
 
     double targetCapacitance{};  //!< [farads] Target spacecraft capacitance
     double targetSunlitArea;  //!< [m^2] Target sunlit area
@@ -74,6 +77,7 @@ private:
     double targetPotentialInit{};  //!< [Volts] Initial target spacecraft potential
     double targetPotential{};  //!< [Volts] Target spacecraft potential
     StateData *targetPotentialState = nullptr;  //!< State data container for target spacecraft potential
+    double targetPhotoElectricCurrent;
 };
 
 

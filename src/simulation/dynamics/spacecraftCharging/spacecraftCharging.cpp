@@ -86,17 +86,27 @@ void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
     this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
     this->targetPotential = this->targetPotentialState->getState()(0, 0);
 
-    // Write out the servicer output message
+    // Write out the servicer output messages
     VoltMsgPayload servicerVoltageMsgBuffer;
     servicerVoltageMsgBuffer = this->servicerPotentialOutMsg.zeroMsgPayload;
     servicerVoltageMsgBuffer.voltage = this->servicerPotential;
     this->servicerPotentialOutMsg.write(&servicerVoltageMsgBuffer, this->moduleID, clockTime);
 
-    // Write out the target output message
+    CurrentMsgPayload servicerPECurrentMsgBuffer;
+    servicerPECurrentMsgBuffer = this->servicerPhotoElectricCurrentOutMsg.zeroMsgPayload;
+    servicerPECurrentMsgBuffer.current = this->servicerPhotoElectricCurrent;
+    this->servicerPhotoElectricCurrentOutMsg.write(&servicerPECurrentMsgBuffer, this->moduleID, clockTime);
+
+    // Write out the target output messages
     VoltMsgPayload targetVoltageMsgBuffer;
     targetVoltageMsgBuffer = this->targetPotentialOutMsg.zeroMsgPayload;
     targetVoltageMsgBuffer.voltage = this->targetPotential;
     this->targetPotentialOutMsg.write(&targetVoltageMsgBuffer, this->moduleID, clockTime);
+
+    CurrentMsgPayload targetPECurrentMsgBuffer;
+    targetPECurrentMsgBuffer = this->targetPhotoElectricCurrentOutMsg.zeroMsgPayload;
+    targetPECurrentMsgBuffer.current = this->targetPhotoElectricCurrent;
+    this->targetPhotoElectricCurrentOutMsg.write(&targetPECurrentMsgBuffer, this->moduleID, clockTime);
 }
 
 /*! Method for charging equations of motion */
@@ -116,29 +126,28 @@ void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeS
     // Compute the servicer photoelectric current
     double temp_photons = 2.0; // [eV]
     double flux_photons = 1e-6; // [A/m^2]
-    double photoelectric_current_servicer{};
     if (this->servicerPotential <= 0) {
-        photoelectric_current_servicer = flux_photons * this->servicerSunlitArea;
+        this->servicerPhotoElectricCurrent = flux_photons * this->servicerSunlitArea;
     } else {
-        photoelectric_current_servicer = flux_photons * this->servicerSunlitArea * exp(-1 * this->servicerPotential / temp_photons);
+        this->servicerPhotoElectricCurrent = flux_photons * this->servicerSunlitArea * exp(-1 * this->servicerPotential / temp_photons);
     }
 
     // Compute the target photoelectric current
     double photoelectric_current_target{};
     if (this->targetPotential <= 0) {
-        photoelectric_current_target = flux_photons * this->targetSunlitArea;
+        this->targetPhotoElectricCurrent = flux_photons * this->targetSunlitArea;
     } else {
-        photoelectric_current_target = flux_photons * this->targetSunlitArea * exp(-1 * this->targetPotential / temp_photons);
+        this->targetPhotoElectricCurrent = flux_photons * this->targetSunlitArea * exp(-1 * this->targetPotential / temp_photons);
     }
 
     // Set the servicer potential derivative
     Eigen::MatrixXd servicerPotentialRate(1, 1);
-    servicerPotentialRate(0, 0) = (beam_current_servicer + photoelectric_current_servicer) / this->servicerCapacitance;
+    servicerPotentialRate(0, 0) = (beam_current_servicer + this->servicerPhotoElectricCurrent) / this->servicerCapacitance;
     this->servicerPotentialState->setDerivative(servicerPotentialRate);
 
     // Set the target potential derivative
     Eigen::MatrixXd targetPotentialRate(1, 1);
-    targetPotentialRate(0, 0) = (beam_current_target + photoelectric_current_target) / this->targetCapacitance;
+    targetPotentialRate(0, 0) = (beam_current_target + this->targetPhotoElectricCurrent) / this->targetCapacitance;
     this->targetPotentialState->setDerivative(targetPotentialRate);
 }
 
