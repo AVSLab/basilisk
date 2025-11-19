@@ -426,6 +426,8 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
     }
 }
 
+const int MAXLEN = 256;
+
 /*! This method loads a requested SPICE kernel into the system memory.  It is
  its own method because we have to load several SPICE kernels in for our
  application.  Note that they are stored in the SPICE library and are not
@@ -438,6 +440,33 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
 {
     char *fileName = new char[this->charBufferSize];
     SpiceChar *name = new SpiceChar[this->charBufferSize];
+
+    // Check if the kernel is already loaded
+    SpiceChar fileCompare [MAXLEN];
+    SpiceChar filtyp [MAXLEN];
+    SpiceChar srcfil [MAXLEN];
+    SpiceInt handle;
+    SpiceBoolean found = SPICEFALSE;
+    SpiceInt total_kernels;
+    ktotal_c( "ALL", &total_kernels );
+
+    for (SpiceInt i = 0; i < total_kernels; i++ )
+    {
+        // Get the i-th loaded kernel information
+        kdata_c(i, "ALL", MAXLEN, MAXLEN, MAXLEN, fileCompare, filtyp, srcfil, &handle, &found);
+
+        if (found){
+            // Check if kernelName is at the end of the file string
+            size_t fileLen = strlen(fileCompare);
+            size_t kernelLen = strlen(kernelName);
+            if (fileLen >= kernelLen &&
+                strcmp(fileCompare + fileLen - kernelLen, kernelName) == 0)
+            {
+                // The kernel_to_check has already been successfully loaded
+                return 0;
+            }
+        }
+    }
 
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
