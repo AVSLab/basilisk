@@ -113,14 +113,32 @@ void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeS
         beam_current_target = - this->I_eBeam * (1 - exp(intermediateTerm));
     }
 
+    // Compute the servicer photoelectric current
+    double temp_photons = 2.0; // [eV]
+    double flux_photons = 1e-6; // [A/m^2]
+    double photoelectric_current_servicer{};
+    if (this->servicerPotential <= 0) {
+        photoelectric_current_servicer = flux_photons * this->servicerSunlitArea;
+    } else {
+        photoelectric_current_servicer = flux_photons * this->servicerSunlitArea * exp(-1 * this->servicerPotential / temp_photons);
+    }
+
+    // Compute the target photoelectric current
+    double photoelectric_current_target{};
+    if (this->targetPotential <= 0) {
+        photoelectric_current_target = flux_photons * this->targetSunlitArea;
+    } else {
+        photoelectric_current_target = flux_photons * this->targetSunlitArea * exp(-1 * this->targetPotential / temp_photons);
+    }
+
     // Set the servicer potential derivative
     Eigen::MatrixXd servicerPotentialRate(1, 1);
-    servicerPotentialRate(0, 0) = beam_current_servicer / this->servicerCapacitance;
+    servicerPotentialRate(0, 0) = (beam_current_servicer + photoelectric_current_servicer) / this->servicerCapacitance;
     this->servicerPotentialState->setDerivative(servicerPotentialRate);
 
     // Set the target potential derivative
     Eigen::MatrixXd targetPotentialRate(1, 1);
-    targetPotentialRate(0, 0) = beam_current_target / this->targetCapacitance;
+    targetPotentialRate(0, 0) = (beam_current_target + photoelectric_current_target) / this->targetCapacitance;
     this->targetPotentialState->setDerivative(targetPotentialRate);
 }
 
