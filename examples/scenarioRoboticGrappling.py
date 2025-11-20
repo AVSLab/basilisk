@@ -72,7 +72,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 class SimBaseClass(SimulationBaseClass.SimBaseClass):
-    def __init__(self, dynRate=0.1):
+    def __init__(self, dynRate=0.0001):
         self.dynRateSec = dynRate
         self.dynRateNanos = macros.sec2nano(dynRate)
         SimulationBaseClass.SimBaseClass.__init__(self)
@@ -86,7 +86,7 @@ class SimBaseClass(SimulationBaseClass.SimBaseClass):
         self.dynProcess.addTask(self.CreateNewTask(self.simTaskName, self.dynRateNanos))
 
 
-def run(show_plots, gain_list, relpos_config, orbit_config, maneuver_config):
+def run(show_plots, gain, relpos_config, orbit_config, maneuver_config):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
@@ -98,23 +98,20 @@ def run(show_plots, gain_list, relpos_config, orbit_config, maneuver_config):
         sc_model (str): Choose which spacecraft models to use, determines mass/inertia properties  ``bskSat``, ``MEV1``, or ``MEV2``
     """
 
-    scSim_list = []
-    for gain in gain_list: # loop through gain
-        scSim = SimBaseClass()
-        create_spacecraft(scSim)
-        define_initial_conditions(scSim, orbit_config, relpos_config)
-        set_up_constraint_effector(scSim, gain)
-        set_up_maneuver(scSim, maneuver_config)
-        log_data(scSim)
+    scSim = SimBaseClass()
+    create_spacecraft(scSim)
+    define_initial_conditions(scSim, orbit_config, relpos_config)
+    set_up_translation_effector(scSim)
+    set_up_constraint_effector(scSim, gain)
+    set_up_maneuver(scSim, maneuver_config)
+    log_data(scSim)
 
-        if vizSupport.vizFound:
-            set_up_vizard(scSim)
-        run_simulation(scSim, maneuver_config)
-        process_data(scSim)
+    if vizSupport.vizFound:
+        set_up_vizard(scSim)
+    run_simulation(scSim, maneuver_config)
+    process_data(scSim)
 
-        scSim_list.append(scSim)
-
-    return plotting(scSim_list, gain_list, maneuver_config, show_plots)
+    return plotting(scSim, gain, maneuver_config, show_plots)
 
 
 def create_spacecraft(scSim):
@@ -147,9 +144,9 @@ def create_spacecraft(scSim):
                                     [0.0]]  # [m] position vector of body-fixed point B2 relative to target COM
     scSim.scObject2.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0],
                                         [0.0, 0.0, 600.0]]  # [kg-m^2] chaser spacecraft inertia
-    scSim.r_P1B1_mag = 0.1  # [m] position vector magnitude from chaser COM to connection point
-    scSim.r_P2B2_mag = 0.1  # [m] position vector magnitude from target COM to connection point
-    scSim.r_P2P1_mag = 0.1  # [m] arm_length |r_P2P1|
+    scSim.r_P1B1_mag = 1.0  # [m] position vector magnitude from chaser COM to connection point
+    scSim.r_P2B2_mag = 1.0  # [m] position vector magnitude from target COM to connection point
+    scSim.r_P2P1_mag = 1.0  # [m] arm_length |r_P2P1|
 
 
 def define_initial_conditions(scSim, orbit_config, relpos_config):
@@ -169,10 +166,10 @@ def define_initial_conditions(scSim, orbit_config, relpos_config):
         oe.Omega = 60.0 * macros.D2R
         oe.omega = 15.0 * macros.D2R
         oe.f = 90.0 * macros.D2R
-        r_CN, rDot_CN = orbitalMotion.elem2rv(earthGravBody.mu, oe)
+        scSim.r_CN, rDot_CN = orbitalMotion.elem2rv(earthGravBody.mu, oe)
 
     elif orbit_config == 'no orbit':  # spacecraft taken out of orbit, ex. floating in deep space
-        r_CN = np.array([1, 0, 0])  # [m]
+        scSim.r_CN = np.array([1, 0, 0])  # [m]
         rDot_CN = np.array([1., 0., 0.])  # [m/s]
 
     else:
@@ -180,25 +177,26 @@ def define_initial_conditions(scSim, orbit_config, relpos_config):
 
     # Set chaser spacecraft translational states relative to target
     if relpos_config == "alongtrackahead":
-        rHat = rDot_CN / np.linalg.norm(rDot_CN)
+        scSim.rHat = rDot_CN / np.linalg.norm(rDot_CN)
     elif relpos_config == "alongtrackbehind":
-        rHat = - rDot_CN / np.linalg.norm(rDot_CN)
+        scSim.rHat = - rDot_CN / np.linalg.norm(rDot_CN)
     elif relpos_config == "radial":
-        rHat = r_CN / np.linalg.norm(r_CN)
+        scSim.rHat = scSim.r_CN / np.linalg.norm(scSim.r_CN)
     elif relpos_config == "antiradial":
-        rHat = - r_CN / np.linalg.norm(r_CN)
+        scSim.rHat = - scSim.r_CN / np.linalg.norm(scSim.r_CN)
     else:
         raise Exception("relpos_config must be 'alongtrackahead', 'alongtrackbehind', 'radial', or 'antiradial'")
 
-    scSim.r_P1B1_B1 = scSim.r_P1B1_mag * rHat
-    scSim.r_P2B2_B2 = - scSim.r_P2B2_mag * rHat
-    scSim.r_P2P1_B1Init = scSim.r_P2P1_mag * rHat
+    scSim.r_P1B1_B1 = scSim.r_P1B1_mag * scSim.rHat
+    scSim.r_P2B2_B2 = - scSim.r_P2B2_mag * scSim.rHat
+    scSim.r_P2P1_B1Init = scSim.r_P2P1_mag * scSim.rHat
     r_B2B1 = scSim.r_P1B1_B1 + scSim.r_P2P1_B1Init - scSim.r_P2B2_B2
+    print(r_B2B1)
 
     # Center of mass calculation
     total_mass_1 = scSim.scObject1.hub.mHub
     total_mass_2 = scSim.scObject2.hub.mHub
-    scSim.r_B1C = - (total_mass_1+ total_mass_2 * r_B2B1) / (total_mass_1 + total_mass_2)
+    scSim.r_B1C = - (total_mass_2 * r_B2B1 + 20.0*np.array([2.0, 0.0, 0.0])) / (total_mass_1 + total_mass_2 + 20.0)
     scSim.r_B2C = scSim.r_B1C + r_B2B1
 
     # Compute rotational states
@@ -211,30 +209,88 @@ def define_initial_conditions(scSim, orbit_config, relpos_config):
     rDot_B2N_N = rDot_CN + np.cross(omega_CN, scSim.r_B2C)
 
     # Set the initial values for all spacecraft states
-    scSim.scObject1.hub.r_CN_NInit = scSim.r_B1C + r_CN
+    scSim.scObject1.hub.r_CN_NInit = scSim.r_B1C + scSim.r_CN
     scSim.scObject1.hub.v_CN_NInit = rDot_B1N_N
     scSim.scObject1.hub.sigma_BNInit = sigma_B1N
     scSim.scObject1.hub.omega_BN_BInit = omega_B1N_B1
-    scSim.scObject2.hub.r_CN_NInit = scSim.r_B2C + r_CN
+    scSim.scObject2.hub.r_CN_NInit = scSim.r_B2C + scSim.r_CN
     scSim.scObject2.hub.v_CN_NInit = rDot_B2N_N
     scSim.scObject2.hub.sigma_BNInit = sigma_B2N
     scSim.scObject2.hub.omega_BN_BInit = omega_B2N_B2
+
+def set_up_translation_effector(scSim):
+    # Set up the 1 DOF linear translation effector (robotic arm)
+    scSim.translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+
+    # Define properties of translating body
+    mass = 20.0
+    rhoInit = scSim.r_P2P1_mag
+    rhoDotInit = 0.0
+    fHat_B = scSim.rHat
+    r_FcF_F = [0.0, 0.0, 0.0]#scSim.rHat
+    r_F0B_B = scSim.r_P1B1_mag * scSim.rHat
+    IPntFc_F = [[50.0, 0.0, 0.0],
+                [0.0, 80.0, 0.0],
+                [0.0, 0.0, 60.0]]
+    dcm_FB = [[1.0, 0.0, 0.0],
+              [0.0, 1.0, 0.0],
+              [0.0, 0.0, 1.0]]
+    k = 100.0
+    c = 50.0
+    rhoRef = scSim.r_P2P1_mag
+
+    # set parameters above
+    scSim.translatingBody.setMass(mass)
+    scSim.translatingBody.setK(k)
+    scSim.translatingBody.setC(c)
+    scSim.translatingBody.setRhoInit(rhoInit)
+    scSim.translatingBody.setRhoDotInit(rhoDotInit)
+    scSim.translatingBody.setFHat_B(fHat_B)
+    scSim.translatingBody.setR_FcF_F(r_FcF_F)
+    scSim.translatingBody.setR_F0B_B(r_F0B_B)
+    scSim.translatingBody.setIPntFc_F(IPntFc_F)
+    scSim.translatingBody.setDCM_FB(dcm_FB)
+    scSim.translatingBody.ModelTag = "translatingBody"
+
+    # Create the reference message
+    translationRef = messaging.LinearTranslationRigidBodyMsgPayload()
+    translationRef.rho = rhoRef
+    translationRef.rhoDot = 0.0
+    translationRefMsg = messaging.LinearTranslationRigidBodyMsg().write(translationRef)
+    scSim.translatingBody.translatingBodyRefInMsg.subscribeTo(translationRefMsg)
+
+    # Add the translation effector to the chaser spacecraft
+    scSim.scObject1.addStateEffector(scSim.translatingBody)
+    scSim.AddModelToTask(scSim.simTaskName, scSim.translatingBody)
+
+    mr_PcB_B = -(scSim.translatingBody.getR_F0B_B() + np.transpose(scSim.translatingBody.getDCM_FB()) @
+                 (scSim.translatingBody.getR_FcF_F() + scSim.translatingBody.getRhoInit() *
+                  np.array(scSim.translatingBody.getFHat_B()))) * scSim.translatingBody.getMass()
+    # scSim.scObject1.hub.r_BcB_B = mr_PcB_B / scSim.scObject1.hub.mHub
 
 
 def set_up_constraint_effector(scSim, gain):
     # Set up the constraint effector
     constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
-    constraintEffector.setR_P1B1_B1(scSim.r_P1B1_B1)
+    constraintEffector.setR_P1B1_B1([0., 0., 0.])
     constraintEffector.setR_P2B2_B2(scSim.r_P2B2_B2)
-    constraintEffector.setR_P2P1_B1Init(scSim.r_P2P1_B1Init)
+    constraintEffector.setR_P2P1_B1Init([0., 0., 0.])
     constraintEffector.setAlpha(gain)
     constraintEffector.setBeta(constraintEffector.getAlpha())
     constraintEffector.ModelTag = "constraintEffector"
 
+    effectorStatusMsgPayload = messaging.DeviceStatusMsgPayload()
+    effectorStatusMsgPayload.deviceStatus = 1
+    effectorStatusMsg = messaging.DeviceStatusMsg().write(effectorStatusMsgPayload)
+    # constraintEffector.effectorStatusInMsg.subscribeTo(effectorStatusMsg)
+
     # Add constraints to both spacecraft
-    scSim.scObject1.addDynamicEffector(constraintEffector)
+    scSim.translatingBody.addDynamicEffector(constraintEffector)
     scSim.scObject2.addDynamicEffector(constraintEffector)
     scSim.AddModelToTask(scSim.simTaskName, constraintEffector)
+
+    scSim.cnstLog = constraintEffector.constraintElements.recorder()
+    scSim.AddModelToTask(scSim.simTaskName, scSim.cnstLog)
 
 
 def set_up_maneuver(scSim, maneuver_config):
@@ -290,8 +346,8 @@ def set_up_maneuver(scSim, maneuver_config):
         scSim.torqueData = scSim.mrpControl.cmdTorqueOutMsg.recorder()
         scSim.AddModelToTask(scSim.simTaskName, scSim.torqueData)
 
-    else:
-        raise Exception("maneuver_config must be 'orbit' or 'attitude'")
+    # else:
+    #     raise Exception("maneuver_config must be 'orbit' or 'attitude'")
 
     scSim.scObject1.addDynamicEffector(scSim.extFT)
     scSim.AddModelToTask(scSim.simTaskName, scSim.extFT)
@@ -308,7 +364,7 @@ def log_data(scSim):
 def set_up_vizard(scSim):
     viz = vizSupport.enableUnityVisualization(scSim, scSim.simTaskName,
                                               [scSim.scObject1, scSim.scObject2],
-                                            #   saveFile=__file__
+                                              saveFile=__file__
                                               )
     vizSupport.createCustomModel(viz,
                                  simBodiesToModify=[scSim.scObject1.ModelTag],
@@ -328,8 +384,27 @@ def run_simulation(scSim, maneuver_config):
     # Initialize the simulation
     scSim.SetProgressBar(True)
     scSim.InitializeSimulation()
+    print("finish init")
+    print("r_CN: ", scSim.r_CN)
+    print("r_B1C: ", scSim.r_B1C)
+    print("r_B2C: ", scSim.r_B2C)
+    print("r_BcB_B:", scSim.scObject1.hub.r_BcB_B)
+    print("\n")
 
-    scSim.ConfigureStopTime(macros.min2nano(5))
+    print("translating body setup:")
+    print("r_F0B_B:", scSim.translatingBody.getR_F0B_B())
+    print("rhoInit:", scSim.translatingBody.getRhoInit())
+    print("r_FcF_F:", scSim.translatingBody.getR_FcF_F())
+    print("fHat_B:", scSim.translatingBody.getFHat_B())
+    print("\n")
+
+    print("constraint effector setup:")
+    print("r_P1B1_B1:", scSim.r_P1B1_B1)
+    print("r_P2B2_B2:", scSim.r_P2B2_B2)
+    print("r_P2P1_B1Init:", scSim.r_P2P1_B1Init)
+    print("\n")
+
+    scSim.ConfigureStopTime(macros.min2nano(1.0))
     scSim.ExecuteSimulation()
 
     # if maneuver_config == "orbit":
@@ -366,6 +441,13 @@ def process_data(scSim):
     r_B2N_N_hist = scSim.datLog2.r_BN_N
     scSim.sigma_B2N_hist = scSim.datLog2.sigma_BN
 
+    # Collect the logged constraint properties
+    Fc_N_hist = scSim.cnstLog.Fc_N
+    L_B1_hist = scSim.cnstLog.L1_B1
+    L_B2_hist = scSim.cnstLog.L2_B2
+    psi_N_hist = scSim.cnstLog.psi_N
+    scSim.psi_N = psi_N_hist
+
     # Compute constraint violations
     r_B1N_B1 = np.empty(r_B1N_N_hist.shape)
     r_B2N_B1 = np.empty(r_B2N_N_hist.shape)
@@ -381,7 +463,7 @@ def process_data(scSim):
     scSim.psi_B1 = r_B1N_B1 + scSim.r_P1B1_B1 + scSim.r_P2P1_B1Init - (r_B2N_B1 + r_P2B2_B1)
 
 
-def plotting(scSim_list, gain_list, maneuver_config, show_plots):
+def plotting(scSim, gain, maneuver_config, show_plots):
     larger_size = 20
     smaller_size = 18
     fontdict = {'family': 'serif',
@@ -397,60 +479,36 @@ def plotting(scSim_list, gain_list, maneuver_config, show_plots):
 
     # Collect plotting utilities
     figureList = {}
-    n = len(gain_list) # number of data sets
-    timeData = scSim_list[0].time_data/60 # Convert time data to minutes
-
-    labels = []
-    for i in range(n):
-        labels.append(r'$\alpha = $' f"{gain_list[i]:.0e}")
+    timeData = scSim.time_data/60 # Convert time data to minutes
 
     # Plot direction constraint violations
     plt.figure()
-    for i in range(n):
-        plt.semilogy(timeData, np.linalg.norm(scSim_list[i].psi_B1, axis=1))
-        plt.xlabel('time [min]')
-        plt.ylabel('Direction Constraint Violation ' r'$\psi$ [m]')
-        plt.axis("tight")
-    plt.legend(labels, loc='lower right')
+    plt.semilogy(timeData, np.linalg.norm(scSim.psi_B1, axis=1))
+    plt.xlabel('time [min]')
+    plt.ylabel('Direction Constraint Violation ' r'$\psi$ [m]')
+    plt.axis("tight")
+    # plt.legend(labels, loc='lower right')
     pltName = fileName + maneuver_config + "maneuver_" + "DirectionConstraint"
     figureList[pltName] = plt.gcf()
 
     # Plot attitude constraint violations
     plt.figure()
-    for i in range(n):
-        plt.semilogy(timeData, np.linalg.norm(4 * np.arctan(scSim_list[i].sigma_B2B1) * macros.R2D, axis=1))
-        plt.xlabel('time [min]')
-        plt.ylabel('Attitude Constraint Violation ' r'$\phi$ [deg]')
-        plt.axis("tight")
-    plt.legend(labels, loc='lower right')
+    plt.semilogy(timeData, np.linalg.norm(4 * np.arctan(scSim.sigma_B2B1) * macros.R2D, axis=1))
+    plt.xlabel('time [min]')
+    plt.ylabel('Attitude Constraint Violation ' r'$\phi$ [deg]')
+    plt.axis("tight")
+    # plt.legend(labels, loc='lower right')
     pltName = fileName + maneuver_config + "maneuver_" + "AttitudeConstraint"
     figureList[pltName] = plt.gcf()
 
-    # Plot gain performance
-    fig, ax1 = plt.subplots()
-    trans_cnst = []
-    rot_cnst = []
-    runtimes = []
-    for i in range(n):
-        runtimes.append(scSim_list[i].runtime)
-        trans_cnst.append(np.mean(np.linalg.norm(scSim_list[i].psi_B1, axis=1)))
-        rot_cnst.append(np.mean(np.linalg.norm(4 * np.arctan(scSim_list[i].sigma_B2B1) * macros.R2D, axis=1)))
-
-    cnst_color = 'tab:blue'
-    ax1.loglog(gain_list,trans_cnst, color=cnst_color, linestyle='-')
-    ax1.loglog(gain_list, rot_cnst, color=cnst_color, linestyle='--')
-    ax1.set_xlabel('gain')
-    ax1.set_ylabel('average constraint violation [m, deg]', color=cnst_color)
-    ax1.tick_params(axis='y', labelcolor=cnst_color)
-    ax1.legend(['direction', 'attitude'], loc='upper center')
-
-    runtime_color = 'tab:orange'
-    ax2 = ax1.twinx()
-    ax2.loglog(gain_list, runtimes, color=runtime_color)
-    ax2.set_ylabel('runtime [sec]', color=runtime_color)
-    ax2.tick_params(axis='y', labelcolor=runtime_color)
-
-    pltName = fileName + maneuver_config + "maneuver_" + "GainPerformance"
+    # Plot direction constraint violations as seen by the constraint effector
+    plt.figure()
+    plt.semilogy(timeData, np.linalg.norm(scSim.psi_N, axis=1))
+    plt.xlabel('time [min]')
+    plt.ylabel('Direction Constraint Violation ' r'$\psi$ [m]')
+    plt.axis("tight")
+    # plt.legend(labels, loc='lower right')
+    pltName = fileName + maneuver_config + "maneuver_" + "DirectionConstraintByEffector"
     figureList[pltName] = plt.gcf()
 
     if show_plots:
@@ -463,8 +521,8 @@ def plotting(scSim_list, gain_list, maneuver_config, show_plots):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        np.logspace(0, 4, 5),  # gain_list
+        1E4,  # gain
         relpos_config="alongtrackahead",  # relative position ["alongtrackahead", "alongtrackbehind", "radial", or "antiradial"]
-        orbit_config="LEO",  # in orbit or freefloating ["LEO", "no orbit"]
+        orbit_config="no orbit",  # in orbit or freefloating ["LEO", "no orbit"]
         maneuver_config="none",  # maneuver type ["orbit", "attitude"]
     )
