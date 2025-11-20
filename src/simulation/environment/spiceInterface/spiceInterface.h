@@ -98,7 +98,7 @@ private:
      * calls to request from different threads do not race.
      */
     static std::mutex mutex;
-    
+
     /**
      * Global cache mapping canonical absolute paths to weak pointers.
      *
