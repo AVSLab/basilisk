@@ -23,6 +23,7 @@
 
 %{
    #include "spiceInterface.h"
+   #include "SpiceUsr.h"
 %}
 
 %pythoncode %{
@@ -44,6 +45,8 @@ from Basilisk.architecture.swig_common_model import *
 // this raises an error because mySpiceInterface.planetFrames is returned by value
 %naturalvar SpiceInterface::planetFrames;
 
+%ignore SpiceKernel;
+
 %include "sys_model.i"
 
 %include "spiceInterface.h"
@@ -61,6 +64,48 @@ struct AttRefMsg_C;
 %include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
 struct TransRefMsg_C;
 
+%inline %{
+
+/**
+ * Lightweight helper to query SPICE for a loaded kernel by file name.
+ *
+ * This function directly walks the SPICE kernel list using ktotal_c and
+ * kdata_c and returns true if a kernel with the given file name string
+ * is currently loaded. The comparison is done on the raw path string as
+ * stored inside SPICE.
+ */
+bool isKernelLoaded(const std::string &path)
+{
+    SpiceInt count = 0;
+    ktotal_c("ALL", &count);
+
+    for (SpiceInt i = 0; i < count; ++i)
+    {
+        SpiceChar file[512];
+        SpiceChar type[32];
+        SpiceChar source[512];
+        SpiceInt handle;
+        SpiceBoolean found;
+
+        kdata_c(i,
+                "ALL",
+                (SpiceInt)sizeof(file),
+                (SpiceInt)sizeof(type),
+                (SpiceInt)sizeof(source),
+                file,
+                type,
+                source,
+                &handle,
+                &found);
+
+        if (found && path == std::string(file))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+%}
 
 %pythoncode %{
 import sys

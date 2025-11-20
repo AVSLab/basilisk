@@ -22,6 +22,11 @@
 
 #include <vector>
 #include <map>
+#include <filesystem>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <unordered_map>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/bskLogging.h"
@@ -34,6 +39,76 @@
 #include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+
+/**
+ * Thin RAII wrapper around a single SPICE kernel.
+ *
+ * The class furnishes a kernel on construction and unloads it on
+ * destruction, and provides a static request function that caches
+ * instances by canonical absolute path so that a given kernel file is
+ * not furnished multiple times.
+ */
+class SpiceKernel
+{
+public:
+    /**
+     * Request a shared handle for the kernel at the given path.
+     *
+     * The first call for a canonical path constructs a SpiceKernel, which
+     * furnishes the kernel once. Later calls for the same path reuse the
+     * existing instance as long as it is still alive.
+     */
+    static std::shared_ptr<SpiceKernel> request(const std::filesystem::path& path);
+
+    /**
+     * Destructor unloads the kernel from SPICE if the load succeeded.
+     *
+     * This runs once when the last shared_ptr owning this SpiceKernel
+     * instance is destroyed.
+     */
+    ~SpiceKernel();
+
+    /// Canonical absolute path used as the cache key and SPICE file name.
+    const std::string& getPath() const { return path; }
+
+    /// True if furnsh_c succeeded for this kernel.
+    bool wasLoadSuccesful() const {return loadSucceeded; };
+
+    // avoid copy operations
+    SpiceKernel(const SpiceKernel&) = delete;
+    SpiceKernel& operator=(const SpiceKernel&) = delete;
+
+private:
+    /**
+     * Construct a SpiceKernel by furnishing the given canonical path.
+     *
+     * The constructor switches SPICE into RETURN mode, calls furnsh_c,
+     * checks failed_c, and records the load status. The destructor will
+     * unload only if loadSucceeded is true.
+     */
+    explicit SpiceKernel(std::string path);
+
+    std::string path;
+    bool loadSucceeded;
+
+    /**
+     * Static mutex guarding the shared kernel cache.
+     *
+     * All access to SpiceKernel::cache must take this lock so that repeated
+     * calls to request from different threads do not race.
+     */
+    static std::mutex mutex;
+    
+    /**
+     * Global cache mapping canonical absolute paths to weak pointers.
+     *
+     * A non expired weak pointer means there is already a live SpiceKernel
+     * instance owning that kernel, so request can reuse it instead of
+     * calling furnsh_c again.
+     */
+    static std::unordered_map<std::string, std::weak_ptr<SpiceKernel>> cache;
+};
+
 
 /*! @brief spice interface class */
 class SpiceInterface: public SysModel {
@@ -90,6 +165,15 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
 
+    /**
+     * Map of loaded kernel paths to their RAII handles.
+     *
+     * As long as an entry is present, the corresponding kernel remains
+     * furnished in SPICE. Removing an entry allows the SpiceKernel
+     * destructor to unload the kernel when all shared_ptr copies are
+     * gone.
+     */
+    std::unordered_map<std::string, std::shared_ptr<SpiceKernel>> loadedKernels;
 };
 
 

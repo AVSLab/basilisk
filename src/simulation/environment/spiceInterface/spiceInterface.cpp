@@ -23,6 +23,49 @@
 #include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "spiceInterface.h"
+
+namespace {
+    /**
+     * RAII guard for SPICE error mode.
+     *
+     * Sets SPICE error action to RETURN while the guard is alive so that
+     * calls report failures via failed_c() instead of aborting. Restores
+     * the previous error action and print settings on destruction.
+     */
+    struct SpiceErrorModeGuard
+    {
+        char oldAction[32];
+        char oldPrint[32];
+
+        SpiceErrorModeGuard()
+        {
+            erract_c("GET", sizeof(oldAction), oldAction);
+            errprt_c("GET", sizeof(oldPrint),  oldPrint);
+
+            // Only override the abort behavior
+            erract_c("SET", 0, const_cast<char*>("RETURN"));
+            // DO NOT suppress printing: errprt is left untouched
+        }
+
+        ~SpiceErrorModeGuard()
+        {
+            erract_c("SET", 0, oldAction);
+            errprt_c("SET", 0, oldPrint);
+        }
+    };
+
+    /**
+     * Normalize a file system path to a canonical absolute string.
+     *
+     * Used to key kernels so that one physical file maps to a single
+     * cache entry even if referenced through different relative paths.
+     */
+    std::string absolutize(const std::filesystem::path& path)
+    {
+        return std::filesystem::absolute(path).lexically_normal().string();
+    }
+}
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -426,63 +469,46 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spic
     }
 }
 
-/*! This method loads a requested SPICE kernel into the system memory.  It is
- its own method because we have to load several SPICE kernels in for our
- application.  Note that they are stored in the SPICE library and are not
- held locally in this object.
- @return int Zero for success one for failure
- @param kernelName The name of the kernel we are loading
- @param dataPath The path to the data area on the filesystem
+/**
+ * Load a SPICE kernel for use by this interface.
+ *
+ * This function takes a kernel file name and a base directory and
+ * ensures that the corresponding SPICE kernel is available to the
+ * simulation. Internally the module keeps track of which kernels it
+ * has already loaded so that the same file is not loaded multiple
+ * times.
+ *
+ * @param kernelName File name of the kernel inside dataPath.
+ * @param dataPath   Directory where the kernel is located.
+ * @return 0 on success, 1 if loading the kernel failed.
  */
 int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
 {
-    char *fileName = new char[this->charBufferSize];
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
-
-    //! - The required calls come from the SPICE documentation.
-    //! - The most critical call is furnsh_c
-    strcpy(name, "REPORT");
-    erract_c("SET", this->charBufferSize, name);
-    strcpy(fileName, dataPath);
-    strcat(fileName, kernelName);
-    furnsh_c(fileName);
-
-    //! - Check to see if we had trouble loading a kernel and alert user if so
-    strcpy(name, "DEFAULT");
-    erract_c("SET", this->charBufferSize, name);
-    delete[] fileName;
-    delete[] name;
-    if(failed_c()) {
-        return 1;
-    }
+    std::filesystem::path base(dataPath);
+    std::filesystem::path fullPath = base / kernelName;
+    auto kernel = SpiceKernel::request(fullPath.string());
+    if (!kernel->wasLoadSuccesful()) return 1;
+    this->loadedKernels[kernel->getPath()] = kernel;
     return 0;
 }
 
-/*! This method unloads a requested SPICE kernel into the system memory.  It is
- its own method because we have to load several SPICE kernels in for our
- application.  Note that they are stored in the SPICE library and are not
- held locally in this object.
- @return int Zero for success one for failure
- @param kernelName The name of the kernel we are unloading
- @param dataPath The path to the data area on the filesystem
+/**
+ * Tell this interface that a SPICE kernel is no longer needed.
+ *
+ * This function removes the kernel from the set of kernels managed
+ * by this interface. Once no users remain, the underlying kernel is
+ * also removed from SPICE so it no longer affects future queries.
+ *
+ * @param kernelName File name of the kernel inside dataPath.
+ * @param dataPath   Directory where the kernel is located.
+ * @return always 0.
  */
 int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
 {
-    char *fileName = new char[this->charBufferSize];
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
-
-    //! - The required calls come from the SPICE documentation.
-    //! - The most critical call is furnsh_c
-    strcpy(name, "REPORT");
-    erract_c("SET", this->charBufferSize, name);
-    strcpy(fileName, dataPath);
-    strcat(fileName, kernelName);
-    unload_c(fileName);
-    delete[] fileName;
-    delete[] name;
-    if(failed_c()) {
-        return 1;
-    }
+    std::filesystem::path base(dataPath);
+    std::filesystem::path fullPath = base / kernelName;
+    auto key = absolutize(fullPath);
+    this->loadedKernels.erase(key);
     return 0;
 }
 
@@ -505,4 +531,62 @@ std::string SpiceInterface::getCurrentTimeString()
 	std::string returnTimeString = spiceOutputBuffer;
 	delete[] spiceOutputBuffer;
 	return(returnTimeString);
+}
+
+std::mutex SpiceKernel::mutex;
+std::unordered_map<std::string, std::weak_ptr<SpiceKernel>> SpiceKernel::cache;
+
+std::shared_ptr<SpiceKernel>
+SpiceKernel::request(const std::filesystem::path& path)
+{
+    const std::string key = absolutize(path);
+
+    std::lock_guard<std::mutex> lock(mutex);
+
+    auto it = cache.find(key);
+    if (it != cache.end())
+    {
+        if (auto existing = it->second.lock())
+        {
+            // Already have a live handle to this kernel
+            return existing;
+        }
+        // Weak pointer expired - fall through and create a new one
+    }
+
+    // First live handle for this absolute path in this process
+    auto handle = std::shared_ptr<SpiceKernel>(new SpiceKernel(key));
+
+    if (handle->loadSucceeded) cache[key] = handle;
+
+    return handle;
+}
+
+SpiceKernel::~SpiceKernel() noexcept
+{
+    if (!loadSucceeded) return;
+
+    SpiceErrorModeGuard guard;
+    unload_c(path.c_str());
+    if (failed_c())
+    {
+        reset_c();   // SPICE printed its own messages already
+    }
+}
+
+SpiceKernel::SpiceKernel(std::string path_)
+    : path(std::move(path_))
+{
+    SpiceErrorModeGuard guard;
+    furnsh_c(path.c_str());
+
+    if (failed_c())
+    {
+        reset_c();                  // SPICE already printed diagnostics
+        loadSucceeded = false;     // destructor will not unload
+    }
+    else
+    {
+        loadSucceeded = true;
+    }
 }
