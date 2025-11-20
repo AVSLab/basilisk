@@ -336,6 +336,9 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 sigma_B2N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent2.idx];
             }
 
+            std::cout<<"body 1 position: "<<r_B1N_N.transpose()<<std::endl;
+            std::cout<<"body 2 position: "<<r_B2N_N.transpose()<<std::endl;
+
             // computing direction constraint psi in the N frame
             Eigen::Matrix3d dcm_B1N = (sigma_B1N.toRotationMatrix()).transpose();
             Eigen::Matrix3d dcm_B2N = (sigma_B2N.toRotationMatrix()).transpose();

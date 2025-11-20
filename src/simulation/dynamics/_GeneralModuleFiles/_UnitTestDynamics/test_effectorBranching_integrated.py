@@ -651,12 +651,12 @@ def setup_spinningBodiesOneDOF():
     # Define properties of spinning body
     spinningBody.mass = 50.0
     spinningBody.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
-    spinningBody.dcm_S0B = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
-    spinningBody.r_ScS_S = [[1.0], [0.0], [-1.0]]
-    spinningBody.r_SB_B = [[0.5], [-1.5], [-0.5]]
+    spinningBody.dcm_S0B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody.r_ScS_S = [[0.0], [0.0], [0.0]]
+    spinningBody.r_SB_B = [[0.0], [0.0], [0.0]]
     spinningBody.sHat_S = [[0], [-1], [0]]
-    spinningBody.thetaInit = 5.0 * macros.D2R
-    spinningBody.thetaDotInit = -1.0 * macros.D2R
+    spinningBody.thetaInit = 0.0 * macros.D2R
+    spinningBody.thetaDotInit = 0.0 * macros.D2R
     spinningBody.k = 100.0
     spinningBody.c = 50
     spinningBody.ModelTag = "SpinningBody"
