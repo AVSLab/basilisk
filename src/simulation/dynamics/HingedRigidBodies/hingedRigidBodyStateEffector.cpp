@@ -44,8 +44,13 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->IPntS_S.Identity();
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
+
     this->nameOfThetaState = "hingedRigidBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot" + std::to_string(this->effectorID);
+    this->nameOfInertialPositionProperty = "hingedRigidBodyInertialPosition" + std::to_string(this->effectorID);
+    this->nameOfInertialVelocityProperty = "hingedRigidBodyInertialVelocity" + std::to_string(this->effectorID);
+    this->nameOfInertialAttitudeProperty = "hingedRigidBodyInertialAttitude" + std::to_string(this->effectorID);
+    this->nameOfInertialAngVelocityProperty = "hingedRigidBodyInertialAngVelocity" + std::to_string(this->effectorID);
     this->effectorID++;
 
     return;
@@ -81,10 +86,10 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
         SCStatesMsgPayload configLogMsg;
         configLogMsg = this->hingedRigidBodyConfigLogOutMsg.zeroMsgPayload;
         // Note, logging the hinge frame S is the body frame B of that object
-        eigenVector3d2CArray(this->r_SN_N, configLogMsg.r_BN_N);
-        eigenVector3d2CArray(this->v_SN_N, configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN, configLogMsg.sigma_BN);
-        eigenVector3d2CArray(this->omega_SN_S, configLogMsg.omega_BN_B);
+        eigenMatrixXd2CArray(*this->r_SN_N, configLogMsg.r_BN_N);
+        eigenMatrixXd2CArray(*this->v_SN_N, configLogMsg.v_BN_N);
+        eigenMatrixXd2CArray(*this->sigma_SN, configLogMsg.sigma_BN);
+        eigenMatrixXd2CArray(*this->omega_SN_S, configLogMsg.omega_BN_B);
         this->hingedRigidBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentClock);
     }
 
@@ -114,6 +119,20 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     return;
 }
 
+/*! This method attaches a dynamicEffector to the specified HRB
+ @param newDynamicEffector the dynamic effector to be attached to the HRB
+ @param segment the integer number segment to be attached to (default segment=1) */
+void HingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    if (segment != 1) {
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent hinged rigid body linkage because this is 1DOF.");
+    }
+
+    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
+
+    this->dynEffectors.push_back(newDynamicEffector);
+}
+
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
@@ -127,7 +146,26 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
 
+    registerProperties(states);
+
     return;
+}
+
+/*! This method registers the HRB inertial properties with the dynamic parameter manager and links
+ them into dependent dynamic effectors  */
+void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
+{
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_SN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
+    this->v_SN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
+    this->sigma_SN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
+    this->omega_SN_S = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->linkInProperties(states);
+    }
 }
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
@@ -196,6 +234,18 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     gLocal_N = g_N;
     g_P = dcm_PN*gLocal_N;
 
+    // Loop through to collect forces and torques from any connected dynamic effectors
+    Eigen::Vector3d attBodyForce_S = Eigen::Vector3d::Zero();
+    Eigen::Vector3d attBodyTorquePntS_S= Eigen::Vector3d::Zero();
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        // - Compute the force and torque contributions from the dynamicEffectors
+        (*dynIt)->computeForceTorque(integTime, double(0.0));
+        attBodyForce_S += (*dynIt)->forceExternal_B; // here parent frame is S, not B because dynamic effector attached to state effector not hub
+        attBodyTorquePntS_S+= (*dynIt)->torqueExternalPntB_B;
+    }
+
     // - Define omega_BN_S
     this->omega_BN_B = omega_BN_B;
     this->omegaLoc_PN_P = this->omega_BN_B;
@@ -215,7 +265,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     Eigen::Vector3d gravityTorquePntH_P;
     gravityTorquePntH_P = -this->d*this->sHat1_P.cross(this->mass*g_P);
     this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(this->u -this->k*(this->theta-this->thetaRef) - this->c*(this->thetaDot-this->thetaDotRef)
-                    + this->sHat2_P.dot(gravityTorquePntH_P) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
+                    + this->sHat2_P.dot(gravityTorquePntH_P + this->dcm_SP.transpose() * attBodyTorquePntS_S) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
                      + this->mass*this->d*this->d)*this->omega_PN_S(2)*this->omega_PN_S(0) - this->mass*this->d*
                               this->sHat3_P.transpose()*this->omegaTildeLoc_PN_P*this->omegaTildeLoc_PN_P*this->r_HP_P);
 
@@ -224,7 +274,8 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     backSubContr.matrixA = this->mass*this->d*this->sHat3_P*this->aTheta.transpose();
     backSubContr.matrixB = this->mass*this->d*this->sHat3_P*this->bTheta.transpose();
     backSubContr.vecTrans = -(this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_P
-                                                                       + this->mass*this->d*this->cTheta*this->sHat3_P);
+                              + this->mass*this->d*this->cTheta*this->sHat3_P)
+                              + this->dcm_SP.transpose() * attBodyForce_S;
 
     // - Define rotational matrice contributions
     backSubContr.matrixC = (this->IPntS_S(1,1)*this->sHat2_P + this->mass*this->d*this->rTilde_SP_P*this->sHat3_P)
@@ -234,7 +285,8 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     Eigen::Matrix3d intermediateMatrix;
     backSubContr.vecRot = -((this->thetaDot*this->omegaTildeLoc_PN_P + this->cTheta*intermediateMatrix.Identity())
                     *(this->IPntS_S(1,1)*this->sHat2_P + this->mass*this->d*this->rTilde_SP_P*this->sHat3_P)
-                                    + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTilde_SP_P*this->sHat1_P);
+                                    + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTilde_SP_P*this->sHat1_P)
+                                    + (this->dcm_SP.transpose() * attBodyTorquePntS_S) + eigenTilde(this->r_SP_P) * (this->dcm_SP.transpose() * attBodyForce_S);
 
     return;
 }
@@ -373,19 +425,19 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();
-    this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    *this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
 
 
     // inertial angular velocity
     Eigen::Vector3d omega_BN_B;
     omega_BN_B = this->omega_BN_B;
-    this->omega_SN_S = this->dcm_SP * ( omega_BN_B + this->thetaDot*this->sHat2_P);
+    *this->omega_SN_S = this->dcm_SP * ( omega_BN_B + this->thetaDot*this->sHat2_P);
 
     // inertial position vector
-    this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)(*this->inertialPositionProperty);
+    *this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)(*this->inertialPositionProperty);
 
     // inertial velocity vector
-    this->v_SN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
+    *this->v_SN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
                   + this->d * this->thetaDot * this->sHat3_P - this->d * (omega_BN_B.cross(this->sHat1_P))
                   + omega_BN_B.cross(this->r_HP_P);
 
