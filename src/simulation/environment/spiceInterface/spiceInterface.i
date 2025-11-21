@@ -23,6 +23,7 @@
 
 %{
    #include "spiceInterface.h"
+   #include "SpiceUsr.h"
 %}
 
 %pythoncode %{
@@ -31,6 +32,13 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "std_string.i"
 %include "std_vector.i"
+%include "swig_deprecated.i"
+
+%deprecated_function(
+   SpiceInterface::clearKeeper,
+   "2026/11/20",
+   "This method will delete kernels that other simulations running in parallel may be using. spiceInterface will clear automatically the kernels that it has loaded."
+)
 
 %template() std::vector<std::string>;
 
@@ -43,6 +51,9 @@ from Basilisk.architecture.swig_common_model import *
 //    mySpiceInterface.planetFrames[2] = "bb"
 // this raises an error because mySpiceInterface.planetFrames is returned by value
 %naturalvar SpiceInterface::planetFrames;
+
+// utility class, not needed in the Python layer
+%ignore SpiceKernel;
 
 %include "sys_model.i"
 
@@ -61,6 +72,55 @@ struct AttRefMsg_C;
 %include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
 struct TransRefMsg_C;
 
+%inline %{
+
+/**
+ * Lightweight helper to query SPICE for a loaded kernel by file name.
+ *
+ * This function directly walks the SPICE kernel list using ktotal_c and
+ * kdata_c and returns true if a kernel with the given file name string
+ * is currently loaded. The comparison is done on the raw path string as
+ * stored inside SPICE.
+ */
+bool isKernelLoaded(const std::string &path)
+{
+    SpiceInt count = 0;
+    ktotal_c("ALL", &count);
+
+    for (SpiceInt i = 0; i < count; ++i)
+    {
+        SpiceChar file[512];
+        SpiceChar type[32];
+        SpiceChar source[512];
+        SpiceInt handle;
+        SpiceBoolean found;
+
+        kdata_c(i,
+                "ALL",
+                (SpiceInt)sizeof(file),
+                (SpiceInt)sizeof(type),
+                (SpiceInt)sizeof(source),
+                file,
+                type,
+                source,
+                &handle,
+                &found);
+
+        if (found && path == std::string(file))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+size_t countKernelsLoaded()
+{
+    SpiceInt count = 0;
+    ktotal_c("ALL", &count);
+    return static_cast<size_t>(count);
+}
+%}
 
 %pythoncode %{
 import sys
