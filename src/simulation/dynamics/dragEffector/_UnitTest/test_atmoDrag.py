@@ -342,7 +342,7 @@ def run(show_plots, orbitCase, planetCase):
         for idx in range(0, len(posData)):
             oeData = orbitalMotion.rv2elem(mu, posData[idx, 0:3], velData[idx, 0:3])
             smaData.append(oeData.a/1000.)
-        plt.plot(posData[:, 0]*macros.NANO2SEC/P, smaData
+        plt.plot(dataLog.times()*macros.NANO2SEC/P, smaData
                  ,color='#aa0000',
                  )
         plt.xlabel('Time [orbits]')

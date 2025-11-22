@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2025, Autonomous Vehicle Systems Lab
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,44 +16,31 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-
-
-%module MJPIDControllers
+%module orbElemOffset
 
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
 
 %{
-   #include "JointPIDController.h"
+   #include "orbElemOffset.h"
 %}
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
-%include "swig_eigen.i"
+
 %include "std_string.i"
-%include "exception.i"
+%include "swig_conly_data.i"
 
+/* Base class and SysModel helpers */
 %include "sys_model.i"
-%include "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.i"
-%include "simulation/mujocoDynamics/_GeneralModuleFiles/PIDController.h"
 
-// JointPIDController
-%template(_JointPIDControllerBase) PIDController<ScalarJointStateMsgPayload, ScalarJointStateMsgPayload, SingleActuatorMsgPayload>;
+/* OrbElemOffset class */
+%include "orbElemOffset.h"
 
-%ignore JointPIDController::readMeasuredPosition;
-%ignore JointPIDController::readMeasuredVelocity;
-%ignore JointPIDController::readDesiredPosition;
-%ignore JointPIDController::readDesiredVelocity;
-%ignore JointPIDController::writeOutput;
-
-%include "JointPIDController.h"
-
-// Messages
-%include "architecture/msgPayloadDefC/ScalarJointStateMsgPayload.h"
-struct ScalarJointStateMsgPayload_C;
-%include "architecture/msgPayloadDefC/SingleActuatorMsgPayload.h"
-struct SingleActuatorMsgPayload_C;
+/* Message payloads used by OrbElemOffset */
+%include "architecture/msgPayloadDefC/ClassicElementsMsgPayload.h"
+struct ClassicElementsMsg_C;
 
 %pythoncode %{
 import sys

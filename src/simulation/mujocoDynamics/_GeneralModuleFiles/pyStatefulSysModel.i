@@ -17,13 +17,16 @@
 
  */
 %module(directors="1",threads="1",package="Basilisk.simulation") StatefulSysModel
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
    #include "StatefulSysModel.h"
 %}
 
 %pythoncode %{
 import sys
-import traceback
 from Basilisk.architecture.swig_common_model import *
 %}
 
@@ -35,22 +38,14 @@ from Basilisk.architecture.swig_common_model import *
 %ignore DynParamRegisterer::DynParamRegisterer;
 
 %feature("director") StatefulSysModel;
-%feature("pythonappend") StatefulSysModel::StatefulSysModel %{
-    self.__super_init_called__ = True%}
 %rename("_StatefulSysModel") StatefulSysModel;
 %include "StatefulSysModel.i"
 
 %template(registerState) DynParamRegisterer::registerState<StateData, true>;
 
 %pythoncode %{
-class StatefulSysModel(_StatefulSysModel, metaclass=Basilisk.architecture.sysModel.SuperInitChecker):
-    bskLogger: BSKLogger = None
+from Basilisk.architecture.sysModel import SysModelMixin
 
-    def __init_subclass__(cls):
-        # Make it so any exceptions in UpdateState and Reset
-        # print any exceptions before returning control to
-        # C++ (at which point exceptions will crash the program)
-        cls.UpdateState = Basilisk.architecture.sysModel.logError(cls.UpdateState)
-        cls.Reset = Basilisk.architecture.sysModel.logError(cls.Reset)
-        cls.registerStates = Basilisk.architecture.sysModel.logError(cls.registerStates)
+class StatefulSysModel(SysModelMixin, _StatefulSysModel):
+    """Python wrapper for the C++ StatefulSysModel."""
 %}

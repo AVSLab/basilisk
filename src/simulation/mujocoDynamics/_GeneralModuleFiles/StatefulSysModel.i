@@ -17,8 +17,12 @@
 
  */
 %module cStatefulSysModel
+
+%include "architecture/utilities/bskException.swg"
+%default_bsk_exception();
+
 %{
-   #include "StatefulSysModel.h"
+   #include "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.h"
 %}
 
 %include "architecture/utilities/bskLogging.h"
