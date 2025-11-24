@@ -74,6 +74,7 @@ sys.path.append(path + '/../../examples/')
                                         , 'scenarioExtendingBoom'
                                         , 'scenarioPrescribedMotionWithRotationBranching'
                                         , 'scenarioPrescribedMotionWithTranslationBranching'
+                                        , 'scenarioImpact'
                                         ])
 @pytest.mark.scenarioTest
 def test_scenarioBskScenarios(show_plots, scenarioCase):
