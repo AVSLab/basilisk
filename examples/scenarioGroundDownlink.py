@@ -54,6 +54,7 @@ demonstrate the data stored, generated, and downlinked.
 .. image:: /_images/Scenarios/scenarioGroundPassStorage.svg
    :align: center
 """
+
 import inspect
 import os
 
@@ -62,12 +63,17 @@ from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
+bskName = "Basilisk"
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import simpleInstrument, simpleStorageUnit, partitionedStorageUnit, spaceToGroundTransmitter
+from Basilisk.simulation import (
+    simpleInstrument,
+    simpleStorageUnit,
+    partitionedStorageUnit,
+    spaceToGroundTransmitter,
+)
 from Basilisk.simulation import groundLocation
 from Basilisk.utilities import vizSupport
 from Basilisk.utilities import unitTestSupport
@@ -77,11 +83,14 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import astroConstants
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 from Basilisk import __path__
+
 bskPath = __path__[0]
 
 path = os.path.dirname(os.path.abspath(__file__))
+
 
 def run(show_plots):
     """
@@ -92,14 +101,14 @@ def run(show_plots):
 
     """
 
-    taskName = "unitTask"               # arbitrary name (don't change)
-    processname = "TestProcess"         # arbitrary name (don't change)
+    taskName = "unitTask"  # arbitrary name (don't change)
+    processname = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
     scenarioSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(10.0)     # update process rate update time
+    testProcessRate = macros.sec2nano(10.0)  # update process rate update time
     testProc = scenarioSim.CreateNewProcess(processname)
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
@@ -112,28 +121,27 @@ def run(show_plots):
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True  # ensure this is the central gravitational body
-
-    planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
+    ggm03s_path = get_path(DataFile.LocalGravData.GGM03S_J2_only)
+    planet.useSphericalHarmonicsGravityModel(str(ggm03s_path), 2)
     mu = planet.mu
     # setup Spice interface for some solar system bodies
-    timeInitString = '2020 MAY 21 18:28:03 (UTC)'
+    timeInitString = "2020 MAY 21 18:28:03 (UTC)"
     spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
     scenarioSim.AddModelToTask(taskName, spiceObject, -1)
 
-
     #   setup orbit using orbitalMotion library
     oe = orbitalMotion.ClassicElements()
-    oe.a = astroConstants.REQ_EARTH*1e3 + 418e3
+    oe.a = astroConstants.REQ_EARTH * 1e3 + 418e3
     oe.e = 0.00061
-    oe.i = 51.6418*macros.D2R
+    oe.i = 51.6418 * macros.D2R
 
-    oe.Omega = 119.2314*macros.D2R
-    oe.omega = 	337.8329*macros.D2R
-    oe.f     = 22.2753*macros.D2R
+    oe.Omega = 119.2314 * macros.D2R
+    oe.omega = 337.8329 * macros.D2R
+    oe.f = 22.2753 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu / oe.a / oe.a / oe.a)
+    P = 2.0 * np.pi / n
 
     scObject.hub.r_CN_NInit = rN
     scObject.hub.v_CN_NInit = vN
@@ -148,10 +156,10 @@ def run(show_plots):
     # Create the ground location
     groundStation = groundLocation.GroundLocation()
     groundStation.ModelTag = "BoulderGroundStation"
-    groundStation.planetRadius = astroConstants.REQ_EARTH*1e3
+    groundStation.planetRadius = astroConstants.REQ_EARTH * 1e3
     groundStation.specifyLocation(np.radians(40.009971), np.radians(-105.243895), 1624)
     groundStation.planetInMsg.subscribeTo(spiceObject.planetStateOutMsgs[0])
-    groundStation.minimumElevation = np.radians(10.)
+    groundStation.minimumElevation = np.radians(10.0)
     groundStation.maximumRange = 1e9
     groundStation.addSpacecraftToModel(scObject.scStateOutMsg)
     scenarioSim.AddModelToTask(taskName, groundStation)
@@ -159,22 +167,22 @@ def run(show_plots):
     # Create an instrument
     instrument = simpleInstrument.SimpleInstrument()
     instrument.ModelTag = "instrument1"
-    instrument.nodeBaudRate = 2400. # baud
-    instrument.nodeDataName = "Instrument 1" # baud
+    instrument.nodeBaudRate = 2400.0  # baud
+    instrument.nodeDataName = "Instrument 1"  # baud
     scenarioSim.AddModelToTask(taskName, instrument)
 
     # Create another instrument
     instrument2 = simpleInstrument.SimpleInstrument()
     instrument2.ModelTag = "instrument2"
-    instrument2.nodeBaudRate = 2400. # baud
+    instrument2.nodeBaudRate = 2400.0  # baud
     instrument2.nodeDataName = "Instrument 2"  # baud
     scenarioSim.AddModelToTask(taskName, instrument2)
 
     # Create a "transmitter"
     transmitter = spaceToGroundTransmitter.SpaceToGroundTransmitter()
     transmitter.ModelTag = "transmitter"
-    transmitter.nodeBaudRate = -9600.   # baud
-    transmitter.packetSize = -1E6   # bits
+    transmitter.nodeBaudRate = -9600.0  # baud
+    transmitter.packetSize = -1e6  # bits
     transmitter.numBuffers = 2
     transmitter.addAccessMsgToTransmitter(groundStation.accessOutMsgs[-1])
     scenarioSim.AddModelToTask(taskName, transmitter)
@@ -182,7 +190,7 @@ def run(show_plots):
     # Create a partitionedStorageUnit and attach the instrument to it
     dataMonitor = partitionedStorageUnit.PartitionedStorageUnit()
     dataMonitor.ModelTag = "dataMonitor"
-    dataMonitor.storageCapacity = 8E9   # bits (1 GB)
+    dataMonitor.storageCapacity = 8e9  # bits (1 GB)
     dataMonitor.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(instrument2.nodeDataOutMsg)
     dataMonitor.addDataNodeToModel(transmitter.nodeDataOutMsg)
@@ -195,7 +203,7 @@ def run(show_plots):
     # Create a simpleStorageUnit and attach the instrument to it
     dataMonitor2 = simpleStorageUnit.SimpleStorageUnit()
     dataMonitor2.ModelTag = "dataMonitor2"
-    dataMonitor2.storageCapacity = 1E5  # bits
+    dataMonitor2.storageCapacity = 1e5  # bits
     dataMonitor2.addDataNodeToModel(instrument.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(instrument2.nodeDataOutMsg)
     dataMonitor2.addDataNodeToModel(transmitter.nodeDataOutMsg)
@@ -221,17 +229,22 @@ def run(show_plots):
 
     # setup Vizard support
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scenarioSim, taskName, scObject
-                                                  # , saveFile=__file__
-                                                  )
-        vizSupport.addLocation(viz, stationName="Boulder Station"
-                               , parentBodyName=planet.displayName
-                               , r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init)
-                               , fieldOfView=np.radians(160.)
-                               , color='pink'
-                               , range=1000.0*1000  # meters
-                               , label="Boulder Pink"
-                               )
+        viz = vizSupport.enableUnityVisualization(
+            scenarioSim,
+            taskName,
+            scObject,
+            # , saveFile=__file__
+        )
+        vizSupport.addLocation(
+            viz,
+            stationName="Boulder Station",
+            parentBodyName=planet.displayName,
+            r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init),
+            fieldOfView=np.radians(160.0),
+            color="pink",
+            range=1000.0 * 1000,  # meters
+            label="Boulder Pink",
+        )
         viz.settings.spacecraftSizeMultiplier = 1.5
         viz.settings.showLocationCommLines = 1
         viz.settings.showLocationCones = 1
@@ -244,15 +257,14 @@ def run(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.hour2nano(12))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.hour2nano(12))  # seconds to stop simulation
     scenarioSim.ExecuteSimulation()
 
     scenarioSim.ConfigureStopTime(macros.hour2nano(24))
     if vizSupport.vizFound:
-        vizSupport.changeLocation(viz, stationName="Boulder Station"
-                                  , color="blue"
-                                  , label="Boulder Blue"
-                                  )
+        vizSupport.changeLocation(
+            viz, stationName="Boulder Station", color="blue", label="Boulder Blue"
+        )
     scenarioSim.ExecuteSimulation()
 
     # Grabbed logged data for plotting
@@ -280,61 +292,72 @@ def run(show_plots):
     # Stopped here. Revisiting instrument implementation first.
     figureList = {}
     plt.close("all")  # clears out plots from earlier test runs
-    fig=plt.figure(1)
-    plt.plot(tvec, storageLevel/(8E3), label='Data Unit Total Storage Level (KB)')
-    plt.plot(tvec, storedData[:, 0]/(8E3), label='Instrument 1 Partition Level (KB)')
-    plt.plot(tvec, storedData[:, 1]/(8E3), label='Instrument 2 Partition Level (KB)')
-    plt.xlabel('Time (Hr)')
-    plt.ylabel('Data Stored (KB)')
+    fig = plt.figure(1)
+    plt.plot(tvec, storageLevel / (8e3), label="Data Unit Total Storage Level (KB)")
+    plt.plot(tvec, storedData[:, 0] / (8e3), label="Instrument 1 Partition Level (KB)")
+    plt.plot(tvec, storedData[:, 1] / (8e3), label="Instrument 2 Partition Level (KB)")
+    plt.xlabel("Time (Hr)")
+    plt.ylabel("Data Stored (KB)")
     plt.grid(True)
     plt.legend()
-    figureList['scenarioGroundPassStorage'] = fig
+    figureList["scenarioGroundPassStorage"] = fig
 
     #   Plot the orbit and ground station location data
     fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1, projection='3d')
-    ax.plot(scPosition[:,0]/1000.,scPosition[:, 1]/1000.,scPosition[:,2]/1000., label='S/C Position')
-    ax.plot(groundPosition[:,0]/1000.,groundPosition[:, 0]/1000.,groundPosition[:,2]/1000., label='Ground Station Position')
+    ax = fig.add_subplot(1, 1, 1, projection="3d")
+    ax.plot(
+        scPosition[:, 0] / 1000.0,
+        scPosition[:, 1] / 1000.0,
+        scPosition[:, 2] / 1000.0,
+        label="S/C Position",
+    )
+    ax.plot(
+        groundPosition[:, 0] / 1000.0,
+        groundPosition[:, 0] / 1000.0,
+        groundPosition[:, 2] / 1000.0,
+        label="Ground Station Position",
+    )
     plt.legend()
-    figureList['scenarioGroundPassECI'] = fig
+    figureList["scenarioGroundPassECI"] = fig
 
     fig = plt.figure()
-    plt.polar(pass_az, 90.-np.degrees(pass_el))
+    plt.polar(pass_az, 90.0 - np.degrees(pass_el))
     # ax.set_yticks(range(0, 90, 10))  # Define the yticks
     # ax.set_yticklabels(map(str, range(90, 0, -10)))
-    plt.title('Ground Pass Azimuth and Declination')
-    figureList['scenarioGroundPassPolar'] = fig
+    plt.title("Ground Pass Azimuth and Declination")
+    figureList["scenarioGroundPassPolar"] = fig
 
     plt.figure()
-    plt.plot(tvec, np.degrees(azimuthData),label='az')
-    plt.plot(tvec, np.degrees(elevationData), label='el')
+    plt.plot(tvec, np.degrees(azimuthData), label="az")
+    plt.plot(tvec, np.degrees(elevationData), label="el")
     plt.legend()
     plt.grid(True)
-    plt.ylabel('Angles (deg)')
-    plt.xlabel('Time (hr)')
-
-    fig=plt.figure()
-    plt.plot(tvec, rangeData/1000.)
-    plt.plot(tvec, accessData*1000.)
-    plt.grid(True)
-    plt.title('Slant Range, Access vs. Time')
-    plt.ylabel('Slant Range (km)')
-    plt.xlabel('Time (hr)')
-    figureList['scenarioGroundPassRange'] = fig
+    plt.ylabel("Angles (deg)")
+    plt.xlabel("Time (hr)")
 
     fig = plt.figure()
-    plt.plot(tvec,storageNetBaud / (8E3), label='Net Baud Rate (KB/s)')
-    plt.xlabel('Time (Hr)')
-    plt.ylabel('Data Rate (KB/s)')
+    plt.plot(tvec, rangeData / 1000.0)
+    plt.plot(tvec, accessData * 1000.0)
+    plt.grid(True)
+    plt.title("Slant Range, Access vs. Time")
+    plt.ylabel("Slant Range (km)")
+    plt.xlabel("Time (hr)")
+    figureList["scenarioGroundPassRange"] = fig
+
+    fig = plt.figure()
+    plt.plot(tvec, storageNetBaud / (8e3), label="Net Baud Rate (KB/s)")
+    plt.xlabel("Time (Hr)")
+    plt.ylabel("Data Rate (KB/s)")
     plt.grid(True)
     plt.legend()
-    figureList['scenarioGroundPassBaud'] = fig
+    figureList["scenarioGroundPassBaud"] = fig
 
     if show_plots:
         plt.show()
     plt.close("all")
 
     return figureList
+
 
 # This statement below ensures that the unitTestScript can be run as a
 # stand-alone python script

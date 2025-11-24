@@ -29,6 +29,17 @@ from Basilisk import __version__
 pooch_logger = pooch.utils.get_logger()
 pooch_logger.setLevel(logging.INFO)
 
+# Override URLs for large NAIF kernels (not in GitHub repo)
+EXTERNAL_KERNEL_URLS = {
+    "supportData/EphemerisData/de430.bsp": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp",
+    "supportData/EphemerisData/naif0012.tls": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+    "supportData/EphemerisData/pck00010.tpc": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc",
+    "supportData/EphemerisData/de-403-masses.tpc": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/de-403-masses.tpc",
+    "supportData/EphemerisData/hst_edited.bsp": "https://naif.jpl.nasa.gov/pub/naif/HST/kernels/spk/hst_edited.bsp",
+    "supportData/EphemerisData/nh_pred_od077.bsp": "https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp",
+}
+
+
 DATA_VERSION = f"v{__version__}"
 
 ALBEDO_DATA_BASE_PATH = "AlbedoData/"
@@ -72,7 +83,10 @@ def find_local_support_data() -> Path | None:
 LOCAL_SUPPORT = find_local_support_data()
 BASE_URL = f"https://raw.githubusercontent.com/AVSLab/basilisk/{DATA_VERSION}/"
 POOCH = pooch.create(
-    path=pooch.os_cache("bsk_support_data"), base_url=BASE_URL, registry=REGISTRY
+    path=pooch.os_cache("bsk_support_data"),
+    base_url=BASE_URL,
+    registry=REGISTRY,
+    urls=EXTERNAL_KERNEL_URLS,
 )
 
 

@@ -157,12 +157,10 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     scObject_0.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup Spice interface for some solar system bodies
-    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
-                                     , timeInitString
-                                     # earth and mars must come first as with gravBodies
-                                     , spicePlanetNames=["earth", "mars barycenter", "sun", "venus"]
-                                     )
+    timeInitString = "2021 MAY 04 07:47:48.965 (UTC)"
+    # earth and mars must come first as with gravBodies
+    gravFactory.createSpiceInterface(time=timeInitString,
+                                     spicePlanetNames=["earth", "mars barycenter", "sun", "venus"])
 
     if planet == "earth":
         if eclipseCondition == "full":

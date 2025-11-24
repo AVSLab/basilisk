@@ -185,7 +185,6 @@ In this simulation setup the planet's spherical harmonics are turned on.
 """
 
 
-
 #
 # Basilisk Scenario Script and Integrated Test
 #
@@ -200,6 +199,7 @@ from copy import copy
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # To play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.
 #
@@ -217,12 +217,21 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+)
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 # always import the Basilisk messaging support
+
 
 def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     """
@@ -260,7 +269,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(10.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # setup the simulation tasks/objects
@@ -285,20 +294,22 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # overridden.  If multiple bodies are simulated, then their positions can be
     # dynamically updated.  See scenarioOrbitMultiBody.py to learn how this is
     # done via a SPICE object.
-    if planetCase == 'Mars':
+    if planetCase == "Mars":
         planet = gravFactory.createMarsBarycenter()
-        planet.isCentralBody = True           # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM2BData.txt', 100)
+            ggm2b_path = get_path(DataFile.LocalGravData.GGM2BData)
+            planet.useSphericalHarmonicsGravityModel(str(ggm2b_path), 100)
 
     else:  # Earth
         planet = gravFactory.createEarth()
-        planet.isCentralBody = True          # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
         if useSphericalHarmonics:
             # If extra customization is required, see the createEarth() macro to change additional values.
             # For example, the spherical harmonics are turned off by default.  To engage them, the following code
             # is used
-            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
+            ggm03s_j2_only_path = get_path(DataFile.LocalGravData.GGM03S_J2_only)
+            planet.useSphericalHarmonicsGravityModel(str(ggm03s_j2_only_path), 2)
 
             # The value 2 indicates that the first two harmonics, excluding the 0th order harmonic,
             # are included.  This harmonics data file only includes a zeroth order and J2 term.
@@ -320,17 +331,17 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000      # meters
-    rGEO = 42000. * 1000     # meters
-    if orbitCase == 'GEO':
+    rLEO = 7000.0 * 1000  # meters
+    rGEO = 42000.0 * 1000  # meters
+    if orbitCase == "GEO":
         oe.a = rGEO
         oe.e = 0.00001
         oe.i = 0.0 * macros.D2R
-    elif orbitCase == 'GTO':
+    elif orbitCase == "GTO":
         oe.a = (rLEO + rGEO) / 2.0
         oe.e = 1.0 - rLEO / oe.a
         oe.i = 0.0 * macros.D2R
-    else:                   # LEO case, default case 0
+    else:  # LEO case, default case 0
         oe.a = rLEO
         oe.e = 0.0001
         oe.i = 33.3 * macros.D2R
@@ -338,9 +349,10 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
     # with circular or equatorial orbit, some angles are arbitrary
-
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.r_CN_NInit = rN  # m   - r_BN_N
@@ -364,9 +376,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     if useSphericalHarmonics:
-        simulationTime = macros.sec2nano(3. * P)
+        simulationTime = macros.sec2nano(3.0 * P)
     else:
         simulationTime = macros.sec2nano(0.75 * P)
 
@@ -381,7 +393,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # The recorder can be put onto a separate task with its own update rate.  However, this can be
     # trickier to do as the recording timing must be carefully balanced with the module msg writing
     # to avoid recording an older message.
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     # create a logging task object of the spacecraft output message at the desired down sampling ratio
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
@@ -452,8 +466,18 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # the inertial position vector components, while the second plot either shows a planar
     # orbit view relative to the peri-focal frame (no spherical harmonics), or the
     # semi-major axis time history plot (with spherical harmonics turned on).
-    figureList, finalDiff = plotOrbits(dataRec.times(), posData, velData, oe, mu, P,
-                            orbitCase, useSphericalHarmonics, planetCase, planet)
+    figureList, finalDiff = plotOrbits(
+        dataRec.times(),
+        posData,
+        velData,
+        oe,
+        mu,
+        P,
+        orbitCase,
+        useSphericalHarmonics,
+        planetCase,
+        planet,
+    )
 
     if show_plots:
         plt.show()
@@ -464,22 +488,36 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     return finalDiff, figureList
 
 
-def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHarmonics, planetCase, planet):
+def plotOrbits(
+    timeAxis,
+    posData,
+    velData,
+    oe,
+    mu,
+    P,
+    orbitCase,
+    useSphericalHarmonics,
+    planetCase,
+    planet,
+):
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     finalDiff = 0.0
 
     for idx in range(3):
-        plt.plot(timeAxis * macros.NANO2SEC / P, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
     pltName = fileName + "1" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
     figureList[pltName] = plt.figure(1)
@@ -493,10 +531,10 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
         # draw the planet
         fig = plt.gcf()
         ax = fig.gca()
-        if planetCase == 'Mars':
-            planetColor = '#884400'
+        if planetCase == "Mars":
+            planetColor = "#884400"
         else:
-            planetColor = '#008800'
+            planetColor = "#008800"
         planetRadius = planet.radEquator / 1000
         ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
         # draw the actual orbit
@@ -506,27 +544,35 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
             oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - oe.omega)
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0
-                 )
+        plt.plot(
+            rData * np.cos(fData) / 1000,
+            rData * np.sin(fData) / 1000,
+            color="#aa0000",
+            linewidth=3.0,
+        )
         # draw the full osculating orbit from the initial conditions
         fData = np.linspace(0, 2 * np.pi, 100)
         rData = []
         for idx in range(0, len(fData)):
             rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555'
-                 )
-        plt.xlabel('$i_e$ Cord. [km]')
-        plt.ylabel('$i_p$ Cord. [km]')
+        plt.plot(
+            rData * np.cos(fData) / 1000,
+            rData * np.sin(fData) / 1000,
+            "--",
+            color="#555555",
+        )
+        plt.xlabel("$i_e$ Cord. [km]")
+        plt.ylabel("$i_p$ Cord. [km]")
         plt.grid()
 
         plt.figure(3)
         fig = plt.gcf()
         ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
+        ax.ticklabel_format(useOffset=False, style="plain")
         Deltar = np.empty((0, 3))
         E0 = orbitalMotion.f2E(oe.f, oe.e)
         M0 = orbitalMotion.E2M(E0, oe.e)
-        n = np.sqrt(mu/(oe.a*oe.a*oe.a))
+        n = np.sqrt(mu / (oe.a * oe.a * oe.a))
         oe2 = copy(oe)
         for idx in range(0, len(posData)):
             M = M0 + n * timeAxis[idx] * macros.NANO2SEC
@@ -535,13 +581,18 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
             rv, vv = orbitalMotion.elem2rv(mu, oe2)
             Deltar = np.append(Deltar, [posData[idx] - rv], axis=0)
         for idx in range(3):
-            plt.plot(timeAxis * macros.NANO2SEC / P, Deltar[:, idx] ,
-                     color=unitTestSupport.getLineColor(idx, 3),
-                     label=r'$\Delta r_{BN,' + str(idx) + '}$')
-        plt.legend(loc='lower right')
-        plt.xlabel('Time [orbits]')
-        plt.ylabel('Trajectory Differences [m]')
-        pltName = fileName + "3" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
+            plt.plot(
+                timeAxis * macros.NANO2SEC / P,
+                Deltar[:, idx],
+                color=unitTestSupport.getLineColor(idx, 3),
+                label=r"$\Delta r_{BN," + str(idx) + "}$",
+            )
+        plt.legend(loc="lower right")
+        plt.xlabel("Time [orbits]")
+        plt.ylabel("Trajectory Differences [m]")
+        pltName = (
+            fileName + "3" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
+        )
         figureList[pltName] = plt.figure(3)
 
         finalDiff = np.linalg.norm(Deltar[-1])
@@ -550,24 +601,28 @@ def plotOrbits(timeAxis, posData, velData, oe, mu, P, orbitCase, useSphericalHar
         plt.figure(2)
         fig = plt.gcf()
         ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
+        ax.ticklabel_format(useOffset=False, style="plain")
         smaData = []
         for idx in range(0, len(posData)):
             oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
-            smaData.append(oeData.a / 1000.)
-        plt.plot(timeAxis * macros.NANO2SEC / P, smaData, color='#aa0000',
-                 )
-        plt.xlabel('Time [orbits]')
-        plt.ylabel('SMA [km]')
+            smaData.append(oeData.a / 1000.0)
+        plt.plot(
+            timeAxis * macros.NANO2SEC / P,
+            smaData,
+            color="#aa0000",
+        )
+        plt.xlabel("Time [orbits]")
+        plt.ylabel("SMA [km]")
 
     pltName = fileName + "2" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
     figureList[pltName] = plt.figure(2)
     return figureList, finalDiff
 
+
 if __name__ == "__main__":
     run(
-        True,        # show_plots
-        'LEO',       # orbit Case (LEO, GTO, GEO)
-        False,       # useSphericalHarmonics
-        'Earth'      # planetCase (Earth, Mars)
+        True,  # show_plots
+        "LEO",  # orbit Case (LEO, GTO, GEO)
+        False,  # useSphericalHarmonics
+        "Earth",  # planetCase (Earth, Mars)
     )

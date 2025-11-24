@@ -88,19 +88,38 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
 from Basilisk.simulation import spacecraft
+
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport, simIncludeThruster)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    unitTestSupport,
+    vizSupport,
+    simIncludeThruster,
+)
 from Basilisk.simulation import simSynch
 from Basilisk.architecture import messaging
 from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
+
 try:
     from Basilisk.simulation import vizInterface
 except ImportError:
     pass
 
-def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSphericalHarmonics, planetCase):
+
+def run(
+    show_plots,
+    liveStream,
+    broadcastStream,
+    timeStep,
+    orbitCase,
+    useSphericalHarmonics,
+    planetCase,
+):
     """
     At the end of the python script you can specify the following example parameters.
 
@@ -147,9 +166,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     # initialize spacecraft object and set properties
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "bskSat"
-    I = [60., 0., 0.,
-         0., 30., 0.,
-         0., 0., 40.]
+    I = [60.0, 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 40.0]
     scObject.hub.mHub = 50.0  # kg - spacecraft mass
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
 
@@ -158,17 +175,19 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
 
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    if planetCase == 'Mars':
+    if planetCase == "Mars":
         planet = gravFactory.createMarsBarycenter()
-        planet.isCentralBody = True           # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM2BData.txt', 100)
+            ggm2b_path = get_path(DataFile.LocalGravData.GGM2BData)
+            planet.useSphericalHarmonicsGravityModel(str(ggm2b_path), 100)
 
     else:  # Earth
         planet = gravFactory.createEarth()
-        planet.isCentralBody = True          # ensure this is the central gravitational body
+        planet.isCentralBody = True  # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            planet.useSphericalHarmonicsGravityModel(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt', 2)
+            ggm03s_j2_only_path = get_path(DataFile.LocalGravData.GGM03S_J2_only)
+            planet.useSphericalHarmonicsGravityModel(str(ggm03s_j2_only_path), 2)
     mu = planet.mu
 
     # attach gravity model to spacecraft
@@ -179,25 +198,27 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000      # meters
-    rGEO = 42000. * 1000     # meters
-    if orbitCase == 'GEO':
+    rLEO = 7000.0 * 1000  # meters
+    rGEO = 42000.0 * 1000  # meters
+    if orbitCase == "GEO":
         oe.a = rGEO
         oe.e = 0.00001
         oe.i = 0.0 * macros.D2R
-    elif orbitCase == 'GTO':
+    elif orbitCase == "GTO":
         oe.a = (rLEO + rGEO) / 2.0
         oe.e = 1.0 - rLEO / oe.a
         oe.i = 0.0 * macros.D2R
-    else:                   # LEO case, default case 0
-        oe.a = 2.5*rLEO
+    else:  # LEO case, default case 0
+        oe.a = 2.5 * rLEO
         oe.e = 0.10
         oe.i = 33.3 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(
+        mu, rN, vN
+    )  # this stores consistent initial orbit elements
     # with circular or equatorial orbit, some angles are arbitrary
 
     #
@@ -212,7 +233,7 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
 
     # Make a fresh thruster factory instance, this is critical to run multiple times
     thFactory = simIncludeThruster.thrusterFactory()
-    thFactory.create('MOOG_Monarc_22_6', [0, 0, 0], [0, -1.5, 0])
+    thFactory.create("MOOG_Monarc_22_6", [0, 0, 0], [0, -1.5, 0])
     thrModelTag = "ACSThrusterDynamics"
     thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
 
@@ -224,9 +245,9 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
 
     # set the simulation time
     n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
+    P = 2.0 * np.pi / n
     if useSphericalHarmonics:
-        simulationTime = macros.sec2nano(3. * P)
+        simulationTime = macros.sec2nano(3.0 * P)
     else:
         simulationTime = macros.sec2nano(1 * P)
 
@@ -237,7 +258,9 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
         numDataPoints = 400
     else:
         numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = unitTestSupport.samplingTime(
+        simulationTime, simulationTimeStep, numDataPoints
+    )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
@@ -253,12 +276,15 @@ def run(show_plots, liveStream, broadcastStream, timeStep, orbitCase, useSpheric
             scSim.AddModelToTask(simTaskName, clockSync)
 
         # Configure Vizard, using liveStream and broadcastStream options
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                  , thrEffectorList=thrusterSet
-                                                  , thrColors=vizSupport.toRGBA255("white")
-                                                  , liveStream=liveStream
-                                                  , broadcastStream=broadcastStream
-                                                  )
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            simTaskName,
+            scObject,
+            thrEffectorList=thrusterSet,
+            thrColors=vizSupport.toRGBA255("white"),
+            liveStream=liveStream,
+            broadcastStream=broadcastStream,
+        )
         # Set key listeners
         viz.settings.keyboardLiveInput = "bxpqz"
 
@@ -318,13 +344,12 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
 
     priorKeyPressTime = dt.datetime.now()
     while incrementalStopTime < simulationTime:
-
         currState = scObject.scStateOutMsg.read()
         alt = np.linalg.norm(currState.r_BN_N) - planet.radEquator
         velNorm = np.linalg.norm(currState.v_BN_N)
 
         if vizSupport.vizFound:
-            hudpanel.displayString = f"HUD\nAltitude: {alt/1000:.2f} km\nInertial Velocity: {velNorm/1000:.2f} km/s"
+            hudpanel.displayString = f"HUD\nAltitude: {alt / 1000:.2f} km\nInertial Velocity: {velNorm / 1000:.2f} km/s"
             viz.vizEventDialogs.append(hudpanel)
 
         # Here, I only want to run a single BSK timestep before checking for user responses.
@@ -348,20 +373,22 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
 
             # Parse keyboard inputs, perform actions
             now = dt.datetime.now()
-            if (now - priorKeyPressTime).total_seconds() > 1.0: # check that 1s has passed since last key press
-                if 'b' in keyInputs:
+            if (
+                now - priorKeyPressTime
+            ).total_seconds() > 1.0:  # check that 1s has passed since last key press
+                if "b" in keyInputs:
                     print("key - b")
                     priorKeyPressTime = now
                     if not continueBurn:
                         print("burn panel")
                         viz.vizEventDialogs.append(burnpanel)
-                if 'q' in keyInputs:
+                if "q" in keyInputs:
                     print("key - q")
                     # Set terminateVizard flag, send to Vizard to cleanly close Vizard and end scenario
                     viz.liveSettings.terminateVizard = True
                     viz.UpdateState(incrementalStopTime)
                     exit(0)
-                if 'x' in keyInputs:
+                if "x" in keyInputs:
                     print("key - x")
                     priorKeyPressTime = now
                     if continueBurn:
@@ -369,11 +396,11 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
                         continueBurn = False
                         thrMsgData.OnTimeRequest = [0, 0, 0]
                         thrMsg.write(thrMsgData, incrementalStopTime)
-                if 'z' in keyInputs:
+                if "z" in keyInputs:
                     print("key - z")
                     priorKeyPressTime = now
                     vizSupport.endFlag = True  # End scenario
-                if 'p' in keyInputs:
+                if "p" in keyInputs:
                     print("key - p")
                     priorKeyPressTime = now
                     vizSupport.pauseFlag = not vizSupport.pauseFlag  # Toggle
@@ -392,7 +419,7 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
                         print("Cancelling burn.")
 
             # Append info panel
-            if incrementalStopTime == 100*simulationTimeStep:
+            if incrementalStopTime == 100 * simulationTimeStep:
                 viz.vizEventDialogs.append(infopanel)
 
             # Turn on thrusters
@@ -416,16 +443,19 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style="plain")
     for idx in range(3):
-        plt.plot(dataLog.times() * macros.NANO2SEC / P, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
+        plt.plot(
+            dataLog.times() * macros.NANO2SEC / P,
+            posData[:, idx] / 1000.0,
+            color=unitTestSupport.getLineColor(idx, 3),
+            label="$r_{BN," + str(idx) + "}$",
+        )
+    plt.legend(loc="lower right")
+    plt.xlabel("Time [orbits]")
+    plt.ylabel("Inertial Position [km]")
     figureList = {}
-    pltName = fileName + "1" + orbitCase + str(int(useSphericalHarmonics))+ planetCase
+    pltName = fileName + "1" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
     figureList[pltName] = plt.figure(1)
 
     if useSphericalHarmonics is False:
@@ -437,10 +467,10 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
         # draw the planet
         fig = plt.gcf()
         ax = fig.gca()
-        if planetCase == 'Mars':
-            planetColor = '#884400'
+        if planetCase == "Mars":
+            planetColor = "#884400"
         else:
-            planetColor = '#008800'
+            planetColor = "#008800"
         planetRadius = planet.radEquator / 1000
         ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
         # draw the actual orbit
@@ -450,32 +480,43 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
             oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - oe.omega)
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0
-                 )
+        plt.plot(
+            rData * np.cos(fData) / 1000,
+            rData * np.sin(fData) / 1000,
+            color="#aa0000",
+            linewidth=3.0,
+        )
         # draw the full osculating orbit from the initial conditions
         fData = np.linspace(0, 2 * np.pi, 100)
         rData = []
         for idx in range(0, len(fData)):
             rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555'
-                 )
-        plt.xlabel('$i_e$ Cord. [km]')
-        plt.ylabel('$i_p$ Cord. [km]')
+        plt.plot(
+            rData * np.cos(fData) / 1000,
+            rData * np.sin(fData) / 1000,
+            "--",
+            color="#555555",
+        )
+        plt.xlabel("$i_e$ Cord. [km]")
+        plt.ylabel("$i_p$ Cord. [km]")
         plt.grid()
 
     else:
         plt.figure(2)
         fig = plt.gcf()
         ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
+        ax.ticklabel_format(useOffset=False, style="plain")
         smaData = []
         for idx in range(0, len(posData)):
             oeData = orbitalMotion.rv2elem(mu, posData[idx], velData[idx])
-            smaData.append(oeData.a / 1000.)
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, smaData, color='#aa0000',
-                 )
-        plt.xlabel('Time [orbits]')
-        plt.ylabel('SMA [km]')
+            smaData.append(oeData.a / 1000.0)
+        plt.plot(
+            posData[:, 0] * macros.NANO2SEC / P,
+            smaData,
+            color="#aa0000",
+        )
+        plt.xlabel("Time [orbits]")
+        plt.ylabel("SMA [km]")
 
     pltName = fileName + "2" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
     figureList[pltName] = plt.figure(2)
@@ -495,11 +536,11 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
 #
 if __name__ == "__main__":
     run(
-        False,       # show_plots
-        True,        # liveStream
-        True,        # broadcastStream
-        1.0,         # time step (s)
-        'LEO',       # orbit Case (LEO, GTO, GEO)
-        False,       # useSphericalHarmonics
-        'Earth'      # planetCase (Earth, Mars)
+        False,  # show_plots
+        True,  # liveStream
+        True,  # broadcastStream
+        1.0,  # time step (s)
+        "LEO",  # orbit Case (LEO, GTO, GEO)
+        False,  # useSphericalHarmonics
+        "Earth",  # planetCase (Earth, Mars)
     )

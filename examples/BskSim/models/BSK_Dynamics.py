@@ -142,8 +142,7 @@ class BSKDynamicModels():
         self.moon = 2
 
         self.gravFactory.addBodiesTo(self.scObject)
-        self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                              timeInitString,
+        self.gravFactory.createSpiceInterface(time=timeInitString,
                                               epochInMsg=True)
         self.epochMsg = self.gravFactory.epochMsg
 

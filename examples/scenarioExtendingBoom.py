@@ -114,7 +114,7 @@ def run(show_plots):
     gravFactory.addBodiesTo(scObject)
 
     timeInitString = "2016 JUNE 3 01:34:30.0"
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString, epochInMsg=True)
+    gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
     gravFactory.spiceObject.zeroBase = 'earth'
     scSim.AddModelToTask(dynTaskName, gravFactory.spiceObject)
 

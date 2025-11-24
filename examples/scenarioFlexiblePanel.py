@@ -83,9 +83,22 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Basilisk.utilities import (SimulationBaseClass, vizSupport, simIncludeGravBody, macros, orbitalMotion,
-                                unitTestSupport, RigidBodyKinematics as rbk)
-from Basilisk.simulation import spacecraft, spinningBodyNDOFStateEffector, simpleNav, extForceTorque, svIntegrators
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    vizSupport,
+    simIncludeGravBody,
+    macros,
+    orbitalMotion,
+    unitTestSupport,
+    RigidBodyKinematics as rbk,
+)
+from Basilisk.simulation import (
+    spacecraft,
+    spinningBodyNDOFStateEffector,
+    simpleNav,
+    extForceTorque,
+    svIntegrators,
+)
 from Basilisk.fswAlgorithms import mrpFeedback, inertial3D, attTrackingError
 from Basilisk.architecture import messaging
 
@@ -100,7 +113,9 @@ def run(show_plots, numberOfSegments):
 
     scGeometry = geometryClass(numberOfSegments)
     scObject, panel, extForceTorque = setUpDynModules(scSim, scGeometry)
-    thetaData, attErrorLog = setUpFSWModules(scSim, scObject, panel, scGeometry, extForceTorque)
+    thetaData, attErrorLog = setUpFSWModules(
+        scSim, scObject, panel, scGeometry, extForceTorque
+    )
 
     if vizSupport.vizFound:
         setUpVizard(scSim, scObject, panel, scGeometry)
@@ -113,7 +128,7 @@ def run(show_plots, numberOfSegments):
 
 def createSimBaseClass():
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.simulationTime = macros.min2nano(10.)
+    scSim.simulationTime = macros.min2nano(10.0)
     scSim.dynTaskName = "dynTask"
     scSim.dynProcess = scSim.CreateNewProcess("dynProcess")
     simTimeStep = macros.sec2nano(0.1)
@@ -159,9 +174,29 @@ def setUpSpacecraft(scSim, scGeometry):
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "scObject"
     scObject.hub.mHub = scGeometry.massHub
-    scObject.hub.IHubPntBc_B = [[scGeometry.massHub / 12 * (scGeometry.lengthHub ** 2 + scGeometry.heightHub ** 2), 0.0, 0.0],
-                                [0.0, scGeometry.massHub / 12 * (scGeometry.widthHub ** 2 + scGeometry.heightHub ** 2), 0.0],
-                                [0.0, 0.0, scGeometry.massHub / 12 * (scGeometry.lengthHub ** 2 + scGeometry.widthHub ** 2)]]
+    scObject.hub.IHubPntBc_B = [
+        [
+            scGeometry.massHub
+            / 12
+            * (scGeometry.lengthHub**2 + scGeometry.heightHub**2),
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            scGeometry.massHub
+            / 12
+            * (scGeometry.widthHub**2 + scGeometry.heightHub**2),
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            scGeometry.massHub
+            / 12
+            * (scGeometry.lengthHub**2 + scGeometry.widthHub**2),
+        ],
+    ]
     scSim.AddModelToTask(scSim.dynTaskName, scObject)
 
     return scObject
@@ -173,15 +208,17 @@ def setUpFlexiblePanel(scSim, scObject, scGeometry):
     for idx in range(scGeometry.numberOfSegments):
         spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
         spinningBody.setMass(0.0)
-        spinningBody.setISPntSc_S([[0.0, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0]])
-        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
-                                 [0.0, 1.0, 0.0],
-                                 [0.0, 0.0, 1.0]])
+        spinningBody.setISPntSc_S([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
         spinningBody.setR_ScS_S([[0.0], [scGeometry.lengthSubPanel / 2], [0.0]])
         if idx == 0:
-            spinningBody.setR_SP_P([[0.0], [scGeometry.lengthHub / 2], [scGeometry.heightHub / 2 - scGeometry.thicknessSubPanel / 2]])
+            spinningBody.setR_SP_P(
+                [
+                    [0.0],
+                    [scGeometry.lengthHub / 2],
+                    [scGeometry.heightHub / 2 - scGeometry.thicknessSubPanel / 2],
+                ]
+            )
         else:
             spinningBody.setR_SP_P([[0.0], [scGeometry.lengthSubPanel], 0.0])
         spinningBody.setSHat_S([[1], [0], [0]])
@@ -193,12 +230,32 @@ def setUpFlexiblePanel(scSim, scObject, scGeometry):
 
         spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
         spinningBody.setMass(scGeometry.massSubPanel)
-        spinningBody.setISPntSc_S([[scGeometry.massSubPanel / 12 * (scGeometry.lengthSubPanel ** 2 + scGeometry.thicknessSubPanel ** 2), 0.0, 0.0],
-                                   [0.0, scGeometry.massSubPanel / 12 * (scGeometry.widthSubPanel ** 2 + scGeometry.thicknessSubPanel ** 2), 0.0],
-                                   [0.0, 0.0, scGeometry.massSubPanel / 12 * (scGeometry.widthSubPanel ** 2 + scGeometry.lengthSubPanel ** 2)]])
-        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
-                                 [0.0, 1.0, 0.0],
-                                 [0.0, 0.0, 1.0]])
+        spinningBody.setISPntSc_S(
+            [
+                [
+                    scGeometry.massSubPanel
+                    / 12
+                    * (scGeometry.lengthSubPanel**2 + scGeometry.thicknessSubPanel**2),
+                    0.0,
+                    0.0,
+                ],
+                [
+                    0.0,
+                    scGeometry.massSubPanel
+                    / 12
+                    * (scGeometry.widthSubPanel**2 + scGeometry.thicknessSubPanel**2),
+                    0.0,
+                ],
+                [
+                    0.0,
+                    0.0,
+                    scGeometry.massSubPanel
+                    / 12
+                    * (scGeometry.widthSubPanel**2 + scGeometry.lengthSubPanel**2),
+                ],
+            ]
+        )
+        spinningBody.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
         spinningBody.setR_ScS_S([[0.0], [scGeometry.lengthSubPanel / 2], [0.0]])
         spinningBody.setR_SP_P([[0.0], [0.0], [0.0]])
         spinningBody.setSHat_S([[0], [1], [0]])
@@ -224,16 +281,14 @@ def setUpExtForceTorque(scSim, scObject):
 
 def setUpGravity(scSim, scObject):
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(['earth', 'sun'])
-    gravBodies['earth'].isCentralBody = True
-    mu = gravBodies['earth'].mu
+    gravBodies = gravFactory.createBodies(["earth", "sun"])
+    gravBodies["earth"].isCentralBody = True
+    mu = gravBodies["earth"].mu
     gravFactory.addBodiesTo(scObject)
 
     timeInitString = "2012 MAY 1 00:28:30.0"
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
-                                     epochInMsg=True)
-    gravFactory.spiceObject.zeroBase = 'earth'
+    gravFactory.createSpiceInterface(time=timeInitString, epochInMsg=True)
+    gravFactory.spiceObject.zeroBase = "earth"
     scSim.AddModelToTask(scSim.dynTaskName, gravFactory.spiceObject)
 
     return mu
@@ -260,7 +315,9 @@ def setUpFSWModules(scSim, scObject, panel, scGeometry, extFTObject):
     attError = setUpGuidance(scSim, sNavObject, inertial3DObj)
     setUpControl(scSim, extFTObject, attError, scGeometry)
 
-    thetaData, attErrorLog = setUpRecorders(scSim, scObject, panel, attError, scGeometry)
+    thetaData, attErrorLog = setUpRecorders(
+        scSim, scObject, panel, attError, scGeometry
+    )
 
     return thetaData, attErrorLog
 
@@ -294,17 +351,68 @@ def setUpGuidance(scSim, sNavObject, inertial3DObj):
 
 
 def setUpControl(scSim, extFTObject, attError, scGeometry):
-    IHubPntBc_B = np.array([[scGeometry.massHub / 12 * (scGeometry.lengthHub ** 2 + scGeometry.heightHub ** 2), 0.0, 0.0],
-                            [0.0, scGeometry.massHub / 12 * (scGeometry.widthHub ** 2 + scGeometry.heightHub ** 2), 0.0],
-                            [0.0, 0.0, scGeometry.massHub / 12 * (scGeometry.lengthHub ** 2 + scGeometry.widthHub ** 2)]])
+    IHubPntBc_B = np.array(
+        [
+            [
+                scGeometry.massHub
+                / 12
+                * (scGeometry.lengthHub**2 + scGeometry.heightHub**2),
+                0.0,
+                0.0,
+            ],
+            [
+                0.0,
+                scGeometry.massHub
+                / 12
+                * (scGeometry.widthHub**2 + scGeometry.heightHub**2),
+                0.0,
+            ],
+            [
+                0.0,
+                0.0,
+                scGeometry.massHub
+                / 12
+                * (scGeometry.lengthHub**2 + scGeometry.widthHub**2),
+            ],
+        ]
+    )
     IPanelPntSc_B = np.array(
-        [[scGeometry.massPanel / 12 * (scGeometry.lengthPanel ** 2 + scGeometry.thicknessPanel ** 2), 0.0, 0.0],
-         [0.0, scGeometry.massPanel / 12 * (scGeometry.widthPanel ** 2 + scGeometry.thicknessPanel ** 2), 0.0],
-         [0.0, 0.0, scGeometry.massPanel / 12 * (scGeometry.widthPanel ** 2 + scGeometry.lengthPanel ** 2)]])
-    r_ScB_B = [0.0, scGeometry.lengthHub / 2 + scGeometry.lengthPanel / 2,
-               scGeometry.heightHub / 2 - scGeometry.thicknessSubPanel / 2]
-    IHubPntB_B = IHubPntBc_B + IPanelPntSc_B - scGeometry.massPanel * np.array(rbk.v3Tilde(r_ScB_B)) @ np.array(
-        rbk.v3Tilde(r_ScB_B))
+        [
+            [
+                scGeometry.massPanel
+                / 12
+                * (scGeometry.lengthPanel**2 + scGeometry.thicknessPanel**2),
+                0.0,
+                0.0,
+            ],
+            [
+                0.0,
+                scGeometry.massPanel
+                / 12
+                * (scGeometry.widthPanel**2 + scGeometry.thicknessPanel**2),
+                0.0,
+            ],
+            [
+                0.0,
+                0.0,
+                scGeometry.massPanel
+                / 12
+                * (scGeometry.widthPanel**2 + scGeometry.lengthPanel**2),
+            ],
+        ]
+    )
+    r_ScB_B = [
+        0.0,
+        scGeometry.lengthHub / 2 + scGeometry.lengthPanel / 2,
+        scGeometry.heightHub / 2 - scGeometry.thicknessSubPanel / 2,
+    ]
+    IHubPntB_B = (
+        IHubPntBc_B
+        + IPanelPntSc_B
+        - scGeometry.massPanel
+        * np.array(rbk.v3Tilde(r_ScB_B))
+        @ np.array(rbk.v3Tilde(r_ScB_B))
+    )
 
     mrpControl = mrpFeedback.mrpFeedback()
     mrpControl.ModelTag = "mrpFeedback"
@@ -314,7 +422,9 @@ def setUpControl(scSim, extFTObject, attError, scGeometry):
     mrpControl.P = 2 * np.max(IHubPntB_B) / decayTime
     mrpControl.K = (mrpControl.P / xi) ** 2 / np.max(IHubPntB_B)
 
-    configData = messaging.VehicleConfigMsgPayload(IHubPntB_B=list(IHubPntB_B.flatten()))
+    configData = messaging.VehicleConfigMsgPayload(
+        IHubPntB_B=list(IHubPntB_B.flatten())
+    )
 
     configDataMsg = messaging.VehicleConfigMsg()
     configDataMsg.write(configData)
@@ -342,20 +452,33 @@ def setUpRecorders(scSim, scObject, panel, attError, scGeometry):
 def setUpVizard(scSim, scObject, panel, scGeometry):
     scBodyList = [scObject]
     for idx in range(scGeometry.numberOfSegments):
-        scBodyList.append([f"subPanel{idx + 1}", panel.spinningBodyConfigLogOutMsgs[2 * idx + 1]])
-    viz = vizSupport.enableUnityVisualization(scSim, scSim.dynTaskName, scBodyList
-                                              # , saveFile=fileName
-                                              )
-    vizSupport.createCustomModel(viz
-                                 , simBodiesToModify=[scObject.ModelTag]
-                                 , modelPath="CUBE"
-                                 , color=vizSupport.toRGBA255("gold")
-                                 , scale=[scGeometry.widthHub, scGeometry.lengthHub, scGeometry.heightHub])
+        scBodyList.append(
+            [f"subPanel{idx + 1}", panel.spinningBodyConfigLogOutMsgs[2 * idx + 1]]
+        )
+    viz = vizSupport.enableUnityVisualization(
+        scSim,
+        scSim.dynTaskName,
+        scBodyList,
+        # , saveFile=fileName
+    )
+    vizSupport.createCustomModel(
+        viz,
+        simBodiesToModify=[scObject.ModelTag],
+        modelPath="CUBE",
+        color=vizSupport.toRGBA255("gold"),
+        scale=[scGeometry.widthHub, scGeometry.lengthHub, scGeometry.heightHub],
+    )
     for idx in range(scGeometry.numberOfSegments):
-        vizSupport.createCustomModel(viz
-                                     , simBodiesToModify=[f"subPanel{idx + 1}"]
-                                     , modelPath="CUBE"
-                                     , scale=[scGeometry.widthSubPanel, scGeometry.lengthSubPanel, scGeometry.thicknessSubPanel])
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[f"subPanel{idx + 1}"],
+            modelPath="CUBE",
+            scale=[
+                scGeometry.widthSubPanel,
+                scGeometry.lengthSubPanel,
+                scGeometry.thicknessSubPanel,
+            ],
+        )
     viz.settings.orbitLinesOn = -1
 
 
@@ -383,11 +506,15 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
     plt.clf()
     ax = plt.axes()
     for idx in range(scGeometry.numberOfSegments):
-        plt.plot(timeSecDyn, macros.R2D * theta[2 * idx], label=r'$\theta_' + str(idx + 1) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Bending Angles', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\theta$ [deg]', fontsize='18')
+        plt.plot(
+            timeSecDyn,
+            macros.R2D * theta[2 * idx],
+            label=r"$\theta_" + str(idx + 1) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Bending Angles", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\theta$ [deg]", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -398,11 +525,15 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
     plt.clf()
     ax = plt.axes()
     for idx in range(scGeometry.numberOfSegments):
-        plt.plot(timeSecDyn, macros.R2D * theta[2 * idx + 1], label=r'$\beta_' + str(idx + 1) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Torsional Angles', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\beta$ [deg]', fontsize='18')
+        plt.plot(
+            timeSecDyn,
+            macros.R2D * theta[2 * idx + 1],
+            label=r"$\beta_" + str(idx + 1) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Torsional Angles", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\beta$ [deg]", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -413,11 +544,15 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
     plt.clf()
     ax = plt.axes()
     for idx in range(scGeometry.numberOfSegments):
-        plt.plot(timeSecDyn, macros.R2D * thetaDot[2 * idx], label=r'$\dot{\theta}_' + str(idx + 1) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Bending Angle Rates', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\dot{\theta}$ [deg/s]', fontsize='18')
+        plt.plot(
+            timeSecDyn,
+            macros.R2D * thetaDot[2 * idx],
+            label=r"$\dot{\theta}_" + str(idx + 1) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Bending Angle Rates", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\dot{\theta}$ [deg/s]", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -428,11 +563,15 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
     plt.clf()
     ax = plt.axes()
     for idx in range(scGeometry.numberOfSegments):
-        plt.plot(timeSecDyn, macros.R2D * thetaDot[2 * idx + 1], label=r'$\dot{\beta}_' + str(idx + 1) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Torsional Angle Rates', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\dot{\beta}$ [deg/s]', fontsize='18')
+        plt.plot(
+            timeSecDyn,
+            macros.R2D * thetaDot[2 * idx + 1],
+            label=r"$\dot{\beta}_" + str(idx + 1) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Torsional Angle Rates", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\dot{\beta}$ [deg/s]", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -443,13 +582,16 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
     plt.clf()
     ax = plt.axes()
     for idx in range(3):
-        plt.plot(timeSecFSW, attErrorLog.sigma_BR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\sigma_' + str(idx) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Attitude Error', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\sigma_{B/R}$', fontsize='18')
+        plt.plot(
+            timeSecFSW,
+            attErrorLog.sigma_BR[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\sigma_" + str(idx) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Attitude Error", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\sigma_{B/R}$", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -460,13 +602,16 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
     plt.clf()
     ax = plt.axes()
     for idx in range(3):
-        plt.plot(timeSecFSW, attErrorLog.omega_BR_B[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label=r'$\omega_' + str(idx) + '$')
-    plt.legend(fontsize='14')
-    plt.title('Attitude Error Rate', fontsize='22')
-    plt.xlabel('time [min]', fontsize='18')
-    plt.ylabel(r'$\omega_{B/R}$', fontsize='18')
+        plt.plot(
+            timeSecFSW,
+            attErrorLog.omega_BR_B[:, idx],
+            color=unitTestSupport.getLineColor(idx, 3),
+            label=r"$\omega_" + str(idx) + "$",
+        )
+    plt.legend(fontsize="14")
+    plt.title("Attitude Error Rate", fontsize="22")
+    plt.xlabel("time [min]", fontsize="18")
+    plt.ylabel(r"$\omega_{B/R}$", fontsize="18")
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     ax.yaxis.offsetText.set_fontsize(14)
@@ -482,7 +627,4 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
 
 
 if __name__ == "__main__":
-    run(
-        True,
-        5
-    )
+    run(True, 5)
