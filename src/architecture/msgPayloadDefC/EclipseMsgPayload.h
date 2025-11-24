@@ -21,10 +21,15 @@
 #define eclipseSimMsg_h
 
 
-//!@brief Eclipse shadow factor message definition.
+//! @brief Eclipse illumination message definition.
 typedef struct {
-    double shadowFactor;       //!< Proportion of illumination due to eclipse. 0 = fully shadowed, 1 = fully illuminated.
-}EclipseMsgPayload;
+    //! Fraction of illumination due to eclipse. 0 = fully shadowed, 1 = fully illuminated.
+    double shadowFactor;
+} EclipseMsgPayload;
 
+//! illuminationFactor alias to be used instead of shadowFactor. shadowFactor will be deprecated by
+#ifndef BSK_DISABLE_ILLUMINATIONFACTOR_ALIAS
+#define illuminationFactor shadowFactor
+#endif
 
 #endif /* eclipseSimMsg_h */
