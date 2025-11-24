@@ -217,7 +217,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         num_RW = 4  # number of wheels used in the scenario
 
         # Dynamics process outputs: pull log messages below if any
-        shadowFactor = np.delete(self.shadowRec.shadowFactor, 0, 0)
+        illuminationFactor = np.delete(self.shadowRec.illuminationFactor, 0, 0)
 
         # FSW process outputs
         dataUsReq = np.delete(self.rwMotorRec.motorTorque[:, range(num_RW)], 0, 0)
@@ -235,7 +235,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
         BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
 
-        BSK_plt.plot_shadow_fraction(timeData, shadowFactor)
+        BSK_plt.plot_shadow_fraction(timeData, illuminationFactor)
         BSK_plt.plot_sun_point(timeData, sunPoint)
 
         figureList = {}
@@ -243,7 +243,7 @@ class scenario_AttitudeEclipse(BSKSim, BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed", "shadowFraction", "sunDirectionVector"]
+            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed", "illuminationFraction", "sunDirectionVector"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList

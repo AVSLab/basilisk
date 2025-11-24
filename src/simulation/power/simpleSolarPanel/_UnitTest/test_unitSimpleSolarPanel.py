@@ -99,7 +99,7 @@ def run(showPlots, orbitDistance, eclipseValue, scAttitude):
 
     #   Input message set-up
     eclipseMessage = messaging.EclipseMsgPayload()
-    eclipseMessage.shadowFactor = eclipseValue  # Set it to be totally in shadow
+    eclipseMessage.illuminationFactor = eclipseValue  # Set it to be totally in shadow
     eclipseMsg = messaging.EclipseMsg().write(eclipseMessage)
 
 

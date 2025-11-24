@@ -60,7 +60,7 @@ private:
     double sunDistanceFactor;                   //!< [-] Scale factor on the base solar power computed using the true s/c-sun distance.
     SpicePlanetStateMsgPayload sunData;            //!< [-] Unused for now, but including it for future
     SCStatesMsgPayload stateCurrent;           //!< [-] Current SSBI-relative state
-    double shadowFactor;                        //!< [-] solar eclipse shadow factor from 0 (fully obscured) to 1 (fully visible)
+    double illuminationFactor;                        //!< [-] solar eclipse illumination factor from 0 (fully obscured) to 1 (fully visible)
 
 
 };

@@ -58,7 +58,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->sunVisibilityFactor = this->sunEclipseInMsg.zeroMsgPayload;
-    this->sunVisibilityFactor.shadowFactor = 1.0;
+    this->sunVisibilityFactor.illuminationFactor = 1.0;
     this->sunDistanceFactor = 1.0;
     this->dcm_PB.setIdentity(3,3);
     this->propagationMatrix.resize(1);
@@ -264,7 +264,7 @@ void CoarseSunSensor::computeTrueOutput()
     this->trueValue *= this->sunDistanceFactor;
 
     // Also apply shadow factor. Basically, correct the intensity of the light.
-    this->trueValue *= this->sunVisibilityFactor.shadowFactor;
+    this->trueValue *= this->sunVisibilityFactor.illuminationFactor;
 
     // Adding albedo value (if defined by the user)
     if (this->albedoValue > 0.0){

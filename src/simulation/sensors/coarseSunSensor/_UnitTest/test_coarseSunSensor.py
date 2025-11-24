@@ -118,7 +118,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
 
     # create dummy eclipse message
     eclipseMsg = messaging.EclipseMsgPayload()
-    eclipseMsg.shadowFactor = visibilityFactor
+    eclipseMsg.illuminationFactor = visibilityFactor
     ecMsg = messaging.EclipseMsg().write(eclipseMsg)
 
     def setupCSS(CSS):

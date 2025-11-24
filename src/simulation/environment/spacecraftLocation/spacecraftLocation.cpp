@@ -36,7 +36,7 @@ SpacecraftLocation::SpacecraftLocation()
     this->aHat_B.fill(0.0);
     this->theta = -1.0;
     this->theta_solar = -1.0;
-    this->min_shadow_factor = -1.0;
+    this->min_illumination_factor = -1.0;
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -283,8 +283,8 @@ SpacecraftLocation::computeAccess()
             }
 
             // Check if eclipse is valid
-            if (this->eclipseInMsg.isLinked() && this->min_shadow_factor > 0.0) {
-                if (eclipseInMsgData.shadowFactor < this->min_shadow_factor) {
+            if (this->eclipseInMsg.isLinked() && this->min_illumination_factor > 0.0) {
+                if (eclipseInMsgData.illuminationFactor < this->min_illumination_factor) {
                     this->accessMsgBuffer.at(c).hasAccess = 0;
                     this->accessMsgBuffer.at(c).hasIllumination = 0;
                 }

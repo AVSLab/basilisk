@@ -56,7 +56,7 @@ class SpacecraftLocation : public SysModel
     Eigen::Vector3d aHat_B; //!< [] (optional) unit direction vector of the sensor/communication boresight axis
     double theta;           //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
     double theta_solar;     //!< [r] (optional) illumination half-cone angle, treating aHat_B as the surface normal
-    double min_shadow_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
+    double min_illumination_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
 
     ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;        //!< (optional) planet state input message
