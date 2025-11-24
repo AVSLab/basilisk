@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=70", "pybind11>=2.12"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bsk-sdk"
+version = "1.0.0"
+description = "Header-only SDK for developing Basilisk plugins."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "ISC" }
+authors = [{ name = "Basilisk Developers" }]
+dependencies = ["pybind11>=2.12"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: ISC License (ISCL)",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+homepage = "https://avslab.github.io/basilisk/"
+source = "https://github.com/AVSLab/basilisk"
+tracker = "https://github.com/AVSLab/basilisk/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["bsk_sdk"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"bsk_sdk" = ["include/**/*"]

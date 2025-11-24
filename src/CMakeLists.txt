@@ -195,6 +195,10 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Add Target
     add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
+    if(${LIB_NAME} STREQUAL "architectureLib")
+      target_compile_definitions(${LIB_NAME} PRIVATE BASILISK_ARCH_EXPORTS=1)
+    endif()
+
     # Add to list of library
     list(APPEND AllLibs ${LIB_NAME})
 
@@ -594,6 +598,7 @@ add_subdirectory("utilities") # has protobuffers included
 add_subdirectory("architecture/messaging/cMsgCInterface")
 add_subdirectory("architecture/messaging/")
 
+
 # TODO: I'd call this generate_libraries(), because it really does find all of them. TODO: I'd like for all generated
 # libraries to end up in a dist/Basilisk/lib folder rather than the /dist/Basilisk folder; however haven't found a way
 # to use target_link_libraries() in a cross platform way to support this (needs full path and custom extensions
@@ -601,6 +606,18 @@ add_subdirectory("architecture/messaging/")
 set(AllLibs "")
 generate_package_libraries("${CMAKE_SOURCE_DIR}" "${AllLibs}") # This finds GeneralModuleFiles and generates a library
                                                                # of the parentDirectory name
+
+# Update architectureLib with msgTypeRegistry.cpp, now that generate_package_libraries has defined it.
+# This assumes generate_package_libraries handles architectureLib creation.
+if(TARGET architectureLib)
+    target_sources(architectureLib PRIVATE
+        "${PROJECT_SOURCE_DIR}/architecture/messaging/msgTypeRegistry.cpp"
+    )
+    target_include_directories(architectureLib PUBLIC
+        "${PROJECT_SOURCE_DIR}/architecture/messaging"
+    )
+    target_compile_definitions(architectureLib PRIVATE BASILISK_ARCH_EXPORTS=1)
+endif()
 
 set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cMsgCInterface)
 
@@ -710,6 +727,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/utilities")
 
 if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
@@ -729,6 +747,19 @@ else()
       "    __version__ = _pkg_version('bsk')\n"
       "except Exception:\n"
       "    __version__ = '0.0.0'\n")
+endif()
+
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/modules")
+configure_file(
+  "${CMAKE_SOURCE_DIR}/modules/__init__.py"
+  "${CMAKE_BINARY_DIR}/Basilisk/modules/__init__.py"
+  COPYONLY
+)
+
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bsk_core")
+file(GLOB BSK_CORE_SOURCES "${CMAKE_SOURCE_DIR}/bsk_core/*.py" "${CMAKE_SOURCE_DIR}/bsk_core/**")
+if(BSK_CORE_SOURCES)
+  create_symlinks("${CMAKE_BINARY_DIR}/bsk_core" ${BSK_CORE_SOURCES})
 endif()
 
 # TODO: Iterate through all dist directories and add __init__.py's where they don't exist
