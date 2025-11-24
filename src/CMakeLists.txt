@@ -715,10 +715,20 @@ if(WIN32 AND (Python3_VERSION VERSION_GREATER 3.8))
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n"
-       "from Basilisk.architecture import messaging\n")
+       "from Basilisk.architecture import messaging\n"
+       "try:\n"
+       "    from importlib.metadata import version as _pkg_version\n"
+       "    __version__ = _pkg_version('bsk')\n"
+       "except Exception:\n"
+       "    __version__ = '0.0.0'\n")
 else()
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
-      "from Basilisk.architecture import messaging # ensure recorders() work without first importing messaging\n")
+      "from Basilisk.architecture import messaging # ensure recorders() work without first importing messaging\n"
+      "try:\n"
+      "    from importlib.metadata import version as _pkg_version\n"
+      "    __version__ = _pkg_version('bsk')\n"
+      "except Exception:\n"
+      "    __version__ = '0.0.0'\n")
 endif()
 
 # TODO: Iterate through all dist directories and add __init__.py's where they don't exist
