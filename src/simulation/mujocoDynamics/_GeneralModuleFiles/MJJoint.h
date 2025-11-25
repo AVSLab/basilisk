@@ -89,7 +89,7 @@ protected:
      *
      * Throws an exception if initialization has not been completed.
      */
-    void checkInitialized();
+    void checkInitialized() const;
 
 protected:
     MJBody& body; ///< Reference to the body the joint is attached to.
@@ -121,6 +121,20 @@ public:
      * @param body Reference to the body the joint is associated with.
      */
     MJScalarJoint(mjsJoint* joint, MJBody& body);
+
+    /**
+     * @brief Returns the axis of rotation for hinge joints and the direction
+     * of translation for slide joints.
+     *
+     * Returned vector is normalized.
+     */
+    Eigen::Vector3d getAxis() const;
+
+    /**
+     * @brief Returns true if this is a rotational joint, false if it's a
+     * translational slide joint.
+     */
+    bool isHinge() const;
 
     /**
      * @brief Sets the position of the joint.

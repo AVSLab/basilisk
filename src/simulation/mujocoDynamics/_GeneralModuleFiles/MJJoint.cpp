@@ -53,7 +53,7 @@ void MJJoint::configure(const mjModel* m)
     this->qvelAdr = m->jnt_dofadr[this->getId()];
 }
 
-void MJJoint::checkInitialized()
+void MJJoint::checkInitialized() const
 {
     if (!this->qposAdr.has_value()) {
         return body.getSpec().getScene().logAndThrow<std::runtime_error>(
@@ -68,6 +68,20 @@ MJScalarJoint::MJScalarJoint(mjsJoint* joint, MJBody& body)
         body.getSpec()
     )
 {}
+
+Eigen::Vector3d MJScalarJoint::getAxis() const
+{
+    checkInitialized();
+    const auto m = this->body.getSpec().getMujocoModel();
+    return Eigen::Vector3d(m->jnt_axis + (this->qposAdr.value() * 3));
+}
+
+bool MJScalarJoint::isHinge() const
+{
+    checkInitialized();
+    const auto m = this->body.getSpec().getMujocoModel();
+    return m->jnt_type[this->qposAdr.value()] == mjJNT_HINGE;
+}
 
 void MJScalarJoint::configure(const mjModel* m)
 {
