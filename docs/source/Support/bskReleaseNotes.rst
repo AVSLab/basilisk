@@ -108,6 +108,15 @@ Version |release|
   ``pyStatefulSysModel.i`` to use this mixin.
 - Added support for setting the position and velocity of :ref:`MJBody` with pure translational motion.
 - Added ``getAxis`` and ``isHinge`` to :ref:`MJJoint`.
+- Added :ref:`linearTimeInvariantSystem`. This module implements a linear time-invariant
+  system using state-space representation. It can be used to model linear systems in the dynamics task of
+  ``MJScene``. This model is abstract: subclasses must specify how the input vector is
+  read from input messages, and the output vector is written to output messages. Subclasses
+  can be implemented in Python.
+- Added :ref:`singleActuatorLTI`: a single-input single-output subclass of :ref:`linearTimeInvariantSystem`
+  whose input and output is a :ref:`SingleActuatorMsgPayload`.
+- Added :ref:`forceAtSiteLTI`: a subclass of :ref:`linearTimeInvariantSystem` whose input vector
+  is read from a :ref:`ForceAtSiteMsgPayload` and output vector is written to a :ref:`ForceAtSiteMsgPayload`.
 
 
 Version 2.8.0 (August 30, 2025)
