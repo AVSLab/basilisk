@@ -413,44 +413,51 @@ void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond
 
 %define EIGEN_MAT_WRAP(type, typeCheckPrecedence)
 
+/* Python -> C++: by value */
 %typemap(in, fragment="pyObjToEigenMatrix") type {
     $1 = pyObjToEigenMatrix<type>($input);
     if (PyErr_Occurred()) SWIG_fail;
 }
 
+/* For member assignment (e.g. setting a struct field) */
 %typemap(memberin) type {
     $1 = std::move($input);
 }
 
+/* Python -> C++: non-const reference (copy-in, no write-back) */
 %typemap(in, fragment="pyObjToEigenMatrix") type & {
     $1 = new type;
     *$1 = pyObjToEigenMatrix<type>($input);
     if (PyErr_Occurred()) SWIG_fail;
 }
 
+/* Free temporary created for non-const reference in typemap(in) */
 %typemap(freearg) type & {
     delete $1;
 }
 
-%typemap(typecheck, fragment="checkPyObjectIsMatrixLike", precedence= ## typeCheckPrecedence) type {
-    // PyErr_Fetch and PyErr_Restore preserve/restore the error status before this function
-    // We use the error flag to check whether conversion is valid, but we do not want to
-    // alter the previous error status of the program
+/* Overload resolution; check whether input can be converted to type */
+%typemap(typecheck,
+         fragment="checkPyObjectIsMatrixLike",
+         precedence= ## typeCheckPrecedence) type {
+    // Preserve prior error state
     PyObject *ty, *value, *traceback;
     PyErr_Fetch(&ty, &value, &traceback);
 
     pyObjToEigenMatrix<type>($input);
-    $1 = ! PyErr_Occurred();
+    $1 = !PyErr_Occurred();
 
     PyErr_Restore(ty, value, traceback);
 }
 
+/* C++ -> Python: by value */
 %typemap(out, optimal="1", fragment="fillPyObjList") type {
     $result = PyList_New(0);
     fillPyObjList<type>($result, $1);
     if (PyErr_Occurred()) SWIG_fail;
 }
 
+/* C++ -> Python: pointer return */
 %typemap(out, fragment="fillPyObjList") type * {
     if(!($1))
     {
@@ -464,32 +471,102 @@ void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond
     if (PyErr_Occurred()) SWIG_fail;
 }
 
-%typemap(typecheck) type & = type;
-%typemap(typecheck) type && = type;
+/* Director: Python override return -> C++ Eigen (by value) */
+%typemap(directorout, fragment="pyObjToEigenMatrix") type {
+    $result = pyObjToEigenMatrix<type>($input);
+    if (PyErr_Occurred()) {
+        Swig::DirectorTypeMismatchException::raise(
+            PyExc_TypeError,
+            "Could not convert Python return value to Eigen matrix "
+            "for director method"
+        );
+    }
+}
 
-%typemap(in) type && = type &;
-%typemap(freearg) type && = type &;
+/* Director: Python override return -> C++ Eigen pointer (allocate new) */
+%typemap(directorout, fragment="pyObjToEigenMatrix") type * {
+    type *tmp = new type;
+    *tmp = pyObjToEigenMatrix<type>($input);
+    if (PyErr_Occurred()) {
+        delete tmp;
+        Swig::DirectorTypeMismatchException::raise(
+            PyExc_TypeError,
+            "Could not convert Python return value to Eigen matrix pointer "
+            "for director method"
+        );
+    }
+    $result = tmp;
+}
+
+/* Director: C++ Eigen argument -> Python list (by value) */
+%typemap(directorin, fragment="fillPyObjList") type {
+    $input = PyList_New(0);
+    fillPyObjList<type>($input, $1);
+    if (PyErr_Occurred()) {
+        Swig::DirectorTypeMismatchException::raise(
+            PyExc_TypeError,
+            "Could not convert Eigen matrix argument for director method"
+        );
+    }
+}
+
+/* Director: C++ Eigen pointer argument -> Python object */
+%typemap(directorin, fragment="fillPyObjList") type * {
+    if (!$1) {
+        Py_INCREF(Py_None);
+        $input = Py_None;
+    } else {
+        $input = PyList_New(0);
+        fillPyObjList<type>($input, *$1);
+        if (PyErr_Occurred()) {
+            Swig::DirectorTypeMismatchException::raise(
+                PyExc_TypeError,
+                "Could not convert Eigen matrix pointer argument for director method"
+            );
+        }
+    }
+}
+
+/* Aliases for references in type system and director typemaps */
+%typemap(typecheck)  type & = type;
+%typemap(typecheck)  type && = type;
+
+%typemap(in)        type && = type &;
+%typemap(freearg)   type && = type &;
+
+%typemap(directorin)  type & = type;
+%typemap(directorout) type & = type;
 
 %enddef
 
+/* ============================================================
+   Rotation wrappers (MRPd, Quaterniond)
+   ============================================================ */
+
 %define EIGEN_ROT_WRAP(type, typeCheckPrecedence)
 
+/* Python -> C++: by value */
 %typemap(in, fragment="pyObjToRotation") type {
     $1 = pyObjToRotation<type>($input);
     if (PyErr_Occurred()) SWIG_fail;
 }
 
+/* Python -> C++: non-const reference (copy-in, no write-back) */
 %typemap(in, fragment="pyObjToRotation") type & {
     $1 = new type;
     *$1 = pyObjToRotation<type>($input);
     if (PyErr_Occurred()) SWIG_fail;
 }
 
+/* Free temporary created for non-const reference in typemap(in) */
 %typemap(freearg) type & {
     delete $1;
 }
 
-%typemap(typecheck, fragment="getInputSize", precedence= ## typeCheckPrecedence) type {
+/* Overload resolution for rotation-like inputs */
+%typemap(typecheck,
+         fragment="getInputSize",
+         precedence= ## typeCheckPrecedence) type {
     auto maybeSize = getInputSize($input);
 
     if (!maybeSize)
@@ -507,14 +584,16 @@ void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond
     }
 }
 
+/* C++ -> Python: by value */
 %typemap(out, optimal="1", fragment="fillPyObjList") type {
     $result = PyList_New(0);
     fillPyObjList($result, $1);
     if (PyErr_Occurred()) SWIG_fail;
 }
 
+/* C++ -> Python: pointer return */
 %typemap(out, fragment="fillPyObjList") type * {
-    if(!($1))
+    if (!($1))
     {
         $result = SWIG_Py_Void();
     }
@@ -526,26 +605,90 @@ void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond
     if (PyErr_Occurred()) SWIG_fail;
 }
 
-%typemap(typecheck) type & = type;
-%typemap(typecheck) type && = type;
+/* Director: Python override return -> C++ rotation (by value) */
+%typemap(directorout, fragment="pyObjToRotation") type {
+    $result = pyObjToRotation<type>($input);
+    if (PyErr_Occurred()) {
+        Swig::DirectorTypeMismatchException::raise(
+            PyExc_TypeError,
+            "Could not convert Python return value to Eigen rotation "
+            "for director method"
+        );
+    }
+}
 
-%typemap(in) type && = type &;
-%typemap(freearg) type && = type &;
+/* Director: Python override return -> C++ rotation pointer (allocate new) */
+%typemap(directorout, fragment="pyObjToRotation") type * {
+    type *tmp = new type;
+    *tmp = pyObjToRotation<type>($input);
+    if (PyErr_Occurred()) {
+        delete tmp;
+        Swig::DirectorTypeMismatchException::raise(
+            PyExc_TypeError,
+            "Could not convert Python return value to Eigen rotation pointer "
+            "for director method"
+        );
+    }
+    $result = tmp;
+}
+
+/* Director: C++ rotation argument -> Python list (by value) */
+%typemap(directorin, fragment="fillPyObjList") type {
+    $input = PyList_New(0);
+    fillPyObjList($input, $1);
+    if (PyErr_Occurred()) {
+        Swig::DirectorTypeMismatchException::raise(
+            PyExc_TypeError,
+            "Could not convert Eigen rotation argument for director method"
+        );
+    }
+}
+
+/* Director: C++ rotation pointer argument -> Python object */
+%typemap(directorin, fragment="fillPyObjList") type * {
+    if (!$1) {
+        Py_INCREF(Py_None);
+        $input = Py_None;
+    } else {
+        $input = PyList_New(0);
+        fillPyObjList($input, *$1);
+        if (PyErr_Occurred()) {
+            Swig::DirectorTypeMismatchException::raise(
+                PyExc_TypeError,
+                "Could not convert Eigen rotation pointer argument for director method"
+            );
+        }
+    }
+}
+
+/* Aliases for references */
+%typemap(typecheck)  type & = type;
+%typemap(typecheck)  type && = type;
+
+%typemap(in)        type && = type &;
+%typemap(freearg)   type && = type &;
+
+%typemap(directorin)  type & = type;
+%typemap(directorout) type & = type;
 
 %enddef
+
+/* ============================================================
+   Concrete bindings
+   ============================================================ */
 
 // Second value is the precedence for overloads. If two methods are overloaded
 // with different Eigen inputs, then the precedence determines which ones are
 // attempted first.
 //
-// Fully fixed-size types should have precendence 155 < precedence < 160
+// Fully fixed-size types should have precedence 155 < precedence < 160
 // Types partially fixed-size should have precedence 160 < precedence < 165
-// Fully dynamically sized should have precedence 165 < precendence < 170
+// Fully dynamically sized should have precedence 165 < precedence < 170
 //
-// Boolean matrices should have lower precendence than integer matrices,
-// which should have lower precendence than double matrices.
+// Boolean matrices should have lower precedence than integer matrices,
+// which should have lower precedence than double matrices.
 //
-// For reference, std::array has precendence 155, and std::vector has precendence 160
+// For reference, std::array has precedence 155, and std::vector has precedence 160.
 //
 // If we were to pass a list of three integers from python to an overloaded method 'foo',
 // this would be the order in which they would be chosen (from first to last):
@@ -568,12 +711,11 @@ EIGEN_MAT_WRAP(Eigen::MatrixX3d,164)
 EIGEN_MAT_WRAP(Eigen::MatrixXi, 169)
 EIGEN_MAT_WRAP(Eigen::MatrixXd, 169)
 
-// Rotation wrappers work so that they can be set from Python on any
-// of the three ways we have of representing rotations: MRPs (3x1 vector),
-// quaternions (4x1 vector), or rotation matrix (3x3 vector).
+// Rotation wrappers work so that they can be set from Python as any of:
+//   * MRPs (3x1 vector),
+//   * quaternions (4x1 vector),
+//   * rotation matrix (3x3).
 //
-// Their return type, however, is always an MRPd.
-//
-// The precedence should be that of fixed-size double eigen matrices (159).
+// Here we bind MRPd and Quaterniond as concrete rotation types.
 EIGEN_ROT_WRAP(Eigen::MRPd       , 159)
 EIGEN_ROT_WRAP(Eigen::Quaterniond, 159)
