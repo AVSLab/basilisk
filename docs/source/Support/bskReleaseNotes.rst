@@ -108,6 +108,10 @@ Version |release|
   ``pyStatefulSysModel.i`` to use this mixin.
 - Added support for setting the position and velocity of :ref:`MJBody` with pure translational motion.
 - Added ``getAxis`` and ``isHinge`` to :ref:`MJJoint`.
+- Added :ref:`DragGeometryMsgPayload`, which contains geometry information of a body necessary to
+  compute the drag acting on such body.
+- Added :ref:`AerodynamicDrag`, a model intended to be used with MuJoCo dynamics to model
+  cannonball aerodynamic drag forces and torques acting on bodies.
 
 
 Version 2.8.0 (August 30, 2025)
