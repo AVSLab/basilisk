@@ -88,6 +88,7 @@ Version |release|
 - Fixed a bug where :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`
   both registered their states under the same name, resulting in overwriting and a ``BSK_ERROR``.
 - Added support for :ref:`hingedRigidBodyStateEffector` to be the parent for Dynamic Effectors.
+- Added SWIG Eigen typemaps for passing Eigen products or returning Eigen products to/from director methods.
 
 
 Version 2.8.0 (August 30, 2025)
