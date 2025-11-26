@@ -784,6 +784,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
     liveVizSettings->set_relativeorbitchief(this->liveSettings.relativeOrbitChief);
     liveVizSettings->set_terminatevizard(this->liveSettings.terminateVizard);
+    liveVizSettings->set_playbackpaused(this->liveSettings.playbackPaused);
+    liveVizSettings->set_playbackinrealtime(this->liveSettings.playbackInRealTime);
+    liveVizSettings->set_playbackmultiplier(this->liveSettings.playbackMultiplier);
     message->set_allocated_livesettings(liveVizSettings);
 
 

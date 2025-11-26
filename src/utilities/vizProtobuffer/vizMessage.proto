@@ -270,6 +270,9 @@ message VizMessage{
         repeated PointLine targetLines = 1; // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
         string relativeOrbitChief = 2;      // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
         bool terminateVizard = 3;           // If true, Vizard application will immediately shut down and exit
+        bool playbackPaused = 4;            // If true, Vizard will pause playback
+        int32 playbackInRealTime = 5;        // Value of +1 to playback in real time, -1 to playback at frame rate
+        int32 playbackMultiplier = 6;       // Sets playback speed (either frame rate or real time) to 2^playbackMultiplier
     }
 
     message VizSettingsPb{

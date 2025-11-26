@@ -348,6 +348,15 @@ with every message being sent.  The following live settings can be set directly 
     * - ``terminateVizard``
       - bool
       - If true, Vizard application will immediately shut down and exit
+    * - ``playbackPaused``
+      - bool
+      - If true, Vizard application will immediately shut down and exit
+    * - ``playbackInRealTime``
+      - int
+      - If +1, Vizard will playback in real time, if -1 then playback will be at frame rate, 0 is Vizard default
+    * - ``playbackMultiplier``
+      - int
+      - Sets playback speed (either frame rate or real time) to 2^playbackMultiplier
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

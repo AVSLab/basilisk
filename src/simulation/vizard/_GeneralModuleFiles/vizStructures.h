@@ -469,6 +469,10 @@ LiveVizSettings
     std::vector<PointLine> targetLineList;       //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, thus the line properties can change with time.
     std::string relativeOrbitChief = "";         //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     bool terminateVizard=false;                  //!< If true, Vizard application will immediately shut down and exit
+    bool playbackPaused=false;                   //!< If true, Vizard will pause playback
+    int playbackInRealTime=0;                    //!< Value of +1 to playback in real time, -1 to playback at frame rate, 0 is Vizard default
+    int playbackMultiplier=0;                    //!< Sets playback speed (either frame rate or real time) to 2^playbackMultiplier
+
 }LiveVizSettings;
 
 
