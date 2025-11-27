@@ -310,7 +310,7 @@ def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -320,7 +320,11 @@ def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.
 
     to the inertial Cartesian position and velocity vectors.
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant mu.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     The code can handle the following cases:
 
@@ -336,7 +340,7 @@ def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.
 
         To handle the parabolic case and distinguish it form the
         rectilinear elliptical case, instead of passing along the
-        semi-major axis a in the "a" input slot, the negative radius
+        semi-major axis ``a`` in the "a" input slot, the negative radius
         at periapses is supplied.  Having "a" be negative and e = 1
         is a then a unique identified for the code for the parabolic
         case.
@@ -399,7 +403,7 @@ def elem2rv(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarra
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -409,7 +413,11 @@ def elem2rv(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarra
 
     to the inertial Cartesian position and velocity vectors.
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant ``mu``.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     :param mu: gravitational parameter
     :param elements: orbital elements
@@ -460,7 +468,7 @@ def rv2elem_parab(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicEleme
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis             km
+    a   semi-major axis             m (see below)
     e   eccentricity
     i   inclination                 rad
     AN  ascending node              rad
@@ -468,10 +476,14 @@ def rv2elem_parab(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicEleme
     f   true anomaly angle          rad
     === ========================= =======
 
-    If the orbit is rectilinear, then f will be the eccentric or hyperbolic anomaly
+    If the orbit is rectilinear, then ``f`` will be the eccentric or hyperbolic anomaly
 
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant ``mu``.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     The code can handle the following cases:
 
@@ -600,7 +612,7 @@ def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -611,7 +623,11 @@ def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     If the orbit is rectilinear, then this will be the eccentric or hyperbolic anomaly
 
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant ``mu``.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     :param mu:  gravitational parameter
     :param rVec: position vector
