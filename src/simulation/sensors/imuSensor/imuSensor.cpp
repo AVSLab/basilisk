@@ -111,7 +111,6 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     }
     this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
     this->errorModelAccel.setRNGSeed(this->RNGSeed);
-    this->errorModelAccel.setUpperBounds(this->walkBoundsAccel);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
@@ -121,7 +120,6 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     }
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
     this->errorModelGyro.setRNGSeed(this->RNGSeed);
-    this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
 
     Eigen::MatrixXd oSatBounds;
     oSatBounds.resize(this->numStates, 2);
@@ -142,19 +140,6 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     aSatBounds(2,0) = -this->senTransMax;
     aSatBounds(2,1) = this->senTransMax;
     this->aSat.setBounds(aSatBounds);
-
-    // Check if user set deprecated walkBounds
-    if(this->walkBoundsAccel(0) != -1.0 || this->walkBoundsAccel(1) != -1.0 || this->walkBoundsAccel(2) != -1.0) {
-        bskLogger.bskLog(BSK_WARNING, "ImuSensor: walkBoundsAccel is deprecated. Please use setErrorBoundsAccel() instead.");
-        this->setErrorBoundsAccel(this->walkBoundsAccel);
-    }
-
-    if(this->walkBoundsGyro(0) != -1.0 || this->walkBoundsGyro(1) != -1.0 || this->walkBoundsGyro(2) != -1.0) {
-        bskLogger.bskLog(BSK_WARNING, "ImuSensor: walkBoundsGyro is deprecated. Please use setErrorBoundsGyro() instead.");
-        this->setErrorBoundsGyro(this->walkBoundsGyro);
-    }
-
-    return;
 }
 
 
