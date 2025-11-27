@@ -10,6 +10,10 @@ how to run it, as well as testing.
 The corruption types are outlined in this
 :download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/BasiliskCorruptions.pdf>`.
 
+.. note::
+
+    On the first run the module outputs a zero'd message.  Only on the 2nd run onwards does the sensor
+    have IMU data.
 
 Message Connection Descriptions
 -------------------------------
@@ -30,4 +34,3 @@ provides information on what this message is used for.
     * - sensorOutMsg
       - :ref:`IMUSensorMsgPayload`
       - output message name for IMU output data
-

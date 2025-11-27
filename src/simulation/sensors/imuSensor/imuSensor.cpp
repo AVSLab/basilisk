@@ -411,6 +411,10 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 		this->applySensorSaturation(CurrentSimNanos);
         /* Output sensed data */
         this->writeOutputMessages(CurrentSimNanos);
+    } else {
+        /* write out an empty message */
+        IMUSensorMsgPayload localOutput = {};
+        this->sensorOutMsg.write(&localOutput, this->moduleID, CurrentSimNanos);
     }
 
     //record data from the current spacecraft message which is needed for the next IMU call
