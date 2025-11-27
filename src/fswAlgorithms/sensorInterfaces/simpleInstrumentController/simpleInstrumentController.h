@@ -37,6 +37,11 @@ typedef struct {
     double rateErrTolerance; //!< Rate error tolerance in rad/s
     unsigned int imaged;    //!< Indicator for whether or not the image has already been captured
     unsigned int controllerStatus;  //!< dictates whether or not the controller should be running
+    double constraintStartTime; //!< time when constraints were first satisfied [nanoseconds]
+    unsigned int useDurationImaging; //!< flag to enable duration-based imaging
+    double acquisitionTime; //!< (optional) Duration that constraints must be satisfied [nanoseconds]
+    double allowedTime;     //!< (optional) Maximum allowed time for imaging [nanoseconds]
+    unsigned int constraintsActive; //!< flag to track state
 
     /* declare module IO interfaces */
     AccessMsg_C locationAccessInMsg;                   //!< Ground location access input message
