@@ -23,6 +23,8 @@ import math
 
 import numpy as np
 from numpy import linalg as la
+from typing import Tuple
+
 
 
 class ClassicElements(object):
@@ -160,7 +162,7 @@ I_PLUTO = 17.14175 * D2R
 E_PLUTO = 0.24880766
 
 
-def E2f(Ecc, e):
+def E2f(Ecc:float, e:float) -> float:
     """
     Maps eccentric anomaly angles into true anomaly angles
     This function requires the orbit to be either circular or
@@ -176,7 +178,7 @@ def E2f(Ecc, e):
     raise ValueError('Error: E2f() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def E2M(Ecc, e):
+def E2M(Ecc:float, e:float) -> float:
     """
     Maps the eccentric anomaly angle into the corresponding
     mean elliptic anomaly angle.  Both 2D and 1D elliptic
@@ -192,7 +194,7 @@ def E2M(Ecc, e):
     raise ValueError('Error: E2M() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def f2E(f, e):
+def f2E(f:float, e:float) -> float:
     """
     Maps true anomaly angles into eccentric anomaly angles.
     This function requires the orbit to be either circular or
@@ -208,7 +210,7 @@ def f2E(f, e):
     raise ValueError('Error: f2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def f2H(f, e):
+def f2H(f:float, e:float) -> float:
     """
     Maps true anomaly angles into hyperbolic anomaly angles.
     This function requires the orbit to be hyperbolic
@@ -223,7 +225,7 @@ def f2H(f, e):
     raise ValueError('Error: f2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def H2f(H, e):
+def H2f(H:float, e:float) -> float:
     """
     Maps hyperbolic anomaly angles into true anomaly angles.
     This function requires the orbit to be hyperbolic
@@ -238,7 +240,7 @@ def H2f(H, e):
     raise ValueError('Error: H2f() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def H2N(H, e):
+def H2N(H:float, e:float) -> float:
     """
     Maps the hyperbolic anomaly angle H into the corresponding
     mean hyperbolic anomaly angle N.
@@ -253,7 +255,7 @@ def H2N(H, e):
     raise ValueError('Error: H2N() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def M2E(M, e):
+def M2E(M:float, e:float) -> float:
     """
     Maps the mean elliptic anomaly angle into the corresponding
     eccentric anomaly angle.  Both 2D and 1D elliptic
@@ -279,7 +281,7 @@ def M2E(M, e):
     raise ValueError('Error: M2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def N2H(N, e):
+def N2H(N:float, e:float) -> float:
     """
     Maps the mean hyperbolic anomaly angle N into the corresponding
     hyperbolic anomaly angle H.
@@ -303,7 +305,7 @@ def N2H(N, e):
         return H1
     raise ValueError('Error: N2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
-def elem2rv_parab(mu, elements):
+def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
@@ -392,7 +394,7 @@ def elem2rv_parab(mu, elements):
 
     return rVec, vVec
 
-def elem2rv(mu, elements):
+def elem2rv(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
@@ -451,7 +453,7 @@ def elem2rv(mu, elements):
 
     return rVec, vVec
 
-def rv2elem_parab(mu, rVec, vVec):
+def rv2elem_parab(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     """
     Translates the orbit elements inertial Cartesian position
     vector rVec and velocity vector vVec into the corresponding
@@ -591,7 +593,7 @@ def rv2elem_parab(mu, rVec, vVec):
 
     return elements
 
-def rv2elem(mu, rVec, vVec):
+def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     """
     Translates the orbit elements inertial Cartesian position
     vector rVec and velocity vector vVec into the corresponding
@@ -720,7 +722,7 @@ def rv2elem(mu, rVec, vVec):
     return elements
 
 
-def atmosphericDensity(alt):
+def atmosphericDensity(alt: float) -> float:
     """
     This program computes the atmospheric density based on altitude
     supplied by user.  This function uses a curve fit based on
@@ -751,7 +753,7 @@ def atmosphericDensity(alt):
     return density
 
 
-def debyeLength(alt):
+def debyeLength(alt: float) -> float:
     """
     This program computes the debyeLength length for a given
     altitude and is valid for altitudes ranging
@@ -790,7 +792,7 @@ def debyeLength(alt):
     return debyedist
 
 
-def atmosphericDrag(Cd, A, m, rvec, vvec):
+def atmosphericDrag(Cd: float, A: float, m: float, rvec: np.ndarray, vvec: np.ndarray) -> np.ndarray:
     """
      This program computes the atmospheric drag acceleration
      vector acting on a spacecraft.
@@ -831,7 +833,7 @@ def atmosphericDrag(Cd, A, m, rvec, vvec):
     return advec
 
 
-def jPerturb(rvec, num, planet):
+def jPerturb(rvec: np.ndarray, num: int, planet:str) -> np.ndarray:
     """
     Computes the J2_EARTH-J6_EARTH zonal gravitational perturbation
     accelerations.
@@ -977,7 +979,7 @@ def jPerturb(rvec, num, planet):
     return ajtot
 
 
-def solarRad(A, m, sunvec):
+def solarRad(A: float, m: float, sunvec: np.ndarray) -> np.ndarray:
     """
     Computes the inertial solar radiation force vectors
     based on cross-sectional Area and mass of the spacecraft
@@ -1015,7 +1017,7 @@ def solarRad(A, m, sunvec):
     return arvec
 
 
-def v3Normalize(v):
+def v3Normalize(v: np.ndarray) -> np.ndarray:
     result = np.zeros(3)
     norm = la.norm(v)
     if norm > DB0_EPS:
@@ -1023,7 +1025,7 @@ def v3Normalize(v):
     return result
 
 
-def clMeanOscMap(req, J2, oe, oep, sign):
+def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep:ClassicElements, sign: int):
     """
     First-order J2 Mapping Between Mean and Osculating Orbital Elements
 
@@ -1112,7 +1114,7 @@ def clMeanOscMap(req, J2, oe, oep, sign):
     return
 
 
-def clElem2eqElem(elements_cl, elements_eq):
+def clElem2eqElem(elements_cl: ClassicElements, elements_eq: EquinoctialElements):
     """
     conversion
     from classical orbital elements (a,e,i,Omega,omega,f)
@@ -1133,7 +1135,7 @@ def clElem2eqElem(elements_cl, elements_eq):
     return
 
 
-def hillFrame(rc_N, vc_N):
+def hillFrame(rc_N: np.ndarray, vc_N: np.ndarray) -> np.ndarray:
     """
     Compute the Hill frame DCM HN
     :param rc_N: inertial position vector
@@ -1148,7 +1150,7 @@ def hillFrame(rc_N, vc_N):
     return np.array([ir, itheta, ih])
 
 
-def rv2hill(rc_N, vc_N, rd_N, vd_N):
+def rv2hill(rc_N: np.ndarray, vc_N: np.ndarray, rd_N: np.ndarray, vd_N: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Express the deputy position and velocity vector as chief by the chief Hill frame.
 
@@ -1167,7 +1169,7 @@ def rv2hill(rc_N, vc_N, rd_N, vd_N):
     return rho_H, rhoPrime_H
 
 
-def hill2rv(rc_N, vc_N, rho_H, rhoPrime_H):
+def hill2rv(rc_N: np.ndarray, vc_N: np.ndarray, rho_H: np.ndarray, rhoPrime_H: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Map the deputy position and velocity vector relative to the chief Hill frame to inertial frame.
 
