@@ -171,7 +171,6 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
         [0.0, processNoiseLevel, 0.0],
         [0.0, 0.0, processNoiseLevel]
     ]
-    imuSensor2.walkBoundsGyro = [-1.0, -1.0, -1.0]
     imuSensor2.senRotBias = [0.0, 0.0, 0.0]
     imuSensor2.applySensorErrors = True
     imuSensor2.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
