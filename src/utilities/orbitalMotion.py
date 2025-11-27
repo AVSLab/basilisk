@@ -28,26 +28,30 @@ from typing import Tuple
 
 
 class ClassicElements(object):
-    a = None
-    e = None
-    i = None
-    Omega = None
-    omega = None
-    f = None
-    rmag = None
-    alpha = None
-    rPeriap = None
-    rApoap = None
+    __slots__ = ['a', 'e', 'i', 'Omega', 'omega', 'f', 'rmag', 'alpha', 'rPeriap', 'rApoap']
+    def __init__(self):
+        self.a = None
+        self.e = None
+        self.i = None
+        self.Omega = None
+        self.omega = None
+        self.f = None
+        self.rmag = None
+        self.alpha = None
+        self.rPeriap = None
+        self.rApoap = None
 
 
 class EquinoctialElements(object):
-    a = None
-    P1 = None
-    P2 = None
-    Q1 = None
-    Q2 = None
-    l = None
-    L = None
+    __slots__ = ['a', 'P1', 'P2', 'Q1', 'Q2', 'l', 'L']
+    def __init__(self):
+        self.a = None
+        self.P1 = None
+        self.P2 = None
+        self.Q1 = None
+        self.Q2 = None
+        self.l = None
+        self.L = None
 
 
 N_DEBYE_PARAMETERS = 37  # orbitalMotion.h #
@@ -769,6 +773,14 @@ def atmosphericDensity(alt: float) -> float:
     return density
 
 
+DEBYE_ALTITUDES = [200.0, 250.0, 300.0, 350.0, 400., 450., 500., 550., 600., 650., 700., 750., 800., 850.,
+         900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450.,
+         1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000.]
+DEBYE_LENGTHS = [5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03, 4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03,
+         7.30E-03, 8.31E-03, 8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
+         1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02, 2.76E-02, 2.76E-02,
+         2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02]
+
 def debyeLength(alt: float) -> float:
     """
     This program computes the debyeLength length for a given
@@ -779,14 +791,6 @@ def debyeLength(alt: float) -> float:
     :param alt: altitude in km
     :return: debye length given in m
     """
-    X = [200.0, 250.0, 300.0, 350.0, 400., 450., 500., 550., 600., 650., 700., 750., 800., 850.,
-         900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450.,
-         1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000.]
-
-    Y = [5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03, 4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03,
-         7.30E-03, 8.31E-03, 8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
-         1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02, 2.76E-02, 2.76E-02,
-         2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02]
 
     # Flat debyeLength length for altitudes above 2000 km #
     if alt > 2000.0 and alt <= 30000.0:
@@ -800,10 +804,10 @@ def debyeLength(alt: float) -> float:
     # Interpolation of data #
     i = 0
     for i in range(0, N_DEBYE_PARAMETERS - 1):
-        if X[i + 1] > alt:
+        if DEBYE_ALTITUDES[i + 1] > alt:
             break
-    a = (alt - X[i]) / (X[i + 1] - X[i])
-    debyedist = Y[i] + a * (Y[i + 1] - Y[i])
+    a = (alt - DEBYE_ALTITUDES[i]) / (DEBYE_ALTITUDES[i + 1] - DEBYE_ALTITUDES[i])
+    debyedist = DEBYE_LENGTHS[i] + a * (DEBYE_LENGTHS[i + 1] - DEBYE_LENGTHS[i])
 
     return debyedist
 
