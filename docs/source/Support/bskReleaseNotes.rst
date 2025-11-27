@@ -94,6 +94,7 @@ Version |release|
 - Updated :ref:`imuSensor` to remove deprecated direct setting of ``walkBoundsGyro`` and ``walkBoundsAccel``.
   The module now outputs a zero'd output message on the first run.
 - Updated Basilisk python dependencies to include the latest range of allowable packages
+- Improved documentation of :ref:`orbitalMotion`
 
 
 Version 2.8.0 (August 30, 2025)
