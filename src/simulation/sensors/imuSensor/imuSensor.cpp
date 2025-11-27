@@ -285,7 +285,7 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 {
     Eigen::Vector3d OmegaErrors; //angular noise plus bias
     Eigen::Vector3d AccelErrors; //linear noise plus bias
-    double dt; //time step
+    double dt; // [s] time step
 
     dt = (CurrentTime - this->PreviousTime)*1.0E-9;
 
