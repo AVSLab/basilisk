@@ -1,5 +1,5 @@
 wheel
-cmake<4.0
+cmake
 conan
 packaging
 setuptools

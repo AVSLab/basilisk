@@ -1,10 +1,11 @@
-pandas<=2.2.3,>=2.0.3
-matplotlib<=3.10.1,>=3.7.5
+pandas>=2.0.3,<=2.2.3; python_version < "3.9"
+pandas>=2.0.3,<=2.3.3; python_version >= "3.9"
+matplotlib>=3.7.5,<=3.10.7
 numpy>=1.24.4,<2.4.0; python_version < "3.13"
 numpy>=2.0,<2.4.0; python_version >= "3.13"
 colorama==0.4.6
 tqdm==4.67.1
-pillow<=11.2.1,>=10.4.0
-requests==2.32.3
-bokeh<=3.7.2,>=3.1.1
-protobuf<=6.30.2,>=5.29.4
+pillow>=10.4.0,<=12.0.0
+requests>=2.32.3,<=2.32.5
+bokeh>=3.1.1,<=3.8.1
+protobuf>=5.29.4,<=6.33.1

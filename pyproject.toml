@@ -1,8 +1,8 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-    "setuptools>=70.1.0,<=78.1.0",   # Required for "bdist_wheel" to work correctly.
-    "setuptools-scm>=8.0,<=8.2.1",  # Automatically include all Git-controlled files in sdist
+    "setuptools>=70.1.0,<=80.9.0",   # Required for "bdist_wheel" to work correctly.
+    "setuptools-scm>=8.0,<=9.2.2",  # Automatically include all Git-controlled files in sdist
     "packaging>=24.0,<26",
 
     # needed to find the numpy include headers,
@@ -11,7 +11,7 @@ requires = [
     "numpy>=2.0,<2.4.0;     python_version >= '3.13'",
 
     # Requirements for building Basilisk through conanfile
-    "conan>=2.0.5,<=2.15.1",
+    "conan>=2.0.5,<=2.23.0",
     "cmake>=3.26,<4.0",
     "swig>=4.2.1,<=4.3.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
 ]
