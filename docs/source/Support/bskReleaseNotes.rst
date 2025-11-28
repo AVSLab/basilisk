@@ -90,7 +90,8 @@ Version |release|
 - Added support for :ref:`hingedRigidBodyStateEffector` to be the parent for Dynamic Effectors.
 - Added SWIG Eigen typemaps for passing Eigen products or returning Eigen products to/from director methods.
 - Added a new scenario that simulates a debris strike on a flexible solar array :ref:`scenarioImpact`.
-
+- Updated :ref:`imuSensor` to remove deprecated direct setting of ``walkBoundsGyro`` and ``walkBoundsAccel``.
+  The module now outputs a zero'd output message on the first run.
 
 Version 2.8.0 (August 30, 2025)
 -------------------------------
