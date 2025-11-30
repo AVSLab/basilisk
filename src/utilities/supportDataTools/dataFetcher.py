@@ -39,6 +39,10 @@ EXTERNAL_KERNEL_URLS = {
     "supportData/EphemerisData/nh_pred_od077.bsp": "https://naif.jpl.nasa.gov/pub/naif/pds/data/nh-j_p_ss-spice-6-v1.0/nhsp_1000/data/spk/nh_pred_od077.bsp",
 }
 
+# Do not set hashes for files fetched from external URLs such as JPL NAIF as
+# they may change without notice.
+for key in EXTERNAL_KERNEL_URLS:
+    REGISTRY[key] = None
 
 DATA_VERSION = f"v{__version__}"
 
