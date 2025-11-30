@@ -48,8 +48,12 @@ public:
     /* public variables */
     int numOutputEnergies = -1; //!< number of energy bins used in the output message
     std::string kpIndex = ""; //!< Kp index
-    std::string eDataFullPath; //! Full path to the electron flux model file selected by the user.
-    std::string iDataFullPath; //! Full path to the ion flux model file selected by the user.
+
+    /// @brief Full path to the electron flux model file selected by the user.
+    std::string eDataFullPath;
+
+    /// @brief Full path to the ion flux model file selected by the user.
+    std::string iDataFullPath;
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg; //!<  spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> earthStateInMsg; //!< Earth planet state input message
@@ -62,6 +66,14 @@ public:
 private:
     void calcLocalTime(double v1[3], double v2[3]);
     double bilinear(int, int, double, double, double, double, double, double, double);
+
+    /*!
+    * @brief Read in a Denton-format flux data file and load its contents.
+    *
+    * @param fullPath Full filesystem path to the Denton data file.
+    * @param data Output array that will be filled with flux values
+    *        indexed as [Kp][energy][localTime].
+    */
     void readDentonDataFile(const std::string& fullPath, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);
 
     int kpIndexCounter; //!< Kp index counter (betweeen 0 and 27)

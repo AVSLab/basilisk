@@ -326,11 +326,6 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
 
 }
 
-/*! Read in the Denton data file
-    @param fileName data file name
-    @param data data array pointer
-
-*/
 void DentonFluxModel::readDentonDataFile(const std::string& fullPath,
                                          double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
 {
