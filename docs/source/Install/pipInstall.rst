@@ -66,7 +66,7 @@ The main benefit of this approach will come in the future, when a set of pre-com
 allowing most users to easily ``pip install Basilisk`` without compilation, in the same way that packages like
 ``numpy``, ``scipy``, and ``pandas`` are available.
 
-To keep the wheel size smaller, the large BSK data files are not installed by default.  If the user
+To keep the wheel size smaller, the BSK data files are not installed by default.  If the user
 wants to use script that assumes they are included into the Basilisk python package, then go to the
 command line, change the current directory to be inside the environment where Basilisk was ``pip`` installed,
 and run the command::
@@ -76,8 +76,7 @@ and run the command::
 This command runs a python file stored in the ``src/utilities`` folder.
 The ``pip install`` process automatically
 creates this console command in the current python environment to call this python file.  The file
-directly downloads the missing large BSK data files and put them into the local Basilisk python
-package installation.
+directly downloads the missing BSK data files and put them into a local pooch cache.
 
 .. note::
 
