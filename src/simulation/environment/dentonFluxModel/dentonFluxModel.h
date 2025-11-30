@@ -43,13 +43,13 @@ public:
     // Methods
     void Reset(uint64_t CurrentSimNanos) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
-    
+    void configureDentonFiles(const std::string& eFile, const std::string& iFile);
+
     /* public variables */
     int numOutputEnergies = -1; //!< number of energy bins used in the output message
     std::string kpIndex = ""; //!< Kp index
-    std::string dataPath = ""; //!< -- String with the path to the Denton GEO data
-    std::string eDataFileName = "model_e_array_all.txt"; //!< file name of the electron data file
-    std::string iDataFileName = "model_i_array_all.txt"; //!< file name of the ion data file
+    std::string eDataFullPath; //! Full path to the electron flux model file selected by the user.
+    std::string iDataFullPath; //! Full path to the ion flux model file selected by the user.
 
     ReadFunctor<SCStatesMsgPayload> scStateInMsg; //!<  spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> earthStateInMsg; //!< Earth planet state input message
@@ -62,7 +62,7 @@ public:
 private:
     void calcLocalTime(double v1[3], double v2[3]);
     double bilinear(int, int, double, double, double, double, double, double, double);
-    void readDentonDataFile(std::string fileName, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);
+    void readDentonDataFile(const std::string& fullPath, double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES]);
 
     int kpIndexCounter; //!< Kp index counter (betweeen 0 and 27)
     double localTime; //!< spacecraft location time relative to sun heading at GEO
@@ -72,10 +72,10 @@ private:
 
     //!< Electron Flux:
     double mean_e_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
-    
+
     //!< Ion Flux:
     double mean_i_flux[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES];
-        
+
     //!< Fill average centre energies, normalized by satellite
     double enElec[40] = {1.034126,     1.346516,     1.817463,     2.399564,
     3.161048,     4.153217,     5.539430,     7.464148,
@@ -87,7 +87,7 @@ private:
     2069.619628,  2703.301269,  3540.124511,  4639.775390,
     6069.347656,  7957.457519, 10436.841796, 13677.195312,
     17923.560546, 23488.560546, 30782.000000, 40326.937500};
-    
+
     double enProt[40] = { 1.816424,     2.284231,     2.904752,     3.639589,
     4.483188,     5.671049,     7.343667,     9.450922,
     11.934194,    15.105951,    19.372854,    24.943658,
