@@ -22,6 +22,7 @@ import functools
 import requests
 import pooch
 import logging
+from typing import Optional
 
 from Basilisk.utilities.supportDataTools.registrySnippet import REGISTRY
 from Basilisk import __version__
@@ -67,7 +68,7 @@ def tag_exists(tag_url: str) -> bool:
         return False
 
 
-def find_local_support_data() -> Path | None:
+def find_local_support_data() -> Optional[Path]:
     """
     Return the path to the local ``supportData`` directory if running
     from a cloned repo in editable mode, otherwise return ``None``.
