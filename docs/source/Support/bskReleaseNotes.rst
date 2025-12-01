@@ -26,6 +26,8 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Added automatic MD5 registry generation via ``makeRegistry.py`` for versioned supportData.
+- Updated documentation to include workflow for adding new supportData files and regenerating the registry.
 - Removed automated version bumping on merges to develop. Version bumps will be handled manually moving forward.
 - Added SWIG as a python package dependency in ``requirements_dev.txt`` and updated installation instructions.
 - Updated CI to no longer automatically publish git tags and publish wheels to PyPI. This process will be handled manually.
@@ -111,6 +113,14 @@ Version |release|
   ``pyStatefulSysModel.i`` to use this mixin.
 - Added support for setting the position and velocity of :ref:`MJBody` with pure translational motion.
 - Added ``getAxis`` and ``isHinge`` to :ref:`MJJoint`.
+- Migrated ``supportData`` handling to a Pooch-based fetch system.
+
+  .. warning::
+
+    This is a breaking change, minor changes were made to how the Denton flux model API is used.
+    See list of known issues for details.
+
+- Removed ``supportData`` files from wheels and source distributions to reduce package size.
 
 
 Version 2.8.0 (August 30, 2025)
