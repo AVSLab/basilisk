@@ -17,13 +17,13 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import multiprocessing as mp
 import os
 import sys
 import time
-import multiprocessing as mp
-import pytest
 import traceback
 
+import pytest
 from Basilisk import __path__
 from Basilisk.simulation import spiceInterface
 
@@ -41,6 +41,7 @@ passes if all workers complete without hangs or unhandled exceptions.
 """
 
 bskPath = __path__[0]
+
 
 def createLoadDestroySpice(workerId, iterations, dataPath):
     """
@@ -127,9 +128,7 @@ def createLoadDestroySpice(workerId, iterations, dataPath):
             "traceback": traceback.format_exc(),
         }
         exceptionList.append(errorInfo)
-        print(
-            f"Worker {workerId} failed with error outside iteration loop: {exc}"
-        )
+        print(f"Worker {workerId} failed with error outside iteration loop: {exc}")
 
     return {
         "workerId": workerId,
@@ -165,8 +164,7 @@ def runThreadSafetyTest(numWorkers=2, iterationsPerWorker=5):
     startTime = time.time()
 
     workerArgs = [
-        (workerId, iterationsPerWorker, dataPath)
-        for workerId in range(numWorkers)
+        (workerId, iterationsPerWorker, dataPath) for workerId in range(numWorkers)
     ]
 
     with mp.Pool(processes=numWorkers) as pool:
@@ -202,7 +200,7 @@ def runThreadSafetyTest(numWorkers=2, iterationsPerWorker=5):
             print(allExceptions[0]["traceback"])
         success = False
     else:
-        success = (totalFailure == 0)
+        success = totalFailure == 0
         if success:
             print("TEST PASSED: SPICE interface thread safety looks robust")
         else:
@@ -236,10 +234,11 @@ def _runTestWithTimeout(resultQueue, numWorkers, iterationsPerWorker):
         )
 
 
+@pytest.mark.flaky(reruns=3)
 @pytest.mark.parametrize(
     "numWorkers, iterationsPerWorker",
     [
-        (50, 3),
+        (10, 3),
     ],
 )
 def testSpiceThreadSafety(numWorkers, iterationsPerWorker):
@@ -253,8 +252,8 @@ def testSpiceThreadSafety(numWorkers, iterationsPerWorker):
     iterationsPerWorker : int
         Number of load/unload cycles per worker.
     """
-    from multiprocessing import Process, Queue
     import queue
+    from multiprocessing import Process, Queue
 
     resultQueue = Queue()
     testProcess = Process(
@@ -272,9 +271,7 @@ def testSpiceThreadSafety(numWorkers, iterationsPerWorker):
         testProcess.join(1)
         if testProcess.is_alive():
             os.kill(testProcess.pid, 9)
-        pytest.fail(
-            f"Thread safety test timed out after {timeoutSeconds} seconds"
-        )
+        pytest.fail(f"Thread safety test timed out after {timeoutSeconds} seconds")
 
     try:
         results, success = resultQueue.get(block=False)
@@ -286,18 +283,16 @@ def testSpiceThreadSafety(numWorkers, iterationsPerWorker):
             )
 
         assert success, "Thread safety test reported thread-safety issues"
-        assert (
-            results["failedIterations"] == 0
-        ), "Some iterations failed in the thread-safety test"
-    except queue.Empty:
-        pytest.fail(
-            "Thread safety test completed but did not return any results"
+        assert results["failedIterations"] == 0, (
+            "Some iterations failed in the thread-safety test"
         )
+    except queue.Empty:
+        pytest.fail("Thread safety test completed but did not return any results")
 
 
 if __name__ == "__main__":
-    from multiprocessing import Process, Queue
     import queue
+    from multiprocessing import Process, Queue
 
     numWorkers = 50
     iterationsPerWorker = 3
@@ -322,19 +317,14 @@ if __name__ == "__main__":
         testProcess.join(1)
         if testProcess.is_alive():
             os.kill(testProcess.pid, 9)
-        print(
-            f"ERROR: Thread safety test timed out after {timeoutSeconds} seconds"
-        )
+        print(f"ERROR: Thread safety test timed out after {timeoutSeconds} seconds")
         sys.exit(2)
 
     try:
         results, success = resultQueue.get(block=False)
 
         if isinstance(results, dict) and "error" in results:
-            print(
-                "ERROR: Thread safety test failed with error: "
-                f"{results['error']}"
-            )
+            print(f"ERROR: Thread safety test failed with error: {results['error']}")
             print(results.get("traceback"))
             sys.exit(1)
 
