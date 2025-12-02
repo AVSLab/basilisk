@@ -94,7 +94,6 @@ public:
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
     Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
-    void addHingedPanel(HingedPanel NewPanel) {PanelVec.push_back(NewPanel);} //!< class method
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
@@ -117,6 +116,7 @@ private:
     Eigen::Matrix3d omegaTildeLoc_BN_B; //!< -- tilde matrix of omegaBN
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     static uint64_t effectorID;        //!< [] ID number of this panel
+    int numberOfDegreesOfFreedom = 0;  //!< [] total number of panels ??? what makes this diff than effector ID ??? 
 
 public:
     NHingedRigidBodyStateEffector();  //!< -- Contructor
@@ -126,6 +126,7 @@ public:
 	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
+    void addHingedPanel(HingedPanel NewPanel); //!< -- method for adding a new hinged body
     void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override; //!< -- Method for adding attached dynamic effector 
     void registerProperties(DynParamManager& states) override; //!< -- Method for registering the HRB inertial properties
     void computeDependentEffectors(BackSubMatrices& backSubContr, double integTime); //!< -- Add cumulated force/torque of each effector successively to vecRot and vecTrans 
