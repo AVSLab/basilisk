@@ -22,6 +22,7 @@
 
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -54,6 +55,34 @@ struct HingedPanel {
     Eigen::Vector3d rPrime_SB_B;     //!< [m/s] Body time derivative of rSB_B
     Eigen::Matrix3d rPrimeTilde_SB_B;//!< -- Tilde matrix of rPrime_SB_B
     Eigen::Matrix3d ISPrimePntS_B;   //!< [kg-m^2/s] time body derivative IPntS in body frame components
+    Eigen::Vector3d extForce_S = Eigen::Vector3d::Zero();        //!< [N] external force acting on the hinged body in S frame components
+    Eigen::Vector3d extTorquePntS_S = Eigen::Vector3d::Zero();  //!< [N-m] external torque acting on the hinged body about point Sc in S frame components
+
+    Eigen::Vector3d sHat_S = {0.0, 1.0, 0.0};                    //!< hinging axis in S frame components
+    Eigen::Matrix3d dcm_S0S = Eigen::Matrix3d::Identity();       //!< DCM from the S0 frame to S frame (rotated by theta) ??????????????????
+
+    std::vector<DynamicEffector*> dynEffectors;     //!< -- Vector of dynamic effectors attached
+
+    std::string nameOfInertialPositionProperty;     //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;     //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;     //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;  //!< -- identifier for the inertial angular velocity property
+
+    Eigen::Vector3d r_ScN_N;                        //!< [m] position vector of the hinged body center of mass Sc relative to the inertial frame origin N
+    Eigen::Vector3d v_ScN_N;                        //!< [m/s] inertial velocity vector of Sc relative to inertial frame
+    Eigen::MatrixXd* r_SN_N;                        //!< [m] position vector of the hinged body frame origin S relative to the inertial frame origin N
+    Eigen::MatrixXd* v_SN_N;                        //!< [m/s] inertial velocity vector of S relative to inertial frame
+    Eigen::MatrixXd* sigma_SN;                      //!< MRP attitude of frame S relative to inertial frame
+    Eigen::MatrixXd* omega_SN_S;                    //!< [rad/s] inertial hinged body frame angular velocity vector
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    }
 };
 
 /*! @brief NHingedRigidBodyStateEffector class */
@@ -61,6 +90,7 @@ class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
+    std::string propertyNameIndex{};
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
     Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
@@ -96,6 +126,9 @@ public:
 	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override; //!< -- Method for adding attached dynamic effector 
+    void registerProperties(DynParamManager& states) override; //!< -- Method for registering the HRB inertial properties
+    void computeDependentEffectors(BackSubMatrices& backSubContr, double integTime); //!< -- Add cumulated force/torque of each effector successively to vecRot and vecTrans 
     void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
