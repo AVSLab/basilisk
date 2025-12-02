@@ -34,6 +34,8 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     this->dcm_HB.Identity();
     this->nameOfThetaState ="nHingedRigidBody" + std::to_string(this->effectorID) + "Theta";
     this->nameOfThetaDotState = "nHingedRigidBody" + std::to_string(this->effectorID) + "ThetaDot";
+    this->propertyNameIndex = std::to_string(NHingedRigidBodyStateEffector::effectorID); // preserves effectorID for later adding bodies
+
     this->effectorID++;
 
     return;
@@ -73,6 +75,29 @@ void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 
     return;
 }
+
+void NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel) {
+    PanelVec.push_back(NewPanel);
+    this->numberOfDegreesOfFreedom++;
+
+    // this->spinningBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>); // no msg arr defined in header. what is this doing and can i remove it????
+    // this->spinningBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
+    // this->spinningBodyRefInMsgs.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
+
+    this->aTheta.conservativeResize(this->aTheta.rows()+1, 3);
+    this->bTheta.conservativeResize(this->bTheta.rows()+1, 3);
+    // this->CTheta.conservativeResize(this->CTheta.rows()+1); // no cTheta in header ???
+
+
+    // ERROR cause PanelVec not a pointer. if i change it to reflect   std::vector<std::shared_ptr<SpinningBody>> spinningBodyVec; it will cause errors other places cause its never been treated as a pointer ???
+    PanelVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialPositionProperty = "hingedBodyInertialPosition" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    PanelVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialVelocityProperty = "hingedBodyInertialVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    PanelVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialAttitudeProperty = "hingedBodyInertialAttitude" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    PanelVec[this->numberOfDegreesOfFreedom-1]->nameOfInertialAngVelocityProperty = "hingedBodyInertialAngVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+}
+
+
+   // !TODO: add these methods: addDynamicEffector registerProperties computeDependentEffectors and augment the updateContributions func
 
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
 void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
