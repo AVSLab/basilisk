@@ -22,10 +22,14 @@
 
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include <architecture/msgPayloadDefC/SCStatesMsgPayload.h>
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 
 
 
@@ -46,6 +50,7 @@ struct HingedPanel {
     Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
     Eigen::Vector3d omega_BN_S;      //!< [rad/s] omega_BN in S frame components
     Eigen::Vector3d omega_SB_B;      //!< [rad/s] omega_SB in B frame components
+    Eigen::Vector3d omega_SN_B = Eigen::Vector3d::Zero();  // remove!      //!< [rad/s] angular velocity of the S frame wrt the N frame in B frame components
     Eigen::Vector3d sHat1_B;         //!< -- unit direction vector for the first axis of the S frame
     Eigen::Vector3d sHat2_B;         //!< -- unit direction vector for the second axis of the S frame
     Eigen::Vector3d sHat3_B;         //!< -- unit direction vector for the third axis of the S frame
@@ -54,6 +59,33 @@ struct HingedPanel {
     Eigen::Vector3d rPrime_SB_B;     //!< [m/s] Body time derivative of rSB_B
     Eigen::Matrix3d rPrimeTilde_SB_B;//!< -- Tilde matrix of rPrime_SB_B
     Eigen::Matrix3d ISPrimePntS_B;   //!< [kg-m^2/s] time body derivative IPntS in body frame components
+    Eigen::Vector3d extForce_S = Eigen::Vector3d::Zero();        //!< [N] external force acting on the hinged body in S frame components
+    Eigen::Vector3d extTorquePntS_S = Eigen::Vector3d::Zero();  //!< [N-m] external torque acting on the hinged body about point Sc in S frame components
+
+    Eigen::Vector3d sHat_S = {0.0, 1.0, 0.0};                    //!< hinging axis in S frame components
+    Eigen::Matrix3d dcm_S0S = Eigen::Matrix3d::Identity();       //!< DCM from the S0 frame to S frame (rotated by theta) ??????????????????
+
+    std::vector<DynamicEffector*> dynEffectors;     //!< -- Vector of dynamic effectors attached
+
+    std::string nameOfInertialPositionProperty;     //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;     //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;     //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;  //!< -- identifier for the inertial angular velocity property
+
+    Eigen::Vector3d r_SN_N;                        //!< [m] position vector of the hinged body center of mass Sc relative to the inertial frame origin N
+    Eigen::Vector3d v_SN_N;                        //!< [m/s] inertial velocity vector of Sc relative to inertial frame
+    
+    Eigen::MatrixXd* sigma_SN;                      //!< MRP attitude of frame S relative to inertial frame
+    Eigen::MatrixXd* omega_SN_S;                    //!< [rad/s] inertial hinged body frame angular velocity vector
+
+    template <typename Type>
+    /** Assign the state engine parameter names */
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    }
 };
 
 /*! @brief NHingedRigidBodyStateEffector class */
@@ -61,11 +93,18 @@ class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
+    std::string propertyNameIndex{};
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
     Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
-    void addHingedPanel(HingedPanel NewPanel) {PanelVec.push_back(NewPanel);} //!< class method
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    std::vector<Message<HingedRigidBodyMsgPayload>*> hingedBodyOutMsgs;       //!< state output message
+    std::vector<Message<SCStatesMsgPayload>*> nHingedBodyConfigLogOutMsgs;     //!< Hinged body state config log message    
+    std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> hingedBodyRefInMsgs;  //!< (optional) reference state input message
+
+    // std::vector<Message<SCStatesMsgPayload>*>& getConfigLogMsgs() {
+    //     return nHingedBodyConfigLogOutMsgs;
+    // }
 
 private:
     double totalMass;                //!< [kg] Total mass of effector
@@ -81,27 +120,39 @@ private:
     Eigen::MatrixXd matrixLDHRB;    //!< [-] term needed for back substitution
     Eigen::MatrixXd matrixMDHRB;    //!< [-] term needed for back substitution
     Eigen::VectorXd vectorVDHRB;    //!< [-] term needed for back substitution
-    Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
-    Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
+    Eigen::MatrixXd aTheta;         //!< -- term needed for back substitution
+    Eigen::MatrixXd bTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
     Eigen::Matrix3d omegaTildeLoc_BN_B; //!< -- tilde matrix of omegaBN
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     static uint64_t effectorID;        //!< [] ID number of this panel
+    int numberOfDegreesOfFreedom = 0;  //!< [] total number of panels ??? what makes this diff than effector ID ??? 
+    Eigen::MatrixXd* inertialPositionProperty = nullptr;
+    Eigen::MatrixXd* inertialVelocityProperty = nullptr;
+    Eigen::MatrixXd* inertialAttitudeProperty = nullptr;
+    Eigen::MatrixXd* inertialAngVelocityProperty = nullptr;
+    Eigen::Vector3d omega_BN_B = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d dcm_BN = Eigen::Matrix3d::Zero();
 
 public:
     NHingedRigidBodyStateEffector();  //!< -- Contructor
-    ~NHingedRigidBodyStateEffector();  //!< -- Destructor
+    ~NHingedRigidBodyStateEffector() override;  //!< -- Destructor
     double HeaviFunc(double cond); //!< -- Heaviside function used for matrix contributions
     void WriteOutputMessages(uint64_t CurrentClock);
-	void UpdateState(uint64_t CurrentSimNanos);
-    void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
-    void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
+	void UpdateState(uint64_t CurrentSimNanos) override;
+    void registerStates(DynParamManager& statesIn) override;  //!< -- Method for registering the HRB states
+    void linkInStates(DynParamManager& states) override;  //!< -- Method for getting access to other states
+    void addHingedPanel(HingedPanel NewPanel); //!< -- method for adding a new hinged body
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override; //!< -- Method for adding attached dynamic effector 
+    void registerProperties(DynParamManager& states) override; //!< -- Method for registering the HRB inertial properties
+    void computeDependentEffectors(BackSubMatrices& backSubContr, double integTime); //!< -- Add cumulated force/torque of each effector successively to vecRot and vecTrans 
     void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
     void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
     void readInputMessages();       //!< -- method to read input messages
+    void computeHingedBodyInertialStates(Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B); //!< -- method to compute inertial states 
 };
 
 
