@@ -34,6 +34,7 @@ splitPath = path.split('simulation')
 
 from Basilisk.utilities import SimulationBaseClass, macros, simIncludeThruster
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import pythonVariableLogger
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.architecture import sim_model
 from Basilisk.simulation import spacecraft, svIntegrators, gravityEffector
@@ -322,6 +323,16 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}")[segment-1].recorder()
     unitTestSim.AddModelToTask(unitTaskName, inertialPropLog)
 
+    attachedPropLog = None
+    if stateEffector == "nHingedRigidBodies" and dynamicEffector == "extForceTorque":
+        attachedPropLog = pythonVariableLogger.PythonVariableLogger({
+            "r_attachN_N": lambda _: scObject.dynManager.getPropertyReference(
+                getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position")),
+            "sigma_attach": lambda _: scObject.dynManager.getPropertyReference(
+                getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude")),
+        })
+        unitTestSim.AddModelToTask(unitTaskName, attachedPropLog)
+
     # Add energy and momentum variables to log
     scObjectLog = scObject.logger(["totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
@@ -363,6 +374,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     # Run the sim for a few timesteps to confirm execution without error
     stopTime = 1
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+
     unitTestSim.ExecuteSimulation()
 
     # Continue to check state effector EOMs using pure force & torque
@@ -810,6 +822,63 @@ def setup_hingedRigidBodyStateEffector():
     stateEffProps.inertialPropLogName = "hingedRigidBodyConfigLogOutMsg"
 
     return(hingedBody, stateEffProps)
+
+def setup_hingedRigidBodyNDOF():
+    hingedBodyEffector = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+    numberOfSegments = 3 # 3 segments of 2DOF joints is really 6 hinged bodies here
+    massSubPanel = 100.0 / numberOfSegments
+    lengthSubPanel = 18.0 / numberOfSegments
+    widthSubPanel =  3.0
+    thicknessSubPanel = 0.3
+    hingedBodyEffector.r_HB_B = [-2,0,0]
+    hingedBodyEffector.dcm_HB = np.eye(3)
+
+    baseHinge_B = np.array(hingedBodyEffector.r_HB_B, dtype=float)
+    dcm_HB = np.eye(3)
+    s1_hat = np.array([[-1.0], [0.0], [0.0]])
+    sum_rH_B = np.zeros((3, 1))
+    mr_ScB_B = np.zeros((3, 1))
+
+    # Attached dynamic effector connects to segment 3, not to the chain in general
+    selected_segment = numberOfSegments
+    selected_hinge_B = None # Hinge location of the segment the test attaches to
+
+    thetaSum = 0.0
+    for idx in range(numberOfSegments):
+        hingedPanel = nHingedRigidBodyStateEffector.HingedPanel()
+        hingedPanel.mass = massSubPanel
+        hingedPanel.IPntS_S = [[massSubPanel / 12 * (lengthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0, 0.0],
+                                   [0.0, massSubPanel / 12 * (widthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0],
+                                   [0.0, 0.0, massSubPanel / 12 * (widthSubPanel ** 2 + lengthSubPanel ** 2)]]
+        hingedPanel.d = 1.0
+        hingedPanel.thetaInit = (2.0 * macros.D2R)
+        hingedPanel.thetaDotInit = (-0.5 * macros.D2R)
+        hingedPanel.k = 10
+        hingedPanel.c = 8
+        hingedBodyEffector.addHingedPanel(hingedPanel)
+
+        thetaSum += hingedPanel.thetaInit # Saving cumulative angle of whole chain
+        dcm_SB = rbk.euler2(thetaSum) @ dcm_HB
+        sHat1_B = dcm_SB[0, :].reshape(3, 1)
+        r_ScB_B = baseHinge_B - hingedPanel.d * sHat1_B + sum_rH_B
+
+        if idx == selected_segment - 1:
+            # Dynamic effectors attach at the panel hinge location
+            selected_hinge_B = r_ScB_B + hingedPanel.d * sHat1_B
+
+        # Compute COM offset contribution, to be divided by the hub mass
+        mr_ScB_B -= hingedPanel.mass * r_ScB_B
+        sum_rH_B += -2.0 * hingedPanel.d * sHat1_B # Save previous link contributiuons
+
+    hingedBodyEffector.ModelTag = "hingedBody"
+    stateEffProps = stateEffectorProperties()
+    stateEffProps.totalMass = massSubPanel * numberOfSegments
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = selected_hinge_B
+    stateEffProps.r_PcP_P = hingedPanel.d * s1_hat
+    stateEffProps.inertialPropLogName = "nHingedBodyConfigLogOutMsgs"
+
+    return(hingedBodyEffector, stateEffProps)
 
 def setup_translatingBodiesOneDOF():
     translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()

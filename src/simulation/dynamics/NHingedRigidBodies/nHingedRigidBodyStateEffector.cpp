@@ -19,7 +19,6 @@
 
 #include "nHingedRigidBodyStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include <iostream>
 
 /*! This is the constructor, setting variables to default values */
 NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
@@ -34,6 +33,8 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     this->dcm_HB.Identity();
     this->nameOfThetaState ="nHingedRigidBody" + std::to_string(this->effectorID) + "Theta";
     this->nameOfThetaDotState = "nHingedRigidBody" + std::to_string(this->effectorID) + "ThetaDot";
+    this->propertyNameIndex = std::to_string(NHingedRigidBodyStateEffector::effectorID); // preserves effectorID for later adding bodies
+
     this->effectorID++;
 
     return;
@@ -62,22 +63,115 @@ void NHingedRigidBodyStateEffector::readInputMessages()
  */
 void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    int hingedBodyIndex = 0;
+    for(auto& hingedPanel: this->PanelVec) {
+        if (this->hingedBodyOutMsgs[hingedBodyIndex]->isLinked()) {
+            HingedRigidBodyMsgPayload hingedBodyBuffer = this->hingedBodyOutMsgs[hingedBodyIndex]->zeroMsgPayload;
+
+            hingedBodyBuffer.theta = hingedPanel.theta;
+            hingedBodyBuffer.thetaDot = hingedPanel.thetaDot;
+            this->hingedBodyOutMsgs[hingedBodyIndex]->write(&hingedBodyBuffer, this->moduleID, CurrentClock);
+        }
+
+        if (this->nHingedBodyConfigLogOutMsgs[hingedBodyIndex]->isLinked()) {
+            SCStatesMsgPayload configLogMsg = this->nHingedBodyConfigLogOutMsgs[hingedBodyIndex]->zeroMsgPayload;
+
+            // Logging the S frame is the body frame B of that object
+            eigenVector3d2CArray(hingedPanel.r_SN_N, configLogMsg.r_BN_N);
+            eigenVector3d2CArray(hingedPanel.v_SN_N, configLogMsg.v_BN_N);
+            eigenMatrixXd2CArray(*hingedPanel.sigma_SN, configLogMsg.sigma_BN);
+            eigenMatrixXd2CArray(*hingedPanel.omega_SN_S, configLogMsg.omega_BN_B);
+            this->nHingedBodyConfigLogOutMsgs[hingedBodyIndex]->write(&configLogMsg, this->moduleID, CurrentClock);
+        }
+        hingedBodyIndex++;
+    }
     return;
+}
+
+void NHingedRigidBodyStateEffector::computeHingedBodyInertialStates()
+{
+    for(auto& hingedPanel: this->PanelVec) {
+        hingedPanel.omega_SN_B = hingedPanel.omega_SB_B + this->omega_BN_B;
+
+        Eigen::Matrix3d dcm_SN = hingedPanel.dcm_SB * this->dcm_BN;
+        *hingedPanel.sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+        *hingedPanel.omega_SN_S = hingedPanel.dcm_SB * hingedPanel.omega_SN_B;
+
+        // COM kinematics in body-frame components.
+        const Eigen::Vector3d r_HB_B = hingedPanel.r_SB_B + hingedPanel.d * hingedPanel.sHat1_B;
+        const double thetaDotSum = hingedPanel.omega_SB_B.dot(hingedPanel.sHat2_B);
+        const Eigen::Vector3d rPrime_HB_B = hingedPanel.rPrime_SB_B - hingedPanel.d * thetaDotSum * hingedPanel.sHat3_B;
+
+        // Compute the translation properties.
+        hingedPanel.r_SN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * hingedPanel.r_SB_B;
+        hingedPanel.v_SN_N = (Eigen::Vector3d)*this->inertialVelocityProperty
+                           + this->dcm_BN.transpose() * (hingedPanel.rPrime_SB_B + this->omega_BN_B.cross(hingedPanel.r_SB_B));
+
+        *hingedPanel.r_HN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * r_HB_B;
+        *hingedPanel.v_HN_N = (Eigen::Vector3d)*this->inertialVelocityProperty
+                            + this->dcm_BN.transpose() * (rPrime_HB_B + this->omega_BN_B.cross(r_HB_B));
+    }
 }
 
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    // - Get access to the hub states
-    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
+    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity); // why is propName_vehicleGravity not in class?  i think its in dynparam
+
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N"); // why spiining:  this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+    // this->inertialAttitudeProperty = statesIn.getPropertyReference(this->nameOfInertialAttitudeProperty); // spinning bodies doesnt have these two and doesnt have them in the header either
+    // this->inertialAngVelocityProperty = statesIn.getPropertyReference(this->nameOfInertialAngVelocityProperty);
 
     return;
+}
+
+void NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel) {
+    PanelVec.push_back(NewPanel);
+    this->numberOfDegreesOfFreedom++;
+
+    this->nHingedBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
+    this->hingedBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
+    this->hingedBodyRefInMsgs.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
+
+    this->aTheta.conservativeResize(this->aTheta.rows()+1, 3);
+    this->bTheta.conservativeResize(this->bTheta.rows()+1, 3);
+    // this->CTheta.conservativeResize(this->CTheta.rows()+1); // no cTheta in header ???
+
+    PanelVec[this->numberOfDegreesOfFreedom-1].nameOfInertialPositionProperty = "hingedBodyInertialPosition" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    PanelVec[this->numberOfDegreesOfFreedom-1].nameOfInertialVelocityProperty = "hingedBodyInertialVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    PanelVec[this->numberOfDegreesOfFreedom-1].nameOfInertialAttitudeProperty = "hingedBodyInertialAttitude" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    PanelVec[this->numberOfDegreesOfFreedom-1].nameOfInertialAngVelocityProperty = "hingedBodyInertialAngVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+}
+
+   void NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+{
+    if (segment <= 0 || segment > this->numberOfDegreesOfFreedom) {
+        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent hinged body linkage.");
+    } else {
+        this->PanelVec[segment-1].assignStateParamNames(newDynamicEffector);
+        this->PanelVec[segment-1].dynEffectors.push_back(newDynamicEffector);
+    }
+}
+
+void NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
+{
+    for(auto& hingedPanel: this->PanelVec) {
+        Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+        hingedPanel.r_HN_N = states.createProperty(hingedPanel.nameOfInertialPositionProperty, stateInit);
+        hingedPanel.v_HN_N = states.createProperty(hingedPanel.nameOfInertialVelocityProperty, stateInit);
+        hingedPanel.sigma_SN = states.createProperty(hingedPanel.nameOfInertialAttitudeProperty, stateInit); // this notation is inconsistant with s=sc
+        hingedPanel.omega_SN_S = states.createProperty(hingedPanel.nameOfInertialAngVelocityProperty, stateInit);
+
+        for(auto& dynEffector: hingedPanel.dynEffectors) {
+            dynEffector->linkInProperties(states);
+        }
+    }
 }
 
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
 void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
-
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     Eigen::MatrixXd thetaInitMatrix(this->PanelVec.size(),1);
     Eigen::MatrixXd thetaDotInitMatrix(this->PanelVec.size(),1);
@@ -95,6 +189,8 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     this->thetaState->setState(thetaInitMatrix);
     this->thetaDotState = states.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
+
+    registerProperties(states);
 
     return;
 }
@@ -202,32 +298,83 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
     return ans;
 }
 
+void NHingedRigidBodyStateEffector::computeDependentEffectors(
+    BackSubMatrices& backSubContr, double integTime)
+{
+    Eigen::Vector3d force_S = Eigen::Vector3d::Zero();
+    Eigen::Vector3d torquePntS_S = Eigen::Vector3d::Zero();
+
+    for (int idx = static_cast<int>(this->PanelVec.size()) - 1; idx >= 0; --idx) {
+        HingedPanel& panel = this->PanelVec[idx];
+
+        for (auto& dynEffector : panel.dynEffectors) {
+            dynEffector->computeForceTorque(integTime, 0.0);
+            force_S += dynEffector->forceExternal_B;
+            torquePntS_S += dynEffector->torqueExternalPntB_B;
+        }
+
+        panel.extForce_S = force_S;
+        panel.extTorquePntS_S = torquePntS_S;
+
+        // Rotate external forces/torques into the parent body's frame P (new S frame for next loop).
+        const Eigen::Matrix3d dcm_PS = panel.dcm_SS_prev.transpose();
+        Eigen::Vector3d r_SP_prev;
+        if (idx > 0) {
+            const HingedPanel& parentPanel = this->PanelVec[idx - 1];
+            const Eigen::Vector3d r_HCurrent_B = panel.r_SB_B + panel.d * panel.sHat1_B;
+            const Eigen::Vector3d r_HParent_B = parentPanel.r_SB_B + parentPanel.d * parentPanel.sHat1_B;
+            r_SP_prev = parentPanel.dcm_SB * (r_HCurrent_B - r_HParent_B);
+        } else {
+            const Eigen::Vector3d r_SP_S = panel.dcm_SB * (panel.r_SB_B + panel.d * panel.sHat1_B);
+            r_SP_prev = dcm_PS * r_SP_S;
+        }
+
+        Eigen::Vector3d force_prev = dcm_PS * force_S;
+        Eigen::Vector3d torque_prev = dcm_PS * torquePntS_S;
+
+        force_S = force_prev;
+        torquePntS_S = torque_prev + r_SP_prev.cross(force_prev);
+    }
+
+    // Base body rotated into the hub body frame, added as cumulated force/torque here
+    backSubContr.vecTrans += force_S;
+    backSubContr.vecRot += torquePntS_S;
+}
+
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
  method */
 void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    backSubContr.matrixA.setZero(); // should i really be zeroing this out?
+    backSubContr.matrixB.setZero();
+    backSubContr.matrixC.setZero();
+    backSubContr.matrixD.setZero();
+    backSubContr.vecTrans.setZero();
+    backSubContr.vecRot.setZero();
+
     // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_BN;
-    Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d )sigma_BN;
-    dcm_NB = sigmaLocal_BN.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
+    this->sigma_BN = sigma_BN;
+    dcm_NB = this->sigma_BN.toRotationMatrix();
+    this->dcm_BN = dcm_NB.transpose();
+    this->omega_BN_B = omega_BN_B;
 
     // - Map gravity to body frame
     Eigen::Vector3d gLocal_N;
     Eigen::Vector3d g_B;
     gLocal_N = *this->g_N;
-    g_B = dcm_BN*gLocal_N;
+    g_B = this->dcm_BN*gLocal_N; // not sure about this either
 
     // - Define omega_BN_S
-    this->omegaLoc_BN_B = omega_BN_B;
+    this->omegaLoc_BN_B = this->omega_BN_B;
     std::vector<HingedPanel>::iterator PanelIt;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
         PanelIt->omega_BN_S = PanelIt->dcm_SB*this->omegaLoc_BN_B;
     }
     // - Define omegaTildeLoc_BN_B
     this->omegaTildeLoc_BN_B = eigenTilde(this->omegaLoc_BN_B);
+
+    this->computeDependentEffectors(backSubContr, integTime);
 
     // - Define A matrix for the panel equations
     std::vector<HingedPanel>::iterator PanelIt2;
@@ -354,7 +501,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         double remainingMass;
         remainingMass = this->totalMass - massOfCurrentPanelAndBefore;
         gravForceRestOfPanels = remainingMass*g_B;
-        this->vectorVDHRB(j-1) = sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel)
+        this->vectorVDHRB(j-1) = sumTerm1
+        + PanelIt->sHat2_B.dot(gravTorqueCurPanel + PanelIt->dcm_SB.transpose() * PanelIt->extTorquePntS_S)
         + 2.0*PanelIt->d*PanelIt->sHat3_B.dot(gravForceRestOfPanels);
         j += 1;
     }
@@ -363,9 +511,6 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
 
     // - translational contributions
-    backSubContr.matrixA.setZero();
-    backSubContr.matrixB.setZero();
-    backSubContr.vecTrans.setZero();
     double sumThetaDot = 0;
     Eigen::Vector3d sumTerm2;
     sumTerm2.setZero();
@@ -393,9 +538,6 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     bTheta = this->matrixEDHRB.row(0)*this->matrixGDHRB;
 
     // - Rotational contributions
-    backSubContr.matrixC.setZero();
-    backSubContr.matrixD.setZero();
-    backSubContr.vecRot.setZero();
     sumThetaDot = 0;
     sumTerm2.setZero();
     Eigen::Matrix3d sumTerm3;
@@ -471,7 +613,6 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::
     this->thetaState->setDerivative(this->thetaDotState->getState());
     // - Second, a little more involved
     this->thetaDotState->setDerivative(thetaDDot);
-
     return;
 }
 
@@ -513,6 +654,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
  */
 void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    this->computeHingedBodyInertialStates();
     WriteOutputMessages(CurrentSimNanos);
 
     return;
