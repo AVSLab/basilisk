@@ -1,7 +1,9 @@
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import spiceInterface
+from pathlib import Path
 
 from Basilisk import __path__
+from Basilisk.simulation import spiceInterface
+from Basilisk.utilities import SimulationBaseClass
+
 bskPath = __path__[0]
 
 
@@ -22,7 +24,7 @@ def createOneSim():
 
     # Create and register the SpiceInterface
     SpiceObject = spiceInterface.SpiceInterface()
-    SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
+    SpiceObject.SPICEDataPath = str(Path(bskPath) / "supportData" / "EphemerisData")
     TotalSim.AddModelToTask("task", SpiceObject)
 
     # Run long enough for the SpiceInterface to furnish its kernels
@@ -58,7 +60,7 @@ def test_multipleInterfaces():
       - unload_c() is only called when the last user disappears
       - the shared-pointer-based lifetime system works correctly
     """
-    kernel = f"{bskPath}/supportData/EphemerisData/de430.bsp"
+    kernel = str(Path(bskPath) / "supportData" / "EphemerisData" / "de430.bsp")
 
     # Step 1 - Kernel not yet loaded
     assert not spiceInterface.isKernelLoaded(kernel)
@@ -88,6 +90,7 @@ def test_multipleInterfaces():
     smallScope()
 
     import gc
+
     gc.collect()
 
     # Step 5 - Kernel must now be fully unloaded
