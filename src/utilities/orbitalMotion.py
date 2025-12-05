@@ -23,29 +23,35 @@ import math
 
 import numpy as np
 from numpy import linalg as la
+from typing import Tuple
+
 
 
 class ClassicElements(object):
-    a = None
-    e = None
-    i = None
-    Omega = None
-    omega = None
-    f = None
-    rmag = None
-    alpha = None
-    rPeriap = None
-    rApoap = None
+    __slots__ = ['a', 'e', 'i', 'Omega', 'omega', 'f', 'rmag', 'alpha', 'rPeriap', 'rApoap']
+    def __init__(self):
+        self.a = None
+        self.e = None
+        self.i = None
+        self.Omega = None
+        self.omega = None
+        self.f = None
+        self.rmag = None
+        self.alpha = None
+        self.rPeriap = None
+        self.rApoap = None
 
 
 class EquinoctialElements(object):
-    a = None
-    P1 = None
-    P2 = None
-    Q1 = None
-    Q2 = None
-    l = None
-    L = None
+    __slots__ = ['a', 'P1', 'P2', 'Q1', 'Q2', 'l', 'L']
+    def __init__(self):
+        self.a = None
+        self.P1 = None
+        self.P2 = None
+        self.Q1 = None
+        self.Q2 = None
+        self.l = None
+        self.L = None
 
 
 N_DEBYE_PARAMETERS = 37  # orbitalMotion.h #
@@ -160,7 +166,7 @@ I_PLUTO = 17.14175 * D2R
 E_PLUTO = 0.24880766
 
 
-def E2f(Ecc, e):
+def E2f(Ecc:float, e:float) -> float:
     """
     Maps eccentric anomaly angles into true anomaly angles
     This function requires the orbit to be either circular or
@@ -176,7 +182,7 @@ def E2f(Ecc, e):
     raise ValueError('Error: E2f() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def E2M(Ecc, e):
+def E2M(Ecc:float, e:float) -> float:
     """
     Maps the eccentric anomaly angle into the corresponding
     mean elliptic anomaly angle.  Both 2D and 1D elliptic
@@ -192,7 +198,7 @@ def E2M(Ecc, e):
     raise ValueError('Error: E2M() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def f2E(f, e):
+def f2E(f:float, e:float) -> float:
     """
     Maps true anomaly angles into eccentric anomaly angles.
     This function requires the orbit to be either circular or
@@ -208,7 +214,7 @@ def f2E(f, e):
     raise ValueError('Error: f2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def f2H(f, e):
+def f2H(f:float, e:float) -> float:
     """
     Maps true anomaly angles into hyperbolic anomaly angles.
     This function requires the orbit to be hyperbolic
@@ -223,7 +229,7 @@ def f2H(f, e):
     raise ValueError('Error: f2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def H2f(H, e):
+def H2f(H:float, e:float) -> float:
     """
     Maps hyperbolic anomaly angles into true anomaly angles.
     This function requires the orbit to be hyperbolic
@@ -238,7 +244,7 @@ def H2f(H, e):
     raise ValueError('Error: H2f() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def H2N(H, e):
+def H2N(H:float, e:float) -> float:
     """
     Maps the hyperbolic anomaly angle H into the corresponding
     mean hyperbolic anomaly angle N.
@@ -253,7 +259,7 @@ def H2N(H, e):
     raise ValueError('Error: H2N() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def M2E(M, e):
+def M2E(M:float, e:float) -> float:
     """
     Maps the mean elliptic anomaly angle into the corresponding
     eccentric anomaly angle.  Both 2D and 1D elliptic
@@ -279,7 +285,7 @@ def M2E(M, e):
     raise ValueError('Error: M2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
 
-def N2H(N, e):
+def N2H(N:float, e:float) -> float:
     """
     Maps the mean hyperbolic anomaly angle N into the corresponding
     hyperbolic anomaly angle H.
@@ -303,12 +309,12 @@ def N2H(N, e):
         return H1
     raise ValueError('Error: N2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
 
-def elem2rv_parab(mu, elements):
+def elem2rv_parab(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -318,7 +324,11 @@ def elem2rv_parab(mu, elements):
 
     to the inertial Cartesian position and velocity vectors.
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant mu.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     The code can handle the following cases:
 
@@ -334,7 +344,7 @@ def elem2rv_parab(mu, elements):
 
         To handle the parabolic case and distinguish it form the
         rectilinear elliptical case, instead of passing along the
-        semi-major axis a in the "a" input slot, the negative radius
+        semi-major axis ``a`` in the "a" input slot, the negative radius
         at periapses is supplied.  Having "a" be negative and e = 1
         is a then a unique identified for the code for the parabolic
         case.
@@ -392,12 +402,12 @@ def elem2rv_parab(mu, elements):
 
     return rVec, vVec
 
-def elem2rv(mu, elements):
+def elem2rv(mu: float, elements: ClassicElements) -> Tuple[np.ndarray, np.ndarray]:
     """
     Translates the orbit elements:
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -407,7 +417,11 @@ def elem2rv(mu, elements):
 
     to the inertial Cartesian position and velocity vectors.
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant ``mu``.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     :param mu: gravitational parameter
     :param elements: orbital elements
@@ -451,14 +465,14 @@ def elem2rv(mu, elements):
 
     return rVec, vVec
 
-def rv2elem_parab(mu, rVec, vVec):
+def rv2elem_parab(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     """
     Translates the orbit elements inertial Cartesian position
     vector rVec and velocity vector vVec into the corresponding
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis             km
+    a   semi-major axis             m (see below)
     e   eccentricity
     i   inclination                 rad
     AN  ascending node              rad
@@ -466,10 +480,14 @@ def rv2elem_parab(mu, rVec, vVec):
     f   true anomaly angle          rad
     === ========================= =======
 
-    If the orbit is rectilinear, then f will be the eccentric or hyperbolic anomaly
+    If the orbit is rectilinear, then ``f`` will be the eccentric or hyperbolic anomaly
 
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant ``mu``.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     The code can handle the following cases:
 
@@ -591,14 +609,14 @@ def rv2elem_parab(mu, rVec, vVec):
 
     return elements
 
-def rv2elem(mu, rVec, vVec):
+def rv2elem(mu: float, rVec: np.ndarray, vVec: np.ndarray) -> ClassicElements:
     """
     Translates the orbit elements inertial Cartesian position
     vector rVec and velocity vector vVec into the corresponding
     classical orbit elements where
 
     === ========================= =======
-    a   semi-major axis           km
+    a   semi-major axis           m
     e   eccentricity
     i   inclination               rad
     AN  ascending node            rad
@@ -609,7 +627,11 @@ def rv2elem(mu, rVec, vVec):
     If the orbit is rectilinear, then this will be the eccentric or hyperbolic anomaly
 
     The attracting body is specified through the supplied
-    gravitational constant mu (units of km^3/s^2).
+    gravitational constant ``mu``.
+
+    .. note::
+        The semi-major axis units must be the same that the distance units used in the mu variable,
+        i.e., ``a`` must be in m if ``mu`` is in m^3/s^2.
 
     :param mu:  gravitational parameter
     :param rVec: position vector
@@ -720,7 +742,7 @@ def rv2elem(mu, rVec, vVec):
     return elements
 
 
-def atmosphericDensity(alt):
+def atmosphericDensity(alt: float) -> float:
     """
     This program computes the atmospheric density based on altitude
     supplied by user.  This function uses a curve fit based on
@@ -751,7 +773,15 @@ def atmosphericDensity(alt):
     return density
 
 
-def debyeLength(alt):
+DEBYE_ALTITUDES = [200.0, 250.0, 300.0, 350.0, 400., 450., 500., 550., 600., 650., 700., 750., 800., 850.,
+         900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450.,
+         1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000.]
+DEBYE_LENGTHS = [5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03, 4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03,
+         7.30E-03, 8.31E-03, 8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
+         1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02, 2.76E-02, 2.76E-02,
+         2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02]
+
+def debyeLength(alt: float) -> float:
     """
     This program computes the debyeLength length for a given
     altitude and is valid for altitudes ranging
@@ -761,14 +791,6 @@ def debyeLength(alt):
     :param alt: altitude in km
     :return: debye length given in m
     """
-    X = [200.0, 250.0, 300.0, 350.0, 400., 450., 500., 550., 600., 650., 700., 750., 800., 850.,
-         900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450.,
-         1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000.]
-
-    Y = [5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03, 4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03,
-         7.30E-03, 8.31E-03, 8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
-         1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02, 2.76E-02, 2.76E-02,
-         2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02]
 
     # Flat debyeLength length for altitudes above 2000 km #
     if alt > 2000.0 and alt <= 30000.0:
@@ -782,15 +804,15 @@ def debyeLength(alt):
     # Interpolation of data #
     i = 0
     for i in range(0, N_DEBYE_PARAMETERS - 1):
-        if X[i + 1] > alt:
+        if DEBYE_ALTITUDES[i + 1] > alt:
             break
-    a = (alt - X[i]) / (X[i + 1] - X[i])
-    debyedist = Y[i] + a * (Y[i + 1] - Y[i])
+    a = (alt - DEBYE_ALTITUDES[i]) / (DEBYE_ALTITUDES[i + 1] - DEBYE_ALTITUDES[i])
+    debyedist = DEBYE_LENGTHS[i] + a * (DEBYE_LENGTHS[i + 1] - DEBYE_LENGTHS[i])
 
     return debyedist
 
 
-def atmosphericDrag(Cd, A, m, rvec, vvec):
+def atmosphericDrag(Cd: float, A: float, m: float, rvec: np.ndarray, vvec: np.ndarray) -> np.ndarray:
     """
      This program computes the atmospheric drag acceleration
      vector acting on a spacecraft.
@@ -831,7 +853,7 @@ def atmosphericDrag(Cd, A, m, rvec, vvec):
     return advec
 
 
-def jPerturb(rvec, num, planet):
+def jPerturb(rvec: np.ndarray, num: int, planet:str) -> np.ndarray:
     """
     Computes the J2_EARTH-J6_EARTH zonal gravitational perturbation
     accelerations.
@@ -977,7 +999,7 @@ def jPerturb(rvec, num, planet):
     return ajtot
 
 
-def solarRad(A, m, sunvec):
+def solarRad(A: float, m: float, sunvec: np.ndarray) -> np.ndarray:
     """
     Computes the inertial solar radiation force vectors
     based on cross-sectional Area and mass of the spacecraft
@@ -1015,7 +1037,7 @@ def solarRad(A, m, sunvec):
     return arvec
 
 
-def v3Normalize(v):
+def v3Normalize(v: np.ndarray) -> np.ndarray:
     result = np.zeros(3)
     norm = la.norm(v)
     if norm > DB0_EPS:
@@ -1023,7 +1045,7 @@ def v3Normalize(v):
     return result
 
 
-def clMeanOscMap(req, J2, oe, oep, sign):
+def clMeanOscMap(req: float, J2: float, oe: ClassicElements, oep:ClassicElements, sign: int):
     """
     First-order J2 Mapping Between Mean and Osculating Orbital Elements
 
@@ -1112,7 +1134,7 @@ def clMeanOscMap(req, J2, oe, oep, sign):
     return
 
 
-def clElem2eqElem(elements_cl, elements_eq):
+def clElem2eqElem(elements_cl: ClassicElements, elements_eq: EquinoctialElements):
     """
     conversion
     from classical orbital elements (a,e,i,Omega,omega,f)
@@ -1133,7 +1155,7 @@ def clElem2eqElem(elements_cl, elements_eq):
     return
 
 
-def hillFrame(rc_N, vc_N):
+def hillFrame(rc_N: np.ndarray, vc_N: np.ndarray) -> np.ndarray:
     """
     Compute the Hill frame DCM HN
     :param rc_N: inertial position vector
@@ -1148,7 +1170,7 @@ def hillFrame(rc_N, vc_N):
     return np.array([ir, itheta, ih])
 
 
-def rv2hill(rc_N, vc_N, rd_N, vd_N):
+def rv2hill(rc_N: np.ndarray, vc_N: np.ndarray, rd_N: np.ndarray, vd_N: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Express the deputy position and velocity vector as chief by the chief Hill frame.
 
@@ -1167,7 +1189,7 @@ def rv2hill(rc_N, vc_N, rd_N, vd_N):
     return rho_H, rhoPrime_H
 
 
-def hill2rv(rc_N, vc_N, rho_H, rhoPrime_H):
+def hill2rv(rc_N: np.ndarray, vc_N: np.ndarray, rho_H: np.ndarray, rhoPrime_H: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Map the deputy position and velocity vector relative to the chief Hill frame to inertial frame.
 
