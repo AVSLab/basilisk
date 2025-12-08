@@ -342,7 +342,7 @@ def run(show_plots):
 
     if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(sc_sim, data_rec_task_name, sc_body_list,
-                                                  saveFile=filename
+                                                  #saveFile=filename
                                                   )
         vizSupport.createCustomModel(viz
                                      , simBodiesToModify=[sc_object.ModelTag]
