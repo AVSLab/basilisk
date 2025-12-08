@@ -95,6 +95,10 @@ Version |release|
   The module now outputs a zero'd output message on the first run.
 - Updated Basilisk python dependencies to include the latest range of allowable packages
 - Improved documentation of :ref:`orbitalMotion`
+- Avoid reloading and re-unloading SPICE kernels when multiple simulations run in the same process. This
+  fixes the problem with Spice becoming very slow when multiple simulation are run in parallel, addresses
+  the Spice kernel load limit of 5000 kernels, and prevents a rare bug where kernels are corrupted when
+  loaded from multiple simulations at the same time.
 
 
 Version 2.8.0 (August 30, 2025)
