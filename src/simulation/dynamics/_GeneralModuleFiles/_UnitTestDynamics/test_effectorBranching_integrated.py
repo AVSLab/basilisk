@@ -840,7 +840,7 @@ def setup_dualHingedRigidBodies():
                 (hingedBody.r_H1B_B + np.transpose(hingedBody.dcm_H1B) @ (np.transpose(dcm_S1H1) @ (hingedBody.l1 *
                 s1_hat) + np.transpose(dcm_S2H1) @ (hingedBody.d2 * s1_hat))) * hingedBody.mass2)
 
-    stateEffProps = stateEfectorProperties()
+    stateEffProps = stateEffectorProperties()
     stateEffProps.totalMass = hingedBody.mass1 + hingedBody.mass2
     stateEffProps.mr_PcB_B = mr_ScB_B
     stateEffProps.r_PB_B = hingedBody.r_H1B_B + hingedBody.l1 * np.array(hingedBody.dcm_H1B) @ s1_hat
