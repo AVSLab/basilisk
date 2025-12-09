@@ -106,6 +106,8 @@ Version |release|
   add better error logging for all methods implemented in Python and will add a sanity check that the
   C++ class constructor is called (otherwise, hard-to-parse errors will be raised). Refactored
   ``pyStatefulSysModel.i`` to use this mixin.
+- Added support for setting the position and velocity of :ref:`MJBody` with pure translational motion.
+- Added ``getAxis`` and ``isHinge`` to :ref:`MJJoint`.
 
 
 Version 2.8.0 (August 30, 2025)

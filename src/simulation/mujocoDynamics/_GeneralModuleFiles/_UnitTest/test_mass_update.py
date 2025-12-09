@@ -94,6 +94,10 @@ def test_continuouslyChangingMass(showPlots: bool = False):
     scSim.AddModelToTask("test", posRec)
 
     scSim.InitializeSimulation()
+
+    # initial position should not matter
+    ballBody.setPosition([0, 1, 0])
+
     scSim.ConfigureStopTime(macros.sec2nano(tf))
     scSim.ExecuteSimulation()
 

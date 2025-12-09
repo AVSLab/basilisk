@@ -27,6 +27,28 @@
 
 #include <iostream>
 
+namespace
+{
+    /** Returns true if the first three scalar joints are translational
+     * and along the main axis ([1,0,0], [0,1,0], [0,0,1]).
+    */
+    bool areJoints3DTranslation(std::list<MJScalarJoint>& joints)
+    {
+        if (joints.size() < 3) return false;
+
+        size_t idx = 0;
+        for (auto&& joint : joints)
+        {
+            if (idx == 3) break;
+            if (joint.isHinge()) return false;
+            if (std::fabs(joint.getAxis()[idx] - 1) > 1e-10) return false;
+            ++idx;
+        }
+
+        return true;
+    }
+}
+
 MJBody::MJBody(mjsBody* body, MJSpec& spec)
     : MJObject(body), spec(spec)
 {
@@ -152,20 +174,40 @@ MJFreeJoint & MJBody::getFreeJoint()
 
 void MJBody::setPosition(const Eigen::Vector3d& position)
 {
-    if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set position in non-free body " +
+    if (this->freeJoint.has_value()) {
+        this->freeJoint.value().setPosition(position);
+    } else if (areJoints3DTranslation(scalarJoints))
+    {
+        size_t idx = 0;
+        for (auto&& joint : scalarJoints)
+        {
+            if (idx == 3) break;
+            joint.setPosition(position[idx]);
+            ++idx;
+        }
+    } else {
+        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set position in a body with no 'free' joint or no 3D translational joints " +
                                                     name);
     }
-    this->freeJoint.value().setPosition(position);
 }
 
 void MJBody::setVelocity(const Eigen::Vector3d& velocity)
 {
-    if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set velocity in non-free body " +
+    if (this->freeJoint.has_value()) {
+        this->freeJoint.value().setVelocity(velocity);
+    } else if (areJoints3DTranslation(scalarJoints))
+    {
+        size_t idx = 0;
+        for (auto&& joint : scalarJoints)
+        {
+            if (idx == 3) break;
+            joint.setVelocity(velocity[idx]);
+            ++idx;
+        }
+    } else {
+        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set velocity in a body with no 'free' joint or no 3D translational joints " +
                                                     name);
     }
-    this->freeJoint.value().setVelocity(velocity);
 }
 
 void MJBody::setAttitude(const Eigen::MRPd& attitude)
