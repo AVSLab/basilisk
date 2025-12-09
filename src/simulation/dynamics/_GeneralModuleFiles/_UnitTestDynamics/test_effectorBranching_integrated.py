@@ -422,6 +422,8 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     integral = np.cumsum(y_avg * dx[:, None], axis=0)
     dH = np.vstack((np.zeros((1, 3)), integral))
 
+    print(rotAngMom_N[:,-1]-rotAngMom_N[0,-1])
+
     # Plotting
     plt.close("all")
     plt.figure()
@@ -679,13 +681,13 @@ def setup_spinningBodiesTwoDOF():
     spinningBody.IS1PntSc1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     spinningBody.IS2PntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
     spinningBody.dcm_S10B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    spinningBody.dcm_S20S1 = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
-    spinningBody.r_Sc1S1_S1 = [[1.0], [-0.5], [0.0]]
-    spinningBody.r_Sc2S2_S2 = [[1.0], [0.0], [-1.0]]
-    spinningBody.r_S1B_B = [[-1.0], [0.5], [-1.0]]
-    spinningBody.r_S2S1_S1 = [[0.5], [-0.5], [-0.5]]
-    spinningBody.s1Hat_S1 = [[0], [0], [1]]
-    spinningBody.s2Hat_S2 = [[0], [-1], [0]]
+    spinningBody.dcm_S20S1 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody.r_Sc1S1_S1 = [[-0.75], [0.0], [0.0]]
+    spinningBody.r_Sc2S2_S2 = [[-1.0], [0.0], [0.0]]
+    spinningBody.r_S1B_B = [[0.5], [-1.5], [-0.5]]
+    spinningBody.r_S2S1_S1 = [[-1.5], [0.0], [0.0]]
+    spinningBody.s1Hat_S1 = [[0], [1], [0]]
+    spinningBody.s2Hat_S2 = [[0], [1], [0]]
     spinningBody.theta1DotInit = 1.0 * macros.D2R
     spinningBody.theta2DotInit = 1.0 * macros.D2R
     spinningBody.k1 = 1000.0
@@ -812,23 +814,23 @@ def setup_dualHingedRigidBodies():
     hingedBody = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
 
     # Define properties of HRB
-    hingedBody.mass1 = 200
+    hingedBody.mass1 = 100
     hingedBody.IPntS1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     hingedBody.d1 = 0.75
     hingedBody.l1 = 1.5
-    hingedBody.k1 = 100
-    hingedBody.c1 = 50
-    hingedBody.dcm_H1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    hingedBody.k1 = 1000
+    hingedBody.c1 = 500
+    hingedBody.dcm_H1B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     hingedBody.r_H1B_B = [[0.5], [-1.5], [-0.5]]
-    hingedBody.theta1Init = 5 * macros.D2R
-    hingedBody.theta1DotInit = -1 * macros.D2R
+    hingedBody.theta1Init = 0 * macros.D2R
+    hingedBody.theta1DotInit = 1 * macros.D2R
     hingedBody.mass2 = 200
-    hingedBody.IPntS2_S2 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    hingedBody.IPntS2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 50.0]]
     hingedBody.d2 = 1
-    hingedBody.k2 = 100
-    hingedBody.c2 = 50
-    hingedBody.theta2Init = -2 * macros.D2R
-    hingedBody.theta2DotInit = 0.0
+    hingedBody.k2 = 500
+    hingedBody.c2 = 200
+    hingedBody.theta2Init = 0 * macros.D2R
+    hingedBody.theta2DotInit = 1.0 * macros.D2R
     hingedBody.ModelTag = "HingedRigidBody2DOF"
 
     # Compute COM offset contribution, to be divided by the hub mass
@@ -913,4 +915,4 @@ class stateEffectorProperties:
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
 
 if __name__ == "__main__":
-    effectorBranchingIntegratedTest(True, "dualHingedRigidBodies", True, "extForceTorque", True)
+    effectorBranchingIntegratedTest(True, "dualHingedRigidBodies", True, "extForceTorque", True) #spinningBodiesTwoDOF dualHingedRigidBodies
