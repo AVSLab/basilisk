@@ -292,8 +292,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
 
     // - Sum of forces and torques
     Eigen::Vector3d externalForcePan2_P = gravForcePan2_P + (this->dcm_S2P.transpose() * attBodyForce_S2);
-    Eigen::Vector3d externalTorquePan1PntS1_P = gravTorquePan1PntH1_P + (this->dcm_S1P.transpose() * attBodyTorquePntS1_S1);
-    Eigen::Vector3d externalTorquePan2PntS2_P = gravTorquePan2PntH2_P + (this->dcm_S2P.transpose() * attBodyTorquePntS2_S2);
+    Eigen::Vector3d externalTorquePan1PntS1_P = gravTorquePan1PntH1_P - (this->dcm_S1P.transpose() * attBodyTorquePntS1_S1);
+    Eigen::Vector3d externalTorquePan2PntS2_P = gravTorquePan2PntH2_P - (this->dcm_S2P.transpose() * attBodyTorquePntS2_S2);
 
     // - Define omegaBN_S
     this->omega_BN_B = omega_BN_B;
@@ -326,7 +326,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     this->vectorVDHRB(0) =
       -(this->IPntS1_S1(0, 0) - this->IPntS1_S1(2, 2)) * this->omega_PN_S1(2) * this->omega_PN_S1(0) + this->u1 -
       this->k1 * this->theta1 - this->c1 * this->theta1Dot + this->k2 * this->theta2 + this->c2 * this->theta2Dot +
-      (this->sHat12_P.dot(externalTorquePan1PntS1_P) + (this->sHat12_P.dot(externalTorquePan2PntS2_P)) + (this->l1 * this->sHat13_P.dot(externalForcePan2_P))) -
+      (this->sHat12_P.dot(externalTorquePan1PntS1_P) - (this->sHat12_P.dot(-(this->dcm_S2P.transpose() * attBodyTorquePntS2_S2))) + (this->l1 * this->sHat13_P.dot(externalForcePan2_P))) -
       this->mass1 * this->d1 * this->sHat13_P.transpose() *
         (2 * this->omegaTildePNLoc_P * this->rPrimeS1P_P +
          this->omegaTildePNLoc_P * this->omegaTildePNLoc_P * this->r_S1P_P) -
