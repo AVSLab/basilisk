@@ -101,6 +101,12 @@ Version |release|
   loaded from multiple simulations at the same time.
 - Added optional prescribed 1-DOF helical screw motion to the :ref:`prescribedRotation1DOF` kinematic profiler module.
 - Added a new prescribed helical screw motion example scenario. See :ref:`scenarioPrescribedScrewMotion`.
+- Added ``SysModelMixin``, a utility class in ``py_sys_model.i`` that can be used for subclasses
+  of ``SysModel`` (:ref:`sys_model`) that have virtual methods to be implemented in Python. The class will automatically
+  add better error logging for all methods implemented in Python and will add a sanity check that the
+  C++ class constructor is called (otherwise, hard-to-parse errors will be raised). Refactored
+  ``pyStatefulSysModel.i`` to use this mixin.
+
 
 Version 2.8.0 (August 30, 2025)
 -------------------------------
