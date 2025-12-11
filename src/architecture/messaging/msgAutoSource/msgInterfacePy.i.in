@@ -59,10 +59,13 @@ if "{type}" == "EclipseMsg":
     from . import _{type}Payload as _m
     from Basilisk.utilities import deprecated
 
+    # ----- Payload aliasing -----
     def _get_illum(self):
         return _m.{type}Payload_shadowFactor_get(self)
+
     def _set_illum(self, v):
         _m.{type}Payload_shadowFactor_set(self, v)
+
     {type}Payload.illuminationFactor = property(_get_illum, _set_illum)
 
     # Deprecate the old shadowFactor name
@@ -83,4 +86,18 @@ if "{type}" == "EclipseMsg":
         _m.{type}Payload_shadowFactor_set(self, v)
 
     {type}Payload.shadowFactor = property(_warn_get_shadow, _warn_set_shadow)
+
+    # ----- Recorder aliasing so logs can use illuminationFactor -----
+    try:
+        _orig_rec_getattr = EclipseMsgRecorder.__getattr__
+
+        def _rec_getattr_with_alias(self, name):
+            if name == "illuminationFactor":
+                # Delegate to the original implementation but ask for shadowFactor
+                return _orig_rec_getattr(self, "shadowFactor")
+            return _orig_rec_getattr(self, name)
+
+        EclipseMsgRecorder.__getattr__ = _rec_getattr_with_alias
+    except Exception:
+        pass
 %}}
