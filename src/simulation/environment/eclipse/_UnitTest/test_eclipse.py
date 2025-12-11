@@ -29,6 +29,7 @@ import os
 import numpy as np
 
 import pytest
+import datetime
 from Basilisk import __path__
 from Basilisk.simulation import eclipse
 from Basilisk.simulation import spacecraft
@@ -39,6 +40,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
+from Basilisk.architecture.messaging import EclipseMsgPayload
 
 bskPath = __path__[0]
 
@@ -406,6 +408,44 @@ def unitEclipseCustom(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+def test_shadow_vs_illumination_alias_and_deprecation_behavior():
+    """
+    Check aliasing and deprecation behavior for EclipseMsgPayload.
+
+    If this test starts failing with a BSKUrgentDeprecationWarning (or the
+    deprecation utility starts treating ``shadowFactor`` as an error), that is
+    a signal that we have passed the deprecation deadline and should:
+
+    * remove support for ``EclipseMsgPayload.shadowFactor``, and
+    * remove this test (or update it to only check ``illuminationFactor``).
+    """
+    p = EclipseMsgPayload()
+
+    # 1. Test Forward Direction (New -> Old)
+    # Setting the new variable should update the old one silently (or logically).
+    p.illuminationFactor = 0.8
+    assert p.illuminationFactor == pytest.approx(0.8)
+
+    # Reading the OLD variable (shadowFactor) triggers the warning.
+    # We must catch it so it doesn't fail the "no warnings allowed" check.
+    with pytest.warns(Warning, match=".*illuminationFactor.*"):
+        val = p.shadowFactor
+    assert val == pytest.approx(0.8)
+
+    cutoff = datetime.date(2026, 12, 31)
+    today = datetime.date.today()
+
+    if today <= cutoff:
+        # 2. Test Backward Direction (Old -> New)
+        # Setting the deprecated name should emit a warning.
+        with pytest.warns(Warning, match=r".*illuminationFactor.*"):
+            p.shadowFactor = 0.5
+
+        # Verify it updated the new variable
+        assert p.illuminationFactor == pytest.approx(0.5)
+
+
 if __name__ == "__main__":
     unitEclipse(False, "annular", "mars")
     unitEclipseCustom(False)
+    test_shadow_vs_illumination_alias_and_deprecation_behavior()
