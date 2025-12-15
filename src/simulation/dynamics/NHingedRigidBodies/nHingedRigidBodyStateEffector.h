@@ -59,7 +59,6 @@ struct HingedPanel {
     Eigen::Vector3d extTorquePntS_S = Eigen::Vector3d::Zero();  //!< [N-m] external torque acting on the hinged body about point Sc in S frame components
 
     Eigen::Vector3d sHat_S = {0.0, 1.0, 0.0};                    //!< hinging axis in S frame components
-    Eigen::Matrix3d dcm_S0S = Eigen::Matrix3d::Identity();       //!< DCM from the S0 frame to S frame (rotated by theta) ??????????????????
 
     std::vector<DynamicEffector*> dynEffectors;     //!< -- Vector of dynamic effectors attached
 
