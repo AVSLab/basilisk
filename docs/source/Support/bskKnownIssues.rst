@@ -32,6 +32,8 @@ Version |release|
   been deprecated and will be removed after October 11, 2026.
 - For :ref:`vizInterface`.settings, changed the name of ``viewCameraConeHUD`` to ``viewCameraFrustrumHUD``.
   Using the old settings name results in the setting not being applied.
+- When building the Basilisk documentation with doxygen 1.15 or newer, warnings associated with
+  unclosed quotes are treated as errors and cause the build to fail. Quotes are fixed now.
 
 
 Version 2.8.0

@@ -122,6 +122,7 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     - :ref:`spinningBodyOneDOFStateEffector`
     - :ref:`spinningBodyTwoDOFStateEffector`
     - :ref:`hingedRigidBodyStateEffector`
+    - :ref:`hingedRigidBodyStateEffector`
 
     Dynamic effectors that are expected to be able to attach to state effectors (isChild) include:
 
@@ -666,6 +667,77 @@ def setup_spinningBodiesTwoDOF():
     stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsgs"
 
     return(spinningBody, stateEffProps)
+
+def setup_hingedRigidBodyStateEffector():
+    hingedBody = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define properties of HRB
+    hingedBody.mass = 50.0
+    hingedBody.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    hingedBody.d = 1.0
+    hingedBody.k = 100.0
+    hingedBody.c = 50.0
+    hingedBody.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    hingedBody.r_HB_B = [[0.5], [-1.5], [-0.5]]
+    hingedBody.thetaInit = 5 * macros.D2R
+    hingedBody.thetaDotInit = -1 * macros.D2R
+    hingedBody.ModelTag = "HingedRigidBody"
+
+    # Compute COM offset contribution, to be divided by the hub mass
+    dcm_SH = rbk.euler2(hingedBody.thetaInit)
+    s1_hat = np.array([[-1.0],[0.0],[0.0]])
+    mr_ScB_B = -(hingedBody.r_HB_B + np.transpose(hingedBody.dcm_HB) @
+                 (np.transpose(dcm_SH) @ (hingedBody.d * s1_hat))) * hingedBody.mass
+
+    stateEffProps = stateEfectorProperties()
+    stateEffProps.totalMass = hingedBody.mass
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = hingedBody.r_HB_B
+    stateEffProps.r_PcP_P = hingedBody.d * s1_hat
+    stateEffProps.inertialPropLogName = "hingedRigidBodyConfigLogOutMsg"
+
+    return(hingedBody, stateEffProps)
+
+def setup_dualHingedRigidBodies():
+    hingedBody = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+
+    # Define properties of HRB
+    hingedBody.mass1 = 200
+    hingedBody.IPntS1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    hingedBody.d1 = 0.75
+    hingedBody.l1 = 1.5
+    hingedBody.k1 = 100
+    hingedBody.c1 = 50
+    hingedBody.dcm_H1B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    hingedBody.r_H1B_B = [[0.5], [-1.5], [-0.5]]
+    hingedBody.theta1Init = 5 * macros.D2R
+    hingedBody.theta1DotInit = -1 * macros.D2R
+    hingedBody.mass2 = 200
+    hingedBody.IPntS2_S2 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    hingedBody.d2 = 1
+    hingedBody.k2 = 100
+    hingedBody.c2 = 50
+    hingedBody.theta2Init = -2 * macros.D2R
+    hingedBody.theta2DotInit = 0.0
+    hingedBody.ModelTag = "HingedRigidBody2DOF"
+
+    # Compute COM offset contribution, to be divided by the hub mass
+    dcm_S1H1 = rbk.euler2(hingedBody.theta1Init)
+    dcm_S2H1 = rbk.euler2(hingedBody.theta2Init) @ dcm_S1H1
+    s1_hat = np.array([[-1.0],[0.0],[0.0]])
+    mr_ScB_B = -((hingedBody.r_H1B_B + np.transpose(hingedBody.dcm_H1B) @
+                np.transpose(dcm_S1H1) @ (hingedBody.d1 * s1_hat)) * hingedBody.mass1 +
+                (hingedBody.r_H1B_B + np.transpose(hingedBody.dcm_H1B) @ (hingedBody.l1 *
+                s1_hat + np.transpose(dcm_S2H1) @ (hingedBody.d2 * s1_hat))) * hingedBody.mass2)
+
+    stateEffProps = stateEfectorProperties()
+    stateEffProps.totalMass = hingedBody.mass1 + hingedBody.mass2
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = hingedBody.r_H1B_B + hingedBody.l1 * np.array(hingedBody.dcm_H1B) @ s1_hat
+    stateEffProps.r_PcP_P = hingedBody.d2 * s1_hat
+    stateEffProps.inertialPropLogName = "dualHingedRigidBodyConfigLogOutMsgs"
+
+    return(hingedBody, stateEffProps)
 
 def setup_hingedRigidBodyStateEffector():
     hingedBody = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
