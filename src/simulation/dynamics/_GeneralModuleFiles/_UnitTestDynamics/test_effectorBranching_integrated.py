@@ -366,17 +366,8 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
     print("when everything is working, this vector should be zero: ", datLog.r_BN_N[0,:]-datLog.r_CN_N[0,:])
 
-    # Grab effector's inertial position
-    if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
-        r_ScN_N_log = np.zeros_like(inertialPropLog.r_BN_N)
-        for i in range(len(inertialPropLog.sigma_BN)):
-            q_i = inertialPropLog.sigma_BN[i, :]  # MRP at timestep i
-            dcm_NP = np.transpose(rbk.MRP2C(q_i))
-            r_ScN_N_log[i, :] = inertialPropLog.r_BN_N[i, :] + (dcm_NP @ stateEffProps.r_PcP_P).flatten()
-    else:
-        r_ScN_N_log = inertialPropLog.r_BN_N
-
-    # Grab effector's attitude properties
+    # Grab effector's properties
+    r_ScN_N_log = inertialPropLog.r_BN_N
     sigma_SN_log = inertialPropLog.sigma_BN
 
     # Compute conservation quantities using the state and dynamic effector's logged properties
