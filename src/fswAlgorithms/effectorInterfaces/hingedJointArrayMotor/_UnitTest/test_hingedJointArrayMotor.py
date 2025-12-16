@@ -111,7 +111,18 @@ def test_hingedJointArrayMotor(nonActForces, maxTorque, numJoints, numSpacecraft
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     # create mass matrix input message
-    M = np.eye((6 + numJoints) * numSpacecraft)
+    rng = np.random.default_rng(12345)
+    M = np.zeros(((6 + numJoints) * numSpacecraft, (6 + numJoints) * numSpacecraft), dtype=float)
+    for sc in range(numSpacecraft):
+        startIdx = sc * (6 + numJoints)
+        endIdx = startIdx + 6 + numJoints
+        m = 10.0
+        I = np.diag([8.0, 6.0, 4.0])
+        A = rng.standard_normal((6 + numJoints, 6 + numJoints))
+        SPD = A @ A.T + 1e-3 * np.eye(6 + numJoints)
+        SPD[0:3,0:3] = m * np.eye(3)
+        SPD[3:6,3:6] = I
+        M[startIdx:endIdx, startIdx:endIdx] = SPD
     massMatrixInMsgData = messaging.MJSysMassMatrixMsgPayload()
     massMatrixInMsgData.massMatrix.clear()
     for v in M.flatten():
