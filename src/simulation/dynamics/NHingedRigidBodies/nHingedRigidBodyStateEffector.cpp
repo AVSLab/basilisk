@@ -253,31 +253,30 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 void NHingedRigidBodyStateEffector::computeDependentEffectors(
     BackSubMatrices& backSubContr, double integTime)
 {
-    Eigen::Vector3d force_B = Eigen::Vector3d::Zero();
-    Eigen::Vector3d torquePntB_B = Eigen::Vector3d::Zero();
+    Eigen::Vector3d force_S = Eigen::Vector3d::Zero(); // Parent frame of each panel is S of previous panel
+    Eigen::Vector3d torquePntS_S = Eigen::Vector3d::Zero();
 
     for (auto it = PanelVec.rbegin(); it != PanelVec.rend(); ++it) {
         HingedPanel& panel = *it;
 
-        Eigen::Vector3d panelForce_B = Eigen::Vector3d::Zero();
-        Eigen::Vector3d panelTorque_B = Eigen::Vector3d::Zero();
-
         for (auto& dynEffector : panel.dynEffectors) {
             dynEffector->computeForceTorque(integTime, 0.0);
-            panelForce_B  += dynEffector->forceExternal_B;
-            panelTorque_B += dynEffector->torqueExternalPntB_B;
+            force_S  += dynEffector->forceExternal_B;
+            torquePntS_S += dynEffector->torqueExternalPntB_B;
         }
 
-        panel.extForce_S = panel.dcm_SB * panelForce_B;
-        panel.extTorquePntS_S = panel.dcm_SB * panelTorque_B;
+        panel.extForce_S = force_S;
+        panel.extTorquePntS_S = torquePntS_S;
 
-        // Accumulate hub contributions
-        force_B += panelForce_B;
-        torquePntB_B += panelTorque_B + panel.r_SB_B.cross(panelForce_B);
+        // Rotate external forces/torques into the parent body's frame P (new S frame for next loop)
+        Eigen::Vector3d r_SP_S = panel.dcm_SB * (panel.r_SB_B + panel.d * panel.sHat1_B);
+        force_S = panel.dcm_SS_prev * force_S;
+        torquePntS_S = panel.dcm_SS_prev * torquePntS_S + r_SP_S.cross(force_S); // Subtracting d (adding it cause d is in - direction????) from this cause S is the COM? 
     }
-
-    backSubContr.vecTrans += force_B;
-    backSubContr.vecRot   += torquePntB_B;
+    
+    // Base body rotated into the hub body frame, added as cumulated force/torque here
+    backSubContr.vecTrans += force_S; // The parent of the last link is B 
+    backSubContr.vecRot += torquePntS_S;
 }
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
