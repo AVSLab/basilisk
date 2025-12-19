@@ -10,9 +10,8 @@ Welcome to Basilisk: an Astrodynamics Simulation Framework
 
 .. tip::
 
-   This documentation is for the latest release on ``develop``.
-   If you are looking for documenation for prior tagged releases, they can be found at
-   `here <https://hanspeterschaub.info/bskOlderDocs.html>`_.
+   The documentation for the tagged release is found at https://avslab.github.io/basilisk,
+   while the documentation for the latest beta release is found at https://avslab.github.io/basilisk/develop.
 
 Architecture
 ------------
