@@ -26,6 +26,7 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Added docs on releasing a new version of Basilisk.
 - Removed automated version bumping on merges to develop. Version bumps will be handled manually moving forward.
 - Added SWIG as a python package dependency in ``requirements_dev.txt`` and updated installation instructions.
 - Updated CI to no longer automatically publish git tags and publish wheels to PyPI. This process will be handled manually.
