@@ -117,8 +117,9 @@ default setting for that behavior.
         -1 for false, 1 for relative to parent body, 2 for relative to chief spacecraft body.
     * - ``orbitLineSegments``
       - int
-      - Number of line segments to use when drawing an osculating trajectory. Value of 0 (protobuffer default)
-        to use viz default or any value greater than or equal to 4.
+      - Number of line segments to use when drawing an osculating orbit lines or
+        osculating ground track lines.
+        Value of 0 (protobuffer default) to use viz default or any value greater than or equal to 4.
     * - ``relativeOrbitRange``
       - int
       - +/- Angular range in degrees of the osculating trajectory to show. Value of 0 (protobuffer default) to use
@@ -144,6 +145,12 @@ default setting for that behavior.
       - string
       - String of the spacecraft or celestial body name whose rotation matrix will provide the fixed frame to plot the
         true path trajectory against.
+    * - ``osculatingOrbitLineRange``
+      - float(2)
+      - Minimum and maximum angles to draw the osculating orbit lines
+    * - ``osculatingGroundTrackRange``
+      - float(2)
+      - Minimum and maximum angles to draw the osculating ground track lines
     * - **Spacecraft Settings**
       -
       -
@@ -248,6 +255,12 @@ default setting for that behavior.
     * - ``useLineRenderersForTargetLinesAndFrames``
       - int
       - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showOsculatingGroundTrackLines``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    * - ``showTruePathGroundTrackLines``
+      - int
+      - Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     * - **Lighting Settings**
       -
       -
@@ -335,6 +348,15 @@ with every message being sent.  The following live settings can be set directly 
     * - ``terminateVizard``
       - bool
       - If true, Vizard application will immediately shut down and exit
+    * - ``playbackPaused``
+      - bool
+      - If true, Vizard application will immediately shut down and exit
+    * - ``playbackInRealTime``
+      - int
+      - If +1, Vizard will playback in real time, if -1 then playback will be at frame rate, 0 is Vizard default
+    * - ``playbackMultiplier``
+      - int
+      - Sets playback speed (either frame rate or real time) to 2^playbackMultiplier
 
 Setting Actuator GUI Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1715,13 +1737,13 @@ The spacecraft Vizard data supports the use of ``oscOrbitColorList`` to override
 orbit line color and specify a custom color.  This is done using::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                              , oscOrbitColorList=vizSupport.toRGB255("red"))
+                                              , oscOrbitColorList=vizSupport.toRGBA255("red"))
 
 If you have multiple spacecraft, then this argument must be a list with the length being the number of
 spacecraft::
 
     viz = vizSupport.enableUnityVisualization(scSim, simTaskName, [scObject, scObject2]
-                                              , oscOrbitColorList=[vizSupport.toRGB255("red"), None])
+                                              , oscOrbitColorList=[vizSupport.toRGBA255("red"), None])
 
 The argument None is used to specify the Vizard default shape to be used.
 

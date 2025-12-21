@@ -680,7 +680,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
         vizSettings->set_linesandframeslinewidth(this->settings.linesAndFramesLineWidth);
         vizSettings->set_uselinerenderersfortargetlinesandframes(this->settings.useLineRenderersForTargetLinesAndFrames);
-
+        for (size_t i=0; i<settings.osculatingOrbitLineRange.size(); i++){
+            vizSettings->add_osculatingorbitlinerange(this->settings.osculatingOrbitLineRange[i]*R2D);
+        }
+        for (size_t i=0; i<settings.osculatingGroundTrackRange.size(); i++){
+            vizSettings->add_osculatinggroundtrackrange(this->settings.osculatingGroundTrackRange[i]*R2D);
+        }
+        vizSettings->set_showosculatinggroundtracklines(this->settings.showOsculatingGroundTrackLines);
+        vizSettings->set_showtruepathgroundtracklines(this->settings.showTruePathGroundTrackLines);
 
         // define actuator GUI settings
         for (size_t idx = 0; idx < this->settings.actuatorGuiSettingsList.size(); idx++) {
@@ -777,6 +784,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     }
     liveVizSettings->set_relativeorbitchief(this->liveSettings.relativeOrbitChief);
     liveVizSettings->set_terminatevizard(this->liveSettings.terminateVizard);
+    liveVizSettings->set_playbackpaused(this->liveSettings.playbackPaused);
+    liveVizSettings->set_playbackinrealtime(this->liveSettings.playbackInRealTime);
+    liveVizSettings->set_playbackmultiplier(this->liveSettings.playbackMultiplier);
     message->set_allocated_livesettings(liveVizSettings);
 
 
@@ -1046,6 +1056,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (size_t i=0; i<scIt->trueTrajectoryLineColor.size(); i++){
                 scp->add_truetrajectorylinecolor(scIt->trueTrajectoryLineColor[i]);
             }
+
+            /* set spacecraft ground track line color */
+            for (size_t i=0; i<scIt->groundTrackLineColor.size(); i++){
+                scp->add_groundtracklinecolor(scIt->groundTrackLineColor[i]);
+            }
+
+            /* set spacecraft celestialbody on which to draw a ground track */
+            scp->set_groundtrackbodyname(scIt->groundTrackBodyName);
 
             // Write Multi-Shape-Model messages
             for (size_t idx =0; idx < (size_t) scIt->msmInfo.msmList.size(); idx++) {

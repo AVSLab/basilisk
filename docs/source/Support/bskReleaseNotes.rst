@@ -100,6 +100,7 @@ Version |release|
   fixes the problem with Spice becoming very slow when multiple simulation are run in parallel, addresses
   the Spice kernel load limit of 5000 kernels, and prevents a rare bug where kernels are corrupted when
   loaded from multiple simulations at the same time.
+- Added support for Vizard version 2.3.2
 - Added optional prescribed 1-DOF helical screw motion to the :ref:`prescribedRotation1DOF` kinematic profiler module.
 - Added a new prescribed helical screw motion example scenario. See :ref:`scenarioPrescribedScrewMotion`.
 - Added ``SysModelMixin``, a utility class in ``py_sys_model.i`` that can be used for subclasses

@@ -33,6 +33,7 @@ Orbital Simulations
    Simulating Trajectory about Multiple Celestial Bodies <scenarioPatchedConics>
    Including Custom Gravitational Bodies <scenarioCustomGravBody>
    Near-Halo Orbit Simulation <scenarioHaloOrbit>
+   Showing Ground Tracks on a Planet <scenarioGroundTracks>
 
 
 Attitude Simulations

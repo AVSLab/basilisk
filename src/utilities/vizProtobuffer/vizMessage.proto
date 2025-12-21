@@ -53,7 +53,7 @@ message VizMessage{
         //FIELDS 1-4 EVERY TIMESTEP,
         //FIELDS 5-8, 10-12, 17-18 EVERY TIMESTEP IF THESE COMPONENTS ARE PRESENT IN SIM
         //FIELDS 9, 13, 16, 19 NEED ONLY BE SENT IN FIRST MESSAGE
-        //FIELDS 14-15 OPTIONAL FIELDS THAT CAN BE UPDATED EVERY TIMESTEP IF DESIRED, BUT NEED NEVER BE INCLUDED
+        //FIELDS 14-15, 20, 21 OPTIONAL FIELDS THAT CAN BE UPDATED EVERY TIMESTEP IF DESIRED, BUT NEED NEVER BE INCLUDED
         string spacecraftName = 1;
         repeated double position = 2;                 // [m] SCStatesMsg.r_BN_N
         repeated double velocity = 3;                 // [m/s] SCStatesMsg.v_BN_N
@@ -73,6 +73,8 @@ message VizMessage{
         repeated MultiShape multiShapes = 17;         // (Optional) Multi-Shape-Model (MSM)
         repeated Ellipsoid ellipsoids = 18;           // (Optional) Ellipsoid Heads Up Displays
         string parentSpacecraftName = 19;             // Name of the main spacecraft body that this spacecraft object should be considered a component of. Required if this spacecraft object is a subcomponent of a larger craft (i.e. deployable solar panel)
+        repeated int32 groundTrackLineColor = 20;     // (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+        string groundTrackBodyName = 21;                  // (Optional) Name of the celestial body to draw ground track on, otherwise ground track will default to spacecraft's dominant grav body
     }
 
     message ReactionWheel{ //ONLY REQUIRED IF RW HUD/PANEL DESIRED
@@ -268,6 +270,9 @@ message VizMessage{
         repeated PointLine targetLines = 1; // list of lines between 2 scenario targets.  This list is redrawn on each update step, so the line properties can change with time.
         string relativeOrbitChief = 2;      // If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
         bool terminateVizard = 3;           // If true, Vizard application will immediately shut down and exit
+        bool playbackPaused = 4;            // If true, Vizard will pause playback
+        int32 playbackInRealTime = 5;        // Value of +1 to playback in real time, -1 to playback at frame rate
+        int32 playbackMultiplier = 6;       // Sets playback speed (either frame rate or real time) to 2^playbackMultiplier
     }
 
     message VizSettingsPb{
@@ -334,6 +339,10 @@ message VizMessage{
         double celestialBodyOrbitLineWidth = 59;            // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
         double linesAndFramesLineWidth = 60;                // Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
         int32 useLineRenderersForTargetLinesAndFrames = 61; // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        int32 showOsculatingGroundTrackLines = 62;          // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+        repeated int32 osculatingOrbitLineRange = 63;       // [deg] Empty array to use viz default, otherwise provide min and max values, negative value indicates prior to current orbit true anomaly, min must be less than max
+        repeated int32 osculatingGroundTrackRange = 64;     // [deg] Empty array to use viz default, otherwise provide min and max values, negative value indicates prior to current orbit true anomaly, min must be less than max
+        int32 showTruePathGroundTrackLines = 65;            // Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
     }
 
     message MultiShape{ //ONLY NEEDED IF MSM DESIRED

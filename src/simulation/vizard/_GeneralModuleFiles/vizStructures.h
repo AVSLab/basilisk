@@ -372,6 +372,8 @@ VizSpacecraftData
     std::vector<int> oscOrbitLineColor;                         //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     std::vector<int>  trueTrajectoryLineColor;                  //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
     ReadFunctor<ColorMsgPayload> trueTrajectoryLineColorInMsg;  //!< (Optional) Messages specifying true trajectory orbit line RGBA colors.  If connected, this replaces the values set in trueTrajectoryLineColor
+    std::vector<int> groundTrackLineColor;                      //!< (Optional) Send desired RGBA as values between 0 and 255, color can be changed at any time step
+    std::string groundTrackBodyName = "";                       //!< (Optional) Name of the celestial body to draw ground track on, otherwise ground track will default to spacecraft's dominant grav body
     MultiShapeInfo msmInfo;                                     //!< (Optional) MSM configuration information
     std::vector<Ellipsoid *> ellipsoidList;                     //!< (Optional) ellipsoid about the spacecraft location
 }VizSpacecraftData;
@@ -449,8 +451,11 @@ VizSettings
     double spacecraftOrbitLineWidth = 0;                  //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale spacecraft orbit line width
     double celestialBodyOrbitLineWidth = 0;               //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale celestial body orbit line width
     double linesAndFramesLineWidth = 0;                   //!< Value of 0 (protobuffer default) to use viz default, values greater than 0 to scale general line widths
-    int useLineRenderersForTargetLinesAndFrames = 0;    //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
-
+    int useLineRenderersForTargetLinesAndFrames = 0;      //!< Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    std::vector<double> osculatingOrbitLineRange = {};    //!< (Optional) [rad] Provide the minimum and maximum angle range for osculating orbit lines
+    std::vector<double> osculatingGroundTrackRange = {};  //!< (Optional) [rad] Provide the minimum and maximum angle range for osculating ground track lines
+    int showOsculatingGroundTrackLines = 0;               //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
+    int showTruePathGroundTrackLines = 0;               //!< (Optional) Value of 0 (protobuffer default) to use viz default, -1 for false, 1 for true
 }VizSettings;
 
 
@@ -464,6 +469,10 @@ LiveVizSettings
     std::vector<PointLine> targetLineList;       //!< vector of lines between 2 scenario targets.  This list is redrawn on each update step, thus the line properties can change with time.
     std::string relativeOrbitChief = "";         //!< If valid spacecraft name provided, the relative orbit chief spacecraft will be set to that spacecraft object. Setting the string to "AUTO" or leaving this field empty will select the camera target spacecraft as the chief.
     bool terminateVizard=false;                  //!< If true, Vizard application will immediately shut down and exit
+    bool playbackPaused=false;                   //!< If true, Vizard will pause playback
+    int playbackInRealTime=0;                    //!< Value of +1 to playback in real time, -1 to playback at frame rate, 0 is Vizard default
+    int playbackMultiplier=0;                    //!< Sets playback speed (either frame rate or real time) to 2^playbackMultiplier
+
 }LiveVizSettings;
 
 
