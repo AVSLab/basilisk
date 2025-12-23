@@ -26,6 +26,12 @@ Basilisk Release Notes
 
 Version |release|
 -----------------
+- Migrated supportData handling to a Pooch-based fetch system.
+  .. warning::
+
+    This is a breaking change, minor changes were made to how the Denton flux model API is used.
+    See list of known issues for details.
+- Removed supportData files from wheels and source distributions to reduce package size.
 - Added automatic MD5 registry generation via ``makeRegistry.py`` for versioned supportData.
 - Updated documentation to include workflow for adding new supportData files and regenerating the registry.
 - Removed automated version bumping on merges to develop. Version bumps will be handled manually moving forward.
