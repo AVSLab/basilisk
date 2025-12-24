@@ -87,8 +87,7 @@ directly downloads the missing BSK data files and put them into a local pooch ca
 
 If installing Basilisk via a wheel the user does not have direct access to the full Basilisk source
 folder which contains the ``examples`` folder.  The Terminal command ``bskExamples``
-will download a copy of the examples folder into the local directory.  This command will also
-call ``bskLargeData`` as the examples assume these data files are present.
+will download a copy of the examples folder into the local directory.
 
 Alternatively, if you download a zip'd folder of the Basilisk source code you can install it via ``pip``
 using::
