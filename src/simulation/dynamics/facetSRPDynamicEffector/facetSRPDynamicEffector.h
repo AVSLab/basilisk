@@ -67,8 +67,6 @@ public:
 
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                    //!< Sun spice ephemeris input message
 
-    uint64_t numFacets = 0;                                                              //!< Total number of spacecraft facets
-    uint64_t numArticulatedFacets = 0;                                                   //!< Number of articulated facets
 private:
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;      //!< Articulated facet angle data input message
     std::vector<double> facetArticulationAngleList;                                      //!< [rad] Vector of facet rotation angles
@@ -78,6 +76,8 @@ private:
     StateData *hubPosition = nullptr;                                                    //!< [m] Hub inertial position vector
     StateData *hubSigma = nullptr;                                                       //!< Hub MRP inertial attitude
     bool facetAngleMsgRead = false;                                                      //!< Boolean variable signaling that the facet articulation messages are read
+    uint64_t numFacets = 0;                                                              //!< Total number of spacecraft facets
+    uint64_t numArticulatedFacets = 0;                                                   //!< Number of articulated facets
 };
 
 #endif
