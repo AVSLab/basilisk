@@ -36,6 +36,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -100,7 +101,8 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     # Construct algorithm and associated C++ container
     testModule = magneticFieldWMM.MagneticFieldWMM()
     testModule.ModelTag = "WMM"
-    testModule.dataPath = bskPath + '/supportData/MagneticField/'
+    wmm_path = get_path(DataFile.MagneticFieldData.WMM)
+    testModule.configureWMMFile(str(wmm_path))
 
     if not useDefault:
         testModule.epochDateFractionalYear = decimalYear

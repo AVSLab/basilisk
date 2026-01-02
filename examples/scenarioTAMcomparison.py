@@ -133,6 +133,7 @@ from Basilisk.simulation import magnetometer
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import simSetPlanetEnvironment
+from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -140,7 +141,7 @@ from Basilisk.utilities import vizSupport
 def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     """
     The scenarios can be run with the following setups parameters:
-    
+
     Args:
         show_plots (bool): Determines if the script should display plots
         orbitCase (str):  Specify the type of orbit to be simulated {'elliptical','circular'}
@@ -148,7 +149,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
         useBias2 (bool): Flag to use a sensor bias on TAM 2
         useBounds1 (bool): Flag to use TAM 1 sensor bounds
         useBounds2 (bool): Flag to use TAM 2 sensor bounds
-    
+
     """
 
     # Create simulation variable names
@@ -219,7 +220,9 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
 
     magModule3 = magneticFieldWMM.MagneticFieldWMM()
     magModule3.ModelTag = "WMM"
-    magModule3.dataPath = bskPath + '/supportData/MagneticField/'
+    wmm_path = get_path(DataFile.MagneticFieldData.WMM)
+    magModule3.configureWMMFile(str(wmm_path))
+
     # set epoch date/time message
     epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
     magModule3.epochInMsg.subscribeTo(epochMsg)
@@ -466,4 +469,3 @@ if __name__ == "__main__":
         True,   #Use sensor bounds 1 (True,False)
         False   #Use sensor bounds 2 (True,False)
     )
-
