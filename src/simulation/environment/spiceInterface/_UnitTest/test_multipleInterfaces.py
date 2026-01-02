@@ -60,41 +60,32 @@ def test_multipleInterfaces():
       - unload_c() is only called when the last user disappears
       - the shared-pointer-based lifetime system works correctly
     """
-    kernel = str(Path(bskPath) / "supportData" / "EphemerisData" / "de430.bsp")
 
-    # Step 1 - Kernel not yet loaded
-    assert not spiceInterface.isKernelLoaded(kernel)
+    # Step 1: nothing loaded yet
+    assert spiceInterface.countKernelsLoaded() == 0
 
     def smallScope():
-        # Step 2 - First SpiceInterface loads the kernel
+        # Step 2: first sim loads (pooch or local)
         firstSim, firstSpice = createOneSim()
-        assert spiceInterface.isKernelLoaded(kernel)
-
         kernelsLoadedWithOneSim = spiceInterface.countKernelsLoaded()
+        assert kernelsLoadedWithOneSim > 0
 
-        # Step 3 - Many more SpiceInterfaces do NOT reload the kernel
+        # Step 3: many more sims do not increase kernel count
         cacheSims = []
-        N = 20
-        for _ in range(N):
+        for _ in range(20):
             cacheSims.append(createOneSim())
 
         kernelsLoadedWithNSims = spiceInterface.countKernelsLoaded()
-
-        # Step 4 - check kernels are not being loaded again
         assert kernelsLoadedWithOneSim == kernelsLoadedWithNSims
 
-        # sanity check kernel is still loaded
-        assert spiceInterface.isKernelLoaded(kernel)
-
-    # Everything in smallScope is destroyed once we leave the function
     smallScope()
 
     import gc
 
     gc.collect()
 
-    # Step 5 - Kernel must now be fully unloaded
-    assert not spiceInterface.isKernelLoaded(kernel)
+    # Step 5: everything should be unloaded
+    assert spiceInterface.countKernelsLoaded() == 0
 
 
 if __name__ == "__main__":

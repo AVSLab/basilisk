@@ -27,6 +27,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <set>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/bskLogging.h"
@@ -129,6 +130,15 @@ public:
     void pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData);
     void writeOutputMessages(uint64_t CurrentClock);
 
+    //! Add a SPICE kernel by full path (absolute or relative)
+    void addKernelPath(const std::string& kernelPath);
+
+    //! Convenience: add many kernels
+    void addKernelPaths(const std::vector<std::string>& kernelPaths);
+
+    //! Clear configured kernel paths (does not unload already loaded kernels)
+    void clearKernelPaths();
+
     /** Resets all data loaded to SPICE.
      *
      * Calls `kclear_c`, which resets all loaded kernels for all simulations
@@ -177,6 +187,13 @@ private:
 
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
+
+    //! Optional explicit kernel list. If non-empty, Reset() loads these instead
+    // of SPICEDataPath defaults.
+    std::vector<std::string> kernelPaths;
+
+    //! Track which configured kernel paths have been loaded.
+    std::set<std::string> configuredLoadedKernelKeys;
 
     /**
      * Map of loaded kernel paths to their RAII handles.

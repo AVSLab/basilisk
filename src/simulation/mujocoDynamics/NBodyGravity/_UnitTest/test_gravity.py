@@ -480,7 +480,6 @@ def test_gps(showPlots: bool, useSphericalHarmonics: bool, useThirdBodies: bool)
     # planetary bodies
     spice = spiceInterface.SpiceInterface()
     spice.ModelTag = "SpiceInterface"
-    spice.SPICEDataPath = bskPath + "/supportData/EphemerisData/"
     spice.addPlanetNames(["earth", "moon", "sun"])
     spice.UTCCalInit = utcCalInit
     scene.AddModelToDynamicsTask(spice)
@@ -715,7 +714,6 @@ def test_mujocoVsSpacecraft(
         # planetary bodies
         spice = spiceInterface.SpiceInterface()
         spice.ModelTag = "SpiceInterface"
-        spice.SPICEDataPath = bskPath + "/supportData/EphemerisData/"
         spice.addPlanetNames(["earth", "sun", "moon"])
         spice.UTCCalInit = utcCalInit
         # spice.zeroBase = 'Earth' # Not actually needed for NBodyGravity

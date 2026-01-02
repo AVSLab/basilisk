@@ -369,7 +369,6 @@ def singleGravityBody(show_plots):
     SpiceObject = spiceInterface.SpiceInterface()
 
     SpiceObject.ModelTag = "SpiceInterfaceData"
-    SpiceObject.SPICEDataPath = bskPath + "/supportData/EphemerisData/"
     SpiceObject.addPlanetNames(
         spiceInterface.StringVector(["earth", "mars barycenter", "sun"])
     )

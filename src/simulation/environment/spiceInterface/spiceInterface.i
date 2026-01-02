@@ -16,6 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
 %module spiceInterface
 
 %include "architecture/utilities/bskException.swg"
@@ -29,6 +30,7 @@
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
+
 %include "swig_conly_data.i"
 %include "std_string.i"
 %include "std_vector.i"
@@ -41,22 +43,10 @@ from Basilisk.architecture.swig_common_model import *
 )
 
 %template() std::vector<std::string>;
-
-// Declaring planetFrames %naturalvar removes the need for the StringVector wrapper:
-//    mySpiceInterface.planetFrames = ["a", "b", "c"]
-// is allowed, which is more pythonic than:
-//    mySpiceInterface.planetFrames = spiceInterface.StringVector(["a", "b", "c"])
-// (which is also allowed)
-// However, modifiying in place is forbidden:
-//    mySpiceInterface.planetFrames[2] = "bb"
-// this raises an error because mySpiceInterface.planetFrames is returned by value
 %naturalvar SpiceInterface::planetFrames;
-
-// utility class, not needed in the Python layer
 %ignore SpiceKernel;
 
 %include "sys_model.i"
-
 %include "spiceInterface.h"
 
 %include "architecture/msgPayloadDefC/EpochMsgPayload.h"
@@ -73,15 +63,6 @@ struct AttRefMsg_C;
 struct TransRefMsg_C;
 
 %inline %{
-
-/**
- * Lightweight helper to query SPICE for a loaded kernel by file name.
- *
- * This function directly walks the SPICE kernel list using ktotal_c and
- * kdata_c and returns true if a kernel with the given file name string
- * is currently loaded. The comparison is done on the raw path string as
- * stored inside SPICE.
- */
 bool isKernelLoaded(const std::string &path)
 {
     SpiceInt count = 0;
@@ -120,6 +101,25 @@ size_t countKernelsLoaded()
     ktotal_c("ALL", &count);
     return static_cast<size_t>(count);
 }
+%}   // <-- IMPORTANT: close %inline before any %pythoncode
+
+%pythoncode %{
+def _bsk_configure_spice_default_kernels(self, auto_configure_kernels=True):
+    if not auto_configure_kernels:
+        return
+    try:
+        from Basilisk.utilities.supportDataTools.spiceKernels import configure_spiceinterface_default_kernels
+        configure_spiceinterface_default_kernels(self)
+    except Exception as e:
+        import warnings
+        warnings.warn(f"SpiceInterface autoconfig failed: {e!r}")
+
+_old_init = SpiceInterface.__init__
+def __init__(self, *args, auto_configure_kernels=True, **kwargs):
+    _old_init(self, *args, **kwargs)
+    _bsk_configure_spice_default_kernels(self, auto_configure_kernels=auto_configure_kernels)
+
+SpiceInterface.__init__ = __init__
 %}
 
 %pythoncode %{
